@@ -116,6 +116,7 @@ class StaticHtmlOutput
 				->setOption('baseUrl', home_url())
 				->setOption('additionalUrls', '')
 				->setOption('generateZip', '')
+				->setOption('cleanMeta', '')
 				->setOption('retainStaticFiles', '')
 				->setOption('sendViaFTP', '')
 				->setOption('ftpServer', '')
@@ -179,6 +180,7 @@ class StaticHtmlOutput
 				->assign('baseUrl', $this->_options->getOption('baseUrl'))
 				->assign('additionalUrls', $this->_options->getOption('additionalUrls'))
 				->assign('generateZip', $this->_options->getOption('generateZip'))
+				->assign('cleanMeta', $this->_options->getOption('cleanMeta'))
 				->assign('retainStaticFiles', $this->_options->getOption('retainStaticFiles'))
 				->assign('sendViaFTP', $this->_options->getOption('sendViaFTP'))
 				->assign('ftpServer', $this->_options->getOption('ftpServer'))
@@ -211,6 +213,7 @@ class StaticHtmlOutput
 			->setOption('baseUrl', filter_input(INPUT_POST, 'baseUrl', FILTER_SANITIZE_URL))
 			->setOption('additionalUrls', filter_input(INPUT_POST, 'additionalUrls'))
 			->setOption('generateZip', filter_input(INPUT_POST, 'generateZip'))
+			->setOption('cleanMeta', filter_input(INPUT_POST, 'cleanMeta'))
 			->setOption('retainStaticFiles', filter_input(INPUT_POST, 'retainStaticFiles'))
 			->setOption('sendViaFTP', filter_input(INPUT_POST, 'sendViaFTP'))
 			->setOption('ftpServer', filter_input(INPUT_POST, 'ftpServer'))
@@ -276,7 +279,7 @@ class StaticHtmlOutput
 			
 			//echo "Processing ". $currentUrl."<br />";
 			
-			$urlResponse = new StaticHtmlOutput_UrlRequest($currentUrl);
+			$urlResponse = new StaticHtmlOutput_UrlRequest($currentUrl, $this->_options->getOption('cleanMeta'));
 			$urlResponse->cleanup();
 			
 			// Add current url to the list of processed urls

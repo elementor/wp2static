@@ -42,6 +42,11 @@
                   </p>
                   <textarea class="widefat" name="additionalUrls" id="additionalUrls" rows="5" cols="10"><?php echo esc_html($this->additionalUrls) ?></textarea>
                 </p>
+
+                <p>
+                  <input name="cleanMeta" id="cleanMeta" value="1" type="checkbox" <?php if ($this->cleanMeta == 1) echo "checked"; ?> />
+                  <label for="cleanMeta"><?= __('Strip out unneeded WordPress meta tags', 'static-html-output-plugin');?></label> 
+                </p>
                 
                 <p>
                   <input name="generateZip" id="generateZip" value="1" type="checkbox" <?php if ($this->generateZip == 1) echo "checked"; ?> />
