@@ -8,7 +8,7 @@
 
 <div class="wrap">
 	
-	<h2><?= __('WP Static HTML Output Plugin', 'static-html-output-plugin');?></h2>
+	<h2><?= __('WP Static HTML Output - Configure & Run', 'static-html-output-plugin');?></h2>
 	
 	<?php if (is_array($this->exportLog) && count($this->exportLog)): ?>
 	<h3>Export Log</h3>
@@ -24,16 +24,22 @@
 					<div class="postbox">
 						<div class="handlediv" title="Click to toggle"><br /></div>
 
-              <h3 class="hndle"><span><?= __('Export Options', 'static-html-output-plugin');?></span></h3>
+              <h3 class="hndle"><span><?= __('Configurable options', 'static-html-output-plugin');?></span></h3>
 
               <div class="inside">
                 <p>
-                  <label for="baseUrl"><?= __('Base Url', 'static-html-output-plugin');?>:</label>
+                  <strong><label for="baseUrl"><?= __('Base Url', 'static-html-output-plugin');?></label></strong>
+                  <p>
+                    <i>This defaults to your WordPress Site URL. If you know the URL of where you'll be hosting the static version of your site, it will be good to change this to that, ie http://mystaticsite.github.io</i>
+                  </p> 
                   <input type="text" id="baseUrl" name="baseUrl" value="<?php echo esc_attr($this->baseUrl) ?>" size="50" />
                 </p>
                 
                 <p>
-                  <label for="additionalUrls"><?= __('Additional Urls', 'static-html-output-plugin');?>:</label>
+                  <strong><label for="additionalUrls"><?= __('Additional Urls', 'static-html-output-plugin');?></label></strong>
+                  <p>
+                    <i>For a few themes, certain files may not be detected as part of the export process. Enter any such files here, one per line. </i>
+                  </p>
                   <textarea class="widefat" name="additionalUrls" id="additionalUrls" rows="5" cols="10"><?php echo esc_html($this->additionalUrls) ?></textarea>
                 </p>
                 
@@ -49,12 +55,27 @@
 							
 						</div>
 					</div>
-					
+
+					<div class="postbox">
+						<div class="handlediv" title="Click to toggle"><br /></div>
+
+              <h3 class="hndle"><span><?= __('Export your site', 'static-html-output-plugin');?></span></h3>
+
+              <div class="inside">
+                <p>
+                  <p>
+                    <i>Clicking the button below will start the process of generating a static site from your WordPress installation. Depending on the size of your website, this process may take some time.</i>
+                  </p> 
 					<p class="submit">
             <?php wp_nonce_field($this->onceAction) ?>					
 						<input type="hidden" name="action" value="generate" />
-						<input class="button-primary" type="submit" name="submit" value="Generate" />
+						<input class="button-primary" type="submit" name="submit" value="Start static site export" />
 					</p>
+                </p>
+							
+						</div>
+					</div>
+					
 					
 				</form>
 				
