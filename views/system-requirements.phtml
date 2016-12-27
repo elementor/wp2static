@@ -15,9 +15,9 @@ else:
 endif;
 
 if (!$this->uploadsFolderWritable):
-	$fail[] = 'Your uploads folder is not writable.';
+	$fail[] = 'Your uploads folder ('. $this->uploadsFolder['path']  .') is not writable.';
 else:
-	$pass[] = 'Your uploads folder is writable';
+	$pass[] = 'Your uploads folder ('. $this->uploadsFolder['path']  .') is writable';
 endif;
 
 if (!$this->permalinksStructureDefined):
