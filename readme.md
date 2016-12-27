@@ -8,6 +8,10 @@ Allows you to leverage WordPress as a great CMS, but benefit from the speed, sec
  - specify extra files to include in the output (ie, dynamically loaded assets)
  - multi-language support (English/Japanese currently)
 
+## Demo site
+
+You can [see a working example here](https://leonstafford.github.io/demo-site-wordpress-static-html-output-plugin) of a plain WordPress install which has had a few tweaks done to optimize it for static HTML output. It is hosted on GitHub Pages, but could just as easily be hosted on Dropbox, BitBucket, GitLab, S3, your own server or anywhere else you can host HTML files.  
+
 ## Roadmap
 
  - selectively export only changed pages since last output
