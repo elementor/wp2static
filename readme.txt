@@ -6,7 +6,7 @@ Requires at least: 3.2
 Tested up to: 4.7
 Stable tag: 1.1.2
 
-Produces a static HTML version of your Wordpress install and adjusts URLs to be portable. Allows you to leverage WordPress as a great CMS, but benefit from the speed, security and portability that a static website provides.
+Allows you to leverage WordPress as a great CMS, but benefit from the speed, security and portability that a static website provides.
 
 == Description ==
 
