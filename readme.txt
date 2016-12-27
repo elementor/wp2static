@@ -4,7 +4,7 @@ Donate link: http://leonstafford.github.io
 Tags: static,html,export,performance,security,portable
 Requires at least: 3.2
 Tested up to: 4.7
-Stable tag: 1.1.2
+Stable tag: 1.1.3
 
 Allows you to leverage WordPress as a great CMS, but benefit from the speed, security and portability that a static website provides.
 
@@ -56,6 +56,12 @@ See the readme. In brief: you can't use dynamic WordPress functions such as comm
 2. The main interface (Japanese)
 
 == Changelog ==
+= 1.1.3 =
+
+* Now able to choose whether to strip unneeded meta tags from generated source code.
+* Improved layout for config/export screen.
+* Better feedback to user when system requirements are not met
+
 = 1.1.2 =
 
 * Version bump for supporting latest WP (4.7)
