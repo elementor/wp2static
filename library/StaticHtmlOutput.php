@@ -166,6 +166,7 @@ class StaticHtmlOutput
 				->assign('uploadsFolderWritable', $uploadsFolderWritable)
 				->assign('supportsZipArchives', $supportsZipArchives)
 				->assign('permalinksStructureDefined', $permalinksStructureDefined)
+				->assign('uploadsFolder', $uploadDir)
 				->render();
 		}
 		else
