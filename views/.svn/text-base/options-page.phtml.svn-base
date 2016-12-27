@@ -1,0 +1,65 @@
+<?php
+/**
+ * @package WP Static HTML Output
+ *
+ * Copyright (c) 2011 Leon Stafford
+ */
+?>
+
+<div class="wrap">
+	
+	<h2><?= __('WP Static HTML Output Plugin', 'static-html-output-plugin');?></h2>
+	
+	<?php if (is_array($this->exportLog) && count($this->exportLog)): ?>
+	<h3>Export Log</h3>
+	<pre class="wpsho-export-log"><?php echo implode("\n", array_keys($this->exportLog)) ?></pre>
+	<?php endif ?>
+	
+	<div class="postbox-container">
+		<div class="metabox-holder">
+			<div class="meta-box-sortables ui-sortable">
+				
+				<form id="general-options" method="post" action="">
+					
+					<div class="postbox">
+						<div class="handlediv" title="Click to toggle"><br /></div>
+
+              <h3 class="hndle"><span><?= __('Export Options', 'static-html-output-plugin');?></span></h3>
+
+              <div class="inside">
+                <p>
+                  <label for="baseUrl"><?= __('Base Url', 'static-html-output-plugin');?>:</label>
+                  <input type="text" id="baseUrl" name="baseUrl" value="<?php echo esc_attr($this->baseUrl) ?>" size="50" />
+                </p>
+                
+                <p>
+                  <label for="additionalUrls"><?= __('Additional Urls', 'static-html-output-plugin');?>:</label>
+                  <textarea class="widefat" name="additionalUrls" id="additionalUrls" rows="5" cols="10"><?php echo esc_html($this->additionalUrls) ?></textarea>
+                </p>
+                
+                <p>
+                  <input name="generateZip" id="generateZip" value="1" type="checkbox" <?php if ($this->generateZip == 1) echo "checked"; ?> />
+                  <label for="generateZip"><?= __('Generate Zip archive of whole site', 'static-html-output-plugin');?></label> 
+                </p>							
+                  
+                <p>
+                  <input name="retainStaticFiles" id="retainStaticFiles" value="1" type="checkbox" <?php if ($this->retainStaticFiles == 1) echo "checked"; ?> />
+                  <label for="retainStaticFiles"><?= __('Retain generated static files on server', 'static-html-output-plugin');?></label> 
+                </p>
+							
+						</div>
+					</div>
+					
+					<p class="submit">
+            <?php wp_nonce_field($this->onceAction) ?>					
+						<input type="hidden" name="action" value="generate" />
+						<input class="button-primary" type="submit" name="submit" value="Generate" />
+					</p>
+					
+				</form>
+				
+			</div>
+		</div>
+	</div>
+	
+</div>

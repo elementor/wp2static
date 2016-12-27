@@ -1,0 +1,52 @@
+<?php
+/**
+ * @package WP Static HTML Output
+ *
+ * Copyright (c) 2011 Leon Stafford
+ */
+
+$fail = array();
+$pass = array();
+
+if (!$this->supportsZipArchives):
+	$fail[] = 'You are missing the <strong>zip</strong> extension';
+else:
+	$pass[] = 'You have the <strong>zip</strong> extension';
+endif;
+
+if (!$this->uploadsFolderWritable):
+	$fail[] = 'Your uploads folder is not writable.';
+else:
+	$pass[] = 'Your uploads folder is writable';
+endif;
+
+if (!$this->permalinksStructureDefined):
+	$fail[] = 'Your permalinks structure is undefined. Please set your permalinks structure here: <a href="'.admin_url( 'options-permalink.php' ).'">Permalink Settings</a>';
+else:
+	$pass[] = 'Your permalinks structure is ok.';
+endif;
+?>
+
+<div class="wrap wpsho-report">
+	
+	<h2>System Requirements Report</h2>
+	
+	<p><strong>Your server does not meet the following requirements in order to use this plugin.</strong></p>
+	
+	<p>
+		The following requirements failed, please contact your hosting provider in order to receive assistance with meeting the system requirements for this plugin:
+		<ul>
+			<li><?php echo implode('</li><li>', $fail) ?></li>
+		</ul>
+	</p>
+	
+	<?php if (count($pass)): ?>
+	<p>
+		The following requirements were successfully met:
+		<ul>
+			<li><?php echo implode('</li><li>', $pass) ?></li>
+		</ul>
+	</p>
+	<?php endif ?>
+	
+</div>
