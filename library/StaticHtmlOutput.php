@@ -331,9 +331,8 @@ class StaticHtmlOutput
 		
 		if($this->_options->getOption('sendViaFTP') == 1)
 		{		
-			
 			//crude FTP addition		
-			require_once '/home/leon/leonwp/wp-content/plugins/static-html-output-plugin/library/FTP/ftp.php';
+            require_once(__DIR__.'/../class/user.php');
 			$config = array();//keys[passive_mode(true|false)|transfer_mode(FTP_ASCII|FTP_BINARY)|reattempts(int)|log_path|verbose(true|false)|create_mask(default:0777)]
 			$ftp = new ftp($config);
 			$ftp->conn($this->_options->getOption('ftpServer'), $this->_options->getOption('ftpUsername'), filter_input(INPUT_POST, 'ftpPassword'));
@@ -343,7 +342,9 @@ class StaticHtmlOutput
 		
 			unset($ftp);
 		}
-		
+
+        // TODO: keep copy of last export folder for incremental addition
+
 		// Remove temporary files unless user requested to keep or needed for FTP transfer
 		if ($this->_options->getOption('retainStaticFiles') != 1)		
 		{
