@@ -67,8 +67,6 @@ See the readme. In brief: you can't use dynamic WordPress functions such as comm
 
 = 1.2.0 =
 
-Good to be back into developing the plugin again. This release brings some good functionality, though may be some bugs. If so, please contact me to fix: lionhive@gmail.com Cheers, Leon
-
  * 1-click generation and exporting to an FTP server
  * improved user experience when saving and exporting sites (no more white screen of boredom!)
 
@@ -147,6 +145,13 @@ Altered main codebase to fix recursion bug and endless loop. Essential upgrade.
 Initial release to Wordpress community
 
 == Upgrade Notice ==
+
+= 1.2.0 =
+
+Good to be back into developing the plugin again. This release brings some good functionality, though may be some bugs. If so, please contact me to fix: lionhive@gmail.com Cheers, Leon
+
+ * 1-click generation and exporting to an FTP server
+ * improved user experience when saving and exporting sites (no more white screen of boredom!)
 
 = 1.1.2 =
 
