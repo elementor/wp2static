@@ -97,6 +97,7 @@ class StaticHtmlOutput
 		{
 			add_action('admin_menu', array($instance, 'registerOptionsPage'));
 			add_action(self::HOOK . '-saveOptions', array($instance, 'saveOptions'));
+
 		}
 		
 		return $instance;
@@ -235,13 +236,6 @@ class StaticHtmlOutput
 	public function genArch()
 	{
 
-		// Protection
-		if (!isset($_POST['action']) || 'genArchive' != $_POST['action'])
-		{
-			return;
-		}
-
-	
 		// Generate archive
 		$archiveUrl = $this->_generateArchive();
 		
@@ -259,12 +253,10 @@ class StaticHtmlOutput
 			}
 		}
 		
-        echo 'Archive has been created... log...';
-/*
 		$this->_view->setTemplate('message')
 			->assign('message', $message)
+            ->assign('exportLog', $this->_exportLog)
 			->render();
-*/
     }
 	
 	/**
