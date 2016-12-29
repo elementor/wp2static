@@ -217,7 +217,15 @@ class StaticHtmlOutput
 			->setOption('ftpUsername', filter_input(INPUT_POST, 'ftpUsername'))
 			->setOption('ftpRemotePath', filter_input(INPUT_POST, 'ftpRemotePath'))		
 			->save();
-		
+
+        $message = 'Options have been updated successfully.';
+
+		$this->_view->setTemplate('message')
+			->assign('message', $message)
+			->render();
+
+/*
+
 		// Generate archive
 		$archiveUrl = $this->_generateArchive();
 		
@@ -238,6 +246,7 @@ class StaticHtmlOutput
 		$this->_view->setTemplate('message')
 			->assign('message', $message)
 			->render();
+*/
 	}
 	
 	/**
