@@ -9,10 +9,10 @@
 <script>
 jQuery(document).ready(function($){
     $('#generateArchiveButton').click(function() {
-        console.log('Generating archive...');
 
+        $('#results').show();
         // set form action for generation vs saving options
-        $('#formActionHiddenField').val('my_action')
+        $('#formActionHiddenField').val('generate_archive')
         
         data = $('#general-options').serialize();
 
@@ -31,10 +31,6 @@ jQuery(document).ready(function($){
 	<h2><?= __('WP Static HTML Output - Configure & Run', 'static-html-output-plugin');?></h2>
 
 	
-	<?php if (is_array($this->exportLog) && count($this->exportLog)): ?>
-	<h3>Export Log</h3>
-	<pre class="wpsho-export-log"><?php echo implode("\n", array_keys($this->exportLog)) ?></pre>
-	<?php endif ?>
 	
 	<div class="postbox-container">
 		<div class="metabox-holder">
@@ -119,13 +115,13 @@ jQuery(document).ready(function($){
                     <i>Clicking the button below will start the process of generating a static site from your WordPress installation. Depending on the size of your website, this process may take some time.</i>
                   </p> 
 
-    <div id="results">
-        results go here...
+    <div id="results" style="display:none;">
+        <img src="<?php echo plugins_url('../images/dashinfinity.gif', __FILE__); ?>" />
     </div>
 
 					<p class="submit">
             <?php wp_nonce_field($this->onceAction) ?>
-						<input id="generateArchiveButton" class="button-primary" value="Start static site export (AJAX)" />
+						<input id="generateArchiveButton" class="button-primary" value="Start static site export" />
 					</p>
                 </p>
 						</div>

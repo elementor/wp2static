@@ -43,11 +43,13 @@ function myplugin_init() {
 }
 add_action('plugins_loaded', 'myplugin_init');
 
-add_action( 'wp_ajax_my_action', 'my_action_callback' );
+add_action( 'wp_ajax_generate_archive', 'generate_archive' );
 
-function my_action_callback() {
+function generate_archive() {
 
-    echo 'some response this is!';
+    $plugin = StaticHtmlOutput::getInstance();
 
-    wp_die(); // this is required to terminate immediately and return a proper response
+    $plugin->genArch();
+
+    wp_die();
 }
