@@ -42,3 +42,12 @@ function myplugin_init() {
   load_plugin_textdomain( 'static-html-output-plugin', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' ); 
 }
 add_action('plugins_loaded', 'myplugin_init');
+
+add_action( 'wp_ajax_my_action', 'my_action_callback' );
+
+function my_action_callback() {
+
+    echo 'some response this is!';
+
+    wp_die(); // this is required to terminate immediately and return a proper response
+}

@@ -10,14 +10,18 @@
 jQuery(document).ready(function($){
     $('#generateArchiveButton').click(function() {
         console.log('Generating archive...');
-        $.ajax({
-          type: "POST",
-          url: '',
-          data: $('#general-options').serialize(),
-          success: function(response) {
+
+        // set form action for generation vs saving options
+        $('#formActionHiddenField').val('my_action')
+        
+        data = $('#general-options').serialize();
+
+        jQuery.post(ajaxurl, data, function(response) {
             $('#results').html(response);
-          }
         });
+
+        // revert form action for saving options vs generation
+        $('#formActionHiddenField').val('generate')
     });
 });
 </script>
@@ -98,7 +102,7 @@ jQuery(document).ready(function($){
 
 					<p class="submit">
             <?php wp_nonce_field($this->onceAction) ?>
-						<input type="hidden" name="action" value="generate" />
+						<input id="formActionHiddenField" type="hidden" name="action" value="generate" />
 						<input class="button-primary" type="submit" name="submit" value="Save current options" />
 					</p>
 						</div>
@@ -121,7 +125,6 @@ jQuery(document).ready(function($){
 
 					<p class="submit">
             <?php wp_nonce_field($this->onceAction) ?>
-						<input type="hidden" name="action" value="generate" />
 						<input id="generateArchiveButton" class="button-primary" value="Start static site export (AJAX)" />
 					</p>
                 </p>
