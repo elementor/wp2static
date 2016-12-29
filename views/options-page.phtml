@@ -6,9 +6,29 @@
  */
 ?>
 
+<script>
+jQuery(document).ready(function($){
+    $('#generateArchiveButton').click(function() {
+        console.log('Generating archive...');
+        $.ajax({
+          type: "POST",
+          url: '',
+          data: $('#general-options').serialize(),
+          success: function(response) {
+            $('#results').html(response);
+          }
+        });
+    });
+});
+</script>
+
 <div class="wrap">
 	
 	<h2><?= __('WP Static HTML Output - Configure & Run', 'static-html-output-plugin');?></h2>
+
+    <div id="results">
+        results go here...
+    </div>
 	
 	<?php if (is_array($this->exportLog) && count($this->exportLog)): ?>
 	<h3>Export Log</h3>
@@ -92,9 +112,15 @@
                     <i>Clicking the button below will start the process of generating a static site from your WordPress installation. Depending on the size of your website, this process may take some time.</i>
                   </p> 
 					<p class="submit">
-            <?php wp_nonce_field($this->onceAction) ?>					
+            <?php wp_nonce_field($this->onceAction) ?>
 						<input type="hidden" name="action" value="generate" />
 						<input class="button-primary" type="submit" name="submit" value="Start static site export" />
+					</p>
+
+					<p class="submit">
+            <?php wp_nonce_field($this->onceAction) ?>
+						<input type="hidden" name="action" value="generate" />
+						<input id="generateArchiveButton" class="button-primary" value="Start static site export (AJAX)" />
 					</p>
                 </p>
 							
