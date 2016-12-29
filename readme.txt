@@ -12,25 +12,25 @@ Allows you to leverage WordPress as a great CMS, but benefit from the speed, sec
 
 ## Features
 
- - generates a standalone, static html copy of your whole WordPress website
- - specify extra files to include in the output (ie, dynamically loaded assets)
- - 1-click static site creation and publishing to an FTP server
- - multi-language support (English/Japanese currently)
+ * generates a standalone, static html copy of your whole WordPress website
+ * specify extra files to include in the output (ie, dynamically loaded assets)
+ * 1-click static site creation and publishing to an FTP server
+ * multi-language support (English/Japanese currently)
 
 This plugin produces a static HTML version of your wordpress install, incredibly useful for anyone who would like the publishing power of wordpress but whose webhost doesn't allow dynamic PHP driven sites - such as Dropbox. You can run your development site on a different domain or offline, and the plugin will change all relevant URLs when you publish your site. It's a simple but powerful plugin, and after hitting the publish button, the plugin will output a ZIP file of your entire site, ready to upload straight to it's new home. 
 
 Limitations:
 
- - The nature of a static site implies that any dynamic elements of your wordpress install that reply upon Wordpress plugins or internal functions to operate dynamically will no longer work. Significantly, this means comments. You can workaround this by including a non-Wordpress version of an external comments provider into your theme code, such as the Disqus comment system. Any page elements that rely upon Javascript will function normally. 
- - inability to correctly capture some relative links in posts
- - inability to detect assets dynamically loaded via javascript after page load, these will need to specified separately (but will work)
+ * The nature of a static site implies that any dynamic elements of your wordpress install that reply upon Wordpress plugins or internal functions to operate dynamically will no longer work. Significantly, this means comments. You can workaround this by including a non-Wordpress version of an external comments provider into your theme code, such as the Disqus comment system. Any page elements that rely upon Javascript will function normally. 
+ * inability to correctly capture some relative links in posts
+ * inability to detect assets dynamically loaded via javascript after page load, these will need to specified separately (but will work)
 
 Planned upgrades:
 
- - progress meter to show % of .ZIP creation 
- - speed improvements 
- - selectively export only changed pages since last output
- - 1-click deployment your static files via sFTP, SCP, Dropbox, etc
+ * progress meter to show % of .ZIP creation 
+ * speed improvements 
+ * selectively export only changed pages since last output
+ * 1-click deployment your static files via sFTP, SCP, Dropbox, etc
 
 Developed by [**Leon Stafford**](http://leonstafford.github.io). If you have any questions about this plugin's usage, installation or development, please email me at: [leon.stafford@mac.com](mailto:leon.stafford@mac.com)
 
@@ -50,9 +50,9 @@ e.g.
 
 Anywhere that allows HTML files to be uploaded, ie:
 
- - GitHub/GitLab/BitBucket Pages
- - S3 / CloudFront
- - Dropbox
+ * GitHub/GitLab/BitBucket Pages
+ * S3 / CloudFront
+ * Dropbox
 
 = My comments don't work anymore! = 
 
@@ -67,10 +67,10 @@ See the readme. In brief: you can't use dynamic WordPress functions such as comm
 
 = 1.2.0 =
 
-Good to be back into developing the plugin again. This release brings some good functionality, though may be some bugs. If so, please contact me to fix: [mailto:lionhive@gmail.com](lionhive@gmail.com) - Cheers, Leon
+Good to be back into developing the plugin again. This release brings some good functionality, though may be some bugs. If so, please contact me to fix: lionhive@gmail.com Cheers, Leon
 
- - 1-click generation and exporting to an FTP server
- - improved user experience when saving and exporting sites (no more white screen of boredom!)
+ * 1-click generation and exporting to an FTP server
+ * improved user experience when saving and exporting sites (no more white screen of boredom!)
 
 = 1.1.3 =
 
