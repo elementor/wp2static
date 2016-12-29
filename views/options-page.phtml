@@ -58,6 +58,31 @@
                   <label for="retainStaticFiles"><?= __('Retain generated static files on server', 'static-html-output-plugin');?></label> 
                 </p>
 							
+                <p>
+                    <input name="sendViaFTP" id="sendViaFTP" value="1" type="checkbox" <?php if ($this->sendViaFTP == 1) echo "checked"; ?> />
+                    <label for="sendViaFTP"><?= __('Transfer files via FTP', 'static-html-output-plugin');?></label>
+                    <br /><b><span style="color:red;"><?= __('FTP functionality is in Beta testing: For large sites, page may seem unresponsive until complete. If in doubt, check your remote FTP directory for activity.', 'static-html-output-plugin');?> </span></b>
+                </p>
+
+                <p>
+                    <label for="ftpServer"><?= __('FTP Server', 'static-html-output-plugin');?>:</label><br />
+                    <input name="ftpServer" id="ftpServer" value="<?php echo esc_attr($this->ftpServer) ?>" size="30" />						
+                </p>
+
+                <p>
+                    <label for="ftpUsername"><?= __('FTP Username', 'static-html-output-plugin');?>:</label><br />
+                    <input name="ftpUsername" id="ftpUsername" value="<?php echo esc_attr($this->ftpUsername) ?>" size="30" />						
+                </p>
+
+                <p>
+                    <label for="ftpPassword"><?= __('FTP Password', 'static-html-output-plugin');?>:</label><br />
+                    <input name="ftpPassword" id="ftpPassword" type="password" value="" size="30" />
+                </p>
+
+                <p>
+                    <label for="ftpRemotePath"><?= __('FTP Remote Path', 'static-html-output-plugin');?>:</label><br />
+                    <input name="ftpRemotePath" id="ftpRemotePath" value="<?php echo esc_attr($this->ftpRemotePath) ?>" size="30" />						
+                </p>
 						</div>
 					</div>
 

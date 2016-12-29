@@ -332,7 +332,7 @@ class StaticHtmlOutput
 		if($this->_options->getOption('sendViaFTP') == 1)
 		{		
 			//crude FTP addition		
-            require_once(__DIR__.'/../class/user.php');
+            require_once(__DIR__.'/FTP/ftp.php');
 			$config = array();//keys[passive_mode(true|false)|transfer_mode(FTP_ASCII|FTP_BINARY)|reattempts(int)|log_path|verbose(true|false)|create_mask(default:0777)]
 			$ftp = new ftp($config);
 			$ftp->conn($this->_options->getOption('ftpServer'), $this->_options->getOption('ftpUsername'), filter_input(INPUT_POST, 'ftpPassword'));
