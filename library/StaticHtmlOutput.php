@@ -132,7 +132,13 @@ class StaticHtmlOutput
 	 */
 	public function registerOptionsPage()
 	{
+        /*
+        add_submenu_page( string $parent_slug, string $page_title, string $menu_title, string $capability, string $menu_slug, callable $function = '' )
+        */
 		$page = add_submenu_page('tools.php', __('WP Static HTML Output', 'static-html-output-plugin'), __('WP Static HTML Output', 'static-html-output-plugin'), 'manage_options', self::HOOK . '-options', array($this, 'renderOptionsPage'));
+        /*
+        add_action( string $tag, callable $function_to_add, int $priority = 10, int $accepted_args = 1 )
+        */
 		add_action('admin_print_styles-' . $page, array($this, 'enqueueAdminStyles'));
 	}
 	
@@ -172,20 +178,21 @@ class StaticHtmlOutput
 		else
 		{
 			do_action(self::HOOK . '-saveOptions');
-			
-			$this->_view
-				->setTemplate('options-page')
-				->assign('exportLog', $this->_exportLog)
-				->assign('baseUrl', $this->_options->getOption('baseUrl'))
-				->assign('additionalUrls', $this->_options->getOption('additionalUrls'))
-				->assign('cleanMeta', $this->_options->getOption('cleanMeta'))
-				->assign('retainStaticFiles', $this->_options->getOption('retainStaticFiles'))
-				->assign('sendViaFTP', $this->_options->getOption('sendViaFTP'))
-				->assign('ftpServer', $this->_options->getOption('ftpServer'))
-				->assign('ftpUsername', $this->_options->getOption('ftpUsername'))
-				->assign('ftpRemotePath', $this->_options->getOption('ftpRemotePath'))
-				->assign('onceAction', self::HOOK . '-options')
-				->render();
+
+            $this->_view
+                ->setTemplate('options-page')
+                ->assign('exportLog', $this->_exportLog)
+                ->assign('baseUrl', $this->_options->getOption('baseUrl'))
+                ->assign('additionalUrls', $this->_options->getOption('additionalUrls'))
+                ->assign('cleanMeta', $this->_options->getOption('cleanMeta'))
+                ->assign('retainStaticFiles', $this->_options->getOption('retainStaticFiles'))
+                ->assign('sendViaFTP', $this->_options->getOption('sendViaFTP'))
+                ->assign('ftpServer', $this->_options->getOption('ftpServer'))
+                ->assign('ftpUsername', $this->_options->getOption('ftpUsername'))
+                ->assign('ftpRemotePath', $this->_options->getOption('ftpRemotePath'))
+                ->assign('onceAction', self::HOOK . '-options')
+                ->render();
+
 		}
 	}
 	
@@ -223,9 +230,18 @@ class StaticHtmlOutput
 		$this->_view->setTemplate('message')
 			->assign('message', $message)
 			->render();
+	}
 
-/*
+	public function genArch()
+	{
 
+		// Protection
+		if (!isset($_POST['action']) || 'genArchive' != $_POST['action'])
+		{
+			return;
+		}
+
+	
 		// Generate archive
 		$archiveUrl = $this->_generateArchive();
 		
@@ -243,11 +259,13 @@ class StaticHtmlOutput
 			}
 		}
 		
+        echo 'Archive has been created... log...';
+/*
 		$this->_view->setTemplate('message')
 			->assign('message', $message)
 			->render();
 */
-	}
+    }
 	
 	/**
 	 * Generates ZIP archive
