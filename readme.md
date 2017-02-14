@@ -32,6 +32,7 @@ To quickly try out the plugin, without affecting your other WordPress installati
  - `docker build -t leonstafford/wordpress-static-html-plugin:latest # add zip extension and WP cli on top of latest WordPress Docker image
  - `docker run --name devmysql -e MYSQL_ROOT_PASSWORD=banana -d mariadb` # run a MySQL container for the WordPress one to later use
  - `docker run --name plugindevwp --link devmysql:mysql -p 8080:80 -d wordpress` # run the official WordPress image, linking to your MySQL instance
+ - sudo docker run --name plugindevwp --link devmysql:mysql -p 8080:80 -d -v /home/leon/wordpress-static-html-plugin/:/app leonstafford/wordpress-static-html-plugin # run the customized WP image, bind mounting the dev sources to /app dir
  - `docker exec -it plugindevwp bash` # get CLI access to the container
  - `sh /post_launch.sh` # install WP; install and activate static output plugin
  - `exit` # leave the container's shell
