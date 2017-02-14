@@ -29,16 +29,15 @@ If you'd like to contribute, please follow the usual GitHub procedures (create a
 To quickly try out the plugin, without affecting your other WordPress installations:
 
  - [install Docker](http://docker.com)
+ - `docker build -t leonstafford/wordpress-static-html-plugin:latest # add zip extension and WP cli on top of latest WordPress Docker image
  - `docker run --name devmysql -e MYSQL_ROOT_PASSWORD=banana -d mariadb` # run a MySQL container for the WordPress one to later use
  - `docker run --name plugindevwp --link devmysql:mysql -p 8080:80 -d wordpress` # run the official WordPress image, linking to your MySQL instance
  - `docker exec -it plugindevwp bash` # get CLI access to the container
- - `docker-php-ext-install zip` # install zip extension for PHP, which the plugin requires
- - `service apache2 reload` # enables new extension to be used
+ - `sh /post_launch.sh` # install WP; install and activate static output plugin
  - `exit` # leave the container's shell
  - `docker ps` # get WordPress container's id so you can connect from the host
  - `docker inspect __yourcontainerid__ | grep Address` # get IP for connecting in your browser
- - open IP in browser and perform WP installation as usual
- - install the plugin by searching by its name, else go back into container and use `wp-cli` method
+ - open IP in browser and you have a clean WP install, including the plugin (l/p: admin/admin)
 
 ## Support
 
