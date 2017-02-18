@@ -13,6 +13,10 @@ cp -r /app wp-content/plugins/wordpress-static-html-output
 chown -R www-data:www-data wp-content/plugins/wordpress-static-html-output
 chown -R www-data:www-data wp-content/uploads
 
+
+# activate wp static output plugin
+wp --allow-root plugin activate wordpress-static-html-output
+
 # OPTIONAL: install latest static plugin from WP plugins site vs local src
 #wp --allow-root plugin install static-html-output-plugin --activate
 
