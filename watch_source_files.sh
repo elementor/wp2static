@@ -1,5 +1,8 @@
 #!/bin/bash
-while inotifywait -qrm --event modify --format '%w%f' /app; do
-    echo 'something has changed!'
+
+inotifywait -rm --event modify --format '%w%f' --exclude '.*\.swp.*' /app |
+while read filename; do
+    echo 'a file has changed!'
+    echo $filename
     . /sync_sources.sh
 done

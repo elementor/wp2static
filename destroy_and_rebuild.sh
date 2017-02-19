@@ -1,4 +1,5 @@
 #!/bin/bash
+
 # convenience script to destroy any running containers, rebuild (with cache) and output notifications from script watching/syncing source files
 sudo docker rm -f devmysql
 sudo docker rm -f plugindevwp
