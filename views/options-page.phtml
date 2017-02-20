@@ -8,20 +8,69 @@
 
 <script>
 jQuery(document).ready(function($){
+
+    var currentArchive = 1;
+
+    function processArchives() {
+        // set form action for generation vs saving options
+        $('.hiddenActionField').val('generate_archive');
+
+        console.log('processing archive');
+        console.log('current archive: ' + currentArchive);
+
+        archives = $('.options-form');
+        numberOfArchives = archives.length;
+
+        console.log('number of archives: ' + numberOfArchives);
+
+        if (currentArchive <= numberOfArchives) {
+
+            data = $(archives[currentArchive - 1]).serialize();
+
+            $.ajax({
+                url: ajaxurl,
+                data: data,
+                dataType: 'html',
+                method: 'POST',
+                success: function(serverResponse) {
+                    console.log('processed archive ' + currentArchive + ' / ' + numberOfArchives);
+                    $('#results').append(serverResponse);
+                    currentArchive += 1;
+                    processArchives();
+                    }
+
+
+            });
+        } else {
+             currentArchive = 0;
+            // all archives processed
+            $('#progress').hide();
+        }
+    }
+
     $('#generateArchiveButton').click(function() {
 
-        $('#results').show();
-        // set form action for generation vs saving options
-        $('#formActionHiddenField').val('generate_archive')
-        
-        data = $('#general-options').serialize();
+        $('#progress').show();
 
-        jQuery.post(ajaxurl, data, function(response) {
-            $('#results').html(response);
-        });
+        processArchives();
 
+        $('#results').html('');
+
+        // TODO: renable this upon all complete
         // revert form action for saving options vs generation
-        $('#formActionHiddenField').val('generate')
+        //$('#formActionHiddenField').val('generate')
+    });
+
+    // TODO: set to on body event with button class as target, else need to reattach handler!
+    $('.wrap').on('click', '.addAnotherTargetButton', function(event) {
+        // TODO: needed prevention?
+        event.preventDefault();
+
+        // check for max of 5 forms (in DB)
+
+        // append copy of form below current one
+       $('.options-form:last').clone().insertAfter('.options-form:last');
+
     });
 });
 </script>
@@ -33,13 +82,16 @@ jQuery(document).ready(function($){
 	<div class="postbox-container">
 		<div class="metabox-holder">
 			<div class="meta-box-sortables ui-sortable">
-				
-				<form id="general-options" method="post" action="">
-					
-					<div class="postbox">
-						<div class="handlediv" title="Click to toggle"><br /></div>
 
-              <h3 class="hndle"><span><?= __('Configurable options', 'static-html-output-plugin');?></span></h3>
+				<form id="general-options" class="options-form" method="post" action="">
+
+					<div class="postbox">
+						<!--<div class="handlediv" title="Click to toggle"><br /></div>-->
+
+              <h3>
+                <span><?= __('Configurable options', 'static-html-output-plugin');?></span>
+                <button class="addAnotherTargetButton">Add another export target</button>
+              </h3>
 
               <div class="inside">
                 <p>
@@ -96,12 +148,13 @@ jQuery(document).ready(function($){
 
 					<p class="submit">
             <?php wp_nonce_field($this->onceAction) ?>
-						<input id="formActionHiddenField" type="hidden" name="action" value="generate" />
+						<input id="formActionHiddenField" class="hiddenActionField" type="hidden" name="action" value="generate" />
 						<input class="button-primary" type="submit" name="submit" value="Save current options" />
 					</p>
 						</div>
 					</div>
 
+				</form>
 					<div class="postbox">
 						<div class="handlediv" title="Click to toggle"><br /></div>
 
@@ -109,13 +162,17 @@ jQuery(document).ready(function($){
 
               <div class="inside">
                 <p>
-                  <p>
-                    <i>Clicking the button below will start the process of generating a static site from your WordPress installation. Depending on the size of your website, this process may take some time.</i>
-                  </p> 
 
-    <div id="results" style="display:none;">
+    <div id="progress" style="display:none;">
         <img src="<?php echo plugins_url('../images/dashinfinity.gif', __FILE__); ?>" />
     </div>
+
+    <div id="results">
+    </div>
+
+                  <p>
+                    <i>Clicking the button below will start the process of generating a static site from your WordPress installation. Depending on the size of your website, this process may take some time.</i>
+                  </p>
 
 					<p class="submit">
             <?php wp_nonce_field($this->onceAction) ?>
@@ -124,7 +181,6 @@ jQuery(document).ready(function($){
                 </p>
 						</div>
 					</div>
-				</form>
 			</div>
 		</div>
 	</div>
