@@ -268,6 +268,7 @@ class StaticHtmlOutput
 		global $blog_id;
 		set_time_limit(0);
 		
+
 		// Prepare archive directory
 		$uploadDir = wp_upload_dir();
 		$exporter = wp_get_current_user();
@@ -278,13 +279,19 @@ class StaticHtmlOutput
 			wp_mkdir_p($archiveDir);
 		}
 		
+        // override options with posted vars
+/*			->setOption('retainStaticFiles', filter_input(INPUT_POST, 'retainStaticFiles'))
+*/
+
 		// Prepare queue
 		$baseUrl = untrailingslashit(home_url());
-		$newBaseUrl = untrailingslashit($this->_options->getOption('baseUrl'));
+		// TODO: overridden $newBaseUrl = untrailingslashit($this->_options->getOption('baseUrl'));
+        $newBaseUrl = untrailingslashit(filter_input(INPUT_POST, 'baseUrl', FILTER_SANITIZE_URL));
 		$urlsQueue = array_unique(array_merge(
 			array(trailingslashit($baseUrl)),
 			$this->_getListOfLocalFilesByUrl(array(get_template_directory_uri())),
-			$this->_getListOfLocalFilesByUrl(explode("\n", $this->_options->getOption('additionalUrls')))
+			// TODO: overridden $this->_getListOfLocalFilesByUrl(explode("\n", $this->_options->getOption('additionalUrls')))
+			$this->_getListOfLocalFilesByUrl(explode("\n", filter_input(INPUT_POST, 'additionalUrls')))
 		));
 		
 		// Process queue
@@ -295,7 +302,8 @@ class StaticHtmlOutput
 			
 			//echo "Processing ". $currentUrl."<br />";
 			
-			$urlResponse = new StaticHtmlOutput_UrlRequest($currentUrl, $this->_options->getOption('cleanMeta'));
+			// TODO: overridden $urlResponse = new StaticHtmlOutput_UrlRequest($currentUrl, $this->_options->getOption('cleanMeta'));
+			$urlResponse = new StaticHtmlOutput_UrlRequest($currentUrl, filter_input(INPUT_POST, 'cleanMeta'));
 			$urlResponse->cleanup();
 			
 			// Add current url to the list of processed urls
@@ -345,13 +353,15 @@ class StaticHtmlOutput
 		$zipArchive->close();
 		rename($tempZip, $archiveName . '.zip'); 
 		
-		if($this->_options->getOption('sendViaFTP') == 1)
+		// TODO: overridden if($this->_options->getOption('sendViaFTP') == 1)
+		if(filter_input(INPUT_POST, 'sendViaFTP') == 1)
 		{		
 			//crude FTP addition		
             require_once(__DIR__.'/FTP/ftp.php');
 			$config = array();//keys[passive_mode(true|false)|transfer_mode(FTP_ASCII|FTP_BINARY)|reattempts(int)|log_path|verbose(true|false)|create_mask(default:0777)]
 			$ftp = new ftp($config);
-			$ftp->conn($this->_options->getOption('ftpServer'), $this->_options->getOption('ftpUsername'), filter_input(INPUT_POST, 'ftpPassword'));
+			// TODO: overridden $ftp->conn($this->_options->getOption('ftpServer'), $this->_options->getOption('ftpUsername'), filter_input(INPUT_POST, 'ftpPassword'));
+			$ftp->conn(filter_input(INPUT_POST, 'ftpServer'), filter_input(INPUT_POST, 'ftpUsername'), filter_input(INPUT_POST, 'ftpRemotePath'));
 			
 			//Crude FTP				
 			$ftp->put($this->_options->getOption('ftpRemotePath'), $archiveName . '/');			
@@ -362,6 +372,7 @@ class StaticHtmlOutput
         // TODO: keep copy of last export folder for incremental addition
 
 		// Remove temporary files unless user requested to keep or needed for FTP transfer
+		// TODO: overridden if ($this->_options->getOption('retainStaticFiles') != 1)		
 		if ($this->_options->getOption('retainStaticFiles') != 1)		
 		{
 			$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($archiveDir), RecursiveIteratorIterator::CHILD_FIRST);
