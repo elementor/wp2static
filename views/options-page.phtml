@@ -6,7 +6,18 @@
  */
 ?>
 
+<?php 
+
+$settings = esc_html($this->staticExportSettings);
+if ($settings == '') {
+    $settings = 'banana';
+}
+?>
+
 <script>
+
+var settings = '<?php echo $settings; ?>';
+
 jQuery(document).ready(function($){
 
     var currentArchive = 1;
@@ -48,6 +59,46 @@ jQuery(document).ready(function($){
         }
     }
 
+    function saveOptions() {
+        // toggles between saving and generating
+        $('.hiddenActionField').val('generate');
+
+        console.log('saving options');
+
+        archives = $('.options-form');
+        numberOfArchives = archives.length;
+
+        console.log('number of archives: ' + numberOfArchives);
+
+
+        var newSettings = {};
+        $(".options-form").serializeArray().map(function(x){newSettings[x.name] = x.value;});
+
+        console.log(newSettings);
+
+        // stick json encoded settings into hidden field within form(s)
+        $(".hiddenSettingsField").val(newSettings);
+        
+        // base data on first form, so as to include nonces
+        data = $(archives[0]).serialize();
+
+
+        console.log(data);
+
+        $.ajax({
+            url: ajaxurl,
+            data: data,
+            dataType: 'html',
+            method: 'POST',
+            success: function(serverResponse) {
+                console.log('options saved');
+                $('#results').append(serverResponse);
+                }
+        });
+
+        $('#progress').hide();
+    }
+
     $('#generateArchiveButton').click(function() {
 
         $('#progress').show();
@@ -59,6 +110,15 @@ jQuery(document).ready(function($){
         // TODO: renable this upon all complete
         // revert form action for saving options vs generation
         //$('#formActionHiddenField').val('generate')
+    });
+
+    $('#saveSettingsButton').click(function() {
+
+        $('#progress').show();
+        
+        saveOptions();
+
+        $('#results').html('');
     });
 
     // TODO: set to on body event with button class as target, else need to reattach handler!
@@ -149,7 +209,8 @@ jQuery(document).ready(function($){
 					<p class="submit">
             <?php wp_nonce_field($this->onceAction) ?>
 						<input id="formActionHiddenField" class="hiddenActionField" type="hidden" name="action" value="generate" />
-						<input class="button-primary" type="submit" name="submit" value="Save current options" />
+						<input name="staticExportSettings" class="hiddenSettingsField" type="hidden" name="action" value="" />
+						<input id="saveSettingsButton" class="button-primary" value="Save current options" />
 					</p>
 						</div>
 					</div>

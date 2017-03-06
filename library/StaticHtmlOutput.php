@@ -114,6 +114,8 @@ class StaticHtmlOutput
 		{
 			$this->_options
 				->setOption('version', self::VERSION)
+				->setOption('static_export_settings', self::VERSION)
+/*
 				->setOption('baseUrl', home_url())
 				->setOption('additionalUrls', '')
 				->setOption('cleanMeta', '')
@@ -123,6 +125,7 @@ class StaticHtmlOutput
 				->setOption('ftpUsername', '')
 				->setOption('ftpPassword', '')
 				->setOption('ftpRemotePath', '')
+*/
 				->save();
 		}
 	}
@@ -166,7 +169,7 @@ class StaticHtmlOutput
 		$supportsZipArchives = extension_loaded('zip');
 		$permalinksStructureDefined = strlen(get_option('permalink_structure'));
 		
-		if (!$uploadsFolderWritable || !$supportsZipArchives ||!$permalinksStructureDefined)
+		if (!$uploadsFolderWritable || !$supportsZipArchives || !$permalinksStructureDefined)
 		{
 			$this->_view
 				->setTemplate('system-requirements')
@@ -183,6 +186,8 @@ class StaticHtmlOutput
             $this->_view
                 ->setTemplate('options-page')
                 ->assign('exportLog', $this->_exportLog)
+                ->assign('staticExportOption', $this->_options->getOption('static-export-options'))
+/*
                 ->assign('baseUrl', $this->_options->getOption('baseUrl'))
                 ->assign('additionalUrls', $this->_options->getOption('additionalUrls'))
                 ->assign('cleanMeta', $this->_options->getOption('cleanMeta'))
@@ -191,6 +196,7 @@ class StaticHtmlOutput
                 ->assign('ftpServer', $this->_options->getOption('ftpServer'))
                 ->assign('ftpUsername', $this->_options->getOption('ftpUsername'))
                 ->assign('ftpRemotePath', $this->_options->getOption('ftpRemotePath'))
+*/
                 ->assign('onceAction', self::HOOK . '-options')
                 ->render();
 
@@ -216,6 +222,8 @@ class StaticHtmlOutput
 		
 		// Save options
 		$this->_options
+			->setOption('static-export-settings', filter_input(INPUT_POST, 'staticExportSettings', FILTER_SANITIZE_URL))
+/*
 			->setOption('baseUrl', filter_input(INPUT_POST, 'baseUrl', FILTER_SANITIZE_URL))
 			->setOption('additionalUrls', filter_input(INPUT_POST, 'additionalUrls'))
 			->setOption('cleanMeta', filter_input(INPUT_POST, 'cleanMeta'))
@@ -223,7 +231,8 @@ class StaticHtmlOutput
 			->setOption('sendViaFTP', filter_input(INPUT_POST, 'sendViaFTP'))
 			->setOption('ftpServer', filter_input(INPUT_POST, 'ftpServer'))
 			->setOption('ftpUsername', filter_input(INPUT_POST, 'ftpUsername'))
-			->setOption('ftpRemotePath', filter_input(INPUT_POST, 'ftpRemotePath'))		
+			->setOption('ftpRemotePath', filter_input(INPUT_POST, 'ftpRemotePath'))	
+*/
 			->save();
 
         $message = 'Options have been updated successfully.';
