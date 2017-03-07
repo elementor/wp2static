@@ -143,6 +143,9 @@ jQuery(document).ready(function($){
             settingsBlock = JSON.parse('{"' + decodeURI(archive).replace(/\n/g, ",").replace(/\r/g, ",").replace(/"/g, '\\"').replace(/&amp;/g, '","').replace(/=/g,'":"') + '"}');
         
             console.log(settingsBlock);
+
+            //TODO: if there is only one form, populate it, else, clone last form, wipe values and populate with this block
+
         });
 
         
