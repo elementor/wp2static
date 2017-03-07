@@ -185,6 +185,7 @@ class StaticHtmlOutput
 
 			do_action(self::HOOK . '-saveOptions');
 
+
             $this->_view
                 ->setTemplate('options-page')
                 ->assign('exportLog', $this->_exportLog)
