@@ -181,12 +181,14 @@ class StaticHtmlOutput
 		}
 		else
 		{
+            error_log('about to do saveOptions hook');
+
 			do_action(self::HOOK . '-saveOptions');
 
             $this->_view
                 ->setTemplate('options-page')
                 ->assign('exportLog', $this->_exportLog)
-                ->assign('staticExportOption', $this->_options->getOption('static-export-options'))
+                ->assign('staticExportSettings', $this->_options->getOption('static-export-settings'))
 /*
                 ->assign('baseUrl', $this->_options->getOption('baseUrl'))
                 ->assign('additionalUrls', $this->_options->getOption('additionalUrls'))
@@ -209,17 +211,22 @@ class StaticHtmlOutput
 	 */
 	public function saveOptions()
 	{
+        error_log('saveOptions');
 		// Protection
 		if (!isset($_POST['action']) || 'generate' != $_POST['action'])
 		{
+            error_log('didnt detect the generate action');
 			return;
 		}
 		
 		if (!check_admin_referer(self::HOOK . '-options') || !current_user_can('manage_options'))
 		{
+            error_log('user didnt have permissions to change options');
 			exit('You cannot change WP Static HTML Output Plugin options.');
 		}
-		
+	
+        error_log('met conditions, starting to save');
+	
 		// Save options
 		$this->_options
 			->setOption('static-export-settings', filter_input(INPUT_POST, 'staticExportSettings', FILTER_SANITIZE_URL))
@@ -234,6 +241,8 @@ class StaticHtmlOutput
 			->setOption('ftpRemotePath', filter_input(INPUT_POST, 'ftpRemotePath'))	
 */
 			->save();
+
+        error_log('saving options!!!');
 
         $message = 'Options have been updated successfully.';
 
