@@ -119,6 +119,37 @@ jQuery(document).ready(function($){
        $('.options-form:last').clone().insertAfter('.options-form:last');
 
     });
+
+    //  load existing settings
+    if (settings != 'banana') {
+        console.log('existing settings found, lets use those');
+        
+        archives = settings.split('baseUrl=');
+        // remove crufty first element
+        archives.shift();
+        console.log(archives);
+
+
+        // iterate each saved settings chunk and create forms for them
+        $.each(archives, function(index, value) {
+            // add back in the 'baseUrl='
+            archive = 'baseUrl=' + value;
+            // trim trailing field
+            //archive = archive.substring(0, archive.indexOf('&amp;staticExportSettings=&amp;'));
+            archive = archive.substring(0, archive.indexOf('&amp;staticExportSettings='));
+            //archive = archive.substring(0, archive.indexOf('staticExportSettings='));
+            console.log(archive);
+
+            settingsBlock = JSON.parse('{"' + decodeURI(archive).replace(/\n/g, ",").replace(/\r/g, ",").replace(/"/g, '\\"').replace(/&amp;/g, '","').replace(/=/g,'":"') + '"}');
+        
+            console.log(settingsBlock);
+        });
+
+        
+
+
+    }
+    
 });
 </script>
 
