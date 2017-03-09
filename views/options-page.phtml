@@ -129,11 +129,17 @@ jQuery(document).ready(function($){
         archives.shift();
         console.log(archives);
 
+        // first run, will populate only form on page
+        var targetExportSettingsBlock = $('.options-form')[0];
 
         // iterate each saved settings chunk and create forms for them
         $.each(archives, function(index, value) {
 
             renderedExportSettingsBlocks = $('.options-form').length;
+            console.log('currently, there are n forms on page: ' + renderedExportSettingsBlocks);
+
+            // always target the last rendered block
+            targetExportSettingsBlock = $('.options-form:last');
 
             // add back in the 'baseUrl='
             archive = 'baseUrl=' + value;
@@ -147,36 +153,22 @@ jQuery(document).ready(function($){
         
             console.log(settingsBlock);
 
-            var targetExportSettingsBlock;
-
-            //TODO: if there is only one form, populate it, else, clone last form, wipe values and populate with this block
-            if (renderedExportSettingsBlocks == 1) {
-                targetExportSettingsBlock = $('.options-form')[0];
-            } else {
-                // clone last form
-                $('.options-form:last').clone().insertAfter('.options-form:last');
-
-                // clear values
-
-                // set as target
-                targetExportSettingsBlock =  $('.options-form:last');
-            }
             
             // populate fields in target form with this archive's values
             // baseUrl
-            $(targetExportSettingsBlock).find('#baseUrl').val(decodeURIComponent(settingsBlock.baseUrl));
+            $(targetExportSettingsBlock).find('#baseUrl').first().val(decodeURIComponent(settingsBlock.baseUrl));
 
             // convert additionalurls back into line-separated decoded uri's
 
            
             // cleanMeta 
-            $(targetExportSettingsBlock).find('#cleanMeta')[0].checked = settingsBlock.cleanMeta;
+            $(targetExportSettingsBlock).find('#cleanMeta').first().checked = settingsBlock.cleanMeta;
 
             // retainStaticFiles
-            $(targetExportSettingsBlock).find('#retainStaticFiles')[0].checked = settingsBlock.retainStaticFiles;
+            $(targetExportSettingsBlock).find('#retainStaticFiles').first().checked = settingsBlock.retainStaticFiles;
 
             // sendViaFTP
-            $(targetExportSettingsBlock).find('#sendViaFTP')[0].checked = settingsBlock.sendViaFTP;
+            $(targetExportSettingsBlock).find('#sendViaFTP').first().checked = settingsBlock.sendViaFTP;
 
             // ftpServer
             $(targetExportSettingsBlock).find('#ftpServer').val(settingsBlock.ftpServer);
@@ -190,13 +182,34 @@ jQuery(document).ready(function($){
             // ftpRemotePath
             $(targetExportSettingsBlock).find('#ftpRemotePath').val(settingsBlock.ftpRemotePath);
 
+            console.log('total settingsBlocks to render: ' + archives.length);
+            console.log('current settingsBlock: ' + index);
+
+            // if there are more to come, clone and set target
+            if (index < (archives.length -1)) {
+             
+                // clone last form
+                $('.options-form:last').clone().insertAfter('.options-form:last');
+
+                // set as target
+                targetExportSettingsBlock =  $('.options-form:last');
+
+                // clear values
+                $(targetExportSettingsBlock).find('#baseUrl').first().val('');
+
+                // convert additionalurls back into line-separated decoded uri's
+               
+                $(targetExportSettingsBlock).find('#cleanMeta').first().prop('checked', false);
+                $(targetExportSettingsBlock).find('#retainStaticFiles').first().prop('checked', false);
+                $(targetExportSettingsBlock).find('#sendViaFTP').first().prop('checked', false);
+                $(targetExportSettingsBlock).find('#ftpServer').val('');
+                $(targetExportSettingsBlock).find('#ftpUsername').val('');
+                $(targetExportSettingsBlock).find('#ftpPassword').val('');
+                $(targetExportSettingsBlock).find('#ftpRemotePath').val('');
+
+            }
         });
-
-        
-
-
     }
-    
 });
 </script>
 
