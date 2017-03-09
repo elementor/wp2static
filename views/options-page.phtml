@@ -99,6 +99,20 @@ jQuery(document).ready(function($){
         //$('#formActionHiddenField').val('generate')
     });
 
+    $('.wrap').on('click', '.removeTargetButton', function(event) {
+        event.preventDefault();
+
+        console.log($('.options-form').length);
+
+        // check if only settings block, prevent deleting it
+        if ($('.options-form').length === 1) {
+            alert("Sorry, got to keep at least one settings block around. But, you can delete the values if you like");
+        } else {
+            // delete target block
+            $(event.target).closest('.options-form').remove();
+        }
+    });
+
     $('.wrap').on('click', '.saveSettingsButton', function(event) {
         // TODO: needed prevention?
         event.preventDefault();
@@ -152,7 +166,6 @@ jQuery(document).ready(function($){
             settingsBlock = JSON.parse('{"' + decodeURI(archive).replace(/\n/g, ",").replace(/\r/g, ",").replace(/"/g, '\\"').replace(/&amp;/g, '","').replace(/=/g,'":"') + '"}');
         
             console.log(settingsBlock);
-
             
             // populate fields in target form with this archive's values
             // baseUrl
@@ -194,7 +207,7 @@ jQuery(document).ready(function($){
                 // clear values
                 $(targetExportSettingsBlock).find('#baseUrl').first().val('');
 
-                // convert additionalurls back into line-separated decoded uri's
+                $(targetExportSettingsBlock).find('#additionalUrls').val('');
                 $(targetExportSettingsBlock).find('#cleanMeta').first().prop('checked', false);
                 $(targetExportSettingsBlock).find('#retainStaticFiles').first().prop('checked', false);
                 $(targetExportSettingsBlock).find('#sendViaFTP').first().prop('checked', false);
@@ -224,6 +237,7 @@ jQuery(document).ready(function($){
               <h3>
                 <span><?= __('Configurable options', 'static-html-output-plugin');?></span>
                 <button class="addAnotherTargetButton">Add another export target</button>
+                <button class="removeTargetButton">Remove this export target</button>
               </h3>
 
               <div class="inside">
