@@ -159,35 +159,32 @@ jQuery(document).ready(function($){
             $(targetExportSettingsBlock).find('#baseUrl').first().val(decodeURIComponent(settingsBlock.baseUrl));
 
             // convert additionalurls back into line-separated decoded uri's
+            // TODO: use single map function
+            additionalUrls = settingsBlock.additionalUrls.split(',');
 
-           
-            // cleanMeta 
-            $(targetExportSettingsBlock).find('#cleanMeta').first().checked = settingsBlock.cleanMeta;
+            newAdditionalUrls = '';
 
-            // retainStaticFiles
-            $(targetExportSettingsBlock).find('#retainStaticFiles').first().checked = settingsBlock.retainStaticFiles;
+            $.each(additionalUrls, function(index, value) {
+               if (value != '') {
+                   newAdditionalUrls += decodeURIComponent(value) + "\n"; 
+               }
+            });
 
-            // sendViaFTP
-            $(targetExportSettingsBlock).find('#sendViaFTP').first().checked = settingsBlock.sendViaFTP;
+            $(targetExportSettingsBlock).find('#additionalUrls').val(newAdditionalUrls);
 
-            // ftpServer
-            $(targetExportSettingsBlock).find('#ftpServer').val(settingsBlock.ftpServer);
-
-            // ftpUsername
-            $(targetExportSettingsBlock).find('#ftpUsername').val(settingsBlock.ftpUsername);
-
-            // ftpPassword
-            $(targetExportSettingsBlock).find('#ftpPassword').val(settingsBlock.ftpPassword);
-
-            // ftpRemotePath
-            $(targetExportSettingsBlock).find('#ftpRemotePath').val(settingsBlock.ftpRemotePath);
+            $(targetExportSettingsBlock).find('#cleanMeta')[0].checked = settingsBlock.cleanMeta;
+            $(targetExportSettingsBlock).find('#retainStaticFiles')[0].checked = settingsBlock.retainStaticFiles;
+            $(targetExportSettingsBlock).find('#sendViaFTP')[0].checked = settingsBlock.sendViaFTP;
+            $(targetExportSettingsBlock).find('#ftpServer').first().val(decodeURIComponent(settingsBlock.ftpServer));
+            $(targetExportSettingsBlock).find('#ftpUsername').first().val(settingsBlock.ftpUsername);
+            $(targetExportSettingsBlock).find('#ftpPassword').first().val(settingsBlock.ftpPassword);
+            $(targetExportSettingsBlock).find('#ftpRemotePath').first().val(decodeURIComponent(settingsBlock.ftpRemotePath));
 
             console.log('total settingsBlocks to render: ' + archives.length);
             console.log('current settingsBlock: ' + index);
 
             // if there are more to come, clone and set target
             if (index < (archives.length -1)) {
-             
                 // clone last form
                 $('.options-form:last').clone().insertAfter('.options-form:last');
 
@@ -198,7 +195,6 @@ jQuery(document).ready(function($){
                 $(targetExportSettingsBlock).find('#baseUrl').first().val('');
 
                 // convert additionalurls back into line-separated decoded uri's
-               
                 $(targetExportSettingsBlock).find('#cleanMeta').first().prop('checked', false);
                 $(targetExportSettingsBlock).find('#retainStaticFiles').first().prop('checked', false);
                 $(targetExportSettingsBlock).find('#sendViaFTP').first().prop('checked', false);
@@ -206,7 +202,6 @@ jQuery(document).ready(function($){
                 $(targetExportSettingsBlock).find('#ftpUsername').val('');
                 $(targetExportSettingsBlock).find('#ftpPassword').val('');
                 $(targetExportSettingsBlock).find('#ftpRemotePath').val('');
-
             }
         });
     }
