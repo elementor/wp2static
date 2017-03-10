@@ -21,6 +21,34 @@ if ($settings == '') {
 var settings = '<?php echo $settings; ?>';
 
 jQuery(document).ready(function($){
+    // request permission on page load
+    if (Notification.permission !== "granted") {
+        Notification.requestPermission();
+    }
+
+    function notifyMe() {
+      if (!Notification) {
+        alert('All exports are complete!.'); 
+        return;
+      }
+
+      if (Notification.permission !== "granted")
+        Notification.requestPermission();
+      else {
+        var notification = new Notification('WP Static HTML Export', {
+          icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png',
+          body: "Exports have finished!",
+        });
+
+        notification.onclick = function () {
+          parent.focus();
+          window.focus();
+          this.close();
+        };
+        
+      }
+
+    }
 
     var currentArchive = 1;
 
@@ -58,6 +86,7 @@ jQuery(document).ready(function($){
              currentArchive = 0;
             // all archives processed
             $('#progress').hide();
+            notifyMe();
         }
     }
 
