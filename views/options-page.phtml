@@ -189,8 +189,8 @@ jQuery(document).ready(function($){
             $(targetExportSettingsBlock).find('#retainStaticFiles')[0].checked = settingsBlock.retainStaticFiles;
             $(targetExportSettingsBlock).find('#sendViaFTP')[0].checked = settingsBlock.sendViaFTP;
             $(targetExportSettingsBlock).find('#ftpServer').first().val(decodeURIComponent(settingsBlock.ftpServer));
-            $(targetExportSettingsBlock).find('#ftpUsername').first().val(settingsBlock.ftpUsername);
-            $(targetExportSettingsBlock).find('#ftpPassword').first().val(settingsBlock.ftpPassword);
+            $(targetExportSettingsBlock).find('#ftpUsername').first().val(decodeURIComponent(settingsBlock.ftpUsername));
+            $(targetExportSettingsBlock).find('#ftpPassword').first().val(decodeURIComponent(settingsBlock.ftpPassword));
             $(targetExportSettingsBlock).find('#ftpRemotePath').first().val(decodeURIComponent(settingsBlock.ftpRemotePath));
 
             console.log('total settingsBlocks to render: ' + archives.length);

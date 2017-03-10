@@ -191,10 +191,6 @@ class StaticHtmlOutput
                 ->assign('exportLog', $this->_exportLog)
                 ->assign('staticExportSettings', $this->_options->getOption('static-export-settings'))
 /*
-                ->assign('baseUrl', $this->_options->getOption('baseUrl'))
-                ->assign('additionalUrls', $this->_options->getOption('additionalUrls'))
-                ->assign('cleanMeta', $this->_options->getOption('cleanMeta'))
-                ->assign('retainStaticFiles', $this->_options->getOption('retainStaticFiles'))
                 ->assign('sendViaFTP', $this->_options->getOption('sendViaFTP'))
                 ->assign('ftpServer', $this->_options->getOption('ftpServer'))
                 ->assign('ftpUsername', $this->_options->getOption('ftpUsername'))
@@ -232,10 +228,6 @@ class StaticHtmlOutput
 		$this->_options
 			->setOption('static-export-settings', filter_input(INPUT_POST, 'staticExportSettings', FILTER_SANITIZE_URL))
 /*
-			->setOption('baseUrl', filter_input(INPUT_POST, 'baseUrl', FILTER_SANITIZE_URL))
-			->setOption('additionalUrls', filter_input(INPUT_POST, 'additionalUrls'))
-			->setOption('cleanMeta', filter_input(INPUT_POST, 'cleanMeta'))
-			->setOption('retainStaticFiles', filter_input(INPUT_POST, 'retainStaticFiles'))
 			->setOption('sendViaFTP', filter_input(INPUT_POST, 'sendViaFTP'))
 			->setOption('ftpServer', filter_input(INPUT_POST, 'ftpServer'))
 			->setOption('ftpUsername', filter_input(INPUT_POST, 'ftpUsername'))
@@ -297,19 +289,13 @@ class StaticHtmlOutput
 		{
 			wp_mkdir_p($archiveDir);
 		}
-		
-        // override options with posted vars
-/*			->setOption('retainStaticFiles', filter_input(INPUT_POST, 'retainStaticFiles'))
-*/
 
 		// Prepare queue
 		$baseUrl = untrailingslashit(home_url());
-		// TODO: overridden $newBaseUrl = untrailingslashit($this->_options->getOption('baseUrl'));
         $newBaseUrl = untrailingslashit(filter_input(INPUT_POST, 'baseUrl', FILTER_SANITIZE_URL));
 		$urlsQueue = array_unique(array_merge(
 			array(trailingslashit($baseUrl)),
 			$this->_getListOfLocalFilesByUrl(array(get_template_directory_uri())),
-			// TODO: overridden $this->_getListOfLocalFilesByUrl(explode("\n", $this->_options->getOption('additionalUrls')))
 			$this->_getListOfLocalFilesByUrl(explode("\n", filter_input(INPUT_POST, 'additionalUrls')))
 		));
 		
@@ -321,7 +307,6 @@ class StaticHtmlOutput
 			
 			//echo "Processing ". $currentUrl."<br />";
 			
-			// TODO: overridden $urlResponse = new StaticHtmlOutput_UrlRequest($currentUrl, $this->_options->getOption('cleanMeta'));
 			$urlResponse = new StaticHtmlOutput_UrlRequest($currentUrl, filter_input(INPUT_POST, 'cleanMeta'));
 			$urlResponse->cleanup();
 			
@@ -371,27 +356,33 @@ class StaticHtmlOutput
 			
 		$zipArchive->close();
 		rename($tempZip, $archiveName . '.zip'); 
-		
-		// TODO: overridden if($this->_options->getOption('sendViaFTP') == 1)
+
 		if(filter_input(INPUT_POST, 'sendViaFTP') == 1)
 		{		
 			//crude FTP addition		
-            require_once(__DIR__.'/FTP/ftp.php');
-			$config = array();//keys[passive_mode(true|false)|transfer_mode(FTP_ASCII|FTP_BINARY)|reattempts(int)|log_path|verbose(true|false)|create_mask(default:0777)]
-			$ftp = new ftp($config);
-			// TODO: overridden $ftp->conn($this->_options->getOption('ftpServer'), $this->_options->getOption('ftpUsername'), filter_input(INPUT_POST, 'ftpPassword'));
-			$ftp->conn(filter_input(INPUT_POST, 'ftpServer'), filter_input(INPUT_POST, 'ftpUsername'), filter_input(INPUT_POST, 'ftpRemotePath'));
-			
-			//Crude FTP				
-			$ftp->put($this->_options->getOption('ftpRemotePath'), $archiveName . '/');			
-		
+            //require_once(__DIR__.'/FTP/ftp.php');
+            require_once(__DIR__.'/FTP/FtpClient.php');
+            require_once(__DIR__.'/FTP/FtpException.php');
+            require_once(__DIR__.'/FTP/FtpWrapper.php');
+
+            $ftp = new \FtpClient\FtpClient();
+            $ftp->connect(filter_input(INPUT_POST, 'ftpServer'));
+            $ftp->login(filter_input(INPUT_POST, 'ftpUsername'), filter_input(INPUT_POST, 'ftpPassword'));
+
+            // create remote directory before putting
+            $ftp->mkdir(filter_input(INPUT_POST, 'ftpRemotePath'));
+
+            $ftp->putAll($archiveName . '/', filter_input(INPUT_POST, 'ftpRemotePath'));
+            
+            // TODO: check for active FTP connection before trying to send...
+            error_log('has tried to connect to FTP');
+
 			unset($ftp);
 		}
 
         // TODO: keep copy of last export folder for incremental addition
 
 		// Remove temporary files unless user requested to keep or needed for FTP transfer
-		// TODO: overridden if ($this->_options->getOption('retainStaticFiles') != 1)		
 		if ($this->_options->getOption('retainStaticFiles') != 1)		
 		{
 			$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($archiveDir), RecursiveIteratorIterator::CHILD_FIRST);
