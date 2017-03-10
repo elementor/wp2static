@@ -34,6 +34,8 @@ To quickly try out the plugin, without affecting your other WordPress installati
  - `docker inspect __yourcontainerid__ | grep Address` # get IP for connecting in your browser
  - open IP in browser and you have a clean WP install, including the plugin (l/p: admin/admin)
 
+There is a great [Dockerized FTP server](https://github.com/stilliard/docker-pure-ftpd) which I've found useful in development. I may extend this to also serve the hosted files for more complete test capabilities. So long as you can install Docker, this is a much less painful way to get a local FTP server and users setup than what I've experienced before.
+
 ## Support
 
 Development is done in my personal time. If you would like to see some new features added, bugs fixed, etc, think about sending me a donation for motivation ;)
