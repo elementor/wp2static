@@ -369,6 +369,8 @@ class StaticHtmlOutput
             $ftp->connect(filter_input(INPUT_POST, 'ftpServer'));
             $ftp->login(filter_input(INPUT_POST, 'ftpUsername'), filter_input(INPUT_POST, 'ftpPassword'));
 
+            $ftp->pasv(true);
+
             // create remote directory before putting
             $ftp->mkdir(filter_input(INPUT_POST, 'ftpRemotePath'));
 
