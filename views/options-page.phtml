@@ -183,8 +183,6 @@ jQuery(document).ready(function($){
 
               <h3>
                 <span><?= __('Configurable options', 'static-html-output-plugin');?></span>
-                <button class="button addAnotherTargetButton">Add another export target</button>
-                <button class="button removeTargetButton">Remove this export target</button>
               </h3>
 
               <div class="inside">
@@ -204,47 +202,48 @@ jQuery(document).ready(function($){
                   <textarea class="widefat" name="additionalUrls" id="additionalUrls" rows="5" cols="10"><?php echo esc_html($this->additionalUrls) ?></textarea>
                 </p>
 
-                <p>
-                  <input name="cleanMeta" id="cleanMeta" value="1" type="checkbox" <?php if ($this->cleanMeta == 1) echo "checked"; ?> />
-                  <label for="cleanMeta"><?= __('Strip out unneeded WordPress meta tags', 'static-html-output-plugin');?></label> 
-                </p>
+                <fieldset>
+                    <label for="cleanMeta">
+                        <input name="cleanMeta" id="cleanMeta" value="1" type="checkbox" <?php if ($this->cleanMeta == 1) echo "checked"; ?> />
+                        <span><?= __('Strip out unneeded WordPress meta tags', 'static-html-output-plugin');?></span>
+                    </label>
+                </fieldset>
                 
-                <p>
-                  <input name="retainStaticFiles" id="retainStaticFiles" value="1" type="checkbox" <?php if ($this->retainStaticFiles == 1) echo "checked"; ?> />
-                  <label for="retainStaticFiles"><?= __('Retain generated static files on server', 'static-html-output-plugin');?></label> 
-                </p>
-							
-                <p>
+                <fieldset>
+                    <label for="retainStaticFiles">
+                        <input name="retainStaticFiles" id="retainStaticFiles" value="1" type="checkbox" <?php if ($this->retainStaticFiles == 1) echo "checked"; ?> />
+                        <span><?= __('Retain generated static files on server', 'static-html-output-plugin');?></span>
+                    </label>
+                </fieldset>
+
+                <fieldset>
+                    <label for="sendViaFTP">
                     <input name="sendViaFTP" id="sendViaFTP" value="1" type="checkbox" <?php if ($this->sendViaFTP == 1) echo "checked"; ?> />
-                    <label for="sendViaFTP"><?= __('Transfer files via FTP', 'static-html-output-plugin');?></label>
-                    <br /><b><span style="color:red;"><?= __('FTP functionality is in Beta testing: For large sites, page may seem unresponsive until complete. If in doubt, check your remote FTP directory for activity.', 'static-html-output-plugin');?> </span></b>
-                </p>
+                        <span><?= __('Transfer files via FTP', 'static-html-output-plugin');?></span>
+                    </label>
+                </fieldset>
 
-                <p>
-                    <label for="ftpServer"><?= __('FTP Server', 'static-html-output-plugin');?>:</label><br />
-                    <input name="ftpServer" id="ftpServer" value="<?php echo esc_attr($this->ftpServer) ?>" size="30" />						
-                </p>
+                <input name="ftpServer" class="regular-text" id="ftpServer" value="<?php echo esc_attr($this->ftpServer) ?>" placeholder="<?= __('FTP Server', 'static-html-output-plugin');?>" />
+                <span class="description">ie, localhost, 192.168.1.7, ftp.mydomain.com, etc</span>
+                <br>
 
-                <p>
-                    <label for="ftpUsername"><?= __('FTP Username', 'static-html-output-plugin');?>:</label><br />
-                    <input name="ftpUsername" id="ftpUsername" value="<?php echo esc_attr($this->ftpUsername) ?>" size="30" />						
-                </p>
+                <input name="ftpUsername" class="regular-text" id="ftpUsername" value="<?php echo esc_attr($this->ftpUsername) ?>" placeholder="<?= __('FTP Username', 'static-html-output-plugin');?>" />
+                <br>
 
-                <p>
-                    <label for="ftpPassword"><?= __('FTP Password', 'static-html-output-plugin');?>:</label><br />
-                    <input name="ftpPassword" id="ftpPassword" type="password" value="" size="30" />
-                </p>
+                <input class="regular-text" name="ftpPassword" id="ftpPassword" type="password" value="" placeholder="<?= __('FTP Password', 'static-html-output-plugin');?>" />
+                <br>
 
-                <p>
-                    <label for="ftpRemotePath"><?= __('FTP Remote Path', 'static-html-output-plugin');?>:</label><br />
-                    <input name="ftpRemotePath" id="ftpRemotePath" value="<?php echo esc_attr($this->ftpRemotePath) ?>" size="30" />						
-                </p>
+                <input class="regular-text" name="ftpRemotePath" id="ftpRemotePath" value="<?php echo esc_attr($this->ftpRemotePath) ?>" placeholder="<?= __('FTP Remote Path', 'static-html-output-plugin');?>" />
+                <span class="description">will attempt to create folder recursively if non-existent</span>
+                <br>
 
 					<p class="submit">
             <?php wp_nonce_field($this->onceAction) ?>
 						<input id="formActionHiddenField" class="hiddenActionField" type="hidden" name="action" value="generate" />
 						<input name="staticExportSettings" class="hiddenSettingsField" type="hidden" name="action" value="" />
 						<input class="saveSettingsButton button-primary" value="Save current options" />
+                        <button class="button addAnotherTargetButton">Add another export target</button>
+                        <button class="button removeTargetButton">Remove this export target</button>
 					</p>
 						</div>
 					</div>
