@@ -5,23 +5,16 @@
  * Copyright (c) 2011 Leon Stafford
  */
 
-error_log('loading options page');
-?>
-
-<?php 
-
 $settings = esc_html($this->staticExportSettings);
 if ($settings == '') {
-    $settings = 'banana';
+    $settings = 'no existing settings found';
 }
 ?>
 
 <script>
-
 var settings = '<?php echo $settings; ?>';
 
 jQuery(document).ready(function($){
-    // request permission on page load
     if (Notification.permission !== "granted") {
         Notification.requestPermission();
     }
@@ -32,9 +25,9 @@ jQuery(document).ready(function($){
         return;
       }
 
-      if (Notification.permission !== "granted")
+      if (Notification.permission !== "granted") {
         Notification.requestPermission();
-      else {
+      } else {
         var notification = new Notification('WP Static HTML Export', {
           icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png',
           body: "Exports have finished!",
@@ -45,42 +38,28 @@ jQuery(document).ready(function($){
           window.focus();
           this.close();
         };
-        
       }
-
     }
 
     var currentArchive = 1;
 
     function processArchives() {
-        // set form action for generation vs saving options
         $('.hiddenActionField').val('generate_archive');
-
-        console.log('processing archive');
-        console.log('current archive: ' + currentArchive);
-
         archives = $('.options-form');
         numberOfArchives = archives.length;
 
-        console.log('number of archives: ' + numberOfArchives);
-
         if (currentArchive <= numberOfArchives) {
-
             data = $(archives[currentArchive - 1]).serialize();
-
             $.ajax({
                 url: ajaxurl,
                 data: data,
                 dataType: 'html',
                 method: 'POST',
                 success: function(serverResponse) {
-                    console.log('processed archive ' + currentArchive + ' / ' + numberOfArchives);
                     $('#results').append(serverResponse);
                     currentArchive += 1;
                     processArchives();
                     }
-
-
             });
         } else {
              currentArchive = 0;
@@ -91,53 +70,30 @@ jQuery(document).ready(function($){
     }
 
     function saveOptions() {
-        // toggles between saving and generating
+        // toggles between saving and generating archives
+        // TODO: 'save' would be better name here....
         $('.hiddenActionField').val('generate');
-
-        console.log('saving options');
-
         archives = $('.options-form');
         numberOfArchives = archives.length;
-
-        console.log('number of archives: ' + numberOfArchives);
-
-
-        //var newSettings = {};
-        //$(".options-form").serializeArray().map(function(x){newSettings[x.name] = x.value;});
         var newSettings = $(".options-form").serialize();
-
-        console.log(newSettings);
-
         // stick json encoded settings into hidden field within form(s)
         $(".hiddenSettingsField").val(newSettings);
-        
-        // just submit form as usual 
+        // submit first form which encapsulates all others 
         $(archives[0]).submit();
     }
 
     $('#generateArchiveButton').click(function() {
-
         $('#progress').show();
-
         processArchives();
-
         $('#results').html('');
-
-        // TODO: renable this upon all complete
-        // revert form action for saving options vs generation
-        //$('#formActionHiddenField').val('generate')
     });
 
     $('.wrap').on('click', '.removeTargetButton', function(event) {
         event.preventDefault();
 
-        console.log($('.options-form').length);
-
-        // check if only settings block, prevent deleting it
         if ($('.options-form').length === 1) {
             alert("Sorry, got to keep at least one settings block around. But, you can delete the values if you like");
         } else {
-            // delete target block
             $(event.target).closest('.options-form').remove();
         }
     });
@@ -145,65 +101,37 @@ jQuery(document).ready(function($){
     $('.wrap').on('click', '.saveSettingsButton', function(event) {
         // TODO: needed prevention?
         event.preventDefault();
-
         $('#progress').show();
-        
         saveOptions();
-
         $('#results').html('');
-
     });
 
     $('.wrap').on('click', '.addAnotherTargetButton', function(event) {
-        // TODO: needed prevention?
         event.preventDefault();
-
-        // append copy of form below current one
        $('.options-form:last').clone().insertAfter('.options-form:last');
-
     });
 
     //  load existing settings
-    if (settings != 'banana') {
-        console.log('existing settings found, lets use those');
-        
+    if (settings != 'no existing settings found') {
         archives = settings.split('baseUrl=');
         // remove crufty first element
         archives.shift();
-        console.log(archives);
 
         // first run, will populate only form on page
         var targetExportSettingsBlock = $('.options-form')[0];
 
         // iterate each saved settings chunk and create forms for them
         $.each(archives, function(index, value) {
-
             renderedExportSettingsBlocks = $('.options-form').length;
-            console.log('currently, there are n forms on page: ' + renderedExportSettingsBlocks);
-
-            // always target the last rendered block
             targetExportSettingsBlock = $('.options-form:last');
-
-            // add back in the 'baseUrl='
             archive = 'baseUrl=' + value;
-            // trim trailing field
-            //archive = archive.substring(0, archive.indexOf('&amp;staticExportSettings=&amp;'));
             archive = archive.substring(0, archive.indexOf('&amp;staticExportSettings='));
-            //archive = archive.substring(0, archive.indexOf('staticExportSettings='));
-            console.log(archive);
 
             settingsBlock = JSON.parse('{"' + decodeURI(archive).replace(/\n/g, ",").replace(/\r/g, ",").replace(/"/g, '\\"').replace(/&amp;/g, '","').replace(/=/g,'":"') + '"}');
         
-            console.log(settingsBlock);
-            
-            // populate fields in target form with this archive's values
-            // baseUrl
             $(targetExportSettingsBlock).find('#baseUrl').first().val(decodeURIComponent(settingsBlock.baseUrl));
 
-            // convert additionalurls back into line-separated decoded uri's
-            // TODO: use single map function
             additionalUrls = settingsBlock.additionalUrls.split(',');
-
             newAdditionalUrls = '';
 
             $.each(additionalUrls, function(index, value) {
@@ -213,7 +141,6 @@ jQuery(document).ready(function($){
             });
 
             $(targetExportSettingsBlock).find('#additionalUrls').val(newAdditionalUrls);
-
             $(targetExportSettingsBlock).find('#cleanMeta')[0].checked = settingsBlock.cleanMeta;
             $(targetExportSettingsBlock).find('#retainStaticFiles')[0].checked = settingsBlock.retainStaticFiles;
             $(targetExportSettingsBlock).find('#sendViaFTP')[0].checked = settingsBlock.sendViaFTP;
@@ -222,20 +149,12 @@ jQuery(document).ready(function($){
             $(targetExportSettingsBlock).find('#ftpPassword').first().val(decodeURIComponent(settingsBlock.ftpPassword));
             $(targetExportSettingsBlock).find('#ftpRemotePath').first().val(decodeURIComponent(settingsBlock.ftpRemotePath));
 
-            console.log('total settingsBlocks to render: ' + archives.length);
-            console.log('current settingsBlock: ' + index);
 
             // if there are more to come, clone and set target
             if (index < (archives.length -1)) {
-                // clone last form
                 $('.options-form:last').clone().insertAfter('.options-form:last');
-
-                // set as target
                 targetExportSettingsBlock =  $('.options-form:last');
-
-                // clear values
                 $(targetExportSettingsBlock).find('#baseUrl').first().val('');
-
                 $(targetExportSettingsBlock).find('#additionalUrls').val('');
                 $(targetExportSettingsBlock).find('#cleanMeta').first().prop('checked', false);
                 $(targetExportSettingsBlock).find('#retainStaticFiles').first().prop('checked', false);
@@ -261,12 +180,11 @@ jQuery(document).ready(function($){
 				<form id="general-options" class="options-form" method="post" action="">
 
 					<div class="postbox">
-						<!--<div class="handlediv" title="Click to toggle"><br /></div>-->
 
               <h3>
                 <span><?= __('Configurable options', 'static-html-output-plugin');?></span>
-                <button class="addAnotherTargetButton">Add another export target</button>
-                <button class="removeTargetButton">Remove this export target</button>
+                <button class="button addAnotherTargetButton">Add another export target</button>
+                <button class="button removeTargetButton">Remove this export target</button>
               </h3>
 
               <div class="inside">
