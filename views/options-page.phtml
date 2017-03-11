@@ -205,7 +205,7 @@ jQuery(document).ready(function($){
                 <fieldset>
                     <label for="cleanMeta">
                         <input name="cleanMeta" id="cleanMeta" value="1" type="checkbox" <?php if ($this->cleanMeta == 1) echo "checked"; ?> />
-                        <span><?= __('Strip out unneeded WordPress meta tags', 'static-html-output-plugin');?></span>
+                        <span><?= __('Strip out unneeded WordPress meta tags, ie &lt;meta name="generator" content="WordPress...', 'static-html-output-plugin');?></span>
                     </label>
                 </fieldset>
                 
