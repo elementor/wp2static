@@ -8,16 +8,8 @@
 /**
  * WP Static HTML Output Plugin
  */
-class StaticHtmlOutput
-{
-	/**
-	 * Plugin version
-	 */
-	const VERSION = '1.2.0';
-	
-	/**
-	 * The lookup key used to locate the options record in the wp_options table
-	 */
+class StaticHtmlOutput {
+	const VERSION = '1.2.1';
 	const OPTIONS_KEY = 'wp-static-html-output-options';
 	
 	/**
@@ -53,25 +45,21 @@ class StaticHtmlOutput
 	 * Singleton pattern implementation makes "new" unavailable
 	 * @return void
 	 */
-	protected function __construct()
-	{}
+	protected function __construct() {}
 	
 	/**
 	 * Singleton pattern implementation makes "clone" unavailable
 	 * @return void
 	 */
-	protected function __clone()
-	{}
+	protected function __clone() {}
 	
 	/**
 	 * Returns an instance of WP Static HTML Output Plugin
 	 * Singleton pattern implementation
 	 * @return StaticHtmlOutput
 	 */
-	public static function getInstance()
-	{
-		if (null === self::$_instance)
-		{
+	public static function getInstance() {
+		if (null === self::$_instance) {
 			self::$_instance = new self();
 			self::$_instance->_options = new StaticHtmlOutput_Options(self::OPTIONS_KEY);
 			self::$_instance->_view = new StaticHtmlOutput_View();
@@ -85,73 +73,34 @@ class StaticHtmlOutput
 	 * @param string $bootstrapFile
 	 * @return StaticHtmlOutput
 	 */
-	public static function init($bootstrapFile)
-	{
+	public static function init($bootstrapFile) {
 		$instance = self::getInstance();
 		
-		// Activation
 		register_activation_hook($bootstrapFile, array($instance, 'activate'));
 		
-		// Backend hooks and action callbacks
-		if (is_admin())
-		{
+		if (is_admin()) {
 			add_action('admin_menu', array($instance, 'registerOptionsPage'));
 			add_action(self::HOOK . '-saveOptions', array($instance, 'saveOptions'));
-
 		}
 		
 		return $instance;
 	}
 	
-	/**
-	 * Performs activation
-	 * @return void
-	 */
-	public function activate()
-	{
-		// Not installed?
-		if (null === $this->_options->getOption('version'))
-		{
+	public function activate() {
+		if (null === $this->_options->getOption('version')) {
 			$this->_options
 				->setOption('version', self::VERSION)
 				->setOption('static_export_settings', self::VERSION)
-/*
-				->setOption('baseUrl', home_url())
-				->setOption('additionalUrls', '')
-				->setOption('cleanMeta', '')
-				->setOption('retainStaticFiles', '')
-				->setOption('sendViaFTP', '')
-				->setOption('ftpServer', '')
-				->setOption('ftpUsername', '')
-				->setOption('ftpPassword', '')
-				->setOption('ftpRemotePath', '')
-*/
 				->save();
 		}
 	}
 	
-	/**
-	 * Adds menu navigation items for this plugin
-	 * @return void
-	 */
-	public function registerOptionsPage()
-	{
-        /*
-        add_submenu_page( string $parent_slug, string $page_title, string $menu_title, string $capability, string $menu_slug, callable $function = '' )
-        */
+	public function registerOptionsPage() {
 		$page = add_submenu_page('tools.php', __('WP Static HTML Output', 'static-html-output-plugin'), __('WP Static HTML Output', 'static-html-output-plugin'), 'manage_options', self::HOOK . '-options', array($this, 'renderOptionsPage'));
-        /*
-        add_action( string $tag, callable $function_to_add, int $priority = 10, int $accepted_args = 1 )
-        */
 		add_action('admin_print_styles-' . $page, array($this, 'enqueueAdminStyles'));
 	}
 	
-	/**
-	 * Enqueues CSS files required for this plugin
-	 * @return void
-	 */
-	public function enqueueAdminStyles()
-	{
+	public function enqueueAdminStyles() {
 		$pluginDirUrl = plugin_dir_url(dirname(__FILE__));
 		wp_enqueue_style(self::HOOK . '-admin', $pluginDirUrl . '/css/wp-static-html-output.css');
 	}
@@ -161,16 +110,14 @@ class StaticHtmlOutput
 	 * Fires saveOptions action hook.
 	 * @return void
 	 */
-	public function renderOptionsPage()
-	{
+	public function renderOptionsPage() {
 		// Check system requirements
 		$uploadDir = wp_upload_dir();
 		$uploadsFolderWritable = $uploadDir && is_writable($uploadDir['path']);
 		$supportsZipArchives = extension_loaded('zip');
 		$permalinksStructureDefined = strlen(get_option('permalink_structure'));
 		
-		if (!$uploadsFolderWritable || !$supportsZipArchives || !$permalinksStructureDefined)
-		{
+		if (!$uploadsFolderWritable || !$supportsZipArchives || !$permalinksStructureDefined) {
 			$this->_view
 				->setTemplate('system-requirements')
 				->assign('uploadsFolderWritable', $uploadsFolderWritable)
@@ -178,61 +125,32 @@ class StaticHtmlOutput
 				->assign('permalinksStructureDefined', $permalinksStructureDefined)
 				->assign('uploadsFolder', $uploadDir)
 				->render();
-		}
-		else
-		{
-            error_log('about to do saveOptions hook');
+		} else {
 
 			do_action(self::HOOK . '-saveOptions');
-
 
             $this->_view
                 ->setTemplate('options-page')
                 ->assign('exportLog', $this->_exportLog)
                 ->assign('staticExportSettings', $this->_options->getOption('static-export-settings'))
-/*
-                ->assign('sendViaFTP', $this->_options->getOption('sendViaFTP'))
-                ->assign('ftpServer', $this->_options->getOption('ftpServer'))
-                ->assign('ftpUsername', $this->_options->getOption('ftpUsername'))
-                ->assign('ftpRemotePath', $this->_options->getOption('ftpRemotePath'))
-*/
                 ->assign('onceAction', self::HOOK . '-options')
                 ->render();
-
 		}
 	}
 	
-	/**
-	 * Saves the options
-	 * @return void
-	 */
-	public function saveOptions()
-	{
-        error_log('saveOptions');
-		// Protection
-		if (!isset($_POST['action']) || 'generate' != $_POST['action'])
-		{
+	public function saveOptions() {
+		if (!isset($_POST['action']) || 'generate' != $_POST['action']) {
             error_log('didnt detect the generate action');
 			return;
 		}
 		
-		if (!check_admin_referer(self::HOOK . '-options') || !current_user_can('manage_options'))
-		{
+		if (!check_admin_referer(self::HOOK . '-options') || !current_user_can('manage_options')) {
             error_log('user didnt have permissions to change options');
 			exit('You cannot change WP Static HTML Output Plugin options.');
 		}
 	
-        error_log('met conditions, starting to save');
-	
-		// Save options
 		$this->_options
 			->setOption('static-export-settings', filter_input(INPUT_POST, 'staticExportSettings', FILTER_SANITIZE_URL))
-/*
-			->setOption('sendViaFTP', filter_input(INPUT_POST, 'sendViaFTP'))
-			->setOption('ftpServer', filter_input(INPUT_POST, 'ftpServer'))
-			->setOption('ftpUsername', filter_input(INPUT_POST, 'ftpUsername'))
-			->setOption('ftpRemotePath', filter_input(INPUT_POST, 'ftpRemotePath'))	
-*/
 			->save();
 
         error_log('saving options!!!');
@@ -244,19 +162,12 @@ class StaticHtmlOutput
 			->render();
 	}
 
-	public function genArch()
-	{
-
-		// Generate archive
+	public function genArch() {
 		$archiveUrl = $this->_generateArchive();
 		
-		// Render the message
-		if (is_wp_error($archiveUrl))
-		{
+		if (is_wp_error($archiveUrl)) {
 			$message = 'Error: ' . $archiveUrl->get_error_code;
-		}
-		else
-		{
+		} else {
 			$message = sprintf('Archive created successfully: <a href="%s">Download archive</a>', $archiveUrl);
 			if ($this->_options->getOption('retainStaticFiles') == 1)
 			{
@@ -278,9 +189,7 @@ class StaticHtmlOutput
 	{
 		global $blog_id;
 		set_time_limit(0);
-		
 
-		// Prepare archive directory
 		$uploadDir = wp_upload_dir();
 		$exporter = wp_get_current_user();
 		$archiveName = $uploadDir['path'] . '/' . self::HOOK . '-' . $blog_id . '-' . time() . '-' . $exporter->user_login;
@@ -290,7 +199,6 @@ class StaticHtmlOutput
 			wp_mkdir_p($archiveDir);
 		}
 
-		// Prepare queue
 		$baseUrl = untrailingslashit(home_url());
         $newBaseUrl = untrailingslashit(filter_input(INPUT_POST, 'baseUrl', FILTER_SANITIZE_URL));
 		$urlsQueue = array_unique(array_merge(
@@ -299,7 +207,6 @@ class StaticHtmlOutput
 			$this->_getListOfLocalFilesByUrl(explode("\n", filter_input(INPUT_POST, 'additionalUrls')))
 		));
 		
-		// Process queue
 		$this->_exportLog = array();
 		while (count($urlsQueue))
 		{
@@ -314,41 +221,28 @@ class StaticHtmlOutput
 			$this->_exportLog[$currentUrl] = true;
 			
 			
-			// Add new urls to the queue
-			
-			foreach ($urlResponse->extractAllUrls($baseUrl) as $newUrl)
-			{
-				if (!isset($this->_exportLog[$newUrl]) && $newUrl != $currentUrl && !in_array($newUrl,$urlsQueue))
-				{
+			foreach ($urlResponse->extractAllUrls($baseUrl) as $newUrl) {
+				if (!isset($this->_exportLog[$newUrl]) && $newUrl != $currentUrl && !in_array($newUrl,$urlsQueue)) {
 					//echo "Adding ".$newUrl." to the list<br />";
 					$urlsQueue[] = $newUrl;
 				}
 			}
 			
-			// Save url data
 			$urlResponse->replaceBaseUlr($baseUrl, $newBaseUrl);
 			$this->_saveUrlData($urlResponse, $archiveDir);
-			
 		}
 		
-		// Create archive object
 		$tempZip = $archiveName . '.tmp';
 		$zipArchive = new ZipArchive();
-		if ($zipArchive->open($tempZip, ZIPARCHIVE::CREATE) !== true)
-		{
+		if ($zipArchive->open($tempZip, ZIPARCHIVE::CREATE) !== true) {
 			return new WP_Error('Could not create archive');
 		}
 		
-		
 		$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($archiveDir));
-		foreach ($iterator as $fileName => $fileObject)
-		{
-			
+		foreach ($iterator as $fileName => $fileObject) {
 			$baseName = basename($fileName);
-			if($baseName != '.' && $baseName != '..') 
-			{
-				if (!$zipArchive->addFile(realpath($fileName), str_replace($archiveDir, '', $fileName)))
-				{
+			if($baseName != '.' && $baseName != '..') {
+				if (!$zipArchive->addFile(realpath($fileName), str_replace($archiveDir, '', $fileName))) {
 					return new WP_Error('Could not add file: ' . $fileName);
 				}
 			}
@@ -357,10 +251,7 @@ class StaticHtmlOutput
 		$zipArchive->close();
 		rename($tempZip, $archiveName . '.zip'); 
 
-		if(filter_input(INPUT_POST, 'sendViaFTP') == 1)
-		{		
-			//crude FTP addition		
-            //require_once(__DIR__.'/FTP/ftp.php');
+		if(filter_input(INPUT_POST, 'sendViaFTP') == 1) {		
             require_once(__DIR__.'/FTP/FtpClient.php');
             require_once(__DIR__.'/FTP/FtpException.php');
             require_once(__DIR__.'/FTP/FtpWrapper.php');
@@ -368,48 +259,37 @@ class StaticHtmlOutput
             $ftp = new \FtpClient\FtpClient();
             $ftp->connect(filter_input(INPUT_POST, 'ftpServer'));
             $ftp->login(filter_input(INPUT_POST, 'ftpUsername'), filter_input(INPUT_POST, 'ftpPassword'));
-
             $ftp->pasv(true);
 
-            // create remote directory before putting
+            // TODO: only make dir if nonexistant
             $ftp->mkdir(filter_input(INPUT_POST, 'ftpRemotePath'));
 
             $ftp->putAll($archiveName . '/', filter_input(INPUT_POST, 'ftpRemotePath'));
             
-            // TODO: check for active FTP connection before trying to send...
-            error_log('has tried to connect to FTP');
-
+            // TODO: error handling when not connected/unable to put, etc
 			unset($ftp);
 		}
 
         // TODO: keep copy of last export folder for incremental addition
 
 		// Remove temporary files unless user requested to keep or needed for FTP transfer
-		if ($this->_options->getOption('retainStaticFiles') != 1)		
-		{
+		if ($this->_options->getOption('retainStaticFiles') != 1)		{
 			$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($archiveDir), RecursiveIteratorIterator::CHILD_FIRST);
-			foreach ($iterator as $fileName => $fileObject)
-			{
+			foreach ($iterator as $fileName => $fileObject) {
 					
 				// Remove file
-				if ($fileObject->isDir())
-				{
+				if ($fileObject->isDir()) {
 					// Ignore special dirs
 					$dirName = basename($fileName);
 					if($dirName != '.' && $dirName != '..') {
 						rmdir($fileName);
 					}
-				}
-				else
-				{
+				} else {
 					unlink($fileName);
 				}
 			}
 			rmdir($archiveDir);
 		}	
-	
-	
-	
 	
 		return str_replace(ABSPATH, trailingslashit(home_url()), $archiveName . '.zip');
 	}
@@ -423,20 +303,15 @@ class StaticHtmlOutput
 	{
 		$files = array();
 		
-		foreach ($urls as $url)
-		{
+		foreach ($urls as $url) {
 			$directory = str_replace(home_url('/'), ABSPATH, $url);
 			
-			if (stripos($url, home_url('/')) === 0 && is_dir($directory))
-			{
+			if (stripos($url, home_url('/')) === 0 && is_dir($directory)) {
 				$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory));
-				foreach ($iterator as $fileName => $fileObject)
-				{
-					if (is_file($fileName))
-					{
+				foreach ($iterator as $fileName => $fileObject) {
+					if (is_file($fileName)) {
 						$pathinfo = pathinfo($fileName);
-						if (isset($pathinfo['extension']) && !in_array($pathinfo['extension'], array('php', 'phtml', 'tpl')))
-						{
+						if (isset($pathinfo['extension']) && !in_array($pathinfo['extension'], array('php', 'phtml', 'tpl'))) {
 							array_push($files, home_url(str_replace(ABSPATH, '', $fileName)));
 						}
 					}
@@ -453,24 +328,22 @@ class StaticHtmlOutput
 	 * @param string $archiveDir
 	 * @return void
 	 */
-	protected function _saveUrlData(StaticHtmlOutput_UrlRequest $url, $archiveDir)
-	{
+	protected function _saveUrlData(StaticHtmlOutput_UrlRequest $url, $archiveDir) {
 		$urlInfo = parse_url($url->getUrl());
 		$pathInfo = pathinfo(isset($urlInfo['path']) && $urlInfo['path'] != '/' ? $urlInfo['path'] : 'index.html');
 		
 		// Prepare file directory and create it if it doesn't exist
 		$fileDir = $archiveDir . (isset($pathInfo['dirname']) ? $pathInfo['dirname'] : '');
-		if (empty($pathInfo['extension']) && $pathInfo['basename'] == $pathInfo['filename'])
-		{
+
+		if (empty($pathInfo['extension']) && $pathInfo['basename'] == $pathInfo['filename']) {
 			$fileDir .= '/' . $pathInfo['basename'];
 			$pathInfo['filename'] = 'index';
 		}
-		if (!file_exists($fileDir))
-		{
+
+		if (!file_exists($fileDir)) {
 			wp_mkdir_p($fileDir);
 		}
 		
-		// Prepare file name and save file contents
 		$fileExtension = ($url->isHtml() || !isset($pathInfo['extension']) ? 'html' : $pathInfo['extension']);
 		$fileName = $fileDir . '/' . $pathInfo['filename'] . '.' . $fileExtension;
 		file_put_contents($fileName, $url->getResponseBody());
