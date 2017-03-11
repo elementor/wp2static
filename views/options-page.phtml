@@ -148,6 +148,11 @@ jQuery(document).ready(function($){
             $(targetExportSettingsBlock).find('#ftpUsername').first().val(decodeURIComponent(settingsBlock.ftpUsername));
             $(targetExportSettingsBlock).find('#ftpPassword').first().val(decodeURIComponent(settingsBlock.ftpPassword));
             $(targetExportSettingsBlock).find('#ftpRemotePath').first().val(decodeURIComponent(settingsBlock.ftpRemotePath));
+            $(targetExportSettingsBlock).find('#sendViaS3')[0].checked = settingsBlock.sendViaS3;
+            $(targetExportSettingsBlock).find('#s3Key').first().val(decodeURIComponent(settingsBlock.s3Key));
+            $(targetExportSettingsBlock).find('#s3Secret').first().val(decodeURIComponent(settingsBlock.s3Secret));
+            $(targetExportSettingsBlock).find('#s3Region').first().val(decodeURIComponent(settingsBlock.s3Region));
+            $(targetExportSettingsBlock).find('#s3Bucket').first().val(decodeURIComponent(settingsBlock.s3Bucket));
 
 
             // if there are more to come, clone and set target
@@ -163,6 +168,11 @@ jQuery(document).ready(function($){
                 $(targetExportSettingsBlock).find('#ftpUsername').val('');
                 $(targetExportSettingsBlock).find('#ftpPassword').val('');
                 $(targetExportSettingsBlock).find('#ftpRemotePath').val('');
+                $(targetExportSettingsBlock).find('#sendViaS3').first().prop('checked', false);
+                $(targetExportSettingsBlock).find('#s3Key').val('');
+                $(targetExportSettingsBlock).find('#s3Secret').val('');
+                $(targetExportSettingsBlock).find('#s3Region').val('');
+                $(targetExportSettingsBlock).find('#s3Bucket').val('');
             }
         });
     }
@@ -235,6 +245,47 @@ jQuery(document).ready(function($){
 
                 <input class="regular-text" name="ftpRemotePath" id="ftpRemotePath" value="<?php echo esc_attr($this->ftpRemotePath) ?>" placeholder="<?= __('FTP Remote Path', 'static-html-output-plugin');?>" />
                 <span class="description">will attempt to create folder recursively if non-existent</span>
+                <br>
+            
+
+                <br>
+                <fieldset>
+                    <label for="sendViaS3">
+                    <input name="sendViaS3" id="sendViaS3" value="1" type="checkbox" <?php if ($this->sendViaS3 == 1) echo "checked"; ?> />
+                        <span><?= __('Transfer files via S3', 'static-html-output-plugin');?></span>
+                    </label>
+                </fieldset>
+
+                <input name="s3Key" class="regular-text" id="s3Key" value="<?php echo esc_attr($this->s3Key) ?>" placeholder="<?= __('S3 Key', 'static-html-output-plugin');?>" />
+                <span class="description">ie, AKIAIOSFODNN7EXAMPLE</span>
+                <br>
+
+
+                <input name="s3Secret" class="regular-text" id="s3Secret" value="<?php echo esc_attr($this->s3Secret) ?>" placeholder="<?= __('S3 Secret', 'static-html-output-plugin');?>" />
+                <span class="description">ie, wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY</span>
+                <br>
+
+                <select name="s3Region" id="s3Region">
+                    <option value="us-east-1">US East (N. Virginia)</option>
+                    <option value="us-east-2">US East (Ohio)</option>
+                    <option value="us-west-1">US West (N. California)</option>
+                    <option value="us-west-2">US West (Oregon)</option>
+                    <option value="ca-central-1">Canada (Central)</option>
+                    <option value="ap-south-1">Asia Pacific (Mumbai)</option>
+                    <option value="ap-northeast-2">Asia Pacific (Seoul)</option>
+                    <option value="ap-southeast-1">Asia Pacific (Singapore)</option>
+                    <option value="ap-southeast-2">Asia Pacific (Sydney)</option>
+                    <option value="ap-northeast-1">Asia Pacific (Tokyo)</option>
+                    <option value="eu-central-1">EU (Frankfurt)</option>
+                    <option value="eu-west-1">EU (Ireland)</option>
+                    <option value="eu-west-2">EU (London)</option>
+                    <option value="sa-east-1">South America (São Paulo)</option>
+                </select>
+                <span class="description">choose the region your bucket is in</span>
+                <br>
+
+                <input name="s3Bucket" class="regular-text" id="s3Bucket" value="<?php echo esc_attr($this->s3Bucket) ?>" placeholder="<?= __('S3 Bucket name', 'static-html-output-plugin');?>" />
+                <span class="description">ie, my-static-site</span>
                 <br>
 
 					<p class="submit">
