@@ -271,6 +271,36 @@ class StaticHtmlOutput {
 			unset($ftp);
 		}
 
+
+		if(filter_input(INPUT_POST, 'sendViaS3') == 1) {		
+            require_once(__DIR__.'/aws/aws-autoloader.php');
+
+            $credentials = new Aws\Credentials\Credentials(filter_input(INPUT_POST, 's3Key'), filter_input(INPUT_POST, 's3Secret'));
+
+            $s3Client = new Aws\S3\S3Client([
+                'version'     => 'latest',
+                'region'      => filter_input(INPUT_POST, 's3Region'), 
+                'credentials' => $credentials
+            ]);
+
+            # available regions http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region
+            // Where the files will be source from
+            $source = $archiveName . '/';
+
+            // Where the files will be transferred to
+            $dest = 's3://' . filter_input(INPUT_POST, 's3Bucket');
+
+            error_log($source);
+            error_log($dest);
+
+            // Create a transfer object.
+            $manager = new \Aws\S3\Transfer($s3Client, $source, $dest);
+
+            // Perform the transfer synchronously.
+            $manager->transfer();
+        }
+
+
         // TODO: keep copy of last export folder for incremental addition
 
 		// Remove temporary files unless user requested to keep or needed for FTP transfer
