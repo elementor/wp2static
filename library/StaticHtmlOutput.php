@@ -261,8 +261,9 @@ class StaticHtmlOutput {
             $ftp->login(filter_input(INPUT_POST, 'ftpUsername'), filter_input(INPUT_POST, 'ftpPassword'));
             $ftp->pasv(true);
 
-            // TODO: only make dir if nonexistant
-            $ftp->mkdir(filter_input(INPUT_POST, 'ftpRemotePath'));
+            if (!$ftp->isdir(filter_input(INPUT_POST, 'ftpRemotePath'))) {
+                $ftp->mkdir(filter_input(INPUT_POST, 'ftpRemotePath'), true);
+            }
 
             $ftp->putAll($archiveName . '/', filter_input(INPUT_POST, 'ftpRemotePath'));
             
