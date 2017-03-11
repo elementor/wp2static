@@ -3,31 +3,39 @@ Contributors: leonstafford
 Donate link: http://leonstafford.github.io
 Tags: static,html,export,performance,security,portable
 Requires at least: 3.2
-Tested up to: 4.7
-Stable tag: 1.2.0
+Tested up to: 4.7.3
+Stable tag: 1.2.1
 
 Allows you to leverage WordPress as a great CMS, but benefit from the speed, security and portability that a static website provides.
 
 == Description ==
 
-## Features
+= Features =
 
  * generates a standalone, static html copy of your whole WordPress website
  * specify extra files to include in the output (ie, dynamically loaded assets)
+ * multiple export targets allows multilingual sites published to different folders/domains
  * 1-click static site creation and publishing to an FTP server
  * multi-language support (English/Japanese currently)
 
 This plugin produces a static HTML version of your wordpress install, incredibly useful for anyone who would like the publishing power of wordpress but whose webhost doesn't allow dynamic PHP driven sites - such as Dropbox. You can run your development site on a different domain or offline, and the plugin will change all relevant URLs when you publish your site. It's a simple but powerful plugin, and after hitting the publish button, the plugin will output a ZIP file of your entire site, ready to upload straight to it's new home. 
 
-Limitations:
+= Limitations =
 
  * The nature of a static site implies that any dynamic elements of your wordpress install that reply upon Wordpress plugins or internal functions to operate dynamically will no longer work. Significantly, this means comments. You can workaround this by including a non-Wordpress version of an external comments provider into your theme code, such as the Disqus comment system. Any page elements that rely upon Javascript will function normally. 
  * inability to correctly capture some relative links in posts
  * inability to detect assets dynamically loaded via javascript after page load, these will need to specified separately (but will work)
 
-Planned upgrades:
+= Similar plugins =
 
- * progress meter to show % of .ZIP creation 
+Having issues with this plugin? I try to support any issues via the official support forum or email, but if you want to try some other plugins for static export, give these a go:
+
+ * [Simply Static](https://wordpress.org/plugins/simply-static/)
+
+= Planned upgrades =
+
+ * progress meter to show % of .ZIP creation
+ * realtime logs visible during / saved after export
  * speed improvements 
  * selectively export only changed pages since last output
  * 1-click deployment your static files via sFTP, SCP, Dropbox, etc
@@ -36,13 +44,23 @@ Developed by [**Leon Stafford**](http://leonstafford.github.io). If you have any
 
 == Installation ==
 
-This section describes how to install the plugin and get it working.
+= via WP Admin panel =
 
-e.g.
+1. Go to Plugins > Add New
+2. Search for "WP Static HTML Output"
+3. Click on the Install Now button
+4. Activate the plugin and find it under the Tools menu
 
-1. Upload the static-html-output directory to the `/wp-content/plugins/` directory, or install via the wordpress interface "add new" or "upload" the zip file
+= manual installation =
+
+1. Upload the static-html-output directory to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Access the plugin settings from the "tools" menu
+3. Access the plugin settings from the "Tools" menu
+
+= via WP CLI =
+
+1. `wp --allow-root plugin install static-html-output-plugin --activate`
+
 
 == Frequently Asked Questions ==
 
@@ -64,6 +82,11 @@ See the readme. In brief: you can't use dynamic WordPress functions such as comm
 2. The main interface (Japanese)
 
 == Changelog ==
+
+= 1.2.1 =
+
+ * unlimited export targets
+ * desktop notifications alert you when all exports are completed (no more staring at the screen)
 
 = 1.2.0 =
 
@@ -145,6 +168,13 @@ Altered main codebase to fix recursion bug and endless loop. Essential upgrade.
 Initial release to Wordpress community
 
 == Upgrade Notice ==
+
+= 1.2.1 =
+
+This update brings much desired multiple export targets. Please note, it will need you to enter your settings again as the guts of the plugin changed quite a bit and a settings migration didn't make the cut.
+
+ * unlimited export targets
+ * desktop notifications alert you when all exports are completed (no more staring at the screen)
 
 = 1.2.0 =
 
