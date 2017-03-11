@@ -13,7 +13,11 @@ cp -r $PROJECT_ROOT/* $SVN_ROOT/trunk/
 rm $SVN_ROOT/trunk/*.sh
 rm $SVN_ROOT/trunk/*.ini
 rm $SVN_ROOT/trunk/Dockerfile
-rm -r $SVN_ROOT/trunk/readme.md
+rm $SVN_ROOT/trunk/readme.md
+rm -r $SVN_ROOT/trunk/wpassets
+
+# image assets (for WP official pages) need to go into /assets, not /trunk
+cp -r $PROJECT_ROOT/wpassets/* $SVN_ROOT/assets/
 
 cd $SVN_ROOT
 
