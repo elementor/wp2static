@@ -5,7 +5,10 @@ Allows you to leverage WordPress as a great CMS, but benefit from the speed, sec
 ## Features
 
  - generates a standalone, static html copy of your whole WordPress website
+ - auto-deploy to local folder, FTP or S3
+ - one site to unlimited export targets
  - specify extra files to include in the output (ie, dynamically loaded assets)
+ - desktop notifications alert you to when exports are complete
  - multi-language support (English/Japanese currently)
 
 ## Demo site
@@ -16,7 +19,6 @@ You can [see a working example here](https://leonstafford.github.io/demo-site-wo
 
  - selectively export only changed pages since last output
  - deploy your static files via sFTP, SCP, Dropbox, etc
- - have a one-liner provisioning script for testing/development
 
 ## Development
 

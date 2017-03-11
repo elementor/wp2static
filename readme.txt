@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: static,html,export,performance,security,portable
 Requires at least: 3.2
 Tested up to: 4.7.3
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 
 Allows you to leverage WordPress as a great CMS, but benefit from the speed, security and portability that a static website provides.
 
@@ -13,9 +13,10 @@ Allows you to leverage WordPress as a great CMS, but benefit from the speed, sec
 = Features =
 
  * generates a standalone, static html copy of your whole WordPress website
+ * auto-deploy to local folder, FTP or S3
+ * one site to unlimited export targets
  * specify extra files to include in the output (ie, dynamically loaded assets)
- * multiple export targets allows multilingual sites published to different folders/domains
- * 1-click static site creation and publishing to an FTP server
+ * desktop notifications alert you to when exports are complete
  * multi-language support (English/Japanese currently)
 
 This plugin produces a static HTML version of your wordpress install, incredibly useful for anyone who would like the publishing power of wordpress but whose webhost doesn't allow dynamic PHP driven sites - such as Dropbox. You can run your development site on a different domain or offline, and the plugin will change all relevant URLs when you publish your site. It's a simple but powerful plugin, and after hitting the publish button, the plugin will output a ZIP file of your entire site, ready to upload straight to it's new home. 
@@ -82,6 +83,10 @@ See the readme. In brief: you can't use dynamic WordPress functions such as comm
 2. The main interface (Japanese)
 
 == Changelog ==
+
+= 1.2.2 =
+
+ * supports Amazon Web Service's S3 as an export option
 
 = 1.2.1 =
 
@@ -168,6 +173,10 @@ Altered main codebase to fix recursion bug and endless loop. Essential upgrade.
 Initial release to Wordpress community
 
 == Upgrade Notice ==
+
+= 1.2.2 =
+
+ * supports Amazon Web Service's S3 as an export option
 
 = 1.2.1 =
 

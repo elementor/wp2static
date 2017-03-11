@@ -9,7 +9,7 @@
  * WP Static HTML Output Plugin
  */
 class StaticHtmlOutput {
-	const VERSION = '1.2.1';
+	const VERSION = '1.2.2';
 	const OPTIONS_KEY = 'wp-static-html-output-options';
 	
 	/**
