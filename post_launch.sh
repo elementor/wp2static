@@ -3,11 +3,20 @@
 # run wp-cli cmds from wp install path
 cd /var/www/html
 
+echo 'awaiting mysql to be reachable'
+
+while ! mysqladmin ping -h devmysql --silent; do
+    printf "."
+    sleep 1
+done
+
+# still requires buffer before accessible for wp cli
+sleep 5
+
 # install default
 wp --allow-root core install --url='172.17.0.3' --title='wp plugindev' --admin_user=admin --admin_password=admin --admin_email=blah@blah.com --skip-email
 
 . /sync_sources.sh
-
 
 # activate wp static output plugin
 wp --allow-root plugin activate wordpress-static-html-output
