@@ -316,7 +316,7 @@ class StaticHtmlOutput {
                 foreach($files as $item){
                     if($item != '.' && $item != '..'){
                         if(is_dir($dir.'/'.$item)) {
-                            FolderToDropbox($dir.$item, $dbxClient, $siteroot, $dropboxFolder);
+                            FolderToDropbox($dir.'/'.$item, $dbxClient, $siteroot, $dropboxFolder);
                         } else if(is_file($dir.'/'.$item)) {
                             $clean_dir = str_replace($siteroot, '', $dir.'/'.$item);
 
