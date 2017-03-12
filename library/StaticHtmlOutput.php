@@ -9,7 +9,7 @@
  * WP Static HTML Output Plugin
  */
 class StaticHtmlOutput {
-	const VERSION = '1.2.2';
+	const VERSION = '1.4';
 	const OPTIONS_KEY = 'wp-static-html-output-options';
 	
 	/**
@@ -116,6 +116,7 @@ class StaticHtmlOutput {
 		$uploadsFolderWritable = $uploadDir && is_writable($uploadDir['path']);
 		$supportsZipArchives = extension_loaded('zip');
 		$permalinksStructureDefined = strlen(get_option('permalink_structure'));
+        
 		
 		if (!$uploadsFolderWritable || !$supportsZipArchives || !$permalinksStructureDefined) {
 			$this->_view
@@ -299,6 +300,39 @@ class StaticHtmlOutput {
             // Perform the transfer synchronously.
             $manager->transfer();
         }
+
+		if(filter_input(INPUT_POST, 'sendViaDropbox') == 1) {
+            require_once(__DIR__.'/Dropbox/autoload.php');
+
+            // will exclude the siteroot when copying
+            $siteroot = $archiveName . '/';
+            $dropboxAccessToken = filter_input(INPUT_POST, 'dropboxAccessToken');
+            $dropboxFolder = filter_input(INPUT_POST, 'dropboxFolder');
+
+            $dbxClient = new Dropbox\Client($dropboxAccesstoken, "PHP-Example/1.0");
+
+            function FolderToDropbox($dir, $dbxClient, $siteroot, $dropboxFolder){
+                $files = scandir($dir);
+                foreach($files as $item){
+                    if($item != '.' && $item != '..'){
+                        if(is_dir($dir.'/'.$item)) {
+                            FolderToDropbox($dir.$item, $dbxClient, $siteroot, $dropboxFolder);
+                        } else if(is_file($dir.'/'.$item)) {
+                            $clean_dir = str_replace($siteroot, '', $dir.'/'.$item);
+
+                            $targetPath = '/'.$dropboxFolder.'/'.$clean_dir;
+                            $f = fopen($dir.'/'.$item, "rb");
+                    
+                            $result = $dbxClient->uploadFile($targetPath, Dropbox\WriteMode::add(), $f);
+                            fclose($f);
+                        } 
+                    }
+                }
+            }
+
+            FolderToDropbox($siteroot, $dbxClient, $siteroot, $dropboxFolder);
+        }
+
 
 
         // TODO: keep copy of last export folder for incremental addition
