@@ -2,7 +2,7 @@
 
 PROJECT_ROOT=$(pwd)
 SVN_ROOT=/home/leon/svnplugindir
-NEW_TAG=1.2.2
+NEW_TAG=1.4
 
 # run from project root
 

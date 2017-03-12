@@ -153,6 +153,9 @@ jQuery(document).ready(function($){
             $(targetExportSettingsBlock).find('#s3Secret').first().val(decodeURIComponent(settingsBlock.s3Secret));
             $(targetExportSettingsBlock).find('#s3Region').first().val(decodeURIComponent(settingsBlock.s3Region));
             $(targetExportSettingsBlock).find('#s3Bucket').first().val(decodeURIComponent(settingsBlock.s3Bucket));
+            $(targetExportSettingsBlock).find('#sendViaDropbox')[0].checked = settingsBlock.sendViaDropbox;
+            $(targetExportSettingsBlock).find('#dropboxAccessToken').first().val(decodeURIComponent(settingsBlock.dropboxAccessToken));
+            $(targetExportSettingsBlock).find('#dropboxFolder').first().val(decodeURIComponent(settingsBlock.dropboxFolder));
 
 
             // if there are more to come, clone and set target
@@ -173,6 +176,9 @@ jQuery(document).ready(function($){
                 $(targetExportSettingsBlock).find('#s3Secret').val('');
                 $(targetExportSettingsBlock).find('#s3Region').val('');
                 $(targetExportSettingsBlock).find('#s3Bucket').val('');
+                $(targetExportSettingsBlock).find('#sendViaDropbox').first().prop('checked', false);
+                $(targetExportSettingsBlock).find('#dropboxAccessToken').val('');
+                $(targetExportSettingsBlock).find('#dropboxFolder').val('');
             }
         });
     }
@@ -286,6 +292,22 @@ jQuery(document).ready(function($){
 
                 <input name="s3Bucket" class="regular-text" id="s3Bucket" value="<?php echo esc_attr($this->s3Bucket) ?>" placeholder="<?= __('S3 Bucket name', 'static-html-output-plugin');?>" />
                 <span class="description">ie, my-static-site</span>
+                <br>
+
+                <br>
+                <fieldset>
+                    <label for="sendViaDropbox">
+                    <input name="sendViaDropbox" id="sendViaDropbox" value="1" type="checkbox" <?php if ($this->sendViaDropbox == 1) echo "checked"; ?> />
+                        <span><?= __('Transfer files via Dropbox', 'static-html-output-plugin');?></span>
+                    </label>
+                </fieldset>
+
+                <input name="dropboxAccessToken" class="regular-text" id="dropboxAccessToken" value="<?php echo esc_attr($this->dropboxAccessToken) ?>" placeholder="<?= __('Dropbox access token', 'static-html-output-plugin');?>" />
+                <span class="description"><a href="https://blogs.dropbox.com/developers/2014/05/generate-an-access-token-for-your-own-account/" target="_blank">How do I get this?</a></span>
+                <br>
+
+                <input name="dropboxFolder" class="regular-text" id="dropboxFolder" value="<?php echo esc_attr($this->dropboxFolder) ?>" placeholder="<?= __('Dropbox folder', 'static-html-output-plugin');?>" />
+                <span class="description">ie, where you want this to appear in your Dropbox account</span>
                 <br>
 
 					<p class="submit">
