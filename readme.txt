@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: static,html,export,performance,security,portable
 Requires at least: 3.2
 Tested up to: 4.7.3
-Stable tag: 1.4
+Stable tag: 1.5
 
 Allows you to leverage WordPress as a great CMS, but benefit from the speed, security and portability that a static website provides.
 
@@ -83,6 +83,10 @@ See the readme. In brief: you can't use dynamic WordPress functions such as comm
 2. The main interface (Japanese)
 
 == Changelog ==
+
+= 1.5 =
+
+ * bugfix for Dropbox export function not exporting all files
 
 = 1.4 =
 
@@ -182,6 +186,10 @@ Altered main codebase to fix recursion bug and endless loop. Essential upgrade.
 Initial release to Wordpress community
 
 == Upgrade Notice ==
+
+= 1.5 =
+
+ * bugfix for Dropbox export function not exporting all files
 
 = 1.4 =
 
