@@ -309,7 +309,7 @@ class StaticHtmlOutput {
             $dropboxAccessToken = filter_input(INPUT_POST, 'dropboxAccessToken');
             $dropboxFolder = filter_input(INPUT_POST, 'dropboxFolder');
 
-            $dbxClient = new Dropbox\Client($dropboxAccesstoken, "PHP-Example/1.0");
+            $dbxClient = new Dropbox\Client($dropboxAccessToken, "PHP-Example/1.0");
 
             function FolderToDropbox($dir, $dbxClient, $siteroot, $dropboxFolder){
                 $files = scandir($dir);
