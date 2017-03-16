@@ -141,7 +141,6 @@ class StaticHtmlOutput {
 	
 	public function saveOptions() {
 		if (!isset($_POST['action']) || 'generate' != $_POST['action']) {
-            error_log('didnt detect the generate action');
 			return;
 		}
 		
@@ -153,8 +152,6 @@ class StaticHtmlOutput {
 		$this->_options
 			->setOption('static-export-settings', filter_input(INPUT_POST, 'staticExportSettings', FILTER_SANITIZE_URL))
 			->save();
-
-        error_log('saving options!!!');
 
         $message = 'Options have been updated successfully.';
 
@@ -205,23 +202,26 @@ class StaticHtmlOutput {
 		$urlsQueue = array_unique(array_merge(
 			array(trailingslashit($baseUrl)),
 			$this->_getListOfLocalFilesByUrl(array(get_template_directory_uri())),
-			$this->_getListOfLocalFilesByUrl(explode("\n", filter_input(INPUT_POST, 'additionalUrls')))
+			explode("\n", filter_input(INPUT_POST, 'additionalUrls'))
 		));
-		
+
 		$this->_exportLog = array();
+
 		while (count($urlsQueue))
 		{
 			$currentUrl = array_shift($urlsQueue);
-			
-			//echo "Processing ". $currentUrl."<br />";
-			
+
 			$urlResponse = new StaticHtmlOutput_UrlRequest($currentUrl, filter_input(INPUT_POST, 'cleanMeta'));
-			$urlResponse->cleanup();
-			
-			// Add current url to the list of processed urls
-			$this->_exportLog[$currentUrl] = true;
-			
-			
+
+            if ($urlResponse->checkResponse() == 'FAIL') {
+                // that sucks, should add to error log...
+            } else {
+                // Add current url to the list of processed urls
+                $this->_exportLog[$currentUrl] = true;
+            }
+
+            $urlResponse->cleanup();
+
 			foreach ($urlResponse->extractAllUrls($baseUrl) as $newUrl) {
 				if (!isset($this->_exportLog[$newUrl]) && $newUrl != $currentUrl && !in_array($newUrl,$urlsQueue)) {
 					//echo "Adding ".$newUrl." to the list<br />";
@@ -290,9 +290,6 @@ class StaticHtmlOutput {
 
             // Where the files will be transferred to
             $dest = 's3://' . filter_input(INPUT_POST, 's3Bucket');
-
-            error_log($source);
-            error_log($dest);
 
             // Create a transfer object.
             $manager = new \Aws\S3\Transfer($s3Client, $source, $dest);
@@ -367,13 +364,15 @@ class StaticHtmlOutput {
 	protected function _getListOfLocalFilesByUrl(array $urls)
 	{
 		$files = array();
-		
+
 		foreach ($urls as $url) {
 			$directory = str_replace(home_url('/'), ABSPATH, $url);
-			
+
+            // checking if url contains the WP site url at first position and is a directory
 			if (stripos($url, home_url('/')) === 0 && is_dir($directory)) {
 				$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory));
 				foreach ($iterator as $fileName => $fileObject) {
+
 					if (is_file($fileName)) {
 						$pathinfo = pathinfo($fileName);
 						if (isset($pathinfo['extension']) && !in_array($pathinfo['extension'], array('php', 'phtml', 'tpl'))) {
@@ -381,9 +380,14 @@ class StaticHtmlOutput {
 						}
 					}
 				}
-			}
+			} else {
+                // if is not empty, add full path to $files list
+                if ($url != '') {
+                    array_push($files, $url);
+                }
+            }
 		}
-		
+
 		return $files;
 	}
 	

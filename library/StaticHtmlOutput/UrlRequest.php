@@ -28,10 +28,21 @@ class StaticHtmlOutput_UrlRequest
 	 */
 	public function __construct($url, $cleanMeta = false)
 	{
-		$this->_url = filter_var($url, FILTER_VALIDATE_URL);
+		$this->_url = filter_var(trim($url), FILTER_VALIDATE_URL);
 		$this->_cleanMeta = $cleanMeta;
+
 		$response = wp_remote_get($this->_url,array('timeout'=>300)); //set a long time out
-		$this->_response = (is_wp_error($response) ? '' : $response);
+
+		$this->_response = '';
+
+        if (is_wp_error($response)) {
+            error_log('WP_ERROR');
+            error_log(print_r($response, true));
+            $this->_response = 'FAIL';
+        } else {
+            $this->_response = $response;
+        }
+
 	}
 	
 	/**
@@ -41,6 +52,11 @@ class StaticHtmlOutput_UrlRequest
 	public function getUrl()
 	{
 		return $this->_url;
+	}
+
+	public function checkResponse()
+	{
+		return $this->_response;
 	}
 	
 	/**
