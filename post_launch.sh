@@ -13,8 +13,11 @@ done
 # still requires buffer before accessible for wp cli
 sleep 5
 
+# get container IP address
+containerIP=$(ip route get 1 | awk '{print $NF;exit}')
+
 # install default
-wp --allow-root core install --url='172.17.0.3' --title='wp plugindev' --admin_user=admin --admin_password=admin --admin_email=blah@blah.com --skip-email
+wp --allow-root core install --url="$containerIP" --title='wp plugindev' --admin_user=admin --admin_password=admin --admin_email=blah@blah.com --skip-email
 
 . /sync_sources.sh
 
