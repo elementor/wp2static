@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: static,html,export,performance,security,portable
 Requires at least: 3.2
 Tested up to: 4.7.3
-Stable tag: 1.5
+Stable tag: 1.6
 
 Allows you to leverage WordPress as a great CMS, but benefit from the speed, security and portability that a static website provides.
 
@@ -13,7 +13,7 @@ Allows you to leverage WordPress as a great CMS, but benefit from the speed, sec
 = Features =
 
  * generates a standalone, static html copy of your whole WordPress website
- * auto-deploy to local folder, FTP or S3
+ * auto-deploy to local folder, FTP, S3 or Dropbox
  * one site to unlimited export targets
  * specify extra files to include in the output (ie, dynamically loaded assets)
  * desktop notifications alert you to when exports are complete
@@ -35,11 +35,12 @@ Having issues with this plugin? I try to support any issues via the official sup
 
 = Planned upgrades =
 
+ * re-write export to relative URLs
  * progress meter to show % of .ZIP creation
  * realtime logs visible during / saved after export
- * speed improvements 
+ * speed improvements for large sites
  * selectively export only changed pages since last output
- * 1-click deployment your static files via sFTP, SCP, Dropbox, etc
+ * increase 1-click deployment options
 
 Developed by [**Leon Stafford**](http://leonstafford.github.io). If you have any questions about this plugin's usage, installation or development, please email me at: [leon.stafford@mac.com](mailto:leon.stafford@mac.com)
 
@@ -83,6 +84,10 @@ See the readme. In brief: you can't use dynamic WordPress functions such as comm
 2. The main interface (Japanese)
 
 == Changelog ==
+
+= 1.6 =
+
+ * Additional URLs now work again! Much needed bugfix.
 
 = 1.5 =
 
@@ -186,6 +191,10 @@ Altered main codebase to fix recursion bug and endless loop. Essential upgrade.
 Initial release to Wordpress community
 
 == Upgrade Notice ==
+
+= 1.6 =
+
+ * Additional URLs now work again! Much needed bugfix. Recommended upgrade.
 
 = 1.5 =
 
