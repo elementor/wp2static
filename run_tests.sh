@@ -1,4 +1,6 @@
 #!/bin/bash
+echo 'what is running now?'
+docker ps
 
 containerID=$(sudo docker ps | grep plugindevwp | grep -o -e '^\S*')
 
