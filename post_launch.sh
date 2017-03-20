@@ -28,5 +28,5 @@ wp --allow-root plugin activate wordpress-static-html-output
 #wp --allow-root plugin install static-html-output-plugin --activate
 
 # OPTIONAL: run log apache errors
-# tail -f /var/log/apache2/error.log
+tail -f /var/log/apache2/error.log
 
