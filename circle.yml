@@ -1,4 +1,5 @@
 machine:
+  ruby:
   services:
     - docker
 
@@ -7,9 +8,7 @@ test:
     - docker build -t leonstafford/wordpress-static-html-plugin:latest . 
     - docker run --name devmysql -e MYSQL_ROOT_PASSWORD=banana -d mariadb
     - docker run --name plugindevwp --link devmysql:mysql -p 8080:80 -d -v $(pwd):/app leonstafford/wordpress-static-html-plugin
-    - docker exec plugindevwp sh /post_launch.sh # leaves site running
-    - echo 'launching selenium server container'
+    - docker exec plugindevwp sh /post_launch.sh
     - docker run -d -p 4444:4444 -v /dev/shm:/dev/shm selenium/standalone-chrome:latest
-    - ruby rub_tests.rb
-    - curl --retry 10 --retry-delay 5 -v http://localhost:9200
+    - /bin/bash run_tests.sh
 
