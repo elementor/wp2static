@@ -124,7 +124,9 @@ class StaticHtmlOutput_UrlRequest
 	public function extractAllUrls($baseUrl)
 	{
 		$allUrls = array();
-		
+	
+
+        // TODO: will this follow urls for JS/CSS easily by adjusting?
 		if ($this->isHtml() && preg_match_all('/' . str_replace('/', '\/', $baseUrl) . '[^"\'#\? ]+/i', $this->_response['body'], $matches))
 		{
 			$allUrls = array_unique($matches[0]);
