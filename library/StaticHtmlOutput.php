@@ -420,10 +420,10 @@ class StaticHtmlOutput {
 		$fileExtension = ($url->isHtml() || !isset($pathInfo['extension']) ? 'html' : $pathInfo['extension']);
 		$fileName = $fileDir . '/' . $pathInfo['filename'] . '.' . $fileExtension;
         $fileContents = $url->getResponseBody();
-        error_log($filename);
         if ($fileContents != '') {
             file_put_contents($fileName, $fileContents);
         } else {
+            error_log($filename);
             error_log('response body was empty');
         }
 	}
