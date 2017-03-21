@@ -214,14 +214,24 @@ class StaticHtmlOutput {
 			$urlResponse = new StaticHtmlOutput_UrlRequest($currentUrl, filter_input(INPUT_POST, 'cleanMeta'));
 
             if ($urlResponse->checkResponse() == 'FAIL') {
-                // that sucks, should add to error log...
+                error_log('Failed to get this file');
+                error_log($currentUrl);
             } else {
                 // Add current url to the list of processed urls
                 $this->_exportLog[$currentUrl] = true;
+
+                // TODO: this shouldnt be part of urlrequest, just general settings
+                // add conditional logic here whether to do cleanup, vs in each request?
+                $urlResponse->cleanup();
+
+                // rewrite url and save to file
+                $urlResponse->replaceBaseUlr($baseUrl, $newBaseUrl);
+
+                $this->_saveUrlData($urlResponse, $archiveDir);
             }
 
-            $urlResponse->cleanup();
 
+            // get all other urls from within this one and add to queue if not there
 			foreach ($urlResponse->extractAllUrls($baseUrl) as $newUrl) {
 				if (!isset($this->_exportLog[$newUrl]) && $newUrl != $currentUrl && !in_array($newUrl,$urlsQueue)) {
 					//echo "Adding ".$newUrl." to the list<br />";
@@ -229,8 +239,6 @@ class StaticHtmlOutput {
 				}
 			}
 			
-			$urlResponse->replaceBaseUlr($baseUrl, $newBaseUrl);
-			$this->_saveUrlData($urlResponse, $archiveDir);
 		}
 		
 		$tempZip = $archiveName . '.tmp';
