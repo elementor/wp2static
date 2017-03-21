@@ -219,17 +219,11 @@ class StaticHtmlOutput {
             } else {
                 // Add current url to the list of processed urls
                 $this->_exportLog[$currentUrl] = true;
-
-                // TODO: this shouldnt be part of urlrequest, just general settings
-                // add conditional logic here whether to do cleanup, vs in each request?
-                $urlResponse->cleanup();
-
-                // rewrite url and save to file
-                $urlResponse->replaceBaseUlr($baseUrl, $newBaseUrl);
-
-                $this->_saveUrlData($urlResponse, $archiveDir);
             }
 
+            // TODO: this shouldnt be part of urlrequest, just general settings
+            // add conditional logic here whether to do cleanup, vs in each request?
+            $urlResponse->cleanup();
 
             // get all other urls from within this one and add to queue if not there
 			foreach ($urlResponse->extractAllUrls($baseUrl) as $newUrl) {
@@ -239,6 +233,8 @@ class StaticHtmlOutput {
 				}
 			}
 			
+			$urlResponse->replaceBaseUlr($baseUrl, $newBaseUrl);
+			$this->_saveUrlData($urlResponse, $archiveDir);
 		}
 		
 		$tempZip = $archiveName . '.tmp';
@@ -423,6 +419,12 @@ class StaticHtmlOutput {
 		
 		$fileExtension = ($url->isHtml() || !isset($pathInfo['extension']) ? 'html' : $pathInfo['extension']);
 		$fileName = $fileDir . '/' . $pathInfo['filename'] . '.' . $fileExtension;
-		file_put_contents($fileName, $url->getResponseBody());
+        $fileContents = $url->getResponseBody();
+        error_log($filename);
+        if ($fileContents != '') {
+            file_put_contents($fileName, $fileContents);
+        } else {
+            error_log('response body was empty');
+        }
 	}
 }
