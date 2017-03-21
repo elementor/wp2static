@@ -87,7 +87,7 @@ See the readme. In brief: you can't use dynamic WordPress functions such as comm
 
 = 1.7 =
 
- * WORK IN PROGRESS RELEASE
+ * Bugfix: index.html contents empty for some users' themes/setups
  * Bugfix: remove PHP short open tags for better compatibility
 
 = 1.6 =
@@ -196,6 +196,11 @@ Altered main codebase to fix recursion bug and endless loop. Essential upgrade.
 Initial release to Wordpress community
 
 == Upgrade Notice ==
+
+= 1.7 =
+
+ * Bugfix: index.html contents empty for some users' themes/setups
+ * Bugfix: remove PHP short open tags for better compatibility
 
 = 1.6 =
 
