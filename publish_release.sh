@@ -2,7 +2,7 @@
 
 PROJECT_ROOT=$(pwd)
 SVN_ROOT=/home/leon/svnplugindir
-NEW_TAG=1.6
+NEW_TAG=1.7
 
 # run from project root
 
@@ -11,8 +11,11 @@ cp -r $PROJECT_ROOT/* $SVN_ROOT/trunk/
 
 # remove files only used in development
 rm $SVN_ROOT/trunk/*.sh
+rm $SVN_ROOT/trunk/*.rb
 rm $SVN_ROOT/trunk/*.ini
 rm $SVN_ROOT/trunk/Dockerfile
+rm $SVN_ROOT/trunk/circle.yml
+rm $SVN_ROOT/trunk/Gemfile*
 rm $SVN_ROOT/trunk/readme.md
 rm -r $SVN_ROOT/trunk/wpassets
 
