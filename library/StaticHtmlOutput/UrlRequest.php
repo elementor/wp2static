@@ -147,6 +147,15 @@ class StaticHtmlOutput_UrlRequest
 		{
 			$responseBody = str_replace($oldBaseUrl, $newBaseUrl, $this->getResponseBody());
 			$responseBody = str_replace('<head>', "<head>\n<base href=\"" . esc_attr($newBaseUrl) . "\" />\n", $responseBody);
+
+            /* fix for cases where URL has been escaped/modified, ie
+                http:\/\/banana.com\/
+                //banana.com
+                https:// -> http:// */
+            $oldDomain = parse_url($oldBaseUrl)['host'];
+            $newDomain = parse_url($newBaseUrl)['host'];
+			$responseBody = str_replace($oldDomain, $newDomain, $responseBody);
+
 			$this->setResponseBody($responseBody);
 		}
 	}
