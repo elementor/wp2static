@@ -5,59 +5,23 @@
  * Copyright (c) 2011 Leon Stafford
  */
 
-/**
- * WP Static HTML Output Plugin
- */
 class StaticHtmlOutput {
 	const VERSION = '1.7';
 	const OPTIONS_KEY = 'wp-static-html-output-options';
-	
-	/**
-	 * The hook used in all actions and filters
-	 */
 	const HOOK = 'wp-static-html-output';
 	
-	/**
-	 * Singleton instance
-	 * @var StaticHtmlOutput
-	 */
 	protected static $_instance = null;
 	
-	/**
-	 * An instance of the options structure containing all options for this plugin
-	 * @var StaticHtmlOutput_Options
-	 */
 	protected $_options = null;
 	
-	/**
-	 * View object
-	 * @var StaticHtmlOutput_View
-	 */
 	protected $_view = null;
 	
-	/**
-	 * Export log (list of processed urls)
-	 * @var array
-	 */
 	protected $_exportLog = array();
 	
-	/**
-	 * Singleton pattern implementation makes "new" unavailable
-	 * @return void
-	 */
 	protected function __construct() {}
 	
-	/**
-	 * Singleton pattern implementation makes "clone" unavailable
-	 * @return void
-	 */
 	protected function __clone() {}
 	
-	/**
-	 * Returns an instance of WP Static HTML Output Plugin
-	 * Singleton pattern implementation
-	 * @return StaticHtmlOutput
-	 */
 	public static function getInstance() {
 		if (null === self::$_instance) {
 			self::$_instance = new self();
@@ -68,11 +32,6 @@ class StaticHtmlOutput {
 		return self::$_instance;
 	}
 	
-	/**
-	 * Initializes singleton instance and assigns hooks callbacks
-	 * @param string $bootstrapFile
-	 * @return StaticHtmlOutput
-	 */
 	public static function init($bootstrapFile) {
 		$instance = self::getInstance();
 		
@@ -105,19 +64,13 @@ class StaticHtmlOutput {
 		wp_enqueue_style(self::HOOK . '-admin', $pluginDirUrl . '/css/wp-static-html-output.css');
 	}
 	
-	/**
-	 * Renders the general options page.
-	 * Fires saveOptions action hook.
-	 * @return void
-	 */
 	public function renderOptionsPage() {
 		// Check system requirements
 		$uploadDir = wp_upload_dir();
 		$uploadsFolderWritable = $uploadDir && is_writable($uploadDir['path']);
 		$supportsZipArchives = extension_loaded('zip');
 		$permalinksStructureDefined = strlen(get_option('permalink_structure'));
-        
-		
+
 		if (!$uploadsFolderWritable || !$supportsZipArchives || !$permalinksStructureDefined) {
 			$this->_view
 				->setTemplate('system-requirements')
@@ -179,10 +132,6 @@ class StaticHtmlOutput {
 			->render();
     }
 	
-	/**
-	 * Generates ZIP archive
-	 * @return string|WP_Error
-	 */
 	protected function _generateArchive()
 	{
 		global $blog_id;
@@ -276,7 +225,6 @@ class StaticHtmlOutput {
 			unset($ftp);
 		}
 
-
 		if(filter_input(INPUT_POST, 'sendViaS3') == 1) {		
             require_once(__DIR__.'/aws/aws-autoloader.php');
 
@@ -360,11 +308,6 @@ class StaticHtmlOutput {
 		return str_replace(ABSPATH, trailingslashit(home_url()), $archiveName . '.zip');
 	}
 	
-	/**
-	 * Returns the list of local files
-	 * @param array $urls
-	 * @return array
-	 */
 	protected function _getListOfLocalFilesByUrl(array $urls)
 	{
 		$files = array();
@@ -395,12 +338,6 @@ class StaticHtmlOutput {
 		return $files;
 	}
 	
-	/**
-	 * Saves url data in temporary archive directory
-	 * @param StaticHtmlOutput_UrlRequest $url
-	 * @param string $archiveDir
-	 * @return void
-	 */
 	protected function _saveUrlData(StaticHtmlOutput_UrlRequest $url, $archiveDir) {
 		$urlInfo = parse_url($url->getUrl());
 		$pathInfo = pathinfo(isset($urlInfo['path']) && $urlInfo['path'] != '/' ? $urlInfo['path'] : 'index.html');
