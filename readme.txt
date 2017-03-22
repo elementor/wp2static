@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: static,html,export,performance,security,portable
 Requires at least: 3.2
 Tested up to: 4.7.3
-Stable tag: 1.7
+Stable tag: 1.8
 
 Allows you to leverage WordPress as a great CMS, but benefit from the speed, security and portability that a static website provides.
 
@@ -84,6 +84,12 @@ See the readme. In brief: you can't use dynamic WordPress functions such as comm
 2. The main interface (Japanese)
 
 == Changelog ==
+
+= 1.8 =
+
+ * Bugfix: improved URL rewriting
+
+Plugin now ensures that formatted versions of your site's URL, ie //mydomain.com or http:\/\/mydomain.com\/ or the https/http equivalent are detected and rewritten to your target Base URL. The rewriting should now also work within CSS and JavaScript files. 
 
 = 1.7 =
 
@@ -196,6 +202,12 @@ Altered main codebase to fix recursion bug and endless loop. Essential upgrade.
 Initial release to Wordpress community
 
 == Upgrade Notice ==
+
+= 1.8 =
+
+ * Bugfix: improved URL rewriting
+
+Plugin now ensures that formatted versions of your site's URL, ie //mydomain.com or http:\/\/mydomain.com\/ or the https/http equivalent are detected and rewritten to your target Base URL. The rewriting should now also work within CSS and JavaScript files. 
 
 = 1.7 =
 
