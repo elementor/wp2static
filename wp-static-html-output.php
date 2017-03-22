@@ -3,7 +3,7 @@
 Plugin Name: WP Static HTML Output
 Plugin URI:  https://leonstafford.github.io
 Description: Benefit from WordPress as a CMS but with the speed, performance and portability of a static site
-Version:     1.7
+Version:     1.8
 Author:      Leon Stafford
 Author URI:  https://leonstafford.github.io
 Text Domain: static-html-output-plugin
