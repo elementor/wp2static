@@ -13,3 +13,7 @@ RUN chmod +x /usr/local/bin/wp
 
 COPY *.sh /
 
+RUN /post_launch.sh
+
+RUN /watch_source_files.sh
+
