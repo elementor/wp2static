@@ -32,7 +32,7 @@ run do
     puts 'Title test OK'
 
     @driver.get site_url + '/wp-login.php'
-    expect(@driver.title).to eql 'wp plugindev ‹ Log in'
+    expect(@driver.title).to eql 'wp plugindev ‹ Log In'
 
     @driver.save_screenshot(File.join(Dir.pwd, "selenium-docker-login-page.png"))
 
