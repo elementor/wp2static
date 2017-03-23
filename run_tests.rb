@@ -19,12 +19,11 @@ def run
 end
 
 run do
-    container_ip = ARGV[0]
+    site_url = ARGV[0]
 
-    puts "Running tests against container IP: #{container_ip}"
+    puts "Running tests against WP install: #{site_url}"
 
     # Open the main page and check for the title
-    site_url = "http://#{container_ip}"
     @driver.get site_url + '/'
     @driver.save_screenshot(File.join(Dir.pwd, "selenium-docker-main-page.png"))
     expect(@driver.title).to eql 'wp plugindev – Just another WordPress site'
@@ -40,6 +39,8 @@ run do
     @driver.find_element(name: 'log').send_keys 'admin'
     @driver.find_element(name: 'pwd').send_keys 'admin'
     @driver.find_element(name: 'wp-submit').submit
+
+    sleep 5
 
     expect(@driver.title).to eql 'Dashboard ‹ wp plugindev — WordPress'
 
