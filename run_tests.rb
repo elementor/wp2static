@@ -18,11 +18,6 @@ def run
     teardown
 end
 
-def wait_until_appears(type, name, timeout: 5)
-  wait = Selenium::WebDriver::Wait.new(timeout: timeout)
-  wait.until { @driver.find_element(type, name).visible? }
-end
-
 run do
     container_ip = ARGV[0]
 
@@ -31,14 +26,14 @@ run do
     # Open the main page and check for the title
     site_url = "http://#{container_ip}"
     @driver.get site_url + '/'
-    #@driver.save_screenshot(File.join(Dir.pwd, "selenium-docker-main-page.png"))
+    @driver.save_screenshot(File.join(Dir.pwd, "selenium-docker-main-page.png"))
     expect(@driver.title).to eql 'wp plugindev – Just another WordPress site'
 
     puts 'Title test OK'
 
-    wait_until_appears('name','log')
-
     @driver.get site_url + '/wp-admin'
+
+    @driver.save_screenshot(File.join(Dir.pwd, "selenium-docker-login-page.png"))
 
     @driver.find_element(name: 'log').send_keys 'admin'
     @driver.find_element(name: 'pwd').send_keys 'admin'
