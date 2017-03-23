@@ -31,10 +31,11 @@ run do
 
     puts 'Title test OK'
 
-    @driver.get site_url + '/wp-admin'
+    @driver.get site_url + '/wp-login.php'
 
     @driver.save_screenshot(File.join(Dir.pwd, "selenium-docker-login-page.png"))
 
+    #id user_login
     @driver.find_element(name: 'log').send_keys 'admin'
     @driver.find_element(name: 'pwd').send_keys 'admin'
     @driver.find_element(name: 'wp-submit').submit
