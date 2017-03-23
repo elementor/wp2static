@@ -19,13 +19,14 @@ def run
 end
 
 run do
-    site_url = ARGV[0]
+    container_ip = ARGV[0]
 
-    puts "Running tests against WP install: #{site_url}"
+    puts "Running tests against container IP: #{container_ip}"
 
     # Open the main page and check for the title
+    site_url = "http://#{container_ip}"
     @driver.get site_url + '/'
-    @driver.save_screenshot(File.join(Dir.pwd, "selenium-docker-main-page.png"))
+    #@driver.save_screenshot(File.join(Dir.pwd, "selenium-docker-main-page.png"))
     expect(@driver.title).to eql 'wp plugindev – Just another WordPress site'
 
     puts 'Title test OK'
@@ -33,16 +34,12 @@ run do
     @driver.get site_url + '/wp-login.php'
     expect(@driver.title).to eql 'wp plugindev ‹ Log In'
 
-    @driver.save_screenshot(File.join(Dir.pwd, "selenium-docker-login-page.png"))
+    #@driver.save_screenshot(File.join(Dir.pwd, "selenium-docker-login-page.png"))
 
     #id user_login
     @driver.find_element(name: 'log').send_keys 'admin'
     @driver.find_element(name: 'pwd').send_keys 'admin'
     @driver.find_element(name: 'wp-submit').submit
-
-    sleep 5
-
-    puts @driver.page_source
 
     expect(@driver.title).to eql 'Dashboard ‹ wp plugindev — WordPress'
 
@@ -57,5 +54,5 @@ run do
     # check contents of index.html file
 
     ## Generate a screenshot of the checkbox page
-    @driver.save_screenshot(File.join(Dir.pwd, "selenium-docker-plugin-settings.png"))
+    #@driver.save_screenshot(File.join(Dir.pwd, "selenium-docker-plugin-settings.png"))
 end
