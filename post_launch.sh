@@ -39,4 +39,4 @@ wp --allow-root plugin activate wordpress-static-html-output
 echo "WordPress installed and accessible on $containerIP"
 echo "WP siteurl:"
 
-wp --allow-root option get siteurl
+wp --allow-root option get siteurl > /app/siteurl
