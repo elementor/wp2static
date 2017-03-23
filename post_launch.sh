@@ -36,3 +36,4 @@ wp --allow-root plugin activate wordpress-static-html-output
 # OPTIONAL: run log apache errors
 #tail -f /var/log/apache2/error.log
 
+echo "WordPress installed and accessible on $containerIP"
