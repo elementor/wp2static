@@ -36,7 +36,7 @@ run do
 
     puts 'Title test OK'
 
-    wait_until_appears(:name => 'log')
+    wait_until_appears('name','log')
 
     @driver.get site_url + '/wp-admin'
 
