@@ -14,7 +14,7 @@ echo $webContainerIP
 echo $sqlContainerIP
 echo $seleniumContainerIP
 
-siteurl=$(cat /app/siteurl)
+siteurl=$(cat siteurl)
 
 gem install bundler
 bundle install
