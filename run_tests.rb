@@ -42,6 +42,8 @@ run do
 
     sleep 5
 
+    puts @driver.page_source
+
     expect(@driver.title).to eql 'Dashboard ‹ wp plugindev — WordPress'
 
     puts 'Login test OK'
