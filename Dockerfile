@@ -13,5 +13,3 @@ RUN chmod +x /usr/local/bin/wp
 
 COPY *.sh /
 
-ENTRYPOINT /post_launch.sh
-

@@ -3,6 +3,9 @@
 # run wp-cli cmds from wp install path
 cd /var/www/html
 
+
+# wait for mysql container
+# * wordpress image's default entrypoint will also take some time
 echo 'awaiting mysql to be reachable'
 
 while ! mysqladmin ping -h devmysql --silent; do
@@ -33,5 +36,3 @@ wp --allow-root plugin activate wordpress-static-html-output
 # OPTIONAL: run log apache errors
 #tail -f /var/log/apache2/error.log
 
-
-/bin/bash /watch_source_files.sh
