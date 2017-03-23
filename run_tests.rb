@@ -18,6 +18,11 @@ def run
     teardown
 end
 
+def wait_until_appears(type, name, timeout: 5)
+  wait = Selenium::WebDriver::Wait.new(timeout: timeout)
+  wait.until { @driver.find_element(type, name).visible? }
+end
+
 run do
     container_ip = ARGV[0]
 
@@ -31,6 +36,7 @@ run do
 
     puts 'Title test OK'
 
+    wait_until_appears(:name => 'log')
 
     @driver.get site_url + '/wp-admin'
 
