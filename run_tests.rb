@@ -47,9 +47,14 @@ run do
 
     @driver.get site_url + '/wp-admin/tools.php?page=wp-static-html-output-options'
 
+    expect(@driver.title).to eql 'WP Static HTML Output ‹ wp plugindev — WordPress'
+
     # setup export and run
+    @driver.find_element(name: 'baseUrl').send_keys 'http://google.com'
+    @driver.find_element(class: 'saveSettingsButton').click
 
     # get list of files from export folder (should be only one exported folder)
+    #puts Dir["/path/to/search/**/*.rb"]
 
     # check contents of index.html file
 
