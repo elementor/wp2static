@@ -27,3 +27,8 @@ echo $seleniumContainerIP
 gem install bundler
 bundle install
 bundle exec ruby run_tests.rb $webContainerIP
+
+# cleanup
+sudo docker rm -f devmysql
+sudo docker rm -f plugindevwp
+sudo docker rm -f seleniumserver
