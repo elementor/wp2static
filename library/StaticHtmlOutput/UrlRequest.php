@@ -107,8 +107,10 @@ class StaticHtmlOutput_UrlRequest
                 http:\/\/banana.com\/
                 //banana.com
                 https:// -> http:// */
-            $oldDomain = parse_url($oldBaseUrl)['host'];
-            $newDomain = parse_url($newBaseUrl)['host'];
+            $oldDomain = parse_url($oldBaseUrl);
+            $oldDomain = $oldDomain['host'];
+            $newDomain = parse_url($newBaseUrl);
+            $newDomain = $newDomain['host'];
 			$responseBody = str_replace($oldDomain, $newDomain, $responseBody);
 
 			$this->setResponseBody($responseBody);

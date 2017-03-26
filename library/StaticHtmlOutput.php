@@ -230,11 +230,11 @@ class StaticHtmlOutput {
 
             $credentials = new Aws\Credentials\Credentials(filter_input(INPUT_POST, 's3Key'), filter_input(INPUT_POST, 's3Secret'));
 
-            $s3Client = new Aws\S3\S3Client([
+            $s3Client = new Aws\S3\S3Client(array(
                 'version'     => 'latest',
                 'region'      => filter_input(INPUT_POST, 's3Region'), 
                 'credentials' => $credentials
-            ]);
+            ));
 
             # available regions http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region
             // Where the files will be source from
