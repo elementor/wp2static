@@ -1,9 +1,10 @@
 <?php
+
 namespace Aws\ConfigService\Exception;
 
-use Aws\Exception\AwsException;
+use Aws\Common\Exception\ServiceResponseException;
 
 /**
- * Represents an error interacting with the AWS Config service.
+ * Exception thrown by the ConfigService service client.
  */
-class ConfigServiceException extends AwsException {}
+class ConfigServiceException extends ServiceResponseException {}

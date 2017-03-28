@@ -1,9 +1,10 @@
 <?php
+
 namespace Aws\CognitoSync\Exception;
 
-use Aws\Exception\AwsException;
+use Aws\Common\Exception\ServiceResponseException;
 
 /**
- * Represents an error interacting with the Amazon Cognito Sync service.
+ * Exception thrown by the CognitoSync service client.
  */
-class CognitoSyncException extends AwsException {}
+class CognitoSyncException extends ServiceResponseException {}

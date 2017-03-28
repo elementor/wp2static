@@ -1,9 +1,10 @@
 <?php
+
 namespace Aws\CognitoIdentity\Exception;
 
-use Aws\Exception\AwsException;
+use Aws\Common\Exception\ServiceResponseException;
 
 /**
- * Represents an error interacting with the Amazon Cognito Identity Logs service.
+ * Exception thrown by the CognitoIdentity service client.
  */
-class CognitoIdentityException extends AwsException {}
+class CognitoIdentityException extends ServiceResponseException {}
