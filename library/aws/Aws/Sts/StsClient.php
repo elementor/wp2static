@@ -1,53 +1,115 @@
 <?php
+/**
+ * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ * http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 namespace Aws\Sts;
 
-use Aws\AwsClient;
-use Aws\Result;
-use Aws\Credentials\Credentials;
+use Aws\Common\Client\AbstractClient;
+use Aws\Common\Client\ClientBuilder;
+use Aws\Common\Credentials\Credentials;
+use Aws\Common\Enum\ClientOptions as Options;
+use Aws\Common\Exception\InvalidArgumentException;
+use Aws\Common\Signature\SignatureListener;
+use Guzzle\Common\Collection;
+use Guzzle\Service\Command\AbstractCommand;
+use Guzzle\Service\Resource\Model;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\Event;
 
 /**
- * This client is used to interact with the **AWS Security Token Service (AWS STS)**.
+ * Client to interact with AWS Security Token Service
  *
- * @method \Aws\Result assumeRole(array $args = [])
- * @method \GuzzleHttp\Promise\Promise assumeRoleAsync(array $args = [])
- * @method \Aws\Result assumeRoleWithSAML(array $args = [])
- * @method \GuzzleHttp\Promise\Promise assumeRoleWithSAMLAsync(array $args = [])
- * @method \Aws\Result assumeRoleWithWebIdentity(array $args = [])
- * @method \GuzzleHttp\Promise\Promise assumeRoleWithWebIdentityAsync(array $args = [])
- * @method \Aws\Result decodeAuthorizationMessage(array $args = [])
- * @method \GuzzleHttp\Promise\Promise decodeAuthorizationMessageAsync(array $args = [])
- * @method \Aws\Result getCallerIdentity(array $args = [])
- * @method \GuzzleHttp\Promise\Promise getCallerIdentityAsync(array $args = [])
- * @method \Aws\Result getFederationToken(array $args = [])
- * @method \GuzzleHttp\Promise\Promise getFederationTokenAsync(array $args = [])
- * @method \Aws\Result getSessionToken(array $args = [])
- * @method \GuzzleHttp\Promise\Promise getSessionTokenAsync(array $args = [])
+ * @method Model assumeRole(array $args = array()) {@command Sts AssumeRole}
+ * @method Model assumeRoleWithSAML(array $args = array()) {@command Sts AssumeRoleWithSAML}
+ * @method Model assumeRoleWithWebIdentity(array $args = array()) {@command Sts AssumeRoleWithWebIdentity}
+ * @method Model decodeAuthorizationMessage(array $args = array()) {@command Sts DecodeAuthorizationMessage}
+ * @method Model getFederationToken(array $args = array()) {@command Sts GetFederationToken}
+ * @method Model getSessionToken(array $args = array()) {@command Sts GetSessionToken}
+ *
+ * @link http://docs.aws.amazon.com/aws-sdk-php/v2/guide/service-sts.html User guide
+ * @link http://docs.aws.amazon.com/aws-sdk-php/v2/api/class-Aws.Sts.StsClient.html API docs
  */
-class StsClient extends AwsClient
+class StsClient extends AbstractClient
 {
+    const LATEST_API_VERSION = '2011-06-15';
+
     /**
-     * Creates credentials from the result of an STS operations
+     * Factory method to create a new Amazon STS client using an array of configuration options:
      *
-     * @param Result $result Result of an STS operation
+     * @param array|Collection $config Client configuration data
      *
-     * @return Credentials
-     * @throws \InvalidArgumentException if the result contains no credentials
+     * @return self
+     * @throws InvalidArgumentException
+     * @link http://docs.aws.amazon.com/aws-sdk-php/v2/guide/configuration.html#client-configuration-options
      */
-    public function createCredentials(Result $result)
+    public static function factory($config = array())
     {
-        if (!$result->hasKey('Credentials')) {
-            throw new \InvalidArgumentException('Result contains no credentials');
+        // Always need long term credentials
+        if (!isset($config[Options::CREDENTIALS]) && isset($config[Options::TOKEN])) {
+            throw new InvalidArgumentException('You must use long-term credentials with Amazon STS');
         }
 
-        $c = $result['Credentials'];
+        // Construct the STS client with the client builder
+        $client = ClientBuilder::factory(__NAMESPACE__)
+            ->setConfig($config)
+            ->setConfigDefaults(array(
+                Options::VERSION             => self::LATEST_API_VERSION,
+                Options::SERVICE_DESCRIPTION => __DIR__ . '/Resources/sts-%s.php'
+            ))
+            ->build();
+
+        // Attach a listener to prevent AssumeRoleWithWebIdentity requests from being signed
+        $client->getEventDispatcher()->addListener('command.before_send', function(Event $event) {
+            /** @var AbstractCommand $command */
+            $command = $event['command'];
+            if ($command->getName() === 'AssumeRoleWithWebIdentity'
+                || $command->getName() === 'AssumeRoleWithSAML'
+            ) {
+                /** @var EventDispatcher $dispatcher */
+                $dispatcher = $command->getRequest()->getEventDispatcher();
+                foreach ($dispatcher->getListeners('request.before_send') as $listener) {
+                    if (is_array($listener) && $listener[0] instanceof SignatureListener) {
+                        $dispatcher->removeListener('request.before_send', $listener);
+                        break;
+                    }
+                }
+            }
+        });
+
+        return $client;
+    }
+
+    /**
+     * Creates a credentials object from the credential data return by an STS operation
+     *
+     * @param Model $result The result of an STS operation
+     *
+     * @return Credentials
+     * @throws InvalidArgumentException if the result does not contain credential data
+     */
+    public function createCredentials(Model $result)
+    {
+        if (!$result->hasKey('Credentials')) {
+            throw new InvalidArgumentException('The modeled result provided contained no credentials.');
+        }
 
         return new Credentials(
-            $c['AccessKeyId'],
-            $c['SecretAccessKey'],
-            isset($c['SessionToken']) ? $c['SessionToken'] : null,
-            isset($c['Expiration']) && $c['Expiration'] instanceof \DateTimeInterface
-                ? (int) $c['Expiration']->format('U')
-                : null
+            $result->getPath('Credentials/AccessKeyId'),
+            $result->getPath('Credentials/SecretAccessKey'),
+            $result->getPath('Credentials/SessionToken'),
+            $result->getPath('Credentials/Expiration')
         );
     }
 }

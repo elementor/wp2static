@@ -1,40 +1,38 @@
 <?php
+/**
+ * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ * http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 namespace Aws\S3\Exception;
 
 /**
- * Exception thrown when errors occur while deleting objects using a
- * {@see S3\BatchDelete} object.
+ * Exception thrown when errors occur in a DeleteMultipleObjects request
  */
-class DeleteMultipleObjectsException extends \Exception
+class DeleteMultipleObjectsException extends S3Exception
 {
-    private $deleted = [];
-    private $errors = [];
+    /**
+     * @var array Array of errors
+     */
+    protected $errors = array();
 
     /**
-     * @param array       $deleted Array of successfully deleted keys
-     * @param array       $errors  Array of errors that were encountered
+     * @param array $errors Array of errors
      */
-    public function __construct(array $deleted, array $errors)
+    public function __construct(array $errors = array())
     {
-        $this->deleted = array_values($deleted);
-        $this->errors = array_values($errors);
-        parent::__construct('Unable to delete certain keys when executing a'
-            . ' DeleteMultipleObjects request: '
-            . self::createMessageFromErrors($errors));
-    }
-
-    /**
-     * Create a single error message from multiple errors.
-     *
-     * @param array $errors Errors encountered
-     *
-     * @return string
-     */
-    public static function createMessageFromErrors(array $errors)
-    {
-        return "\n- " . implode("\n- ", array_map(function ($key) {
-            return json_encode($key);
-        }, $errors));
+        parent::__construct('Unable to delete certain keys when executing a DeleteMultipleObjects request');
+        $this->errors = $errors;
     }
 
     /**
@@ -46,17 +44,5 @@ class DeleteMultipleObjectsException extends \Exception
     public function getErrors()
     {
         return $this->errors;
-    }
-
-    /**
-     * Get the successfully deleted objects
-     *
-     * @return array Returns an array of associative arrays, each containing
-     *               a 'Key' and optionally 'DeleteMarker' and
-     *              'DeleterMarkerVersionId'
-     */
-    public function getDeleted()
-    {
-        return $this->deleted;
     }
 }

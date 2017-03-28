@@ -1,9 +1,10 @@
 <?php
+
 namespace Aws\WorkSpaces\Exception;
 
-use Aws\Exception\AwsException;
+use Aws\Common\Exception\ServiceResponseException;
 
 /**
- * Represents an error while interacting with Amazon WorkSpaces.
+ * Default service exception class
  */
-class WorkSpacesException extends AwsException {}
+class WorkSpacesException extends ServiceResponseException {}
