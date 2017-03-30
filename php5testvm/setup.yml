@@ -1,0 +1,134 @@
+---
+- hosts: vagrant
+  remote_user: vagrant
+  sudo: yes
+  tasks:
+    - name: Install unzip
+      apt: pkg=unzip state=latest update_cache=yes
+
+    - name: Install MySQL client, server and related libraries
+      apt: pkg={{ item }} state=latest
+      with_items:
+        - mysql-client
+        - mysql-server
+        - python-mysqldb
+
+    - name: Install PHP and its modules
+      apt: pkg={{ item }} state=latest
+      with_items:
+        - php5
+        - php5-cli
+        - php5-curl
+        - php5-gd
+        - php5-imagick
+        - php5-mysql
+        - php5-xmlrpc
+        - php5-xdebug
+
+    - name: Install Apache and its modules
+      apt: pkg={{ item }} state=latest
+      with_items:
+        - apache2
+        - libapache2-mod-php5
+
+    - name: Activate mod_rewrite
+      apache2_module: 
+        name: rewrite
+        state: present
+
+    - name: Start MySQL service
+      service:
+        name: "mysql"
+        state: started
+        enabled: yes
+
+    - name: Setup MySQL root password
+      mysql_user:
+        name: "root"
+        password: "mysql"
+        host: "{{ item }}"
+        state: present
+      with_items:
+        - "{{ ansible_hostname }}"
+        - 127.0.0.1
+        - ::1
+        - localhost
+
+    - name: Setup MySQL creds for root user
+      template:
+        src: "{{ mysqlTemplatePath }}"
+        dest: "/root/.my.cnf"
+        owner: "root"
+        mode: 0600
+
+    - name: Delete blank MySQL users
+      mysql_user:
+        name: ""
+        host: "{{ item }}"
+        state: absent
+      with_items:
+        - "{{ ansible_hostname }}"
+        - 127.0.0.1
+        - ::1
+        - localhost
+
+    - name: Drop MySQL test database
+      mysql_db: 
+        name: test
+        state: absent
+
+    - name: Setup empty database for WordPress
+      mysql_db:
+        name: "wordpress"
+        encoding: "utf8"
+        collation: "utf8_unicode_ci"
+        state: "present"
+        login_user: "root"
+        login_password: "mysql"
+
+    - name: Setup MySQL user for WordPress
+      mysql_user:
+        name: "user_wp"
+        password: "wordpress"
+        host: "localhost"
+        priv: "wordpress.*:ALL"
+        state: "present"
+
+    - name: Put "vagrant" user in www-data group
+      user:
+        name: "vagrant"
+        groups: "www-data"
+        append: yes
+
+    - name: Set up XDebug for remote debugging
+      template:
+        src: "{{ xdebugTemplatePath }}"
+        dest: /etc/php5/apache2/conf.d/xdebug-remote-debugging.ini       
+
+    - name: Unzip WordPress
+      unarchive: 
+        src: wordpress.zip 
+        dest: /vagrant/
+
+    - name: Symlink web root to unzipped WordPress
+      file:
+        src: "/vagrant/wordpress"
+        dest: "/var/www/wordpress"
+        state: "link"
+
+    - name: Copy virtual host setup over
+      template: 
+        src: "{{ vhostTemplatePath }}"
+        dest: /etc/apache2/sites-available/
+
+    - name: Activate virtual host
+      command: a2ensite vhost
+
+    - name: Deactivate default vhost
+      command: a2dissite 000-default
+
+    - name: Ensure Apache is running
+      service: 
+        name: apache2 
+        state: restarted 
+        enabled: yes
