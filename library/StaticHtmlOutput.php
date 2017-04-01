@@ -238,6 +238,10 @@ class StaticHtmlOutput {
                 {
                     try
                     {
+                        error_log($Key);
+                        error_log($Bucket);
+
+
                         $Model = $S3->PutObject(array('Bucket'      => $Bucket,
                             'Key'         => $Key,
                             'Body'        => $Data,
@@ -247,6 +251,7 @@ class StaticHtmlOutput {
                     }
                     catch (Exception $e)    //FIX should be more fine-grained?
                     {
+                        error_log($e->getMessage());
                         print("Retry, sleep ${Sleep} - " . $e->getMessage() . "\n");
                         sleep($Sleep);
                         $Sleep *= 2;
@@ -261,25 +266,31 @@ class StaticHtmlOutput {
             function UploadDirectory($S3, $Bucket, $dir, $siteroot) {
                 $files = scandir($dir);
                 foreach($files as $item){
+                    error_log($item);
                     if($item != '.' && $item != '..'){
                         $ContentType = GuessType($item);
                         if(is_dir($dir.'/'.$item)) {
                             UploadDirectory($S3, $Bucket, $dir.'/'.$item, $siteroot);
                         } else if(is_file($dir.'/'.$item)) {
+                            error_log('sending file');
                             $clean_dir = str_replace($siteroot, '', $dir.'/'.$item);
 
-                            $targetPath = '/'.$dropboxFolder.'/'.$clean_dir;
+                            $targetPath = $clean_dir;
                             $f = fopen($dir.'/'.$item, "rb");
-                    
-                            if (UploadObject($S3, $Bucket, $targetPath,
-                                    $f, Aws\S3\Enum\CannedAcl::PUBLIC_READ, $ContentType)) {
-                                print("Uploaded file " . $item .
-                                    " to Bucket '{$Bucket}'\n");
-                            } else {
-                                exit("Could not " .
-                                    "upload file " . $item .
-                                    " to Bucket '{$Bucket}'\n");
-                            }
+                            error_log('putting/...');
+                            UploadObject($S3, $Bucket, $targetPath, $f, Aws\S3\Enum\CannedAcl::PUBLIC_READ, $ContentType);
+
+                            #if (UploadObject($S3, $Bucket, $targetPath,
+                            #        $f, Aws\S3\Enum\CannedAcl::PUBLIC_READ, $ContentType)) {
+                            #    print("Uploaded file " . $item .
+                            #        " to Bucket '{$Bucket}'\n");
+                            #} else {
+                            #    exit("Could not " .
+                            #        "upload file " . $item .
+                            #        " to Bucket '{$Bucket}'\n");
+                            #}
+
+                            error_log('has putted english ');
 
                             fclose($f);
                         } 
@@ -329,7 +340,7 @@ class StaticHtmlOutput {
             $Bucket = filter_input(INPUT_POST, 's3Bucket');
 
             // Upload the directory to the bucket
-            UploadDirectory($S3, $Bucket, $Directory);
+            UploadDirectory($S3, $Bucket, $siteroot, $siteroot);
 
         }
 
