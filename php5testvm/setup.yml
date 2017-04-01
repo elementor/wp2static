@@ -136,3 +136,29 @@
         name: apache2 
         state: restarted 
         enabled: yes
+
+    - name: download wp-cli
+      sudo: yes
+      get_url: url=https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar dest=/usr/local/bin/wp
+
+    - name: update permissions of wp-cli to allow anyone to execute it (should be only for local install!)
+      file: path=/usr/local/bin/wp mode="0755"
+
+    - name: WP config
+      command: wp core config --allow-root --dbname=wordpress --dbuser=root --dbpass=mysql --force
+      args:
+        chdir: /var/www/wordpress
+ 
+    - name: do WP install
+      command: wp core install --allow-root --url='192.168.50.5' --title='wp plugindev' --admin_user=admin --admin_password=admin --admin_email=blah@blah.com --skip-email
+      args:
+        chdir: /var/www/wordpress
+
+    - name: copy plugin files to WP install
+      command: cp -r /plugin /var/www/wordpress/wp-content/plugins/wordpress-static-html-output
+ 
+    - name: plugin install
+      command: wp core --allow-root plugin activate wordpress-static-html-output
+      args:
+        chdir: /var/www/wordpress
+ 
