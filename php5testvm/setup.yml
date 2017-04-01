@@ -158,7 +158,7 @@
       command: cp -r /plugin /var/www/wordpress/wp-content/plugins/wordpress-static-html-output
  
     - name: plugin install
-      command: wp core --allow-root plugin activate wordpress-static-html-output
+      command: wp --allow-root plugin activate wordpress-static-html-output
       args:
         chdir: /var/www/wordpress
  
