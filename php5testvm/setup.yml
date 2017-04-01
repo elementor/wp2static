@@ -150,7 +150,7 @@
         chdir: /var/www/wordpress
  
     - name: do WP install
-      command: wp core install --allow-root --url='192.168.50.5' --title='wp plugindev' --admin_user=admin --admin_password=admin --admin_email=blah@blah.com --skip-email
+      command: wp core install --allow-root --url='192.168.50.50' --title='wp plugindev' --admin_user=admin --admin_password=admin --admin_email=blah@blah.com --skip-email
       args:
         chdir: /var/www/wordpress
 
