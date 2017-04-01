@@ -228,16 +228,13 @@ class StaticHtmlOutput {
 		if(filter_input(INPUT_POST, 'sendViaS3') == 1) {		
             require_once(__DIR__.'/aws/aws-autoloader.php');
 
-            function UploadObject($S3, $Bucket, $Key, $Data,
-                                  $ACL = Aws\S3\Enum\CannedAcl::PRIVATE_ACCESS, $ContentType = "text/plain")
-            {
+            $ACL = Aws\S3\Enum\CannedAcl::PRIVATE_ACCESS;
+
+            function UploadObject($S3, $Bucket, $Key, $Data, $ACL, $ContentType = "text/plain") {
                 $Try   = 1;
                 $Sleep = 1;
-                // Try to do the upload
-                do
-                {
-                    try
-                    {
+                do {
+                    try {
                         error_log($Key);
                         error_log($Bucket);
 
@@ -249,15 +246,14 @@ class StaticHtmlOutput {
                             'ContentType' => $ContentType));
                         return true;
                     }
-                    catch (Exception $e)    //FIX should be more fine-grained?
-                    {
+                    catch (Exception $e) {
                         error_log($e->getMessage());
                         print("Retry, sleep ${Sleep} - " . $e->getMessage() . "\n");
                         sleep($Sleep);
                         $Sleep *= 2;
                     }
                 }
-                while (++$Try < 6);
+                while (++$Try < 2);
                 return false;
             }
 
@@ -266,31 +262,23 @@ class StaticHtmlOutput {
             function UploadDirectory($S3, $Bucket, $dir, $siteroot) {
                 $files = scandir($dir);
                 foreach($files as $item){
-                    error_log($item);
                     if($item != '.' && $item != '..'){
                         $ContentType = GuessType($item);
                         if(is_dir($dir.'/'.$item)) {
                             UploadDirectory($S3, $Bucket, $dir.'/'.$item, $siteroot);
                         } else if(is_file($dir.'/'.$item)) {
-                            error_log('sending file');
                             $clean_dir = str_replace($siteroot, '', $dir.'/'.$item);
 
                             $targetPath = $clean_dir;
                             $f = fopen($dir.'/'.$item, "rb");
-                            error_log('putting/...');
-                            UploadObject($S3, $Bucket, $targetPath, $f, Aws\S3\Enum\CannedAcl::PUBLIC_READ, $ContentType);
+                            
 
-                            #if (UploadObject($S3, $Bucket, $targetPath,
-                            #        $f, Aws\S3\Enum\CannedAcl::PUBLIC_READ, $ContentType)) {
-                            #    print("Uploaded file " . $item .
-                            #        " to Bucket '{$Bucket}'\n");
-                            #} else {
-                            #    exit("Could not " .
-                            #        "upload file " . $item .
-                            #        " to Bucket '{$Bucket}'\n");
-                            #}
-
-                            error_log('has putted english ');
+                            if (UploadObject($S3, $Bucket, $targetPath, $f, Aws\S3\Enum\CannedAcl::PUBLIC_READ, $ContentType);) {
+                                //print("Uploaded file " . $item .  " to Bucket '{$Bucket}'\n");
+                            } else {
+                                error_log("Could not upload file" . $item);
+                                wp_die();
+                            }
 
                             fclose($f);
                         } 
