@@ -170,6 +170,10 @@ class StaticHtmlOutput {
                 $this->_exportLog[$currentUrl] = true;
             }
 
+            // TODO: shifting this block into above conditional prevents index containing error
+            //       but doesn't crawl all folders...
+            //       alternatively, index.html contains 'F' from 'FAIL or 'Failed to get...'
+
             // TODO: this shouldnt be part of urlrequest, just general settings
             // add conditional logic here whether to do cleanup, vs in each request?
             $urlResponse->cleanup();
@@ -441,7 +445,8 @@ class StaticHtmlOutput {
 		$fileExtension = ($url->isHtml() || !isset($pathInfo['extension']) ? 'html' : $pathInfo['extension']);
 		$fileName = $fileDir . '/' . $pathInfo['filename'] . '.' . $fileExtension;
         $fileContents = $url->getResponseBody();
-        if ($fileContents != '') {
+        // TODO: fix for unclear issue on PHP5.3
+        if ($fileContents != '' && $fileContents != 'F') {
             file_put_contents($fileName, $fileContents);
         } else {
             error_log($filename);
