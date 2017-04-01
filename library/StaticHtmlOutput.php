@@ -228,11 +228,8 @@ class StaticHtmlOutput {
 		if(filter_input(INPUT_POST, 'sendViaS3') == 1) {		
             require_once(__DIR__.'/aws/aws-autoloader.php');
 
-            use Aws\S3\S3Client;
-            use Aws\S3\Enum\CannedAcl;
-
             function UploadObject($S3, $Bucket, $Key, $Data,
-                                  $ACL = CannedAcl::PRIVATE_ACCESS, $ContentType = "text/plain")
+                                  $ACL = Aws\S3\Enum\CannedAcl::PRIVATE_ACCESS, $ContentType = "text/plain")
             {
                 $Try   = 1;
                 $Sleep = 1;
@@ -263,12 +260,12 @@ class StaticHtmlOutput {
                 $dir = new DirectoryIterator($Directory);
                 foreach ($dir as $fileinfo) {
                     if (!$fileinfo->isDot()) {
-                        var_dump($fileinfo->getFilename());
-                        //$ContentType = mime_content_type($fileinfo->getFilename());
+                        error_log($fileinfo->getFilename());
                         $ContentType = GuessType($fileinfo->getFilename());
-                        var_dump($ContentType);
+                        error_log($ContentType);
                         try {
                             if ($ContentType === 'directory') {
+                                error_log('ISDIR');
                                 UploadDirectory($S3, $Bucket, $fileinfo->getPath() . "\\" . $fileinfo->getFilename());
                             } else {
                                 $Data = file_get_contents($fileinfo->getFilename());
@@ -325,7 +322,7 @@ class StaticHtmlOutput {
                 }
             }
 
-            $S3 = S3Client::factory(array(
+            $S3 = Aws\S3\S3Client::factory(array(
                 'key'    => filter_input(INPUT_POST, 's3Key'),
                 'secret' => filter_input(INPUT_POST, 's3Secret'),
                 'region' => filter_input(INPUT_POST, 's3Region')
