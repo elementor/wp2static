@@ -228,135 +228,116 @@ class StaticHtmlOutput {
 		if(filter_input(INPUT_POST, 'sendViaS3') == 1) {		
             require_once(__DIR__.'/aws/aws-autoloader.php');
 
-            $s3Client = Aws\S3\S3Client::factory(array(
-             'version' => 'latest',
-              'region'  => filter_input(INPUT_POST, 's3Region'),
-              'credentials' => array(
-                'key' => filter_input(INPUT_POST, 's3Key'),
-                'secret'  => filter_input(INPUT_POST, 's3Secret'),
-              )
-            ));
+            use Aws\S3\S3Client;
+            use Aws\S3\Enum\CannedAcl;
 
-/* TODO: look at this
+            function UploadObject($S3, $Bucket, $Key, $Data,
+                                  $ACL = CannedAcl::PRIVATE_ACCESS, $ContentType = "text/plain")
+            {
+                $Try   = 1;
+                $Sleep = 1;
+                // Try to do the upload
+                do
+                {
+                    try
+                    {
+                        $Model = $S3->PutObject(array('Bucket'      => $Bucket,
+                            'Key'         => $Key,
+                            'Body'        => $Data,
+                            'ACL'         => $ACL,
+                            'ContentType' => $ContentType));
+                        return true;
+                    }
+                    catch (Exception $e)    //FIX should be more fine-grained?
+                    {
+                        print("Retry, sleep ${Sleep} - " . $e->getMessage() . "\n");
+                        sleep($Sleep);
+                        $Sleep *= 2;
+                    }
+                }
+                while (++$Try < 6);
+                return false;
+            }
 
-use Aws\S3\S3Client;
-use Aws\S3\Enum\CannedAcl;
-function UploadObject($S3, $Bucket, $Key, $Data,
-                      $ACL = CannedAcl::PRIVATE_ACCESS, $ContentType = "text/plain")
-{
-    $Try   = 1;
-    $Sleep = 1;
-    // Try to do the upload
-    do
-    {
-        try
-        {
-            $Model = $S3->PutObject(array('Bucket'      => $Bucket,
-                'Key'         => $Key,
-                'Body'        => $Data,
-                'ACL'         => $ACL,
-                'ContentType' => $ContentType));
-            return true;
-        }
-        catch (Exception $e)    //FIX should be more fine-grained?
-        {
-            print("Retry, sleep ${Sleep} - " . $e->getMessage() . "\n");
-            sleep($Sleep);
-            $Sleep *= 2;
-        }
-    }
-    while (++$Try < 6);
-    return false;
-}
-// Heather added
-function UploadDirectory($S3, $Bucket, $Directory)
-{
-    $dir = new DirectoryIterator($Directory);
-    foreach ($dir as $fileinfo) {
-        if (!$fileinfo->isDot()) {
-            var_dump($fileinfo->getFilename());
-            //$ContentType = mime_content_type($fileinfo->getFilename());
-            $ContentType = GuessType($fileinfo->getFilename());
-            var_dump($ContentType);
-            try {
-                if ($ContentType === 'directory') {
-                    UploadDirectory($S3, $Bucket, $fileinfo->getPath() . "\\" . $fileinfo->getFilename());
-                } else {
-                    $Data = file_get_contents($fileinfo->getFilename());
-                    if ($Data === FALSE) {
-                        print ("Error uploading file/directory: " . $fileinfo->getFilename());
-                    } else {
-                        if (UploadObject($S3, $Bucket, $fileinfo->getPath() . "\\" . $fileinfo->getFilename(),
-                                $Data, CannedAcl::PUBLIC_READ, $ContentType)) {
-                            print("Uploaded file " . $fileinfo->getFilename() .
-                                " to Bucket '{$Bucket}'\n");
-                        } else {
-                            exit("Could not " .
-                                "upload file " . $fileinfo->getFilename() .
-                                " to Bucket '{$Bucket}'\n");
+            function UploadDirectory($S3, $Bucket, $Directory) {
+                $dir = new DirectoryIterator($Directory);
+                foreach ($dir as $fileinfo) {
+                    if (!$fileinfo->isDot()) {
+                        var_dump($fileinfo->getFilename());
+                        //$ContentType = mime_content_type($fileinfo->getFilename());
+                        $ContentType = GuessType($fileinfo->getFilename());
+                        var_dump($ContentType);
+                        try {
+                            if ($ContentType === 'directory') {
+                                UploadDirectory($S3, $Bucket, $fileinfo->getPath() . "\\" . $fileinfo->getFilename());
+                            } else {
+                                $Data = file_get_contents($fileinfo->getFilename());
+                                if ($Data === FALSE) {
+                                    print ("Error uploading file/directory: " . $fileinfo->getFilename());
+                                } else {
+                                    if (UploadObject($S3, $Bucket, $fileinfo->getPath() . "\\" . $fileinfo->getFilename(),
+                                            $Data, CannedAcl::PUBLIC_READ, $ContentType)) {
+                                        print("Uploaded file " . $fileinfo->getFilename() .
+                                            " to Bucket '{$Bucket}'\n");
+                                    } else {
+                                        exit("Could not " .
+                                            "upload file " . $fileinfo->getFilename() .
+                                            " to Bucket '{$Bucket}'\n");
+                                    }
+                                }
+                            }
+                        }
+                        catch (UnexpectedValueException $e) {
+                            print ("Error: Could not read directory or was not a directory: " . $fileinfo->getFilename());
                         }
                     }
                 }
             }
-            catch (UnexpectedValueException $e) {
-                print ("Error: Could not read directory or was not a directory: " . $fileinfo->getFilename());
-            }
-        }
-    }
-}
-/*
- * GuessType -
- *
- *  Make a simple guess as to the file's content type,
- *  and return a MIME type.
- */
-function GuessType($File)
-{
-    $Info = pathinfo($File, PATHINFO_EXTENSION);
-    switch (strtolower($Info))
-    {
-        case "jpg":
-        case "jpeg":
-            return "image/jpeg";
-        case "png":
-            return "image/png";
-        case "gif":
-            return "image/gif";
-        case "htm":
-        case "html":
-            return "text/html";
-        case "txt":
-            return "text/plain";
-        case "php":
-            return "text/plain";
-        case "":
-            return "directory";
-        default:
-            return "text/plain";
-    }
-}
 
-*/
-
-
-
-
-            // adjust for v2 of php sdk 
-            $dir = new DirectoryIterator($archiveName . '/');
-            foreach ($dir as $fileinfo) {
-                if (!$fileinfo->isDot()) {
-                    error_log($fileinfo->getFilename());
-                    $result = $s3Client->putObject(array(
-                        'Bucket'     => filter_input(INPUT_POST, 's3Bucket'),
-                        'Key'        => $fileinfo->getFilename(),
-                        'SourceFile' => $fileinfo->getFilename(),
-                        //'Metadata'   => array(
-                        //    'Foo' => 'abc',
-                        //    'Baz' => '123'
-                        //)
-                    ));
+            /*
+             * GuessType -
+             *
+             *  Make a simple guess as to the file's content type,
+             *  and return a MIME type.
+             */
+            function GuessType($File) {
+                $Info = pathinfo($File, PATHINFO_EXTENSION);
+                switch (strtolower($Info))
+                {
+                    case "jpg":
+                    case "jpeg":
+                        return "image/jpeg";
+                    case "png":
+                        return "image/png";
+                    case "gif":
+                        return "image/gif";
+                    case "htm":
+                    case "html":
+                        return "text/html";
+                    case "txt":
+                        return "text/plain";
+                    case "php":
+                        return "text/plain";
+                    case "":
+                        return "directory";
+                    default:
+                        return "text/plain";
                 }
             }
+
+            $S3 = S3Client::factory(array(
+                'key'    => filter_input(INPUT_POST, 's3Key'),
+                'secret' => filter_input(INPUT_POST, 's3Secret'),
+                'region' => filter_input(INPUT_POST, 's3Region')
+                )
+            );
+
+            $Directory = $archiveName . '/';
+            $Bucket = filter_input(INPUT_POST, 's3Bucket');
+
+            // Upload the directory to the bucket
+            UploadDirectory($S3, $Bucket, $Directory);
+
         }
 
 		if(filter_input(INPUT_POST, 'sendViaDropbox') == 1) {
