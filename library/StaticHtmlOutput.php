@@ -256,38 +256,34 @@ class StaticHtmlOutput {
                 return false;
             }
 
-            function UploadDirectory($S3, $Bucket, $Directory) {
-                $iterator = new RecursiveDirectoryIterator($Directory);
-                foreach ($iterator as $fileName => $fileObject) {
-                    error_log(print_r($fileObject, true));
-                        error_log(print_r($fileObject));
-                        error_log($fileName);
-                        $ContentType = GuessType($fileName);
-                        error_log($ContentType);
-                        try {
-                            if ($ContentType === 'directory') {
-                                error_log('ISDIR');
-                                UploadDirectory($S3, $Bucket, $fileObject->pathName . "\\" . $fileName);
+            $siteroot = $archiveName . '/';
+
+            function UploadDirectory($S3, $Bucket, $dir, $siteroot) {
+                $files = scandir($dir);
+                foreach($files as $item){
+                    if($item != '.' && $item != '..'){
+                        $ContentType = GuessType($item);
+                        if(is_dir($dir.'/'.$item)) {
+                            UploadDirectory($S3, $Bucket, $dir.'/'.$item, $siteroot);
+                        } else if(is_file($dir.'/'.$item)) {
+                            $clean_dir = str_replace($siteroot, '', $dir.'/'.$item);
+
+                            $targetPath = '/'.$dropboxFolder.'/'.$clean_dir;
+                            $f = fopen($dir.'/'.$item, "rb");
+                    
+                            if (UploadObject($S3, $Bucket, $targetPath,
+                                    $f, Aws\S3\Enum\CannedAcl::PUBLIC_READ, $ContentType)) {
+                                print("Uploaded file " . $item .
+                                    " to Bucket '{$Bucket}'\n");
                             } else {
-                                $Data = file_get_contents($fileName);
-                                if ($Data === FALSE) {
-                                    print ("Error uploading file/directory: " . $fileName);
-                                } else {
-                                    if (UploadObject($S3, $Bucket, $fileObject->pathName . "\\" . $fileName,
-                                            $Data, Aws\S3\Enum\CannedAcl::PUBLIC_READ, $ContentType)) {
-                                        print("Uploaded file " . $fileName .
-                                            " to Bucket '{$Bucket}'\n");
-                                    } else {
-                                        exit("Could not " .
-                                            "upload file " . $fileName .
-                                            " to Bucket '{$Bucket}'\n");
-                                    }
-                                }
+                                exit("Could not " .
+                                    "upload file " . $item .
+                                    " to Bucket '{$Bucket}'\n");
                             }
-                        }
-                        catch (UnexpectedValueException $e) {
-                            print ("Error: Could not read directory or was not a directory: " . $fileName);
-                        }
+
+                            fclose($f);
+                        } 
+                    }
                 }
             }
 
