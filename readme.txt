@@ -85,6 +85,12 @@ See the readme. In brief: you can't use dynamic WordPress functions such as comm
 
 == Changelog ==
 
+= 1.9 =
+
+ * Bugfix: Plugin now works on PHP 5.3
+
+Though this is no longer an officially supported PHP version, many of this plugin's users are running PHP 5.3 or earlier. This fix should once again allow them to use the plugin, which has not been possible for them since about version 1.2. If you are one of these affected users, please now upgrade and enjoy all the new useful features!
+
 = 1.8 =
 
  * Bugfix: improved URL rewriting
@@ -202,6 +208,14 @@ Altered main codebase to fix recursion bug and endless loop. Essential upgrade.
 Initial release to Wordpress community
 
 == Upgrade Notice ==
+
+= 1.9 =
+
+Critical update for many users~!
+
+ * Bugfix: Plugin now works on PHP 5.3
+
+Though this is no longer an officially supported PHP version, many of this plugin's users are running PHP 5.3 or earlier. This fix should once again allow them to use the plugin, which has not been possible for them since about version 1.2. If you are one of these affected users, please now upgrade and enjoy all the new useful features!
 
 = 1.8 =
 

@@ -6,7 +6,7 @@
  */
 
 class StaticHtmlOutput {
-	const VERSION = '1.8';
+	const VERSION = '1.9';
 	const OPTIONS_KEY = 'wp-static-html-output-options';
 	const HOOK = 'wp-static-html-output';
 	
