@@ -235,9 +235,9 @@ class StaticHtmlOutput {
                 $Sleep = 1;
                 do {
                     try {
-                        error_log($Key);
-                        error_log($Bucket);
-                        error_log($ContentType);
+                        #error_log($Key);
+                        #error_log($Bucket);
+                        #error_log($ContentType);
 
 
                         $Model = $S3->PutObject(array('Bucket'      => $Bucket,
@@ -271,13 +271,16 @@ class StaticHtmlOutput {
                             $clean_dir = str_replace($siteroot, '', $dir.'/'.$item);
 
                             $targetPath = $clean_dir;
-                            $f = fopen($dir.'/'.$item, "rb");
+                            $f = file_get_contents($dir.'/'.$item);
+
+                            error_log($targetPath);
+                            if($targetPath == '/index.html') {
+                                error_log('**************************');
+                                error_log($f);
+                                error_log('**************************');
+                            }
                             
                             UploadObject($S3, $Bucket, $targetPath, $f, Aws\S3\Enum\CannedAcl::PUBLIC_READ, $ContentType);
-
-                            if(is_resource($f)) {
-                                fclose($f);
-                            }
                         } 
                     }
                 }
