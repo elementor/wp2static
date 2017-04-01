@@ -237,6 +237,7 @@ class StaticHtmlOutput {
                     try {
                         error_log($Key);
                         error_log($Bucket);
+                        error_log($ContentType);
 
 
                         $Model = $S3->PutObject(array('Bucket'      => $Bucket,
@@ -274,7 +275,9 @@ class StaticHtmlOutput {
                             
                             UploadObject($S3, $Bucket, $targetPath, $f, Aws\S3\Enum\CannedAcl::PUBLIC_READ, $ContentType);
 
-                            fclose($f);
+                            if(is_resource($f)) {
+                                fclose($f);
+                            }
                         } 
                     }
                 }
@@ -300,6 +303,8 @@ class StaticHtmlOutput {
                     case "htm":
                     case "html":
                         return "text/html";
+                    case "css":
+                        return "text/css";
                     case "txt":
                         return "text/plain";
                     case "php":
