@@ -239,11 +239,6 @@ class StaticHtmlOutput {
                 $Sleep = 1;
                 do {
                     try {
-                        #error_log($Key);
-                        #error_log($Bucket);
-                        #error_log($ContentType);
-
-
                         $Model = $S3->PutObject(array('Bucket'      => $Bucket,
                             'Key'         => $Key,
                             'Body'        => $Data,
@@ -277,11 +272,7 @@ class StaticHtmlOutput {
                             $targetPath = $clean_dir;
                             $f = file_get_contents($dir.'/'.$item);
 
-                            error_log($targetPath);
                             if($targetPath == '/index.html') {
-                                error_log('**************************');
-                                error_log($f);
-                                error_log('**************************');
                             }
                             
                             UploadObject($S3, $Bucket, $targetPath, $f, Aws\S3\Enum\CannedAcl::PUBLIC_READ, $ContentType);
