@@ -272,13 +272,7 @@ class StaticHtmlOutput {
                             $targetPath = $clean_dir;
                             $f = fopen($dir.'/'.$item, "rb");
                             
-
-                            if (UploadObject($S3, $Bucket, $targetPath, $f, Aws\S3\Enum\CannedAcl::PUBLIC_READ, $ContentType)) {
-                                //print("Uploaded file " . $item .  " to Bucket '{$Bucket}'\n");
-                            } else {
-                                error_log("Could not upload file" . $item);
-                                wp_die();
-                            }
+                            UploadObject($S3, $Bucket, $targetPath, $f, Aws\S3\Enum\CannedAcl::PUBLIC_READ, $ContentType);
 
                             fclose($f);
                         } 
