@@ -120,6 +120,9 @@
     - name: set WordPress file permissions correctly
       file: path=/var/www/wordpress state=directory recurse=yes owner=www-data group=www-data mode=0775
 
+    - name: create upload dir for wordpress
+      file: path=/var/www/wordpress/wp-content/uploads state=directory owner=www-data group=www-data mode=0755
+
     - name: Copy virtual host setup over
       template: 
         src: "{{ vhostTemplatePath }}"
