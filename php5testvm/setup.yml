@@ -33,7 +33,13 @@
         mode: 0600
 
     - name: touch php error log file
-      file: path=/var/log/apache2/php_err.log owner=www-data group=www-data mode=0755
+      copy:
+        content: ""
+        dest: /var/log/apache2/php_err.log
+        force: no
+        group: www-data
+        owner: www-data
+        mode: 0755
 
     - name: Install Apache and its modules
       apt: pkg={{ item }} state=latest
@@ -164,6 +170,11 @@
  
     - name: do WP install
       command: wp core install --allow-root --url='192.168.50.50' --title='wp plugindev' --admin_user=admin --admin_password=admin --admin_email=blah@blah.com --skip-email
+      args:
+        chdir: /var/www/wordpress
+
+    - name: set Permalinks structure
+      command: wp --allow-root rewrite structure '/%year%/%monthnum%/%postname%'
       args:
         chdir: /var/www/wordpress
 
