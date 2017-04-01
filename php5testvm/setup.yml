@@ -25,6 +25,16 @@
         - php5-xmlrpc
         - php5-xdebug
 
+    - name: Install custom php error config
+      template:
+        src: "{{ phpErrorTemplatePath }}"
+        dest: "/etc/php5/conf.d/php_error.ini"
+        owner: "root"
+        mode: 0600
+
+    - name: touch php error log file
+      file: path=/var/log/apache2/php_err.log owner=www-data group=www-data mode=0755
+
     - name: Install Apache and its modules
       apt: pkg={{ item }} state=latest
       with_items:
