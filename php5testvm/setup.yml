@@ -122,7 +122,7 @@
         dest: /etc/apache2/sites-available/
 
     - name: Activate virtual host
-      command: a2ensite vhost
+      command: a2ensite vhost.conf
 
     - name: Deactivate default vhost
       command: a2dissite 000-default
