@@ -105,16 +105,20 @@
         src: "{{ xdebugTemplatePath }}"
         dest: /etc/php5/apache2/conf.d/xdebug-remote-debugging.ini       
 
-    - name: Unzip WordPress
-      unarchive: 
-        src: wordpress.zip 
-        dest: /vagrant/
+    - name: make directory for wordpress
+      file: path=/var/www/wordpress state=directory owner=www-data group=www-data mode=0755
 
-    - name: Symlink web root to unzipped WordPress
-      file:
-        src: "/vagrant/wordpress"
-        dest: "/var/www/wordpress"
-        state: "link"
+    - name: download WordPress
+      get_url: url=http://wordpress.org/latest.zip dest=/tmp/
+
+    - name: unzip WordPress
+      command: unzip /tmp/latest.zip -d /tmp creates=/var/www/wordpress/readme.html
+
+    - name: move WordPress files to web root
+      shell: mv /tmp/wordpress/* /var/www/wordpress/ creates=/var/www/wordpress/readme.html
+
+    - name: set WordPress file permissions correctly
+      file: path=/var/www/wordpress state=directory recurse=yes owner=www-data group=www-data mode=0775
 
     - name: Copy virtual host setup over
       template: 
