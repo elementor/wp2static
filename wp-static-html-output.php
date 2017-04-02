@@ -11,7 +11,6 @@ Text Domain: static-html-output-plugin
 Copyright (c) 2017 Leon Stafford
  */
 
-require_once 'library/StaticHtmlOutput/Exception.php';
 require_once 'library/StaticHtmlOutput/Options.php';
 require_once 'library/StaticHtmlOutput/View.php';
 require_once 'library/StaticHtmlOutput/UrlRequest.php';
