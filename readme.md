@@ -5,7 +5,7 @@ Allows you to leverage WordPress as a great CMS, but benefit from the speed, sec
 ## Features
 
  - generates a standalone, static html copy of your whole WordPress website
- - auto-deploy to local folder, FTP or S3
+ - auto-deploy to local folder, FTP, Dropbox or S3
  - one site to unlimited export targets
  - specify extra files to include in the output (ie, dynamically loaded assets)
  - desktop notifications alert you to when exports are complete
@@ -18,7 +18,7 @@ You can [see a working example here](https://leonstafford.github.io/demo-site-wo
 ## Roadmap
 
  - selectively export only changed pages since last output
- - deploy your static files via sFTP, SCP, Dropbox, etc
+ - auto-deploy your static files via sFTP, SCP, Netlify, Github Pages, etc
 
 ## Development
 
@@ -33,7 +33,8 @@ If you'd like to contribute, please follow the usual GitHub procedures (create a
 To quickly try out the plugin, without affecting your other WordPress installations:
 
  - [install Docker](http://docker.com)
- - `sh destroy_and_rebuild.sh # view contents of this file to see how it builds
+ - `./provisioning/destroy_and_rebuild.sh # view contents of this file to see how it builds
+ - above command outputs the IP address of the WordPress container, but you can also run below steps
  - `docker ps` # get WordPress container's id so you can connect from the host
  - `docker inspect __yourcontainerid__ | grep Address` # get IP for connecting in your browser
  - open IP in browser and you have a clean WP install, including the plugin (l/p: admin/admin)
@@ -42,8 +43,12 @@ There is a great [Dockerized FTP server](https://github.com/stilliard/docker-pur
 
 ## Support
 
-Development is done in my personal time. If you would like to see some new features added, bugs fixed, etc, think about sending me a donation for motivation ;)
+Please [raise an issue](https://github.com/leonstafford/wordpress-static-html-plugin/issues/new) here on GitHub or on the plugin's [support forum](https://wordpress.org/support/plugin/static-html-output-plugin).
 
 ## Contact
 
 Email me, Leon Stafford, at [lionhive@gmail.com](mailto:lionhive@gmail.com)
+
+## Donations
+
+Has this plugin helped you save some money on web hosting or otherwise helped you out? Please consider [donating via PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=NHEV6WLYJ6QWQ) to help me help others. 
