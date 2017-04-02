@@ -18,8 +18,7 @@ require_once 'library/StaticHtmlOutput.php';
 
 StaticHtmlOutput::init(__FILE__);
 
-function pluginActionLinks($links) 
-{
+function pluginActionLinks($links) {
 	$settings_link = '<a href="tools.php?page=wp-static-html-output-options">' . __('Settings', 'static-html-output-plugin') . '</a>'; 
   	array_unshift( $links, $settings_link ); 
   	return $links; 	
