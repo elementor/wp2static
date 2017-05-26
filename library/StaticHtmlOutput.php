@@ -1,4 +1,10 @@
 <?php
+/**
+ * @package WP Static HTML Output
+ *
+ * Copyright (c) 2011 Leon Stafford
+ */
+
 class StaticHtmlOutput {
 	const VERSION = '1.9';
 	const OPTIONS_KEY = 'wp-static-html-output-options';
@@ -60,8 +66,8 @@ class StaticHtmlOutput {
 	
 	public function renderOptionsPage() {
 		// Check system requirements
-		$uploadDir = wp_upload_dir();
-		$uploadsFolderWritable = $uploadDir && is_writable($uploadDir['path']);
+		$uploadDir = $this->get_write_directory();
+		$uploadsFolderWritable = $uploadDir && is_writable($uploadDir);
 		$supportsZipArchives = extension_loaded('zip');
 		$permalinksStructureDefined = strlen(get_option('permalink_structure'));
 
@@ -107,6 +113,26 @@ class StaticHtmlOutput {
 			->render();
 	}
 
+	public function get_write_directory(){
+		$outputDir = filter_input(INPUT_POST, 'outputDirectory');
+
+		// Check to see if the directory exists
+		if ( $outputDir && !file_exists($outputDir)) {
+
+			// If not, try to create it
+			wp_mkdir_p($outputDir);
+
+			// Makes sure it's writable
+			if( is_writable( $outputDir ) ){
+				return $outputDir;
+			}
+		}
+
+		// Default WP Upload Location
+		$wp_upload_dir = wp_upload_dir();
+		return $wp_upload_dir['path'];
+	}
+
 	public function genArch() {
 		$archiveUrl = $this->_generateArchive();
 		
@@ -131,9 +157,9 @@ class StaticHtmlOutput {
 		global $blog_id;
 		set_time_limit(0);
 
-		$uploadDir = wp_upload_dir();
+		$uploadDir = $this->get_write_directory();
 		$exporter = wp_get_current_user();
-		$archiveName = $uploadDir['path'] . '/' . self::HOOK . '-' . $blog_id . '-' . time() . '-' . $exporter->user_login;
+		$archiveName = $uploadDir . '/' . self::HOOK . '-' . $blog_id . '-' . time() . '-' . $exporter->user_login;
 		$archiveDir = $archiveName . '/';
 		if (!file_exists($archiveDir))
 		{
@@ -257,7 +283,7 @@ class StaticHtmlOutput {
                 $files = scandir($dir);
                 foreach($files as $item){
                     if($item != '.' && $item != '..'){
-                        $ContentType = GuessMimeType($item);
+                        $ContentType = GuessType($item);
                         if(is_dir($dir.'/'.$item)) {
                             UploadDirectory($S3, $Bucket, $dir.'/'.$item, $siteroot);
                         } else if(is_file($dir.'/'.$item)) {
@@ -275,7 +301,13 @@ class StaticHtmlOutput {
                 }
             }
 
-            function GuessMimeType($File) {
+            /*
+             * GuessType -
+             *
+             *  Make a simple guess as to the file's content type,
+             *  and return a MIME type.
+             */
+            function GuessType($File) {
                 $Info = pathinfo($File, PATHINFO_EXTENSION);
                 switch (strtolower($Info))
                 {

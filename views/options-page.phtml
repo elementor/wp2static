@@ -131,6 +131,8 @@ jQuery(document).ready(function($){
         
             $(targetExportSettingsBlock).find('#baseUrl').first().val(decodeURIComponent(settingsBlock.baseUrl));
 
+            $(targetExportSettingsBlock).find('#outputDirectory').val(decodeURIComponent(settingsBlock.outputDirectory));
+
             additionalUrls = settingsBlock.additionalUrls.split(',');
             newAdditionalUrls = '';
 
@@ -163,6 +165,7 @@ jQuery(document).ready(function($){
                 $('.options-form:last').clone().insertAfter('.options-form:last');
                 targetExportSettingsBlock =  $('.options-form:last');
                 $(targetExportSettingsBlock).find('#baseUrl').first().val('');
+                $(targetExportSettingsBlock).find('#outputDirectory').val('');
                 $(targetExportSettingsBlock).find('#additionalUrls').val('');
                 $(targetExportSettingsBlock).find('#cleanMeta').first().prop('checked', false);
                 $(targetExportSettingsBlock).find('#retainStaticFiles').first().prop('checked', false);
@@ -208,6 +211,14 @@ jQuery(document).ready(function($){
                     <i>This defaults to your WordPress Site URL. If you know the URL of where you'll be hosting the static version of your site, it will be good to change this to that, ie http://mystaticsite.github.io</i>
                   </p> 
                   <input type="text" id="baseUrl" name="baseUrl" value="<?php echo esc_attr($this->baseUrl) ?>" size="50" />
+                </p>
+
+                <p>
+                  <strong><label for="outputDirectory"><?php echo __('Output Directory', 'static-html-output-plugin');?></label></strong>
+                  <p>
+                    <i>This defaults to your WordPress uploads directory. Ex: <?php $default_upload_dir = wp_upload_dir(); echo $default_upload_dir['path']; ?></i>
+                  </p> 
+                  <input type="text" id="outputDirectory" name="outputDirectory" value="<?php echo esc_html($this->outputDirectory) ?>" size="50" />
                 </p>
                 
                 <p>
