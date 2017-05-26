@@ -283,7 +283,7 @@ class StaticHtmlOutput {
                 $files = scandir($dir);
                 foreach($files as $item){
                     if($item != '.' && $item != '..'){
-                        $ContentType = GuessType($item);
+                        $ContentType = GuessMimeType($item);
                         if(is_dir($dir.'/'.$item)) {
                             UploadDirectory($S3, $Bucket, $dir.'/'.$item, $siteroot);
                         } else if(is_file($dir.'/'.$item)) {
@@ -301,13 +301,7 @@ class StaticHtmlOutput {
                 }
             }
 
-            /*
-             * GuessType -
-             *
-             *  Make a simple guess as to the file's content type,
-             *  and return a MIME type.
-             */
-            function GuessType($File) {
+            function GuessMimeType($File) {
                 $Info = pathinfo($File, PATHINFO_EXTENSION);
                 switch (strtolower($Info))
                 {
