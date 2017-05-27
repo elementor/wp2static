@@ -7,7 +7,7 @@ test:
   override:
     - docker build -t leonstafford/wordpress-static-html-plugin:latest . 
     - docker run --name devmysql -e MYSQL_ROOT_PASSWORD=banana -d mariadb
-    - docker run --name plugindevwp --link devmysql:mysql -p 8080:80 -d -v $(pwd):/app leonstafford/wordpress-static-html-plugin
+    - docker run --name plugindevwp --link devmysql:mysql -p 8088:80 -d -v $(pwd):/app leonstafford/wordpress-static-html-plugin
     - sudo lxc-attach -n "$(docker inspect --format "{{.Id}}" plugindevwp)" -- bash -c 'sh /post_launch.sh'
     - docker run --name seleniumserver -d -p 4444:4444 -v /dev/shm:/dev/shm selenium/standalone-chrome:latest
     - /bin/bash provisioning/run_tests.sh
