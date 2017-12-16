@@ -310,6 +310,19 @@ class StaticHtmlOutput {
             // Upload the directory to the bucket
             UploadDirectory($S3, $Bucket, $archiveName, $archiveName.'/');
 
+            if(strlen(filter_input(INPUT_POST, 'cfDistributionId'))>12) {
+                $CF = Aws\CloudFront\CloudFrontClient::factory(array(
+                    'version'		=> '2016-01-28',
+                'key'           => filter_input(INPUT_POST, 's3Key'),
+                'secret'        => filter_input(INPUT_POST, 's3Secret'),
+                    )
+                );
+                $result = $CF->createInvalidation(array(
+                    'DistributionId' => filter_input(INPUT_POST, 'cfDistributionId'),
+                        'Paths' => array ( 'Quantity' => 1, 'Items' => array('/*')),
+                        'CallerReference' => time()
+                ));
+            }
         }
 
 		if(filter_input(INPUT_POST, 'sendViaDropbox') == 1) {
