@@ -251,9 +251,8 @@ class StaticHtmlOutput {
 
 		if(filter_input(INPUT_POST, 'sendViaS3') == 1) {		
             require_once(__DIR__.'/aws/aws-autoloader.php');
-
-            $ACL = Aws\S3\Enum\CannedAcl::PRIVATE_ACCESS;
-
+            require_once(__DIR__.'/StaticHtmlOutput/MimeTypes.php');
+            
             function UploadObject($S3, $Bucket, $Key, $Data, $ACL, $ContentType = "text/plain") {
                 $Try   = 1;
                 $Sleep = 1;
@@ -277,13 +276,10 @@ class StaticHtmlOutput {
                 return false;
             }
 
-            $siteroot = $archiveName . '/';
-
             function UploadDirectory($S3, $Bucket, $dir, $siteroot) {
                 $files = scandir($dir);
                 foreach($files as $item){
                     if($item != '.' && $item != '..'){
-                        $ContentType = GuessMimeType($item);
                         if(is_dir($dir.'/'.$item)) {
                             UploadDirectory($S3, $Bucket, $dir.'/'.$item, $siteroot);
                         } else if(is_file($dir.'/'.$item)) {
@@ -295,51 +291,24 @@ class StaticHtmlOutput {
                             if($targetPath == '/index.html') {
                             }
                             
-                            UploadObject($S3, $Bucket, $targetPath, $f, Aws\S3\Enum\CannedAcl::PUBLIC_READ, $ContentType);
+                            UploadObject($S3, $Bucket, $targetPath, $f, 'public-read', GuessMimeType($item));
                         } 
                     }
                 }
             }
 
-            function GuessMimeType($File) {
-                $Info = pathinfo($File, PATHINFO_EXTENSION);
-                switch (strtolower($Info))
-                {
-                    case "jpg":
-                    case "jpeg":
-                        return "image/jpeg";
-                    case "png":
-                        return "image/png";
-                    case "gif":
-                        return "image/gif";
-                    case "htm":
-                    case "html":
-                        return "text/html";
-                    case "css":
-                        return "text/css";
-                    case "txt":
-                        return "text/plain";
-                    case "php":
-                        return "text/plain";
-                    case "":
-                        return "directory";
-                    default:
-                        return "text/plain";
-                }
-            }
-
             $S3 = Aws\S3\S3Client::factory(array(
+                'version'=> '2006-03-01',
                 'key'    => filter_input(INPUT_POST, 's3Key'),
                 'secret' => filter_input(INPUT_POST, 's3Secret'),
                 'region' => filter_input(INPUT_POST, 's3Region')
                 )
             );
 
-            $Directory = $archiveName . '/';
             $Bucket = filter_input(INPUT_POST, 's3Bucket');
 
             // Upload the directory to the bucket
-            UploadDirectory($S3, $Bucket, $siteroot, $siteroot);
+            UploadDirectory($S3, $Bucket, $archiveName, $archiveName.'/');
 
         }
 
