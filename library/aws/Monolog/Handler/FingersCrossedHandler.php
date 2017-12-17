@@ -61,7 +61,10 @@ class FingersCrossedHandler extends AbstractHandler
         $this->bufferSize = $bufferSize;
         $this->bubble = $bubble;
         $this->stopBuffering = $stopBuffering;
-        $this->passthruLevel = $passthruLevel;
+
+        if ($passthruLevel !== null) {
+            $this->passthruLevel = Logger::toMonologLevel($passthruLevel);
+        }
 
         if (!$this->handler instanceof HandlerInterface && !is_callable($this->handler)) {
             throw new \RuntimeException("The given handler (".json_encode($this->handler).") is not a callable nor a Monolog\Handler\HandlerInterface object");
@@ -74,6 +77,26 @@ class FingersCrossedHandler extends AbstractHandler
     public function isHandling(array $record)
     {
         return true;
+    }
+
+    /**
+     * Manually activate this logger regardless of the activation strategy
+     */
+    public function activate()
+    {
+        if ($this->stopBuffering) {
+            $this->buffering = false;
+        }
+        if (!$this->handler instanceof HandlerInterface) {
+            $record = end($this->buffer) ?: null;
+
+            $this->handler = call_user_func($this->handler, $record, $this);
+            if (!$this->handler instanceof HandlerInterface) {
+                throw new \RuntimeException("The factory callable should return a HandlerInterface");
+            }
+        }
+        $this->handler->handleBatch($this->buffer);
+        $this->buffer = array();
     }
 
     /**
@@ -93,17 +116,7 @@ class FingersCrossedHandler extends AbstractHandler
                 array_shift($this->buffer);
             }
             if ($this->activationStrategy->isHandlerActivated($record)) {
-                if ($this->stopBuffering) {
-                    $this->buffering = false;
-                }
-                if (!$this->handler instanceof HandlerInterface) {
-                    $this->handler = call_user_func($this->handler, $record, $this);
-                    if (!$this->handler instanceof HandlerInterface) {
-                        throw new \RuntimeException("The factory callable should return a HandlerInterface");
-                    }
-                }
-                $this->handler->handleBatch($this->buffer);
-                $this->buffer = array();
+                $this->activate();
             }
         } else {
             $this->handler->handle($record);

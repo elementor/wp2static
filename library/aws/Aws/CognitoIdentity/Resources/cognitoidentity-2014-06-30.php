@@ -50,7 +50,6 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 128,
                 ),
                 'AllowUnauthenticatedIdentities' => array(
                     'required' => true,
@@ -64,10 +63,9 @@ return array (
                     'additionalProperties' => array(
                         'type' => 'string',
                         'minLength' => 1,
-                        'maxLength' => 128,
                         'data' => array(
                             'shape_name' => 'IdentityProviderName',
-                            'key_pattern' => '/[\\w._-]+/',
+                            'key_pattern' => '/[\\w._/-]+/',
                         ),
                     ),
                 ),
@@ -75,7 +73,6 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 128,
                 ),
                 'OpenIdConnectProviderARNs' => array(
                     'type' => 'array',
@@ -84,7 +81,6 @@ return array (
                         'name' => 'ARNString',
                         'type' => 'string',
                         'minLength' => 20,
-                        'maxLength' => 2048,
                     ),
                 ),
             ),
@@ -115,6 +111,55 @@ return array (
                 ),
             ),
         ),
+        'DeleteIdentities' => array(
+            'httpMethod' => 'POST',
+            'uri' => '/',
+            'class' => 'Aws\\Common\\Command\\JsonCommand',
+            'responseClass' => 'DeleteIdentitiesResponse',
+            'responseType' => 'model',
+            'parameters' => array(
+                'Content-Type' => array(
+                    'static' => true,
+                    'location' => 'header',
+                    'default' => 'application/x-amz-json-1.1',
+                ),
+                'command.expects' => array(
+                    'static' => true,
+                    'default' => 'application/json',
+                ),
+                'X-Amz-Target' => array(
+                    'static' => true,
+                    'location' => 'header',
+                    'default' => 'AWSCognitoIdentityService.DeleteIdentities',
+                ),
+                'IdentityIdsToDelete' => array(
+                    'required' => true,
+                    'type' => 'array',
+                    'location' => 'json',
+                    'minItems' => 1,
+                    'maxItems' => 60,
+                    'items' => array(
+                        'name' => 'IdentityId',
+                        'type' => 'string',
+                        'minLength' => 1,
+                    ),
+                ),
+            ),
+            'errorResponses' => array(
+                array(
+                    'reason' => 'Thrown for missing or bad input parameter(s).',
+                    'class' => 'InvalidParameterException',
+                ),
+                array(
+                    'reason' => 'Thrown when a request is throttled.',
+                    'class' => 'TooManyRequestsException',
+                ),
+                array(
+                    'reason' => 'Thrown when the service encounters an error during processing the request.',
+                    'class' => 'InternalErrorException',
+                ),
+            ),
+        ),
         'DeleteIdentityPool' => array(
             'httpMethod' => 'POST',
             'uri' => '/',
@@ -141,7 +186,6 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 50,
                 ),
             ),
             'errorResponses' => array(
@@ -193,7 +237,6 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 50,
                 ),
             ),
             'errorResponses' => array(
@@ -245,7 +288,6 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 50,
                 ),
             ),
             'errorResponses' => array(
@@ -297,7 +339,6 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 50,
                 ),
                 'Logins' => array(
                     'type' => 'object',
@@ -305,10 +346,9 @@ return array (
                     'additionalProperties' => array(
                         'type' => 'string',
                         'minLength' => 1,
-                        'maxLength' => 2048,
                         'data' => array(
                             'shape_name' => 'IdentityProviderName',
-                            'key_pattern' => '/[\\w._-]+/',
+                            'key_pattern' => '/[\\w._/-]+/',
                         ),
                     ),
                 ),
@@ -342,6 +382,10 @@ return array (
                     'reason' => 'Thrown when the service encounters an error during processing the request.',
                     'class' => 'InternalErrorException',
                 ),
+                array(
+                    'reason' => 'An exception thrown when a dependent service such as Facebook or Twitter is not responding',
+                    'class' => 'ExternalServiceException',
+                ),
             ),
         ),
         'GetId' => array(
@@ -369,14 +413,12 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 15,
                 ),
                 'IdentityPoolId' => array(
                     'required' => true,
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 50,
                 ),
                 'Logins' => array(
                     'type' => 'object',
@@ -384,10 +426,9 @@ return array (
                     'additionalProperties' => array(
                         'type' => 'string',
                         'minLength' => 1,
-                        'maxLength' => 2048,
                         'data' => array(
                             'shape_name' => 'IdentityProviderName',
-                            'key_pattern' => '/[\\w._-]+/',
+                            'key_pattern' => '/[\\w._/-]+/',
                         ),
                     ),
                 ),
@@ -421,6 +462,10 @@ return array (
                     'reason' => 'Thrown when the total number of user pools has exceeded a preset limit.',
                     'class' => 'LimitExceededException',
                 ),
+                array(
+                    'reason' => 'An exception thrown when a dependent service such as Facebook or Twitter is not responding',
+                    'class' => 'ExternalServiceException',
+                ),
             ),
         ),
         'GetIdentityPoolRoles' => array(
@@ -445,10 +490,10 @@ return array (
                     'default' => 'AWSCognitoIdentityService.GetIdentityPoolRoles',
                 ),
                 'IdentityPoolId' => array(
+                    'required' => true,
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 50,
                 ),
             ),
             'errorResponses' => array(
@@ -504,7 +549,6 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 50,
                 ),
                 'Logins' => array(
                     'type' => 'object',
@@ -512,10 +556,9 @@ return array (
                     'additionalProperties' => array(
                         'type' => 'string',
                         'minLength' => 1,
-                        'maxLength' => 2048,
                         'data' => array(
                             'shape_name' => 'IdentityProviderName',
-                            'key_pattern' => '/[\\w._-]+/',
+                            'key_pattern' => '/[\\w._/-]+/',
                         ),
                     ),
                 ),
@@ -545,6 +588,10 @@ return array (
                     'reason' => 'Thrown when the service encounters an error during processing the request.',
                     'class' => 'InternalErrorException',
                 ),
+                array(
+                    'reason' => 'An exception thrown when a dependent service such as Facebook or Twitter is not responding',
+                    'class' => 'ExternalServiceException',
+                ),
             ),
         ),
         'GetOpenIdTokenForDeveloperIdentity' => array(
@@ -573,13 +620,11 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 50,
                 ),
                 'IdentityId' => array(
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 50,
                 ),
                 'Logins' => array(
                     'required' => true,
@@ -588,10 +633,9 @@ return array (
                     'additionalProperties' => array(
                         'type' => 'string',
                         'minLength' => 1,
-                        'maxLength' => 2048,
                         'data' => array(
                             'shape_name' => 'IdentityProviderName',
-                            'key_pattern' => '/[\\w._-]+/',
+                            'key_pattern' => '/[\\w._/-]+/',
                         ),
                     ),
                 ),
@@ -659,7 +703,6 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 50,
                 ),
                 'MaxResults' => array(
                     'required' => true,
@@ -672,6 +715,11 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
+                ),
+                'HideDisabled' => array(
+                    'type' => 'boolean',
+                    'format' => 'boolean-string',
+                    'location' => 'json',
                 ),
             ),
             'errorResponses' => array(
@@ -776,19 +824,16 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 50,
                 ),
                 'IdentityId' => array(
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 50,
                 ),
                 'DeveloperUserIdentifier' => array(
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 1024,
                 ),
                 'MaxResults' => array(
                     'type' => 'numeric',
@@ -855,28 +900,24 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 1024,
                 ),
                 'DestinationUserIdentifier' => array(
                     'required' => true,
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 1024,
                 ),
                 'DeveloperProviderName' => array(
                     'required' => true,
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 128,
                 ),
                 'IdentityPoolId' => array(
                     'required' => true,
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 50,
                 ),
             ),
             'errorResponses' => array(
@@ -932,7 +973,6 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 50,
                 ),
                 'Roles' => array(
                     'required' => true,
@@ -941,7 +981,6 @@ return array (
                     'additionalProperties' => array(
                         'type' => 'string',
                         'minLength' => 20,
-                        'maxLength' => 2048,
                         'data' => array(
                             'shape_name' => 'RoleType',
                             'key_pattern' => '/(un)?authenticated/',
@@ -974,6 +1013,10 @@ return array (
                     'reason' => 'Thrown when the service encounters an error during processing the request.',
                     'class' => 'InternalErrorException',
                 ),
+                array(
+                    'reason' => 'Thrown if there are parallel requests to modify a resource.',
+                    'class' => 'ConcurrentModificationException',
+                ),
             ),
         ),
         'UnlinkDeveloperIdentity' => array(
@@ -1002,28 +1045,24 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 50,
                 ),
                 'IdentityPoolId' => array(
                     'required' => true,
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 50,
                 ),
                 'DeveloperProviderName' => array(
                     'required' => true,
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 128,
                 ),
                 'DeveloperUserIdentifier' => array(
                     'required' => true,
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 1024,
                 ),
             ),
             'errorResponses' => array(
@@ -1079,7 +1118,6 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 50,
                 ),
                 'Logins' => array(
                     'required' => true,
@@ -1088,10 +1126,9 @@ return array (
                     'additionalProperties' => array(
                         'type' => 'string',
                         'minLength' => 1,
-                        'maxLength' => 2048,
                         'data' => array(
                             'shape_name' => 'IdentityProviderName',
-                            'key_pattern' => '/[\\w._-]+/',
+                            'key_pattern' => '/[\\w._/-]+/',
                         ),
                     ),
                 ),
@@ -1103,7 +1140,6 @@ return array (
                         'name' => 'IdentityProviderName',
                         'type' => 'string',
                         'minLength' => 1,
-                        'maxLength' => 128,
                     ),
                 ),
             ),
@@ -1131,6 +1167,10 @@ return array (
                 array(
                     'reason' => 'Thrown when the service encounters an error during processing the request.',
                     'class' => 'InternalErrorException',
+                ),
+                array(
+                    'reason' => 'An exception thrown when a dependent service such as Facebook or Twitter is not responding',
+                    'class' => 'ExternalServiceException',
                 ),
             ),
         ),
@@ -1160,14 +1200,12 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 50,
                 ),
                 'IdentityPoolName' => array(
                     'required' => true,
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 128,
                 ),
                 'AllowUnauthenticatedIdentities' => array(
                     'required' => true,
@@ -1181,10 +1219,9 @@ return array (
                     'additionalProperties' => array(
                         'type' => 'string',
                         'minLength' => 1,
-                        'maxLength' => 128,
                         'data' => array(
                             'shape_name' => 'IdentityProviderName',
-                            'key_pattern' => '/[\\w._-]+/',
+                            'key_pattern' => '/[\\w._/-]+/',
                         ),
                     ),
                 ),
@@ -1192,7 +1229,6 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 128,
                 ),
                 'OpenIdConnectProviderARNs' => array(
                     'type' => 'array',
@@ -1201,7 +1237,6 @@ return array (
                         'name' => 'ARNString',
                         'type' => 'string',
                         'minLength' => 20,
-                        'maxLength' => 2048,
                     ),
                 ),
             ),
@@ -1229,6 +1264,10 @@ return array (
                 array(
                     'reason' => 'Thrown when the service encounters an error during processing the request.',
                     'class' => 'InternalErrorException',
+                ),
+                array(
+                    'reason' => 'Thrown if there are parallel requests to modify a resource.',
+                    'class' => 'ConcurrentModificationException',
                 ),
             ),
         ),
@@ -1267,6 +1306,28 @@ return array (
                     'items' => array(
                         'name' => 'ARNString',
                         'type' => 'string',
+                    ),
+                ),
+            ),
+        ),
+        'DeleteIdentitiesResponse' => array(
+            'type' => 'object',
+            'additionalProperties' => true,
+            'properties' => array(
+                'UnprocessedIdentityIds' => array(
+                    'type' => 'array',
+                    'location' => 'json',
+                    'items' => array(
+                        'name' => 'UnprocessedIdentityId',
+                        'type' => 'object',
+                        'properties' => array(
+                            'IdentityId' => array(
+                                'type' => 'string',
+                            ),
+                            'ErrorCode' => array(
+                                'type' => 'string',
+                            ),
+                        ),
                     ),
                 ),
             ),

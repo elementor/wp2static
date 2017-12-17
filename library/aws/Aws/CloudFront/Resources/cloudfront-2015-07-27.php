@@ -15,7 +15,7 @@
  */
 
 return array (
-    'apiVersion' => '2014-11-06',
+    'apiVersion' => '2015-07-27',
     'endpointPrefix' => 'cloudfront',
     'serviceFullName' => 'Amazon CloudFront',
     'serviceAbbreviation' => 'CloudFront',
@@ -68,7 +68,7 @@ return array (
     'operations' => array(
         'CreateCloudFrontOriginAccessIdentity' => array(
             'httpMethod' => 'POST',
-            'uri' => '/2014-11-06/origin-access-identity/cloudfront',
+            'uri' => '/2015-07-27/origin-access-identity/cloudfront',
             'class' => 'Guzzle\\Service\\Command\\OperationCommand',
             'responseClass' => 'CreateCloudFrontOriginAccessIdentityResult',
             'responseType' => 'model',
@@ -76,7 +76,7 @@ return array (
                 'xmlRoot' => array(
                     'name' => 'CloudFrontOriginAccessIdentityConfig',
                     'namespaces' => array(
-                        'http://cloudfront.amazonaws.com/doc/2014-11-06/',
+                        'http://cloudfront.amazonaws.com/doc/2015-07-27/',
                     ),
                 ),
             ),
@@ -121,7 +121,7 @@ return array (
         ),
         'CreateDistribution' => array(
             'httpMethod' => 'POST',
-            'uri' => '/2014-11-06/distribution',
+            'uri' => '/2015-07-27/distribution',
             'class' => 'Guzzle\\Service\\Command\\OperationCommand',
             'responseClass' => 'CreateDistributionResult',
             'responseType' => 'model',
@@ -129,7 +129,7 @@ return array (
                 'xmlRoot' => array(
                     'name' => 'DistributionConfig',
                     'namespaces' => array(
-                        'http://cloudfront.amazonaws.com/doc/2014-11-06/',
+                        'http://cloudfront.amazonaws.com/doc/2015-07-27/',
                     ),
                 ),
             ),
@@ -348,6 +348,12 @@ return array (
                             'type' => 'boolean',
                             'format' => 'boolean-string',
                         ),
+                        'DefaultTTL' => array(
+                            'type' => 'numeric',
+                        ),
+                        'MaxTTL' => array(
+                            'type' => 'numeric',
+                        ),
                     ),
                 ),
                 'CacheBehaviors' => array(
@@ -493,6 +499,12 @@ return array (
                                         'type' => 'boolean',
                                         'format' => 'boolean-string',
                                     ),
+                                    'DefaultTTL' => array(
+                                        'type' => 'numeric',
+                                    ),
+                                    'MaxTTL' => array(
+                                        'type' => 'numeric',
+                                    ),
                                 ),
                             ),
                         ),
@@ -615,6 +627,10 @@ return array (
                         ),
                     ),
                 ),
+                'WebACLId' => array(
+                    'type' => 'string',
+                    'location' => 'xml',
+                ),
                 'command.expects' => array(
                     'static' => true,
                     'default' => 'application/xml',
@@ -650,6 +666,9 @@ return array (
                 ),
                 array(
                     'class' => 'InvalidViewerCertificateException',
+                ),
+                array(
+                    'class' => 'InvalidMinimumProtocolVersionException',
                 ),
                 array(
                     'reason' => 'This operation requires a body. Ensure that the body is present and the Content-Type header is set.',
@@ -729,11 +748,17 @@ return array (
                     'reason' => 'You cannot specify SSLv3 as the minimum protocol version if you only want to support only clients that Support Server Name Indication (SNI).',
                     'class' => 'InvalidProtocolSettingsException',
                 ),
+                array(
+                    'class' => 'InvalidTTLOrderException',
+                ),
+                array(
+                    'class' => 'InvalidWebACLIdException',
+                ),
             ),
         ),
         'CreateInvalidation' => array(
             'httpMethod' => 'POST',
-            'uri' => '/2014-11-06/distribution/{DistributionId}/invalidation',
+            'uri' => '/2015-07-27/distribution/{DistributionId}/invalidation',
             'class' => 'Guzzle\\Service\\Command\\OperationCommand',
             'responseClass' => 'CreateInvalidationResult',
             'responseType' => 'model',
@@ -741,7 +766,7 @@ return array (
                 'xmlRoot' => array(
                     'name' => 'InvalidationBatch',
                     'namespaces' => array(
-                        'http://cloudfront.amazonaws.com/doc/2014-11-06/',
+                        'http://cloudfront.amazonaws.com/doc/2015-07-27/',
                     ),
                 ),
             ),
@@ -811,7 +836,7 @@ return array (
         ),
         'CreateStreamingDistribution' => array(
             'httpMethod' => 'POST',
-            'uri' => '/2014-11-06/streaming-distribution',
+            'uri' => '/2015-07-27/streaming-distribution',
             'class' => 'Guzzle\\Service\\Command\\OperationCommand',
             'responseClass' => 'CreateStreamingDistributionResult',
             'responseType' => 'model',
@@ -819,7 +844,7 @@ return array (
                 'xmlRoot' => array(
                     'name' => 'StreamingDistributionConfig',
                     'namespaces' => array(
-                        'http://cloudfront.amazonaws.com/doc/2014-11-06/',
+                        'http://cloudfront.amazonaws.com/doc/2015-07-27/',
                     ),
                 ),
             ),
@@ -973,9 +998,9 @@ return array (
         ),
         'DeleteCloudFrontOriginAccessIdentity' => array(
             'httpMethod' => 'DELETE',
-            'uri' => '/2014-11-06/origin-access-identity/cloudfront/{Id}',
+            'uri' => '/2015-07-27/origin-access-identity/cloudfront/{Id}',
             'class' => 'Guzzle\\Service\\Command\\OperationCommand',
-            'responseClass' => 'DeleteCloudFrontOriginAccessIdentity2014_11_06Output',
+            'responseClass' => 'DeleteCloudFrontOriginAccessIdentity2015_07_27Output',
             'responseType' => 'model',
             'parameters' => array(
                 'Id' => array(
@@ -1013,9 +1038,9 @@ return array (
         ),
         'DeleteDistribution' => array(
             'httpMethod' => 'DELETE',
-            'uri' => '/2014-11-06/distribution/{Id}',
+            'uri' => '/2015-07-27/distribution/{Id}',
             'class' => 'Guzzle\\Service\\Command\\OperationCommand',
-            'responseClass' => 'DeleteDistribution2014_11_06Output',
+            'responseClass' => 'DeleteDistribution2015_07_27Output',
             'responseType' => 'model',
             'parameters' => array(
                 'Id' => array(
@@ -1053,9 +1078,9 @@ return array (
         ),
         'DeleteStreamingDistribution' => array(
             'httpMethod' => 'DELETE',
-            'uri' => '/2014-11-06/streaming-distribution/{Id}',
+            'uri' => '/2015-07-27/streaming-distribution/{Id}',
             'class' => 'Guzzle\\Service\\Command\\OperationCommand',
-            'responseClass' => 'DeleteStreamingDistribution2014_11_06Output',
+            'responseClass' => 'DeleteStreamingDistribution2015_07_27Output',
             'responseType' => 'model',
             'parameters' => array(
                 'Id' => array(
@@ -1093,7 +1118,7 @@ return array (
         ),
         'GetCloudFrontOriginAccessIdentity' => array(
             'httpMethod' => 'GET',
-            'uri' => '/2014-11-06/origin-access-identity/cloudfront/{Id}',
+            'uri' => '/2015-07-27/origin-access-identity/cloudfront/{Id}',
             'class' => 'Guzzle\\Service\\Command\\OperationCommand',
             'responseClass' => 'GetCloudFrontOriginAccessIdentityResult',
             'responseType' => 'model',
@@ -1121,7 +1146,7 @@ return array (
         ),
         'GetCloudFrontOriginAccessIdentityConfig' => array(
             'httpMethod' => 'GET',
-            'uri' => '/2014-11-06/origin-access-identity/cloudfront/{Id}/config',
+            'uri' => '/2015-07-27/origin-access-identity/cloudfront/{Id}/config',
             'class' => 'Guzzle\\Service\\Command\\OperationCommand',
             'responseClass' => 'GetCloudFrontOriginAccessIdentityConfigResult',
             'responseType' => 'model',
@@ -1149,7 +1174,7 @@ return array (
         ),
         'GetDistribution' => array(
             'httpMethod' => 'GET',
-            'uri' => '/2014-11-06/distribution/{Id}',
+            'uri' => '/2015-07-27/distribution/{Id}',
             'class' => 'Guzzle\\Service\\Command\\OperationCommand',
             'responseClass' => 'GetDistributionResult',
             'responseType' => 'model',
@@ -1177,7 +1202,7 @@ return array (
         ),
         'GetDistributionConfig' => array(
             'httpMethod' => 'GET',
-            'uri' => '/2014-11-06/distribution/{Id}/config',
+            'uri' => '/2015-07-27/distribution/{Id}/config',
             'class' => 'Guzzle\\Service\\Command\\OperationCommand',
             'responseClass' => 'GetDistributionConfigResult',
             'responseType' => 'model',
@@ -1205,7 +1230,7 @@ return array (
         ),
         'GetInvalidation' => array(
             'httpMethod' => 'GET',
-            'uri' => '/2014-11-06/distribution/{DistributionId}/invalidation/{Id}',
+            'uri' => '/2015-07-27/distribution/{DistributionId}/invalidation/{Id}',
             'class' => 'Guzzle\\Service\\Command\\OperationCommand',
             'responseClass' => 'GetInvalidationResult',
             'responseType' => 'model',
@@ -1242,7 +1267,7 @@ return array (
         ),
         'GetStreamingDistribution' => array(
             'httpMethod' => 'GET',
-            'uri' => '/2014-11-06/streaming-distribution/{Id}',
+            'uri' => '/2015-07-27/streaming-distribution/{Id}',
             'class' => 'Guzzle\\Service\\Command\\OperationCommand',
             'responseClass' => 'GetStreamingDistributionResult',
             'responseType' => 'model',
@@ -1270,7 +1295,7 @@ return array (
         ),
         'GetStreamingDistributionConfig' => array(
             'httpMethod' => 'GET',
-            'uri' => '/2014-11-06/streaming-distribution/{Id}/config',
+            'uri' => '/2015-07-27/streaming-distribution/{Id}/config',
             'class' => 'Guzzle\\Service\\Command\\OperationCommand',
             'responseClass' => 'GetStreamingDistributionConfigResult',
             'responseType' => 'model',
@@ -1298,7 +1323,7 @@ return array (
         ),
         'ListCloudFrontOriginAccessIdentities' => array(
             'httpMethod' => 'GET',
-            'uri' => '/2014-11-06/origin-access-identity/cloudfront',
+            'uri' => '/2015-07-27/origin-access-identity/cloudfront',
             'class' => 'Guzzle\\Service\\Command\\OperationCommand',
             'responseClass' => 'ListCloudFrontOriginAccessIdentitiesResult',
             'responseType' => 'model',
@@ -1325,7 +1350,7 @@ return array (
         ),
         'ListDistributions' => array(
             'httpMethod' => 'GET',
-            'uri' => '/2014-11-06/distribution',
+            'uri' => '/2015-07-27/distribution',
             'class' => 'Guzzle\\Service\\Command\\OperationCommand',
             'responseClass' => 'ListDistributionsResult',
             'responseType' => 'model',
@@ -1350,9 +1375,44 @@ return array (
                 ),
             ),
         ),
+        'ListDistributionsByWebACLId' => array(
+            'httpMethod' => 'GET',
+            'uri' => '/2015-07-27/distributionsByWebACLId/{WebACLId}',
+            'class' => 'Guzzle\\Service\\Command\\OperationCommand',
+            'responseClass' => 'ListDistributionsByWebACLIdResult',
+            'responseType' => 'model',
+            'parameters' => array(
+                'Marker' => array(
+                    'type' => 'string',
+                    'location' => 'query',
+                ),
+                'MaxItems' => array(
+                    'type' => 'string',
+                    'location' => 'query',
+                ),
+                'WebACLId' => array(
+                    'required' => true,
+                    'type' => 'string',
+                    'location' => 'uri',
+                ),
+                'command.expects' => array(
+                    'static' => true,
+                    'default' => 'application/xml',
+                ),
+            ),
+            'errorResponses' => array(
+                array(
+                    'reason' => 'The argument is invalid.',
+                    'class' => 'InvalidArgumentException',
+                ),
+                array(
+                    'class' => 'InvalidWebACLIdException',
+                ),
+            ),
+        ),
         'ListInvalidations' => array(
             'httpMethod' => 'GET',
-            'uri' => '/2014-11-06/distribution/{DistributionId}/invalidation',
+            'uri' => '/2015-07-27/distribution/{DistributionId}/invalidation',
             'class' => 'Guzzle\\Service\\Command\\OperationCommand',
             'responseClass' => 'ListInvalidationsResult',
             'responseType' => 'model',
@@ -1392,7 +1452,7 @@ return array (
         ),
         'ListStreamingDistributions' => array(
             'httpMethod' => 'GET',
-            'uri' => '/2014-11-06/streaming-distribution',
+            'uri' => '/2015-07-27/streaming-distribution',
             'class' => 'Guzzle\\Service\\Command\\OperationCommand',
             'responseClass' => 'ListStreamingDistributionsResult',
             'responseType' => 'model',
@@ -1419,7 +1479,7 @@ return array (
         ),
         'UpdateCloudFrontOriginAccessIdentity' => array(
             'httpMethod' => 'PUT',
-            'uri' => '/2014-11-06/origin-access-identity/cloudfront/{Id}/config',
+            'uri' => '/2015-07-27/origin-access-identity/cloudfront/{Id}/config',
             'class' => 'Guzzle\\Service\\Command\\OperationCommand',
             'responseClass' => 'UpdateCloudFrontOriginAccessIdentityResult',
             'responseType' => 'model',
@@ -1427,7 +1487,7 @@ return array (
                 'xmlRoot' => array(
                     'name' => 'CloudFrontOriginAccessIdentityConfig',
                     'namespaces' => array(
-                        'http://cloudfront.amazonaws.com/doc/2014-11-06/',
+                        'http://cloudfront.amazonaws.com/doc/2015-07-27/',
                     ),
                 ),
             ),
@@ -1494,7 +1554,7 @@ return array (
         ),
         'UpdateDistribution' => array(
             'httpMethod' => 'PUT',
-            'uri' => '/2014-11-06/distribution/{Id}/config',
+            'uri' => '/2015-07-27/distribution/{Id}/config',
             'class' => 'Guzzle\\Service\\Command\\OperationCommand',
             'responseClass' => 'UpdateDistributionResult',
             'responseType' => 'model',
@@ -1502,7 +1562,7 @@ return array (
                 'xmlRoot' => array(
                     'name' => 'DistributionConfig',
                     'namespaces' => array(
-                        'http://cloudfront.amazonaws.com/doc/2014-11-06/',
+                        'http://cloudfront.amazonaws.com/doc/2015-07-27/',
                     ),
                 ),
             ),
@@ -1721,6 +1781,12 @@ return array (
                             'type' => 'boolean',
                             'format' => 'boolean-string',
                         ),
+                        'DefaultTTL' => array(
+                            'type' => 'numeric',
+                        ),
+                        'MaxTTL' => array(
+                            'type' => 'numeric',
+                        ),
                     ),
                 ),
                 'CacheBehaviors' => array(
@@ -1866,6 +1932,12 @@ return array (
                                         'type' => 'boolean',
                                         'format' => 'boolean-string',
                                     ),
+                                    'DefaultTTL' => array(
+                                        'type' => 'numeric',
+                                    ),
+                                    'MaxTTL' => array(
+                                        'type' => 'numeric',
+                                    ),
                                 ),
                             ),
                         ),
@@ -1988,6 +2060,10 @@ return array (
                         ),
                     ),
                 ),
+                'WebACLId' => array(
+                    'type' => 'string',
+                    'location' => 'xml',
+                ),
                 'Id' => array(
                     'required' => true,
                     'type' => 'string',
@@ -2069,6 +2145,9 @@ return array (
                     'class' => 'InvalidViewerCertificateException',
                 ),
                 array(
+                    'class' => 'InvalidMinimumProtocolVersionException',
+                ),
+                array(
                     'reason' => 'This operation requires the HTTPS protocol. Ensure that you specify the HTTPS protocol in your request, or omit the RequiredProtocols element from your distribution configuration.',
                     'class' => 'InvalidRequiredProtocolException',
                 ),
@@ -2112,11 +2191,17 @@ return array (
                 array(
                     'class' => 'InvalidGeoRestrictionParameterException',
                 ),
+                array(
+                    'class' => 'InvalidTTLOrderException',
+                ),
+                array(
+                    'class' => 'InvalidWebACLIdException',
+                ),
             ),
         ),
         'UpdateStreamingDistribution' => array(
             'httpMethod' => 'PUT',
-            'uri' => '/2014-11-06/streaming-distribution/{Id}/config',
+            'uri' => '/2015-07-27/streaming-distribution/{Id}/config',
             'class' => 'Guzzle\\Service\\Command\\OperationCommand',
             'responseClass' => 'UpdateStreamingDistributionResult',
             'responseType' => 'model',
@@ -2124,7 +2209,7 @@ return array (
                 'xmlRoot' => array(
                     'name' => 'StreamingDistributionConfig',
                     'namespaces' => array(
-                        'http://cloudfront.amazonaws.com/doc/2014-11-06/',
+                        'http://cloudfront.amazonaws.com/doc/2015-07-27/',
                     ),
                 ),
             ),
@@ -2585,6 +2670,12 @@ return array (
                                 'SmoothStreaming' => array(
                                     'type' => 'boolean',
                                 ),
+                                'DefaultTTL' => array(
+                                    'type' => 'numeric',
+                                ),
+                                'MaxTTL' => array(
+                                    'type' => 'numeric',
+                                ),
                             ),
                         ),
                         'CacheBehaviors' => array(
@@ -2714,6 +2805,12 @@ return array (
                                             'SmoothStreaming' => array(
                                                 'type' => 'boolean',
                                             ),
+                                            'DefaultTTL' => array(
+                                                'type' => 'numeric',
+                                            ),
+                                            'MaxTTL' => array(
+                                                'type' => 'numeric',
+                                            ),
                                         ),
                                     ),
                                 ),
@@ -2815,6 +2912,9 @@ return array (
                                     ),
                                 ),
                             ),
+                        ),
+                        'WebACLId' => array(
+                            'type' => 'string',
                         ),
                     ),
                 ),
@@ -3036,7 +3136,7 @@ return array (
                 ),
             ),
         ),
-        'DeleteCloudFrontOriginAccessIdentity2014_11_06Output' => array(
+        'DeleteCloudFrontOriginAccessIdentity2015_07_27Output' => array(
             'type' => 'object',
             'additionalProperties' => true,
             'properties' => array(
@@ -3046,7 +3146,7 @@ return array (
                 ),
             ),
         ),
-        'DeleteDistribution2014_11_06Output' => array(
+        'DeleteDistribution2015_07_27Output' => array(
             'type' => 'object',
             'additionalProperties' => true,
             'properties' => array(
@@ -3056,7 +3156,7 @@ return array (
                 ),
             ),
         ),
-        'DeleteStreamingDistribution2014_11_06Output' => array(
+        'DeleteStreamingDistribution2015_07_27Output' => array(
             'type' => 'object',
             'additionalProperties' => true,
             'properties' => array(
@@ -3376,6 +3476,12 @@ return array (
                                 'SmoothStreaming' => array(
                                     'type' => 'boolean',
                                 ),
+                                'DefaultTTL' => array(
+                                    'type' => 'numeric',
+                                ),
+                                'MaxTTL' => array(
+                                    'type' => 'numeric',
+                                ),
                             ),
                         ),
                         'CacheBehaviors' => array(
@@ -3505,6 +3611,12 @@ return array (
                                             'SmoothStreaming' => array(
                                                 'type' => 'boolean',
                                             ),
+                                            'DefaultTTL' => array(
+                                                'type' => 'numeric',
+                                            ),
+                                            'MaxTTL' => array(
+                                                'type' => 'numeric',
+                                            ),
                                         ),
                                     ),
                                 ),
@@ -3606,6 +3718,9 @@ return array (
                                     ),
                                 ),
                             ),
+                        ),
+                        'WebACLId' => array(
+                            'type' => 'string',
                         ),
                     ),
                 ),
@@ -3813,6 +3928,12 @@ return array (
                         'SmoothStreaming' => array(
                             'type' => 'boolean',
                         ),
+                        'DefaultTTL' => array(
+                            'type' => 'numeric',
+                        ),
+                        'MaxTTL' => array(
+                            'type' => 'numeric',
+                        ),
                     ),
                 ),
                 'CacheBehaviors' => array(
@@ -3943,6 +4064,12 @@ return array (
                                     'SmoothStreaming' => array(
                                         'type' => 'boolean',
                                     ),
+                                    'DefaultTTL' => array(
+                                        'type' => 'numeric',
+                                    ),
+                                    'MaxTTL' => array(
+                                        'type' => 'numeric',
+                                    ),
                                 ),
                             ),
                         ),
@@ -4051,6 +4178,10 @@ return array (
                             ),
                         ),
                     ),
+                ),
+                'WebACLId' => array(
+                    'type' => 'string',
+                    'location' => 'xml',
                 ),
                 'ETag' => array(
                     'type' => 'string',
@@ -4625,6 +4756,12 @@ return array (
                                     'SmoothStreaming' => array(
                                         'type' => 'boolean',
                                     ),
+                                    'DefaultTTL' => array(
+                                        'type' => 'numeric',
+                                    ),
+                                    'MaxTTL' => array(
+                                        'type' => 'numeric',
+                                    ),
                                 ),
                             ),
                             'CacheBehaviors' => array(
@@ -4754,6 +4891,12 @@ return array (
                                                 'SmoothStreaming' => array(
                                                     'type' => 'boolean',
                                                 ),
+                                                'DefaultTTL' => array(
+                                                    'type' => 'numeric',
+                                                ),
+                                                'MaxTTL' => array(
+                                                    'type' => 'numeric',
+                                                ),
                                             ),
                                         ),
                                     ),
@@ -4838,6 +4981,470 @@ return array (
                                         ),
                                     ),
                                 ),
+                            ),
+                            'WebACLId' => array(
+                                'type' => 'string',
+                            ),
+                        ),
+                    ),
+                ),
+                'RequestId' => array(
+                    'location' => 'header',
+                    'sentAs' => 'x-amz-request-id',
+                ),
+            ),
+        ),
+        'ListDistributionsByWebACLIdResult' => array(
+            'type' => 'object',
+            'additionalProperties' => true,
+            'properties' => array(
+                'Marker' => array(
+                    'type' => 'string',
+                    'location' => 'xml',
+                ),
+                'NextMarker' => array(
+                    'type' => 'string',
+                    'location' => 'xml',
+                ),
+                'MaxItems' => array(
+                    'type' => 'numeric',
+                    'location' => 'xml',
+                ),
+                'IsTruncated' => array(
+                    'type' => 'boolean',
+                    'location' => 'xml',
+                ),
+                'Quantity' => array(
+                    'type' => 'numeric',
+                    'location' => 'xml',
+                ),
+                'Items' => array(
+                    'type' => 'array',
+                    'location' => 'xml',
+                    'items' => array(
+                        'name' => 'DistributionSummary',
+                        'type' => 'object',
+                        'sentAs' => 'DistributionSummary',
+                        'properties' => array(
+                            'Id' => array(
+                                'type' => 'string',
+                            ),
+                            'Status' => array(
+                                'type' => 'string',
+                            ),
+                            'LastModifiedTime' => array(
+                                'type' => 'string',
+                            ),
+                            'DomainName' => array(
+                                'type' => 'string',
+                            ),
+                            'Aliases' => array(
+                                'type' => 'object',
+                                'properties' => array(
+                                    'Quantity' => array(
+                                        'type' => 'numeric',
+                                    ),
+                                    'Items' => array(
+                                        'type' => 'array',
+                                        'items' => array(
+                                            'name' => 'CNAME',
+                                            'type' => 'string',
+                                            'sentAs' => 'CNAME',
+                                        ),
+                                    ),
+                                ),
+                            ),
+                            'Origins' => array(
+                                'type' => 'object',
+                                'properties' => array(
+                                    'Quantity' => array(
+                                        'type' => 'numeric',
+                                    ),
+                                    'Items' => array(
+                                        'type' => 'array',
+                                        'items' => array(
+                                            'name' => 'Origin',
+                                            'type' => 'object',
+                                            'sentAs' => 'Origin',
+                                            'properties' => array(
+                                                'Id' => array(
+                                                    'type' => 'string',
+                                                ),
+                                                'DomainName' => array(
+                                                    'type' => 'string',
+                                                ),
+                                                'OriginPath' => array(
+                                                    'type' => 'string',
+                                                ),
+                                                'S3OriginConfig' => array(
+                                                    'type' => 'object',
+                                                    'properties' => array(
+                                                        'OriginAccessIdentity' => array(
+                                                            'type' => 'string',
+                                                        ),
+                                                    ),
+                                                ),
+                                                'CustomOriginConfig' => array(
+                                                    'type' => 'object',
+                                                    'properties' => array(
+                                                        'HTTPPort' => array(
+                                                            'type' => 'numeric',
+                                                        ),
+                                                        'HTTPSPort' => array(
+                                                            'type' => 'numeric',
+                                                        ),
+                                                        'OriginProtocolPolicy' => array(
+                                                            'type' => 'string',
+                                                        ),
+                                                    ),
+                                                ),
+                                            ),
+                                        ),
+                                    ),
+                                ),
+                            ),
+                            'DefaultCacheBehavior' => array(
+                                'type' => 'object',
+                                'properties' => array(
+                                    'TargetOriginId' => array(
+                                        'type' => 'string',
+                                    ),
+                                    'ForwardedValues' => array(
+                                        'type' => 'object',
+                                        'properties' => array(
+                                            'QueryString' => array(
+                                                'type' => 'boolean',
+                                            ),
+                                            'Cookies' => array(
+                                                'type' => 'object',
+                                                'properties' => array(
+                                                    'Forward' => array(
+                                                        'type' => 'string',
+                                                    ),
+                                                    'WhitelistedNames' => array(
+                                                        'type' => 'object',
+                                                        'properties' => array(
+                                                            'Quantity' => array(
+                                                                'type' => 'numeric',
+                                                            ),
+                                                            'Items' => array(
+                                                                'type' => 'array',
+                                                                'items' => array(
+                                                                    'name' => 'Name',
+                                                                    'type' => 'string',
+                                                                    'sentAs' => 'Name',
+                                                                ),
+                                                            ),
+                                                        ),
+                                                    ),
+                                                ),
+                                            ),
+                                            'Headers' => array(
+                                                'type' => 'object',
+                                                'properties' => array(
+                                                    'Quantity' => array(
+                                                        'type' => 'numeric',
+                                                    ),
+                                                    'Items' => array(
+                                                        'type' => 'array',
+                                                        'items' => array(
+                                                            'name' => 'Name',
+                                                            'type' => 'string',
+                                                            'sentAs' => 'Name',
+                                                        ),
+                                                    ),
+                                                ),
+                                            ),
+                                        ),
+                                    ),
+                                    'TrustedSigners' => array(
+                                        'type' => 'object',
+                                        'properties' => array(
+                                            'Enabled' => array(
+                                                'type' => 'boolean',
+                                            ),
+                                            'Quantity' => array(
+                                                'type' => 'numeric',
+                                            ),
+                                            'Items' => array(
+                                                'type' => 'array',
+                                                'items' => array(
+                                                    'name' => 'AwsAccountNumber',
+                                                    'type' => 'string',
+                                                    'sentAs' => 'AwsAccountNumber',
+                                                ),
+                                            ),
+                                        ),
+                                    ),
+                                    'ViewerProtocolPolicy' => array(
+                                        'type' => 'string',
+                                    ),
+                                    'MinTTL' => array(
+                                        'type' => 'numeric',
+                                    ),
+                                    'AllowedMethods' => array(
+                                        'type' => 'object',
+                                        'properties' => array(
+                                            'Quantity' => array(
+                                                'type' => 'numeric',
+                                            ),
+                                            'Items' => array(
+                                                'type' => 'array',
+                                                'items' => array(
+                                                    'name' => 'Method',
+                                                    'type' => 'string',
+                                                    'sentAs' => 'Method',
+                                                ),
+                                            ),
+                                            'CachedMethods' => array(
+                                                'type' => 'object',
+                                                'properties' => array(
+                                                    'Quantity' => array(
+                                                        'type' => 'numeric',
+                                                    ),
+                                                    'Items' => array(
+                                                        'type' => 'array',
+                                                        'items' => array(
+                                                            'name' => 'Method',
+                                                            'type' => 'string',
+                                                            'sentAs' => 'Method',
+                                                        ),
+                                                    ),
+                                                ),
+                                            ),
+                                        ),
+                                    ),
+                                    'SmoothStreaming' => array(
+                                        'type' => 'boolean',
+                                    ),
+                                    'DefaultTTL' => array(
+                                        'type' => 'numeric',
+                                    ),
+                                    'MaxTTL' => array(
+                                        'type' => 'numeric',
+                                    ),
+                                ),
+                            ),
+                            'CacheBehaviors' => array(
+                                'type' => 'object',
+                                'properties' => array(
+                                    'Quantity' => array(
+                                        'type' => 'numeric',
+                                    ),
+                                    'Items' => array(
+                                        'type' => 'array',
+                                        'items' => array(
+                                            'name' => 'CacheBehavior',
+                                            'type' => 'object',
+                                            'sentAs' => 'CacheBehavior',
+                                            'properties' => array(
+                                                'PathPattern' => array(
+                                                    'type' => 'string',
+                                                ),
+                                                'TargetOriginId' => array(
+                                                    'type' => 'string',
+                                                ),
+                                                'ForwardedValues' => array(
+                                                    'type' => 'object',
+                                                    'properties' => array(
+                                                        'QueryString' => array(
+                                                            'type' => 'boolean',
+                                                        ),
+                                                        'Cookies' => array(
+                                                            'type' => 'object',
+                                                            'properties' => array(
+                                                                'Forward' => array(
+                                                                    'type' => 'string',
+                                                                ),
+                                                                'WhitelistedNames' => array(
+                                                                    'type' => 'object',
+                                                                    'properties' => array(
+                                                                        'Quantity' => array(
+                                                                            'type' => 'numeric',
+                                                                        ),
+                                                                        'Items' => array(
+                                                                            'type' => 'array',
+                                                                            'items' => array(
+                                                                                'name' => 'Name',
+                                                                                'type' => 'string',
+                                                                                'sentAs' => 'Name',
+                                                                            ),
+                                                                        ),
+                                                                    ),
+                                                                ),
+                                                            ),
+                                                        ),
+                                                        'Headers' => array(
+                                                            'type' => 'object',
+                                                            'properties' => array(
+                                                                'Quantity' => array(
+                                                                    'type' => 'numeric',
+                                                                ),
+                                                                'Items' => array(
+                                                                    'type' => 'array',
+                                                                    'items' => array(
+                                                                        'name' => 'Name',
+                                                                        'type' => 'string',
+                                                                        'sentAs' => 'Name',
+                                                                    ),
+                                                                ),
+                                                            ),
+                                                        ),
+                                                    ),
+                                                ),
+                                                'TrustedSigners' => array(
+                                                    'type' => 'object',
+                                                    'properties' => array(
+                                                        'Enabled' => array(
+                                                            'type' => 'boolean',
+                                                        ),
+                                                        'Quantity' => array(
+                                                            'type' => 'numeric',
+                                                        ),
+                                                        'Items' => array(
+                                                            'type' => 'array',
+                                                            'items' => array(
+                                                                'name' => 'AwsAccountNumber',
+                                                                'type' => 'string',
+                                                                'sentAs' => 'AwsAccountNumber',
+                                                            ),
+                                                        ),
+                                                    ),
+                                                ),
+                                                'ViewerProtocolPolicy' => array(
+                                                    'type' => 'string',
+                                                ),
+                                                'MinTTL' => array(
+                                                    'type' => 'numeric',
+                                                ),
+                                                'AllowedMethods' => array(
+                                                    'type' => 'object',
+                                                    'properties' => array(
+                                                        'Quantity' => array(
+                                                            'type' => 'numeric',
+                                                        ),
+                                                        'Items' => array(
+                                                            'type' => 'array',
+                                                            'items' => array(
+                                                                'name' => 'Method',
+                                                                'type' => 'string',
+                                                                'sentAs' => 'Method',
+                                                            ),
+                                                        ),
+                                                        'CachedMethods' => array(
+                                                            'type' => 'object',
+                                                            'properties' => array(
+                                                                'Quantity' => array(
+                                                                    'type' => 'numeric',
+                                                                ),
+                                                                'Items' => array(
+                                                                    'type' => 'array',
+                                                                    'items' => array(
+                                                                        'name' => 'Method',
+                                                                        'type' => 'string',
+                                                                        'sentAs' => 'Method',
+                                                                    ),
+                                                                ),
+                                                            ),
+                                                        ),
+                                                    ),
+                                                ),
+                                                'SmoothStreaming' => array(
+                                                    'type' => 'boolean',
+                                                ),
+                                                'DefaultTTL' => array(
+                                                    'type' => 'numeric',
+                                                ),
+                                                'MaxTTL' => array(
+                                                    'type' => 'numeric',
+                                                ),
+                                            ),
+                                        ),
+                                    ),
+                                ),
+                            ),
+                            'CustomErrorResponses' => array(
+                                'type' => 'object',
+                                'properties' => array(
+                                    'Quantity' => array(
+                                        'type' => 'numeric',
+                                    ),
+                                    'Items' => array(
+                                        'type' => 'array',
+                                        'items' => array(
+                                            'name' => 'CustomErrorResponse',
+                                            'type' => 'object',
+                                            'sentAs' => 'CustomErrorResponse',
+                                            'properties' => array(
+                                                'ErrorCode' => array(
+                                                    'type' => 'numeric',
+                                                ),
+                                                'ResponsePagePath' => array(
+                                                    'type' => 'string',
+                                                ),
+                                                'ResponseCode' => array(
+                                                    'type' => 'string',
+                                                ),
+                                                'ErrorCachingMinTTL' => array(
+                                                    'type' => 'numeric',
+                                                ),
+                                            ),
+                                        ),
+                                    ),
+                                ),
+                            ),
+                            'Comment' => array(
+                                'type' => 'string',
+                            ),
+                            'PriceClass' => array(
+                                'type' => 'string',
+                            ),
+                            'Enabled' => array(
+                                'type' => 'boolean',
+                            ),
+                            'ViewerCertificate' => array(
+                                'type' => 'object',
+                                'properties' => array(
+                                    'IAMCertificateId' => array(
+                                        'type' => 'string',
+                                    ),
+                                    'CloudFrontDefaultCertificate' => array(
+                                        'type' => 'boolean',
+                                    ),
+                                    'SSLSupportMethod' => array(
+                                        'type' => 'string',
+                                    ),
+                                    'MinimumProtocolVersion' => array(
+                                        'type' => 'string',
+                                    ),
+                                ),
+                            ),
+                            'Restrictions' => array(
+                                'type' => 'object',
+                                'properties' => array(
+                                    'GeoRestriction' => array(
+                                        'type' => 'object',
+                                        'properties' => array(
+                                            'RestrictionType' => array(
+                                                'type' => 'string',
+                                            ),
+                                            'Quantity' => array(
+                                                'type' => 'numeric',
+                                            ),
+                                            'Items' => array(
+                                                'type' => 'array',
+                                                'items' => array(
+                                                    'name' => 'Location',
+                                                    'type' => 'string',
+                                                    'sentAs' => 'Location',
+                                                ),
+                                            ),
+                                        ),
+                                    ),
+                                ),
+                            ),
+                            'WebACLId' => array(
+                                'type' => 'string',
                             ),
                         ),
                     ),
@@ -5294,6 +5901,12 @@ return array (
                                 'SmoothStreaming' => array(
                                     'type' => 'boolean',
                                 ),
+                                'DefaultTTL' => array(
+                                    'type' => 'numeric',
+                                ),
+                                'MaxTTL' => array(
+                                    'type' => 'numeric',
+                                ),
                             ),
                         ),
                         'CacheBehaviors' => array(
@@ -5423,6 +6036,12 @@ return array (
                                             'SmoothStreaming' => array(
                                                 'type' => 'boolean',
                                             ),
+                                            'DefaultTTL' => array(
+                                                'type' => 'numeric',
+                                            ),
+                                            'MaxTTL' => array(
+                                                'type' => 'numeric',
+                                            ),
                                         ),
                                     ),
                                 ),
@@ -5524,6 +6143,9 @@ return array (
                                     ),
                                 ),
                             ),
+                        ),
+                        'WebACLId' => array(
+                            'type' => 'string',
                         ),
                     ),
                 ),

@@ -69,6 +69,7 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method Model getBucketAcl(array $args = array()) {@command S3 GetBucketAcl}
  * @method Model getBucketCors(array $args = array()) {@command S3 GetBucketCors}
  * @method Model getBucketLifecycle(array $args = array()) {@command S3 GetBucketLifecycle}
+ * @method Model getBucketLifecycleConfiguration(array $args = array()) {@command S3 GetBucketLifecycleConfiguration}
  * @method Model getBucketLocation(array $args = array()) {@command S3 GetBucketLocation}
  * @method Model getBucketLogging(array $args = array()) {@command S3 GetBucketLogging}
  * @method Model getBucketNotification(array $args = array()) {@command S3 GetBucketNotification}
@@ -92,6 +93,7 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method Model putBucketAcl(array $args = array()) {@command S3 PutBucketAcl}
  * @method Model putBucketCors(array $args = array()) {@command S3 PutBucketCors}
  * @method Model putBucketLifecycle(array $args = array()) {@command S3 PutBucketLifecycle}
+ * @method Model putBucketLifecycleConfiguration(array $args = array()) {@command S3 PutBucketLifecycleConfiguration}
  * @method Model putBucketLogging(array $args = array()) {@command S3 PutBucketLogging}
  * @method Model putBucketNotification(array $args = array()) {@command S3 PutBucketNotification}
  * @method Model putBucketNotificationConfiguration(array $args = array()) {@command S3 PutBucketNotificationConfiguration}
@@ -169,7 +171,8 @@ class S3Client extends AbstractClient
 
         // Configure the custom exponential backoff plugin for retrying S3 specific errors
         if (!isset($config[Options::BACKOFF])) {
-            $config[Options::BACKOFF] = static::createBackoffPlugin($exceptionParser);
+            $retries = isset($config[Options::BACKOFF_RETRIES]) ? $config[Options::BACKOFF_RETRIES] : 3;
+            $config[Options::BACKOFF] = static::createBackoffPlugin($exceptionParser, $retries);
         }
 
         $config[Options::SIGNATURE] = $signature = static::createSignature($config);
@@ -241,10 +244,10 @@ class S3Client extends AbstractClient
      *
      * @return BackoffPlugin
      */
-    private static function createBackoffPlugin(S3ExceptionParser $exceptionParser)
+    private static function createBackoffPlugin(S3ExceptionParser $exceptionParser, $retries = 3)
     {
         return new BackoffPlugin(
-            new TruncatedBackoffStrategy(3,
+            new TruncatedBackoffStrategy($retries,
                 new IncompleteMultipartUploadChecker(
                     new CurlBackoffStrategy(null,
                         new HttpBackoffStrategy(null,
