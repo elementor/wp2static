@@ -1,5 +1,213 @@
 # CHANGELOG
 
+## 2.8.31 - 2016-07-25
+
+* `Add configurable backoff retries`
+
+## 2.8.30 - 2016-05-03
+
+* `Aws\Lambda` - Fixed bug in `UpdateFunctionCode`.
+
+## 2.8.29 - 2016-04-11
+
+* `Aws\Lambda` - Fixed bug in `UpdateFunctionCode`.
+
+## 2.8.28 - 2016-04-05
+
+* `Aws\Common` - Fixed a race condition caused by credentials expiring and being
+  refreshed after a request signature had been partially calculated.
+
+## 2.8.27 - 2016-01-29
+
+* Remove all 'maxLength' constraints from models. This validation will be
+  handled server-side.
+
+## 2.8.26 - 2016-01-29
+
+* `Aws\Ssm` - Added support for long EC2 instance IDs.
+
+## 2.8.25 - 2016-01-25
+
+* `Aws\AutoScaling` - Added support for setting and describing instance
+  protection status.
+* `Aws\CloudFront` - Added support using AWS ACM certificates with CloudFront
+  distributions.
+* `Aws\CloudFront` - Added support for new origin security features.
+* `Aws\CloudFront` - Added support for GZip compression.
+* `Aws\Ec2` - Added support for EC2 dedicated hosts.
+* `Aws\Ec2` - Added support for scheduled instances.
+* `Aws\Ec2` - Added support for DNS resolution of public hostnames to private IP
+  addresses when queried over ClassicLink. Additionally, private hosted zones
+  associated with your VPC can now be accessed from a linked EC2-Classic
+  instance.
+* `Aws\Ec2` - Added support for managed NATs.
+* `Aws\Ec2` - Added support for specifying encryption on CopyImage commands.
+
+## 2.8.24 - 2015-11-16
+
+* `Aws\DeviceFarm` - Added support for managing projects, device pools, runs,
+  and uploads.
+* `Aws\DynamoDb` - Fixed bug where properly opening sessions might return false
+  on HHVM.
+* `Aws\DynamoDb` - Fixed bug where calling `session_regenerate_id` without
+  changing session data would prevent data from being carried over from the
+  previous session ID.
+* `Aws\Sts` - Added support for 64-character role session names.
+
+## 2.8.23 - 2015-11-02
+
+* `Aws\AutoScaling` - Added support for EBS encryption.
+* `Aws\Iam` - Added support for resource-based policy simulations.
+* `Aws\Iam` - Added support for service-aware policy simulation.
+* `Aws\Ssm` - Added support for EC2 Run Command, a new EC2 feature that enables
+  you to securely and remotely manage the configuration of your Amazon EC2
+  Windows instances.
+
+## 2.8.22 - 2015-10-15
+
+* `Aws\CloudFormation` - Added support for specifying affected resource types
+  in `CreateStack` and `UpdateStack` operations.
+* `Aws\CloudFormation` - Added support for the `DescribeAccountLimits` API.
+* `Aws\CloudFront` - Added support for WebACL identifiers and related
+  operations.
+* `Aws\Cloudtrail` - Added support for log file integrity validation, log
+  encryption with AWS KMS–Managed Keys (SSE-KMS), and trail tagging.
+* `Aws\CloudWatchLogs` - Added support for export task operations.
+* `Aws\ConfigService` - Added support for config rules, evaluation strategies,
+  and compliance querying.
+* `Aws\Ec2` - Added support for spot blocks.
+* `Aws\Ecs` - Added support for more Docker options hostname, Docker labels,
+  working directory, networking disabled, privileged execution, read-only root
+  filesystem, DNS servers, DNS search domains, ulimits, log configuration, extra
+  hosts (hosts to add to /etc/hosts), and security options (for MLS systems like
+  SELinux).
+* `Aws\Lambda` - Added support for function versioning.
+* `Aws\Kinesis` - Added support for increasing and decreasing stream retention
+  periods.
+* `Aws\Kms` - Added support for scheduling and cancelling key deletions and
+  listing retirable grants.
+* `Aws\S3` - Added support for specifying server side encryption on an when
+  uploading a part of a multipart upload.
+* `Aws\Ses` - Added support for inbound email APIs.
+* `Aws\Workspaces` - Added support for storage volume encryption with AWS KMS.
+
+## 2.8.21 - 2015-09-16
+
+* `Aws\Ec2` - Added support for the "diversified" SpotFleet allocation strategy.
+* `Aws\Ec2` - Added support for reading `StateMessage` and `DataEncryptionKeyId`
+  from a `DescribeSnapshots` response.
+* `Aws\Iam` - Added support for new policy simulation APIs.
+* `Aws\Kinesis` - Added support for timestamped GetRecords call.
+* `Aws\MachineLearning` - Fixed invalid validation constraint on `Predict`
+  operation.
+* `Aws\OpsWorks` - Added support for operations on ECS clusters.
+* `Aws\Route53` - Added support for calculated and latency health checks.
+* `Aws\S3` - Added support for new `STANDARD_IA` storage class.
+* `Aws\S3` - Added support for specifying storage class in cross-region
+  replication configuration.
+* `Aws\StorageGateway` - Added support for tagging and untagging resources.
+
+## 2.8.20 - 2015-09-03
+
+* `Aws\CodePipeline` - Added support for using encryption keys with artifact
+  stores.
+* `Aws\ConfigService` - Added support for the `ListDiscoveredResources`
+  operation and new resource types.
+* `Aws\Ec2` - Added support for using instance weights with the
+  `RequestSpotFleet` API.
+* `Aws\Sns` - Added support for configurable SigningCertURL host patterns.
+* `Aws\StorageGateway` - Added support for tagging and untagging resources.
+* Fixed issue with loading the phar from opcache.
+
+## 2.8.19 - 2015-08-20
+
+* `Aws\S3` - Added support for event notification filters.
+
+## 2.8.18 - 2015-08-12
+
+* `Aws\ElasticBeanstalk` - Added support for enhanced health reporting.
+* `Aws\Glacier` - Fixed an issue where content bodies that equaled false (e.g.,
+  '0') would not be uploaded.
+
+## 2.8.17 - 2015-08-04
+
+* `Aws\Common` - Fixed an issue with `RefreshableInstanceProfileCredentials`
+  serilaization.
+* `Aws\DeviceFarm` - Added support for the `GetAccountSettings` operation.
+
+## 2.8.16 - 2015-07-28
+
+* `Aws\CloudWatchLogs` - Added support for 4 new operations: `PutDestination`,
+  `PutDestinationPolicy`, `DescribeDestinations`, and `DeleteDestination`.
+* `Aws\S3` - Added support for receiving the storage class in the responses
+  for `GetObject` and `HeadObject` operations.
+
+## 2.8.15 - 2015-07-23
+
+* `Aws\CloudSearch` - Marked CloudSearchClient::getDomainClient as deprecated.
+  This method has been removed in v3 of the SDK.
+* `Aws\Ec2` - Added support for SpotFleetLaunchSpecification.
+* `Aws\Glacier` - Added support for the InitiateVaultLock, GetVaultLock,
+  AbortVaultLock, and CompleteVaultLock API operations.
+
+## 2.8.14 - 2015-07-14
+
+* `Aws\DeviceFarm` - Added support for AWS DeviceFarm, an app testing service 
+  that enables you to test your Android and Fire OS apps on real, physical 
+  phones and tablets that are hosted by AWS.
+* `Aws\DynamoDb` - Added support for consistent scans and update streams.
+* `Aws\DynamoDbStreams` - Added support for Amazon DynamoDB Streams, giving you
+  the ability to subscribe to the transactional log of all changes transpiring
+  in your DynamoDB table.
+
+## 2.8.13 - 2015-07-09
+
+* `Aws\AutoScaling` - Added support for step policies.
+* `Aws\CodeCommit` - Added support for AWS CodeCommit, a secure, highly
+  scalable, managed source control service that hosts private Git repositories.
+* `Aws\CodePipeline` - Added support for AWS CodePipeline, a continuous delivery
+  service that enables you to model, visualize, and automate the steps required
+  to release your software.
+* `Aws\Ec2` - Added support for encrypted snapshots.
+* `Aws\Iam` - Added support for uploading SSH public keys for authentication
+  with AWS CodeCommit.
+* `Aws\S3` - Fixed #609 to handle non-200 responses in the Stream Wrapper.
+* `Aws\Ses` - Added support for cross-account sending through the sending
+  authorization feature.
+* Fixed the way that cached credentials work via #670.
+
+## 2.8.11 - 2015-06-24
+
+* `Aws\CloudFront` - Added support for configurable `MaxTTL` and `DefaultTTL`.
+* `Aws\ConfigService` - Added support for recording changes for specific
+  resource types.
+* `Aws\Ecs` - Added support for sorting, deregistering, and overriding
+  environment variables for task definitions.
+* `Aws\Glacier` - Added support for the `AddTagsToVault`, `ListTagsForVault`,
+  and `RemoveTagsFromVault` API operations.
+* `Aws\OpwWorks` - Added support for specifying agent versions to be used on
+  instances.
+* `Aws\Redshift` - Added support for the `CreateSnapshotCopyGrant`,
+  `DescribeSnapshotCopyGrants`, and `DeleteSnapshotCopyGrant` API operations.
+* Fixed empty list serialization for Elastic Load Balancing and CloudFormation
+  operations.
+
+## 2.8.10 - 2015-06-11
+
+* `Aws\AutoScaling` - Added support for attaching and detaching load balancers.
+* `Aws\Ec2` - Added support for VPC flow logs and the M4 instance types.
+* `Aws\Ecs` - Added support for the UpdateContainerAgent operation.
+* `Aws\CloudHsm` - Fixed a configuration issue that was affecting some operations.
+
+## 2.8.9 - 2015-06-04
+
+* `Aws\CloudWatchLogs` - Added support for the PutSubscriptionFilter,
+  DescribeSubscriptionFilters, and DeleteSubscriptionFilter operations.
+* `Aws\DynamoDb` - Fixed the DynamoDB `Marshaler` to better handler empty maps.
+* `Aws\CognitoIdentity` - Added support for the DeleteIdentities operation,
+  and hiding disabled identities with the ListIdentities operation.
+* `Aws\StorageGateway` - Added support for the ListVolumeInitiators operation.
+
 ## 2.8.8 - 2015-05-28
 
 * `Aws\Lambda` - Added Amazon S3 upload support.
@@ -70,11 +278,11 @@ for details about any changes you may need to make to your code for this upgrade
 * `Aws\WorkSpaces` - Added support for the Amazon WorkSpaces service.
 * `Aws\Ecs` - Added support for the ECS service scheduler operations.
 * `Aws\S3` - Added support for the `getBucketNotificationConfiguration` and
-  `putBucketNotificationConfiguration` operations to the `S3Client` to replace 
+  `putBucketNotificationConfiguration` operations to the `S3Client` to replace
   the, now deprecated, `getBucketNotification` and `putBucketNotification`
   operations.
 * [BC] `Aws\Lambda` - Added support for the new AWS Lambda API, which has been
-  changed based on customer feedback during Lambda's preview period. 
+  changed based on customer feedback during Lambda's preview period.
 * `Aws\Common` - Deprecated "facades". They will not be present in Version 3 of
   the SDK.
 * `Aws\Common` - Added `getAwsErrorCode`, `getAwsErrorType` and `getAwsRequestId`
