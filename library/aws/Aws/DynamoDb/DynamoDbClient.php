@@ -77,7 +77,13 @@ class DynamoDbClient extends AbstractClient
         // Configure the custom exponential backoff plugin for DynamoDB throttling
         $exceptionParser = new JsonQueryExceptionParser();
         if (!isset($config[Options::BACKOFF])) {
-            $config[Options::BACKOFF] = self::createBackoffPlugin($exceptionParser);
+            $retries = isset($config[Options::BACKOFF_RETRIES]) ? $config[Options::BACKOFF_RETRIES] : 11;
+            $config[Options::BACKOFF] = new BackoffPlugin(
+                // Retry requests if the CRC32 header does not match the CRC32 of the response.
+                new Crc32ErrorChecker(
+                    self::createDynamoDbBackoffStrategy($exceptionParser, $retries)
+                )
+            );
         }
 
         // Construct the DynamoDB client with the client builder
@@ -96,30 +102,26 @@ class DynamoDbClient extends AbstractClient
     }
 
     /**
-     * Create an Amazon DynamoDB specific backoff plugin
+     * Create a DynamoDB-specific backoff strategy.
      *
      * @param JsonQueryExceptionParser $exceptionParser
      *
-     * @return BackoffPlugin
+     * @return TruncatedBackoffStrategy
+     * @internal
      */
-    private static function createBackoffPlugin(JsonQueryExceptionParser $exceptionParser)
+    public static function createDynamoDbBackoffStrategy(JsonQueryExceptionParser $exceptionParser, $retries = 11)
     {
-        return new BackoffPlugin(
-            // Retry requests (even if successful) if the CRC32 header is does not match the CRC32 of the response
-            new Crc32ErrorChecker(
-                // Retry failed requests up to 11 times instead of the normal 3
-                new TruncatedBackoffStrategy(11,
-                    // Retry failed requests with 400-level responses due to throttling
-                    new ThrottlingErrorChecker($exceptionParser,
-                        // Retry failed requests with 500-level responses
-                        new HttpBackoffStrategy(null,
-                            // Retry failed requests due to transient network or cURL problems
-                            new CurlBackoffStrategy(null,
-                                new ExpiredCredentialsChecker($exceptionParser,
-                                     // Use the custom retry delay method instead of default exponential backoff
-                                     new CallbackBackoffStrategy(__CLASS__ . '::calculateRetryDelay', false)
-                                )
-                            )
+        // Retry failed requests up to 11 times instead of the normal 3
+        return new TruncatedBackoffStrategy($retries,
+            // Retry failed requests with 400-level responses due to throttling
+            new ThrottlingErrorChecker($exceptionParser,
+                // Retry failed requests with 500-level responses
+                new HttpBackoffStrategy(null,
+                    // Retry failed requests due to transient network or cURL problems
+                    new CurlBackoffStrategy(null,
+                        new ExpiredCredentialsChecker($exceptionParser,
+                            // Use the custom retry delay method instead of default exponential backoff
+                            new CallbackBackoffStrategy(__CLASS__ . '::calculateRetryDelay', false)
                         )
                     )
                 )
@@ -170,6 +172,7 @@ class DynamoDbClient extends AbstractClient
      * @param int $retries Number of retries
      *
      * @return float Returns the amount of time to wait in seconds
+     * @internal
      */
     public static function calculateRetryDelay($retries)
     {

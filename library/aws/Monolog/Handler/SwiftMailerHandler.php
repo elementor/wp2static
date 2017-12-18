@@ -12,6 +12,7 @@
 namespace Monolog\Handler;
 
 use Monolog\Logger;
+use Monolog\Formatter\LineFormatter;
 
 /**
  * SwiftMailerHandler uses Swift_Mailer to send the emails
@@ -26,7 +27,7 @@ class SwiftMailerHandler extends MailHandler
     /**
      * @param \Swift_Mailer           $mailer  The mailer to use
      * @param callable|\Swift_Message $message An example message for real messages, only the body will be replaced
-     * @param integer                 $level   The minimum logging level at which this handler will be triggered
+     * @param int                     $level   The minimum logging level at which this handler will be triggered
      * @param Boolean                 $bubble  Whether the messages that are handled can bubble up the stack or not
      */
     public function __construct(\Swift_Mailer $mailer, $message, $level = Logger::ERROR, $bubble = true)
@@ -48,8 +49,8 @@ class SwiftMailerHandler extends MailHandler
     /**
      * Creates instance of Swift_Message to be sent
      *
-     * @param string $content formatted email body to be sent
-     * @param array  $records Log records that formed the content
+     * @param  string         $content formatted email body to be sent
+     * @param  array          $records Log records that formed the content
      * @return \Swift_Message
      */
     protected function buildMessage($content, array $records)
@@ -57,12 +58,18 @@ class SwiftMailerHandler extends MailHandler
         $message = null;
         if ($this->messageTemplate instanceof \Swift_Message) {
             $message = clone $this->messageTemplate;
-        } else if (is_callable($this->messageTemplate)) {
+            $message->generateId();
+        } elseif (is_callable($this->messageTemplate)) {
             $message = call_user_func($this->messageTemplate, $content, $records);
         }
 
         if (!$message instanceof \Swift_Message) {
             throw new \InvalidArgumentException('Could not resolve message as instance of Swift_Message or a callable returning it');
+        }
+
+        if ($records) {
+            $subjectFormatter = new LineFormatter($message->getSubject());
+            $message->setSubject($subjectFormatter->format($this->getHighestRecord($records)));
         }
 
         $message->setBody($content);

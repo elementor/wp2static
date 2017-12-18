@@ -91,7 +91,6 @@ return array (
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 4,
-                    'maxLength' => 23,
                 ),
             ),
             'errorResponses' => array(
@@ -123,7 +122,6 @@ return array (
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 4,
-                    'maxLength' => 63,
                 ),
             ),
         ),
@@ -149,12 +147,10 @@ return array (
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 1,
-                    'maxLength' => 100,
                 ),
                 'Description' => array(
                     'type' => 'string',
                     'location' => 'aws.query',
-                    'maxLength' => 200,
                 ),
             ),
             'errorResponses' => array(
@@ -186,19 +182,16 @@ return array (
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 1,
-                    'maxLength' => 100,
                 ),
                 'VersionLabel' => array(
                     'required' => true,
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 1,
-                    'maxLength' => 100,
                 ),
                 'Description' => array(
                     'type' => 'string',
                     'location' => 'aws.query',
-                    'maxLength' => 200,
                 ),
                 'SourceBundle' => array(
                     'type' => 'object',
@@ -206,11 +199,9 @@ return array (
                     'properties' => array(
                         'S3Bucket' => array(
                             'type' => 'string',
-                            'maxLength' => 255,
                         ),
                         'S3Key' => array(
                             'type' => 'string',
-                            'maxLength' => 1024,
                         ),
                     ),
                 ),
@@ -261,19 +252,16 @@ return array (
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 1,
-                    'maxLength' => 100,
                 ),
                 'TemplateName' => array(
                     'required' => true,
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 1,
-                    'maxLength' => 100,
                 ),
                 'SolutionStackName' => array(
                     'type' => 'string',
                     'location' => 'aws.query',
-                    'maxLength' => 100,
                 ),
                 'SourceConfiguration' => array(
                     'type' => 'object',
@@ -282,12 +270,10 @@ return array (
                         'ApplicationName' => array(
                             'type' => 'string',
                             'minLength' => 1,
-                            'maxLength' => 100,
                         ),
                         'TemplateName' => array(
                             'type' => 'string',
                             'minLength' => 1,
-                            'maxLength' => 100,
                         ),
                     ),
                 ),
@@ -298,7 +284,6 @@ return array (
                 'Description' => array(
                     'type' => 'string',
                     'location' => 'aws.query',
-                    'maxLength' => 200,
                 ),
                 'OptionSettings' => array(
                     'type' => 'array',
@@ -311,7 +296,6 @@ return array (
                             'ResourceName' => array(
                                 'type' => 'string',
                                 'minLength' => 1,
-                                'maxLength' => 256,
                             ),
                             'Namespace' => array(
                                 'type' => 'string',
@@ -359,25 +343,21 @@ return array (
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 1,
-                    'maxLength' => 100,
                 ),
                 'EnvironmentName' => array(
                     'required' => true,
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 4,
-                    'maxLength' => 23,
                 ),
                 'Description' => array(
                     'type' => 'string',
                     'location' => 'aws.query',
-                    'maxLength' => 200,
                 ),
                 'CNAMEPrefix' => array(
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 4,
-                    'maxLength' => 63,
                 ),
                 'Tier' => array(
                     'type' => 'object',
@@ -405,12 +385,10 @@ return array (
                             'Key' => array(
                                 'type' => 'string',
                                 'minLength' => 1,
-                                'maxLength' => 128,
                             ),
                             'Value' => array(
                                 'type' => 'string',
                                 'minLength' => 1,
-                                'maxLength' => 256,
                             ),
                         ),
                     ),
@@ -419,18 +397,15 @@ return array (
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 1,
-                    'maxLength' => 100,
                 ),
                 'TemplateName' => array(
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 1,
-                    'maxLength' => 100,
                 ),
                 'SolutionStackName' => array(
                     'type' => 'string',
                     'location' => 'aws.query',
-                    'maxLength' => 100,
                 ),
                 'OptionSettings' => array(
                     'type' => 'array',
@@ -443,7 +418,6 @@ return array (
                             'ResourceName' => array(
                                 'type' => 'string',
                                 'minLength' => 1,
-                                'maxLength' => 256,
                             ),
                             'Namespace' => array(
                                 'type' => 'string',
@@ -468,7 +442,6 @@ return array (
                             'ResourceName' => array(
                                 'type' => 'string',
                                 'minLength' => 1,
-                                'maxLength' => 256,
                             ),
                             'Namespace' => array(
                                 'type' => 'string',
@@ -546,7 +519,6 @@ return array (
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 1,
-                    'maxLength' => 100,
                 ),
                 'TerminateEnvByForce' => array(
                     'type' => 'boolean',
@@ -556,7 +528,7 @@ return array (
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'Unable to perform the specified operation because another operation is already in progress affecting an an element in this activity.',
+                    'reason' => 'Unable to perform the specified operation because another operation is already in progress affecting an element in this activity.',
                     'class' => 'OperationInProgressException',
                 ),
             ),
@@ -583,14 +555,12 @@ return array (
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 1,
-                    'maxLength' => 100,
                 ),
                 'VersionLabel' => array(
                     'required' => true,
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 1,
-                    'maxLength' => 100,
                 ),
                 'DeleteSourceBundle' => array(
                     'type' => 'boolean',
@@ -608,7 +578,7 @@ return array (
                     'class' => 'InsufficientPrivilegesException',
                 ),
                 array(
-                    'reason' => 'Unable to perform the specified operation because another operation is already in progress affecting an an element in this activity.',
+                    'reason' => 'Unable to perform the specified operation because another operation is already in progress affecting an element in this activity.',
                     'class' => 'OperationInProgressException',
                 ),
                 array(
@@ -639,19 +609,17 @@ return array (
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 1,
-                    'maxLength' => 100,
                 ),
                 'TemplateName' => array(
                     'required' => true,
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 1,
-                    'maxLength' => 100,
                 ),
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'Unable to perform the specified operation because another operation is already in progress affecting an an element in this activity.',
+                    'reason' => 'Unable to perform the specified operation because another operation is already in progress affecting an element in this activity.',
                     'class' => 'OperationInProgressException',
                 ),
             ),
@@ -678,14 +646,12 @@ return array (
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 1,
-                    'maxLength' => 100,
                 ),
                 'EnvironmentName' => array(
                     'required' => true,
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 4,
-                    'maxLength' => 23,
                 ),
             ),
         ),
@@ -710,7 +676,6 @@ return array (
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 1,
-                    'maxLength' => 100,
                 ),
                 'VersionLabels' => array(
                     'type' => 'array',
@@ -720,7 +685,6 @@ return array (
                         'name' => 'VersionLabel',
                         'type' => 'string',
                         'minLength' => 1,
-                        'maxLength' => 100,
                     ),
                 ),
             ),
@@ -750,7 +714,6 @@ return array (
                         'name' => 'ApplicationName',
                         'type' => 'string',
                         'minLength' => 1,
-                        'maxLength' => 100,
                     ),
                 ),
             ),
@@ -776,24 +739,20 @@ return array (
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 1,
-                    'maxLength' => 100,
                 ),
                 'TemplateName' => array(
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 1,
-                    'maxLength' => 100,
                 ),
                 'EnvironmentName' => array(
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 4,
-                    'maxLength' => 23,
                 ),
                 'SolutionStackName' => array(
                     'type' => 'string',
                     'location' => 'aws.query',
-                    'maxLength' => 100,
                 ),
                 'Options' => array(
                     'type' => 'array',
@@ -806,7 +765,6 @@ return array (
                             'ResourceName' => array(
                                 'type' => 'string',
                                 'minLength' => 1,
-                                'maxLength' => 256,
                             ),
                             'Namespace' => array(
                                 'type' => 'string',
@@ -841,19 +799,62 @@ return array (
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 1,
-                    'maxLength' => 100,
                 ),
                 'TemplateName' => array(
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 1,
-                    'maxLength' => 100,
                 ),
                 'EnvironmentName' => array(
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 4,
-                    'maxLength' => 23,
+                ),
+            ),
+        ),
+        'DescribeEnvironmentHealth' => array(
+            'httpMethod' => 'POST',
+            'uri' => '/',
+            'class' => 'Aws\\Common\\Command\\QueryCommand',
+            'responseClass' => 'DescribeEnvironmentHealthResult',
+            'responseType' => 'model',
+            'parameters' => array(
+                'Action' => array(
+                    'static' => true,
+                    'location' => 'aws.query',
+                    'default' => 'DescribeEnvironmentHealth',
+                ),
+                'Version' => array(
+                    'static' => true,
+                    'location' => 'aws.query',
+                    'default' => '2010-12-01',
+                ),
+                'EnvironmentName' => array(
+                    'type' => 'string',
+                    'location' => 'aws.query',
+                    'minLength' => 4,
+                ),
+                'EnvironmentId' => array(
+                    'type' => 'string',
+                    'location' => 'aws.query',
+                ),
+                'AttributeNames' => array(
+                    'type' => 'array',
+                    'location' => 'aws.query',
+                    'sentAs' => 'AttributeNames.member',
+                    'items' => array(
+                        'name' => 'EnvironmentHealthAttribute',
+                        'type' => 'string',
+                    ),
+                ),
+            ),
+            'errorResponses' => array(
+                array(
+                    'reason' => 'The request is invalid, please check parameters and their values',
+                    'class' => 'InvalidRequestException',
+                ),
+                array(
+                    'class' => 'ElasticBeanstalkServiceException',
                 ),
             ),
         ),
@@ -882,7 +883,6 @@ return array (
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 4,
-                    'maxLength' => 23,
                 ),
             ),
             'errorResponses' => array(
@@ -913,13 +913,11 @@ return array (
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 1,
-                    'maxLength' => 100,
                 ),
                 'VersionLabel' => array(
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 1,
-                    'maxLength' => 100,
                 ),
                 'EnvironmentIds' => array(
                     'type' => 'array',
@@ -938,7 +936,6 @@ return array (
                         'name' => 'EnvironmentName',
                         'type' => 'string',
                         'minLength' => 4,
-                        'maxLength' => 23,
                     ),
                 ),
                 'IncludeDeleted' => array(
@@ -978,19 +975,16 @@ return array (
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 1,
-                    'maxLength' => 100,
                 ),
                 'VersionLabel' => array(
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 1,
-                    'maxLength' => 100,
                 ),
                 'TemplateName' => array(
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 1,
-                    'maxLength' => 100,
                 ),
                 'EnvironmentId' => array(
                     'type' => 'string',
@@ -1000,7 +994,6 @@ return array (
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 4,
-                    'maxLength' => 23,
                 ),
                 'RequestId' => array(
                     'type' => 'string',
@@ -1037,6 +1030,57 @@ return array (
                 'NextToken' => array(
                     'type' => 'string',
                     'location' => 'aws.query',
+                ),
+            ),
+        ),
+        'DescribeInstancesHealth' => array(
+            'httpMethod' => 'POST',
+            'uri' => '/',
+            'class' => 'Aws\\Common\\Command\\QueryCommand',
+            'responseClass' => 'DescribeInstancesHealthResult',
+            'responseType' => 'model',
+            'parameters' => array(
+                'Action' => array(
+                    'static' => true,
+                    'location' => 'aws.query',
+                    'default' => 'DescribeInstancesHealth',
+                ),
+                'Version' => array(
+                    'static' => true,
+                    'location' => 'aws.query',
+                    'default' => '2010-12-01',
+                ),
+                'EnvironmentName' => array(
+                    'type' => 'string',
+                    'location' => 'aws.query',
+                    'minLength' => 4,
+                ),
+                'EnvironmentId' => array(
+                    'type' => 'string',
+                    'location' => 'aws.query',
+                ),
+                'AttributeNames' => array(
+                    'type' => 'array',
+                    'location' => 'aws.query',
+                    'sentAs' => 'AttributeNames.member',
+                    'items' => array(
+                        'name' => 'InstancesHealthAttribute',
+                        'type' => 'string',
+                    ),
+                ),
+                'NextToken' => array(
+                    'type' => 'string',
+                    'location' => 'aws.query',
+                    'minLength' => 1,
+                ),
+            ),
+            'errorResponses' => array(
+                array(
+                    'reason' => 'The request is invalid, please check parameters and their values',
+                    'class' => 'InvalidRequestException',
+                ),
+                array(
+                    'class' => 'ElasticBeanstalkServiceException',
                 ),
             ),
         ),
@@ -1084,7 +1128,6 @@ return array (
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 4,
-                    'maxLength' => 23,
                 ),
             ),
             'errorResponses' => array(
@@ -1119,7 +1162,6 @@ return array (
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 4,
-                    'maxLength' => 23,
                 ),
                 'InfoType' => array(
                     'required' => true,
@@ -1153,7 +1195,6 @@ return array (
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 4,
-                    'maxLength' => 23,
                 ),
             ),
         ),
@@ -1182,7 +1223,6 @@ return array (
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 4,
-                    'maxLength' => 23,
                 ),
                 'InfoType' => array(
                     'required' => true,
@@ -1216,7 +1256,6 @@ return array (
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 4,
-                    'maxLength' => 23,
                 ),
                 'DestinationEnvironmentId' => array(
                     'type' => 'string',
@@ -1226,7 +1265,6 @@ return array (
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 4,
-                    'maxLength' => 23,
                 ),
             ),
         ),
@@ -1255,7 +1293,6 @@ return array (
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 4,
-                    'maxLength' => 23,
                 ),
                 'TerminateResources' => array(
                     'type' => 'boolean',
@@ -1292,12 +1329,10 @@ return array (
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 1,
-                    'maxLength' => 100,
                 ),
                 'Description' => array(
                     'type' => 'string',
                     'location' => 'aws.query',
-                    'maxLength' => 200,
                 ),
             ),
         ),
@@ -1323,19 +1358,16 @@ return array (
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 1,
-                    'maxLength' => 100,
                 ),
                 'VersionLabel' => array(
                     'required' => true,
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 1,
-                    'maxLength' => 100,
                 ),
                 'Description' => array(
                     'type' => 'string',
                     'location' => 'aws.query',
-                    'maxLength' => 200,
                 ),
             ),
         ),
@@ -1361,19 +1393,16 @@ return array (
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 1,
-                    'maxLength' => 100,
                 ),
                 'TemplateName' => array(
                     'required' => true,
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 1,
-                    'maxLength' => 100,
                 ),
                 'Description' => array(
                     'type' => 'string',
                     'location' => 'aws.query',
-                    'maxLength' => 200,
                 ),
                 'OptionSettings' => array(
                     'type' => 'array',
@@ -1386,7 +1415,6 @@ return array (
                             'ResourceName' => array(
                                 'type' => 'string',
                                 'minLength' => 1,
-                                'maxLength' => 256,
                             ),
                             'Namespace' => array(
                                 'type' => 'string',
@@ -1411,7 +1439,6 @@ return array (
                             'ResourceName' => array(
                                 'type' => 'string',
                                 'minLength' => 1,
-                                'maxLength' => 256,
                             ),
                             'Namespace' => array(
                                 'type' => 'string',
@@ -1455,12 +1482,10 @@ return array (
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 4,
-                    'maxLength' => 23,
                 ),
                 'Description' => array(
                     'type' => 'string',
                     'location' => 'aws.query',
-                    'maxLength' => 200,
                 ),
                 'Tier' => array(
                     'type' => 'object',
@@ -1481,18 +1506,15 @@ return array (
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 1,
-                    'maxLength' => 100,
                 ),
                 'TemplateName' => array(
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 1,
-                    'maxLength' => 100,
                 ),
                 'SolutionStackName' => array(
                     'type' => 'string',
                     'location' => 'aws.query',
-                    'maxLength' => 100,
                 ),
                 'OptionSettings' => array(
                     'type' => 'array',
@@ -1505,7 +1527,6 @@ return array (
                             'ResourceName' => array(
                                 'type' => 'string',
                                 'minLength' => 1,
-                                'maxLength' => 256,
                             ),
                             'Namespace' => array(
                                 'type' => 'string',
@@ -1530,7 +1551,6 @@ return array (
                             'ResourceName' => array(
                                 'type' => 'string',
                                 'minLength' => 1,
-                                'maxLength' => 256,
                             ),
                             'Namespace' => array(
                                 'type' => 'string',
@@ -1571,19 +1591,16 @@ return array (
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 1,
-                    'maxLength' => 100,
                 ),
                 'TemplateName' => array(
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 1,
-                    'maxLength' => 100,
                 ),
                 'EnvironmentName' => array(
                     'type' => 'string',
                     'location' => 'aws.query',
                     'minLength' => 4,
-                    'maxLength' => 23,
                 ),
                 'OptionSettings' => array(
                     'required' => true,
@@ -1597,7 +1614,6 @@ return array (
                             'ResourceName' => array(
                                 'type' => 'string',
                                 'minLength' => 1,
-                                'maxLength' => 256,
                             ),
                             'Namespace' => array(
                                 'type' => 'string',
@@ -1835,6 +1851,10 @@ return array (
                     'location' => 'xml',
                 ),
                 'Health' => array(
+                    'type' => 'string',
+                    'location' => 'xml',
+                ),
+                'HealthStatus' => array(
                     'type' => 'string',
                     'location' => 'xml',
                 ),
@@ -2116,6 +2136,129 @@ return array (
                 ),
             ),
         ),
+        'DescribeEnvironmentHealthResult' => array(
+            'type' => 'object',
+            'additionalProperties' => true,
+            'properties' => array(
+                'EnvironmentName' => array(
+                    'type' => 'string',
+                    'location' => 'xml',
+                ),
+                'HealthStatus' => array(
+                    'type' => 'string',
+                    'location' => 'xml',
+                ),
+                'Status' => array(
+                    'type' => 'string',
+                    'location' => 'xml',
+                ),
+                'Color' => array(
+                    'type' => 'string',
+                    'location' => 'xml',
+                ),
+                'Causes' => array(
+                    'type' => 'array',
+                    'location' => 'xml',
+                    'items' => array(
+                        'name' => 'Cause',
+                        'type' => 'string',
+                        'sentAs' => 'member',
+                    ),
+                ),
+                'ApplicationMetrics' => array(
+                    'type' => 'object',
+                    'location' => 'xml',
+                    'properties' => array(
+                        'Duration' => array(
+                            'type' => 'numeric',
+                        ),
+                        'RequestCount' => array(
+                            'type' => 'numeric',
+                        ),
+                        'StatusCodes' => array(
+                            'type' => 'object',
+                            'properties' => array(
+                                'Status2xx' => array(
+                                    'type' => 'numeric',
+                                ),
+                                'Status3xx' => array(
+                                    'type' => 'numeric',
+                                ),
+                                'Status4xx' => array(
+                                    'type' => 'numeric',
+                                ),
+                                'Status5xx' => array(
+                                    'type' => 'numeric',
+                                ),
+                            ),
+                        ),
+                        'Latency' => array(
+                            'type' => 'object',
+                            'properties' => array(
+                                'P999' => array(
+                                    'type' => 'numeric',
+                                ),
+                                'P99' => array(
+                                    'type' => 'numeric',
+                                ),
+                                'P95' => array(
+                                    'type' => 'numeric',
+                                ),
+                                'P90' => array(
+                                    'type' => 'numeric',
+                                ),
+                                'P85' => array(
+                                    'type' => 'numeric',
+                                ),
+                                'P75' => array(
+                                    'type' => 'numeric',
+                                ),
+                                'P50' => array(
+                                    'type' => 'numeric',
+                                ),
+                                'P10' => array(
+                                    'type' => 'numeric',
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+                'InstancesHealth' => array(
+                    'type' => 'object',
+                    'location' => 'xml',
+                    'properties' => array(
+                        'NoData' => array(
+                            'type' => 'numeric',
+                        ),
+                        'Unknown' => array(
+                            'type' => 'numeric',
+                        ),
+                        'Pending' => array(
+                            'type' => 'numeric',
+                        ),
+                        'Ok' => array(
+                            'type' => 'numeric',
+                        ),
+                        'Info' => array(
+                            'type' => 'numeric',
+                        ),
+                        'Warning' => array(
+                            'type' => 'numeric',
+                        ),
+                        'Degraded' => array(
+                            'type' => 'numeric',
+                        ),
+                        'Severe' => array(
+                            'type' => 'numeric',
+                        ),
+                    ),
+                ),
+                'RefreshedAt' => array(
+                    'type' => 'string',
+                    'location' => 'xml',
+                ),
+            ),
+        ),
         'EnvironmentResourceDescriptionsMessage' => array(
             'type' => 'object',
             'additionalProperties' => true,
@@ -2266,6 +2409,9 @@ return array (
                             'Health' => array(
                                 'type' => 'string',
                             ),
+                            'HealthStatus' => array(
+                                'type' => 'string',
+                            ),
                             'Resources' => array(
                                 'type' => 'object',
                                 'properties' => array(
@@ -2355,6 +2501,147 @@ return array (
                             ),
                         ),
                     ),
+                ),
+                'NextToken' => array(
+                    'type' => 'string',
+                    'location' => 'xml',
+                ),
+            ),
+        ),
+        'DescribeInstancesHealthResult' => array(
+            'type' => 'object',
+            'additionalProperties' => true,
+            'properties' => array(
+                'InstanceHealthList' => array(
+                    'type' => 'array',
+                    'location' => 'xml',
+                    'items' => array(
+                        'name' => 'SingleInstanceHealth',
+                        'type' => 'object',
+                        'sentAs' => 'member',
+                        'properties' => array(
+                            'InstanceId' => array(
+                                'type' => 'string',
+                            ),
+                            'HealthStatus' => array(
+                                'type' => 'string',
+                            ),
+                            'Color' => array(
+                                'type' => 'string',
+                            ),
+                            'Causes' => array(
+                                'type' => 'array',
+                                'items' => array(
+                                    'name' => 'Cause',
+                                    'type' => 'string',
+                                    'sentAs' => 'member',
+                                ),
+                            ),
+                            'LaunchedAt' => array(
+                                'type' => 'string',
+                            ),
+                            'ApplicationMetrics' => array(
+                                'type' => 'object',
+                                'properties' => array(
+                                    'Duration' => array(
+                                        'type' => 'numeric',
+                                    ),
+                                    'RequestCount' => array(
+                                        'type' => 'numeric',
+                                    ),
+                                    'StatusCodes' => array(
+                                        'type' => 'object',
+                                        'properties' => array(
+                                            'Status2xx' => array(
+                                                'type' => 'numeric',
+                                            ),
+                                            'Status3xx' => array(
+                                                'type' => 'numeric',
+                                            ),
+                                            'Status4xx' => array(
+                                                'type' => 'numeric',
+                                            ),
+                                            'Status5xx' => array(
+                                                'type' => 'numeric',
+                                            ),
+                                        ),
+                                    ),
+                                    'Latency' => array(
+                                        'type' => 'object',
+                                        'properties' => array(
+                                            'P999' => array(
+                                                'type' => 'numeric',
+                                            ),
+                                            'P99' => array(
+                                                'type' => 'numeric',
+                                            ),
+                                            'P95' => array(
+                                                'type' => 'numeric',
+                                            ),
+                                            'P90' => array(
+                                                'type' => 'numeric',
+                                            ),
+                                            'P85' => array(
+                                                'type' => 'numeric',
+                                            ),
+                                            'P75' => array(
+                                                'type' => 'numeric',
+                                            ),
+                                            'P50' => array(
+                                                'type' => 'numeric',
+                                            ),
+                                            'P10' => array(
+                                                'type' => 'numeric',
+                                            ),
+                                        ),
+                                    ),
+                                ),
+                            ),
+                            'System' => array(
+                                'type' => 'object',
+                                'properties' => array(
+                                    'CPUUtilization' => array(
+                                        'type' => 'object',
+                                        'properties' => array(
+                                            'User' => array(
+                                                'type' => 'numeric',
+                                            ),
+                                            'Nice' => array(
+                                                'type' => 'numeric',
+                                            ),
+                                            'System' => array(
+                                                'type' => 'numeric',
+                                            ),
+                                            'Idle' => array(
+                                                'type' => 'numeric',
+                                            ),
+                                            'IOWait' => array(
+                                                'type' => 'numeric',
+                                            ),
+                                            'IRQ' => array(
+                                                'type' => 'numeric',
+                                            ),
+                                            'SoftIRQ' => array(
+                                                'type' => 'numeric',
+                                            ),
+                                        ),
+                                    ),
+                                    'LoadAverage' => array(
+                                        'type' => 'array',
+                                        'items' => array(
+                                            'name' => 'LoadAverageValue',
+                                            'type' => 'numeric',
+                                            'sentAs' => 'member',
+                                        ),
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+                'RefreshedAt' => array(
+                    'type' => 'string',
+                    'location' => 'xml',
                 ),
                 'NextToken' => array(
                     'type' => 'string',

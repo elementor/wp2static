@@ -53,12 +53,16 @@ return array (
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'These errors are usually caused by a server-side issue.',
+                    'reason' => 'These errors are usually caused by a server issue.',
                     'class' => 'ServerException',
                 ),
                 array(
-                    'reason' => 'These errors are usually caused by something the client did, such as use an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specify an identifier that is not valid.',
+                    'reason' => 'These errors are usually caused by a client action, such as using an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specifying an identifier that is not valid.',
                     'class' => 'ClientException',
+                ),
+                array(
+                    'reason' => 'The specified parameter is invalid. Review the available parameters for the API request.',
+                    'class' => 'InvalidParameterException',
                 ),
             ),
         ),
@@ -93,6 +97,7 @@ return array (
                     'location' => 'json',
                 ),
                 'taskDefinition' => array(
+                    'required' => true,
                     'type' => 'string',
                     'location' => 'json',
                 ),
@@ -116,6 +121,7 @@ return array (
                     ),
                 ),
                 'desiredCount' => array(
+                    'required' => true,
                     'type' => 'numeric',
                     'location' => 'json',
                 ),
@@ -130,12 +136,20 @@ return array (
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'These errors are usually caused by a server-side issue.',
+                    'reason' => 'These errors are usually caused by a server issue.',
                     'class' => 'ServerException',
                 ),
                 array(
-                    'reason' => 'These errors are usually caused by something the client did, such as use an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specify an identifier that is not valid.',
+                    'reason' => 'These errors are usually caused by a client action, such as using an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specifying an identifier that is not valid.',
                     'class' => 'ClientException',
+                ),
+                array(
+                    'reason' => 'The specified parameter is invalid. Review the available parameters for the API request.',
+                    'class' => 'InvalidParameterException',
+                ),
+                array(
+                    'reason' => 'The specified cluster could not be found. You can view your available clusters with ListClusters. Amazon ECS clusters are region-specific.',
+                    'class' => 'ClusterNotFoundException',
                 ),
             ),
         ),
@@ -168,12 +182,28 @@ return array (
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'These errors are usually caused by a server-side issue.',
+                    'reason' => 'These errors are usually caused by a server issue.',
                     'class' => 'ServerException',
                 ),
                 array(
-                    'reason' => 'These errors are usually caused by something the client did, such as use an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specify an identifier that is not valid.',
+                    'reason' => 'These errors are usually caused by a client action, such as using an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specifying an identifier that is not valid.',
                     'class' => 'ClientException',
+                ),
+                array(
+                    'reason' => 'The specified parameter is invalid. Review the available parameters for the API request.',
+                    'class' => 'InvalidParameterException',
+                ),
+                array(
+                    'reason' => 'The specified cluster could not be found. You can view your available clusters with ListClusters. Amazon ECS clusters are region-specific.',
+                    'class' => 'ClusterNotFoundException',
+                ),
+                array(
+                    'reason' => 'You cannot delete a cluster that has registered container instances. You must first deregister the container instances before you can delete the cluster. For more information, see DeregisterContainerInstance.',
+                    'class' => 'ClusterContainsContainerInstancesException',
+                ),
+                array(
+                    'reason' => 'You cannot delete a cluster that contains services. You must first update the service to reduce its desired task count to 0 and then delete the service. For more information, see UpdateService and DeleteService.',
+                    'class' => 'ClusterContainsServicesException',
                 ),
             ),
         ),
@@ -210,12 +240,24 @@ return array (
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'These errors are usually caused by a server-side issue.',
+                    'reason' => 'These errors are usually caused by a server issue.',
                     'class' => 'ServerException',
                 ),
                 array(
-                    'reason' => 'These errors are usually caused by something the client did, such as use an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specify an identifier that is not valid.',
+                    'reason' => 'These errors are usually caused by a client action, such as using an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specifying an identifier that is not valid.',
                     'class' => 'ClientException',
+                ),
+                array(
+                    'reason' => 'The specified parameter is invalid. Review the available parameters for the API request.',
+                    'class' => 'InvalidParameterException',
+                ),
+                array(
+                    'reason' => 'The specified cluster could not be found. You can view your available clusters with ListClusters. Amazon ECS clusters are region-specific.',
+                    'class' => 'ClusterNotFoundException',
+                ),
+                array(
+                    'reason' => 'The specified service could not be found. You can view your available services with ListServices. Amazon ECS services are cluster-specific and region-specific.',
+                    'class' => 'ServiceNotFoundException',
                 ),
             ),
         ),
@@ -257,12 +299,20 @@ return array (
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'These errors are usually caused by a server-side issue.',
+                    'reason' => 'These errors are usually caused by a server issue.',
                     'class' => 'ServerException',
                 ),
                 array(
-                    'reason' => 'These errors are usually caused by something the client did, such as use an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specify an identifier that is not valid.',
+                    'reason' => 'These errors are usually caused by a client action, such as using an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specifying an identifier that is not valid.',
                     'class' => 'ClientException',
+                ),
+                array(
+                    'reason' => 'The specified parameter is invalid. Review the available parameters for the API request.',
+                    'class' => 'InvalidParameterException',
+                ),
+                array(
+                    'reason' => 'The specified cluster could not be found. You can view your available clusters with ListClusters. Amazon ECS clusters are region-specific.',
+                    'class' => 'ClusterNotFoundException',
                 ),
             ),
         ),
@@ -295,12 +345,16 @@ return array (
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'These errors are usually caused by a server-side issue.',
+                    'reason' => 'These errors are usually caused by a server issue.',
                     'class' => 'ServerException',
                 ),
                 array(
-                    'reason' => 'These errors are usually caused by something the client did, such as use an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specify an identifier that is not valid.',
+                    'reason' => 'These errors are usually caused by a client action, such as using an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specifying an identifier that is not valid.',
                     'class' => 'ClientException',
+                ),
+                array(
+                    'reason' => 'The specified parameter is invalid. Review the available parameters for the API request.',
+                    'class' => 'InvalidParameterException',
                 ),
             ),
         ),
@@ -336,12 +390,16 @@ return array (
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'These errors are usually caused by a server-side issue.',
+                    'reason' => 'These errors are usually caused by a server issue.',
                     'class' => 'ServerException',
                 ),
                 array(
-                    'reason' => 'These errors are usually caused by something the client did, such as use an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specify an identifier that is not valid.',
+                    'reason' => 'These errors are usually caused by a client action, such as using an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specifying an identifier that is not valid.',
                     'class' => 'ClientException',
+                ),
+                array(
+                    'reason' => 'The specified parameter is invalid. Review the available parameters for the API request.',
+                    'class' => 'InvalidParameterException',
                 ),
             ),
         ),
@@ -382,12 +440,20 @@ return array (
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'These errors are usually caused by a server-side issue.',
+                    'reason' => 'These errors are usually caused by a server issue.',
                     'class' => 'ServerException',
                 ),
                 array(
-                    'reason' => 'These errors are usually caused by something the client did, such as use an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specify an identifier that is not valid.',
+                    'reason' => 'These errors are usually caused by a client action, such as using an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specifying an identifier that is not valid.',
                     'class' => 'ClientException',
+                ),
+                array(
+                    'reason' => 'The specified parameter is invalid. Review the available parameters for the API request.',
+                    'class' => 'InvalidParameterException',
+                ),
+                array(
+                    'reason' => 'The specified cluster could not be found. You can view your available clusters with ListClusters. Amazon ECS clusters are region-specific.',
+                    'class' => 'ClusterNotFoundException',
                 ),
             ),
         ),
@@ -428,12 +494,20 @@ return array (
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'These errors are usually caused by a server-side issue.',
+                    'reason' => 'These errors are usually caused by a server issue.',
                     'class' => 'ServerException',
                 ),
                 array(
-                    'reason' => 'These errors are usually caused by something the client did, such as use an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specify an identifier that is not valid.',
+                    'reason' => 'These errors are usually caused by a client action, such as using an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specifying an identifier that is not valid.',
                     'class' => 'ClientException',
+                ),
+                array(
+                    'reason' => 'The specified parameter is invalid. Review the available parameters for the API request.',
+                    'class' => 'InvalidParameterException',
+                ),
+                array(
+                    'reason' => 'The specified cluster could not be found. You can view your available clusters with ListClusters. Amazon ECS clusters are region-specific.',
+                    'class' => 'ClusterNotFoundException',
                 ),
             ),
         ),
@@ -466,12 +540,16 @@ return array (
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'These errors are usually caused by a server-side issue.',
+                    'reason' => 'These errors are usually caused by a server issue.',
                     'class' => 'ServerException',
                 ),
                 array(
-                    'reason' => 'These errors are usually caused by something the client did, such as use an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specify an identifier that is not valid.',
+                    'reason' => 'These errors are usually caused by a client action, such as using an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specifying an identifier that is not valid.',
                     'class' => 'ClientException',
+                ),
+                array(
+                    'reason' => 'The specified parameter is invalid. Review the available parameters for the API request.',
+                    'class' => 'InvalidParameterException',
                 ),
             ),
         ),
@@ -512,12 +590,20 @@ return array (
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'These errors are usually caused by a server-side issue.',
+                    'reason' => 'These errors are usually caused by a server issue.',
                     'class' => 'ServerException',
                 ),
                 array(
-                    'reason' => 'These errors are usually caused by something the client did, such as use an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specify an identifier that is not valid.',
+                    'reason' => 'These errors are usually caused by a client action, such as using an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specifying an identifier that is not valid.',
                     'class' => 'ClientException',
+                ),
+                array(
+                    'reason' => 'The specified parameter is invalid. Review the available parameters for the API request.',
+                    'class' => 'InvalidParameterException',
+                ),
+                array(
+                    'reason' => 'The specified cluster could not be found. You can view your available clusters with ListClusters. Amazon ECS clusters are region-specific.',
+                    'class' => 'ClusterNotFoundException',
                 ),
             ),
         ),
@@ -553,11 +639,11 @@ return array (
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'These errors are usually caused by a server-side issue.',
+                    'reason' => 'These errors are usually caused by a server issue.',
                     'class' => 'ServerException',
                 ),
                 array(
-                    'reason' => 'These errors are usually caused by something the client did, such as use an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specify an identifier that is not valid.',
+                    'reason' => 'These errors are usually caused by a client action, such as using an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specifying an identifier that is not valid.',
                     'class' => 'ClientException',
                 ),
             ),
@@ -594,12 +680,16 @@ return array (
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'These errors are usually caused by a server-side issue.',
+                    'reason' => 'These errors are usually caused by a server issue.',
                     'class' => 'ServerException',
                 ),
                 array(
-                    'reason' => 'These errors are usually caused by something the client did, such as use an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specify an identifier that is not valid.',
+                    'reason' => 'These errors are usually caused by a client action, such as using an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specifying an identifier that is not valid.',
                     'class' => 'ClientException',
+                ),
+                array(
+                    'reason' => 'The specified parameter is invalid. Review the available parameters for the API request.',
+                    'class' => 'InvalidParameterException',
                 ),
             ),
         ),
@@ -639,12 +729,20 @@ return array (
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'These errors are usually caused by a server-side issue.',
+                    'reason' => 'These errors are usually caused by a server issue.',
                     'class' => 'ServerException',
                 ),
                 array(
-                    'reason' => 'These errors are usually caused by something the client did, such as use an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specify an identifier that is not valid.',
+                    'reason' => 'These errors are usually caused by a client action, such as using an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specifying an identifier that is not valid.',
                     'class' => 'ClientException',
+                ),
+                array(
+                    'reason' => 'The specified parameter is invalid. Review the available parameters for the API request.',
+                    'class' => 'InvalidParameterException',
+                ),
+                array(
+                    'reason' => 'The specified cluster could not be found. You can view your available clusters with ListClusters. Amazon ECS clusters are region-specific.',
+                    'class' => 'ClusterNotFoundException',
                 ),
             ),
         ),
@@ -684,12 +782,20 @@ return array (
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'These errors are usually caused by a server-side issue.',
+                    'reason' => 'These errors are usually caused by a server issue.',
                     'class' => 'ServerException',
                 ),
                 array(
-                    'reason' => 'These errors are usually caused by something the client did, such as use an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specify an identifier that is not valid.',
+                    'reason' => 'These errors are usually caused by a client action, such as using an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specifying an identifier that is not valid.',
                     'class' => 'ClientException',
+                ),
+                array(
+                    'reason' => 'The specified parameter is invalid. Review the available parameters for the API request.',
+                    'class' => 'InvalidParameterException',
+                ),
+                array(
+                    'reason' => 'The specified cluster could not be found. You can view your available clusters with ListClusters. Amazon ECS clusters are region-specific.',
+                    'class' => 'ClusterNotFoundException',
                 ),
             ),
         ),
@@ -729,12 +835,16 @@ return array (
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'These errors are usually caused by a server-side issue.',
+                    'reason' => 'These errors are usually caused by a server issue.',
                     'class' => 'ServerException',
                 ),
                 array(
-                    'reason' => 'These errors are usually caused by something the client did, such as use an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specify an identifier that is not valid.',
+                    'reason' => 'These errors are usually caused by a client action, such as using an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specifying an identifier that is not valid.',
                     'class' => 'ClientException',
+                ),
+                array(
+                    'reason' => 'The specified parameter is invalid. Review the available parameters for the API request.',
+                    'class' => 'InvalidParameterException',
                 ),
             ),
         ),
@@ -763,6 +873,14 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                 ),
+                'status' => array(
+                    'type' => 'string',
+                    'location' => 'json',
+                ),
+                'sort' => array(
+                    'type' => 'string',
+                    'location' => 'json',
+                ),
                 'nextToken' => array(
                     'type' => 'string',
                     'location' => 'json',
@@ -774,12 +892,16 @@ return array (
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'These errors are usually caused by a server-side issue.',
+                    'reason' => 'These errors are usually caused by a server issue.',
                     'class' => 'ServerException',
                 ),
                 array(
-                    'reason' => 'These errors are usually caused by something the client did, such as use an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specify an identifier that is not valid.',
+                    'reason' => 'These errors are usually caused by a client action, such as using an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specifying an identifier that is not valid.',
                     'class' => 'ClientException',
+                ),
+                array(
+                    'reason' => 'The specified parameter is invalid. Review the available parameters for the API request.',
+                    'class' => 'InvalidParameterException',
                 ),
             ),
         ),
@@ -832,15 +954,31 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                 ),
+                'desiredStatus' => array(
+                    'type' => 'string',
+                    'location' => 'json',
+                ),
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'These errors are usually caused by a server-side issue.',
+                    'reason' => 'These errors are usually caused by a server issue.',
                     'class' => 'ServerException',
                 ),
                 array(
-                    'reason' => 'These errors are usually caused by something the client did, such as use an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specify an identifier that is not valid.',
+                    'reason' => 'These errors are usually caused by a client action, such as using an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specifying an identifier that is not valid.',
                     'class' => 'ClientException',
+                ),
+                array(
+                    'reason' => 'The specified parameter is invalid. Review the available parameters for the API request.',
+                    'class' => 'InvalidParameterException',
+                ),
+                array(
+                    'reason' => 'The specified cluster could not be found. You can view your available clusters with ListClusters. Amazon ECS clusters are region-specific.',
+                    'class' => 'ClusterNotFoundException',
+                ),
+                array(
+                    'reason' => 'The specified service could not be found. You can view your available services with ListServices. Amazon ECS services are cluster-specific and region-specific.',
+                    'class' => 'ServiceNotFoundException',
                 ),
             ),
         ),
@@ -885,6 +1023,7 @@ return array (
                         'type' => 'object',
                         'properties' => array(
                             '' => array(
+                                'type' => 'object',
                             ),
                         ),
                     ),
@@ -904,14 +1043,35 @@ return array (
                         ),
                     ),
                 ),
+                'containerInstanceArn' => array(
+                    'type' => 'string',
+                    'location' => 'json',
+                ),
+                'attributes' => array(
+                    'type' => 'array',
+                    'location' => 'json',
+                    'items' => array(
+                        'name' => 'Attribute',
+                        'type' => 'object',
+                        'properties' => array(
+                            'name' => array(
+                                'required' => true,
+                                'type' => 'string',
+                            ),
+                            'value' => array(
+                                'type' => 'string',
+                            ),
+                        ),
+                    ),
+                ),
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'These errors are usually caused by a server-side issue.',
+                    'reason' => 'These errors are usually caused by a server issue.',
                     'class' => 'ServerException',
                 ),
                 array(
-                    'reason' => 'These errors are usually caused by something the client did, such as use an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specify an identifier that is not valid.',
+                    'reason' => 'These errors are usually caused by a client action, such as using an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specifying an identifier that is not valid.',
                     'class' => 'ClientException',
                 ),
             ),
@@ -980,6 +1140,9 @@ return array (
                                         ),
                                         'hostPort' => array(
                                             'type' => 'numeric',
+                                        ),
+                                        'protocol' => array(
+                                            'type' => 'string',
                                         ),
                                     ),
                                 ),
@@ -1052,6 +1215,113 @@ return array (
                                     ),
                                 ),
                             ),
+                            'hostname' => array(
+                                'type' => 'string',
+                            ),
+                            'user' => array(
+                                'type' => 'string',
+                            ),
+                            'workingDirectory' => array(
+                                'type' => 'string',
+                            ),
+                            'disableNetworking' => array(
+                                'type' => 'boolean',
+                                'format' => 'boolean-string',
+                            ),
+                            'privileged' => array(
+                                'type' => 'boolean',
+                                'format' => 'boolean-string',
+                            ),
+                            'readonlyRootFilesystem' => array(
+                                'type' => 'boolean',
+                                'format' => 'boolean-string',
+                            ),
+                            'dnsServers' => array(
+                                'type' => 'array',
+                                'items' => array(
+                                    'name' => 'String',
+                                    'type' => 'string',
+                                ),
+                            ),
+                            'dnsSearchDomains' => array(
+                                'type' => 'array',
+                                'items' => array(
+                                    'name' => 'String',
+                                    'type' => 'string',
+                                ),
+                            ),
+                            'extraHosts' => array(
+                                'type' => 'array',
+                                'items' => array(
+                                    'name' => 'HostEntry',
+                                    'type' => 'object',
+                                    'properties' => array(
+                                        'hostname' => array(
+                                            'required' => true,
+                                            'type' => 'string',
+                                        ),
+                                        'ipAddress' => array(
+                                            'required' => true,
+                                            'type' => 'string',
+                                        ),
+                                    ),
+                                ),
+                            ),
+                            'dockerSecurityOptions' => array(
+                                'type' => 'array',
+                                'items' => array(
+                                    'name' => 'String',
+                                    'type' => 'string',
+                                ),
+                            ),
+                            'dockerLabels' => array(
+                                'type' => 'object',
+                                'additionalProperties' => array(
+                                    'type' => 'string',
+                                    'data' => array(
+                                        'shape_name' => 'String',
+                                    ),
+                                ),
+                            ),
+                            'ulimits' => array(
+                                'type' => 'array',
+                                'items' => array(
+                                    'name' => 'Ulimit',
+                                    'type' => 'object',
+                                    'properties' => array(
+                                        'name' => array(
+                                            'required' => true,
+                                            'type' => 'string',
+                                        ),
+                                        'softLimit' => array(
+                                            'required' => true,
+                                            'type' => 'numeric',
+                                        ),
+                                        'hardLimit' => array(
+                                            'required' => true,
+                                            'type' => 'numeric',
+                                        ),
+                                    ),
+                                ),
+                            ),
+                            'logConfiguration' => array(
+                                'type' => 'object',
+                                'properties' => array(
+                                    'logDriver' => array(
+                                        'required' => true,
+                                        'type' => 'string',
+                                    ),
+                                    'options' => array(
+                                        'type' => 'object',
+                                        'additionalProperties' => array(
+                                            'type' => 'string',
+                                            'data' => array(
+                                                'shape_name' => 'String',
+                                            ),
+                                        ),
+                                    ),
+                                ),
+                            ),
                         ),
                     ),
                 ),
@@ -1079,12 +1349,16 @@ return array (
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'These errors are usually caused by a server-side issue.',
+                    'reason' => 'These errors are usually caused by a server issue.',
                     'class' => 'ServerException',
                 ),
                 array(
-                    'reason' => 'These errors are usually caused by something the client did, such as use an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specify an identifier that is not valid.',
+                    'reason' => 'These errors are usually caused by a client action, such as using an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specifying an identifier that is not valid.',
                     'class' => 'ClientException',
+                ),
+                array(
+                    'reason' => 'The specified parameter is invalid. Review the available parameters for the API request.',
+                    'class' => 'InvalidParameterException',
                 ),
             ),
         ),
@@ -1138,6 +1412,21 @@ return array (
                                             'type' => 'string',
                                         ),
                                     ),
+                                    'environment' => array(
+                                        'type' => 'array',
+                                        'items' => array(
+                                            'name' => 'KeyValuePair',
+                                            'type' => 'object',
+                                            'properties' => array(
+                                                'name' => array(
+                                                    'type' => 'string',
+                                                ),
+                                                'value' => array(
+                                                    'type' => 'string',
+                                                ),
+                                            ),
+                                        ),
+                                    ),
                                 ),
                             ),
                         ),
@@ -1154,12 +1443,20 @@ return array (
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'These errors are usually caused by a server-side issue.',
+                    'reason' => 'These errors are usually caused by a server issue.',
                     'class' => 'ServerException',
                 ),
                 array(
-                    'reason' => 'These errors are usually caused by something the client did, such as use an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specify an identifier that is not valid.',
+                    'reason' => 'These errors are usually caused by a client action, such as using an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specifying an identifier that is not valid.',
                     'class' => 'ClientException',
+                ),
+                array(
+                    'reason' => 'The specified parameter is invalid. Review the available parameters for the API request.',
+                    'class' => 'InvalidParameterException',
+                ),
+                array(
+                    'reason' => 'The specified cluster could not be found. You can view your available clusters with ListClusters. Amazon ECS clusters are region-specific.',
+                    'class' => 'ClusterNotFoundException',
                 ),
             ),
         ),
@@ -1213,6 +1510,21 @@ return array (
                                             'type' => 'string',
                                         ),
                                     ),
+                                    'environment' => array(
+                                        'type' => 'array',
+                                        'items' => array(
+                                            'name' => 'KeyValuePair',
+                                            'type' => 'object',
+                                            'properties' => array(
+                                                'name' => array(
+                                                    'type' => 'string',
+                                                ),
+                                                'value' => array(
+                                                    'type' => 'string',
+                                                ),
+                                            ),
+                                        ),
+                                    ),
                                 ),
                             ),
                         ),
@@ -1234,12 +1546,20 @@ return array (
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'These errors are usually caused by a server-side issue.',
+                    'reason' => 'These errors are usually caused by a server issue.',
                     'class' => 'ServerException',
                 ),
                 array(
-                    'reason' => 'These errors are usually caused by something the client did, such as use an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specify an identifier that is not valid.',
+                    'reason' => 'These errors are usually caused by a client action, such as using an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specifying an identifier that is not valid.',
                     'class' => 'ClientException',
+                ),
+                array(
+                    'reason' => 'The specified parameter is invalid. Review the available parameters for the API request.',
+                    'class' => 'InvalidParameterException',
+                ),
+                array(
+                    'reason' => 'The specified cluster could not be found. You can view your available clusters with ListClusters. Amazon ECS clusters are region-specific.',
+                    'class' => 'ClusterNotFoundException',
                 ),
             ),
         ),
@@ -1276,12 +1596,20 @@ return array (
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'These errors are usually caused by a server-side issue.',
+                    'reason' => 'These errors are usually caused by a server issue.',
                     'class' => 'ServerException',
                 ),
                 array(
-                    'reason' => 'These errors are usually caused by something the client did, such as use an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specify an identifier that is not valid.',
+                    'reason' => 'These errors are usually caused by a client action, such as using an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specifying an identifier that is not valid.',
                     'class' => 'ClientException',
+                ),
+                array(
+                    'reason' => 'The specified parameter is invalid. Review the available parameters for the API request.',
+                    'class' => 'InvalidParameterException',
+                ),
+                array(
+                    'reason' => 'The specified cluster could not be found. You can view your available clusters with ListClusters. Amazon ECS clusters are region-specific.',
+                    'class' => 'ClusterNotFoundException',
                 ),
             ),
         ),
@@ -1346,17 +1674,20 @@ return array (
                             'hostPort' => array(
                                 'type' => 'numeric',
                             ),
+                            'protocol' => array(
+                                'type' => 'string',
+                            ),
                         ),
                     ),
                 ),
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'These errors are usually caused by a server-side issue.',
+                    'reason' => 'These errors are usually caused by a server issue.',
                     'class' => 'ServerException',
                 ),
                 array(
-                    'reason' => 'These errors are usually caused by something the client did, such as use an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specify an identifier that is not valid.',
+                    'reason' => 'These errors are usually caused by a client action, such as using an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specifying an identifier that is not valid.',
                     'class' => 'ClientException',
                 ),
             ),
@@ -1401,12 +1732,74 @@ return array (
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'These errors are usually caused by a server-side issue.',
+                    'reason' => 'These errors are usually caused by a server issue.',
                     'class' => 'ServerException',
                 ),
                 array(
-                    'reason' => 'These errors are usually caused by something the client did, such as use an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specify an identifier that is not valid.',
+                    'reason' => 'These errors are usually caused by a client action, such as using an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specifying an identifier that is not valid.',
                     'class' => 'ClientException',
+                ),
+            ),
+        ),
+        'UpdateContainerAgent' => array(
+            'httpMethod' => 'POST',
+            'uri' => '/',
+            'class' => 'Aws\\Common\\Command\\JsonCommand',
+            'responseClass' => 'UpdateContainerAgentResponse',
+            'responseType' => 'model',
+            'parameters' => array(
+                'Content-Type' => array(
+                    'static' => true,
+                    'location' => 'header',
+                    'default' => 'application/x-amz-json-1.1',
+                ),
+                'command.expects' => array(
+                    'static' => true,
+                    'default' => 'application/json',
+                ),
+                'X-Amz-Target' => array(
+                    'static' => true,
+                    'location' => 'header',
+                    'default' => 'AmazonEC2ContainerServiceV20141113.UpdateContainerAgent',
+                ),
+                'cluster' => array(
+                    'type' => 'string',
+                    'location' => 'json',
+                ),
+                'containerInstance' => array(
+                    'required' => true,
+                    'type' => 'string',
+                    'location' => 'json',
+                ),
+            ),
+            'errorResponses' => array(
+                array(
+                    'reason' => 'These errors are usually caused by a server issue.',
+                    'class' => 'ServerException',
+                ),
+                array(
+                    'reason' => 'These errors are usually caused by a client action, such as using an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specifying an identifier that is not valid.',
+                    'class' => 'ClientException',
+                ),
+                array(
+                    'reason' => 'The specified parameter is invalid. Review the available parameters for the API request.',
+                    'class' => 'InvalidParameterException',
+                ),
+                array(
+                    'reason' => 'The specified cluster could not be found. You can view your available clusters with ListClusters. Amazon ECS clusters are region-specific.',
+                    'class' => 'ClusterNotFoundException',
+                ),
+                array(
+                    'reason' => 'There is already a current Amazon ECS container agent update in progress on the specified container instance. If the container agent becomes disconnected while it is in a transitional stage, such as PENDING or STAGING, the update process can get stuck in that state. However, when the agent reconnects, it resumes where it stopped previously.',
+                    'class' => 'UpdateInProgressException',
+                ),
+                array(
+                    'reason' => 'There is no update available for this Amazon ECS container agent. This could be because the agent is already running the latest version, or it is so old that there is no update path to the current version.',
+                    'class' => 'NoUpdateAvailableException',
+                ),
+                array(
+                    'reason' => 'Amazon ECS is unable to determine the current version of the Amazon ECS container agent on the container instance and does not have enough information to proceed with an update. This could be because the agent running on the container instance is an older or custom version that does not use our version information.',
+                    'class' => 'MissingVersionException',
                 ),
             ),
         ),
@@ -1451,12 +1844,28 @@ return array (
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'These errors are usually caused by a server-side issue.',
+                    'reason' => 'These errors are usually caused by a server issue.',
                     'class' => 'ServerException',
                 ),
                 array(
-                    'reason' => 'These errors are usually caused by something the client did, such as use an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specify an identifier that is not valid.',
+                    'reason' => 'These errors are usually caused by a client action, such as using an action or resource on behalf of a user that doesn\'t have permission to use the action or resource, or specifying an identifier that is not valid.',
                     'class' => 'ClientException',
+                ),
+                array(
+                    'reason' => 'The specified parameter is invalid. Review the available parameters for the API request.',
+                    'class' => 'InvalidParameterException',
+                ),
+                array(
+                    'reason' => 'The specified cluster could not be found. You can view your available clusters with ListClusters. Amazon ECS clusters are region-specific.',
+                    'class' => 'ClusterNotFoundException',
+                ),
+                array(
+                    'reason' => 'The specified service could not be found. You can view your available services with ListServices. Amazon ECS services are cluster-specific and region-specific.',
+                    'class' => 'ServiceNotFoundException',
+                ),
+                array(
+                    'reason' => 'The specified service is not active. You cannot update a service that is not active. If you have previously deleted a service, you can re-create it with CreateService.',
+                    'class' => 'ServiceNotActiveException',
                 ),
             ),
         ),
@@ -1486,6 +1895,9 @@ return array (
                             'type' => 'numeric',
                         ),
                         'pendingTasksCount' => array(
+                            'type' => 'numeric',
+                        ),
+                        'activeServicesCount' => array(
                             'type' => 'numeric',
                         ),
                     ),
@@ -1626,6 +2038,9 @@ return array (
                         'pendingTasksCount' => array(
                             'type' => 'numeric',
                         ),
+                        'activeServicesCount' => array(
+                            'type' => 'numeric',
+                        ),
                     ),
                 ),
             ),
@@ -1752,6 +2167,20 @@ return array (
                         'ec2InstanceId' => array(
                             'type' => 'string',
                         ),
+                        'versionInfo' => array(
+                            'type' => 'object',
+                            'properties' => array(
+                                'agentVersion' => array(
+                                    'type' => 'string',
+                                ),
+                                'agentHash' => array(
+                                    'type' => 'string',
+                                ),
+                                'dockerVersion' => array(
+                                    'type' => 'string',
+                                ),
+                            ),
+                        ),
                         'remainingResources' => array(
                             'type' => 'array',
                             'items' => array(
@@ -1759,6 +2188,7 @@ return array (
                                 'type' => 'object',
                                 'properties' => array(
                                     '' => array(
+                                        'type' => 'object',
                                     ),
                                 ),
                             ),
@@ -1770,6 +2200,7 @@ return array (
                                 'type' => 'object',
                                 'properties' => array(
                                     '' => array(
+                                        'type' => 'object',
                                     ),
                                 ),
                             ),
@@ -1785,6 +2216,24 @@ return array (
                         ),
                         'pendingTasksCount' => array(
                             'type' => 'numeric',
+                        ),
+                        'agentUpdateStatus' => array(
+                            'type' => 'string',
+                        ),
+                        'attributes' => array(
+                            'type' => 'array',
+                            'items' => array(
+                                'name' => 'Attribute',
+                                'type' => 'object',
+                                'properties' => array(
+                                    'name' => array(
+                                        'type' => 'string',
+                                    ),
+                                    'value' => array(
+                                        'type' => 'string',
+                                    ),
+                                ),
+                            ),
                         ),
                     ),
                 ),
@@ -1837,6 +2286,9 @@ return array (
                                                 ),
                                                 'hostPort' => array(
                                                     'type' => 'numeric',
+                                                ),
+                                                'protocol' => array(
+                                                    'type' => 'string',
                                                 ),
                                             ),
                                         ),
@@ -1906,6 +2358,98 @@ return array (
                                             ),
                                         ),
                                     ),
+                                    'hostname' => array(
+                                        'type' => 'string',
+                                    ),
+                                    'user' => array(
+                                        'type' => 'string',
+                                    ),
+                                    'workingDirectory' => array(
+                                        'type' => 'string',
+                                    ),
+                                    'disableNetworking' => array(
+                                        'type' => 'boolean',
+                                    ),
+                                    'privileged' => array(
+                                        'type' => 'boolean',
+                                    ),
+                                    'readonlyRootFilesystem' => array(
+                                        'type' => 'boolean',
+                                    ),
+                                    'dnsServers' => array(
+                                        'type' => 'array',
+                                        'items' => array(
+                                            'name' => 'String',
+                                            'type' => 'string',
+                                        ),
+                                    ),
+                                    'dnsSearchDomains' => array(
+                                        'type' => 'array',
+                                        'items' => array(
+                                            'name' => 'String',
+                                            'type' => 'string',
+                                        ),
+                                    ),
+                                    'extraHosts' => array(
+                                        'type' => 'array',
+                                        'items' => array(
+                                            'name' => 'HostEntry',
+                                            'type' => 'object',
+                                            'properties' => array(
+                                                'hostname' => array(
+                                                    'type' => 'string',
+                                                ),
+                                                'ipAddress' => array(
+                                                    'type' => 'string',
+                                                ),
+                                            ),
+                                        ),
+                                    ),
+                                    'dockerSecurityOptions' => array(
+                                        'type' => 'array',
+                                        'items' => array(
+                                            'name' => 'String',
+                                            'type' => 'string',
+                                        ),
+                                    ),
+                                    'dockerLabels' => array(
+                                        'type' => 'object',
+                                        'additionalProperties' => array(
+                                            'type' => 'string',
+                                        ),
+                                    ),
+                                    'ulimits' => array(
+                                        'type' => 'array',
+                                        'items' => array(
+                                            'name' => 'Ulimit',
+                                            'type' => 'object',
+                                            'properties' => array(
+                                                'name' => array(
+                                                    'type' => 'string',
+                                                ),
+                                                'softLimit' => array(
+                                                    'type' => 'numeric',
+                                                ),
+                                                'hardLimit' => array(
+                                                    'type' => 'numeric',
+                                                ),
+                                            ),
+                                        ),
+                                    ),
+                                    'logConfiguration' => array(
+                                        'type' => 'object',
+                                        'properties' => array(
+                                            'logDriver' => array(
+                                                'type' => 'string',
+                                            ),
+                                            'options' => array(
+                                                'type' => 'object',
+                                                'additionalProperties' => array(
+                                                    'type' => 'string',
+                                                ),
+                                            ),
+                                        ),
+                                    ),
                                 ),
                             ),
                         ),
@@ -1931,6 +2475,24 @@ return array (
                                                 'type' => 'string',
                                             ),
                                         ),
+                                    ),
+                                ),
+                            ),
+                        ),
+                        'status' => array(
+                            'type' => 'string',
+                        ),
+                        'requiresAttributes' => array(
+                            'type' => 'array',
+                            'items' => array(
+                                'name' => 'Attribute',
+                                'type' => 'object',
+                                'properties' => array(
+                                    'name' => array(
+                                        'type' => 'string',
+                                    ),
+                                    'value' => array(
+                                        'type' => 'string',
                                     ),
                                 ),
                             ),
@@ -1966,6 +2528,9 @@ return array (
                                 'type' => 'numeric',
                             ),
                             'pendingTasksCount' => array(
+                                'type' => 'numeric',
+                            ),
+                            'activeServicesCount' => array(
                                 'type' => 'numeric',
                             ),
                         ),
@@ -2006,6 +2571,20 @@ return array (
                             'ec2InstanceId' => array(
                                 'type' => 'string',
                             ),
+                            'versionInfo' => array(
+                                'type' => 'object',
+                                'properties' => array(
+                                    'agentVersion' => array(
+                                        'type' => 'string',
+                                    ),
+                                    'agentHash' => array(
+                                        'type' => 'string',
+                                    ),
+                                    'dockerVersion' => array(
+                                        'type' => 'string',
+                                    ),
+                                ),
+                            ),
                             'remainingResources' => array(
                                 'type' => 'array',
                                 'items' => array(
@@ -2013,6 +2592,7 @@ return array (
                                     'type' => 'object',
                                     'properties' => array(
                                         '' => array(
+                                            'type' => 'object',
                                         ),
                                     ),
                                 ),
@@ -2024,6 +2604,7 @@ return array (
                                     'type' => 'object',
                                     'properties' => array(
                                         '' => array(
+                                            'type' => 'object',
                                         ),
                                     ),
                                 ),
@@ -2039,6 +2620,24 @@ return array (
                             ),
                             'pendingTasksCount' => array(
                                 'type' => 'numeric',
+                            ),
+                            'agentUpdateStatus' => array(
+                                'type' => 'string',
+                            ),
+                            'attributes' => array(
+                                'type' => 'array',
+                                'items' => array(
+                                    'name' => 'Attribute',
+                                    'type' => 'object',
+                                    'properties' => array(
+                                        'name' => array(
+                                            'type' => 'string',
+                                        ),
+                                        'value' => array(
+                                            'type' => 'string',
+                                        ),
+                                    ),
+                                ),
                             ),
                         ),
                     ),
@@ -2237,6 +2836,9 @@ return array (
                                                 'hostPort' => array(
                                                     'type' => 'numeric',
                                                 ),
+                                                'protocol' => array(
+                                                    'type' => 'string',
+                                                ),
                                             ),
                                         ),
                                     ),
@@ -2305,6 +2907,98 @@ return array (
                                             ),
                                         ),
                                     ),
+                                    'hostname' => array(
+                                        'type' => 'string',
+                                    ),
+                                    'user' => array(
+                                        'type' => 'string',
+                                    ),
+                                    'workingDirectory' => array(
+                                        'type' => 'string',
+                                    ),
+                                    'disableNetworking' => array(
+                                        'type' => 'boolean',
+                                    ),
+                                    'privileged' => array(
+                                        'type' => 'boolean',
+                                    ),
+                                    'readonlyRootFilesystem' => array(
+                                        'type' => 'boolean',
+                                    ),
+                                    'dnsServers' => array(
+                                        'type' => 'array',
+                                        'items' => array(
+                                            'name' => 'String',
+                                            'type' => 'string',
+                                        ),
+                                    ),
+                                    'dnsSearchDomains' => array(
+                                        'type' => 'array',
+                                        'items' => array(
+                                            'name' => 'String',
+                                            'type' => 'string',
+                                        ),
+                                    ),
+                                    'extraHosts' => array(
+                                        'type' => 'array',
+                                        'items' => array(
+                                            'name' => 'HostEntry',
+                                            'type' => 'object',
+                                            'properties' => array(
+                                                'hostname' => array(
+                                                    'type' => 'string',
+                                                ),
+                                                'ipAddress' => array(
+                                                    'type' => 'string',
+                                                ),
+                                            ),
+                                        ),
+                                    ),
+                                    'dockerSecurityOptions' => array(
+                                        'type' => 'array',
+                                        'items' => array(
+                                            'name' => 'String',
+                                            'type' => 'string',
+                                        ),
+                                    ),
+                                    'dockerLabels' => array(
+                                        'type' => 'object',
+                                        'additionalProperties' => array(
+                                            'type' => 'string',
+                                        ),
+                                    ),
+                                    'ulimits' => array(
+                                        'type' => 'array',
+                                        'items' => array(
+                                            'name' => 'Ulimit',
+                                            'type' => 'object',
+                                            'properties' => array(
+                                                'name' => array(
+                                                    'type' => 'string',
+                                                ),
+                                                'softLimit' => array(
+                                                    'type' => 'numeric',
+                                                ),
+                                                'hardLimit' => array(
+                                                    'type' => 'numeric',
+                                                ),
+                                            ),
+                                        ),
+                                    ),
+                                    'logConfiguration' => array(
+                                        'type' => 'object',
+                                        'properties' => array(
+                                            'logDriver' => array(
+                                                'type' => 'string',
+                                            ),
+                                            'options' => array(
+                                                'type' => 'object',
+                                                'additionalProperties' => array(
+                                                    'type' => 'string',
+                                                ),
+                                            ),
+                                        ),
+                                    ),
                                 ),
                             ),
                         ),
@@ -2330,6 +3024,24 @@ return array (
                                                 'type' => 'string',
                                             ),
                                         ),
+                                    ),
+                                ),
+                            ),
+                        ),
+                        'status' => array(
+                            'type' => 'string',
+                        ),
+                        'requiresAttributes' => array(
+                            'type' => 'array',
+                            'items' => array(
+                                'name' => 'Attribute',
+                                'type' => 'object',
+                                'properties' => array(
+                                    'name' => array(
+                                        'type' => 'string',
+                                    ),
+                                    'value' => array(
+                                        'type' => 'string',
                                     ),
                                 ),
                             ),
@@ -2378,6 +3090,21 @@ return array (
                                                     'items' => array(
                                                         'name' => 'String',
                                                         'type' => 'string',
+                                                    ),
+                                                ),
+                                                'environment' => array(
+                                                    'type' => 'array',
+                                                    'items' => array(
+                                                        'name' => 'KeyValuePair',
+                                                        'type' => 'object',
+                                                        'properties' => array(
+                                                            'name' => array(
+                                                                'type' => 'string',
+                                                            ),
+                                                            'value' => array(
+                                                                'type' => 'string',
+                                                            ),
+                                                        ),
                                                     ),
                                                 ),
                                             ),
@@ -2430,6 +3157,9 @@ return array (
                                                     'hostPort' => array(
                                                         'type' => 'numeric',
                                                     ),
+                                                    'protocol' => array(
+                                                        'type' => 'string',
+                                                    ),
                                                 ),
                                             ),
                                         ),
@@ -2465,6 +3195,10 @@ return array (
             'additionalProperties' => true,
             'properties' => array(
                 'endpoint' => array(
+                    'type' => 'string',
+                    'location' => 'json',
+                ),
+                'telemetryEndpoint' => array(
                     'type' => 'string',
                     'location' => 'json',
                 ),
@@ -2592,6 +3326,20 @@ return array (
                         'ec2InstanceId' => array(
                             'type' => 'string',
                         ),
+                        'versionInfo' => array(
+                            'type' => 'object',
+                            'properties' => array(
+                                'agentVersion' => array(
+                                    'type' => 'string',
+                                ),
+                                'agentHash' => array(
+                                    'type' => 'string',
+                                ),
+                                'dockerVersion' => array(
+                                    'type' => 'string',
+                                ),
+                            ),
+                        ),
                         'remainingResources' => array(
                             'type' => 'array',
                             'items' => array(
@@ -2599,6 +3347,7 @@ return array (
                                 'type' => 'object',
                                 'properties' => array(
                                     '' => array(
+                                        'type' => 'object',
                                     ),
                                 ),
                             ),
@@ -2610,6 +3359,7 @@ return array (
                                 'type' => 'object',
                                 'properties' => array(
                                     '' => array(
+                                        'type' => 'object',
                                     ),
                                 ),
                             ),
@@ -2625,6 +3375,24 @@ return array (
                         ),
                         'pendingTasksCount' => array(
                             'type' => 'numeric',
+                        ),
+                        'agentUpdateStatus' => array(
+                            'type' => 'string',
+                        ),
+                        'attributes' => array(
+                            'type' => 'array',
+                            'items' => array(
+                                'name' => 'Attribute',
+                                'type' => 'object',
+                                'properties' => array(
+                                    'name' => array(
+                                        'type' => 'string',
+                                    ),
+                                    'value' => array(
+                                        'type' => 'string',
+                                    ),
+                                ),
+                            ),
                         ),
                     ),
                 ),
@@ -2677,6 +3445,9 @@ return array (
                                                 ),
                                                 'hostPort' => array(
                                                     'type' => 'numeric',
+                                                ),
+                                                'protocol' => array(
+                                                    'type' => 'string',
                                                 ),
                                             ),
                                         ),
@@ -2746,6 +3517,98 @@ return array (
                                             ),
                                         ),
                                     ),
+                                    'hostname' => array(
+                                        'type' => 'string',
+                                    ),
+                                    'user' => array(
+                                        'type' => 'string',
+                                    ),
+                                    'workingDirectory' => array(
+                                        'type' => 'string',
+                                    ),
+                                    'disableNetworking' => array(
+                                        'type' => 'boolean',
+                                    ),
+                                    'privileged' => array(
+                                        'type' => 'boolean',
+                                    ),
+                                    'readonlyRootFilesystem' => array(
+                                        'type' => 'boolean',
+                                    ),
+                                    'dnsServers' => array(
+                                        'type' => 'array',
+                                        'items' => array(
+                                            'name' => 'String',
+                                            'type' => 'string',
+                                        ),
+                                    ),
+                                    'dnsSearchDomains' => array(
+                                        'type' => 'array',
+                                        'items' => array(
+                                            'name' => 'String',
+                                            'type' => 'string',
+                                        ),
+                                    ),
+                                    'extraHosts' => array(
+                                        'type' => 'array',
+                                        'items' => array(
+                                            'name' => 'HostEntry',
+                                            'type' => 'object',
+                                            'properties' => array(
+                                                'hostname' => array(
+                                                    'type' => 'string',
+                                                ),
+                                                'ipAddress' => array(
+                                                    'type' => 'string',
+                                                ),
+                                            ),
+                                        ),
+                                    ),
+                                    'dockerSecurityOptions' => array(
+                                        'type' => 'array',
+                                        'items' => array(
+                                            'name' => 'String',
+                                            'type' => 'string',
+                                        ),
+                                    ),
+                                    'dockerLabels' => array(
+                                        'type' => 'object',
+                                        'additionalProperties' => array(
+                                            'type' => 'string',
+                                        ),
+                                    ),
+                                    'ulimits' => array(
+                                        'type' => 'array',
+                                        'items' => array(
+                                            'name' => 'Ulimit',
+                                            'type' => 'object',
+                                            'properties' => array(
+                                                'name' => array(
+                                                    'type' => 'string',
+                                                ),
+                                                'softLimit' => array(
+                                                    'type' => 'numeric',
+                                                ),
+                                                'hardLimit' => array(
+                                                    'type' => 'numeric',
+                                                ),
+                                            ),
+                                        ),
+                                    ),
+                                    'logConfiguration' => array(
+                                        'type' => 'object',
+                                        'properties' => array(
+                                            'logDriver' => array(
+                                                'type' => 'string',
+                                            ),
+                                            'options' => array(
+                                                'type' => 'object',
+                                                'additionalProperties' => array(
+                                                    'type' => 'string',
+                                                ),
+                                            ),
+                                        ),
+                                    ),
                                 ),
                             ),
                         ),
@@ -2771,6 +3634,24 @@ return array (
                                                 'type' => 'string',
                                             ),
                                         ),
+                                    ),
+                                ),
+                            ),
+                        ),
+                        'status' => array(
+                            'type' => 'string',
+                        ),
+                        'requiresAttributes' => array(
+                            'type' => 'array',
+                            'items' => array(
+                                'name' => 'Attribute',
+                                'type' => 'object',
+                                'properties' => array(
+                                    'name' => array(
+                                        'type' => 'string',
+                                    ),
+                                    'value' => array(
+                                        'type' => 'string',
                                     ),
                                 ),
                             ),
@@ -2819,6 +3700,21 @@ return array (
                                                     'items' => array(
                                                         'name' => 'String',
                                                         'type' => 'string',
+                                                    ),
+                                                ),
+                                                'environment' => array(
+                                                    'type' => 'array',
+                                                    'items' => array(
+                                                        'name' => 'KeyValuePair',
+                                                        'type' => 'object',
+                                                        'properties' => array(
+                                                            'name' => array(
+                                                                'type' => 'string',
+                                                            ),
+                                                            'value' => array(
+                                                                'type' => 'string',
+                                                            ),
+                                                        ),
                                                     ),
                                                 ),
                                             ),
@@ -2870,6 +3766,9 @@ return array (
                                                     ),
                                                     'hostPort' => array(
                                                         'type' => 'numeric',
+                                                    ),
+                                                    'protocol' => array(
+                                                        'type' => 'string',
                                                     ),
                                                 ),
                                             ),
@@ -2943,6 +3842,21 @@ return array (
                                                         'type' => 'string',
                                                     ),
                                                 ),
+                                                'environment' => array(
+                                                    'type' => 'array',
+                                                    'items' => array(
+                                                        'name' => 'KeyValuePair',
+                                                        'type' => 'object',
+                                                        'properties' => array(
+                                                            'name' => array(
+                                                                'type' => 'string',
+                                                            ),
+                                                            'value' => array(
+                                                                'type' => 'string',
+                                                            ),
+                                                        ),
+                                                    ),
+                                                ),
                                             ),
                                         ),
                                     ),
@@ -2992,6 +3906,9 @@ return array (
                                                     ),
                                                     'hostPort' => array(
                                                         'type' => 'numeric',
+                                                    ),
+                                                    'protocol' => array(
+                                                        'type' => 'string',
                                                     ),
                                                 ),
                                             ),
@@ -3062,6 +3979,21 @@ return array (
                                                     'type' => 'string',
                                                 ),
                                             ),
+                                            'environment' => array(
+                                                'type' => 'array',
+                                                'items' => array(
+                                                    'name' => 'KeyValuePair',
+                                                    'type' => 'object',
+                                                    'properties' => array(
+                                                        'name' => array(
+                                                            'type' => 'string',
+                                                        ),
+                                                        'value' => array(
+                                                            'type' => 'string',
+                                                        ),
+                                                    ),
+                                                ),
+                                            ),
                                         ),
                                     ),
                                 ),
@@ -3112,6 +4044,9 @@ return array (
                                                 'hostPort' => array(
                                                     'type' => 'numeric',
                                                 ),
+                                                'protocol' => array(
+                                                    'type' => 'string',
+                                                ),
                                             ),
                                         ),
                                     ),
@@ -3142,6 +4077,92 @@ return array (
                 'acknowledgment' => array(
                     'type' => 'string',
                     'location' => 'json',
+                ),
+            ),
+        ),
+        'UpdateContainerAgentResponse' => array(
+            'type' => 'object',
+            'additionalProperties' => true,
+            'properties' => array(
+                'containerInstance' => array(
+                    'type' => 'object',
+                    'location' => 'json',
+                    'properties' => array(
+                        'containerInstanceArn' => array(
+                            'type' => 'string',
+                        ),
+                        'ec2InstanceId' => array(
+                            'type' => 'string',
+                        ),
+                        'versionInfo' => array(
+                            'type' => 'object',
+                            'properties' => array(
+                                'agentVersion' => array(
+                                    'type' => 'string',
+                                ),
+                                'agentHash' => array(
+                                    'type' => 'string',
+                                ),
+                                'dockerVersion' => array(
+                                    'type' => 'string',
+                                ),
+                            ),
+                        ),
+                        'remainingResources' => array(
+                            'type' => 'array',
+                            'items' => array(
+                                'name' => 'Resource',
+                                'type' => 'object',
+                                'properties' => array(
+                                    '' => array(
+                                        'type' => 'object',
+                                    ),
+                                ),
+                            ),
+                        ),
+                        'registeredResources' => array(
+                            'type' => 'array',
+                            'items' => array(
+                                'name' => 'Resource',
+                                'type' => 'object',
+                                'properties' => array(
+                                    '' => array(
+                                        'type' => 'object',
+                                    ),
+                                ),
+                            ),
+                        ),
+                        'status' => array(
+                            'type' => 'string',
+                        ),
+                        'agentConnected' => array(
+                            'type' => 'boolean',
+                        ),
+                        'runningTasksCount' => array(
+                            'type' => 'numeric',
+                        ),
+                        'pendingTasksCount' => array(
+                            'type' => 'numeric',
+                        ),
+                        'agentUpdateStatus' => array(
+                            'type' => 'string',
+                        ),
+                        'attributes' => array(
+                            'type' => 'array',
+                            'items' => array(
+                                'name' => 'Attribute',
+                                'type' => 'object',
+                                'properties' => array(
+                                    'name' => array(
+                                        'type' => 'string',
+                                    ),
+                                    'value' => array(
+                                        'type' => 'string',
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
                 ),
             ),
         ),
@@ -3252,6 +4273,44 @@ return array (
                     ),
                 ),
             ),
+        ),
+    ),
+    'iterators' => array(
+        'ListClusters' => array(
+            'input_token' => 'nextToken',
+            'output_token' => 'nextToken',
+            'limit_key' => 'maxResults',
+            'result_key' => 'clusterArns',
+        ),
+        'ListContainerInstances' => array(
+            'input_token' => 'nextToken',
+            'output_token' => 'nextToken',
+            'limit_key' => 'maxResults',
+            'result_key' => 'containerInstanceArns',
+        ),
+        'ListTaskDefinitions' => array(
+            'input_token' => 'nextToken',
+            'output_token' => 'nextToken',
+            'limit_key' => 'maxResults',
+            'result_key' => 'taskDefinitionArns',
+        ),
+        'ListTaskDefinitionFamilies' => array(
+            'input_token' => 'nextToken',
+            'output_token' => 'nextToken',
+            'limit_key' => 'maxResults',
+            'result_key' => 'families',
+        ),
+        'ListTasks' => array(
+            'input_token' => 'nextToken',
+            'output_token' => 'nextToken',
+            'limit_key' => 'maxResults',
+            'result_key' => 'taskArns',
+        ),
+        'ListServices' => array(
+            'input_token' => 'nextToken',
+            'output_token' => 'nextToken',
+            'limit_key' => 'maxResults',
+            'result_key' => 'serviceArns',
         ),
     ),
 );
