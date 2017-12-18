@@ -155,6 +155,7 @@ jQuery(document).ready(function($){
             $(targetExportSettingsBlock).find('#s3Secret').first().val(decodeURIComponent(settingsBlock.s3Secret));
             $(targetExportSettingsBlock).find('#s3Region').first().val(decodeURIComponent(settingsBlock.s3Region));
             $(targetExportSettingsBlock).find('#s3Bucket').first().val(decodeURIComponent(settingsBlock.s3Bucket));
+            $(targetExportSettingsBlock).find('#cfDistributionId').first().val(decodeURIComponent(settingsBlock.cfDistributionId));
             $(targetExportSettingsBlock).find('#sendViaDropbox')[0].checked = settingsBlock.sendViaDropbox;
             $(targetExportSettingsBlock).find('#dropboxAccessToken').first().val(decodeURIComponent(settingsBlock.dropboxAccessToken));
             $(targetExportSettingsBlock).find('#dropboxFolder').first().val(decodeURIComponent(settingsBlock.dropboxFolder));
@@ -179,6 +180,7 @@ jQuery(document).ready(function($){
                 $(targetExportSettingsBlock).find('#s3Secret').val('');
                 $(targetExportSettingsBlock).find('#s3Region').val('');
                 $(targetExportSettingsBlock).find('#s3Bucket').val('');
+                $(targetExportSettingsBlock).find('#cfDistributionId').val('');
                 $(targetExportSettingsBlock).find('#sendViaDropbox').first().prop('checked', false);
                 $(targetExportSettingsBlock).find('#dropboxAccessToken').val('');
                 $(targetExportSettingsBlock).find('#dropboxFolder').val('');
@@ -307,6 +309,10 @@ http://172.17.0.3/my_pricelist.pdf</pre>
 
                 <input name="s3Bucket" class="regular-text" id="s3Bucket" value="<?php echo esc_attr($this->s3Bucket) ?>" placeholder="<?php echo __('S3 Bucket name', 'static-html-output-plugin');?>" />
                 <span class="description">ie, my-static-site</span>
+                <br>
+
+                <input name="cfDistributionId" class="regular-text" id="cfDistributionId" value="<?php echo esc_attr($this->cfDistributionId) ?>" placeholder="<?php echo __('CloudFront DistributionId', 'static-html-output-plugin');?>" />
+                <span class="description">ie, ABC123DEFX</span>
                 <br>
 
                 <br>

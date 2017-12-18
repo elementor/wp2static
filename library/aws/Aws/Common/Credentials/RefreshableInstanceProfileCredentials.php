@@ -29,6 +29,8 @@ class RefreshableInstanceProfileCredentials extends AbstractRefreshableCredentia
      * @var InstanceMetadataClient
      */
     protected $client;
+    /** @var bool */
+    private $customClient;
 
     /**
      * Constructs a new instance profile credentials decorator
@@ -38,8 +40,38 @@ class RefreshableInstanceProfileCredentials extends AbstractRefreshableCredentia
      */
     public function __construct(CredentialsInterface $credentials, InstanceMetadataClient $client = null)
     {
-        $this->credentials = $credentials;
+        parent::__construct($credentials);
+        $this->setClient($client);
+    }
+
+    public function setClient(InstanceMetadataClient $client = null)
+    {
+        $this->customClient = null !== $client;
         $this->client = $client ?: InstanceMetadataClient::factory();
+    }
+
+    public function serialize()
+    {
+        $serializable = array(
+            'credentials' => parent::serialize(),
+            'customClient' => $this->customClient,
+        );
+
+        if ($this->customClient) {
+            $serializable['client'] = serialize($this->client);
+        }
+
+        return json_encode($serializable);
+    }
+
+    public function unserialize($value)
+    {
+        $serialized = json_decode($value, true);
+        parent::unserialize($serialized['credentials']);
+        $this->customClient = $serialized['customClient'];
+        $this->client = $this->customClient ?
+            unserialize($serialized['client'])
+            : InstanceMetadataClient::factory();
     }
 
     /**
@@ -50,10 +82,10 @@ class RefreshableInstanceProfileCredentials extends AbstractRefreshableCredentia
     protected function refresh()
     {
         $credentials = $this->client->getInstanceProfileCredentials();
-        // Expire the token 30 minutes early to pre-fetch before expiring.
+        // Expire the token 5 minutes early to pre-fetch before expiring.
         $this->credentials->setAccessKeyId($credentials->getAccessKeyId())
             ->setSecretKey($credentials->getSecretKey())
             ->setSecurityToken($credentials->getSecurityToken())
-            ->setExpiration($credentials->getExpiration() - 1800);
+            ->setExpiration($credentials->getExpiration() - 300);
     }
 }

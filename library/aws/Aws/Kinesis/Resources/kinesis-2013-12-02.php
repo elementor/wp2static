@@ -83,7 +83,6 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 128,
                 ),
                 'Tags' => array(
                     'required' => true,
@@ -91,7 +90,6 @@ return array (
                     'location' => 'json',
                     'additionalProperties' => array(
                         'type' => 'string',
-                        'maxLength' => 256,
                         'data' => array(
                             'shape_name' => 'TagKey',
                         ),
@@ -100,11 +98,11 @@ return array (
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'The requested resource could not be found. It might not be specified correctly, or it might not be in the ACTIVE state.',
+                    'reason' => 'The requested resource could not be found. The stream might not be specified correctly, or it might not be in the ACTIVE state if the operation requires it.',
                     'class' => 'ResourceNotFoundException',
                 ),
                 array(
-                    'reason' => 'The resource is not available for this operation. For example, you attempted to split a shard but the stream is not in the ACTIVE state.',
+                    'reason' => 'The resource is not available for this operation. For successful operation, the resource needs to be in the ACTIVE state.',
                     'class' => 'ResourceInUseException',
                 ),
                 array(
@@ -143,19 +141,73 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 128,
                 ),
                 'ShardCount' => array(
                     'required' => true,
                     'type' => 'numeric',
                     'location' => 'json',
                     'minimum' => 1,
+                    'maximum' => 100000,
                 ),
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'The resource is not available for this operation. For example, you attempted to split a shard but the stream is not in the ACTIVE state.',
+                    'reason' => 'The resource is not available for this operation. For successful operation, the resource needs to be in the ACTIVE state.',
                     'class' => 'ResourceInUseException',
+                ),
+                array(
+                    'reason' => 'The requested resource exceeds the maximum number allowed, or the number of concurrent stream requests exceeds the maximum number allowed (5).',
+                    'class' => 'LimitExceededException',
+                ),
+                array(
+                    'reason' => 'A specified parameter exceeds its restrictions, is not supported, or can\'t be used. For more information, see the returned message.',
+                    'class' => 'InvalidArgumentException',
+                ),
+            ),
+        ),
+        'DecreaseStreamRetentionPeriod' => array(
+            'httpMethod' => 'POST',
+            'uri' => '/',
+            'class' => 'Aws\\Common\\Command\\JsonCommand',
+            'responseClass' => 'EmptyOutput',
+            'responseType' => 'model',
+            'parameters' => array(
+                'Content-Type' => array(
+                    'static' => true,
+                    'location' => 'header',
+                    'default' => 'application/x-amz-json-1.1',
+                ),
+                'command.expects' => array(
+                    'static' => true,
+                    'default' => 'application/json',
+                ),
+                'X-Amz-Target' => array(
+                    'static' => true,
+                    'location' => 'header',
+                    'default' => 'Kinesis_20131202.DecreaseStreamRetentionPeriod',
+                ),
+                'StreamName' => array(
+                    'required' => true,
+                    'type' => 'string',
+                    'location' => 'json',
+                    'minLength' => 1,
+                ),
+                'RetentionPeriodHours' => array(
+                    'required' => true,
+                    'type' => 'numeric',
+                    'location' => 'json',
+                    'minimum' => 24,
+                    'maximum' => 168,
+                ),
+            ),
+            'errorResponses' => array(
+                array(
+                    'reason' => 'The resource is not available for this operation. For successful operation, the resource needs to be in the ACTIVE state.',
+                    'class' => 'ResourceInUseException',
+                ),
+                array(
+                    'reason' => 'The requested resource could not be found. The stream might not be specified correctly, or it might not be in the ACTIVE state if the operation requires it.',
+                    'class' => 'ResourceNotFoundException',
                 ),
                 array(
                     'reason' => 'The requested resource exceeds the maximum number allowed, or the number of concurrent stream requests exceeds the maximum number allowed (5).',
@@ -193,12 +245,11 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 128,
                 ),
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'The requested resource could not be found. It might not be specified correctly, or it might not be in the ACTIVE state.',
+                    'reason' => 'The requested resource could not be found. The stream might not be specified correctly, or it might not be in the ACTIVE state if the operation requires it.',
                     'class' => 'ResourceNotFoundException',
                 ),
                 array(
@@ -233,7 +284,6 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 128,
                 ),
                 'Limit' => array(
                     'type' => 'numeric',
@@ -245,12 +295,11 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 128,
                 ),
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'The requested resource could not be found. It might not be specified correctly, or it might not be in the ACTIVE state.',
+                    'reason' => 'The requested resource could not be found. The stream might not be specified correctly, or it might not be in the ACTIVE state if the operation requires it.',
                     'class' => 'ResourceNotFoundException',
                 ),
                 array(
@@ -285,7 +334,6 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 512,
                 ),
                 'Limit' => array(
                     'type' => 'numeric',
@@ -296,7 +344,7 @@ return array (
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'The requested resource could not be found. It might not be specified correctly, or it might not be in the ACTIVE state.',
+                    'reason' => 'The requested resource could not be found. The stream might not be specified correctly, or it might not be in the ACTIVE state if the operation requires it.',
                     'class' => 'ResourceNotFoundException',
                 ),
                 array(
@@ -339,14 +387,12 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 128,
                 ),
                 'ShardId' => array(
                     'required' => true,
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 128,
                 ),
                 'ShardIteratorType' => array(
                     'required' => true,
@@ -360,7 +406,7 @@ return array (
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'The requested resource could not be found. It might not be specified correctly, or it might not be in the ACTIVE state.',
+                    'reason' => 'The requested resource could not be found. The stream might not be specified correctly, or it might not be in the ACTIVE state if the operation requires it.',
                     'class' => 'ResourceNotFoundException',
                 ),
                 array(
@@ -370,6 +416,60 @@ return array (
                 array(
                     'reason' => 'The request rate is too high, or the requested data is too large for the available throughput. Reduce the frequency or size of your requests. For more information, see Error Retries and Exponential Backoff in AWS in the AWS General Reference.',
                     'class' => 'ProvisionedThroughputExceededException',
+                ),
+            ),
+        ),
+        'IncreaseStreamRetentionPeriod' => array(
+            'httpMethod' => 'POST',
+            'uri' => '/',
+            'class' => 'Aws\\Common\\Command\\JsonCommand',
+            'responseClass' => 'EmptyOutput',
+            'responseType' => 'model',
+            'parameters' => array(
+                'Content-Type' => array(
+                    'static' => true,
+                    'location' => 'header',
+                    'default' => 'application/x-amz-json-1.1',
+                ),
+                'command.expects' => array(
+                    'static' => true,
+                    'default' => 'application/json',
+                ),
+                'X-Amz-Target' => array(
+                    'static' => true,
+                    'location' => 'header',
+                    'default' => 'Kinesis_20131202.IncreaseStreamRetentionPeriod',
+                ),
+                'StreamName' => array(
+                    'required' => true,
+                    'type' => 'string',
+                    'location' => 'json',
+                    'minLength' => 1,
+                ),
+                'RetentionPeriodHours' => array(
+                    'required' => true,
+                    'type' => 'numeric',
+                    'location' => 'json',
+                    'minimum' => 24,
+                    'maximum' => 168,
+                ),
+            ),
+            'errorResponses' => array(
+                array(
+                    'reason' => 'The resource is not available for this operation. For successful operation, the resource needs to be in the ACTIVE state.',
+                    'class' => 'ResourceInUseException',
+                ),
+                array(
+                    'reason' => 'The requested resource could not be found. The stream might not be specified correctly, or it might not be in the ACTIVE state if the operation requires it.',
+                    'class' => 'ResourceNotFoundException',
+                ),
+                array(
+                    'reason' => 'The requested resource exceeds the maximum number allowed, or the number of concurrent stream requests exceeds the maximum number allowed (5).',
+                    'class' => 'LimitExceededException',
+                ),
+                array(
+                    'reason' => 'A specified parameter exceeds its restrictions, is not supported, or can\'t be used. For more information, see the returned message.',
+                    'class' => 'InvalidArgumentException',
                 ),
             ),
         ),
@@ -404,7 +504,6 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 128,
                 ),
             ),
             'errorResponses' => array(
@@ -440,13 +539,11 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 128,
                 ),
                 'ExclusiveStartTagKey' => array(
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 128,
                 ),
                 'Limit' => array(
                     'type' => 'numeric',
@@ -457,7 +554,7 @@ return array (
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'The requested resource could not be found. It might not be specified correctly, or it might not be in the ACTIVE state.',
+                    'reason' => 'The requested resource could not be found. The stream might not be specified correctly, or it might not be in the ACTIVE state if the operation requires it.',
                     'class' => 'ResourceNotFoundException',
                 ),
                 array(
@@ -496,30 +593,27 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 128,
                 ),
                 'ShardToMerge' => array(
                     'required' => true,
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 128,
                 ),
                 'AdjacentShardToMerge' => array(
                     'required' => true,
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 128,
                 ),
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'The requested resource could not be found. It might not be specified correctly, or it might not be in the ACTIVE state.',
+                    'reason' => 'The requested resource could not be found. The stream might not be specified correctly, or it might not be in the ACTIVE state if the operation requires it.',
                     'class' => 'ResourceNotFoundException',
                 ),
                 array(
-                    'reason' => 'The resource is not available for this operation. For example, you attempted to split a shard but the stream is not in the ACTIVE state.',
+                    'reason' => 'The resource is not available for this operation. For successful operation, the resource needs to be in the ACTIVE state.',
                     'class' => 'ResourceInUseException',
                 ),
                 array(
@@ -558,7 +652,6 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 128,
                 ),
                 'Data' => array(
                     'required' => true,
@@ -573,7 +666,6 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 256,
                 ),
                 'ExplicitHashKey' => array(
                     'type' => 'string',
@@ -586,7 +678,7 @@ return array (
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'The requested resource could not be found. It might not be specified correctly, or it might not be in the ACTIVE state.',
+                    'reason' => 'The requested resource could not be found. The stream might not be specified correctly, or it might not be in the ACTIVE state if the operation requires it.',
                     'class' => 'ResourceNotFoundException',
                 ),
                 array(
@@ -644,7 +736,6 @@ return array (
                                 'required' => true,
                                 'type' => 'string',
                                 'minLength' => 1,
-                                'maxLength' => 256,
                             ),
                         ),
                     ),
@@ -654,12 +745,11 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 128,
                 ),
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'The requested resource could not be found. It might not be specified correctly, or it might not be in the ACTIVE state.',
+                    'reason' => 'The requested resource could not be found. The stream might not be specified correctly, or it might not be in the ACTIVE state if the operation requires it.',
                     'class' => 'ResourceNotFoundException',
                 ),
                 array(
@@ -698,7 +788,6 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 128,
                 ),
                 'TagKeys' => array(
                     'required' => true,
@@ -710,17 +799,16 @@ return array (
                         'name' => 'TagKey',
                         'type' => 'string',
                         'minLength' => 1,
-                        'maxLength' => 128,
                     ),
                 ),
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'The requested resource could not be found. It might not be specified correctly, or it might not be in the ACTIVE state.',
+                    'reason' => 'The requested resource could not be found. The stream might not be specified correctly, or it might not be in the ACTIVE state if the operation requires it.',
                     'class' => 'ResourceNotFoundException',
                 ),
                 array(
-                    'reason' => 'The resource is not available for this operation. For example, you attempted to split a shard but the stream is not in the ACTIVE state.',
+                    'reason' => 'The resource is not available for this operation. For successful operation, the resource needs to be in the ACTIVE state.',
                     'class' => 'ResourceInUseException',
                 ),
                 array(
@@ -759,14 +847,12 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 128,
                 ),
                 'ShardToSplit' => array(
                     'required' => true,
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
-                    'maxLength' => 128,
                 ),
                 'NewStartingHashKey' => array(
                     'required' => true,
@@ -776,11 +862,11 @@ return array (
             ),
             'errorResponses' => array(
                 array(
-                    'reason' => 'The requested resource could not be found. It might not be specified correctly, or it might not be in the ACTIVE state.',
+                    'reason' => 'The requested resource could not be found. The stream might not be specified correctly, or it might not be in the ACTIVE state if the operation requires it.',
                     'class' => 'ResourceNotFoundException',
                 ),
                 array(
-                    'reason' => 'The resource is not available for this operation. For example, you attempted to split a shard but the stream is not in the ACTIVE state.',
+                    'reason' => 'The resource is not available for this operation. For successful operation, the resource needs to be in the ACTIVE state.',
                     'class' => 'ResourceInUseException',
                 ),
                 array(
@@ -859,6 +945,9 @@ return array (
                         'HasMoreShards' => array(
                             'type' => 'boolean',
                         ),
+                        'RetentionPeriodHours' => array(
+                            'type' => 'numeric',
+                        ),
                     ),
                 ),
             ),
@@ -875,6 +964,9 @@ return array (
                         'type' => 'object',
                         'properties' => array(
                             'SequenceNumber' => array(
+                                'type' => 'string',
+                            ),
+                            'ApproximateArrivalTimestamp' => array(
                                 'type' => 'string',
                             ),
                             'Data' => array(

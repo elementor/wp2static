@@ -32,9 +32,9 @@ class FilesystemCache extends FileCache
     /**
      * {@inheritdoc}
      */
-    public function __construct($directory, $extension = self::EXTENSION)
+    public function __construct($directory, $extension = self::EXTENSION, $umask = 0002)
     {
-        parent::__construct($directory, $extension);
+        parent::__construct($directory, $extension, $umask);
     }
 
     /**
@@ -53,7 +53,7 @@ class FilesystemCache extends FileCache
         $resource = fopen($filename, "r");
 
         if (false !== ($line = fgets($resource))) {
-            $lifetime = (integer) $line;
+            $lifetime = (int) $line;
         }
 
         if ($lifetime !== 0 && $lifetime < time()) {
@@ -86,7 +86,7 @@ class FilesystemCache extends FileCache
         $resource = fopen($filename, "r");
 
         if (false !== ($line = fgets($resource))) {
-            $lifetime = (integer) $line;
+            $lifetime = (int) $line;
         }
 
         fclose($resource);
