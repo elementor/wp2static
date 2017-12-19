@@ -12,4 +12,5 @@ RUN curl -L https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
 RUN chmod +x /usr/local/bin/wp
 
 COPY provisioning/*.sh /
+COPY provisioning/.env-vars /
 

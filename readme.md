@@ -39,6 +39,8 @@ To quickly try out the plugin, without affecting your other WordPress installati
  - `docker inspect __yourcontainerid__ | grep Address` # get IP for connecting in your browser
  - open IP in browser and you have a clean WP install, including the plugin (l/p: admin/admin)
 
+Optional use case - for me, I sometimes need to do development on a remote EC2 instance (to overcome terrible internet speeds where I am). In this instance, I need to set the site URL to the public DNS or assigned domain name of my EC2 instance. You can copy the `./provisioning/.env-vars-SAMPLE` file to `./provisioning/.env-vars` and set the `WPSTATICURL` variable within to your publicly accessible URL on port `8091`.
+
 There is a great [Dockerized FTP server](https://github.com/stilliard/docker-pure-ftpd) which I've found useful in development. I may extend this to also serve the hosted files for more complete test capabilities. So long as you can install Docker, this is a much less painful way to get a local FTP server and users setup than what I've experienced before.
 
 ## Support

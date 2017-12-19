@@ -3,6 +3,9 @@
 # run wp-cli cmds from wp install path
 cd /var/www/html
 
+# source env vars to use in Docker run commands
+. /.env-vars
+
 
 # wait for mysql container
 # * wordpress image's default entrypoint will also take some time
@@ -16,8 +19,15 @@ done
 # still requires buffer before accessible for wp cli
 sleep 5
 
-# get container IP address
-containerIP=$(ip route get 1 | awk '{print $NF;exit}')
+
+# override site URL from env var if set
+if [[ -z "${WPSTATICURL}" ]]; then
+	echo 'no site URL specified, use container IP'
+	# get container IP address to use as site URL
+	containerIP=$(ip route get 1 | awk '{print $NF;exit}')
+else
+  containerIP="${WPSTATICURL}"
+fi
 
 echo 'pwd:'
 pwd
