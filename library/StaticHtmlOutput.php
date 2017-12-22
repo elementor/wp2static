@@ -5,6 +5,11 @@
  * Copyright (c) 2011 Leon Stafford
  */
 
+use Kunnu\Dropbox\Dropbox;
+use Kunnu\Dropbox\DropboxApp;
+use Kunnu\Dropbox\DropboxFile;
+use Kunnu\Dropbox\Exceptions\DropboxClientException;
+
 class StaticHtmlOutput {
 	const VERSION = '1.9';
 	const OPTIONS_KEY = 'wp-static-html-output-options';
@@ -326,14 +331,16 @@ class StaticHtmlOutput {
         }
 
 		if(filter_input(INPUT_POST, 'sendViaDropbox') == 1) {
-            require_once(__DIR__.'/Dropbox/autoload.php');
-
             // will exclude the siteroot when copying
             $siteroot = $archiveName . '/';
+            $dropboxAppKey = filter_input(INPUT_POST, 'dropboxAppKey');
+            $dropboxAppSecret = filter_input(INPUT_POST, 'dropboxAppSecret');
             $dropboxAccessToken = filter_input(INPUT_POST, 'dropboxAccessToken');
             $dropboxFolder = filter_input(INPUT_POST, 'dropboxFolder');
 
-            $dbxClient = new Dropbox\Client($dropboxAccessToken, "PHP-Example/1.0");
+
+			$app = new DropboxApp($dropboxAppKey, $dropboxAppSecret, $dropboxAccessToken);
+			$dbxClient = new Dropbox($app);
 
             function FolderToDropbox($dir, $dbxClient, $siteroot, $dropboxFolder){
                 $files = scandir($dir);
@@ -343,12 +350,9 @@ class StaticHtmlOutput {
                             FolderToDropbox($dir.'/'.$item, $dbxClient, $siteroot, $dropboxFolder);
                         } else if(is_file($dir.'/'.$item)) {
                             $clean_dir = str_replace($siteroot, '', $dir.'/'.$item);
-
-                            $targetPath = '/'.$dropboxFolder.'/'.$clean_dir;
-                            $f = fopen($dir.'/'.$item, "rb");
-                    
-                            $result = $dbxClient->uploadFile($targetPath, Dropbox\WriteMode::add(), $f);
-                            fclose($f);
+                            $targetPath =  $dropboxFolder . $clean_dir;
+							$dropboxFile = new DropboxFile($dir.'/'.$item);
+							$uploadedFile = $dbxClient->upload($dropboxFile, $targetPath, ['autorename' => true]);
                         } 
                     }
                 }

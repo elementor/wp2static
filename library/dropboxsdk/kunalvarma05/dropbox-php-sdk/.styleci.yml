@@ -1,0 +1,6 @@
+preset: psr2
+
+linting: true
+
+disabled:
+  - single_class_element_per_statement
