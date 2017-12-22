@@ -161,6 +161,11 @@ jQuery(document).ready(function($){
             $(targetExportSettingsBlock).find('#dropboxAppSecret').first().val(decodeURIComponent(settingsBlock.dropboxAppSecret));
             $(targetExportSettingsBlock).find('#dropboxAccessToken').first().val(decodeURIComponent(settingsBlock.dropboxAccessToken));
             $(targetExportSettingsBlock).find('#dropboxFolder').first().val(decodeURIComponent(settingsBlock.dropboxFolder));
+            $(targetExportSettingsBlock).find('#sendViaGithub')[0].checked = settingsBlock.sendViaGithub;
+            $(targetExportSettingsBlock).find('#githubPersonalAccessToken').first().val(decodeURIComponent(settingsBlock.githubPersonalAccessToken));
+            $(targetExportSettingsBlock).find('#githubPath').first().val(decodeURIComponent(settingsBlock.githubPath));
+            $(targetExportSettingsBlock).find('#githubRepo').first().val(decodeURIComponent(settingsBlock.githubRepo));
+            $(targetExportSettingsBlock).find('#githubBranch').first().val(decodeURIComponent(settingsBlock.githubBranch));
 
 
             // if there are more to come, clone and set target
@@ -188,6 +193,11 @@ jQuery(document).ready(function($){
                 $(targetExportSettingsBlock).find('#dropboxAppSecret').val('');
                 $(targetExportSettingsBlock).find('#dropboxAccessToken').val('');
                 $(targetExportSettingsBlock).find('#dropboxFolder').val('');
+                $(targetExportSettingsBlock).find('#sendViaGithub').first().prop('checked', false);
+                $(targetExportSettingsBlock).find('#githubPersonalAccessToken').val('');
+                $(targetExportSettingsBlock).find('#githubPath').val('');
+                $(targetExportSettingsBlock).find('#githubRepo').val('');
+                $(targetExportSettingsBlock).find('#githubBranch').val('');
             }
         });
     }
@@ -344,6 +354,33 @@ http://172.17.0.3/my_pricelist.pdf</pre>
                 <input name="dropboxFolder" class="regular-text" id="dropboxFolder" value="<?php echo esc_attr($this->dropboxFolder) ?>" placeholder="<?php echo __('Dropbox folder', 'static-html-output-plugin');?>" />
                 <span class="description">where you want this to be transferred to in your Dropbox account (ie, /teststatic)</span>
                 <br>
+
+                <br>
+                <fieldset>
+                    <label for="sendViaGithub">
+                    <input name="sendViaGithub" id="sendViaGithub" value="1" type="checkbox" <?php if ($this->sendViaGithub == 1) echo "checked"; ?> />
+                        <span><?php echo __('Transfer files via GitHub', 'static-html-output-plugin');?></span>
+                    </label>
+                </fieldset>
+
+
+		<input name="githubPersonalAccessToken" class="regular-text" id="githubPersonalAccessToken" value="<?php echo esc_attr($this->githubPersonalAccessToken) ?>" placeholder="<?php echo __('GitHub personal access token', 'static-html-output-plugin');?>" />
+
+                <span class="description"><a href="https://github.com/settings/tokens/new" target="_blank">How do I get this?</a></span>
+                <br>
+
+                <input name="githubRepo" class="regular-text" id="githubRepo" value="<?php echo esc_attr($this->githubRepo) ?>" placeholder="<?php echo __('GitHub repository', 'static-html-output-plugin');?>" />
+                <span class="description">ie, 'mystaticsite'</span>
+                <br>
+
+                <input name="githubBranch" class="regular-text" id="githubBranch" value="<?php echo esc_attr($this->githubBranch) ?>" placeholder="<?php echo __('GitHub branch', 'static-html-output-plugin');?>" />
+                <span class="description">usually 'master' or 'gh-pages'</span>
+                <br>
+
+                <input name="githubPath" class="regular-text" id="githubPath" value="<?php echo esc_attr($this->githubPath) ?>" placeholder="<?php echo __('GitHub path', 'static-html-output-plugin');?>" />
+                <span class="description">Usually the repository root (leave this blank) or the 'doc' folder</span>
+                <br>
+
 
 					<p class="submit">
             <?php wp_nonce_field($this->onceAction) ?>

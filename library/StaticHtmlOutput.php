@@ -362,6 +362,112 @@ class StaticHtmlOutput {
         }
 
 
+		if(filter_input(INPUT_POST, 'sendViaGithub') == 1) {
+
+			$client = new \Github\Client();
+            $githubRepo = filter_input(INPUT_POST, 'githubRepo');
+            $githubBranch = filter_input(INPUT_POST, 'githubBranch');
+            $githubPath = filter_input(INPUT_POST, 'githubPath');
+            $githubPersonalAccessToken = filter_input(INPUT_POST, 'githubPersonalAccessToken');
+
+			# GH user and repo - split from repo field input
+            list($githubUser, $githubRepo) = explode('/', $githubRepo);
+
+            $client->authenticate($githubPersonalAccessToken, Github\Client::AUTH_HTTP_TOKEN);
+
+
+            # 1 - Get reference to branch head
+
+			# get reference to branch
+			$reference = $client->api('gitData')->references()->show($githubUser, $githubRepo, 'heads/' . $githubBranch);
+
+            #2 - Get commit of this
+            $commit = $client->api('gitData')->commits()->show($githubUser, $githubRepo, $reference['object']['sha']);
+
+            $commitSHA = $commit['sha'];
+            $treeSHA = $commit['tree']['sha'];
+            $treeURL = $commit['tree']['url'];
+
+            # 3 - Post file as blob
+
+            $siteroot = $archiveName . '/';
+
+            $_SERVER['globHashes'] = [];
+
+            /* LIMIT DEPTH WHILE TESTING */
+            $_SERVER['counter'] = 0;
+
+            function FolderToGithub($dir, $client, $siteroot, $githubPath, $githubUser, $githubRepo){
+                $files = scandir($dir);
+                foreach($files as $item){
+                    // limit the amount of files exported in testing
+                    if ($_SERVER['counter'] > 999) {
+                        break;
+                    }
+                    if($item != '.' && $item != '..'){
+                        if(is_dir($dir.'/'.$item)) {
+                            FolderToGithub($dir.'/'.$item, $client, $siteroot, $githubPath, $githubUser, $githubRepo);
+                        } else if(is_file($dir.'/'.$item)) {
+
+                            $clean_dir = str_replace($siteroot . '/', '', $dir.'/'.$item);
+                            $targetPath =  $gitubPath . $clean_dir;
+
+                            $encodedFile = chunk_split(base64_encode(file_get_contents($dir .'/' . $item)));
+
+                            $globHash = $client->api('gitData')->blobs()->create(
+                                $githubUser, 
+                                $githubRepo, 
+                                ['content' => $encodedFile, 'encoding' => 'base64']
+                            ); # utf-8 or base64
+
+                            $_SERVER['globHashes'][] = [
+                                $globHash['sha'], 
+                                $targetPath
+                            ];
+                            
+
+                            $_SERVER['counter'] += 1;
+                        } 
+                    }
+                }
+            }
+
+            FolderToGithub($siteroot, $client, $siteroot, $githubPath, $githubUser, $githubRepo);
+            
+            # 5 - Create tree
+
+            $treeContents = [];
+
+            foreach($_SERVER['globHashes'] as $file) {
+                $treeContents[] = [
+                    'path' => $file[1],
+                    'mode' => '100644',
+                    'type' => 'blob',
+                    'sha' => $file[0]
+                ];
+            }
+
+            $treeData = [
+                'base_tree' => $treeSHA,
+                'tree' => $treeContents
+            ];
+
+            $newTree = $client->api('gitData')->trees()->create($githubUser, $githubRepo, $treeData);
+
+            # 6 - Create a commit referencing the new tree
+
+            $commitData = ['message' => 'Static export with date time and info', 'tree' => $newTree['sha'], 'parents' => [$commitSHA]];
+            $commit = $client->api('gitData')->commits()->create($githubUser, $githubRepo, $commitData);
+
+
+            # 7 - Update head reference to the new commit
+            $referenceData = ['sha' => $commit['sha'], 'force' => true ]; //Force is default false
+            $reference = $client->api('gitData')->references()->update(
+                $githubUser,
+                $githubRepo,
+                'heads/' . $githubBranch,
+                $referenceData);
+        }
 
         // TODO: keep copy of last export folder for incremental addition
 

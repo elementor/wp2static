@@ -12,7 +12,8 @@ Copyright (c) 2017 Leon Stafford
  */
 
 // use dropbox sdk lib composer fake autoload
-require 'library/dropboxsdk/autoload.php';
+require_once 'library/dropboxsdk/autoload.php';
+require_once 'library/Github/autoload.php';
 require_once 'library/StaticHtmlOutput/Options.php';
 require_once 'library/StaticHtmlOutput/View.php';
 require_once 'library/StaticHtmlOutput/UrlRequest.php';
