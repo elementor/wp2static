@@ -43,6 +43,16 @@ Optional use case - for me, I sometimes need to do development on a remote EC2 i
 
 There is a great [Dockerized FTP server](https://github.com/stilliard/docker-pure-ftpd) which I've found useful in development. I may extend this to also serve the hosted files for more complete test capabilities. So long as you can install Docker, this is a much less painful way to get a local FTP server and users setup than what I've experienced before.
 
+### Debugging
+
+Connect to the container running the Apache instance.
+
+`sudo docker ps` To find the running container.
+
+`sudo docker exec -it {CONTAINER_ID} bash`
+
+Tail the PHP error log as such `tail -f /var/log/apache2/php_err.log`
+
 ## Support
 
 Please [raise an issue](https://github.com/leonstafford/wordpress-static-html-plugin/issues/new) here on GitHub or on the plugin's [support forum](https://wordpress.org/support/plugin/static-html-output-plugin).

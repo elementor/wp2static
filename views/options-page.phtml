@@ -157,6 +157,8 @@ jQuery(document).ready(function($){
             $(targetExportSettingsBlock).find('#s3Bucket').first().val(decodeURIComponent(settingsBlock.s3Bucket));
             $(targetExportSettingsBlock).find('#cfDistributionId').first().val(decodeURIComponent(settingsBlock.cfDistributionId));
             $(targetExportSettingsBlock).find('#sendViaDropbox')[0].checked = settingsBlock.sendViaDropbox;
+            $(targetExportSettingsBlock).find('#dropboxAppKey').first().val(decodeURIComponent(settingsBlock.dropboxAppKey));
+            $(targetExportSettingsBlock).find('#dropboxAppSecret').first().val(decodeURIComponent(settingsBlock.dropboxAppSecret));
             $(targetExportSettingsBlock).find('#dropboxAccessToken').first().val(decodeURIComponent(settingsBlock.dropboxAccessToken));
             $(targetExportSettingsBlock).find('#dropboxFolder').first().val(decodeURIComponent(settingsBlock.dropboxFolder));
 
@@ -182,6 +184,8 @@ jQuery(document).ready(function($){
                 $(targetExportSettingsBlock).find('#s3Bucket').val('');
                 $(targetExportSettingsBlock).find('#cfDistributionId').val('');
                 $(targetExportSettingsBlock).find('#sendViaDropbox').first().prop('checked', false);
+                $(targetExportSettingsBlock).find('#dropboxAppKey').val('');
+                $(targetExportSettingsBlock).find('#dropboxAppSecret').val('');
                 $(targetExportSettingsBlock).find('#dropboxAccessToken').val('');
                 $(targetExportSettingsBlock).find('#dropboxFolder').val('');
             }
@@ -323,12 +327,22 @@ http://172.17.0.3/my_pricelist.pdf</pre>
                     </label>
                 </fieldset>
 
+
+		<input name="dropboxAppKey" class="regular-text" id="dropboxAppKey" value="<?php echo esc_attr($this->dropboxAppKey) ?>" placeholder="<?php echo __('Dropbox app key', 'static-html-output-plugin');?>" />
+
+                <span class="description">ie, 'llkjhlkewedsc'</span>
+                <br>
+
+                <input name="dropboxAppSecret" class="regular-text" id="dropboxAppSecret" value="<?php echo esc_attr($this->dropboxAppSecret) ?>" placeholder="<?php echo __('Dropbox app secret', 'static-html-output-plugin');?>" />
+                <span class="description">ie, 'vsndbvfjhsdfs'</span>
+                <br>
+
                 <input name="dropboxAccessToken" class="regular-text" id="dropboxAccessToken" value="<?php echo esc_attr($this->dropboxAccessToken) ?>" placeholder="<?php echo __('Dropbox access token', 'static-html-output-plugin');?>" />
                 <span class="description"><a href="https://blogs.dropbox.com/developers/2014/05/generate-an-access-token-for-your-own-account/" target="_blank">How do I get this?</a></span>
                 <br>
 
                 <input name="dropboxFolder" class="regular-text" id="dropboxFolder" value="<?php echo esc_attr($this->dropboxFolder) ?>" placeholder="<?php echo __('Dropbox folder', 'static-html-output-plugin');?>" />
-                <span class="description">ie, where you want this to appear in your Dropbox account</span>
+                <span class="description">where you want this to be transferred to in your Dropbox account (ie, /teststatic)</span>
                 <br>
 
 					<p class="submit">

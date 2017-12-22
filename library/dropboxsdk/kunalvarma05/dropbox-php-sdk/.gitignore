@@ -1,0 +1,6 @@
+index.php
+.phpintel/
+/vendor/
+composer.lock
+/.idea
+.php_cs.cache
