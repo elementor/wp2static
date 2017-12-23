@@ -1,8 +1,8 @@
 #!/bin/bash
 
 PROJECT_ROOT=$(pwd)
-SVN_ROOT=/home/leon/svnplugindir
-NEW_TAG=1.9
+SVN_ROOT=/home/ubuntu/svnplugindir
+NEW_TAG=2.0
 
 # run from project root
 
@@ -26,8 +26,10 @@ cp -r $PROJECT_ROOT/wpassets/* $SVN_ROOT/assets/
 
 cd $SVN_ROOT
 
-# tell svn to add the files
-svn add trunk/*
+# tell svn to add the files 
+# TODO: needs forcing to ensure all files added
+svn add --force * --auto-props --parents --depth infinity -q
+#svn add trunk/*
 
 # svn commit trunk
 svn ci -m "adding files for release $NEW_TAG"

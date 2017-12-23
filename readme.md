@@ -5,7 +5,7 @@ Allows you to leverage WordPress as a great CMS, but benefit from the speed, sec
 ## Features
 
  - generates a standalone, static html copy of your whole WordPress website
- - auto-deploy to local folder, FTP, Dropbox or S3
+ - auto-deploy to local folder, FTP, Dropbox, S3 or GitHub Pages
  - one site to unlimited export targets
  - specify extra files to include in the output (ie, dynamically loaded assets)
  - desktop notifications alert you to when exports are complete
@@ -18,7 +18,8 @@ You can [see a working example here](https://leonstafford.github.io/demo-site-wo
 ## Roadmap
 
  - selectively export only changed pages since last output
- - auto-deploy your static files via sFTP, SCP, Netlify, Github Pages, etc
+ - auto-deploy your static files via sFTP, SCP, Netlify, etc
+ - auto trigger an export via CRON job or on each blog update
 
 ## Development
 

@@ -11,7 +11,7 @@ use Kunnu\Dropbox\DropboxFile;
 use Kunnu\Dropbox\Exceptions\DropboxClientException;
 
 class StaticHtmlOutput {
-	const VERSION = '1.9';
+	const VERSION = '2.0';
 	const OPTIONS_KEY = 'wp-static-html-output-options';
 	const HOOK = 'wp-static-html-output';
 	

@@ -3,8 +3,8 @@ Contributors: leonstafford
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=NHEV6WLYJ6QWQ
 Tags: static,html,export,performance,security,portable
 Requires at least: 3.2
-Tested up to: 4.7.3
-Stable tag: 1.9
+Tested up to: 4.9.1
+Stable tag: 2.0
 
 Allows you to leverage WordPress as a great CMS, but benefit from the speed, security and portability that a static website provides.
 
@@ -13,7 +13,7 @@ Allows you to leverage WordPress as a great CMS, but benefit from the speed, sec
 = Features =
 
  * generates a standalone, static html copy of your whole WordPress website
- * auto-deploy to local folder, FTP, S3 or Dropbox
+ * auto-deploy to local folder, FTP, S3, Dropbox or GitHub
  * one site to unlimited export targets
  * specify extra files to include in the output (ie, dynamically loaded assets)
  * desktop notifications alert you to when exports are complete
@@ -70,7 +70,7 @@ Developed by [**Leon Stafford**](http://leonstafford.github.io). If you have any
 
 Anywhere that allows HTML files to be uploaded, ie:
 
- * GitHub/GitLab/BitBucket Pages
+ * GitHub/GitLab/BitBucket Pages (GitHub API integration now included)
  * S3 / CloudFront
  * Dropbox
 
@@ -84,6 +84,16 @@ See the readme. In brief: you can't use dynamic WordPress functions such as comm
 2. The main interface (Japanese)
 
 == Changelog ==
+
+Critical bug fixes and a shiny new feature!
+
+= 2.0 =
+
+ * Bugfix: Dropbox export once again working after they killed version 1 of their API
+ * Bugfix: Amazon S3 publishing fixed after bug introduced in 1.9
+ * Feature: 1-click publishing to a GitHub Pages static site
+
+Thanks to a user donation for funding the development work to get GitHub Pages exporting added as a new feature. I was also able to merge some recently contributed code from @patrickdk77, fixing the recent issues with AWS S3 and CloudFront. Finally, I couldn't make a new release without fixing the Dropbox export functionality - unbeknowst to me, they had killed version 1 of their API in September, breaking the functionality in this plugin, along with many other apps. 
 
 = 1.9 =
 
@@ -208,6 +218,18 @@ Altered main codebase to fix recursion bug and endless loop. Essential upgrade.
 Initial release to Wordpress community
 
 == Upgrade Notice ==
+
+= 2.0 =
+
+Critical bug fixes and a shiny new feature!
+
+ * Bugfix: Dropbox export once again working after they killed version 1 of their API
+ * Bugfix: Amazon S3 publishing fixed after bug introduced in 1.9
+ * Feature: 1-click publishing to a GitHub Pages static site
+
+Thanks to a user donation for funding the development work to get GitHub Pages exporting added as a new feature. I was also able to merge some recently contributed code from @patrickdk77, fixing the recent issues with AWS S3 and CloudFront. Finally, I couldn't make a new release without fixing the Dropbox export functionality - unbeknowst to me, they had killed version 1 of their API in September, breaking the functionality in this plugin, along with many other apps. 
+
+Please contact me to report any bugs or request new features. Thanks again for your support of this plugin!
 
 = 1.9 =
 
