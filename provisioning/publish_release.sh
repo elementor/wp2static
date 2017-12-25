@@ -26,16 +26,25 @@ cp -r $PROJECT_ROOT/wpassets/* $SVN_ROOT/assets/
 
 cd $SVN_ROOT
 
-# tell svn to add the files 
-# TODO: needs forcing to ensure all files added
-svn add --force * --auto-props --parents --depth infinity -q
-#svn add trunk/*
+###
+#
+#
+#  Manually perform these steps from now on
+#  due to having completely hosed SVN repo before! 
+#
+#
+###
 
-# svn commit trunk
-svn ci -m "adding files for release $NEW_TAG"
-
-# svn create tag
-svn cp trunk tags/$NEW_TAG
-
-# push tag up
-svn ci -m "new tag $NEW_TAG"
+## tell svn to add the files 
+## TODO: needs forcing to ensure all files added
+#svn add --force * --auto-props --parents --depth infinity -q
+##svn add trunk/*
+#
+## svn commit trunk
+#svn ci -m "adding files for release $NEW_TAG"
+#
+## svn create tag
+#svn cp trunk tags/$NEW_TAG
+#
+## push tag up
+#svn ci -m "new tag $NEW_TAG"
