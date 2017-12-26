@@ -166,6 +166,9 @@ jQuery(document).ready(function($){
             $(targetExportSettingsBlock).find('#githubPath').first().val(decodeURIComponent(settingsBlock.githubPath));
             $(targetExportSettingsBlock).find('#githubRepo').first().val(decodeURIComponent(settingsBlock.githubRepo));
             $(targetExportSettingsBlock).find('#githubBranch').first().val(decodeURIComponent(settingsBlock.githubBranch));
+            $(targetExportSettingsBlock).find('#sendViaNetlify')[0].checked = settingsBlock.sendViaNetlify;
+            $(targetExportSettingsBlock).find('#netlifyPersonalAccessToken').first().val(decodeURIComponent(settingsBlock.netlifyPersonalAccessToken));
+            $(targetExportSettingsBlock).find('#netlifySiteID').first().val(decodeURIComponent(settingsBlock.netlifySiteID));
 
 
             // if there are more to come, clone and set target
@@ -198,6 +201,9 @@ jQuery(document).ready(function($){
                 $(targetExportSettingsBlock).find('#githubPath').val('');
                 $(targetExportSettingsBlock).find('#githubRepo').val('');
                 $(targetExportSettingsBlock).find('#githubBranch').val('');
+                $(targetExportSettingsBlock).find('#sendViaNetlify').first().prop('checked', false);
+                $(targetExportSettingsBlock).find('#netlifyPersonalAccessToken').val('');
+                $(targetExportSettingsBlock).find('#netlifySiteID').val('');
             }
         });
     }
@@ -379,6 +385,25 @@ http://172.17.0.3/my_pricelist.pdf</pre>
 
                 <input name="githubPath" class="regular-text" id="githubPath" value="<?php echo esc_attr($this->githubPath) ?>" placeholder="<?php echo __('GitHub path', 'static-html-output-plugin');?>" />
                 <span class="description">Usually the repository root (leave this blank) or the 'doc' folder</span>
+                <br>
+                <br>
+                <fieldset>
+                    <label for="sendViaNetlify">
+                    <input name="sendViaNetlify" id="sendViaNetlify" value="1" type="checkbox" <?php if ($this->sendViaNetlify == 1) echo "checked"; ?> />
+                        <span><?php echo __('Transfer files via Netlify', 'static-html-output-plugin');?></span>
+                    </label>
+                </fieldset>
+
+
+		<input name="netlifyPersonalAccessToken" class="regular-text" id="netlifyPersonalAccessToken" value="<?php echo esc_attr($this->netlifyPersonalAccessToken) ?>" placeholder="<?php echo __('Netlify personal access token', 'static-html-output-plugin');?>" />
+
+                <span class="description"><a href="https://app.netlify.com/account/applications/personal" target="_blank">How do I get this?</a></span>
+                <br>
+
+                <input name="netlifySiteID" class="regular-text" id="netlifySiteID" value="<?php echo esc_attr($this->netlifySiteID) ?>" placeholder="<?php echo __('Netlify site ID', 'static-html-output-plugin');?>" />
+                <span class="description">ie, 'mystaticsite'</span>
+                <br>
+
                 <br>
 
 

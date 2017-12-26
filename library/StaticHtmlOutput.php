@@ -9,6 +9,7 @@ use Kunnu\Dropbox\Dropbox;
 use Kunnu\Dropbox\DropboxApp;
 use Kunnu\Dropbox\DropboxFile;
 use Kunnu\Dropbox\Exceptions\DropboxClientException;
+use GuzzleHttp\Client;
 
 class StaticHtmlOutput {
 	const VERSION = '2.0';
@@ -467,6 +468,47 @@ class StaticHtmlOutput {
                 $githubRepo,
                 'heads/' . $githubBranch,
                 $referenceData);
+        }
+
+		if(filter_input(INPUT_POST, 'sendViaNetlify') == 1) {
+            // will exclude the siteroot when copying
+            $siteroot = $archiveName . '/';
+            $netlifySiteID = filter_input(INPUT_POST, 'netlifySiteID');
+            $netlifyPersonalAccessToken = filter_input(INPUT_POST, 'netlifyPersonalAccessToken');
+
+
+			# get ZIP archive's path
+
+			# make Guzzle request to Netlify aka 
+			#	curl -H "Content-Type: application/zip" \
+			#	 -H "Authorization: Bearer my-api-access-token" \
+			#	 --data-binary "@website.zip" \
+			#	 https://api.netlify.com/api/v1/sites/mysite.netlify.com/deploys
+
+
+			$client = new Client([
+				// Base URI is used with relative requests
+				'base_uri' => 'https://api.netlify.com'
+			]);	
+
+			$response = $client->request('POST', '/api/v1/sites/' . $netlifySiteID . '.netlify.com/deploys', [
+				'multipart' => [
+					[
+						'name'     => 'required_for_guzzle_only',
+						'contents' => fopen($archiveName . '.zip', 'r'),
+						'headers'  => [
+							'Content-Type' => 'application/zip',
+							'Authorization' => 'Bearer ' . $netlifyPersonalAccessToken
+						]
+					]
+				]
+			]);
+
+			error_log($response->getStatusCode(), 0);
+			error_log(print_r($response, true), 0);
+
+
+
         }
 
         // TODO: keep copy of last export folder for incremental addition
