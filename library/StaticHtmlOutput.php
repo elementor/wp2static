@@ -160,8 +160,16 @@ class StaticHtmlOutput {
 
 		$uploadDir = $this->get_write_directory();
 		$exporter = wp_get_current_user();
+		
+
 		$archiveName = $uploadDir . '/' . self::HOOK . '-' . $blog_id . '-' . time() . '-' . $exporter->user_login;
 		$archiveDir = $archiveName . '/';
+		$exportStatus = $archiveDir . 'STATUS';
+		$exportLog = $archiveDir . 'LOG';
+
+		$statusText = 'STARTING EXPORT';
+		file_put_contents($exportStatus, $txt.PHP_EOL , FILE_APPEND | LOCK_EX);
+
 		if (!file_exists($archiveDir))
 		{
 			wp_mkdir_p($archiveDir);
@@ -366,29 +374,29 @@ class StaticHtmlOutput {
 					$githubPath = filter_input(INPUT_POST, 'githubPath');
 					$githubPersonalAccessToken = filter_input(INPUT_POST, 'githubPersonalAccessToken');
 
-# GH user and repo - split from repo field input
-list($githubUser, $githubRepo) = explode('/', $githubRepo);
+					# GH user and repo - split from repo field input
+					list($githubUser, $githubRepo) = explode('/', $githubRepo);
 
-$client->authenticate($githubPersonalAccessToken, Github\Client::AUTH_HTTP_TOKEN);
+					$client->authenticate($githubPersonalAccessToken, Github\Client::AUTH_HTTP_TOKEN);
 
 
-# 1 - Get reference to branch head
+					# 1 - Get reference to branch head
 
-# get reference to branch
-$reference = $client->api('gitData')->references()->show($githubUser, $githubRepo, 'heads/' . $githubBranch);
+					# get reference to branch
+					$reference = $client->api('gitData')->references()->show($githubUser, $githubRepo, 'heads/' . $githubBranch);
 
-#2 - Get commit of this
-$commit = $client->api('gitData')->commits()->show($githubUser, $githubRepo, $reference['object']['sha']);
+					#2 - Get commit of this
+					$commit = $client->api('gitData')->commits()->show($githubUser, $githubRepo, $reference['object']['sha']);
 
-$commitSHA = $commit['sha'];
-$treeSHA = $commit['tree']['sha'];
-$treeURL = $commit['tree']['url'];
+					$commitSHA = $commit['sha'];
+					$treeSHA = $commit['tree']['sha'];
+					$treeURL = $commit['tree']['url'];
 
-# 3 - Post file as blob
+					# 3 - Post file as blob
 
-$siteroot = $archiveName . '/';
+					$siteroot = $archiveName . '/';
 
-$_SERVER['globHashes'] = [];
+					$_SERVER['globHashes'] = [];
 
 					/* LIMIT DEPTH WHILE TESTING */
 					$_SERVER['counter'] = 0;
@@ -508,8 +516,10 @@ $_SERVER['globHashes'] = [];
 
 			// TODO: keep copy of last export folder for incremental addition
 
+			$retainStaticFiles = filter_input(INPUT_POST, 'retainStaticFiles');
+
 			// Remove temporary files unless user requested to keep or needed for FTP transfer
-			if ($this->_options->getOption('retainStaticFiles') != 1)		{
+			if ($retainStaticFiles != 1)		{
 				$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($archiveDir), RecursiveIteratorIterator::CHILD_FIRST);
 				foreach ($iterator as $fileName => $fileObject) {
 
