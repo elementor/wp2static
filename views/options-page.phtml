@@ -13,6 +13,7 @@ if ($settings == '') {
 
 <script>
 var settings = '<?php echo $settings; ?>';
+var uploadsDir = '<?php echo $this->wpUploadsDir; ?>';
 
 jQuery(document).ready(function($){
     if (Notification.permission !== "granted") {
@@ -59,7 +60,13 @@ jQuery(document).ready(function($){
                     $('#results').append(serverResponse);
                     currentArchive += 1;
                     processArchives();
-                    }
+                    },
+                error: function(serverResponse) {
+                    $('#progress').hide();
+                    $('#results').html('ERROR OCCURRED <a target="_blank" href="' + uploadsDir  + '/WP-STATIC-EXPORT-LOG">View log</a>');
+
+                }
+
             });
         } else {
              currentArchive = 0;
@@ -85,8 +92,28 @@ jQuery(document).ready(function($){
     $('#generateArchiveButton').click(function() {
         $('#progress').show();
         processArchives();
+        $('#exportStatus').html('');
+        pollStatus(); 
         $('#results').html('');
     });
+
+
+
+    // start polling, stop when hiding progress
+    function pollStatus() {
+        // read status from file
+        statusFile = uploadsDir + '/WP-STATIC-EXPORT-STATUS';
+
+        $.get(statusFile, function(data){
+            $('#exportStatus').html(data);
+        });
+
+        if ($('#progress').is(":visible")) {
+            // poll again after interval if export still in progress
+            setTimeout(pollStatus, 3000);
+        }
+        
+    }
 
     $('.wrap').on('click', '.removeTargetButton', function(event) {
         event.preventDefault();
@@ -433,10 +460,14 @@ http://172.17.0.3/my_pricelist.pdf</pre>
                 <p>
 
     <div id="progress" style="display:none;">
-        <img src="<?php echo plugins_url('../images/dashinfinity.gif', __FILE__); ?>" />
+        <img src="<?php echo plugins_url('../images/dashinfinity.gif', __FILE__); ?>" style="float:left;"/>
+
+        <div id="exportStatus">
+        
+        </div>
     </div>
 
-    <div id="results">
+    <div id="results" style="clear:both;">
     </div>
 
                   <p>
