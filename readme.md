@@ -21,6 +21,11 @@ You can [see a working example here](https://leonstafford.github.io/demo-site-wo
  - auto-deploy your static files via sFTP, SCP, Netlify, etc
  - auto trigger an export via CRON job or on each blog update
 
+### 2.1 release set to include:
+
+ - updated AWS regions for S3/CloudFront
+ - auto export site to Netlify 
+
 ## Development
 
 Latest development build status: [![CircleCI](https://circleci.com/gh/leonstafford/wordpress-static-html-plugin/tree/master.svg?style=svg)](https://circleci.com/gh/leonstafford/wordpress-static-html-plugin/tree/master)
