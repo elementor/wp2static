@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: static,html,export,performance,security,portable
 Requires at least: 3.2
 Tested up to: 4.9.1
-Stable tag: 2.0
+Stable tag: 2.1
 
 Allows you to leverage WordPress as a great CMS, but benefit from the speed, security and portability that a static website provides.
 
@@ -85,9 +85,17 @@ See the readme. In brief: you can't use dynamic WordPress functions such as comm
 
 == Changelog ==
 
-Critical bug fixes and a shiny new feature!
+= 2.1 =
+
+ * Bugfix: don't hang on failures
+ * Bugfix: fix option to retain files on server after export
+ * Feature: 1-click publishing to a Netlify static site
+ * Feature: view server log on failure
+
 
 = 2.0 =
+
+Critical bug fixes and a shiny new feature!
 
  * Bugfix: Dropbox export once again working after they killed version 1 of their API
  * Bugfix: Amazon S3 publishing fixed after bug introduced in 1.9
@@ -218,6 +226,13 @@ Altered main codebase to fix recursion bug and endless loop. Essential upgrade.
 Initial release to Wordpress community
 
 == Upgrade Notice ==
+
+= 2.1 =
+
+ * Bugfix: don't hang on failures
+ * Bugfix: fix option to retain files on server after export
+ * Feature: 1-click publishing to a Netlify static site
+ * Feature: view server log on failure
 
 = 2.0 =
 
