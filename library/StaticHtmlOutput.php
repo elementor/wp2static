@@ -169,7 +169,7 @@ class StaticHtmlOutput {
 
 		$wpUploadsDir = wp_upload_dir()['basedir'];
 		$exportStatus = $wpUploadsDir . '/WP-STATIC-EXPORT-STATUS';
-		$exportLog = $wpUploadsDir . '/WP-STATIC-EXPORT-LOG';
+		$_SERVER['exportLog'] = $wpUploadsDir . '/WP-STATIC-EXPORT-LOG';
 
 
 		if (!file_exists($archiveDir))
@@ -179,9 +179,11 @@ class StaticHtmlOutput {
 
 		// empty status and log files before starting
 		unlink($exportStatus);
-		unlink($exportLog);
+		unlink($_SERVER['exportLog']);
+
 		$statusText = 'STARTING EXPORT';
 		error_log(file_put_contents($exportStatus, $statusText , FILE_APPEND | LOCK_EX), 0);
+
 
 		$baseUrl = untrailingslashit(home_url());
 		$newBaseUrl = untrailingslashit(filter_input(INPUT_POST, 'baseUrl', FILTER_SANITIZE_URL));
@@ -247,6 +249,8 @@ class StaticHtmlOutput {
 		rename($tempZip, $archiveName . '.zip'); 
 
 		if(filter_input(INPUT_POST, 'sendViaFTP') == 1) {		
+			$statusText = 'STARTING FTP UPLOAD';
+			file_put_contents($exportStatus, $statusText , LOCK_EX);
 			require_once(__DIR__.'/FTP/FtpClient.php');
 			require_once(__DIR__.'/FTP/FtpException.php');
 			require_once(__DIR__.'/FTP/FtpWrapper.php');
@@ -265,7 +269,7 @@ class StaticHtmlOutput {
 				$ftp->putAll($archiveName . '/', filter_input(INPUT_POST, 'ftpRemotePath'));
 			} catch (Exception $e){
 				// write error to log
-				file_put_contents($exportLog, $e , FILE_APPEND | LOCK_EX);
+				file_put_contents($_SERVER['exportLog'], $e , FILE_APPEND | LOCK_EX);
 				throw new Exception($e);
 			}
 
@@ -274,30 +278,24 @@ class StaticHtmlOutput {
 		}
 
 		if(filter_input(INPUT_POST, 'sendViaS3') == 1) {		
+			$statusText = 'STARTING S3 UPLOAD';
+			file_put_contents($exportStatus, $statusText , LOCK_EX);
 			require_once(__DIR__.'/aws/aws-autoloader.php');
 			require_once(__DIR__.'/StaticHtmlOutput/MimeTypes.php');
 
 			function UploadObject($S3, $Bucket, $Key, $Data, $ACL, $ContentType = "text/plain") {
-				$Try   = 1;
-				$Sleep = 1;
-				do {
-					try {
-						$Model = $S3->PutObject(array('Bucket'      => $Bucket,
-									'Key'         => $Key,
-									'Body'        => $Data,
-									'ACL'         => $ACL,
-									'ContentType' => $ContentType));
-						return true;
-					}
-					catch (Exception $e) {
-						error_log($e->getMessage());
-						print("Retry, sleep ${Sleep} - " . $e->getMessage() . "\n");
-						sleep($Sleep);
-						$Sleep *= 2;
-					}
+				try {
+					$Model = $S3->PutObject(array('Bucket'      => $Bucket,
+								'Key'         => $Key,
+								'Body'        => $Data,
+								'ACL'         => $ACL,
+								'ContentType' => $ContentType));
+					return true;
 				}
-				while (++$Try < 2);
-				return false;
+				catch (Exception $e) {
+					file_put_contents($_SERVER['exportLog'], $e , FILE_APPEND | LOCK_EX);
+					throw new Exception($e);
+				}
 			}
 
 			function UploadDirectory($S3, $Bucket, $dir, $siteroot) {
@@ -347,41 +345,54 @@ class StaticHtmlOutput {
 																					'CallerReference' => time()
 																					));
 																					}
-																					}
+			}
 
-																					if(filter_input(INPUT_POST, 'sendViaDropbox') == 1) {
-					// will exclude the siteroot when copying
-					$siteroot = $archiveName . '/';
-					$dropboxAppKey = filter_input(INPUT_POST, 'dropboxAppKey');
-					$dropboxAppSecret = filter_input(INPUT_POST, 'dropboxAppSecret');
-					$dropboxAccessToken = filter_input(INPUT_POST, 'dropboxAccessToken');
-					$dropboxFolder = filter_input(INPUT_POST, 'dropboxFolder');
+			if(filter_input(INPUT_POST, 'sendViaDropbox') == 1) {
+				$statusText = 'STARTING Dropbox UPLOAD';
+				file_put_contents($exportStatus, $statusText , LOCK_EX);
+
+				// will exclude the siteroot when copying
+				$siteroot = $archiveName . '/';
+				$dropboxAppKey = filter_input(INPUT_POST, 'dropboxAppKey');
+				$dropboxAppSecret = filter_input(INPUT_POST, 'dropboxAppSecret');
+				$dropboxAccessToken = filter_input(INPUT_POST, 'dropboxAccessToken');
+				$dropboxFolder = filter_input(INPUT_POST, 'dropboxFolder');
 
 
-					$app = new DropboxApp($dropboxAppKey, $dropboxAppSecret, $dropboxAccessToken);
-					$dbxClient = new Dropbox($app);
+				$app = new DropboxApp($dropboxAppKey, $dropboxAppSecret, $dropboxAccessToken);
+				$dbxClient = new Dropbox($app);
 
-					function FolderToDropbox($dir, $dbxClient, $siteroot, $dropboxFolder){
+				function FolderToDropbox($dir, $dbxClient, $siteroot, $dropboxFolder){
 					$files = scandir($dir);
 					foreach($files as $item){
-					if($item != '.' && $item != '..'){
-					if(is_dir($dir.'/'.$item)) {
-					FolderToDropbox($dir.'/'.$item, $dbxClient, $siteroot, $dropboxFolder);
-					} else if(is_file($dir.'/'.$item)) {
-					$clean_dir = str_replace($siteroot, '', $dir.'/'.$item);
-					$targetPath =  $dropboxFolder . $clean_dir;
-					$dropboxFile = new DropboxFile($dir.'/'.$item);
-					$uploadedFile = $dbxClient->upload($dropboxFile, $targetPath, ['autorename' => true]);
-					} 
-					}
-					}
-					}
+						if($item != '.' && $item != '..'){
+							if(is_dir($dir.'/'.$item)) {
+								FolderToDropbox($dir.'/'.$item, $dbxClient, $siteroot, $dropboxFolder);
+							} else if(is_file($dir.'/'.$item)) {
+								$clean_dir = str_replace($siteroot, '', $dir.'/'.$item);
+								$targetPath =  $dropboxFolder . $clean_dir;
 
-					FolderToDropbox($siteroot, $dbxClient, $siteroot, $dropboxFolder);
+
+								try {
+									$dropboxFile = new DropboxFile($dir.'/'.$item);
+									$uploadedFile = $dbxClient->upload($dropboxFile, $targetPath, ['autorename' => true]);
+								} catch (Exception $e) {
+									file_put_contents($_SERVER['exportLog'], $e , FILE_APPEND | LOCK_EX);
+									throw new Exception($e);
+
+								}
+							} 
+						}
 					}
+				}
+
+				FolderToDropbox($siteroot, $dbxClient, $siteroot, $dropboxFolder);
+			}
 
 
 					if(filter_input(INPUT_POST, 'sendViaGithub') == 1) {
+						$statusText = 'STARTING GitHub UPLOAD';
+						file_put_contents($exportStatus, $statusText , LOCK_EX);
 
 					$client = new \Github\Client();
 					$githubRepo = filter_input(INPUT_POST, 'githubRepo');
@@ -489,6 +500,8 @@ class StaticHtmlOutput {
 			}
 
 			if(filter_input(INPUT_POST, 'sendViaNetlify') == 1) {
+				$statusText = 'STARTING Netlify UPLOAD';
+				file_put_contents($exportStatus, $statusText , LOCK_EX);
 				// will exclude the siteroot when copying
 				$siteroot = $archiveName . '/';
 				$netlifySiteID = filter_input(INPUT_POST, 'netlifySiteID');
@@ -509,19 +522,25 @@ class StaticHtmlOutput {
 						'base_uri' => 'https://api.netlify.com'
 				]);	
 
-				$response = $client->request('POST', '/api/v1/sites/' . $netlifySiteID . '.netlify.com/deploys', [
-						'multipart' => [
-						[
-						'name'     => 'required_for_guzzle_only',
-						'contents' => fopen($archiveName . '.zip', 'r'),
-						'headers'  => [
-						'Content-Type' => 'application/zip',
-						'Authorization' => 'Bearer ' . $netlifyPersonalAccessToken
-						]
-						]
-						]
-				]);
 
+				try {
+					$response = $client->request('POST', '/api/v1/sites/' . $netlifySiteID . '.netlify.com/deploys', [
+							'multipart' => [
+							[
+							'name'     => 'required_for_guzzle_only',
+							'contents' => fopen($archiveName . '.zip', 'r'),
+							'headers'  => [
+							'Content-Type' => 'application/zip',
+							'Authorization' => 'Bearer ' . $netlifyPersonalAccessToken
+							]
+							]
+							]
+					]);
+				} catch (Exception $e) {
+					file_put_contents($_SERVER['exportLog'], $e , FILE_APPEND | LOCK_EX);
+					throw new Exception($e);
+				}
+			
 				error_log($response->getStatusCode(), 0);
 				error_log(print_r($response, true), 0);
 
