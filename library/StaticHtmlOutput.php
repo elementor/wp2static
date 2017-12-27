@@ -88,6 +88,7 @@ class StaticHtmlOutput {
 				->setTemplate('options-page')
 				->assign('exportLog', $this->_exportLog)
 				->assign('staticExportSettings', $this->_options->getOption('static-export-settings'))
+				->assign('wpUploadsDir', wp_upload_dir()['baseurl'])
 				->assign('onceAction', self::HOOK . '-options')
 				->render();
 		}
@@ -164,16 +165,23 @@ class StaticHtmlOutput {
 
 		$archiveName = $uploadDir . '/' . self::HOOK . '-' . $blog_id . '-' . time() . '-' . $exporter->user_login;
 		$archiveDir = $archiveName . '/';
-		$exportStatus = $archiveDir . 'STATUS';
-		$exportLog = $archiveDir . 'LOG';
 
-		$statusText = 'STARTING EXPORT';
-		file_put_contents($exportStatus, $txt.PHP_EOL , FILE_APPEND | LOCK_EX);
+
+		$wpUploadsDir = wp_upload_dir()['basedir'];
+		$exportStatus = $wpUploadsDir . '/WP-STATIC-EXPORT-STATUS';
+		$exportLog = $wpUploadsDir . '/WP-STATIC-EXPORT-LOG';
+
 
 		if (!file_exists($archiveDir))
 		{
 			wp_mkdir_p($archiveDir);
 		}
+
+		// empty status and log files before starting
+		unlink($exportStatus);
+		unlink($exportLog);
+		$statusText = 'STARTING EXPORT';
+		error_log(file_put_contents($exportStatus, $statusText , FILE_APPEND | LOCK_EX), 0);
 
 		$baseUrl = untrailingslashit(home_url());
 		$newBaseUrl = untrailingslashit(filter_input(INPUT_POST, 'baseUrl', FILTER_SANITIZE_URL));
@@ -244,15 +252,22 @@ class StaticHtmlOutput {
 			require_once(__DIR__.'/FTP/FtpWrapper.php');
 
 			$ftp = new \FtpClient\FtpClient();
-			$ftp->connect(filter_input(INPUT_POST, 'ftpServer'));
-			$ftp->login(filter_input(INPUT_POST, 'ftpUsername'), filter_input(INPUT_POST, 'ftpPassword'));
-			$ftp->pasv(true);
+			
+			try {
+				$ftp->connect(filter_input(INPUT_POST, 'ftpServer'));
+				$ftp->login(filter_input(INPUT_POST, 'ftpUsername'), filter_input(INPUT_POST, 'ftpPassword'));
+				$ftp->pasv(true);
 
-			if (!$ftp->isdir(filter_input(INPUT_POST, 'ftpRemotePath'))) {
-				$ftp->mkdir(filter_input(INPUT_POST, 'ftpRemotePath'), true);
+				if (!$ftp->isdir(filter_input(INPUT_POST, 'ftpRemotePath'))) {
+					$ftp->mkdir(filter_input(INPUT_POST, 'ftpRemotePath'), true);
+				}
+
+				$ftp->putAll($archiveName . '/', filter_input(INPUT_POST, 'ftpRemotePath'));
+			} catch (Exception $e){
+				// write error to log
+				file_put_contents($exportLog, $e , FILE_APPEND | LOCK_EX);
+				throw new Exception($e);
 			}
-
-			$ftp->putAll($archiveName . '/', filter_input(INPUT_POST, 'ftpRemotePath'));
 
 			// TODO: error handling when not connected/unable to put, etc
 			unset($ftp);
