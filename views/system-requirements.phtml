@@ -34,10 +34,19 @@ endif;
 	<p><strong>Oops - we need to fix some things before the plugin will run smoothly for you.</strong></p>
 	
 	<p>
-		The following requirements failed, please contact the plugin developer, <a href="https://leonstafford.github.io">Leon Stafford</a>, for some support with your issue.
+		The following requirements failed, please contact the plugin developer, <a href="https://leonstafford.github.io">Leon Stafford</a>, for some support with your issue or see tips below.
 		<ul>
 			<li><?php echo implode('</li><li>', $fail) ?></li>
 		</ul>
+
+        <p>Missing the ZIP extension? This can be a common issue but easy to fix. It means that the installation of the PHP programming language on your web host does not currently have support for reading and generating compressed ZIP files. This is needed for the plugin to be able to generate a .zip archive of your static website. Here's some hosting company and platform specific guides on how to fix:</p>
+
+        <ul>
+            <li><a target="_blank" href="https://godaddy.com/help/enable-custom-php-modules-12036">GoDaddy</a></li>
+            <li><a target="_blank" href="https://stackoverflow.com/questions/23564138/how-to-enable-zip-dll-in-xampp">XAMPP</a></li>
+            <li><a target="_blank" href="https://stackoverflow.com/questions/38104348/install-php-zip-on-php-5-6-on-ubuntu">Ubuntu</a></li>
+            <li><a target="_blank" href="https://www.digitalocean.com/community/questions/php-7-0-ziparchive-library-is-missing-or-disabled">DigitalOcean</a></li>
+        </ul>
 	</p>
 	
 	<?php if (count($pass)): ?>
