@@ -1,1 +1,4 @@
 .env-vars
+node_modules/
+package-lock.json
+
