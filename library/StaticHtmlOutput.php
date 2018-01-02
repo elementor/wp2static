@@ -119,11 +119,7 @@ class StaticHtmlOutput {
 		$outputDir = filter_input(INPUT_POST, 'outputDirectory');
 
 		// Check to see if the directory exists
-		if ( $outputDir && !file_exists($outputDir)) {
-
-			// If not, try to create it
-			wp_mkdir_p($outputDir);
-
+		if ( $outputDir && is_dir($outputDir)) {
 			// Makes sure it's writable
 			if( is_writable( $outputDir ) ){
 				return $outputDir;
