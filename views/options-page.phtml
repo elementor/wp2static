@@ -23,7 +23,7 @@ jQuery(document).ready(function($){
 
     function notifyMe() {
       if (!Notification) {
-        alert('All exports are complete!.'); 
+        alert('All exports are complete!.');
         return;
       }
 
@@ -86,8 +86,16 @@ jQuery(document).ready(function($){
         var newSettings = $(".options-form").serialize();
         // stick json encoded settings into hidden field within form(s)
         $(".hiddenSettingsField").val(newSettings);
-        // submit first form which encapsulates all others 
+        // submit first form which encapsulates all others
         $(archives[0]).submit();
+    }
+
+    // looks for the cron variable in the URL and if it's found runs the process.
+    // http://localhost/wordpress/wp-admin/tools.php?page=wp-static-html-output-options&cron=yes
+    if(window.location.href.indexOf("cron") > -1) {
+      $('#progress').show();
+      processArchives();
+      $('#results').html('');
     }
 
     $('#generateArchiveButton').click(function() {
@@ -157,7 +165,7 @@ jQuery(document).ready(function($){
             archive = archive.substring(0, archive.indexOf('&amp;staticExportSettings='));
 
             settingsBlock = JSON.parse('{"' + decodeURI(archive).replace(/\n/g, ",").replace(/\r/g, ",").replace(/"/g, '\\"').replace(/&amp;/g, '","').replace(/=/g,'":"') + '"}');
-        
+
             $(targetExportSettingsBlock).find('#baseUrl').first().val(decodeURIComponent(settingsBlock.baseUrl));
 
             $(targetExportSettingsBlock).find('#outputDirectory').val(decodeURIComponent(settingsBlock.outputDirectory));
@@ -167,7 +175,7 @@ jQuery(document).ready(function($){
 
             $.each(additionalUrls, function(index, value) {
                if (value != '') {
-                   newAdditionalUrls += decodeURIComponent(value) + "\n"; 
+                   newAdditionalUrls += decodeURIComponent(value) + "\n";
                }
             });
 
@@ -240,7 +248,7 @@ jQuery(document).ready(function($){
 </script>
 
 <div class="wrap">
-	
+
 	<h2><?php echo __('WP Static HTML Output - Configure & Run', 'static-html-output-plugin');?></h2>
 
 	<div class="postbox-container">
@@ -260,7 +268,7 @@ jQuery(document).ready(function($){
                   <strong><label for="baseUrl"><?php echo __('Base Url', 'static-html-output-plugin');?></label></strong>
                   <p>
                     <i>This defaults to your WordPress Site URL. If you know the URL of where you'll be hosting the static version of your site, it will be good to change this to that, ie http://mystaticsite.github.io</i>
-                  </p> 
+                  </p>
                   <input type="text" id="baseUrl" name="baseUrl" value="<?php echo esc_attr($this->baseUrl) ?>" size="50" />
                 </p>
 
@@ -268,10 +276,10 @@ jQuery(document).ready(function($){
                   <strong><label for="outputDirectory"><?php echo __('Output Directory', 'static-html-output-plugin');?></label></strong>
                   <p>
                     <i>This defaults to your WordPress uploads directory. Ex: <?php $default_upload_dir = wp_upload_dir(); echo $default_upload_dir['path']; ?></i>
-                  </p> 
+                  </p>
                   <input type="text" id="outputDirectory" name="outputDirectory" value="<?php echo esc_html($this->outputDirectory) ?>" size="50" />
                 </p>
-                
+
                 <p>
                   <strong><label for="additionalUrls"><?php echo __('Additional Urls', 'static-html-output-plugin');?></label></strong>
                   <p>
@@ -290,7 +298,7 @@ http://172.17.0.3/my_pricelist.pdf</pre>
                         <span><?php echo __('Strip out unneeded WordPress meta tags, ie &lt;meta name="generator" content="WordPress...', 'static-html-output-plugin');?></span>
                     </label>
                 </fieldset>
-                
+
                 <fieldset>
                     <label for="retainStaticFiles">
                         <input name="retainStaticFiles" id="retainStaticFiles" value="1" type="checkbox" <?php if ($this->retainStaticFiles == 1) echo "checked"; ?> />
@@ -318,7 +326,7 @@ http://172.17.0.3/my_pricelist.pdf</pre>
                 <input class="regular-text" name="ftpRemotePath" id="ftpRemotePath" value="<?php echo esc_attr($this->ftpRemotePath) ?>" placeholder="<?php echo __('FTP Remote Path', 'static-html-output-plugin');?>" />
                 <span class="description">will attempt to create folder recursively if non-existent</span>
                 <br>
-            
+
 
                 <br>
                 <fieldset>
