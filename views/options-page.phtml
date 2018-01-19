@@ -259,7 +259,7 @@ jQuery(document).ready(function($){
                 <p>
                   <strong><label for="baseUrl"><?php echo __('Base Url', 'static-html-output-plugin');?></label></strong>
                   <p>
-                    <i>This defaults to your WordPress Site URL. If you know the URL of where you'll be hosting the static version of your site, it will be good to change this to that, ie http://mystaticsite.github.io</i>
+                    <i><?php echo __("This defaults to your WordPress Site URL. If you know the URL of where you'll be hosting the static version of your site, it will be good to change this to that, ie http://mystaticsite.github.io!", 'static-html-output-plugin');?></i>
                   </p> 
                   <input type="text" id="baseUrl" name="baseUrl" value="<?php echo esc_attr($this->baseUrl) ?>" size="50" />
                 </p>

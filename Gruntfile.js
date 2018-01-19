@@ -6,7 +6,7 @@ module.exports = function(grunt) {
 		makepot: {
 			target: {
 				options: {
-					cwd: '',                          // Directory of files to internationalize.
+					cwd: './',                          // Directory of files to internationalize.
 					domainPath: 'languages',                   // Where to save the POT file.
 					exclude: [
 						'provisioning', 
@@ -21,7 +21,7 @@ module.exports = function(grunt) {
 						'wpassets',
 					],                      // List of files or directories to ignore.
 					include: [],                      // List of files or directories to include.
-					mainFile: '',                     // Main project file.
+					mainFile: 'wp-static-html-output.php',                     // Main project file.
 					potComments: 'WP Static HTML Output',                  // The copyright at the beginning of the POT file.
 					potFilename: 'static-html-output-plugin.pot',                  // Name of the POT file.
 					potHeaders: {
