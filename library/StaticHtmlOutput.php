@@ -135,6 +135,14 @@ class StaticHtmlOutput {
 		return $wp_upload_dir['path'];
 	}
 
+	public function githubExport() {
+        // grab a file from list to create blob in GH
+
+        // echo remaining number of files or complete status
+        echo 99;
+
+    }
+
 	public function genArch() {
 		$archiveUrl = $this->_generateArchive();
 
@@ -142,8 +150,7 @@ class StaticHtmlOutput {
 			$message = 'Error: ' . $archiveUrl->get_error_code;
 		} else {
 			$message = sprintf('Archive created successfully: <a href="%s">Download archive</a>', $archiveUrl);
-			if ($this->_options->getOption('retainStaticFiles') == 1)
-			{
+			if ($this->_options->getOption('retainStaticFiles') == 1) {
 				$message .= sprintf('<br />Static files retained at: %s/', str_replace(home_url(),'',substr($archiveUrl,0,-4)));
 			}
 		}
@@ -168,21 +175,20 @@ class StaticHtmlOutput {
 
 
 		$wpUploadsDir = wp_upload_dir()['basedir'];
-		$exportStatus = $wpUploadsDir . '/WP-STATIC-EXPORT-STATUS';
+		$_SERVER['exportStatus'] = $wpUploadsDir . '/WP-STATIC-EXPORT-STATUS';
 		$_SERVER['exportLog'] = $wpUploadsDir . '/WP-STATIC-EXPORT-LOG';
+		$_SERVER['githubFilesToExport'] = $wpUploadsDir . '/WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT';
 
-
-		if (!file_exists($archiveDir))
-		{
+		if (!file_exists($archiveDir)) {
 			wp_mkdir_p($archiveDir);
 		}
 
 		// empty status and log files before starting
-		unlink($exportStatus);
+		unlink($_SERVER['exportStatus']);
 		unlink($_SERVER['exportLog']);
 
 		$statusText = 'STARTING EXPORT';
-		error_log(file_put_contents($exportStatus, $statusText , FILE_APPEND | LOCK_EX), 0);
+		error_log(file_put_contents($_SERVER['exportStatus'], $statusText , FILE_APPEND | LOCK_EX), 0);
 
 
 		$baseUrl = untrailingslashit(home_url());
@@ -250,7 +256,7 @@ class StaticHtmlOutput {
 
 		if(filter_input(INPUT_POST, 'sendViaFTP') == 1) {		
 			$statusText = 'STARTING FTP UPLOAD';
-			file_put_contents($exportStatus, $statusText , LOCK_EX);
+			file_put_contents($_SERVER['exportStatus'], $statusText , LOCK_EX);
 			require_once(__DIR__.'/FTP/FtpClient.php');
 			require_once(__DIR__.'/FTP/FtpException.php');
 			require_once(__DIR__.'/FTP/FtpWrapper.php');
@@ -279,7 +285,7 @@ class StaticHtmlOutput {
 
 		if(filter_input(INPUT_POST, 'sendViaS3') == 1) {		
 			$statusText = 'STARTING S3 UPLOAD';
-			file_put_contents($exportStatus, $statusText , LOCK_EX);
+			file_put_contents($_SERVER['exportStatus'], $statusText , LOCK_EX);
 			require_once(__DIR__.'/aws/aws-autoloader.php');
 			require_once(__DIR__.'/StaticHtmlOutput/MimeTypes.php');
 
@@ -349,7 +355,7 @@ class StaticHtmlOutput {
 
 			if(filter_input(INPUT_POST, 'sendViaDropbox') == 1) {
 				$statusText = 'STARTING Dropbox UPLOAD';
-				file_put_contents($exportStatus, $statusText , LOCK_EX);
+				file_put_contents($_SERVER['exportStatus'], $statusText , LOCK_EX);
 
 				// will exclude the siteroot when copying
 				$siteroot = $archiveName . '/';
@@ -391,8 +397,8 @@ class StaticHtmlOutput {
 
 
 					if(filter_input(INPUT_POST, 'sendViaGithub') == 1) {
-						$statusText = 'STARTING GitHub UPLOAD';
-						file_put_contents($exportStatus, $statusText , LOCK_EX);
+						$statusText = 'GitHub: Process starting...';
+						file_put_contents($_SERVER['exportStatus'], $statusText , LOCK_EX);
 
 					$client = new \Github\Client();
 					$githubRepo = filter_input(INPUT_POST, 'githubRepo');
@@ -403,15 +409,20 @@ class StaticHtmlOutput {
 					# GH user and repo - split from repo field input
 					list($githubUser, $githubRepo) = explode('/', $githubRepo);
 
+                    $statusText = 'GitHub: Authenticating...';
+                    file_put_contents($_SERVER['exportStatus'], $statusText , LOCK_EX);
+
 					$client->authenticate($githubPersonalAccessToken, Github\Client::AUTH_HTTP_TOKEN);
 
 
-					# 1 - Get reference to branch head
+                    $statusText = 'GitHub: Getting reference to branch head...';
+                    file_put_contents($_SERVER['exportStatus'], $statusText , LOCK_EX);
 
-					# get reference to branch
 					$reference = $client->api('gitData')->references()->show($githubUser, $githubRepo, 'heads/' . $githubBranch);
 
-					#2 - Get commit of this
+                    $statusText = 'GitHub: Getting commit for branch head...';
+                    file_put_contents($_SERVER['exportStatus'], $statusText , LOCK_EX);
+
 					$commit = $client->api('gitData')->commits()->show($githubUser, $githubRepo, $reference['object']['sha']);
 
 					$commitSHA = $commit['sha'];
@@ -427,22 +438,50 @@ class StaticHtmlOutput {
 					/* LIMIT DEPTH WHILE TESTING */
 					$_SERVER['counter'] = 0;
 
+
 				function FolderToGithub($dir, $client, $siteroot, $githubPath, $githubUser, $githubRepo){
 					$files = scandir($dir);
 					foreach($files as $item){
+
+
 						// limit the amount of files exported in testing
-						if ($_SERVER['counter'] > 999) {
+				        if ($_SERVER['counter'] > 999) {
+						#if ($_SERVER['counter'] > 15) {
 							break;
 						}
-						if($item != '.' && $item != '..'){
+                        // exclude ., .. and .git folders
+						if($item != '.' && $item != '..' && $item != '.git'){
+                            
+
 							if(is_dir($dir.'/'.$item)) {
 								FolderToGithub($dir.'/'.$item, $client, $siteroot, $githubPath, $githubUser, $githubRepo);
 							} else if(is_file($dir.'/'.$item)) {
 
+
+                                // siteroot: /home/somewebs/public_html/wordpress/wp-content/uploads/2018/01/wp-static-html-output-1-1516441854-leon/
+                                // targetPath: ~somewebs/wordpress/beautiful-moalboal-blog/index.html
+
+                                // $_SERVER['REQUEST_URI']: /~somewebs/wordpress/wp-admin/admin-ajax.php
+
+                                // if WP hosted on subdir, remove that from target path 
+
+                                $subdir = str_replace('/wp-admin/admin-ajax.php', '', $_SERVER['REQUEST_URI']);
+                                $subdir = ltrim($subdir, '/');
+                                
+
 								$clean_dir = str_replace($siteroot . '/', '', $dir.'/'.$item);
-								$targetPath =  $gitubPath . $clean_dir;
+
+                                $clean_dir = str_replace($subdir, '', $clean_dir);
+
+
+								$targetPath =  $githubPath . $clean_dir;
+                                $targetPath = ltrim($targetPath, '/');
+
 
 								$encodedFile = chunk_split(base64_encode(file_get_contents($dir .'/' . $item)));
+
+                                $statusText = 'GitHub: Creating blob of file... # ' . $_SERVER['counter'];
+                                file_put_contents($_SERVER['exportStatus'], $statusText , LOCK_EX);
 
 								$globHash = $client->api('gitData')->blobs()->create(
 										$githubUser, 
@@ -462,9 +501,15 @@ class StaticHtmlOutput {
 					}
 				}
 
+
+
+                $statusText = 'GitHub: Entering export process...';
+                file_put_contents($_SERVER['exportStatus'], $statusText , LOCK_EX);
+
 				FolderToGithub($siteroot, $client, $siteroot, $githubPath, $githubUser, $githubRepo);
 
-# 5 - Create tree
+                $statusText = 'GitHub: Finished creating all blobs...';
+                file_put_contents($_SERVER['exportStatus'], $statusText , LOCK_EX);
 
 				$treeContents = [];
 
@@ -482,26 +527,44 @@ class StaticHtmlOutput {
 					'tree' => $treeContents
 				];
 
+                $statusText = 'GitHub: Creating tree...';
+                file_put_contents($_SERVER['exportStatus'], $statusText , LOCK_EX);
+
+                error_log(print_r($treeData, true));
+
 				$newTree = $client->api('gitData')->trees()->create($githubUser, $githubRepo, $treeData);
 
-# 6 - Create a commit referencing the new tree
+                $statusText = 'GitHub: Tree created...';
+                file_put_contents($_SERVER['exportStatus'], $statusText , LOCK_EX);
 
+                
 				$commitData = ['message' => 'Static export with date time and info', 'tree' => $newTree['sha'], 'parents' => [$commitSHA]];
+                $statusText = 'GitHub: Creating commit...';
+                file_put_contents($_SERVER['exportStatus'], $statusText , LOCK_EX);
+
 				$commit = $client->api('gitData')->commits()->create($githubUser, $githubRepo, $commitData);
 
 
-# 7 - Update head reference to the new commit
+                $statusText = 'GitHub: Updating head to reference commit...';
+                file_put_contents($_SERVER['exportStatus'], $statusText , LOCK_EX);
+
 				$referenceData = ['sha' => $commit['sha'], 'force' => true ]; //Force is default false
-				$reference = $client->api('gitData')->references()->update(
-						$githubUser,
-						$githubRepo,
-						'heads/' . $githubBranch,
-						$referenceData);
+				try {
+                    $reference = $client->api('gitData')->references()->update(
+                            $githubUser,
+                            $githubRepo,
+                            'heads/' . $githubBranch,
+                            $referenceData);
+				} catch (Exception $e) {
+					file_put_contents($_SERVER['exportLog'], $e , LOCK_EX);
+					throw new Exception($e);
+				}
+
 			}
 
 			if(filter_input(INPUT_POST, 'sendViaNetlify') == 1) {
 				$statusText = 'STARTING Netlify UPLOAD';
-				file_put_contents($exportStatus, $statusText , LOCK_EX);
+				file_put_contents($_SERVER['exportStatus'], $statusText , LOCK_EX);
 				// will exclude the siteroot when copying
 				$siteroot = $archiveName . '/';
 				$netlifySiteID = filter_input(INPUT_POST, 'netlifySiteID');
@@ -627,7 +690,7 @@ class StaticHtmlOutput {
 		if ($fileContents != '' && $fileContents != 'F') {
 			file_put_contents($fileName, $fileContents);
 		} else {
-			error_log($filename);
+			error_log($fileName);
 			error_log('response body was empty');
 		}
 	}
