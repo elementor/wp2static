@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: static,html,export,performance,security,portable
 Requires at least: 3.2
 Tested up to: 4.9.1
-Stable tag: 2.1
+Stable tag: 2.2
 
 Allows you to leverage WordPress as a great CMS, but benefit from the speed, security and portability that a static website provides.
 
@@ -84,6 +84,11 @@ See the readme. In brief: you can't use dynamic WordPress functions such as comm
 2. The main interface (Japanese)
 
 == Changelog ==
+
+= 2.2 =
+
+ * Bugfix: GitHub export now works on shared/limited hosting
+ * Feature: Realtime export progress logs
 
 = 2.1 =
 
@@ -226,6 +231,15 @@ Altered main codebase to fix recursion bug and endless loop. Essential upgrade.
 Initial release to Wordpress community
 
 == Upgrade Notice ==
+
+= 2.2 =
+
+Important upgrade - bug fix and better error reporting. Recommended for all users.
+
+ * Bugfix: GitHub export now works on shared/limited hosting
+ * Feature: Realtime export progress logs
+
+Recommended upgrade for all users. Exporting from shared hosting has been improved. Better ability to debug issues and get help when an export is failing.
 
 = 2.1 =
 
