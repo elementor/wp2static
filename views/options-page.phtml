@@ -64,12 +64,12 @@ jQuery(document).ready(function($){
                 // if response is an int and not null, call again, update counter on page
                 console.log(serverResponse);
                 if (serverResponse > 0) {
-                    $('#results').prepend('GitHub export: There are ' + serverResponse + ' files remaining to export to GH. ');
-                    
+                    console.log('GITHUB: ' + serverResponse + ' files remaining to be sent as blobs');
+ 
                     //setTimeout(exportToGitHub, 1000);
                     exportToGitHub();
                 } else {
-                    $('#results').prepend('GitHub export: All blobs created, now creating tree, new reference, etc. ');
+                    console.log('GITHUB: All blobs created, now creating tree, new reference, etc.');
                     data = data.replace('github_export', 'github_finalise_export');
                     $.ajax({
                         url: ajaxurl,
@@ -78,10 +78,14 @@ jQuery(document).ready(function($){
                         method: 'POST',
                         success: function(serverResponse) {
                             console.log(serverResponse);
-                            $('#results').prepend('GitHub export: All done! Yay!');
+                            console.log('GITHUB: Export complete!');
+                            // change progress animation to a green tick
+                            $('#progress').attr("src", pluginDir + '../images/greentick.png');
+                            $('#progress').css("width", '123px');
+                            notifyMe();
                         },
                         error: function(serverResponse) {
-                            console.log('ERROR doing GH finalise');
+                            console.log('GITHUB: Export failure');
                             console.log(serverResponse);
                         }
                     });
@@ -111,15 +115,19 @@ jQuery(document).ready(function($){
                     $('#results').append(serverResponse);
                     currentArchive += 1;
                     processArchives();
-                    
-                    // process any files needing exporting to GitHub
-                    exportToGitHub();
-                    },
+                   
+                    if ($('#sendViaGithub').attr('checked') == 'checked') {
+                        // process any files needing exporting to GitHub
+                        exportToGitHub();
+                    }
+                },
                 error: function(serverResponse) {
                     console.log('ERROR IN EXPORT');
                     console.log(serverResponse);
                 }
             });
+        } else if ($('#sendViaGithub').attr('checked') == 'checked') {
+            // don't consider things finished yet...
         } else {
              currentArchive = 0;
             // all archives processed
@@ -166,10 +174,12 @@ jQuery(document).ready(function($){
             //$('#exportStatus').css('height', 0); /* Reset the height*/
             $('#exportStatus').css('height', Math.min($('#exportStatus').prop('scrollHeight'), heightLimit) + "px");
         });
-
-        if ($('#progress').is(":visible")) {
+        
+        if ($('#progress').attr("src").includes('infinity')) {
             // poll again after interval if export still in progress
             setTimeout(pollStatus, pollingInterval);
+        } else {
+            console.log('export progress halted');
         }
         
     }
