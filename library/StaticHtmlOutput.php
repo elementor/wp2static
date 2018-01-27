@@ -268,6 +268,7 @@ class StaticHtmlOutput {
 		if (is_wp_error($archiveUrl)) {
 			$message = 'Error: ' . $archiveUrl->get_error_code;
 		} else {
+            $this->_prependExportLog('ZIP CREATED: Download a ZIP of your static site from: ' . $archiveUrl);
 			$message = sprintf('Archive created successfully: <a href="%s">Download archive</a>', $archiveUrl);
 			if ($this->_options->getOption('retainStaticFiles') == 1) {
 				$message .= sprintf('<br />Static files retained at: %s/', str_replace(home_url(),'',substr($archiveUrl,0,-4)));
