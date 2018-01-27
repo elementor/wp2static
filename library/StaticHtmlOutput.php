@@ -179,26 +179,21 @@ class StaticHtmlOutput {
             'tree' => $treeContents
         ];
 
-        $statusText = 'GitHub: Creating tree...';
-        file_put_contents($_SERVER['exportStatus'], $statusText , LOCK_EX);
+        $this->_prependExportLog('GITHUB: Creating tree ...' . PHP_EOL);
 
         error_log(print_r($treeData, true));
 
         $newTree = $client->api('gitData')->trees()->create($githubUser, $githubRepo, $treeData);
 
-        $statusText = 'GitHub: Tree created...';
-        file_put_contents($_SERVER['exportStatus'], $statusText , LOCK_EX);
-
+        $this->_prependExportLog('GITHUB: Tree created');
         
         $commitData = ['message' => 'Static export with date time and info', 'tree' => $newTree['sha'], 'parents' => [$commitSHA]];
-        $statusText = 'GitHub: Creating commit...';
-        file_put_contents($_SERVER['exportStatus'], $statusText , LOCK_EX);
+        $this->_prependExportLog('GITHUB: Creating commit ...');
 
         $commit = $client->api('gitData')->commits()->create($githubUser, $githubRepo, $commitData);
 
 
-        $statusText = 'GitHub: Updating head to reference commit...';
-        file_put_contents($_SERVER['exportStatus'], $statusText , LOCK_EX);
+        $this->_prependExportLog('GITHUB: Updating head to reference commit ...');
 
         $referenceData = ['sha' => $commit['sha'], 'force' => true ]; //Force is default false
         try {
@@ -208,7 +203,7 @@ class StaticHtmlOutput {
                     'heads/' . $githubBranch,
                     $referenceData);
         } catch (Exception $e) {
-            file_put_contents($_SERVER['exportLog'], $e , LOCK_EX);
+            $this->_prependExportLog($e);
             throw new Exception($e);
         }
 
@@ -226,15 +221,11 @@ class StaticHtmlOutput {
 		$wpUploadsDir = wp_upload_dir()['basedir'];
         $_SERVER['githubFilesToExport'] = $wpUploadsDir . '/WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT';
 
-        // try sleeping in case file is empty:
-        //sleep(2);
-
         // grab first line from filelist
         $githubFilesToExport = $_SERVER['githubFilesToExport'];
         $f = fopen($githubFilesToExport, 'r');
         $line = fgets($f);
         fclose($f);
-
 
         // remove first line from file (disabled while testing)
         $contents = file($githubFilesToExport, FILE_IGNORE_NEW_LINES);
@@ -249,6 +240,8 @@ class StaticHtmlOutput {
         list($fileToExport, $targetPath) = explode(',', $line);
         error_log($fileToExport);
         
+        $this->_prependExportLog('GITHUB: Creating blob for ' . $targetPath);
+
         $encodedFile = chunk_split(base64_encode(file_get_contents($fileToExport)));
 
         $globHash = $client->api('gitData')->blobs()->create(
