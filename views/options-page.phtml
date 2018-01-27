@@ -115,11 +115,9 @@ jQuery(document).ready(function($){
                     exportToGitHub();
                     },
                 error: function(serverResponse) {
-                    $('#progress').hide();
-                    $('#results').html('ERROR OCCURRED <a target="_blank" href="' + uploadsDir  + '/WP-STATIC-EXPORT-LOG">View log</a>');
-
+                    console.log('ERROR IN EXPORT');
+                    console.log(serverResponse);
                 }
-
             });
         } else {
              currentArchive = 0;
@@ -156,10 +154,13 @@ jQuery(document).ready(function($){
     // start polling, stop when hiding progress
     function pollStatus() {
         // read status from file
-        statusFile = uploadsDir + '/WP-STATIC-EXPORT-STATUS';
+        logFile = uploadsDir + '/WP-STATIC-EXPORT-LOG';
 
-        $.get(statusFile, function(data){
+        $.get(logFile, function(data){
             $('#exportStatus').html(data);
+            heightLimit = 1000;
+            //$('#exportStatus').css('height', 0); /* Reset the height*/
+            $('#exportStatus').css('height', Math.min($('#exportStatus').prop('scrollHeight'), heightLimit) + "px");
         });
 
         if ($('#progress').is(":visible")) {
@@ -513,12 +514,17 @@ http://172.17.0.3/my_pricelist.pdf</pre>
               <div class="inside">
                 <p>
 
-    <div id="progress" style="display:none;">
-        <img src="<?php echo plugins_url('../images/dashinfinity.gif', __FILE__); ?>" style="float:left;"/>
-
-        <div id="exportStatus">
-        
+    <div>
+        <img src="<?php echo plugins_url('../images/dashinfinity.gif', __FILE__); ?>" id="progress" style="float:left;display:block;"/>
+        <div id="donateText">
+            Thanks for using this plugin. I'm a solo open source developer, trying to effect social change with <a target="_blank" href="https://beautifulmoalboal.org">Beautiful Moalboal</a>. Please consider <a target="_blank" href="https://beautifulmoalboal.org/support-us/">making a donation</a> to allow me to keep doing what I love. <i>-- <a target="_blank" href="">Leon Stafford</a></i>
         </div>
+
+        <h2 style="clear:both;">Export Log</h2>
+
+        <textarea id="exportStatus">
+Your progress will update here every few seconds and this text area will automatically resize to fit the contents of the full log...
+        </textarea>
     </div>
 
     <div id="results" style="clear:both;">
