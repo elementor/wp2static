@@ -39,8 +39,11 @@ div.postbox div.inside {
 #donateText {
     font-size: 23px;
     line-height: 32px;
+    display: none;
 }
 
 #progress {
     margin-right: 30px;
+    display: none;
+    float: left;
 }

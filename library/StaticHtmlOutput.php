@@ -89,6 +89,7 @@ class StaticHtmlOutput {
 				->assign('exportLog', $this->_exportLog)
 				->assign('staticExportSettings', $this->_options->getOption('static-export-settings'))
 				->assign('wpUploadsDir', wp_upload_dir()['baseurl'])
+				->assign('wpPluginDir', plugins_url('/', __FILE__))
 				->assign('onceAction', self::HOOK . '-options')
 				->render();
 		}
@@ -343,23 +344,9 @@ class StaticHtmlOutput {
 				// Add current url to the list of processed urls
                 // need to keep old exportLog intact for dependent function below
 				$this->_exportLog[$currentUrl] = true;
-                $logText = date("Y-m-d h:i:s") . ' CRAWLED FILE: ' . $currentUrl;
-                //file_put_contents($_SERVER['exportLog'], $logText , FILE_APPEND | LOCK_EX);
-                
-                // efficient way to prepend
-                // from https://stackoverflow.com/a/29777782/1668057
-                $src = fopen($_SERVER['exportLog'], 'r+');
-                $dest = fopen('php://temp', 'w');
 
-                fwrite($dest, $logText . PHP_EOL);
-
-                stream_copy_to_stream($src, $dest);
-                rewind($dest);
-                rewind($src);
-                stream_copy_to_stream($dest, $src);
-
-                fclose($src);
-                fclose($dest);
+                $logText = 'CRAWLED FILE: ' . $currentUrl;
+                $this->_prependExportLog($logText);
 			}
 
 			// TODO: shifting this block into above conditional prevents index containing error
@@ -728,6 +715,25 @@ class StaticHtmlOutput {
 
 		return $files;
 	}
+
+    protected function _prependExportLog($text) {
+		$wpUploadsDir = wp_upload_dir()['basedir'];
+		$exportLog = $wpUploadsDir . '/WP-STATIC-EXPORT-LOG';
+        // efficient way to prepend
+        // from https://stackoverflow.com/a/29777782/1668057
+        $src = fopen($exportLog, 'r+');
+        $dest = fopen('php://temp', 'w');
+
+        fwrite($dest,  date("Y-m-d h:i:s") . ' ' . $text . PHP_EOL);
+
+        stream_copy_to_stream($src, $dest);
+        rewind($dest);
+        rewind($src);
+        stream_copy_to_stream($dest, $src);
+
+        fclose($src);
+        fclose($dest);
+    }
 
 	protected function _saveUrlData(StaticHtmlOutput_UrlRequest $url, $archiveDir) {
 		$urlInfo = parse_url($url->getUrl());
