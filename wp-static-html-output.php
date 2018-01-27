@@ -35,6 +35,7 @@ add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'pluginActionLink
 add_action('plugins_loaded', 'initialise_localisation');
 add_action( 'wp_ajax_generate_archive', 'generate_archive' );
 add_action( 'wp_ajax_github_export', 'github_export' );
+add_action( 'wp_ajax_github_finalise_export', 'github_finalise_export' );
 
 function generate_archive() {
     $plugin = StaticHtmlOutput::getInstance();
@@ -45,5 +46,11 @@ function generate_archive() {
 function github_export() {
     $plugin = StaticHtmlOutput::getInstance();
     $plugin->githubExport();
+    wp_die();
+}
+
+function github_finalise_export() {
+    $plugin = StaticHtmlOutput::getInstance();
+    $plugin->githubFinaliseExport();
     wp_die();
 }
