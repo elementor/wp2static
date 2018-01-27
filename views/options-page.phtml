@@ -52,7 +52,7 @@ jQuery(document).ready(function($){
         data = $(archives[0]).serialize();
         data = data.replace('generate_archive', 'github_export');
 
-        console.log(data);
+        console.log('Exporting to GitHub');
 
         $.ajax({
             url: ajaxurl,
@@ -60,10 +60,34 @@ jQuery(document).ready(function($){
             dataType: 'html',
             method: 'POST',
             success: function(serverResponse) {
+                // if response is an int and not null, call again, update counter on page
                 console.log(serverResponse);
-                },
+                if (serverResponse > 0) {
+                    $('#results').prepend('GitHub export: There are ' + serverResponse + ' files remaining to export to GH. ');
+                    
+                    //setTimeout(exportToGitHub, 1000);
+                    exportToGitHub();
+                } else {
+                    $('#results').prepend('GitHub export: All blobs created, now creating tree, new reference, etc. ');
+                    data = data.replace('github_export', 'github_finalise_export');
+                    $.ajax({
+                        url: ajaxurl,
+                        data: data,
+                        dataType: 'html',
+                        method: 'POST',
+                        success: function(serverResponse) {
+                            console.log(serverResponse);
+                            $('#results').prepend('GitHub export: All done! Yay!');
+                        },
+                        error: function(serverResponse) {
+                            console.log('ERROR doing GH finalise');
+                            console.log(serverResponse);
+                        }
+                    });
+                }
+            },
             error: function(serverResponse) {
-                console.log('ERROR');
+                console.log('ERROR doing GH export');
                 console.log(serverResponse);
             }
         });
@@ -76,7 +100,7 @@ jQuery(document).ready(function($){
 
         if (currentArchive <= numberOfArchives) {
             data = $(archives[currentArchive - 1]).serialize();
-            console.log(data);
+            console.log('Processing archive...');
             $.ajax({
                 url: ajaxurl,
                 data: data,
