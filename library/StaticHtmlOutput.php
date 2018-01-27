@@ -240,7 +240,7 @@ class StaticHtmlOutput {
         list($fileToExport, $targetPath) = explode(',', $line);
         error_log($fileToExport);
         
-        $this->_prependExportLog('GITHUB: Creating blob for ' . $targetPath);
+        $this->_prependExportLog('GITHUB: Creating blob for ' . rtrim($targetPath));
 
         $encodedFile = chunk_split(base64_encode(file_get_contents($fileToExport)));
 
@@ -257,10 +257,9 @@ class StaticHtmlOutput {
         file_put_contents($githubGlobHashesAndPaths, $globHashPathLine, FILE_APPEND | LOCK_EX);
 
 
+        $this->_prependExportLog('GITHUB: ' . $filesRemaining . ' blobs remaining to create');
         
-        // echo remaining number of files or complete status
         echo $filesRemaining;
-
     }
 
 	public function genArch() {
