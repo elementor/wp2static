@@ -77,3 +77,6 @@ Email me, Leon Stafford, at [lionhive@gmail.com](mailto:lionhive@gmail.com)
 ## Donations
 
 Has this plugin helped you save some money on web hosting or otherwise helped you out? Please consider [donating via PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=NHEV6WLYJ6QWQ) to help me help others. 
+
+[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=leonstafford&url=https://github.com/leonstafford/wordpress-static-html-plugin&language=en_US&tags=github&category=software)
+
