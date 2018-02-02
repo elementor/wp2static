@@ -259,9 +259,13 @@ class StaticHtmlOutput {
     }
 
 	public function genArch() {
-		$archiveUrl = $this->_generateArchive();
+		$archiveUrl = $this->_prepareInitialFileList();
 
-		if (is_wp_error($archiveUrl)) {
+        if ($archiveUrl = 'initial crawl list ready') {
+            $this->_prependExportLog('crawl list function complete. client should trigger crawl now');
+
+
+        } elseif (is_wp_error($archiveUrl)) {
 			$message = 'Error: ' . $archiveUrl->get_error_code;
 		} else {
             $this->_prependExportLog('ZIP CREATED: Download a ZIP of your static site from: ' . $archiveUrl);
@@ -271,42 +275,43 @@ class StaticHtmlOutput {
 			}
 		}
 
-		#$this->_view->setTemplate('message')
-		#	->assign('message', $message)
-		#	->assign('exportLog', $this->_exportLog)
-		#	->render();
         echo 'Archive has been generated';
 	}
 
-	protected function _generateArchive()
+	protected function _prepareInitialFileList()
 	{
 		global $blog_id;
 		set_time_limit(0);
 
 		$uploadDir = $this->get_write_directory();
 		$exporter = wp_get_current_user();
+
+		$wpUploadsDir = wp_upload_dir()['basedir'];
+		$_SERVER['urlsQueue'] = $wpUploadsDir . '/WP-STATIC-CRAWLING-QUEUE';
+        // move current to 'previous' on complete to do diffs
+		$_SERVER['currentArchive'] = $wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE';
+		$_SERVER['exportLog'] = $wpUploadsDir . '/WP-STATIC-EXPORT-LOG';
+		$_SERVER['githubFilesToExport'] = $wpUploadsDir . '/WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT';
 		
 
 		$archiveName = $uploadDir . '/' . self::HOOK . '-' . $blog_id . '-' . time() . '-' . $exporter->user_login;
 		$archiveDir = $archiveName . '/';
 
+        // save archive dir to file used during process
+        file_put_contents($_SERVER['currentArchive'], $archiveDir);
+    
 
-		$wpUploadsDir = wp_upload_dir()['basedir'];
-		$_SERVER['exportStatus'] = $wpUploadsDir . '/WP-STATIC-EXPORT-STATUS';
-		$_SERVER['exportLog'] = $wpUploadsDir . '/WP-STATIC-EXPORT-LOG';
-		$_SERVER['githubFilesToExport'] = $wpUploadsDir . '/WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT';
 
 		if (!file_exists($archiveDir)) {
 			wp_mkdir_p($archiveDir);
 		}
 
 		// empty status and log files before starting
-		unlink($_SERVER['exportStatus']);
 		unlink($_SERVER['exportLog']);
+		unlink($_SERVER['urlsQueue']);
 
-		$statusText = 'STARTING EXPORT';
-		error_log(file_put_contents($_SERVER['exportStatus'], $statusText , FILE_APPEND | LOCK_EX), 0);
-
+        // TODO: this first file_put_contents required to create file, function not handling it..
+        file_put_contents($_SERVER['exportLog'], date("Y-m-d h:i:s") . ' STARTING EXPORT', FILE_APPEND | LOCK_EX);
 
 		$baseUrl = untrailingslashit(home_url());
 		$newBaseUrl = untrailingslashit(filter_input(INPUT_POST, 'baseUrl', FILTER_SANITIZE_URL));
@@ -318,46 +323,83 @@ class StaticHtmlOutput {
 
 		$this->_exportLog = array();
 
-		while (count($urlsQueue))
-		{
-			$currentUrl = array_shift($urlsQueue);
+        $this->_prependExportLog('INITIAL CRAWL LIST CONTAINS ' . count($urlsQueue) . ' FILES');
 
-			$urlResponse = new StaticHtmlOutput_UrlRequest($currentUrl, filter_input(INPUT_POST, 'cleanMeta'));
 
-			if ($urlResponse->checkResponse() == 'FAIL') {
-				error_log('Failed to get this file');
-				error_log($currentUrl);
-                $logText = 'Failed to crawl file: ' . $currentUrl . "\n";
-                file_put_contents($_SERVER['exportLog'], $logText , FILE_APPEND | LOCK_EX);
-			} else {
-				// Add current url to the list of processed urls
-                // need to keep old exportLog intact for dependent function below
-				$this->_exportLog[$currentUrl] = true;
+        // TODO: put urlsQueue here into a file, return to client from this function. 
+        //       run next function, working on list of initial crawl files
+        $str = implode("\n", $urlsQueue);
+        file_put_contents($_SERVER['urlsQueue'], $str);
 
-                $logText = 'CRAWLED FILE: ' . $currentUrl;
-                $this->_prependExportLog($logText);
-			}
+        return 'initial crawl list ready';
+    }
 
-			// TODO: shifting this block into above conditional prevents index containing error
-			//       but doesn't crawl all folders...
-			//       alternatively, index.html contains 'F' from 'FAIL or 'Failed to get...'
+	public function crawlTheWordPressSite() {
+		$wpUploadsDir = wp_upload_dir()['basedir'];
+		$_SERVER['urlsQueue'] = $wpUploadsDir . '/WP-STATIC-CRAWLING-QUEUE';
 
-			// TODO: this shouldnt be part of urlrequest, just general settings
-			// add conditional logic here whether to do cleanup, vs in each request?
-			$urlResponse->cleanup();
+        $contents = file($_SERVER['urlsQueue'], FILE_IGNORE_NEW_LINES);
 
-			// get all other urls from within this one and add to queue if not there
-			foreach ($urlResponse->extractAllUrls($baseUrl) as $newUrl) {
-				if (!isset($this->_exportLog[$newUrl]) && $newUrl != $currentUrl && !in_array($newUrl,$urlsQueue)) {
-					//echo "Adding ".$newUrl." to the list<br />";
-					$urlsQueue[] = $newUrl;
-				}
-			}
+        // read whole file in as array
+        
+        // grab first line
+        $first_line = array_shift($contents);
 
-			$urlResponse->replaceBaseUlr($baseUrl, $newBaseUrl);
-			$this->_saveUrlData($urlResponse, $archiveDir);
-		}
+        // write remainder back to file
+        file_put_contents($_SERVER['urlsQueue'], implode("\r\n", $contents));
+        // process the line
+        $currentUrl = $first_line;
 
+        $this->_prependExportLog('CRAWLING FILE: ' . $currentUrl);
+
+        // TODO: option to ignore images here for quicker export
+
+        // TODO: checks here on url, make sure it's not empty
+        if (empty($currentUrl)){
+            $this->_prependExportLog('SKIPPING EMPTY FILE');
+        }
+
+        $urlResponse = new StaticHtmlOutput_UrlRequest($currentUrl, filter_input(INPUT_POST, 'cleanMeta'));
+
+        if ($urlResponse->checkResponse() == 'FAIL') {
+            error_log('Failed to get this file');
+            error_log($currentUrl);
+            $this->_prependExportLog('FAILED TO CRAWL FILE: ' . $currentUrl);
+        } else {
+            // Add current url to the list of processed urls
+            // need to keep old exportLog intact for dependent function below
+            $this->_exportLog[$currentUrl] = true;
+
+            $this->_prependExportLog('CRAWLED FILE: ' . $currentUrl);
+        }
+
+
+        $urlResponse->cleanup();
+
+		$baseUrl = untrailingslashit(home_url());
+		$newBaseUrl = untrailingslashit(filter_input(INPUT_POST, 'baseUrl', FILTER_SANITIZE_URL));
+
+        // get all other urls from within this one and add to queue if not there
+        foreach ($urlResponse->extractAllUrls($baseUrl) as $newUrl) {
+            // TODO: need to recheck it doesn't exist in file...?
+            if ($newUrl != $currentUrl && !in_array($newUrl,$contents)) {
+                //echo "Adding ".$newUrl." to the list<br />";
+                file_put_contents($_SERVER['urlsQueue'], $newUrl . PHP_EOL, FILE_APPEND | LOCK_EX);
+            } else {
+                $this->_prependExportLog('FILE ALREADY CRALWED: ' . $newUrl);
+            }
+        }
+
+
+        $urlResponse->replaceBaseUlr($baseUrl, $newBaseUrl);
+
+		$wpUploadsDir = wp_upload_dir()['basedir'];
+	    $archiveDir = file_get_contents($wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE');
+
+        $this->_saveUrlData($urlResponse, $archiveDir);
+    }
+
+    public function createTheArchive() {
 		$tempZip = $archiveName . '.tmp';
 		$zipArchive = new ZipArchive();
 		if ($zipArchive->open($tempZip, ZIPARCHIVE::CREATE) !== true) {
@@ -378,8 +420,6 @@ class StaticHtmlOutput {
 		rename($tempZip, $archiveName . '.zip'); 
 
 		if(filter_input(INPUT_POST, 'sendViaFTP') == 1) {		
-			$statusText = 'STARTING FTP UPLOAD';
-			file_put_contents($_SERVER['exportStatus'], $statusText , LOCK_EX);
 			require_once(__DIR__.'/FTP/FtpClient.php');
 			require_once(__DIR__.'/FTP/FtpException.php');
 			require_once(__DIR__.'/FTP/FtpWrapper.php');
@@ -407,8 +447,6 @@ class StaticHtmlOutput {
 		}
 
 		if(filter_input(INPUT_POST, 'sendViaS3') == 1) {		
-			$statusText = 'STARTING S3 UPLOAD';
-			file_put_contents($_SERVER['exportStatus'], $statusText , LOCK_EX);
 			require_once(__DIR__.'/aws/aws-autoloader.php');
 			require_once(__DIR__.'/StaticHtmlOutput/MimeTypes.php');
 
@@ -477,8 +515,6 @@ class StaticHtmlOutput {
 			}
 
 			if(filter_input(INPUT_POST, 'sendViaDropbox') == 1) {
-				$statusText = 'STARTING Dropbox UPLOAD';
-				file_put_contents($_SERVER['exportStatus'], $statusText , LOCK_EX);
 
 				// will exclude the siteroot when copying
 				$siteroot = $archiveName . '/';
@@ -520,8 +556,6 @@ class StaticHtmlOutput {
 
 
 					if(filter_input(INPUT_POST, 'sendViaGithub') == 1) {
-						$statusText = 'GitHub: Process starting...';
-						file_put_contents($_SERVER['exportStatus'], $statusText , LOCK_EX);
 
                         // empty the list of GH export files in preparation
                         $f = @fopen($_SERVER['githubFilesToExport'], "r+");
@@ -591,15 +625,11 @@ class StaticHtmlOutput {
 				}
 
 
-                $statusText = 'GitHub: Preparing GH export file list...';
-                file_put_contents($_SERVER['exportStatus'], $statusText , LOCK_EX);
 
 				FolderToGithub($siteroot, $siteroot, $githubPath);
 			}
 
 			if(filter_input(INPUT_POST, 'sendViaNetlify') == 1) {
-				$statusText = 'STARTING Netlify UPLOAD';
-				file_put_contents($_SERVER['exportStatus'], $statusText , LOCK_EX);
 				// will exclude the siteroot when copying
 				$siteroot = $archiveName . '/';
 				$netlifySiteID = filter_input(INPUT_POST, 'netlifySiteID');
@@ -710,6 +740,10 @@ class StaticHtmlOutput {
 		$exportLog = $wpUploadsDir . '/WP-STATIC-EXPORT-LOG';
         // efficient way to prepend
         // from https://stackoverflow.com/a/29777782/1668057
+
+        //error_log($text);
+        //return;
+
         $src = fopen($exportLog, 'r+');
         $dest = fopen('php://temp', 'w');
 

@@ -15,7 +15,7 @@ if ($settings == '') {
 var settings = '<?php echo $settings; ?>';
 var uploadsDir = '<?php echo $this->wpUploadsDir; ?>';
 var pluginDir = '<?php echo $this->wpPluginDir; ?>';
-var pollingInterval = 500;
+var pollingInterval = 5000;
 
 jQuery(document).ready(function($){
     if (Notification.permission !== "granted") {
@@ -98,44 +98,70 @@ jQuery(document).ready(function($){
         });
     }
 
+    /* TODO: convert this function to non-blocking
+
+        it gets called recursively for as many archives there are
+
+    */
     function processArchives() {
         $('.hiddenActionField').val('generate_archive');
         archives = $('.options-form');
         numberOfArchives = archives.length;
 
-        if (currentArchive <= numberOfArchives) {
-            data = $(archives[currentArchive - 1]).serialize();
-            console.log('Processing archive...');
-            $.ajax({
-                url: ajaxurl,
-                data: data,
-                dataType: 'html',
-                method: 'POST',
-                success: function(serverResponse) {
-                    $('#results').append(serverResponse);
-                    currentArchive += 1;
-                    processArchives();
-                   
+        data = $(archives[0]).serialize();
+        console.log('Processing archive...');
+        $.ajax({
+            url: ajaxurl,
+            data: data,
+            dataType: 'html',
+            method: 'POST',
+            success: function(serverResponse) {
+                console.log(serverResponse);
+
+                console.log('initial crawl complete, start crawling in non-blocking way');
+                crawlSite();
+               
+            },
+            error: function(serverResponse) {
+                console.log('ERROR IN EXPORT');
+                console.log(serverResponse);
+            }
+        });
+    }
+
+    function crawlSite() {
+        $('.hiddenActionField').val('crawl_site');
+        archives = $('.options-form');
+
+        data = $(archives[0]).serialize();
+        console.log('Starting crawl...');
+        $.ajax({
+            url: ajaxurl,
+            data: data,
+            dataType: 'html',
+            method: 'POST',
+            success: function(serverResponse) {
+                if (serverResponse == 'allCrawlingComplete') {
+                    console.log('All crawling complete, proceed to arch gen/exporting');
                     if ($('#sendViaGithub').attr('checked') == 'checked') {
                         // process any files needing exporting to GitHub
                         exportToGitHub();
                     }
-                },
-                error: function(serverResponse) {
-                    console.log('ERROR IN EXPORT');
-                    console.log(serverResponse);
+                    // change progress animation to a green tick
+                    $('#progress').attr("src", pluginDir + '../images/greentick.png');
+                    $('#progress').css("width", '123px');
+                    notifyMe();
+                } else {
+                    console.log('continuing to crawl site');
+                    crawlSite();
                 }
-            });
-        } else if ($('#sendViaGithub').attr('checked') == 'checked') {
-            // don't consider things finished yet...
-        } else {
-             currentArchive = 0;
-            // all archives processed
-            // change progress animation to a green tick
-            $('#progress').attr("src", pluginDir + '../images/greentick.png');
-            $('#progress').css("width", '123px');
-            notifyMe();
-        }
+               
+            },
+            error: function(serverResponse) {
+                console.log('ERROR IN CRAWLING');
+                console.log(serverResponse);
+            }
+        });
     }
 
     function saveOptions() {
@@ -156,9 +182,10 @@ jQuery(document).ready(function($){
         $('#donateText').show();
         processArchives();
         $('#exportStatus').html('');
+        pollingInterval = $('#pollIntervalSetting')[0].value;
+
         // allow time for status file to be emptied before first poll
         setTimeout(pollStatus, pollingInterval);
-        $('#results').html('');
     });
 
 
@@ -199,7 +226,6 @@ jQuery(document).ready(function($){
         event.preventDefault();
         $('#progress').show();
         saveOptions();
-        $('#results').html('');
     });
 
     $('.wrap').on('click', '.addAnotherTargetButton', function(event) {
@@ -519,6 +545,11 @@ http://172.17.0.3/my_pricelist.pdf</pre>
 						</div>
 					</div>
 
+<label>Poll interval <input id="pollIntervalSetting" value="5000" /> </label>
+<?php set_time_limit(600); ?>
+
+Current timeout value <?php echo ini_get('max_execution_time'); ?>
+
 				</form>
 					<div class="postbox">
 						<div class="handlediv" title="Click to toggle"><br /></div>
@@ -541,8 +572,6 @@ Your progress will update here every few seconds and this text area will automat
         </textarea>
     </div>
 
-    <div id="results" style="clear:both;">
-    </div>
 
                   <p>
                     <i>Clicking the button below will start the process of generating a static site from your WordPress installation. Depending on the size of your website, this process may take some time.</i>
