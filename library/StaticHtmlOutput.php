@@ -440,6 +440,9 @@ class StaticHtmlOutput {
     }
 
     public function createTheArchive() {
+        $wpUploadsDir = wp_upload_dir()['basedir'];
+        $archiveDir = file_get_contents($wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE');
+        $archiveName = rtrim($archiveDir, '/');
         // get archive name from the archiveDir stored in file, minus last slash
 		$tempZip = $archiveName . '.tmp';
 		$zipArchive = new ZipArchive();
@@ -461,7 +464,10 @@ class StaticHtmlOutput {
         $zipDownloadLink = $archiveName . '.zip';
 		rename($tempZip, $zipDownloadLink); 
 
-        echo $zipDownloadLink;
+        $publicDownloadableZip = str_replace(ABSPATH, trailingslashit(home_url()), $archiveName . '.zip');
+        $this->_prependExportLog('ZIP CREATED: Download at ' . $publicDownloadableZip);
+
+        echo $publicDownloadableZip;
     }
 
     public function doTheOtherExports() {
