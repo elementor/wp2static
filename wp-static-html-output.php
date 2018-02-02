@@ -35,7 +35,14 @@ add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'pluginActionLink
 add_action('plugins_loaded', 'initialise_localisation');
 add_action( 'wp_ajax_generate_archive', 'generate_archive' );
 add_action( 'wp_ajax_github_export', 'github_export' );
+add_action( 'wp_ajax_crawl_site', 'crawl_site' );
 add_action( 'wp_ajax_github_finalise_export', 'github_finalise_export' );
+
+function crawl_site() {
+    $plugin = StaticHtmlOutput::getInstance();
+    $plugin->crawlTheWordPressSite();
+    wp_die();
+}
 
 function generate_archive() {
     $plugin = StaticHtmlOutput::getInstance();
