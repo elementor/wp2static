@@ -287,7 +287,7 @@ class StaticHtmlOutput {
 		$exporter = wp_get_current_user();
 
 		$wpUploadsDir = wp_upload_dir()['basedir'];
-		$_SERVER['urlsQueue'] = $wpUploadsDir . '/WP-STATIC-CRAWLING-QUEUE';
+		$_SERVER['urlsQueue'] = $wpUploadsDir . '/WP-STATIC-INITIAL-CRAWL-LIST';
         // move current to 'previous' on complete to do diffs
 		$_SERVER['currentArchive'] = $wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE';
 		$_SERVER['exportLog'] = $wpUploadsDir . '/WP-STATIC-EXPORT-LOG';
@@ -318,8 +318,10 @@ class StaticHtmlOutput {
 		$urlsQueue = array_unique(array_merge(
 					array(trailingslashit($baseUrl)),
 					$this->_getListOfLocalFilesByUrl(array(get_template_directory_uri())),
+                    $this->_getAllWPPostURLs(),
 					explode("\n", filter_input(INPUT_POST, 'additionalUrls'))
 					));
+
 
 		$this->_exportLog = array();
 
@@ -330,76 +332,115 @@ class StaticHtmlOutput {
         //       run next function, working on list of initial crawl files
         $str = implode("\n", $urlsQueue);
         file_put_contents($_SERVER['urlsQueue'], $str);
+        
+        // reset crawled links file
+        file_put_contents($wpUploadsDir . '/WP-STATIC-CRAWLED-LINKS', '');
 
         return 'initial crawl list ready';
     }
 
 	public function crawlTheWordPressSite() {
+        // grab a line from the INITIAL_CRAWL list, then crawl all links on it that aren't already stored in CRAWLED_LINKS file
 		$wpUploadsDir = wp_upload_dir()['basedir'];
-		$_SERVER['urlsQueue'] = $wpUploadsDir . '/WP-STATIC-CRAWLING-QUEUE';
+		$initial_crawl_list_file = $wpUploadsDir . '/WP-STATIC-INITIAL-CRAWL-LIST';
+        $crawled_links_file = $wpUploadsDir . '/WP-STATIC-CRAWLED-LINKS';
 
-        $contents = file($_SERVER['urlsQueue'], FILE_IGNORE_NEW_LINES);
+        $initial_crawl_list = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
+        $crawled_links = file($crawled_links_file, FILE_IGNORE_NEW_LINES);
 
         // read whole file in as array
-        
-        // grab first line
-        $first_line = array_shift($contents);
 
-        // write remainder back to file
-        file_put_contents($_SERVER['urlsQueue'], implode("\r\n", $contents));
-        // process the line
-        $currentUrl = $first_line;
+        // while there are lines to process
+        if (!empty($initial_crawl_list)) {
+            // grab first line
+            $first_line = array_shift($initial_crawl_list);
 
-        $this->_prependExportLog('CRAWLING FILE: ' . $currentUrl);
+            // write remainder back to file
+            file_put_contents($initial_crawl_list_file, implode("\r\n", $initial_crawl_list));
 
-        // TODO: option to ignore images here for quicker export
+            // process the line
+            $currentUrl = $first_line;
 
-        // TODO: checks here on url, make sure it's not empty
-        if (empty($currentUrl)){
-            $this->_prependExportLog('SKIPPING EMPTY FILE');
-        }
+            $this->_prependExportLog('CRAWLING URL: ' . $currentUrl);
 
-        $urlResponse = new StaticHtmlOutput_UrlRequest($currentUrl, filter_input(INPUT_POST, 'cleanMeta'));
-
-        if ($urlResponse->checkResponse() == 'FAIL') {
-            error_log('Failed to get this file');
-            error_log($currentUrl);
-            $this->_prependExportLog('FAILED TO CRAWL FILE: ' . $currentUrl);
-        } else {
-            // Add current url to the list of processed urls
-            // need to keep old exportLog intact for dependent function below
-            $this->_exportLog[$currentUrl] = true;
-
-            $this->_prependExportLog('CRAWLED FILE: ' . $currentUrl);
-        }
-
-
-        $urlResponse->cleanup();
-
-		$baseUrl = untrailingslashit(home_url());
-		$newBaseUrl = untrailingslashit(filter_input(INPUT_POST, 'baseUrl', FILTER_SANITIZE_URL));
-
-        // get all other urls from within this one and add to queue if not there
-        foreach ($urlResponse->extractAllUrls($baseUrl) as $newUrl) {
-            // TODO: need to recheck it doesn't exist in file...?
-            if ($newUrl != $currentUrl && !in_array($newUrl,$contents)) {
-                //echo "Adding ".$newUrl." to the list<br />";
-                file_put_contents($_SERVER['urlsQueue'], $newUrl . PHP_EOL, FILE_APPEND | LOCK_EX);
-            } else {
-                $this->_prependExportLog('FILE ALREADY CRALWED: ' . $newUrl);
+            // TODO: checks here on url, make sure it's not empty
+            if (empty($currentUrl)){
+                $this->_prependExportLog('SKIPPING EMPTY FILE');
             }
+
+            $urlResponse = new StaticHtmlOutput_UrlRequest($currentUrl, filter_input(INPUT_POST, 'cleanMeta'));
+
+            if ($urlResponse->checkResponse() == 'FAIL') {
+                error_log('Failed to get this file');
+                error_log($currentUrl);
+                $this->_prependExportLog('FAILED TO CRAWL FILE: ' . $currentUrl);
+            } else {
+                // Add current url to the list of processed urls
+                // need to keep old exportLog intact for dependent function below
+                file_put_contents($crawled_links_file, $currentUrl . PHP_EOL, FILE_APPEND | LOCK_EX);
+
+                $this->_prependExportLog('CRAWLED FILE: ' . $currentUrl);
+            }
+
+
+            $baseUrl = untrailingslashit(home_url());
+            $newBaseUrl = untrailingslashit(filter_input(INPUT_POST, 'baseUrl', FILTER_SANITIZE_URL));
+
+            // get all other urls from within this one and add to queue if not there
+            foreach ($urlResponse->extractAllUrls($baseUrl) as $newUrl) {
+
+                $this->_prependExportLog('potential new file: ' . $newUrl);
+
+                // TODO: need to recheck it doesn't exist in file...?
+                if ($newUrl != $currentUrl && !in_array($newUrl, $crawled_links)) {
+                    //file_put_contents($_SERVER['urlsQueue'], $newUrl . PHP_EOL, FILE_APPEND | LOCK_EX);
+                    // do crawl link recursively here
+                    
+                    $urlResponse = new StaticHtmlOutput_UrlRequest($newUrl, filter_input(INPUT_POST, 'cleanMeta'));
+
+                    if ($urlResponse->checkResponse() == 'FAIL') {
+                        error_log('Failed to get this file');
+                        error_log($newUrl);
+                        $this->_prependExportLog('FAILED TO CRAWL FILE: ' . $newUrl);
+                    } else {
+                        // Add current url to the list of processed urls
+                        // need to keep old exportLog intact for dependent function below
+                        file_put_contents($crawled_links, $newUrl . PHP_EOL, FILE_APPEND | LOCK_EX);
+
+                        $this->_prependExportLog('CRAWLED FILE: ' . $newUrl);
+                    }
+
+                    $urlResponse->cleanup();
+                    $urlResponse->replaceBaseUlr($baseUrl, $newBaseUrl);
+                    $wpUploadsDir = wp_upload_dir()['basedir'];
+                    $archiveDir = file_get_contents($wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE');
+                    $this->_saveUrlData($urlResponse, $archiveDir);
+                } else {
+                    $this->_prependExportLog('FILE ALREADY CRAWLED: ' . $newUrl);
+                }
+            }
+
+            $urlResponse->cleanup();
+
+
+            $urlResponse->replaceBaseUlr($baseUrl, $newBaseUrl);
+
+            $wpUploadsDir = wp_upload_dir()['basedir'];
+            $archiveDir = file_get_contents($wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE');
+
+            $this->_saveUrlData($urlResponse, $archiveDir);
+
+        } else {
+            // all initial links crawled, tell the client
+            $this->_prependExportLog('CRAWLING COMPLETED');
+            echo 'CRAWLING COMPLETED';
+
         }
-
-
-        $urlResponse->replaceBaseUlr($baseUrl, $newBaseUrl);
-
-		$wpUploadsDir = wp_upload_dir()['basedir'];
-	    $archiveDir = file_get_contents($wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE');
-
-        $this->_saveUrlData($urlResponse, $archiveDir);
+        
     }
 
     public function createTheArchive() {
+        // get archive name from the archiveDir stored in file, minus last slash
 		$tempZip = $archiveName . '.tmp';
 		$zipArchive = new ZipArchive();
 		if ($zipArchive->open($tempZip, ZIPARCHIVE::CREATE) !== true) {
@@ -417,7 +458,13 @@ class StaticHtmlOutput {
 		}
 
 		$zipArchive->close();
-		rename($tempZip, $archiveName . '.zip'); 
+        $zipDownloadLink = $archiveName . '.zip';
+		rename($tempZip, $zipDownloadLink); 
+
+        echo $zipDownloadLink;
+    }
+
+    public function doTheOtherExports() {
 
 		if(filter_input(INPUT_POST, 'sendViaFTP') == 1) {		
 			require_once(__DIR__.'/FTP/FtpClient.php');
@@ -705,6 +752,37 @@ class StaticHtmlOutput {
 			return str_replace(ABSPATH, trailingslashit(home_url()), $archiveName . '.zip');
 	}
 
+    protected function _getAllWPPostURLs(){
+
+        global $wpdb;
+        $posts = $wpdb->get_results("
+            SELECT ID,post_type,post_title
+            FROM {$wpdb->posts}
+            WHERE post_status = 'publish' AND post_type NOT IN ('revision','nav_menu_item')
+        ");
+
+        $postURLs = array();
+
+        foreach($posts as $post) {
+            switch ($post->post_type) {
+                case 'page':
+                    $permalink = get_page_link($post->ID);
+                    break;
+                case 'post':
+                    $permalink = get_permalink($post->ID);
+                    break;
+                case 'attachment':
+                    $permalink = get_attachment_link($post->ID);
+                    break;
+            }
+            
+            // add permalink to array
+            $postURLs[] = $permalink;
+        }
+
+        return $postURLs;
+    }
+
 	protected function _getListOfLocalFilesByUrl(array $urls)
 	{
 		$files = array();
@@ -716,7 +794,6 @@ class StaticHtmlOutput {
 			if (stripos($url, home_url('/')) === 0 && is_dir($directory)) {
 				$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory));
 				foreach ($iterator as $fileName => $fileObject) {
-
 					if (is_file($fileName)) {
 						$pathinfo = pathinfo($fileName);
 						if (isset($pathinfo['extension']) && !in_array($pathinfo['extension'], array('php', 'phtml', 'tpl'))) {

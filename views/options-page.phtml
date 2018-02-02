@@ -129,6 +129,38 @@ jQuery(document).ready(function($){
         });
     }
 
+    function createZipArchive() {
+        $('.hiddenActionField').val('create_zip');
+        archives = $('.options-form');
+
+        data = $(archives[0]).serialize();
+        console.log('Starting zip creation...');
+        $.ajax({
+            url: ajaxurl,
+            data: data,
+            dataType: 'html',
+            method: 'POST',
+            success: function(serverResponse) {
+                    console.log('ZIP created, user should be able to dl while exports continue');
+
+                    // TODO: check GH still working
+                    if ($('#sendViaGithub').attr('checked') == 'checked') {
+                        // process any files needing exporting to GitHub
+                        exportToGitHub();
+                    }
+
+                    // change progress animation to a green tick
+                    $('#progress').attr("src", pluginDir + '../images/greentick.png');
+                    $('#progress').css("width", '123px');
+                    notifyMe();
+            },
+            error: function(serverResponse) {
+                console.log('ERROR IN ZIP CREATION');
+                console.log(serverResponse);
+            }
+        });
+    }
+
     function crawlSite() {
         $('.hiddenActionField').val('crawl_site');
         archives = $('.options-form');
@@ -141,16 +173,10 @@ jQuery(document).ready(function($){
             dataType: 'html',
             method: 'POST',
             success: function(serverResponse) {
-                if (serverResponse == 'allCrawlingComplete') {
+                if (serverResponse == 'CRAWLING COMPLETED') {
                     console.log('All crawling complete, proceed to arch gen/exporting');
-                    if ($('#sendViaGithub').attr('checked') == 'checked') {
-                        // process any files needing exporting to GitHub
-                        exportToGitHub();
-                    }
-                    // change progress animation to a green tick
-                    $('#progress').attr("src", pluginDir + '../images/greentick.png');
-                    $('#progress').css("width", '123px');
-                    notifyMe();
+
+                    createZipArchive();
                 } else {
                     console.log('continuing to crawl site');
                     crawlSite();
