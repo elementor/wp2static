@@ -39,6 +39,7 @@ add_action( 'wp_ajax_crawl_site', 'crawl_site' );
 add_action( 'wp_ajax_save_options', 'save_options' );
 add_action( 'wp_ajax_create_zip', 'create_zip' );
 add_action( 'wp_ajax_github_finalise_export', 'github_finalise_export' );
+add_action( 'wp_ajax_github_prepare_export', 'github_prepare_export' );
 
 function save_options() {
     $plugin = StaticHtmlOutput::getInstance();
@@ -61,6 +62,12 @@ function create_zip() {
 function start_export() {
     $plugin = StaticHtmlOutput::getInstance();
     $plugin->startExport();
+    wp_die();
+}
+
+function github_prepare_export() {
+    $plugin = StaticHtmlOutput::getInstance();
+    $plugin->githubPrepareExport();
     wp_die();
 }
 

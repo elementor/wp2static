@@ -333,7 +333,6 @@ class StaticHtmlOutput {
                         $this->_prependExportLog('FAILED TO CRAWL FILE: ' . $newUrl);
                     } else {
                         file_put_contents($crawled_links_file, $newUrl . PHP_EOL, FILE_APPEND | LOCK_EX);
-
                         $crawled_links[] = $newUrl;
                         $this->_prependExportLog('CRAWLED FILE: ' . $newUrl);
                     }
@@ -517,16 +516,16 @@ class StaticHtmlOutput {
         FolderToDropbox($siteroot, $dbxClient, $siteroot, $dropboxFolder);
     }
 
-    public function githubPrepareFiles () {
+    public function githubPrepareExport () {
         // empty the list of GH export files in preparation
+        $wpUploadsDir = wp_upload_dir()['basedir'];
+		$_SERVER['githubFilesToExport'] = $wpUploadsDir . '/WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT';
         $f = @fopen($_SERVER['githubFilesToExport'], "r+");
         if ($f !== false) {
             ftruncate($f, 0);
             fclose($f);
         }
 
-        // empty the list of GH blob hashes in preparation
-        $wpUploadsDir = wp_upload_dir()['basedir'];
         $githubGlobHashesAndPaths = $wpUploadsDir . '/WP-STATIC-EXPORT-GITHUB-GLOBS-PATHS';
         $f = @fopen($githubGlobHashesAndPaths, "r+");
         if ($f !== false) {
@@ -536,6 +535,9 @@ class StaticHtmlOutput {
             
         // optional path within GH repo
         $githubPath = filter_input(INPUT_POST, 'githubPath');
+
+        $archiveDir = file_get_contents($wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE');
+        $archiveName = rtrim($archiveDir, '/');
 
         $siteroot = $archiveName . '/';
 
