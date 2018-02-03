@@ -673,7 +673,7 @@ class StaticHtmlOutput {
 			$directory = str_replace(home_url('/'), ABSPATH, $url);
 
 			if (stripos($url, home_url('/')) === 0 && is_dir($directory)) {
-				$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory));
+				$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory), RecursiveDirectoryIterator::SKIP_DOTS);
 				foreach ($iterator as $fileName => $fileObject) {
 					if (is_file($fileName)) {
 						$pathinfo = pathinfo($fileName);
