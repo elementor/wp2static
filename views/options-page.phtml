@@ -47,13 +47,10 @@ jQuery(document).ready(function($){
     var currentArchive = 1;
 
     function exportToGitHub() {
-        console.log('exportToGitHub called');
-        $('.hiddenActionField').val('generate_archive');
+        $('.hiddenActionField').val('start_export');
         archives = $('.options-form');
         data = $(archives[0]).serialize();
-        data = data.replace('generate_archive', 'github_export');
-
-        console.log('Exporting to GitHub');
+        data = data.replace('start_export', 'github_upload_blobs');
 
         $.ajax({
             url: ajaxurl,
@@ -61,72 +58,49 @@ jQuery(document).ready(function($){
             dataType: 'html',
             method: 'POST',
             success: function(serverResponse) {
-                // if response is an int and not null, call again, update counter on page
-                console.log(serverResponse);
                 if (serverResponse > 0) {
-                    console.log('GITHUB: ' + serverResponse + ' files remaining to be sent as blobs');
- 
-                    //setTimeout(exportToGitHub, 1000);
+                    // more GH exporting to go
                     exportToGitHub();
                 } else {
-                    console.log('GITHUB: All blobs created, now creating tree, new reference, etc.');
-                    data = data.replace('github_export', 'github_finalise_export');
+                    data = data.replace('github_upload_blobs', 'github_finalise_export');
                     $.ajax({
                         url: ajaxurl,
                         data: data,
                         dataType: 'html',
                         method: 'POST',
                         success: function(serverResponse) {
-                            console.log(serverResponse);
-                            console.log('GITHUB: Export complete!');
-                            // change progress animation to a green tick
                             $('#progress').attr("src", pluginDir + '../images/greentick.png');
                             $('#progress').css("width", '123px');
                             notifyMe();
                         },
-                        error: function(serverResponse) {
-                            console.log('GITHUB: Export failure');
-                            console.log(serverResponse);
-                        }
+                        error: ajaxErrorHandler
                     });
                 }
             },
-            error: function(serverResponse) {
-                console.log('ERROR doing GH export');
-                console.log(serverResponse);
-            }
+            error: ajaxErrorHandler
         });
     }
 
-    /* TODO: convert this function to non-blocking
-
-        it gets called recursively for as many archives there are
-
-    */
-    function processArchives() {
-        $('.hiddenActionField').val('generate_archive');
+    function startExport() {
+        $('.hiddenActionField').val('start_export');
         archives = $('.options-form');
-        numberOfArchives = archives.length;
 
         data = $(archives[0]).serialize();
-        console.log('Processing archive...');
         $.ajax({
             url: ajaxurl,
             data: data,
             dataType: 'html',
             method: 'POST',
             success: function(serverResponse) {
-                console.log(serverResponse);
-
-                console.log('initial crawl complete, start crawling in non-blocking way');
                 crawlSite();
-               
             },
-            error: function(serverResponse) {
-                console.log('ERROR IN EXPORT');
-                console.log(serverResponse);
-            }
+            error: ajaxErrorHandler
         });
+    }
+    
+    function ajaxErrorHandler () {
+        $('#progress').attr("src", pluginDir + '../images/fail_icon.png');
+        $('#progress').css("width", '123px');
     }
 
     function createZipArchive() {
@@ -134,30 +108,21 @@ jQuery(document).ready(function($){
         archives = $('.options-form');
 
         data = $(archives[0]).serialize();
-        console.log('Starting zip creation...');
         $.ajax({
             url: ajaxurl,
             data: data,
             dataType: 'html',
             method: 'POST',
             success: function(serverResponse) {
-                    console.log('ZIP created, user should be able to dl while exports continue');
-
-                    // TODO: check GH still working
-                    if ($('#sendViaGithub').attr('checked') == 'checked') {
-                        // process any files needing exporting to GitHub
-                        exportToGitHub();
-                    }
-
-                    // change progress animation to a green tick
+                if ($('#sendViaGithub').attr('checked') == 'checked') {
+                    exportToGitHub();
+                } else {
                     $('#progress').attr("src", pluginDir + '../images/greentick.png');
                     $('#progress').css("width", '123px');
                     notifyMe();
+                }
             },
-            error: function(serverResponse) {
-                console.log('ERROR IN ZIP CREATION');
-                console.log(serverResponse);
-            }
+            error: ajaxErrorHandler
         });
     }
 
@@ -166,7 +131,6 @@ jQuery(document).ready(function($){
         archives = $('.options-form');
 
         data = $(archives[0]).serialize();
-        console.log('Starting crawl...');
         $.ajax({
             url: ajaxurl,
             data: data,
@@ -174,29 +138,21 @@ jQuery(document).ready(function($){
             method: 'POST',
             success: function(serverResponse) {
                 if (serverResponse == 'CRAWLING COMPLETED') {
-                    console.log('All crawling complete, proceed to arch gen/exporting');
-
                     createZipArchive();
                 } else {
-                    console.log('continuing to crawl site');
                     crawlSite();
                 }
                
             },
-            error: function(serverResponse) {
-                console.log('ERROR IN CRAWLING');
-                console.log(serverResponse);
-            }
+            error: ajaxErrorHandler
         });
     }
 
     function saveOptions() {
         $('.hiddenActionField').val('save_options');
         archives = $('.options-form');
-        var newSettings = $(".options-form").serialize();
-        // stick json encoded settings into hidden field within form(s)
+        newSettings = $(".options-form").serialize();
         $(".hiddenSettingsField").val(newSettings);
-        // submit first form which encapsulates all others 
         data = $(archives[0]).serialize();
         $.ajax({
             url: ajaxurl,
@@ -204,49 +160,37 @@ jQuery(document).ready(function($){
             dataType: 'html',
             method: 'POST',
             success: function(serverResponse) {
-                console.log('SAVED OPTIONS');
                 $('#progress').hide();
+                alert('Options have been saved');
             },
             error: function(serverResponse) {
-                console.log('ERROR SAVING OPTIONS');
-                console.log(serverResponse);
                 $('#progress').hide();
             }
         });
     }
 
-    $('#generateArchiveButton').click(function() {
+    $('#startExportButton').click(function() {
         $('#progress').show();
         $('#donateText').show();
-        processArchives();
+        startExport();
         $('#exportStatus').html('');
         pollingInterval = $('#pollIntervalSetting')[0].value;
-
-        // allow time for status file to be emptied before first poll
         setTimeout(pollStatus, pollingInterval);
     });
 
 
-
-    // start polling, stop when hiding progress
     function pollStatus() {
-        // read status from file
         logFile = uploadsDir + '/WP-STATIC-EXPORT-LOG';
 
         $.get(logFile, function(data){
             $('#exportStatus').html(data);
             heightLimit = 1000;
-            //$('#exportStatus').css('height', 0); /* Reset the height*/
             $('#exportStatus').css('height', Math.min($('#exportStatus').prop('scrollHeight'), heightLimit) + "px");
         });
         
         if ($('#progress').attr("src").includes('infinity')) {
-            // poll again after interval if export still in progress
             setTimeout(pollStatus, pollingInterval);
-        } else {
-            console.log('export progress halted');
-        }
-        
+        }         
     }
 
     $('.wrap').on('click', '.removeTargetButton', function(event) {
@@ -616,7 +560,7 @@ Your progress will update here every few seconds and this text area will automat
 
 					<p class="submit">
             <?php wp_nonce_field($this->onceAction) ?>
-						<input id="generateArchiveButton" class="button-primary" value="Start static site export" />
+						<input id="startExportButton" class="button-primary" value="Start static site export" />
 					</p>
                 </p>
 						</div>
