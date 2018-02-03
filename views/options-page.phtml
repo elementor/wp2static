@@ -115,13 +115,28 @@ jQuery(document).ready(function($){
             method: 'POST',
             success: function(serverResponse) {
                 if ($('#sendViaGithub').attr('checked') == 'checked') {
-                    exportToGitHub();
+                    githubPrepareExport();
                 } else {
                     $('#progress').attr("src", pluginDir + '../images/greentick.png');
                     $('#progress').css("width", '123px');
                     notifyMe();
                 }
             },
+            error: ajaxErrorHandler
+        });
+    }
+
+    function githubPrepareExport() {
+        $('.hiddenActionField').val('github_prepare_export');
+        archives = $('.options-form');
+
+        data = $(archives[0]).serialize();
+        $.ajax({
+            url: ajaxurl,
+            data: data,
+            dataType: 'html',
+            method: 'POST',
+            success: exportToGitHub,
             error: ajaxErrorHandler
         });
     }
