@@ -199,15 +199,12 @@ class StaticHtmlOutput {
         // remove first line from file (disabled while testing)
         $contents = file($githubFilesToExport, FILE_IGNORE_NEW_LINES);
         $filesRemaining = count($contents) - 1;
-        error_log('remaining:');
-        error_log($filesRemaining);
         $first_line = array_shift($contents);
         file_put_contents($githubFilesToExport, implode("\r\n", $contents));
 
         // create the blob
         // first part of line is file to read, second is target path in GH:
         list($fileToExport, $targetPath) = explode(',', $line);
-        error_log($fileToExport);
         
         $this->_prependExportLog('GITHUB: Creating blob for ' . rtrim($targetPath));
 
@@ -294,6 +291,10 @@ class StaticHtmlOutput {
         return 'initial crawl list ready';
     }
 
+    public function saveWordPressPageToHTML () {
+
+    }
+
 	public function crawlTheWordPressSite() {
 		$wpUploadsDir = wp_upload_dir()['basedir'];
 		$initial_crawl_list_file = $wpUploadsDir . '/WP-STATIC-INITIAL-CRAWL-LIST';
@@ -308,7 +309,7 @@ class StaticHtmlOutput {
             $this->_prependExportLog('CRAWLING URL: ' . $currentUrl);
 
             if (empty($currentUrl)){
-                $this->_prependExportLog('SKIPPING EMPTY FILE');
+                $this->_prependExportLog('EMPTY FILE ENCOUNTERED');
             }
 
             $urlResponse = new StaticHtmlOutput_UrlRequest($currentUrl, filter_input(INPUT_POST, 'cleanMeta'));
@@ -322,6 +323,11 @@ class StaticHtmlOutput {
 
             $baseUrl = untrailingslashit(home_url());
             $newBaseUrl = untrailingslashit(filter_input(INPUT_POST, 'baseUrl', FILTER_SANITIZE_URL));
+            $urlResponse->cleanup();
+            $urlResponse->replaceBaseUlr($baseUrl, $newBaseUrl);
+            $wpUploadsDir = wp_upload_dir()['basedir'];
+            $archiveDir = file_get_contents($wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE');
+            $this->_saveUrlData($urlResponse, $archiveDir);
 
             foreach ($urlResponse->extractAllUrls($baseUrl) as $newUrl) {
                 if ($newUrl != $currentUrl && !in_array($newUrl, $crawled_links) && !in_array($newUrl, $initial_crawl_list)) {
@@ -344,12 +350,6 @@ class StaticHtmlOutput {
                     $this->_saveUrlData($urlResponse, $archiveDir);
                 } 
             }
-
-            $urlResponse->cleanup();
-            $urlResponse->replaceBaseUlr($baseUrl, $newBaseUrl);
-            $wpUploadsDir = wp_upload_dir()['basedir'];
-            $archiveDir = file_get_contents($wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE');
-            $this->_saveUrlData($urlResponse, $archiveDir);
         } else {
             $this->_prependExportLog('CRAWLING COMPLETED');
             echo 'CRAWLING COMPLETED';
@@ -683,12 +683,13 @@ class StaticHtmlOutput {
 					}
 				}
 			} else {
-				// if is not empty, add full path to $files list
 				if ($url != '') {
 					array_push($files, $url);
 				}
 			}
 		}
+
+        // TODO: remove any dot files, like .gitignore here, only rm'd from dirs above
 
 		return $files;
 	}
