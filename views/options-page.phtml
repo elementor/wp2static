@@ -191,16 +191,28 @@ jQuery(document).ready(function($){
     }
 
     function saveOptions() {
-        // toggles between saving and generating archives
-        // TODO: 'save' would be better name here....
-        $('.hiddenActionField').val('generate');
+        $('.hiddenActionField').val('save_options');
         archives = $('.options-form');
-        numberOfArchives = archives.length;
         var newSettings = $(".options-form").serialize();
         // stick json encoded settings into hidden field within form(s)
         $(".hiddenSettingsField").val(newSettings);
         // submit first form which encapsulates all others 
-        $(archives[0]).submit();
+        data = $(archives[0]).serialize();
+        $.ajax({
+            url: ajaxurl,
+            data: data,
+            dataType: 'html',
+            method: 'POST',
+            success: function(serverResponse) {
+                console.log('SAVED OPTIONS');
+                $('#progress').hide();
+            },
+            error: function(serverResponse) {
+                console.log('ERROR SAVING OPTIONS');
+                console.log(serverResponse);
+                $('#progress').hide();
+            }
+        });
     }
 
     $('#generateArchiveButton').click(function() {
@@ -248,7 +260,6 @@ jQuery(document).ready(function($){
     });
 
     $('.wrap').on('click', '.saveSettingsButton', function(event) {
-        // TODO: needed prevention?
         event.preventDefault();
         $('#progress').show();
         saveOptions();

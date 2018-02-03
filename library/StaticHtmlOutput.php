@@ -81,7 +81,6 @@ class StaticHtmlOutput {
 				->assign('uploadsFolder', $uploadDir)
 				->render();
 		} else {
-
 			do_action(self::HOOK . '-saveOptions');
 
 			$this->_view
@@ -95,11 +94,7 @@ class StaticHtmlOutput {
 		}
 	}
 
-	public function saveOptions() {
-		if (!isset($_POST['action']) || 'generate' != $_POST['action']) {
-			return;
-		}
-
+    public function saveExportSettings () {
 		if (!check_admin_referer(self::HOOK . '-options') || !current_user_can('manage_options')) {
 			error_log('user didnt have permissions to change options');
 			exit('You cannot change WP Static HTML Output Plugin options.');
@@ -108,13 +103,7 @@ class StaticHtmlOutput {
 		$this->_options
 			->setOption('static-export-settings', filter_input(INPUT_POST, 'staticExportSettings', FILTER_SANITIZE_URL))
 			->save();
-
-		$message = 'Options have been updated successfully.';
-
-		$this->_view->setTemplate('message')
-			->assign('message', $message)
-			->render();
-	}
+    }
 
 	public function get_write_directory(){
 		$outputDir = filter_input(INPUT_POST, 'outputDirectory');

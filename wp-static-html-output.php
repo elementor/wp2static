@@ -36,8 +36,15 @@ add_action('plugins_loaded', 'initialise_localisation');
 add_action( 'wp_ajax_generate_archive', 'generate_archive' );
 add_action( 'wp_ajax_github_export', 'github_export' );
 add_action( 'wp_ajax_crawl_site', 'crawl_site' );
+add_action( 'wp_ajax_save_options', 'save_options' );
 add_action( 'wp_ajax_create_zip', 'create_zip' );
 add_action( 'wp_ajax_github_finalise_export', 'github_finalise_export' );
+
+function save_options() {
+    $plugin = StaticHtmlOutput::getInstance();
+    $plugin->saveExportSettings();
+    wp_die();
+}
 
 function crawl_site() {
     $plugin = StaticHtmlOutput::getInstance();
