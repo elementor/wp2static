@@ -46,6 +46,10 @@ class StaticHtmlOutput {
 		return $instance;
 	}
 
+	public function saveOptions() {
+    // required
+    }
+
 	public function activate() {
 		if (null === $this->_options->getOption('version')) {
 			$this->_options
@@ -85,7 +89,6 @@ class StaticHtmlOutput {
 
 			$this->_view
 				->setTemplate('options-page')
-				->assign('exportLog', $this->_exportLog)
 				->assign('staticExportSettings', $this->_options->getOption('static-export-settings'))
 				->assign('wpUploadsDir', wp_upload_dir()['baseurl'])
 				->assign('wpPluginDir', plugins_url('/', __FILE__))
@@ -108,15 +111,12 @@ class StaticHtmlOutput {
 	public function get_write_directory(){
 		$outputDir = filter_input(INPUT_POST, 'outputDirectory');
 
-		// Check to see if the directory exists
 		if ( $outputDir && is_dir($outputDir)) {
-			// Makes sure it's writable
 			if( is_writable( $outputDir ) ){
 				return $outputDir;
 			}
 		}
 
-		// Default WP Upload Location
 		$wp_upload_dir = wp_upload_dir();
 		return $wp_upload_dir['path'];
 	}
@@ -127,28 +127,20 @@ class StaticHtmlOutput {
         $githubBranch = filter_input(INPUT_POST, 'githubBranch');
         $githubPersonalAccessToken = filter_input(INPUT_POST, 'githubPersonalAccessToken');
 
-        # GH user and repo - split from repo field input
         list($githubUser, $githubRepo) = explode('/', $githubRepo);
 
         $client->authenticate($githubPersonalAccessToken, Github\Client::AUTH_HTTP_TOKEN);
-
         $reference = $client->api('gitData')->references()->show($githubUser, $githubRepo, 'heads/' . $githubBranch);
-
         $commit = $client->api('gitData')->commits()->show($githubUser, $githubRepo, $reference['object']['sha']);
-
         $commitSHA = $commit['sha'];
         $treeSHA = $commit['tree']['sha'];
         $treeURL = $commit['tree']['url'];
-
         $treeContents = [];
-
 		$wpUploadsDir = wp_upload_dir()['basedir'];
         $githubGlobHashesAndPaths = $wpUploadsDir . '/WP-STATIC-EXPORT-GITHUB-GLOBS-PATHS';
-
         $contents = file($githubGlobHashesAndPaths);
 
         foreach($contents as $line) {
-            // split line into blob hash and target path
             list($blobHash, $targetPath) = explode(',', $line);
 
             $treeContents[] = [
@@ -165,21 +157,15 @@ class StaticHtmlOutput {
         ];
 
         $this->_prependExportLog('GITHUB: Creating tree ...' . PHP_EOL);
-
-        error_log(print_r($treeData, true));
-
+        $this->_prependExportLog('GITHUB: tree data: '. PHP_EOL);
+        $this->_prependExportLog(print_r($treeData, true) . PHP_EOL);
         $newTree = $client->api('gitData')->trees()->create($githubUser, $githubRepo, $treeData);
-
         $this->_prependExportLog('GITHUB: Tree created');
         
-        $commitData = ['message' => 'Static export with date time and info', 'tree' => $newTree['sha'], 'parents' => [$commitSHA]];
+        $commitData = ['message' => 'WP Static HTML Export Plugin on ' . date("Y-m-d h:i:s"), 'tree' => $newTree['sha'], 'parents' => [$commitSHA]];
         $this->_prependExportLog('GITHUB: Creating commit ...');
-
         $commit = $client->api('gitData')->commits()->create($githubUser, $githubRepo, $commitData);
-
-
         $this->_prependExportLog('GITHUB: Updating head to reference commit ...');
-
         $referenceData = ['sha' => $commit['sha'], 'force' => true ]; //Force is default false
         try {
             $reference = $client->api('gitData')->references()->update(
@@ -194,8 +180,7 @@ class StaticHtmlOutput {
 
     }
 
-    // function runs for each line in export file
-	public function githubExport() {
+	public function githubUploadBlobs() {
         $client = new \Github\Client();
         $githubRepo = filter_input(INPUT_POST, 'githubRepo');
         $githubPersonalAccessToken = filter_input(INPUT_POST, 'githubPersonalAccessToken');
@@ -247,7 +232,7 @@ class StaticHtmlOutput {
         echo $filesRemaining;
     }
 
-	public function genArch() {
+	public function startExport() {
 		$archiveUrl = $this->_prepareInitialFileList();
 
         if ($archiveUrl = 'initial crawl list ready') {
@@ -267,39 +252,29 @@ class StaticHtmlOutput {
         echo 'Archive has been generated';
 	}
 
-	protected function _prepareInitialFileList()
-	{
+	protected function _prepareInitialFileList() {
 		global $blog_id;
 		set_time_limit(0);
 
 		$uploadDir = $this->get_write_directory();
 		$exporter = wp_get_current_user();
-
 		$wpUploadsDir = wp_upload_dir()['basedir'];
 		$_SERVER['urlsQueue'] = $wpUploadsDir . '/WP-STATIC-INITIAL-CRAWL-LIST';
-        // move current to 'previous' on complete to do diffs
 		$_SERVER['currentArchive'] = $wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE';
 		$_SERVER['exportLog'] = $wpUploadsDir . '/WP-STATIC-EXPORT-LOG';
 		$_SERVER['githubFilesToExport'] = $wpUploadsDir . '/WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT';
-		
-
 		$archiveName = $uploadDir . '/' . self::HOOK . '-' . $blog_id . '-' . time() . '-' . $exporter->user_login;
 		$archiveDir = $archiveName . '/';
 
-        // save archive dir to file used during process
         file_put_contents($_SERVER['currentArchive'], $archiveDir);
-    
-
 
 		if (!file_exists($archiveDir)) {
 			wp_mkdir_p($archiveDir);
 		}
 
-		// empty status and log files before starting
 		unlink($_SERVER['exportLog']);
 		unlink($_SERVER['urlsQueue']);
 
-        // TODO: this first file_put_contents required to create file, function not handling it..
         file_put_contents($_SERVER['exportLog'], date("Y-m-d h:i:s") . ' STARTING EXPORT', FILE_APPEND | LOCK_EX);
 
 		$baseUrl = untrailingslashit(home_url());
@@ -311,18 +286,10 @@ class StaticHtmlOutput {
 					explode("\n", filter_input(INPUT_POST, 'additionalUrls'))
 					));
 
-
-		$this->_exportLog = array();
-
         $this->_prependExportLog('INITIAL CRAWL LIST CONTAINS ' . count($urlsQueue) . ' FILES');
 
-
-        // TODO: put urlsQueue here into a file, return to client from this function. 
-        //       run next function, working on list of initial crawl files
         $str = implode("\n", $urlsQueue);
         file_put_contents($_SERVER['urlsQueue'], $str);
-        
-        // reset crawled links file
         file_put_contents($wpUploadsDir . '/WP-STATIC-CRAWLED-LINKS', '');
 
         return 'initial crawl list ready';
@@ -631,41 +598,22 @@ class StaticHtmlOutput {
 				function FolderToGithub($dir, $siteroot, $githubPath){
 					$files = scandir($dir);
 					foreach($files as $item){
-
-
-                        // exclude ., .. and .git folders
 						if($item != '.' && $item != '..' && $item != '.git'){
-                            
-
 							if(is_dir($dir.'/'.$item)) {
 								FolderToGithub($dir.'/'.$item, $siteroot, $githubPath);
 							} else if(is_file($dir.'/'.$item)) {
-
-
-                                // siteroot: /home/somewebs/public_html/wordpress/wp-content/uploads/2018/01/wp-static-html-output-1-1516441854-leon/
-                                // targetPath: ~somewebs/wordpress/beautiful-moalboal-blog/index.html
-
-                                // $_SERVER['REQUEST_URI']: /~somewebs/wordpress/wp-admin/admin-ajax.php
-
-                                // if WP hosted on subdir, remove that from target path 
-
                                 $subdir = str_replace('/wp-admin/admin-ajax.php', '', $_SERVER['REQUEST_URI']);
                                 $subdir = ltrim($subdir, '/');
-                                
 								$clean_dir = str_replace($siteroot . '/', '', $dir.'/'.$item);
                                 $clean_dir = str_replace($subdir, '', $clean_dir);
-
 								$targetPath =  $githubPath . $clean_dir;
                                 $targetPath = ltrim($targetPath, '/');
-
-                                // add line containing file path and target GH path for subsequent processing
                                 $githubExportLine = $dir .'/' . $item . ',' . $targetPath . "\n";
                                 file_put_contents($_SERVER['githubFilesToExport'], $githubExportLine, FILE_APPEND | LOCK_EX);
 							} 
 						}
 					}
 				}
-
 
 
 				FolderToGithub($siteroot, $siteroot, $githubPath);
@@ -685,7 +633,6 @@ class StaticHtmlOutput {
 #	 -H "Authorization: Bearer my-api-access-token" \
 #	 --data-binary "@website.zip" \
 #	 https://api.netlify.com/api/v1/sites/mysite.netlify.com/deploys
-
 
 				$client = new Client([
 						// Base URI is used with relative requests
@@ -713,9 +660,6 @@ class StaticHtmlOutput {
 			
 				error_log($response->getStatusCode(), 0);
 				error_log(print_r($response, true), 0);
-
-
-
 			}
 
             // TODO: need folder to do GH export, force keep for now
@@ -748,7 +692,6 @@ class StaticHtmlOutput {
 	}
 
     protected function _getAllWPPostURLs(){
-
         global $wpdb;
         $posts = $wpdb->get_results("
             SELECT ID,post_type,post_title
@@ -778,8 +721,7 @@ class StaticHtmlOutput {
         return $postURLs;
     }
 
-	protected function _getListOfLocalFilesByUrl(array $urls)
-	{
+	protected function _getListOfLocalFilesByUrl(array $urls) {
 		$files = array();
 
 		foreach ($urls as $url) {
@@ -810,22 +752,13 @@ class StaticHtmlOutput {
     protected function _prependExportLog($text) {
 		$wpUploadsDir = wp_upload_dir()['basedir'];
 		$exportLog = $wpUploadsDir . '/WP-STATIC-EXPORT-LOG';
-        // efficient way to prepend
-        // from https://stackoverflow.com/a/29777782/1668057
-
-        //error_log($text);
-        //return;
-
         $src = fopen($exportLog, 'r+');
         $dest = fopen('php://temp', 'w');
-
         fwrite($dest,  date("Y-m-d h:i:s") . ' ' . $text . PHP_EOL);
-
         stream_copy_to_stream($src, $dest);
         rewind($dest);
         rewind($src);
         stream_copy_to_stream($dest, $src);
-
         fclose($src);
         fclose($dest);
     }
@@ -834,7 +767,6 @@ class StaticHtmlOutput {
 		$urlInfo = parse_url($url->getUrl());
 		$pathInfo = pathinfo(isset($urlInfo['path']) && $urlInfo['path'] != '/' ? $urlInfo['path'] : 'index.html');
 
-		// Prepare file directory and create it if it doesn't exist
 		$fileDir = $archiveDir . (isset($pathInfo['dirname']) ? $pathInfo['dirname'] : '');
 
 		if (empty($pathInfo['extension']) && $pathInfo['basename'] == $pathInfo['filename']) {
@@ -849,7 +781,6 @@ class StaticHtmlOutput {
 		$fileExtension = ($url->isHtml() || !isset($pathInfo['extension']) ? 'html' : $pathInfo['extension']);
 		$fileName = $fileDir . '/' . $pathInfo['filename'] . '.' . $fileExtension;
 		$fileContents = $url->getResponseBody();
-		// TODO: fix for unclear issue on PHP5.3
 		if ($fileContents != '' && $fileContents != 'F') {
 			file_put_contents($fileName, $fileContents);
 		} else {
