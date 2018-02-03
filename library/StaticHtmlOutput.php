@@ -19,7 +19,6 @@ class StaticHtmlOutput {
 	protected static $_instance = null;
 	protected $_options = null;
 	protected $_view = null;
-	protected $_exportLog = array();
 	protected function __construct() {}
 	protected function __clone() {}
 
@@ -296,30 +295,18 @@ class StaticHtmlOutput {
     }
 
 	public function crawlTheWordPressSite() {
-        // grab a line from the INITIAL_CRAWL list, then crawl all links on it that aren't already stored in CRAWLED_LINKS file
 		$wpUploadsDir = wp_upload_dir()['basedir'];
 		$initial_crawl_list_file = $wpUploadsDir . '/WP-STATIC-INITIAL-CRAWL-LIST';
         $crawled_links_file = $wpUploadsDir . '/WP-STATIC-CRAWLED-LINKS';
-
         $initial_crawl_list = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
         $crawled_links = file($crawled_links_file, FILE_IGNORE_NEW_LINES);
 
-        // read whole file in as array
-
-        // while there are lines to process
         if (!empty($initial_crawl_list)) {
-            // grab first line
             $first_line = array_shift($initial_crawl_list);
-
-            // write remainder back to file
             file_put_contents($initial_crawl_list_file, implode("\r\n", $initial_crawl_list));
-
-            // process the line
             $currentUrl = $first_line;
-
             $this->_prependExportLog('CRAWLING URL: ' . $currentUrl);
 
-            // TODO: checks here on url, make sure it's not empty
             if (empty($currentUrl)){
                 $this->_prependExportLog('SKIPPING EMPTY FILE');
             }
@@ -327,42 +314,27 @@ class StaticHtmlOutput {
             $urlResponse = new StaticHtmlOutput_UrlRequest($currentUrl, filter_input(INPUT_POST, 'cleanMeta'));
 
             if ($urlResponse->checkResponse() == 'FAIL') {
-                error_log('Failed to get this file');
-                error_log($currentUrl);
                 $this->_prependExportLog('FAILED TO CRAWL FILE: ' . $currentUrl);
             } else {
-                // Add current url to the list of processed urls
-                // need to keep old exportLog intact for dependent function below
                 file_put_contents($crawled_links_file, $currentUrl . PHP_EOL, FILE_APPEND | LOCK_EX);
-
                 $this->_prependExportLog('CRAWLED FILE: ' . $currentUrl);
             }
-
 
             $baseUrl = untrailingslashit(home_url());
             $newBaseUrl = untrailingslashit(filter_input(INPUT_POST, 'baseUrl', FILTER_SANITIZE_URL));
 
-            // get all other urls from within this one and add to queue if not there
             foreach ($urlResponse->extractAllUrls($baseUrl) as $newUrl) {
-
-                $this->_prependExportLog('potential new file: ' . $newUrl);
-
-                // TODO: need to recheck it doesn't exist in file...?
-                if ($newUrl != $currentUrl && !in_array($newUrl, $crawled_links)) {
-                    //file_put_contents($_SERVER['urlsQueue'], $newUrl . PHP_EOL, FILE_APPEND | LOCK_EX);
-                    // do crawl link recursively here
+                if ($newUrl != $currentUrl && !in_array($newUrl, $crawled_links) && !in_array($newUrl, $initial_crawl_list)) {
+                    $this->_prependExportLog('DISCOVERED NEW FILE: ' . $newUrl);
                     
                     $urlResponse = new StaticHtmlOutput_UrlRequest($newUrl, filter_input(INPUT_POST, 'cleanMeta'));
 
                     if ($urlResponse->checkResponse() == 'FAIL') {
-                        error_log('Failed to get this file');
-                        error_log($newUrl);
                         $this->_prependExportLog('FAILED TO CRAWL FILE: ' . $newUrl);
                     } else {
-                        // Add current url to the list of processed urls
-                        // need to keep old exportLog intact for dependent function below
-                        file_put_contents($crawled_links, $newUrl . PHP_EOL, FILE_APPEND | LOCK_EX);
+                        file_put_contents($crawled_links_file, $newUrl . PHP_EOL, FILE_APPEND | LOCK_EX);
 
+                        $crawled_links[] = $newUrl;
                         $this->_prependExportLog('CRAWLED FILE: ' . $newUrl);
                     }
 
@@ -371,35 +343,25 @@ class StaticHtmlOutput {
                     $wpUploadsDir = wp_upload_dir()['basedir'];
                     $archiveDir = file_get_contents($wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE');
                     $this->_saveUrlData($urlResponse, $archiveDir);
-                } else {
-                    $this->_prependExportLog('FILE ALREADY CRAWLED: ' . $newUrl);
-                }
+                } 
             }
 
             $urlResponse->cleanup();
-
-
             $urlResponse->replaceBaseUlr($baseUrl, $newBaseUrl);
-
             $wpUploadsDir = wp_upload_dir()['basedir'];
             $archiveDir = file_get_contents($wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE');
-
             $this->_saveUrlData($urlResponse, $archiveDir);
-
         } else {
-            // all initial links crawled, tell the client
             $this->_prependExportLog('CRAWLING COMPLETED');
             echo 'CRAWLING COMPLETED';
-
         }
-        
     }
 
     public function createTheArchive() {
+        $this->_prependExportLog('CREATING ZIP FILE...');
         $wpUploadsDir = wp_upload_dir()['basedir'];
         $archiveDir = file_get_contents($wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE');
         $archiveName = rtrim($archiveDir, '/');
-        // get archive name from the archiveDir stored in file, minus last slash
 		$tempZip = $archiveName . '.tmp';
 		$zipArchive = new ZipArchive();
 		if ($zipArchive->open($tempZip, ZIPARCHIVE::CREATE) !== true) {
@@ -419,211 +381,193 @@ class StaticHtmlOutput {
 		$zipArchive->close();
         $zipDownloadLink = $archiveName . '.zip';
 		rename($tempZip, $zipDownloadLink); 
-
         $publicDownloadableZip = str_replace(ABSPATH, trailingslashit(home_url()), $archiveName . '.zip');
         $this->_prependExportLog('ZIP CREATED: Download at ' . $publicDownloadableZip);
 
         echo $publicDownloadableZip;
     }
 
-    public function doTheOtherExports() {
+    public function ftpExport() {
+        require_once(__DIR__.'/FTP/FtpClient.php');
+        require_once(__DIR__.'/FTP/FtpException.php');
+        require_once(__DIR__.'/FTP/FtpWrapper.php');
 
-		if(filter_input(INPUT_POST, 'sendViaFTP') == 1) {		
-			require_once(__DIR__.'/FTP/FtpClient.php');
-			require_once(__DIR__.'/FTP/FtpException.php');
-			require_once(__DIR__.'/FTP/FtpWrapper.php');
+        $ftp = new \FtpClient\FtpClient();
+        
+        try {
+            $ftp->connect(filter_input(INPUT_POST, 'ftpServer'));
+            $ftp->login(filter_input(INPUT_POST, 'ftpUsername'), filter_input(INPUT_POST, 'ftpPassword'));
+            $ftp->pasv(true);
 
-			$ftp = new \FtpClient\FtpClient();
-			
-			try {
-				$ftp->connect(filter_input(INPUT_POST, 'ftpServer'));
-				$ftp->login(filter_input(INPUT_POST, 'ftpUsername'), filter_input(INPUT_POST, 'ftpPassword'));
-				$ftp->pasv(true);
+            if (!$ftp->isdir(filter_input(INPUT_POST, 'ftpRemotePath'))) {
+                $ftp->mkdir(filter_input(INPUT_POST, 'ftpRemotePath'), true);
+            }
 
-				if (!$ftp->isdir(filter_input(INPUT_POST, 'ftpRemotePath'))) {
-					$ftp->mkdir(filter_input(INPUT_POST, 'ftpRemotePath'), true);
-				}
+            $ftp->putAll($archiveName . '/', filter_input(INPUT_POST, 'ftpRemotePath'));
+        } catch (Exception $e){
+            // write error to log
+            file_put_contents($_SERVER['exportLog'], $e , FILE_APPEND | LOCK_EX);
+            throw new Exception($e);
+        }
 
-				$ftp->putAll($archiveName . '/', filter_input(INPUT_POST, 'ftpRemotePath'));
-			} catch (Exception $e){
-				// write error to log
-				file_put_contents($_SERVER['exportLog'], $e , FILE_APPEND | LOCK_EX);
-				throw new Exception($e);
-			}
+        // TODO: error handling when not connected/unable to put, etc
+        unset($ftp);
+    }
 
-			// TODO: error handling when not connected/unable to put, etc
-			unset($ftp);
-		}
+    public function s3Export() {
+        require_once(__DIR__.'/aws/aws-autoloader.php');
+        require_once(__DIR__.'/StaticHtmlOutput/MimeTypes.php');
 
-		if(filter_input(INPUT_POST, 'sendViaS3') == 1) {		
-			require_once(__DIR__.'/aws/aws-autoloader.php');
-			require_once(__DIR__.'/StaticHtmlOutput/MimeTypes.php');
+        function UploadObject($S3, $Bucket, $Key, $Data, $ACL, $ContentType = "text/plain") {
+            try {
+                $Model = $S3->PutObject(array('Bucket'      => $Bucket,
+                            'Key'         => $Key,
+                            'Body'        => $Data,
+                            'ACL'         => $ACL,
+                            'ContentType' => $ContentType));
+                return true;
+            }
+            catch (Exception $e) {
+                file_put_contents($_SERVER['exportLog'], $e , FILE_APPEND | LOCK_EX);
+                throw new Exception($e);
+            }
+        }
 
-			function UploadObject($S3, $Bucket, $Key, $Data, $ACL, $ContentType = "text/plain") {
-				try {
-					$Model = $S3->PutObject(array('Bucket'      => $Bucket,
-								'Key'         => $Key,
-								'Body'        => $Data,
-								'ACL'         => $ACL,
-								'ContentType' => $ContentType));
-					return true;
-				}
-				catch (Exception $e) {
-					file_put_contents($_SERVER['exportLog'], $e , FILE_APPEND | LOCK_EX);
-					throw new Exception($e);
-				}
-			}
+        function UploadDirectory($S3, $Bucket, $dir, $siteroot) {
+            $files = scandir($dir);
+            foreach($files as $item){
+                if($item != '.' && $item != '..'){
+                    if(is_dir($dir.'/'.$item)) {
+                        UploadDirectory($S3, $Bucket, $dir.'/'.$item, $siteroot);
+                    } else if(is_file($dir.'/'.$item)) {
+                        $clean_dir = str_replace($siteroot, '', $dir.'/'.$item);
 
-			function UploadDirectory($S3, $Bucket, $dir, $siteroot) {
-				$files = scandir($dir);
-				foreach($files as $item){
-					if($item != '.' && $item != '..'){
-						if(is_dir($dir.'/'.$item)) {
-							UploadDirectory($S3, $Bucket, $dir.'/'.$item, $siteroot);
-						} else if(is_file($dir.'/'.$item)) {
-							$clean_dir = str_replace($siteroot, '', $dir.'/'.$item);
+                        $targetPath = $clean_dir;
+                        $f = file_get_contents($dir.'/'.$item);
 
-							$targetPath = $clean_dir;
-							$f = file_get_contents($dir.'/'.$item);
-
-							if($targetPath == '/index.html') {
-							}
-
-							UploadObject($S3, $Bucket, $targetPath, $f, 'public-read', GuessMimeType($item));
-						} 
-					}
-				}
-			}
-
-			$S3 = Aws\S3\S3Client::factory(array(
-						'version'=> '2006-03-01',
-						'key'    => filter_input(INPUT_POST, 's3Key'),
-						'secret' => filter_input(INPUT_POST, 's3Secret'),
-						'region' => filter_input(INPUT_POST, 's3Region')
-						)
-					);
-
-			$Bucket = filter_input(INPUT_POST, 's3Bucket');
-
-			// Upload the directory to the bucket
-			UploadDirectory($S3, $Bucket, $archiveName, $archiveName.'/');
-
-			if(strlen(filter_input(INPUT_POST, 'cfDistributionId'))>12) {
-				$CF = Aws\CloudFront\CloudFrontClient::factory(array(
-							'version'		=> '2016-01-28',
-							'key'           => filter_input(INPUT_POST, 's3Key'),
-							'secret'        => filter_input(INPUT_POST, 's3Secret'),
-							)
-						);
-				$result = $CF->createInvalidation(array(
-							'DistributionId' => filter_input(INPUT_POST, 'cfDistributionId'),
-							'Paths' => array ( 'Quantity' => 1, 'Items' => array('/*')),
-																					'CallerReference' => time()
-																					));
-																					}
-			}
-
-			if(filter_input(INPUT_POST, 'sendViaDropbox') == 1) {
-
-				// will exclude the siteroot when copying
-				$siteroot = $archiveName . '/';
-				$dropboxAppKey = filter_input(INPUT_POST, 'dropboxAppKey');
-				$dropboxAppSecret = filter_input(INPUT_POST, 'dropboxAppSecret');
-				$dropboxAccessToken = filter_input(INPUT_POST, 'dropboxAccessToken');
-				$dropboxFolder = filter_input(INPUT_POST, 'dropboxFolder');
-
-
-				$app = new DropboxApp($dropboxAppKey, $dropboxAppSecret, $dropboxAccessToken);
-				$dbxClient = new Dropbox($app);
-
-				function FolderToDropbox($dir, $dbxClient, $siteroot, $dropboxFolder){
-					$files = scandir($dir);
-					foreach($files as $item){
-						if($item != '.' && $item != '..'){
-							if(is_dir($dir.'/'.$item)) {
-								FolderToDropbox($dir.'/'.$item, $dbxClient, $siteroot, $dropboxFolder);
-							} else if(is_file($dir.'/'.$item)) {
-								$clean_dir = str_replace($siteroot, '', $dir.'/'.$item);
-								$targetPath =  $dropboxFolder . $clean_dir;
-
-
-								try {
-									$dropboxFile = new DropboxFile($dir.'/'.$item);
-									$uploadedFile = $dbxClient->upload($dropboxFile, $targetPath, ['autorename' => true]);
-								} catch (Exception $e) {
-									file_put_contents($_SERVER['exportLog'], $e , FILE_APPEND | LOCK_EX);
-									throw new Exception($e);
-
-								}
-							} 
-						}
-					}
-				}
-
-				FolderToDropbox($siteroot, $dbxClient, $siteroot, $dropboxFolder);
-			}
-
-
-					if(filter_input(INPUT_POST, 'sendViaGithub') == 1) {
-
-                        // empty the list of GH export files in preparation
-                        $f = @fopen($_SERVER['githubFilesToExport'], "r+");
-                        if ($f !== false) {
-                            ftruncate($f, 0);
-                            fclose($f);
+                        if($targetPath == '/index.html') {
                         }
 
-                        // empty the list of GH blob hashes in preparation
-                        $wpUploadsDir = wp_upload_dir()['basedir'];
-                        $githubGlobHashesAndPaths = $wpUploadsDir . '/WP-STATIC-EXPORT-GITHUB-GLOBS-PATHS';
-                        $f = @fopen($githubGlobHashesAndPaths, "r+");
-                        if ($f !== false) {
-                            ftruncate($f, 0);
-                            fclose($f);
+                        UploadObject($S3, $Bucket, $targetPath, $f, 'public-read', GuessMimeType($item));
+                    } 
+                }
+            }
+        }
+
+        $S3 = Aws\S3\S3Client::factory(array(
+            'version'=> '2006-03-01',
+            'key'    => filter_input(INPUT_POST, 's3Key'),
+            'secret' => filter_input(INPUT_POST, 's3Secret'),
+            'region' => filter_input(INPUT_POST, 's3Region')
+            )
+        );
+
+        $Bucket = filter_input(INPUT_POST, 's3Bucket');
+
+        UploadDirectory($S3, $Bucket, $archiveName, $archiveName.'/');
+
+        if(strlen(filter_input(INPUT_POST, 'cfDistributionId'))>12) {
+            $CF = Aws\CloudFront\CloudFrontClient::factory(array(
+                'version'		=> '2016-01-28',
+                'key'           => filter_input(INPUT_POST, 's3Key'),
+                'secret'        => filter_input(INPUT_POST, 's3Secret'),
+                )
+            );
+            $result = $CF->createInvalidation(array(
+                'DistributionId' => filter_input(INPUT_POST, 'cfDistributionId'),
+                'Paths' => array (
+                    'Quantity' => 1, 'Items' => array('/*')),
+                    'CallerReference' => time()
+            ));
+        }
+    }
+
+    public function dropboxExport() {
+        $siteroot = $archiveName . '/';
+        $dropboxAppKey = filter_input(INPUT_POST, 'dropboxAppKey');
+        $dropboxAppSecret = filter_input(INPUT_POST, 'dropboxAppSecret');
+        $dropboxAccessToken = filter_input(INPUT_POST, 'dropboxAccessToken');
+        $dropboxFolder = filter_input(INPUT_POST, 'dropboxFolder');
+        $app = new DropboxApp($dropboxAppKey, $dropboxAppSecret, $dropboxAccessToken);
+        $dbxClient = new Dropbox($app);
+
+        function FolderToDropbox($dir, $dbxClient, $siteroot, $dropboxFolder){
+            $files = scandir($dir);
+            foreach($files as $item){
+                if($item != '.' && $item != '..'){
+                    if(is_dir($dir.'/'.$item)) {
+                        FolderToDropbox($dir.'/'.$item, $dbxClient, $siteroot, $dropboxFolder);
+                    } else if(is_file($dir.'/'.$item)) {
+                        $clean_dir = str_replace($siteroot, '', $dir.'/'.$item);
+                        $targetPath =  $dropboxFolder . $clean_dir;
+
+                        try {
+                            $dropboxFile = new DropboxFile($dir.'/'.$item);
+                            $uploadedFile = $dbxClient->upload($dropboxFile, $targetPath, ['autorename' => true]);
+                        } catch (Exception $e) {
+                            file_put_contents($_SERVER['exportLog'], $e , FILE_APPEND | LOCK_EX);
+                            throw new Exception($e);
+
                         }
-                    
-                    // optional path within GH repo
-					$githubPath = filter_input(INPUT_POST, 'githubPath');
+                    } 
+                }
+            }
+        }
+
+        FolderToDropbox($siteroot, $dbxClient, $siteroot, $dropboxFolder);
+    }
+
+    public function githubPrepareFiles () {
+        // empty the list of GH export files in preparation
+        $f = @fopen($_SERVER['githubFilesToExport'], "r+");
+        if ($f !== false) {
+            ftruncate($f, 0);
+            fclose($f);
+        }
+
+        // empty the list of GH blob hashes in preparation
+        $wpUploadsDir = wp_upload_dir()['basedir'];
+        $githubGlobHashesAndPaths = $wpUploadsDir . '/WP-STATIC-EXPORT-GITHUB-GLOBS-PATHS';
+        $f = @fopen($githubGlobHashesAndPaths, "r+");
+        if ($f !== false) {
+            ftruncate($f, 0);
+            fclose($f);
+        }
+            
+        // optional path within GH repo
+        $githubPath = filter_input(INPUT_POST, 'githubPath');
+
+        $siteroot = $archiveName . '/';
+
+        function FolderToGithub($dir, $siteroot, $githubPath){
+            $files = scandir($dir);
+            foreach($files as $item){
+                if($item != '.' && $item != '..' && $item != '.git'){
+                    if(is_dir($dir.'/'.$item)) {
+                        FolderToGithub($dir.'/'.$item, $siteroot, $githubPath);
+                    } else if(is_file($dir.'/'.$item)) {
+                        $subdir = str_replace('/wp-admin/admin-ajax.php', '', $_SERVER['REQUEST_URI']);
+                        $subdir = ltrim($subdir, '/');
+                        $clean_dir = str_replace($siteroot . '/', '', $dir.'/'.$item);
+                        $clean_dir = str_replace($subdir, '', $clean_dir);
+                        $targetPath =  $githubPath . $clean_dir;
+                        $targetPath = ltrim($targetPath, '/');
+                        $githubExportLine = $dir .'/' . $item . ',' . $targetPath . "\n";
+                        file_put_contents($_SERVER['githubFilesToExport'], $githubExportLine, FILE_APPEND | LOCK_EX);
+                    } 
+                }
+            }
+        }
 
 
-					# 3 - Post file as blob
+        FolderToGithub($siteroot, $siteroot, $githubPath);
+    }
 
-					$siteroot = $archiveName . '/';
-
-
-					/* LIMIT DEPTH WHILE TESTING */
-					$_SERVER['counter'] = 0;
-
-
-				function FolderToGithub($dir, $siteroot, $githubPath){
-					$files = scandir($dir);
-					foreach($files as $item){
-						if($item != '.' && $item != '..' && $item != '.git'){
-							if(is_dir($dir.'/'.$item)) {
-								FolderToGithub($dir.'/'.$item, $siteroot, $githubPath);
-							} else if(is_file($dir.'/'.$item)) {
-                                $subdir = str_replace('/wp-admin/admin-ajax.php', '', $_SERVER['REQUEST_URI']);
-                                $subdir = ltrim($subdir, '/');
-								$clean_dir = str_replace($siteroot . '/', '', $dir.'/'.$item);
-                                $clean_dir = str_replace($subdir, '', $clean_dir);
-								$targetPath =  $githubPath . $clean_dir;
-                                $targetPath = ltrim($targetPath, '/');
-                                $githubExportLine = $dir .'/' . $item . ',' . $targetPath . "\n";
-                                file_put_contents($_SERVER['githubFilesToExport'], $githubExportLine, FILE_APPEND | LOCK_EX);
-							} 
-						}
-					}
-				}
-
-
-				FolderToGithub($siteroot, $siteroot, $githubPath);
-			}
-
-			if(filter_input(INPUT_POST, 'sendViaNetlify') == 1) {
-				// will exclude the siteroot when copying
-				$siteroot = $archiveName . '/';
-				$netlifySiteID = filter_input(INPUT_POST, 'netlifySiteID');
-				$netlifyPersonalAccessToken = filter_input(INPUT_POST, 'netlifyPersonalAccessToken');
+    public function netlifyExport () {
+        // will exclude the siteroot when copying
+        $siteroot = $archiveName . '/';
+        $netlifySiteID = filter_input(INPUT_POST, 'netlifySiteID');
+        $netlifyPersonalAccessToken = filter_input(INPUT_POST, 'netlifyPersonalAccessToken');
 
 
 # get ZIP archive's path
@@ -634,61 +578,61 @@ class StaticHtmlOutput {
 #	 --data-binary "@website.zip" \
 #	 https://api.netlify.com/api/v1/sites/mysite.netlify.com/deploys
 
-				$client = new Client([
-						// Base URI is used with relative requests
-						'base_uri' => 'https://api.netlify.com'
-				]);	
+        $client = new Client([
+                // Base URI is used with relative requests
+                'base_uri' => 'https://api.netlify.com'
+        ]);	
 
+        try {
+            $response = $client->request('POST', '/api/v1/sites/' . $netlifySiteID . '.netlify.com/deploys', [
+                    'multipart' => [
+                    [
+                    'name'     => 'required_for_guzzle_only',
+                    'contents' => fopen($archiveName . '.zip', 'r'),
+                    'headers'  => [
+                    'Content-Type' => 'application/zip',
+                    'Authorization' => 'Bearer ' . $netlifyPersonalAccessToken
+                    ]
+                    ]
+                    ]
+            ]);
+        } catch (Exception $e) {
+            file_put_contents($_SERVER['exportLog'], $e , FILE_APPEND | LOCK_EX);
+            throw new Exception($e);
+        }
+    
+        error_log($response->getStatusCode(), 0);
+        error_log(print_r($response, true), 0);
+    }
 
-				try {
-					$response = $client->request('POST', '/api/v1/sites/' . $netlifySiteID . '.netlify.com/deploys', [
-							'multipart' => [
-							[
-							'name'     => 'required_for_guzzle_only',
-							'contents' => fopen($archiveName . '.zip', 'r'),
-							'headers'  => [
-							'Content-Type' => 'application/zip',
-							'Authorization' => 'Bearer ' . $netlifyPersonalAccessToken
-							]
-							]
-							]
-					]);
-				} catch (Exception $e) {
-					file_put_contents($_SERVER['exportLog'], $e , FILE_APPEND | LOCK_EX);
-					throw new Exception($e);
-				}
-			
-				error_log($response->getStatusCode(), 0);
-				error_log(print_r($response, true), 0);
-			}
+    public function cleanupAfterExports() {
+        // TODO: need folder to do GH export, force keep for now
 
-            // TODO: need folder to do GH export, force keep for now
+        // TODO: keep copy of last export folder for incremental addition
 
-			// TODO: keep copy of last export folder for incremental addition
+        $retainStaticFiles = filter_input(INPUT_POST, 'retainStaticFiles');
 
-			$retainStaticFiles = filter_input(INPUT_POST, 'retainStaticFiles');
+        // Remove temporary files unless user requested to keep or needed for FTP transfer
+        //if ($retainStaticFiles != 1)		{
+        if ($retainStaticFiles == 'banana')		{
+            $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($archiveDir), RecursiveIteratorIterator::CHILD_FIRST);
+            foreach ($iterator as $fileName => $fileObject) {
 
-			// Remove temporary files unless user requested to keep or needed for FTP transfer
-			//if ($retainStaticFiles != 1)		{
-			if ($retainStaticFiles == 'banana')		{
-				$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($archiveDir), RecursiveIteratorIterator::CHILD_FIRST);
-				foreach ($iterator as $fileName => $fileObject) {
+                // Remove file
+                if ($fileObject->isDir()) {
+                    // Ignore special dirs
+                    $dirName = basename($fileName);
+                    if($dirName != '.' && $dirName != '..') {
+                        rmdir($fileName);
+                    }
+                } else {
+                    unlink($fileName);
+                }
+            }
+            rmdir($archiveDir);
+        }	
 
-					// Remove file
-					if ($fileObject->isDir()) {
-						// Ignore special dirs
-						$dirName = basename($fileName);
-						if($dirName != '.' && $dirName != '..') {
-							rmdir($fileName);
-						}
-					} else {
-						unlink($fileName);
-					}
-				}
-				rmdir($archiveDir);
-			}	
-
-			return str_replace(ABSPATH, trailingslashit(home_url()), $archiveName . '.zip');
+        $this->_prependExportLog('EXPORT CLEANUP COMPLETE' . PHP_EOL);
 	}
 
     protected function _getAllWPPostURLs(){
@@ -714,7 +658,6 @@ class StaticHtmlOutput {
                     break;
             }
             
-            // add permalink to array
             $postURLs[] = $permalink;
         }
 
@@ -727,7 +670,6 @@ class StaticHtmlOutput {
 		foreach ($urls as $url) {
 			$directory = str_replace(home_url('/'), ABSPATH, $url);
 
-			// checking if url contains the WP site url at first position and is a directory
 			if (stripos($url, home_url('/')) === 0 && is_dir($directory)) {
 				$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory));
 				foreach ($iterator as $fileName => $fileObject) {
