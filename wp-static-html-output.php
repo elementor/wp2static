@@ -40,6 +40,20 @@ add_action( 'wp_ajax_save_options', 'save_options' );
 add_action( 'wp_ajax_create_zip', 'create_zip' );
 add_action( 'wp_ajax_github_finalise_export', 'github_finalise_export' );
 add_action( 'wp_ajax_github_prepare_export', 'github_prepare_export' );
+add_action( 'wp_ajax_ftp_prepare_export', 'ftp_prepare_export' );
+add_action( 'wp_ajax_ftp_transfer_files', 'ftp_transfer_files' );
+
+function ftp_prepare_export() {
+    $plugin = StaticHtmlOutput::getInstance();
+    $plugin->ftpPrepareExport();
+    wp_die();
+}
+
+function ftp_transfer_files() {
+    $plugin = StaticHtmlOutput::getInstance();
+    $plugin->ftpTransferFiles();
+    wp_die();
+}
 
 function save_options() {
     $plugin = StaticHtmlOutput::getInstance();
