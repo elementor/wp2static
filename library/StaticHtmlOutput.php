@@ -120,6 +120,20 @@ class StaticHtmlOutput {
 		return $wp_upload_dir['path'];
 	}
 
+    public function progressThroughExportTargets() {
+		$wpUploadsDir = wp_upload_dir()['basedir'];
+        $exportTargetsFile = $wpUploadsDir . '/WP-STATIC-EXPORT-TARGETS';
+
+        // remove first line from file (disabled while testing)
+        $exportTargets = file($exportTargetsFile, FILE_IGNORE_NEW_LINES);
+        $filesRemaining = count($exportTargets) - 1;
+        $first_line = array_shift($exportTargets);
+        file_put_contents($exportTargetsFile, implode("\r\n", $exportTargets));
+
+        
+        $this->_prependExportLog('PROGRESS: Starting export type:' . $target . PHP_EOL);
+    }
+
     public function githubFinaliseExport() {
         $client = new \Github\Client();
         $githubRepo = filter_input(INPUT_POST, 'githubRepo');
@@ -196,6 +210,8 @@ class StaticHtmlOutput {
         $line = fgets($f);
         fclose($f);
 
+        // TODO: look at these funcs above and below, seems redundant...
+
         // remove first line from file (disabled while testing)
         $contents = file($githubFilesToExport, FILE_IGNORE_NEW_LINES);
         $filesRemaining = count($contents) - 1;
@@ -229,6 +245,28 @@ class StaticHtmlOutput {
     }
 
 	public function startExport() {
+        // prepare export targets
+		$wpUploadsDir = wp_upload_dir()['basedir'];
+        $exportTargetsFile = $wpUploadsDir . '/WP-STATIC-EXPORT-TARGETS';
+        unlink($wpUploadsDir . '/WP-STATIC-EXPORT-TARGETS');
+
+        // add each export target to file
+        if (filter_input(INPUT_POST, 'sendViaGithub') == 1) {
+            file_put_contents($exportTargetsFile, 'GITHUB' . PHP_EOL, FILE_APPEND | LOCK_EX);
+        }
+        if (filter_input(INPUT_POST, 'sendViaFTP') == 1) {
+            file_put_contents($exportTargetsFile, 'FTP' . PHP_EOL, FILE_APPEND | LOCK_EX);
+        }
+        if (filter_input(INPUT_POST, 'sendViaS3') == 1) {
+            file_put_contents($exportTargetsFile, 'S3' . PHP_EOL, FILE_APPEND | LOCK_EX);
+        }
+        if (filter_input(INPUT_POST, 'sendViaNetlify') == 1) {
+            file_put_contents($exportTargetsFile, 'NETLIFY' . PHP_EOL, FILE_APPEND | LOCK_EX);
+        }
+        if (filter_input(INPUT_POST, 'sendViaDropbox') == 1) {
+            file_put_contents($exportTargetsFile, 'DROPBOX' . PHP_EOL, FILE_APPEND | LOCK_EX);
+        }
+
 		$archiveUrl = $this->_prepareInitialFileList();
 
         if ($archiveUrl = 'initial crawl list ready') {
@@ -386,31 +424,134 @@ class StaticHtmlOutput {
         echo $publicDownloadableZip;
     }
 
-    public function ftpExport() {
+    public function ftpPrepareExport() {
+        $this->_prependExportLog('FTP EXPORT: Checking credentials..:');
+
         require_once(__DIR__.'/FTP/FtpClient.php');
         require_once(__DIR__.'/FTP/FtpException.php');
         require_once(__DIR__.'/FTP/FtpWrapper.php');
 
         $ftp = new \FtpClient\FtpClient();
         
-        try {
-            $ftp->connect(filter_input(INPUT_POST, 'ftpServer'));
-            $ftp->login(filter_input(INPUT_POST, 'ftpUsername'), filter_input(INPUT_POST, 'ftpPassword'));
-            $ftp->pasv(true);
+        $ftp->connect(filter_input(INPUT_POST, 'ftpServer'));
+        $ftp->login(filter_input(INPUT_POST, 'ftpUsername'), filter_input(INPUT_POST, 'ftpPassword'));
 
-            if (!$ftp->isdir(filter_input(INPUT_POST, 'ftpRemotePath'))) {
-                $ftp->mkdir(filter_input(INPUT_POST, 'ftpRemotePath'), true);
-            }
-
-            $ftp->putAll($archiveName . '/', filter_input(INPUT_POST, 'ftpRemotePath'));
-        } catch (Exception $e){
-            // write error to log
-            file_put_contents($_SERVER['exportLog'], $e , FILE_APPEND | LOCK_EX);
-            throw new Exception($e);
+        if ($ftp->isdir(filter_input(INPUT_POST, 'ftpRemotePath'))) {
+            $this->_prependExportLog('FTP EXPORT: Remote dir exists');
+        } else {
+            $this->_prependExportLog('FTP EXPORT: Creating remote dir');
+            $ftp->mkdir(filter_input(INPUT_POST, 'ftpRemotePath'), true);
         }
+
+        unset($ftp);
+
+        $this->_prependExportLog('FTP EXPORT: Preparing list of files to transfer');
+
+        // prepare file list
+        $wpUploadsDir = wp_upload_dir()['basedir'];
+        $_SERVER['ftpFilesToExport'] = $wpUploadsDir . '/WP-STATIC-EXPORT-FTP-FILES-TO-EXPORT';
+
+        $f = @fopen($_SERVER['ftpFilesToExport'], "r+");
+        if ($f !== false) {
+            ftruncate($f, 0);
+            fclose($f);
+        }
+
+        $ftpTargetPath = filter_input(INPUT_POST, 'ftpRemotePath');
+        $archiveDir = file_get_contents($wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE');
+        $archiveName = rtrim($archiveDir, '/');
+        $siteroot = $archiveName . '/';
+
+        function FolderToFTP($dir, $siteroot, $ftpTargetPath){
+            $files = scandir($dir);
+            foreach($files as $item){
+                if($item != '.' && $item != '..' && $item != '.git'){
+                    if(is_dir($dir.'/'.$item)) {
+                        FolderToFTP($dir.'/'.$item, $siteroot, $ftpTargetPath);
+                    } else if(is_file($dir.'/'.$item)) {
+                        $subdir = str_replace('/wp-admin/admin-ajax.php', '', $_SERVER['REQUEST_URI']);
+                        $subdir = ltrim($subdir, '/');
+                        //$clean_dir = str_replace($siteroot . '/', '', $dir.'/'.$item);
+                        $clean_dir = str_replace($siteroot . '/', '', $dir.'/');
+                        $clean_dir = str_replace($subdir, '', $clean_dir);
+                        $targetPath =  $ftpTargetPath . $clean_dir;
+                        $targetPath = ltrim($targetPath, '/');
+                        $ftpExportLine = $dir .'/' . $item . ',' . $targetPath . "\n";
+                        file_put_contents($_SERVER['ftpFilesToExport'], $ftpExportLine, FILE_APPEND | LOCK_EX);
+                    } 
+                }
+            }
+        }
+
+        FolderToFTP($siteroot, $siteroot, $ftpTargetPath);
+
+        echo 'SUCCESS';
+    }
+
+    public function ftpTransferFiles($batch_size = 5) {
+        $wpUploadsDir = wp_upload_dir()['basedir'];
+        $archiveDir = file_get_contents($wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE');
+        $archiveName = rtrim($archiveDir, '/');
+
+        require_once(__DIR__.'/FTP/FtpClient.php');
+        require_once(__DIR__.'/FTP/FtpException.php');
+        require_once(__DIR__.'/FTP/FtpWrapper.php');
+
+        $ftp = new \FtpClient\FtpClient();
+        
+        $ftp->connect(filter_input(INPUT_POST, 'ftpServer'));
+        $ftp->login(filter_input(INPUT_POST, 'ftpUsername'), filter_input(INPUT_POST, 'ftpPassword'));
+
+        $ftp->pasv(true);
+        
+        $_SERVER['ftpFilesToExport'] = $wpUploadsDir . '/WP-STATIC-EXPORT-FTP-FILES-TO-EXPORT';
+
+        // grab first line from filelist
+        $ftpFilesToExport = $_SERVER['ftpFilesToExport'];
+        $f = fopen($ftpFilesToExport, 'r');
+        $line = fgets($f);
+        fclose($f);
+
+        // TODO: look at these funcs above and below, seems redundant...
+
+        // TODO: refactor like the crawling function, first_line unused
+        $contents = file($ftpFilesToExport, FILE_IGNORE_NEW_LINES);
+        $filesRemaining = count($contents) - 1;
+
+        error_log($filesRemaining);
+
+        if ($filesRemaining < 0) {
+            echo $filesRemaining;die();
+        }
+
+        $first_line = array_shift($contents);
+        file_put_contents($ftpFilesToExport, implode("\r\n", $contents));
+
+        list($fileToTransfer, $targetPath) = explode(',', $line);
+
+        // TODO: check other funcs using similar, was causing issues without trimming CR's
+        $targetPath = rtrim($targetPath);
+
+        $this->_prependExportLog('FTP EXPORT: transferring ' . 
+            basename($fileToTransfer) . ' TO ' . $targetPath);
+       
+        if ($ftp->isdir($targetPath)) {
+            //$this->_prependExportLog('FTP EXPORT: Remote dir exists');
+        } else {
+            $this->_prependExportLog('FTP EXPORT: Creating remote dir');
+            $mkdir_result = $ftp->mkdir($targetPath, true); // true = recursive creation
+            error_log(print_r($mkdir_result, true));
+        }
+
+        $ftp->chdir($targetPath);
+        $ftp->putFromPath($fileToTransfer);
+
+        $this->_prependExportLog('FTP EXPORT: ' . $filesRemaining . ' files remaining to transfer');
 
         // TODO: error handling when not connected/unable to put, etc
         unset($ftp);
+
+        echo $filesRemaining;
     }
 
     public function s3Export() {

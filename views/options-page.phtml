@@ -16,6 +16,7 @@ var settings = '<?php echo $settings; ?>';
 var uploadsDir = '<?php echo $this->wpUploadsDir; ?>';
 var pluginDir = '<?php echo $this->wpPluginDir; ?>';
 var pollingInterval = 5000;
+var exportTargets = [];
 
 jQuery(document).ready(function($){
     if (Notification.permission !== "granted") {
@@ -46,6 +47,50 @@ jQuery(document).ready(function($){
 
     var currentArchive = 1;
 
+    function prepareFTPExport() {
+        $('.hiddenActionField').val('ftp_prepare_export');
+        archives = $('.options-form');
+        data = $(archives[0]).serialize();
+        console.log('should trigger FTP action server side');
+
+        $.ajax({
+            url: ajaxurl,
+            data: data,
+            dataType: 'html',
+            method: 'POST',
+            success: ftpTransferFiles,
+            error: ajaxErrorHandler
+        });
+    }
+
+    function ftpTransferFiles() {
+        $('.hiddenActionField').val('ftp_transfer_files');
+        archives = $('.options-form');
+        data = $(archives[0]).serialize();
+
+        $.ajax({
+            url: ajaxurl,
+            data: data,
+            dataType: 'html',
+            method: 'POST',
+            success: function(serverResponse) {
+                if (serverResponse > 0) {
+                    ftpTransferFiles();
+                } else {
+                    $.ajax({
+                        url: ajaxurl,
+                        data: data,
+                        dataType: 'html',
+                        method: 'POST',
+                        success: processExportTargets,
+                        error: ajaxErrorHandler
+                    });
+                }
+            },
+            error: ajaxErrorHandler
+        });
+    }
+
     function exportToGitHub() {
         $('.hiddenActionField').val('start_export');
         archives = $('.options-form');
@@ -68,11 +113,7 @@ jQuery(document).ready(function($){
                         data: data,
                         dataType: 'html',
                         method: 'POST',
-                        success: function(serverResponse) {
-                            $('#progress').attr("src", pluginDir + '../images/greentick.png');
-                            $('#progress').css("width", '123px');
-                            notifyMe();
-                        },
+                        success: processExportTargets,
                         error: ajaxErrorHandler
                     });
                 }
@@ -84,6 +125,22 @@ jQuery(document).ready(function($){
     function startExport() {
         $('.hiddenActionField').val('start_export');
         archives = $('.options-form');
+
+        if ($('#sendViaGithub').attr('checked') == 'checked') {
+            exportTargets.push('GITHUB');
+        }
+        if ($('#sendViaFTP').attr('checked') == 'checked') {
+            exportTargets.push('FTP');
+        }
+        if ($('#sendViaDropbox').attr('checked') == 'checked') {
+            exportTargets.push('DROPBOX');
+        }
+        if ($('#sendViaS3').attr('checked') == 'checked') {
+            exportTargets.push('S3');
+        }
+        if ($('#sendViaNetlify').attr('checked') == 'checked') {
+            exportTargets.push('NETLIFY');
+        }
 
         data = $(archives[0]).serialize();
         $.ajax({
@@ -103,6 +160,38 @@ jQuery(document).ready(function($){
         $('#progress').css("width", '123px');
     }
 
+    function processExportTargets () {
+        // grab next item from exportTargets array, removing from array
+        switch(target = exportTargets.shift()) {
+            case 'GITHUB':
+                githubPrepareExport();
+                break;
+
+            case 'FTP':
+                prepareFTPExport();
+                break;
+
+            case 'S3':
+
+                break;
+
+            case 'DROPBOX':
+
+                break;
+
+            case 'NETLIFY':
+
+                break;
+
+            default:
+                console.log('unexpected export target - are we finished?');
+                $('#progress').attr("src", pluginDir + '../images/greentick.png');
+                $('#progress').css("width", '123px');
+                notifyMe();
+                break; 
+        }
+    }
+
     function createZipArchive() {
         $('.hiddenActionField').val('create_zip');
         archives = $('.options-form');
@@ -113,15 +202,7 @@ jQuery(document).ready(function($){
             data: data,
             dataType: 'html',
             method: 'POST',
-            success: function(serverResponse) {
-                if ($('#sendViaGithub').attr('checked') == 'checked') {
-                    githubPrepareExport();
-                } else {
-                    $('#progress').attr("src", pluginDir + '../images/greentick.png');
-                    $('#progress').css("width", '123px');
-                    notifyMe();
-                }
-            },
+            success: processExportTargets,
             error: ajaxErrorHandler
         });
     }
@@ -541,7 +622,7 @@ http://172.17.0.3/my_pricelist.pdf</pre>
 						</div>
 					</div>
 
-<label>Poll interval <input id="pollIntervalSetting" value="5000" /> </label>
+<label>Poll interval <input id="pollIntervalSetting" value="500" /> </label>
 <?php set_time_limit(600); ?>
 
 Current timeout value <?php echo ini_get('max_execution_time'); ?>
