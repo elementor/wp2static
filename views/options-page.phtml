@@ -542,9 +542,9 @@ http://172.17.0.3/my_pricelist.pdf</pre>
                 <br>
                 <fieldset>
                     <label for="sendViaDropbox">
-                    <input name="sendViaDropbox" id="sendViaDropbox" value="1" type="checkbox" <?php if ($this->sendViaDropbox == 1) echo "checked"; ?> <?php if (floatval(PHP_VERSION) < 7) { echo 'disabled'; } ?> />
+                    <input name="sendViaDropbox" id="sendViaDropbox" value="1" type="checkbox" <?php if ($this->sendViaDropbox == 1) echo "checked"; ?> <?php if (floatval(PHP_VERSION) < 5) { echo 'disabled'; } ?> />
                         <span><?php echo __('Transfer files via Dropbox', 'static-html-output-plugin');?></span>
-                        <span style="color:red;"><?php if (floatval(PHP_VERSION) < 7) { echo 'Requires PHP >= 7, you have ' . PHP_VERSION; } ?></span>
+                        <span style="color:red;"><?php if (floatval(PHP_VERSION) < 5) { echo 'Requires PHP >= 7, you have ' . PHP_VERSION; } ?></span>
                     </label>
                 </fieldset>
 
@@ -628,7 +628,7 @@ http://172.17.0.3/my_pricelist.pdf</pre>
 
 Current timeout value <?php echo ini_get('max_execution_time'); ?>
 
-<?php echo PHP_VERSION; ?>
+ PHP Version: <?php echo PHP_VERSION; ?>
 
 				</form>
 					<div class="postbox">
