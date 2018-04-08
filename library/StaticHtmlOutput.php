@@ -728,14 +728,14 @@ class StaticHtmlOutput {
 
         try {
             $response = $client->request('POST', '/api/v1/sites/' . $netlifySiteID . '.netlify.com/deploys', [
+                    'headers'  => [
+                        'Content-Type' => 'application/zip',
+                        'Authorization' => 'Bearer ' . $netlifyPersonalAccessToken
+                    ],
                     'multipart' => [
                     [
                     'name'     => 'required_for_guzzle_only',
                     'contents' => fopen($archiveName . '.zip', 'r'),
-                    'headers'  => [
-                    'Content-Type' => 'application/zip',
-                    'Authorization' => 'Bearer ' . $netlifyPersonalAccessToken
-                    ]
                     ]
                     ]
             ]);
