@@ -732,12 +732,7 @@ class StaticHtmlOutput {
                         'Content-Type' => 'application/zip',
                         'Authorization' => 'Bearer ' . $netlifyPersonalAccessToken
                     ],
-                    'multipart' => [
-                    [
-                    'name'     => 'required_for_guzzle_only',
-                    'contents' => fopen($archiveName . '.zip', 'r'),
-                    ]
-                    ]
+                    'body' => fopen($archiveName . '.zip', 'rb')
             ]);
         } catch (Exception $e) {
             file_put_contents($_SERVER['exportLog'], $e , FILE_APPEND | LOCK_EX);
