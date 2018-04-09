@@ -728,16 +728,11 @@ class StaticHtmlOutput {
 
         try {
             $response = $client->request('POST', '/api/v1/sites/' . $netlifySiteID . '.netlify.com/deploys', [
-                    'multipart' => [
-                    [
-                    'name'     => 'required_for_guzzle_only',
-                    'contents' => fopen($archiveName . '.zip', 'r'),
                     'headers'  => [
-                    'Content-Type' => 'application/zip',
-                    'Authorization' => 'Bearer ' . $netlifyPersonalAccessToken
-                    ]
-                    ]
-                    ]
+                        'Content-Type' => 'application/zip',
+                        'Authorization' => 'Bearer ' . $netlifyPersonalAccessToken
+                    ],
+                    'body' => fopen($archiveName . '.zip', 'rb')
             ]);
         } catch (Exception $e) {
             file_put_contents($_SERVER['exportLog'], $e , FILE_APPEND | LOCK_EX);
