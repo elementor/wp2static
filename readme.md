@@ -64,6 +64,8 @@ Uses the [https://github.com/cedaro/grunt-wp-i18n](https://github.com/cedaro/gru
 
 A `packages.json` file and `.nvmrc` exist to help show the dependencies required to get the grunt task working.
 
+Our official [translation page](https://translate.wordpress.org/projects/wp-plugins/static-html-output-plugin) on wordpress.org. 
+
 ### Debugging
 
 Connect to the container running the Apache instance.
