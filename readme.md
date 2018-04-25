@@ -62,6 +62,8 @@ There is a great [Dockerized FTP server](https://github.com/stilliard/docker-pur
 
 Uses the [https://github.com/cedaro/grunt-wp-i18n](https://github.com/cedaro/grunt-wp-i18n) npm module and the Gruntfile.js in the project root. `npm i -g grunt` then `grunt` to scan plugin source and generate a new `languages/static-html-output-plugin.pot` file.
 
+A `packages.json` file and `.nvmrc` exist to help show the dependencies required to get the grunt task working.
+
 ### Debugging
 
 Connect to the container running the Apache instance.
