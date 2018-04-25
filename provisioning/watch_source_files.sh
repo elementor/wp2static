@@ -1,6 +1,6 @@
 #!/bin/bash
 
-inotifywait -rm --event modify --format '%w%f' --exclude '.*\.swp.*' /app |
+inotifywait -rm --event modify --format '%w%f' --exclude '.*\.swp*' --exclude '.*\.staging*' /app |
 while read filename; do
     echo 'a file has changed!'
     echo $filename
