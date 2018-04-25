@@ -4,7 +4,8 @@ RUN touch /var/log/apache2/php_err.log && chown www-data:www-data /var/log/apach
 COPY provisioning/php_error.ini /usr/local/etc/php/conf.d/php_error.ini
 
 RUN apt-get update \
-&& apt-get install -y inotify-tools rsync mysql-client iproute \
+&& apt-get install -y inotify-tools rsync mysql-client iproute zlib1g-dev \
+&& rm -rf /var/lib/apt/lists/* \
 && docker-php-ext-install zip
 
 # install wp cli

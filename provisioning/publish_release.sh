@@ -20,11 +20,15 @@ rm $SVN_ROOT/trunk/readme.md
 rm -r $SVN_ROOT/trunk/wpassets
 rm -r $SVN_ROOT/trunk/php53tests
 rm -r $SVN_ROOT/trunk/php5testvm
+rm -r $SVN_ROOT/trunk/provisioning
+rm -r $SVN_ROOT/trunk/demo_site_content
 
 # image assets (for WP official pages) need to go into /assets, not /trunk
 cp -r $PROJECT_ROOT/wpassets/* $SVN_ROOT/assets/
 
 cd $SVN_ROOT
+
+# TODO: linting, spaces to tabs, etc
 
 ###
 #

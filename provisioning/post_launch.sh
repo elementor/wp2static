@@ -43,6 +43,12 @@ wp --allow-root plugin activate wordpress-static-html-output
 # OPTIONAL: install latest static plugin from WP plugins site vs local src
 #wp --allow-root plugin install static-html-output-plugin --activate
 
+# OPTIONAL: install convenience / common plugins here
+wp --allow-root plugin install wp-crontrol --activate # look into WP Cron
+#wp --allow-root plugin install fakerpress --activate # generate dummy content for testing
+#wp --allow-root plugin install wp-hide-security-enhancer --activate # strip out things making your site identifiable as a WP one
+#wp --allow-root plugin install static-html-output-plugin --activate
+
 # OPTIONAL: run log apache errors
 #tail -f /var/log/apache2/error.log
 

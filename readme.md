@@ -15,6 +15,8 @@ Allows you to leverage WordPress as a great CMS, but benefit from the speed, sec
 
 You can [see a working example here](https://leonstafford.github.io/demo-site-wordpress-static-html-output-plugin) of a plain WordPress install which has had a few tweaks done to optimize it for static HTML output. It is hosted on GitHub Pages, but could just as easily be hosted on Dropbox, BitBucket, GitLab, S3, your own server or anywhere else you can host HTML files.  
 
+*TODO: move the demo theme into this repo, along with demonstrations of WP Hide and other useful plugins for WP static sites.*
+
 ## Roadmap
 
  - selectively export only changed pages since last output
@@ -43,12 +45,16 @@ To quickly try out the plugin, without affecting your other WordPress installati
 
  - [install Docker](http://docker.com)
  - `./provisioning/destroy_and_rebuild.sh # view contents of this file to see how it builds
- - above command outputs the IP address of the WordPress container, but you can also run below steps
- - `docker ps` # get WordPress container's id so you can connect from the host
- - `docker inspect __yourcontainerid__ | grep Address` # get IP for connecting in your browser
+ - `./provisioning/get_webserver_ip.sh # outputs the IP address of the WordPress container
  - open IP in browser and you have a clean WP install, including the plugin (l/p: admin/admin)
 
 Optional use case - for me, I sometimes need to do development on a remote EC2 instance (to overcome terrible internet speeds where I am). In this instance, I need to set the site URL to the public DNS or assigned domain name of my EC2 instance. You can copy the `./provisioning/.env-vars-SAMPLE` file to `./provisioning/.env-vars` and set the `WPSTATICURL` variable within to your publicly accessible URL on port `8091`.
+
+### Demo website content
+
+Included in the `./demo_site_content/` dir, are the posts used for the demo sites for this plugin, including guides on functionality. 
+
+To capture content from the development instance, run `./provisioning/backup_demo_content.sh`
 
 There is a great [Dockerized FTP server](https://github.com/stilliard/docker-pure-ftpd) which I've found useful in development. I may extend this to also serve the hosted files for more complete test capabilities. So long as you can install Docker, this is a much less painful way to get a local FTP server and users setup than what I've experienced before.
 
