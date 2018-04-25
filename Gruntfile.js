@@ -34,11 +34,27 @@ module.exports = function(grunt) {
 					updatePoFiles: false              // Whether to update PO files in the same directory as the POT file.
 				}
 			}
-		}
+		},
+		potomo: {                            // Task 
+			dist: {                            // Target 
+			  options: {                       // Target options 
+				poDel: false
+			  },
+			files: [{
+					expand: true,
+					cwd: './languages',
+					src: ['*.po'],
+					dest: './languages',
+					ext: '.mo',
+					nonull: true
+				  }]
+			}
+		  }
 	});
 
   grunt.loadNpmTasks('grunt-wp-i18n');
+  grunt.loadNpmTasks('grunt-potomo');
 
-  grunt.registerTask('default', ['makepot']);
+  grunt.registerTask('default', ['makepot', 'potomo']);
 
 };
