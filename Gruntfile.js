@@ -20,7 +20,7 @@ module.exports = function(grunt) {
 						'library/Github',
 						'wpassets',
 					],                      // List of files or directories to ignore.
-					include: [],                      // List of files or directories to include.
+					include: [ ],                      // List of files or directories to include.
 					mainFile: 'wp-static-html-output.php',                     // Main project file.
 					potComments: 'WP Static HTML Output',                  // The copyright at the beginning of the POT file.
 					potFilename: 'static-html-output-plugin.pot',                  // Name of the POT file.

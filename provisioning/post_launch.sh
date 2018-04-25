@@ -40,6 +40,10 @@ wp --allow-root core install --url="$containerIP" --title='wp plugindev' --admin
 # activate wp static output plugin
 wp --allow-root plugin activate wordpress-static-html-output
 
+# install supported languages
+wp --allow-root language core install es_ES
+wp --allow-root language core install ja
+
 # OPTIONAL: install latest static plugin from WP plugins site vs local src
 #wp --allow-root plugin install static-html-output-plugin --activate
 
