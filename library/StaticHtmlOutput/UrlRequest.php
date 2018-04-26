@@ -20,13 +20,13 @@ class StaticHtmlOutput_UrlRequest
 
 		$this->_response = '';
 
-        if (is_wp_error($response)) {
-            error_log('WP_ERROR');
-            error_log(print_r($response, true));
-            $this->_response = 'FAIL';
-        } else {
-            $this->_response = $response;
-        }
+		if (is_wp_error($response)) {
+			error_log('WP_ERROR');
+			error_log(print_r($response, true));
+			$this->_response = 'FAIL';
+		} else {
+			$this->_response = $response;
+		}
 
 	}
 	
@@ -65,20 +65,20 @@ class StaticHtmlOutput_UrlRequest
 
 	public function isRewritable()
 	{
-        $contentType = $this->getContentType();
-        return (stripos($contentType, 'html') !== false) || (stripos($contentType, 'text') !== false);
+		$contentType = $this->getContentType();
+		return (stripos($contentType, 'html') !== false) || (stripos($contentType, 'text') !== false);
 	}
 	
 	public function cleanup()
 	{
 		if ($this->isHtml())
 		{
-            if ($this->_cleanMeta)
-            {
-                $responseBody = preg_replace('/<link rel=["\' ](pingback|alternate|EditURI|wlwmanifest|index|profile|prev)["\' ](.*?)>/si', '', $this->getResponseBody());
-                $responseBody = preg_replace('/<meta name=["\' ]generator["\' ](.*?)>/si', '', $responseBody);
-                $this->setResponseBody($responseBody);
-            }
+			if ($this->_cleanMeta)
+			{
+				$responseBody = preg_replace('/<link rel=["\' ](pingback|alternate|EditURI|wlwmanifest|index|profile|prev)["\' ](.*?)>/si', '', $this->getResponseBody());
+				$responseBody = preg_replace('/<meta name=["\' ]generator["\' ](.*?)>/si', '', $responseBody);
+				$this->setResponseBody($responseBody);
+			}
 		}
 	}
 	
@@ -87,7 +87,7 @@ class StaticHtmlOutput_UrlRequest
 		$allUrls = array();
 	
 
-        // TODO: will this follow urls for JS/CSS easily by adjusting?
+		// TODO: will this follow urls for JS/CSS easily by adjusting?
 		if ($this->isHtml() && preg_match_all('/' . str_replace('/', '\/', $baseUrl) . '[^"\'#\? ]+/i', $this->_response['body'], $matches))
 		{
 			$allUrls = array_unique($matches[0]);
@@ -96,22 +96,49 @@ class StaticHtmlOutput_UrlRequest
 		return $allUrls;
 	}
 	
-	public function replaceBaseUlr($oldBaseUrl, $newBaseUrl)
+	public function replaceBaseUrl($oldBaseUrl, $newBaseUrl)
 	{
 		if ($this->isRewritable())
 		{
 			$responseBody = str_replace($oldBaseUrl, $newBaseUrl, $this->getResponseBody());
 			$responseBody = str_replace('<head>', "<head>\n<base href=\"" . esc_attr($newBaseUrl) . "\" />\n", $responseBody);
 
-            /* fix for cases where URL has been escaped/modified, ie
-                http:\/\/banana.com\/
-                //banana.com
-                https:// -> http:// */
-            $oldDomain = parse_url($oldBaseUrl);
-            $oldDomain = $oldDomain['host'];
-            $newDomain = parse_url($newBaseUrl);
-            $newDomain = $newDomain['host'];
-			$responseBody = str_replace($oldDomain, $newDomain, $responseBody);
+			/* fix for cases where URL has been escaped/modified, ie
+				http:\/\/banana.com\/
+				//banana.com
+				https:// -> http:// */
+			$oldDomain = parse_url($oldBaseUrl);
+			$newDomain = parse_url($newBaseUrl);
+
+			// Fix JSON encoded URLs
+			$oldBaseUrlJsonEncoded = substr(json_encode($oldBaseUrl), 1, -1);
+			$newBaseUrlJsonEncoded = substr(json_encode($newBaseUrl), 1, -1);
+			$responseBody = str_replace($oldBaseUrlJsonEncoded, $newBaseUrlJsonEncoded, $responseBody);
+
+			// Fix JSON encoded protocol relative URLs
+			$oldBaseUrlJsonEncodedRelative = substr(json_encode(substr($oldBaseUrl, strlen($oldDomain['scheme']) + 1)), 1, -1);
+			$newBaseUrlJsonEncodedRelative = substr(json_encode(substr($newBaseUrl, strlen($newDomain['scheme']) + 1)), 1, -1);
+			$responseBody = str_replace($oldBaseUrlJsonEncodedRelative, $newBaseUrlJsonEncodedRelative, $responseBody);
+
+			// Fix URL encoded URLs
+			$oldBaseUrlEncoded = urlencode($oldBaseUrl);
+			$newBaseUrlEncoded = urlencode($newBaseUrl);
+			$responseBody = str_replace($oldBaseUrlEncoded, $newBaseUrlEncoded, $responseBody);
+
+			// Fix URL encoded protocol relative URLs
+			$oldBaseUrlEncodedRelative = urlencode(substr($oldBaseUrl, strlen($oldDomain['scheme']) + 1));
+			$newBaseUrlEncodedRelative = urlencode(substr($newBaseUrl, strlen($newDomain['scheme']) + 1));
+			$responseBody = str_replace($oldBaseUrlEncodedRelative, $newBaseUrlEncodedRelative, $responseBody);
+
+			// Fix plain text URLs
+			$responseBody = str_replace($oldBaseUrl, $newBaseUrl, $responseBody);
+
+			// Fix plain text protocol relative URLs
+			$oldBaseUrlRelative = substr($oldBaseUrl, strlen($oldDomain['scheme']) + 1);
+			$newBaseUrlRelative = substr($newBaseUrl, strlen($newDomain['scheme']) + 1);
+			$responseBody = str_replace($oldBaseUrlRelative, $newBaseUrlRelative, $responseBody);
+
+			$responseBody = str_replace($oldDomain['host'], $newDomain['host'], $responseBody);
 
 			$this->setResponseBody($responseBody);
 		}
