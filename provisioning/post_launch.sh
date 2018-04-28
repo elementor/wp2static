@@ -40,9 +40,19 @@ wp --allow-root core install --url="$containerIP" --title='wp plugindev' --admin
 # activate wp static output plugin
 wp --allow-root plugin activate wordpress-static-html-output
 
+# import plugin needed for demo site content
+wp --allow-root plugin install wordpress-importer --activate
+
 # install supported languages
 wp --allow-root language core install es_ES
 wp --allow-root language core install ja
+
+# delete hello world post
+wp --allow-root post delete 1 --force
+
+# import the demo site content
+wp --allow-root import /app/demo_site_content/wp_static_demo_content.xml --authors=create
+
 
 # OPTIONAL: install latest static plugin from WP plugins site vs local src
 #wp --allow-root plugin install static-html-output-plugin --activate
