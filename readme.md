@@ -74,7 +74,17 @@ Connect to the container running the Apache instance.
 
 `sudo docker exec -it {CONTAINER_ID} bash`
 
-Tail the PHP error log as such `tail -f /var/log/apache2/php_err.log`
+Tail the PHP access/error logs as such:
+
+`docker logs -f plugindevwp`
+
+To display only errors and hide the access log, you can pipe stdout to /dev/null:
+
+`docker logs -f plugindevwp >/dev/null`
+
+To follow only the access log, you can pipe stderr to /dev/null:
+
+`docker logs -f your_php_apache_container 2>/dev/null`
 
 ## Support
 
