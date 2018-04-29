@@ -27,8 +27,22 @@ StaticHtmlOutput::init(__FILE__);
 function pluginActionLinks($links) {
 	$settings_link = '<a href="tools.php?page=wp-static-html-output-options">' . __('Settings', 'static-html-output-plugin') . '</a>'; 
   	array_unshift( $links, $settings_link ); 
+
   	return $links; 	
+}
+
+// allow triggering export via CRON/custom function
+function wp_static_html_output_server_side_export() {
+	// TODO: allow options in this function and update the add_action signature
+	error_log('');
+	error_log('************************');
+	error_log('RUNNING EXPORT VIA CRON');
+	error_log('************************');
+	error_log('');
 }	
+
+// add_action( $tag, $function_to_add, $priority, $accepted_args );
+add_action( 'wp_static_html_output_server_side_export_hook', 'wp_static_html_output_server_side_export', 10, 0 );
 
 function initialise_localisation() {
     load_plugin_textdomain( 'static-html-output-plugin', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' ); 
