@@ -91,6 +91,31 @@ jQuery(document).ready(function($){
         });
     }
 
+    function netlifyDoExport() {
+        // this is a one shot export, not async partial transfers like others
+        $('.hiddenActionField').val('netlify_do_export');
+        archives = $('.options-form');
+        data = $(archives[0]).serialize();
+
+        $.ajax({
+            url: ajaxurl,
+            data: data,
+            dataType: 'html',
+            method: 'POST',
+            success: function(serverResponse) {
+                $.ajax({
+                    url: ajaxurl,
+                    data: data,
+                    dataType: 'html',
+                    method: 'POST',
+                    success: processExportTargets,
+                    error: ajaxErrorHandler
+                });
+            },
+            error: ajaxErrorHandler
+        });
+    }
+
     function exportToGitHub() {
         $('.hiddenActionField').val('start_export');
         archives = $('.options-form');
@@ -180,7 +205,7 @@ jQuery(document).ready(function($){
                 break;
 
             case 'NETLIFY':
-
+                netlifyDoExport();
                 break;
 
             default:

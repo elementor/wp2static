@@ -39,6 +39,10 @@ function wp_static_html_output_server_side_export() {
 	error_log('RUNNING EXPORT VIA CRON');
 	error_log('************************');
 	error_log('');
+
+    $plugin = StaticHtmlOutput::getInstance();
+    $plugin->doExportWithoutGUI();
+    wp_die();
 }	
 
 // add_action( $tag, $function_to_add, $priority, $accepted_args );
@@ -59,18 +63,8 @@ add_action( 'wp_ajax_github_finalise_export', 'github_finalise_export' );
 add_action( 'wp_ajax_github_prepare_export', 'github_prepare_export' );
 add_action( 'wp_ajax_ftp_prepare_export', 'ftp_prepare_export' );
 add_action( 'wp_ajax_ftp_transfer_files', 'ftp_transfer_files' );
+add_action( 'wp_ajax_netlify_do_export', 'netlify_do_export' );
 
-function ftp_prepare_export() {
-    $plugin = StaticHtmlOutput::getInstance();
-    $plugin->ftpPrepareExport();
-    wp_die();
-}
-
-function ftp_transfer_files() {
-    $plugin = StaticHtmlOutput::getInstance();
-    $plugin->ftpTransferFiles();
-    wp_die();
-}
 
 function save_options() {
     $plugin = StaticHtmlOutput::getInstance();
@@ -111,5 +105,23 @@ function github_upload_blobs() {
 function github_finalise_export() {
     $plugin = StaticHtmlOutput::getInstance();
     $plugin->githubFinaliseExport();
+    wp_die();
+}
+
+function ftp_prepare_export() {
+    $plugin = StaticHtmlOutput::getInstance();
+    $plugin->ftpPrepareExport();
+    wp_die();
+}
+
+function ftp_transfer_files() {
+    $plugin = StaticHtmlOutput::getInstance();
+    $plugin->ftpTransferFiles();
+    wp_die();
+}
+
+function netlify_do_export() {
+    $plugin = StaticHtmlOutput::getInstance();
+    $plugin->netlifyExport();
     wp_die();
 }
