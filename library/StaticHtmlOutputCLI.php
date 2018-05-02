@@ -286,24 +286,9 @@ class StaticHtmlOutput {
         echo 'Archive has been generated';
 	}
 
-	protected function _prepareInitialFileList($viaCLI = false) {
+	protected function _prepareInitialFileList() {
 		global $blog_id;
 		set_time_limit(0);
-
-        // set options from GUI or CLI
-        $newBaseUrl = untrailingslashit(filter_input(INPUT_POST, 'baseUrl', FILTER_SANITIZE_URL));
-        $additionalUrls = filter_input(INPUT_POST, 'additionalUrls');
-
-        if ($viaCLI) {
-            // read options from DB as array
-            parse_str($this->_options->getOption('static-export-settings'), $pluginOptions);
-
-            $newBaseURL = $pluginOptions['baseUrl'];
-            $additionalUrls = $pluginOptions['additionalUrls'];
-        }
-
-        error_log('baseurl from options');
-        error_log($newBaseURL);
 
 		$uploadDir = $this->get_write_directory();
 		$exporter = wp_get_current_user();
@@ -327,12 +312,12 @@ class StaticHtmlOutput {
         file_put_contents($_SERVER['exportLog'], date("Y-m-d h:i:s") . ' STARTING EXPORT', FILE_APPEND | LOCK_EX);
 
 		$baseUrl = untrailingslashit(home_url());
-		
+		$newBaseUrl = untrailingslashit(filter_input(INPUT_POST, 'baseUrl', FILTER_SANITIZE_URL));
 		$urlsQueue = array_unique(array_merge(
 					array(trailingslashit($baseUrl)),
 					$this->_getListOfLocalFilesByUrl(array(get_template_directory_uri())),
                     $this->_getAllWPPostURLs(),
-					explode("\n", $additionalUrls)
+					explode("\n", filter_input(INPUT_POST, 'additionalUrls'))
 					));
 
         $this->_prependExportLog('INITIAL CRAWL LIST CONTAINS ' . count($urlsQueue) . ' FILES');
@@ -344,6 +329,9 @@ class StaticHtmlOutput {
         return 'initial crawl list ready';
     }
 
+    public function saveWordPressPageToHTML () {
+
+    }
 
 	public function crawlTheWordPressSite() {
 		$wpUploadsDir = wp_upload_dir()['basedir'];
@@ -754,19 +742,21 @@ class StaticHtmlOutput {
         error_log($response->getStatusCode(), 0);
         error_log(print_r($response, true), 0);
     }
+/*
+    $plugin->crawlTheWordPressSite();
+    wp_die();
+}
 
-    public function doExportWithoutGUI() {
-        // parse options hash
+function create_zip() {
+    $plugin = StaticHtmlOutput::getInstance();
+    $plugin->createTheArchive();
+    wp_die();
+}
 
-        // generate initial list
-        $archiveURL = $this->_prepareInitialFileList(true);
-        // crawl to get other pages
-
-        // create zip
-
-        // do any exports
-    }
-
+function start_export() {
+    $plugin = StaticHtmlOutput::getInstance();
+    $plugin->startExport();
+*/
     public function cleanupAfterExports() {
         // TODO: need folder to do GH export, force keep for now
 
