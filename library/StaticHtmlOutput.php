@@ -244,30 +244,49 @@ class StaticHtmlOutput {
         echo $filesRemaining;
     }
 
-	public function startExport() {
+	public function startExport($viaCLI = false) {
         // prepare export targets
 		$wpUploadsDir = wp_upload_dir()['basedir'];
         $exportTargetsFile = $wpUploadsDir . '/WP-STATIC-EXPORT-TARGETS';
         unlink($wpUploadsDir . '/WP-STATIC-EXPORT-TARGETS');
 
+        // set options from GUI or override via CLI
+        $sendViaGithub = filter_input(INPUT_POST, 'sendViaGithub');
+        $sendViaFTP = filter_input(INPUT_POST, 'sendViaFTP');
+        $sendViaS3 = filter_input(INPUT_POST, 'sendViaS3');
+        $sendViaNetlify = filter_input(INPUT_POST, 'sendViaNetlify');
+        $sendViaDropbox = filter_input(INPUT_POST, 'sendViaDropbox');
+
+        if ($viaCLI) {
+            error_log('DOING EXPORT VIA CLI');
+            parse_str($this->_options->getOption('static-export-settings'), $pluginOptions);
+
+            $sendViaGithub = $pluginOptions['sendViaGithub'];
+            $sendViaFTP = $pluginOptions['sendViaFTP'];
+            $sendViaS3 = $pluginOptions['sendViaS3'];
+            $sendViaNetlify = $pluginOptions['sendViaNetlify'];
+            error_log($sendViaNetlify);
+            $sendViaDropbox = $pluginOptions['sendViaDropbox'];
+        }
+
         // add each export target to file
-        if (filter_input(INPUT_POST, 'sendViaGithub') == 1) {
+        if ($sendViaGithub == 1) {
             file_put_contents($exportTargetsFile, 'GITHUB' . PHP_EOL, FILE_APPEND | LOCK_EX);
         }
-        if (filter_input(INPUT_POST, 'sendViaFTP') == 1) {
+        if ($sendViaFTP == 1) {
             file_put_contents($exportTargetsFile, 'FTP' . PHP_EOL, FILE_APPEND | LOCK_EX);
         }
-        if (filter_input(INPUT_POST, 'sendViaS3') == 1) {
+        if ($sendViaS3 == 1) {
             file_put_contents($exportTargetsFile, 'S3' . PHP_EOL, FILE_APPEND | LOCK_EX);
         }
-        if (filter_input(INPUT_POST, 'sendViaNetlify') == 1) {
+        if ($sendViaNetlify == 1) {
             file_put_contents($exportTargetsFile, 'NETLIFY' . PHP_EOL, FILE_APPEND | LOCK_EX);
         }
-        if (filter_input(INPUT_POST, 'sendViaDropbox') == 1) {
+        if ($sendViaDropbox == 1) {
             file_put_contents($exportTargetsFile, 'DROPBOX' . PHP_EOL, FILE_APPEND | LOCK_EX);
         }
 
-		$archiveUrl = $this->_prepareInitialFileList();
+        $archiveUrl = $this->_prepareInitialFileList($viaCLI);
 
         if ($archiveUrl = 'initial crawl list ready') {
             $this->_prependExportLog('crawl list function complete. client should trigger crawl now');
@@ -344,64 +363,81 @@ class StaticHtmlOutput {
         return 'initial crawl list ready';
     }
 
-
-	public function crawlTheWordPressSite() {
+	public function crawlABitMore($viaCLI = false) {
+        error_log('DOING A BIT OF CRAWLING');
 		$wpUploadsDir = wp_upload_dir()['basedir'];
 		$initial_crawl_list_file = $wpUploadsDir . '/WP-STATIC-INITIAL-CRAWL-LIST';
         $crawled_links_file = $wpUploadsDir . '/WP-STATIC-CRAWLED-LINKS';
         $initial_crawl_list = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
         $crawled_links = file($crawled_links_file, FILE_IGNORE_NEW_LINES);
 
+        $first_line = array_shift($initial_crawl_list);
+        file_put_contents($initial_crawl_list_file, implode("\r\n", $initial_crawl_list));
+        $currentUrl = $first_line;
+        $this->_prependExportLog('CRAWLING URL: ' . $currentUrl);
+
+        if (empty($currentUrl)){
+            $this->_prependExportLog('EMPTY FILE ENCOUNTERED');
+        }
+
+        $urlResponse = new StaticHtmlOutput_UrlRequest($currentUrl, filter_input(INPUT_POST, 'cleanMeta'));
+
+        if ($urlResponse->checkResponse() == 'FAIL') {
+            $this->_prependExportLog('FAILED TO CRAWL FILE: ' . $currentUrl);
+        } else {
+            file_put_contents($crawled_links_file, $currentUrl . PHP_EOL, FILE_APPEND | LOCK_EX);
+            $this->_prependExportLog('CRAWLED FILE: ' . $currentUrl);
+        }
+
+        $baseUrl = untrailingslashit(home_url());
+        $newBaseUrl = untrailingslashit(filter_input(INPUT_POST, 'baseUrl', FILTER_SANITIZE_URL));
+        $urlResponse->cleanup();
+        $urlResponse->replaceBaseUrl($baseUrl, $newBaseUrl);
+        $wpUploadsDir = wp_upload_dir()['basedir'];
+        $archiveDir = file_get_contents($wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE');
+        $this->_saveUrlData($urlResponse, $archiveDir);
+
+        foreach ($urlResponse->extractAllUrls($baseUrl) as $newUrl) {
+            if ($newUrl != $currentUrl && !in_array($newUrl, $crawled_links) && !in_array($newUrl, $initial_crawl_list)) {
+                $this->_prependExportLog('DISCOVERED NEW FILE: ' . $newUrl);
+                
+                $urlResponse = new StaticHtmlOutput_UrlRequest($newUrl, filter_input(INPUT_POST, 'cleanMeta'));
+
+                if ($urlResponse->checkResponse() == 'FAIL') {
+                    $this->_prependExportLog('FAILED TO CRAWL FILE: ' . $newUrl);
+                } else {
+                    file_put_contents($crawled_links_file, $newUrl . PHP_EOL, FILE_APPEND | LOCK_EX);
+                    $crawled_links[] = $newUrl;
+                    $this->_prependExportLog('CRAWLED FILE: ' . $newUrl);
+                }
+
+                $urlResponse->cleanup();
+                $urlResponse->replaceBaseUrl($baseUrl, $newBaseUrl);
+                $wpUploadsDir = wp_upload_dir()['basedir'];
+                $archiveDir = file_get_contents($wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE');
+                $this->_saveUrlData($urlResponse, $archiveDir);
+            } 
+        }
+        
+        // loop for CLI
+        if ($viaCLI) {
+            $this->crawlTheWordPressSite(true);
+        }
+    }
+
+	public function crawlTheWordPressSite($viaCLI = false) {
+		$wpUploadsDir = wp_upload_dir()['basedir'];
+		$initial_crawl_list_file = $wpUploadsDir . '/WP-STATIC-INITIAL-CRAWL-LIST';
+        $initial_crawl_list = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
+
+        // NOTE: via GUI hits this function repeatedly,
+        // viaCLI, we want to do it in one hit
+        
         if (!empty($initial_crawl_list)) {
-            $first_line = array_shift($initial_crawl_list);
-            file_put_contents($initial_crawl_list_file, implode("\r\n", $initial_crawl_list));
-            $currentUrl = $first_line;
-            $this->_prependExportLog('CRAWLING URL: ' . $currentUrl);
-
-            if (empty($currentUrl)){
-                $this->_prependExportLog('EMPTY FILE ENCOUNTERED');
-            }
-
-            $urlResponse = new StaticHtmlOutput_UrlRequest($currentUrl, filter_input(INPUT_POST, 'cleanMeta'));
-
-            if ($urlResponse->checkResponse() == 'FAIL') {
-                $this->_prependExportLog('FAILED TO CRAWL FILE: ' . $currentUrl);
-            } else {
-                file_put_contents($crawled_links_file, $currentUrl . PHP_EOL, FILE_APPEND | LOCK_EX);
-                $this->_prependExportLog('CRAWLED FILE: ' . $currentUrl);
-            }
-
-            $baseUrl = untrailingslashit(home_url());
-            $newBaseUrl = untrailingslashit(filter_input(INPUT_POST, 'baseUrl', FILTER_SANITIZE_URL));
-            $urlResponse->cleanup();
-            $urlResponse->replaceBaseUrl($baseUrl, $newBaseUrl);
-            $wpUploadsDir = wp_upload_dir()['basedir'];
-            $archiveDir = file_get_contents($wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE');
-            $this->_saveUrlData($urlResponse, $archiveDir);
-
-            foreach ($urlResponse->extractAllUrls($baseUrl) as $newUrl) {
-                if ($newUrl != $currentUrl && !in_array($newUrl, $crawled_links) && !in_array($newUrl, $initial_crawl_list)) {
-                    $this->_prependExportLog('DISCOVERED NEW FILE: ' . $newUrl);
-                    
-                    $urlResponse = new StaticHtmlOutput_UrlRequest($newUrl, filter_input(INPUT_POST, 'cleanMeta'));
-
-                    if ($urlResponse->checkResponse() == 'FAIL') {
-                        $this->_prependExportLog('FAILED TO CRAWL FILE: ' . $newUrl);
-                    } else {
-                        file_put_contents($crawled_links_file, $newUrl . PHP_EOL, FILE_APPEND | LOCK_EX);
-                        $crawled_links[] = $newUrl;
-                        $this->_prependExportLog('CRAWLED FILE: ' . $newUrl);
-                    }
-
-                    $urlResponse->cleanup();
-                    $urlResponse->replaceBaseUrl($baseUrl, $newBaseUrl);
-                    $wpUploadsDir = wp_upload_dir()['basedir'];
-                    $archiveDir = file_get_contents($wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE');
-                    $this->_saveUrlData($urlResponse, $archiveDir);
-                } 
-            }
+            $this->crawlABitMore($viaCLI);
         } else {
             $this->_prependExportLog('CRAWLING COMPLETED');
+            error_log('CRAWLING COMPLETED');
             echo 'CRAWLING COMPLETED';
         }
     }
@@ -757,10 +793,13 @@ class StaticHtmlOutput {
 
     public function doExportWithoutGUI() {
         // parse options hash
+        // TODO: DRY this up by adding as instance var
 
-        // generate initial list
-        $archiveURL = $this->_prepareInitialFileList(true);
-        // crawl to get other pages
+
+        // start export, including build initial file list
+        $this->startExport(true);
+
+        $this-> crawlTheWordPressSite(true);
 
         // create zip
 
