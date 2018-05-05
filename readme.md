@@ -2,6 +2,17 @@
 
 Allows you to leverage WordPress as a great CMS, but benefit from the speed, security and portability that a static website provides.
 
+---
+
+## V3 Release - $110 of $1,000 funding goal met so far!
+
+> Help get more features released in the next major version - [Back WP Static HTML Output Plugin on Kickstarter](https://www.kickstarter.com/projects/1776117837/the-wp-plugin-that-speeds-up-and-secures-your-site)
+
+[![Kickstarter](https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Kickstarter_logo.svg/512px-Kickstarter_logo.svg.png)](https://www.kickstarter.com/projects/1776117837/the-wp-plugin-that-speeds-up-and-secures-your-site)
+
+
+---
+
 ## Features
 
  - generates a standalone, static html copy of your whole WordPress website
