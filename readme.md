@@ -4,7 +4,7 @@ Allows you to leverage WordPress as a great CMS, but benefit from the speed, sec
 
 ---
 
-## V3 Release - $110 of $1,000 funding goal met so far!
+## V3 Release - $203 of $1,000 funding goal met so far!
 
 > Help get more features released in the next major version - [Back WP Static HTML Output Plugin on Kickstarter](https://www.kickstarter.com/projects/1776117837/the-wp-plugin-that-speeds-up-and-secures-your-site)
 
