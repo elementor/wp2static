@@ -28,6 +28,12 @@ You can [see a working example here](https://leonstafford.github.io/demo-site-wo
 
 *TODO: move the demo theme into this repo, along with demonstrations of WP Hide and other useful plugins for WP static sites.*
 
+### Scheduling exports via CRON/WP-CRON, etc
+
+This is an in-development feature, currently only in the GitHub repo, not in the official plugin yet.
+
+Using the [WP Crontrol](https://wordpress.org/plugins/wp-crontrol/) plugin, you can add this hook to a schedule to trigger an export: `wp_static_html_output_server_side_export_hook`. This will run your export using the settings you've saved via the GUI. Via this method, you can schedule your exports to happen daily or if you're after an *on-post publish* kind of behaviour, you could set this to every few minutes.
+
 ## Roadmap
 
  - selectively export only changed pages since last output
