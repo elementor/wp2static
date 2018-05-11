@@ -197,11 +197,13 @@ jQuery(document).ready(function($){
                 break;
 
             case 'S3':
-
+// TODO: this is missing
                 break;
 
             case 'DROPBOX':
 
+// TODO: this is missing
+                break;
                 break;
 
             case 'NETLIFY':
@@ -291,6 +293,11 @@ jQuery(document).ready(function($){
     }
 
     $('#startExportButton').click(function() {
+		// set progress image back to original src
+		
+        $('#progress').attr("src", pluginDir + '../images/dashinfinity.gif');
+        $('#progress').css("width", '102px');
+
         $('#progress').show();
         $('#donateText').show();
         startExport();
