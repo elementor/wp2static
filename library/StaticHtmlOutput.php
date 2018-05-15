@@ -291,8 +291,7 @@ class StaticHtmlOutput {
         $archiveUrl = $this->_prepareInitialFileList($viaCLI);
 
         if ($archiveUrl = 'initial crawl list ready') {
-            $this->_prependExportLog('crawl list function complete. client should trigger crawl now');
-
+            $this->_prependExportLog('Initial list of files to include is prepared. Now crawling these to extract more URLs.');
 
         } elseif (is_wp_error($archiveUrl)) {
 			$message = 'Error: ' . $archiveUrl->get_error_code;
@@ -370,8 +369,6 @@ class StaticHtmlOutput {
     }
 
 	public function crawlABitMore($viaCLI = false) {
-        $this->_prependExportLog('entering crawlABitMore');
-        error_log('DOING A BIT OF CRAWLING');
 		$wpUploadsDir = wp_upload_dir()['basedir'];
 		$initial_crawl_list_file = $wpUploadsDir . '/WP-STATIC-INITIAL-CRAWL-LIST';
         $crawled_links_file = $wpUploadsDir . '/WP-STATIC-CRAWLED-LINKS';
@@ -400,6 +397,7 @@ class StaticHtmlOutput {
         }
 
         $urlResponse = new StaticHtmlOutput_UrlRequest($currentUrl, $do_meta_clean);
+        $urlResponseForFurtherExtraction = new StaticHtmlOutput_UrlRequest($currentUrl, $do_meta_clean);
 
         if ($urlResponse->checkResponse() == 'FAIL') {
             $this->_prependExportLog('FAILED TO CRAWL FILE: ' . $currentUrl);
@@ -412,13 +410,16 @@ class StaticHtmlOutput {
 
         $baseUrl = untrailingslashit(home_url());
         $urlResponse->cleanup();
+		// TODO: if it replaces baseurl here, it will be searching links starting with that...
+		// TODO: shouldn't be doing this here...
         $urlResponse->replaceBaseUrl($baseUrl, $newBaseUrl);
         $wpUploadsDir = wp_upload_dir()['basedir'];
         $archiveDir = file_get_contents($wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE');
         $this->_saveUrlData($urlResponse, $archiveDir);
 
-        foreach ($urlResponse->extractAllUrls($baseUrl) as $newUrl) {
-            $this->_prependExportLog('subfile: ' . $newUrl);
+		// try extracting urls from a response that hasn't been changed yet...
+		// this seems to do it...
+        foreach ($urlResponseForFurtherExtraction->extractAllUrls($baseUrl) as $newUrl) {
             error_log($newUrl);
             if ($newUrl != $currentUrl && !in_array($newUrl, $crawled_links) && !in_array($newUrl, $initial_crawl_list)) {
                 $this->_prependExportLog('DISCOVERED NEW FILE: ' . $newUrl);
@@ -449,7 +450,6 @@ class StaticHtmlOutput {
 
 	public function crawlTheWordPressSite($viaCLI = false) {
 		
-		$this->_prependExportLog('entering crawlTheWordPressSite');
 
 		$wpUploadsDir = wp_upload_dir()['basedir'];
 		$initial_crawl_list_file = $wpUploadsDir . '/WP-STATIC-INITIAL-CRAWL-LIST';
