@@ -86,10 +86,6 @@ class StaticHtmlOutput_UrlRequest
 	{
 		$allUrls = array();
 	
-        error_log("\n\n entering extractAllUrls \n\n");
-        error_log($baseUrl);
-        error_log($this->getUrl());
-
 		// TODO: will this follow urls for JS/CSS easily by adjusting?
         // TODO: just add options to check for content type JS or CSS
 		if (!$this->isHtml()) {
@@ -97,8 +93,19 @@ class StaticHtmlOutput_UrlRequest
             return [];
         }
 
-        // we have a valid HTML response, look for matching urls in         
+        // we have a valid HTML response, look for matching urls in the urlrequest body
 
+        
+        // TODO: could use this to get any relative urls, also...
+        # find ALL urls on page:
+        #preg_match_all(
+        #    '@((https?://)?([-\\w]+\\.[-\\w\\.]+)+\\w(:\\d+)?(/([-\\w/_\\.]*(\\?\\S+)?)?)*)@',
+        #    $this->_response['body'],
+        #    $allURLsInResponseBody);
+
+        #error_log(print_r($allURLsInResponseBody[0], true));
+
+        // looks only for urls starting with base name, also needs to search for relative links
         if (
             preg_match_all(
                 '/' . str_replace('/', '\/', $baseUrl) . '[^"\'#\? ]+/i', // find this
@@ -106,10 +113,9 @@ class StaticHtmlOutput_UrlRequest
                 $matches // save matches into this array
             )
         ) {
-            error_log('URL PRODUCED MATCHES');
 			$allUrls = array_unique($matches[0]);
 		} else {
-            error_log('URL DIDN"T PRODUCE MATCHES');
+            error_log('DIDNT FIND ANY LINKS IN RESPONSE BODY THAT WE WANT TO ADD TO ARCHIVE');
         }
 		
 		return $allUrls;
