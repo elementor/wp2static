@@ -1,8 +1,8 @@
 #!/bin/bash
 
 PROJECT_ROOT=$(pwd)
-SVN_ROOT=/home/ubuntu/svnplugindir
-NEW_TAG=2.2
+SVN_ROOT=$HOME/svnplugindir
+NEW_TAG=2.3
 
 # run from project root
 

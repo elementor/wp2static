@@ -3,8 +3,8 @@ Contributors: leonstafford
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=NHEV6WLYJ6QWQ
 Tags: static,html,export,performance,security,portable
 Requires at least: 3.2
-Tested up to: 4.9.1
-Stable tag: 2.2
+Tested up to: 4.9.5
+Stable tag: 2.3
 
 Allows you to leverage WordPress as a great CMS, but benefit from the speed, security and portability that a static website provides.
 
@@ -13,11 +13,14 @@ Allows you to leverage WordPress as a great CMS, but benefit from the speed, sec
 = Features =
 
  * generates a standalone, static html copy of your whole WordPress website
- * auto-deploy to local folder, FTP, S3, Dropbox or GitHub
+ * auto-deploy to a local folder, ZIP file, FTP, S3, Dropbox, GitHub or Netlify
  * one site to unlimited export targets
  * specify extra files to include in the output (ie, dynamically loaded assets)
  * desktop notifications alert you to when exports are complete
- * multi-language support (English/Japanese currently)
+ * multi-language support (English/Japanese currently, Spanish and Chinese in progress)
+ * schedule unattended exports via the WP Crontrol plugin
+ * realtime logs visible during / saved after export
+ * asynchronous exports for some methods overcomes hosting limitations for large site exports
 
 This plugin produces a static HTML version of your wordpress install, incredibly useful for anyone who would like the publishing power of wordpress but whose webhost doesn't allow dynamic PHP driven sites - such as Dropbox. You can run your development site on a different domain or offline, and the plugin will change all relevant URLs when you publish your site. It's a simple but powerful plugin, and after hitting the publish button, the plugin will output a ZIP file of your entire site, ready to upload straight to it's new home. 
 
@@ -37,8 +40,6 @@ Having issues with this plugin? I try to support any issues via the official sup
 
  * re-write export to relative URLs
  * progress meter to show % of .ZIP creation
- * realtime logs visible during / saved after export
- * speed improvements for large sites
  * selectively export only changed pages since last output
  * increase 1-click deployment options
 
@@ -73,6 +74,8 @@ Anywhere that allows HTML files to be uploaded, ie:
  * GitHub/GitLab/BitBucket Pages (GitHub API integration now included)
  * S3 / CloudFront
  * Dropbox
+ * Any FTP server
+ * Netlify
 
 = My comments don't work anymore! = 
 
@@ -84,6 +87,13 @@ See the readme. In brief: you can't use dynamic WordPress functions such as comm
 2. The main interface (Japanese)
 
 == Changelog ==
+
+= 2.3 =
+
+ * Feature: Scheduled exports via WP Crontrol 
+ * Bugfix: FTP export now works on shared/limited hosting
+ * Bugfix: Extracts all URLs when crawling your website's HTML files
+ * Bugfix: Subsequent exports correctly show realtime progress in log
 
 = 2.2 =
 
@@ -231,6 +241,15 @@ Altered main codebase to fix recursion bug and endless loop. Essential upgrade.
 Initial release to Wordpress community
 
 == Upgrade Notice ==
+
+= 2.3 =
+
+Important upgrade - critical bugfixes and new features. As we hit the 100,000 alltime downloads mark, there are big things in the pipeline coming in the major 3.0 release. Get the latest 2.3 version for a marked improvement to the plugin! 
+
+ * Feature: Scheduled exports via WP Crontrol 
+ * Bugfix: FTP export now works on shared/limited hosting
+ * Bugfix: Extracts all URLs when crawling your website's HTML files
+ * Bugfix: Subsequent exports correctly show realtime progress in log
 
 = 2.2 =
 
