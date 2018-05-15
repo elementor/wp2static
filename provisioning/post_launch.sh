@@ -50,6 +50,9 @@ wp --allow-root language core install ja
 # delete hello world post
 wp --allow-root post delete 1 --force
 
+# import demo content media before post import
+wp --allow-root media import /app/demo_site_content/images/*.png
+wp --allow-root media import /app/demo_site_content/images/*.jpg
 # import the demo site content
 wp --allow-root import /app/demo_site_content/wp_static_demo_content.xml --authors=create
 
