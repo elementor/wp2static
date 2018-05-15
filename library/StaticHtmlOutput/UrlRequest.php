@@ -135,11 +135,6 @@ class StaticHtmlOutput_UrlRequest
 			$oldDomain = parse_url($oldBaseUrl);
 			$newDomain = parse_url($newBaseUrl);
 
-            error_log('OLD DOMAIN');
-            error_log(print_r($oldDomain, true));
-            error_log('NEW DOMAIN');
-            error_log(print_r($newDomain, true));
-
 			// Fix JSON encoded URLs
 			$oldBaseUrlJsonEncoded = substr(json_encode($oldBaseUrl), 1, -1);
 			$newBaseUrlJsonEncoded = substr(json_encode($newBaseUrl), 1, -1);
