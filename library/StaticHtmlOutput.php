@@ -267,7 +267,6 @@ class StaticHtmlOutput {
             $sendViaFTP = $pluginOptions['sendViaFTP'];
             $sendViaS3 = $pluginOptions['sendViaS3'];
             $sendViaNetlify = $pluginOptions['sendViaNetlify'];
-            error_log($sendViaNetlify);
             $sendViaDropbox = $pluginOptions['sendViaDropbox'];
         }
 
@@ -307,14 +306,11 @@ class StaticHtmlOutput {
 	}
 
 	protected function _prepareInitialFileList($viaCLI = false) {
-		error_log('PREPARE INITIAL FILE LIST: viaCLi = ' . $viaCLI);
 		global $blog_id;
 		set_time_limit(0);
 
         // set options from GUI or CLI
         $newBaseUrl = untrailingslashit(filter_input(INPUT_POST, 'baseUrl', FILTER_SANITIZE_URL));
-
-		error_log('SETTING NEW BASE URL TO: ' . $newBaseUrl);
 
         $additionalUrls = filter_input(INPUT_POST, 'additionalUrls');
 
@@ -326,8 +322,6 @@ class StaticHtmlOutput {
             $additionalUrls = $pluginOptions['additionalUrls'];
         }
 
-        error_log('baseurl from options');
-        error_log($newBaseURL);
 
 		$uploadDir = $this->get_write_directory();
 		$exporter = wp_get_current_user();
@@ -379,7 +373,6 @@ class StaticHtmlOutput {
         file_put_contents($initial_crawl_list_file, implode("\r\n", $initial_crawl_list));
         $currentUrl = $first_line;
         $this->_prependExportLog('CRAWLING URL: ' . $currentUrl);
-        error_log('CRAWLING URL: ' . $currentUrl);
 
         $do_meta_clean = filter_input(INPUT_POST, 'cleanMeta');
         $newBaseUrl = untrailingslashit(filter_input(INPUT_POST, 'baseUrl', FILTER_SANITIZE_URL));
@@ -401,11 +394,9 @@ class StaticHtmlOutput {
 
         if ($urlResponse->checkResponse() == 'FAIL') {
             $this->_prependExportLog('FAILED TO CRAWL FILE: ' . $currentUrl);
-            error_log('FAILED TO CRAWL FILE: ' . $currentUrl);
         } else {
             file_put_contents($crawled_links_file, $currentUrl . PHP_EOL, FILE_APPEND | LOCK_EX);
             $this->_prependExportLog('CRAWLED FILE: ' . $currentUrl);
-            error_log('CRAWLED FILE: ' . $currentUrl);
         }
 
         $baseUrl = untrailingslashit(home_url());
@@ -420,7 +411,6 @@ class StaticHtmlOutput {
 		// try extracting urls from a response that hasn't been changed yet...
 		// this seems to do it...
         foreach ($urlResponseForFurtherExtraction->extractAllUrls($baseUrl) as $newUrl) {
-            error_log($newUrl);
             if ($newUrl != $currentUrl && !in_array($newUrl, $crawled_links) && !in_array($newUrl, $initial_crawl_list)) {
                 $this->_prependExportLog('DISCOVERED NEW FILE: ' . $newUrl);
                 
@@ -590,8 +580,6 @@ class StaticHtmlOutput {
         $contents = file($ftpFilesToExport, FILE_IGNORE_NEW_LINES);
         $filesRemaining = count($contents) - 1;
 
-        error_log($filesRemaining);
-
         if ($filesRemaining < 0) {
             echo $filesRemaining;die();
         }
@@ -612,7 +600,6 @@ class StaticHtmlOutput {
         } else {
             $this->_prependExportLog('FTP EXPORT: Creating remote dir');
             $mkdir_result = $ftp->mkdir($targetPath, true); // true = recursive creation
-            error_log(print_r($mkdir_result, true));
         }
 
         $ftp->chdir($targetPath);
@@ -694,30 +681,38 @@ class StaticHtmlOutput {
         }
     }
 
+	// TODO: this is being called twice, check export targets flow in FE/BE
     public function dropboxExport() {
+        $wpUploadsDir = wp_upload_dir()['basedir'];
+        $archiveDir = file_get_contents($wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE');
+        $archiveName = rtrim($archiveDir, '/');
         $siteroot = $archiveName . '/';
         $dropboxAppKey = filter_input(INPUT_POST, 'dropboxAppKey');
         $dropboxAppSecret = filter_input(INPUT_POST, 'dropboxAppSecret');
         $dropboxAccessToken = filter_input(INPUT_POST, 'dropboxAccessToken');
         $dropboxFolder = filter_input(INPUT_POST, 'dropboxFolder');
+
+        $this->_prependExportLog('DROPBOX EXPORT: Doing one synchronous export to your ' . $dropboxFolder . ' directory');
+
         $app = new DropboxApp($dropboxAppKey, $dropboxAppSecret, $dropboxAccessToken);
         $dbxClient = new Dropbox($app);
 
-        function FolderToDropbox($dir, $dbxClient, $siteroot, $dropboxFolder){
+        function FolderToDropbox($dir, $dbxClient, $siteroot, $dropboxFolder, $pluginInstance){
             $files = scandir($dir);
             foreach($files as $item){
-                if($item != '.' && $item != '..'){
+                if($item != '.' && $item != '..' && $item != '.git'){
                     if(is_dir($dir.'/'.$item)) {
-                        FolderToDropbox($dir.'/'.$item, $dbxClient, $siteroot, $dropboxFolder);
+                        FolderToDropbox($dir.'/'.$item, $dbxClient, $siteroot, $dropboxFolder, $pluginInstance);
                     } else if(is_file($dir.'/'.$item)) {
                         $clean_dir = str_replace($siteroot, '', $dir.'/'.$item);
                         $targetPath =  $dropboxFolder . $clean_dir;
 
                         try {
                             $dropboxFile = new DropboxFile($dir.'/'.$item);
-                            $uploadedFile = $dbxClient->upload($dropboxFile, $targetPath, ['autorename' => true]);
+                            $uploadedFile = $dbxClient->upload($dropboxFile, $targetPath, ['autorename' => false, 'mode' => 'overwrite']);
                         } catch (Exception $e) {
-                            file_put_contents($_SERVER['exportLog'], $e , FILE_APPEND | LOCK_EX);
+							$pluginInstance->_prependExportLog('DROPBOX EXPORT: following error returned from Dropbox:');
+							$pluginInstance->_prependExportLog($e);
                             throw new Exception($e);
 
                         }
@@ -726,7 +721,7 @@ class StaticHtmlOutput {
             }
         }
 
-        FolderToDropbox($siteroot, $dbxClient, $siteroot, $dropboxFolder);
+        FolderToDropbox($siteroot, $dbxClient, $siteroot, $dropboxFolder, $this);
     }
 
     public function githubPrepareExport () {
@@ -920,7 +915,7 @@ class StaticHtmlOutput {
 		return $files;
 	}
 
-    protected function _prependExportLog($text) {
+    public function _prependExportLog($text) {
 		$wpUploadsDir = wp_upload_dir()['basedir'];
 		$exportLog = $wpUploadsDir . '/WP-STATIC-EXPORT-LOG';
         $src = fopen($exportLog, 'r+');
