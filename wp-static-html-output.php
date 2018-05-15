@@ -65,6 +65,7 @@ add_action( 'wp_ajax_ftp_prepare_export', 'ftp_prepare_export' );
 add_action( 'wp_ajax_ftp_transfer_files', 'ftp_transfer_files' );
 add_action( 'wp_ajax_netlify_do_export', 'netlify_do_export' );
 add_action( 'wp_ajax_dropbox_do_export', 'dropbox_do_export' );
+add_action( 'wp_ajax_s3_do_export', 's3_do_export' );
 
 
 function save_options() {
@@ -130,5 +131,11 @@ function netlify_do_export() {
 function dropbox_do_export() {
     $plugin = StaticHtmlOutput::getInstance();
     $plugin->dropboxExport();
+    wp_die();
+}
+
+function s3_do_export() {
+    $plugin = StaticHtmlOutput::getInstance();
+    $plugin->s3Export();
     wp_die();
 }

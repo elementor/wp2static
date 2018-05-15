@@ -616,6 +616,10 @@ class StaticHtmlOutput {
     public function s3Export() {
         require_once(__DIR__.'/aws/aws-autoloader.php');
         require_once(__DIR__.'/StaticHtmlOutput/MimeTypes.php');
+        $wpUploadsDir = wp_upload_dir()['basedir'];
+        $archiveDir = file_get_contents($wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE');
+        $archiveName = rtrim($archiveDir, '/');
+        $siteroot = $archiveName . '/';
 
         function UploadObject($S3, $Bucket, $Key, $Data, $ACL, $ContentType = "text/plain") {
             try {
