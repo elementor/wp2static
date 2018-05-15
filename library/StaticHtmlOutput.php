@@ -157,7 +157,7 @@ class StaticHtmlOutput {
             list($blobHash, $targetPath) = explode(',', $line);
 
             $treeContents[] = [
-                'path' => $targetPath,
+                'path' => trim($targetPath),
                 'mode' => '100644',
                 'type' => 'blob',
                 'sha' => $blobHash
@@ -171,7 +171,7 @@ class StaticHtmlOutput {
 
         $this->_prependExportLog('GITHUB: Creating tree ...' . PHP_EOL);
         $this->_prependExportLog('GITHUB: tree data: '. PHP_EOL);
-        $this->_prependExportLog(print_r($treeData, true) . PHP_EOL);
+        #$this->_prependExportLog(print_r($treeData, true) . PHP_EOL);
         $newTree = $client->api('gitData')->trees()->create($githubUser, $githubRepo, $treeData);
         $this->_prependExportLog('GITHUB: Tree created');
         
