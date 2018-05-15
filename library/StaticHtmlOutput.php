@@ -778,19 +778,14 @@ class StaticHtmlOutput {
     }
 
     public function netlifyExport () {
+        $this->_prependExportLog('NETLIFY EXPORT: starting to deploy ZIP file');
         // will exclude the siteroot when copying
+        $wpUploadsDir = wp_upload_dir()['basedir'];
+        $archiveDir = file_get_contents($wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE');
+        $archiveName = rtrim($archiveDir, '/');
         $siteroot = $archiveName . '/';
         $netlifySiteID = filter_input(INPUT_POST, 'netlifySiteID');
         $netlifyPersonalAccessToken = filter_input(INPUT_POST, 'netlifyPersonalAccessToken');
-
-
-# get ZIP archive's path
-
-# make Guzzle request to Netlify aka 
-#	curl -H "Content-Type: application/zip" \
-#	 -H "Authorization: Bearer my-api-access-token" \
-#	 --data-binary "@website.zip" \
-#	 https://api.netlify.com/api/v1/sites/mysite.netlify.com/deploys
 
         $client = new Client([
                 // Base URI is used with relative requests
