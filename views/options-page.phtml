@@ -141,6 +141,31 @@ jQuery(document).ready(function($){
         });
     }
 
+    function s3DoExport() {
+        // this is a one shot export, not async partial transfers like others
+        $('.hiddenActionField').val('s3_do_export');
+        archives = $('.options-form');
+        data = $(archives[0]).serialize();
+
+        $.ajax({
+            url: ajaxurl,
+            data: data,
+            dataType: 'html',
+            method: 'POST',
+            success: function(serverResponse) {
+                $.ajax({
+                    url: ajaxurl,
+                    data: data,
+                    dataType: 'html',
+                    method: 'POST',
+                    success: processExportTargets,
+                    error: ajaxErrorHandler
+                });
+            },
+            error: ajaxErrorHandler
+        });
+    }
+
     function exportToGitHub() {
         $('.hiddenActionField').val('start_export');
         archives = $('.options-form');
@@ -223,7 +248,7 @@ jQuery(document).ready(function($){
                 break;
 
             case 'S3':
-// TODO: this is missing
+                s3DoExport();
                 break;
 
             case 'DROPBOX':
