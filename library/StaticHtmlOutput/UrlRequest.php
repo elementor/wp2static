@@ -81,17 +81,36 @@ class StaticHtmlOutput_UrlRequest
 			}
 		}
 	}
-	
+    
 	public function extractAllUrls($baseUrl)
 	{
 		$allUrls = array();
 	
+        error_log("\n\n entering extractAllUrls \n\n");
+        error_log($baseUrl);
+        error_log($this->getUrl());
 
 		// TODO: will this follow urls for JS/CSS easily by adjusting?
-		if ($this->isHtml() && preg_match_all('/' . str_replace('/', '\/', $baseUrl) . '[^"\'#\? ]+/i', $this->_response['body'], $matches))
-		{
+        // TODO: just add options to check for content type JS or CSS
+		if (!$this->isHtml()) {
+            error_log('UrlRequest was not a valid HTML file - not extracting links!');
+            return [];
+        }
+
+        // we have a valid HTML response, look for matching urls in         
+
+        if (
+            preg_match_all(
+                '/' . str_replace('/', '\/', $baseUrl) . '[^"\'#\? ]+/i', // find this
+                $this->_response['body'], // in this
+                $matches // save matches into this array
+            )
+        ) {
+            error_log('URL PRODUCED MATCHES');
 			$allUrls = array_unique($matches[0]);
-		}
+		} else {
+            error_log('URL DIDN"T PRODUCE MATCHES');
+        }
 		
 		return $allUrls;
 	}
@@ -109,6 +128,11 @@ class StaticHtmlOutput_UrlRequest
 				https:// -> http:// */
 			$oldDomain = parse_url($oldBaseUrl);
 			$newDomain = parse_url($newBaseUrl);
+
+            error_log('OLD DOMAIN');
+            error_log(print_r($oldDomain, true));
+            error_log('NEW DOMAIN');
+            error_log(print_r($newDomain, true));
 
 			// Fix JSON encoded URLs
 			$oldBaseUrlJsonEncoded = substr(json_encode($oldBaseUrl), 1, -1);

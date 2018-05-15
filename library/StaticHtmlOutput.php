@@ -245,6 +245,8 @@ class StaticHtmlOutput {
     }
 
 	public function startExport($viaCLI = false) {
+        $this->_prependExportLog('STARTING EXPORT: via CLI = ' . $viaCLI);
+        error_log('STARTING EXPORT: via CLI = ' . $viaCLI);
         // prepare export targets
 		$wpUploadsDir = wp_upload_dir()['basedir'];
         $exportTargetsFile = $wpUploadsDir . '/WP-STATIC-EXPORT-TARGETS';
@@ -306,11 +308,15 @@ class StaticHtmlOutput {
 	}
 
 	protected function _prepareInitialFileList($viaCLI = false) {
+		error_log('PREPARE INITIAL FILE LIST: viaCLi = ' . $viaCLI);
 		global $blog_id;
 		set_time_limit(0);
 
         // set options from GUI or CLI
         $newBaseUrl = untrailingslashit(filter_input(INPUT_POST, 'baseUrl', FILTER_SANITIZE_URL));
+
+		error_log('SETTING NEW BASE URL TO: ' . $newBaseUrl);
+
         $additionalUrls = filter_input(INPUT_POST, 'additionalUrls');
 
         if ($viaCLI) {
@@ -364,6 +370,7 @@ class StaticHtmlOutput {
     }
 
 	public function crawlABitMore($viaCLI = false) {
+        $this->_prependExportLog('entering crawlABitMore');
         error_log('DOING A BIT OF CRAWLING');
 		$wpUploadsDir = wp_upload_dir()['basedir'];
 		$initial_crawl_list_file = $wpUploadsDir . '/WP-STATIC-INITIAL-CRAWL-LIST';
@@ -411,6 +418,7 @@ class StaticHtmlOutput {
         $this->_saveUrlData($urlResponse, $archiveDir);
 
         foreach ($urlResponse->extractAllUrls($baseUrl) as $newUrl) {
+            $this->_prependExportLog('subfile: ' . $newUrl);
             error_log($newUrl);
             if ($newUrl != $currentUrl && !in_array($newUrl, $crawled_links) && !in_array($newUrl, $initial_crawl_list)) {
                 $this->_prependExportLog('DISCOVERED NEW FILE: ' . $newUrl);
@@ -435,11 +443,14 @@ class StaticHtmlOutput {
         
         // loop for CLI
         if ($viaCLI) {
-            $this->crawlTheWordPressSite(true);
+            $this->crawlTheWordPressSite($viaCLI);
         }
     }
 
 	public function crawlTheWordPressSite($viaCLI = false) {
+		
+		$this->_prependExportLog('entering crawlTheWordPressSite');
+
 		$wpUploadsDir = wp_upload_dir()['basedir'];
 		$initial_crawl_list_file = $wpUploadsDir . '/WP-STATIC-INITIAL-CRAWL-LIST';
         $initial_crawl_list = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
