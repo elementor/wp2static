@@ -300,9 +300,17 @@ class StaticHtmlOutput {
 			if ($this->_options->getOption('retainStaticFiles') == 1) {
 				$message .= sprintf('<br />Static files retained at: %s/', str_replace(home_url(),'',substr($archiveUrl,0,-4)));
 			}
-		}
+        }
 
         echo 'Archive has been generated';
+
+        global $blog_id;
+        $archiveDir = file_get_contents($wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE');
+        $uploadDir = $this->get_write_directory();
+        unlink($uploadDir . '/latest-' . $blog_id );
+        symlink($archiveDir, $uploadDir . '/latest-' . $blog_id );
+
+        echo 'LOCALDIR SYMLINK UPDATED: '. $uploadDir . '/latest-' . $blog_id;
 	}
 
 	protected function _prepareInitialFileList($viaCLI = false) {
