@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# getting the repo locally:
+# svn co https://plugins.svn.wordpress.org/your-plugin-name $HOME/svnplugindir
+
+
 PROJECT_ROOT=$(pwd)
 SVN_ROOT=$HOME/svnplugindir
 NEW_TAG=2.3
@@ -17,8 +21,11 @@ rm $SVN_ROOT/trunk/Dockerfile
 rm $SVN_ROOT/trunk/circle.yml
 rm $SVN_ROOT/trunk/Gemfile*
 rm $SVN_ROOT/trunk/readme.md
+rm $SVN_ROOT/trunk/package-lock.json
+rm $SVN_ROOT/trunk/package.json
 rm -r $SVN_ROOT/trunk/wpassets
 rm -r $SVN_ROOT/trunk/php53tests
+rm -r $SVN_ROOT/trunk/node_modules
 rm -r $SVN_ROOT/trunk/php5testvm
 rm -r $SVN_ROOT/trunk/provisioning
 rm -r $SVN_ROOT/trunk/demo_site_content

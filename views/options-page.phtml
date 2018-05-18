@@ -91,6 +91,50 @@ jQuery(document).ready(function($){
         });
     }
 
+    function prepareBUNNYCDNExport() {
+        $('.hiddenActionField').val('bunnycdn_prepare_export');
+        archives = $('.options-form');
+        data = $(archives[0]).serialize();
+        console.log('should trigger BunnyCDN action server side');
+
+        $.ajax({
+            url: ajaxurl,
+            data: data,
+            dataType: 'html',
+            method: 'POST',
+            success: bunnycdnTransferFiles,
+            error: ajaxErrorHandler
+        });
+    }
+
+    function bunnycdnTransferFiles() {
+        $('.hiddenActionField').val('bunnycdn_transfer_files');
+        archives = $('.options-form');
+        data = $(archives[0]).serialize();
+
+        $.ajax({
+            url: ajaxurl,
+            data: data,
+            dataType: 'html',
+            method: 'POST',
+            success: function(serverResponse) {
+                if (serverResponse > 0) {
+                    bunnycdnTransferFiles();
+                } else {
+                    $.ajax({
+                        url: ajaxurl,
+                        data: data,
+                        dataType: 'html',
+                        method: 'POST',
+                        success: processExportTargets,
+                        error: ajaxErrorHandler
+                    });
+                }
+            },
+            error: ajaxErrorHandler
+        });
+    }
+
     function netlifyDoExport() {
         // this is a one shot export, not async partial transfers like others
         $('.hiddenActionField').val('netlify_do_export');
@@ -430,6 +474,10 @@ jQuery(document).ready(function($){
             $(targetExportSettingsBlock).find('#ftpUsername').first().val(decodeURIComponent(settingsBlock.ftpUsername));
             $(targetExportSettingsBlock).find('#ftpPassword').first().val(decodeURIComponent(settingsBlock.ftpPassword));
             $(targetExportSettingsBlock).find('#ftpRemotePath').first().val(decodeURIComponent(settingsBlock.ftpRemotePath));
+            $(targetExportSettingsBlock).find('#sendViaBUNNYCDN')[0].checked = settingsBlock.sendViaFTP;
+            $(targetExportSettingsBlock).find('#bunnycdnPullZoneName').first().val(decodeURIComponent(settingsBlock.bunnycdnPullZoneName));
+            $(targetExportSettingsBlock).find('#bunnycdnAPIKey').first().val(decodeURIComponent(settingsBlock.bunnycdnAPIKey));
+            $(targetExportSettingsBlock).find('#bunnycdnPath').first().val(decodeURIComponent(settingsBlock.bunnycdnPath));
             $(targetExportSettingsBlock).find('#sendViaS3')[0].checked = settingsBlock.sendViaS3;
             $(targetExportSettingsBlock).find('#s3Key').first().val(decodeURIComponent(settingsBlock.s3Key));
             $(targetExportSettingsBlock).find('#s3Secret').first().val(decodeURIComponent(settingsBlock.s3Secret));
@@ -465,6 +513,10 @@ jQuery(document).ready(function($){
                 $(targetExportSettingsBlock).find('#ftpUsername').val('');
                 $(targetExportSettingsBlock).find('#ftpPassword').val('');
                 $(targetExportSettingsBlock).find('#ftpRemotePath').val('');
+                $(targetExportSettingsBlock).find('#sendViaBUNNYCDN').first().prop('checked', false);
+                $(targetExportSettingsBlock).find('#bunnycdnPullZoneName').val('');
+                $(targetExportSettingsBlock).find('#bunnycdnAPIKey').val('');
+                $(targetExportSettingsBlock).find('#bunnycdnPath').val('');
                 $(targetExportSettingsBlock).find('#sendViaS3').first().prop('checked', false);
                 $(targetExportSettingsBlock).find('#s3Key').val('');
                 $(targetExportSettingsBlock).find('#s3Secret').val('');
@@ -620,6 +672,22 @@ http://172.17.0.3/my_pricelist.pdf</pre>
                 <span class="description">ie, ABC123DEFX</span>
                 <br>
 
+                <fieldset>
+                    <label for="sendViaBUNNYCDN">
+                    <input name="sendViaBUNNYCDN" id="sendViaBUNNYCDN" value="1" type="checkbox" <?php if ($this->sendViaBUNNYCDN == 1) echo "checked"; ?> />
+                        <span><?php echo __('Transfer files via BunnyCDN', 'static-html-output-plugin');?></span>
+                    </label>
+                </fieldset>
+
+                <input name="bunnycdnPullZoneName" class="regular-text" id="bunnycdnPullZoneName" value="<?php echo esc_attr($this->bunnycdnPullZoneName) ?>" placeholder="<?php echo __('Pull Zone', 'static-html-output-plugin');?>" />
+                <span class="description">ie, mybunnypullzone, etc</span>
+                <br>
+
+                <input name="bunnycdnAPIKey" class="regular-text" id="bunnycdnAPIKey" type='password' value="<?php echo esc_attr($this->bunnycdnAPIKey) ?>" placeholder="<?php echo __('API Key', 'static-html-output-plugin');?>" />
+                <br>
+
+                <input class="regular-text" name="bunnycdnPath" id="bunnycdnPath" value="<?php echo esc_attr($this->bunnycdnPath) ?>" placeholder="<?php echo __('BunnyCDN Remote Path', 'static-html-output-plugin');?>" />
+                <span class="description">will attempt to create folder recursively if non-existent</span>
                 <br>
                 <fieldset>
                     <label for="sendViaDropbox">
