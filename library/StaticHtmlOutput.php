@@ -621,6 +621,95 @@ class StaticHtmlOutput {
         echo $filesRemaining;
     }
 
+    public function bunnycdnPrepareExport() {
+        $this->_prependExportLog('BUNNYCDN EXPORT: Preparing export..:');
+
+        
+
+        // prepare file list
+        $wpUploadsDir = wp_upload_dir()['basedir'];
+        $_SERVER['bunnycdnFilesToExport'] = $wpUploadsDir . '/WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT';
+
+        $f = @fopen($_SERVER['bunnycdnFilesToExport'], "r+");
+        if ($f !== false) {
+            ftruncate($f, 0);
+            fclose($f);
+        }
+
+        $bunnycdnTargetPath = filter_input(INPUT_POST, 'bunnycdnRemotePath');
+        $archiveDir = file_get_contents($wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE');
+        $archiveName = rtrim($archiveDir, '/');
+        $siteroot = $archiveName . '/';
+
+        function AddToBunnyCDNExportList($dir, $siteroot, $bunnycdnTargetPath){
+            $files = scandir($dir);
+            foreach($files as $item){
+                if($item != '.' && $item != '..' && $item != '.git'){
+                    if(is_dir($dir.'/'.$item)) {
+                        AddToBunnyCDNExportList($dir.'/'.$item, $siteroot, $bunnycdnTargetPath);
+                    } else if(is_file($dir.'/'.$item)) {
+                        $subdir = str_replace('/wp-admin/admin-ajax.php', '', $_SERVER['REQUEST_URI']);
+                        $subdir = ltrim($subdir, '/');
+                        //$clean_dir = str_replace($siteroot . '/', '', $dir.'/'.$item);
+                        $clean_dir = str_replace($siteroot . '/', '', $dir.'/');
+                        $clean_dir = str_replace($subdir, '', $clean_dir);
+                        $targetPath =  $bunnycdnTargetPath . $clean_dir;
+                        $targetPath = ltrim($targetPath, '/');
+                        $bunnycdnExportLine = $dir .'/' . $item . ',' . $targetPath . "\n";
+                        file_put_contents($_SERVER['bunnycdnFilesToExport'], $bunnycdnExportLine, FILE_APPEND | LOCK_EX);
+                    } 
+                }
+            }
+        }
+
+        AddToBunnyCDNExportList($siteroot, $siteroot, $bunnycdnTargetPath);
+
+        echo 'SUCCESS';
+    }
+
+    public function bunnycdnTransferFiles($batch_size = 5) {
+        $wpUploadsDir = wp_upload_dir()['basedir'];
+        $archiveDir = file_get_contents($wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE');
+        $archiveName = rtrim($archiveDir, '/');
+
+
+        $_SERVER['bunnycdnFilesToExport'] = $wpUploadsDir . '/WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT';
+
+        // grab first line from filelist
+        $bunnycdnFilesToExport = $_SERVER['bunnycdnFilesToExport'];
+        $f = fopen($bunnycdnFilesToExport, 'r');
+        $line = fgets($f);
+        fclose($f);
+
+
+        $contents = file($bunnycdnFilesToExport, FILE_IGNORE_NEW_LINES);
+        $filesRemaining = count($contents) - 1;
+
+        if ($filesRemaining < 0) {
+            echo $filesRemaining;die();
+        }
+
+        $first_line = array_shift($contents);
+        file_put_contents($bunnycdnFilesToExport, implode("\r\n", $contents));
+
+        list($fileToTransfer, $targetPath) = explode(',', $line);
+
+        // TODO: check other funcs using similar, was causing issues without trimming CR's
+        $targetPath = rtrim($targetPath);
+
+        $this->_prependExportLog('BUNNYCDN EXPORT: transferring ' . 
+            basename($fileToTransfer) . ' TO ' . $targetPath);
+       
+        $bunnycdn->putFromPath($fileToTransfer);
+
+        $this->_prependExportLog('BUNNYCDN EXPORT: ' . $filesRemaining . ' files remaining to transfer');
+
+        // TODO: error handling when not connected/unable to put, etc
+        unset($bunnycdn);
+
+        echo $filesRemaining;
+    }
+
     public function s3Export() {
         require_once(__DIR__.'/aws/aws-autoloader.php');
         require_once(__DIR__.'/StaticHtmlOutput/MimeTypes.php');

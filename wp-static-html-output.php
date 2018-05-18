@@ -63,6 +63,8 @@ add_action( 'wp_ajax_github_finalise_export', 'github_finalise_export' );
 add_action( 'wp_ajax_github_prepare_export', 'github_prepare_export' );
 add_action( 'wp_ajax_ftp_prepare_export', 'ftp_prepare_export' );
 add_action( 'wp_ajax_ftp_transfer_files', 'ftp_transfer_files' );
+add_action( 'wp_ajax_bunnycdn_prepare_export', 'bunnycdn_prepare_export' );
+add_action( 'wp_ajax_bunnycdn_transfer_files', 'bunnycdn_transfer_files' );
 add_action( 'wp_ajax_netlify_do_export', 'netlify_do_export' );
 add_action( 'wp_ajax_dropbox_do_export', 'dropbox_do_export' );
 add_action( 'wp_ajax_s3_do_export', 's3_do_export' );
@@ -119,6 +121,18 @@ function ftp_prepare_export() {
 function ftp_transfer_files() {
     $plugin = StaticHtmlOutput::getInstance();
     $plugin->ftpTransferFiles();
+    wp_die();
+}
+
+function bunnycdn_prepare_export() {
+    $plugin = StaticHtmlOutput::getInstance();
+    $plugin->bunnycdnPrepareExport();
+    wp_die();
+}
+
+function bunnycdn_transfer_files() {
+    $plugin = StaticHtmlOutput::getInstance();
+    $plugin->bunnycdnTransferFiles();
     wp_die();
 }
 
