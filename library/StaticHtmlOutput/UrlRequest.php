@@ -35,6 +35,15 @@ class StaticHtmlOutput_UrlRequest
 		return $this->_url;
 	}
 
+	public function getUrlWithoutFilename()
+	{
+        $file_info = pathinfo($this->getUrl());
+
+        return isset($file_info['extension'])
+            ? str_replace($file_info['filename'] . "." . $file_info['extension'], "", $this->getUrl())
+            : $this->getUrl();
+	}
+
 	public function checkResponse()
 	{
 		return $this->_response;
@@ -63,6 +72,26 @@ class StaticHtmlOutput_UrlRequest
 		return stripos($this->getContentType(), 'html') !== false;
 	}
 
+	public function isCrawlableContentType()
+	{
+
+        $crawable_types = array(
+            "text/plain",
+            "application/javascript",
+            "application/json",
+            "application/xml",
+            "text/css",
+        );
+
+        if (in_array($this->getContentType(), $crawable_types)) {
+            error_log($this->getUrl());
+            error_log($this->getContentType());
+            return true;
+        }
+
+        return false;
+	}
+
 	public function isRewritable()
 	{
 		$contentType = $this->getContentType();
@@ -82,28 +111,20 @@ class StaticHtmlOutput_UrlRequest
 		}
 	}
     
-	public function extractAllUrls($baseUrl)
-	{
+	public function extractAllUrls($baseUrl) {
 		$allUrls = array();
 	
-		// TODO: will this follow urls for JS/CSS easily by adjusting?
-        // TODO: just add options to check for content type JS or CSS
-		if (!$this->isHtml()) {
+		if (!$this->isHtml() && !$this->isCrawlableContentType()) {
             error_log('UrlRequest was not a valid HTML file - not extracting links!');
             return [];
         }
 
-        // we have a valid HTML response, look for matching urls in the urlrequest body
-
-        
         // TODO: could use this to get any relative urls, also...
         # find ALL urls on page:
         #preg_match_all(
         #    '@((https?://)?([-\\w]+\\.[-\\w\\.]+)+\\w(:\\d+)?(/([-\\w/_\\.]*(\\?\\S+)?)?)*)@',
         #    $this->_response['body'],
         #    $allURLsInResponseBody);
-
-        #error_log(print_r($allURLsInResponseBody[0], true));
 
         // looks only for urls starting with base name, also needs to search for relative links
         if (
@@ -114,11 +135,42 @@ class StaticHtmlOutput_UrlRequest
             )
         ) {
 			$allUrls = array_unique($matches[0]);
-		} else {
+		} 
+
+        // do an extra check for url links in CSS file:
+        if ($this->getContentType() == 'text/css') {
+            if( preg_match_all(
+#                '/url\((.+?)\);/i', // find any links 
+                '/url\(([\s])?([\"|\'])?(.*?)([\"|\'])?([\s])?\)/i', // find any urls in CSS
+                $this->_response['body'], // in this
+                $matches // save matches into this array
+                )
+            ) {
+                error_log('FOUND URLS IN CSS!');
+                // returns something like fonts/generatepress.eot
+
+                // we need to prepend the fullpath to the CSS file, trimming the basename
+                $found_relative_urls = array();
+
+                foreach($matches[3] as $relative_url) {
+                    $found_relative_urls[] = $this->getUrlWithoutFilename() . $relative_url;
+                }
+
+                $allUrls = array_unique (array_merge ($allUrls, array_unique($found_relative_urls)));
+            }
+        }
+
+        if (!empty($allUrls)) {
+            error_log(print_r($allUrls, true));
+
+            return $allUrls;
+        } else {
+            error_log($this->getUrl());
+            error_log($this->getContentType());
             error_log('DIDNT FIND ANY LINKS IN RESPONSE BODY THAT WE WANT TO ADD TO ARCHIVE');
+            return [];
         }
 		
-		return $allUrls;
 	}
 	
 	public function replaceBaseUrl($oldBaseUrl, $newBaseUrl)
