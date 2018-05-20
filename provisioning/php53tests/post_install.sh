@@ -20,12 +20,36 @@ done
 sleep 5
 
 
+# need apache2 sources for php
+apt-get install apache2 
+apt-get install libxml2-dev
+
+# stop complaining about php and apache being differently threaded
+a2dismod mpm_event
+a2enmod mpm_prefork
+
+echo 'AddType application/x-httpd-php .php' >> /etc/apache2/apache2.conf 
+
+
+cd 
+wget http://au1.php.net/distributions/php-5.3.29.tar.gz
+tar xfz http://au1.php.net/distributions/php-5.3.29.tar.gz
+cd http://au1.php.net/distributions/php-5.3.29
+./configure --with-mysql --with-apxs2
+make
+make install
+
+
+
+service apache2 stop
+service apache2 start
+
+
+
+
 # install default
 cd /var/www/html
-
-rm index.html
-
-service apache2 start
+#rm index.html
 
 wp --allow-root core download 
 wp --allow-root config create --dbname=wordpress --dbuser=root --dbpass=banana --dbhost=php53sql
@@ -34,7 +58,10 @@ wp --allow-root db create
 
 wp --allow-root core install --url="172.19.0.6" --title='PHP 5.3.29 WordPress Instance' --admin_user=admin --admin_password=admin --admin_email=blah@blah.com --skip-email
 
+# activate wp static output plugin
+#wp --allow-root plugin activate wordpress-static-html-output
 
+chown -R www-data:www-data /var/www/html
 
 # keep container alive
 
