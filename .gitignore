@@ -5,4 +5,5 @@ package-lock.json
 *.swo
 *.swn
 .DS_Store
+plugin_options_backup.sql
 
