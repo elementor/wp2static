@@ -12,6 +12,10 @@ RUN apt-get update \
 RUN curl -L https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -o /usr/local/bin/wp
 RUN chmod +x /usr/local/bin/wp
 
+# install phpunit to path (version 5 dev will need older version)
+RUN curl -L https://phar.phpunit.de/phpunit.phar -o /usr/local/bin/phpunit
+RUN chmod +x /usr/local/bin/phpunit
+
 COPY provisioning/*.sh /
 COPY provisioning/.env-vars /
 

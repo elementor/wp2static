@@ -1,14 +1,8 @@
-FROM ubuntu:precise
+FROM helder/php-5.3
 
 RUN apt-get update \
-&& apt-get install -y vim mysql-client mysql-server apache2 libapache2-mod-php5 pwgen python-setuptools php5-mysql  php5-ldap
+&& apt-get install -y vim mysql-client apache2 libapache2-mod-php5 pwgen python-setuptools php5-mysql  php5-ldap wget
 
-RUN rm -rf /var/www/
-ADD https://wordpress.org/latest.tar.gz /wordpress.tar.gz
-RUN tar xvzf /wordpress.tar.gz && rm /wordpress.tar.gz
-RUN mv /wordpress /var/www/
+ADD ./httpd-custom.conf /usr/local/apache2/conf/httpd.conf
 
-RUN chown -R www-data:www-data /var/www/
-
-EXPOSE 80
-
+COPY *.sh /
