@@ -63,7 +63,7 @@ wp --allow-root import /app/demo_site_content/wp_static_demo_content.xml --autho
 # OPTIONAL: install convenience / common plugins here
 wp --allow-root plugin install wp-crontrol --activate # look into WP Cron
 wp --allow-root plugin install elementor --activate # test plugin compatibility
-wp --allow-root plugin install generatepress --activate # test theme compatibility
+wp --allow-root theme install generatepress --activate # test theme compatibility
 #wp --allow-root plugin install fakerpress --activate # generate dummy content for testing
 #wp --allow-root plugin install wp-hide-security-enhancer --activate # strip out things making your site identifiable as a WP one
 #wp --allow-root plugin install static-html-output-plugin --activate
