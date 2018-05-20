@@ -50,6 +50,16 @@ Using the [WP Crontrol](https://wordpress.org/plugins/wp-crontrol/) plugin, you 
  - logging of errors when an export fails 
  - prevent hanging on failure
 
+### Theme & Plugin compatibility
+
+Whilst it would be a challenge to test with every possible combination of plugins and themes, WP Static HTML Output Plugin has been tested with those in the following table and any notes are included. If you would like to see a fix to make it compatible with a certain theme or plugin, contact me.
+
+|Theme/plugin name   |   |Known to work well   |Issues   |Notes   |
+|---|---|---|---|---|
+|Elementor page builder   |   |   |   |   |
+|GeneratePress   |   |   |   |   |
+|   |   |   |   |   |
+
 ## Development
 
 Latest development build status: [![CircleCI](https://circleci.com/gh/leonstafford/wordpress-static-html-plugin/tree/master.svg?style=svg)](https://circleci.com/gh/leonstafford/wordpress-static-html-plugin/tree/master)
