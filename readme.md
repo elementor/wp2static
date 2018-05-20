@@ -18,7 +18,8 @@ The lead developer of this plugin, [Leon Stafford](https://leonstafford.github.i
 ## Features
 
  - generates a standalone, static html copy of your whole WordPress website
- - auto-deploy to local folder, FTP, Dropbox, S3 or GitHub Pages
+ - auto-deploy to local folder, FTP, Dropbox, S3, GitHub Pages, Netlify or BunnyCDN
+ - scheduled exports via WP-Crontrol of by hitting the custom hook
  - one site to unlimited export targets
  - specify extra files to include in the output (ie, dynamically loaded assets)
  - desktop notifications alert you to when exports are complete

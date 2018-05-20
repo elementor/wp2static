@@ -1,10 +1,10 @@
 === WP Static HTML Output ===
 Contributors: leonstafford
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=NHEV6WLYJ6QWQ
-Tags: static,html,export,performance,security,portable
+Tags: static,html,export,performance,security,portable,s3,dropbox,github,netlify,bunnycdn
 Requires at least: 3.2
-Tested up to: 4.9.5
-Stable tag: 2.3
+Tested up to: 4.9.6
+Stable tag: 2.4
 
 Allows you to leverage WordPress as a great CMS, but benefit from the speed, security and portability that a static website provides.
 
@@ -13,12 +13,12 @@ Allows you to leverage WordPress as a great CMS, but benefit from the speed, sec
 = Features =
 
  * generates a standalone, static html copy of your whole WordPress website
- * auto-deploy to a local folder, ZIP file, FTP, S3, Dropbox, GitHub or Netlify
+ * auto-deploy to a local folder, ZIP file, FTP, S3, Dropbox, GitHub, Netlify or BunnyCDN
  * one site to unlimited export targets
  * specify extra files to include in the output (ie, dynamically loaded assets)
  * desktop notifications alert you to when exports are complete
  * multi-language support (English/Japanese currently, Spanish and Chinese in progress)
- * schedule unattended exports via the WP Crontrol plugin
+ * schedule unattended exports via the WP Crontrol plugin or by hitting the custom hook
  * realtime logs visible during / saved after export
  * asynchronous exports for some methods overcomes hosting limitations for large site exports
 
@@ -87,6 +87,11 @@ See the readme. In brief: you can't use dynamic WordPress functions such as comm
 2. The main interface (Japanese)
 
 == Changelog ==
+
+= 2.4 =
+
+ * Feature: Export to BunnyCDN - a very cheap and quick static site hosting option 
+ * Bugfix: Extracts relative URLs like fonts, background images, etc linked from your theme's CSS files
 
 = 2.3 =
 
@@ -241,6 +246,13 @@ Altered main codebase to fix recursion bug and endless loop. Essential upgrade.
 Initial release to Wordpress community
 
 == Upgrade Notice ==
+
+= 2.4 =
+
+All the important bits from the 2.3 release, plus:
+
+ * Feature: Export to BunnyCDN - a very cheap and quick static site hosting option 
+ * Bugfix: Extracts relative URLs like fonts, background images, etc linked from your theme's CSS files
 
 = 2.3 =
 
