@@ -624,8 +624,6 @@ class StaticHtmlOutput {
     public function bunnycdnPrepareExport() {
         $this->_prependExportLog('BUNNYCDN EXPORT: Preparing export..:');
 
-        
-
         // prepare file list
         $wpUploadsDir = wp_upload_dir()['basedir'];
         $_SERVER['bunnycdnFilesToExport'] = $wpUploadsDir . '/WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT';
@@ -639,7 +637,7 @@ class StaticHtmlOutput {
         $bunnycdnTargetPath = filter_input(INPUT_POST, 'bunnycdnRemotePath');
         $archiveDir = file_get_contents($wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE');
         $archiveName = rtrim($archiveDir, '/');
-        $siteroot = $archiveName . '/';
+        $siteroot = $archiveName;
 
         function AddToBunnyCDNExportList($dir, $siteroot, $bunnycdnTargetPath){
             $files = scandir($dir);
@@ -668,6 +666,8 @@ class StaticHtmlOutput {
     }
 
     public function bunnycdnTransferFiles($batch_size = 5) {
+        $bunnycdnAPIKey = filter_input(INPUT_POST, 'bunnycdnAPIKey');
+        $bunnycdnPullZoneName = filter_input(INPUT_POST, 'bunnycdnPullZoneName');
         $wpUploadsDir = wp_upload_dir()['basedir'];
         $archiveDir = file_get_contents($wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE');
         $archiveName = rtrim($archiveDir, '/');
@@ -694,13 +694,29 @@ class StaticHtmlOutput {
 
         list($fileToTransfer, $targetPath) = explode(',', $line);
 
-        // TODO: check other funcs using similar, was causing issues without trimming CR's
         $targetPath = rtrim($targetPath);
 
         $this->_prependExportLog('BUNNYCDN EXPORT: transferring ' . 
             basename($fileToTransfer) . ' TO ' . $targetPath);
        
-        $bunnycdn->putFromPath($fileToTransfer);
+		// do the bunny export
+        $client = new Client([
+                'base_uri' => 'https://storage.bunnycdn.com'
+        ]);	
+
+        try {
+            $response = $client->request('PUT', '/' . $bunnycdnPullZoneName . '/' . $targetPath . basename($fileToTransfer), [
+                    'headers'  => [
+                        'AccessKey' => ' ' . $bunnycdnAPIKey
+                    ],
+                    'body' => fopen($fileToTransfer, 'rb')
+            ]);
+        } catch (Exception $e) {
+			error_log($bunnycdnAPIKey);
+			$this->_prependExportLog('BUNNYCDN EXPORT: error encountered');
+			$this->_prependExportLog($e);
+            throw new Exception($e);
+        }
 
         $this->_prependExportLog('BUNNYCDN EXPORT: ' . $filesRemaining . ' files remaining to transfer');
 

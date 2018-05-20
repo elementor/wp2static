@@ -252,6 +252,9 @@ jQuery(document).ready(function($){
         if ($('#sendViaFTP').attr('checked') == 'checked') {
             exportTargets.push('FTP');
         }
+        if ($('#sendViaBUNNYCDN').attr('checked') == 'checked') {
+            exportTargets.push('BUNNYCDN');
+        }
         if ($('#sendViaDropbox').attr('checked') == 'checked') {
             exportTargets.push('DROPBOX');
         }
@@ -289,6 +292,10 @@ jQuery(document).ready(function($){
 
             case 'FTP':
                 prepareFTPExport();
+                break;
+
+            case 'BUNNYCDN':
+                prepareBUNNYCDNExport();
                 break;
 
             case 'S3':
