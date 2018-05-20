@@ -84,8 +84,8 @@ class StaticHtmlOutput_UrlRequest
         );
 
         if (in_array($this->getContentType(), $crawable_types)) {
-            error_log($this->getUrl());
-            error_log($this->getContentType());
+            #error_log($this->getUrl());
+            #error_log($this->getContentType());
             return true;
         }
 
@@ -161,7 +161,7 @@ class StaticHtmlOutput_UrlRequest
         }
 
         if (!empty($allUrls)) {
-            error_log(print_r($allUrls, true));
+            #error_log(print_r($allUrls, true));
 
             return $allUrls;
         } else {
