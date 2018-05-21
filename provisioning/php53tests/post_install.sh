@@ -44,8 +44,8 @@ make install
 
 echo 'AddType application/x-httpd-php .php' >> /etc/apache2/apache2.conf 
 
-service apache2 stop
-service apache2 start
+apachectl stop
+apachectl start
 
 
 # install WP CLI
@@ -70,8 +70,8 @@ wp --allow-root core install --url="172.19.0.6" --title='PHP 5.3.29 WordPress In
 
 chown -R www-data:www-data /var/www
 
-service apache2 stop
-service apache2 start
+apachectl stop
+apachectl start
 
 # keep container alive
 
