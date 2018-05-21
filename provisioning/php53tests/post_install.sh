@@ -1,14 +1,5 @@
 #!/bin/bash
 
-
-# install WP CLI
-
-curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-chmod +x wp-cli.phar
-mv wp-cli.phar /usr/local/bin/wp
-
-
-
 echo 'awaiting mysql to be reachable'
 
 while ! mysqladmin ping -h php53sql --silent; do
@@ -21,29 +12,45 @@ sleep 5
 
 
 # need apache2 sources for php
-apt-get install apache2 
-apt-get install libxml2-dev
+apt-get install -y apache2 apache2-dev libxml2-dev
+
+#mkdir /etc/apache2/mods-available
+
 
 # stop complaining about php and apache being differently threaded
 a2dismod mpm_event
 a2enmod mpm_prefork
 
-echo 'AddType application/x-httpd-php .php' >> /etc/apache2/apache2.conf 
-
-
 cd 
 wget http://au1.php.net/distributions/php-5.3.29.tar.gz
-tar xfz http://au1.php.net/distributions/php-5.3.29.tar.gz
-cd http://au1.php.net/distributions/php-5.3.29
+tar xfz php-5.3.29.tar.gz
+cd php-5.3.29
 ./configure --with-mysql --with-apxs2
 make
 make install
 
 
+# need apache2 sources for php
 
-service apache2 stop
-service apache2 start
+# stop complaining about php and apache being differently threaded
+#RUN a2dismod mpm_event
+#RUN a2enmod mpm_prefork
+#
+#RUN a2enmod \
+#            php5 \
+#        rewrite \
+#        ssl
 
+echo 'AddType application/x-httpd-php .php' >> /etc/apache2/apache2.conf 
+
+service apache2 restart
+
+
+# install WP CLI
+
+curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+chmod +x wp-cli.phar
+mv wp-cli.phar /usr/local/bin/wp
 
 
 
