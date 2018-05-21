@@ -11,6 +11,6 @@ sudo docker run --name plugindev53 --net php53net --link php53sql:mysql -p 8093:
 
 sudo docker exec plugindev53 bash /post_install.sh
 
-sudo docker exec -itd plugindev53 bash 
+#sudo docker exec -itd plugindev53 bash 
 # something to keep alive with -it
 
