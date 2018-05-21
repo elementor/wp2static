@@ -54,8 +54,9 @@ Whilst it would be a challenge to test with every possible combination of plugin
 |---|---|---|---|---|
 |Elementor page builder   |   |<img src="https://raw.githubusercontent.com/leonstafford/wordpress-static-html-plugin/master/images/greentick.png" width="20">   |   |   |
 |GeneratePress   |   |<img src="https://raw.githubusercontent.com/leonstafford/wordpress-static-html-plugin/master/images/greentick.png" width="20">   |   |   |
-|Avada Theme   |   |   |[8](https://github.com/leonstafford/wordpress-static-html-plugin/issues/8)   |   |
-|Slider Revolution   |   |   |[2](https://github.com/leonstafford/wordpress-static-html-plugin/issues/2)   |   |
+|Avada Theme   |   |   |[see #8](https://github.com/leonstafford/wordpress-static-html-plugin/issues/8)   |   |
+|Slider Revolution   |   |   |[see #2](https://github.com/leonstafford/wordpress-static-html-plugin/issues/2)   |   |
+|Contact Form Maker   |   |   |[see #13](https://github.com/leonstafford/wordpress-static-html-plugin/issues/13)   |   |
 |   |   |   |   |   |
 
 ## Development
