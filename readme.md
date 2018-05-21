@@ -27,7 +27,7 @@ The lead developer of this plugin, [Leon Stafford](https://leonstafford.github.i
 
 ## Demo site
 
-You can [see a working example here](https://leonstafford.github.io/demo-site-wordpress-static-html-output-plugin) of a plain WordPress install which has had a few tweaks done to optimize it for static HTML output. It is hosted on GitHub Pages, but could just as easily be hosted on Dropbox, BitBucket, GitLab, S3, your own server or anywhere else you can host HTML files.  
+You can [see a working example here](https://leonstafford.github.io/demo-site-wordpress-static-html-output-plugin) of a vanilla WordPress install which has had a few tweaks done to optimize it for static HTML output. It is hosted on GitHub Pages, but could just as easily be hosted on Dropbox, BitBucket, GitLab, S3, Netlify, BunnyCDN, your own server or anywhere else you can host HTML files.  
 
 *TODO: move the demo theme into this repo, along with demonstrations of WP Hide and other useful plugins for WP static sites.*
 
@@ -40,16 +40,11 @@ Using the [WP Crontrol](https://wordpress.org/plugins/wp-crontrol/) plugin, you 
 ## Roadmap
 
  - selectively export only changed pages since last output
- - auto-deploy your static files via sFTP, SCP, Netlify, etc
- - auto trigger an export via CRON job or on each blog update
+ - auto trigger an export on a post/page publish action
+ - WP CLI integration
+ - submission of bug report from within plugin
+ - backwards compatibility with older php and wordpress versions (degrade gracefully)
 
-### 2.1 release brings:
-
- - updated AWS regions for S3/CloudFront
- - auto export site to Netlify (BETA)
- - live status of export
- - logging of errors when an export fails 
- - prevent hanging on failure
 
 ### Theme & Plugin compatibility
 
@@ -57,8 +52,10 @@ Whilst it would be a challenge to test with every possible combination of plugin
 
 |Theme/plugin name   |   |Known to work well   |Issues   |Notes   |
 |---|---|---|---|---|
-|Elementor page builder   |   |   |   |   |
-|GeneratePress   |   |   |   |   |
+|Elementor page builder   |   |<img src="https://raw.githubusercontent.com/leonstafford/wordpress-static-html-plugin/master/images/greentick.png" width="20">   |   |   |
+|GeneratePress   |   |<img src="https://raw.githubusercontent.com/leonstafford/wordpress-static-html-plugin/master/images/greentick.png" width="20">   |   |   |
+|Avada Theme   |   |   |[8](https://github.com/leonstafford/wordpress-static-html-plugin/issues/8)   |   |
+|Slider Revolution   |   |   |[2](https://github.com/leonstafford/wordpress-static-html-plugin/issues/2)   |   |
 |   |   |   |   |   |
 
 ## Development
