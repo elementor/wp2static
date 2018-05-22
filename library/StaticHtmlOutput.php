@@ -85,11 +85,12 @@ class StaticHtmlOutput {
 				->render();
 		} else {
 			do_action(self::HOOK . '-saveOptions');
+			$wp_upload_dir = wp_upload_dir();
 
 			$this->_view
 				->setTemplate('options-page')
 				->assign('staticExportSettings', $this->_options->getOption('static-export-settings'))
-				->assign('wpUploadsDir', wp_upload_dir()['baseurl'])
+				->assign('wpUploadsDir', $wp_upload_dir['baseurl'])
 				->assign('wpPluginDir', plugins_url('/', __FILE__))
 				->assign('onceAction', self::HOOK . '-options')
 				->render();
@@ -121,7 +122,8 @@ class StaticHtmlOutput {
 	}
 
     public function progressThroughExportTargets() {
-		$wpUploadsDir = wp_upload_dir()['basedir'];
+	$wp_upload_dir = wp_upload_dir();
+	$wpUploadsDir = $wp_upload_dir['baseurl'];
         $exportTargetsFile = $wpUploadsDir . '/WP-STATIC-EXPORT-TARGETS';
 
         // remove first line from file (disabled while testing)
@@ -148,26 +150,27 @@ class StaticHtmlOutput {
         $commitSHA = $commit['sha'];
         $treeSHA = $commit['tree']['sha'];
         $treeURL = $commit['tree']['url'];
-        $treeContents = [];
-		$wpUploadsDir = wp_upload_dir()['basedir'];
+        $treeContents = array();
+	$wp_upload_dir = wp_upload_dir();
+	$wpUploadsDir = $wp_upload_dir['baseurl'];
         $githubGlobHashesAndPaths = $wpUploadsDir . '/WP-STATIC-EXPORT-GITHUB-GLOBS-PATHS';
         $contents = file($githubGlobHashesAndPaths);
 
         foreach($contents as $line) {
             list($blobHash, $targetPath) = explode(',', $line);
 
-            $treeContents[] = [
+            $treeContents[] = array(
                 'path' => trim($targetPath),
                 'mode' => '100644',
                 'type' => 'blob',
                 'sha' => $blobHash
-            ];
+            );
         }
 
-        $treeData = [
+        $treeData = array(
             'base_tree' => $treeSHA,
             'tree' => $treeContents
-        ];
+        );
 
         $this->_prependExportLog('GITHUB: Creating tree ...' . PHP_EOL);
         $this->_prependExportLog('GITHUB: tree data: '. PHP_EOL);
@@ -175,11 +178,11 @@ class StaticHtmlOutput {
         $newTree = $client->api('gitData')->trees()->create($githubUser, $githubRepo, $treeData);
         $this->_prependExportLog('GITHUB: Tree created');
         
-        $commitData = ['message' => 'WP Static HTML Export Plugin on ' . date("Y-m-d h:i:s"), 'tree' => $newTree['sha'], 'parents' => [$commitSHA]];
+        $commitData = array('message' => 'WP Static HTML Export Plugin on ' . date("Y-m-d h:i:s"), 'tree' => $newTree['sha'], 'parents' => array($commitSHA));
         $this->_prependExportLog('GITHUB: Creating commit ...');
         $commit = $client->api('gitData')->commits()->create($githubUser, $githubRepo, $commitData);
         $this->_prependExportLog('GITHUB: Updating head to reference commit ...');
-        $referenceData = ['sha' => $commit['sha'], 'force' => true ]; //Force is default false
+        $referenceData = array('sha' => $commit['sha'], 'force' => true); //Force is default false
         try {
             $reference = $client->api('gitData')->references()->update(
                     $githubUser,
@@ -201,7 +204,8 @@ class StaticHtmlOutput {
 
         $client->authenticate($githubPersonalAccessToken, Github\Client::AUTH_HTTP_TOKEN);
 
-		$wpUploadsDir = wp_upload_dir()['basedir'];
+	$wp_upload_dir = wp_upload_dir();
+	$wpUploadsDir = $wp_upload_dir['baseurl'];
         $_SERVER['githubFilesToExport'] = $wpUploadsDir . '/WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT';
 
         // grab first line from filelist
@@ -229,10 +233,11 @@ class StaticHtmlOutput {
         $globHash = $client->api('gitData')->blobs()->create(
                 $githubUser, 
                 $githubRepo, 
-                ['content' => $encodedFile, 'encoding' => 'base64']
+                array('content' => $encodedFile, 'encoding' => 'base64')
                 ); # utf-8 or base64
 
-		$wpUploadsDir = wp_upload_dir()['basedir'];
+	$wp_upload_dir = wp_upload_dir();
+	$wpUploadsDir = $wp_upload_dir['baseurl'];
         $githubGlobHashesAndPaths = $wpUploadsDir . '/WP-STATIC-EXPORT-GITHUB-GLOBS-PATHS';
 
         $globHashPathLine = $globHash['sha'] . ',' . $targetPath;
@@ -248,7 +253,8 @@ class StaticHtmlOutput {
         $this->_prependExportLog('STARTING EXPORT: via CLI = ' . $viaCLI);
         error_log('STARTING EXPORT: via CLI = ' . $viaCLI);
         // prepare export targets
-		$wpUploadsDir = wp_upload_dir()['basedir'];
+	$wp_upload_dir = wp_upload_dir();
+	$wpUploadsDir = $wp_upload_dir['baseurl'];
         $exportTargetsFile = $wpUploadsDir . '/WP-STATIC-EXPORT-TARGETS';
         unlink($wpUploadsDir . '/WP-STATIC-EXPORT-TARGETS');
 
@@ -333,7 +339,8 @@ class StaticHtmlOutput {
 
 		$uploadDir = $this->get_write_directory();
 		$exporter = wp_get_current_user();
-		$wpUploadsDir = wp_upload_dir()['basedir'];
+		$wp_upload_dir = wp_upload_dir();
+		$wpUploadsDir = $wp_upload_dir['baseurl'];
 		$_SERVER['urlsQueue'] = $wpUploadsDir . '/WP-STATIC-INITIAL-CRAWL-LIST';
 		$_SERVER['currentArchive'] = $wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE';
 		$_SERVER['exportLog'] = $wpUploadsDir . '/WP-STATIC-EXPORT-LOG';
@@ -371,7 +378,8 @@ class StaticHtmlOutput {
     }
 
 	public function crawlABitMore($viaCLI = false) {
-		$wpUploadsDir = wp_upload_dir()['basedir'];
+	$wp_upload_dir = wp_upload_dir();
+	$wpUploadsDir = $wp_upload_dir['baseurl'];
 		$initial_crawl_list_file = $wpUploadsDir . '/WP-STATIC-INITIAL-CRAWL-LIST';
         $crawled_links_file = $wpUploadsDir . '/WP-STATIC-CRAWLED-LINKS';
         $initial_crawl_list = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
@@ -412,7 +420,8 @@ class StaticHtmlOutput {
 		// TODO: if it replaces baseurl here, it will be searching links starting with that...
 		// TODO: shouldn't be doing this here...
         $urlResponse->replaceBaseUrl($baseUrl, $newBaseUrl);
-        $wpUploadsDir = wp_upload_dir()['basedir'];
+	$wp_upload_dir = wp_upload_dir();
+	$wpUploadsDir = $wp_upload_dir['baseurl'];
         $archiveDir = file_get_contents($wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE');
         $this->_saveUrlData($urlResponse, $archiveDir);
 
@@ -434,7 +443,8 @@ class StaticHtmlOutput {
 
                 $urlResponse->cleanup();
                 $urlResponse->replaceBaseUrl($baseUrl, $newBaseUrl);
-                $wpUploadsDir = wp_upload_dir()['basedir'];
+		$wp_upload_dir = wp_upload_dir();
+		$wpUploadsDir = $wp_upload_dir['baseurl'];
                 $archiveDir = file_get_contents($wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE');
                 $this->_saveUrlData($urlResponse, $archiveDir);
             } 
@@ -449,7 +459,8 @@ class StaticHtmlOutput {
 	public function crawlTheWordPressSite($viaCLI = false) {
 		
 
-		$wpUploadsDir = wp_upload_dir()['basedir'];
+		$wp_upload_dir = wp_upload_dir();
+		$wpUploadsDir = $wp_upload_dir['baseurl'];
 		$initial_crawl_list_file = $wpUploadsDir . '/WP-STATIC-INITIAL-CRAWL-LIST';
         $initial_crawl_list = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
 
@@ -466,7 +477,8 @@ class StaticHtmlOutput {
 
     public function createTheArchive() {
         $this->_prependExportLog('CREATING ZIP FILE...');
-        $wpUploadsDir = wp_upload_dir()['basedir'];
+	$wp_upload_dir = wp_upload_dir();
+	$wpUploadsDir = $wp_upload_dir['baseurl'];
         $archiveDir = file_get_contents($wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE');
         $archiveName = rtrim($archiveDir, '/');
 		$tempZip = $archiveName . '.tmp';
@@ -518,7 +530,8 @@ class StaticHtmlOutput {
         $this->_prependExportLog('FTP EXPORT: Preparing list of files to transfer');
 
         // prepare file list
-        $wpUploadsDir = wp_upload_dir()['basedir'];
+	$wp_upload_dir = wp_upload_dir();
+	$wpUploadsDir = $wp_upload_dir['baseurl'];
         $_SERVER['ftpFilesToExport'] = $wpUploadsDir . '/WP-STATIC-EXPORT-FTP-FILES-TO-EXPORT';
 
         $f = @fopen($_SERVER['ftpFilesToExport'], "r+");
@@ -559,7 +572,8 @@ class StaticHtmlOutput {
     }
 
     public function ftpTransferFiles($batch_size = 5) {
-        $wpUploadsDir = wp_upload_dir()['basedir'];
+	$wp_upload_dir = wp_upload_dir();
+	$wpUploadsDir = $wp_upload_dir['baseurl'];
         $archiveDir = file_get_contents($wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE');
         $archiveName = rtrim($archiveDir, '/');
 
@@ -625,7 +639,8 @@ class StaticHtmlOutput {
         $this->_prependExportLog('BUNNYCDN EXPORT: Preparing export..:');
 
         // prepare file list
-        $wpUploadsDir = wp_upload_dir()['basedir'];
+	$wp_upload_dir = wp_upload_dir();
+	$wpUploadsDir = $wp_upload_dir['baseurl'];
         $_SERVER['bunnycdnFilesToExport'] = $wpUploadsDir . '/WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT';
 
         $f = @fopen($_SERVER['bunnycdnFilesToExport'], "r+");
@@ -668,7 +683,8 @@ class StaticHtmlOutput {
     public function bunnycdnTransferFiles($batch_size = 5) {
         $bunnycdnAPIKey = filter_input(INPUT_POST, 'bunnycdnAPIKey');
         $bunnycdnPullZoneName = filter_input(INPUT_POST, 'bunnycdnPullZoneName');
-        $wpUploadsDir = wp_upload_dir()['basedir'];
+	$wp_upload_dir = wp_upload_dir();
+	$wpUploadsDir = $wp_upload_dir['baseurl'];
         $archiveDir = file_get_contents($wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE');
         $archiveName = rtrim($archiveDir, '/');
 
@@ -700,17 +716,17 @@ class StaticHtmlOutput {
             basename($fileToTransfer) . ' TO ' . $targetPath);
        
 		// do the bunny export
-        $client = new Client([
+        $client = new Client(array(
                 'base_uri' => 'https://storage.bunnycdn.com'
-        ]);	
+        ));	
 
         try {
-            $response = $client->request('PUT', '/' . $bunnycdnPullZoneName . '/' . $targetPath . basename($fileToTransfer), [
-                    'headers'  => [
+            $response = $client->request('PUT', '/' . $bunnycdnPullZoneName . '/' . $targetPath . basename($fileToTransfer), array(
+                    'headers'  => array(
                         'AccessKey' => ' ' . $bunnycdnAPIKey
-                    ],
+                    ),
                     'body' => fopen($fileToTransfer, 'rb')
-            ]);
+            ));
         } catch (Exception $e) {
 			error_log($bunnycdnAPIKey);
 			$this->_prependExportLog('BUNNYCDN EXPORT: error encountered');
@@ -729,7 +745,8 @@ class StaticHtmlOutput {
     public function s3Export() {
         require_once(__DIR__.'/aws/aws-autoloader.php');
         require_once(__DIR__.'/StaticHtmlOutput/MimeTypes.php');
-        $wpUploadsDir = wp_upload_dir()['basedir'];
+	$wp_upload_dir = wp_upload_dir();
+	$wpUploadsDir = $wp_upload_dir['baseurl'];
         $archiveDir = file_get_contents($wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE');
         $archiveName = rtrim($archiveDir, '/');
         $siteroot = $archiveName . '/';
@@ -800,7 +817,8 @@ class StaticHtmlOutput {
 
 	// TODO: this is being called twice, check export targets flow in FE/BE
     public function dropboxExport() {
-        $wpUploadsDir = wp_upload_dir()['basedir'];
+	$wp_upload_dir = wp_upload_dir();
+	$wpUploadsDir = $wp_upload_dir['baseurl'];
         $archiveDir = file_get_contents($wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE');
         $archiveName = rtrim($archiveDir, '/');
         $siteroot = $archiveName . '/';
@@ -826,7 +844,7 @@ class StaticHtmlOutput {
 
                         try {
                             $dropboxFile = new DropboxFile($dir.'/'.$item);
-                            $uploadedFile = $dbxClient->upload($dropboxFile, $targetPath, ['autorename' => false, 'mode' => 'overwrite']);
+                            $uploadedFile = $dbxClient->upload($dropboxFile, $targetPath, array('autorename' => false, 'mode' => 'overwrite'));
                         } catch (Exception $e) {
 							$pluginInstance->_prependExportLog('DROPBOX EXPORT: following error returned from Dropbox:');
 							$pluginInstance->_prependExportLog($e);
@@ -843,7 +861,8 @@ class StaticHtmlOutput {
 
     public function githubPrepareExport () {
         // empty the list of GH export files in preparation
-        $wpUploadsDir = wp_upload_dir()['basedir'];
+	$wp_upload_dir = wp_upload_dir();
+	$wpUploadsDir = $wp_upload_dir['baseurl'];
 		$_SERVER['githubFilesToExport'] = $wpUploadsDir . '/WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT';
         $f = @fopen($_SERVER['githubFilesToExport'], "r+");
         if ($f !== false) {
@@ -893,26 +912,27 @@ class StaticHtmlOutput {
     public function netlifyExport () {
         $this->_prependExportLog('NETLIFY EXPORT: starting to deploy ZIP file');
         // will exclude the siteroot when copying
-        $wpUploadsDir = wp_upload_dir()['basedir'];
+	$wp_upload_dir = wp_upload_dir();
+	$wpUploadsDir = $wp_upload_dir['baseurl'];
         $archiveDir = file_get_contents($wpUploadsDir . '/WP-STATIC-CURRENT-ARCHIVE');
         $archiveName = rtrim($archiveDir, '/');
         $siteroot = $archiveName . '/';
         $netlifySiteID = filter_input(INPUT_POST, 'netlifySiteID');
         $netlifyPersonalAccessToken = filter_input(INPUT_POST, 'netlifyPersonalAccessToken');
 
-        $client = new Client([
+        $client = new Client(array(
                 // Base URI is used with relative requests
                 'base_uri' => 'https://api.netlify.com'
-        ]);	
+        ));	
 
         try {
-            $response = $client->request('POST', '/api/v1/sites/' . $netlifySiteID . '.netlify.com/deploys', [
-                    'headers'  => [
+            $response = $client->request('POST', '/api/v1/sites/' . $netlifySiteID . '.netlify.com/deploys', array(
+                    'headers'  => array(
                         'Content-Type' => 'application/zip',
                         'Authorization' => 'Bearer ' . $netlifyPersonalAccessToken
-                    ],
+                    ),
                     'body' => fopen($archiveName . '.zip', 'rb')
-            ]);
+            ));
         } catch (Exception $e) {
             file_put_contents($_SERVER['exportLog'], $e , FILE_APPEND | LOCK_EX);
             throw new Exception($e);
@@ -1028,8 +1048,9 @@ class StaticHtmlOutput {
 	}
 
     public function _prependExportLog($text) {
-		$wpUploadsDir = wp_upload_dir()['basedir'];
-		$exportLog = $wpUploadsDir . '/WP-STATIC-EXPORT-LOG';
+	$wp_upload_dir = wp_upload_dir();
+	$wpUploadsDir = $wp_upload_dir['baseurl'];
+	$exportLog = $wpUploadsDir . '/WP-STATIC-EXPORT-LOG';
         $src = fopen($exportLog, 'r+');
         $dest = fopen('php://temp', 'w');
         fwrite($dest,  date("Y-m-d h:i:s") . ' ' . $text . PHP_EOL);
