@@ -21,8 +21,11 @@ wp --allow-root config create --dbname=wordpress --dbuser=root --dbpass=banana -
 wp --allow-root db create
 wp --allow-root core install --url="172.19.0.6" --title='PHP 5.3.29 WordPress Instance' --admin_user=admin --admin_password=admin --admin_email=blah@blah.com --skip-email
 
+. /sync_sources.sh
+
 # activate wp static output plugin
-#wp --allow-root plugin activate wordpress-static-html-output
+wp --allow-root plugin activate wordpress-static-html-output
+
 
 rm /var/www/index.html
 

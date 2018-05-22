@@ -2,7 +2,7 @@ FROM ubuntu:precise
 
 # purposefully separating to cache hard, simple to force cache clear when needed
 RUN apt-get update 
-RUN apt-get install -y vim wget mysql-client apache2-dev curl apache2 libxml2-dev build-essential libcurl4-openssl-dev
+RUN apt-get install -y inotify-tools rsync vim wget mysql-client apache2-dev curl apache2 libxml2-dev build-essential libcurl4-openssl-dev
 
 # dont need, else add to /etc/apache2/apache2 conf?
 #ADD ./httpd-custom.conf /usr/local/apache2/conf/httpd.conf
@@ -26,9 +26,4 @@ RUN mv wp-cli.phar /usr/local/bin/wp
 
 COPY *.sh /
 COPY phpinfo.php /var/www/
-
-
-
-EXPOSE 80
-EXPOSE 443
 
