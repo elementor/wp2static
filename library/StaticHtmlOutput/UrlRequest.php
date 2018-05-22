@@ -116,7 +116,7 @@ class StaticHtmlOutput_UrlRequest
 	
 		if (!$this->isHtml() && !$this->isCrawlableContentType()) {
             error_log('UrlRequest was not a valid HTML file - not extracting links!');
-            return [];
+            return array();
         }
 
         // TODO: could use this to get any relative urls, also...
@@ -168,7 +168,7 @@ class StaticHtmlOutput_UrlRequest
             error_log($this->getUrl());
             error_log($this->getContentType());
             error_log('DIDNT FIND ANY LINKS IN RESPONSE BODY THAT WE WANT TO ADD TO ARCHIVE');
-            return [];
+            return array();
         }
 		
 	}
