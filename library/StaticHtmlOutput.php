@@ -23,7 +23,7 @@ class StaticHtmlOutput {
 	protected function __clone() {}
 
     // gets the full path on server to the wp uploads dir
-    // not to be confued with uploads public URL
+    // not to be confued with uploads public URL 
 	public function getUploadsDirBaseDIR() {
         $tmp_var_to_hold_return_array = wp_upload_dir();
 
