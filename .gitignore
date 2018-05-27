@@ -7,3 +7,5 @@ package-lock.json
 .DS_Store
 plugin_options_backup.sql
 
+
+/vendor/
