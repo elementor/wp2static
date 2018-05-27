@@ -67,6 +67,10 @@ This repo contains the latest code, which you can clone/download to get the blee
 
 If you'd like to contribute, please follow the usual GitHub procedures (create an Issue, fork repo, submit PR). If you're unsure about any of that, contact me and I'll be happy to help. 
 
+### Libraries
+
+Composer version of plugins will not work within the plugin for most users, so we convert and `require`/`include` them.
+
 ### Docker quickstart
 
 To quickly try out the plugin, without affecting your other WordPress installations:
