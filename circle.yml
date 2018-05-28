@@ -1,14 +1,6 @@
 machine:
   ruby:
 
-dependencies:
-  post:
-    - cd $HOME && curl -OL https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar
-    - cd $HOME && curl -OL https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar
-    - cd $HOME && git clone https://github.com/wimg/PHPCompatibility.git
-    - cd $HOME && git clone -b master https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards.git wpcs
-    - cd $HOME && php phpcs.phar --config-set installed_paths /home/ubuntu/PHPCompatibility,/home/ubuntu/wpcs
-
 test:
   override:
-    - cd $HOME && php phpcs.phar --ignore=*/provisioning/*,*.dbus/*,*/PHPCompatibility/*,*/wpcs/*,*/vendor/*,*/node_modules/* --standard=PHPCompatibility ./wordpress-static-html-plugin/
+    - echo 'tests running within repo for now'
