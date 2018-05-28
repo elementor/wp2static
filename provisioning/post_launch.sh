@@ -32,10 +32,15 @@ fi
 echo 'pwd:'
 pwd
 
+# apache erorr around here
+
 # install default
 wp --allow-root core install --url="$containerIP" --title='wp plugindev' --admin_user=admin --admin_password=admin --admin_email=blah@blah.com --skip-email
 
 . /sync_sources.sh
+
+# sh: 1: -t: not found
+# error around here
 
 # activate wp static output plugin
 wp --allow-root plugin activate wordpress-static-html-output

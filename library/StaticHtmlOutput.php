@@ -111,7 +111,7 @@ class StaticHtmlOutput {
 		}
 	}
 
-    public function saveExportSettings () {
+    public function save_options () {
 		if (!check_admin_referer(self::HOOK . '-options') || !current_user_can('manage_options')) {
 			error_log('user didnt have permissions to change options');
 			exit('You cannot change WP Static HTML Output Plugin options.');
@@ -148,7 +148,7 @@ class StaticHtmlOutput {
         $this->_prependExportLog('PROGRESS: Starting export type:' . $target . PHP_EOL);
     }
 
-    public function githubFinaliseExport() {
+    public function github_finalise_export() {
         $client = new \Github\Client();
         $githubRepo = filter_input(INPUT_POST, 'githubRepo');
         $githubBranch = filter_input(INPUT_POST, 'githubBranch');
@@ -206,7 +206,7 @@ class StaticHtmlOutput {
 
     }
 
-	public function githubUploadBlobs() {
+	public function github_upload_blobs() {
         $client = new \Github\Client();
         $githubRepo = filter_input(INPUT_POST, 'githubRepo');
         $githubPersonalAccessToken = filter_input(INPUT_POST, 'githubPersonalAccessToken');
@@ -255,7 +255,7 @@ class StaticHtmlOutput {
         echo $filesRemaining;
     }
 
-	public function startExport($viaCLI = false) {
+	public function start_export($viaCLI = false) {
         $this->_prependExportLog('STARTING EXPORT: via CLI = ' . $viaCLI);
         error_log('STARTING EXPORT: via CLI = ' . $viaCLI);
         // prepare export targets
@@ -448,11 +448,11 @@ class StaticHtmlOutput {
         
         // loop for CLI
         if ($viaCLI) {
-            $this->crawlTheWordPressSite($viaCLI);
+            $this->crawl_site($viaCLI);
         }
     }
 
-	public function crawlTheWordPressSite($viaCLI = false) {
+	public function crawl_site($viaCLI = false) {
 		$initial_crawl_list_file = $this->getUploadsDirBaseDIR() . '/WP-STATIC-INITIAL-CRAWL-LIST';
         $initial_crawl_list = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
 
@@ -467,7 +467,7 @@ class StaticHtmlOutput {
         }
     }
 
-    public function createTheArchive() {
+    public function create_zip() {
         $this->_prependExportLog('CREATING ZIP FILE...');
         $archiveDir = file_get_contents($this->getUploadsDirBaseDIR() . '/WP-STATIC-CURRENT-ARCHIVE');
         $archiveName = rtrim($archiveDir, '/');
@@ -496,7 +496,7 @@ class StaticHtmlOutput {
         echo $publicDownloadableZip;
     }
 
-    public function ftpPrepareExport() {
+    public function ftp_prepare_export() {
         $this->_prependExportLog('FTP EXPORT: Checking credentials..:');
 
         require_once(__DIR__.'/FTP/FtpClient.php');
@@ -559,7 +559,7 @@ class StaticHtmlOutput {
         echo 'SUCCESS';
     }
 
-    public function ftpTransferFiles($batch_size = 5) {
+    public function ftp_transfer_files($batch_size = 5) {
         $archiveDir = file_get_contents($this->getUploadsDirBaseDIR() . '/WP-STATIC-CURRENT-ARCHIVE');
         $archiveName = rtrim($archiveDir, '/');
 
@@ -621,7 +621,7 @@ class StaticHtmlOutput {
         echo $filesRemaining;
     }
 
-    public function bunnycdnPrepareExport() {
+    public function bunnycdn_prepare_export() {
         $this->_prependExportLog('BUNNYCDN EXPORT: Preparing export..:');
 
         // prepare file list
@@ -664,7 +664,7 @@ class StaticHtmlOutput {
         echo 'SUCCESS';
     }
 
-    public function bunnycdnTransferFiles($batch_size = 5) {
+    public function bunnycdn_transfer_files($batch_size = 5) {
         $bunnycdnAPIKey = filter_input(INPUT_POST, 'bunnycdnAPIKey');
         $bunnycdnPullZoneName = filter_input(INPUT_POST, 'bunnycdnPullZoneName');
         $archiveDir = file_get_contents($this->getUploadsDirBaseDIR() . '/WP-STATIC-CURRENT-ARCHIVE');
@@ -724,7 +724,7 @@ class StaticHtmlOutput {
         echo $filesRemaining;
     }
 
-    public function s3Export() {
+    public function s3_do_export() {
         require_once(__DIR__.'/aws/aws-autoloader.php');
         require_once(__DIR__.'/StaticHtmlOutput/MimeTypes.php');
         $archiveDir = file_get_contents($this->getUploadsDirBaseDIR() . '/WP-STATIC-CURRENT-ARCHIVE');
@@ -796,7 +796,7 @@ class StaticHtmlOutput {
     }
 
 	// TODO: this is being called twice, check export targets flow in FE/BE
-    public function dropboxExport() {
+    public function dropbox_do_export() {
         $archiveDir = file_get_contents($this->getUploadsDirBaseDIR() . '/WP-STATIC-CURRENT-ARCHIVE');
         $archiveName = rtrim($archiveDir, '/');
         $siteroot = $archiveName . '/';
@@ -837,7 +837,7 @@ class StaticHtmlOutput {
         FolderToDropbox($siteroot, $dbxClient, $siteroot, $dropboxFolder, $this);
     }
 
-    public function githubPrepareExport () {
+    public function github_prepare_export () {
         // empty the list of GH export files in preparation
 		$_SERVER['githubFilesToExport'] = $this->getUploadsDirBaseDIR() . '/WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT';
         $f = @fopen($_SERVER['githubFilesToExport'], "r+");
@@ -885,7 +885,7 @@ class StaticHtmlOutput {
         FolderToGithub($siteroot, $siteroot, $githubPath);
     }
 
-    public function netlifyExport () {
+    public function netlify_do_export () {
         $this->_prependExportLog('NETLIFY EXPORT: starting to deploy ZIP file');
         // will exclude the siteroot when copying
         $archiveDir = file_get_contents($this->getUploadsDirBaseDIR() . '/WP-STATIC-CURRENT-ARCHIVE');
@@ -922,13 +922,13 @@ class StaticHtmlOutput {
 
 
         // start export, including build initial file list
-        $this->startExport(true);
+        $this->start_export(true);
 
         // do the crawl
-        $this->crawlTheWordPressSite(true);
+        $this->crawl_site(true);
 
         // create zip
-        $this->createTheArchive();
+        $this->create_zip();
         
 
         // do any exports

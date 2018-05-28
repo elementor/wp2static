@@ -9,7 +9,12 @@ $settings = esc_html($this->staticExportSettings);
 if ($settings == '') {
     $settings = 'no existing settings found';
 }
+
+$ajax_nonce = wp_create_nonce( 'wpstatichtmloutput' );
+
 ?>
+
+
 
 <script>
 var settings = '<?php echo $settings; ?>';
@@ -211,7 +216,7 @@ jQuery(document).ready(function($){
     }
 
     function exportToGitHub() {
-        $('.hiddenActionField').val('start_export');
+        $('.hiddenActionField').val('wp_static_html_output_ajax');
         archives = $('.options-form');
         data = $(archives[0]).serialize();
         data = data.replace('start_export', 'github_upload_blobs');
@@ -265,7 +270,7 @@ jQuery(document).ready(function($){
             exportTargets.push('NETLIFY');
         }
 
-        data = $(archives[0]).serialize();
+        data = $(archives[0]).serialize() + '&nonce=<?php echo $ajax_nonce; ?>&ajax_action=start_export';
         $.ajax({
             url: ajaxurl,
             data: data,
@@ -350,10 +355,10 @@ jQuery(document).ready(function($){
     }
 
     function crawlSite() {
-        $('.hiddenActionField').val('crawl_site');
+        $('.hiddenActionField').val('wp_static_html_output_ajax');
         archives = $('.options-form');
 
-        data = $(archives[0]).serialize();
+        data = $(archives[0]).serialize() + '&nonce=<?php echo $ajax_nonce; ?>&ajax_action=crawl_site';
         $.ajax({
             url: ajaxurl,
             data: data,
@@ -372,7 +377,8 @@ jQuery(document).ready(function($){
     }
 
     function saveOptions() {
-        $('.hiddenActionField').val('save_options');
+        $('.hiddenActionField').val('wp_static_html_output_ajax');
+        $('#hiddenAJAXAction').val('save_options');
         archives = $('.options-form');
         newSettings = $(".options-form").serialize();
         $(".hiddenSettingsField").val(newSettings);
@@ -770,7 +776,9 @@ http://172.17.0.3/my_pricelist.pdf</pre>
 
 					<p class="submit">
             <?php wp_nonce_field($this->onceAction) ?>
-						<input id="formActionHiddenField" class="hiddenActionField" type="hidden" name="action" value="generate" />
+						<input id="formActionHiddenField" class="hiddenActionField" type="hidden" name="action" value="wp_static_html_output_ajax" />
+						<input id="hiddenNonceField" type="hidden" name="nonce" value="<?php echo $ajax_nonce; ?>" />
+						<input id="hiddenAJAXAction" type="hidden" name="ajax_action" value="" />
 						<input name="staticExportSettings" class="hiddenSettingsField" type="hidden" name="action" value="" />
 						<input class="saveSettingsButton button-primary" value="Save current options" />
                         <button class="button addAnotherTargetButton">Add another export target</button>
