@@ -14,7 +14,7 @@
 
 // TODO: find way to enable these based on detected capabilities
 // require_once 'library/dropboxsdk/autoload.php'; //?
-// require_once 'library/Github/autoload.php'; //?
+ require_once 'library/Github/autoload.php'; //?
 require_once 'library/StaticHtmlOutput/Options.php';
 require_once 'library/StaticHtmlOutput/View.php';
 require_once 'library/StaticHtmlOutput/UrlRequest.php';

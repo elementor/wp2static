@@ -190,36 +190,15 @@ jQuery(document).ready(function($){
         });
     }
 
-    function s3DoExport() {
-        // this is a one shot export, not async partial transfers like others
-        $('.hiddenActionField').val('s3_do_export');
-        archives = $('.options-form');
-        data = $(archives[0]).serialize();
+	// allows calling one AJAX function, optionally incremental (batch exports)
+	// with an optional finali
+	function doAJAXExport( export_action, finalise_export_action ) {
+		console.log('calling doAJAXExport with: ' + export_action);
 
-        $.ajax({
-            url: ajaxurl,
-            data: data,
-            dataType: 'html',
-            method: 'POST',
-            success: function(serverResponse) {
-                $.ajax({
-                    url: ajaxurl,
-                    data: data,
-                    dataType: 'html',
-                    method: 'POST',
-                    success: processExportTargets,
-                    error: ajaxErrorHandler
-                });
-            },
-            error: ajaxErrorHandler
-        });
-    }
-
-    function exportToGitHub() {
         $('.hiddenActionField').val('wp_static_html_output_ajax');
+        $('#hiddenAJAXAction').val(export_action);
         archives = $('.options-form');
         data = $(archives[0]).serialize();
-        data = data.replace('start_export', 'github_upload_blobs');
 
         $.ajax({
             url: ajaxurl,
@@ -227,28 +206,29 @@ jQuery(document).ready(function($){
             dataType: 'html',
             method: 'POST',
             success: function(serverResponse) {
-                if (serverResponse > 0) {
-                    // more GH exporting to go
-                    exportToGitHub();
-                } else {
-                    data = data.replace('github_upload_blobs', 'github_finalise_export');
-                    $.ajax({
-                        url: ajaxurl,
-                        data: data,
-                        dataType: 'html',
-                        method: 'POST',
-                        success: processExportTargets,
-                        error: ajaxErrorHandler
-                    });
-                }
+				// incremental jobs keep calling themselves
+				if (finalise_export_action) {
+					if (serverResponse > 0) {
+						// call this same method
+						console.log('incremental job step, calling same function');
+						doAJAXExport( export_action, finalise_export_action )
+					} else {
+						console.log('incremental job completed, calling same function');
+						doAJAXExport( finalise_export_action )
+					}
+				} else {
+					// not an incremental action, continue on with export targets
+					processExportTargets();
+				}
             },
             error: ajaxErrorHandler
         });
-    }
+	}
 
     function startExport() {
         console.log('START_EXPORT called');
-        $('.hiddenActionField').val('start_export');
+        $('.hiddenActionField').val('wp_static_html_output_ajax');
+        $('#hiddenAJAXAction').val('start_export');
         archives = $('.options-form');
 
         if ($('#sendViaGithub').attr('checked') == 'checked') {
@@ -270,7 +250,7 @@ jQuery(document).ready(function($){
             exportTargets.push('NETLIFY');
         }
 
-        data = $(archives[0]).serialize() + '&nonce=<?php echo $ajax_nonce; ?>&ajax_action=start_export';
+        data = $(archives[0]).serialize();
         $.ajax({
             url: ajaxurl,
             data: data,
@@ -290,6 +270,7 @@ jQuery(document).ready(function($){
 
     function processExportTargets () {
         // grab next item from exportTargets array, removing from array
+		// TODO: just call doAJAXExport with shifted arr element
         switch(target = exportTargets.shift()) {
             case 'GITHUB':
                 githubPrepareExport();
@@ -304,7 +285,7 @@ jQuery(document).ready(function($){
                 break;
 
             case 'S3':
-                s3DoExport();
+				doAJAXExport('s3_do_expot');
                 break;
 
             case 'DROPBOX':
@@ -324,23 +305,9 @@ jQuery(document).ready(function($){
         }
     }
 
-    function createZipArchive() {
-        $('.hiddenActionField').val('create_zip');
-        archives = $('.options-form');
-
-        data = $(archives[0]).serialize();
-        $.ajax({
-            url: ajaxurl,
-            data: data,
-            dataType: 'html',
-            method: 'POST',
-            success: processExportTargets,
-            error: ajaxErrorHandler
-        });
-    }
-
     function githubPrepareExport() {
-        $('.hiddenActionField').val('github_prepare_export');
+        $('.hiddenActionField').val('wp_static_html_output_ajax');
+        $('#hiddenAJAXAction').val('github_prepare_export');
         archives = $('.options-form');
 
         data = $(archives[0]).serialize();
@@ -349,16 +316,18 @@ jQuery(document).ready(function($){
             data: data,
             dataType: 'html',
             method: 'POST',
-            success: exportToGitHub,
+			// TODO: rework doAJAXExport to handle prep, process and finalise tasks
+            success: function() { doAJAXExport('github_upload_blobs', 'github_finalise_export')},
             error: ajaxErrorHandler
         });
     }
 
     function crawlSite() {
         $('.hiddenActionField').val('wp_static_html_output_ajax');
+        $('#hiddenAJAXAction').val('crawl_site');
         archives = $('.options-form');
+        data = $(archives[0]).serialize();
 
-        data = $(archives[0]).serialize() + '&nonce=<?php echo $ajax_nonce; ?>&ajax_action=crawl_site';
         $.ajax({
             url: ajaxurl,
             data: data,
@@ -366,7 +335,7 @@ jQuery(document).ready(function($){
             method: 'POST',
             success: function(serverResponse) {
                 if (serverResponse == 'CRAWLING COMPLETED') {
-                    createZipArchive();
+                    doAJAXExport('create_zip');
                 } else {
                     crawlSite();
                 }
@@ -806,7 +775,7 @@ Current timeout value <?php echo ini_get('max_execution_time'); ?>
     <div>
         <img src="<?php echo plugins_url('../images/dashinfinity.gif', __FILE__); ?>" id="progress" />
         <div id="donateText">
-            Thanks for using this plugin. I'm a solo <a target="_blank" href="https://leonstafford.github.io">open source developer</a>, currently crowdsourcing for the next big release of this plugin. If this plugin has helped save you time or helped your business, please help boost the <a target="_blank" href="https://www.kickstarter.com/projects/1776117837/the-wp-plugin-that-speeds-up-and-secures-your-site">Kickstarter Campaign</a>. I'm also available to help speed up and secure your WordPress powered site - shoot me an email: <a target="_blank" href="mailto:leonstafford@protonmail.com">leon.stafford@protonmail.com</a></i>
+            Thanks for using this plugin. I'm a solo <a target="_blank" href="https://leonstafford.github.io">open source developer</a>, currently crowdsourcing for the next big release of this plugin. If this plugin has helped save you time or helped your business, please help boost the <a target="_blank" href="https://www.kickstarter.com/projects/1776117837/the-wp-plugin-that-speeds-up-and-secures-your-site">Kickstarter Campaign</a>. I'm also available to help speed up and secure your WordPress powered site - shoot me an email: <a target="_blank" href="mailto:leonstafford@protonmail.com">leonstafford@protonmail.com</a></i>
         </div>
 
         <h2 style="clear:both;">Export Log</h2>
