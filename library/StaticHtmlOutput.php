@@ -453,6 +453,7 @@ class StaticHtmlOutput {
     }
 
 	public function crawl_site($viaCLI = false) {
+		error_log('STUCK HERE');
 		$initial_crawl_list_file = $this->getUploadsDirBaseDIR() . '/WP-STATIC-INITIAL-CRAWL-LIST';
         $initial_crawl_list = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
 
@@ -725,6 +726,7 @@ class StaticHtmlOutput {
     }
 
     public function s3_do_export() {
+        $this->_prependExportLog('S3 EXPORT: starting ');
         require_once(__DIR__.'/aws/aws-autoloader.php');
         require_once(__DIR__.'/StaticHtmlOutput/MimeTypes.php');
         $archiveDir = file_get_contents($this->getUploadsDirBaseDIR() . '/WP-STATIC-CURRENT-ARCHIVE');
