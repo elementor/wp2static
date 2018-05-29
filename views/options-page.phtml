@@ -96,50 +96,6 @@ jQuery(document).ready(function($){
         });
     }
 
-    function prepareBUNNYCDNExport() {
-        $('.hiddenActionField').val('bunnycdn_prepare_export');
-        archives = $('.options-form');
-        data = $(archives[0]).serialize();
-        console.log('should trigger BunnyCDN action server side');
-
-        $.ajax({
-            url: ajaxurl,
-            data: data,
-            dataType: 'html',
-            method: 'POST',
-            success: bunnycdnTransferFiles,
-            error: ajaxErrorHandler
-        });
-    }
-
-    function bunnycdnTransferFiles() {
-        $('.hiddenActionField').val('bunnycdn_transfer_files');
-        archives = $('.options-form');
-        data = $(archives[0]).serialize();
-
-        $.ajax({
-            url: ajaxurl,
-            data: data,
-            dataType: 'html',
-            method: 'POST',
-            success: function(serverResponse) {
-                if (serverResponse > 0) {
-                    bunnycdnTransferFiles();
-                } else {
-                    $.ajax({
-                        url: ajaxurl,
-                        data: data,
-                        dataType: 'html',
-                        method: 'POST',
-                        success: processExportTargets,
-                        error: ajaxErrorHandler
-                    });
-                }
-            },
-            error: ajaxErrorHandler
-        });
-    }
-
     function netlifyDoExport() {
         // this is a one shot export, not async partial transfers like others
         $('.hiddenActionField').val('netlify_do_export');
@@ -281,7 +237,7 @@ jQuery(document).ready(function($){
                 break;
 
             case 'BUNNYCDN':
-                prepareBUNNYCDNExport();
+				doAJAXExport('bunnycdn_prepare_export', 'bunnycdn_transfer_files');
                 break;
 
             case 'S3':
