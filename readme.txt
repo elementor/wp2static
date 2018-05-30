@@ -1,6 +1,6 @@
 === WP Static HTML Output ===
 Contributors: leonstafford
-Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=NHEV6WLYJ6QWQ
+Donate link: https://www.paypal.me/leonjstafford
 Tags: static,html,export,performance,security,portable,s3,dropbox,github,netlify,bunnycdn
 Requires at least: 3.2
 Tested up to: 4.9.6
@@ -43,7 +43,7 @@ Having issues with this plugin? I try to support any issues via the official sup
  * selectively export only changed pages since last output
  * increase 1-click deployment options
 
-Developed by [**Leon Stafford**](http://leonstafford.github.io). If you have any questions about this plugin's usage, installation or development, please email me at: [leon.stafford@mac.com](mailto:leon.stafford@mac.com)
+Developed by [**Leon Stafford**](http://leonstafford.github.io). If you have any questions about this plugin's usage, installation or development, please email me at: [leonstafford@mac.com](mailto:leonstafford@protonmail.com)
 
 == Installation ==
 
@@ -342,7 +342,7 @@ This update brings much desired multiple export targets. Please note, it will ne
 
 = 1.2.0 =
 
-Good to be back into developing the plugin again. This release brings some good functionality, though may be some bugs. If so, please contact me to fix: lionhive@gmail.com Cheers, Leon
+Good to be back into developing the plugin again. This release brings some good functionality, though may be some bugs. 
 
  * 1-click generation and exporting to an FTP server
  * improved user experience when saving and exporting sites (no more white screen of boredom!)
