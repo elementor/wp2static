@@ -22,6 +22,8 @@ class StaticHtmlOutput {
 	protected function __construct() {}
 	protected function __clone() {}
 
+	public $FILEPATH = '/var/www/html/wp-content/uploads/OBLADEE';
+
     // gets the full path on server to the wp uploads dir
     // not to be confued with uploads public URL 
 	public function getUploadsDirBaseDIR() {
@@ -731,12 +733,46 @@ class StaticHtmlOutput {
 		}
     }
 
-	// TODO: re-use this will all export options (hard coded to S3 for initial testing')
-	public function prepare_file_list($rewrite_options = 'S3') {
-        $this->_prependExportLog('GENERIC EXPORT: Preparing list of files to transfer');
+	public function recursively_scan_dir($dir, $siteroot, $file_list_path){
+		// rm duplicate slashes in path (TODO: fix cause)
+		$dir = str_replace('//', '/', $dir);
+		$this->_prependExportLog('DIR:' . $dir);
+		$this->_prependExportLog('SITEROOT:' . $siteroot);
+		$files = scandir($dir);
+		foreach($files as $item){
+			if($item != '.' && $item != '..' && $item != '.git'){
+				if(is_dir($dir.'/'.$item)) {
+					$this->recursively_scan_dir($dir.'/'.$item, $siteroot, $file_list_path);
+				} else if(is_file($dir.'/'.$item)) {
+					$subdir = str_replace('/wp-admin/admin-ajax.php', '', $_SERVER['REQUEST_URI']);
+					$subdir = ltrim($subdir, '/');
+					$clean_dir = str_replace($siteroot . '/', '', $dir.'/');
+					$clean_dir = str_replace($subdir, '', $clean_dir);
+					$filename = $dir .'/' . $item . "\n";
+					
+					// rm duplicate slashes in path (TODO: fix cause)
+					$filename = str_replace('//', '/', $filename);
+					$this->_prependExportLog('FILE TO ADD:');
+					$this->_prependExportLog($filename);
+					$this->add_file_to_list($filename, $file_list_path);
+				} 
+			}
+		}
+	}
 
-        $_SERVER['genericFilesToExport'] = $this->getUploadsDirBaseDIR() . '/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT';
-        $f = @fopen($_SERVER['genericFilesToExport'], "r+");
+	// only store files in list, let each export processor/transferer rewrite as needed
+	public function add_file_to_list( $filename, $file_list_path) {
+		$this->_prependExportLog('FILEPATH2: ' . $file_list_path);
+		file_put_contents($file_list_path, $filename, FILE_APPEND | LOCK_EX);
+	}
+
+	public function prepare_file_list($export_target) {
+        $this->_prependExportLog('GENERIC EXPORT: Preparing list of files for ' . $export_target . ' transfer');
+        $this->_prependExportLog('FILEPATH1: ' . $this->FILEPATH);
+
+         $file_list_path = $this->getUploadsDirBaseDIR() . '/WP-STATIC-EXPORT-' . $export_target . '-FILES-TO-EXPORT';
+
+        $f = @fopen($file_list_path, "r+");
         if ($f !== false) {
             ftruncate($f, 0);
             fclose($f);
@@ -746,31 +782,9 @@ class StaticHtmlOutput {
         $archiveName = rtrim($archiveDir, '/');
         $siteroot = $archiveName . '/';
 
-		// only store files in list, let each export processor/transferer rewrite as needed
-		function add_file_to_list( $filename ) {
 
-			file_put_contents($_SERVER['ftpFilesToExport'], $filename, FILE_APPEND | LOCK_EX);
-		}
 
-        function recursively_scan_dir($dir, $siteroot){
-            $files = scandir($dir);
-            foreach($files as $item){
-                if($item != '.' && $item != '..' && $item != '.git'){
-                    if(is_dir($dir.'/'.$item)) {
-                        recursively_scan_dir($dir.'/'.$item, $siteroot);
-                    } else if(is_file($dir.'/'.$item)) {
-                        $subdir = str_replace('/wp-admin/admin-ajax.php', '', $_SERVER['REQUEST_URI']);
-                        $subdir = ltrim($subdir, '/');
-                        $clean_dir = str_replace($siteroot . '/', '', $dir.'/');
-                        $clean_dir = str_replace($subdir, '', $clean_dir);
-                        $filename = $dir .'/' . $item . "\n";
-                        add_file_to_list($filename);
-                    } 
-                }
-            }
-        }
-
-        folder_to_filelist($siteroot, $siteroot);
+        $this->recursively_scan_dir($siteroot, $siteroot, $file_list_path);
 
 
         $this->_prependExportLog('GENERIC EXPORT: File list prepared');
@@ -779,11 +793,7 @@ class StaticHtmlOutput {
     public function s3_prepare_export() {
         $this->_prependExportLog('S3 EXPORT: preparing export...');
 
-
-
-        $archiveDir = file_get_contents($this->getUploadsDirBaseDIR() . '/WP-STATIC-CURRENT-ARCHIVE');
-        $archiveName = rtrim($archiveDir, '/');
-        $siteroot = $archiveName . '/';
+		$this->prepare_file_list('S3');
 
 
         echo 'SUCCESS';
