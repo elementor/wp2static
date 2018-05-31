@@ -494,7 +494,9 @@ class StaticHtmlOutput {
         $publicDownloadableZip = str_replace(ABSPATH, trailingslashit(home_url()), $archiveName . '.zip');
         $this->_prependExportLog('ZIP CREATED: Download at ' . $publicDownloadableZip);
 
-        echo $publicDownloadableZip;
+		echo 'SUCCESS';
+		// TODO: put the zip url somewhere in the interface
+        //echo $publicDownloadableZip;
     }
 
     public function ftp_prepare_export() {
@@ -722,7 +724,11 @@ class StaticHtmlOutput {
         // TODO: error handling when not connected/unable to put, etc
         unset($bunnycdn);
 
-        echo $filesRemaining;
+		if ( $filesRemaining > 0 ) {
+			echo $filesRemaining;
+		} else {
+			echo 'SUCCESS';
+		}
     }
 
     public function s3_do_export() {
