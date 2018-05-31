@@ -804,6 +804,7 @@ class StaticHtmlOutput {
 		}
 	}
 
+	// TODO: make this a generic func, calling vendor specific files
     public function s3_transfer_files() {
         $this->_prependExportLog('S3 EXPORT: Transferring files...');
 
