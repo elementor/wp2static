@@ -50,78 +50,9 @@ jQuery(document).ready(function($){
 
     var currentArchive = 1;
 
-    function prepareFTPExport() {
-        $('.hiddenActionField').val('ftp_prepare_export');
-        archives = $('.options-form');
-        data = $(archives[0]).serialize();
-        console.log('should trigger FTP action server side');
-
-        $.ajax({
-            url: ajaxurl,
-            data: data,
-            dataType: 'html',
-            method: 'POST',
-            success: ftpTransferFiles,
-            error: ajaxErrorHandler
-        });
-    }
-
-    function ftpTransferFiles() {
-        $('.hiddenActionField').val('ftp_transfer_files');
-        archives = $('.options-form');
-        data = $(archives[0]).serialize();
-
-        $.ajax({
-            url: ajaxurl,
-            data: data,
-            dataType: 'html',
-            method: 'POST',
-            success: function(serverResponse) {
-                if (serverResponse > 0) {
-                    ftpTransferFiles();
-                } else {
-                    $.ajax({
-                        url: ajaxurl,
-                        data: data,
-                        dataType: 'html',
-                        method: 'POST',
-                        success: processExportTargets,
-                        error: ajaxErrorHandler
-                    });
-                }
-            },
-            error: ajaxErrorHandler
-        });
-    }
-
     function netlifyDoExport() {
         // this is a one shot export, not async partial transfers like others
         $('.hiddenActionField').val('netlify_do_export');
-        archives = $('.options-form');
-        data = $(archives[0]).serialize();
-
-        $.ajax({
-            url: ajaxurl,
-            data: data,
-            dataType: 'html',
-            method: 'POST',
-            success: function(serverResponse) {
-                $.ajax({
-                    url: ajaxurl,
-                    data: data,
-                    dataType: 'html',
-                    method: 'POST',
-                    success: processExportTargets,
-                    error: ajaxErrorHandler
-                });
-            },
-            error: ajaxErrorHandler
-        });
-    }
-
-    function dropboxDoExport() {
-        // this is a one shot export, not async partial transfers like others
-        $('.hiddenActionField').val('dropbox_do_export');
         archives = $('.options-form');
         data = $(archives[0]).serialize();
 
@@ -239,7 +170,7 @@ jQuery(document).ready(function($){
                 break;
 
             case 'FTP':
-                prepareFTPExport();
+				doAJAXExport('ftp_prepare_export', 'ftp_transfer_files');
                 break;
 
             case 'BUNNYCDN':
@@ -251,7 +182,7 @@ jQuery(document).ready(function($){
                 break;
 
             case 'DROPBOX':
-                dropboxDoExport();
+				doAJAXExport('dropbox_do_export');
                 break;
 
             case 'NETLIFY':

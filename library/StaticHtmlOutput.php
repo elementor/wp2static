@@ -453,7 +453,6 @@ class StaticHtmlOutput {
     }
 
 	public function crawl_site($viaCLI = false) {
-		error_log('STUCK HERE');
 		$initial_crawl_list_file = $this->getUploadsDirBaseDIR() . '/WP-STATIC-INITIAL-CRAWL-LIST';
         $initial_crawl_list = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
 
@@ -621,7 +620,11 @@ class StaticHtmlOutput {
         // TODO: error handling when not connected/unable to put, etc
         unset($ftp);
 
-        echo $filesRemaining;
+		if ( $filesRemaining > 0 ) {
+			echo $filesRemaining;
+		} else {
+			echo 'SUCCESS';
+		}
     }
 
     public function bunnycdn_prepare_export() {
@@ -721,9 +724,6 @@ class StaticHtmlOutput {
 
         $this->_prependExportLog('BUNNYCDN EXPORT: ' . $filesRemaining . ' files remaining to transfer');
 
-        // TODO: error handling when not connected/unable to put, etc
-        unset($bunnycdn);
-
 		if ( $filesRemaining > 0 ) {
 			echo $filesRemaining;
 		} else {
@@ -804,6 +804,7 @@ class StaticHtmlOutput {
     }
 
 	// TODO: this is being called twice, check export targets flow in FE/BE
+	// TODO: convert this to an incremental export
     public function dropbox_do_export() {
         $archiveDir = file_get_contents($this->getUploadsDirBaseDIR() . '/WP-STATIC-CURRENT-ARCHIVE');
         $archiveName = rtrim($archiveDir, '/');
@@ -819,6 +820,9 @@ class StaticHtmlOutput {
         $dbxClient = new Dropbox($app);
 
         function FolderToDropbox($dir, $dbxClient, $siteroot, $dropboxFolder, $pluginInstance){
+			$pluginInstance->_prependExportLog('DROPBOX EXPORT: called with following options:');
+			$pluginInstance->_prependExportLog($dir);
+			$pluginInstance->_prependExportLog($siteroot);
             $files = scandir($dir);
             foreach($files as $item){
                 if($item != '.' && $item != '..' && $item != '.git'){
@@ -840,6 +844,8 @@ class StaticHtmlOutput {
                     } 
                 }
             }
+
+			echo 'SUCCESS';
         }
 
         FolderToDropbox($siteroot, $dbxClient, $siteroot, $dropboxFolder, $this);
