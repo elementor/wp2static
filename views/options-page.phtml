@@ -50,34 +50,9 @@ jQuery(document).ready(function($){
 
     var currentArchive = 1;
 
-    function netlifyDoExport() {
-        // this is a one shot export, not async partial transfers like others
-        $('.hiddenActionField').val('netlify_do_export');
-        archives = $('.options-form');
-        data = $(archives[0]).serialize();
-
-        $.ajax({
-            url: ajaxurl,
-            data: data,
-            dataType: 'html',
-            method: 'POST',
-            success: function(serverResponse) {
-                $.ajax({
-                    url: ajaxurl,
-                    data: data,
-                    dataType: 'html',
-                    method: 'POST',
-                    success: processExportTargets,
-                    error: ajaxErrorHandler
-                });
-            },
-            error: ajaxErrorHandler
-        });
-    }
-
 	// allows calling one AJAX function, optionally incremental (batch exports)
 	// with an optional finali
-	// TODO: refactor to allow 3 actions
+	// TODO: refactor to allow 3+ actions
 	function doAJAXExport( export_action, finalise_export_action ) {
 		console.log('calling doAJAXExport with: ' + export_action);
 
@@ -101,6 +76,12 @@ jQuery(document).ready(function($){
 					console.log(finalise_export_action);
 					// call 2nd action
 					doAJAXExport( finalise_export_action )
+				} else if (serverResponse > 0 && finalise_export_action) {
+					console.log('3A: incremental task #:');
+					console.log(serverResponse);
+					console.log('3B: next task:');
+					console.log(finalise_export_action);
+					doAJAXExport( export_action, finalise_export_action );
 				} else if (serverResponse > 0) {
 					console.log('3: incremental task #:');
 					console.log(serverResponse);
@@ -150,7 +131,7 @@ jQuery(document).ready(function($){
             dataType: 'html',
             method: 'POST',
             success: function(serverResponse) {
-                crawlSite();
+				doAJAXExport('crawl_site', 'create_zip');
             },
             error: ajaxErrorHandler
         });
@@ -162,65 +143,47 @@ jQuery(document).ready(function($){
     }
 
     function processExportTargets () {
-        // grab next item from exportTargets array, removing from array
-		// TODO: just call doAJAXExport with shifted arr element (req's consistent naming of exports)
-        switch(target = exportTargets.shift()) {
-            case 'GITHUB':
-				// TODO: 
-                githubPrepareExport();
-				//doAJAXExport('github_prepare_export', 'github_transfer_blobs', 'github_finalise_export');
-                break;
+		// TODO: optimisation: just call doAJAXExport with shifted arr element (req's consistent naming of exports)
 
-            case 'FTP':
-				doAJAXExport('ftp_prepare_export', 'ftp_transfer_files');
-                break;
+		if( exportTargets.length > 0) {
+			switch(target = exportTargets.shift()) {
+				case 'GITHUB':
+					doAJAXExport('github_prepare_export', 'github_transfer_blobs', 'github_finalise_export');
+					break;
 
-            case 'BUNNYCDN':
-				doAJAXExport('bunnycdn_prepare_export', 'bunnycdn_transfer_files');
-                break;
+				case 'FTP':
+					doAJAXExport('ftp_prepare_export', 'ftp_transfer_files');
+					break;
 
-            case 'S3':
-				doAJAXExport('s3_prepare_export', 's3_transfer_files');
-                break;
+				case 'BUNNYCDN':
+					doAJAXExport('bunnycdn_prepare_export', 'bunnycdn_transfer_files');
+					break;
 
-            case 'DROPBOX':
-				doAJAXExport('dropbox_do_export');
-                break;
+				case 'S3':
+					doAJAXExport('s3_prepare_export', 's3_transfer_files', 'cloudfront_invalidate_cache');
+					break;
 
-            case 'NETLIFY':
-				doAJAXExport('netlify_do_export');
-                break;
+				case 'DROPBOX':
+					doAJAXExport('dropbox_do_export');
+					break;
 
-            default:
-                console.log('unexpected export target - are we finished?');
-                $('#progress').attr("src", pluginDir + '../images/greentick.png');
-                $('#progress').css("width", '123px');
-                notifyMe();
-                break; 
-        }
-    }
+				case 'NETLIFY':
+					doAJAXExport('netlify_do_export');
+					break;
 
-    function crawlSite() {
-        $('.hiddenActionField').val('wp_static_html_output_ajax');
-        $('#hiddenAJAXAction').val('crawl_site');
-        archives = $('.options-form');
-        data = $(archives[0]).serialize();
-
-        $.ajax({
-            url: ajaxurl,
-            data: data,
-            dataType: 'html',
-            method: 'POST',
-            success: function(serverResponse) {
-                if (serverResponse == 'CRAWLING COMPLETED') {
-                    doAJAXExport('create_zip');
-                } else {
-                    crawlSite();
-                }
-               
-            },
-            error: ajaxErrorHandler
-        });
+				default:
+					console.log('Unexpected export target - are we finished?');
+					$('#progress').attr("src", pluginDir + '../images/greentick.png');
+					$('#progress').css("width", '123px');
+					notifyMe();
+					break; 
+			}
+		} else {
+			console.log('All export targets have been processed');
+			$('#progress').attr("src", pluginDir + '../images/greentick.png');
+			$('#progress').css("width", '123px');
+			notifyMe();
+		}
     }
 
     function saveOptions() {

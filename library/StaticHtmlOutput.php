@@ -458,15 +458,14 @@ class StaticHtmlOutput {
 		$initial_crawl_list_file = $this->getUploadsDirBaseDIR() . '/WP-STATIC-INITIAL-CRAWL-LIST';
         $initial_crawl_list = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
 
-        // NOTE: via GUI hits this function repeatedly,
-        // viaCLI, we want to do it in one hit
-        
-        if (!empty($initial_crawl_list)) {
+        $filesRemaining = count($initial_crawl_list) - 1;
+
+		if ( !empty($initial_crawl_list) ) {
+            $this->_prependExportLog('CRAWLING SITE: ' . $filesRemaining . ' files remaining');
             $this->crawlABitMore($viaCLI);
-        } else {
-            $this->_prependExportLog('CRAWLING COMPLETED');
-            echo 'CRAWLING COMPLETED'; // used by the view to proceed
-        }
+		} else {
+			echo 'SUCCESS';
+		}
     }
 
     public function create_zip() {
@@ -807,7 +806,27 @@ class StaticHtmlOutput {
 	// TODO: make this a generic func, calling vendor specific files
     public function s3_transfer_files() {
         $this->_prependExportLog('S3 EXPORT: Transferring files...');
+        $archiveDir = file_get_contents($this->getUploadsDirBaseDIR() . '/WP-STATIC-CURRENT-ARCHIVE');
+        $archiveName = rtrim($archiveDir, '/');
+        $siteroot = $archiveName . '/';
+        $file_list_path = $this->getUploadsDirBaseDIR() . '/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT';
+        $contents = file($file_list_path, FILE_IGNORE_NEW_LINES);
+        $filesRemaining = count($contents) - 1;
 
+        if ($filesRemaining < 0) {
+            echo $filesRemaining;die();
+        }
+
+        $filename = array_shift($contents);
+		$file_body = file_get_contents($filename);
+		// rewrite file without first line
+        file_put_contents($file_list_path, implode("\r\n", $contents));
+
+		$target_path = str_replace($siteroot, '', $filename);
+        $this->_prependExportLog('S3 EXPORT: transferring ' . 
+            basename($filename) . ' TO ' . $target_path);
+       
+		// do the vendor specific export:
 		require_once(__DIR__.'/aws/aws-autoloader.php');
         require_once(__DIR__.'/StaticHtmlOutput/MimeTypes.php');
 
@@ -822,32 +841,6 @@ class StaticHtmlOutput {
 
         $Bucket = filter_input(INPUT_POST, 's3Bucket');
 
-		# grab first item from list and export, etc..
-        $archiveDir = file_get_contents($this->getUploadsDirBaseDIR() . '/WP-STATIC-CURRENT-ARCHIVE');
-        $archiveName = rtrim($archiveDir, '/');
-        $siteroot = $archiveName . '/';
-
-        $file_list_path = $this->getUploadsDirBaseDIR() . '/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT';
-
-        $contents = file($file_list_path, FILE_IGNORE_NEW_LINES);
-        $filesRemaining = count($contents) - 1;
-
-        if ($filesRemaining < 0) {
-            echo $filesRemaining;die();
-        }
-
-        $filename = array_shift($contents);
-		$file_body = file_get_contents($filename);
-		// rewrite file without first line
-        file_put_contents($file_list_path, implode("\r\n", $contents));
-
-		$target_path = str_replace($siteroot, '', $filename);
-
-        $this->_prependExportLog('S3 EXPORT: transferring ' . 
-            basename($filename) . ' TO ' . $target_path);
-       
-		// do the vendor specific export:
-
 		$this->s3_put_object($S3, $Bucket, $target_path, $file_body, 'public-read', GuessMimeType($filename));
 
         $this->_prependExportLog('S3 EXPORT: ' . $filesRemaining . ' files remaining to transfer');
@@ -857,26 +850,22 @@ class StaticHtmlOutput {
 		} else {
 			echo 'SUCCESS';
 		}
-
-
-		# TODO: add this as another export option/third phase to S3 exports
-        #if(strlen(filter_input(INPUT_POST, 'cfDistributionId'))>12) {
-		#	$this->cloudfront_invalidate_all_items();
-        #}
     }
 
 	public function cloudfront_invalidate_all_items() {
-		$CF = Aws\CloudFront\CloudFrontClient::factory(array(
-			'version'		=> '2016-01-28',
-			'key'           => filter_input(INPUT_POST, 's3Key'),
-			'secret'        => filter_input(INPUT_POST, 's3Secret'),
-			));
+        if(strlen(filter_input(INPUT_POST, 'cfDistributionId'))>12) {
+			$CF = Aws\CloudFront\CloudFrontClient::factory(array(
+				'version'		=> '2016-01-28',
+				'key'           => filter_input(INPUT_POST, 's3Key'),
+				'secret'        => filter_input(INPUT_POST, 's3Secret'),
+				));
 
-		$result = $CF->createInvalidation(array(
-			'DistributionId' => filter_input(INPUT_POST, 'cfDistributionId'),
-			'Paths' => array (
-				'Quantity' => 1, 'Items' => array('/*')),
-				'CallerReference' => time()));
+			$result = $CF->createInvalidation(array(
+				'DistributionId' => filter_input(INPUT_POST, 'cfDistributionId'),
+				'Paths' => array (
+					'Quantity' => 1, 'Items' => array('/*')),
+					'CallerReference' => time()));
+        }
 	}
 
 	// TODO: this is being called twice, check export targets flow in FE/BE
