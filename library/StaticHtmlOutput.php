@@ -824,7 +824,7 @@ class StaticHtmlOutput {
 		# grab first item from list and export, etc..
         $archiveDir = file_get_contents($this->getUploadsDirBaseDIR() . '/WP-STATIC-CURRENT-ARCHIVE');
         $archiveName = rtrim($archiveDir, '/');
-
+        $siteroot = $archiveName . '/';
 
         $file_list_path = $this->getUploadsDirBaseDIR() . '/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT';
 
@@ -840,15 +840,14 @@ class StaticHtmlOutput {
 		// rewrite file without first line
         file_put_contents($file_list_path, implode("\r\n", $contents));
 
-
-        $targetPath = 'DOSOMEPATHTRANSFORM';
+		$target_path = str_replace($siteroot, '', $filename);
 
         $this->_prependExportLog('S3 EXPORT: transferring ' . 
-            basename($filename) . ' TO ' . $targetPath);
+            basename($filename) . ' TO ' . $target_path);
        
 		// do the vendor specific export:
 
-		$this->s3_put_object($S3, $Bucket, $targetPath, $file_body, 'public-read', GuessMimeType($item));
+		$this->s3_put_object($S3, $Bucket, $target_path, $file_body, 'public-read', GuessMimeType($filename));
 
         $this->_prependExportLog('S3 EXPORT: ' . $filesRemaining . ' files remaining to transfer');
 
