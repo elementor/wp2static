@@ -736,9 +736,8 @@ class StaticHtmlOutput {
 	public function recursively_scan_dir($dir, $siteroot, $file_list_path){
 		// rm duplicate slashes in path (TODO: fix cause)
 		$dir = str_replace('//', '/', $dir);
-		$this->_prependExportLog('DIR:' . $dir);
-		$this->_prependExportLog('SITEROOT:' . $siteroot);
 		$files = scandir($dir);
+
 		foreach($files as $item){
 			if($item != '.' && $item != '..' && $item != '.git'){
 				if(is_dir($dir.'/'.$item)) {
@@ -749,8 +748,6 @@ class StaticHtmlOutput {
 					$clean_dir = str_replace($siteroot . '/', '', $dir.'/');
 					$clean_dir = str_replace($subdir, '', $clean_dir);
 					$filename = $dir .'/' . $item . "\n";
-					
-					// rm duplicate slashes in path (TODO: fix cause)
 					$filename = str_replace('//', '/', $filename);
 					$this->_prependExportLog('FILE TO ADD:');
 					$this->_prependExportLog($filename);
@@ -760,18 +757,16 @@ class StaticHtmlOutput {
 		}
 	}
 
-	// only store files in list, let each export processor/transferer rewrite as needed
 	public function add_file_to_list( $filename, $file_list_path) {
-		$this->_prependExportLog('FILEPATH2: ' . $file_list_path);
 		file_put_contents($file_list_path, $filename, FILE_APPEND | LOCK_EX);
 	}
 
 	public function prepare_file_list($export_target) {
-        $this->_prependExportLog('GENERIC EXPORT: Preparing list of files for ' . $export_target . ' transfer');
-        $this->_prependExportLog('FILEPATH1: ' . $this->FILEPATH);
+        $this->_prependExportLog($export_target . ' EXPORT: Preparing list of files to export');
 
          $file_list_path = $this->getUploadsDirBaseDIR() . '/WP-STATIC-EXPORT-' . $export_target . '-FILES-TO-EXPORT';
 
+		// zero file
         $f = @fopen($file_list_path, "r+");
         if ($f !== false) {
             ftruncate($f, 0);
@@ -782,61 +777,38 @@ class StaticHtmlOutput {
         $archiveName = rtrim($archiveDir, '/');
         $siteroot = $archiveName . '/';
 
-
-
         $this->recursively_scan_dir($siteroot, $siteroot, $file_list_path);
-
-
         $this->_prependExportLog('GENERIC EXPORT: File list prepared');
 	}
 
     public function s3_prepare_export() {
         $this->_prependExportLog('S3 EXPORT: preparing export...');
-
 		$this->prepare_file_list('S3');
-
 
         echo 'SUCCESS';
     }
-    public function s3_do_export() {
 
-		# goes in transfer func
+	public function s3_put_object($S3, $Bucket, $Key, $Data, $ACL, $ContentType = "text/plain") {
+		try {
+			$Model = $S3->PutObject(array('Bucket'      => $Bucket,
+						'Key'         => $Key,
+						'Body'        => $Data,
+						'ACL'         => $ACL,
+						'ContentType' => $ContentType));
+			return true;
+		}
+		catch (Exception $e) {
+			$pluginInstance->_prependExportLog('S3 EXPORT: following error returned from Dropbox:');
+			$pluginInstance->_prependExportLog($e);
+			throw new Exception($e);
+		}
+	}
 
-        function UploadObject($S3, $Bucket, $Key, $Data, $ACL, $ContentType = "text/plain") {
-            try {
-                $Model = $S3->PutObject(array('Bucket'      => $Bucket,
-                            'Key'         => $Key,
-                            'Body'        => $Data,
-                            'ACL'         => $ACL,
-                            'ContentType' => $ContentType));
-                return true;
-            }
-            catch (Exception $e) {
-                file_put_contents($_SERVER['exportLog'], $e , FILE_APPEND | LOCK_EX);
-                throw new Exception($e);
-            }
-        }
+    public function s3_transfer_files() {
+        $this->_prependExportLog('S3 EXPORT: Transferring files...');
 
-        function UploadDirectory($S3, $Bucket, $dir, $siteroot) {
-            $files = scandir($dir);
-            foreach($files as $item){
-                if($item != '.' && $item != '..'){
-                    if(is_dir($dir.'/'.$item)) {
-                        UploadDirectory($S3, $Bucket, $dir.'/'.$item, $siteroot);
-                    } else if(is_file($dir.'/'.$item)) {
-                        $clean_dir = str_replace($siteroot, '', $dir.'/'.$item);
-
-                        $targetPath = $clean_dir;
-                        $f = file_get_contents($dir.'/'.$item);
-
-                        if($targetPath == '/index.html') {
-                        }
-
-                        UploadObject($S3, $Bucket, $targetPath, $f, 'public-read', GuessMimeType($item));
-                    } 
-                }
-            }
-        }
+		require_once(__DIR__.'/aws/aws-autoloader.php');
+        require_once(__DIR__.'/StaticHtmlOutput/MimeTypes.php');
 
 		# goes in transfer step
         $S3 = Aws\S3\S3Client::factory(array(
@@ -849,23 +821,63 @@ class StaticHtmlOutput {
 
         $Bucket = filter_input(INPUT_POST, 's3Bucket');
 
-        UploadDirectory($S3, $Bucket, $archiveName, $archiveName.'/');
+		# grab first item from list and export, etc..
+        $archiveDir = file_get_contents($this->getUploadsDirBaseDIR() . '/WP-STATIC-CURRENT-ARCHIVE');
+        $archiveName = rtrim($archiveDir, '/');
 
-        if(strlen(filter_input(INPUT_POST, 'cfDistributionId'))>12) {
-            $CF = Aws\CloudFront\CloudFrontClient::factory(array(
-                'version'		=> '2016-01-28',
-                'key'           => filter_input(INPUT_POST, 's3Key'),
-                'secret'        => filter_input(INPUT_POST, 's3Secret'),
-                )
-            );
-            $result = $CF->createInvalidation(array(
-                'DistributionId' => filter_input(INPUT_POST, 'cfDistributionId'),
-                'Paths' => array (
-                    'Quantity' => 1, 'Items' => array('/*')),
-                    'CallerReference' => time()
-            ));
+
+        $file_list_path = $this->getUploadsDirBaseDIR() . '/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT';
+
+        $contents = file($file_list_path, FILE_IGNORE_NEW_LINES);
+        $filesRemaining = count($contents) - 1;
+
+        if ($filesRemaining < 0) {
+            echo $filesRemaining;die();
         }
+
+        $filename = array_shift($contents);
+		$file_body = file_get_contents($filename);
+		// rewrite file without first line
+        file_put_contents($file_list_path, implode("\r\n", $contents));
+
+
+        $targetPath = 'DOSOMEPATHTRANSFORM';
+
+        $this->_prependExportLog('S3 EXPORT: transferring ' . 
+            basename($filename) . ' TO ' . $targetPath);
+       
+		// do the vendor specific export:
+
+		$this->s3_put_object($S3, $Bucket, $targetPath, $file_body, 'public-read', GuessMimeType($item));
+
+        $this->_prependExportLog('S3 EXPORT: ' . $filesRemaining . ' files remaining to transfer');
+
+		if ( $filesRemaining > 0 ) {
+			echo $filesRemaining;
+		} else {
+			echo 'SUCCESS';
+		}
+
+
+		# TODO: add this as another export option/third phase to S3 exports
+        #if(strlen(filter_input(INPUT_POST, 'cfDistributionId'))>12) {
+		#	$this->cloudfront_invalidate_all_items();
+        #}
     }
+
+	public function cloudfront_invalidate_all_items() {
+		$CF = Aws\CloudFront\CloudFrontClient::factory(array(
+			'version'		=> '2016-01-28',
+			'key'           => filter_input(INPUT_POST, 's3Key'),
+			'secret'        => filter_input(INPUT_POST, 's3Secret'),
+			));
+
+		$result = $CF->createInvalidation(array(
+			'DistributionId' => filter_input(INPUT_POST, 'cfDistributionId'),
+			'Paths' => array (
+				'Quantity' => 1, 'Items' => array('/*')),
+				'CallerReference' => time()));
+	}
 
 	// TODO: this is being called twice, check export targets flow in FE/BE
 	// TODO: convert this to an incremental export
