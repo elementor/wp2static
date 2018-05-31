@@ -731,13 +731,66 @@ class StaticHtmlOutput {
 		}
     }
 
-    public function s3_do_export() {
-        $this->_prependExportLog('S3 EXPORT: starting ');
-        require_once(__DIR__.'/aws/aws-autoloader.php');
-        require_once(__DIR__.'/StaticHtmlOutput/MimeTypes.php');
+	// TODO: re-use this will all export options (hard coded to S3 for initial testing')
+	public function prepare_file_list($rewrite_options = 'S3') {
+        $this->_prependExportLog('GENERIC EXPORT: Preparing list of files to transfer');
+
+        $_SERVER['genericFilesToExport'] = $this->getUploadsDirBaseDIR() . '/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT';
+        $f = @fopen($_SERVER['genericFilesToExport'], "r+");
+        if ($f !== false) {
+            ftruncate($f, 0);
+            fclose($f);
+        }
+
         $archiveDir = file_get_contents($this->getUploadsDirBaseDIR() . '/WP-STATIC-CURRENT-ARCHIVE');
         $archiveName = rtrim($archiveDir, '/');
         $siteroot = $archiveName . '/';
+
+		// only store files in list, let each export processor/transferer rewrite as needed
+		function add_file_to_list( $filename ) {
+
+			file_put_contents($_SERVER['ftpFilesToExport'], $filename, FILE_APPEND | LOCK_EX);
+		}
+
+        function recursively_scan_dir($dir, $siteroot){
+            $files = scandir($dir);
+            foreach($files as $item){
+                if($item != '.' && $item != '..' && $item != '.git'){
+                    if(is_dir($dir.'/'.$item)) {
+                        recursively_scan_dir($dir.'/'.$item, $siteroot);
+                    } else if(is_file($dir.'/'.$item)) {
+                        $subdir = str_replace('/wp-admin/admin-ajax.php', '', $_SERVER['REQUEST_URI']);
+                        $subdir = ltrim($subdir, '/');
+                        $clean_dir = str_replace($siteroot . '/', '', $dir.'/');
+                        $clean_dir = str_replace($subdir, '', $clean_dir);
+                        $filename = $dir .'/' . $item . "\n";
+                        add_file_to_list($filename);
+                    } 
+                }
+            }
+        }
+
+        folder_to_filelist($siteroot, $siteroot);
+
+
+        $this->_prependExportLog('GENERIC EXPORT: File list prepared');
+	}
+
+    public function s3_prepare_export() {
+        $this->_prependExportLog('S3 EXPORT: preparing export...');
+
+
+
+        $archiveDir = file_get_contents($this->getUploadsDirBaseDIR() . '/WP-STATIC-CURRENT-ARCHIVE');
+        $archiveName = rtrim($archiveDir, '/');
+        $siteroot = $archiveName . '/';
+
+
+        echo 'SUCCESS';
+    }
+    public function s3_do_export() {
+
+		# goes in transfer func
 
         function UploadObject($S3, $Bucket, $Key, $Data, $ACL, $ContentType = "text/plain") {
             try {
@@ -775,6 +828,7 @@ class StaticHtmlOutput {
             }
         }
 
+		# goes in transfer step
         $S3 = Aws\S3\S3Client::factory(array(
             'version'=> '2006-03-01',
             'key'    => filter_input(INPUT_POST, 's3Key'),
