@@ -14,8 +14,6 @@ $ajax_nonce = wp_create_nonce( 'wpstatichtmloutput' );
 
 ?>
 
-
-
 <script>
 var settings = '<?php echo $settings; ?>';
 var uploadsDir = '<?php echo $this->wpUploadsDir; ?>';
@@ -148,6 +146,7 @@ jQuery(document).ready(function($){
 
 	// allows calling one AJAX function, optionally incremental (batch exports)
 	// with an optional finali
+	// TODO: refactor to allow 3 actions
 	function doAJAXExport( export_action, finalise_export_action ) {
 		console.log('calling doAJAXExport with: ' + export_action);
 
@@ -162,19 +161,26 @@ jQuery(document).ready(function($){
             dataType: 'html',
             method: 'POST',
             success: function(serverResponse) {
-				// incremental jobs keep calling themselves
-				if (finalise_export_action) {
-					if (serverResponse > 0) {
-						// call this same method
-						console.log('incremental job step, calling same function');
-						doAJAXExport( export_action, finalise_export_action )
-					} else {
-						console.log('incremental job completed, calling same function');
-						doAJAXExport( finalise_export_action )
-					}
-				} else {
+				// use server response to determine if it will keep going
+				console.log('1: serverResponse');
+				console.log(serverResponse);
+				// if SUCCESS and 2nd action exists:
+				if (serverResponse === 'SUCCESS' && finalise_export_action) {
+					console.log('2: SUCCESS, call 2nd action:');
+					console.log(finalise_export_action);
+					// call 2nd action
+					doAJAXExport( finalise_export_action )
+				} else if (serverResponse > 0) {
+					console.log('3: incremental task #:');
+					console.log(serverResponse);
+					doAJAXExport( export_action );
+				} else if (serverResponse === 'SUCCESS') {
 					// not an incremental action, continue on with export targets
+					console.log('4: last task done, continuing to process export targets');
 					processExportTargets();
+				} else {
+					console.log('5: something unexpected happened...');
+					ajaxErrorHandler();
 				}
             },
             error: ajaxErrorHandler
