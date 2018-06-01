@@ -871,6 +871,7 @@ class StaticHtmlOutput {
 
 	public function cloudfront_invalidate_all_items() {
         if(strlen(filter_input(INPUT_POST, 'cfDistributionId'))>12) {
+			$this->_prependExportLog('CLOUDFRONT INVALIDATING CACHE...');
 			$CF = Aws\CloudFront\CloudFrontClient::factory(array(
 				'version'		=> '2016-01-28',
 				'key'           => filter_input(INPUT_POST, 's3Key'),
