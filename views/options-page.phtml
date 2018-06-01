@@ -167,7 +167,7 @@ jQuery(document).ready(function($){
 		if( exportTargets.length > 0) {
 			switch(target = exportTargets.shift()) {
 				case 'GITHUB':
-					doAJAXExport('github_prepare_export', 'github_transfer_blobs', 'github_finalise_export');
+					doAJAXExport('github_prepare_export', 'github_upload_blobs', 'github_finalise_export');
 					break;
 
 				case 'FTP':

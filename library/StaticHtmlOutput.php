@@ -206,6 +206,8 @@ class StaticHtmlOutput {
             throw new Exception($e);
         }
 
+		echo 'SUCCESS';
+
     }
 
 	public function github_upload_blobs() {
@@ -254,7 +256,11 @@ class StaticHtmlOutput {
 
         $this->_prependExportLog('GITHUB: ' . $filesRemaining . ' blobs remaining to create');
         
-        echo $filesRemaining;
+		if ($filesRemaining > 0) {
+			echo $filesRemaining;
+		} else {
+			echo 'SUCCESS';
+		}
     }
 
 	public function start_export($viaCLI = false) {
@@ -967,6 +973,8 @@ class StaticHtmlOutput {
 
 
         FolderToGithub($siteroot, $siteroot, $githubPath);
+
+		echo 'SUCCESS';
     }
 
     public function netlify_do_export () {
