@@ -883,6 +883,8 @@ class StaticHtmlOutput {
 					'Quantity' => 1, 'Items' => array('/*')),
 					'CallerReference' => time()));
         }
+
+		echo 'SUCCESS';
 	}
 
 	// TODO: this is being called twice, check export targets flow in FE/BE
