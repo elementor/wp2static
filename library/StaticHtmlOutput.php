@@ -447,8 +447,18 @@ class StaticHtmlOutput {
                 $this->_saveUrlData($urlResponse, $archiveDir);
             } 
         }
-        
-        // loop for CLI
+		
+		// TODO: could avoid reading file again here as we should have it above
+        $f = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
+        $filesRemaining = count($f);
+		$this->_prependExportLog('CRAWLING SITE: ' . $filesRemaining . ' files remaining');
+		if ($filesRemaining > 0) {
+			echo $filesRemaining;
+		} else {
+			echo 'SUCCESS';
+		}
+	
+        // if being called via the CLI, just keep crawling (TODO: until when?)
         if ($viaCLI) {
             $this->crawl_site($viaCLI);
         }
@@ -458,14 +468,9 @@ class StaticHtmlOutput {
 		$initial_crawl_list_file = $this->getUploadsDirBaseDIR() . '/WP-STATIC-INITIAL-CRAWL-LIST';
         $initial_crawl_list = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
 
-        $filesRemaining = count($initial_crawl_list) - 1;
-
 		if ( !empty($initial_crawl_list) ) {
-            $this->_prependExportLog('CRAWLING SITE: ' . $filesRemaining . ' files remaining');
             $this->crawlABitMore($viaCLI);
-		} else {
-			echo 'SUCCESS';
-		}
+		} 
     }
 
     public function create_zip() {
