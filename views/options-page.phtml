@@ -102,7 +102,7 @@ jQuery(document).ready(function($){
 					doAJAXExport.apply(this, args);
 
 				// if an action is in progress incremental, it will call itself again
-				} else if (serverResponse > 0 && args.length > 1) {
+				} else if (serverResponse > 0) {
 					console.log('3: IN-PROGRESS, calling all again:');
 					doAJAXExport.apply(this, args);
 				} else if (serverResponse === 'SUCCESS') {
@@ -513,6 +513,7 @@ http://172.17.0.3/my_pricelist.pdf</pre>
                 <input name="cfDistributionId" class="regular-text" id="cfDistributionId" value="<?php echo esc_attr($this->cfDistributionId) ?>" placeholder="<?php echo __('CloudFront DistributionId', 'static-html-output-plugin');?>" />
                 <span class="description">ie, ABC123DEFX</span>
                 <br>
+                <br>
 
                 <fieldset>
                     <label for="sendViaBUNNYCDN">
@@ -530,6 +531,7 @@ http://172.17.0.3/my_pricelist.pdf</pre>
 
                 <input class="regular-text" name="bunnycdnPath" id="bunnycdnPath" value="<?php echo esc_attr($this->bunnycdnPath) ?>" placeholder="<?php echo __('BunnyCDN Remote Path', 'static-html-output-plugin');?>" />
                 <span class="description">will attempt to create folder recursively if non-existent</span>
+                <br>
                 <br>
                 <fieldset>
                     <label for="sendViaDropbox">

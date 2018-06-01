@@ -519,8 +519,14 @@ class StaticHtmlOutput {
 
         $ftp = new \FtpClient\FtpClient();
         
-        $ftp->connect(filter_input(INPUT_POST, 'ftpServer'));
-        $ftp->login(filter_input(INPUT_POST, 'ftpUsername'), filter_input(INPUT_POST, 'ftpPassword'));
+        try {
+			$ftp->connect(filter_input(INPUT_POST, 'ftpServer'));
+			$ftp->login(filter_input(INPUT_POST, 'ftpUsername'), filter_input(INPUT_POST, 'ftpPassword'));
+        } catch (Exception $e) {
+			$this->_prependExportLog('FTP EXPORT: error encountered');
+			$this->_prependExportLog($e);
+            throw new Exception($e);
+        }
 
         if ($ftp->isdir(filter_input(INPUT_POST, 'ftpRemotePath'))) {
             $this->_prependExportLog('FTP EXPORT: Remote dir exists');
@@ -896,9 +902,6 @@ class StaticHtmlOutput {
         $dbxClient = new Dropbox($app);
 
         function FolderToDropbox($dir, $dbxClient, $siteroot, $dropboxFolder, $pluginInstance){
-			$pluginInstance->_prependExportLog('DROPBOX EXPORT: called with following options:');
-			$pluginInstance->_prependExportLog($dir);
-			$pluginInstance->_prependExportLog($siteroot);
             $files = scandir($dir);
             foreach($files as $item){
                 if($item != '.' && $item != '..' && $item != '.git'){
@@ -908,6 +911,7 @@ class StaticHtmlOutput {
                         $clean_dir = str_replace($siteroot, '', $dir.'/'.$item);
                         $targetPath =  $dropboxFolder . $clean_dir;
 
+						$pluginInstance->_prependExportLog('DROPBOX EXPORT: transferring:' . $targetPath);
                         try {
                             $dropboxFile = new DropboxFile($dir.'/'.$item);
                             $uploadedFile = $dbxClient->upload($dropboxFile, $targetPath, array('autorename' => false, 'mode' => 'overwrite'));
@@ -921,10 +925,11 @@ class StaticHtmlOutput {
                 }
             }
 
-			echo 'SUCCESS';
         }
 
         FolderToDropbox($siteroot, $dbxClient, $siteroot, $dropboxFolder, $this);
+
+		echo 'SUCCESS';
     }
 
     public function github_prepare_export () {
