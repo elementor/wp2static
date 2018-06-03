@@ -1035,16 +1035,17 @@ class StaticHtmlOutput {
         // do any exports
     }
 
-    public function cleanupAfterExports() {
-        // TODO: need folder to do GH export, force keep for now
-
-        // TODO: keep copy of last export folder for incremental addition
-
-        $retainStaticFiles = filter_input(INPUT_POST, 'retainStaticFiles');
+    public function post_export_teardown() {
+        $this->_prependExportLog('POST EXPORT CLEANUP: starting...');
+		//TODO: rm symlink if no folder exists
+        $archiveDir = file_get_contents($this->getUploadsDirBaseDIR() . '/WP-STATIC-CURRENT-ARCHIVE');
+        
+		$retainStaticFiles = filter_input(INPUT_POST, 'retainStaticFiles');
+		$retainZipFile = filter_input(INPUT_POST, 'retainZipFile');
 
         // Remove temporary files unless user requested to keep or needed for FTP transfer
-        //if ($retainStaticFiles != 1)		{
-        if ($retainStaticFiles == 'banana')		{
+        if ($retainStaticFiles != 1) {
+			$this->_prependExportLog('POST EXPORT CLEANUP: removing dir: ' . $archiveDir);
             $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($archiveDir), RecursiveIteratorIterator::CHILD_FIRST);
             foreach ($iterator as $fileName => $fileObject) {
 
@@ -1052,6 +1053,7 @@ class StaticHtmlOutput {
                 if ($fileObject->isDir()) {
                     // Ignore special dirs
                     $dirName = basename($fileName);
+					
                     if($dirName != '.' && $dirName != '..') {
                         rmdir($fileName);
                     }
@@ -1062,7 +1064,16 @@ class StaticHtmlOutput {
             rmdir($archiveDir);
         }	
 
-        $this->_prependExportLog('EXPORT CLEANUP COMPLETE' . PHP_EOL);
+        if ($retainZipFile != 1) {
+			$archiveName = rtrim($archiveDir, '/');
+			$zipFile = $archiveName . '.zip';
+			$this->_prependExportLog('POST EXPORT CLEANUP: removing zip: ' . $zipFile);
+			unlink($zipFile);
+		}
+
+		$this->_prependExportLog('POST EXPORT CLEANUP: complete');
+
+		echo 'SUCCESS';
 	}
 
     protected function _getAllWPPostURLs(){

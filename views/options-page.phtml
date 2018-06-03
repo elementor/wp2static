@@ -143,6 +143,9 @@ jQuery(document).ready(function($){
             exportTargets.push('NETLIFY');
         }
 
+		// always run cleanup "exportTarget" (TODO: naming to be improved)
+		exportTargets.push('TEARDOWN');
+
         data = $(archives[0]).serialize();
         $.ajax({
             url: ajaxurl,
@@ -188,6 +191,10 @@ jQuery(document).ready(function($){
 
 				case 'NETLIFY':
 					doAJAXExport('netlify_do_export');
+					break;
+
+				case 'TEARDOWN':
+					doAJAXExport('post_export_teardown');
 					break;
 
 				default:
@@ -311,6 +318,7 @@ jQuery(document).ready(function($){
             $(targetExportSettingsBlock).find('#additionalUrls').val(newAdditionalUrls);
             $(targetExportSettingsBlock).find('#cleanMeta')[0].checked = settingsBlock.cleanMeta;
             $(targetExportSettingsBlock).find('#retainStaticFiles')[0].checked = settingsBlock.retainStaticFiles;
+            $(targetExportSettingsBlock).find('#retainZipFile')[0].checked = settingsBlock.retainZipFile;
             $(targetExportSettingsBlock).find('#sendViaFTP')[0].checked = settingsBlock.sendViaFTP;
             $(targetExportSettingsBlock).find('#ftpServer').first().val(decodeURIComponent(settingsBlock.ftpServer));
             $(targetExportSettingsBlock).find('#ftpUsername').first().val(decodeURIComponent(settingsBlock.ftpUsername));
@@ -350,6 +358,7 @@ jQuery(document).ready(function($){
                 $(targetExportSettingsBlock).find('#additionalUrls').val('');
                 $(targetExportSettingsBlock).find('#cleanMeta').first().prop('checked', false);
                 $(targetExportSettingsBlock).find('#retainStaticFiles').first().prop('checked', false);
+                $(targetExportSettingsBlock).find('#retainZipFile').first().prop('checked', false);
                 $(targetExportSettingsBlock).find('#sendViaFTP').first().prop('checked', false);
                 $(targetExportSettingsBlock).find('#ftpServer').val('');
                 $(targetExportSettingsBlock).find('#ftpUsername').val('');
@@ -440,6 +449,13 @@ http://172.17.0.3/my_pricelist.pdf</pre>
                     <label for="retainStaticFiles">
                         <input name="retainStaticFiles" id="retainStaticFiles" value="1" type="checkbox" <?php if ($this->retainStaticFiles == 1) echo "checked"; ?> />
                         <span><?php echo __('Retain generated static files on server', 'static-html-output-plugin');?></span>
+                    </label>
+                </fieldset>
+
+                <fieldset>
+                    <label for="retainZipFile">
+                        <input name="retainZipFile" id="retainZipFile" value="1" type="checkbox" <?php if ($this->retainZipFile == 1) echo "checked"; ?> />
+                        <span><?php echo __('Retain generated zip file on server', 'static-html-output-plugin');?></span>
                     </label>
                 </fieldset>
 
