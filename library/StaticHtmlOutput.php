@@ -348,8 +348,9 @@ class StaticHtmlOutput {
             $additionalUrls = $pluginOptions['additionalUrls'];
         }
 
+		// location for acrhive folder and zip to be created	
+		$uploadDir = $this->getUploadsDirBaseDIR();
 
-		$uploadDir = $this->get_write_directory();
 		$exporter = wp_get_current_user();
 		$_SERVER['urlsQueue'] = $this->getUploadsDirBaseDIR() . '/WP-STATIC-INITIAL-CRAWL-LIST';
 		$_SERVER['currentArchive'] = $this->getUploadsDirBaseDIR() . '/WP-STATIC-CURRENT-ARCHIVE';
