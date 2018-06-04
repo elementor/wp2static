@@ -110,6 +110,11 @@ class StaticHtmlOutput_UrlRequest
 		if ($this->isHtml()) {
 				$responseBody = preg_replace('/<link rel=["\' ](pingback|alternate|EditURI|wlwmanifest|index|profile|prev)["\' ](.*?)>/si', '', $responseBody);
 				$responseBody = preg_replace('/<meta name=["\' ]generator["\' ](.*?)>/si', '', $responseBody);
+				$responseBody = preg_replace('/<link(.*).w.org(.*)\/>/i', '', $responseBody);
+
+
+
+
 
 		}
 
