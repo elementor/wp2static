@@ -324,7 +324,7 @@ class StaticHtmlOutput {
 
         global $blog_id;
         $archiveDir = file_get_contents($this->getUploadsDirBaseDIR() . '/WP-STATIC-CURRENT-ARCHIVE');
-        $uploadDir = $this->get_write_directory();
+		$uploadDir = $this->getUploadsDirBaseDIR();
         unlink($uploadDir . '/latest-' . $blog_id );
         symlink($archiveDir, $uploadDir . '/latest-' . $blog_id );
 
@@ -1149,25 +1149,95 @@ class StaticHtmlOutput {
 
 	protected function _saveUrlData(StaticHtmlOutput_UrlRequest $url, $archiveDir) {
 		$urlInfo = parse_url($url->getUrl());
-		$pathInfo = pathinfo(isset($urlInfo['path']) && $urlInfo['path'] != '/' ? $urlInfo['path'] : 'index.html');
+		$pathInfo = array();
 
+		//$this->_prependExportLog('urlInfo :' . $urlInfo['path']);
+		/* will look like
+			
+			(homepage)
+
+			[scheme] => http
+			[host] => 172.17.0.3
+			[path] => /
+
+			(closed url segment)
+
+			[scheme] => http
+			[host] => 172.17.0.3
+			[path] => /feed/
+
+			(file with extension)
+
+			[scheme] => http
+			[host] => 172.17.0.3
+			[path] => /wp-content/themes/twentyseventeen/assets/css/ie8.css
+
+		*/
+
+		// TODO: here we can allow certain external host files to be crawled
+
+		// validate our inputs
+		if ( !isset($urlInfo['path']) ) {
+			$this->_prependExportLog('PREPARING URL: Invalid URL given, aborting');
+			return false;
+		}
+
+		// set what the new path will be based on the given url
+		if( $urlInfo['path'] != '/' ) {
+			$pathInfo = pathinfo($urlInfo['path']);
+		} else {
+			$pathInfo = pathinfo('index.html');
+		}
+
+		// set fileDir to the directory name else empty	
 		$fileDir = $archiveDir . (isset($pathInfo['dirname']) ? $pathInfo['dirname'] : '');
 
+		// set filename to index if there is no extension and basename and filename are the same
 		if (empty($pathInfo['extension']) && $pathInfo['basename'] == $pathInfo['filename']) {
 			$fileDir .= '/' . $pathInfo['basename'];
 			$pathInfo['filename'] = 'index';
 		}
 
+		//$fileDir = preg_replace('/(\/+)/', '/', $fileDir);
+
 		if (!file_exists($fileDir)) {
 			wp_mkdir_p($fileDir);
 		}
 
-		$fileExtension = ($url->isHtml() || !isset($pathInfo['extension']) ? 'html' : $pathInfo['extension']);
-		$fileName = $fileDir . '/' . $pathInfo['filename'] . '.' . $fileExtension;
+		$fileExtension = ''; 
+
+		// TODO: was isHtml() method modified to include more than just html
+		// if there's no extension set or content type matches html, set it to html
+		// TODO: seems to be flawed for say /feed/ urls, which would not be xml content type..
+		if( $url->isHtml() || !isset($pathInfo['extension'])) {
+			$fileExtension = 'html'; 
+		} else {
+			$fileExtension = $pathInfo['extension']; 
+		}
+
+		$fileName = '';
+
+		// set path for homepage to index.html, else build filename
+		if ($urlInfo['path'] == '/') {
+			$fileName = $fileDir . 'index.html';
+		} else {
+			$fileName = $fileDir . '/' . $pathInfo['filename'] . '.' . $fileExtension;
+		}
+		
+		// TODO: find where this extra . is coming from (current dir indicator?)
+		$fileName = str_replace('.index.html', 'index.html', $fileName);
+		// remove 2 or more slashes from paths
+		$fileName = preg_replace('/(\/+)/', '/', $fileName);
+
+
 		$fileContents = $url->getResponseBody();
+		
+		$this->_prependExportLog('SAVING URL: ' . $urlInfo['path'] . ' to new path' . $fileName);
+		// TODO: what was the 'F' check for?1? Comments exist for a reason
 		if ($fileContents != '' && $fileContents != 'F') {
 			file_put_contents($fileName, $fileContents);
 		} else {
+			$this->_prependExportLog('SAVING URL: UNABLE TO SAVE FOR SOME REASON');
 			error_log($fileName);
 			error_log('response body was empty');
 		}
