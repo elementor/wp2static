@@ -71,6 +71,11 @@ class StaticHtmlOutput_UrlRequest
 		return stripos($this->getContentType(), 'html') !== false;
 	}
 
+	public function isCSS()
+	{
+		return stripos($this->getContentType(), 'css') !== false;
+	}
+
 	public function isCrawlableContentType()
 	{
 
@@ -99,15 +104,31 @@ class StaticHtmlOutput_UrlRequest
 	
 	public function cleanup()
 	{
+		$responseBody = $this->getResponseBody();
+
 		// strip WP identifiers from html files
 		if ($this->isHtml()) {
-				$responseBody = preg_replace('/<link rel=["\' ](pingback|alternate|EditURI|wlwmanifest|index|profile|prev)["\' ](.*?)>/si', '', $this->getResponseBody());
+				$responseBody = preg_replace('/<link rel=["\' ](pingback|alternate|EditURI|wlwmanifest|index|profile|prev)["\' ](.*?)>/si', '', $responseBody);
 				$responseBody = preg_replace('/<meta name=["\' ]generator["\' ](.*?)>/si', '', $responseBody);
 
-				$this->setResponseBody($responseBody);
 		}
 
-		// TODO: strip comments from CSS / JS files
+		if ($this->isCSS()) {
+
+			$regex = array(
+			"`^([\t\s]+)`ism"=>'',
+			"`^\/\*(.+?)\*\/`ism"=>"",
+			"`([\n\A;]+)\/\*(.+?)\*\/`ism"=>"$1",
+			"`([\n\A;\s]+)//(.+?)[\n\r]`ism"=>"$1\n",
+			"`(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+`ism"=>"\n"
+			);
+
+			$responseBody = preg_replace(array_keys($regex), $regex, $responseBody);
+		}
+
+		$this->setResponseBody($responseBody);
+
+		// TODO: strip comments from JS files
 	}
     
 	public function extractAllUrls($baseUrl) {
