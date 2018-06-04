@@ -153,7 +153,11 @@ jQuery(document).ready(function($){
             dataType: 'html',
             method: 'POST',
             success: function(serverResponse) {
-				doAJAXExport('crawl_site', 'create_zip');
+				if ($('#createZip').attr('checked') == 'checked') {
+					doAJAXExport('crawl_site', 'create_zip');
+				} else {
+					doAJAXExport('crawl_site');
+				}
             },
             error: ajaxErrorHandler
         });
@@ -316,7 +320,7 @@ jQuery(document).ready(function($){
             });
 
             $(targetExportSettingsBlock).find('#additionalUrls').val(newAdditionalUrls);
-            $(targetExportSettingsBlock).find('#cleanMeta')[0].checked = settingsBlock.cleanMeta;
+            $(targetExportSettingsBlock).find('#createZip')[0].checked = settingsBlock.createZip;
             $(targetExportSettingsBlock).find('#retainStaticFiles')[0].checked = settingsBlock.retainStaticFiles;
             $(targetExportSettingsBlock).find('#retainZipFile')[0].checked = settingsBlock.retainZipFile;
             $(targetExportSettingsBlock).find('#sendViaFTP')[0].checked = settingsBlock.sendViaFTP;
@@ -356,7 +360,7 @@ jQuery(document).ready(function($){
                 $(targetExportSettingsBlock).find('#baseUrl').first().val('');
                 $(targetExportSettingsBlock).find('#outputDirectory').val('');
                 $(targetExportSettingsBlock).find('#additionalUrls').val('');
-                $(targetExportSettingsBlock).find('#cleanMeta').first().prop('checked', false);
+                $(targetExportSettingsBlock).find('#createZip').first().prop('checked', false);
                 $(targetExportSettingsBlock).find('#retainStaticFiles').first().prop('checked', false);
                 $(targetExportSettingsBlock).find('#retainZipFile').first().prop('checked', false);
                 $(targetExportSettingsBlock).find('#sendViaFTP').first().prop('checked', false);
@@ -439,9 +443,9 @@ http://172.17.0.3/my_pricelist.pdf</pre>
                 </p>
 
                 <fieldset>
-                    <label for="cleanMeta">
-                        <input name="cleanMeta" id="cleanMeta" value="1" type="checkbox" <?php if ($this->cleanMeta == 1) echo "checked"; ?> />
-                        <span><?php echo __('Strip out unneeded WordPress meta tags, ie &lt;meta name="generator" content="WordPress...', 'static-html-output-plugin');?></span>
+                    <label for="createZip">
+                        <input name="createZip" id="createZip" value="1" type="checkbox" <?php if ($this->createZip == 1) echo "checked"; ?> />
+                        <span><?php echo __('Create a ZIP file of your static site', 'static-html-output-plugin');?></span>
                     </label>
                 </fieldset>
                 

@@ -399,14 +399,12 @@ class StaticHtmlOutput {
         $currentUrl = $first_line;
         $this->_prependExportLog('CRAWLING URL: ' . $currentUrl);
 
-        $do_meta_clean = filter_input(INPUT_POST, 'cleanMeta');
         $newBaseUrl = untrailingslashit(filter_input(INPUT_POST, 'baseUrl', FILTER_SANITIZE_URL));
 
         // override options if running via CLI
         if ($viaCLI) {
             parse_str($this->_options->getOption('static-export-settings'), $pluginOptions);
 
-            $do_meta_clean = $pluginOptions['cleanMeta'];
             $newBaseUrl = $pluginOptions['baseUrl'];
         }
 
@@ -414,8 +412,8 @@ class StaticHtmlOutput {
             $this->_prependExportLog('EMPTY FILE ENCOUNTERED');
         }
 
-        $urlResponse = new StaticHtmlOutput_UrlRequest($currentUrl, $do_meta_clean);
-        $urlResponseForFurtherExtraction = new StaticHtmlOutput_UrlRequest($currentUrl, $do_meta_clean);
+        $urlResponse = new StaticHtmlOutput_UrlRequest($currentUrl);
+        $urlResponseForFurtherExtraction = new StaticHtmlOutput_UrlRequest($currentUrl);
 
         if ($urlResponse->checkResponse() == 'FAIL') {
             $this->_prependExportLog('FAILED TO CRAWL FILE: ' . $currentUrl);
@@ -438,7 +436,7 @@ class StaticHtmlOutput {
             if ($newUrl != $currentUrl && !in_array($newUrl, $crawled_links) && !in_array($newUrl, $initial_crawl_list)) {
                 $this->_prependExportLog('DISCOVERED NEW FILE: ' . $newUrl);
                 
-                $urlResponse = new StaticHtmlOutput_UrlRequest($newUrl, $do_meta_clean);
+                $urlResponse = new StaticHtmlOutput_UrlRequest($newUrl);
 
                 if ($urlResponse->checkResponse() == 'FAIL') {
                     $this->_prependExportLog('FAILED TO CRAWL FILE: ' . $newUrl);

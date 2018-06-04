@@ -11,10 +11,9 @@ class StaticHtmlOutput_UrlRequest
 	
 	protected $_response;
 
-	public function __construct($url, $cleanMeta = false)
+	public function __construct($url)
 	{
 		$this->_url = filter_var(trim($url), FILTER_VALIDATE_URL);
-		$this->_cleanMeta = $cleanMeta;
 
 		$response = wp_remote_get($this->_url,array('timeout'=>300)); //set a long time out
 
@@ -100,16 +99,15 @@ class StaticHtmlOutput_UrlRequest
 	
 	public function cleanup()
 	{
-		if ($this->isHtml())
-		{
-			if ($this->_cleanMeta)
-			{
+		// strip WP identifiers from html files
+		if ($this->isHtml()) {
 				$responseBody = preg_replace('/<link rel=["\' ](pingback|alternate|EditURI|wlwmanifest|index|profile|prev)["\' ](.*?)>/si', '', $this->getResponseBody());
 				$responseBody = preg_replace('/<meta name=["\' ]generator["\' ](.*?)>/si', '', $responseBody);
 
 				$this->setResponseBody($responseBody);
-			}
 		}
+
+		// TODO: strip comments from CSS / JS files
 	}
     
 	public function extractAllUrls($baseUrl) {
