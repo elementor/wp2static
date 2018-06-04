@@ -29,7 +29,7 @@ class StaticHtmlOutput_UrlRequest
 		}
 
 	}
-	
+
 	public function getUrl()
 	{
 		return $this->_url;
@@ -106,6 +106,7 @@ class StaticHtmlOutput_UrlRequest
 			{
 				$responseBody = preg_replace('/<link rel=["\' ](pingback|alternate|EditURI|wlwmanifest|index|profile|prev)["\' ](.*?)>/si', '', $this->getResponseBody());
 				$responseBody = preg_replace('/<meta name=["\' ]generator["\' ](.*?)>/si', '', $responseBody);
+
 				$this->setResponseBody($responseBody);
 			}
 		}
