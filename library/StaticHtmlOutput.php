@@ -144,8 +144,7 @@ class StaticHtmlOutput {
 			}
 		}
 
-		$wp_upload_dir = wp_upload_dir();
-		return $wp_upload_dir['path'];
+		return $this->getUploadsDirBaseDIR();
 	}
 
     public function progressThroughExportTargets() {
@@ -352,8 +351,8 @@ class StaticHtmlOutput {
         $additionalUrls = filter_input(INPUT_POST, 'additionalUrls');
 
 		// location for acrhive folder and zip to be created	
-		$uploadDir = $this->getUploadsDirBaseDIR();
 
+		$uploadDir = $this->get_write_directory();
         if ($viaCLI) {
             // read options from DB as array
             parse_str($this->_options->getOption('static-export-settings'), $pluginOptions);
