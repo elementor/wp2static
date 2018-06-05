@@ -120,3 +120,8 @@ function wp_static_html_output_dashboard_widget_function() {
 	echo "<p>Publish whole site as static HTML</p>";
 	echo "<button class='button button-primary'>Publish whole site</button>";
 }
+
+function wp_static_html_output_deregister_scripts(){
+  wp_deregister_script( 'wp-embed' );
+}
+add_action( 'wp_footer', 'wp_static_html_output_deregister_scripts' );
