@@ -115,7 +115,7 @@ class StaticHtmlOutput {
 
     public function save_options () {
 		if (!check_admin_referer(self::HOOK . '-options') || !current_user_can('manage_options')) {
-			error_log('user didnt have permissions to change options');
+			//error_log('user didnt have permissions to change options');
 			exit('You cannot change WP Static HTML Output Plugin options.');
 		}
 
@@ -125,7 +125,18 @@ class StaticHtmlOutput {
     }
 
 	public function get_write_directory(){
-		$outputDir = filter_input(INPUT_POST, 'outputDirectory');
+		// read outputDirectory setting from post or from plugin options if set
+		$outputDir = '';
+
+		// if post is set from an AJAX call
+		if ( filter_input(INPUT_POST, 'outputDirectory') ) {
+			$outputDir = filter_input(INPUT_POST, 'outputDirectory');
+		} else {
+            parse_str($this->_options->getOption('static-export-settings'), $pluginOptions);
+            if ( array_key_exists('outputDirectory', $pluginOptions )) {
+				$outputDir = $pluginOptions['outputDirectory'];
+			}
+		}
 
 		if ( $outputDir && is_dir($outputDir)) {
 			if( is_writable( $outputDir ) ){
@@ -265,7 +276,7 @@ class StaticHtmlOutput {
 
 	public function start_export($viaCLI = false) {
         $this->_prependExportLog('STARTING EXPORT: via CLI = ' . $viaCLI);
-        error_log('STARTING EXPORT: via CLI = ' . $viaCLI);
+        //error_log('STARTING EXPORT: via CLI = ' . $viaCLI);
         // prepare export targets
         $exportTargetsFile = $this->getUploadsDirBaseDIR() . '/WP-STATIC-EXPORT-TARGETS';
         unlink($this->getUploadsDirBaseDIR() . '/WP-STATIC-EXPORT-TARGETS');
@@ -278,7 +289,7 @@ class StaticHtmlOutput {
         $sendViaDropbox = filter_input(INPUT_POST, 'sendViaDropbox');
 
         if ($viaCLI) {
-            error_log('DOING EXPORT VIA CLI');
+            //error_log('DOING EXPORT VIA CLI');
             parse_str($this->_options->getOption('static-export-settings'), $pluginOptions);
 
             $sendViaGithub = $pluginOptions['sendViaGithub'];
@@ -349,7 +360,6 @@ class StaticHtmlOutput {
 
             $newBaseURL = $pluginOptions['baseUrl'];
             $additionalUrls = $pluginOptions['additionalUrls'];
-			$uploadDir = $pluginOptions['additionalUrls'];
         }
 
 
@@ -358,7 +368,14 @@ class StaticHtmlOutput {
 		$_SERVER['currentArchive'] = $this->getUploadsDirBaseDIR() . '/WP-STATIC-CURRENT-ARCHIVE';
 		$_SERVER['exportLog'] = $this->getUploadsDirBaseDIR() . '/WP-STATIC-EXPORT-LOG';
 		$_SERVER['githubFilesToExport'] = $this->getUploadsDirBaseDIR() . '/WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT';
-		$archiveName = $uploadDir . '/' . self::HOOK . '-' . $blog_id . '-' . time() . '-' . $exporter->user_login;
+
+
+		$archiveName = $uploadDir . '/' . self::HOOK . '-' . $blog_id . '-' . time();
+		// append username if done via UI
+		if ( $exporter->user_login ) {
+			$archiveName .= '-' . $exporter->user_login;
+		}
+
 		$archiveDir = $archiveName . '/';
 
         file_put_contents($_SERVER['currentArchive'], $archiveDir);
@@ -735,7 +752,7 @@ class StaticHtmlOutput {
                     'body' => fopen($fileToTransfer, 'rb')
             ));
         } catch (Exception $e) {
-			error_log($bunnycdnAPIKey);
+			//error_log($bunnycdnAPIKey);
 			$this->_prependExportLog('BUNNYCDN EXPORT: error encountered');
 			$this->_prependExportLog($e);
             throw new Exception($e);
@@ -1013,8 +1030,8 @@ class StaticHtmlOutput {
             throw new Exception($e);
         }
     
-        error_log($response->getStatusCode(), 0);
-        error_log(print_r($response, true), 0);
+        //error_log($response->getStatusCode(), 0);
+        //error_log(print_r($response, true), 0);
     }
 
     public function doExportWithoutGUI() {
@@ -1238,8 +1255,8 @@ class StaticHtmlOutput {
 			file_put_contents($fileName, $fileContents);
 		} else {
 			$this->_prependExportLog('SAVING URL: UNABLE TO SAVE FOR SOME REASON');
-			error_log($fileName);
-			error_log('response body was empty');
+			//error_log($fileName);
+			//error_log('response body was empty');
 		}
 	}
 }
