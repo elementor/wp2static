@@ -99,3 +99,24 @@ function wp_static_html_output_ajax() {
 // rm wp emoji
 remove_action('wp_head', 'print_emoji_detection_script', 7);
 remove_action('wp_print_styles', 'print_emoji_styles');
+
+/**
+ * Add a widget to the dashboard.
+ *
+ * Enable users to statically publish theeir site from the WP Dashboard
+ */
+function wp_static_html_output_add_dashboard_widgets() {
+
+	wp_add_dashboard_widget(
+                 'wp_static_html_output_dashboard_widget',
+                 'Static HTML Output',
+                 'wp_static_html_output_dashboard_widget_function'
+        );	
+}
+//add_action( 'wp_dashboard_setup', 'wp_static_html_output_add_dashboard_widgets' );
+
+function wp_static_html_output_dashboard_widget_function() {
+
+	echo "<p>Publish whole site as static HTML</p>";
+	echo "<button class='button button-primary'>Publish whole site</button>";
+}
