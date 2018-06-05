@@ -88,8 +88,8 @@ class StaticHtmlOutput_UrlRequest
         );
 
         if (in_array($this->getContentType(), $crawable_types)) {
-            #error_log($this->getUrl());
-            #error_log($this->getContentType());
+            //error_log($this->getUrl());
+            //error_log($this->getContentType());
             return true;
         }
 
@@ -140,7 +140,7 @@ class StaticHtmlOutput_UrlRequest
 		$allUrls = array();
 	
 		if (!$this->isHtml() && !$this->isCrawlableContentType()) {
-            error_log('UrlRequest was not a valid HTML file - not extracting links!');
+            //error_log('UrlRequest was not a valid HTML file - not extracting links!');
             return array();
         }
 
@@ -171,7 +171,7 @@ class StaticHtmlOutput_UrlRequest
                 $matches // save matches into this array
                 )
             ) {
-                error_log('FOUND URLS IN CSS!');
+                //error_log('FOUND URLS IN CSS!');
                 // returns something like fonts/generatepress.eot
 
                 // we need to prepend the fullpath to the CSS file, trimming the basename
@@ -186,13 +186,13 @@ class StaticHtmlOutput_UrlRequest
         }
 
         if (!empty($allUrls)) {
-            #error_log(print_r($allUrls, true));
+            //error_log(print_r($allUrls, true));
 
             return $allUrls;
         } else {
-            error_log($this->getUrl());
-            error_log($this->getContentType());
-            error_log('DIDNT FIND ANY LINKS IN RESPONSE BODY THAT WE WANT TO ADD TO ARCHIVE');
+            //error_log($this->getUrl());
+            //error_log($this->getContentType());
+            //error_log('DIDNT FIND ANY LINKS IN RESPONSE BODY THAT WE WANT TO ADD TO ARCHIVE');
             return array();
         }
 		
