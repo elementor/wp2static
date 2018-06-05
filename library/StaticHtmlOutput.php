@@ -340,16 +340,18 @@ class StaticHtmlOutput {
 
         $additionalUrls = filter_input(INPUT_POST, 'additionalUrls');
 
+		// location for acrhive folder and zip to be created	
+		$uploadDir = $this->getUploadsDirBaseDIR();
+
         if ($viaCLI) {
             // read options from DB as array
             parse_str($this->_options->getOption('static-export-settings'), $pluginOptions);
 
             $newBaseURL = $pluginOptions['baseUrl'];
             $additionalUrls = $pluginOptions['additionalUrls'];
+			$uploadDir = $pluginOptions['additionalUrls'];
         }
 
-		// location for acrhive folder and zip to be created	
-		$uploadDir = $this->getUploadsDirBaseDIR();
 
 		$exporter = wp_get_current_user();
 		$_SERVER['urlsQueue'] = $this->getUploadsDirBaseDIR() . '/WP-STATIC-INITIAL-CRAWL-LIST';

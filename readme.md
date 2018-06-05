@@ -4,7 +4,7 @@ Allows you to leverage WordPress as a great CMS, but benefit from the speed, sec
 
 ---
 
-The lead developer of this plugin, [Leon Stafford](https://leonstafford.github.io), is also available for custom web development work. Shoot him an email to see if he can solve your problems: [mailto:leonstafford@protonmail.com](leonstafford@protonmail.com).
+The lead developer of this plugin, [Leon Stafford](https://leonstafford.github.io), is also available for custom web development work. Shoot him an email to see if he can solve your problems: [leonstafford@protonmail.com](mailto:leonstafford@protonmail.com).
 
 
 ---
