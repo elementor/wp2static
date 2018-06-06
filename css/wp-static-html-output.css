@@ -1,5 +1,9 @@
 @CHARSET "UTF-8";
 
+.github, .bunnycdn, .ftp, .dropbox, .netlify, .s3 {
+	display: none;
+}
+
 div.postbox-container {
 	float: none;
 	padding: 0;
