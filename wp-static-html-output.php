@@ -126,4 +126,4 @@ function wp_static_html_output_deregister_scripts(){
 	wp_deregister_script( 'comment-reply' );
 }
 add_action( 'wp_footer', 'wp_static_html_output_deregister_scripts' );
-
+remove_action('wp_head', 'wlwmanifest_link');
