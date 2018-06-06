@@ -122,6 +122,8 @@ function wp_static_html_output_dashboard_widget_function() {
 }
 
 function wp_static_html_output_deregister_scripts(){
-  wp_deregister_script( 'wp-embed' );
+	wp_deregister_script( 'wp-embed' );
+	wp_deregister_script( 'comment-reply' );
 }
 add_action( 'wp_footer', 'wp_static_html_output_deregister_scripts' );
+

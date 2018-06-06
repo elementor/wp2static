@@ -107,13 +107,12 @@ class StaticHtmlOutput_UrlRequest
 		$responseBody = $this->getResponseBody();
 
 		// strip WP identifiers from html files
+		// note: pregreplace over DOMDocument acceptable here as we're dealing with constant
+		// WP geerated output, not varying texts
 		if ($this->isHtml()) {
-				$responseBody = preg_replace('/<link rel=["\' ](pingback|alternate|EditURI|wlwmanifest|index|profile|prev)["\' ](.*?)>/si', '', $responseBody);
+				$responseBody = preg_replace('/<link rel=["\' ](shortlink|canonical|pingback|alternate|EditURI|wlwmanifest|index|profile|prev|next|wlwmanifest)["\' ](.*?)>/si', '', $responseBody);
 				$responseBody = preg_replace('/<meta name=["\' ]generator["\' ](.*?)>/si', '', $responseBody);
 				$responseBody = preg_replace('/<link(.*).w.org(.*)\/>/i', '', $responseBody);
-
-
-
 
 
 		}
