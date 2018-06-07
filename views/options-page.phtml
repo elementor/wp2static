@@ -353,79 +353,68 @@ jQuery(document).ready(function($){
             });
 
             $(targetExportSettingsBlock).find('#additionalUrls').val(newAdditionalUrls);
-            $(targetExportSettingsBlock).find('#createZip')[0].checked = settingsBlock.createZip;
-            $(targetExportSettingsBlock).find('#retainStaticFiles')[0].checked = settingsBlock.retainStaticFiles;
-            $(targetExportSettingsBlock).find('#retainZipFile')[0].checked = settingsBlock.retainZipFile;
-            $(targetExportSettingsBlock).find('#sendViaFTP')[0].checked = settingsBlock.sendViaFTP;
-            $(targetExportSettingsBlock).find('#ftpServer').first().val(decodeURIComponent(settingsBlock.ftpServer));
-            $(targetExportSettingsBlock).find('#ftpUsername').first().val(decodeURIComponent(settingsBlock.ftpUsername));
-            $(targetExportSettingsBlock).find('#ftpPassword').first().val(decodeURIComponent(settingsBlock.ftpPassword));
-            $(targetExportSettingsBlock).find('#ftpRemotePath').first().val(decodeURIComponent(settingsBlock.ftpRemotePath));
-            $(targetExportSettingsBlock).find('#sendViaBUNNYCDN')[0].checked = settingsBlock.sendViaBUNNYCDN;
-            $(targetExportSettingsBlock).find('#bunnycdnPullZoneName').first().val(decodeURIComponent(settingsBlock.bunnycdnPullZoneName));
-            $(targetExportSettingsBlock).find('#bunnycdnAPIKey').first().val(decodeURIComponent(settingsBlock.bunnycdnAPIKey));
-            $(targetExportSettingsBlock).find('#bunnycdnPath').first().val(decodeURIComponent(settingsBlock.bunnycdnPath));
-            $(targetExportSettingsBlock).find('#sendViaS3')[0].checked = settingsBlock.sendViaS3;
-            $(targetExportSettingsBlock).find('#s3Key').first().val(decodeURIComponent(settingsBlock.s3Key));
-            $(targetExportSettingsBlock).find('#s3Secret').first().val(decodeURIComponent(settingsBlock.s3Secret));
-            $(targetExportSettingsBlock).find('#s3Region').first().val(decodeURIComponent(settingsBlock.s3Region));
-            $(targetExportSettingsBlock).find('#s3Bucket').first().val(decodeURIComponent(settingsBlock.s3Bucket));
-            $(targetExportSettingsBlock).find('#cfDistributionId').first().val(decodeURIComponent(settingsBlock.cfDistributionId));
-            $(targetExportSettingsBlock).find('#sendViaDropbox')[0].checked = settingsBlock.sendViaDropbox;
-            $(targetExportSettingsBlock).find('#dropboxAppKey').first().val(decodeURIComponent(settingsBlock.dropboxAppKey));
-            $(targetExportSettingsBlock).find('#dropboxAppSecret').first().val(decodeURIComponent(settingsBlock.dropboxAppSecret));
-            $(targetExportSettingsBlock).find('#dropboxAccessToken').first().val(decodeURIComponent(settingsBlock.dropboxAccessToken));
-            $(targetExportSettingsBlock).find('#dropboxFolder').first().val(decodeURIComponent(settingsBlock.dropboxFolder));
-            $(targetExportSettingsBlock).find('#sendViaGithub')[0].checked = settingsBlock.sendViaGithub;
-            $(targetExportSettingsBlock).find('#githubPersonalAccessToken').first().val(decodeURIComponent(settingsBlock.githubPersonalAccessToken));
-            $(targetExportSettingsBlock).find('#githubPath').first().val(decodeURIComponent(settingsBlock.githubPath));
-            $(targetExportSettingsBlock).find('#githubRepo').first().val(decodeURIComponent(settingsBlock.githubRepo));
-            $(targetExportSettingsBlock).find('#githubBranch').first().val(decodeURIComponent(settingsBlock.githubBranch));
-            $(targetExportSettingsBlock).find('#sendViaNetlify')[0].checked = settingsBlock.sendViaNetlify;
-            $(targetExportSettingsBlock).find('#netlifyPersonalAccessToken').first().val(decodeURIComponent(settingsBlock.netlifyPersonalAccessToken));
-            $(targetExportSettingsBlock).find('#netlifySiteID').first().val(decodeURIComponent(settingsBlock.netlifySiteID));
-            $(targetExportSettingsBlock).find('#dontIncludeAllUploadFiles')[0].checked = settingsBlock.dontIncludeAllUploadFiles;
 
+			// set text fields
+			var textfield_settings = [
+				'ftpServer',
+				'ftpUsername',
+				'ftpPassword',
+				'ftpRemotePath',
+				'bunnycdnPullZoneName',
+				'bunnycdnAPIKey',
+				'bunnycdnPath',
+				's3Key',
+				's3Secret',
+				's3Region',
+				's3Bucket',
+				'cfDistributionId',
+				'dropboxAppKey',
+				'dropboxAppSecret',
+				'dropboxAccessToken',
+				'dropboxFolder',
+				'githubPersonalAccessToken',
+				'githubPath',
+				'githubRepo',
+				'githubBranch',
+				'netlifyPersonalAccessToken',
+				'netlifySiteID',
+			];
+
+			for (var i = 0, len = textfield_settings.length; i < len; i++) {
+				$(targetExportSettingsBlock).find('#' + textfield_settings[i]).first().val(decodeURIComponent(settingsBlock[textfield_settings[i]]));
+			}
+
+			// set checkboxes
+			var checkbox_settings = [
+				'createZip',
+				'retainStaticFiles',
+				'retainZipFile',
+				'sendViaFTP',
+				'sendViaBUNNYCDN',
+				'sendViaS3',
+				'sendViaDropbox',
+				'sendViaGithub',
+				'sendViaNetlify',
+				'dontIncludeAllUploadFiles',
+			];
+
+			for (var i = 0, len = checkbox_settings.length; i < len; i++) {
+				$(targetExportSettingsBlock).find('#' + checkbox_settings[i])[0].checked = settingsBlock[checkbox_settings[i]];
+			}
 
             // if there are more to come, clone and set target
+			// TODO: check if this still works, blanking fields
             if (index < (archives.length -1)) {
                 $('.options-form:last').clone().insertAfter('.options-form:last');
                 targetExportSettingsBlock =  $('.options-form:last');
-                $(targetExportSettingsBlock).find('#baseUrl').first().val('');
-                $(targetExportSettingsBlock).find('#outputDirectory').val('');
-                $(targetExportSettingsBlock).find('#additionalUrls').val('');
-                $(targetExportSettingsBlock).find('#createZip').first().prop('checked', false);
-                $(targetExportSettingsBlock).find('#retainStaticFiles').first().prop('checked', false);
-                $(targetExportSettingsBlock).find('#retainZipFile').first().prop('checked', false);
-                $(targetExportSettingsBlock).find('#sendViaFTP').first().prop('checked', false);
-                $(targetExportSettingsBlock).find('#ftpServer').val('');
-                $(targetExportSettingsBlock).find('#ftpUsername').val('');
-                $(targetExportSettingsBlock).find('#ftpPassword').val('');
-                $(targetExportSettingsBlock).find('#ftpRemotePath').val('');
-                $(targetExportSettingsBlock).find('#sendViaBUNNYCDN').first().prop('checked', false);
-                $(targetExportSettingsBlock).find('#bunnycdnPullZoneName').val('');
-                $(targetExportSettingsBlock).find('#bunnycdnAPIKey').val('');
-                $(targetExportSettingsBlock).find('#bunnycdnPath').val('');
-                $(targetExportSettingsBlock).find('#sendViaS3').first().prop('checked', false);
-                $(targetExportSettingsBlock).find('#s3Key').val('');
-                $(targetExportSettingsBlock).find('#s3Secret').val('');
-                $(targetExportSettingsBlock).find('#s3Region').val('');
-                $(targetExportSettingsBlock).find('#s3Bucket').val('');
-                $(targetExportSettingsBlock).find('#cfDistributionId').val('');
-                $(targetExportSettingsBlock).find('#sendViaDropbox').first().prop('checked', false);
-                $(targetExportSettingsBlock).find('#dropboxAppKey').val('');
-                $(targetExportSettingsBlock).find('#dropboxAppSecret').val('');
-                $(targetExportSettingsBlock).find('#dropboxAccessToken').val('');
-                $(targetExportSettingsBlock).find('#dropboxFolder').val('');
-                $(targetExportSettingsBlock).find('#sendViaGithub').first().prop('checked', false);
-                $(targetExportSettingsBlock).find('#githubPersonalAccessToken').val('');
-                $(targetExportSettingsBlock).find('#githubPath').val('');
-                $(targetExportSettingsBlock).find('#githubRepo').val('');
-                $(targetExportSettingsBlock).find('#githubBranch').val('');
-                $(targetExportSettingsBlock).find('#sendViaNetlify').first().prop('checked', false);
-                $(targetExportSettingsBlock).find('#netlifyPersonalAccessToken').val('');
-                $(targetExportSettingsBlock).find('#netlifySiteID').val('');
-                $(targetExportSettingsBlock).find('#dontIncludeAllUploadFiles').first().prop('checked', false);
+
+				for (var i = 0, len = textfield_settings.length; i < len; i++) {
+					$(targetExportSettingsBlock).find('#' + textfield_settings[i]).first().val('');
+				}
+
+				for (var i = 0, len = checkbox_settings.length; i < len; i++) {
+					$(targetExportSettingsBlock).find('#' + checkbox_settings[i]).first().prop('checked', false);
+				}
             }
         });
     }
@@ -547,7 +536,7 @@ jQuery(document).ready(function($){
                 <br>
 
 
-                <input name="s3Secret" class="regular-text" id="s3Secret" value="<?php echo esc_attr($this->s3Secret) ?>" placeholder="<?php echo __('S3 Secret', 'static-html-output-plugin');?>" />
+                <input name="s3Secret" class="regular-text" id="s3Secret" type="password" value="<?php echo esc_attr($this->s3Secret) ?>" placeholder="<?php echo __('S3 Secret', 'static-html-output-plugin');?>" />
                 <span class="description">ie, wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY</span>
                 <br>
 
@@ -620,11 +609,11 @@ jQuery(document).ready(function($){
                 <span class="description">ie, 'llkjhlkewedsc'</span>
                 <br>
 
-                <input name="dropboxAppSecret" class="regular-text" id="dropboxAppSecret" value="<?php echo esc_attr($this->dropboxAppSecret) ?>" placeholder="<?php echo __('Dropbox app secret', 'static-html-output-plugin');?>" />
+                <input name="dropboxAppSecret" class="regular-text" id="dropboxAppSecret" type="password" value="<?php echo esc_attr($this->dropboxAppSecret) ?>" placeholder="<?php echo __('Dropbox app secret', 'static-html-output-plugin');?>" />
                 <span class="description">ie, 'vsndbvfjhsdfs'</span>
                 <br>
 
-                <input name="dropboxAccessToken" class="regular-text" id="dropboxAccessToken" value="<?php echo esc_attr($this->dropboxAccessToken) ?>" placeholder="<?php echo __('Dropbox access token', 'static-html-output-plugin');?>" />
+                <input name="dropboxAccessToken" class="regular-text" id="dropboxAccessToken" type="password"  value="<?php echo esc_attr($this->dropboxAccessToken) ?>" placeholder="<?php echo __('Dropbox access token', 'static-html-output-plugin');?>" />
                 <span class="description"><a href="https://blogs.dropbox.com/developers/2014/05/generate-an-access-token-for-your-own-account/" target="_blank">How do I get this?</a></span>
                 <br>
 
@@ -643,7 +632,7 @@ jQuery(document).ready(function($){
 
 
 <span class="github">
-		<input name="githubPersonalAccessToken" class="regular-text" id="githubPersonalAccessToken" value="<?php echo esc_attr($this->githubPersonalAccessToken) ?>" placeholder="<?php echo __('GitHub personal access token', 'static-html-output-plugin');?>" />
+		<input name="githubPersonalAccessToken" class="regular-text" id="githubPersonalAccessToken" type="password" value="<?php echo esc_attr($this->githubPersonalAccessToken) ?>" placeholder="<?php echo __('GitHub personal access token', 'static-html-output-plugin');?>" />
 
                 <span class="description"><a href="https://github.com/settings/tokens/new" target="_blank">How do I get this?</a></span>
                 <br>
@@ -670,7 +659,7 @@ jQuery(document).ready(function($){
 
 <span class="netlify">
 
-		<input name="netlifyPersonalAccessToken" class="regular-text" id="netlifyPersonalAccessToken" value="<?php echo esc_attr($this->netlifyPersonalAccessToken) ?>" placeholder="<?php echo __('Netlify personal access token', 'static-html-output-plugin');?>" />
+		<input name="netlifyPersonalAccessToken" class="regular-text" id="netlifyPersonalAccessToken" type="password" value="<?php echo esc_attr($this->netlifyPersonalAccessToken) ?>" placeholder="<?php echo __('Netlify personal access token', 'static-html-output-plugin');?>" />
 
                 <span class="description"><a href="https://app.netlify.com/account/applications/personal" target="_blank">How do I get this?</a></span>
                 <br>
