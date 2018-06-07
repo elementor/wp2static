@@ -391,10 +391,20 @@ class StaticHtmlOutput {
 		$urlsQueue = array_unique(array_merge(
 					array(trailingslashit($baseUrl)),
 					$this->_getListOfLocalFilesByUrl(array(get_template_directory_uri())),
-					$this->_getListOfLocalFilesByUrl(array($this->getUploadsDirBaseURL())),
                     $this->_getAllWPPostURLs(),
 					explode("\n", $additionalUrls)
 					));
+
+
+        $dontIncludeAllUploadFiles = filter_input(INPUT_POST, 'dontIncludeAllUploadFiles');
+
+		if (!$dontIncludeAllUploadFiles) {
+            $this->_prependExportLog('NOT INCLUDING ALL FILES FROM UPLOADS DIR');
+			$urlsQueue = array_unique(array_merge(
+					$urlsQueue,
+					$this->_getListOfLocalFilesByUrl(array($this->getUploadsDirBaseURL()))
+			));
+		}
 
         $this->_prependExportLog('INITIAL CRAWL LIST CONTAINS ' . count($urlsQueue) . ' FILES');
 

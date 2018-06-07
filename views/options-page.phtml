@@ -371,6 +371,7 @@ jQuery(document).ready(function($){
             $(targetExportSettingsBlock).find('#sendViaNetlify')[0].checked = settingsBlock.sendViaNetlify;
             $(targetExportSettingsBlock).find('#netlifyPersonalAccessToken').first().val(decodeURIComponent(settingsBlock.netlifyPersonalAccessToken));
             $(targetExportSettingsBlock).find('#netlifySiteID').first().val(decodeURIComponent(settingsBlock.netlifySiteID));
+            $(targetExportSettingsBlock).find('#dontIncludeAllUploadFiles')[0].checked = settingsBlock.dontIncludeAllUploadFiles;
 
 
             // if there are more to come, clone and set target
@@ -411,6 +412,7 @@ jQuery(document).ready(function($){
                 $(targetExportSettingsBlock).find('#sendViaNetlify').first().prop('checked', false);
                 $(targetExportSettingsBlock).find('#netlifyPersonalAccessToken').val('');
                 $(targetExportSettingsBlock).find('#netlifySiteID').val('');
+                $(targetExportSettingsBlock).find('#dontIncludeAllUploadFiles').first().prop('checked', false);
             }
         });
     }
@@ -668,6 +670,17 @@ jQuery(document).ready(function($){
                     <i>Just leave this blank and it will write any export files to your WordPress uploads directory at: <?php $default_upload_dir = wp_upload_dir(); echo $default_upload_dir['basedir']; ?> else, give the full path to the directory on your server</i>
                   </p> 
                   <input type="text" id="outputDirectory" name="outputDirectory" value="<?php echo esc_html($this->outputDirectory) ?>" size="50" />
+                </p>
+
+                <p>
+                  <strong><label for="outputDirectory"><?php echo __('Don\'t include all files from your uploads diretory', 'static-html-output-plugin');?></label></strong>
+                  <p>
+                <fieldset>
+                    <label for="dontIncludeAllUploadFiles">
+                    <input name="dontIncludeAllUploadFiles" id="dontIncludeAllUploadFiles" value="1" type="checkbox" <?php if ($this->dontIncludeAllUploadFiles == 1) echo "checked"; ?> />
+                        <span><?php echo __('Best to leave this unchecked in most cases. Are there some files in your WP uploads directory you don\'t want included in your export? Check this box to limit the export to only files the plugin finds when crawling your site.', 'static-html-output-plugin');?></span>
+                    </label>
+                </fieldset>
                 </p>
                 
                 <p>
