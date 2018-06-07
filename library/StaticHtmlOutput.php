@@ -22,8 +22,6 @@ class StaticHtmlOutput {
 	protected function __construct() {}
 	protected function __clone() {}
 
-	public $FILEPATH = '/var/www/html/wp-content/uploads/OBLADEE';
-
     // gets the full path on server to the wp uploads dir
     // not to be confued with uploads public URL 
 	public function getUploadsDirBaseDIR() {
@@ -393,6 +391,7 @@ class StaticHtmlOutput {
 		$urlsQueue = array_unique(array_merge(
 					array(trailingslashit($baseUrl)),
 					$this->_getListOfLocalFilesByUrl(array(get_template_directory_uri())),
+					$this->_getListOfLocalFilesByUrl(array($this->getUploadsDirBaseURL())),
                     $this->_getAllWPPostURLs(),
 					explode("\n", $additionalUrls)
 					));
