@@ -189,9 +189,9 @@ jQuery(document).ready(function($){
             method: 'POST',
             success: function(serverResponse) {
 				if ($('#createZip').attr('checked') == 'checked') {
-					doAJAXExport('crawl_site', 'create_zip');
+					doAJAXExport('crawl_site', 'post_process_archive_dir', 'create_zip');
 				} else {
-					doAJAXExport('crawl_site');
+					doAJAXExport('crawl_site', 'post_process_archive_dir');
 				}
             },
             error: ajaxErrorHandler

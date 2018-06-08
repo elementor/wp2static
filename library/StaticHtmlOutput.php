@@ -276,7 +276,11 @@ class StaticHtmlOutput {
         //error_log('STARTING EXPORT: via CLI = ' . $viaCLI);
         // prepare export targets
         $exportTargetsFile = $this->getUploadsDirBaseDIR() . '/WP-STATIC-EXPORT-TARGETS';
-        unlink($this->getUploadsDirBaseDIR() . '/WP-STATIC-EXPORT-TARGETS');
+
+		if ( file_exists($exportTargetsFile) ) {
+			unlink($this->getUploadsDirBaseDIR() . '/WP-STATIC-EXPORT-TARGETS');
+		}
+
 
         // set options from GUI or override via CLI
         $sendViaGithub = filter_input(INPUT_POST, 'sendViaGithub');
@@ -1059,6 +1063,19 @@ class StaticHtmlOutput {
 
         // do any exports
     }
+
+	
+	
+    public function post_process_archive_dir() {
+        $this->_prependExportLog('POST PROCESSING ARCHIVE DIR: ...');
+		//TODO: rm symlink if no folder exists
+        $archiveDir = file_get_contents($this->getUploadsDirBaseDIR() . '/WP-STATIC-CURRENT-ARCHIVE');
+
+		// TODO: move/rename directories here
+
+
+		echo 'SUCCESS';
+	}
 
     public function post_export_teardown() {
         $this->_prependExportLog('POST EXPORT CLEANUP: starting...');
