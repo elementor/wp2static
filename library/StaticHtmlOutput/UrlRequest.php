@@ -171,6 +171,10 @@ class StaticHtmlOutput_UrlRequest
 		$responseBody = str_replace($original_wp_includes, $new_wp_includes, $responseBody);
 
 		// TODO: strip query strings for just our host
+		// TODO: handle different url protocols
+		// TODO: if no preg_replace for the query strings found, then we must go DOMDocument...
+
+
 		// TODO: strip comments from JS files
 
 		$this->setResponseBody($responseBody);
