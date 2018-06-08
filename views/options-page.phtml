@@ -458,6 +458,31 @@ jQuery(document).ready(function($){
 });
 </script>
 
+<?php
+// templating functions to make code a little easier to read
+$template_variables = $this;
+
+function displayCheckbox($field_name, $field_label) {
+	echo "
+		<fieldset>
+			<label for='{$field_name}'>
+				<input name='{$field_name}' id='{$field_name}' value='1' type='checkbox' " . ( $template_variables->{$field_name} == 1 ? 'checked' : '' ) . " />
+				<span>" .  __($field_label, 'static-html-output-plugin') . "</span>
+			</label>
+		</fieldset>
+	";
+}
+
+function displayTextfield($field_name, $field_label, $description, $password = null) {
+	echo "
+		<input name='{$field_name}' class='regular-text' id='{$field_name}' type='" . ( $password  ? 'password' : 'text' ) . "' value='". esc_attr($template_variables->ftpServer) . "' placeholder='" .  __($field_label, 'static-html-output-plugin') . "' />
+		<span class='description'>$description</span>
+		<br>
+	";
+}
+?>
+
+
 <div class="wrap">
 	
 	<h2><?php echo __('WP Static HTML Output - Configure & Run', 'static-html-output-plugin');?></h2>
@@ -480,74 +505,29 @@ jQuery(document).ready(function($){
                   <p>
                     <i><?php echo __("This defaults to your WordPress Site URL. If you know the URL of where you'll be hosting the static version of your site, it will be good to change this to that, ie http://mystaticsite.github.io!", 'static-html-output-plugin');?></i>
                   </p> 
-                  <input type="text" id="baseUrl" name="baseUrl" value="<?php echo esc_attr($this->baseUrl) ?>" size="50" />
+                  <input type="text" id="baseUrl" name="baseUrl" value="<?php echo esc_attr($this->baseUrl) ?>'" size="50" />
                 </p>
 
-
-                <fieldset>
-                    <label for="createZip">
-                        <input name="createZip" id="createZip" value="1" type="checkbox" <?php if ($this->createZip == 1) echo "checked"; ?> />
-                        <span><?php echo __('Create a ZIP file of your statically exported site, ready for you to manually deploy. Download link will appear in the Export Log below', 'static-html-output-plugin');?></span>
-                    </label>
-                </fieldset>
-                
-                <fieldset>
-                    <label for="retainStaticFiles">
-                        <input name="retainStaticFiles" id="retainStaticFiles" value="1" type="checkbox" <?php if ($this->retainStaticFiles == 1) echo "checked"; ?> />
-                        <span><?php echo __('Retain generated static files on server', 'static-html-output-plugin');?></span>
-                    </label>
-                </fieldset>
-
-                <fieldset>
-                    <label for="retainZipFile">
-                        <input name="retainZipFile" id="retainZipFile" value="1" type="checkbox" <?php if ($this->retainZipFile == 1) echo "checked"; ?> />
-                        <span><?php echo __('Retain generated zip file on server', 'static-html-output-plugin');?></span>
-                    </label>
-                </fieldset>
-
-                <fieldset>
-                    <label for="sendViaFTP">
-                    <input name="sendViaFTP" id="sendViaFTP" value="1" type="checkbox" <?php if ($this->sendViaFTP == 1) echo "checked"; ?> />
-                        <span><?php echo __('Transfer files via FTP', 'static-html-output-plugin');?></span>
-                    </label>
-                </fieldset>
+<?php echo displayCheckbox('createZip', 'Create a ZIP file of your statically exported site, ready for you to manually deploy. Download link will appear in the Export Log below'); ?>
+<?php echo displayCheckbox('retainStaticFiles', 'Retain generated static files on server'); ?>
+<?php echo displayCheckbox('retainZipFile', 'Retain generated zip file on server'); ?>
+<?php echo displayCheckbox('sendViaFTP', 'Transfer files via FTP'); ?>
 
 <span class="ftp">
-                <input name="ftpServer" class="regular-text" id="ftpServer" value="<?php echo esc_attr($this->ftpServer) ?>" placeholder="<?php echo __('FTP Server', 'static-html-output-plugin');?>" />
-                <span class="description">ie, localhost, 192.168.1.7, ftp.mydomain.com, etc</span>
-                <br>
-
-                <input name="ftpUsername" class="regular-text" id="ftpUsername" value="<?php echo esc_attr($this->ftpUsername) ?>" placeholder="<?php echo __('FTP Username', 'static-html-output-plugin');?>" />
-                <br>
-
-                <input class="regular-text" name="ftpPassword" id="ftpPassword" type="password" value="" placeholder="<?php echo __('FTP Password', 'static-html-output-plugin');?>" />
-                <br>
-
-                <input class="regular-text" name="ftpRemotePath" id="ftpRemotePath" value="<?php echo esc_attr($this->ftpRemotePath) ?>" placeholder="<?php echo __('FTP Remote Path', 'static-html-output-plugin');?>" />
-                <span class="description">will attempt to create folder recursively if non-existent</span>
-                <br>
-                <br>
+	<?php echo displayTextfield('ftpServer', 'FTP Server', 'ie, localhost, 192.168.1.7, ftp.mydomain.com, etc'); ?>
+	<?php echo displayTextfield('ftpUsername', 'FTP Username', ''); ?>
+	<?php echo displayTextfield('ftpPassword', 'FTP Password', '', 'password'); ?>
+	<?php echo displayTextfield('ftpRemotePath', 'FTP Remote Path', 'will attempt to create folder recursively if non-existent'); ?>
 </span>            
 
-                <fieldset>
-                    <label for="sendViaS3">
-                    <input name="sendViaS3" id="sendViaS3" value="1" type="checkbox" <?php if ($this->sendViaS3 == 1) echo "checked"; ?> />
-                        <span><?php echo __('Transfer files via S3', 'static-html-output-plugin');?></span>
-                    </label>
-                </fieldset>
+
+<?php echo displayCheckbox('sendViaS3', 'Transfer files via S3'); ?>
 
 <span class="s3">
-                <input name="s3Key" class="regular-text" id="s3Key" value="<?php echo esc_attr($this->s3Key) ?>" placeholder="<?php echo __('S3 Key', 'static-html-output-plugin');?>" />
-                <span class="description">ie, AKIAIOSFODNN7EXAMPLE</span>
-                <br>
-
-
-                <input name="s3Secret" class="regular-text" id="s3Secret" type="password" value="<?php echo esc_attr($this->s3Secret) ?>" placeholder="<?php echo __('S3 Secret', 'static-html-output-plugin');?>" />
-                <span class="description">ie, wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY</span>
-                <br>
+	<?php echo displayTextfield('s3Key', 'S3 Key', 'ie, ie, AKIAIOSFODNN7EXAMPLE'); ?>
+	<?php echo displayTextfield('s3Secret', 'S3 Secret', 'ie, wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY', 'password'); ?>
 
                 <!-- check regions available at: http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region -->
-
                 <select name="s3Region" id="s3Region">
                     <option value="us-east-1">US East (N. Virginia)</option>
                     <option value="us-east-2">US East (Ohio)</option>
@@ -570,111 +550,44 @@ jQuery(document).ready(function($){
                 <span class="description">choose the region your bucket is in</span>
                 <br>
 
-                <input name="s3Bucket" class="regular-text" id="s3Bucket" value="<?php echo esc_attr($this->s3Bucket) ?>" placeholder="<?php echo __('S3 Bucket name', 'static-html-output-plugin');?>" />
-                <span class="description">ie, my-static-site</span>
-                <br>
-
-                <input name="cfDistributionId" class="regular-text" id="cfDistributionId" value="<?php echo esc_attr($this->cfDistributionId) ?>" placeholder="<?php echo __('CloudFront DistributionId', 'static-html-output-plugin');?>" />
-                <span class="description">ie, ABC123DEFX</span>
-                <br>
-                <br>
+	<?php echo displayTextfield('s3Bucket', 'S3 Bucket', 'ie, my-static-site'); ?>
+	<?php echo displayTextfield('cfDistributionId', 'CloudFront Distribution ID', 'ie, ABC123DEFX'); ?>
 </span>
 
-                <fieldset>
-                    <label for="sendViaBUNNYCDN">
-                    <input name="sendViaBUNNYCDN" id="sendViaBUNNYCDN" value="1" type="checkbox" <?php if ($this->sendViaBUNNYCDN == 1) echo "checked"; ?> />
-                        <span><?php echo __('Transfer files via BunnyCDN', 'static-html-output-plugin');?></span>
-                    </label>
-                </fieldset>
+<?php echo displayCheckbox('sendViaBUNNYCDN', 'Transfer files via BunnyCDN'); ?>
 
 <span class="bunnycdn">
-                <input name="bunnycdnPullZoneName" class="regular-text" id="bunnycdnPullZoneName" value="<?php echo esc_attr($this->bunnycdnPullZoneName) ?>" placeholder="<?php echo __('Pull Zone', 'static-html-output-plugin');?>" />
-                <span class="description">ie, mybunnypullzone, etc</span>
-                <br>
-
-                <input name="bunnycdnAPIKey" class="regular-text" id="bunnycdnAPIKey" type='password' value="<?php echo esc_attr($this->bunnycdnAPIKey) ?>" placeholder="<?php echo __('API Key', 'static-html-output-plugin');?>" />
-                <br>
-
-                <input class="regular-text" name="bunnycdnPath" id="bunnycdnPath" value="<?php echo esc_attr($this->bunnycdnPath) ?>" placeholder="<?php echo __('BunnyCDN Remote Path', 'static-html-output-plugin');?>" />
-                <span class="description">will attempt to create folder recursively if non-existent</span>
-                <br>
-                <br>
+	<?php echo displayTextfield('bunnycdnPullZoneName', 'Pull Zone', 'ie, mybunnypullzone, etc'); ?>
+	<?php echo displayTextfield('bunnycdnAPIKey', 'API Key', '', 'password'); ?>
+	<?php echo displayTextfield('bunnycdnPath', 'BunnyCDN Remote Path', 'will attempt to create folder recursively if non-existent'); ?>
 </span>
-                <fieldset>
-                    <label for="sendViaDropbox">
-                    <input name="sendViaDropbox" id="sendViaDropbox" value="1" type="checkbox" <?php if ($this->sendViaDropbox == 1) echo "checked"; ?> <?php if (floatval(PHP_VERSION) < 5) { echo 'disabled'; } ?> />
-                        <span><?php echo __('Transfer files via Dropbox', 'static-html-output-plugin');?></span>
-                        <span style="color:red;"><?php if (floatval(PHP_VERSION) < 5) { echo 'Requires PHP >= 7, you have ' . PHP_VERSION; } ?></span>
-                    </label>
-                </fieldset>
 
+<?php echo displayCheckbox('sendViaDropbox', 'Transfer files via Dropbox'); ?>
 
 <span class="dropbox">
-		<input name="dropboxAppKey" class="regular-text" id="dropboxAppKey" value="<?php echo esc_attr($this->dropboxAppKey) ?>" placeholder="<?php echo __('Dropbox app key', 'static-html-output-plugin');?>" />
-
-                <span class="description">ie, 'llkjhlkewedsc'</span>
-                <br>
-
-                <input name="dropboxAppSecret" class="regular-text" id="dropboxAppSecret" type="password" value="<?php echo esc_attr($this->dropboxAppSecret) ?>" placeholder="<?php echo __('Dropbox app secret', 'static-html-output-plugin');?>" />
-                <span class="description">ie, 'vsndbvfjhsdfs'</span>
-                <br>
-
-                <input name="dropboxAccessToken" class="regular-text" id="dropboxAccessToken" type="password"  value="<?php echo esc_attr($this->dropboxAccessToken) ?>" placeholder="<?php echo __('Dropbox access token', 'static-html-output-plugin');?>" />
-                <span class="description"><a href="https://blogs.dropbox.com/developers/2014/05/generate-an-access-token-for-your-own-account/" target="_blank">How do I get this?</a></span>
-                <br>
-
-                <input name="dropboxFolder" class="regular-text" id="dropboxFolder" value="<?php echo esc_attr($this->dropboxFolder) ?>" placeholder="<?php echo __('Dropbox folder', 'static-html-output-plugin');?>" />
-                <span class="description">where you want this to be transferred to in your Dropbox account (ie, /teststatic)</span>
-                <br>
-                <br>
+	<?php echo displayTextfield('dropboxAppKey', 'Dropbox App Key', 'ie, llkjhlkewedsc'); ?>
+	<?php echo displayTextfield('dropboxAppSecret', 'Dropbox App Secret', 'ie, vsndbvfjhsdfs', 'password'); ?>
+	<?php echo displayTextfield('dropboxAccessToken', 'Dropbox Access Token', '<a href="https://blogs.dropbox.com/developers/2014/05/generate-an-access-token-for-your-own-account/" target="_blank">How do I get this?</a>', 'password'); ?>
+	<?php echo displayTextfield('dropboxFolder', 'Dropbox folder', 'where you want this to be transferred to in your Dropbox account (ie, /teststatic)'); ?>
 </span>
 
-                <fieldset>
-                    <label for="sendViaGithub">
-                    <input name="sendViaGithub" id="sendViaGithub" value="1" type="checkbox" <?php if ($this->sendViaGithub == 1) echo "checked"; ?> />
-                        <span><?php echo __('Transfer files via GitHub', 'static-html-output-plugin');?></span>
-                    </label>
-                </fieldset>
-
+<?php echo displayCheckbox('sendViaGithub', 'Transfer files via GitHub'); ?>
 
 <span class="github">
-		<input name="githubPersonalAccessToken" class="regular-text" id="githubPersonalAccessToken" type="password" value="<?php echo esc_attr($this->githubPersonalAccessToken) ?>" placeholder="<?php echo __('GitHub personal access token', 'static-html-output-plugin');?>" />
-
-                <span class="description"><a href="https://github.com/settings/tokens/new" target="_blank">How do I get this?</a></span>
-                <br>
-
-                <input name="githubRepo" class="regular-text" id="githubRepo" value="<?php echo esc_attr($this->githubRepo) ?>" placeholder="<?php echo __('GitHub repository', 'static-html-output-plugin');?>" />
-                <span class="description">ie, 'mystaticsite'</span>
-                <br>
-
-                <input name="githubBranch" class="regular-text" id="githubBranch" value="<?php echo esc_attr($this->githubBranch) ?>" placeholder="<?php echo __('GitHub branch', 'static-html-output-plugin');?>" />
-                <span class="description">usually 'master' or 'gh-pages'</span>
-                <br>
-
-                <input name="githubPath" class="regular-text" id="githubPath" value="<?php echo esc_attr($this->githubPath) ?>" placeholder="<?php echo __('GitHub path', 'static-html-output-plugin');?>" />
-                <span class="description">Usually the repository root (leave this blank) or the 'doc' folder</span>
-                <br>
-                <br>
+	<?php echo displayTextfield('githubPersonalAccessToken', 'GitHub Personal Access Token', '<a href="https://github.com/settings/tokens/new" target="_blank">How do I get this?</a>', 'password'); ?>
+	<?php echo displayTextfield('githubRepo', 'Accout / Repository Name', 'leonstafford/wordpress-static-html-plugin'); ?>
+	<?php echo displayTextfield('githubBranch', 'Branch', 'usually \'master\' or \'gh-pages\''); ?>
+	<?php echo displayTextfield('githubPath', 'Path within repository', 'Usually the repository root (leave this blank) or the \'doc\' folder'); ?>
 </span>
-                <fieldset>
-                    <label for="sendViaNetlify">
-                    <input name="sendViaNetlify" id="sendViaNetlify" value="1" type="checkbox" <?php if ($this->sendViaNetlify == 1) echo "checked"; ?> />
-                        <span><?php echo __('Transfer files via Netlify', 'static-html-output-plugin');?></span>
-                    </label>
-                </fieldset>
+
+<?php echo displayCheckbox('sendViaNetlify', 'Transfer files via Netlify'); ?>
 
 <span class="netlify">
-
-		<input name="netlifyPersonalAccessToken" class="regular-text" id="netlifyPersonalAccessToken" type="password" value="<?php echo esc_attr($this->netlifyPersonalAccessToken) ?>" placeholder="<?php echo __('Netlify personal access token', 'static-html-output-plugin');?>" />
-
-                <span class="description"><a href="https://app.netlify.com/account/applications/personal" target="_blank">How do I get this?</a></span>
-                <br>
-
-                <input name="netlifySiteID" class="regular-text" id="netlifySiteID" value="<?php echo esc_attr($this->netlifySiteID) ?>" placeholder="<?php echo __('Netlify site ID', 'static-html-output-plugin');?>" />
-                <span class="description">ie, 'mystaticsite'</span>
-                <br>
-                <br>
+	<?php echo displayTextfield('netlifyPersonalAccessToken', 'Netlify Personal Access Token', '<a href="https://app.netlify.com/account/applications/personal" target="_blank">How do I get this?</a>', 'password'); ?>
+	<?php echo displayTextfield('netlifySiteID', 'Netlify Site ID', 'ie, mystaticsite'); ?>
 </span>
+
+
                 <p>
                   <strong><label for="outputDirectory"><?php echo __('Override Output Directory', 'static-html-output-plugin');?></label></strong>
                   <p>
@@ -705,7 +618,6 @@ http://172.17.0.3/my_pricelist.pdf</pre>
                   </p>
                   <textarea class="widefat" name="additionalUrls" id="additionalUrls" rows="5" cols="10"><?php echo esc_html($this->additionalUrls) ?></textarea>
                 </p>
-
 		<br>
 
 
