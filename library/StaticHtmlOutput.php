@@ -1310,7 +1310,6 @@ class StaticHtmlOutput {
 		if(  isset($pathInfo['extension'])) {
 			$fileExtension = $pathInfo['extension']; 
 		} else if( $url->isHtml() ) {
-			$this->_prependExportLog('SETTING EXTENSION TO HTML');
 			$fileExtension = 'html'; 
 		} else {
 			// guess mime type

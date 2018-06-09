@@ -427,27 +427,27 @@ jQuery(document).ready(function($){
     }
 
 	// if rewrite values aren't set yet, populate fields with defaults
-	if ( $("#rewriteWPCONTENT").val() == '' ) {
+	if ( $("#rewriteWPCONTENT").val() == '' || $("#rewriteWPCONTENT").val() == 'undefined') {
 		$("#rewriteWPCONTENT").val('contents');
 	}
 
-	if ( $("#rewriteTHEMEDIR").val() == '' ) {
+	if ( $("#rewriteTHEMEDIR").val() == '' || $("#rewriteTHEMEDIR").val() == 'undefined') {
 		$("#rewriteTHEMEDIR").val('theme');
 	}
 
-	if ( $("#rewriteUPLOADS").val() == '' ) {
+	if ( $("#rewriteUPLOADS").val() == '' || $("#rewriteUPLOADS").val() == 'undefined') {
 		$("#rewriteUPLOADS").val('data');
 	}
 
-	if ( $("#rewriteTHEMEROOT").val() == '' ) {
+	if ( $("#rewriteTHEMEROOT").val() == '' || $("#rewriteTHEMEROOT").val() == 'undefined') {
 		$("#rewriteTHEMEROOT").val('ui');
 	}
 
-	if ( $("#rewritePLUGINDIR").val() == '' ) {
+	if ( $("#rewritePLUGINDIR").val() == '' || $("#rewritePLUGINDIR").val() == 'undefined') {
 		$("#rewritePLUGINDIR").val('lib');
 	}
 
-	if ( $("#rewriteWPINC").val() == '' ) {
+	if ( $("#rewriteWPINC").val() == '' || $("#rewriteWPINC").val() == 'undefined') {
 		$("#rewriteWPINC").val('inc');
 	}
 	/* 
