@@ -1069,10 +1069,55 @@ class StaticHtmlOutput {
     public function post_process_archive_dir() {
         $this->_prependExportLog('POST PROCESSING ARCHIVE DIR: ...');
 		//TODO: rm symlink if no folder exists
-        $archiveDir = file_get_contents($this->getUploadsDirBaseDIR() . '/WP-STATIC-CURRENT-ARCHIVE');
+        $archiveDir = untrailingslashit(file_get_contents($this->getUploadsDirBaseDIR() . '/WP-STATIC-CURRENT-ARCHIVE'));
 
-		// TODO: move/rename directories here
+		// rename dirs (in reverse order than when doing in responsebody)
+		// rewrite wp-content  dir
+		$original_wp_content = $archiveDir . '/wp-content'; // TODO: check if this has been modified/use constant
 
+		// rename the theme theme root before the nested theme dir
+		// rename the theme directory 
+        $new_wp_content = $archiveDir .'/' . filter_input(INPUT_POST, 'rewriteWPCONTENT');
+        $new_theme_root = $new_wp_content . '/' . filter_input(INPUT_POST, 'rewriteTHEMEROOT');
+        $new_theme_dir =  $new_theme_root . '/' . filter_input(INPUT_POST, 'rewriteTHEMEDIR');
+
+		// rewrite uploads dir
+		$default_upload_dir = wp_upload_dir(); // need to store as var first
+		$updated_uploads_dir =  str_replace(get_home_path(), '', $default_upload_dir['basedir']);
+		
+		$updated_uploads_dir =  str_replace('wp-content/', '', $updated_uploads_dir);
+		error_log('UPDATED_UPLOADS');
+		error_log($updated_uploads_dir);
+		$updated_uploads_dir = $new_wp_content . '/' . $updated_uploads_dir;
+		$new_uploads_dir = $new_wp_content . '/' . filter_input(INPUT_POST, 'rewriteUPLOADS');
+
+
+
+		$updated_theme_root = $new_wp_content . str_replace(get_home_path(), '/', get_theme_root());
+
+		$updated_theme_dir = $new_theme_root . str_replace(home_url(), '', get_template_directory_uri());
+
+		rename($original_wp_content, $new_wp_content);
+		rename($updated_uploads_dir, $new_uploads_dir);
+		rename($updated_theme_root, $new_theme_root);
+		rename($updated_theme_dir, $new_theme_dir);
+/*
+
+
+
+		// rewrite plugins dir
+		$original_plugins_dir = str_replace(get_home_path(), '/', WP_PLUGIN_DIR);
+		$new_plugins_dir = $new_wp_content . '/' . filter_input(INPUT_POST, 'rewritePLUGINDIR');
+
+		$responseBody = str_replace($original_plugins_dir, $new_plugins_dir, $responseBody);
+
+
+		// rewrite wp-includes  dir
+		$original_wp_includes = '/' . WPINC;
+		$new_wp_includes = '/' . filter_input(INPUT_POST, 'rewriteWPINC');
+
+		$responseBody = str_replace($original_wp_includes, $new_wp_includes, $responseBody);
+*/
 
 		echo 'SUCCESS';
 	}
