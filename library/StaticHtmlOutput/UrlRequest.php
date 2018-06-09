@@ -1067,19 +1067,13 @@ class StaticHtmlOutput_UrlRequest
 		   'zmm' => 'application/vnd.handheld-entertainment+xml'
 		);
 
-		$extension = array_search(rtrim($this->getContentType(), ';'), $content_types_and_extensions);
-
-		// TODO: getContentType is returning charset=UTF-8 after the content type, strip this
+		$content_type = str_replace('; charset=UTF-8', '', $this->getContentType());
+		$extension = array_search($content_type, $content_types_and_extensions);
 
 		if( empty($extension) ) {
 			error_log('NO EXTENSION GUESSED, SETTING TO HTML');
-			error_log($this->getContentType());
-			error_log($content_types_and_extensions['json']);
+			error_log($content_type);
 			return 'html';
-		} else {
-
-			error_log('******* EXTENSION GUESSED, SETTING TO:');
-			error_log($this->getContentType());
 		}
 		
 		return $extension;

@@ -1117,11 +1117,21 @@ class StaticHtmlOutput {
 		// rm other left over WP identifying files
 		unlink($archiveDir . '/xmlrpc.php');
 		unlink($archiveDir . '/wp-login.html');
-
+		unlink($archiveDir . '/wp-login.php');
+		$this->delete_dir_with_files($archiveDir . '/wp-json/');
+		
 		// TODO: remove all text files from theme dir 
 
 		echo 'SUCCESS';
 	}
+
+	public function delete_dir_with_files($dir) { 
+	   $files = array_diff(scandir($dir), array('.','..')); 
+		foreach ($files as $file) { 
+		  (is_dir("$dir/$file")) ? $this->delete_dir_with_files("$dir/$file") : unlink("$dir/$file"); 
+		} 
+		return rmdir($dir); 
+	  } 
 
     public function post_export_teardown() {
         $this->_prependExportLog('POST EXPORT CLEANUP: starting...');
