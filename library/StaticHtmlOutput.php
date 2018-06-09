@@ -1297,10 +1297,15 @@ class StaticHtmlOutput {
 		// TODO: was isHtml() method modified to include more than just html
 		// if there's no extension set or content type matches html, set it to html
 		// TODO: seems to be flawed for say /feed/ urls, which would not be xml content type..
-		if( $url->isHtml() || !isset($pathInfo['extension'])) {
+		if(  isset($pathInfo['extension'])) {
+			$fileExtension = $pathInfo['extension']; 
+		} else if( $url->isHtml() ) {
+			$this->_prependExportLog('SETTING EXTENSION TO HTML');
 			$fileExtension = 'html'; 
 		} else {
-			$fileExtension = $pathInfo['extension']; 
+			// guess mime type
+			
+			$fileExtension = $url->getExtensionFromContentType(); 
 		}
 
 		$fileName = '';
