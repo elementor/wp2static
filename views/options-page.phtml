@@ -647,7 +647,7 @@ http://172.17.0.3/my_pricelist.pdf</pre>
 
 
 		<strong><label><?php echo __('Path rewriting', 'static-html-output-plugin');?></label></strong>
-		<p>In order to hide any trace that your site uses WordPress, the following paths will be rewritten. You may leave these empty and default options will be used, but for more control, you can overwrite them.</p>
+		<p>In order to hide any trace that your site uses WordPress, the following paths will be rewritten. You can leave these default options in, but for more control, you can overwrite them. They cannot be empty.</p>
 			
 
 		<b>/wp-contents</b> will be re-written to <b class="base_url_preview"></b> <input name="rewriteWPCONTENT" class="regular-text rewrite" id="rewriteWPCONTENT" value="<?php echo esc_attr($this->rewriteWPCONTENT) ?>" placeholder="<?php echo __('contents', 'static-html-output-plugin');?>" />
