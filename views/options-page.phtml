@@ -423,33 +423,33 @@ jQuery(document).ready(function($){
 				}
             }
 			
-			// if rewrite values aren't set yet, populate fields with defaults
-			if ( $("#rewriteWPCONTENT").val() == '' ) {
-				$("#rewriteWPCONTENT").val('contents');
-			}
-
-			if ( $("#rewriteTHEMEDIR").val() == '' ) {
-				$("#rewriteTHEMEDIR").val('theme');
-			}
-
-			if ( $("#rewriteUPLOADS").val() == '' ) {
-				$("#rewriteUPLOADS").val('data');
-			}
-
-			if ( $("#rewriteTHEMEROOT").val() == '' ) {
-				$("#rewriteTHEMEROOT").val('ui');
-			}
-
-			if ( $("#rewritePLUGINDIR").val() == '' ) {
-				$("#rewritePLUGINDIR").val('lib');
-			}
-
-			if ( $("#rewriteWPINC").val() == '' ) {
-				$("#rewriteWPINC").val('inc');
-			}
         });
     }
 
+	// if rewrite values aren't set yet, populate fields with defaults
+	if ( $("#rewriteWPCONTENT").val() == '' ) {
+		$("#rewriteWPCONTENT").val('contents');
+	}
+
+	if ( $("#rewriteTHEMEDIR").val() == '' ) {
+		$("#rewriteTHEMEDIR").val('theme');
+	}
+
+	if ( $("#rewriteUPLOADS").val() == '' ) {
+		$("#rewriteUPLOADS").val('data');
+	}
+
+	if ( $("#rewriteTHEMEROOT").val() == '' ) {
+		$("#rewriteTHEMEROOT").val('ui');
+	}
+
+	if ( $("#rewritePLUGINDIR").val() == '' ) {
+		$("#rewritePLUGINDIR").val('lib');
+	}
+
+	if ( $("#rewriteWPINC").val() == '' ) {
+		$("#rewriteWPINC").val('inc');
+	}
 	/* 
 		on page load, show enabed export setting details
 		show any export setting details if the export option is enabled
