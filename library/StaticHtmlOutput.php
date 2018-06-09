@@ -1086,38 +1086,36 @@ class StaticHtmlOutput {
 		$updated_uploads_dir =  str_replace(get_home_path(), '', $default_upload_dir['basedir']);
 		
 		$updated_uploads_dir =  str_replace('wp-content/', '', $updated_uploads_dir);
-		error_log('UPDATED_UPLOADS');
-		error_log($updated_uploads_dir);
 		$updated_uploads_dir = $new_wp_content . '/' . $updated_uploads_dir;
 		$new_uploads_dir = $new_wp_content . '/' . filter_input(INPUT_POST, 'rewriteUPLOADS');
 
 
+		$updated_theme_root = str_replace(get_home_path(), '/', get_theme_root());
+		$updated_theme_root = $new_wp_content . str_replace('wp-content', '/', $updated_theme_root);
 
-		$updated_theme_root = $new_wp_content . str_replace(get_home_path(), '/', get_theme_root());
+		$updated_theme_dir = $new_theme_root . '/' . basename(get_template_directory_uri());
+		$updated_theme_dir = str_replace('\/\/', '', $updated_theme_dir);
 
-		$updated_theme_dir = $new_theme_root . str_replace(home_url(), '', get_template_directory_uri());
+		// rewrite plugins dir
+		$updated_plugins_dir = str_replace(get_home_path(), '/', WP_PLUGIN_DIR);
+		$updated_plugins_dir = str_replace('wp-content/', '', $updated_plugins_dir);
+		$updated_plugins_dir = $new_wp_content . $updated_plugins_dir;
+		$new_plugins_dir = $new_wp_content . '/' . filter_input(INPUT_POST, 'rewritePLUGINDIR');
+
+		// rewrite wp-includes  dir
+		$original_wp_includes = $archiveDir . '/' . WPINC;
+		$new_wp_includes = $archiveDir . '/' . filter_input(INPUT_POST, 'rewriteWPINC');
+
 
 		rename($original_wp_content, $new_wp_content);
 		rename($updated_uploads_dir, $new_uploads_dir);
 		rename($updated_theme_root, $new_theme_root);
 		rename($updated_theme_dir, $new_theme_dir);
-/*
+		rename($updated_plugins_dir, $new_plugins_dir);
+		rename($original_wp_includes, $new_wp_includes);
 
 
-
-		// rewrite plugins dir
-		$original_plugins_dir = str_replace(get_home_path(), '/', WP_PLUGIN_DIR);
-		$new_plugins_dir = $new_wp_content . '/' . filter_input(INPUT_POST, 'rewritePLUGINDIR');
-
-		$responseBody = str_replace($original_plugins_dir, $new_plugins_dir, $responseBody);
-
-
-		// rewrite wp-includes  dir
-		$original_wp_includes = '/' . WPINC;
-		$new_wp_includes = '/' . filter_input(INPUT_POST, 'rewriteWPINC');
-
-		$responseBody = str_replace($original_wp_includes, $new_wp_includes, $responseBody);
-*/
+		// TODO: remove all text files from theme dir 
 
 		echo 'SUCCESS';
 	}
