@@ -17,13 +17,13 @@
  7. WordPress will then import each of the posts, pages, comments, categories, etc.
     contained in this file into your site.
 -->
-<!-- generator="WordPress/4.9.5" created="2018-05-15 09:23" -->
+<!-- generator="WordPress/4.9.6" created="2018-06-09 10:18" -->
 <rss version="2.0" xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:wfw="http://wellformedweb.org/CommentAPI/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:wp="http://wordpress.org/export/1.2/">
   <channel>
 <title>wp plugindev</title>
 <link>http://172.17.0.3</link>
 <description>Just another WordPress site</description>
-<pubDate>Tue, 15 May 2018 09:23:27 +0000</pubDate>
+<pubDate>Sat, 09 Jun 2018 10:18:04 +0000</pubDate>
 <language>en-US</language>
 <wp:wxr_version>1.2</wp:wxr_version>
 <wp:base_site_url>http://172.17.0.3</wp:base_site_url>
@@ -36,7 +36,7 @@
   <wp:author_first_name><![CDATA[]]></wp:author_first_name>
   <wp:author_last_name><![CDATA[]]></wp:author_last_name>
 </wp:author>
-<generator>https://wordpress.org/?v=4.9.5</generator>
+<generator>https://wordpress.org/?v=4.9.6</generator>
 <item>
   <title>Removing comments for a WordPress static website</title>
   <link>http://172.17.0.3/2018/04/28/removing-comments-for-a-wordpress-static-website/</link>
@@ -46,7 +46,7 @@
   <description/>
   <content:encoded><![CDATA[This is demo content]]></content:encoded>
   <excerpt:encoded><![CDATA[]]></excerpt:encoded>
-  <wp:post_id>6</wp:post_id>
+  <wp:post_id>7</wp:post_id>
   <wp:post_date>2018-04-28 08:27:26</wp:post_date>
   <wp:post_date_gmt>2018-04-28 08:27:26</wp:post_date_gmt>
   <wp:comment_status>open</wp:comment_status>
@@ -78,19 +78,19 @@ This feature is yet to be released into the official version of <a href="http://
 <ol>
  	<li>Install the <a href="https://wordpress.org/plugins/wp-crontrol/">WP Crontrol</a> plugin.</li>
  	<li>Go to your Cron Schedules via Settings &gt; Cron Schedules
-<a href="http://172.17.0.3/wp-content/uploads/2018/05/go_to_cron_schedules.png"><img class="alignnone wp-image-11 size-full" src="http://172.17.0.3/wp-content/uploads/2018/05/go_to_cron_schedules.png" alt="" width="406" height="375" /></a></li>
+<a href="http://172.17.0.3/wp-content/uploads/2018/06/go_to_cron_schedules.png"><img class="alignnone wp-image-11 size-full" src="http://172.17.0.3/wp-content/uploads/2018/06/go_to_cron_schedules.png" alt="" width="406" height="375" /></a></li>
  	<li>Add a new Cron Schedule, using WP Static HTML Output's custom hook, setting the following options:
 <ol>
  	<li><strong> Internal name:</strong> <em>wp_static_html_output_server_side_export_hook</em></li>
  	<li><strong>Interval (seconds):</strong> ie <em>3600</em> to run your export every hour, <em>86400</em> for daily exports, etc</li>
- 	<li><strong>Display name:</strong> This can be whatever you like. Something that makes sense to you is recommended, ie "<em>Static site export to S3 once a day</em>" <a style="font-size: 1rem;" href="http://172.17.0.3/wp-content/uploads/2018/05/wpcrontrol_add_scheduled_task.png"><img class="alignnone wp-image-8" src="http://172.17.0.3/wp-content/uploads/2018/05/wpcrontrol_add_scheduled_task-1024x545.png" alt="" width="800" height="426" /></a></li>
+ 	<li><strong>Display name:</strong> This can be whatever you like. Something that makes sense to you is recommended, ie "<em>Static site export to S3 once a day</em>" <a style="font-size: 1rem;" href="http://172.17.0.3/wp-content/uploads/2018/06/wpcrontrol_add_scheduled_task.png"><img class="alignnone wp-image-8" src="http://172.17.0.3/wp-content/uploads/2018/06/wpcrontrol_add_scheduled_task-1024x545.png" alt="" width="800" height="426" /></a></li>
 </ol>
 </li>
- 	<li>Click on Add Cron Schedule to save your scheduled task. It should now appear in your list of tasks, as below: <a style="font-size: 1rem;" href="http://172.17.0.3/wp-content/uploads/2018/05/wp_crontrol_added_task.png"><img class="alignnone wp-image-7" src="http://172.17.0.3/wp-content/uploads/2018/05/wp_crontrol_added_task-1024x490.png" alt="" width="800" height="383" /></a></li>
+ 	<li>Click on Add Cron Schedule to save your scheduled task. It should now appear in your list of tasks, as below: <a style="font-size: 1rem;" href="http://172.17.0.3/wp-content/uploads/2018/06/wp_crontrol_added_task.png"><img class="alignnone wp-image-7" src="http://172.17.0.3/wp-content/uploads/2018/06/wp_crontrol_added_task-1024x490.png" alt="" width="800" height="383" /></a></li>
 </ol>
 &nbsp;]]></content:encoded>
   <excerpt:encoded><![CDATA[]]></excerpt:encoded>
-  <wp:post_id>7</wp:post_id>
+  <wp:post_id>8</wp:post_id>
   <wp:post_date>2018-05-11 14:27:47</wp:post_date>
   <wp:post_date_gmt>2018-05-11 14:27:47</wp:post_date_gmt>
   <wp:comment_status>open</wp:comment_status>
@@ -107,33 +107,6 @@ This feature is yet to be released into the official version of <a href="http://
     <wp:meta_key>_edit_last</wp:meta_key>
     <wp:meta_value><![CDATA[1]]></wp:meta_value>
   </wp:postmeta>
-  <wp:postmeta>
-    <wp:meta_key>_encloseme</wp:meta_key>
-    <wp:meta_value><![CDATA[1]]></wp:meta_value>
-  </wp:postmeta>
-</item>
-<item>
-  <title>go_to_cron_schedules</title>
-  <link>http://172.17.0.3/2018/05/11/scheduling-exports-of-your-static-site-from-wordpress/go_to_cron_schedules-2/</link>
-  <pubDate>Tue, 15 May 2018 09:04:49 +0000</pubDate>
-  <dc:creator/>
-  <guid isPermaLink="false">http://172.17.0.3/wp-content/uploads/2018/05/go_to_cron_schedules-1.png</guid>
-  <description/>
-  <content:encoded><![CDATA[]]></content:encoded>
-  <excerpt:encoded><![CDATA[]]></excerpt:encoded>
-  <wp:post_id>11</wp:post_id>
-  <wp:post_date>2018-05-15 09:04:49</wp:post_date>
-  <wp:post_date_gmt>2018-05-15 09:04:49</wp:post_date_gmt>
-  <wp:comment_status>open</wp:comment_status>
-  <wp:ping_status>closed</wp:ping_status>
-  <wp:post_name>go_to_cron_schedules-2</wp:post_name>
-  <wp:status>inherit</wp:status>
-  <wp:post_parent>7</wp:post_parent>
-  <wp:menu_order>0</wp:menu_order>
-  <wp:post_type>attachment</wp:post_type>
-  <wp:post_password/>
-  <wp:is_sticky>0</wp:is_sticky>
-  <wp:attachment_url>http://172.17.0.3/wp-content/uploads/2018/05/go_to_cron_schedules-1.png</wp:attachment_url>
 </item>
   </channel>
 </rss>
