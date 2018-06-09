@@ -19,6 +19,14 @@ The lead developer of this plugin, [Leon Stafford](https://leonstafford.github.i
  - desktop notifications alert you to when exports are complete
  - multi-language support (English/Japanese currently)
 
+## Use cases
+
+ - Securing a website from malicious attacks/malware
+ - Fastest hosting options for static websites
+ - Free hosting via GitHub, GitLab, BitBucket, etc.
+ - Website archival
+ - Cheap, fast and secure hosting for a digital agency
+
 ## Demo site
 
 You can [see a working example here](https://leonstafford.github.io/demo-site-wordpress-static-html-output-plugin) of a vanilla WordPress install which has had a few tweaks done to optimize it for static HTML output. It is hosted on GitHub Pages, but could just as easily be hosted on Dropbox, BitBucket, GitLab, S3, Netlify, BunnyCDN, your own server or anywhere else you can host HTML files.  
