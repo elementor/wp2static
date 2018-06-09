@@ -1114,6 +1114,9 @@ class StaticHtmlOutput {
 		rename($updated_plugins_dir, $new_plugins_dir);
 		rename($original_wp_includes, $new_wp_includes);
 
+		// rm other left over WP identifying files
+		unlink($archiveDir . '/xmlrpc.php');
+		unlink($archiveDir . '/wp-login.html');
 
 		// TODO: remove all text files from theme dir 
 
