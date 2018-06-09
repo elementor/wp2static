@@ -4,6 +4,10 @@
 	display: none;
 }
 
+.intro-text {
+	font-size: large;
+}
+
 div.postbox-container {
 	float: none;
 	padding: 0;
