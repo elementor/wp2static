@@ -175,6 +175,41 @@ class StaticHtmlOutput_UrlRequest
 		// TODO: if no preg_replace for the query strings found, then we must go DOMDocument...
 
 
+		$pattern = "/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i";
+		// use preg_match_all to grab all the urls
+		preg_match_all($pattern, $responseBody, $urls_in_html);
+
+		$site_url = get_site_url();
+
+		foreach( $urls_in_html as $urls ) {
+			foreach ($urls as $url) {
+				// check for query string in url
+				if ( preg_match('/\?(.+?)/', $url) ) {
+					error_log($url);
+					// we have a query string, check if the domain matches ours
+					if ( strpos($url, $site_url) !== false ) {
+						error_log('OUR DOMAIN');
+						error_log($url);
+
+					} else {
+
+						error_log('DIDNT FIND OUR DOMAIN');
+						error_log($site_url);
+					}	
+				}
+			}
+		} 
+
+		// add it to an array
+
+
+		// iterate the list, check if our domain is in it
+
+		// if so, strip the query string
+
+		// do a str_replace on responseBody
+
+
 		// TODO: strip comments from JS files
 
 		$this->setResponseBody($responseBody);
