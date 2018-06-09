@@ -422,6 +422,31 @@ jQuery(document).ready(function($){
 					$(targetExportSettingsBlock).find('#' + checkbox_settings[i]).first().prop('checked', false);
 				}
             }
+			
+			// if rewrite values aren't set yet, populate fields with defaults
+			if ( $("#rewriteWPCONTENT").val() == '' ) {
+				$("#rewriteWPCONTENT").val('contents');
+			}
+
+			if ( $("#rewriteTHEMEDIR").val() == '' ) {
+				$("#rewriteTHEMEDIR").val('theme');
+			}
+
+			if ( $("#rewriteUPLOADS").val() == '' ) {
+				$("#rewriteUPLOADS").val('data');
+			}
+
+			if ( $("#rewriteTHEMEROOT").val() == '' ) {
+				$("#rewriteTHEMEROOT").val('ui');
+			}
+
+			if ( $("#rewritePLUGINDIR").val() == '' ) {
+				$("#rewritePLUGINDIR").val('lib');
+			}
+
+			if ( $("#rewriteWPINC").val() == '' ) {
+				$("#rewriteWPINC").val('inc');
+			}
         });
     }
 
@@ -503,9 +528,9 @@ function displayTextfield($field_name, $field_label, $description, $password = n
                 <p>
                   <strong><label for="baseUrl"><?php echo __('Base Url', 'static-html-output-plugin');?></label></strong>
                   <p>
-                    <i><?php echo __("This defaults to your WordPress Site URL. If you know the URL of where you'll be hosting the static version of your site, it will be good to change this to that, ie http://mystaticsite.github.io!", 'static-html-output-plugin');?></i>
+                    <i><?php echo __("Set this to the URL you intend to host your static exported sie on, ie http://mystaticsite.com. Do not set this to the same URL as the WordPress site you're currently using (the address in your browser above). This plugin will rewrite all URLs in the exported static html from your current WordPress URL to what you set here.", 'static-html-output-plugin');?></i>
                   </p> 
-                  <input type="text" id="baseUrl" name="baseUrl" value="<?php echo esc_attr($this->baseUrl) ?>'" size="50" />
+                  <input type="text" id="baseUrl" name="baseUrl" value="<?php echo esc_attr($this->baseUrl) ?>" size="50" placeholder="http://mystaticsite.com" />
                 </p>
 
 <?php echo displayCheckbox('createZip', 'Create a ZIP file of your statically exported site, ready for you to manually deploy. Download link will appear in the Export Log below'); ?>
