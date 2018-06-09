@@ -1,18 +1,21 @@
 === WP Static HTML Output ===
 Contributors: leonstafford
 Donate link: https://www.paypal.me/leonjstafford
-Tags: static,html,export,performance,security,portable,s3,dropbox,github,netlify,bunnycdn
+Tags: static,html,export,performance,security,cache,s3,dropbox,github,netlify,bunnycdn
 Requires at least: 3.2
 Tested up to: 4.9.6
-Stable tag: 2.5
+Stable tag: 2.6
 
-Allows you to leverage WordPress as a great CMS, but benefit from the speed, security and portability that a static website provides.
+
+The optimum solution to speed up and secure your WordPress site - export to static HTML and hide all traces of WordPress from your site!
 
 == Description ==
 
 = Features =
 
  * generates a standalone, static html copy of your whole WordPress website
+ * removes all traces of WordPress from your exported site
+ * protects you from malicious attacks/malware
  * auto-deploy to a local folder, ZIP file, FTP, S3, Dropbox, GitHub, Netlify or BunnyCDN
  * one site to unlimited export targets
  * specify extra files to include in the output (ie, dynamically loaded assets)
@@ -87,6 +90,17 @@ See the readme. In brief: you can't use dynamic WordPress functions such as comm
 2. The main interface (Japanese)
 
 == Changelog ==
+
+= 2.6 =
+
+ * Feature: Remove all traces of WordPress from your site - improve your SEO/SEM
+ * Feature: Include all of your uploads folder by default - ensures all files are exported
+ * Improvement: Streamlined interface for less clutter
+ * Improvement: Cleanup export folder upon completion - no more filling up your uploads dir
+ * Improvement: Make ZIP creation an optional step - not everyone needs to create ZIPs!
+ * Bugfix: Respect custom output folder setting
+ * Bugfix: Strip query strings from extracted URLs
+ * Bugfix: Use base uploads dir for export folder - no more digging around for your export folder
 
 = 2.5 =
 
@@ -250,6 +264,19 @@ Altered main codebase to fix recursion bug and endless loop. Essential upgrade.
 Initial release to Wordpress community
 
 == Upgrade Notice ==
+
+= 2.6 =
+
+Important upgrade, bringing a killer new feature, nice improvements and important bugfixes:
+
+ * Feature: Remove all traces of WordPress from your site - improve your SEO/SEM
+ * Feature: Include all of your uploads folder by default - ensures all files are exported
+ * Improvement: Streamlined interface for less clutter
+ * Improvement: Cleanup export folder upon completion - no more filling up your uploads dir
+ * Improvement: Make ZIP creation an optional step - not everyone needs to create ZIPs!
+ * Bugfix: Respect custom output folder setting
+ * Bugfix: Strip query strings from extracted URLs
+ * Bugfix: Use base uploads dir for export folder - no more digging around for your export folder
 
 = 2.5 =
 

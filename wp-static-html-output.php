@@ -2,8 +2,8 @@
 /**
  * Plugin Name: WP Static HTML Output
  * Plugin URI:  https://leonstafford.github.io
- * Description: Benefit from WordPress as a CMS but with the speed, performance and portability of a static site
- * Version:     2.5
+ * Description: The optimum solution to speed up and secure your WordPress site - export to static HTML and hide all traces of WordPress from your site!
+ * Version:     2.6
  * Author:      Leon Stafford
  * Author URI:  https://leonstafford.github.io
  * Text Domain: static-html-output-plugin
