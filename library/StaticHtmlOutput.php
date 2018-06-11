@@ -902,10 +902,13 @@ class StaticHtmlOutput {
     }
 
 	public function cloudfront_invalidate_all_items() {
+		require_once(__DIR__.'/aws/aws-autoloader.php');
+
         if(strlen(filter_input(INPUT_POST, 'cfDistributionId'))>12) {
 			$this->_prependExportLog('CLOUDFRONT INVALIDATING CACHE...');
 			$CF = Aws\CloudFront\CloudFrontClient::factory(array(
 				'version'		=> '2016-01-28',
+				'region' => filter_input(INPUT_POST, 's3Region'),
 				'credentials' => array(
 					'key' => filter_input(INPUT_POST, 's3Key'),
 					'secret'  => filter_input(INPUT_POST, 's3Secret'),
@@ -914,9 +917,14 @@ class StaticHtmlOutput {
 
 			$result = $CF->createInvalidation(array(
 				'DistributionId' => filter_input(INPUT_POST, 'cfDistributionId'),
-				'Paths' => array (
-					'Quantity' => 1, 'Items' => array('/*')),
-					'CallerReference' => time()));
+				'InvalidationBatch' => [ // REQUIRED
+						'CallerReference' => time(),
+						'Paths' => [ // REQUIRED
+							'Items' => array('/*'),
+							'Quantity' => 1, // REQUIRED
+						],
+					]
+			));
         }
 
 		echo 'SUCCESS';
