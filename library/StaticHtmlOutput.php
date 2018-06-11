@@ -834,7 +834,7 @@ class StaticHtmlOutput {
         echo 'SUCCESS';
     }
 
-	public function s3_put_object($S3, $Bucket, $Key, $Data, $ACL, $ContentType = "text/plain") {
+	public function s3_put_object($S3, $Bucket, $Key, $Data, $ACL, $ContentType = "text/plain", $pluginInstance) {
 		try {
 			$Model = $S3->PutObject(array('Bucket'      => $Bucket,
 						'Key'         => $Key,
@@ -880,15 +880,17 @@ class StaticHtmlOutput {
 		# goes in transfer step
         $S3 = Aws\S3\S3Client::factory(array(
             'version'=> '2006-03-01',
-            'key'    => filter_input(INPUT_POST, 's3Key'),
-            'secret' => filter_input(INPUT_POST, 's3Secret'),
-            'region' => filter_input(INPUT_POST, 's3Region')
+            'region' => filter_input(INPUT_POST, 's3Region'),
+			'credentials' => array(
+				'key' => filter_input(INPUT_POST, 's3Key'),
+				'secret'  => filter_input(INPUT_POST, 's3Secret'),
+			  )
             )
         );
 
         $Bucket = filter_input(INPUT_POST, 's3Bucket');
 
-		$this->s3_put_object($S3, $Bucket, $target_path, $file_body, 'public-read', GuessMimeType($filename));
+		$this->s3_put_object($S3, $Bucket, $target_path, $file_body, 'public-read', GuessMimeType($filename), $this);
 
         $this->_prependExportLog('S3 EXPORT: ' . $filesRemaining . ' files remaining to transfer');
 
@@ -904,8 +906,10 @@ class StaticHtmlOutput {
 			$this->_prependExportLog('CLOUDFRONT INVALIDATING CACHE...');
 			$CF = Aws\CloudFront\CloudFrontClient::factory(array(
 				'version'		=> '2016-01-28',
-				'key'           => filter_input(INPUT_POST, 's3Key'),
-				'secret'        => filter_input(INPUT_POST, 's3Secret'),
+				'credentials' => array(
+					'key' => filter_input(INPUT_POST, 's3Key'),
+					'secret'  => filter_input(INPUT_POST, 's3Secret'),
+				  )
 				));
 
 			$result = $CF->createInvalidation(array(

@@ -17,6 +17,8 @@ cp -r $PROJECT_ROOT/* $SVN_ROOT/trunk/
 rm $SVN_ROOT/trunk/*.sh
 rm $SVN_ROOT/trunk/*.rb
 rm $SVN_ROOT/trunk/*.ini
+rm $SVN_ROOT/trunk/*.zip
+rm $SVN_ROOT/trunk/*.swo
 rm $SVN_ROOT/trunk/Dockerfile
 rm $SVN_ROOT/trunk/circle.yml
 rm $SVN_ROOT/trunk/Gemfile*
