@@ -29,7 +29,9 @@ The lead developer of this plugin, [Leon Stafford](https://leonstafford.github.i
 
 ## Demo site
 
-You can [see a working example here](https://leonstafford.github.io/demo-site-wordpress-static-html-output-plugin) of a vanilla WordPress install which has had a few tweaks done to optimize it for static HTML output. It is hosted on GitHub Pages, but could just as easily be hosted on Dropbox, BitBucket, GitLab, S3, Netlify, BunnyCDN, your own server or anywhere else you can host HTML files.  
+You can [see a working example here](https://leonstafford.github.io/demo-site-wordpress-static-html-output-plugin) of a vanilla WordPress install with some sample posts. It is hosted on GitHub Pages, but could just as easily be hosted on Dropbox, BitBucket, GitLab, S3, Netlify, BunnyCDN, your own server or anywhere else you can host HTML files. It is prone to breakage as I use it when testing development versions of the plugin.
+
+Got a site you've used the plugin to export and would like to share it here as a case study? Would love to hear from you!
 
 *TODO: move the demo theme into this repo, along with demonstrations of WP Hide and other useful plugins for WP static sites.*
 
@@ -41,11 +43,16 @@ Using the [WP Crontrol](https://wordpress.org/plugins/wp-crontrol/) plugin, you 
 
 ## Roadmap
 
+See what's on the list for V2.7 of the plugin on its [project page](https://github.com/leonstafford/wordpress-static-html-plugin/projects/3)
+
+### other things in the works
+
  - selectively export only changed pages since last output
+ - more export targets (GitLab, BitBucket and more)
  - auto trigger an export on a post/page publish action
  - WP CLI integration
  - submission of bug report from within plugin
- - backwards compatibility with older php and wordpress versions (degrade gracefully)
+ - backwards compatibility with older php and wordpress versions (degrade gracefully) (delayed until further release)
 
 
 ### Theme & Plugin compatibility
