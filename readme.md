@@ -37,8 +37,6 @@ Got a site you've used the plugin to export and would like to share it here as a
 
 ### Scheduling exports via CRON/WP-CRON, etc
 
-This is an in-development feature, currently only in the GitHub repo, not in the official plugin yet.
-
 Using the [WP Crontrol](https://wordpress.org/plugins/wp-crontrol/) plugin, you can add this hook to a schedule to trigger an export: `wp_static_html_output_server_side_export_hook`. This will run your export using the settings you've saved via the GUI. Via this method, you can schedule your exports to happen daily or if you're after an *on-post publish* kind of behaviour, you could set this to every few minutes.
 
 ## Roadmap
