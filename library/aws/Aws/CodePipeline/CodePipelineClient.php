@@ -1,67 +1,74 @@
 <?php
-
 namespace Aws\CodePipeline;
 
-use Aws\Common\Client\AbstractClient;
-use Aws\Common\Client\ClientBuilder;
-use Aws\Common\Enum\ClientOptions as Options;
-use Aws\Common\Exception\Parser\JsonQueryExceptionParser;
-use Guzzle\Common\Collection;
-use Guzzle\Service\Resource\Model;
+use Aws\AwsClient;
 
 /**
- * Client to interact with AWS CodePipeline
+ * This client is used to interact with the **Amazon CodePipeline** service.
  *
- * @method Model acknowledgeJob(array $args = array()) {@command CodePipeline AcknowledgeJob}
- * @method Model acknowledgeThirdPartyJob(array $args = array()) {@command CodePipeline AcknowledgeThirdPartyJob}
- * @method Model createCustomActionType(array $args = array()) {@command CodePipeline CreateCustomActionType}
- * @method Model createPipeline(array $args = array()) {@command CodePipeline CreatePipeline}
- * @method Model deleteCustomActionType(array $args = array()) {@command CodePipeline DeleteCustomActionType}
- * @method Model deletePipeline(array $args = array()) {@command CodePipeline DeletePipeline}
- * @method Model disableStageTransition(array $args = array()) {@command CodePipeline DisableStageTransition}
- * @method Model enableStageTransition(array $args = array()) {@command CodePipeline EnableStageTransition}
- * @method Model getJobDetails(array $args = array()) {@command CodePipeline GetJobDetails}
- * @method Model getPipeline(array $args = array()) {@command CodePipeline GetPipeline}
- * @method Model getPipelineState(array $args = array()) {@command CodePipeline GetPipelineState}
- * @method Model getThirdPartyJobDetails(array $args = array()) {@command CodePipeline GetThirdPartyJobDetails}
- * @method Model listActionTypes(array $args = array()) {@command CodePipeline ListActionTypes}
- * @method Model listPipelines(array $args = array()) {@command CodePipeline ListPipelines}
- * @method Model pollForJobs(array $args = array()) {@command CodePipeline PollForJobs}
- * @method Model pollForThirdPartyJobs(array $args = array()) {@command CodePipeline PollForThirdPartyJobs}
- * @method Model putActionRevision(array $args = array()) {@command CodePipeline PutActionRevision}
- * @method Model putJobFailureResult(array $args = array()) {@command CodePipeline PutJobFailureResult}
- * @method Model putJobSuccessResult(array $args = array()) {@command CodePipeline PutJobSuccessResult}
- * @method Model putThirdPartyJobFailureResult(array $args = array()) {@command CodePipeline PutThirdPartyJobFailureResult}
- * @method Model putThirdPartyJobSuccessResult(array $args = array()) {@command CodePipeline PutThirdPartyJobSuccessResult}
- * @method Model startPipelineExecution(array $args = array()) {@command CodePipeline StartPipelineExecution}
- * @method Model updatePipeline(array $args = array()) {@command CodePipeline UpdatePipeline}
- *
- * @link http://docs.aws.amazon.com/aws-sdk-php/v2/guide/service-codepipeline.html User guide
- * @link http://docs.aws.amazon.com/aws-sdk-php/v2/api/class-Aws.CodePipeline.CodePipelineClient.html API docs
+ * @method \Aws\Result acknowledgeJob(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise acknowledgeJobAsync(array $args = [])
+ * @method \Aws\Result acknowledgeThirdPartyJob(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise acknowledgeThirdPartyJobAsync(array $args = [])
+ * @method \Aws\Result createCustomActionType(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise createCustomActionTypeAsync(array $args = [])
+ * @method \Aws\Result createPipeline(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise createPipelineAsync(array $args = [])
+ * @method \Aws\Result deleteCustomActionType(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise deleteCustomActionTypeAsync(array $args = [])
+ * @method \Aws\Result deletePipeline(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise deletePipelineAsync(array $args = [])
+ * @method \Aws\Result deleteWebhook(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise deleteWebhookAsync(array $args = [])
+ * @method \Aws\Result deregisterWebhookWithThirdParty(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise deregisterWebhookWithThirdPartyAsync(array $args = [])
+ * @method \Aws\Result disableStageTransition(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise disableStageTransitionAsync(array $args = [])
+ * @method \Aws\Result enableStageTransition(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise enableStageTransitionAsync(array $args = [])
+ * @method \Aws\Result getJobDetails(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getJobDetailsAsync(array $args = [])
+ * @method \Aws\Result getPipeline(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getPipelineAsync(array $args = [])
+ * @method \Aws\Result getPipelineExecution(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getPipelineExecutionAsync(array $args = [])
+ * @method \Aws\Result getPipelineState(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getPipelineStateAsync(array $args = [])
+ * @method \Aws\Result getThirdPartyJobDetails(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getThirdPartyJobDetailsAsync(array $args = [])
+ * @method \Aws\Result listActionTypes(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise listActionTypesAsync(array $args = [])
+ * @method \Aws\Result listPipelineExecutions(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise listPipelineExecutionsAsync(array $args = [])
+ * @method \Aws\Result listPipelines(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise listPipelinesAsync(array $args = [])
+ * @method \Aws\Result listWebhooks(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise listWebhooksAsync(array $args = [])
+ * @method \Aws\Result pollForJobs(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise pollForJobsAsync(array $args = [])
+ * @method \Aws\Result pollForThirdPartyJobs(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise pollForThirdPartyJobsAsync(array $args = [])
+ * @method \Aws\Result putActionRevision(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise putActionRevisionAsync(array $args = [])
+ * @method \Aws\Result putApprovalResult(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise putApprovalResultAsync(array $args = [])
+ * @method \Aws\Result putJobFailureResult(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise putJobFailureResultAsync(array $args = [])
+ * @method \Aws\Result putJobSuccessResult(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise putJobSuccessResultAsync(array $args = [])
+ * @method \Aws\Result putThirdPartyJobFailureResult(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise putThirdPartyJobFailureResultAsync(array $args = [])
+ * @method \Aws\Result putThirdPartyJobSuccessResult(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise putThirdPartyJobSuccessResultAsync(array $args = [])
+ * @method \Aws\Result putWebhook(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise putWebhookAsync(array $args = [])
+ * @method \Aws\Result registerWebhookWithThirdParty(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise registerWebhookWithThirdPartyAsync(array $args = [])
+ * @method \Aws\Result retryStageExecution(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise retryStageExecutionAsync(array $args = [])
+ * @method \Aws\Result startPipelineExecution(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise startPipelineExecutionAsync(array $args = [])
+ * @method \Aws\Result updatePipeline(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise updatePipelineAsync(array $args = [])
  */
-class CodePipelineClient extends AbstractClient
-{
-    const LATEST_API_VERSION = '2015-07-09';
-
-    /**
-     * Factory method to create a new AWS CodePipeline client using an array of configuration options.
-     *
-     * See http://docs.aws.amazon.com/aws-sdk-php/v2/guide/configuration.html#client-configuration-options
-     *
-     * @param array|Collection $config Client configuration data
-     *
-     * @return self
-     * @link http://docs.aws.amazon.com/aws-sdk-php/v2/guide/configuration.html#client-configuration-options
-     */
-    public static function factory($config = array())
-    {
-        return ClientBuilder::factory(__NAMESPACE__)
-            ->setConfig($config)
-            ->setConfigDefaults(array(
-                Options::VERSION             => self::LATEST_API_VERSION,
-                Options::SERVICE_DESCRIPTION => __DIR__ . '/Resources/codepipeline-%s.php'
-            ))
-            ->setExceptionParser(new JsonQueryExceptionParser())
-            ->build();
-    }
-}
+class CodePipelineClient extends AwsClient {}

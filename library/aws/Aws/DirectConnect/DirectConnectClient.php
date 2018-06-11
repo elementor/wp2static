@@ -1,82 +1,98 @@
 <?php
-/**
- * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- * http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
- */
-
 namespace Aws\DirectConnect;
 
-use Aws\Common\Client\AbstractClient;
-use Aws\Common\Client\ClientBuilder;
-use Aws\Common\Enum\ClientOptions as Options;
-use Aws\Common\Exception\Parser\JsonQueryExceptionParser;
-use Guzzle\Common\Collection;
-use Guzzle\Service\Resource\Model;
-use Guzzle\Service\Resource\ResourceIteratorInterface;
+use Aws\AwsClient;
 
 /**
- * Client to interact with AWS Direct Connect
+ * This client is used to interact with the **AWS Direct Connect** service.
  *
- * @method Model allocateConnectionOnInterconnect(array $args = array()) {@command DirectConnect AllocateConnectionOnInterconnect}
- * @method Model allocatePrivateVirtualInterface(array $args = array()) {@command DirectConnect AllocatePrivateVirtualInterface}
- * @method Model allocatePublicVirtualInterface(array $args = array()) {@command DirectConnect AllocatePublicVirtualInterface}
- * @method Model confirmConnection(array $args = array()) {@command DirectConnect ConfirmConnection}
- * @method Model confirmPrivateVirtualInterface(array $args = array()) {@command DirectConnect ConfirmPrivateVirtualInterface}
- * @method Model confirmPublicVirtualInterface(array $args = array()) {@command DirectConnect ConfirmPublicVirtualInterface}
- * @method Model createConnection(array $args = array()) {@command DirectConnect CreateConnection}
- * @method Model createInterconnect(array $args = array()) {@command DirectConnect CreateInterconnect}
- * @method Model createPrivateVirtualInterface(array $args = array()) {@command DirectConnect CreatePrivateVirtualInterface}
- * @method Model createPublicVirtualInterface(array $args = array()) {@command DirectConnect CreatePublicVirtualInterface}
- * @method Model deleteConnection(array $args = array()) {@command DirectConnect DeleteConnection}
- * @method Model deleteInterconnect(array $args = array()) {@command DirectConnect DeleteInterconnect}
- * @method Model deleteVirtualInterface(array $args = array()) {@command DirectConnect DeleteVirtualInterface}
- * @method Model describeConnections(array $args = array()) {@command DirectConnect DescribeConnections}
- * @method Model describeConnectionsOnInterconnect(array $args = array()) {@command DirectConnect DescribeConnectionsOnInterconnect}
- * @method Model describeInterconnects(array $args = array()) {@command DirectConnect DescribeInterconnects}
- * @method Model describeLocations(array $args = array()) {@command DirectConnect DescribeLocations}
- * @method Model describeVirtualGateways(array $args = array()) {@command DirectConnect DescribeVirtualGateways}
- * @method Model describeVirtualInterfaces(array $args = array()) {@command DirectConnect DescribeVirtualInterfaces}
- * @method ResourceIteratorInterface getDescribeConnectionsIterator(array $args = array()) The input array uses the parameters of the DescribeConnections operation
- * @method ResourceIteratorInterface getDescribeConnectionsOnInterconnectIterator(array $args = array()) The input array uses the parameters of the DescribeConnectionsOnInterconnect operation
- * @method ResourceIteratorInterface getDescribeInterconnectsIterator(array $args = array()) The input array uses the parameters of the DescribeInterconnects operation
- * @method ResourceIteratorInterface getDescribeLocationsIterator(array $args = array()) The input array uses the parameters of the DescribeLocations operation
- * @method ResourceIteratorInterface getDescribeVirtualGatewaysIterator(array $args = array()) The input array uses the parameters of the DescribeVirtualGateways operation
- * @method ResourceIteratorInterface getDescribeVirtualInterfacesIterator(array $args = array()) The input array uses the parameters of the DescribeVirtualInterfaces operation
- *
- * @link http://docs.aws.amazon.com/aws-sdk-php/v2/guide/service-directconnect.html User guide
- * @link http://docs.aws.amazon.com/aws-sdk-php/v2/api/class-Aws.DirectConnect.DirectConnectClient.html API docs
+ * @method \Aws\Result allocateConnectionOnInterconnect(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise allocateConnectionOnInterconnectAsync(array $args = [])
+ * @method \Aws\Result allocateHostedConnection(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise allocateHostedConnectionAsync(array $args = [])
+ * @method \Aws\Result allocatePrivateVirtualInterface(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise allocatePrivateVirtualInterfaceAsync(array $args = [])
+ * @method \Aws\Result allocatePublicVirtualInterface(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise allocatePublicVirtualInterfaceAsync(array $args = [])
+ * @method \Aws\Result associateConnectionWithLag(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise associateConnectionWithLagAsync(array $args = [])
+ * @method \Aws\Result associateHostedConnection(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise associateHostedConnectionAsync(array $args = [])
+ * @method \Aws\Result associateVirtualInterface(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise associateVirtualInterfaceAsync(array $args = [])
+ * @method \Aws\Result confirmConnection(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise confirmConnectionAsync(array $args = [])
+ * @method \Aws\Result confirmPrivateVirtualInterface(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise confirmPrivateVirtualInterfaceAsync(array $args = [])
+ * @method \Aws\Result confirmPublicVirtualInterface(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise confirmPublicVirtualInterfaceAsync(array $args = [])
+ * @method \Aws\Result createBGPPeer(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise createBGPPeerAsync(array $args = [])
+ * @method \Aws\Result createConnection(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise createConnectionAsync(array $args = [])
+ * @method \Aws\Result createDirectConnectGateway(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise createDirectConnectGatewayAsync(array $args = [])
+ * @method \Aws\Result createDirectConnectGatewayAssociation(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise createDirectConnectGatewayAssociationAsync(array $args = [])
+ * @method \Aws\Result createInterconnect(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise createInterconnectAsync(array $args = [])
+ * @method \Aws\Result createLag(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise createLagAsync(array $args = [])
+ * @method \Aws\Result createPrivateVirtualInterface(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise createPrivateVirtualInterfaceAsync(array $args = [])
+ * @method \Aws\Result createPublicVirtualInterface(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise createPublicVirtualInterfaceAsync(array $args = [])
+ * @method \Aws\Result deleteBGPPeer(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise deleteBGPPeerAsync(array $args = [])
+ * @method \Aws\Result deleteConnection(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise deleteConnectionAsync(array $args = [])
+ * @method \Aws\Result deleteDirectConnectGateway(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise deleteDirectConnectGatewayAsync(array $args = [])
+ * @method \Aws\Result deleteDirectConnectGatewayAssociation(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise deleteDirectConnectGatewayAssociationAsync(array $args = [])
+ * @method \Aws\Result deleteInterconnect(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise deleteInterconnectAsync(array $args = [])
+ * @method \Aws\Result deleteLag(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise deleteLagAsync(array $args = [])
+ * @method \Aws\Result deleteVirtualInterface(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise deleteVirtualInterfaceAsync(array $args = [])
+ * @method \Aws\Result describeConnectionLoa(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise describeConnectionLoaAsync(array $args = [])
+ * @method \Aws\Result describeConnections(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise describeConnectionsAsync(array $args = [])
+ * @method \Aws\Result describeConnectionsOnInterconnect(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise describeConnectionsOnInterconnectAsync(array $args = [])
+ * @method \Aws\Result describeDirectConnectGatewayAssociations(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise describeDirectConnectGatewayAssociationsAsync(array $args = [])
+ * @method \Aws\Result describeDirectConnectGatewayAttachments(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise describeDirectConnectGatewayAttachmentsAsync(array $args = [])
+ * @method \Aws\Result describeDirectConnectGateways(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise describeDirectConnectGatewaysAsync(array $args = [])
+ * @method \Aws\Result describeHostedConnections(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise describeHostedConnectionsAsync(array $args = [])
+ * @method \Aws\Result describeInterconnectLoa(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise describeInterconnectLoaAsync(array $args = [])
+ * @method \Aws\Result describeInterconnects(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise describeInterconnectsAsync(array $args = [])
+ * @method \Aws\Result describeLags(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise describeLagsAsync(array $args = [])
+ * @method \Aws\Result describeLoa(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise describeLoaAsync(array $args = [])
+ * @method \Aws\Result describeLocations(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise describeLocationsAsync(array $args = [])
+ * @method \Aws\Result describeTags(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise describeTagsAsync(array $args = [])
+ * @method \Aws\Result describeVirtualGateways(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise describeVirtualGatewaysAsync(array $args = [])
+ * @method \Aws\Result describeVirtualInterfaces(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise describeVirtualInterfacesAsync(array $args = [])
+ * @method \Aws\Result disassociateConnectionFromLag(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise disassociateConnectionFromLagAsync(array $args = [])
+ * @method \Aws\Result tagResource(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise tagResourceAsync(array $args = [])
+ * @method \Aws\Result untagResource(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise untagResourceAsync(array $args = [])
+ * @method \Aws\Result updateLag(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise updateLagAsync(array $args = [])
  */
-class DirectConnectClient extends AbstractClient
-{
-    const LATEST_API_VERSION = '2012-10-25';
-
-    /**
-     * Factory method to create a new AWS Direct Connect client using an array of configuration options.
-     *
-     * @param array|Collection $config Client configuration data
-     *
-     * @return self
-     * @link http://docs.aws.amazon.com/aws-sdk-php/v2/guide/configuration.html#client-configuration-options
-     */
-    public static function factory($config = array())
-    {
-        return ClientBuilder::factory(__NAMESPACE__)
-            ->setConfig($config)
-            ->setConfigDefaults(array(
-                Options::VERSION             => self::LATEST_API_VERSION,
-                Options::SERVICE_DESCRIPTION => __DIR__ . '/Resources/directconnect-%s.php'
-            ))
-            ->setExceptionParser(new JsonQueryExceptionParser())
-            ->build();
-    }
-}
+class DirectConnectClient extends AwsClient {}

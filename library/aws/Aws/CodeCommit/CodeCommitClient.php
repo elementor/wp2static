@@ -1,57 +1,82 @@
 <?php
-
 namespace Aws\CodeCommit;
 
-use Aws\Common\Client\AbstractClient;
-use Aws\Common\Client\ClientBuilder;
-use Aws\Common\Enum\ClientOptions as Options;
-use Aws\Common\Exception\Parser\JsonQueryExceptionParser;
-use Guzzle\Common\Collection;
-use Guzzle\Service\Resource\Model;
+use Aws\AwsClient;
 
 /**
- * Client to interact with AWS CodeCommit
+ * This client is used to interact with the **AWS CodeCommit** service.
  *
- * @method Model batchGetRepositories(array $args = array()) {@command CodeCommit BatchGetRepositories}
- * @method Model createBranch(array $args = array()) {@command CodeCommit CreateBranch}
- * @method Model createRepository(array $args = array()) {@command CodeCommit CreateRepository}
- * @method Model deleteRepository(array $args = array()) {@command CodeCommit DeleteRepository}
- * @method Model getBranch(array $args = array()) {@command CodeCommit GetBranch}
- * @method Model getRepository(array $args = array()) {@command CodeCommit GetRepository}
- * @method Model listBranches(array $args = array()) {@command CodeCommit ListBranches}
- * @method Model listRepositories(array $args = array()) {@command CodeCommit ListRepositories}
- * @method Model updateDefaultBranch(array $args = array()) {@command CodeCommit UpdateDefaultBranch}
- * @method Model updateRepositoryDescription(array $args = array()) {@command CodeCommit UpdateRepositoryDescription}
- * @method Model updateRepositoryName(array $args = array()) {@command CodeCommit UpdateRepositoryName}
- * @method ResourceIteratorInterface getListBranchesIterator(array $args = array()) The input array uses the parameters of the ListBranches operation
- * @method ResourceIteratorInterface getListRepositoriesIterator(array $args = array()) The input array uses the parameters of the ListRepositories operation
- *
- * @link http://docs.aws.amazon.com/aws-sdk-php/v2/guide/service-codecommit.html User guide
- * @link http://docs.aws.amazon.com/aws-sdk-php/v2/api/class-Aws.CodeCommit.CodeCommitClient.html API docs
+ * @method \Aws\Result batchGetRepositories(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise batchGetRepositoriesAsync(array $args = [])
+ * @method \Aws\Result createBranch(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise createBranchAsync(array $args = [])
+ * @method \Aws\Result createPullRequest(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise createPullRequestAsync(array $args = [])
+ * @method \Aws\Result createRepository(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise createRepositoryAsync(array $args = [])
+ * @method \Aws\Result deleteBranch(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise deleteBranchAsync(array $args = [])
+ * @method \Aws\Result deleteCommentContent(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise deleteCommentContentAsync(array $args = [])
+ * @method \Aws\Result deleteRepository(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise deleteRepositoryAsync(array $args = [])
+ * @method \Aws\Result describePullRequestEvents(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise describePullRequestEventsAsync(array $args = [])
+ * @method \Aws\Result getBlob(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getBlobAsync(array $args = [])
+ * @method \Aws\Result getBranch(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getBranchAsync(array $args = [])
+ * @method \Aws\Result getComment(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getCommentAsync(array $args = [])
+ * @method \Aws\Result getCommentsForComparedCommit(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getCommentsForComparedCommitAsync(array $args = [])
+ * @method \Aws\Result getCommentsForPullRequest(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getCommentsForPullRequestAsync(array $args = [])
+ * @method \Aws\Result getCommit(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getCommitAsync(array $args = [])
+ * @method \Aws\Result getDifferences(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getDifferencesAsync(array $args = [])
+ * @method \Aws\Result getMergeConflicts(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getMergeConflictsAsync(array $args = [])
+ * @method \Aws\Result getPullRequest(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getPullRequestAsync(array $args = [])
+ * @method \Aws\Result getRepository(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getRepositoryAsync(array $args = [])
+ * @method \Aws\Result getRepositoryTriggers(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getRepositoryTriggersAsync(array $args = [])
+ * @method \Aws\Result listBranches(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise listBranchesAsync(array $args = [])
+ * @method \Aws\Result listPullRequests(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise listPullRequestsAsync(array $args = [])
+ * @method \Aws\Result listRepositories(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise listRepositoriesAsync(array $args = [])
+ * @method \Aws\Result mergePullRequestByFastForward(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise mergePullRequestByFastForwardAsync(array $args = [])
+ * @method \Aws\Result postCommentForComparedCommit(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise postCommentForComparedCommitAsync(array $args = [])
+ * @method \Aws\Result postCommentForPullRequest(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise postCommentForPullRequestAsync(array $args = [])
+ * @method \Aws\Result postCommentReply(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise postCommentReplyAsync(array $args = [])
+ * @method \Aws\Result putFile(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise putFileAsync(array $args = [])
+ * @method \Aws\Result putRepositoryTriggers(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise putRepositoryTriggersAsync(array $args = [])
+ * @method \Aws\Result testRepositoryTriggers(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise testRepositoryTriggersAsync(array $args = [])
+ * @method \Aws\Result updateComment(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise updateCommentAsync(array $args = [])
+ * @method \Aws\Result updateDefaultBranch(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise updateDefaultBranchAsync(array $args = [])
+ * @method \Aws\Result updatePullRequestDescription(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise updatePullRequestDescriptionAsync(array $args = [])
+ * @method \Aws\Result updatePullRequestStatus(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise updatePullRequestStatusAsync(array $args = [])
+ * @method \Aws\Result updatePullRequestTitle(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise updatePullRequestTitleAsync(array $args = [])
+ * @method \Aws\Result updateRepositoryDescription(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise updateRepositoryDescriptionAsync(array $args = [])
+ * @method \Aws\Result updateRepositoryName(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise updateRepositoryNameAsync(array $args = [])
  */
-class CodeCommitClient extends AbstractClient
-{
-    const LATEST_API_VERSION = '2015-04-13';
-
-    /**
-     * Factory method to create a new AWS CodeCommit client using an array of configuration options.
-     *
-     * See http://docs.aws.amazon.com/aws-sdk-php/v2/guide/configuration.html#client-configuration-options
-     *
-     * @param array|Collection $config Client configuration data
-     *
-     * @return self
-     * @link http://docs.aws.amazon.com/aws-sdk-php/v2/guide/configuration.html#client-configuration-options
-     */
-    public static function factory($config = array())
-    {
-        return ClientBuilder::factory(__NAMESPACE__)
-            ->setConfig($config)
-            ->setConfigDefaults(array(
-                Options::VERSION             => self::LATEST_API_VERSION,
-                Options::SERVICE_DESCRIPTION => __DIR__ . '/Resources/codecommit-%s.php'
-            ))
-            ->setExceptionParser(new JsonQueryExceptionParser())
-            ->build();
-    }
-}
+class CodeCommitClient extends AwsClient {}

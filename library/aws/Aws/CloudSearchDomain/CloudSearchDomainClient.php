@@ -1,54 +1,84 @@
 <?php
-
 namespace Aws\CloudSearchDomain;
 
-use Aws\Common\Client\AbstractClient;
-use Aws\Common\Enum\ClientOptions as Options;
-use Aws\Common\Exception\BadMethodCallException;
-use Guzzle\Common\Collection;
-use Guzzle\Service\Resource\Model;
+use Aws\AwsClient;
+use Aws\CommandInterface;
+use GuzzleHttp\Psr7\Uri;
+use Psr\Http\Message\RequestInterface;
+use GuzzleHttp\Psr7;
 
 /**
- * Client to interact with Amazon CloudSearch Domain
+ * This client is used to search and upload documents to an **Amazon CloudSearch** Domain.
  *
- * @method Model search(array $args = array()) {@command CloudSearchDomain Search}
- * @method Model suggest(array $args = array()) {@command CloudSearchDomain Suggest}
- * @method Model uploadDocuments(array $args = array()) {@command CloudSearchDomain UploadDocuments}
- *
- * @link http://docs.aws.amazon.com/aws-sdk-php/v2/guide/service-cloudsearchdomain.html User guide
- * @link http://docs.aws.amazon.com/aws-sdk-php/v2/api/class-Aws.CloudSearchDomain.CloudSearchDomainClient.html API docs
+ * @method \Aws\Result search(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise searchAsync(array $args = [])
+ * @method \Aws\Result suggest(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise suggestAsync(array $args = [])
+ * @method \Aws\Result uploadDocuments(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise uploadDocumentsAsync(array $args = [])
  */
-class CloudSearchDomainClient extends AbstractClient
+class CloudSearchDomainClient extends AwsClient
 {
-    const LATEST_API_VERSION = '2013-01-01';
-
-    /**
-     * Factory method to create a new Amazon CloudSearch Domain client using an array of configuration options.
-     *
-     * You must provide the `endpoint` option for this client, but credentials and `region` are not needed.
-     *
-     * @param array|Collection $config Client configuration data
-     *
-     * @return self
-     * @link http://docs.aws.amazon.com/aws-sdk-php/v2/guide/configuration.html#client-configuration-options
-     */
-    public static function factory($config = array())
+    public function __construct(array $args)
     {
-        return CloudSearchDomainClientBuilder::factory(__NAMESPACE__)
-            ->setConfig($config)
-            ->setConfigDefaults(array(
-                Options::VERSION => self::LATEST_API_VERSION,
-                Options::SERVICE_DESCRIPTION => __DIR__ . '/Resources/cloudsearchdomain-%s.php'
-            ))
-            ->build();
+        parent::__construct($args);
+        $list = $this->getHandlerList();
+        $list->appendBuild($this->searchByPost(), 'cloudsearchdomain.search_by_POST');
+    }
+
+    public static function getArguments()
+    {
+        $args = parent::getArguments();
+        $args['endpoint']['required'] = true;
+        $args['region']['default'] = function (array $args) {
+            // Determine the region from the provided endpoint.
+            // (e.g. http://search-blah.{region}.cloudsearch.amazonaws.com)
+            return explode('.', new Uri($args['endpoint']))[1];
+        };
+
+        return $args;
     }
 
     /**
-     * @internal
-     * @throws BadMethodCallException Do not call this method.
+     * Use POST for search command
+     *
+     * Useful when query string is too long
      */
-    public function setRegion($region)
+    private function searchByPost()
     {
-        throw new BadMethodCallException('You cannot change the region of a CloudSearchDomain client.');
+        return static function (callable $handler) {
+            return function (
+                CommandInterface $c,
+                RequestInterface $r = null
+            ) use ($handler) {
+                if ($c->getName() !== 'Search') {
+                    return $handler($c, $r);
+                }
+                return $handler($c, self::convertGetToPost($r));
+            };
+        };
+    }
+
+    /**
+     * Converts default GET request to a POST request
+     *
+     * Avoiding length restriction in query
+     *
+     * @param RequestInterface $r GET request to be converted
+     * @return RequestInterface $req converted POST request
+     */
+    public static function convertGetToPost(RequestInterface $r)
+    {
+        if ($r->getMethod() === 'POST') {
+            return $r;
+        }
+
+        $query = $r->getUri()->getQuery();
+        $req = $r->withMethod('POST')
+            ->withBody(Psr7\stream_for($query))
+            ->withHeader('Content-Length', strlen($query))
+            ->withHeader('Content-Type', 'application/x-www-form-urlencoded')
+            ->withUri($r->getUri()->withQuery(''));
+        return $req;
     }
 }
