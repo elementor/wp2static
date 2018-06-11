@@ -1,10 +1,9 @@
 <?php
-
 namespace Aws\CodePipeline\Exception;
 
-use Aws\Common\Exception\ServiceResponseException;
+use Aws\Exception\AwsException;
 
 /**
- * Exception thrown by the CodePipeline service client.
+ * Represents an error interacting with the Amazon CodePipeline service.
  */
-class CodePipelineException extends ServiceResponseException {}
+class CodePipelineException extends AwsException {}

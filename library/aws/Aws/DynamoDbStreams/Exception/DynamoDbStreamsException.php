@@ -1,10 +1,9 @@
 <?php
-
 namespace Aws\DynamoDbStreams\Exception;
 
-use Aws\Common\Exception\ServiceResponseException;
+use Aws\Exception\AwsException;
 
 /**
- * Exception thrown by the DynamoDbStreams service client.
+ * Represents an error interacting with the Amazon DynamoDB Streams service.
  */
-class DynamoDbStreamsException extends ServiceResponseException {}
+class DynamoDbStreamsException extends AwsException {}

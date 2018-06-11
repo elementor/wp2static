@@ -1,134 +1,299 @@
 <?php
-/**
- * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- * http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
- */
-
 namespace Aws\Rds;
 
-use Aws\Common\Client\AbstractClient;
-use Aws\Common\Client\ClientBuilder;
-use Aws\Common\Enum\ClientOptions as Options;
-use Guzzle\Common\Collection;
-use Guzzle\Service\Resource\Model;
-use Guzzle\Service\Resource\ResourceIteratorInterface;
+use Aws\AwsClient;
+use Aws\Api\Service;
+use Aws\Api\DocModel;
+use Aws\Api\ApiProvider;
+use Aws\PresignUrlMiddleware;
 
 /**
- * Client to interact with Amazon Relational Database Service
+ * This client is used to interact with the **Amazon Relational Database Service (Amazon RDS)**.
  *
- * @method Model addSourceIdentifierToSubscription(array $args = array()) {@command Rds AddSourceIdentifierToSubscription}
- * @method Model addTagsToResource(array $args = array()) {@command Rds AddTagsToResource}
- * @method Model applyPendingMaintenanceAction(array $args = array()) {@command Rds ApplyPendingMaintenanceAction}
- * @method Model authorizeDBSecurityGroupIngress(array $args = array()) {@command Rds AuthorizeDBSecurityGroupIngress}
- * @method Model copyDBClusterSnapshot(array $args = array()) {@command Rds CopyDBClusterSnapshot}
- * @method Model copyDBParameterGroup(array $args = array()) {@command Rds CopyDBParameterGroup}
- * @method Model copyDBSnapshot(array $args = array()) {@command Rds CopyDBSnapshot}
- * @method Model copyOptionGroup(array $args = array()) {@command Rds CopyOptionGroup}
- * @method Model createDBCluster(array $args = array()) {@command Rds CreateDBCluster}
- * @method Model createDBClusterParameterGroup(array $args = array()) {@command Rds CreateDBClusterParameterGroup}
- * @method Model createDBClusterSnapshot(array $args = array()) {@command Rds CreateDBClusterSnapshot}
- * @method Model createDBInstance(array $args = array()) {@command Rds CreateDBInstance}
- * @method Model createDBInstanceReadReplica(array $args = array()) {@command Rds CreateDBInstanceReadReplica}
- * @method Model createDBParameterGroup(array $args = array()) {@command Rds CreateDBParameterGroup}
- * @method Model createDBSecurityGroup(array $args = array()) {@command Rds CreateDBSecurityGroup}
- * @method Model createDBSnapshot(array $args = array()) {@command Rds CreateDBSnapshot}
- * @method Model createDBSubnetGroup(array $args = array()) {@command Rds CreateDBSubnetGroup}
- * @method Model createEventSubscription(array $args = array()) {@command Rds CreateEventSubscription}
- * @method Model createOptionGroup(array $args = array()) {@command Rds CreateOptionGroup}
- * @method Model deleteDBCluster(array $args = array()) {@command Rds DeleteDBCluster}
- * @method Model deleteDBClusterParameterGroup(array $args = array()) {@command Rds DeleteDBClusterParameterGroup}
- * @method Model deleteDBClusterSnapshot(array $args = array()) {@command Rds DeleteDBClusterSnapshot}
- * @method Model deleteDBInstance(array $args = array()) {@command Rds DeleteDBInstance}
- * @method Model deleteDBParameterGroup(array $args = array()) {@command Rds DeleteDBParameterGroup}
- * @method Model deleteDBSecurityGroup(array $args = array()) {@command Rds DeleteDBSecurityGroup}
- * @method Model deleteDBSnapshot(array $args = array()) {@command Rds DeleteDBSnapshot}
- * @method Model deleteDBSubnetGroup(array $args = array()) {@command Rds DeleteDBSubnetGroup}
- * @method Model deleteEventSubscription(array $args = array()) {@command Rds DeleteEventSubscription}
- * @method Model deleteOptionGroup(array $args = array()) {@command Rds DeleteOptionGroup}
- * @method Model describeAccountAttributes(array $args = array()) {@command Rds DescribeAccountAttributes}
- * @method Model describeCertificates(array $args = array()) {@command Rds DescribeCertificates}
- * @method Model describeDBClusterParameterGroups(array $args = array()) {@command Rds DescribeDBClusterParameterGroups}
- * @method Model describeDBClusterParameters(array $args = array()) {@command Rds DescribeDBClusterParameters}
- * @method Model describeDBClusterSnapshots(array $args = array()) {@command Rds DescribeDBClusterSnapshots}
- * @method Model describeDBClusters(array $args = array()) {@command Rds DescribeDBClusters}
- * @method Model describeDBEngineVersions(array $args = array()) {@command Rds DescribeDBEngineVersions}
- * @method Model describeDBInstances(array $args = array()) {@command Rds DescribeDBInstances}
- * @method Model describeDBLogFiles(array $args = array()) {@command Rds DescribeDBLogFiles}
- * @method Model describeDBParameterGroups(array $args = array()) {@command Rds DescribeDBParameterGroups}
- * @method Model describeDBParameters(array $args = array()) {@command Rds DescribeDBParameters}
- * @method Model describeDBSecurityGroups(array $args = array()) {@command Rds DescribeDBSecurityGroups}
- * @method Model describeDBSnapshots(array $args = array()) {@command Rds DescribeDBSnapshots}
- * @method Model describeDBSubnetGroups(array $args = array()) {@command Rds DescribeDBSubnetGroups}
- * @method Model describeEngineDefaultClusterParameters(array $args = array()) {@command Rds DescribeEngineDefaultClusterParameters}
- * @method Model describeEngineDefaultParameters(array $args = array()) {@command Rds DescribeEngineDefaultParameters}
- * @method Model describeEventCategories(array $args = array()) {@command Rds DescribeEventCategories}
- * @method Model describeEventSubscriptions(array $args = array()) {@command Rds DescribeEventSubscriptions}
- * @method Model describeEvents(array $args = array()) {@command Rds DescribeEvents}
- * @method Model describeOptionGroupOptions(array $args = array()) {@command Rds DescribeOptionGroupOptions}
- * @method Model describeOptionGroups(array $args = array()) {@command Rds DescribeOptionGroups}
- * @method Model describeOrderableDBInstanceOptions(array $args = array()) {@command Rds DescribeOrderableDBInstanceOptions}
- * @method Model describePendingMaintenanceActions(array $args = array()) {@command Rds DescribePendingMaintenanceActions}
- * @method Model describeReservedDBInstances(array $args = array()) {@command Rds DescribeReservedDBInstances}
- * @method Model describeReservedDBInstancesOfferings(array $args = array()) {@command Rds DescribeReservedDBInstancesOfferings}
- * @method Model downloadDBLogFilePortion(array $args = array()) {@command Rds DownloadDBLogFilePortion}
- * @method Model failoverDBCluster(array $args = array()) {@command Rds FailoverDBCluster}
- * @method Model listTagsForResource(array $args = array()) {@command Rds ListTagsForResource}
- * @method Model modifyDBCluster(array $args = array()) {@command Rds ModifyDBCluster}
- * @method Model modifyDBClusterParameterGroup(array $args = array()) {@command Rds ModifyDBClusterParameterGroup}
- * @method Model modifyDBInstance(array $args = array()) {@command Rds ModifyDBInstance}
- * @method Model modifyDBParameterGroup(array $args = array()) {@command Rds ModifyDBParameterGroup}
- * @method Model modifyDBSubnetGroup(array $args = array()) {@command Rds ModifyDBSubnetGroup}
- * @method Model modifyEventSubscription(array $args = array()) {@command Rds ModifyEventSubscription}
- * @method Model modifyOptionGroup(array $args = array()) {@command Rds ModifyOptionGroup}
- * @method Model promoteReadReplica(array $args = array()) {@command Rds PromoteReadReplica}
- * @method Model purchaseReservedDBInstancesOffering(array $args = array()) {@command Rds PurchaseReservedDBInstancesOffering}
- * @method Model rebootDBInstance(array $args = array()) {@command Rds RebootDBInstance}
- * @method Model removeSourceIdentifierFromSubscription(array $args = array()) {@command Rds RemoveSourceIdentifierFromSubscription}
- * @method Model removeTagsFromResource(array $args = array()) {@command Rds RemoveTagsFromResource}
- * @method Model resetDBClusterParameterGroup(array $args = array()) {@command Rds ResetDBClusterParameterGroup}
- * @method Model resetDBParameterGroup(array $args = array()) {@command Rds ResetDBParameterGroup}
- * @method Model restoreDBClusterFromSnapshot(array $args = array()) {@command Rds RestoreDBClusterFromSnapshot}
- * @method Model restoreDBClusterToPointInTime(array $args = array()) {@command Rds RestoreDBClusterToPointInTime}
- * @method Model restoreDBInstanceFromDBSnapshot(array $args = array()) {@command Rds RestoreDBInstanceFromDBSnapshot}
- * @method Model restoreDBInstanceToPointInTime(array $args = array()) {@command Rds RestoreDBInstanceToPointInTime}
- * @method Model revokeDBSecurityGroupIngress(array $args = array()) {@command Rds RevokeDBSecurityGroupIngress}
- * @method waitUntilDBInstanceAvailable(array $input) The input array uses the parameters of the DescribeDBInstances operation and waiter specific settings
- * @method waitUntilDBInstanceDeleted(array $input) The input array uses the parameters of the DescribeDBInstances operation and waiter specific settings
- * @method ResourceIteratorInterface getDescribeEngineDefaultParametersIterator(array $args = array()) The input array uses the parameters of the DescribeEngineDefaultParameters operation
- *
- * @link http://docs.aws.amazon.com/aws-sdk-php/v2/guide/service-rds.html User guide
- * @link http://docs.aws.amazon.com/aws-sdk-php/v2/api/class-Aws.Rds.RdsClient.html API docs
+ * @method \Aws\Result addSourceIdentifierToSubscription(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise addSourceIdentifierToSubscriptionAsync(array $args = [])
+ * @method \Aws\Result addTagsToResource(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise addTagsToResourceAsync(array $args = [])
+ * @method \Aws\Result authorizeDBSecurityGroupIngress(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise authorizeDBSecurityGroupIngressAsync(array $args = [])
+ * @method \Aws\Result copyDBParameterGroup(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise copyDBParameterGroupAsync(array $args = [])
+ * @method \Aws\Result copyDBSnapshot(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise copyDBSnapshotAsync(array $args = [])
+ * @method \Aws\Result copyOptionGroup(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise copyOptionGroupAsync(array $args = [])
+ * @method \Aws\Result createDBInstance(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise createDBInstanceAsync(array $args = [])
+ * @method \Aws\Result createDBInstanceReadReplica(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise createDBInstanceReadReplicaAsync(array $args = [])
+ * @method \Aws\Result createDBParameterGroup(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise createDBParameterGroupAsync(array $args = [])
+ * @method \Aws\Result createDBSecurityGroup(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise createDBSecurityGroupAsync(array $args = [])
+ * @method \Aws\Result createDBSnapshot(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise createDBSnapshotAsync(array $args = [])
+ * @method \Aws\Result createDBSubnetGroup(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise createDBSubnetGroupAsync(array $args = [])
+ * @method \Aws\Result createEventSubscription(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise createEventSubscriptionAsync(array $args = [])
+ * @method \Aws\Result createOptionGroup(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise createOptionGroupAsync(array $args = [])
+ * @method \Aws\Result deleteDBInstance(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise deleteDBInstanceAsync(array $args = [])
+ * @method \Aws\Result deleteDBParameterGroup(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise deleteDBParameterGroupAsync(array $args = [])
+ * @method \Aws\Result deleteDBSecurityGroup(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise deleteDBSecurityGroupAsync(array $args = [])
+ * @method \Aws\Result deleteDBSnapshot(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise deleteDBSnapshotAsync(array $args = [])
+ * @method \Aws\Result deleteDBSubnetGroup(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise deleteDBSubnetGroupAsync(array $args = [])
+ * @method \Aws\Result deleteEventSubscription(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise deleteEventSubscriptionAsync(array $args = [])
+ * @method \Aws\Result deleteOptionGroup(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise deleteOptionGroupAsync(array $args = [])
+ * @method \Aws\Result describeDBEngineVersions(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise describeDBEngineVersionsAsync(array $args = [])
+ * @method \Aws\Result describeDBInstances(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise describeDBInstancesAsync(array $args = [])
+ * @method \Aws\Result describeDBLogFiles(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise describeDBLogFilesAsync(array $args = [])
+ * @method \Aws\Result describeDBParameterGroups(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise describeDBParameterGroupsAsync(array $args = [])
+ * @method \Aws\Result describeDBParameters(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise describeDBParametersAsync(array $args = [])
+ * @method \Aws\Result describeDBSecurityGroups(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise describeDBSecurityGroupsAsync(array $args = [])
+ * @method \Aws\Result describeDBSnapshots(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise describeDBSnapshotsAsync(array $args = [])
+ * @method \Aws\Result describeDBSubnetGroups(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise describeDBSubnetGroupsAsync(array $args = [])
+ * @method \Aws\Result describeEngineDefaultParameters(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise describeEngineDefaultParametersAsync(array $args = [])
+ * @method \Aws\Result describeEventCategories(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise describeEventCategoriesAsync(array $args = [])
+ * @method \Aws\Result describeEventSubscriptions(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise describeEventSubscriptionsAsync(array $args = [])
+ * @method \Aws\Result describeEvents(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise describeEventsAsync(array $args = [])
+ * @method \Aws\Result describeOptionGroupOptions(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise describeOptionGroupOptionsAsync(array $args = [])
+ * @method \Aws\Result describeOptionGroups(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise describeOptionGroupsAsync(array $args = [])
+ * @method \Aws\Result describeOrderableDBInstanceOptions(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise describeOrderableDBInstanceOptionsAsync(array $args = [])
+ * @method \Aws\Result describeReservedDBInstances(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise describeReservedDBInstancesAsync(array $args = [])
+ * @method \Aws\Result describeReservedDBInstancesOfferings(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise describeReservedDBInstancesOfferingsAsync(array $args = [])
+ * @method \Aws\Result downloadDBLogFilePortion(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise downloadDBLogFilePortionAsync(array $args = [])
+ * @method \Aws\Result listTagsForResource(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise listTagsForResourceAsync(array $args = [])
+ * @method \Aws\Result modifyDBInstance(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise modifyDBInstanceAsync(array $args = [])
+ * @method \Aws\Result modifyDBParameterGroup(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise modifyDBParameterGroupAsync(array $args = [])
+ * @method \Aws\Result modifyDBSubnetGroup(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise modifyDBSubnetGroupAsync(array $args = [])
+ * @method \Aws\Result modifyEventSubscription(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise modifyEventSubscriptionAsync(array $args = [])
+ * @method \Aws\Result modifyOptionGroup(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise modifyOptionGroupAsync(array $args = [])
+ * @method \Aws\Result promoteReadReplica(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise promoteReadReplicaAsync(array $args = [])
+ * @method \Aws\Result purchaseReservedDBInstancesOffering(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise purchaseReservedDBInstancesOfferingAsync(array $args = [])
+ * @method \Aws\Result rebootDBInstance(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise rebootDBInstanceAsync(array $args = [])
+ * @method \Aws\Result removeSourceIdentifierFromSubscription(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise removeSourceIdentifierFromSubscriptionAsync(array $args = [])
+ * @method \Aws\Result removeTagsFromResource(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise removeTagsFromResourceAsync(array $args = [])
+ * @method \Aws\Result resetDBParameterGroup(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise resetDBParameterGroupAsync(array $args = [])
+ * @method \Aws\Result restoreDBInstanceFromDBSnapshot(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise restoreDBInstanceFromDBSnapshotAsync(array $args = [])
+ * @method \Aws\Result restoreDBInstanceToPointInTime(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise restoreDBInstanceToPointInTimeAsync(array $args = [])
+ * @method \Aws\Result revokeDBSecurityGroupIngress(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise revokeDBSecurityGroupIngressAsync(array $args = [])
+ * @method \Aws\Result addRoleToDBCluster(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise addRoleToDBClusterAsync(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result applyPendingMaintenanceAction(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise applyPendingMaintenanceActionAsync(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result backtrackDBCluster(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise backtrackDBClusterAsync(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result copyDBClusterParameterGroup(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise copyDBClusterParameterGroupAsync(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result copyDBClusterSnapshot(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise copyDBClusterSnapshotAsync(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result createDBCluster(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise createDBClusterAsync(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result createDBClusterParameterGroup(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise createDBClusterParameterGroupAsync(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result createDBClusterSnapshot(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise createDBClusterSnapshotAsync(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result deleteDBCluster(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise deleteDBClusterAsync(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result deleteDBClusterParameterGroup(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise deleteDBClusterParameterGroupAsync(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result deleteDBClusterSnapshot(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise deleteDBClusterSnapshotAsync(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result describeAccountAttributes(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise describeAccountAttributesAsync(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result describeCertificates(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise describeCertificatesAsync(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result describeDBClusterBacktracks(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise describeDBClusterBacktracksAsync(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result describeDBClusterParameterGroups(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise describeDBClusterParameterGroupsAsync(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result describeDBClusterParameters(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise describeDBClusterParametersAsync(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result describeDBClusterSnapshotAttributes(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise describeDBClusterSnapshotAttributesAsync(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result describeDBClusterSnapshots(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise describeDBClusterSnapshotsAsync(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result describeDBClusters(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise describeDBClustersAsync(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result describeDBSnapshotAttributes(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise describeDBSnapshotAttributesAsync(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result describeEngineDefaultClusterParameters(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise describeEngineDefaultClusterParametersAsync(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result describePendingMaintenanceActions(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise describePendingMaintenanceActionsAsync(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result describeSourceRegions(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise describeSourceRegionsAsync(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result describeValidDBInstanceModifications(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise describeValidDBInstanceModificationsAsync(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result failoverDBCluster(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise failoverDBClusterAsync(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result modifyDBCluster(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise modifyDBClusterAsync(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result modifyDBClusterParameterGroup(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise modifyDBClusterParameterGroupAsync(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result modifyDBClusterSnapshotAttribute(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise modifyDBClusterSnapshotAttributeAsync(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result modifyDBSnapshot(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise modifyDBSnapshotAsync(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result modifyDBSnapshotAttribute(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise modifyDBSnapshotAttributeAsync(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result promoteReadReplicaDBCluster(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise promoteReadReplicaDBClusterAsync(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result removeRoleFromDBCluster(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise removeRoleFromDBClusterAsync(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result resetDBClusterParameterGroup(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise resetDBClusterParameterGroupAsync(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result restoreDBClusterFromS3(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise restoreDBClusterFromS3Async(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result restoreDBClusterFromSnapshot(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise restoreDBClusterFromSnapshotAsync(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result restoreDBClusterToPointInTime(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise restoreDBClusterToPointInTimeAsync(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result restoreDBInstanceFromS3(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise restoreDBInstanceFromS3Async(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result startDBInstance(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise startDBInstanceAsync(array $args = []) (supported in versions 2014-10-31)
+ * @method \Aws\Result stopDBInstance(array $args = []) (supported in versions 2014-10-31)
+ * @method \GuzzleHttp\Promise\Promise stopDBInstanceAsync(array $args = []) (supported in versions 2014-10-31)
  */
-class RdsClient extends AbstractClient
+class RdsClient extends AwsClient
 {
-    const LATEST_API_VERSION = '2014-10-31';
+    public function __construct(array $args)
+    {
+        $args['with_resolved'] = function (array $args) {
+            $this->getHandlerList()->appendInit(
+                PresignUrlMiddleware::wrap(
+                    $this,
+                    $args['endpoint_provider'],
+                    [
+                        'operations' => [
+                            'CopyDBSnapshot',
+                            'CreateDBInstanceReadReplica',
+                            'CopyDBClusterSnapshot',
+                            'CreateDBCluster'
+                        ],
+                        'service' => 'rds',
+                        'presign_param' => 'PreSignedUrl',
+                        'require_different_region' => true,
+                    ]
+                ),
+                'rds.presigner'
+            );
+        };
+
+        parent::__construct($args);
+    }
 
     /**
-     * Factory method to create a new Amazon Relational Database Service client using an array of configuration options.
-     *
-     * @param array|Collection $config Client configuration data
-     *
-     * @return self
-     * @link http://docs.aws.amazon.com/aws-sdk-php/v2/guide/configuration.html#client-configuration-options
+     * @internal
+     * @codeCoverageIgnore
      */
-    public static function factory($config = array())
+    public static function applyDocFilters(array $api, array $docs)
     {
-        return ClientBuilder::factory(__NAMESPACE__)
-            ->setConfig($config)
-            ->setConfigDefaults(array(
-                Options::VERSION             => self::LATEST_API_VERSION,
-                Options::SERVICE_DESCRIPTION => __DIR__ . '/Resources/rds-%s.php'
-            ))
-            ->build();
+        // Add the SourceRegion parameter
+        $docs['shapes']['SourceRegion']['base'] = 'A required parameter that indicates '
+            . 'the region that the DB snapshot will be copied from.';
+        $api['shapes']['SourceRegion'] = ['type' => 'string'];
+        $api['shapes']['CopyDBSnapshotMessage']['members']['SourceRegion'] = ['shape' => 'SourceRegion'];
+        $api['shapes']['CreateDBInstanceReadReplicaMessage']['members']['SourceRegion'] = ['shape' => 'SourceRegion'];
+
+        // Add the DestinationRegion parameter
+        $docs['shapes']['DestinationRegion']['base']
+            = '<div class="alert alert-info">The SDK will populate this '
+            . 'parameter on your behalf using the configured region value of '
+            . 'the client.</div>';
+        $api['shapes']['DestinationRegion'] = ['type' => 'string'];
+        $api['shapes']['CopyDBSnapshotMessage']['members']['DestinationRegion'] = ['shape' => 'DestinationRegion'];
+        $api['shapes']['CreateDBInstanceReadReplicaMessage']['members']['DestinationRegion'] = ['shape' => 'DestinationRegion'];
+
+        // Several parameters in presign APIs are optional.
+        $docs['shapes']['String']['refs']['CopyDBSnapshotMessage$PreSignedUrl']
+            = '<div class="alert alert-info">The SDK will compute this value '
+            . 'for you on your behalf.</div>';
+        $docs['shapes']['String']['refs']['CopyDBSnapshotMessage$DestinationRegion']
+            = '<div class="alert alert-info">The SDK will populate this '
+            . 'parameter on your behalf using the configured region value of '
+            . 'the client.</div>';
+
+        // Several parameters in presign APIs are optional.
+        $docs['shapes']['String']['refs']['CreateDBInstanceReadReplicaMessage$PreSignedUrl']
+            = '<div class="alert alert-info">The SDK will compute this value '
+            . 'for you on your behalf.</div>';
+        $docs['shapes']['String']['refs']['CreateDBInstanceReadReplicaMessage$DestinationRegion']
+            = '<div class="alert alert-info">The SDK will populate this '
+            . 'parameter on your behalf using the configured region value of '
+            . 'the client.</div>';
+
+        if ($api['metadata']['apiVersion'] != '2014-09-01') {
+            $api['shapes']['CopyDBClusterSnapshotMessage']['members']['SourceRegion'] = ['shape' => 'SourceRegion'];
+            $api['shapes']['CreateDBClusterMessage']['members']['SourceRegion'] = ['shape' => 'SourceRegion'];
+
+            $api['shapes']['CopyDBClusterSnapshotMessage']['members']['DestinationRegion'] = ['shape' => 'DestinationRegion'];
+            $api['shapes']['CreateDBClusterMessage']['members']['DestinationRegion'] = ['shape' => 'DestinationRegion'];
+
+            // Several parameters in presign APIs are optional.
+            $docs['shapes']['String']['refs']['CopyDBClusterSnapshotMessage$PreSignedUrl']
+                = '<div class="alert alert-info">The SDK will compute this value '
+                . 'for you on your behalf.</div>';
+            $docs['shapes']['String']['refs']['CopyDBClusterSnapshotMessage$DestinationRegion']
+                = '<div class="alert alert-info">The SDK will populate this '
+                . 'parameter on your behalf using the configured region value of '
+                . 'the client.</div>';
+
+            // Several parameters in presign APIs are optional.
+            $docs['shapes']['String']['refs']['CreateDBClusterMessage$PreSignedUrl']
+                = '<div class="alert alert-info">The SDK will compute this value '
+                . 'for you on your behalf.</div>';
+            $docs['shapes']['String']['refs']['CreateDBClusterMessage$DestinationRegion']
+                = '<div class="alert alert-info">The SDK will populate this '
+                . 'parameter on your behalf using the configured region value of '
+                . 'the client.</div>';
+        }
+
+        return [
+            new Service($api, ApiProvider::defaultProvider()),
+            new DocModel($docs)
+        ];
     }
 }

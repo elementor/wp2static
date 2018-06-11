@@ -1,10 +1,9 @@
 <?php
-
 namespace Aws\DeviceFarm\Exception;
 
-use Aws\Common\Exception\ServiceResponseException;
+use Aws\Exception\AwsException;
 
 /**
- * Exception thrown by the DeviceFarm service client.
+ * Represents an error interacting with the Amazon DeviceFarm service.
  */
-class DeviceFarmException extends ServiceResponseException {}
+class DeviceFarmException extends AwsException {}

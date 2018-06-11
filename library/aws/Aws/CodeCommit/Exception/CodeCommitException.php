@@ -1,10 +1,9 @@
 <?php
-
 namespace Aws\CodeCommit\Exception;
 
-use Aws\Common\Exception\ServiceResponseException;
+use Aws\Exception\AwsException;
 
 /**
- * Exception thrown by the CodeCommit service client.
+ * Represents an error interacting with the **AWS CodeCommit** service.
  */
-class CodeCommitException extends ServiceResponseException {}
+class CodeCommitException extends AwsException {}
