@@ -1123,13 +1123,23 @@ class StaticHtmlOutput {
 		rename($updated_uploads_dir, $new_uploads_dir);
 		rename($updated_theme_root, $new_theme_root);
 		rename($updated_theme_dir, $new_theme_dir);
-		rename($updated_plugins_dir, $new_plugins_dir);
+
+		if( file_exists($updated_plugins_dir) ) {
+			rename($updated_plugins_dir, $new_plugins_dir);
+
+		}
 		rename($original_wp_includes, $new_wp_includes);
 
 		// rm other left over WP identifying files
-		unlink($archiveDir . '/xmlrpc.php');
-		unlink($archiveDir . '/wp-login.html');
-		unlink($archiveDir . '/wp-login.php');
+
+		if( file_exists($archiveDir . '/xmlrpc.php') ) {
+			unlink($archiveDir . '/xmlrpc.php');
+		}
+
+		if( file_exists($archiveDir . '/wp-login.php') ) {
+			unlink($archiveDir . '/wp-login.php');
+		}
+
 		$this->delete_dir_with_files($archiveDir . '/wp-json/');
 		
 		// TODO: remove all text files from theme dir 
@@ -1178,7 +1188,9 @@ class StaticHtmlOutput {
 			$archiveName = rtrim($archiveDir, '/');
 			$zipFile = $archiveName . '.zip';
 			$this->_prependExportLog('POST EXPORT CLEANUP: removing zip: ' . $zipFile);
-			unlink($zipFile);
+			if( file_exists($zipFile) ) {
+				unlink($zipFile);
+			}
 		}
 
 		$this->_prependExportLog('POST EXPORT CLEANUP: complete');
