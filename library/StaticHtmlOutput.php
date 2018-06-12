@@ -12,7 +12,7 @@ use Kunnu\Dropbox\Exceptions\DropboxClientException;
 use GuzzleHttp\Client;
 
 class StaticHtmlOutput {
-	const VERSION = '2.6.1';
+	const VERSION = '2.6.2';
 	const OPTIONS_KEY = 'wp-static-html-output-options';
 	const HOOK = 'wp-static-html-output';
 
