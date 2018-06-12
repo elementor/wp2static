@@ -1102,21 +1102,21 @@ class StaticHtmlOutput {
 
 		// rewrite uploads dir
 		$default_upload_dir = wp_upload_dir(); // need to store as var first
-		$updated_uploads_dir =  str_replace(get_home_path(), '', $default_upload_dir['basedir']);
+		$updated_uploads_dir =  str_replace(ABSPATH, '', $default_upload_dir['basedir']);
 		
 		$updated_uploads_dir =  str_replace('wp-content/', '', $updated_uploads_dir);
 		$updated_uploads_dir = $new_wp_content . '/' . $updated_uploads_dir;
 		$new_uploads_dir = $new_wp_content . '/' . filter_input(INPUT_POST, 'rewriteUPLOADS');
 
 
-		$updated_theme_root = str_replace(get_home_path(), '/', get_theme_root());
+		$updated_theme_root = str_replace(ABSPATH, '/', get_theme_root());
 		$updated_theme_root = $new_wp_content . str_replace('wp-content', '/', $updated_theme_root);
 
 		$updated_theme_dir = $new_theme_root . '/' . basename(get_template_directory_uri());
 		$updated_theme_dir = str_replace('\/\/', '', $updated_theme_dir);
 
 		// rewrite plugins dir
-		$updated_plugins_dir = str_replace(get_home_path(), '/', WP_PLUGIN_DIR);
+		$updated_plugins_dir = str_replace(ABSPATH, '/', WP_PLUGIN_DIR);
 		$updated_plugins_dir = str_replace('wp-content/', '', $updated_plugins_dir);
 		$updated_plugins_dir = $new_wp_content . $updated_plugins_dir;
 		$new_plugins_dir = $new_wp_content . '/' . filter_input(INPUT_POST, 'rewritePLUGINDIR');

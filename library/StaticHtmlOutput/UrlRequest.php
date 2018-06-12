@@ -1145,19 +1145,19 @@ class StaticHtmlOutput_UrlRequest
 		$responseBody = str_replace($original_theme_dir, $new_theme_dir, $responseBody);
 
 		// rewrite the theme theme root just in case
-		$original_theme_root = str_replace(get_home_path(), '/', get_theme_root());
+		$original_theme_root = str_replace(ABSPATH, '/', get_theme_root());
 
 		$responseBody = str_replace($original_theme_root, $new_theme_root, $responseBody);
 
 		// rewrite uploads dir
 		$default_upload_dir = wp_upload_dir(); // need to store as var first
-		$original_uploads_dir = str_replace(get_home_path(), '/', $default_upload_dir['basedir']);
+		$original_uploads_dir = str_replace(ABSPATH, '/', $default_upload_dir['basedir']);
 		$new_uploads_dir = $new_wp_content . '/' . filter_input(INPUT_POST, 'rewriteUPLOADS');
 
 		$responseBody = str_replace($original_uploads_dir, $new_uploads_dir, $responseBody);
 
 		// rewrite plugins dir
-		$original_plugins_dir = str_replace(get_home_path(), '/', WP_PLUGIN_DIR);
+		$original_plugins_dir = str_replace(ABSPATH, '/', WP_PLUGIN_DIR);
 		$new_plugins_dir = $new_wp_content . '/' . filter_input(INPUT_POST, 'rewritePLUGINDIR');
 
 		$responseBody = str_replace($original_plugins_dir, $new_plugins_dir, $responseBody);
