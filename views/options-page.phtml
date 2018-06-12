@@ -659,11 +659,11 @@ http://172.17.0.3/my_pricelist.pdf</pre>
 		<br>
 		<b><?php echo str_replace(home_url(), '', get_template_directory_uri()); ?></b> will be re-written to <b class="base_url_preview"></b><b>wp-content/themes/</b> <input name="rewriteTHEMEDIR" class="regular-text rewrite" id="rewriteTHEMEDIR" value="<?php echo esc_attr($this->rewriteTHEMEDIR) ?>" placeholder="<?php echo __('theme', 'static-html-output-plugin');?>" />
 		<br>
-		<b><?php $default_upload_dir = wp_upload_dir(); echo str_replace(get_home_path(), '/', $default_upload_dir['basedir']); ?></b> will be re-written to <b class="base_url_preview"></b><b>wp-content/</b>  <input name="rewriteUPLOADS" class="regular-text rewrite" id="rewriteUPLOADS" value="<?php echo esc_attr($this->rewriteUPLOADS) ?>" placeholder="<?php echo __('data', 'static-html-output-plugin');?>" />
+		<b><?php $default_upload_dir = wp_upload_dir(); echo str_replace(ABSPATH, '/', $default_upload_dir['basedir']); ?></b> will be re-written to <b class="base_url_preview"></b><b>wp-content/</b>  <input name="rewriteUPLOADS" class="regular-text rewrite" id="rewriteUPLOADS" value="<?php echo esc_attr($this->rewriteUPLOADS) ?>" placeholder="<?php echo __('data', 'static-html-output-plugin');?>" />
 		<br>
-		<b><?php echo str_replace(get_home_path(), '/', get_theme_root()); ?></b> will be re-written to <b class="base_url_preview"></b><b>wp-content/</b>  <input name="rewriteTHEMEROOT" class="regular-text rewrite" id="rewriteTHEMEROOT" value="<?php echo esc_attr($this->rewriteTHEMEROOT) ?>" placeholder="<?php echo __('ui', 'static-html-output-plugin');?>" />
+		<b><?php echo str_replace(ABSPATH, '/', get_theme_root()); ?></b> will be re-written to <b class="base_url_preview"></b><b>wp-content/</b>  <input name="rewriteTHEMEROOT" class="regular-text rewrite" id="rewriteTHEMEROOT" value="<?php echo esc_attr($this->rewriteTHEMEROOT) ?>" placeholder="<?php echo __('ui', 'static-html-output-plugin');?>" />
 		<br>
-		<b><?php echo str_replace(get_home_path(), '/', WP_PLUGIN_DIR); ?></b> will be re-written to <b class="base_url_preview"></b><b>wp-content/</b>  <input name="rewritePLUGINDIR" class="regular-text rewrite" id="rewritePLUGINDIR" value="<?php echo esc_attr($this->rewritePLUGINDIR) ?>" placeholder="<?php echo __('lib', 'static-html-output-plugin');?>" />
+		<b><?php echo str_replace(ABSPATH, '/', WP_PLUGIN_DIR); ?></b> will be re-written to <b class="base_url_preview"></b><b>wp-content/</b>  <input name="rewritePLUGINDIR" class="regular-text rewrite" id="rewritePLUGINDIR" value="<?php echo esc_attr($this->rewritePLUGINDIR) ?>" placeholder="<?php echo __('lib', 'static-html-output-plugin');?>" />
 		<br>
 		<b><?php echo '/' . WPINC; ?></b> will be re-written to <b class="base_url_preview"></b> <input name="rewriteWPINC" class="regular-text rewrite" id="rewriteWPINC" value="<?php echo esc_attr($this->rewriteWPINC) ?>" placeholder="<?php echo __('inc', 'static-html-output-plugin');?>" />
 
