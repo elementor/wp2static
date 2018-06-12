@@ -396,6 +396,7 @@ jQuery(document).ready(function($){
 				'retainStaticFiles',
 				'retainZipFile',
 				'sendViaFTP',
+				'useActiveFTP',
 				'sendViaBUNNYCDN',
 				'sendViaS3',
 				'sendViaDropbox',
@@ -546,6 +547,7 @@ function displayTextfield($field_name, $field_label, $description, $password = n
 	<?php echo displayTextfield('ftpUsername', 'FTP Username', ''); ?>
 	<?php echo displayTextfield('ftpPassword', 'FTP Password', '', 'password'); ?>
 	<?php echo displayTextfield('ftpRemotePath', 'FTP Remote Path', 'will attempt to create folder recursively if non-existent'); ?>
+	<?php echo displayCheckbox('useActiveFTP', 'Use active FTP (defaults to passive mode) <a href="https://stackoverflow.com/q/1699145/1668057" target="_blank">What\'s the difference?</a>'); ?>
 </span>            
 
 
