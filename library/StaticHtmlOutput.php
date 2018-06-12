@@ -583,6 +583,8 @@ class StaticHtmlOutput {
         $archiveName = rtrim($archiveDir, '/');
         $siteroot = $archiveName . '/';
 
+		
+
         function FolderToFTP($dir, $siteroot, $ftpTargetPath){
             $files = scandir($dir);
             foreach($files as $item){
@@ -622,7 +624,12 @@ class StaticHtmlOutput {
         $ftp->connect(filter_input(INPUT_POST, 'ftpServer'));
         $ftp->login(filter_input(INPUT_POST, 'ftpUsername'), filter_input(INPUT_POST, 'ftpPassword'));
 
-        $ftp->pasv(true);
+		if ( filter_input(INPUT_POST, 'useActiveFTP') ) {
+			$this->_prependExportLog('FTP EXPORT: setting ACTIVE transfer mode');
+			$ftp->pasv(false);
+		} else {
+			$ftp->pasv(true);
+		}
         
         $_SERVER['ftpFilesToExport'] = $this->getUploadsDirBaseDIR() . '/WP-STATIC-EXPORT-FTP-FILES-TO-EXPORT';
 
