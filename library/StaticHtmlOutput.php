@@ -272,7 +272,6 @@ class StaticHtmlOutput {
     }
 
 	public function start_export($viaCLI = false) {
-        $this->_prependExportLog('STARTING EXPORT: via CLI = ' . $viaCLI);
         //error_log('STARTING EXPORT: via CLI = ' . $viaCLI);
         // prepare export targets
         $exportTargetsFile = $this->getUploadsDirBaseDIR() . '/WP-STATIC-EXPORT-TARGETS';
@@ -370,7 +369,6 @@ class StaticHtmlOutput {
 		$_SERVER['exportLog'] = $this->getUploadsDirBaseDIR() . '/WP-STATIC-EXPORT-LOG';
 		$_SERVER['githubFilesToExport'] = $this->getUploadsDirBaseDIR() . '/WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT';
 
-
 		$archiveName = $uploadDir . '/' . self::HOOK . '-' . $blog_id . '-' . time();
 		// append username if done via UI
 		if ( $exporter->user_login ) {
@@ -389,6 +387,14 @@ class StaticHtmlOutput {
 		unlink($_SERVER['urlsQueue']);
 
         file_put_contents($_SERVER['exportLog'], date("Y-m-d h:i:s") . ' STARTING EXPORT', FILE_APPEND | LOCK_EX);
+
+        $this->_prependExportLog('STARTING EXPORT: PHP VERSION ' . phpversion() );
+        $this->_prependExportLog('STARTING EXPORT: OS VERSION ' . php_uname() );
+        $this->_prependExportLog('STARTING EXPORT: WP VERSION ' . get_bloginfo('version') );
+        $this->_prependExportLog('STARTING EXPORT: WP URL ' . get_bloginfo('url') );
+        $this->_prependExportLog('STARTING EXPORT: WP ADDRESS ' . get_bloginfo('wpurl') );
+        $this->_prependExportLog('STARTING EXPORT: VIA CLI? ' . $viaCLI);
+        $this->_prependExportLog('STARTING EXPORT: STATIC EXPORT URL ' . filter_input(INPUT_POST, 'baseUrl') );
 
 		$baseUrl = untrailingslashit(home_url());
 		
