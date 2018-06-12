@@ -4,7 +4,7 @@ Donate link: https://www.paypal.me/leonjstafford
 Tags: static,html,export,performance,security,cache,s3,dropbox,github,netlify,bunnycdn
 Requires at least: 3.2
 Tested up to: 4.9.6
-Stable tag: 2.6
+Stable tag: 2.6.1
 
 
 The optimum solution to speed up and secure your WordPress site - export to static HTML and hide all traces of WordPress from your site!
@@ -90,6 +90,16 @@ See the readme. In brief: you can't use dynamic WordPress functions such as comm
 2. The main interface (Japanese)
 
 == Changelog ==
+
+= 2.6.1 =
+
+ * Bugfix: Fix CloudFront Cache Invalidation and update to latest AWS SDK V3.6.13
+ * Bugfix: allow crawling sites served via SSL / HTTPS
+ * Bugfix: prevent PHP warnings in error_log for unlink and renaming files - check they exist first
+ * Bugfix: correctly determine WP root in filesystem
+ * Improvement: allow FTP active mode, not just passive
+ * Improvement: add Osaka endpoint for S3
+ * Improvement: include more information in Export Log to help debug
 
 = 2.6 =
 
@@ -264,6 +274,18 @@ Altered main codebase to fix recursion bug and endless loop. Essential upgrade.
 Initial release to Wordpress community
 
 == Upgrade Notice ==
+
+= 2.6.1 =
+
+Minor release - fixes some minor issues discovered in V2.6, brings some improvements. Recommeneded to upgrade for increased stability with your exports and an easier time troubleshooting when something goes wrong.
+
+ * Bugfix: Fix CloudFront Cache Invalidation and update to latest AWS SDK V3.6.13
+ * Bugfix: allow crawling sites served via SSL / HTTPS
+ * Bugfix: prevent PHP warnings in error_log for unlink and renaming files - check they exist first
+ * Bugfix: correctly determine WP root in filesystem
+ * Improvement: allow FTP active mode, not just passive
+ * Improvement: add Osaka endpoint for S3
+ * Improvement: include more information in Export Log to help debug
 
 = 2.6 =
 
