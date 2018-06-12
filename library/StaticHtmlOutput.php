@@ -10,6 +10,7 @@ use Kunnu\Dropbox\DropboxApp;
 use Kunnu\Dropbox\DropboxFile;
 use Kunnu\Dropbox\Exceptions\DropboxClientException;
 use GuzzleHttp\Client;
+use Github\Client as GithubClient;
 
 class StaticHtmlOutput {
 	const VERSION = '2.6.2';
@@ -159,6 +160,9 @@ class StaticHtmlOutput {
     }
 
     public function github_finalise_export() {
+		require_once(__DIR__.'/GuzzleHttp/autoloader.php');
+		require_once(__DIR__.'/Github/Client.php');
+
         $client = new \Github\Client();
         $githubRepo = filter_input(INPUT_POST, 'githubRepo');
         $githubBranch = filter_input(INPUT_POST, 'githubBranch');
@@ -219,6 +223,8 @@ class StaticHtmlOutput {
     }
 
 	public function github_upload_blobs() {
+		require_once(__DIR__.'/GuzzleHttp/autoloader.php');
+		require_once(__DIR__.'/Github/Client.php');
         $client = new \Github\Client();
         $githubRepo = filter_input(INPUT_POST, 'githubRepo');
         $githubPersonalAccessToken = filter_input(INPUT_POST, 'githubPersonalAccessToken');
@@ -732,6 +738,8 @@ class StaticHtmlOutput {
     }
 
     public function bunnycdn_transfer_files($batch_size = 5) {
+		require_once(__DIR__.'/GuzzleHttp/autoloader.php');
+
         $bunnycdnAPIKey = filter_input(INPUT_POST, 'bunnycdnAPIKey');
         $bunnycdnPullZoneName = filter_input(INPUT_POST, 'bunnycdnPullZoneName');
         $archiveDir = file_get_contents($this->getUploadsDirBaseDIR() . '/WP-STATIC-CURRENT-ARCHIVE');
@@ -888,6 +896,7 @@ class StaticHtmlOutput {
        
 		// do the vendor specific export:
 		require_once(__DIR__.'/aws/aws-autoloader.php');
+		require_once(__DIR__.'/GuzzleHttp/autoloader.php');
         require_once(__DIR__.'/StaticHtmlOutput/MimeTypes.php');
 
 		# goes in transfer step
@@ -916,6 +925,7 @@ class StaticHtmlOutput {
 
 	public function cloudfront_invalidate_all_items() {
 		require_once(__DIR__.'/aws/aws-autoloader.php');
+		require_once(__DIR__.'/GuzzleHttp/autoloader.php');
 
         if(strlen(filter_input(INPUT_POST, 'cfDistributionId'))>12) {
 			$this->_prependExportLog('CLOUDFRONT INVALIDATING CACHE...');
