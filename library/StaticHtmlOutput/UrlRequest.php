@@ -15,7 +15,12 @@ class StaticHtmlOutput_UrlRequest
 	{
 		$this->_url = filter_var(trim($url), FILTER_VALIDATE_URL);
 
-		$response = wp_remote_get($this->_url,array('timeout'=>300)); //set a long time out
+		$response = wp_remote_get( $this->_url,
+			array(
+				'timeout' => 300, //set a long time out
+				'sslverify'   => false // ignore SSL cert check while crawling
+			) 
+		); 
 
 		$this->_response = '';
 
