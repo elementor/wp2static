@@ -10,10 +10,9 @@ use Kunnu\Dropbox\DropboxApp;
 use Kunnu\Dropbox\DropboxFile;
 use Kunnu\Dropbox\Exceptions\DropboxClientException;
 use GuzzleHttp\Client;
-use Github\Client as GithubClient;
 
 class StaticHtmlOutput {
-	const VERSION = '2.6.2';
+	const VERSION = '2.6.3';
 	const OPTIONS_KEY = 'wp-static-html-output-options';
 	const HOOK = 'wp-static-html-output';
 
@@ -160,8 +159,7 @@ class StaticHtmlOutput {
     }
 
     public function github_finalise_export() {
-		require_once(__DIR__.'/GuzzleHttp/autoloader.php');
-		require_once(__DIR__.'/Github/Client.php');
+		require_once(__DIR__.'/Github/autoload.php');
 
         $client = new \Github\Client();
         $githubRepo = filter_input(INPUT_POST, 'githubRepo');
@@ -223,8 +221,8 @@ class StaticHtmlOutput {
     }
 
 	public function github_upload_blobs() {
-		require_once(__DIR__.'/GuzzleHttp/autoloader.php');
-		require_once(__DIR__.'/Github/Client.php');
+		require_once(__DIR__.'/Github/autoload.php');
+
         $client = new \Github\Client();
         $githubRepo = filter_input(INPUT_POST, 'githubRepo');
         $githubPersonalAccessToken = filter_input(INPUT_POST, 'githubPersonalAccessToken');
@@ -342,7 +340,11 @@ class StaticHtmlOutput {
         global $blog_id;
         $archiveDir = file_get_contents($this->getUploadsDirBaseDIR() . '/WP-STATIC-CURRENT-ARCHIVE');
 		$uploadDir = $this->getUploadsDirBaseDIR();
-        unlink($uploadDir . '/latest-' . $blog_id );
+
+		if (file_exists($uploadDir . '/latest-' . $blog_id)) {
+			unlink($uploadDir . '/latest-' . $blog_id );
+		}
+
         symlink($archiveDir, $uploadDir . '/latest-' . $blog_id );
 
         echo 'LOCALDIR SYMLINK UPDATED: '. $uploadDir . '/latest-' . $blog_id;
@@ -389,8 +391,13 @@ class StaticHtmlOutput {
 			wp_mkdir_p($archiveDir);
 		}
 
-		unlink($_SERVER['exportLog']);
-		unlink($_SERVER['urlsQueue']);
+		if (file_exists($_SERVER['exportLog'])) {
+			unlink($_SERVER['exportLog']);
+		}
+
+		if (file_exists($_SERVER['urlsQueue'])) {
+			unlink($_SERVER['urlsQueue']);
+		}
 
         file_put_contents($_SERVER['exportLog'], date("Y-m-d h:i:s") . ' STARTING EXPORT', FILE_APPEND | LOCK_EX);
 
@@ -956,6 +963,8 @@ class StaticHtmlOutput {
 	// TODO: this is being called twice, check export targets flow in FE/BE
 	// TODO: convert this to an incremental export
     public function dropbox_do_export() {
+		require_once(__DIR__.'/GuzzleHttp/autoloader.php');
+
         $archiveDir = file_get_contents($this->getUploadsDirBaseDIR() . '/WP-STATIC-CURRENT-ARCHIVE');
         $archiveName = rtrim($archiveDir, '/');
         $siteroot = $archiveName . '/';
