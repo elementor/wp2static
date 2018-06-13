@@ -948,33 +948,25 @@ class StaticHtmlOutput {
     }
 
 	public function cloudfront_invalidate_all_items() {
-		require_once(__DIR__.'/aws/aws-autoloader.php');
-		require_once(__DIR__.'/GuzzleHttp/autoloader.php');
+		require_once(__DIR__.'/CloudFront/CloudFront.php');
+		$cloudfront_id = filter_input(INPUT_POST, 'cfDistributionId');
 
-        if(strlen(filter_input(INPUT_POST, 'cfDistributionId'))>12) {
+        if(strlen( $cloudfront_id > 12 ) {
 			$this->_prependExportLog('CLOUDFRONT INVALIDATING CACHE...');
-			$CF = Aws\CloudFront\CloudFrontClient::factory(array(
-				'version'		=> '2016-01-28',
-				'region' => filter_input(INPUT_POST, 's3Region'),
-				'credentials' => array(
-					'key' => filter_input(INPUT_POST, 's3Key'),
-					'secret'  => filter_input(INPUT_POST, 's3Secret'),
-				  )
-				));
 
-			$result = $CF->createInvalidation(array(
-				'DistributionId' => filter_input(INPUT_POST, 'cfDistributionId'),
-				'InvalidationBatch' => [ // REQUIRED
-						'CallerReference' => time(),
-						'Paths' => [ // REQUIRED
-							'Items' => array('/*'),
-							'Quantity' => 1, // REQUIRED
-						],
-					]
-			));
+			$cf = new CloudFront(
+				filter_input(INPUT_POST, 's3Key'), 
+				filter_input(INPUT_POST, 's3Secret'),
+				$cloudfront_id);
+
+			$cf->invalidate('/*');
+		
+			if ( $cf->getResponseMessage() == 200 )	{
+				echo 'SUCCESS';
+			} else {
+				$this->_prependExportLog('CF ERROR: ' . $cf->getResponseMessage());
+			}
         }
-
-		echo 'SUCCESS';
 	}
 
 	// TODO: this is being called twice, check export targets flow in FE/BE
