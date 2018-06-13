@@ -862,20 +862,37 @@ class StaticHtmlOutput {
         echo 'SUCCESS';
     }
 
-	public function s3_put_object($S3, $Bucket, $Key, $Data, $ACL, $ContentType = "text/plain", $pluginInstance) {
-		try {
-			$Model = $S3->PutObject(array('Bucket'      => $Bucket,
-						'Key'         => $Key,
-						'Body'        => $Data,
-						'ACL'         => $ACL,
-						'ContentType' => $ContentType));
+	public function s3_put_object($S3, $Bucket, $Key, $Data, $ContentType = "text/plain", $pluginInstance) {
+		
+		require_once(__DIR__.'/S3/S3.php');
+	
+
+		$client = new S3($s3_key, $s3_secret);
+
+		// [OPTIONAL] Specify different curl options
+		$client->useCurlOpts(array(
+			CURLOPT_MAX_RECV_SPEED_LARGE => 1048576,
+			CURLOPT_CONNECTTIMEOUT => 10
+		));
+
+		$response = $client->putObject(
+			$Bucket, // bucket name without s3.amazonaws.com
+			$Key, // path to create in bucket
+			$Data, // file contents - path to stream or fopen result
+			array(
+				'Content-Type' => $ContentType,
+				'x-amz-acl' => 'public-read', // public read for static site
+			)
+		);
+
+		if ( $response->code == 200 ) {
 			return true;
+		} else {
+			$pluginInstance->_prependExportLog('S3 EXPORT: following error returned from S3:');
+			print_r($response);
+			#throw new Exception('S3 error');
 		}
-		catch (Exception $e) {
-			$pluginInstance->_prependExportLog('S3 EXPORT: following error returned from Dropbox:');
-			$pluginInstance->_prependExportLog($e);
-			throw new Exception($e);
-		}
+
 	}
 
 	// TODO: make this a generic func, calling vendor specific files
@@ -919,7 +936,7 @@ class StaticHtmlOutput {
 
         $Bucket = filter_input(INPUT_POST, 's3Bucket');
 
-		$this->s3_put_object($S3, $Bucket, $target_path, $file_body, 'public-read', GuessMimeType($filename), $this);
+		$this->s3_put_object($S3, $Bucket, $target_path, $file_body, GuessMimeType($filename), $this);
 
         $this->_prependExportLog('S3 EXPORT: ' . $filesRemaining . ' files remaining to transfer');
 
