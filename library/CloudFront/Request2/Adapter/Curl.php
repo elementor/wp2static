@@ -1,55 +1,13 @@
 <?php
-/**
- * Adapter for HTTP_Request2 wrapping around cURL extension
- *
- * PHP version 5
- *
- * LICENSE
- *
- * This source file is subject to BSD 3-Clause License that is bundled
- * with this package in the file LICENSE and available at the URL
- * https://raw.github.com/pear/HTTP_Request2/trunk/docs/LICENSE
- *
- * @category  HTTP
- * @package   HTTP_Request2
- * @author    Alexey Borzov <avb@php.net>
- * @copyright 2008-2016 Alexey Borzov <avb@php.net>
- * @license   http://opensource.org/licenses/BSD-3-Clause BSD 3-Clause License
- * @link      http://pear.php.net/package/HTTP_Request2
- */
-
-/**
- * Base class for HTTP_Request2 adapters
- */
 require_once 'HTTP/Request2/Adapter.php';
-
-/**
- * Adapter for HTTP_Request2 wrapping around cURL extension
- *
- * @category HTTP
- * @package  HTTP_Request2
- * @author   Alexey Borzov <avb@php.net>
- * @license  http://opensource.org/licenses/BSD-3-Clause BSD 3-Clause License
- * @version  Release: @package_version@
- * @link     http://pear.php.net/package/HTTP_Request2
- */
 class HTTP_Request2_Adapter_Curl extends HTTP_Request2_Adapter
 {
-    /**
-     * Mapping of header names to cURL options
-     * @var  array
-     */
     protected static $headerMap = array(
         'accept-encoding' => CURLOPT_ENCODING,
         'cookie'          => CURLOPT_COOKIE,
         'referer'         => CURLOPT_REFERER,
         'user-agent'      => CURLOPT_USERAGENT
     );
-
-    /**
-     * Mapping of SSL context options to cURL options
-     * @var  array
-     */
     protected static $sslContextMap = array(
         'ssl_verify_peer' => CURLOPT_SSL_VERIFYPEER,
         'ssl_cafile'      => CURLOPT_CAINFO,
@@ -57,18 +15,12 @@ class HTTP_Request2_Adapter_Curl extends HTTP_Request2_Adapter
         'ssl_local_cert'  => CURLOPT_SSLCERT,
         'ssl_passphrase'  => CURLOPT_SSLCERTPASSWD
     );
-
-    /**
-     * Mapping of CURLE_* constants to Exception subclasses and error codes
-     * @var  array
-     */
     protected static $errorMap = array(
         CURLE_UNSUPPORTED_PROTOCOL  => array('HTTP_Request2_MessageException',
                                              HTTP_Request2_Exception::NON_HTTP_REDIRECT),
         CURLE_COULDNT_RESOLVE_PROXY => array('HTTP_Request2_ConnectionException'),
         CURLE_COULDNT_RESOLVE_HOST  => array('HTTP_Request2_ConnectionException'),
         CURLE_COULDNT_CONNECT       => array('HTTP_Request2_ConnectionException'),
-        // error returned from write callback
         CURLE_WRITE_ERROR           => array('HTTP_Request2_MessageException',
                                              HTTP_Request2_Exception::NON_HTTP_REDIRECT),
         CURLE_OPERATION_TIMEOUTED   => array('HTTP_Request2_MessageException',
@@ -97,51 +49,12 @@ class HTTP_Request2_Adapter_Curl extends HTTP_Request2_Adapter
         CURLE_SSL_CACERT            => array('HTTP_Request2_ConnectionException'),
         CURLE_BAD_CONTENT_ENCODING  => array('HTTP_Request2_MessageException'),
     );
-
-    /**
-     * Response being received
-     * @var  HTTP_Request2_Response
-     */
     protected $response;
-
-    /**
-     * Whether 'sentHeaders' event was sent to observers
-     * @var  boolean
-     */
     protected $eventSentHeaders = false;
-
-    /**
-     * Whether 'receivedHeaders' event was sent to observers
-     * @var boolean
-     */
     protected $eventReceivedHeaders = false;
-
-    /**
-     * Whether 'sentBoody' event was sent to observers
-     * @var boolean
-     */
     protected $eventSentBody = false;
-
-    /**
-     * Position within request body
-     * @var  integer
-     * @see  callbackReadBody()
-     */
     protected $position = 0;
-
-    /**
-     * Information about last transfer, as returned by curl_getinfo()
-     * @var  array
-     */
     protected $lastInfo;
-
-    /**
-     * Creates a subclass of HTTP_Request2_Exception from curl error data
-     *
-     * @param resource $ch curl handle
-     *
-     * @return HTTP_Request2_Exception
-     */
     protected static function wrapCurlError($ch)
     {
         $nativeCode = curl_errno($ch);
@@ -155,15 +68,6 @@ class HTTP_Request2_Adapter_Curl extends HTTP_Request2_Adapter
             return new $class($message, $code, $nativeCode);
         }
     }
-
-    /**
-     * Sends request to the remote server and returns its response
-     *
-     * @param HTTP_Request2 $request HTTP request message
-     *
-     * @return   HTTP_Request2_Response
-     * @throws   HTTP_Request2_Exception
-     */
     public function sendRequest(HTTP_Request2 $request)
     {
         if (!extension_loaded('curl')) {
@@ -209,43 +113,22 @@ class HTTP_Request2_Adapter_Curl extends HTTP_Request2_Adapter
         }
         return $response;
     }
-
-    /**
-     * Returns information about last transfer
-     *
-     * @return   array   associative array as returned by curl_getinfo()
-     */
     public function getInfo()
     {
         return $this->lastInfo;
     }
-
-    /**
-     * Creates a new cURL handle and populates it with data from the request
-     *
-     * @return   resource    a cURL handle, as created by curl_init()
-     * @throws   HTTP_Request2_LogicException
-     * @throws   HTTP_Request2_NotImplementedException
-     */
     protected function createCurlHandle()
     {
         $ch = curl_init();
 
         curl_setopt_array($ch, array(
-            // setup write callbacks
             CURLOPT_HEADERFUNCTION => array($this, 'callbackWriteHeader'),
             CURLOPT_WRITEFUNCTION  => array($this, 'callbackWriteBody'),
-            // buffer size
             CURLOPT_BUFFERSIZE     => $this->request->getConfig('buffer_size'),
-            // connection timeout
             CURLOPT_CONNECTTIMEOUT => $this->request->getConfig('connect_timeout'),
-            // save full outgoing headers, in case someone is interested
             CURLINFO_HEADER_OUT    => true,
-            // request url
             CURLOPT_URL            => $this->request->getUrl()->getUrl()
         ));
-
-        // set up redirects
         if (!$this->request->getConfig('follow_redirects')) {
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
         } else {
@@ -256,27 +139,19 @@ class HTTP_Request2_Adapter_Curl extends HTTP_Request2_Adapter
                 );
             }
             curl_setopt($ch, CURLOPT_MAXREDIRS, $this->request->getConfig('max_redirects'));
-            // limit redirects to http(s), works in 5.2.10+
             if (defined('CURLOPT_REDIR_PROTOCOLS')) {
                 curl_setopt($ch, CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
             }
-            // works in 5.3.2+, http://bugs.php.net/bug.php?id=49571
             if ($this->request->getConfig('strict_redirects') && defined('CURLOPT_POSTREDIR')) {
                 curl_setopt($ch, CURLOPT_POSTREDIR, 3);
             }
         }
-
-        // set local IP via CURLOPT_INTERFACE (request #19515)
         if ($ip = $this->request->getConfig('local_ip')) {
             curl_setopt($ch, CURLOPT_INTERFACE, $ip);
         }
-
-        // request timeout
         if ($timeout = $this->request->getConfig('timeout')) {
             curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
         }
-
-        // set HTTP version
         switch ($this->request->getConfig('protocol_version')) {
         case '1.0':
             curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);
@@ -284,8 +159,6 @@ class HTTP_Request2_Adapter_Curl extends HTTP_Request2_Adapter
         case '1.1':
             curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
         }
-
-        // set request method
         switch ($this->request->getMethod()) {
         case HTTP_Request2::METHOD_GET:
             curl_setopt($ch, CURLOPT_HTTPGET, true);
@@ -302,8 +175,6 @@ class HTTP_Request2_Adapter_Curl extends HTTP_Request2_Adapter
         default:
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $this->request->getMethod());
         }
-
-        // set proxy, if needed
         if ($host = $this->request->getConfig('proxy_host')) {
             if (!($port = $this->request->getConfig('proxy_port'))) {
                 throw new HTTP_Request2_LogicException(
@@ -339,8 +210,6 @@ class HTTP_Request2_Adapter_Curl extends HTTP_Request2_Adapter
                 }
             }
         }
-
-        // set authentication data
         if ($auth = $this->request->getAuth()) {
             curl_setopt($ch, CURLOPT_USERPWD, $auth['user'] . ':' . $auth['password']);
             switch ($auth['scheme']) {
@@ -351,8 +220,6 @@ class HTTP_Request2_Adapter_Curl extends HTTP_Request2_Adapter
                 curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
             }
         }
-
-        // set SSL options
         foreach ($this->request->getConfig() as $name => $value) {
             if ('ssl_verify_host' == $name && null !== $value) {
                 curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, $value? 2: 0);
@@ -362,7 +229,6 @@ class HTTP_Request2_Adapter_Curl extends HTTP_Request2_Adapter
         }
 
         $headers = $this->request->getHeaders();
-        // make cURL automagically send proper header
         if (!isset($headers['accept-encoding'])) {
             $headers['accept-encoding'] = '';
         }
@@ -372,8 +238,6 @@ class HTTP_Request2_Adapter_Curl extends HTTP_Request2_Adapter
         ) {
             $headers['cookie'] = (empty($headers['cookie'])? '': $headers['cookie'] . '; ') . $cookies;
         }
-
-        // set headers having special cURL keys
         foreach (self::$headerMap as $name => $option) {
             if (isset($headers[$name])) {
                 curl_setopt($ch, $option, $headers[$name]);
@@ -385,8 +249,6 @@ class HTTP_Request2_Adapter_Curl extends HTTP_Request2_Adapter
         if (isset($headers['content-length']) || isset($headers['transfer-encoding'])) {
             $this->workaroundPhpBug47204($ch, $headers);
         }
-
-        // set headers not having special keys
         $headersFmt = array();
         foreach ($headers as $name => $value) {
             $canonicalName = implode('-', array_map('ucfirst', explode('-', $name)));
@@ -396,22 +258,9 @@ class HTTP_Request2_Adapter_Curl extends HTTP_Request2_Adapter
 
         return $ch;
     }
-
-    /**
-     * Workaround for PHP bug #47204 that prevents rewinding request body
-     *
-     * The workaround consists of reading the entire request body into memory
-     * and setting it as CURLOPT_POSTFIELDS, so it isn't recommended for large
-     * file uploads, use Socket adapter instead.
-     *
-     * @param resource $ch       cURL handle
-     * @param array    &$headers Request headers
-     */
     protected function workaroundPhpBug47204($ch, &$headers)
     {
-        // no redirects, no digest auth -> probably no rewind needed
         // also apply workaround only for POSTs, othrerwise we get
-        // https://pear.php.net/bugs/bug.php?id=20440 for PUTs
         if (!$this->request->getConfig('follow_redirects')
             && (!($auth = $this->request->getAuth())
                 || HTTP_Request2::AUTH_DIGEST != $auth['scheme'])
@@ -420,7 +269,6 @@ class HTTP_Request2_Adapter_Curl extends HTTP_Request2_Adapter
             curl_setopt($ch, CURLOPT_READFUNCTION, array($this, 'callbackReadBody'));
 
         } else {
-            // rewind may be needed, read the whole body into memory
             if ($this->requestBody instanceof HTTP_Request2_MultipartBody) {
                 $this->requestBody = $this->requestBody->__toString();
 
@@ -431,21 +279,10 @@ class HTTP_Request2_Adapter_Curl extends HTTP_Request2_Adapter
                     $this->requestBody .= fread($fp, 16384);
                 }
             }
-            // curl hangs up if content-length is present
             unset($headers['content-length']);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $this->requestBody);
         }
     }
-
-    /**
-     * Callback function called by cURL for reading the request body
-     *
-     * @param resource $ch     cURL handle
-     * @param resource $fd     file descriptor (not used)
-     * @param integer  $length maximum length of data to return
-     *
-     * @return   string      part of the request body, up to $length bytes
-     */
     protected function callbackReadBody($ch, $fd, $length)
     {
         if (!$this->eventSentHeaders) {
@@ -470,20 +307,9 @@ class HTTP_Request2_Adapter_Curl extends HTTP_Request2_Adapter
         $this->position += strlen($string);
         return $string;
     }
-
-    /**
-     * Callback function called by cURL for saving the response headers
-     *
-     * @param resource $ch     cURL handle
-     * @param string   $string response header (with trailing CRLF)
-     *
-     * @return   integer     number of bytes saved
-     * @see      HTTP_Request2_Response::parseHeaderLine()
-     */
     protected function callbackWriteHeader($ch, $string)
     {
         if (!$this->eventSentHeaders
-            // we may receive a second set of headers if doing e.g. digest auth
             // but don't bother with 100-Continue responses (bug #15785)
             || $this->eventReceivedHeaders && $this->response->getStatus() >= 200
         ) {
@@ -493,7 +319,6 @@ class HTTP_Request2_Adapter_Curl extends HTTP_Request2_Adapter
         }
         if (!$this->eventSentBody) {
             $upload = curl_getinfo($ch, CURLINFO_SIZE_UPLOAD);
-            // if body wasn't read by the callback, send event with total body size
             if ($upload > $this->position) {
                 $this->request->setLastEvent(
                     'sentBodyPart', $upload - $this->position
@@ -515,15 +340,12 @@ class HTTP_Request2_Adapter_Curl extends HTTP_Request2_Adapter
         } else {
             $this->response->parseHeaderLine($string);
             if ('' == trim($string)) {
-                // don't bother with 100-Continue responses (bug #15785)
                 if (200 <= $this->response->getStatus()) {
                     $this->request->setLastEvent('receivedHeaders', $this->response);
                 }
 
                 if ($this->request->getConfig('follow_redirects') && $this->response->isRedirect()) {
                     $redirectUrl = new Net_URL2($this->response->getHeader('location'));
-
-                    // for versions lower than 5.2.10, check the redirection URL protocol
                     if (!defined('CURLOPT_REDIR_PROTOCOLS') && $redirectUrl->isAbsolute()
                         && !in_array($redirectUrl->getScheme(), array('http', 'https'))
                     ) {
@@ -546,20 +368,8 @@ class HTTP_Request2_Adapter_Curl extends HTTP_Request2_Adapter
         }
         return strlen($string);
     }
-
-    /**
-     * Callback function called by cURL for saving the response body
-     *
-     * @param resource $ch     cURL handle (not used)
-     * @param string   $string part of the response body
-     *
-     * @return   integer     number of bytes saved
-     * @throws   HTTP_Request2_MessageException
-     * @see      HTTP_Request2_Response::appendBody()
-     */
     protected function callbackWriteBody($ch, $string)
     {
-        // cURL calls WRITEFUNCTION callback without calling HEADERFUNCTION if
         // response doesn't start with proper HTTP status line (see bug #15716)
         if (empty($this->response)) {
             throw new HTTP_Request2_MessageException(
