@@ -1,89 +1,12 @@
 <?php
-/**
- * Stores cookies and passes them between HTTP requests
- *
- * PHP version 5
- *
- * LICENSE
- *
- * This source file is subject to BSD 3-Clause License that is bundled
- * with this package in the file LICENSE and available at the URL
- * https://raw.github.com/pear/HTTP_Request2/trunk/docs/LICENSE
- *
- * @category  HTTP
- * @package   HTTP_Request2
- * @author    Alexey Borzov <avb@php.net>
- * @copyright 2008-2016 Alexey Borzov <avb@php.net>
- * @license   http://opensource.org/licenses/BSD-3-Clause BSD 3-Clause License
- * @link      http://pear.php.net/package/HTTP_Request2
- */
-
-/** Class representing a HTTP request message */
 require_once 'HTTP/Request2.php';
-
-/**
- * Stores cookies and passes them between HTTP requests
- *
- * @category HTTP
- * @package  HTTP_Request2
- * @author   Alexey Borzov <avb@php.net>
- * @license  http://opensource.org/licenses/BSD-3-Clause BSD 3-Clause License
- * @version  Release: @package_version@
- * @link     http://pear.php.net/package/HTTP_Request2
- */
 class HTTP_Request2_CookieJar implements Serializable
 {
-    /**
-     * Array of stored cookies
-     *
-     * The array is indexed by domain, path and cookie name
-     *   .example.com
-     *     /
-     *       some_cookie => cookie data
-     *     /subdir
-     *       other_cookie => cookie data
-     *   .example.org
-     *     ...
-     *
-     * @var array
-     */
     protected $cookies = array();
-
-    /**
-     * Whether session cookies should be serialized when serializing the jar
-     * @var bool
-     */
     protected $serializeSession = false;
-
-    /**
-     * Whether Public Suffix List should be used for domain matching
-     * @var bool
-     */
     protected $useList = true;
-
-    /**
-     * Whether an attempt to store an invalid cookie should be ignored, rather than cause an Exception
-     * @var bool
-     */
     protected $ignoreInvalid = false;
-
-    /**
-     * Array with Public Suffix List data
-     * @var  array
-     * @link http://publicsuffix.org/
-     */
     protected static $psl = array();
-
-    /**
-     * Class constructor, sets various options
-     *
-     * @param bool $serializeSessionCookies Controls serializing session cookies,
-     *                                      see {@link serializeSessionCookies()}
-     * @param bool $usePublicSuffixList     Controls using Public Suffix List,
-     *                                      see {@link usePublicSuffixList()}
-     * @param bool $ignoreInvalidCookies    Whether invalid cookies should be ignored,
-     *                                      see {@link ignoreInvalidCookies()}
-     */
     public function __construct(
         $serializeSessionCookies = false, $usePublicSuffixList = true,
         $ignoreInvalidCookies = false
@@ -92,43 +15,12 @@ class HTTP_Request2_CookieJar implements Serializable
         $this->usePublicSuffixList($usePublicSuffixList);
         $this->ignoreInvalidCookies($ignoreInvalidCookies);
     }
-
-    /**
-     * Returns current time formatted in ISO-8601 at UTC timezone
-     *
-     * @return string
-     */
     protected function now()
     {
         $dt = new DateTime();
         $dt->setTimezone(new DateTimeZone('UTC'));
         return $dt->format(DateTime::ISO8601);
     }
-
-    /**
-     * Checks cookie array for correctness, possibly updating its 'domain', 'path' and 'expires' fields
-     *
-     * The checks are as follows:
-     *   - cookie array should contain 'name' and 'value' fields;
-     *   - name and value should not contain disallowed symbols;
-     *   - 'expires' should be either empty parseable by DateTime;
-     *   - 'domain' and 'path' should be either not empty or an URL where
-     *     cookie was set should be provided.
-     *   - if $setter is provided, then document at that URL should be allowed
-     *     to set a cookie for that 'domain'. If $setter is not provided,
-     *     then no domain checks will be made.
-     *
-     * 'expires' field will be converted to ISO8601 format from COOKIE format,
-     * 'domain' and 'path' will be set from setter URL if empty.
-     *
-     * @param array    $cookie cookie data, as returned by
-     *                         {@link HTTP_Request2_Response::getCookies()}
-     * @param Net_URL2 $setter URL of the document that sent Set-Cookie header
-     *
-     * @return   array    Updated cookie array
-     * @throws   HTTP_Request2_LogicException
-     * @throws   HTTP_Request2_MessageException
-     */
     protected function checkAndUpdateFields(array $cookie, Net_URL2 $setter = null)
     {
         if ($missing = array_diff(array('name', 'value'), array_keys($cookie))) {
@@ -150,8 +42,6 @@ class HTTP_Request2_CookieJar implements Serializable
             );
         }
         $cookie += array('domain' => '', 'path' => '', 'expires' => null, 'secure' => false);
-
-        // Need ISO-8601 date @ UTC timezone
         if (!empty($cookie['expires'])
             && !preg_match('/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\+0000$/', $cookie['expires'])
         ) {
@@ -196,17 +86,6 @@ class HTTP_Request2_CookieJar implements Serializable
 
         return $cookie;
     }
-
-    /**
-     * Stores a cookie in the jar
-     *
-     * @param array    $cookie cookie data, as returned by
-     *                         {@link HTTP_Request2_Response::getCookies()}
-     * @param Net_URL2 $setter URL of the document that sent Set-Cookie header
-     *
-     * @return bool whether the cookie was successfully stored
-     * @throws HTTP_Request2_Exception
-     */
     public function store(array $cookie, Net_URL2 $setter = null)
     {
         try {
@@ -236,18 +115,6 @@ class HTTP_Request2_CookieJar implements Serializable
 
         return true;
     }
-
-    /**
-     * Adds cookies set in HTTP response to the jar
-     *
-     * @param HTTP_Request2_Response $response HTTP response message
-     * @param Net_URL2               $setter   original request URL, needed for
-     *                               setting default domain/path. If not given,
-     *                               effective URL from response will be used.
-     *
-     * @return bool whether all cookies were successfully stored
-     * @throws HTTP_Request2_LogicException
-     */
     public function addCookiesFromResponse(HTTP_Request2_Response $response, Net_URL2 $setter = null)
     {
         if (null === $setter) {
@@ -266,20 +133,6 @@ class HTTP_Request2_CookieJar implements Serializable
         }
         return $success;
     }
-
-    /**
-     * Returns all cookies matching a given request URL
-     *
-     * The following checks are made:
-     *   - cookie domain should match request host
-     *   - cookie path should be a prefix for request path
-     *   - 'secure' cookies will only be sent for HTTPS requests
-     *
-     * @param Net_URL2 $url      Request url
-     * @param bool     $asString Whether to return cookies as string for "Cookie: " header
-     *
-     * @return array|string Matching cookies
-     */
     public function getMatching(Net_URL2 $url, $asString = false)
     {
         $host   = $url->getHost();
@@ -314,12 +167,6 @@ class HTTP_Request2_CookieJar implements Serializable
             return $str;
         }
     }
-
-    /**
-     * Returns all cookies stored in a jar
-     *
-     * @return array
-     */
     public function getAll()
     {
         $cookies = array();
@@ -332,62 +179,18 @@ class HTTP_Request2_CookieJar implements Serializable
         }
         return $cookies;
     }
-
-    /**
-     * Sets whether session cookies should be serialized when serializing the jar
-     *
-     * @param boolean $serialize serialize?
-     */
     public function serializeSessionCookies($serialize)
     {
         $this->serializeSession = (bool)$serialize;
     }
-
-    /**
-     * Sets whether invalid cookies should be silently ignored or cause an Exception
-     *
-     * @param boolean $ignore ignore?
-     * @link http://pear.php.net/bugs/bug.php?id=19937
-     * @link http://pear.php.net/bugs/bug.php?id=20401
-     */
     public function ignoreInvalidCookies($ignore)
     {
         $this->ignoreInvalid = (bool)$ignore;
     }
-
-    /**
-     * Sets whether Public Suffix List should be used for restricting cookie-setting
-     *
-     * Without PSL {@link domainMatch()} will only prevent setting cookies for
-     * top-level domains like '.com' or '.org'. However, it will not prevent
-     * setting a cookie for '.co.uk' even though only third-level registrations
-     * are possible in .uk domain.
-     *
-     * With the List it is possible to find the highest level at which a domain
-     * may be registered for a particular top-level domain and consequently
-     * prevent cookies set for '.co.uk' or '.msk.ru'. The same list is used by
-     * Firefox, Chrome and Opera browsers to restrict cookie setting.
-     *
-     * Note that PSL is licensed differently to HTTP_Request2 package (refer to
-     * the license information in public-suffix-list.php), so you can disable
-     * its use if this is an issue for you.
-     *
-     * @param boolean $useList use the list?
-     *
-     * @link     http://publicsuffix.org/learn/
-     */
     public function usePublicSuffixList($useList)
     {
         $this->useList = (bool)$useList;
     }
-
-    /**
-     * Returns string representation of object
-     *
-     * @return string
-     *
-     * @see    Serializable::serialize()
-     */
     public function serialize()
     {
         $cookies = $this->getAll();
@@ -405,14 +208,6 @@ class HTTP_Request2_CookieJar implements Serializable
             'ignoreInvalid'    => $this->ignoreInvalid
         ));
     }
-
-    /**
-     * Constructs the object from serialized string
-     *
-     * @param string $serialized string representation
-     *
-     * @see   Serializable::unserialize()
-     */
     public function unserialize($serialized)
     {
         $data = unserialize($serialized);
@@ -435,32 +230,17 @@ class HTTP_Request2_CookieJar implements Serializable
             $this->cookies[$cookie['domain']][$cookie['path']][$cookie['name']] = $cookie;
         }
     }
-
-    /**
-     * Checks whether a cookie domain matches a request host.
-     *
-     * The method is used by {@link store()} to check for whether a document
-     * at given URL can set a cookie with a given domain attribute and by
-     * {@link getMatching()} to find cookies matching the request URL.
-     *
-     * @param string $requestHost  request host
-     * @param string $cookieDomain cookie domain
-     *
-     * @return   bool    match success
-     */
     public function domainMatch($requestHost, $cookieDomain)
     {
         if ($requestHost == $cookieDomain) {
             return true;
         }
-        // IP address, we require exact match
         if (preg_match('/^(?:\d{1,3}\.){3}\d{1,3}$/', $requestHost)) {
             return false;
         }
         if ('.' != $cookieDomain[0]) {
             $cookieDomain = '.' . $cookieDomain;
         }
-        // prevents setting cookies for '.com' and similar domains
         if (!$this->useList && substr_count($cookieDomain, '.') < 2
             || $this->useList && !self::getRegisteredDomain($cookieDomain)
         ) {
@@ -468,24 +248,9 @@ class HTTP_Request2_CookieJar implements Serializable
         }
         return substr('.' . $requestHost, -strlen($cookieDomain)) == $cookieDomain;
     }
-
-    /**
-     * Removes subdomains to get the registered domain (the first after top-level)
-     *
-     * The method will check Public Suffix List to find out where top-level
-     * domain ends and registered domain starts. It will remove domain parts
-     * to the left of registered one.
-     *
-     * @param string $domain domain name
-     *
-     * @return string|bool   registered domain, will return false if $domain is
-     *                       either invalid or a TLD itself
-     */
     public static function getRegisteredDomain($domain)
     {
         $domainParts = explode('.', ltrim($domain, '.'));
-
-        // load the list if needed
         if (empty(self::$psl)) {
             $path = '@data_dir@' . DIRECTORY_SEPARATOR . 'HTTP_Request2';
             if (0 === strpos($path, '@' . 'data_dir@')) {
@@ -498,13 +263,9 @@ class HTTP_Request2_CookieJar implements Serializable
         }
 
         if (!($result = self::checkDomainsList($domainParts, self::$psl))) {
-            // known TLD, invalid domain name
             return false;
         }
-
-        // unknown TLD
         if (!strpos($result, '.')) {
-            // fallback to checking that domain "has at least two dots"
             if (2 > ($count = count($domainParts))) {
                 return false;
             }
@@ -512,15 +273,6 @@ class HTTP_Request2_CookieJar implements Serializable
         }
         return $result;
     }
-
-    /**
-     * Recursive helper method for {@link getRegisteredDomain()}
-     *
-     * @param array $domainParts remaining domain parts
-     * @param mixed $listNode    node in {@link HTTP_Request2_CookieJar::$psl} to check
-     *
-     * @return string|null   concatenated domain parts, null in case of error
-     */
     protected static function checkDomainsList(array $domainParts, $listNode)
     {
         $sub    = array_pop($domainParts);

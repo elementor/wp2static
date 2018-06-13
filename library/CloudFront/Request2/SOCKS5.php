@@ -1,53 +1,7 @@
 <?php
-/**
- * SOCKS5 proxy connection class
- *
- * PHP version 5
- *
- * LICENSE
- *
- * This source file is subject to BSD 3-Clause License that is bundled
- * with this package in the file LICENSE and available at the URL
- * https://raw.github.com/pear/HTTP_Request2/trunk/docs/LICENSE
- *
- * @category  HTTP
- * @package   HTTP_Request2
- * @author    Alexey Borzov <avb@php.net>
- * @copyright 2008-2016 Alexey Borzov <avb@php.net>
- * @license   http://opensource.org/licenses/BSD-3-Clause BSD 3-Clause License
- * @link      http://pear.php.net/package/HTTP_Request2
- */
-
-/** Socket wrapper class used by Socket Adapter */
 require_once 'HTTP/Request2/SocketWrapper.php';
-
-/**
- * SOCKS5 proxy connection class (used by Socket Adapter)
- *
- * @category HTTP
- * @package  HTTP_Request2
- * @author   Alexey Borzov <avb@php.net>
- * @license  http://opensource.org/licenses/BSD-3-Clause BSD 3-Clause License
- * @version  Release: @package_version@
- * @link     http://pear.php.net/package/HTTP_Request2
- * @link     http://pear.php.net/bugs/bug.php?id=19332
- * @link     http://tools.ietf.org/html/rfc1928
- */
 class HTTP_Request2_SOCKS5 extends HTTP_Request2_SocketWrapper
 {
-    /**
-     * Constructor, tries to connect and authenticate to a SOCKS5 proxy
-     *
-     * @param string $address        Proxy address, e.g. 'tcp://localhost:1080'
-     * @param int    $timeout        Connection timeout (seconds)
-     * @param array  $contextOptions Stream context options
-     * @param string $username       Proxy user name
-     * @param string $password       Proxy password
-     *
-     * @throws HTTP_Request2_LogicException
-     * @throws HTTP_Request2_ConnectionException
-     * @throws HTTP_Request2_MessageException
-     */
     public function __construct(
         $address, $timeout = 10, array $contextOptions = array(),
         $username = null, $password = null
@@ -78,17 +32,6 @@ class HTTP_Request2_SOCKS5 extends HTTP_Request2_SocketWrapper
             );
         }
     }
-
-    /**
-     * Performs username/password authentication for SOCKS5
-     *
-     * @param string $username Proxy user name
-     * @param string $password Proxy password
-     *
-     * @throws HTTP_Request2_ConnectionException
-     * @throws HTTP_Request2_MessageException
-     * @link http://tools.ietf.org/html/rfc1929
-     */
     protected function performAuthentication($username, $password)
     {
         $request  = pack('C2', 1, strlen($username)) . $username
@@ -102,16 +45,6 @@ class HTTP_Request2_SOCKS5 extends HTTP_Request2_SocketWrapper
             );
         }
     }
-
-    /**
-     * Connects to a remote host via proxy
-     *
-     * @param string $remoteHost Remote host
-     * @param int    $remotePort Remote port
-     *
-     * @throws HTTP_Request2_ConnectionException
-     * @throws HTTP_Request2_MessageException
-     */
     public function connect($remoteHost, $remotePort)
     {
         $request = pack('C5', 0x05, 0x01, 0x00, 0x03, strlen($remoteHost))
