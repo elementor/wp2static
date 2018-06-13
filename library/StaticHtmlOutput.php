@@ -956,8 +956,6 @@ class StaticHtmlOutput {
 	// TODO: this is being called twice, check export targets flow in FE/BE
 	// TODO: convert this to an incremental export
     public function dropbox_do_export() {
-		require_once(__DIR__.'/GuzzleHttp/autoloader.php');
-
         $archiveDir = file_get_contents($this->getUploadsDirBaseDIR() . '/WP-STATIC-CURRENT-ARCHIVE');
         $archiveName = rtrim($archiveDir, '/');
         $siteroot = $archiveName . '/';
@@ -968,36 +966,64 @@ class StaticHtmlOutput {
 
         $this->_prependExportLog('DROPBOX EXPORT: Doing one synchronous export to your ' . $dropboxFolder . ' directory');
 
-        $app = new DropboxApp($dropboxAppKey, $dropboxAppSecret, $dropboxAccessToken);
-        $dbxClient = new Dropbox($app);
-
-        function FolderToDropbox($dir, $dbxClient, $siteroot, $dropboxFolder, $pluginInstance){
+        function FolderToDropbox($dir, $siteroot, $dropboxFolder, $pluginInstance){
             $files = scandir($dir);
             foreach($files as $item){
                 if($item != '.' && $item != '..' && $item != '.git'){
                     if(is_dir($dir.'/'.$item)) {
-                        FolderToDropbox($dir.'/'.$item, $dbxClient, $siteroot, $dropboxFolder, $pluginInstance);
+                        FolderToDropbox($dir.'/'.$item, $siteroot, $dropboxFolder, $pluginInstance);
                     } else if(is_file($dir.'/'.$item)) {
                         $clean_dir = str_replace($siteroot, '', $dir.'/'.$item);
                         $targetPath =  $dropboxFolder . $clean_dir;
 
 						$pluginInstance->_prependExportLog('DROPBOX EXPORT: transferring:' . $targetPath);
-                        try {
-                            $dropboxFile = new DropboxFile($dir.'/'.$item);
-                            $uploadedFile = $dbxClient->upload($dropboxFile, $targetPath, array('autorename' => false, 'mode' => 'overwrite'));
-                        } catch (Exception $e) {
-							$pluginInstance->_prependExportLog('DROPBOX EXPORT: following error returned from Dropbox:');
-							$pluginInstance->_prependExportLog($e);
-                            throw new Exception($e);
 
-                        }
+
+						$api_url = 'https://content.dropboxapi.com/2/files/upload'; //dropbox api url
+
+						$headers = array('Authorization: Bearer '. $dropboxAccessToken,
+							'Content-Type: application/octet-stream',
+							'Dropbox-API-Arg: '.
+							json_encode(
+								array(
+									"path"=> $targetPath,
+									"mode" => "overwrite",
+									"autorename" => false
+								)
+							)
+
+						);
+
+						$ch = curl_init($api_url);
+
+						curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+						curl_setopt($ch, CURLOPT_POST, true);
+
+						$fp = fopen($dropboxFile, 'rb');
+						$filesize = filesize($path);
+
+						curl_setopt($ch, CURLOPT_POSTFIELDS, fread($fp, $filesize));
+						curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+						$response = curl_exec($ch);
+						$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+						if ($http_code == 200) {
+							error_log('DB POST OK');
+						} else {
+							error_log($response);
+						}
+			
+
+						curl_close($ch);
+
                     } 
                 }
             }
 
         }
 
-        FolderToDropbox($siteroot, $dbxClient, $siteroot, $dropboxFolder, $this);
+        FolderToDropbox($siteroot, $siteroot, $dropboxFolder, $this);
 
 		echo 'SUCCESS';
     }
