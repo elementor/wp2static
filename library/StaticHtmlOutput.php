@@ -862,7 +862,7 @@ class StaticHtmlOutput {
         echo 'SUCCESS';
     }
 
-	public function s3_put_object($S3, $Bucket, $Key, $Data, $ContentType = "text/plain", $pluginInstance) {
+	public function s3_put_object($Bucket, $Key, $Data, $ContentType = "text/plain", $pluginInstance) {
 		
 		require_once(__DIR__.'/S3/S3.php');
 	
@@ -918,25 +918,9 @@ class StaticHtmlOutput {
         $this->_prependExportLog('S3 EXPORT: transferring ' . 
             basename($filename) . ' TO ' . $target_path);
        
-		// do the vendor specific export:
-		require_once(__DIR__.'/aws/aws-autoloader.php');
-		require_once(__DIR__.'/GuzzleHttp/autoloader.php');
-        require_once(__DIR__.'/StaticHtmlOutput/MimeTypes.php');
-
-		# goes in transfer step
-        $S3 = Aws\S3\S3Client::factory(array(
-            'version'=> '2006-03-01',
-            'region' => filter_input(INPUT_POST, 's3Region'),
-			'credentials' => array(
-				'key' => filter_input(INPUT_POST, 's3Key'),
-				'secret'  => filter_input(INPUT_POST, 's3Secret'),
-			  )
-            )
-        );
-
         $Bucket = filter_input(INPUT_POST, 's3Bucket');
 
-		$this->s3_put_object($S3, $Bucket, $target_path, $file_body, GuessMimeType($filename), $this);
+		$this->s3_put_object($Bucket, $target_path, $file_body, GuessMimeType($filename), $this);
 
         $this->_prependExportLog('S3 EXPORT: ' . $filesRemaining . ' files remaining to transfer');
 
