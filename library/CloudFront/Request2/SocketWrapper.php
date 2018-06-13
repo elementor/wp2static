@@ -19,7 +19,7 @@
  */
 
 /** Exception classes for HTTP_Request2 package */
-require_once 'HTTP/Request2/Exception.php';
+require_once 'Exception.php';
 
 /**
  * Socket wrapper class used by Socket Adapter

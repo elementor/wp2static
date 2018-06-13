@@ -950,7 +950,7 @@ class StaticHtmlOutput {
 
 			$cf->invalidate('/*');
 		
-			if ( $cf->getResponseMessage() == 200 )	{
+			if ( $cf->getResponseMessage() == 200 || $cf->getResponseMessage() == 201 )	{
 				echo 'SUCCESS';
 			} else {
 				$this->_prependExportLog('CF ERROR: ' . $cf->getResponseMessage());
