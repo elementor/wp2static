@@ -867,7 +867,10 @@ class StaticHtmlOutput {
 		require_once(__DIR__.'/S3/S3.php');
 	
 
-		$client = new S3($s3_key, $s3_secret);
+		$client = new S3(
+			filter_input(INPUT_POST, 's3Key'),
+			filter_input(INPUT_POST, 's3Secret')
+		);
 
 		// [OPTIONAL] Specify different curl options
 		$client->useCurlOpts(array(
@@ -885,11 +888,11 @@ class StaticHtmlOutput {
 			)
 		);
 
-		if ( $response->code == 200 ) {
+		if ( $response->code == 200 || $response->code == 301) {
 			return true;
 		} else {
 			$pluginInstance->_prependExportLog('S3 EXPORT: following error returned from S3:');
-			print_r($response);
+			$pluginInstance->_prependExportLog(print_r($response, true));
 			#throw new Exception('S3 error');
 		}
 
@@ -917,9 +920,10 @@ class StaticHtmlOutput {
 		$target_path = str_replace($siteroot, '', $filename);
         $this->_prependExportLog('S3 EXPORT: transferring ' . 
             basename($filename) . ' TO ' . $target_path);
-       
-        $Bucket = filter_input(INPUT_POST, 's3Bucket');
+      
+		require_once(__DIR__.'/StaticHtmlOutput/MimeTypes.php'); 
 
+        $Bucket = filter_input(INPUT_POST, 's3Bucket');
 		$this->s3_put_object($Bucket, $target_path, $file_body, GuessMimeType($filename), $this);
 
         $this->_prependExportLog('S3 EXPORT: ' . $filesRemaining . ' files remaining to transfer');
@@ -932,10 +936,11 @@ class StaticHtmlOutput {
     }
 
 	public function cloudfront_invalidate_all_items() {
+        $this->_prependExportLog('S3 EXPORT: Checking whether to invalidate CF cache');
 		require_once(__DIR__.'/CloudFront/CloudFront.php');
 		$cloudfront_id = filter_input(INPUT_POST, 'cfDistributionId');
 
-        if(strlen( $cloudfront_id > 12 )) {
+        if( !empty($cloudfront_id) ) {
 			$this->_prependExportLog('CLOUDFRONT INVALIDATING CACHE...');
 
 			$cf = new CloudFront(
@@ -950,7 +955,10 @@ class StaticHtmlOutput {
 			} else {
 				$this->_prependExportLog('CF ERROR: ' . $cf->getResponseMessage());
 			}
-        }
+        } else {
+			$this->_prependExportLog('S3 EXPORT: Skipping CF cache invalidation');
+			echo 'SUCCESS';
+		}
 	}
 
 	// TODO: this is being called twice, check export targets flow in FE/BE

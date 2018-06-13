@@ -4,8 +4,7 @@
  * A PHP5 class for invalidating Amazon CloudFront objects via its API.
  */
 
-require_once 'HTTP/Request2.php';  // grab with "pear install --onlyreqdeps HTTP_Request2"
-
+require_once 'Request2.php';
 
 class CloudFront {
 
