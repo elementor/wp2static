@@ -11,6 +11,8 @@ The optimum solution to speed up and secure your WordPress site - export to stat
 
 == Description ==
 
+The optimum solution to speed up and secure your WordPress site - export to static HTML and hide all traces of WordPress from your site!
+
 = Features =
 
  * generates a standalone, static html copy of your whole WordPress website
@@ -46,7 +48,7 @@ Having issues with this plugin? I try to support any issues via the official sup
  * selectively export only changed pages since last output
  * increase 1-click deployment options
 
-Developed by [**Leon Stafford**](http://leonstafford.github.io). If you have any questions about this plugin's usage, installation or development, please email me at: [leonstafford@mac.com](mailto:leonstafford@protonmail.com)
+Developed by [**Leon Stafford**](http://leonstafford.github.io). If you have any questions about this plugin's usage, installation or development, please email me at: [leonstafford@protonmail.com](mailto:leonstafford@protonmail.com)
 
 == Installation ==
 
