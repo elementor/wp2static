@@ -935,7 +935,7 @@ class StaticHtmlOutput {
 		require_once(__DIR__.'/CloudFront/CloudFront.php');
 		$cloudfront_id = filter_input(INPUT_POST, 'cfDistributionId');
 
-        if(strlen( $cloudfront_id > 12 ) {
+        if(strlen( $cloudfront_id > 12 )) {
 			$this->_prependExportLog('CLOUDFRONT INVALIDATING CACHE...');
 
 			$cf = new CloudFront(
@@ -959,8 +959,6 @@ class StaticHtmlOutput {
         $archiveDir = file_get_contents($this->getUploadsDirBaseDIR() . '/WP-STATIC-CURRENT-ARCHIVE');
         $archiveName = rtrim($archiveDir, '/');
         $siteroot = $archiveName . '/';
-        $dropboxAppKey = filter_input(INPUT_POST, 'dropboxAppKey');
-        $dropboxAppSecret = filter_input(INPUT_POST, 'dropboxAppSecret');
         $dropboxAccessToken = filter_input(INPUT_POST, 'dropboxAccessToken');
         $dropboxFolder = filter_input(INPUT_POST, 'dropboxFolder');
 

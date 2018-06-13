@@ -368,8 +368,6 @@ jQuery(document).ready(function($){
 				's3Region',
 				's3Bucket',
 				'cfDistributionId',
-				'dropboxAppKey',
-				'dropboxAppSecret',
 				'dropboxAccessToken',
 				'dropboxFolder',
 				'githubPersonalAccessToken',
@@ -596,8 +594,6 @@ function displayTextfield($field_name, $field_label, $description, $password = n
 <?php echo displayCheckbox('sendViaDropbox', 'Transfer files via Dropbox'); ?>
 
 <span class="dropbox">
-	<?php echo displayTextfield('dropboxAppKey', 'Dropbox App Key', 'ie, llkjhlkewedsc'); ?>
-	<?php echo displayTextfield('dropboxAppSecret', 'Dropbox App Secret', 'ie, vsndbvfjhsdfs', 'password'); ?>
 	<?php echo displayTextfield('dropboxAccessToken', 'Dropbox Access Token', '<a href="https://blogs.dropbox.com/developers/2014/05/generate-an-access-token-for-your-own-account/" target="_blank">How do I get this?</a>', 'password'); ?>
 	<?php echo displayTextfield('dropboxFolder', 'Dropbox folder', 'where you want this to be transferred to in your Dropbox account (ie, /teststatic)'); ?>
 </span>
