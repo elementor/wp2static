@@ -29,6 +29,7 @@ if (!class_exists('Net_URL2', true)) {
  * Exception class for HTTP_Request2 package
  */
 require_once 'Request2/Exception.php';
+require_once 'Request2/Adapter/Socket.php';
 
 /**
  * Class representing a HTTP request message
