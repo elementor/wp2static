@@ -1286,8 +1286,8 @@ class StaticHtmlOutput {
         if ($retainZipFile != 1) {
 			$archiveName = rtrim($archiveDir, '/');
 			$zipFile = $archiveName . '.zip';
-			$this->_prependExportLog('POST EXPORT CLEANUP: removing zip: ' . $zipFile);
 			if( file_exists($zipFile) ) {
+				$this->_prependExportLog('POST EXPORT CLEANUP: removing zip: ' . $zipFile);
 				unlink($zipFile);
 			}
 		}
