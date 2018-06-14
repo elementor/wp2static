@@ -26,6 +26,42 @@ jQuery(document).ready(function($){
         Notification.requestPermission();
     }
 
+	function callToAction() {
+		// check how many successful exports and present user with a relevant call to action
+        $('.hiddenActionField').val('wp_static_html_output_ajax');
+        $('#hiddenAJAXAction').val('get_number_of_successes');
+        archives = $('.options-form');
+        newSettings = $(".options-form").serialize();
+        $(".hiddenSettingsField").val(newSettings);
+        data = $(archives[0]).serialize();
+        $.ajax({
+            url: ajaxurl,
+            data: data,
+            dataType: 'html',
+            method: 'POST',
+            success: function(number_of_successes) {
+				console.log('# successes:');
+				console.log(number_of_successes);
+				if (number_of_successes == 1) {
+					$('#happy1stExport').show();
+				} else if (number_of_successes == 5) { 
+					$('#happy5thExport').show();
+				} else if (number_of_successes == 10) { 
+					$('#happy10thExport').show();
+				} else if (number_of_successes % 10 === 0) { 
+					$('#rateThisPlugin').show();
+				} else if (number_of_successes > 100) { 
+					$('#donateText').show();
+				}
+            },
+            error: function(serverResponse) {
+				console.log('# successes:');
+                $('#progress').hide();
+            }
+        });
+
+	}
+	
     function notifyMe() {
       if (!Notification) {
         alert('All exports are complete!.'); 
@@ -181,6 +217,9 @@ jQuery(document).ready(function($){
 		// always run cleanup "exportTarget" (TODO: naming to be improved)
 		exportTargets.push('TEARDOWN');
 
+		// record successful exports into the db
+		exportTargets.push('RECORDSUCCESS');
+
         data = $(archives[0]).serialize();
         $.ajax({
             url: ajaxurl,
@@ -236,9 +275,15 @@ jQuery(document).ready(function($){
 					doAJAXExport('post_export_teardown');
 					break;
 
+				case 'RECORDSUCCESS':
+					doAJAXExport('record_successful_export');
+					break;
+
 				default:
+					// all complete
 					$('#progress').attr("src", pluginDir + '../images/greentick.png');
 					$('#progress').css("width", '123px');
+					callToAction();
 					notifyMe();
 					break; 
 			}
@@ -278,7 +323,7 @@ jQuery(document).ready(function($){
         $('#progress').css("width", '102px');
 
         $('#progress').show();
-        $('#donateText').show();
+        //$('#donateText').show();
         startExport();
         $('#exportStatus').html('');
         pollingInterval = $('#pollIntervalSetting')[0].value;
@@ -665,8 +710,25 @@ http://172.17.0.3/my_pricelist.pdf</pre>
 
     <div>
         <img src="<?php echo plugins_url('../images/dashinfinity.gif', __FILE__); ?>" id="progress" />
+
         <div id="donateText">
             Thanks for using this plugin. If you're liking it, please <a target="_blank" href="https://wordpress.org/plugins/static-html-output-plugin/#reviews">leave a review</a>. Having trouble? <a target="_blank" href="https://github.com/leonstafford/wordpress-static-html-plugin/issues">Report your issue</a> and include the export log which is output below. For feature requests or custom WordPress development, send me an email: <a target="_blank" href="mailto:leonstafford@protonmail.com">leonstafford@protonmail.com</a></i>
+        </div>
+
+        <div id="happy1stExport">
+            Happy first successful export! You may need to check the output, adjust some settings and do it a few times to fine-tune things.. Having trouble? <a target="_blank" href="https://github.com/leonstafford/wordpress-static-html-plugin/issues">Report your issue</a> and include the export log which is output below. For help, feature requests or custom WordPress development, email this plugin's developer: <a target="_blank" href="mailto:leonstafford@protonmail.com">leonstafford@protonmail.com</a></i>
+        </div>
+
+        <div id="happy5thExport">
+            w00t! 5 successful exports, now you're getting the hang of it. Ready to start squeezing more speed from your static site? Contact the developer of this plugin to discuss your website's security and performance concerns: <a target="_blank" href="mailto:leonstafford@protonmail.com">leonstafford@protonmail.com</a></i>
+        </div>
+
+        <div id="happy10thExport">
+            w00t! 5 successful exports, now you're getting the hang of it. Ready to start squeezing more speed from your static site? Contact the developer of this plugin to discuss your website's security and performance concerns: <a target="_blank" href="mailto:leonstafford@protonmail.com">leonstafford@protonmail.com</a></i>
+        </div>
+
+        <div id="#rateThisPlugin"</a>
+			We're so happy your sites are exporting now! Please <a target="_blank" href="https://wordpress.org/plugins/static-html-output-plugin/#reviews">leave a review</a>
         </div>
 
         <h2 style="clear:both;">Export Log</h2>
@@ -674,7 +736,6 @@ http://172.17.0.3/my_pricelist.pdf</pre>
         <textarea id="exportStatus">
 Your progress will update here every few seconds and this text area will automatically resize to fit the contents of the full log...
         </textarea>
-		<label>Poll interval <input id="pollIntervalSetting" value="500" /> </label>
     </div>
 
 
@@ -687,6 +748,7 @@ Your progress will update here every few seconds and this text area will automat
 						<input id="startExportButton" class="button-primary" value="Start static site export" />
 					</p>
                 </p>
+		<label style="display:none;">Poll interval <input id="pollIntervalSetting" value="500" /> </label>
 						</div>
 					</div>
 			</div>
