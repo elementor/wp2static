@@ -652,12 +652,7 @@ http://172.17.0.3/my_pricelist.pdf</pre>
 						</div>
 					</div>
 
-<label>Poll interval <input id="pollIntervalSetting" value="500" /> </label>
 <?php set_time_limit(600); ?>
-
-Current timeout value <?php echo ini_get('max_execution_time'); ?>
-
- PHP Version: <?php echo PHP_VERSION; ?>
 
 				</form>
 					<div class="postbox">
@@ -679,6 +674,7 @@ Current timeout value <?php echo ini_get('max_execution_time'); ?>
         <textarea id="exportStatus">
 Your progress will update here every few seconds and this text area will automatically resize to fit the contents of the full log...
         </textarea>
+		<label>Poll interval <input id="pollIntervalSetting" value="500" /> </label>
     </div>
 
 
