@@ -125,3 +125,31 @@ function wp_static_html_output_deregister_scripts(){
 }
 add_action( 'wp_footer', 'wp_static_html_output_deregister_scripts' );
 remove_action('wp_head', 'wlwmanifest_link');
+
+function wp_static_html_output_upgrade_completed( $upgrader_object, $options ) {
+	// The path to our plugin's main file
+	$our_plugin = plugin_basename( __FILE__ );
+	// If an update has taken place and the updated type is plugins and the plugins element exists
+	if( $options['action'] == 'update' && $options['type'] == 'plugin' && isset( $options['plugins'] ) ) {
+		// Iterate through the plugins being updated and check if ours is there
+		foreach( $options['plugins'] as $plugin ) {
+			if( $plugin == $our_plugin ) {
+
+				global $wpdb;
+				// create meta table if not exists
+				$wpdb->query('CREATE TABLE IF NOT EXISTS '.$wpdb->base_prefix.'wpstatichtmloutput_meta (`id` int(11) NOT NULL auto_increment, `name` varchar(255) NOT NULL, `value` varchar(255) NOT NULL, PRIMARY KEY (id))');
+
+				// check for upgraded_user
+				if ( $wpdb->get_var( 'SELECT `value` FROM '.$wpdb->base_prefix.'wpstatichtmloutput_meta WHERE name = \'upgraded_user\' ') ) {
+					// if exists, nothing to do (show different message/release notes)
+
+				} else {
+					// else insert the first success	
+					$wpdb->query('INSERT INTO '.$wpdb->base_prefix.'wpstatichtmloutput_meta SET `value` = 1 , `name` = \'upgraded_user\' ');
+				}
+			}
+		}
+	}
+}
+
+add_action( 'upgrader_process_complete', 'wp_static_html_output_upgrade_completed', 10, 2 );

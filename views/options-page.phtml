@@ -53,10 +53,13 @@ jQuery(document).ready(function($){
 				} else if (number_of_successes > 100) { 
 					$('#donateText').show();
 				}
+
+				// get back to main execution
+				processExportTargets();
             },
             error: function(serverResponse) {
 				console.log('# successes:');
-                $('#progress').hide();
+				console.log(serverResponse);
             }
         });
 
@@ -191,6 +194,14 @@ jQuery(document).ready(function($){
 	}
 
     function startExport() {
+		// reset UI before export
+		$('#happy1stExport').hide();
+		$('#happy5thExport').hide();
+		$('#happy10thExport').hide();
+		$('#rateThisPlugin').hide();
+		$('#donateText').hide();
+
+	
         $('.hiddenActionField').val('wp_static_html_output_ajax');
         $('#hiddenAJAXAction').val('start_export');
         archives = $('.options-form');
@@ -219,6 +230,9 @@ jQuery(document).ready(function($){
 
 		// record successful exports into the db
 		exportTargets.push('RECORDSUCCESS');
+
+		// call user to action based on number of exports
+		exportTargets.push('CALLTOACTION');
 
         data = $(archives[0]).serialize();
         $.ajax({
@@ -279,11 +293,14 @@ jQuery(document).ready(function($){
 					doAJAXExport('record_successful_export');
 					break;
 
+				case 'CALLTOACTION':
+					callToAction();
+					break;
+
 				default:
 					// all complete
 					$('#progress').attr("src", pluginDir + '../images/greentick.png');
 					$('#progress').css("width", '123px');
-					callToAction();
 					notifyMe();
 					break; 
 			}
@@ -690,7 +707,7 @@ http://172.17.0.3/my_pricelist.pdf</pre>
 						<input id="hiddenNonceField" type="hidden" name="nonce" value="<?php echo $ajax_nonce; ?>" />
 						<input id="hiddenAJAXAction" type="hidden" name="ajax_action" value="" />
 						<input name="staticExportSettings" class="hiddenSettingsField" type="hidden" name="action" value="" />
-						<input class="saveSettingsButton button-primary" value="Save current options" />
+						<button class="saveSettingsButton button-primary">Save current options</button>
                         <button class="button addAnotherTargetButton" disabled>Add another export target</button>
                         <button class="button removeTargetButton">Remove this export target</button>
 					</p>
@@ -706,6 +723,14 @@ http://172.17.0.3/my_pricelist.pdf</pre>
               <h3 class="hndle"><span><?php echo __('Export your site', 'static-html-output-plugin');?></span></h3>
 
               <div class="inside">
+                  <p>
+                    <i>Clicking the button below will start the process of generating a static site from your WordPress installation. Depending on the size of your website, this process may take some time.</i>
+                  </p>
+
+					<p class="submit">
+            <?php wp_nonce_field($this->onceAction) ?>
+						<button id="startExportButton" class="button-primary">Start static site export</button>
+					</p>
                 <p>
 
     <div>
@@ -716,18 +741,18 @@ http://172.17.0.3/my_pricelist.pdf</pre>
         </div>
 
         <div id="happy1stExport">
-            Happy first successful export! You may need to check the output, adjust some settings and do it a few times to fine-tune things.. Having trouble? <a target="_blank" href="https://github.com/leonstafford/wordpress-static-html-plugin/issues">Report your issue</a> and include the export log which is output below. For help, feature requests or custom WordPress development, email this plugin's developer: <a target="_blank" href="mailto:leonstafford@protonmail.com">leonstafford@protonmail.com</a></i>
+            Happy first successful export (since upgrading the plugin)! You may need to check the output, adjust some settings and do it a few times to fine-tune things.. Having trouble? <a target="_blank" href="https://github.com/leonstafford/wordpress-static-html-plugin/issues">Report your issue</a> and include the export log which is output below. For help, feature requests or custom WordPress development, email this plugin's developer: <a target="_blank" href="mailto:leonstafford@protonmail.com">leonstafford@protonmail.com</a></i>
         </div>
 
         <div id="happy5thExport">
-            w00t! 5 successful exports, now you're getting the hang of it. Ready to start squeezing more speed from your static site? Contact the developer of this plugin to discuss your website's security and performance concerns: <a target="_blank" href="mailto:leonstafford@protonmail.com">leonstafford@protonmail.com</a></i>
+            w00t! 5 successful exports recently, now you're getting the hang of it. Ready to start squeezing more speed from your static site? Contact the developer of this plugin to discuss your website's security and performance concerns: <a target="_blank" href="mailto:leonstafford@protonmail.com">leonstafford@protonmail.com</a></i>
         </div>
 
         <div id="happy10thExport">
-            w00t! 5 successful exports, now you're getting the hang of it. Ready to start squeezing more speed from your static site? Contact the developer of this plugin to discuss your website's security and performance concerns: <a target="_blank" href="mailto:leonstafford@protonmail.com">leonstafford@protonmail.com</a></i>
+            Congratulations on 10 successful recent exports! Would you like to have your site featured as a case study on WordPress to static HTML optimisation? Send Leon a brief description to get started: <a target="_blank" href="mailto:leonstafford@protonmail.com">leonstafford@protonmail.com</a></i>
         </div>
 
-        <div id="#rateThisPlugin"</a>
+        <div id="rateThisPlugin"</a>
 			We're so happy your sites are exporting now! Please <a target="_blank" href="https://wordpress.org/plugins/static-html-output-plugin/#reviews">leave a review</a>
         </div>
 
@@ -739,14 +764,6 @@ Your progress will update here every few seconds and this text area will automat
     </div>
 
 
-                  <p>
-                    <i>Clicking the button below will start the process of generating a static site from your WordPress installation. Depending on the size of your website, this process may take some time.</i>
-                  </p>
-
-					<p class="submit">
-            <?php wp_nonce_field($this->onceAction) ?>
-						<input id="startExportButton" class="button-primary" value="Start static site export" />
-					</p>
                 </p>
 		<label style="display:none;">Poll interval <input id="pollIntervalSetting" value="500" /> </label>
 						</div>

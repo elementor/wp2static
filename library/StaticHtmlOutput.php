@@ -1141,6 +1141,21 @@ class StaticHtmlOutput {
         // do any exports
     }
 
+	public function get_number_of_successes($viaCLI = false) {
+		global $wpdb;
+
+		$successes = $wpdb->get_var( 'SELECT `value` FROM '.$wpdb->base_prefix.'wpstatichtmloutput_meta WHERE name = \'successful_export_count\' ');
+
+		if ($successes > 0) {
+
+			echo $successes;
+		} else {
+			echo '';
+		}
+
+	}
+
+
 	public function record_successful_export($viaCLI = false) {
 		// increment a value in the DB 
 		global $wpdb;
