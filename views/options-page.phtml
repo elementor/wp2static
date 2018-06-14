@@ -40,8 +40,6 @@ jQuery(document).ready(function($){
             dataType: 'html',
             method: 'POST',
             success: function(number_of_successes) {
-				console.log('# successes:');
-				console.log(number_of_successes);
 				if (number_of_successes == 1) {
 					$('#happy1stExport').show();
 				} else if (number_of_successes == 5) { 
@@ -741,7 +739,7 @@ http://172.17.0.3/my_pricelist.pdf</pre>
         </div>
 
         <div id="happy1stExport">
-            Happy first successful export (since upgrading the plugin)! You may need to check the output, adjust some settings and do it a few times to fine-tune things.. Having trouble? <a target="_blank" href="https://github.com/leonstafford/wordpress-static-html-plugin/issues">Report your issue</a> and include the export log which is output below. For help, feature requests or custom WordPress development, email this plugin's developer: <a target="_blank" href="mailto:leonstafford@protonmail.com">leonstafford@protonmail.com</a></i>
+            Happy 1st successful export on the new plugin! You may need to check the output, adjust some settings and do it a few times to fine-tune things.. Having trouble? <a target="_blank" href="https://github.com/leonstafford/wordpress-static-html-plugin/issues">Report your issue</a> and include the export log which is output below. For help, email this plugin's developer: <a target="_blank" href="mailto:leonstafford@protonmail.com">leonstafford@protonmail.com</a></i>
         </div>
 
         <div id="happy5thExport">
