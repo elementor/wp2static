@@ -14,10 +14,16 @@ else:
 	$pass[] = 'You have the <strong>zip</strong> extension';
 endif;
 
-if (!$this->uploadsFolderWritable):
-	$fail[] = 'Your uploads folder ('. $this->uploadsFolder['path']  .') is not writable.';
+if (!$this->supports_cURL):
+	$fail[] = 'You are missing the <strong>cURL</strong> extension for PHP';
 else:
-	$pass[] = 'Your uploads folder ('. $this->uploadsFolder['path']  .') is writable';
+	$pass[] = 'You have the <strong>cURL</strong> extension';
+endif;
+
+if (!$this->uploadsFolderWritable):
+	$fail[] = 'Your uploads folder ('. $this->uploadsFolder  .') is not writable.';
+else:
+	$pass[] = 'Your uploads folder ('. $this->uploadsFolder  .') is writable';
 endif;
 
 if (!$this->permalinksStructureDefined):
@@ -39,23 +45,39 @@ endif;
 			<li><?php echo implode('</li><li>', $fail) ?></li>
 		</ul>
 
-        <p>Missing the ZIP extension? This can be a common issue but easy to fix. It means that the installation of the PHP programming language on your web host does not currently have support for reading and generating compressed ZIP files. This is needed for the plugin to be able to generate a .zip archive of your static website. Here's some hosting company and platform specific guides on how to fix:</p>
+		<h3>Missing the ZIP extension?</h3>
+
+        <p> This can be a common issue but easy to fix. It means that the installation of the PHP programming language on your web host does not currently have support for reading and generating compressed ZIP files. This is needed for the plugin to be able to generate a .zip archive of your static website. Here's some hosting company and platform specific guides on how to fix:</p>
 
         <ul>
             <li><a target="_blank" href="https://godaddy.com/help/enable-custom-php-modules-12036">GoDaddy</a></li>
             <li><a target="_blank" href="https://stackoverflow.com/questions/23564138/how-to-enable-zip-dll-in-xampp">XAMPP</a></li>
             <li><a target="_blank" href="https://stackoverflow.com/questions/38104348/install-php-zip-on-php-5-6-on-ubuntu">Ubuntu</a></li>
             <li><a target="_blank" href="https://www.digitalocean.com/community/questions/php-7-0-ziparchive-library-is-missing-or-disabled">DigitalOcean</a></li>
+            <li><a target="_blank" href="http://lmgtfy.com/?q=how+to+get+zip+extension+php">Ask Dr. Google</a></li>
         </ul>
 	</p>
+
+		<h3>Missing the cURL extension?</h3>
+
+        <p> This is a library that allows the plugin to better export your static site out to services like GitHub, S3, Dropbox, BunnyCDN, etc. It's usually an easy fix to get this working. You can try Googling "How to enable cURL extension for PHP", along with the name of the environment you are using to run your WordPress site. This may be something like DigitalOcean, GoDaddy or LAMP, MAMP, WAMP for your webserver on your local computer. If you're still having trouble, the developer of this plugin is easger to help you get up and running. Please email him at <a href="mailto:leonstafford@protonmail.com">leonstafford@protonmail.com</a> and he'll sort you out.</p>
+
+	</p>
+
+		<h3>Need to set your permalinks?</h3>
+
+        <p>Due to the nature of how static sites work, you'll need to have some kind of permalinks structure defined in your <a href="'.admin_url( 'options-permalink.php' ).'">Permalink Settings</a> within WordPress. To learn more on how to do this, please see WordPress's official guide to the <a href="https://codex.wordpress.org/Settings_Permalinks_Screen">Settings Permalinks Screen</a>.</p>
 	
 	<?php if (count($pass)): ?>
+		<h3>It's not all bad - here's what you've got working already:</h3>
 	<p>
 		The following requirements were successfully met:
 		<ul>
 			<li><?php echo implode('</li><li>', $pass) ?></li>
 		</ul>
-	</p>
+	</p
+
+	<p>You're so close! Don't give up now - this plugin may just solve some big problems for you. Please email the developer personally at <a href="mailto:leonstafford@protonmail.com">leonstafford@protonmail.com</a>, he wants this software to make a differnce to everyone and will go out his way to troubleshoot any issues with you!</p>
 	<?php endif ?>
 	
 </div>

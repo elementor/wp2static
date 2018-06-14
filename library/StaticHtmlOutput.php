@@ -87,13 +87,20 @@ class StaticHtmlOutput {
 		$uploadDir = $this->get_write_directory();
 		$uploadsFolderWritable = $uploadDir && is_writable($uploadDir);
 		$supportsZipArchives = extension_loaded('zip');
+		$supports_cURL = extension_loaded('curl');
 		$permalinksStructureDefined = strlen(get_option('permalink_structure'));
 
-		if (!$uploadsFolderWritable || !$supportsZipArchives || !$permalinksStructureDefined) {
+		if (
+			!$uploadsFolderWritable || 
+			!$supportsZipArchives || 
+			!$permalinksStructureDefined ||
+		    !$supports_cURL
+		) {
 			$this->_view
 				->setTemplate('system-requirements')
 				->assign('uploadsFolderWritable', $uploadsFolderWritable)
 				->assign('supportsZipArchives', $supportsZipArchives)
+				->assign('supports_cURL', $supports_cURL)
 				->assign('permalinksStructureDefined', $permalinksStructureDefined)
 				->assign('uploadsFolder', $uploadDir)
 				->render();
@@ -402,6 +409,7 @@ class StaticHtmlOutput {
         file_put_contents($_SERVER['exportLog'], date("Y-m-d h:i:s") . ' STARTING EXPORT', FILE_APPEND | LOCK_EX);
 
         $this->_prependExportLog('STARTING EXPORT: PHP VERSION ' . phpversion() );
+        $this->_prependExportLog('STARTING EXPORT: PHP MAX EXECUTION TIME ' . ini_get('max_execution_time') );
         $this->_prependExportLog('STARTING EXPORT: OS VERSION ' . php_uname() );
         $this->_prependExportLog('STARTING EXPORT: WP VERSION ' . get_bloginfo('version') );
         $this->_prependExportLog('STARTING EXPORT: WP URL ' . get_bloginfo('url') );
