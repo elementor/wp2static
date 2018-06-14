@@ -1141,7 +1141,26 @@ class StaticHtmlOutput {
         // do any exports
     }
 
-	
+	public function record_successful_export($viaCLI = false) {
+		// increment a value in the DB 
+		global $wpdb;
+		// create meta table if not exists
+		$wpdb->query('CREATE TABLE IF NOT EXISTS '.$wpdb->base_prefix.'wpstatichtmloutput_meta (`id` int(11) NOT NULL auto_increment, `name` varchar(255) NOT NULL, `value` varchar(255) NOT NULL, PRIMARY KEY (id))');
+
+		// check for successful_export_count
+		if ( $wpdb->get_var( 'SELECT `value` FROM '.$wpdb->base_prefix.'wpstatichtmloutput_meta WHERE name = \'successful_export_count\' ') ) {
+			// if exists, increase by one
+			$wpdb->get_var( 'UPDATE '.$wpdb->base_prefix.'wpstatichtmloutput_meta SET `value` = `value` + 1 WHERE `name` = \'successful_export_count\' ') ;
+
+		} else {
+			// else insert the first success	
+			$wpdb->query('INSERT INTO '.$wpdb->base_prefix.'wpstatichtmloutput_meta SET `value` = 1 , `name` = \'successful_export_count\' ');
+		}
+
+		echo 'SUCCESS';
+
+	}	
+
 	
     public function post_process_archive_dir() {
         $this->_prependExportLog('POST PROCESSING ARCHIVE DIR: ...');
