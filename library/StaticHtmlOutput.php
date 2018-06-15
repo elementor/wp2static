@@ -118,7 +118,6 @@ class StaticHtmlOutput {
 
     public function save_options () {
 		if (!check_admin_referer(self::HOOK . '-options') || !current_user_can('manage_options')) {
-			//error_log('user didnt have permissions to change options');
 			exit('You cannot change WP Static HTML Output Plugin options.');
 		}
 
@@ -130,9 +129,6 @@ class StaticHtmlOutput {
 	public function outputPath(){
 		// TODO: a costly function, think about optimisations, we don't want this running for each request if possible
 
-		// read outputDirectory setting from post or from plugin options if set
-		// detect if we're running from CLI
-
 		// set default uploads path as output path
 		$outputDir = $this->uploadsPath();
 
@@ -140,9 +136,7 @@ class StaticHtmlOutput {
 		parse_str($this->_options->getOption('static-export-settings'), $pluginOptions);
 		if ( array_key_exists('outputDirectory', $pluginOptions )) {
 			if ( !empty($pluginOptions['outputDirectory']) ) {
-				error_log('found in options');
 				$outputDir = $pluginOptions['outputDirectory'];
-				error_log($outputDir);
 			}
 		} 
 
@@ -154,21 +148,16 @@ class StaticHtmlOutput {
 		// if dir doesn't exist, try to create it recursively
 		if ( !is_dir($outputDir) ) {
 			if ( !mkdir($outputDir, 0755, true) ) {
-				error_log('could not create outputPath at' . $outputDir);
-
 				// reverting back to default uploads path	
 				$outputDir = $this->uploadsPath();
 			}
-
 		}
 
 		// if path is not writeable, revert back to default	
-
 		if ( !empty($outputDir) && !is_writable($outputDir) ) {
 			$outputDir = $this->uploadsPath();
 		}
 
-		error_log('outputPath has been set to: ' . $outputDir);
 		return $outputDir;
 	}
 
@@ -339,7 +328,6 @@ class StaticHtmlOutput {
         $sendViaDropbox = filter_input(INPUT_POST, 'sendViaDropbox');
 
         if ($viaCLI) {
-            //error_log('DOING EXPORT VIA CLI');
             parse_str($this->_options->getOption('static-export-settings'), $pluginOptions);
 
             $sendViaGithub = $pluginOptions['sendViaGithub'];
@@ -837,7 +825,6 @@ class StaticHtmlOutput {
                     'body' => fopen($fileToTransfer, 'rb')
             ));
         } catch (Exception $e) {
-			//error_log($bunnycdnAPIKey);
 			$this->wsLog('BUNNYCDN EXPORT: error encountered');
 			$this->wsLog($e);
             throw new Exception($e);
@@ -910,11 +897,11 @@ class StaticHtmlOutput {
 	public function s3_put_object($Bucket, $Key, $Data, $ContentType = "text/plain", $pluginInstance) {
 		
 		require_once(__DIR__.'/S3/S3.php');
-	
 
 		$client = new S3(
 			filter_input(INPUT_POST, 's3Key'),
-			filter_input(INPUT_POST, 's3Secret')
+			filter_input(INPUT_POST, 's3Secret'),
+		    's3.' . filter_input(INPUT_POST, 's3Region') .  '.amazonaws.com'
 		);
 
 		// [OPTIONAL] Specify different curl options
@@ -933,14 +920,14 @@ class StaticHtmlOutput {
 			)
 		);
 
-		if ( $response->code == 200 || $response->code == 301) {
+		if ($response->code == 200) {
 			return true;
 		} else {
 			$pluginInstance->wsLog('S3 EXPORT: following error returned from S3:');
 			$pluginInstance->wsLog(print_r($response, true));
-			#throw new Exception('S3 error');
+			error_log(print_r($response, true));
+			return false;
 		}
-
 	}
 
 	// TODO: make this a generic func, calling vendor specific files
@@ -968,20 +955,24 @@ class StaticHtmlOutput {
       
 		require_once(__DIR__.'/StaticHtmlOutput/MimeTypes.php'); 
 
-		$this->s3_put_object(
+		if( $this->s3_put_object(
 			filter_input(INPUT_POST, 's3Bucket'),
 			$target_path,
 			$file_body,
 			GuessMimeType($filename),
-			$this);
+			$this) ) 
+		{
+			$this->wsLog('S3 EXPORT: ' . $filesRemaining . ' files remaining to transfer');
 
-        $this->wsLog('S3 EXPORT: ' . $filesRemaining . ' files remaining to transfer');
-
-		if ( $filesRemaining > 0 ) {
-			echo $filesRemaining;
+			if ( $filesRemaining > 0 ) {
+				echo $filesRemaining;
+			} else {
+				echo 'SUCCESS';
+			}
 		} else {
-			echo 'SUCCESS';
+				echo 'FAIL';
 		}
+
     }
 
 	public function cloudfront_invalidate_all_items() {
@@ -1064,11 +1055,9 @@ class StaticHtmlOutput {
 						$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
 						if ($http_code == 200) {
-							error_log('DB POST OK');
 						} else {
 							error_log($response);
 						}
-			
 
 						curl_close($ch);
 
@@ -1159,9 +1148,6 @@ class StaticHtmlOutput {
             file_put_contents($_SERVER['exportLog'], $e , FILE_APPEND | LOCK_EX);
             throw new Exception($e);
         }
-    
-        //error_log($response->getStatusCode(), 0);
-        //error_log(print_r($response, true), 0);
     }
 
     public function doExportWithoutGUI() {
@@ -1299,7 +1285,6 @@ class StaticHtmlOutput {
         $this->wsLog('POST EXPORT CLEANUP: starting...');
 		//TODO: rm symlink if no folder exists
 
-//		error_log($this->uploadsPath());
         $archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
         
 		$retainStaticFiles = filter_input(INPUT_POST, 'retainStaticFiles');
@@ -1508,8 +1493,6 @@ class StaticHtmlOutput {
 			file_put_contents($fileName, $fileContents);
 		} else {
 			$this->wsLog('SAVING URL: UNABLE TO SAVE FOR SOME REASON');
-			//error_log($fileName);
-			//error_log('response body was empty');
 		}
 	}
 }
