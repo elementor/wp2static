@@ -11,31 +11,31 @@ NEW_TAG=2.5
 # run from project root
 
 # copy all files to svn trunk
-cp -r $PROJECT_ROOT/* $SVN_ROOT/trunk/
+#cp -r $PROJECT_ROOT/* $SVN_ROOT/trunk/
 
 # remove files only used in development
-rm $SVN_ROOT/trunk/*.sh
-rm $SVN_ROOT/trunk/*.rb
-rm $SVN_ROOT/trunk/*.ini
-rm $SVN_ROOT/trunk/*.zip
-rm $SVN_ROOT/trunk/*.swo
-rm $SVN_ROOT/trunk/Dockerfile
-rm $SVN_ROOT/trunk/circle.yml
-rm $SVN_ROOT/trunk/Gemfile*
-rm $SVN_ROOT/trunk/readme.md
-rm $SVN_ROOT/trunk/package-lock.json
-rm $SVN_ROOT/trunk/package.json
-rm -r $SVN_ROOT/trunk/wpassets
-rm -r $SVN_ROOT/trunk/php53tests
-rm -r $SVN_ROOT/trunk/node_modules
-rm -r $SVN_ROOT/trunk/php5testvm
-rm -r $SVN_ROOT/trunk/provisioning
-rm -r $SVN_ROOT/trunk/demo_site_content
+#rm $SVN_ROOT/trunk/*.sh
+#rm $SVN_ROOT/trunk/*.rb
+#rm $SVN_ROOT/trunk/*.ini
+#rm $SVN_ROOT/trunk/*.zip
+#rm $SVN_ROOT/trunk/*.swo
+#rm $SVN_ROOT/trunk/Dockerfile
+#rm $SVN_ROOT/trunk/circle.yml
+#rm $SVN_ROOT/trunk/Gemfile*
+#rm $SVN_ROOT/trunk/readme.md
+#rm $SVN_ROOT/trunk/package-lock.json
+#rm $SVN_ROOT/trunk/package.json
+#rm -r $SVN_ROOT/trunk/wpassets
+#rm -r $SVN_ROOT/trunk/php53tests
+#rm -r $SVN_ROOT/trunk/node_modules
+#rm -r $SVN_ROOT/trunk/php5testvm
+#rm -r $SVN_ROOT/trunk/provisioning
+#rm -r $SVN_ROOT/trunk/demo_site_content
 
 # image assets (for WP official pages) need to go into /assets, not /trunk
-cp -r $PROJECT_ROOT/wpassets/* $SVN_ROOT/assets/
-
-cd $SVN_ROOT
+#cp -r $PROJECT_ROOT/wpassets/* $SVN_ROOT/assets/
+#
+#cd $SVN_ROOT
 
 # TODO: linting, spaces to tabs, etc
 
