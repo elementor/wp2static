@@ -125,6 +125,10 @@ To follow only the access log, you can pipe stderr to /dev/null:
 
 `docker logs -f your_php_apache_container 2>/dev/null`
 
+*Debugging cURL requests*
+
+Set the `CURLOPT_VERBOSE` to `true`, with an example in the S3 library. 
+
 ## Support
 
 Please [raise an issue](https://github.com/leonstafford/wordpress-static-html-plugin/issues/new) here on GitHub or on the plugin's [support forum](https://wordpress.org/support/plugin/static-html-output-plugin).

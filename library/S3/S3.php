@@ -6,11 +6,8 @@ class S3 {
 
     private $access_key;
     private $secret_key;
-
     private $endpoint;
-
     private $multi_curl;
-
     private $curl_opts;
 
     public function __construct($access_key, $secret_key, $endpoint = null) {
@@ -60,7 +57,6 @@ class S3Request {
     private $headers;
     private $curl;
     private $response;
-
     private $multi_curl;
 
     public function __construct($action, $endpoint, $uri) {
@@ -161,7 +157,9 @@ class S3Request {
             CURLOPT_HTTPHEADER => $http_headers,
             CURLOPT_HEADER => false,
             CURLOPT_RETURNTRANSFER => false,
-            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_FOLLOWLOCATION => false,
+            CURLOPT_VERBOSE => false,
+			CURLOPT_STDERR, fopen('php://stderr', 'w'),
             CURLOPT_WRITEFUNCTION => array(
                 $this->response, '__curlWriteFunction'
             ),

@@ -2,13 +2,9 @@
 class StaticHtmlOutput_View
 {
 	protected $_variables = array();
-	
 	protected $_path = null;
-	
 	protected $_directory = 'views';
-	
 	protected $_extension = '.phtml';
-	
 	protected $_template = null;
 	
 	public function __construct() {
