@@ -42,6 +42,8 @@ wp --allow-root core install --url="$containerIP" --title='wp plugindev' --admin
 # sh: 1: -t: not found
 # error around here
 
+wp --allow-root config set WP_DEBUG true --raw
+
 # activate wp static output plugin
 wp --allow-root plugin activate wordpress-static-html-output
 
