@@ -542,10 +542,9 @@ jQuery(document).ready(function($){
 </script>
 
 <?php
-// templating functions to make code a little easier to read
-$template_variables = $this;
 
-function displayCheckbox($field_name, $field_label) {
+function displayCheckbox($template_variables, $field_name, $field_label) {
+
 	echo "
 		<fieldset>
 			<label for='{$field_name}'>
@@ -556,7 +555,7 @@ function displayCheckbox($field_name, $field_label) {
 	";
 }
 
-function displayTextfield($field_name, $field_label, $description, $password = null) {
+function displayTextfield($template_variables, $field_name, $field_label, $description, $password = null) {
 	echo "
 		<input name='{$field_name}' class='regular-text' id='{$field_name}' type='" . ( $password  ? 'password' : 'text' ) . "' value='". esc_attr($template_variables->ftpServer) . "' placeholder='" .  __($field_label, 'static-html-output-plugin') . "' />
 		<span class='description'>$description</span>
@@ -594,58 +593,58 @@ function displayTextfield($field_name, $field_label, $description, $password = n
                   <input type="text" id="baseUrl" name="baseUrl" value="<?php echo esc_attr($this->baseUrl) ?>" size="50" placeholder="http://mystaticsite.com" />
                 </p>
 
-<?php echo displayCheckbox('createZip', 'Create a ZIP file of your statically exported site, ready for you to manually deploy. Download link will appear in the Export Log below'); ?>
-<?php echo displayCheckbox('retainStaticFiles', 'Retain generated static files on server'); ?>
-<?php echo displayCheckbox('retainZipFile', 'Retain generated zip file on server'); ?>
-<?php echo displayCheckbox('sendViaFTP', 'Transfer files via FTP'); ?>
+<?php echo displayCheckbox($this, 'createZip', 'Create a ZIP file of your statically exported site, ready for you to manually deploy. Download link will appear in the Export Log below'); ?>
+<?php echo displayCheckbox($this, 'retainStaticFiles', 'Retain generated static files on server'); ?>
+<?php echo displayCheckbox($this, 'retainZipFile', 'Retain generated zip file on server'); ?>
+<?php echo displayCheckbox($this, 'sendViaFTP', 'Transfer files via FTP'); ?>
 
 <span class="ftp">
-	<?php echo displayTextfield('ftpServer', 'FTP Server', 'ie, localhost, 192.168.1.7, ftp.mydomain.com, etc'); ?>
-	<?php echo displayTextfield('ftpUsername', 'FTP Username', ''); ?>
-	<?php echo displayTextfield('ftpPassword', 'FTP Password', '', 'password'); ?>
-	<?php echo displayTextfield('ftpRemotePath', 'FTP Remote Path', 'will attempt to create folder recursively if non-existent'); ?>
-	<?php echo displayCheckbox('useActiveFTP', 'Use active FTP (defaults to passive mode) <a href="https://stackoverflow.com/q/1699145/1668057" target="_blank">What\'s the difference?</a>'); ?>
+	<?php echo displayTextfield($this, 'ftpServer', 'FTP Server', 'ie, localhost, 192.168.1.7, ftp.mydomain.com, etc'); ?>
+	<?php echo displayTextfield($this, 'ftpUsername', 'FTP Username', ''); ?>
+	<?php echo displayTextfield($this, 'ftpPassword', 'FTP Password', '', 'password'); ?>
+	<?php echo displayTextfield($this, 'ftpRemotePath', 'FTP Remote Path', 'will attempt to create folder recursively if non-existent'); ?>
+	<?php echo displayCheckbox($this, 'useActiveFTP', 'Use active FTP (defaults to passive mode) <a href="https://stackoverflow.com/q/1699145/1668057" target="_blank">What\'s the difference?</a>'); ?>
 </span>            
 
 
-<?php echo displayCheckbox('sendViaS3', 'Transfer files via S3'); ?>
+<?php echo displayCheckbox($this, 'sendViaS3', 'Transfer files via S3'); ?>
 
 <span class="s3">
-	<?php echo displayTextfield('s3Key', 'S3 Key', 'ie, ie, AKIAIOSFODNN7EXAMPLE'); ?>
-	<?php echo displayTextfield('s3Secret', 'S3 Secret', 'ie, wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY', 'password'); ?>
-	<?php echo displayTextfield('s3Bucket', 'S3 Bucket', 'ie, my-static-site'); ?>
-	<?php echo displayTextfield('cfDistributionId', 'CloudFront Distribution ID', 'ie, ABC123DEFX'); ?>
+	<?php echo displayTextfield($this, 's3Key', 'S3 Key', 'ie, ie, AKIAIOSFODNN7EXAMPLE'); ?>
+	<?php echo displayTextfield($this, 's3Secret', 'S3 Secret', 'ie, wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY', 'password'); ?>
+	<?php echo displayTextfield($this, 's3Bucket', 'S3 Bucket', 'ie, my-static-site'); ?>
+	<?php echo displayTextfield($this, 'cfDistributionId', 'CloudFront Distribution ID', 'ie, ABC123DEFX'); ?>
 </span>
 
-<?php echo displayCheckbox('sendViaBUNNYCDN', 'Transfer files via BunnyCDN'); ?>
+<?php echo displayCheckbox($this, 'sendViaBUNNYCDN', 'Transfer files via BunnyCDN'); ?>
 
 <span class="bunnycdn">
-	<?php echo displayTextfield('bunnycdnPullZoneName', 'Pull Zone', 'ie, mybunnypullzone, etc'); ?>
-	<?php echo displayTextfield('bunnycdnAPIKey', 'API Key', '', 'password'); ?>
-	<?php echo displayTextfield('bunnycdnPath', 'BunnyCDN Remote Path', 'will attempt to create folder recursively if non-existent'); ?>
+	<?php echo displayTextfield($this, 'bunnycdnPullZoneName', 'Pull Zone', 'ie, mybunnypullzone, etc'); ?>
+	<?php echo displayTextfield($this, 'bunnycdnAPIKey', 'API Key', '', 'password'); ?>
+	<?php echo displayTextfield($this, 'bunnycdnPath', 'BunnyCDN Remote Path', 'will attempt to create folder recursively if non-existent'); ?>
 </span>
 
-<?php echo displayCheckbox('sendViaDropbox', 'Transfer files via Dropbox'); ?>
+<?php echo displayCheckbox($this, 'sendViaDropbox', 'Transfer files via Dropbox'); ?>
 
 <span class="dropbox">
-	<?php echo displayTextfield('dropboxAccessToken', 'Dropbox Access Token', '<a href="https://blogs.dropbox.com/developers/2014/05/generate-an-access-token-for-your-own-account/" target="_blank">How do I get this?</a>', 'password'); ?>
-	<?php echo displayTextfield('dropboxFolder', 'Dropbox folder', 'where you want this to be transferred to in your Dropbox account (ie, /teststatic)'); ?>
+	<?php echo displayTextfield($this, 'dropboxAccessToken', 'Dropbox Access Token', '<a href="https://blogs.dropbox.com/developers/2014/05/generate-an-access-token-for-your-own-account/" target="_blank">How do I get this?</a>', 'password'); ?>
+	<?php echo displayTextfield($this, 'dropboxFolder', 'Dropbox folder', 'where you want this to be transferred to in your Dropbox account (ie, /teststatic)'); ?>
 </span>
 
-<?php echo displayCheckbox('sendViaGithub', 'Transfer files via GitHub'); ?>
+<?php echo displayCheckbox($this, 'sendViaGithub', 'Transfer files via GitHub'); ?>
 
 <span class="github">
-	<?php echo displayTextfield('githubPersonalAccessToken', 'GitHub Personal Access Token', '<a href="https://github.com/settings/tokens/new" target="_blank">How do I get this?</a>', 'password'); ?>
-	<?php echo displayTextfield('githubRepo', 'Account / Repository Name', 'leonstafford/wordpress-static-html-plugin'); ?>
-	<?php echo displayTextfield('githubBranch', 'Branch', 'usually \'master\' or \'gh-pages\''); ?>
-	<?php echo displayTextfield('githubPath', 'Path within repository', 'Usually the repository root (leave this blank) or the \'doc\' folder'); ?>
+	<?php echo displayTextfield($this, 'githubPersonalAccessToken', 'GitHub Personal Access Token', '<a href="https://github.com/settings/tokens/new" target="_blank">How do I get this?</a>', 'password'); ?>
+	<?php echo displayTextfield($this, 'githubRepo', 'Account / Repository Name', 'leonstafford/wordpress-static-html-plugin'); ?>
+	<?php echo displayTextfield($this, 'githubBranch', 'Branch', 'usually \'master\' or \'gh-pages\''); ?>
+	<?php echo displayTextfield($this, 'githubPath', 'Path within repository', 'Usually the repository root (leave this blank) or the \'doc\' folder'); ?>
 </span>
 
-<?php echo displayCheckbox('sendViaNetlify', 'Transfer files via Netlify'); ?>
+<?php echo displayCheckbox($this, 'sendViaNetlify', 'Transfer files via Netlify'); ?>
 
 <span class="netlify">
-	<?php echo displayTextfield('netlifyPersonalAccessToken', 'Netlify Personal Access Token', '<a href="https://app.netlify.com/account/applications/personal" target="_blank">How do I get this?</a>', 'password'); ?>
-	<?php echo displayTextfield('netlifySiteID', 'Netlify Site ID', 'ie, mystaticsite'); ?>
+	<?php echo displayTextfield($this, 'netlifyPersonalAccessToken', 'Netlify Personal Access Token', '<a href="https://app.netlify.com/account/applications/personal" target="_blank">How do I get this?</a>', 'password'); ?>
+	<?php echo displayTextfield($this, 'netlifySiteID', 'Netlify Site ID', 'ie, mystaticsite'); ?>
 </span>
 
 
