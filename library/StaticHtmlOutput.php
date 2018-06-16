@@ -83,7 +83,7 @@ class StaticHtmlOutput {
 
 	public function renderOptionsPage() {
 		// Check system requirements
-		$uploadsFolderWritable = $this->outputPath() && is_writable($this->outputPath());
+		$uploadsFolderWritable = $this->uploadsPath() && is_writable($this->uploadsPath());
 		$supportsZipArchives = extension_loaded('zip');
 		$supports_cURL = extension_loaded('curl');
 		$permalinksStructureDefined = strlen(get_option('permalink_structure'));
@@ -100,7 +100,7 @@ class StaticHtmlOutput {
 				->assign('supportsZipArchives', $supportsZipArchives)
 				->assign('supports_cURL', $supports_cURL)
 				->assign('permalinksStructureDefined', $permalinksStructureDefined)
-				->assign('uploadsFolder', $this->outputPath())
+				->assign('uploadsPath', $this->uploadsPath())
 				->render();
 		} else {
 			do_action(self::HOOK . '-saveOptions');
@@ -112,6 +112,7 @@ class StaticHtmlOutput {
 				->assign('wpUploadsDir', $this->uploadsURL())
 				->assign('wpPluginDir', plugins_url('/', __FILE__))
 				->assign('onceAction', self::HOOK . '-options')
+				->assign('uploadsPath', $this->uploadsPath())
 				->render();
 		}
 	}
@@ -154,7 +155,7 @@ class StaticHtmlOutput {
 		}
 
 		// if path is not writeable, revert back to default	
-		if ( !empty($outputDir) && !is_writable($outputDir) ) {
+		if ( empty($outputDir) || !is_writable($outputDir) ) {
 			$outputDir = $this->uploadsPath();
 		}
 
