@@ -425,6 +425,7 @@ jQuery(document).ready(function($){
 				'bunnycdnPath',
 				's3Key',
 				's3Secret',
+				's3Region',
 				's3Bucket',
 				'cfDistributionId',
 				'dropboxAccessToken',
@@ -675,7 +676,7 @@ function displayTextfield($template_variables, $field_name, $field_label, $descr
                 <p>
                   <strong><label for="outputDirectory"><?php echo __('Override Output Directory', 'static-html-output-plugin');?></label></strong>
                   <p>
-                    <i>Just leave this blank and it will write any export files to your WordPress uploads directory at: <?php $default_upload_dir = wp_upload_dir(); echo $default_upload_dir['basedir']; ?> else, give the full path to the directory on your server</i>
+                    <i>Just leave this blank and it will write any export files to your WordPress uploads directory at: <?php echo $this->uploadsPath; ?> else, give the full path to the directory on your server</i>
                   </p> 
                   <input type="text" id="outputDirectory" name="outputDirectory" value="<?php echo esc_html($this->outputDirectory) ?>" size="50" />
                 </p>
