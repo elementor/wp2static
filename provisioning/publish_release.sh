@@ -8,6 +8,18 @@ PROJECT_ROOT=$(pwd)
 SVN_ROOT=$HOME/svnplugindir
 NEW_TAG=2.5
 
+# manual steps for a new release
+
+# update the files referencing the plugin version number
+
+
+
+# get list of files changes since last release use caret to ensure correct ref:
+
+git diff --name-only HEAD..TARGET_REVISION^
+
+
+
 # run from project root
 
 # copy all files to svn trunk
