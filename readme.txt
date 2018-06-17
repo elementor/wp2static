@@ -59,6 +59,8 @@ Developed by [**Leon Stafford**](http://leonstafford.github.io). If you have any
 3. Click on the Install Now button
 4. Activate the plugin and find it under the Tools menu
 
+[Watch  an installation video](https://youtu.be/kTYlohYGmBk)
+
 = manual installation =
 
 1. Upload the static-html-output directory to the `/wp-content/plugins/` directory
