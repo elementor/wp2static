@@ -69,6 +69,11 @@ wp --allow-root import /app/demo_site_content/wp_static_demo_content.xml --autho
 
 # OPTIONAL: install convenience / common plugins here
 wp --allow-root plugin install wp-crontrol --activate # look into WP Cron
+
+wp --allow-root plugin install simply-static --activate # look into WP Cron
+
+
+
 #wp --allow-root plugin install elementor --activate # test plugin compatibility
 #wp --allow-root theme install generatepress --activate # test theme compatibility
 #wp --allow-root plugin install fakerpress --activate # generate dummy content for testing
@@ -77,6 +82,8 @@ wp --allow-root plugin install wp-crontrol --activate # look into WP Cron
 
 # OPTIONAL: run log apache errors
 #tail -f /var/log/apache2/error.log
+
+chown -R www-data:www-data /var/www/html
 
 echo "WordPress installed and accessible on $containerIP"
 echo "WordPress siteurl:"
