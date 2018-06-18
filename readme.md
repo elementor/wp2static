@@ -3,6 +3,11 @@
 Allows you to leverage WordPress as a great CMS, but benefit from the speed, security and portability that a static website provides.
 
 [![CodeFactor](https://www.codefactor.io/repository/github/leonstafford/wordpress-static-html-plugin/badge)](https://www.codefactor.io/repository/github/leonstafford/wordpress-static-html-plugin)
+[![User support requests](https://img.shields.io/github/issues/leonstafford/wordpress-static-html-plugin/user_support_request.svg)](https://github.com/leonstafford/wordpress-static-html-plugin/labels/user_support_request)
+[![Bugs](https://img.shields.io/github/issues/leonstafford/wordpress-static-html-plugin/bug.svg)](https://github.com/leonstafford/wordpress-static-html-plugin/labels/bug)
+[![New features](https://img.shields.io/github/issues/leonstafford/wordpress-static-html-plugin/new_feature.svg)](https://github.com/leonstafford/wordpress-static-html-plugin/labels/new_feature)
+[![Enhancements](https://img.shields.io/github/issues/leonstafford/wordpress-static-html-plugin/enhancement.svg)](https://github.com/leonstafford/wordpress-static-html-plugin/labels/enhancement)
+[![Translation](https://img.shields.io/github/issues/leonstafford/wordpress-static-html-plugin/translation.svg)](https://github.com/leonstafford/wordpress-static-html-plugin/labels/translation)
 
 ---
 
@@ -32,7 +37,7 @@ The lead developer of this plugin, [Leon Stafford](https://leonstafford.github.i
 ## Demo site
 
 You can [see a working example here](https://leonstafford.github.io/demo-site-wordpress-static-html-output-plugin) of a vanilla WordPress install with some sample posts. It is hosted on GitHub Pages, but could just as easily be hosted on Dropbox, BitBucket, GitLab, S3, Netlify, BunnyCDN, your own server or anywhere else you can host HTML files. It is prone to breakage as I use it when testing development versions of the plugin.
-
+ 
 Got a site you've used the plugin to export and would like to share it here as a case study? Would love to hear from you!
 
 *TODO: move the demo theme into this repo, along with demonstrations of WP Hide and other useful plugins for WP static sites.*
