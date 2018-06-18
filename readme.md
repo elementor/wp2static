@@ -41,8 +41,6 @@ Using the [WP Crontrol](https://wordpress.org/plugins/wp-crontrol/) plugin, you 
 
 ## Roadmap
 
-See what's on the list for V2.7 of the plugin on its [project page](https://github.com/leonstafford/wordpress-static-html-plugin/projects/3)
-
 ### other things in the works
 
  - selectively export only changed pages since last output
