@@ -266,12 +266,21 @@ class StaticHtmlOutput {
         $this->wsLog('GITHUB: Creating blob for ' . rtrim($targetPath));
 
         $encodedFile = chunk_split(base64_encode(file_get_contents($fileToExport)));
+		
+		try {
 
-        $globHash = $client->api('gitData')->blobs()->create(
-                $githubUser, 
-                $githubRepo, 
-                array('content' => $encodedFile, 'encoding' => 'base64')
-                ); # utf-8 or base64
+			$globHash = $client->api('gitData')->blobs()->create(
+					$githubUser, 
+					$githubRepo, 
+					array('content' => $encodedFile, 'encoding' => 'base64')
+					); # utf-8 or base64
+
+        } catch (Exception $e) {
+
+
+			$this->wsLog('GITHUB: Error creating blob:' . $e );
+
+		}
 
         $githubGlobHashesAndPaths = $this->uploadsPath() . '/WP-STATIC-EXPORT-GITHUB-GLOBS-PATHS';
 
