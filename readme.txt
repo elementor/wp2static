@@ -4,7 +4,7 @@ Donate link: https://www.paypal.me/leonjstafford
 Tags: static,html,export,performance,security,cache,s3,dropbox,github,netlify,bunnycdn
 Requires at least: 3.2
 Tested up to: 4.9.6
-Stable tag: 2.8
+Stable tag: 2.9
 
 
 The optimum solution to speed up and secure your WordPress site - export to static HTML and hide all traces of WordPress from your site!
@@ -94,6 +94,10 @@ See the readme. In brief: you can't use dynamic WordPress functions such as comm
 2. The main interface (Japanese)
 
 == Changelog ==
+
+= 2.9 =
+
+ * Bugfix: critical fix for exported directories not being rewritten
 
 = 2.8 =
 
@@ -303,6 +307,10 @@ Altered main codebase to fix recursion bug and endless loop. Essential upgrade.
 Initial release to Wordpress community
 
 == Upgrade Notice ==
+
+= 2.9 =
+
+ * Bugfix: critical fix for exported directories not being rewritten
 
 = 2.8 =
 
