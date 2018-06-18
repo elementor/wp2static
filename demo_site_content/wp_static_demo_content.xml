@@ -17,13 +17,13 @@
  7. WordPress will then import each of the posts, pages, comments, categories, etc.
     contained in this file into your site.
 -->
-<!-- generator="WordPress/4.9.6" created="2018-06-09 10:18" -->
+<!-- generator="WordPress/4.9.6" created="2018-06-18 14:21" -->
 <rss version="2.0" xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:wfw="http://wellformedweb.org/CommentAPI/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:wp="http://wordpress.org/export/1.2/">
   <channel>
 <title>wp plugindev</title>
 <link>http://172.17.0.3</link>
 <description>Just another WordPress site</description>
-<pubDate>Sat, 09 Jun 2018 10:18:04 +0000</pubDate>
+<pubDate>Mon, 18 Jun 2018 14:21:43 +0000</pubDate>
 <language>en-US</language>
 <wp:wxr_version>1.2</wp:wxr_version>
 <wp:base_site_url>http://172.17.0.3</wp:base_site_url>
