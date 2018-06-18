@@ -8,7 +8,7 @@
 use GuzzleHttp\Client;
 
 class StaticHtmlOutput {
-	const VERSION = '2.8';
+	const VERSION = '2.9';
 	const OPTIONS_KEY = 'wp-static-html-output-options';
 	const HOOK = 'wp-static-html-output';
 
