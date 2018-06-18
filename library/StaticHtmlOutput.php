@@ -5,10 +5,6 @@
  * Copyright (c) 2011 Leon Stafford
  */
 
-use Kunnu\Dropbox\Dropbox;
-use Kunnu\Dropbox\DropboxApp;
-use Kunnu\Dropbox\DropboxFile;
-use Kunnu\Dropbox\Exceptions\DropboxClientException;
 use GuzzleHttp\Client;
 
 class StaticHtmlOutput {
@@ -1013,12 +1009,12 @@ class StaticHtmlOutput {
 
         $this->wsLog('DROPBOX EXPORT: Doing one synchronous export to your ' . $dropboxFolder . ' directory');
 
-        function FolderToDropbox($dir, $siteroot, $dropboxFolder, $pluginInstance){
+        function FolderToDropbox($dir, $siteroot, $dropboxFolder, $pluginInstance, $dropboxAccessToken){
             $files = scandir($dir);
             foreach($files as $item){
                 if($item != '.' && $item != '..' && $item != '.git'){
                     if(is_dir($dir.'/'.$item)) {
-                        FolderToDropbox($dir.'/'.$item, $siteroot, $dropboxFolder, $pluginInstance);
+                        FolderToDropbox($dir.'/'.$item, $siteroot, $dropboxFolder, $pluginInstance, $dropboxAccessToken);
                     } else if(is_file($dir.'/'.$item)) {
                         $clean_dir = str_replace($siteroot, '', $dir.'/'.$item);
                         $targetPath =  $dropboxFolder . $clean_dir;
@@ -1058,6 +1054,8 @@ class StaticHtmlOutput {
 						if ($http_code == 200) {
 						} else {
 							error_log($response);
+							$pluginInstance->wsLog($response);
+							echo 'FAIL';die();
 						}
 
 						curl_close($ch);
@@ -1068,7 +1066,7 @@ class StaticHtmlOutput {
 
         }
 
-        FolderToDropbox($siteroot, $siteroot, $dropboxFolder, $this);
+        FolderToDropbox($siteroot, $siteroot, $dropboxFolder, $this, $dropboxAccessToken);
 
 		echo 'SUCCESS';
     }
