@@ -22,9 +22,11 @@ git diff --name-only HEAD..TARGET_REVISION^
 ie:
 
 
+
 languages/static-html-output-plugin.pot
 library/StaticHtmlOutput.php
 readme.txt
+views/options-page.phtml
 wp-static-html-output.php
 
 
