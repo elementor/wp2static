@@ -779,7 +779,7 @@ class StaticHtmlOutput {
     }
 
     public function bunnycdn_transfer_files($batch_size = 5) {
-		require_once(__DIR__.'/GuzzleHttp/autoloader.php');
+		require_once(__DIR__.'/Github/autoload.php');
 
         $bunnycdnAPIKey = filter_input(INPUT_POST, 'bunnycdnAPIKey');
         $bunnycdnPullZoneName = filter_input(INPUT_POST, 'bunnycdnPullZoneName');
@@ -1124,6 +1124,7 @@ class StaticHtmlOutput {
     }
 
     public function netlify_do_export () {
+		require_once(__DIR__.'/Github/autoload.php');
         $this->wsLog('NETLIFY EXPORT: starting to deploy ZIP file');
         // will exclude the siteroot when copying
         $archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
