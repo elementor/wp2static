@@ -23,12 +23,9 @@ ie:
 
 
 languages/static-html-output-plugin.pot
-library/S3/S3.php
 library/StaticHtmlOutput.php
-library/StaticHtmlOutput/View.php
 readme.txt
-views/options-page.phtml
-views/system-requirements.phtml
+wp-static-html-output.php
 
 
 
