@@ -3,9 +3,7 @@
 # run wp-cli cmds from wp install path
 cd /var/www/html
 
-# source env vars to use in Docker run commands
-. /.env-vars
-
+# source env vars to use in Docker run commands (now moved to run cmd using env-file)
 
 # wait for mysql container
 # * wordpress image's default entrypoint will also take some time
@@ -45,6 +43,8 @@ wp --allow-root core install --url="$containerIP" --title='wp plugindev' --admin
 wp --allow-root config set WP_DEBUG true --raw
 wp --allow-root config set WP_FS__DEV_MODE true --type=constant --raw
 wp --allow-root config set SAVEQUERIES true --type=constant --raw
+wp --allow-root config set WP_FS__static-html-output-plugin_SECRET_KEY $FREEMIUM_SECRET_KEY --type=constant --raw 
+wp --allow-root config set WP_FS__SKIP_EMAIL_ACTIVATION true --type=constant --raw 
 
 # activate wp static output plugin
 wp --allow-root plugin activate wordpress-static-html-output
