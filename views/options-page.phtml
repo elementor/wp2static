@@ -546,12 +546,18 @@ jQuery(document).ready(function($){
 
 <?php
 
-function displayCheckbox($template_variables, $field_name, $field_label) {
+function displayCheckbox($template_variables, $field_name, $field_label, $premium = false) {
+	// unlock premium options if user has access to use them
+	if ( wpsho_fr()->is_not_paying() && $premium) {
+		$premium = true;
+	} else {
+		$premium = false;
+	}
 
 	echo "
 		<fieldset>
 			<label for='{$field_name}'>
-				<input name='{$field_name}' id='{$field_name}' value='1' type='checkbox' " . ( $template_variables->{$field_name} == 1 ? 'checked' : '' ) . " />
+				<input name='{$field_name}' id='{$field_name}' value='1' type='checkbox' " . ( $template_variables->{$field_name} == 1 ? 'checked' : '' ) . ($premium ? 'disabled' : '') . " />
 				<span>" .  __($field_label, 'static-html-output-plugin') . "</span>
 			</label>
 		</fieldset>
@@ -599,7 +605,7 @@ function displayTextfield($template_variables, $field_name, $field_label, $descr
 <?php echo displayCheckbox($this, 'createZip', 'Create a ZIP file of your statically exported site, ready for you to manually deploy. Download link will appear in the Export Log below'); ?>
 <?php echo displayCheckbox($this, 'retainStaticFiles', 'Retain generated static files on server'); ?>
 <?php echo displayCheckbox($this, 'retainZipFile', 'Retain generated zip file on server'); ?>
-<?php echo displayCheckbox($this, 'sendViaFTP', 'Transfer files via FTP'); ?>
+<?php echo displayCheckbox($this, 'sendViaFTP', 'Transfer files via FTP', 1); ?>
 
 <span class="ftp">
 	<?php echo displayTextfield($this, 'ftpServer', 'FTP Server', 'ie, localhost, 192.168.1.7, ftp.mydomain.com, etc'); ?>
@@ -610,7 +616,7 @@ function displayTextfield($template_variables, $field_name, $field_label, $descr
 </span>            
 
 
-<?php echo displayCheckbox($this, 'sendViaS3', 'Transfer files via S3'); ?>
+<?php echo displayCheckbox($this, 'sendViaS3', 'Transfer files via S3', 1); ?>
 
 <span class="s3">
 	<?php echo displayTextfield($this, 's3Key', 'S3 Key', 'ie, ie, AKIAIOSFODNN7EXAMPLE'); ?>
@@ -643,7 +649,7 @@ function displayTextfield($template_variables, $field_name, $field_label, $descr
 	<?php echo displayTextfield($this, 'cfDistributionId', 'CloudFront Distribution ID', 'ie, ABC123DEFX'); ?>
 </span>
 
-<?php echo displayCheckbox($this, 'sendViaBUNNYCDN', 'Transfer files via BunnyCDN'); ?>
+<?php echo displayCheckbox($this, 'sendViaBUNNYCDN', 'Transfer files via BunnyCDN', 1); ?>
 
 <span class="bunnycdn">
 	<?php echo displayTextfield($this, 'bunnycdnPullZoneName', 'Pull Zone', 'ie, mybunnypullzone, etc'); ?>
@@ -651,14 +657,14 @@ function displayTextfield($template_variables, $field_name, $field_label, $descr
 	<?php echo displayTextfield($this, 'bunnycdnPath', 'BunnyCDN Remote Path', 'will attempt to create folder recursively if non-existent'); ?>
 </span>
 
-<?php echo displayCheckbox($this, 'sendViaDropbox', 'Transfer files via Dropbox'); ?>
+<?php echo displayCheckbox($this, 'sendViaDropbox', 'Transfer files via Dropbox', 1); ?>
 
 <span class="dropbox">
 	<?php echo displayTextfield($this, 'dropboxAccessToken', 'Dropbox Access Token', '<a href="https://blogs.dropbox.com/developers/2014/05/generate-an-access-token-for-your-own-account/" target="_blank">How do I get this?</a>', 'password'); ?>
 	<?php echo displayTextfield($this, 'dropboxFolder', 'Dropbox folder', 'where you want this to be transferred to in your Dropbox account (ie, /teststatic)'); ?>
 </span>
 
-<?php echo displayCheckbox($this, 'sendViaGithub', 'Transfer files via GitHub'); ?>
+<?php echo displayCheckbox($this, 'sendViaGithub', 'Transfer files via GitHub', 1); ?>
 
 <span class="github">
 	<?php echo displayTextfield($this, 'githubPersonalAccessToken', 'GitHub Personal Access Token', '<a href="https://github.com/settings/tokens/new" target="_blank">How do I get this?</a>', 'password'); ?>
@@ -667,7 +673,7 @@ function displayTextfield($template_variables, $field_name, $field_label, $descr
 	<?php echo displayTextfield($this, 'githubPath', 'Path within repository', 'Usually the repository root (leave this blank) or the \'doc\' folder'); ?>
 </span>
 
-<?php echo displayCheckbox($this, 'sendViaNetlify', 'Transfer files via Netlify'); ?>
+<?php echo displayCheckbox($this, 'sendViaNetlify', 'Transfer files via Netlify', 1); ?>
 
 <span class="netlify">
 	<?php echo displayTextfield($this, 'netlifyPersonalAccessToken', 'Netlify Personal Access Token', '<a href="https://app.netlify.com/account/applications/personal" target="_blank">How do I get this?</a>', 'password'); ?>
