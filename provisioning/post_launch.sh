@@ -43,7 +43,8 @@ wp --allow-root core install --url="$containerIP" --title='wp plugindev' --admin
 # error around here
 
 wp --allow-root config set WP_DEBUG true --raw
-wp --allow-root config set WP_FS__DEV_MODE true --raw
+wp --allow-root config set WP_FS__DEV_MODE true --type=constant --raw
+wp --allow-root config set SAVEQUERIES true --type=constant --raw
 
 # activate wp static output plugin
 wp --allow-root plugin activate wordpress-static-html-output
@@ -72,6 +73,8 @@ wp --allow-root import /app/demo_site_content/wp_static_demo_content.xml --autho
 wp --allow-root plugin install wp-crontrol --activate # look into WP Cron
 
 wp --allow-root plugin install simply-static --activate # look into WP Cron
+
+wp --allow-root plugin install debug-bar # --activate # look into WP Cron
 
 
 
