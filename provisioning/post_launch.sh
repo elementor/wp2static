@@ -35,7 +35,7 @@ pwd
 # apache erorr around here
 
 # install default
-wp --allow-root core install --url="$containerIP" --title='wp plugindev' --admin_user=admin --admin_password=admin --admin_email=blah@blah.com --skip-email
+wp --allow-root core install --url="$containerIP" --title='wp plugindev' --admin_user=admin --admin_password=admin --admin_email=leonstafford@protonmail.com --skip-email
 
 . /sync_sources.sh
 
@@ -43,6 +43,7 @@ wp --allow-root core install --url="$containerIP" --title='wp plugindev' --admin
 # error around here
 
 wp --allow-root config set WP_DEBUG true --raw
+wp --allow-root config set WP_FS__DEV_MODE true --raw
 
 # activate wp static output plugin
 wp --allow-root plugin activate wordpress-static-html-output

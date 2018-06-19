@@ -1,0 +1,97 @@
+@import "../start";
+
+#fs_affiliation_content_wrapper {
+  #messages {
+    margin-top: 25px;
+  }
+
+  h3 {
+    font-size: 24px;
+    padding: 0;
+    margin-left: 0;
+  }
+
+  ul {
+    li {
+      @include box-sizing(border-box);
+      list-style-type: none;
+
+      &:before {
+        content: '✓';
+        margin-right: 10px;
+        font-weight: bold;
+      }
+    }
+  }
+
+  p:not(.description), li, label {
+    font-size: 16px !important;
+    line-height: 26px !important;
+  }
+
+  .button {
+    margin-top: 20px;
+    margin-bottom: 7px;
+    line-height: 35px;
+    height: 40px;
+    font-size: 16px;
+
+    &#cancel_button {
+      margin-right: 5px;
+    }
+  }
+
+  form {
+    .input-container {
+      .input-label {
+        font-weight: bold;
+        display: block;
+        width: 100%;
+      }
+
+      &.input-container-text {
+        label, input, textarea {
+          display: block;
+        }
+      }
+
+      margin-bottom: 15px;
+
+      #add_domain, .remove-domain {
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 3px;
+
+        &:focus {
+          box-shadow: none;
+        }
+
+        &.disabled {
+          color: #aaa;
+          cursor: default;
+        }
+      }
+    }
+
+    #extra_domains_container {
+      .description {
+        margin-top: 0;
+        position: relative;
+        top: -4px;
+      }
+
+      .extra-domain-input-container {
+        margin-bottom: 15px;
+
+        .domain {
+          display: inline-block;
+          margin-right: 5px;
+
+          &:last-of-type {
+            margin-bottom: 0;
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,81 @@
+#fs_marketing_optin
+{
+    display:     none;
+    margin-top:  10px;
+    border:      1px solid #ccc;
+    padding:     10px;
+    line-height: 1.5em;
+
+    .fs-message
+    {
+        display:       block;
+        margin-bottom: 5px;
+        font-size:     1.05em;
+        font-weight:   600;
+    }
+
+    &.error
+    {
+        border:     1px solid $fs-logo-magenta-color;
+        background: #fee;
+
+        .fs-message
+        {
+            color: $fs-logo-magenta-color;
+        }
+    }
+
+    .fs-input-container
+    {
+        margin-top: 5px;
+
+        label
+        {
+            margin-top: 5px;
+            display:    block;
+
+            input
+            {
+                float:  left;
+                margin: 1px 0 0 0;
+            }
+
+            &:first-child
+            {
+                display:       block;
+                margin-bottom: 2px;
+            }
+        }
+    }
+
+    .fs-input-label
+    {
+        display:     block;
+        margin-left: 20px;
+
+        .underlined
+        {
+            text-decoration: underline;
+        }
+    }
+}
+
+.rtl
+{
+    #fs_marketing_optin
+    {
+        .fs-input-container
+        {
+            label input
+            {
+                float: right;
+            }
+        }
+
+        .fs-input-label
+        {
+            margin-left:  0;
+            margin-right: 20px;
+        }
+    }
+}
