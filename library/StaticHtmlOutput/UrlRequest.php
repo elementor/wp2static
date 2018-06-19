@@ -1125,18 +1125,18 @@ class StaticHtmlOutput_UrlRequest
 
 		}
 
-#		if ($this->isCSS()) {
-#
-#			$regex = array(
-#			"`^([\t\s]+)`ism"=>'',
-#			"`^\/\*(.+?)\*\/`ism"=>"",
-#			"`([\n\A;]+)\/\*(.+?)\*\/`ism"=>"$1",
-#			"`([\n\A;\s]+)//(.+?)[\n\r]`ism"=>"$1\n",
-#			"`(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+`ism"=>"\n"
-#			);
-#
-#			$responseBody = preg_replace(array_keys($regex), $regex, $responseBody);
-#		}
+		if ($this->isCSS()) {
+
+			$regex = array(
+			"`^([\t\s]+)`ism"=>'',
+			"`^\/\*(.+?)\*\/`ism"=>"",
+			"`([\n\A;]+)\/\*(.+?)\*\/`ism"=>"$1",
+			"`([\n\A;\s]+)//(.+?)[\n\r]`ism"=>"$1\n",
+			"`(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+`ism"=>"\n"
+			);
+
+			$responseBody = preg_replace(array_keys($regex), $regex, $responseBody);
+		}
 
 		// rewrite all the things, starting with longest paths down to shortest
 		// ie, do wp-content/themes/mytheme before wp-content
