@@ -1,0 +1,55 @@
+@import "../colors";
+
+.fs-modal.fs-modal-deactivation-feedback {
+	.reason-input, .internal-message {
+		margin:	3px 0 3px 22px;
+
+		input, textarea {
+			width: 100%;
+		}
+	}
+
+	li.reason {
+		&.has-internal-message .internal-message {
+			border: 1px solid lighten($darkest-color, 80%);
+			padding: 7px;
+			display: none;
+		}
+
+		@media (max-width: 650px) {
+			li.reason {
+				margin-bottom: 10px;
+
+				.reason-input, .internal-message {
+					margin-left: 29px;
+				}
+
+				label {
+					display: table;
+
+					> span {
+						display: table-cell;
+						font-size: 1.3em;
+					}
+				}
+			}
+		}
+	}
+
+	.anonymous-feedback-label {
+		float: left;
+	}
+
+    .fs-modal-panel {
+        margin-top: 0 !important;
+
+        h3 {
+            margin-top: 0;
+            line-height: 1.5em;
+        }
+    }
+}
+
+#the-list .deactivate > .fs-slug {
+	display: none;
+}

@@ -1,0 +1,47 @@
+.fs-modal.fs-modal-license-activation {
+	.fs-modal-body {
+		input.license_key {
+			width: 100%;
+		}
+	}
+}
+
+#license_options_container {
+	table {
+		&, select, #available_license_key {
+			width: 100%;
+		}
+
+		td:first-child {
+			width: 1%;
+		}
+
+		#other_license_key_container {
+			label {
+				position: relative;
+				top: 6px;
+				float: left;
+				margin-right: 5px;
+			}
+
+			div {
+				overflow: hidden;
+				width: auto;
+				height: 30px;
+				display: block;
+				top: 2px;
+				position: relative;
+
+				input {
+					margin: 0;
+				}
+			}
+		}
+	}
+}
+
+#sites_list_container {
+	td {
+		cursor: pointer;
+	}
+}

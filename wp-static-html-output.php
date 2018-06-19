@@ -12,6 +12,43 @@
  * @package     WP_Static_HTML_Output
  */
 
+// Create a helper function for easy SDK access.
+function wpsho_fr() {
+    global $wpsho_fr;
+
+    if ( ! isset( $wpsho_fr ) ) {
+        // Activate multisite network integration.
+        if ( ! defined( 'WP_FS__PRODUCT_2226_MULTISITE' ) ) {
+            define( 'WP_FS__PRODUCT_2226_MULTISITE', true );
+        }
+
+        // Include Freemius SDK.
+        require_once dirname(__FILE__) . '/freemius/start.php';
+
+        $wpsho_fr = fs_dynamic_init( array(
+            'id'                  => '2226',
+            'slug'                => 'static-html-output-plugin',
+            'type'                => 'plugin',
+            'public_key'          => 'pk_8874b676a9189a1b13450673a921f',
+            'is_premium'          => false,
+            'has_addons'          => false,
+            'has_paid_plans'      => false,
+            'menu'                => array(
+                'slug'           => 'wp-static-html-output-options',
+                'parent'         => array(
+                    'slug' => 'tools.php',
+                ),
+            ),
+        ) );
+    }
+
+    return $wpsho_fr;
+}
+
+wpsho_fr();
+do_action( 'wpsho_fr_loaded' );
+
+
 // TODO: find way to enable these based on detected capabilities
 require_once 'library/StaticHtmlOutput/Options.php';
 require_once 'library/StaticHtmlOutput/View.php';
@@ -126,3 +163,24 @@ function wp_static_html_output_deregister_scripts(){
 add_action( 'wp_footer', 'wp_static_html_output_deregister_scripts' );
 remove_action('wp_head', 'wlwmanifest_link');
 
+function wpsho_fr_custom_connect_message_on_update(
+        $message,
+        $user_first_name,
+        $plugin_title,
+        $user_login,
+        $site_link,
+        $freemius_link
+    ) {
+        return sprintf(
+            __( 'Want better exports? %2$s improves by sending non-sensitive diagnostics to %5$s.', 'static-html-output-plugin' ),
+            $user_first_name,
+            '<b>' . $plugin_title . '</b>',
+            '<b>' . $user_login . '</b>',
+            $site_link,
+            $freemius_link
+        );
+    }
+
+    wpsho_fr()->add_filter('connect_message_on_update', 'wpsho_fr_custom_connect_message_on_update', 10, 6);
+
+    wpsho_fr()->add_filter('connect_message', 'wpsho_fr_custom_connect_message_on_update', 10, 6);

@@ -1,0 +1,194 @@
+@import "../colors";
+@import "../mixins";
+
+.fs-modal {
+	position: fixed;
+	overflow: auto;
+	height: 100%;
+	width: 100%;
+	top: 0;
+	z-index: 100000;
+	display: none;
+	background: rgba(0, 0, 0, 0.6);
+
+	.fs-modal-dialog {
+		background: transparent;
+		position: absolute;
+		left: 50%;
+		margin-left: -298px;
+		padding-bottom: 30px;
+		top: -100%;
+		z-index: 100001;
+		width: 596px;
+
+		@media (max-width: 650px) {
+			margin-left: -50%;
+			box-sizing: border-box;
+			padding-left: 10px;
+			padding-right: 10px;
+			width: 100%;
+
+			.fs-modal-panel > h3 > strong {
+				font-size: 1.3em;
+			}
+		}
+	}
+
+	&.active {
+		display: block;
+
+		&:before {
+			display: block;
+		}
+
+		.fs-modal-dialog {
+			top: 10%;
+		}
+	}
+
+	&.fs-success {
+		.fs-modal-header {
+			border-bottom-color: $wp-notice-success-dark-color;
+		}
+
+		.fs-modal-body {
+			background-color: $wp-notice-success-color;
+		}
+	}
+
+	&.fs-warn {
+		.fs-modal-header {
+			border-bottom-color: $wp-notice-warn-dark-color;
+		}
+
+		.fs-modal-body {
+			background-color: $wp-notice-warn-color;
+		}
+	}
+
+	&.fs-error {
+		.fs-modal-header {
+			border-bottom-color: $wp-notice-error-dark-color;
+		}
+
+		.fs-modal-body {
+			background-color: $wp-notice-error-color;
+		}
+	}
+
+
+	.fs-modal-body,
+	.fs-modal-footer {
+		border: 0;
+		background: #fefefe;
+		padding: 20px;
+	}
+
+    .fs-modal-header {
+        border-bottom: #eeeeee solid 1px;
+        background: #fbfbfb;
+        padding: 15px 20px;
+        position: relative;
+		margin-bottom: -10px;
+//        z-index: 2;
+
+        h4 {
+            margin: 0;
+            padding: 0;
+            text-transform: uppercase;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #cacaca;
+            text-shadow: 1px 1px 1px #fff;
+            letter-spacing: 0.6px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .fs-close {
+            position: absolute;
+            right: 10px;
+            top: 12px;
+            cursor: pointer;
+            color: #bbb;
+            @include border-radius(20px);
+            padding: 3px;
+            @include transition(all 0.2s ease-in-out);
+
+            &:hover {
+                color: #fff;
+                background: #aaa;
+            }
+
+			&, &:hover
+			{
+				.dashicons
+				{
+					text-decoration: none;
+				}
+			}
+        }
+    }
+
+	.fs-modal-body {
+		border-bottom: 0;
+
+		p {
+			font-size: 14px;
+		}
+
+		h2 {
+			font-size: 20px;
+			line-height: 1.5em;
+		}
+
+		> div {
+			margin-top: 10px;
+
+			h2 {
+				font-weight: bold;
+				font-size: 20px;
+				margin-top: 0;
+			}
+		}
+	}
+
+	.fs-modal-footer {
+		border-top: #eeeeee solid 1px;
+		text-align: right;
+
+		> .button {
+			margin: 0 7px;
+
+			&:first-child {
+				margin: 0;
+			}
+		}
+	}
+
+	.fs-modal-panel {
+		> .notice.inline {
+			margin: 0;
+			display: none;
+		}
+
+		&:not(.active) {
+			display: none;
+		}
+	}
+}
+
+.rtl
+{
+    .fs-modal {
+        .fs-modal-header {
+            .fs-close {
+                right: auto;
+                left: 20px;
+            }
+        }
+    }
+}
+
+body.has-fs-modal {
+	overflow: hidden;
+}

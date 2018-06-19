@@ -1,0 +1,449 @@
+@import "../start";
+
+#fs_addons
+{
+    .fs-cards-list
+    {
+        list-style: none;
+
+        .fs-card
+        {
+            float:      left;
+            //            height: 185px; // With reviews/ratings
+            height:     152px;
+            width:      310px;
+            padding:    0;
+            margin:     0 0 30px 30px;
+            font-size:  14px;
+            list-style: none;
+            border:     1px solid #ddd;
+            cursor:     pointer;
+            position:   relative;
+
+            .fs-overlay
+            {
+                position: absolute;
+                left:     0;
+                right:    0;
+                bottom:   0;
+                top:      0;
+                z-index:  9;
+            }
+
+            .fs-inner
+            {
+                background-color: #fff;
+                overflow:         hidden;
+                height:           100%;
+                position:         relative;
+
+                ul
+                {
+                    @include transition(all, 0.15s);
+                    left:     0;
+                    right:    0;
+                    top:      0;
+                    position: absolute;
+                }
+
+                li
+                {
+                    list-style:  none;
+                    line-height: 18px;
+                    padding:     0 15px;
+                    width:       100%;
+                    display:     block;
+                    @include box-sizing(border-box);
+                }
+
+                .fs-card-banner
+                {
+                    padding:           0;
+                    margin:            0;
+                    line-height:       0;
+                    display:           block;
+                    height:            100px;
+                    background-repeat: repeat-x;
+                    background-size:   100% 100%;
+                    @include transition(all, 0.15s);
+                }
+
+                .fs-title
+                {
+                    margin:        10px 0 0 0;
+                    height:        18px;
+                    overflow:      hidden;
+                    color:         #000;
+                    white-space:   nowrap;
+                    text-overflow: ellipsis;
+                    font-weight:   bold;
+                }
+
+                .fs-offer
+                {
+                    font-size: 0.9em;
+                }
+
+                .fs-description
+                {
+                    background-color: #f9f9f9;
+                    padding:          10px 15px 100px 15px;
+                    border-top:       1px solid #eee;
+                    margin:           0 0 10px 0;
+                    color:            #777;
+                }
+
+                .fs-tag
+                {
+                    position: absolute;
+                    top: 10px;
+                    right: 0px;
+                    background: greenyellow;
+                    display: block;
+                    padding: 2px 10px;
+                    @include box-shadow(1px 1px 1px rgba(0,0,0,0.3));
+                    text-transform: uppercase;
+                    font-size: 0.9em;
+                    font-weight: bold;
+                }
+
+                .fs-cta
+                {
+                    .button
+                    {
+                        position: absolute;
+                        top: 112px;
+                        right: 10px;
+                    }
+                }
+            }
+
+            @media screen and (min-width: 960px) {
+                &:hover
+                {
+                    .fs-overlay
+                    {
+                        border:      2px solid $fms-link-color;
+                        margin-left: -1px;
+                        margin-top:  -1px;
+                    }
+
+                    .fs-inner
+                    {
+                        ul
+                        {
+                            top: -100px;
+                        }
+
+                        .fs-card-banner
+                        {
+                            //                        background-position: 50% -100px;
+                        }
+
+                        .fs-title,
+                        .fs-offer
+                        {
+                            color: $fms-link-color;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+#TB_window
+{
+    &, iframe
+    {
+        width: 772px !important;
+    }
+}
+
+#plugin-information
+{
+    #section-description
+    {
+        h2, h3, p, b, i, blockquote, li, ul, ol
+        {
+            clear: none;
+        }
+
+        .fs-selling-points
+        {
+            padding-bottom: 10px;
+            border-bottom:  1px solid #ddd;
+
+            ul
+            {
+                margin: 0;
+
+                li
+                {
+                    padding:    0;
+                    list-style: none outside none;
+
+                    i.dashicons
+                    {
+                        color:          $fs-logo-green-color;
+                        font-size:      3em;
+                        vertical-align: middle;
+                        line-height:    30px;
+                        float:          left;
+                        margin:         0 0 0 -15px;
+                    }
+
+                    h3
+                    {
+                        margin: 1em 30px !important;
+                    }
+                }
+            }
+        }
+
+        .fs-screenshots
+        {
+            @include clearfix();
+            ul
+            {
+                list-style: none;
+                margin:     0;
+
+                li
+                {
+                    width:         225px;
+                    height:        225px;
+                    float:         left;
+                    margin-bottom: 20px;
+                    @include box-sizing(content-box);
+
+                    a
+                    {
+                        display:         block;
+                        width:           100%;
+                        height:          100%;
+                        border:          1px solid;
+                        @include box-shadow(1px 1px 1px rgba(0, 0, 0, 0.2));
+                        background-size: cover;
+                    }
+
+                    &.odd
+                    {
+                        margin-right: 20px;
+                    }
+                }
+            }
+        }
+    }
+
+    .plugin-information-pricing
+    {
+        $pricing_color: #FFFEEC;
+        $borders_color: #DDD;
+        margin:        -16px;
+        //        padding: 20px;
+        border-bottom: 1px solid $borders_color;
+
+        .fs-plan
+        {
+
+            h3
+            {
+                margin-top: 0;
+                padding:    20px;
+                font-size:  16px;
+            }
+
+            .nav-tab-wrapper
+            {
+                border-bottom: 1px solid $borders_color;
+
+                .nav-tab
+                {
+                    cursor:    pointer;
+                    position:  relative;
+                    padding:   0 10px;
+                    font-size: 0.9em;
+
+                    label
+                    {
+                        text-transform: uppercase;
+                        color:          green;
+                        background:     greenyellow;
+                        position:       absolute;
+                        left:           -1px;
+                        right:          -1px;
+                        bottom:         100%;
+                        border:         1px solid darkgreen;
+                        padding:        2px;
+                        text-align:     center;
+                        font-size:      0.9em;
+                        line-height:    1em;
+                    }
+
+                    &.nav-tab-active
+                    {
+                        cursor:              default;
+                        background:          $pricing_color;
+                        border-bottom-color: $pricing_color;
+                    }
+                }
+            }
+
+            &.fs-single-cycle
+            {
+                h3
+                {
+                    background:     $pricing_color;
+                    margin:         0;
+                    padding-bottom: 0;
+                    color:          #0073aa;
+                }
+
+                .nav-tab-wrapper,
+                .fs-billing-frequency
+                {
+                    display: none;
+                }
+            }
+
+            .fs-pricing-body
+            {
+                background: $pricing_color;
+                padding:    20px;
+            }
+
+            .button
+            {
+                width:          100%;
+                text-align:     center;
+                font-weight:    bold;
+                text-transform: uppercase;
+                font-size:      1.1em;
+            }
+
+            label
+            {
+                white-space: nowrap;
+            }
+
+            var {
+                font-style: normal;
+            }
+
+            .fs-billing-frequency,
+            .fs-annual-discount
+            {
+                text-align: center;
+                display: block;
+                font-weight: bold;
+                margin-bottom: 10px;
+                text-transform: uppercase;
+                background: #F3F3F3;
+                padding: 2px;
+                border: 1px solid #ccc;
+            }
+
+            .fs-annual-discount
+            {
+                text-transform: none;
+                color:          green;
+                background:     greenyellow;
+            }
+
+            ul.fs-trial-terms
+            {
+                font-size: 0.9em;
+
+                i
+                {
+                    float:  left;
+                    margin: 0 0 0 -15px;
+                }
+
+                li
+                {
+                    margin: 10px 0 0 0;
+                }
+            }
+        }
+    }
+
+    #section-features
+    {
+        .fs-features
+        {
+            margin: -20px -26px;
+        }
+
+        table
+        {
+            width:           100%;
+            border-spacing:  0;
+            border-collapse: separate;
+
+            thead
+            {
+                th
+                {
+                    padding: 10px 0;
+                }
+
+                .fs-price
+                {
+                    color:       $fs-logo-green-color;
+                    font-weight: normal;
+                    display:     block;
+                    text-align:  center;
+                }
+            }
+
+            tbody
+            {
+                td
+                {
+                    border-top: 1px solid #ccc;
+                    padding:    10px 0;
+                    text-align: center;
+                    width:      100px;
+                    color:      $fs-logo-green-color;
+
+                    &:first-child
+                    {
+                        text-align:   left;
+                        width:        auto;
+                        color:        inherit;
+                        padding-left: 26px;
+                    }
+                }
+                tr.fs-odd
+                {
+                    td
+                    {
+                        background: #fefefe;
+                    }
+                }
+            }
+        }
+
+        .dashicons-yes
+        {
+            width:     30px;
+            height:    30px;
+            font-size: 30px;
+        }
+    }
+}
+
+@media screen and (max-width: 961px) {
+    #fs_addons
+    {
+        .fs-cards-list
+        {
+            .fs-card
+            {
+                height: 265px;
+            }
+        }
+    }
+}
