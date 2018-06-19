@@ -35,7 +35,15 @@ pwd
 # install default
 wp --allow-root core install --url="$containerIP" --title='wp plugindev' --admin_user=admin --admin_password=admin --admin_email=leonstafford@protonmail.com --skip-email
 
-. /sync_sources.sh
+echo 'env var'
+echo "${INSTALL_PLUGIN_FROM_SOURCES}"
+
+if [ -z "${INSTALL_PLUGIN_FROM_SOURCES}" ]; then 
+	echo "Launching without any plugin files synced"; 
+else 
+	. /sync_sources.sh
+fi
+
 
 # sh: 1: -t: not found
 # error around here
@@ -47,7 +55,11 @@ wp --allow-root config set WP_FS__static-html-output-plugin_SECRET_KEY $FREEMIUM
 wp --allow-root config set WP_FS__SKIP_EMAIL_ACTIVATION true --type=constant --raw 
 
 # activate wp static output plugin
-wp --allow-root plugin activate wordpress-static-html-output
+if [ -z "${INSTALL_PLUGIN_FROM_SOURCES}" ]; then 
+	echo "NOT installing plugin from sources"; 
+else 
+	wp --allow-root plugin activate wordpress-static-html-output
+fi
 
 # import plugin needed for demo site content
 wp --allow-root plugin install wordpress-importer --activate
