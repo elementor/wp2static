@@ -40,7 +40,7 @@ function wpsho_fr() {
             ),
             // Set the SDK to work in a sandbox mode (for development & testing).
             // IMPORTANT: MAKE SURE TO REMOVE SECRET KEY BEFORE DEPLOYMENT.
-//            'secret_key'          => getenv('FREEMIUM_SECRET_KEY'),
+            //'secret_key'          => getenv('FREEMIUM_SECRET_KEY'),
         ) );
     }
 
