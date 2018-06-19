@@ -138,7 +138,7 @@ class StaticHtmlOutput {
 		} 
 
 		// override if user has specified it in the UI
-		if ( !empty(filter_input(INPUT_POST, 'outputDirectory')) ) {
+		if ( ! filter_input(INPUT_POST, 'outputDirectory' ) ) {
 			$outputDir = filter_input(INPUT_POST, 'outputDirectory');
 		} 
 
