@@ -12,17 +12,14 @@
  * @package     WP_Static_HTML_Output
  */
 
-// Create a helper function for easy SDK access.
 function wpsho_fr() {
     global $wpsho_fr;
 
     if ( ! isset( $wpsho_fr ) ) {
-        // Activate multisite network integration.
         if ( ! defined( 'WP_FS__PRODUCT_2226_MULTISITE' ) ) {
             define( 'WP_FS__PRODUCT_2226_MULTISITE', true );
         }
 
-        // Include Freemius SDK.
         require_once dirname(__FILE__) . '/freemius/start.php';
 
         $wpsho_fr = fs_dynamic_init( array(
@@ -30,9 +27,11 @@ function wpsho_fr() {
             'slug'                => 'static-html-output-plugin',
             'type'                => 'plugin',
             'public_key'          => 'pk_8874b676a9189a1b13450673a921f',
-            'is_premium'          => false,
+            'is_premium'          => true,
+            // If your plugin is a serviceware, set this option to false.
+            'has_premium_version' => true,
             'has_addons'          => false,
-            'has_paid_plans'      => false,
+            'has_paid_plans'      => true,
             'menu'                => array(
                 'slug'           => 'wp-static-html-output-options',
                 'parent'         => array(
@@ -45,7 +44,9 @@ function wpsho_fr() {
     return $wpsho_fr;
 }
 
+// Init Freemius.
 wpsho_fr();
+// Signal that SDK was initiated.
 do_action( 'wpsho_fr_loaded' );
 
 
