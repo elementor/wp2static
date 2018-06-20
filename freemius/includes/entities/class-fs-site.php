@@ -111,6 +111,7 @@
 
             if ( is_object( $site ) ) {
                 $this->plan_id = $site->plan_id;
+                //$this->plan_id = 3369;
             }
 
             if ( ! is_bool( $this->is_disconnected ) ) {
