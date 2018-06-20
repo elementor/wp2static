@@ -35,9 +35,6 @@ pwd
 # install default
 wp --allow-root core install --url="$containerIP" --title='wp plugindev' --admin_user=admin --admin_password=admin --admin_email=leonstafford@protonmail.com --skip-email
 
-echo 'env var'
-echo "${INSTALL_PLUGIN_FROM_SOURCES}"
-
 if [ -z "${INSTALL_PLUGIN_FROM_SOURCES}" ]; then 
 	echo "Launching without any plugin files synced"; 
 else 
@@ -70,6 +67,13 @@ wp --allow-root language core install ja
 
 # delete hello world post
 wp --allow-root post delete 1 --force
+# delete sample page
+wp --allow-root post delete 2 --force
+# delete privacy policy page
+wp --allow-root post delete 3 --force
+
+# set uploads dir not to organise by year month day
+wp --allow-root db query "update wp_options set option_value = 0 where option_name = 'uploads_use_yearmonth_folders';"
 
 # import demo content media before post import
 wp --allow-root media import /app/demo_site_content/images/*.png
