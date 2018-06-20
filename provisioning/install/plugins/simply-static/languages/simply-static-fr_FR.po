@@ -1,0 +1,453 @@
+# Copyright (C) 2016 Code of Conduct
+# This file is distributed under the GPL-2.0+.
+msgid ""
+msgstr ""
+"Project-Id-Version: Simply Static 1.3.5\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/simply-static\n"
+"POT-Creation-Date: 2016-04-19 21:23:17+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2016-04-20 16:48+0100\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Tips02 <translate@tips02.fr>\n"
+"X-Generator: Poedit 1.5.7\n"
+"X-Poedit-KeywordsList: __;_e;_x:1,2c;_ex:1,2c;_n:1,2;_nx:1,2,4c;_n_noop:1,2;"
+"_nx_noop:1,2,3c;esc_attr__;esc_html__;esc_attr_e;esc_html_e;esc_attr_x:1,2c;"
+"esc_html_x:1,2c\n"
+"Language: fr\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-Basepath: ../\n"
+"X-Textdomain-Support: yes\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: includes/class-simply-static-archive-creator.php:232
+msgid "Unable to create ZIP archive"
+msgstr "Impossible de créer l'archive ZIP"
+
+#: includes/class-simply-static-archive-creator.php:295
+#: includes/class-simply-static-archive-creator.php:302
+msgid "Could not delete temporary file or directory: %s"
+msgstr "Impossible de supprimer les fichiers temporaires ou le répertoire : %s"
+
+#: includes/class-simply-static-archive-manager.php:105
+msgid "An unknown error has occurred"
+msgstr "Une erreur inconnue est survenue"
+
+#: includes/class-simply-static-archive-manager.php:280
+msgid "Setting up"
+msgstr "Mise en place"
+
+#: includes/class-simply-static-archive-manager.php:320
+msgid "Fetched %d of %d pages/files"
+msgstr "%d pages/fichiers sur %d générés"
+
+#: includes/class-simply-static-archive-manager.php:349
+msgid "ZIP archive created: "
+msgstr "Archive ZIP créée : "
+
+#: includes/class-simply-static-archive-manager.php:350
+msgid "Click here to download"
+msgstr "Cliquez-ici pour la télécharger"
+
+#: includes/class-simply-static-archive-manager.php:362
+msgid "Copied %d of %d files"
+msgstr "%d fichiers sur %d copiés"
+
+#: includes/class-simply-static-archive-manager.php:381
+msgid "Wrapping up"
+msgstr "Fin du processus"
+
+#: includes/class-simply-static-archive-manager.php:408
+msgid "Done! Finished in %s"
+msgstr "Effectué ! Fini en %s"
+
+#: includes/class-simply-static-archive-manager.php:418
+msgid "Cancelled"
+msgstr "Annulé"
+
+#: includes/class-simply-static-archive-manager.php:438
+msgid "Error: %s"
+msgstr "Erreur : %s"
+
+#: includes/class-simply-static-url-fetcher.php:22
+msgid "Attempting to fetch remote URL: %s"
+msgstr "Tentative de parcours de l'URL distante : %s"
+
+#: includes/class-simply-static-view.php:132
+msgid "Can't find view template: %s"
+msgstr "Ne peut trouver le modèle de vue : %s"
+
+#: includes/class-simply-static-view.php:138
+msgid "Can't find view layout: %s"
+msgstr "Ne peut trouver la mise en page : %s"
+
+#: includes/class-simply-static.php:198 includes/class-simply-static.php:217
+msgid "Simply Static Settings"
+msgstr "Paramètres Simply Static"
+
+#. Plugin Name of the plugin/theme
+msgid "Simply Static"
+msgstr ""
+
+#: includes/class-simply-static.php:208
+msgid "Generate Static Site"
+msgstr "Générer le Site Statique"
+
+#: includes/class-simply-static.php:209
+msgid "Generate"
+msgstr "Générer"
+
+#: includes/class-simply-static.php:218
+msgid "Settings"
+msgstr "Paramètres"
+
+#: includes/class-simply-static.php:318
+msgid "Settings saved."
+msgstr "Paramètres sauvegardés."
+
+#: includes/class-simply-static.php:378
+msgid "Destination URL cannot be blank"
+msgstr "Le répertoire de destination ne peut être vide"
+
+#: includes/class-simply-static.php:383
+msgid "Temporary Files Directory cannot be blank"
+msgstr "Le répertoire temporaire ne peut être vide"
+
+#: includes/class-simply-static.php:387
+msgid "Temporary Files Directory is not writeable: %s"
+msgstr "Impossible d'écrire dans le répertoire des fichiers : %s"
+
+#: includes/class-simply-static.php:390
+msgid "Temporary Files Directory does not exist: %s"
+msgstr "Le répertoire temporaire n'existe pas : %s"
+
+#: includes/class-simply-static.php:396
+msgid ""
+"Your site does not have a permalink structure set. You can select one on <a "
+"href='%s'>the Permalink Settings page</a>."
+msgstr ""
+"Votre site n'a pas la structure des permaliens activée. Vous pouvez en "
+"sélectionner une sur <a href='%s'>la page des paramètres des Permaliens</a>."
+
+#: includes/class-simply-static.php:401
+msgid ""
+"Your server does not have the PHP zip extension enabled. Please visit <a "
+"href='http://www.php.net/manual/en/book.zip.php'>the PHP zip extension page</"
+"a> for more information on how to enable it."
+msgstr ""
+"Votre serveur n'a pas l'extension PHP zip activé. Rendez vous sur <a "
+"href='http://www.php.net/manual/en/book.zip.php'>la page PHP de l'extension "
+"zip</a> pour plus d'information pour l'activer."
+
+#: includes/class-simply-static.php:409
+msgid "Local Directory cannot be blank"
+msgstr "Le répertoire local ne peut pas être vide"
+
+#: includes/class-simply-static.php:413
+msgid "Local Directory is not writeable: %s"
+msgstr "Il n'est pas possible d'écrire dans le répertoire local : %s"
+
+#: includes/class-simply-static.php:416
+msgid "Local Directory does not exist: %s"
+msgstr "Le répertoire local n'existe pas : %s"
+
+#: includes/class-simply-static.php:424
+msgid "An Additional URL does not start with <code>%s</code>: %s"
+msgstr "Une URL additionnelle ne commence pas par <code>%s</code>: %s"
+
+#: includes/class-simply-static.php:433
+msgid ""
+"An Additional File or Directory is not located within an expected directory: "
+"%s<br />It should be in one of these directories (or a subdirectory):<br  /"
+"><code>%s</code><br /> <code>%s</code><br /> <code>%s</code>"
+msgstr ""
+"Un fichier ou un répertoire additionnel ne peut être localisé dans le "
+"répertoire attendu : %s<br/>Cela pourrait être un de ces répertoires  (ou "
+"sous-répertoire) : <br/><code>%s</code><br /> <code>%s</code><br /> <code>"
+"%s</code>"
+
+#: views/_export_log.php:8
+msgid "Code"
+msgstr ""
+
+#: views/_export_log.php:9
+msgid "URL"
+msgstr ""
+
+#: views/_export_log.php:10
+msgid "Found on"
+msgstr "Trouvé sur"
+
+#: views/_export_log.php:12
+msgid "Errors (%d)"
+msgstr "Erreurs (%d)"
+
+#: views/_export_log.php:61
+msgid "1xx Informational:"
+msgstr "1xx Informationnel :"
+
+#: views/_export_log.php:62
+msgid "2xx Success:"
+msgstr "2xx Succès :"
+
+#: views/_export_log.php:63
+msgid "3xx Redirection:"
+msgstr "3xx Redirection :"
+
+#: views/_export_log.php:64
+msgid "4xx Client Error:"
+msgstr "4xx Erreur Client :"
+
+#: views/_export_log.php:65
+msgid "5xx Server Error:"
+msgstr "5xx Erruer Serveur :"
+
+#: views/_export_log.php:66
+msgid ""
+"More information on HTTP status codes is available on <a "
+"href='%s'>Wikipedia</a>."
+msgstr ""
+"Plus d'infos sur les codes de statuts HTTP disponibles sur <a "
+"href='%s'>Wikipedia</a>."
+
+#: views/generate.php:7
+msgid "Simply Static &rsaquo; Generate"
+msgstr "Simply Static &rsaquo; Générer"
+
+#: views/generate.php:15
+msgid ""
+"Uh oh, we've found an issue that prevents us from creating a static copy of "
+"your site."
+msgstr ""
+"Oups, nous avons eu un problème qui nous a empêché de créer une copie "
+"statique de votre site."
+
+#: views/generate.php:19
+msgid "Generate Static Files"
+msgstr "Générer les Fichiers Statiques"
+
+#: views/generate.php:21
+msgid "Pause"
+msgstr ""
+
+#: views/generate.php:23
+msgid "Resume"
+msgstr "Reprendre"
+
+#: views/generate.php:25
+msgid "Cancel"
+msgstr "Annuler"
+
+#: views/generate.php:30
+msgid "Activity Log"
+msgstr "Journal d'activité"
+
+#: views/generate.php:35
+msgid "Export Log"
+msgstr "Exporter le Journal"
+
+#: views/layouts/admin.php:26
+msgid "Like this plugin?"
+msgstr "Vous aimez ce plugin ?"
+
+#: views/layouts/admin.php:29
+msgid ""
+"Join the mailing list to be notified when new features and plugins are "
+"released."
+msgstr ""
+"Rejoignez la mailing list pour être informé des nouvelles fonctionnalités et "
+"versions du plugin."
+
+#: views/layouts/admin.php:35
+msgid "email address"
+msgstr "Adresse email"
+
+#: views/layouts/admin.php:38
+msgid "Subscribe"
+msgstr "S'inscrire"
+
+#: views/redirect.php:4
+msgid "Redirecting..."
+msgstr "Redirection..."
+
+#: views/settings.php:7
+msgid "Simply Static &rsaquo; Settings"
+msgstr "Simply Static &rsaquo; Paramètres "
+
+#: views/settings.php:17
+msgid "General"
+msgstr "Général"
+
+#: views/settings.php:18
+msgid "Advanced"
+msgstr "Avancé"
+
+#: views/settings.php:27
+msgid "Origin URL"
+msgstr "URL d'origine"
+
+#: views/settings.php:34
+msgid ""
+"This is the URL of your WordPress installation. You can edit the URL on <a "
+"href='%s'>the General Settings page</a>."
+msgstr ""
+"Ceci est l'URL de votre installation WordPress. Vous pouvez éditer l'URL sur "
+"la page des <a href='%s'>Paramètres généraux</a>."
+
+#: views/settings.php:39
+msgid "Destination URL"
+msgstr "URL de Destination"
+
+#: views/settings.php:47
+msgid ""
+"This is the URL where your static site will live. When generating your "
+"static site, all links to the Origin URL will be replaced with the "
+"Destination URL."
+msgstr ""
+"Ceci est l'URL où se trouve votre site statique. Quand vous générez votre "
+"site statique, tous les liens de l'URL d'Origine seront remplacés par ceux "
+"de l'URL de Destination."
+
+#: views/settings.php:52
+msgid "Delivery Method"
+msgstr "Méthode utilisée"
+
+#: views/settings.php:55
+msgid "ZIP Archive"
+msgstr "Archive ZIP"
+
+#: views/settings.php:56 views/settings.php:74
+msgid "Local Directory"
+msgstr "Répertoire local"
+
+#: views/settings.php:63
+msgid ""
+"Saving your static files to a ZIP archive is Simply Static's default "
+"delivery method. After generating your static files you will be prompted to "
+"download the ZIP archive."
+msgstr ""
+"La sauvegarde de vos fichiers dans une archive ZIP est la méthode par défaut "
+"de Simply Static. Après avoir généré vos fichiers statiques il vous sera "
+"demandé de télécharger l'archive ZIP."
+
+#: views/settings.php:69
+msgid ""
+"Saving your static files to a local directory is useful if you want to serve "
+"your static files from the same server as your WordPress installation. "
+"WordPress can live on a subdomain (e.g. wordpress.example.com) while your "
+"static files are served from your primary domain (e.g. www.example.com)."
+msgstr ""
+"Sauver vos fichiers dans un répertoire local est pratique si vous souhaitez "
+"servir vos fichiers statiques depuis le même serveur que votre installation. "
+"WordPress peut être installé sur un sous-domaine (ex : wordpress.exemple.fr) "
+"tandis que vos fichiers statiques sont servis depuis votre domaine principal "
+"(ex : www.exemple.fr)."
+
+#: views/settings.php:79
+msgid ""
+"This is the directory where your static files will be saved. The directory "
+"must exist and be writeable by the webserver."
+msgstr ""
+"Ceci est le répertoire où vos fichiers seront sauvegardés. Le répertoire "
+"doit exister et il doit être possible d'y écrire depuis le serveur web."
+
+#: views/settings.php:86 views/settings.php:151
+msgid "Save Changes"
+msgstr "Sauvegarder les changements"
+
+#: views/settings.php:100
+msgid "Temporary Files Directory"
+msgstr "Répertoire temporaire des fichiers"
+
+#: views/settings.php:105
+msgid ""
+"Your static files (and ZIP archives, if generated) are temporarily saved to "
+"this directory. This directory must exist and be writeable."
+msgstr ""
+"Vos fichiers statiques (et archives ZIP, si générées) sont sauvegardés "
+"temporairement dans ce répertoire. Ce dossier doit exister et il doit être "
+"possible d'y écrire depuis le serveur web."
+
+#: views/settings.php:113
+msgid "Delete temporary files"
+msgstr "Effacer les fichiers temporaires"
+
+#: views/settings.php:116
+msgid ""
+"Static files are temporarily saved to the directory above before being "
+"copied to their destination. These files can be deleted after the copy "
+"process, or you can keep them as a backup."
+msgstr ""
+"Les fichiers temporaires seront sauvegardés dans le répertoire ci-dessus "
+"avant d'être copiés vers leur destination. Ces fichiers peuvent être effacés "
+"après la procédure de copie, ou vous pouvez les conserver comme une copie de "
+"secours."
+
+#: views/settings.php:122
+msgid "Additional URLs"
+msgstr "URLs additionnelles"
+
+#: views/settings.php:127
+msgid ""
+"Simply Static will create a static copy of any page it can find a link to, "
+"starting at %s. If you want to create static copies of pages or files that "
+"<em>aren't</em> linked to, add the URLs here (one per line). Examples: <code>"
+"%s</code> or <code>%s</code>"
+msgstr ""
+"Simply Static créera une copie statique de toute page liée qu'il trouvera, "
+"commençant par %s. Si vous souhaitez créer une copie statique de pages ou "
+"fichiers qui <em>ne sont pas</em> liés, ajoutez leurs URLs ici (une par "
+"ligne). Exemples : <code>%s</code> ou <code>%s</code>"
+
+#: views/settings.php:129
+msgid "/hidden-page"
+msgstr "/page-non-liee"
+
+#: views/settings.php:130
+msgid "/images/secret.jpg"
+msgstr ""
+
+#: views/settings.php:136
+msgid "Additional Files and Directories"
+msgstr "Fichiers et Répertoires additionnels"
+
+#: views/settings.php:141
+msgid ""
+"Sometimes you may want to include additional files (such as files referenced "
+"via AJAX) or directories. Add the paths to those files or directories here "
+"(one per line). Examples: <code>%s</code> or <code>%s</code>"
+msgstr ""
+"Parfois vous pouvez vouloir inclure des fichiers additionnels (comme des "
+"fichiers référencés par AJAX) ou des répertoires. Ajoutez les chemins vers "
+"ces fichiers ou répertoires (un par ligne). Exemples : <code>%s</code> ou "
+"<code>%s</code>"
+
+#: views/settings.php:142
+msgid "additional-directory"
+msgstr "repertoire-additionnel"
+
+#: views/settings.php:143
+msgid "fancy.pdf"
+msgstr "chic.pdf"
+
+#. Plugin URI of the plugin/theme
+msgid "http://codeofconduct.co/simply-static"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"Produces a static HTML version of your WordPress install and adjusts URLs "
+"accordingly."
+msgstr ""
+"Produit une version HTML statique de votre installation WordPress et ajuste "
+"les URLs en conséquence."
+
+#. Author of the plugin/theme
+msgid "Code of Conduct"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "http://codeofconduct.co/"
+msgstr ""
