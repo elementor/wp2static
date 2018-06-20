@@ -82,6 +82,9 @@ wp --allow-root media import /app/demo_site_content/images/*.jpg
 wp --allow-root import /app/demo_site_content/wp_static_demo_content.xml --authors=create
 
 
+# import data used for testing
+cp /test_data/1px_yellow_background.png /var/www/html/wp-content/themes/twentyseventeen/
+
 # OPTIONAL: install latest static plugin from WP plugins site vs local src
 #wp --allow-root plugin install static-html-output-plugin --activate
 
