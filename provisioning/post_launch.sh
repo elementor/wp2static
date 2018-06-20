@@ -58,12 +58,18 @@ else
 	wp --allow-root plugin activate wordpress-static-html-output
 fi
 
-# import plugin needed for demo site content
-wp --allow-root plugin install wordpress-importer --activate
+# ensure additional plugin dirs are at correct permissions before activating
+chown -R www-data:www-data wp-content/uploads
+
+# OPTIONAL: install convenience / common plugins here
+wp --allow-root plugin activate wp-crontrol 
+#wp --allow-root plugin activate simply-static  
+wp --allow-root plugin activate wordpress-importer 
+#wp --allow-root plugin activate debug-bar  
 
 # install supported languages
-wp --allow-root language core install es_ES
-wp --allow-root language core install ja
+#wp --allow-root language core install es_ES
+#wp --allow-root language core install ja
 
 # delete hello world post
 wp --allow-root post delete 1 --force
@@ -88,12 +94,6 @@ cp /test_data/1px_yellow_background.png /var/www/html/wp-content/themes/twentyse
 # OPTIONAL: install latest static plugin from WP plugins site vs local src
 #wp --allow-root plugin install static-html-output-plugin --activate
 
-# OPTIONAL: install convenience / common plugins here
-wp --allow-root plugin install wp-crontrol --activate # look into WP Cron
-
-wp --allow-root plugin install simply-static --activate # look into WP Cron
-
-wp --allow-root plugin install debug-bar # --activate # look into WP Cron
 
 
 

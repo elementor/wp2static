@@ -1,0 +1,212 @@
+#sistContainer {
+	/*margin-right: 310px;*/
+}
+
+#sistContainer #sistContent {
+	width: 100%;
+	float: left;
+	max-width: calc( 100% - 300px );
+}
+
+#sistContainer #sistSidebar {
+	float: left;
+	width: 280px;
+}
+
+/* Generate page */
+
+#sistContainer #activityLog {
+	border: 1px solid #000;
+	background-color: #EFF;
+	color: #000;
+	display: block;
+	height: 100px;
+	overflow: auto;
+	padding: 5px;
+}
+
+#sistContainer #activityLog .error-state {
+	color: #dc143c;
+}
+
+#sistContainer .spinner {
+	float: none;
+}
+
+#sistContainer .actions .spinner {
+	margin-top: 12px;
+}
+
+/* Adding this to ensure table fits within parent div */
+#sistContainer #exportLog table {
+	word-break: break-all;
+}
+
+#sistContainer #exportLog td.status-code {
+	min-width: 35px;
+}
+
+#sistContainer #exportLog td.status-code.unprocessable {
+	font-weight: bold;
+	color: #000;
+}
+
+#sistContainer .hide {
+	display: none;
+}
+
+#sistContainer .button.button-destroy {
+	color: #fff;
+    background-color: #c9302c;
+    border-color: #ac2925;
+}
+
+#sistContainer .button.button-destroy:hover {
+	background-color: #d9534f;
+	border-color: #d43f3a;
+}
+
+#sistContainer .tablenav .page-numbers {
+	padding: 6px 4px;
+	font-size: 13px;
+}
+
+#sistContainer .tablenav .page-numbers.prev, #sistContainer .tablenav .page-numbers.next {
+	padding: 3px 4px 6px;
+	font-size: 16px;
+}
+
+#sistContainer .tablenav .page-numbers.current {
+	display: inline-block;
+	min-width: 17px;
+	border: 1px solid #ccc;
+	padding: 6px 4px;
+	background: #e5e5e5;
+	font-size: 13px;
+	line-height: 1;
+	font-weight: 400;
+	text-align: center;
+}
+
+#sistContainer .tablenav .http-status {
+	margin-top: 3px;
+	line-height: 1.4em;
+}
+
+/* Settings page */
+
+#sistContainer .tab-pane, tr.delivery-method {
+	display: none;
+}
+
+#sistContainer .tab-pane.active, tr.delivery-method.active {
+	display: table-row;
+}
+
+#sistContainer select:disabled, select.disabled {
+	border-color: rgba(222,222,222,.75);
+	background: rgba(255,255,255,.5);
+	color: rgba(51,51,51,.5);
+}
+
+#sistContainer .help-block {
+	display: block;
+	margin-top: 5px;
+	margin-bottom: 10px;
+	color: #737373;
+}
+
+#sistContainer .scheme-entry {
+	height: 28px;
+	margin-right: 0;
+	vertical-align: bottom;
+	border-right: 0;
+}
+
+#sistContainer .host-entry {
+	height: 28px;
+	width: 300px;
+	margin-left: 0;
+	padding: 2px 5px;
+	vertical-align: bottom;
+}
+
+#sistContainer .url-dest-option {
+	border: 1px solid #f1f1f1;
+	display: table;
+	cursor: pointer;
+	width: 100%;
+}
+
+#sistContainer .url-dest-option:hover {
+	background-color: #ececec;
+	border: 1px solid #ddd;
+}
+
+#sistContainer .url-dest-option.active {
+	background-color: #e5e5e5;
+	border: 1px solid #ccc;
+}
+
+#sistContainer .url-dest-option > span {
+	display: table-cell;
+	vertical-align: middle;
+	padding: 15px 9px;
+}
+
+#sistContainer .url-dest-option > span:first-child {
+	width: 10px;
+}
+
+#sistContainer #excludableUrlRowTemplate {
+	display: none;
+}
+
+#sistContainer .excludable-url-row input[type='checkbox'],
+#sistContainer .excludable-url-row .button {
+	margin-left: 10px;
+}
+
+/* Diagnostics page */
+
+#sistContainer #diagnosticsPage table.striped {
+	margin-bottom: 20px;
+}
+
+#sistContainer #diagnosticsPage td.label {
+	width: 75%;
+}
+
+#sistContainer #diagnosticsPage td.test.success, #sistContainer #diagnosticsPage td.enabled {
+	font-weight: bold;
+	width: 25%;
+	color: #008000;
+}
+
+#sistContainer #diagnosticsPage td.test.success::before {
+	content: "\2713  ";
+}
+
+#sistContainer #diagnosticsPage td.test.error {
+	font-weight: bold;
+	width: 25%;
+	color: #dc143c;
+}
+
+#sistContainer #diagnosticsPage td.disabled {
+	width: 25%;
+}
+
+#sistContainer #diagnosticsPage td.test.error::before {
+	content: "\2717  ";
+}
+
+/* Mailchimp Form CSS */
+
+/* Mailchimp original CSS at:
+   http://cdn-images.mailchimp.com/embedcode/slim-081711.css
+*/
+#sistContainer #mc_embed_signup input {border:1px solid #999; -webkit-appearance:none;}
+#sistContainer #mc_embed_signup input:focus {border-color:#333;}
+#sistContainer #mc_embed_signup .clear {clear:none; display:inline;}
+#sistContainer #mc_embed_signup input.email {display:block; padding:8px 0; margin:0 4% 10px 0; text-indent:5px; width:58%; min-width:130px; width:100%;}
