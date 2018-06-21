@@ -730,6 +730,22 @@ http://172.17.0.3/my_pricelist.pdf</pre>
 		<br>
 		<b><?php echo '/' . WPINC; ?></b> will be re-written to <b class="base_url_preview"></b> <input name="rewriteWPINC" class="regular-text rewrite" id="rewriteWPINC" value="<?php echo esc_attr($this->rewriteWPINC) ?>" placeholder="<?php echo __('inc', 'static-html-output-plugin');?>" />
 
+		<br>
+		<br>
+		<strong><label><?php echo __('Scheduled / programmatic exports via WP-Cron', 'static-html-output-plugin');?></label></strong>
+		<p>Using the <a href="https://wordpress.org/plugins/wp-crontrol/" target="_blank">WP Crontrol</a> plugin, you can add the following hook to a schedule to trigger an export. This will run your export using the settings you've saved via this screen. Using this method, you can schedule your exports to happen daily or if you're after an on-post publish kind of behaviour, you could set this to every few minutes.</p>
+		<input type="text" style="width:340px;" value="wp_static_html_output_server_side_export_hook" disabled />
+<?php
+	// show upgrade link for those not on professional_edition
+	if ( ! wpsho_fr()->is_plan('professional_edition') ) {
+		 echo '<a href="' . wpsho_fr()->get_upgrade_url() . '">' .
+            __('Upgrade to the Professional Edition for programmatic access', 'static-html-output-plugin') .
+            '</a>';
+	}
+?>
+
+
+		<br>
 
 					<p class="submit">
             <?php wp_nonce_field($this->onceAction) ?>
