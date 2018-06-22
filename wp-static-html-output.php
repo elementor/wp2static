@@ -80,21 +80,25 @@ function plugin_action_links( $links ) {
 	return $links;
 }
 
-/**
- * Allow triggering export via CRON/custom function
- *
- * @since 2.3
- *
- * @return null
- */
-function wp_static_html_output_server_side_export() {
-	$plugin = StaticHtmlOutput::getInstance();
-	$plugin->doExportWithoutGUI();
-	wp_die();
-	return null;
+
+if ( wpsho_fr()->is_plan('professional_edition') ) {
+	/**
+	 * Allow triggering export via CRON/custom function
+	 *
+	 * @since 2.3
+	 *
+	 * @return null
+	 */
+	function wp_static_html_output_server_side_export() {
+		$plugin = StaticHtmlOutput::getInstance();
+		$plugin->doExportWithoutGUI();
+		wp_die();
+		return null;
+	}
+
+	add_action( 'wp_static_html_output_server_side_export_hook', 'wp_static_html_output_server_side_export', 10, 0 );
 }
 
-add_action( 'wp_static_html_output_server_side_export_hook', 'wp_static_html_output_server_side_export', 10, 0 );
 
 /**
  * This hook is called once any activated plugins have been loaded. Is generally used for immediate filter setup, or plugin overrides.

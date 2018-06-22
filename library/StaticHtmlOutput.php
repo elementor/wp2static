@@ -172,128 +172,131 @@ class StaticHtmlOutput {
     }
 
     public function github_finalise_export() {
-		require_once(__DIR__.'/Github/autoload.php');
+		if ( wpsho_fr()->is__premium_only() ) {
+			require_once(__DIR__.'/Github/autoload.php');
 
-        $client = new \Github\Client();
-        $githubRepo = filter_input(INPUT_POST, 'githubRepo');
-        $githubBranch = filter_input(INPUT_POST, 'githubBranch');
-        $githubPersonalAccessToken = filter_input(INPUT_POST, 'githubPersonalAccessToken');
+			$client = new \Github\Client();
+			$githubRepo = filter_input(INPUT_POST, 'githubRepo');
+			$githubBranch = filter_input(INPUT_POST, 'githubBranch');
+			$githubPersonalAccessToken = filter_input(INPUT_POST, 'githubPersonalAccessToken');
 
-        list($githubUser, $githubRepo) = explode('/', $githubRepo);
+			list($githubUser, $githubRepo) = explode('/', $githubRepo);
 
-        $client->authenticate($githubPersonalAccessToken, Github\Client::AUTH_HTTP_TOKEN);
-        $reference = $client->api('gitData')->references()->show($githubUser, $githubRepo, 'heads/' . $githubBranch);
-        $commit = $client->api('gitData')->commits()->show($githubUser, $githubRepo, $reference['object']['sha']);
-        $commitSHA = $commit['sha'];
-        $treeSHA = $commit['tree']['sha'];
-        $treeURL = $commit['tree']['url'];
-        $treeContents = array();
-        $githubGlobHashesAndPaths = $this->uploadsPath() . '/WP-STATIC-EXPORT-GITHUB-GLOBS-PATHS';
-        $contents = file($githubGlobHashesAndPaths);
+			$client->authenticate($githubPersonalAccessToken, Github\Client::AUTH_HTTP_TOKEN);
+			$reference = $client->api('gitData')->references()->show($githubUser, $githubRepo, 'heads/' . $githubBranch);
+			$commit = $client->api('gitData')->commits()->show($githubUser, $githubRepo, $reference['object']['sha']);
+			$commitSHA = $commit['sha'];
+			$treeSHA = $commit['tree']['sha'];
+			$treeURL = $commit['tree']['url'];
+			$treeContents = array();
+			$githubGlobHashesAndPaths = $this->uploadsPath() . '/WP-STATIC-EXPORT-GITHUB-GLOBS-PATHS';
+			$contents = file($githubGlobHashesAndPaths);
 
-        foreach($contents as $line) {
-            list($blobHash, $targetPath) = explode(',', $line);
+			foreach($contents as $line) {
+				list($blobHash, $targetPath) = explode(',', $line);
 
-            $treeContents[] = array(
-                'path' => trim($targetPath),
-                'mode' => '100644',
-                'type' => 'blob',
-                'sha' => $blobHash
-            );
-        }
+				$treeContents[] = array(
+					'path' => trim($targetPath),
+					'mode' => '100644',
+					'type' => 'blob',
+					'sha' => $blobHash
+				);
+			}
 
-        $treeData = array(
-            'base_tree' => $treeSHA,
-            'tree' => $treeContents
-        );
+			$treeData = array(
+				'base_tree' => $treeSHA,
+				'tree' => $treeContents
+			);
 
-        $this->wsLog('GITHUB: Creating tree ...' . PHP_EOL);
-        $this->wsLog('GITHUB: tree data: '. PHP_EOL);
-        #$this->wsLog(print_r($treeData, true) . PHP_EOL);
-        $newTree = $client->api('gitData')->trees()->create($githubUser, $githubRepo, $treeData);
-        $this->wsLog('GITHUB: Tree created');
-        
-        $commitData = array('message' => 'WP Static HTML Export Plugin on ' . date("Y-m-d h:i:s"), 'tree' => $newTree['sha'], 'parents' => array($commitSHA));
-        $this->wsLog('GITHUB: Creating commit ...');
-        $commit = $client->api('gitData')->commits()->create($githubUser, $githubRepo, $commitData);
-        $this->wsLog('GITHUB: Updating head to reference commit ...');
-        $referenceData = array('sha' => $commit['sha'], 'force' => true); //Force is default false
-        try {
-            $reference = $client->api('gitData')->references()->update(
-                    $githubUser,
-                    $githubRepo,
-                    'heads/' . $githubBranch,
-                    $referenceData);
-        } catch (Exception $e) {
-            $this->wsLog($e);
-            throw new Exception($e);
-        }
+			$this->wsLog('GITHUB: Creating tree ...' . PHP_EOL);
+			$this->wsLog('GITHUB: tree data: '. PHP_EOL);
+			#$this->wsLog(print_r($treeData, true) . PHP_EOL);
+			$newTree = $client->api('gitData')->trees()->create($githubUser, $githubRepo, $treeData);
+			$this->wsLog('GITHUB: Tree created');
+			
+			$commitData = array('message' => 'WP Static HTML Export Plugin on ' . date("Y-m-d h:i:s"), 'tree' => $newTree['sha'], 'parents' => array($commitSHA));
+			$this->wsLog('GITHUB: Creating commit ...');
+			$commit = $client->api('gitData')->commits()->create($githubUser, $githubRepo, $commitData);
+			$this->wsLog('GITHUB: Updating head to reference commit ...');
+			$referenceData = array('sha' => $commit['sha'], 'force' => true); //Force is default false
+			try {
+				$reference = $client->api('gitData')->references()->update(
+						$githubUser,
+						$githubRepo,
+						'heads/' . $githubBranch,
+						$referenceData);
+			} catch (Exception $e) {
+				$this->wsLog($e);
+				throw new Exception($e);
+			}
 
-		echo 'SUCCESS';
-
+			echo 'SUCCESS';
+		}
     }
 
 	public function github_upload_blobs() {
-		require_once(__DIR__.'/Github/autoload.php');
+		if ( wpsho_fr()->is__premium_only() ) {
+			require_once(__DIR__.'/Github/autoload.php');
 
-        $client = new \Github\Client();
-        $githubRepo = filter_input(INPUT_POST, 'githubRepo');
-        $githubPersonalAccessToken = filter_input(INPUT_POST, 'githubPersonalAccessToken');
-        list($githubUser, $githubRepo) = explode('/', $githubRepo);
+			$client = new \Github\Client();
+			$githubRepo = filter_input(INPUT_POST, 'githubRepo');
+			$githubPersonalAccessToken = filter_input(INPUT_POST, 'githubPersonalAccessToken');
+			list($githubUser, $githubRepo) = explode('/', $githubRepo);
 
-        $client->authenticate($githubPersonalAccessToken, Github\Client::AUTH_HTTP_TOKEN);
+			$client->authenticate($githubPersonalAccessToken, Github\Client::AUTH_HTTP_TOKEN);
 
-        $_SERVER['githubFilesToExport'] = $this->uploadsPath() . '/WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT';
+			$_SERVER['githubFilesToExport'] = $this->uploadsPath() . '/WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT';
 
-        // grab first line from filelist
-        $githubFilesToExport = $_SERVER['githubFilesToExport'];
-        $f = fopen($githubFilesToExport, 'r');
-        $line = fgets($f);
-        fclose($f);
+			// grab first line from filelist
+			$githubFilesToExport = $_SERVER['githubFilesToExport'];
+			$f = fopen($githubFilesToExport, 'r');
+			$line = fgets($f);
+			fclose($f);
 
-        // TODO: look at these funcs above and below, seems redundant...
+			// TODO: look at these funcs above and below, seems redundant...
 
-        // remove first line from file (disabled while testing)
-        $contents = file($githubFilesToExport, FILE_IGNORE_NEW_LINES);
-        $filesRemaining = count($contents) - 1;
-        $first_line = array_shift($contents);
-        file_put_contents($githubFilesToExport, implode("\r\n", $contents));
+			// remove first line from file (disabled while testing)
+			$contents = file($githubFilesToExport, FILE_IGNORE_NEW_LINES);
+			$filesRemaining = count($contents) - 1;
+			$first_line = array_shift($contents);
+			file_put_contents($githubFilesToExport, implode("\r\n", $contents));
 
-        // create the blob
-        // first part of line is file to read, second is target path in GH:
-        list($fileToExport, $targetPath) = explode(',', $line);
-        
-        $this->wsLog('GITHUB: Creating blob for ' . rtrim($targetPath));
+			// create the blob
+			// first part of line is file to read, second is target path in GH:
+			list($fileToExport, $targetPath) = explode(',', $line);
+			
+			$this->wsLog('GITHUB: Creating blob for ' . rtrim($targetPath));
 
-        $encodedFile = chunk_split(base64_encode(file_get_contents($fileToExport)));
-		
-		try {
+			$encodedFile = chunk_split(base64_encode(file_get_contents($fileToExport)));
+			
+			try {
 
-			$globHash = $client->api('gitData')->blobs()->create(
-					$githubUser, 
-					$githubRepo, 
-					array('content' => $encodedFile, 'encoding' => 'base64')
-					); # utf-8 or base64
+				$globHash = $client->api('gitData')->blobs()->create(
+						$githubUser, 
+						$githubRepo, 
+						array('content' => $encodedFile, 'encoding' => 'base64')
+						); # utf-8 or base64
 
-        } catch (Exception $e) {
-
-
-			$this->wsLog('GITHUB: Error creating blob:' . $e );
-
-		}
-
-        $githubGlobHashesAndPaths = $this->uploadsPath() . '/WP-STATIC-EXPORT-GITHUB-GLOBS-PATHS';
-
-        $globHashPathLine = $globHash['sha'] . ',' . $targetPath;
-        file_put_contents($githubGlobHashesAndPaths, $globHashPathLine, FILE_APPEND | LOCK_EX);
+			} catch (Exception $e) {
 
 
-        $this->wsLog('GITHUB: ' . $filesRemaining . ' blobs remaining to create');
-        
-		if ($filesRemaining > 0) {
-			echo $filesRemaining;
-		} else {
-			echo 'SUCCESS';
+				$this->wsLog('GITHUB: Error creating blob:' . $e );
+
+			}
+
+			$githubGlobHashesAndPaths = $this->uploadsPath() . '/WP-STATIC-EXPORT-GITHUB-GLOBS-PATHS';
+
+			$globHashPathLine = $globHash['sha'] . ',' . $targetPath;
+			file_put_contents($githubGlobHashesAndPaths, $globHashPathLine, FILE_APPEND | LOCK_EX);
+
+
+			$this->wsLog('GITHUB: ' . $filesRemaining . ' blobs remaining to create');
+			
+			if ($filesRemaining > 0) {
+				echo $filesRemaining;
+			} else {
+				echo 'SUCCESS';
+			}
 		}
     }
 
@@ -599,249 +602,257 @@ class StaticHtmlOutput {
     }
 
     public function ftp_prepare_export() {
-        $this->wsLog('FTP EXPORT: Checking credentials..:');
+		if ( wpsho_fr()->is__premium_only() ) {
+			$this->wsLog('FTP EXPORT: Checking credentials..:');
 
-        require_once(__DIR__.'/FTP/FtpClient.php');
-        require_once(__DIR__.'/FTP/FtpException.php');
-        require_once(__DIR__.'/FTP/FtpWrapper.php');
+			require_once(__DIR__.'/FTP/FtpClient.php');
+			require_once(__DIR__.'/FTP/FtpException.php');
+			require_once(__DIR__.'/FTP/FtpWrapper.php');
 
-        $ftp = new \FtpClient\FtpClient();
-        
-        try {
-			$ftp->connect(filter_input(INPUT_POST, 'ftpServer'));
-			$ftp->login(filter_input(INPUT_POST, 'ftpUsername'), filter_input(INPUT_POST, 'ftpPassword'));
-        } catch (Exception $e) {
-			$this->wsLog('FTP EXPORT: error encountered');
-			$this->wsLog($e);
-            throw new Exception($e);
-        }
+			$ftp = new \FtpClient\FtpClient();
+			
+			try {
+				$ftp->connect(filter_input(INPUT_POST, 'ftpServer'));
+				$ftp->login(filter_input(INPUT_POST, 'ftpUsername'), filter_input(INPUT_POST, 'ftpPassword'));
+			} catch (Exception $e) {
+				$this->wsLog('FTP EXPORT: error encountered');
+				$this->wsLog($e);
+				throw new Exception($e);
+			}
 
-        if ($ftp->isdir(filter_input(INPUT_POST, 'ftpRemotePath'))) {
-            $this->wsLog('FTP EXPORT: Remote dir exists');
-        } else {
-            $this->wsLog('FTP EXPORT: Creating remote dir');
-            $ftp->mkdir(filter_input(INPUT_POST, 'ftpRemotePath'), true);
-        }
+			if ($ftp->isdir(filter_input(INPUT_POST, 'ftpRemotePath'))) {
+				$this->wsLog('FTP EXPORT: Remote dir exists');
+			} else {
+				$this->wsLog('FTP EXPORT: Creating remote dir');
+				$ftp->mkdir(filter_input(INPUT_POST, 'ftpRemotePath'), true);
+			}
 
-        unset($ftp);
+			unset($ftp);
 
-        $this->wsLog('FTP EXPORT: Preparing list of files to transfer');
+			$this->wsLog('FTP EXPORT: Preparing list of files to transfer');
 
-        // prepare file list
-        $_SERVER['ftpFilesToExport'] = $this->uploadsPath() . '/WP-STATIC-EXPORT-FTP-FILES-TO-EXPORT';
+			// prepare file list
+			$_SERVER['ftpFilesToExport'] = $this->uploadsPath() . '/WP-STATIC-EXPORT-FTP-FILES-TO-EXPORT';
 
-        $f = @fopen($_SERVER['ftpFilesToExport'], "r+");
-        if ($f !== false) {
-            ftruncate($f, 0);
-            fclose($f);
-        }
+			$f = @fopen($_SERVER['ftpFilesToExport'], "r+");
+			if ($f !== false) {
+				ftruncate($f, 0);
+				fclose($f);
+			}
 
-        $ftpTargetPath = filter_input(INPUT_POST, 'ftpRemotePath');
-        $archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
-        $archiveName = rtrim($archiveDir, '/');
-        $siteroot = $archiveName . '/';
+			$ftpTargetPath = filter_input(INPUT_POST, 'ftpRemotePath');
+			$archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
+			$archiveName = rtrim($archiveDir, '/');
+			$siteroot = $archiveName . '/';
 
-		
+			
 
-        function FolderToFTP($dir, $siteroot, $ftpTargetPath){
-            $files = scandir($dir);
-            foreach($files as $item){
-                if($item != '.' && $item != '..' && $item != '.git'){
-                    if(is_dir($dir.'/'.$item)) {
-                        FolderToFTP($dir.'/'.$item, $siteroot, $ftpTargetPath);
-                    } else if(is_file($dir.'/'.$item)) {
-                        $subdir = str_replace('/wp-admin/admin-ajax.php', '', $_SERVER['REQUEST_URI']);
-                        $subdir = ltrim($subdir, '/');
-                        //$clean_dir = str_replace($siteroot . '/', '', $dir.'/'.$item);
-                        $clean_dir = str_replace($siteroot . '/', '', $dir.'/');
-                        $clean_dir = str_replace($subdir, '', $clean_dir);
-                        $targetPath =  $ftpTargetPath . $clean_dir;
-                        $targetPath = ltrim($targetPath, '/');
-                        $ftpExportLine = $dir .'/' . $item . ',' . $targetPath . "\n";
-                        file_put_contents($_SERVER['ftpFilesToExport'], $ftpExportLine, FILE_APPEND | LOCK_EX);
-                    } 
-                }
-            }
-        }
+			function FolderToFTP($dir, $siteroot, $ftpTargetPath){
+				$files = scandir($dir);
+				foreach($files as $item){
+					if($item != '.' && $item != '..' && $item != '.git'){
+						if(is_dir($dir.'/'.$item)) {
+							FolderToFTP($dir.'/'.$item, $siteroot, $ftpTargetPath);
+						} else if(is_file($dir.'/'.$item)) {
+							$subdir = str_replace('/wp-admin/admin-ajax.php', '', $_SERVER['REQUEST_URI']);
+							$subdir = ltrim($subdir, '/');
+							//$clean_dir = str_replace($siteroot . '/', '', $dir.'/'.$item);
+							$clean_dir = str_replace($siteroot . '/', '', $dir.'/');
+							$clean_dir = str_replace($subdir, '', $clean_dir);
+							$targetPath =  $ftpTargetPath . $clean_dir;
+							$targetPath = ltrim($targetPath, '/');
+							$ftpExportLine = $dir .'/' . $item . ',' . $targetPath . "\n";
+							file_put_contents($_SERVER['ftpFilesToExport'], $ftpExportLine, FILE_APPEND | LOCK_EX);
+						} 
+					}
+				}
+			}
 
-        FolderToFTP($siteroot, $siteroot, $ftpTargetPath);
+			FolderToFTP($siteroot, $siteroot, $ftpTargetPath);
 
-        echo 'SUCCESS';
+			echo 'SUCCESS';
+		}
     }
 
     public function ftp_transfer_files($batch_size = 5) {
-        $archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
-        $archiveName = rtrim($archiveDir, '/');
+		if ( wpsho_fr()->is__premium_only() ) {
+			$archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
+			$archiveName = rtrim($archiveDir, '/');
 
-        require_once(__DIR__.'/FTP/FtpClient.php');
-        require_once(__DIR__.'/FTP/FtpException.php');
-        require_once(__DIR__.'/FTP/FtpWrapper.php');
+			require_once(__DIR__.'/FTP/FtpClient.php');
+			require_once(__DIR__.'/FTP/FtpException.php');
+			require_once(__DIR__.'/FTP/FtpWrapper.php');
 
-        $ftp = new \FtpClient\FtpClient();
-        
-        $ftp->connect(filter_input(INPUT_POST, 'ftpServer'));
-        $ftp->login(filter_input(INPUT_POST, 'ftpUsername'), filter_input(INPUT_POST, 'ftpPassword'));
+			$ftp = new \FtpClient\FtpClient();
+			
+			$ftp->connect(filter_input(INPUT_POST, 'ftpServer'));
+			$ftp->login(filter_input(INPUT_POST, 'ftpUsername'), filter_input(INPUT_POST, 'ftpPassword'));
 
-		if ( filter_input(INPUT_POST, 'useActiveFTP') ) {
-			$this->wsLog('FTP EXPORT: setting ACTIVE transfer mode');
-			$ftp->pasv(false);
-		} else {
-			$ftp->pasv(true);
-		}
-        
-        $_SERVER['ftpFilesToExport'] = $this->uploadsPath() . '/WP-STATIC-EXPORT-FTP-FILES-TO-EXPORT';
+			if ( filter_input(INPUT_POST, 'useActiveFTP') ) {
+				$this->wsLog('FTP EXPORT: setting ACTIVE transfer mode');
+				$ftp->pasv(false);
+			} else {
+				$ftp->pasv(true);
+			}
+			
+			$_SERVER['ftpFilesToExport'] = $this->uploadsPath() . '/WP-STATIC-EXPORT-FTP-FILES-TO-EXPORT';
 
-        // grab first line from filelist
-        $ftpFilesToExport = $_SERVER['ftpFilesToExport'];
-        $f = fopen($ftpFilesToExport, 'r');
-        $line = fgets($f);
-        fclose($f);
+			// grab first line from filelist
+			$ftpFilesToExport = $_SERVER['ftpFilesToExport'];
+			$f = fopen($ftpFilesToExport, 'r');
+			$line = fgets($f);
+			fclose($f);
 
-        // TODO: look at these funcs above and below, seems redundant...
+			// TODO: look at these funcs above and below, seems redundant...
 
-        // TODO: refactor like the crawling function, first_line unused
-        $contents = file($ftpFilesToExport, FILE_IGNORE_NEW_LINES);
-        $filesRemaining = count($contents) - 1;
+			// TODO: refactor like the crawling function, first_line unused
+			$contents = file($ftpFilesToExport, FILE_IGNORE_NEW_LINES);
+			$filesRemaining = count($contents) - 1;
 
-        if ($filesRemaining < 0) {
-            echo $filesRemaining;die();
-        }
+			if ($filesRemaining < 0) {
+				echo $filesRemaining;die();
+			}
 
-        $first_line = array_shift($contents);
-        file_put_contents($ftpFilesToExport, implode("\r\n", $contents));
+			$first_line = array_shift($contents);
+			file_put_contents($ftpFilesToExport, implode("\r\n", $contents));
 
-        list($fileToTransfer, $targetPath) = explode(',', $line);
+			list($fileToTransfer, $targetPath) = explode(',', $line);
 
-        // TODO: check other funcs using similar, was causing issues without trimming CR's
-        $targetPath = rtrim($targetPath);
+			// TODO: check other funcs using similar, was causing issues without trimming CR's
+			$targetPath = rtrim($targetPath);
 
-        $this->wsLog('FTP EXPORT: transferring ' . 
-            basename($fileToTransfer) . ' TO ' . $targetPath);
-       
-        if ($ftp->isdir($targetPath)) {
-            //$this->wsLog('FTP EXPORT: Remote dir exists');
-        } else {
-            $this->wsLog('FTP EXPORT: Creating remote dir');
-            $mkdir_result = $ftp->mkdir($targetPath, true); // true = recursive creation
-        }
+			$this->wsLog('FTP EXPORT: transferring ' . 
+				basename($fileToTransfer) . ' TO ' . $targetPath);
+		   
+			if ($ftp->isdir($targetPath)) {
+				//$this->wsLog('FTP EXPORT: Remote dir exists');
+			} else {
+				$this->wsLog('FTP EXPORT: Creating remote dir');
+				$mkdir_result = $ftp->mkdir($targetPath, true); // true = recursive creation
+			}
 
-        $ftp->chdir($targetPath);
-        $ftp->putFromPath($fileToTransfer);
+			$ftp->chdir($targetPath);
+			$ftp->putFromPath($fileToTransfer);
 
-        $this->wsLog('FTP EXPORT: ' . $filesRemaining . ' files remaining to transfer');
+			$this->wsLog('FTP EXPORT: ' . $filesRemaining . ' files remaining to transfer');
 
-        // TODO: error handling when not connected/unable to put, etc
-        unset($ftp);
+			// TODO: error handling when not connected/unable to put, etc
+			unset($ftp);
 
-		if ( $filesRemaining > 0 ) {
-			echo $filesRemaining;
-		} else {
-			echo 'SUCCESS';
+			if ( $filesRemaining > 0 ) {
+				echo $filesRemaining;
+			} else {
+				echo 'SUCCESS';
+			}
 		}
     }
 
     public function bunnycdn_prepare_export() {
-        $this->wsLog('BUNNYCDN EXPORT: Preparing export..:');
+		if ( wpsho_fr()->is__premium_only() ) {
+			$this->wsLog('BUNNYCDN EXPORT: Preparing export..:');
 
-        // prepare file list
-        $_SERVER['bunnycdnFilesToExport'] = $this->uploadsPath() . '/WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT';
+			// prepare file list
+			$_SERVER['bunnycdnFilesToExport'] = $this->uploadsPath() . '/WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT';
 
-        $f = @fopen($_SERVER['bunnycdnFilesToExport'], "r+");
-        if ($f !== false) {
-            ftruncate($f, 0);
-            fclose($f);
-        }
+			$f = @fopen($_SERVER['bunnycdnFilesToExport'], "r+");
+			if ($f !== false) {
+				ftruncate($f, 0);
+				fclose($f);
+			}
 
-        $bunnycdnTargetPath = filter_input(INPUT_POST, 'bunnycdnRemotePath');
-        $archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
-        $archiveName = rtrim($archiveDir, '/');
-        $siteroot = $archiveName;
+			$bunnycdnTargetPath = filter_input(INPUT_POST, 'bunnycdnRemotePath');
+			$archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
+			$archiveName = rtrim($archiveDir, '/');
+			$siteroot = $archiveName;
 
-        function AddToBunnyCDNExportList($dir, $siteroot, $bunnycdnTargetPath){
-            $files = scandir($dir);
-            foreach($files as $item){
-                if($item != '.' && $item != '..' && $item != '.git'){
-                    if(is_dir($dir.'/'.$item)) {
-                        AddToBunnyCDNExportList($dir.'/'.$item, $siteroot, $bunnycdnTargetPath);
-                    } else if(is_file($dir.'/'.$item)) {
-                        $subdir = str_replace('/wp-admin/admin-ajax.php', '', $_SERVER['REQUEST_URI']);
-                        $subdir = ltrim($subdir, '/');
-                        //$clean_dir = str_replace($siteroot . '/', '', $dir.'/'.$item);
-                        $clean_dir = str_replace($siteroot . '/', '', $dir.'/');
-                        $clean_dir = str_replace($subdir, '', $clean_dir);
-                        $targetPath =  $bunnycdnTargetPath . $clean_dir;
-                        $targetPath = ltrim($targetPath, '/');
-                        $bunnycdnExportLine = $dir .'/' . $item . ',' . $targetPath . "\n";
-                        file_put_contents($_SERVER['bunnycdnFilesToExport'], $bunnycdnExportLine, FILE_APPEND | LOCK_EX);
-                    } 
-                }
-            }
-        }
+			function AddToBunnyCDNExportList($dir, $siteroot, $bunnycdnTargetPath){
+				$files = scandir($dir);
+				foreach($files as $item){
+					if($item != '.' && $item != '..' && $item != '.git'){
+						if(is_dir($dir.'/'.$item)) {
+							AddToBunnyCDNExportList($dir.'/'.$item, $siteroot, $bunnycdnTargetPath);
+						} else if(is_file($dir.'/'.$item)) {
+							$subdir = str_replace('/wp-admin/admin-ajax.php', '', $_SERVER['REQUEST_URI']);
+							$subdir = ltrim($subdir, '/');
+							//$clean_dir = str_replace($siteroot . '/', '', $dir.'/'.$item);
+							$clean_dir = str_replace($siteroot . '/', '', $dir.'/');
+							$clean_dir = str_replace($subdir, '', $clean_dir);
+							$targetPath =  $bunnycdnTargetPath . $clean_dir;
+							$targetPath = ltrim($targetPath, '/');
+							$bunnycdnExportLine = $dir .'/' . $item . ',' . $targetPath . "\n";
+							file_put_contents($_SERVER['bunnycdnFilesToExport'], $bunnycdnExportLine, FILE_APPEND | LOCK_EX);
+						} 
+					}
+				}
+			}
 
-        AddToBunnyCDNExportList($siteroot, $siteroot, $bunnycdnTargetPath);
+			AddToBunnyCDNExportList($siteroot, $siteroot, $bunnycdnTargetPath);
 
-        echo 'SUCCESS';
+			echo 'SUCCESS';
+		}
     }
 
     public function bunnycdn_transfer_files($batch_size = 5) {
-		require_once(__DIR__.'/Github/autoload.php');
+		if ( wpsho_fr()->is__premium_only() ) {
+			require_once(__DIR__.'/Github/autoload.php');
 
-        $bunnycdnAPIKey = filter_input(INPUT_POST, 'bunnycdnAPIKey');
-        $bunnycdnPullZoneName = filter_input(INPUT_POST, 'bunnycdnPullZoneName');
-        $archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
-        $archiveName = rtrim($archiveDir, '/');
-
-
-        $_SERVER['bunnycdnFilesToExport'] = $this->uploadsPath() . '/WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT';
-
-        // grab first line from filelist
-        $bunnycdnFilesToExport = $_SERVER['bunnycdnFilesToExport'];
-        $f = fopen($bunnycdnFilesToExport, 'r');
-        $line = fgets($f);
-        fclose($f);
+			$bunnycdnAPIKey = filter_input(INPUT_POST, 'bunnycdnAPIKey');
+			$bunnycdnPullZoneName = filter_input(INPUT_POST, 'bunnycdnPullZoneName');
+			$archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
+			$archiveName = rtrim($archiveDir, '/');
 
 
-        $contents = file($bunnycdnFilesToExport, FILE_IGNORE_NEW_LINES);
-        $filesRemaining = count($contents) - 1;
+			$_SERVER['bunnycdnFilesToExport'] = $this->uploadsPath() . '/WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT';
 
-        if ($filesRemaining < 0) {
-            echo $filesRemaining;die();
-        }
+			// grab first line from filelist
+			$bunnycdnFilesToExport = $_SERVER['bunnycdnFilesToExport'];
+			$f = fopen($bunnycdnFilesToExport, 'r');
+			$line = fgets($f);
+			fclose($f);
 
-        $first_line = array_shift($contents);
-        file_put_contents($bunnycdnFilesToExport, implode("\r\n", $contents));
 
-        list($fileToTransfer, $targetPath) = explode(',', $line);
+			$contents = file($bunnycdnFilesToExport, FILE_IGNORE_NEW_LINES);
+			$filesRemaining = count($contents) - 1;
 
-        $targetPath = rtrim($targetPath);
+			if ($filesRemaining < 0) {
+				echo $filesRemaining;die();
+			}
 
-        $this->wsLog('BUNNYCDN EXPORT: transferring ' . 
-            basename($fileToTransfer) . ' TO ' . $targetPath);
-       
-		// do the bunny export
-        $client = new Client(array(
-                'base_uri' => 'https://storage.bunnycdn.com'
-        ));	
+			$first_line = array_shift($contents);
+			file_put_contents($bunnycdnFilesToExport, implode("\r\n", $contents));
 
-        try {
-            $response = $client->request('PUT', '/' . $bunnycdnPullZoneName . '/' . $targetPath . basename($fileToTransfer), array(
-                    'headers'  => array(
-                        'AccessKey' => ' ' . $bunnycdnAPIKey
-                    ),
-                    'body' => fopen($fileToTransfer, 'rb')
-            ));
-        } catch (Exception $e) {
-			$this->wsLog('BUNNYCDN EXPORT: error encountered');
-			$this->wsLog($e);
-            throw new Exception($e);
-        }
+			list($fileToTransfer, $targetPath) = explode(',', $line);
 
-        $this->wsLog('BUNNYCDN EXPORT: ' . $filesRemaining . ' files remaining to transfer');
+			$targetPath = rtrim($targetPath);
 
-		if ( $filesRemaining > 0 ) {
-			echo $filesRemaining;
-		} else {
-			echo 'SUCCESS';
+			$this->wsLog('BUNNYCDN EXPORT: transferring ' . 
+				basename($fileToTransfer) . ' TO ' . $targetPath);
+		   
+			// do the bunny export
+			$client = new Client(array(
+					'base_uri' => 'https://storage.bunnycdn.com'
+			));	
+
+			try {
+				$response = $client->request('PUT', '/' . $bunnycdnPullZoneName . '/' . $targetPath . basename($fileToTransfer), array(
+						'headers'  => array(
+							'AccessKey' => ' ' . $bunnycdnAPIKey
+						),
+						'body' => fopen($fileToTransfer, 'rb')
+				));
+			} catch (Exception $e) {
+				$this->wsLog('BUNNYCDN EXPORT: error encountered');
+				$this->wsLog($e);
+				throw new Exception($e);
+			}
+
+			$this->wsLog('BUNNYCDN EXPORT: ' . $filesRemaining . ' files remaining to transfer');
+
+			if ( $filesRemaining > 0 ) {
+				echo $filesRemaining;
+			} else {
+				echo 'SUCCESS';
+			}
 		}
     }
 
@@ -894,287 +905,302 @@ class StaticHtmlOutput {
 	}
 
     public function s3_prepare_export() {
-        $this->wsLog('S3 EXPORT: preparing export...');
-		$this->prepare_file_list('S3');
+		if ( wpsho_fr()->is__premium_only() ) {
+			$this->wsLog('S3 EXPORT: preparing export...');
+			$this->prepare_file_list('S3');
 
-        echo 'SUCCESS';
+			echo 'SUCCESS';
+		}	
     }
 
 	public function s3_put_object($Bucket, $Key, $Data, $ContentType = "text/plain", $pluginInstance) {
+		if ( wpsho_fr()->is__premium_only() ) {
 		
-		require_once(__DIR__.'/S3/S3.php');
+			require_once(__DIR__.'/S3/S3.php');
 
-		$client = new S3(
-			filter_input(INPUT_POST, 's3Key'),
-			filter_input(INPUT_POST, 's3Secret'),
-		    's3.' . filter_input(INPUT_POST, 's3Region') .  '.amazonaws.com'
-		);
+			$client = new S3(
+				filter_input(INPUT_POST, 's3Key'),
+				filter_input(INPUT_POST, 's3Secret'),
+				's3.' . filter_input(INPUT_POST, 's3Region') .  '.amazonaws.com'
+			);
 
-		// [OPTIONAL] Specify different curl options
-		$client->useCurlOpts(array(
-			CURLOPT_MAX_RECV_SPEED_LARGE => 1048576,
-			CURLOPT_CONNECTTIMEOUT => 10
-		));
+			// [OPTIONAL] Specify different curl options
+			$client->useCurlOpts(array(
+				CURLOPT_MAX_RECV_SPEED_LARGE => 1048576,
+				CURLOPT_CONNECTTIMEOUT => 10
+			));
 
-		$response = $client->putObject(
-			$Bucket, // bucket name without s3.amazonaws.com
-			$Key, // path to create in bucket
-			$Data, // file contents - path to stream or fopen result
-			array(
-				'Content-Type' => $ContentType,
-				'x-amz-acl' => 'public-read', // public read for static site
-			)
-		);
+			$response = $client->putObject(
+				$Bucket, // bucket name without s3.amazonaws.com
+				$Key, // path to create in bucket
+				$Data, // file contents - path to stream or fopen result
+				array(
+					'Content-Type' => $ContentType,
+					'x-amz-acl' => 'public-read', // public read for static site
+				)
+			);
 
-		if ($response->code == 200) {
-			return true;
-		} else {
-			$pluginInstance->wsLog('S3 EXPORT: following error returned from S3:');
-			$pluginInstance->wsLog(print_r($response, true));
-			error_log(print_r($response, true));
-			return false;
+			if ($response->code == 200) {
+				return true;
+			} else {
+				$pluginInstance->wsLog('S3 EXPORT: following error returned from S3:');
+				$pluginInstance->wsLog(print_r($response, true));
+				error_log(print_r($response, true));
+				return false;
+			}
 		}
 	}
 
 	// TODO: make this a generic func, calling vendor specific files
     public function s3_transfer_files() {
-        $this->wsLog('S3 EXPORT: Transferring files...');
-        $archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
-        $archiveName = rtrim($archiveDir, '/');
-        $siteroot = $archiveName . '/';
-        $file_list_path = $this->uploadsPath() . '/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT';
-        $contents = file($file_list_path, FILE_IGNORE_NEW_LINES);
-        $filesRemaining = count($contents) - 1;
+		if ( wpsho_fr()->is__premium_only() ) {
+			$this->wsLog('S3 EXPORT: Transferring files...');
+			$archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
+			$archiveName = rtrim($archiveDir, '/');
+			$siteroot = $archiveName . '/';
+			$file_list_path = $this->uploadsPath() . '/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT';
+			$contents = file($file_list_path, FILE_IGNORE_NEW_LINES);
+			$filesRemaining = count($contents) - 1;
 
-        if ($filesRemaining < 0) {
-            echo $filesRemaining;die();
-        }
-
-        $filename = array_shift($contents);
-		$file_body = file_get_contents($filename);
-		// rewrite file without first line
-        file_put_contents($file_list_path, implode("\r\n", $contents));
-
-		$target_path = str_replace($siteroot, '', $filename);
-        $this->wsLog('S3 EXPORT: transferring ' . 
-            basename($filename) . ' TO ' . $target_path);
-      
-		require_once(__DIR__.'/StaticHtmlOutput/MimeTypes.php'); 
-
-		if( $this->s3_put_object(
-			filter_input(INPUT_POST, 's3Bucket'),
-			$target_path,
-			$file_body,
-			GuessMimeType($filename),
-			$this) ) 
-		{
-			$this->wsLog('S3 EXPORT: ' . $filesRemaining . ' files remaining to transfer');
-
-			if ( $filesRemaining > 0 ) {
-				echo $filesRemaining;
-			} else {
-				echo 'SUCCESS';
+			if ($filesRemaining < 0) {
+				echo $filesRemaining;die();
 			}
-		} else {
-				echo 'FAIL';
-		}
 
+			$filename = array_shift($contents);
+			$file_body = file_get_contents($filename);
+			// rewrite file without first line
+			file_put_contents($file_list_path, implode("\r\n", $contents));
+
+			$target_path = str_replace($siteroot, '', $filename);
+			$this->wsLog('S3 EXPORT: transferring ' . 
+				basename($filename) . ' TO ' . $target_path);
+		  
+			require_once(__DIR__.'/StaticHtmlOutput/MimeTypes.php'); 
+
+			if( $this->s3_put_object(
+				filter_input(INPUT_POST, 's3Bucket'),
+				$target_path,
+				$file_body,
+				GuessMimeType($filename),
+				$this) ) 
+			{
+				$this->wsLog('S3 EXPORT: ' . $filesRemaining . ' files remaining to transfer');
+
+				if ( $filesRemaining > 0 ) {
+					echo $filesRemaining;
+				} else {
+					echo 'SUCCESS';
+				}
+			} else {
+					echo 'FAIL';
+			}
+		}
     }
 
 	public function cloudfront_invalidate_all_items() {
-        $this->wsLog('S3 EXPORT: Checking whether to invalidate CF cache');
-		require_once(__DIR__.'/CloudFront/CloudFront.php');
-		$cloudfront_id = filter_input(INPUT_POST, 'cfDistributionId');
+		if ( wpsho_fr()->is__premium_only() ) {
+			$this->wsLog('S3 EXPORT: Checking whether to invalidate CF cache');
+			require_once(__DIR__.'/CloudFront/CloudFront.php');
+			$cloudfront_id = filter_input(INPUT_POST, 'cfDistributionId');
 
-        if( !empty($cloudfront_id) ) {
-			$this->wsLog('CLOUDFRONT INVALIDATING CACHE...');
+			if( !empty($cloudfront_id) ) {
+				$this->wsLog('CLOUDFRONT INVALIDATING CACHE...');
 
-			$cf = new CloudFront(
-				filter_input(INPUT_POST, 's3Key'), 
-				filter_input(INPUT_POST, 's3Secret'),
-				$cloudfront_id);
+				$cf = new CloudFront(
+					filter_input(INPUT_POST, 's3Key'), 
+					filter_input(INPUT_POST, 's3Secret'),
+					$cloudfront_id);
 
-			$cf->invalidate('/*');
-		
-			if ( $cf->getResponseMessage() == 200 || $cf->getResponseMessage() == 201 )	{
-				echo 'SUCCESS';
+				$cf->invalidate('/*');
+			
+				if ( $cf->getResponseMessage() == 200 || $cf->getResponseMessage() == 201 )	{
+					echo 'SUCCESS';
+				} else {
+					$this->wsLog('CF ERROR: ' . $cf->getResponseMessage());
+				}
 			} else {
-				$this->wsLog('CF ERROR: ' . $cf->getResponseMessage());
+				$this->wsLog('S3 EXPORT: Skipping CF cache invalidation');
+				echo 'SUCCESS';
 			}
-        } else {
-			$this->wsLog('S3 EXPORT: Skipping CF cache invalidation');
-			echo 'SUCCESS';
 		}
 	}
 
 	// TODO: this is being called twice, check export targets flow in FE/BE
 	// TODO: convert this to an incremental export
     public function dropbox_do_export() {
-        $archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
-        $archiveName = rtrim($archiveDir, '/');
-        $siteroot = $archiveName . '/';
-        $dropboxAccessToken = filter_input(INPUT_POST, 'dropboxAccessToken');
-        $dropboxFolder = filter_input(INPUT_POST, 'dropboxFolder');
+		if ( wpsho_fr()->is__premium_only() ) {
+			$archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
+			$archiveName = rtrim($archiveDir, '/');
+			$siteroot = $archiveName . '/';
+			$dropboxAccessToken = filter_input(INPUT_POST, 'dropboxAccessToken');
+			$dropboxFolder = filter_input(INPUT_POST, 'dropboxFolder');
 
-        $this->wsLog('DROPBOX EXPORT: Doing one synchronous export to your ' . $dropboxFolder . ' directory');
+			$this->wsLog('DROPBOX EXPORT: Doing one synchronous export to your ' . $dropboxFolder . ' directory');
 
-        function FolderToDropbox($dir, $siteroot, $dropboxFolder, $pluginInstance, $dropboxAccessToken){
-            $files = scandir($dir);
-            foreach($files as $item){
-                if($item != '.' && $item != '..' && $item != '.git'){
-                    if(is_dir($dir.'/'.$item)) {
-                        FolderToDropbox($dir.'/'.$item, $siteroot, $dropboxFolder, $pluginInstance, $dropboxAccessToken);
-                    } else if(is_file($dir.'/'.$item)) {
-                        $clean_dir = str_replace($siteroot, '', $dir.'/'.$item);
-                        $targetPath =  $dropboxFolder . $clean_dir;
+			function FolderToDropbox($dir, $siteroot, $dropboxFolder, $pluginInstance, $dropboxAccessToken){
+				$files = scandir($dir);
+				foreach($files as $item){
+					if($item != '.' && $item != '..' && $item != '.git'){
+						if(is_dir($dir.'/'.$item)) {
+							FolderToDropbox($dir.'/'.$item, $siteroot, $dropboxFolder, $pluginInstance, $dropboxAccessToken);
+						} else if(is_file($dir.'/'.$item)) {
+							$clean_dir = str_replace($siteroot, '', $dir.'/'.$item);
+							$targetPath =  $dropboxFolder . $clean_dir;
 
-						$pluginInstance->wsLog('DROPBOX EXPORT: transferring:' . $targetPath);
+							$pluginInstance->wsLog('DROPBOX EXPORT: transferring:' . $targetPath);
 
 
-						$api_url = 'https://content.dropboxapi.com/2/files/upload'; //dropbox api url
+							$api_url = 'https://content.dropboxapi.com/2/files/upload'; //dropbox api url
 
-						$headers = array('Authorization: Bearer '. $dropboxAccessToken,
-							'Content-Type: application/octet-stream',
-							'Dropbox-API-Arg: '.
-							json_encode(
-								array(
-									"path"=> $targetPath,
-									"mode" => "overwrite",
-									"autorename" => false
+							$headers = array('Authorization: Bearer '. $dropboxAccessToken,
+								'Content-Type: application/octet-stream',
+								'Dropbox-API-Arg: '.
+								json_encode(
+									array(
+										"path"=> $targetPath,
+										"mode" => "overwrite",
+										"autorename" => false
+									)
 								)
-							)
 
-						);
+							);
 
-						$ch = curl_init($api_url);
+							$ch = curl_init($api_url);
 
-						curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-						curl_setopt($ch, CURLOPT_POST, true);
+							curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+							curl_setopt($ch, CURLOPT_POST, true);
 
-						$fp = fopen($dropboxFile, 'rb');
-						$filesize = filesize($path);
+							$fp = fopen($dropboxFile, 'rb');
+							$filesize = filesize($path);
 
-						curl_setopt($ch, CURLOPT_POSTFIELDS, fread($fp, $filesize));
-						curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+							curl_setopt($ch, CURLOPT_POSTFIELDS, fread($fp, $filesize));
+							curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-						$response = curl_exec($ch);
-						$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+							$response = curl_exec($ch);
+							$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-						if ($http_code == 200) {
-						} else {
-							error_log($response);
-							$pluginInstance->wsLog($response);
-							echo 'FAIL';die();
-						}
+							if ($http_code == 200) {
+							} else {
+								error_log($response);
+								$pluginInstance->wsLog($response);
+								echo 'FAIL';die();
+							}
 
-						curl_close($ch);
+							curl_close($ch);
 
-                    } 
-                }
-            }
+						} 
+					}
+				}
 
-        }
+			}
 
-        FolderToDropbox($siteroot, $siteroot, $dropboxFolder, $this, $dropboxAccessToken);
+			FolderToDropbox($siteroot, $siteroot, $dropboxFolder, $this, $dropboxAccessToken);
 
-		echo 'SUCCESS';
+			echo 'SUCCESS';
+		}
     }
 
     public function github_prepare_export () {
-        // empty the list of GH export files in preparation
-		$_SERVER['githubFilesToExport'] = $this->uploadsPath() . '/WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT';
-        $f = @fopen($_SERVER['githubFilesToExport'], "r+");
-        if ($f !== false) {
-            ftruncate($f, 0);
-            fclose($f);
-        }
+		if ( wpsho_fr()->is__premium_only() ) {
+			// empty the list of GH export files in preparation
+			$_SERVER['githubFilesToExport'] = $this->uploadsPath() . '/WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT';
+			$f = @fopen($_SERVER['githubFilesToExport'], "r+");
+			if ($f !== false) {
+				ftruncate($f, 0);
+				fclose($f);
+			}
 
-        $githubGlobHashesAndPaths = $this->uploadsPath() . '/WP-STATIC-EXPORT-GITHUB-GLOBS-PATHS';
-        $f = @fopen($githubGlobHashesAndPaths, "r+");
-        if ($f !== false) {
-            ftruncate($f, 0);
-            fclose($f);
-        }
-            
-        // optional path within GH repo
-        $githubPath = filter_input(INPUT_POST, 'githubPath');
+			$githubGlobHashesAndPaths = $this->uploadsPath() . '/WP-STATIC-EXPORT-GITHUB-GLOBS-PATHS';
+			$f = @fopen($githubGlobHashesAndPaths, "r+");
+			if ($f !== false) {
+				ftruncate($f, 0);
+				fclose($f);
+			}
+				
+			// optional path within GH repo
+			$githubPath = filter_input(INPUT_POST, 'githubPath');
 
-        $archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
-        $archiveName = rtrim($archiveDir, '/');
+			$archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
+			$archiveName = rtrim($archiveDir, '/');
 
-        $siteroot = $archiveName . '/';
+			$siteroot = $archiveName . '/';
 
-        function FolderToGithub($dir, $siteroot, $githubPath){
-            $files = scandir($dir);
-            foreach($files as $item){
-                if($item != '.' && $item != '..' && $item != '.git'){
-                    if(is_dir($dir.'/'.$item)) {
-                        FolderToGithub($dir.'/'.$item, $siteroot, $githubPath);
-                    } else if(is_file($dir.'/'.$item)) {
-                        $subdir = str_replace('/wp-admin/admin-ajax.php', '', $_SERVER['REQUEST_URI']);
-                        $subdir = ltrim($subdir, '/');
-                        $clean_dir = str_replace($siteroot . '/', '', $dir.'/'.$item);
-                        $clean_dir = str_replace($subdir, '', $clean_dir);
-                        $targetPath =  $githubPath . $clean_dir;
-                        $targetPath = ltrim($targetPath, '/');
-                        $githubExportLine = $dir .'/' . $item . ',' . $targetPath . "\n";
-                        file_put_contents($_SERVER['githubFilesToExport'], $githubExportLine, FILE_APPEND | LOCK_EX);
-                    } 
-                }
-            }
-        }
+			function FolderToGithub($dir, $siteroot, $githubPath){
+				$files = scandir($dir);
+				foreach($files as $item){
+					if($item != '.' && $item != '..' && $item != '.git'){
+						if(is_dir($dir.'/'.$item)) {
+							FolderToGithub($dir.'/'.$item, $siteroot, $githubPath);
+						} else if(is_file($dir.'/'.$item)) {
+							$subdir = str_replace('/wp-admin/admin-ajax.php', '', $_SERVER['REQUEST_URI']);
+							$subdir = ltrim($subdir, '/');
+							$clean_dir = str_replace($siteroot . '/', '', $dir.'/'.$item);
+							$clean_dir = str_replace($subdir, '', $clean_dir);
+							$targetPath =  $githubPath . $clean_dir;
+							$targetPath = ltrim($targetPath, '/');
+							$githubExportLine = $dir .'/' . $item . ',' . $targetPath . "\n";
+							file_put_contents($_SERVER['githubFilesToExport'], $githubExportLine, FILE_APPEND | LOCK_EX);
+						} 
+					}
+				}
+			}
 
 
-        FolderToGithub($siteroot, $siteroot, $githubPath);
+			FolderToGithub($siteroot, $siteroot, $githubPath);
 
-		echo 'SUCCESS';
+			echo 'SUCCESS';
+		}
     }
 
     public function netlify_do_export () {
-		require_once(__DIR__.'/Github/autoload.php');
-        $this->wsLog('NETLIFY EXPORT: starting to deploy ZIP file');
-        // will exclude the siteroot when copying
-        $archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
-        $archiveName = rtrim($archiveDir, '/');
-        $siteroot = $archiveName . '/';
-        $netlifySiteID = filter_input(INPUT_POST, 'netlifySiteID');
-        $netlifyPersonalAccessToken = filter_input(INPUT_POST, 'netlifyPersonalAccessToken');
+		if ( wpsho_fr()->is__premium_only() ) {
+			require_once(__DIR__.'/Github/autoload.php');
+			$this->wsLog('NETLIFY EXPORT: starting to deploy ZIP file');
+			// will exclude the siteroot when copying
+			$archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
+			$archiveName = rtrim($archiveDir, '/');
+			$siteroot = $archiveName . '/';
+			$netlifySiteID = filter_input(INPUT_POST, 'netlifySiteID');
+			$netlifyPersonalAccessToken = filter_input(INPUT_POST, 'netlifyPersonalAccessToken');
 
-        $client = new Client(array(
-                // Base URI is used with relative requests
-                'base_uri' => 'https://api.netlify.com'
-        ));	
+			$client = new Client(array(
+					// Base URI is used with relative requests
+					'base_uri' => 'https://api.netlify.com'
+			));	
 
-        try {
-            $response = $client->request('POST', '/api/v1/sites/' . $netlifySiteID . '.netlify.com/deploys', array(
-                    'headers'  => array(
-                        'Content-Type' => 'application/zip',
-                        'Authorization' => 'Bearer ' . $netlifyPersonalAccessToken
-                    ),
-                    'body' => fopen($archiveName . '.zip', 'rb')
-            ));
-        } catch (Exception $e) {
-            file_put_contents($_SERVER['exportLog'], $e , FILE_APPEND | LOCK_EX);
-            throw new Exception($e);
-        }
+			try {
+				$response = $client->request('POST', '/api/v1/sites/' . $netlifySiteID . '.netlify.com/deploys', array(
+						'headers'  => array(
+							'Content-Type' => 'application/zip',
+							'Authorization' => 'Bearer ' . $netlifyPersonalAccessToken
+						),
+						'body' => fopen($archiveName . '.zip', 'rb')
+				));
+			} catch (Exception $e) {
+				file_put_contents($_SERVER['exportLog'], $e , FILE_APPEND | LOCK_EX);
+				throw new Exception($e);
+			}
+		}
     }
 
     public function doExportWithoutGUI() {
-        // parse options hash
-        // TODO: DRY this up by adding as instance var
+		if ( wpsho_fr()->is_plan('professional_edition') ) {
+			// parse options hash
+			// TODO: DRY this up by adding as instance var
 
 
-        // start export, including build initial file list
-        $this->start_export(true);
+			// start export, including build initial file list
+			$this->start_export(true);
 
-        // do the crawl
-        $this->crawl_site(true);
+			// do the crawl
+			$this->crawl_site(true);
 
-        // create zip
-        $this->create_zip();
-        
+			// create zip
+			$this->create_zip();
+			
 
-        // do any exports
+			// do any exports
+		}
     }
 
 	public function get_number_of_successes($viaCLI = false) {
