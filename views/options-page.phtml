@@ -513,7 +513,7 @@ jQuery(document).ready(function($){
 	}
 	/* 
 		on page load, show enabed export setting details
-		show any export setting details if the export option is enabled
+		show any export setting details if the export option is checked and not disabled
 	*/
 
 	// do for each checkbox starting with sendVia
@@ -529,7 +529,7 @@ jQuery(document).ready(function($){
 		var export_option_elements = $('.' + export_option_name );
 
 		// log which checkbox has changed in order to process it's settings group visibility
-		if($(this).is(":checked")) {
+		if($(this).is(":checked") && $(this).is(":enabled")) {
 			export_option_elements.show();
 			// unhide all the inputs, the following span and the following br
 			
