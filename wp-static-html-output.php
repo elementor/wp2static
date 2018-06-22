@@ -8,7 +8,9 @@
  * Author URI:  https://leonstafford.github.io
  * Text Domain: static-html-output-plugin
  * Copyright (c) 2017 Leon Stafford
-
+ * 
+ * @fs_premium_only /library/FTP/, /library/Github/, /library/CloudFront/, /library/Psr/, /library/S3/, /library/GuzzleHttp/
+ * 
  * @package     WP_Static_HTML_Output
  */
 
