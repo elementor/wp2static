@@ -30,6 +30,13 @@ views/options-page.phtml
 wp-static-html-output.php
 
 
+# rm any swap files
+find -name "*.swp" -print
+find -name "*.swo" -print
+
+# change below to xargs svn rm..
+# find -name "*.swp" -print -delete
+# find -name "*.swo" -print -delete
 
 # run from project root
 
