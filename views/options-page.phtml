@@ -203,7 +203,7 @@ jQuery(document).ready(function($){
 		exportTargets = [];
 	
         $('.hiddenActionField').val('wp_static_html_output_ajax');
-        $('#hiddenAJAXAction').val('start_export');
+        $('#hiddenAJAXAction').val('cleanup_working_files');
         archives = $('.options-form');
 
         if ($('#sendViaGithub').attr('checked') == 'checked') {
@@ -242,9 +242,9 @@ jQuery(document).ready(function($){
             method: 'POST',
             success: function(serverResponse) {
 				if ($('#createZip').attr('checked') == 'checked') {
-					doAJAXExport('cleanup_working_files', 'cleanup_leftover_archives', 'crawl_site', 'create_symlink_to_latest_archive', 'post_process_archive_dir', 'create_zip');
+					doAJAXExport('cleanup_leftover_archives', 'start_export', 'crawl_site', 'create_symlink_to_latest_archive', 'post_process_archive_dir', 'create_zip');
 				} else {
-					doAJAXExport('cleanup_working_files', 'cleanup_leftover_archives', 'crawl_site', 'create_symlink_to_latest_archive', 'post_process_archive_dir' );
+					doAJAXExport('cleanup_leftover_archives', 'start_export', 'crawl_site', 'create_symlink_to_latest_archive', 'post_process_archive_dir' );
 				}
             },
             error: ajaxErrorHandler
