@@ -300,27 +300,8 @@ class StaticHtmlOutput {
 		}
     }
 
-	// clean up files possibly left behind by a partial export
-	public function cleanup_working_files() {
-		if ( file_exists($this->uploadsPath() . '/WP-STATIC-EXPORT-TARGETS') ) {
-			unlink($this->uploadsPath() . '/WP-STATIC-EXPORT-TARGETS');
-		}
-
-		if ( file_exists($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE') ) {
-			unlink($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
-		}
-
-		if ( file_exists($this->uploadsPath() . '/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT') ) {
-			unlink($this->uploadsPath() . '/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT');
-		}
-
-		if ( file_exists($this->uploadsPath() . '/WP-STATIC-CRAWLED-LINKS') ) {
-			unlink($this->uploadsPath() . '/WP-STATIC-CRAWLED-LINKS');
-		}
-
-		if ( file_exists($this->uploadsPath() . '/WP-STATIC-INITIAL-CRAWL-LIST') ) {
-			unlink($this->uploadsPath() . '/WP-STATIC-INITIAL-CRAWL-LIST');
-		}
+	public function cleanup_leftover_archives() {
+		$this->wsLog('CLEANUP LEFTOVER ARCHIVES: ' . $this->uploadsPath());
 
 		// TODO: cleanup all but latest archives in case of multiple failed exports filling up disk
 		$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this->uploadsPath()));
@@ -328,24 +309,60 @@ class StaticHtmlOutput {
 
 		$current_user = $exporter->user_login;
 
+
+		// remove all but the zip files
 		foreach ($iterator as $fileName => $fileObject) {
 			$baseName = basename($fileName);
 
-			if(
-				strpos($baseName, 'wp-static-html-output-' && 
-				strpos($baseName, '-' . $current_user)
+			$this->wsLog('checking to rm or not: ' . $baseName);
+
+			if( strpos($baseName, 'wp-static-html-output-' && strpos($baseName, '-' . $current_user) 
 				) ) {
-				error_log('cleaning up a previous export dir or zip:');
-				echo $baseName;
-				echo print_r($fileObject);
-			
+				$this->wsLog('cleaning up a previous export dir or zip: ' . $fileName);
+				if (is_dir($fileName)) {
+					delete_dir_with_files($fileName);
+				} else {
+					unlink($fileName);
+				}
 			}
 		}
+
+		echo 'SUCCESS';
+	}	
+
+	// clean up files possibly left behind by a partial export
+	public function cleanup_working_files() {
+		$this->wsLog('CLEANING WORKING FILES:');
+
+		$files_to_clean = array(
+			'/WP-STATIC-EXPORT-TARGETS',
+			'/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT',
+			'/WP-STATIC-EXPORT-FTP-FILES-TO-EXPORT',
+			'/WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT',
+			'/WP-STATIC-EXPORT-DROPBOX-FILES-TO-EXPORT',
+			'/WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT',
+			'/WP-STATIC-CRAWLED-LINKS',
+			'/WP-STATIC-INITIAL-CRAWL-LIST',
+		);
+
+		foreach ($files_to_clean as $file_to_clean) {
+			if ( file_exists($this->uploadsPath() . $file_to_clean) ) {
+				unlink($this->uploadsPath() . $file_to_clean);
+
+				//// reset each file if it exists, ready for writing
+				//$f = @fopen($this->uploadsPath() . $file_to_clean, "r+");
+				//if ($f !== false) {
+				//	ftruncate($f, 0);
+				//	fclose($f);
+				//}
+
+			}
+		}
+
+		echo 'SUCCESS';
 	}
 
 	public function start_export($viaCLI = false) {
-#		$this->cleanup_working_files();
-
         // set options from GUI or override via CLI
         $sendViaGithub = filter_input(INPUT_POST, 'sendViaGithub');
         $sendViaFTP = filter_input(INPUT_POST, 'sendViaFTP');
@@ -424,16 +441,11 @@ class StaticHtmlOutput {
         file_put_contents($_SERVER['currentArchive'], $archiveDir);
 
 		if (!file_exists($archiveDir)) {
-			error_log('creating archive dir: ' . $archiveDir);
 			wp_mkdir_p($archiveDir);
 		}
 
 		if (file_exists($_SERVER['exportLog'])) {
 			unlink($_SERVER['exportLog']);
-		}
-
-		if (file_exists($_SERVER['urlsQueue'])) {
-			unlink($_SERVER['urlsQueue']);
 		}
 
         file_put_contents($_SERVER['exportLog'], date("Y-m-d h:i:s") . ' STARTING EXPORT', FILE_APPEND | LOCK_EX);
@@ -1241,20 +1253,7 @@ class StaticHtmlOutput {
     public function post_process_archive_dir() {
         $this->wsLog('POST PROCESSING ARCHIVE DIR: ...');
 
-		// reset symlink to latest archive (if retain files options checked)
-        global $blog_id;
-        $archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
 
-		if (file_exists($this->outputPath() . '/latest-' . $blog_id)) {
-			unlink($this->outputPath() . '/latest-' . $blog_id );
-		}
-
-        symlink($archiveDir, $this->outputPath() . '/latest-' . $blog_id );
-
-        $this->wsLog('LOCALDIR SYMLINK CREATED: '. $this->outputPath() . '/latest-' . $blog_id);
-
-
-		//TODO: rm symlink if no folder exists
         $archiveDir = untrailingslashit(file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE'));
 
 		// rename dirs (in reverse order than when doing in responsebody)
@@ -1294,7 +1293,11 @@ class StaticHtmlOutput {
 
 
 		rename($original_wp_content, $new_wp_content);
-		rename($updated_uploads_dir, $new_uploads_dir);
+
+		if (file_exists($updated_uploads_dir)) {
+			rename($updated_uploads_dir, $new_uploads_dir);
+		}
+
 		rename($updated_theme_root, $new_theme_root);
 		rename($updated_theme_dir, $new_theme_dir);
 
@@ -1329,17 +1332,44 @@ class StaticHtmlOutput {
 		return rmdir($dir); 
 	  } 
 
+	public function remove_symlink_to_latest_archive() {
+        global $blog_id;
+        $archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
+
+		if (is_link($this->outputPath() . '/latest-' . $blog_id)) {
+			$this->wsLog('REMOVING SYMLINK: '. $this->outputPath() . '/latest-' . $blog_id);
+			unlink($this->outputPath() . '/latest-' . $blog_id );
+		} else {
+			$this->wsLog('REMOVING SYMLINK: NO LINK FOUND AT'. $this->outputPath() . '/latest-' . $blog_id);
+		}
+	}	
+
+	public function create_symlink_to_latest_archive() {
+        global $blog_id;
+        $archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
+
+		// rm and recreate
+		$this->remove_symlink_to_latest_archive();
+
+        $this->wsLog('(RE)CREATING SYMLINK TO LATEST EXPORT FOLDER: '. $this->outputPath() . '/latest-' . $blog_id);
+
+        symlink($archiveDir, $this->outputPath() . '/latest-' . $blog_id );
+
+		echo 'SUCCESS';
+	}	
+
     public function post_export_teardown() {
         $this->wsLog('POST EXPORT CLEANUP: starting...');
-		//TODO: rm symlink if no folder exists
 
         $archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
-        
+
 		$retainStaticFiles = filter_input(INPUT_POST, 'retainStaticFiles');
 		$retainZipFile = filter_input(INPUT_POST, 'retainZipFile');
 
         // Remove temporary files unless user requested to keep or needed for FTP transfer
         if ($retainStaticFiles != 1) {
+			$this->remove_symlink_to_latest_archive();
+
 			$this->wsLog('POST EXPORT CLEANUP: removing dir: ' . $archiveDir);
             $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($archiveDir), RecursiveIteratorIterator::CHILD_FIRST);
             foreach ($iterator as $fileName => $fileObject) {
@@ -1500,7 +1530,6 @@ class StaticHtmlOutput {
 		//$fileDir = preg_replace('/(\/+)/', '/', $fileDir);
 
 		if (!file_exists($fileDir)) {
-			error_log('making a dir when saving a url: ' . $fileDir);
 			wp_mkdir_p($fileDir);
 		}
 
