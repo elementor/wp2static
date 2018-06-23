@@ -48,7 +48,12 @@ else
 fi
 
 # install core (replace default version on container)
-wp --allow-root core download --version="$WP_INSTALL_VERSION" --force
+if [ -z "${WP_INSTALL_VERSION}" ]; then 
+	echo "Using WP version that came with container"; 
+else 
+	echo "Installing WP version: ${WP_INSTALL_VERSION}"; 
+	wp --allow-root core download --version="$WP_INSTALL_VERSION" --force
+fi
 
 
 
