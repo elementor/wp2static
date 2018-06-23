@@ -62,9 +62,10 @@ if ( ! function_exists( 'wpsho_fr' ) ) {
 	require_once 'library/StaticHtmlOutput/View.php';
 	require_once 'library/StaticHtmlOutput/UrlRequest.php';
 	require_once 'library/StaticHtmlOutput/FilesHelper.php';
+	require_once 'library/StaticHtmlOutput/Netlify.php';
 	require_once 'library/StaticHtmlOutput.php';
 
-	StaticHtmlOutput::init( __FILE__ );
+	StaticHtmlOutput_Controller::init( __FILE__ );
 
 	/**
 	 * Settings link for WP Static HTML Output plugin
@@ -136,7 +137,7 @@ if ( ! function_exists( 'wpsho_fr' ) ) {
 		$instance_method = filter_input( INPUT_POST, 'ajax_action' );
 
 		if ( '' !== $instance_method && is_string( $instance_method ) ) {
-			$plugin_instance = StaticHtmlOutput::getInstance();
+			$plugin_instance = StaticHtmlOutput_Controller::getInstance();
 			call_user_func( array( $plugin_instance, $instance_method ) );
 		}
 
