@@ -866,14 +866,10 @@ class StaticHtmlOutput {
 					$filename = str_replace('//', '/', $filename);
 					$this->wsLog('FILE TO ADD:');
 					$this->wsLog($filename);
-					$this->add_file_to_list($filename, $file_list_path);
+					file_put_contents($file_list_path, $filename, FILE_APPEND | LOCK_EX);
 				} 
 			}
 		}
-	}
-
-	public function add_file_to_list( $filename, $file_list_path) {
-		file_put_contents($file_list_path, $filename, FILE_APPEND | LOCK_EX);
 	}
 
 	public function prepare_file_list($export_target) {
