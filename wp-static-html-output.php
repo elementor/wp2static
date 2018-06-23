@@ -61,6 +61,7 @@ if ( ! function_exists( 'wpsho_fr' ) ) {
 	require_once 'library/StaticHtmlOutput/Options.php';
 	require_once 'library/StaticHtmlOutput/View.php';
 	require_once 'library/StaticHtmlOutput/UrlRequest.php';
+	require_once 'library/StaticHtmlOutput/FilesHelper.php';
 	require_once 'library/StaticHtmlOutput.php';
 
 	StaticHtmlOutput::init( __FILE__ );
