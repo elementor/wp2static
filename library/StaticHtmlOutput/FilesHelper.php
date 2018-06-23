@@ -47,4 +47,32 @@ class StaticHtmlOutput_FilesHelper
 		}
 	}
 
+	public static function getListOfLocalFilesByUrl(array $urls) {
+		$files = array();
+
+		foreach ($urls as $url) {
+			$directory = str_replace(home_url('/'), ABSPATH, $url);
+
+			if (stripos($url, home_url('/')) === 0 && is_dir($directory)) {
+				$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory), RecursiveDirectoryIterator::SKIP_DOTS);
+				foreach ($iterator as $fileName => $fileObject) {
+					if (is_file($fileName)) {
+						$pathinfo = pathinfo($fileName);
+						if (isset($pathinfo['extension']) && !in_array($pathinfo['extension'], array('php', 'phtml', 'tpl'))) {
+							array_push($files, home_url(str_replace(ABSPATH, '', $fileName)));
+						}
+					}
+				}
+			} else {
+				if ($url != '') {
+					array_push($files, $url);
+				}
+			}
+		}
+
+        // TODO: remove any dot files, like .gitignore here, only rm'd from dirs above
+
+		return $files;
+	}
+
 }

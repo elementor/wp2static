@@ -444,7 +444,7 @@ class StaticHtmlOutput {
 		
 		$urlsQueue = array_unique(array_merge(
 					array(trailingslashit($baseUrl)),
-					$this->_getListOfLocalFilesByUrl(array(get_template_directory_uri())),
+					StaticHtmlOutput_FilesHelper::getListOfLocalFilesByUrl(array(get_template_directory_uri())),
                     $this->_getAllWPPostURLs(),
 					explode("\n", $additionalUrls)
 					));
@@ -456,7 +456,7 @@ class StaticHtmlOutput {
             $this->wsLog('NOT INCLUDING ALL FILES FROM UPLOADS DIR');
 			$urlsQueue = array_unique(array_merge(
 					$urlsQueue,
-					$this->_getListOfLocalFilesByUrl(array($this->uploadsURL()))
+					StaticHtmlOutput_FilesHelper::getListOfLocalFilesByUrl(array($this->uploadsURL()))
 			));
 		}
 
@@ -1381,34 +1381,6 @@ class StaticHtmlOutput {
 
         return $postURLs;
     }
-
-	protected function _getListOfLocalFilesByUrl(array $urls) {
-		$files = array();
-
-		foreach ($urls as $url) {
-			$directory = str_replace(home_url('/'), ABSPATH, $url);
-
-			if (stripos($url, home_url('/')) === 0 && is_dir($directory)) {
-				$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory), RecursiveDirectoryIterator::SKIP_DOTS);
-				foreach ($iterator as $fileName => $fileObject) {
-					if (is_file($fileName)) {
-						$pathinfo = pathinfo($fileName);
-						if (isset($pathinfo['extension']) && !in_array($pathinfo['extension'], array('php', 'phtml', 'tpl'))) {
-							array_push($files, home_url(str_replace(ABSPATH, '', $fileName)));
-						}
-					}
-				}
-			} else {
-				if ($url != '') {
-					array_push($files, $url);
-				}
-			}
-		}
-
-        // TODO: remove any dot files, like .gitignore here, only rm'd from dirs above
-
-		return $files;
-	}
 
     public function wsLog($text) {
         $exportLog = $this->uploadsPath() . '/WP-STATIC-EXPORT-LOG';
