@@ -612,8 +612,8 @@ function displayTextfield($template_variables, $field_name, $field_label, $descr
                 </p>
 
 <?php echo displayCheckbox($this, 'createZip', 'Create a ZIP file of your statically exported site, ready for you to manually deploy. Download link will appear in the Export Log below'); ?>
-<?php echo displayCheckbox($this, 'retainStaticFiles', 'Retain generated static files on server'); ?>
-<?php echo displayCheckbox($this, 'retainZipFile', 'Retain generated zip file on server'); ?>
+<?php echo displayCheckbox($this, 'retainStaticFiles', 'Retain the last exported site folder on server, along with a symlink to it named "latest-1"'); ?>
+<?php echo displayCheckbox($this, 'retainZipFile', 'Retain generated zip file on server (this option is soon to be deprecated, but currently required if you chose to generate the ZIP file above)'); ?>
 <?php echo displayCheckbox($this, 'sendViaFTP', 'Transfer files via FTP', 1); ?>
 
 <span class="ftp">
