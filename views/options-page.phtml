@@ -242,9 +242,9 @@ jQuery(document).ready(function($){
             method: 'POST',
             success: function(serverResponse) {
 				if ($('#createZip').attr('checked') == 'checked') {
-					doAJAXExport('crawl_site', 'post_process_archive_dir', 'create_zip');
+					doAJAXExport('cleanup_working_files', 'cleanup_leftover_archives', 'crawl_site', 'create_symlink_to_latest_archive', 'post_process_archive_dir', 'create_zip');
 				} else {
-					doAJAXExport('crawl_site', 'post_process_archive_dir' );
+					doAJAXExport('cleanup_working_files', 'cleanup_leftover_archives', 'crawl_site', 'create_symlink_to_latest_archive', 'post_process_archive_dir' );
 				}
             },
             error: ajaxErrorHandler
