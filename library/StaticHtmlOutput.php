@@ -309,7 +309,7 @@ class StaticHtmlOutput {
 				$this->wsLog('cleaning up a previous export dir or zip: ' . $fileName);
 
 				if (is_dir($this->uploadsPath() . '/' . $fileName)) {
-					$this->delete_dir_with_files( $this->uploadsPath() . '/' . $fileName);
+					StaticHtmlOutput_FilesHelper::delete_dir_with_files($this->uploadsPath() . '/' . $fileName);
 				} else {
 					unlink($this->uploadsPath() . '/' . $fileName);
 				}
@@ -1298,20 +1298,13 @@ class StaticHtmlOutput {
 			unlink($archiveDir . '/wp-login.php');
 		}
 
-		$this->delete_dir_with_files($archiveDir . '/wp-json/');
+		StaticHtmlOutput_FilesHelper::delete_dir_with_files($archiveDir . '/wp-json/');
 		
 		// TODO: remove all text files from theme dir 
 
 		echo 'SUCCESS';
 	}
 
-	public function delete_dir_with_files($dir) { 
-	   $files = array_diff(scandir($dir), array('.','..')); 
-		foreach ($files as $file) { 
-		  (is_dir("$dir/$file")) ? $this->delete_dir_with_files("$dir/$file") : unlink("$dir/$file"); 
-		} 
-		return rmdir($dir); 
-	  } 
 
 	public function remove_symlink_to_latest_archive() {
         global $blog_id;
