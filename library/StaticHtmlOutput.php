@@ -304,25 +304,21 @@ class StaticHtmlOutput {
 		$this->wsLog('CLEANUP LEFTOVER ARCHIVES: ' . $this->uploadsPath());
 
 		// TODO: cleanup all but latest archives in case of multiple failed exports filling up disk
-		$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this->uploadsPath()));
-		$exporter = wp_get_current_user();
 
-		$current_user = $exporter->user_login;
 
+		$leftover_files = preg_grep('/^([^.])/', scandir($this->uploadsPath()));
 
 		// remove all but the zip files
-		foreach ($iterator as $fileName => $fileObject) {
-			$baseName = basename($fileName);
+		foreach ($leftover_files as $fileName) {
+			$this->wsLog('checking to rm or not: ' . $fileName);
 
-			$this->wsLog('checking to rm or not: ' . $baseName);
-
-			if( strpos($baseName, 'wp-static-html-output-' && strpos($baseName, '-' . $current_user) 
-				) ) {
+			if( strpos($fileName, 'wp-static-html-output-') !== false ) {
 				$this->wsLog('cleaning up a previous export dir or zip: ' . $fileName);
-				if (is_dir($fileName)) {
-					delete_dir_with_files($fileName);
+
+				if (is_dir($this->uploadsPath() . '/' . $fileName)) {
+					$this->delete_dir_with_files( $this->uploadsPath() . '/' . $fileName);
 				} else {
-					unlink($fileName);
+					unlink($this->uploadsPath() . '/' . $fileName);
 				}
 			}
 		}
