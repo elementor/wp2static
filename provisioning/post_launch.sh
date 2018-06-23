@@ -1,7 +1,13 @@
 #!/bin/bash
 
 # run wp-cli cmds from wp install path
-cd /var/www/html
+if [ -z "${SUBDIR_TO_INSTALL}" ]; then 
+	echo "Installing into root"; 
+	cd /var/www/html
+else 
+	echo "Installing into subdirectory: ${SUBDIR_TO_INSTALL}"; 
+	cd /var/www/html/${SUBDIR_TO_INSTALL}
+fi
 
 # source env vars to use in Docker run commands (now moved to run cmd using env-file)
 
@@ -30,14 +36,24 @@ fi
 echo 'pwd:'
 pwd
 
-# apache erorr around here
+INSTALL_URL=$containerIP
+
+if [ -z "${SUBDIR_TO_INSTALL}" ]; then 
+	echo "Installing into root"; 
+else 
+	echo "Installing into subdirectory: ${SUBDIR_TO_INSTALL}"; 
+	INSTALL_URL="$containerIP/${SUBDIR_TO_INSTALL}/"
+	#mkdir ${SUBDIR_TO_INSTALL}
+	#cd ${SUBDIR_TO_INSTALL}
+fi
 
 # install core (replace default version on container)
 wp --allow-root core download --version="$WP_INSTALL_VERSION" --force
 
 
+
 # install default
-wp --allow-root core install --url="$containerIP" --title='wp plugindev' --admin_user=admin --admin_password=admin --admin_email=leonstafford@protonmail.com --skip-email
+wp --allow-root core install --url="$INSTALL_URL" --title='wp plugindev' --admin_user=admin --admin_password=admin --admin_email=leonstafford@protonmail.com --skip-email
 
 if [ -z "${INSTALL_PLUGIN_FROM_SOURCES}" ]; then 
 	echo "Launching without any plugin files synced"; 
