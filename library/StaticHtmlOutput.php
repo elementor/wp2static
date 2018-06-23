@@ -5,9 +5,7 @@
  * Copyright (c) 2011 Leon Stafford
  */
 
-use GuzzleHttp\Client;
-
-class StaticHtmlOutput {
+class StaticHtmlOutput_Controller {
 	const VERSION = '3.1';
 	const OPTIONS_KEY = 'wp-static-html-output-options';
 	const HOOK = 'wp-static-html-output';
@@ -1119,40 +1117,26 @@ class StaticHtmlOutput {
 
     public function netlify_do_export () {
 		if ( wpsho_fr()->is__premium_only() ) {
-			require_once(__DIR__.'/Github/autoload.php');
+
 			$this->wsLog('NETLIFY EXPORT: starting to deploy ZIP file');
+
 			// will exclude the siteroot when copying
 			$archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
-			$archiveName = rtrim($archiveDir, '/');
-			$siteroot = $archiveName . '/';
-			$netlifySiteID = filter_input(INPUT_POST, 'netlifySiteID');
-			$netlifyPersonalAccessToken = filter_input(INPUT_POST, 'netlifyPersonalAccessToken');
+			$archiveName = rtrim($archiveDir, '/') . '.zip';
 
-			$client = new Client(array(
-					// Base URI is used with relative requests
-					'base_uri' => 'https://api.netlify.com'
-			));	
+			$netlify = new StaticHtmlOutput_Netlify(
+				filter_input(INPUT_POST, 'netlifySiteID'),
+				filter_input(INPUT_POST, 'netlifyPersonalAccessToken')
+			);
 
-			try {
-				$response = $client->request('POST', '/api/v1/sites/' . $netlifySiteID . '.netlify.com/deploys', array(
-						'headers'  => array(
-							'Content-Type' => 'application/zip',
-							'Authorization' => 'Bearer ' . $netlifyPersonalAccessToken
-						),
-						'body' => fopen($archiveName . '.zip', 'rb')
-				));
-			} catch (Exception $e) {
-				file_put_contents($_SERVER['exportLog'], $e , FILE_APPEND | LOCK_EX);
-				throw new Exception($e);
-			}
+			echo $netlify->deploy($archiveName);
 		}
     }
 
     public function doExportWithoutGUI() {
 		if ( wpsho_fr()->is_plan('professional_edition') ) {
-			// parse options hash
-			// TODO: DRY this up by adding as instance var
-
+			// TODO: get parity with UI export options
+			
 
 			// start export, including build initial file list
 			$this->start_export(true);
@@ -1162,9 +1146,8 @@ class StaticHtmlOutput {
 
 			// create zip
 			$this->create_zip();
-			
 
-			// do any exports
+			// TODO: run any other enabled exports
 		}
     }
 
@@ -1179,9 +1162,7 @@ class StaticHtmlOutput {
 		} else {
 			echo '';
 		}
-
 	}
-
 
 	public function record_successful_export($viaCLI = false) {
 		// increment a value in the DB 
