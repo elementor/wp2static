@@ -15,6 +15,7 @@ class StaticHtmlOutput_UrlRequest
 	{
 		$this->_url = filter_var(trim($url), FILTER_VALIDATE_URL);
 
+
 		$response = wp_remote_get( $this->_url,
 			array(
 				'timeout' => 300, //set a long time out
@@ -25,7 +26,8 @@ class StaticHtmlOutput_UrlRequest
 		$this->_response = '';
 
 		if (is_wp_error($response)) {
-			error_log('WP_ERROR');
+			error_log('error in wp_remote_get response for URL:');
+			error_log($this->_url);
 			error_log(print_r($response, true));
 			$this->_response = 'FAIL';
 		} else {
