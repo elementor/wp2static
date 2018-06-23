@@ -8,7 +8,7 @@
 use GuzzleHttp\Client;
 
 class StaticHtmlOutput {
-	const VERSION = '3.0';
+	const VERSION = '3.1';
 	const OPTIONS_KEY = 'wp-static-html-output-options';
 	const HOOK = 'wp-static-html-output';
 
@@ -323,11 +323,28 @@ class StaticHtmlOutput {
 		}
 
 		// TODO: cleanup all but latest archives in case of multiple failed exports filling up disk
+		$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this->uploadsPath()));
+		$exporter = wp_get_current_user();
 
+		$current_user = $exporter->user_login;
+
+		foreach ($iterator as $fileName => $fileObject) {
+			$baseName = basename($fileName);
+
+			if(
+				strpos($baseName, 'wp-static-html-output-' && 
+				strpos($baseName, '-' . $current_user)
+				) ) {
+				error_log('cleaning up a previous export dir or zip:');
+				echo $baseName;
+				echo print_r($fileObject);
+			
+			}
+		}
 	}
 
 	public function start_export($viaCLI = false) {
-		$this->cleanup_working_files();
+#		$this->cleanup_working_files();
 
         // set options from GUI or override via CLI
         $sendViaGithub = filter_input(INPUT_POST, 'sendViaGithub');
@@ -367,31 +384,7 @@ class StaticHtmlOutput {
 
         $archiveUrl = $this->_prepareInitialFileList($viaCLI);
 
-        if ($archiveUrl = 'initial crawl list ready') {
-            $this->wsLog('Initial list of files to include is prepared. Now crawling these to extract more URLs.');
-
-        } elseif (is_wp_error($archiveUrl)) {
-			$message = 'Error: ' . $archiveUrl->get_error_code;
-		} else {
-            $this->wsLog('ZIP CREATED: Download a ZIP of your static site from: ' . $archiveUrl);
-			$message = sprintf('Archive created successfully: <a href="%s">Download archive</a>', $archiveUrl);
-			if ($this->_options->getOption('retainStaticFiles') == 1) {
-				$message .= sprintf('<br />Static files retained at: %s/', str_replace(home_url(),'',substr($archiveUrl,0,-4)));
-			}
-        }
-
-        echo 'Archive has been generated';
-
-        global $blog_id;
-        $archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
-
-		if (file_exists($this->outputPath() . '/latest-' . $blog_id)) {
-			unlink($this->outputPath() . '/latest-' . $blog_id );
-		}
-
-        symlink($archiveDir, $this->outputPath() . '/latest-' . $blog_id );
-
-        echo 'LOCALDIR SYMLINK UPDATED: '. $this->outputPath() . '/latest-' . $blog_id;
+        echo 'SUCCESS';
 	}
 
 	protected function _prepareInitialFileList($viaCLI = false) {
@@ -414,6 +407,7 @@ class StaticHtmlOutput {
 
 		$exporter = wp_get_current_user();
 		$_SERVER['urlsQueue'] = $this->uploadsPath() . '/WP-STATIC-INITIAL-CRAWL-LIST';
+		// setting path to store the archive dir path
 		$_SERVER['currentArchive'] = $this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE';
 		$_SERVER['exportLog'] = $this->uploadsPath() . '/WP-STATIC-EXPORT-LOG';
 		$_SERVER['githubFilesToExport'] = $this->uploadsPath() . '/WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT';
@@ -426,9 +420,11 @@ class StaticHtmlOutput {
 
 		$archiveDir = $archiveName . '/';
 
+		// writing the archive dir into the `$this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE'` path
         file_put_contents($_SERVER['currentArchive'], $archiveDir);
 
 		if (!file_exists($archiveDir)) {
+			error_log('creating archive dir: ' . $archiveDir);
 			wp_mkdir_p($archiveDir);
 		}
 
@@ -502,6 +498,9 @@ class StaticHtmlOutput {
 
         if (empty($currentUrl)){
             $this->wsLog('EMPTY FILE ENCOUNTERED');
+			// skip this empty file
+			echo 'SUCCESS';
+			return;
         }
 
         $urlResponse = new StaticHtmlOutput_UrlRequest($currentUrl);
@@ -1241,6 +1240,20 @@ class StaticHtmlOutput {
 	
     public function post_process_archive_dir() {
         $this->wsLog('POST PROCESSING ARCHIVE DIR: ...');
+
+		// reset symlink to latest archive (if retain files options checked)
+        global $blog_id;
+        $archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
+
+		if (file_exists($this->outputPath() . '/latest-' . $blog_id)) {
+			unlink($this->outputPath() . '/latest-' . $blog_id );
+		}
+
+        symlink($archiveDir, $this->outputPath() . '/latest-' . $blog_id );
+
+        $this->wsLog('LOCALDIR SYMLINK CREATED: '. $this->outputPath() . '/latest-' . $blog_id);
+
+
 		//TODO: rm symlink if no folder exists
         $archiveDir = untrailingslashit(file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE'));
 
@@ -1487,6 +1500,7 @@ class StaticHtmlOutput {
 		//$fileDir = preg_replace('/(\/+)/', '/', $fileDir);
 
 		if (!file_exists($fileDir)) {
+			error_log('making a dir when saving a url: ' . $fileDir);
 			wp_mkdir_p($fileDir);
 		}
 

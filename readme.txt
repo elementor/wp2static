@@ -4,7 +4,7 @@ Donate link: https://www.paypal.me/leonjstafford
 Tags: static,html,export,performance,security,cache,s3,dropbox,github,netlify,bunnycdn
 Requires at least: 3.2
 Tested up to: 4.9.6
-Stable tag: 3.0
+Stable tag: 3.1
 
 
 The optimum solution to speed up and secure your WordPress site - export to static HTML and hide all traces of WordPress from your site!
