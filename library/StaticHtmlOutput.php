@@ -332,19 +332,12 @@ class StaticHtmlOutput {
 			'/WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT',
 			'/WP-STATIC-CRAWLED-LINKS',
 			'/WP-STATIC-INITIAL-CRAWL-LIST',
+			'/WP-STATIC-CURRENT-ARCHIVE',
 		);
 
 		foreach ($files_to_clean as $file_to_clean) {
 			if ( file_exists($this->uploadsPath() . $file_to_clean) ) {
 				unlink($this->uploadsPath() . $file_to_clean);
-
-				//// reset each file if it exists, ready for writing
-				//$f = @fopen($this->uploadsPath() . $file_to_clean, "r+");
-				//if ($f !== false) {
-				//	ftruncate($f, 0);
-				//	fclose($f);
-				//}
-
 			}
 		}
 
@@ -1386,11 +1379,12 @@ class StaticHtmlOutput {
 			}
 		}
 
+		
 		$this->cleanup_working_files();
 
 		$this->wsLog('POST EXPORT CLEANUP: complete');
 
-		echo 'SUCCESS';
+		// has SUCCESS returned already from cleanup working files..
 	}
 
     protected function _getAllWPPostURLs(){
