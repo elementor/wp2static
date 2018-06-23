@@ -302,16 +302,9 @@ class StaticHtmlOutput {
 
 	public function cleanup_leftover_archives() {
 		$this->wsLog('CLEANUP LEFTOVER ARCHIVES: ' . $this->uploadsPath());
-
-		// TODO: cleanup all but latest archives in case of multiple failed exports filling up disk
-
-
 		$leftover_files = preg_grep('/^([^.])/', scandir($this->uploadsPath()));
 
-		// remove all but the zip files
 		foreach ($leftover_files as $fileName) {
-			$this->wsLog('checking to rm or not: ' . $fileName);
-
 			if( strpos($fileName, 'wp-static-html-output-') !== false ) {
 				$this->wsLog('cleaning up a previous export dir or zip: ' . $fileName);
 
@@ -419,7 +412,6 @@ class StaticHtmlOutput {
 
 
 		$exporter = wp_get_current_user();
-		$_SERVER['urlsQueue'] = $this->uploadsPath() . '/WP-STATIC-INITIAL-CRAWL-LIST';
 		// setting path to store the archive dir path
 		$_SERVER['currentArchive'] = $this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE';
 		$_SERVER['exportLog'] = $this->uploadsPath() . '/WP-STATIC-EXPORT-LOG';
@@ -478,7 +470,7 @@ class StaticHtmlOutput {
         $this->wsLog('INITIAL CRAWL LIST CONTAINS ' . count($urlsQueue) . ' FILES');
 
         $str = implode("\n", $urlsQueue);
-        file_put_contents($_SERVER['urlsQueue'], $str);
+        file_put_contents($this->uploadsPath() . '/WP-STATIC-INITIAL-CRAWL-LIST', $str);
         file_put_contents($this->uploadsPath() . '/WP-STATIC-CRAWLED-LINKS', '');
 
         return 'initial crawl list ready';
