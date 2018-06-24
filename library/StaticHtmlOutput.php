@@ -13,21 +13,10 @@ class StaticHtmlOutput_Controller {
 	protected static $_instance = null;
 	protected $_options = null;
 	protected $_view = null;
+	protected $_uploadsPath;
+	protected $_uploadsURL;
 	protected function __construct() {}
 	protected function __clone() {}
-
-	// TODO: merge this with  outputPath, which will default to uploads path unless overridden
-	public function uploadsPath() {
-        $tmp_var_to_hold_return_array = wp_upload_dir();
-
-		return $tmp_var_to_hold_return_array['basedir'];
-	}
-
-	public function uploadsURL() {
-        $tmp_var_to_hold_return_array = wp_upload_dir();
-
-		return $tmp_var_to_hold_return_array['baseurl'];
-	}
 
 	public static function getInstance() {
 		if (null === self::$_instance) {
@@ -41,6 +30,9 @@ class StaticHtmlOutput_Controller {
 
 	public static function init($bootstrapFile) {
 		$instance = self::getInstance();
+        $tmp_var_to_hold_return_array = wp_upload_dir();
+		$instance->_uploadsPath = $tmp_var_to_hold_return_array['basedir'];
+		$instance->_uploadsURL = $tmp_var_to_hold_return_array['baseurl'];
 
 		register_activation_hook($bootstrapFile, array($instance, 'activate'));
 
@@ -77,7 +69,7 @@ class StaticHtmlOutput_Controller {
 
 	public function renderOptionsPage() {
 		// Check system requirements
-		$uploadsFolderWritable = $this->uploadsPath() && is_writable($this->uploadsPath());
+		$uploadsFolderWritable = $this->_uploadsPath && is_writable($this->_uploadsPath);
 		$supportsZipArchives = extension_loaded('zip');
 		$supports_cURL = extension_loaded('curl');
 		$permalinksStructureDefined = strlen(get_option('permalink_structure'));
@@ -94,7 +86,7 @@ class StaticHtmlOutput_Controller {
 				->assign('supportsZipArchives', $supportsZipArchives)
 				->assign('supports_cURL', $supports_cURL)
 				->assign('permalinksStructureDefined', $permalinksStructureDefined)
-				->assign('uploadsPath', $this->uploadsPath())
+				->assign('uploadsPath', $this->_uploadsPath)
 				->render();
 		} else {
 			do_action(self::HOOK . '-saveOptions');
@@ -103,10 +95,10 @@ class StaticHtmlOutput_Controller {
 			$this->_view
 				->setTemplate('options-page')
 				->assign('staticExportSettings', $this->_options->getOption('static-export-settings'))
-				->assign('wpUploadsDir', $this->uploadsURL())
+				->assign('wpUploadsDir', $this->_uploadsURL)
 				->assign('wpPluginDir', plugins_url('/', __FILE__))
 				->assign('onceAction', self::HOOK . '-options')
-				->assign('uploadsPath', $this->uploadsPath())
+				->assign('uploadsPath', $this->_uploadsPath)
 				->render();
 		}
 	}
@@ -125,7 +117,7 @@ class StaticHtmlOutput_Controller {
 		// TODO: a costly function, think about optimisations, we don't want this running for each request if possible
 
 		// set default uploads path as output path
-		$outputDir = $this->uploadsPath();
+		$outputDir = $this->_uploadsPath;
 
 		// check for outputDir set in saved options
 		parse_str($this->_options->getOption('static-export-settings'), $pluginOptions);
@@ -142,19 +134,19 @@ class StaticHtmlOutput_Controller {
 
 		if ( !is_dir($outputDir) ) {
 			// reverting back to default uploads path	
-			$outputDir = $this->uploadsPath();
+			$outputDir = $this->_uploadsPath;
 		}
 
 		// if path is not writeable, revert back to default	
 		if ( empty($outputDir) || !is_writable($outputDir) ) {
-			$outputDir = $this->uploadsPath();
+			$outputDir = $this->_uploadsPath;
 		}
 
 		return $outputDir;
 	}
 
     public function progressThroughExportTargets() {
-        $exportTargetsFile = $this->uploadsPath() . '/WP-STATIC-EXPORT-TARGETS';
+        $exportTargetsFile = $this->_uploadsPath . '/WP-STATIC-EXPORT-TARGETS';
 
         // remove first line from file (disabled while testing)
         $exportTargets = file($exportTargetsFile, FILE_IGNORE_NEW_LINES);
@@ -173,7 +165,7 @@ class StaticHtmlOutput_Controller {
 				filter_input(INPUT_POST, 'githubPersonalAccessToken'),
 				filter_input(INPUT_POST, 'githubBranch'),
 				filter_input(INPUT_POST, 'githubPath'),
-				$this->uploadsPath()
+				$this->_uploadsPath
 			);
 
 			$github->upload_blobs();
@@ -189,7 +181,7 @@ class StaticHtmlOutput_Controller {
 				filter_input(INPUT_POST, 'githubPersonalAccessToken'),
 				filter_input(INPUT_POST, 'githubBranch'),
 				filter_input(INPUT_POST, 'githubPath'),
-				$this->uploadsPath()
+				$this->_uploadsPath
 			);
 
 			$github->prepare_deployment();
@@ -205,7 +197,7 @@ class StaticHtmlOutput_Controller {
 				filter_input(INPUT_POST, 'githubPersonalAccessToken'),
 				filter_input(INPUT_POST, 'githubBranch'),
 				filter_input(INPUT_POST, 'githubPath'),
-				$this->uploadsPath()
+				$this->_uploadsPath
 			);
 
 			$github->commit_new_tree();
@@ -213,17 +205,17 @@ class StaticHtmlOutput_Controller {
     }
 
 	public function cleanup_leftover_archives() {
-		$this->wsLog('CLEANUP LEFTOVER ARCHIVES: ' . $this->uploadsPath());
-		$leftover_files = preg_grep('/^([^.])/', scandir($this->uploadsPath()));
+		$this->wsLog('CLEANUP LEFTOVER ARCHIVES: ' . $this->_uploadsPath);
+		$leftover_files = preg_grep('/^([^.])/', scandir($this->_uploadsPath));
 
 		foreach ($leftover_files as $fileName) {
 			if( strpos($fileName, 'wp-static-html-output-') !== false ) {
 				$this->wsLog('cleaning up a previous export dir or zip: ' . $fileName);
 
-				if (is_dir($this->uploadsPath() . '/' . $fileName)) {
-					StaticHtmlOutput_FilesHelper::delete_dir_with_files($this->uploadsPath() . '/' . $fileName);
+				if (is_dir($this->_uploadsPath . '/' . $fileName)) {
+					StaticHtmlOutput_FilesHelper::delete_dir_with_files($this->_uploadsPath . '/' . $fileName);
 				} else {
-					unlink($this->uploadsPath() . '/' . $fileName);
+					unlink($this->_uploadsPath . '/' . $fileName);
 				}
 			}
 		}
@@ -248,8 +240,8 @@ class StaticHtmlOutput_Controller {
 		);
 
 		foreach ($files_to_clean as $file_to_clean) {
-			if ( file_exists($this->uploadsPath() . $file_to_clean) ) {
-				unlink($this->uploadsPath() . $file_to_clean);
+			if ( file_exists($this->_uploadsPath . $file_to_clean) ) {
+				unlink($this->_uploadsPath . $file_to_clean);
 			}
 		}
 
@@ -274,7 +266,7 @@ class StaticHtmlOutput_Controller {
             $sendViaDropbox = $pluginOptions['sendViaDropbox'];
         }
 
-        $exportTargetsFile = $this->uploadsPath() . '/WP-STATIC-EXPORT-TARGETS';
+        $exportTargetsFile = $this->_uploadsPath . '/WP-STATIC-EXPORT-TARGETS';
 
         // add each export target to file
         if ($sendViaGithub == 1) {
@@ -318,9 +310,9 @@ class StaticHtmlOutput_Controller {
 
 		$exporter = wp_get_current_user();
 		// setting path to store the archive dir path
-		$_SERVER['currentArchive'] = $this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE';
-		$_SERVER['exportLog'] = $this->uploadsPath() . '/WP-STATIC-EXPORT-LOG';
-		$_SERVER['githubFilesToExport'] = $this->uploadsPath() . '/WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT';
+		$_SERVER['currentArchive'] = $this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE';
+		$_SERVER['exportLog'] = $this->_uploadsPath . '/WP-STATIC-EXPORT-LOG';
+		$_SERVER['githubFilesToExport'] = $this->_uploadsPath . '/WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT';
 
 		$archiveName = $this->outputPath() . '/' . self::HOOK . '-' . $blog_id . '-' . time();
 		// append username if done via UI
@@ -330,7 +322,7 @@ class StaticHtmlOutput_Controller {
 
 		$archiveDir = $archiveName . '/';
 
-		// writing the archive dir into the `$this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE'` path
+		// writing the archive dir into the `$this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE'` path
         file_put_contents($_SERVER['currentArchive'], $archiveDir);
 
 		if (!file_exists($archiveDir)) {
@@ -368,22 +360,22 @@ class StaticHtmlOutput_Controller {
             $this->wsLog('NOT INCLUDING ALL FILES FROM UPLOADS DIR');
 			$urlsQueue = array_unique(array_merge(
 					$urlsQueue,
-					StaticHtmlOutput_FilesHelper::getListOfLocalFilesByUrl(array($this->uploadsURL()))
+					StaticHtmlOutput_FilesHelper::getListOfLocalFilesByUrl(array($this->_uploadsURL))
 			));
 		}
 
         $this->wsLog('INITIAL CRAWL LIST CONTAINS ' . count($urlsQueue) . ' FILES');
 
         $str = implode("\n", $urlsQueue);
-        file_put_contents($this->uploadsPath() . '/WP-STATIC-INITIAL-CRAWL-LIST', $str);
-        file_put_contents($this->uploadsPath() . '/WP-STATIC-CRAWLED-LINKS', '');
+        file_put_contents($this->_uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST', $str);
+        file_put_contents($this->_uploadsPath . '/WP-STATIC-CRAWLED-LINKS', '');
 
         return 'initial crawl list ready';
     }
 
 	public function crawlABitMore($viaCLI = false) {
-		$initial_crawl_list_file = $this->uploadsPath() . '/WP-STATIC-INITIAL-CRAWL-LIST';
-        $crawled_links_file = $this->uploadsPath() . '/WP-STATIC-CRAWLED-LINKS';
+		$initial_crawl_list_file = $this->_uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST';
+        $crawled_links_file = $this->_uploadsPath . '/WP-STATIC-CRAWLED-LINKS';
         $initial_crawl_list = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
         $crawled_links = file($crawled_links_file, FILE_IGNORE_NEW_LINES);
 
@@ -423,7 +415,7 @@ class StaticHtmlOutput_Controller {
 		// TODO: if it replaces baseurl here, it will be searching links starting with that...
 		// TODO: shouldn't be doing this here...
         $urlResponse->replaceBaseUrl($baseUrl, $newBaseUrl);
-        $archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
+        $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
         $this->_saveUrlData($urlResponse, $archiveDir);
 
 		// try extracting urls from a response that hasn't been changed yet...
@@ -444,7 +436,7 @@ class StaticHtmlOutput_Controller {
 
                 $urlResponse->cleanup();
                 $urlResponse->replaceBaseUrl($baseUrl, $newBaseUrl);
-                $archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
+                $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
                 $this->_saveUrlData($urlResponse, $archiveDir);
             } 
         }
@@ -466,7 +458,7 @@ class StaticHtmlOutput_Controller {
     }
 
 	public function crawl_site($viaCLI = false) {
-		$initial_crawl_list_file = $this->uploadsPath() . '/WP-STATIC-INITIAL-CRAWL-LIST';
+		$initial_crawl_list_file = $this->_uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST';
         $initial_crawl_list = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
 
 		if ( !empty($initial_crawl_list) ) {
@@ -476,7 +468,7 @@ class StaticHtmlOutput_Controller {
 
     public function create_zip() {
         $this->wsLog('CREATING ZIP FILE...');
-        $archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
+        $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
         $archiveName = rtrim($archiveDir, '/');
 		$tempZip = $archiveName . '.tmp';
 		$zipArchive = new ZipArchive();
@@ -515,7 +507,7 @@ class StaticHtmlOutput_Controller {
 				filter_input(INPUT_POST, 'ftpPassword'),
 				filter_input(INPUT_POST, 'ftpRemotePath'),
 				filter_input(INPUT_POST, 'useActiveFTP'),
-				$this->uploadsPath()
+				$this->_uploadsPath
 			);
 
 			$ftp->prepare_deployment();
@@ -532,7 +524,7 @@ class StaticHtmlOutput_Controller {
 				filter_input(INPUT_POST, 'ftpPassword'),
 				filter_input(INPUT_POST, 'ftpRemotePath'),
 				filter_input(INPUT_POST, 'useActiveFTP'),
-				$this->uploadsPath()
+				$this->_uploadsPath
 			);
 
 			$ftp->transfer_files();
@@ -547,7 +539,7 @@ class StaticHtmlOutput_Controller {
 				filter_input(INPUT_POST, 'bunnycdnPullZoneName'),
 				filter_input(INPUT_POST, 'bunnycdnAPIKey'),
 				filter_input(INPUT_POST, 'bunnycdnRemotePath'),
-				$this->uploadsPath()
+				$this->_uploadsPath
 			);
 
 			$bunnyCDN->prepare_export();
@@ -562,7 +554,7 @@ class StaticHtmlOutput_Controller {
 				filter_input(INPUT_POST, 'bunnycdnPullZoneName'),
 				filter_input(INPUT_POST, 'bunnycdnAPIKey'),
 				filter_input(INPUT_POST, 'bunnycdnRemotePath'),
-				$this->uploadsPath()
+				$this->_uploadsPath
 			);
 
 			$bunnyCDN->transfer_files();
@@ -577,7 +569,7 @@ class StaticHtmlOutput_Controller {
 				filter_input(INPUT_POST, 'bunnycdnPullZoneName'),
 				filter_input(INPUT_POST, 'bunnycdnAPIKey'),
 				filter_input(INPUT_POST, 'bunnycdnRemotePath'),
-				$this->uploadsPath()
+				$this->_uploadsPath
 			);
 
 			$bunnyCDN->purge_all_cache();
@@ -587,7 +579,7 @@ class StaticHtmlOutput_Controller {
 	public function prepare_file_list($export_target) {
         $this->wsLog($export_target . ' EXPORT: Preparing list of files to export');
 
-         $file_list_path = $this->uploadsPath() . '/WP-STATIC-EXPORT-' . $export_target . '-FILES-TO-EXPORT';
+         $file_list_path = $this->_uploadsPath . '/WP-STATIC-EXPORT-' . $export_target . '-FILES-TO-EXPORT';
 
 		// zero file
         $f = @fopen($file_list_path, "r+");
@@ -596,7 +588,7 @@ class StaticHtmlOutput_Controller {
             fclose($f);
         }
 
-        $archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
+        $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
         $archiveName = rtrim($archiveDir, '/');
         $siteroot = $archiveName . '/';
 
@@ -655,10 +647,10 @@ class StaticHtmlOutput_Controller {
     public function s3_transfer_files() {
 		if ( wpsho_fr()->is__premium_only() ) {
 			$this->wsLog('S3 EXPORT: Transferring files...');
-			$archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
+			$archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
 			$archiveName = rtrim($archiveDir, '/');
 			$siteroot = $archiveName . '/';
-			$file_list_path = $this->uploadsPath() . '/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT';
+			$file_list_path = $this->_uploadsPath . '/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT';
 			$contents = file($file_list_path, FILE_IGNORE_NEW_LINES);
 			$filesRemaining = count($contents) - 1;
 
@@ -729,7 +721,7 @@ class StaticHtmlOutput_Controller {
 	// TODO: convert this to an incremental export
     public function dropbox_do_export() {
 		if ( wpsho_fr()->is__premium_only() ) {
-			$archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
+			$archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
 			$archiveName = rtrim($archiveDir, '/');
 			$siteroot = $archiveName . '/';
 			$dropboxAccessToken = filter_input(INPUT_POST, 'dropboxAccessToken');
@@ -807,7 +799,7 @@ class StaticHtmlOutput_Controller {
 			$this->wsLog('NETLIFY EXPORT: starting to deploy ZIP file');
 
 			// will exclude the siteroot when copying
-			$archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
+			$archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
 			$archiveName = rtrim($archiveDir, '/') . '.zip';
 
 			$netlify = new StaticHtmlOutput_Netlify(
@@ -875,7 +867,7 @@ class StaticHtmlOutput_Controller {
         $this->wsLog('POST PROCESSING ARCHIVE DIR: ...');
 
 
-        $archiveDir = untrailingslashit(file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE'));
+        $archiveDir = untrailingslashit(file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE'));
 
 		// rename dirs (in reverse order than when doing in responsebody)
 		// rewrite wp-content  dir
@@ -948,7 +940,7 @@ class StaticHtmlOutput_Controller {
 
 	public function remove_symlink_to_latest_archive() {
         global $blog_id;
-        $archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
+        $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
 
 		if (is_link($this->outputPath() . '/latest-' . $blog_id)) {
 			$this->wsLog('REMOVING SYMLINK: '. $this->outputPath() . '/latest-' . $blog_id);
@@ -960,7 +952,7 @@ class StaticHtmlOutput_Controller {
 
 	public function create_symlink_to_latest_archive() {
         global $blog_id;
-        $archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
+        $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
 
 		// rm and recreate
 		$this->remove_symlink_to_latest_archive();
@@ -975,7 +967,7 @@ class StaticHtmlOutput_Controller {
     public function post_export_teardown() {
         $this->wsLog('POST EXPORT CLEANUP: starting...');
 
-        $archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
+        $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
 
 		$retainStaticFiles = filter_input(INPUT_POST, 'retainStaticFiles');
 		$retainZipFile = filter_input(INPUT_POST, 'retainZipFile');
@@ -1050,7 +1042,7 @@ class StaticHtmlOutput_Controller {
     }
 
     public function wsLog($text) {
-        $exportLog = $this->uploadsPath() . '/WP-STATIC-EXPORT-LOG';
+        $exportLog = $this->_uploadsPath . '/WP-STATIC-EXPORT-LOG';
         
         $src = fopen($exportLog, 'r+');
         $dest = fopen('php://temp', 'w');
