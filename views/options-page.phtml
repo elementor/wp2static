@@ -270,7 +270,7 @@ jQuery(document).ready(function($){
 					break;
 
 				case 'BUNNYCDN':
-					doAJAXExport('bunnycdn_prepare_export', 'bunnycdn_transfer_files');
+					doAJAXExport('bunnycdn_prepare_export', 'bunnycdn_transfer_files', 'bunnycdn_purge_cache');
 					break;
 
 				case 'S3':
@@ -700,7 +700,7 @@ function displayTextfield($template_variables, $field_name, $field_label, $descr
                 </p>
 
                 <p>
-                  <strong><label for="outputDirectory"><?php echo __('Don\'t include all files from your uploads diretory', 'static-html-output-plugin');?></label></strong>
+                  <strong><label for="outputDirectory"><?php echo __('Don\'t include all files from your uploads directory', 'static-html-output-plugin');?></label></strong>
                   <p>
                 <fieldset>
                     <label for="dontIncludeAllUploadFiles">
