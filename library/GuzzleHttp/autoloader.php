@@ -74,14 +74,14 @@ $mapping = array(
     'GuzzleHttp\Psr7\UriNormalizer' => __DIR__ . '/Psr7/UriNormalizer.php',
     'GuzzleHttp\Psr7\UriResolver' => __DIR__ . '/Psr7/UriResolver.php',
     'GuzzleHttp\Psr7\functions' => __DIR__ . '/Psr7/functions.php',
-    'GuzzleHttp\Psr7\functions_include' => __DIR__ . '/..//Psr7/functions_include.php',
-    'Psr\Http\Message\MessageInterface' => __DIR__ . '/..//Psr/Http/Message/MessageInterface.php',
-    'Psr\Http\Message\RequestInterface' => __DIR__ . '/..//Psr/Http/Message/RequestInterface.php',
-    'Psr\Http\Message\ResponseInterface' => __DIR__ . '/..//Psr/Http/Message/ResponseInterface.php',
-    'Psr\Http\Message\ServerRequestInterface' => __DIR__ . '/..//Psr/Http/Message/ServerRequestInterface.php',
-    'Psr\Http\Message\StreamInterface' => __DIR__ . '/..//Psr/Http/Message/StreamInterface.php',
-    'Psr\Http\Message\UploadedFileInterface' => __DIR__ . '/..//Psr/Http/Message/UploadedFileInterface.php',
-    'Psr\Http\Message\UriInterface' => __DIR__ . '/..//Psr/Http/Message/UriInterface.php',
+    'GuzzleHttp\Psr7\functions_include' => __DIR__ . '/Psr7/functions_include.php',
+    'Psr\Http\Message\MessageInterface' => __DIR__ . '/../Psr/Http/Message/MessageInterface.php',
+    'Psr\Http\Message\RequestInterface' => __DIR__ . '/../Psr/Http/Message/RequestInterface.php',
+    'Psr\Http\Message\ResponseInterface' => __DIR__ . '/../Psr/Http/Message/ResponseInterface.php',
+    'Psr\Http\Message\ServerRequestInterface' => __DIR__ . '/../Psr/Http/Message/ServerRequestInterface.php',
+    'Psr\Http\Message\StreamInterface' => __DIR__ . '/../Psr/Http/Message/StreamInterface.php',
+    'Psr\Http\Message\UploadedFileInterface' => __DIR__ . '/../Psr/Http/Message/UploadedFileInterface.php',
+    'Psr\Http\Message\UriInterface' => __DIR__ . '/../Psr/Http/Message/UriInterface.php',
 );
 
 spl_autoload_register(function ($class) use ($mapping) {
