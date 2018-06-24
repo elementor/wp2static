@@ -595,72 +595,16 @@ class StaticHtmlOutput_Controller {
 		if ( wpsho_fr()->is__premium_only() ) {
 			$this->wsLog('FTP EXPORT: Checking credentials..:');
 
-			require_once(__DIR__.'/FTP/FtpClient.php');
-			require_once(__DIR__.'/FTP/FtpException.php');
-			require_once(__DIR__.'/FTP/FtpWrapper.php');
+			$ftp = new StaticHtmlOutput_FTP(
+				filter_input(INPUT_POST, 'ftpServer'),
+				filter_input(INPUT_POST, 'ftpUsername'),
+				filter_input(INPUT_POST, 'ftpPassword'),
+				filter_input(INPUT_POST, 'ftpRemotePath'),
+				filter_input(INPUT_POST, 'useActiveFTP'),
+				$this->uploadsPath()
+			);
 
-			$ftp = new \FtpClient\FtpClient();
-			
-			try {
-				$ftp->connect(filter_input(INPUT_POST, 'ftpServer'));
-				$ftp->login(filter_input(INPUT_POST, 'ftpUsername'), filter_input(INPUT_POST, 'ftpPassword'));
-			} catch (Exception $e) {
-				$this->wsLog('FTP EXPORT: error encountered');
-				$this->wsLog($e);
-				throw new Exception($e);
-			}
-
-			if ($ftp->isdir(filter_input(INPUT_POST, 'ftpRemotePath'))) {
-				$this->wsLog('FTP EXPORT: Remote dir exists');
-			} else {
-				$this->wsLog('FTP EXPORT: Creating remote dir');
-				$ftp->mkdir(filter_input(INPUT_POST, 'ftpRemotePath'), true);
-			}
-
-			unset($ftp);
-
-			$this->wsLog('FTP EXPORT: Preparing list of files to transfer');
-
-			// prepare file list
-			$_SERVER['ftpFilesToExport'] = $this->uploadsPath() . '/WP-STATIC-EXPORT-FTP-FILES-TO-EXPORT';
-
-			$f = @fopen($_SERVER['ftpFilesToExport'], "r+");
-			if ($f !== false) {
-				ftruncate($f, 0);
-				fclose($f);
-			}
-
-			$ftpTargetPath = filter_input(INPUT_POST, 'ftpRemotePath');
-			$archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
-			$archiveName = rtrim($archiveDir, '/');
-			$siteroot = $archiveName . '/';
-
-			
-
-			function FolderToFTP($dir, $siteroot, $ftpTargetPath){
-				$files = scandir($dir);
-				foreach($files as $item){
-					if($item != '.' && $item != '..' && $item != '.git'){
-						if(is_dir($dir.'/'.$item)) {
-							FolderToFTP($dir.'/'.$item, $siteroot, $ftpTargetPath);
-						} else if(is_file($dir.'/'.$item)) {
-							$subdir = str_replace('/wp-admin/admin-ajax.php', '', $_SERVER['REQUEST_URI']);
-							$subdir = ltrim($subdir, '/');
-							//$clean_dir = str_replace($siteroot . '/', '', $dir.'/'.$item);
-							$clean_dir = str_replace($siteroot . '/', '', $dir.'/');
-							$clean_dir = str_replace($subdir, '', $clean_dir);
-							$targetPath =  $ftpTargetPath . $clean_dir;
-							$targetPath = ltrim($targetPath, '/');
-							$ftpExportLine = $dir .'/' . $item . ',' . $targetPath . "\n";
-							file_put_contents($_SERVER['ftpFilesToExport'], $ftpExportLine, FILE_APPEND | LOCK_EX);
-						} 
-					}
-				}
-			}
-
-			FolderToFTP($siteroot, $siteroot, $ftpTargetPath);
-
-			echo 'SUCCESS';
+			$ftp->prepare_deployment();
 		}
     }
 
