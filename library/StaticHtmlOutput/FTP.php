@@ -5,8 +5,6 @@
  * Copyright (c) 2011 Leon Stafford
  */
 
-use GuzzleHttp\Client;
-
 class StaticHtmlOutput_FTP
 {
 	protected $_host;
