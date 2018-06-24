@@ -89,7 +89,7 @@ class StaticHtmlOutput_BunnyCDN
 		return count($contents);
 	}
 
-    public function transfer_files($batch_size = 5) {
+    public function transfer_files() {
 		if ( wpsho_fr()->is__premium_only() ) {
 			require_once dirname(__FILE__) . '/../GuzzleHttp/autoloader.php';
 

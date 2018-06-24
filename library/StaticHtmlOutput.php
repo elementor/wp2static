@@ -607,74 +607,18 @@ class StaticHtmlOutput_Controller {
 
     public function ftp_transfer_files($batch_size = 5) {
 		if ( wpsho_fr()->is__premium_only() ) {
-			$archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
-			$archiveName = rtrim($archiveDir, '/');
+			$this->wsLog('FTP EXPORT: transferring files..:');
 
-			require_once(__DIR__.'/FTP/FtpClient.php');
-			require_once(__DIR__.'/FTP/FtpException.php');
-			require_once(__DIR__.'/FTP/FtpWrapper.php');
+			$ftp = new StaticHtmlOutput_FTP(
+				filter_input(INPUT_POST, 'ftpServer'),
+				filter_input(INPUT_POST, 'ftpUsername'),
+				filter_input(INPUT_POST, 'ftpPassword'),
+				filter_input(INPUT_POST, 'ftpRemotePath'),
+				filter_input(INPUT_POST, 'useActiveFTP'),
+				$this->uploadsPath()
+			);
 
-			$ftp = new \FtpClient\FtpClient();
-			
-			$ftp->connect(filter_input(INPUT_POST, 'ftpServer'));
-			$ftp->login(filter_input(INPUT_POST, 'ftpUsername'), filter_input(INPUT_POST, 'ftpPassword'));
-
-			if ( filter_input(INPUT_POST, 'useActiveFTP') ) {
-				$this->wsLog('FTP EXPORT: setting ACTIVE transfer mode');
-				$ftp->pasv(false);
-			} else {
-				$ftp->pasv(true);
-			}
-			
-			$_SERVER['ftpFilesToExport'] = $this->uploadsPath() . '/WP-STATIC-EXPORT-FTP-FILES-TO-EXPORT';
-
-			// grab first line from filelist
-			$ftpFilesToExport = $_SERVER['ftpFilesToExport'];
-			$f = fopen($ftpFilesToExport, 'r');
-			$line = fgets($f);
-			fclose($f);
-
-			// TODO: look at these funcs above and below, seems redundant...
-
-			// TODO: refactor like the crawling function, first_line unused
-			$contents = file($ftpFilesToExport, FILE_IGNORE_NEW_LINES);
-			$filesRemaining = count($contents) - 1;
-
-			if ($filesRemaining < 0) {
-				echo $filesRemaining;die();
-			}
-
-			$first_line = array_shift($contents);
-			file_put_contents($ftpFilesToExport, implode("\r\n", $contents));
-
-			list($fileToTransfer, $targetPath) = explode(',', $line);
-
-			// TODO: check other funcs using similar, was causing issues without trimming CR's
-			$targetPath = rtrim($targetPath);
-
-			$this->wsLog('FTP EXPORT: transferring ' . 
-				basename($fileToTransfer) . ' TO ' . $targetPath);
-		   
-			if ($ftp->isdir($targetPath)) {
-				//$this->wsLog('FTP EXPORT: Remote dir exists');
-			} else {
-				$this->wsLog('FTP EXPORT: Creating remote dir');
-				$mkdir_result = $ftp->mkdir($targetPath, true); // true = recursive creation
-			}
-
-			$ftp->chdir($targetPath);
-			$ftp->putFromPath($fileToTransfer);
-
-			$this->wsLog('FTP EXPORT: ' . $filesRemaining . ' files remaining to transfer');
-
-			// TODO: error handling when not connected/unable to put, etc
-			unset($ftp);
-
-			if ( $filesRemaining > 0 ) {
-				echo $filesRemaining;
-			} else {
-				echo 'SUCCESS';
-			}
+			$ftp->transfer_files();
 		}
     }
 
