@@ -140,12 +140,9 @@ class StaticHtmlOutput_Controller {
 			$outputDir = filter_input(INPUT_POST, 'outputDirectory');
 		} 
 
-		// if dir doesn't exist, try to create it recursively
 		if ( !is_dir($outputDir) ) {
-			if ( !mkdir($outputDir, 0755, true) ) {
-				// reverting back to default uploads path	
-				$outputDir = $this->uploadsPath();
-			}
+			// reverting back to default uploads path	
+			$outputDir = $this->uploadsPath();
 		}
 
 		// if path is not writeable, revert back to default	

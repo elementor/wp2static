@@ -38,9 +38,9 @@ class StaticHtmlOutput_FTP
 	}
 
 	public function test_connection() {
-		require_once(__DIR__.'/..//FTP/FtpClient.php');
-		require_once(__DIR__.'/..//FTP/FtpException.php');
-		require_once(__DIR__.'/..//FTP/FtpWrapper.php');
+		require_once(__DIR__.'/../FTP/FtpClient.php');
+		require_once(__DIR__.'/../FTP/FtpException.php');
+		require_once(__DIR__.'/../FTP/FtpWrapper.php');
 
 		$ftp = new \FtpClient\FtpClient();
 		
