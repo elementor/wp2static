@@ -50,8 +50,8 @@ class StaticHtmlOutput_BunnyCDN
 					$clean_dir = str_replace($subdir, '', $clean_dir);
 					$targetPath =  $remotePath . $clean_dir;
 					$targetPath = ltrim($targetPath, '/');
-					$bunnycdnExportLine = $dir .'/' . $item . ',' . $targetPath . "\n";
-					file_put_contents($this->_exportFileList, $bunnycdnExportLine, FILE_APPEND | LOCK_EX);
+					$export_line = $dir .'/' . $item . ',' . $targetPath . "\n";
+					file_put_contents($this->_exportFileList, $export_line, FILE_APPEND | LOCK_EX);
 				} 
 			}
 		}
