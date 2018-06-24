@@ -161,137 +161,54 @@ class StaticHtmlOutput_Controller {
         $filesRemaining = count($exportTargets) - 1;
         $first_line = array_shift($exportTargets);
         file_put_contents($exportTargetsFile, implode("\r\n", $exportTargets));
-
         
         $this->wsLog('PROGRESS: Starting export type:' . $target . PHP_EOL);
     }
 
-    public function github_finalise_export() {
+	public function github_upload_blobs() {
 		if ( wpsho_fr()->is__premium_only() ) {
-			require_once(__DIR__.'/Github/autoload.php');
-
-			$client = new \Github\Client();
-			$githubRepo = filter_input(INPUT_POST, 'githubRepo');
-			$githubBranch = filter_input(INPUT_POST, 'githubBranch');
-			$githubPersonalAccessToken = filter_input(INPUT_POST, 'githubPersonalAccessToken');
-
-			list($githubUser, $githubRepo) = explode('/', $githubRepo);
-
-			$client->authenticate($githubPersonalAccessToken, Github\Client::AUTH_HTTP_TOKEN);
-			$reference = $client->api('gitData')->references()->show($githubUser, $githubRepo, 'heads/' . $githubBranch);
-			$commit = $client->api('gitData')->commits()->show($githubUser, $githubRepo, $reference['object']['sha']);
-			$commitSHA = $commit['sha'];
-			$treeSHA = $commit['tree']['sha'];
-			$treeURL = $commit['tree']['url'];
-			$treeContents = array();
-			$githubGlobHashesAndPaths = $this->uploadsPath() . '/WP-STATIC-EXPORT-GITHUB-GLOBS-PATHS';
-			$contents = file($githubGlobHashesAndPaths);
-
-			foreach($contents as $line) {
-				list($blobHash, $targetPath) = explode(',', $line);
-
-				$treeContents[] = array(
-					'path' => trim($targetPath),
-					'mode' => '100644',
-					'type' => 'blob',
-					'sha' => $blobHash
-				);
-			}
-
-			$treeData = array(
-				'base_tree' => $treeSHA,
-				'tree' => $treeContents
+			$this->wsLog('GITHUB EXPORT: Uploading file blobs...');
+			$github = new StaticHtmlOutput_GitHub(
+				filter_input(INPUT_POST, 'githubRepo'),
+				filter_input(INPUT_POST, 'githubPersonalAccessToken'),
+				filter_input(INPUT_POST, 'githubBranch'),
+				filter_input(INPUT_POST, 'githubPath'),
+				$this->uploadsPath()
 			);
 
-			$this->wsLog('GITHUB: Creating tree ...' . PHP_EOL);
-			$this->wsLog('GITHUB: tree data: '. PHP_EOL);
-			#$this->wsLog(print_r($treeData, true) . PHP_EOL);
-			$newTree = $client->api('gitData')->trees()->create($githubUser, $githubRepo, $treeData);
-			$this->wsLog('GITHUB: Tree created');
-			
-			$commitData = array('message' => 'WP Static HTML Export Plugin on ' . date("Y-m-d h:i:s"), 'tree' => $newTree['sha'], 'parents' => array($commitSHA));
-			$this->wsLog('GITHUB: Creating commit ...');
-			$commit = $client->api('gitData')->commits()->create($githubUser, $githubRepo, $commitData);
-			$this->wsLog('GITHUB: Updating head to reference commit ...');
-			$referenceData = array('sha' => $commit['sha'], 'force' => true); //Force is default false
-			try {
-				$reference = $client->api('gitData')->references()->update(
-						$githubUser,
-						$githubRepo,
-						'heads/' . $githubBranch,
-						$referenceData);
-			} catch (Exception $e) {
-				$this->wsLog($e);
-				throw new Exception($e);
-			}
-
-			echo 'SUCCESS';
+			$github->upload_blobs();
 		}
     }
 
-	public function github_upload_blobs() {
+    public function github_prepare_export () {
 		if ( wpsho_fr()->is__premium_only() ) {
-			require_once(__DIR__.'/Github/autoload.php');
+			$this->wsLog('GITHUB EXPORT: Preparing files for deployment...');
 
-			$client = new \Github\Client();
-			$githubRepo = filter_input(INPUT_POST, 'githubRepo');
-			$githubPersonalAccessToken = filter_input(INPUT_POST, 'githubPersonalAccessToken');
-			list($githubUser, $githubRepo) = explode('/', $githubRepo);
+			$github = new StaticHtmlOutput_GitHub(
+				filter_input(INPUT_POST, 'githubRepo'),
+				filter_input(INPUT_POST, 'githubPersonalAccessToken'),
+				filter_input(INPUT_POST, 'githubBranch'),
+				filter_input(INPUT_POST, 'githubPath'),
+				$this->uploadsPath()
+			);
 
-			$client->authenticate($githubPersonalAccessToken, Github\Client::AUTH_HTTP_TOKEN);
+			$github->prepare_deployment();
+		}
+    }
 
-			$_SERVER['githubFilesToExport'] = $this->uploadsPath() . '/WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT';
+    public function github_finalise_export() {
+		if ( wpsho_fr()->is__premium_only() ) {
+			$this->wsLog('GITHUB EXPORT: Finalising deployment...');
 
-			// grab first line from filelist
-			$githubFilesToExport = $_SERVER['githubFilesToExport'];
-			$f = fopen($githubFilesToExport, 'r');
-			$line = fgets($f);
-			fclose($f);
+			$github = new StaticHtmlOutput_GitHub(
+				filter_input(INPUT_POST, 'githubRepo'),
+				filter_input(INPUT_POST, 'githubPersonalAccessToken'),
+				filter_input(INPUT_POST, 'githubBranch'),
+				filter_input(INPUT_POST, 'githubPath'),
+				$this->uploadsPath()
+			);
 
-			// TODO: look at these funcs above and below, seems redundant...
-
-			// remove first line from file (disabled while testing)
-			$contents = file($githubFilesToExport, FILE_IGNORE_NEW_LINES);
-			$filesRemaining = count($contents) - 1;
-			$first_line = array_shift($contents);
-			file_put_contents($githubFilesToExport, implode("\r\n", $contents));
-
-			// create the blob
-			// first part of line is file to read, second is target path in GH:
-			list($fileToExport, $targetPath) = explode(',', $line);
-			
-			$this->wsLog('GITHUB: Creating blob for ' . rtrim($targetPath));
-
-			$encodedFile = chunk_split(base64_encode(file_get_contents($fileToExport)));
-			
-			try {
-
-				$globHash = $client->api('gitData')->blobs()->create(
-						$githubUser, 
-						$githubRepo, 
-						array('content' => $encodedFile, 'encoding' => 'base64')
-						); # utf-8 or base64
-
-			} catch (Exception $e) {
-
-
-				$this->wsLog('GITHUB: Error creating blob:' . $e );
-
-			}
-
-			$githubGlobHashesAndPaths = $this->uploadsPath() . '/WP-STATIC-EXPORT-GITHUB-GLOBS-PATHS';
-
-			$globHashPathLine = $globHash['sha'] . ',' . $targetPath;
-			file_put_contents($githubGlobHashesAndPaths, $globHashPathLine, FILE_APPEND | LOCK_EX);
-
-
-			$this->wsLog('GITHUB: ' . $filesRemaining . ' blobs remaining to create');
-			
-			if ($filesRemaining > 0) {
-				echo $filesRemaining;
-			} else {
-				echo 'SUCCESS';
-			}
+			$github->commit_new_tree();
 		}
     }
 
@@ -883,57 +800,6 @@ class StaticHtmlOutput_Controller {
 		}
     }
 
-    public function github_prepare_export () {
-		if ( wpsho_fr()->is__premium_only() ) {
-			// empty the list of GH export files in preparation
-			$_SERVER['githubFilesToExport'] = $this->uploadsPath() . '/WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT';
-			$f = @fopen($_SERVER['githubFilesToExport'], "r+");
-			if ($f !== false) {
-				ftruncate($f, 0);
-				fclose($f);
-			}
-
-			$githubGlobHashesAndPaths = $this->uploadsPath() . '/WP-STATIC-EXPORT-GITHUB-GLOBS-PATHS';
-			$f = @fopen($githubGlobHashesAndPaths, "r+");
-			if ($f !== false) {
-				ftruncate($f, 0);
-				fclose($f);
-			}
-				
-			// optional path within GH repo
-			$githubPath = filter_input(INPUT_POST, 'githubPath');
-
-			$archiveDir = file_get_contents($this->uploadsPath() . '/WP-STATIC-CURRENT-ARCHIVE');
-			$archiveName = rtrim($archiveDir, '/');
-
-			$siteroot = $archiveName . '/';
-
-			function FolderToGithub($dir, $siteroot, $githubPath){
-				$files = scandir($dir);
-				foreach($files as $item){
-					if($item != '.' && $item != '..' && $item != '.git'){
-						if(is_dir($dir.'/'.$item)) {
-							FolderToGithub($dir.'/'.$item, $siteroot, $githubPath);
-						} else if(is_file($dir.'/'.$item)) {
-							$subdir = str_replace('/wp-admin/admin-ajax.php', '', $_SERVER['REQUEST_URI']);
-							$subdir = ltrim($subdir, '/');
-							$clean_dir = str_replace($siteroot . '/', '', $dir.'/'.$item);
-							$clean_dir = str_replace($subdir, '', $clean_dir);
-							$targetPath =  $githubPath . $clean_dir;
-							$targetPath = ltrim($targetPath, '/');
-							$githubExportLine = $dir .'/' . $item . ',' . $targetPath . "\n";
-							file_put_contents($_SERVER['githubFilesToExport'], $githubExportLine, FILE_APPEND | LOCK_EX);
-						} 
-					}
-				}
-			}
-
-
-			FolderToGithub($siteroot, $siteroot, $githubPath);
-
-			echo 'SUCCESS';
-		}
-    }
 
     public function netlify_do_export () {
 		if ( wpsho_fr()->is__premium_only() ) {
