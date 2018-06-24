@@ -661,7 +661,7 @@ function displayTextfield($template_variables, $field_name, $field_label, $descr
 <?php echo displayCheckbox($this, 'sendViaBUNNYCDN', 'Transfer files via BunnyCDN', 1); ?>
 
 <span class="bunnycdn">
-	<?php echo displayTextfield($this, 'bunnycdnPullZoneName', 'Pull Zone', 'ie, mybunnypullzone, etc'); ?>
+	<?php echo displayTextfield($this, 'bunnycdnPullZoneName', 'Pull Zone', 'ie, mybunnypullzone, etc . This will do a cache purge once all files are transferred '); ?>
 	<?php echo displayTextfield($this, 'bunnycdnAPIKey', 'API Key', '', 'password'); ?>
 	<?php echo displayTextfield($this, 'bunnycdnPath', 'BunnyCDN Remote Path', 'will attempt to create folder recursively if non-existent'); ?>
 </span>
