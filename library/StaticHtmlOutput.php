@@ -752,7 +752,7 @@ class StaticHtmlOutput_Controller {
 		}
     }
 
-    public function bunnycdn_transfer_files($batch_size = 5) {
+    public function bunnycdn_transfer_files() {
 		if ( wpsho_fr()->is__premium_only() ) {
 			$this->wsLog('BUNNYCDN EXPORT: transferring files'); 
 
@@ -764,6 +764,21 @@ class StaticHtmlOutput_Controller {
 			);
 
 			$bunnyCDN->transfer_files();
+		}
+    }
+
+    public function bunnycdn_purge_cache() {
+		if ( wpsho_fr()->is__premium_only() ) {
+			$this->wsLog('BUNNYCDN EXPORT: purging cache'); 
+
+			$bunnyCDN = new StaticHtmlOutput_BunnyCDN(
+				filter_input(INPUT_POST, 'bunnycdnPullZoneName'),
+				filter_input(INPUT_POST, 'bunnycdnAPIKey'),
+				filter_input(INPUT_POST, 'bunnycdnRemotePath'),
+				$this->uploadsPath()
+			);
+
+			$bunnyCDN->purge_all_cache();
 		}
     }
 

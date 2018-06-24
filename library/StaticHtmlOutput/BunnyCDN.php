@@ -125,6 +125,7 @@ class StaticHtmlOutput_BunnyCDN
 				throw new Exception($e);
 			}
 
+
 			//$this->wsLog('BUNNYCDN EXPORT: ' . $filesRemaining . ' files remaining to transfer');
 
 			if ( $this->get_remaining_items_count() > 0 ) {
@@ -134,4 +135,31 @@ class StaticHtmlOutput_BunnyCDN
 			}
 		}
     }
+
+	public function purge_all_cache() {
+		require_once dirname(__FILE__) . '/../GuzzleHttp/autoloader.php';
+		// purege cache for each file
+		$client = new Client();	
+
+		try {
+			$response = $client->request('POST', 'https://bunnycdn.com/api/pullzone/' . $this->_zoneID . '/purgeCache', array(
+					'headers'  => array(
+						'AccessKey' => ' ' . $this->_APIKey
+					)
+			));
+
+			if ($response->getStatusCode() == 200) {
+				echo 'SUCCESS';
+			} else {
+				echo 'FAIL';
+			}
+			
+
+		} catch (Exception $e) {
+			//$this->wsLog('BUNNYCDN EXPORT: error encountered');
+			//$this->wsLog($e);
+			error_log($e);
+			throw new Exception($e);
+		}
+	}
 }
