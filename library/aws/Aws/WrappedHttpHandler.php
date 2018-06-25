@@ -1,27 +1,9 @@
 <?php
 namespace Aws;
-
 use Aws\Api\Parser\Exception\ParserException;
 use GuzzleHttp\Promise;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-
-/**
- * Converts an HTTP handler into a Command HTTP handler.
- *
- * HTTP handlers have the following signature:
- *     function(RequestInterface $request, array $options) : PromiseInterface
- *
- * The promise returned form an HTTP handler must resolve to a PSR-7 response
- * object when fulfilled or an error array when rejected. The error array
- * can contain the following data:
- *
- * - exception: (required, Exception) Exception that was encountered.
- * - response: (ResponseInterface) PSR-7 response that was received (if a
- *   response) was received.
- * - connection_error: (bool) True if the error is the result of failing to
- *   connect.
- */
 class WrappedHttpHandler
 {
     private $httpHandler;
@@ -29,20 +11,6 @@ class WrappedHttpHandler
     private $errorParser;
     private $exceptionClass;
     private $collectStats;
-
-    /**
-     * @param callable $httpHandler    Function that accepts a request and array
-     *                                 of request options and returns a promise
-     *                                 that fulfills with a response or rejects
-     *                                 with an error array.
-     * @param callable $parser         Function that accepts a response object
-     *                                 and returns an AWS result object.
-     * @param callable $errorParser    Function that parses a response object
-     *                                 into AWS error data.
-     * @param string   $exceptionClass Exception class to throw.
-     * @param bool     $collectStats   Whether to collect HTTP transfer
-     *                                 information.
-     */
     public function __construct(
         callable $httpHandler,
         callable $parser,
@@ -56,16 +24,6 @@ class WrappedHttpHandler
         $this->exceptionClass = $exceptionClass;
         $this->collectStats = $collectStats;
     }
-
-    /**
-     * Calls the simpler HTTP specific handler and wraps the returned promise
-     * with AWS specific values (e.g., a result object or AWS exception).
-     *
-     * @param CommandInterface $command Command being executed.
-     * @param RequestInterface $request Request to send.
-     *
-     * @return Promise\PromiseInterface
-     */
     public function __invoke(
         CommandInterface $command,
         RequestInterface $request
@@ -83,7 +41,6 @@ class WrappedHttpHandler
             throw new \InvalidArgumentException('Providing a custom HTTP stats'
                 . ' receiver to Aws\WrappedHttpHandler is not supported.');
         }
-
         return Promise\promise_for($fn($request, $options))
             ->then(
                 function (
@@ -104,15 +61,6 @@ class WrappedHttpHandler
                 }
             );
     }
-
-    /**
-     * @param CommandInterface  $command
-     * @param RequestInterface  $request
-     * @param ResponseInterface $response
-     * @param array             $stats
-     *
-     * @return ResultInterface
-     */
     private function parseResponse(
         CommandInterface $command,
         RequestInterface $request,
@@ -124,7 +72,6 @@ class WrappedHttpHandler
         $result = $status < 300
             ? $parser($command, $response)
             : new Result();
-
         $metadata = [
             'statusCode'    => $status,
             'effectiveUri'  => (string) $request->getUri(),
@@ -134,27 +81,12 @@ class WrappedHttpHandler
         if (!empty($stats)) {
             $metadata['transferStats']['http'] = [$stats];
         }
-
-        // Bring headers into the metadata array.
         foreach ($response->getHeaders() as $name => $values) {
             $metadata['headers'][strtolower($name)] = $values[0];
         }
-
         $result['@metadata'] = $metadata;
-
         return $result;
     }
-
-    /**
-     * Parses a rejection into an AWS error.
-     *
-     * @param array            $err     Rejection error array.
-     * @param RequestInterface $request Request that was sent.
-     * @param CommandInterface $command Command being sent.
-     * @param array            $stats   Transfer statistics
-     *
-     * @return \Exception
-     */
     private function parseError(
         array $err,
         RequestInterface $request,
@@ -164,9 +96,7 @@ class WrappedHttpHandler
         if (!isset($err['exception'])) {
             throw new \RuntimeException('The HTTP handler was rejected without an "exception" key value pair.');
         }
-
         $serviceError = "AWS HTTP error: " . $err['exception']->getMessage();
-
         if (!isset($err['response'])) {
             $parts = ['response' => null];
         } else {
@@ -179,15 +109,12 @@ class WrappedHttpHandler
                 $serviceError .= ' Unable to parse error information from '
                     . "response - {$e->getMessage()}";
             }
-
             $parts['response'] = $err['response'];
         }
-
         $parts['exception'] = $err['exception'];
         $parts['request'] = $request;
         $parts['connection_error'] = !empty($err['connection_error']);
         $parts['transfer_stats'] = $stats;
-
         return new $this->exceptionClass(
             sprintf(
                 'Error executing "%s" on "%s"; %s',

@@ -1,22 +1,10 @@
 <?php
 namespace JmesPath;
-
-/**
- * Tree visitor used to compile JMESPath expressions into native PHP code.
- */
 class TreeCompiler
 {
     private $indentation;
     private $source;
     private $vars;
-
-    /**
-     * @param array  $ast    AST to compile.
-     * @param string $fnName The name of the function to generate.
-     * @param string $expr   Expression being compiled.
-     *
-     * @return string
-     */
     public function visit(array $ast, $fnName, $expr)
     {
         $this->vars = [];
@@ -33,43 +21,20 @@ class TreeCompiler
                 ->write('return $value;')
             ->outdent()
         ->write('}');
-
         return $this->source;
     }
-
-    /**
-     * @param array $node
-     * @return mixed
-     */
     private function dispatch(array $node)
     {
         return $this->{"visit_{$node['type']}"}($node);
     }
-
-    /**
-     * Creates a monotonically incrementing unique variable name by prefix.
-     *
-     * @param string $prefix Variable name prefix
-     *
-     * @return string
-     */
     private function makeVar($prefix)
     {
         if (!isset($this->vars[$prefix])) {
             $this->vars[$prefix] = 0;
             return '$' . $prefix;
         }
-
         return '$' . $prefix . ++$this->vars[$prefix];
     }
-
-    /**
-     * Writes the given line of source code. Pass positional arguments to write
-     * that match the format of sprintf.
-     *
-     * @param string $str String to write
-     * @return $this
-     */
     private function write($str)
     {
         $this->source .= $this->indentation;
@@ -80,27 +45,16 @@ class TreeCompiler
         $this->source .= vsprintf($str, array_slice(func_get_args(), 1)) . "\n";
         return $this;
     }
-
-    /**
-     * Decreases the indentation level of code being written
-     * @return $this
-     */
     private function outdent()
     {
         $this->indentation = substr($this->indentation, 0, -4);
         return $this;
     }
-
-    /**
-     * Increases the indentation level of code being written
-     * @return $this
-     */
     private function indent()
     {
         $this->indentation .= '    ';
         return $this;
     }
-
     private function visit_or(array $node)
     {
         $a = $this->makeVar('beforeOr');
@@ -114,7 +68,6 @@ class TreeCompiler
                 ->outdent()
             ->write('}');
     }
-
     private function visit_and(array $node)
     {
         $a = $this->makeVar('beforeAnd');
@@ -128,16 +81,14 @@ class TreeCompiler
                 ->outdent()
             ->write('}');
     }
-
     private function visit_not(array $node)
     {
         return $this
-            ->write('// Visiting not node')
+            ->write('
             ->dispatch($node['children'][0])
-            ->write('// Applying boolean not to result of not node')
+            ->write('
             ->write('$value = !Utils::isTruthy($value);');
     }
-
     private function visit_subexpression(array $node)
     {
         return $this
@@ -148,7 +99,6 @@ class TreeCompiler
                 ->outdent()
             ->write('}');
     }
-
     private function visit_field(array $node)
     {
         $arr = '$value[' . var_export($node['value'], true) . ']';
@@ -166,10 +116,8 @@ class TreeCompiler
                 ->write('$value = null;')
                 ->outdent()
             ->write("}");
-
         return $this;
     }
-
     private function visit_index(array $node)
     {
         if ($node['value'] >= 0) {
@@ -180,7 +128,6 @@ class TreeCompiler
                 $check, $check
             );
         }
-
         $a = $this->makeVar('count');
         return $this
             ->write('if (is_array($value) || ($value instanceof \\ArrayAccess && $value instanceof \\Countable)) {')
@@ -194,24 +141,20 @@ class TreeCompiler
                 ->outdent()
             ->write('}');
     }
-
     private function visit_literal(array $node)
     {
         return $this->write('$value = %s;', var_export($node['value'], true));
     }
-
     private function visit_pipe(array $node)
     {
         return $this
             ->dispatch($node['children'][0])
             ->dispatch($node['children'][1]);
     }
-
     private function visit_multi_select_list(array $node)
     {
         return $this->visit_multi_select_hash($node);
     }
-
     private function visit_multi_select_hash(array $node)
     {
         $listVal = $this->makeVar('list');
@@ -220,7 +163,6 @@ class TreeCompiler
             ->indent()
             ->write('%s = [];', $listVal)
             ->write('%s = $value;', $value);
-
         $first = true;
         foreach ($node['children'] as $child) {
             if (!$first) {
@@ -236,32 +178,27 @@ class TreeCompiler
                 $this->write('%s[] = $value;', $listVal);
             }
         }
-
         return $this
             ->write('$value = %s;', $listVal)
             ->outdent()
             ->write('}');
     }
-
     private function visit_function(array $node)
     {
         $value = $this->makeVar('val');
         $args = $this->makeVar('args');
         $this->write('%s = $value;', $value)
             ->write('%s = [];', $args);
-
         foreach ($node['children'] as $arg) {
             $this->dispatch($arg);
             $this->write('%s[] = $value;', $args)
                 ->write('$value = %s;', $value);
         }
-
         return $this->write(
             '$value = Fn::getInstance()->__invoke("%s", %s);',
             $node['value'], $args
         );
     }
-
     private function visit_slice(array $node)
     {
         return $this
@@ -272,12 +209,10 @@ class TreeCompiler
                 var_export($node['value'][2], true)
             );
     }
-
     private function visit_current(array $node)
     {
-        return $this->write('// Visiting current node (no-op)');
+        return $this->write('
     }
-
     private function visit_expref(array $node)
     {
         $child = var_export($node['children'][0], true);
@@ -287,15 +222,13 @@ class TreeCompiler
             ->outdent()
         ->write('};');
     }
-
     private function visit_flatten(array $node)
     {
         $this->dispatch($node['children'][0]);
         $merged = $this->makeVar('merged');
         $val = $this->makeVar('val');
-
         $this
-            ->write('// Visiting merge node')
+            ->write('
             ->write('if (!Utils::isArray($value)) {')
                 ->indent()
                 ->write('$value = null;')
@@ -319,18 +252,15 @@ class TreeCompiler
                 ->write('$value = %s;', $merged)
                 ->outdent()
             ->write('}');
-
         return $this;
     }
-
     private function visit_projection(array $node)
     {
         $val = $this->makeVar('val');
         $collected = $this->makeVar('collected');
-        $this->write('// Visiting projection node')
+        $this->write('
             ->dispatch($node['children'][0])
             ->write('');
-
         if (!isset($node['from'])) {
             $this->write('if (!is_array($value) || !($value instanceof \stdClass)) { $value = null; }');
         } elseif ($node['from'] == 'object') {
@@ -338,7 +268,6 @@ class TreeCompiler
         } elseif ($node['from'] == 'array') {
             $this->write('if (!Utils::isArray($value)) { $value = null; }');
         }
-
         $this->write('if ($value !== null) {')
             ->indent()
             ->write('%s = [];', $collected)
@@ -356,18 +285,16 @@ class TreeCompiler
             ->write('$value = %s;', $collected)
             ->outdent()
         ->write('}');
-
         return $this;
     }
-
     private function visit_condition(array $node)
     {
         $value = $this->makeVar('beforeCondition');
         return $this
             ->write('%s = $value;', $value)
-            ->write('// Visiting condition node')
+            ->write('
             ->dispatch($node['children'][0])
-            ->write('// Checking result of condition node')
+            ->write('
             ->write('if (Utils::isTruthy($value)) {')
                 ->indent()
                 ->write('$value = %s;', $value)
@@ -379,22 +306,19 @@ class TreeCompiler
                 ->outdent()
             ->write('}');
     }
-
     private function visit_comparator(array $node)
     {
         $value = $this->makeVar('val');
         $a = $this->makeVar('left');
         $b = $this->makeVar('right');
-
         $this
-            ->write('// Visiting comparator node')
+            ->write('
             ->write('%s = $value;', $value)
             ->dispatch($node['children'][0])
             ->write('%s = $value;', $a)
             ->write('$value = %s;', $value)
             ->dispatch($node['children'][1])
             ->write('%s = $value;', $b);
-
         if ($node['value'] == '==') {
             $this->write('$value = Utils::isEqual(%s, %s);', $a, $b);
         } elseif ($node['value'] == '!=') {
@@ -405,11 +329,8 @@ class TreeCompiler
                 $a, $a, $b, $b, $a, $node['value'], $b
             );
         }
-
         return $this;
     }
-
-    /** @internal */
     public function __call($method, $args)
     {
         throw new \RuntimeException(
