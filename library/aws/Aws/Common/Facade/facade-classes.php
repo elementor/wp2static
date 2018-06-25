@@ -1,29 +1,5 @@
 <?php
-/**
- * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- * http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
- */
-
 namespace Aws\Common\Facade;
-
-/**
- * The following classes are used to implement the static client facades and are aliased into the global namespaced. We
- * discourage the use of these classes directly by their full namespace since they are not autoloaded and are considered
- * an implementation detail that could possibly be changed in the future.
- */
-
-// @codeCoverageIgnoreStart
-
 class AutoScaling extends Facade
 {
     public static function getServiceBuilderKey()
@@ -31,7 +7,6 @@ class AutoScaling extends Facade
         return 'autoscaling';
     }
 }
-
 class CloudFormation extends Facade
 {
     public static function getServiceBuilderKey()
@@ -39,7 +14,6 @@ class CloudFormation extends Facade
         return 'cloudformation';
     }
 }
-
 class CloudFront extends Facade
 {
     public static function getServiceBuilderKey()
@@ -47,7 +21,6 @@ class CloudFront extends Facade
         return 'cloudfront';
     }
 }
-
 class CloudSearch extends Facade
 {
     public static function getServiceBuilderKey()
@@ -55,7 +28,6 @@ class CloudSearch extends Facade
         return 'cloudsearch';
     }
 }
-
 class CloudTrail extends Facade
 {
     public static function getServiceBuilderKey()
@@ -63,7 +35,6 @@ class CloudTrail extends Facade
         return 'cloudtrail';
     }
 }
-
 class CloudWatch extends Facade
 {
     public static function getServiceBuilderKey()
@@ -71,7 +42,6 @@ class CloudWatch extends Facade
         return 'cloudwatch';
     }
 }
-
 class DataPipeline extends Facade
 {
     public static function getServiceBuilderKey()
@@ -79,7 +49,6 @@ class DataPipeline extends Facade
         return 'datapipeline';
     }
 }
-
 class DirectConnect extends Facade
 {
     public static function getServiceBuilderKey()
@@ -87,7 +56,6 @@ class DirectConnect extends Facade
         return 'directconnect';
     }
 }
-
 class DynamoDb extends Facade
 {
     public static function getServiceBuilderKey()
@@ -95,7 +63,6 @@ class DynamoDb extends Facade
         return 'dynamodb';
     }
 }
-
 class Ec2 extends Facade
 {
     public static function getServiceBuilderKey()
@@ -103,7 +70,6 @@ class Ec2 extends Facade
         return 'ec2';
     }
 }
-
 class ElastiCache extends Facade
 {
     public static function getServiceBuilderKey()
@@ -111,7 +77,6 @@ class ElastiCache extends Facade
         return 'elasticache';
     }
 }
-
 class ElasticBeanstalk extends Facade
 {
     public static function getServiceBuilderKey()
@@ -119,7 +84,6 @@ class ElasticBeanstalk extends Facade
         return 'elasticbeanstalk';
     }
 }
-
 class ElasticLoadBalancing extends Facade
 {
     public static function getServiceBuilderKey()
@@ -127,7 +91,6 @@ class ElasticLoadBalancing extends Facade
         return 'elasticloadbalancing';
     }
 }
-
 class ElasticTranscoder extends Facade
 {
     public static function getServiceBuilderKey()
@@ -135,7 +98,6 @@ class ElasticTranscoder extends Facade
         return 'elastictranscoder';
     }
 }
-
 class Emr extends Facade
 {
     public static function getServiceBuilderKey()
@@ -143,7 +105,6 @@ class Emr extends Facade
         return 'emr';
     }
 }
-
 class Glacier extends Facade
 {
     public static function getServiceBuilderKey()
@@ -151,7 +112,6 @@ class Glacier extends Facade
         return 'glacier';
     }
 }
-
 class Iam extends Facade
 {
     public static function getServiceBuilderKey()
@@ -159,7 +119,6 @@ class Iam extends Facade
         return 'iam';
     }
 }
-
 class ImportExport extends Facade
 {
     public static function getServiceBuilderKey()
@@ -167,7 +126,6 @@ class ImportExport extends Facade
         return 'importexport';
     }
 }
-
 class Kinesis extends Facade
 {
     public static function getServiceBuilderKey()
@@ -175,7 +133,6 @@ class Kinesis extends Facade
         return 'kinesis';
     }
 }
-
 class OpsWorks extends Facade
 {
     public static function getServiceBuilderKey()
@@ -183,7 +140,6 @@ class OpsWorks extends Facade
         return 'opsworks';
     }
 }
-
 class Rds extends Facade
 {
     public static function getServiceBuilderKey()
@@ -191,7 +147,6 @@ class Rds extends Facade
         return 'rds';
     }
 }
-
 class Redshift extends Facade
 {
     public static function getServiceBuilderKey()
@@ -199,7 +154,6 @@ class Redshift extends Facade
         return 'redshift';
     }
 }
-
 class Route53 extends Facade
 {
     public static function getServiceBuilderKey()
@@ -207,7 +161,6 @@ class Route53 extends Facade
         return 'route53';
     }
 }
-
 class S3 extends Facade
 {
     public static function getServiceBuilderKey()
@@ -215,7 +168,6 @@ class S3 extends Facade
         return 's3';
     }
 }
-
 class SimpleDb extends Facade
 {
     public static function getServiceBuilderKey()
@@ -223,7 +175,6 @@ class SimpleDb extends Facade
         return 'sdb';
     }
 }
-
 class Ses extends Facade
 {
     public static function getServiceBuilderKey()
@@ -231,7 +182,6 @@ class Ses extends Facade
         return 'ses';
     }
 }
-
 class Sns extends Facade
 {
     public static function getServiceBuilderKey()
@@ -239,7 +189,6 @@ class Sns extends Facade
         return 'sns';
     }
 }
-
 class Sqs extends Facade
 {
     public static function getServiceBuilderKey()
@@ -247,7 +196,6 @@ class Sqs extends Facade
         return 'sqs';
     }
 }
-
 class StorageGateway extends Facade
 {
     public static function getServiceBuilderKey()
@@ -255,7 +203,6 @@ class StorageGateway extends Facade
         return 'storagegateway';
     }
 }
-
 class Sts extends Facade
 {
     public static function getServiceBuilderKey()
@@ -263,7 +210,6 @@ class Sts extends Facade
         return 'sts';
     }
 }
-
 class Support extends Facade
 {
     public static function getServiceBuilderKey()
@@ -271,7 +217,6 @@ class Support extends Facade
         return 'support';
     }
 }
-
 class Swf extends Facade
 {
     public static function getServiceBuilderKey()
@@ -279,5 +224,3 @@ class Swf extends Facade
         return 'swf';
     }
 }
-
-// @codeCoverageIgnoreEnd
