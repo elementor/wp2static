@@ -17,8 +17,9 @@ class StaticHtmlOutput_S3
 	protected $_uploadsPath;
 	protected $_exportFileList;
 	protected $_archiveName;
+	protected $_plugin;
 
-	public function __construct($key, $secret, $region, $bucket, $remotePath, $uploadsPath) {
+	public function __construct($plugin, $key, $secret, $region, $bucket, $remotePath, $uploadsPath) {
 
 		$this->_key = $key;
 		$this->_secret = $secret;
@@ -28,6 +29,7 @@ class StaticHtmlOutput_S3
 		$this->_exportFileList = $uploadsPath . '/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT';
 		$archiveDir = file_get_contents($uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
 		$this->_archiveName = rtrim($archiveDir, '/');
+		$this->_plugin = $plugin;
 	}
 
 	public function clear_file_list() {
@@ -70,7 +72,7 @@ class StaticHtmlOutput_S3
     public function prepare_deployment() {
 		if ( wpsho_fr()->is__premium_only() ) {
 
-			//$this->wsLog('S3 EXPORT: Preparing list of files to transfer');
+			$this->_plugin->wsLog('S3 EXPORT: Preparing list of files to transfer');
 
 			$this->clear_file_list();
 
@@ -147,10 +149,12 @@ class StaticHtmlOutput_S3
 
 			$targetPath = rtrim($targetPath);
 
+
 			// vendor specific from here
 
 			require_once(__DIR__.'/MimeTypes.php'); 
 
+			$this->_plugin->wsLog('S3 EXPORT: transferring ' .  basename($fileToTransfer) . ' TO ' . $targetPath);
 			$this->s3_put_object(
 				$targetPath . basename($fileToTransfer),
 				file_get_contents($fileToTransfer),
@@ -160,89 +164,13 @@ class StaticHtmlOutput_S3
 		   
 			// end vendor specific 
 
-			//$this->wsLog('S3 EXPORT: ' . $filesRemaining . ' files remaining to transfer');
-
-			if ( $this->get_remaining_items_count() > 0 ) {
-				//$this->wsLog('S3 EXPORT: ' . $filesRemaining . ' files remaining to transfer');
-				echo $this->get_remaining_items_count();
+			$filesRemaining = $this->get_remaining_items_count();
+			if ( $filesRemaining > 0 ) {
+				$this->_plugin->wsLog('S3 EXPORT: ' . $filesRemaining . ' files remaining to transfer');
+				echo $filesRemaining;
 			} else {
 				echo 'SUCCESS';
 			}
 		}
     }
-
-    public function commit_new_tree() {
-		if ( wpsho_fr()->is__premium_only() ) {
-			require_once(__DIR__.'/../Github/autoload.php');
-
-			if ($this->get_remaining_items_count() < 0) {
-				echo 'ERROR';
-				die();
-			}
-
-			$line = $this->get_item_to_export();
-
-			list($fileToTransfer, $targetPath) = explode(',', $line);
-
-			$targetPath = rtrim($targetPath);
-
-			// vendor specific from here
-
-			$client = new \Github\Client();
-
-			$client->authenticate($this->_accessToken, Github\Client::AUTH_HTTP_TOKEN);
-			$reference = $client->api('gitData')->references()->show($this->_user, $this->_repository, 'heads/' . $this->_branch);
-			$commit = $client->api('gitData')->commits()->show($this->_user, $this->_repository, $reference['object']['sha']);
-			$commitSHA = $commit['sha'];
-			$treeSHA = $commit['tree']['sha'];
-			$treeURL = $commit['tree']['url'];
-			$treeContents = array();
-			$contents = file($this->_globHashAndPathList);
-
-			foreach($contents as $line) {
-				list($blobHash, $targetPath) = explode(',', $line);
-
-				$treeContents[] = array(
-					'path' => trim($targetPath),
-					'mode' => '100644',
-					'type' => 'blob',
-					'sha' => $blobHash
-				);
-			}
-
-			$treeData = array(
-				'base_tree' => $treeSHA,
-				'tree' => $treeContents
-			);
-
-			$newTree = $client->api('gitData')->trees()->create($this->_user, $this->_repository, $treeData);
-			
-			$commitData = array('message' => 'WP Static HTML Output plugin: ' . date("Y-m-d h:i:s"), 'tree' => $newTree['sha'], 'parents' => array($commitSHA));
-			$commit = $client->api('gitData')->commits()->create($this->_user, $this->_repository, $commitData);
-			$referenceData = array('sha' => $commit['sha'], 'force' => true); //Force is default false
-
-			try {
-				$reference = $client->api('gitData')->references()->update(
-						$this->_user,
-						$this->_repository,
-						'heads/' . $this->_branch,
-						$referenceData);
-			} catch (Exception $e) {
-				$this->wsLog($e);
-				throw new Exception($e);
-			}
-		   
-			// end vendor specific 
-
-			//$this->wsLog('S3 EXPORT: ' . $filesRemaining . ' files remaining to transfer');
-
-			if ( $this->get_remaining_items_count() > 0 ) {
-				//$this->wsLog('S3 EXPORT: ' . $filesRemaining . ' files remaining to transfer');
-				echo $this->get_remaining_items_count();
-			} else {
-				echo 'SUCCESS';
-			}
-		}
-    }
-
 }

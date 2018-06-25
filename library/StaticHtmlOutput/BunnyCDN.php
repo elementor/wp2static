@@ -16,8 +16,9 @@ class StaticHtmlOutput_BunnyCDN
 	protected $_uploadsPath;
 	protected $_exportFileList;
 	protected $_archiveName;
+	protected $_plugin;
 	
-	public function __construct($zoneID, $APIKey, $remotePath, $uploadsPath) {
+	public function __construct($plugin, $zoneID, $APIKey, $remotePath, $uploadsPath) {
 		$this->_zoneID = $zoneID;
 		$this->_APIKey = $APIKey;
 		$this->_remotePath = $remotePath;
@@ -26,6 +27,7 @@ class StaticHtmlOutput_BunnyCDN
 		$this->_exportFileList = $uploadsPath . '/WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT';
 		$archiveDir = file_get_contents($uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
 		$this->_archiveName = rtrim($archiveDir, '/');
+		$this->_plugin = $plugin;
 	}
 
 	public function clear_file_list() {
@@ -104,7 +106,7 @@ class StaticHtmlOutput_BunnyCDN
 
 			$targetPath = rtrim($targetPath);
 
-			//$this->wsLog('BUNNYCDN EXPORT: transferring ' .  basename($fileToTransfer) . ' TO ' . $targetPath);
+			$this->_plugin->wsLog('BUNNYCDN EXPORT: transferring ' .  basename($fileToTransfer) . ' TO ' . $targetPath);
 		   
 			// do the bunny export
 			$client = new Client(array(
@@ -119,17 +121,18 @@ class StaticHtmlOutput_BunnyCDN
 						'body' => fopen($fileToTransfer, 'rb')
 				));
 			} catch (Exception $e) {
-				//$this->wsLog('BUNNYCDN EXPORT: error encountered');
-				//$this->wsLog($e);
+				$this->_plugin->wsLog('BUNNYCDN EXPORT: error encountered');
+				$this->_plugin->wsLog($e);
 				error_log($e);
 				throw new Exception($e);
 			}
 
 
-			//$this->wsLog('BUNNYCDN EXPORT: ' . $filesRemaining . ' files remaining to transfer');
+			$filesRemaining = $this->get_remaining_items_count();
 
-			if ( $this->get_remaining_items_count() > 0 ) {
-				echo $this->get_remaining_items_count();
+			if ( $filesRemaining > 0 ) {
+				$this->_plugin->wsLog('BUNNYCDN EXPORT: ' . $filesRemaining . ' files remaining to transfer');
+				echo $filesRemaining;
 			} else {
 				echo 'SUCCESS';
 			}
@@ -156,8 +159,8 @@ class StaticHtmlOutput_BunnyCDN
 			
 
 		} catch (Exception $e) {
-			//$this->wsLog('BUNNYCDN EXPORT: error encountered');
-			//$this->wsLog($e);
+			$this->_plugin->wsLog('BUNNYCDN EXPORT: error encountered');
+			$this->_plugin->wsLog($e);
 			error_log($e);
 			throw new Exception($e);
 		}

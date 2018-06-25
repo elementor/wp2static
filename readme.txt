@@ -18,14 +18,17 @@ The optimum solution to speed up and secure your WordPress site - export to stat
  * generates a standalone, static html copy of your whole WordPress website
  * removes all traces of WordPress from your exported site
  * protects you from malicious attacks/malware
- * auto-deploy to a local folder, ZIP file, FTP, S3, Dropbox, GitHub, Netlify or BunnyCDN
- * one site to unlimited export targets
+ * auto-deploy to a local folder or ZIP file
  * specify extra files to include in the output (ie, dynamically loaded assets)
  * desktop notifications alert you to when exports are complete
  * multi-language support (English/Japanese currently, Spanish and Chinese in progress)
- * schedule unattended exports via the WP Crontrol plugin or by hitting the custom hook
  * realtime logs visible during / saved after export
  * asynchronous exports for some methods overcomes hosting limitations for large site exports
+
+= Premium features =
+
+ * auto-deploy to a FTP, S3, Dropbox, GitHub, Netlify or BunnyCDN
+ * schedule unattended exports via the WP Crontrol plugin or by hitting the custom hook
 
 This plugin produces a static HTML version of your wordpress install, incredibly useful for anyone who would like the publishing power of wordpress but whose webhost doesn't allow dynamic PHP driven sites - such as Dropbox. You can run your development site on a different domain or offline, and the plugin will change all relevant URLs when you publish your site. It's a simple but powerful plugin, and after hitting the publish button, the plugin will output a ZIP file of your entire site, ready to upload straight to it's new home. 
 
@@ -81,6 +84,7 @@ Anywhere that allows HTML files to be uploaded, ie:
  * GitHub/GitLab/BitBucket Pages (GitHub API integration now included)
  * S3 / CloudFront
  * Dropbox
+ * BunnyCDN
  * Any FTP server
  * Netlify
 
@@ -94,6 +98,18 @@ See the readme. In brief: you can't use dynamic WordPress functions such as comm
 2. The main interface (Japanese)
 
 == Changelog ==
+
+= 3.1 =
+
+ * Bugfix: fix certain CloudFront exceptions not being caught/logged
+ * Bugfix: previous exports being included in deployments in some cases 
+ * Bugfix: issue preventing Dropbox deployments from working
+ * Bugfix: enable S3 deploys to all regions
+ * Bugfix: allow crawling local/self-cert SSL sites
+ * Improvement: Dropbox export done incrementally to support shared hosting environments
+ * Improvement: allow setting a subfolder within your S3 bucket to deploy to
+ * Improvement: minimized number of files from plugin for faster install times
+ * Improvement: allow crawling basic auth protected sites
 
 = 3.0 =
 
@@ -311,6 +327,20 @@ Altered main codebase to fix recursion bug and endless loop. Essential upgrade.
 Initial release to Wordpress community
 
 == Upgrade Notice ==
+
+= 3.1 =
+
+Critical upgrade with bugfixes and improvements
+
+ * Bugfix: fix certain CloudFront exceptions not being caught/logged
+ * Bugfix: previous exports being included in deployments in some cases 
+ * Bugfix: issue preventing Dropbox deployments from working
+ * Bugfix: enable S3 deploys to all regions
+ * Bugfix: allow crawling local/self-cert SSL sites
+ * Improvement: Dropbox export done incrementally to support shared hosting environments
+ * Improvement: allow setting a subfolder within your S3 bucket to deploy to
+ * Improvement: minimized number of files from plugin for faster install times
+ * Improvement: allow crawling basic auth protected sites
 
 = 3.0 =
 
