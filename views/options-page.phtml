@@ -439,6 +439,8 @@ jQuery(document).ready(function($){
 				'githubBranch',
 				'netlifyPersonalAccessToken',
 				'netlifySiteID',
+				'basicAuthUser',
+				'basicAuthPassword',
 				'rewriteWPCONTENT',
 				'rewriteTHEMEDIR',
 				'rewriteUPLOADS',
@@ -463,6 +465,7 @@ jQuery(document).ready(function($){
 				'sendViaDropbox',
 				'sendViaGithub',
 				'sendViaNetlify',
+				'sendViaBasic', // todo: allow for improved naming of this
 				'dontIncludeAllUploadFiles',
 			];
 
@@ -689,6 +692,13 @@ function displayTextfield($template_variables, $field_name, $field_label, $descr
 <span class="netlify">
 	<?php echo displayTextfield($this, 'netlifyPersonalAccessToken', 'Netlify Personal Access Token', '<a href="https://app.netlify.com/account/applications/personal" target="_blank">How do I get this?</a>', 'password'); ?>
 	<?php echo displayTextfield($this, 'netlifySiteID', 'Netlify Site ID', 'ie, mystaticsite'); ?>
+</span>
+
+<?php echo displayCheckbox($this, 'sendViaBasic', 'My WP site requires Basic Auth to access', 1); ?>
+
+<span class="basic">
+	<?php echo displayTextfield($this, 'basicAuthUser', 'Basic Auth user', '', ''); ?>
+	<?php echo displayTextfield($this, 'basicAuthPassword', 'Basic Auth password', '', 'password'); ?>
 </span>
 
 
