@@ -161,6 +161,7 @@ class StaticHtmlOutput_Controller {
 		if ( wpsho_fr()->is__premium_only() ) {
 			$this->wsLog('GITHUB EXPORT: Uploading file blobs...');
 			$github = new StaticHtmlOutput_GitHub(
+				$this,
 				filter_input(INPUT_POST, 'githubRepo'),
 				filter_input(INPUT_POST, 'githubPersonalAccessToken'),
 				filter_input(INPUT_POST, 'githubBranch'),
@@ -177,6 +178,7 @@ class StaticHtmlOutput_Controller {
 			$this->wsLog('GITHUB EXPORT: Preparing files for deployment...');
 
 			$github = new StaticHtmlOutput_GitHub(
+				$this,
 				filter_input(INPUT_POST, 'githubRepo'),
 				filter_input(INPUT_POST, 'githubPersonalAccessToken'),
 				filter_input(INPUT_POST, 'githubBranch'),
@@ -193,6 +195,7 @@ class StaticHtmlOutput_Controller {
 			$this->wsLog('GITHUB EXPORT: Finalising deployment...');
 
 			$github = new StaticHtmlOutput_GitHub(
+				$this,
 				filter_input(INPUT_POST, 'githubRepo'),
 				filter_input(INPUT_POST, 'githubPersonalAccessToken'),
 				filter_input(INPUT_POST, 'githubBranch'),
