@@ -599,9 +599,17 @@ class StaticHtmlOutput_Controller {
     public function s3_prepare_export() {
 		if ( wpsho_fr()->is__premium_only() ) {
 			$this->wsLog('S3 EXPORT: preparing export...');
-			$this->prepare_file_list('S3');
 
-			echo 'SUCCESS';
+			$s3 = new StaticHtmlOutput_S3(
+				filter_input(INPUT_POST, 's3Key'),
+				filter_input(INPUT_POST, 's3Secret'),
+				filter_input(INPUT_POST, 's3Region'),
+				filter_input(INPUT_POST, 's3Bucket'),
+				filter_input(INPUT_POST, 's3RemotePath'),
+				$this->_uploadsPath
+			);
+
+			$s3->prepare_deployment();
 		}	
     }
 
@@ -647,45 +655,19 @@ class StaticHtmlOutput_Controller {
     public function s3_transfer_files() {
 		if ( wpsho_fr()->is__premium_only() ) {
 			$this->wsLog('S3 EXPORT: Transferring files...');
-			$archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
-			$archiveName = rtrim($archiveDir, '/');
-			$siteroot = $archiveName . '/';
-			$file_list_path = $this->_uploadsPath . '/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT';
-			$contents = file($file_list_path, FILE_IGNORE_NEW_LINES);
-			$filesRemaining = count($contents) - 1;
 
-			if ($filesRemaining < 0) {
-				echo $filesRemaining;die();
-			}
-
-			$filename = array_shift($contents);
-			$file_body = file_get_contents($filename);
-			// rewrite file without first line
-			file_put_contents($file_list_path, implode("\r\n", $contents));
-
-			$target_path = str_replace($siteroot, '', $filename);
-			$this->wsLog('S3 EXPORT: transferring ' . 
-				basename($filename) . ' TO ' . $target_path);
-		  
-			require_once(__DIR__.'/StaticHtmlOutput/MimeTypes.php'); 
-
-			if( $this->s3_put_object(
+			$s3 = new StaticHtmlOutput_S3(
+				filter_input(INPUT_POST, 's3Key'),
+				filter_input(INPUT_POST, 's3Secret'),
+				filter_input(INPUT_POST, 's3Region'),
 				filter_input(INPUT_POST, 's3Bucket'),
-				$target_path,
-				$file_body,
-				GuessMimeType($filename),
-				$this) ) 
-			{
-				$this->wsLog('S3 EXPORT: ' . $filesRemaining . ' files remaining to transfer');
+				filter_input(INPUT_POST, 's3RemotePath'),
+				$this->_uploadsPath
+			);
 
-				if ( $filesRemaining > 0 ) {
-					echo $filesRemaining;
-				} else {
-					echo 'SUCCESS';
-				}
-			} else {
-					echo 'FAIL';
-			}
+			$s3->transfer_files();
+
+		  
 		}
     }
 
@@ -727,7 +709,7 @@ class StaticHtmlOutput_Controller {
 				$this->_uploadsPath
 			);
 
-			echo $dropbox->prepare_export();
+			$dropbox->prepare_export();
 		}
     }
 
@@ -741,7 +723,7 @@ class StaticHtmlOutput_Controller {
 				$this->_uploadsPath
 			);
 
-			echo $dropbox->transfer_files();
+			$dropbox->transfer_files();
 		}
     }
 
