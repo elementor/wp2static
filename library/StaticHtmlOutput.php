@@ -400,8 +400,14 @@ class StaticHtmlOutput_Controller {
 			return;
         }
 
-        $urlResponse = new StaticHtmlOutput_UrlRequest($currentUrl);
-        $urlResponseForFurtherExtraction = new StaticHtmlOutput_UrlRequest($currentUrl);
+		$basicAuth = array(
+			'useBasicAuth' => filter_input(INPUT_POST, 'sendViaBasic'),
+			'basicAuthUser' => filter_input(INPUT_POST, 'basicAuthUser'),
+			'basicAuthPassword' => filter_input(INPUT_POST, 'basicAuthPassword')
+		);
+
+        $urlResponse = new StaticHtmlOutput_UrlRequest($currentUrl, $basicAuth);
+        $urlResponseForFurtherExtraction = new StaticHtmlOutput_UrlRequest($currentUrl, $basicAuth);
 
         if ($urlResponse->checkResponse() == 'FAIL') {
             $this->wsLog('FAILED TO CRAWL FILE: ' . $currentUrl);
@@ -424,7 +430,7 @@ class StaticHtmlOutput_Controller {
             if ($newUrl != $currentUrl && !in_array($newUrl, $crawled_links) && !in_array($newUrl, $initial_crawl_list)) {
                 $this->wsLog('DISCOVERED NEW FILE: ' . $newUrl);
                 
-                $urlResponse = new StaticHtmlOutput_UrlRequest($newUrl);
+                $urlResponse = new StaticHtmlOutput_UrlRequest($newUrl, $basicAuth);
 
                 if ($urlResponse->checkResponse() == 'FAIL') {
                     $this->wsLog('FAILED TO CRAWL FILE: ' . $newUrl);
