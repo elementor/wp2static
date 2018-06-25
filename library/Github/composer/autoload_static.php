@@ -16,11 +16,6 @@ class ComposerStaticInit3bddc4cdc010a13a4ceb2ae6873689bd
         array (
             'Symfony\\Component\\OptionsResolver\\' => 34,
         ),
-        'P' => 
-        array (
-            'Psr\\Http\\Message\\' => 17,
-            'Psr\\Cache\\' => 10,
-        ),
         'H' => 
         array (
             'Http\\Promise\\' => 13,
@@ -45,14 +40,6 @@ class ComposerStaticInit3bddc4cdc010a13a4ceb2ae6873689bd
         'Symfony\\Component\\OptionsResolver\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/options-resolver',
-        ),
-        'Psr\\Http\\Message\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/psr/http-message/src',
-        ),
-        'Psr\\Cache\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/psr/cache/src',
         ),
         'Http\\Promise\\' => 
         array (
