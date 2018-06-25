@@ -8,20 +8,26 @@
 class StaticHtmlOutput_UrlRequest
 {
 	protected $_url;
+	protected $_basicAuthCredentials;
 	
 	protected $_response;
 
-	public function __construct($url)
+	public function __construct($url, $basicAuth)
 	{
 		$this->_url = filter_var(trim($url), FILTER_VALIDATE_URL);
 
 
-		$response = wp_remote_get( $this->_url,
-			array(
-				'timeout' => 300, //set a long time out
-				'sslverify'   => false // ignore SSL cert check while crawling
-			) 
-		); 
+		$args = array(
+			'timeout' => 300, //set a long time out
+			'sslverify'   => apply_filters( 'https_local_ssl_verify', false )
+		);
+
+		if ( !empty($basicAuth['useBasicAuth']) ) {
+			$this->_basicAuthCredentials = base64_encode( $basicAuth['basicAuthUser'] . ':' . $basicAuth['basicAuthPassword'] );
+			$args['headers'] = array( 'Authorization' => 'Basic ' . $this->_basicAuthCredentials );
+		}
+		
+		$response = wp_remote_get( $this->_url, $args); 
 
 		$this->_response = '';
 
