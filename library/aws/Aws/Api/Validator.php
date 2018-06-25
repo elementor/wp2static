@@ -1,30 +1,17 @@
 <?php
 namespace Aws\Api;
-
 use Aws;
-
-/**
- * Validates a schema against a hash of input.
- */
 class Validator
 {
     private $path = [];
     private $errors = [];
     private $constraints = [];
-
     private static $defaultConstraints = [
         'required' => true,
         'min'      => true,
         'max'      => false,
         'pattern'  => false
     ];
-
-    /**
-     * @param array $constraints Associative array of constraints to enforce.
-     *                           Accepts the following keys: "required", "min",
-     *                           "max", and "pattern". If a key is not
-     *                           provided, the constraint will assume false.
-     */
     public function __construct(array $constraints = null)
     {
         static $assumedFalseValues = [
@@ -37,20 +24,9 @@ class Validator
             ? self::$defaultConstraints
             : $constraints + $assumedFalseValues;
     }
-
-    /**
-     * Validates the given input against the schema.
-     *
-     * @param string $name  Operation name
-     * @param Shape  $shape Shape to validate
-     * @param array  $input Input to validate
-     *
-     * @throws \InvalidArgumentException if the input is invalid.
-     */
     public function validate($name, Shape $shape, array $input)
     {
         $this->dispatch($shape, $input);
-
         if ($this->errors) {
             $message = sprintf(
                 "Found %d error%s while validating the input provided for the "
@@ -61,11 +37,9 @@ class Validator
                 implode("\n", $this->errors)
             );
             $this->errors = [];
-
             throw new \InvalidArgumentException($message);
         }
     }
-
     private function dispatch(Shape $shape, $value)
     {
         static $methods = [
@@ -81,19 +55,16 @@ class Validator
             'byte'      => 'check_string',
             'char'      => 'check_string'
         ];
-
         $type = $shape->getType();
         if (isset($methods[$type])) {
             $this->{$methods[$type]}($shape, $value);
         }
     }
-
     private function check_structure(StructureShape $shape, $value)
     {
         if (!$this->checkAssociativeArray($value)) {
             return;
         }
-
         if ($this->constraints['required'] && $shape['required']) {
             foreach ($shape['required'] as $req) {
                 if (!isset($value[$req])) {
@@ -103,7 +74,6 @@ class Validator
                 }
             }
         }
-
         foreach ($value as $name => $v) {
             if ($shape->hasMember($name)) {
                 $this->path[] = $name;
@@ -115,7 +85,6 @@ class Validator
             }
         }
     }
-
     private function check_list(ListShape $shape, $value)
     {
         if (!is_array($value)) {
@@ -123,9 +92,7 @@ class Validator
                 . Aws\describe_type($value));
             return;
         }
-
         $this->validateRange($shape, count($value), "list element count");
-
         $items = $shape->getMember();
         foreach ($value as $index => $v) {
             $this->path[] = $index;
@@ -133,13 +100,11 @@ class Validator
             array_pop($this->path);
         }
     }
-
     private function check_map(MapShape $shape, $value)
     {
         if (!$this->checkAssociativeArray($value)) {
             return;
         }
-
         $values = $shape->getValue();
         foreach ($value as $key => $v) {
             $this->path[] = $key;
@@ -147,7 +112,6 @@ class Validator
             array_pop($this->path);
         }
     }
-
     private function check_blob(Shape $shape, $value)
     {
         static $valid = [
@@ -156,7 +120,6 @@ class Validator
             'double' => true,
             'resource' => true
         ];
-
         $type = gettype($value);
         if (!isset($valid[$type])) {
             if ($type != 'object' || !method_exists($value, '__toString')) {
@@ -167,7 +130,6 @@ class Validator
             }
         }
     }
-
     private function check_numeric(Shape $shape, $value)
     {
         if (!is_numeric($value)) {
@@ -175,10 +137,8 @@ class Validator
                 . Aws\describe_type($value));
             return;
         }
-
         $this->validateRange($shape, $value, "numeric value");
     }
-
     private function check_boolean(Shape $shape, $value)
     {
         if (!is_bool($value)) {
@@ -186,7 +146,6 @@ class Validator
                 . Aws\describe_type($value));
         }
     }
-
     private function check_string(Shape $shape, $value)
     {
         if ($shape['jsonvalue']) {
@@ -196,15 +155,12 @@ class Validator
             }
             return;
         }
-
         if (!$this->checkCanString($value)) {
             $this->addError('must be a string or an object that implements '
                 . '__toString(). Found ' . Aws\describe_type($value));
             return;
         }
-
         $this->validateRange($shape, strlen($value), "string length");
-
         if ($this->constraints['pattern']) {
             $pattern = $shape['pattern'];
             if ($pattern && !preg_match("/$pattern/", $value)) {
@@ -212,7 +168,6 @@ class Validator
             }
         }
     }
-
     private function validateRange(Shape $shape, $length, $descriptor)
     {
         if ($this->constraints['min']) {
@@ -222,7 +177,6 @@ class Validator
                     . "found $descriptor of $length");
             }
         }
-
         if ($this->constraints['max']) {
             $max = $shape['max'];
             if ($max && $length > $max) {
@@ -231,7 +185,6 @@ class Validator
             }
         }
     }
-
     private function checkCanString($value)
     {
         static $valid = [
@@ -240,13 +193,10 @@ class Validator
             'double'  => true,
             'NULL'    => true,
         ];
-
         $type = gettype($value);
-
         return isset($valid[$type]) ||
             ($type == 'object' && method_exists($value, '__toString'));
     }
-
     private function checkAssociativeArray($value)
     {
         if (!is_array($value) || isset($value[0])) {
@@ -254,10 +204,8 @@ class Validator
                 . Aws\describe_type($value));
             return false;
         }
-
         return true;
     }
-
     private function addError($message)
     {
         $this->errors[] =
@@ -265,7 +213,6 @@ class Validator
             . ' '
             . $message;
     }
-
     private function canJsonEncode($data)
     {
         return !is_resource($data);

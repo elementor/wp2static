@@ -1,10 +1,8 @@
 <?php
 namespace Aws\S3\Crypto;
-
 use Aws\Crypto\MaterialsProvider;
 use Aws\Crypto\MetadataEnvelope;
 use Aws\Crypto\MetadataStrategyInterface;
-
 trait CryptoParamsTrait
 {
     protected function getMaterialsProvider(array $args)
@@ -12,18 +10,15 @@ trait CryptoParamsTrait
         if ($args['@MaterialsProvider'] instanceof MaterialsProvider) {
             return $args['@MaterialsProvider'];
         }
-
         throw new \InvalidArgumentException('An instance of MaterialsProvider'
             . ' must be passed in the "MaterialsProvider" field.');
     }
-
     protected function getInstructionFileSuffix(array $args)
     {
         return !empty($args['@InstructionFileSuffix'])
             ? $args['@InstructionFileSuffix']
             : $this->instructionFileSuffix;
     }
-
     protected function determineGetObjectStrategy(
         $result,
         $instructionFileSuffix
@@ -31,20 +26,17 @@ trait CryptoParamsTrait
         if (isset($result['Metadata'][MetadataEnvelope::CONTENT_KEY_V2_HEADER])) {
             return new HeadersMetadataStrategy();
         }
-
         return new InstructionFileMetadataStrategy(
             $this->client,
             $instructionFileSuffix
         );
     }
-
     protected function getMetadataStrategy(array $args, $instructionFileSuffix)
     {
         if (!empty($args['@MetadataStrategy'])) {
             if ($args['@MetadataStrategy'] instanceof MetadataStrategyInterface) {
                 return $args['@MetadataStrategy'];
             }
-
             if (is_string($args['@MetadataStrategy'])) {
                 switch ($args['@MetadataStrategy']) {
                     case HeadersMetadataStrategy::class:
@@ -69,7 +61,6 @@ trait CryptoParamsTrait
                 $instructionFileSuffix
             );
         }
-
         return null;
     }
 }

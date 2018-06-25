@@ -1,6 +1,5 @@
 <?php
 namespace Aws\Exception;
-
 class CouldNotCreateChecksumException extends \RuntimeException
 {
     public function __construct($algorithm, \Exception $previous = null)
