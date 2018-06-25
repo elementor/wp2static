@@ -717,78 +717,31 @@ class StaticHtmlOutput_Controller {
 		}
 	}
 
-	// TODO: this is being called twice, check export targets flow in FE/BE
-	// TODO: convert this to an incremental export
+    public function dropbox_prepare_export() {
+		if ( wpsho_fr()->is__premium_only() ) {
+			$this->wsLog('DROPBOX EXPORT: preparing export');
+
+			$dropbox = new StaticHtmlOutput_Dropbox(
+				filter_input(INPUT_POST, 'dropboxAccessToken'),
+				filter_input(INPUT_POST, 'dropboxFolder'),
+				$this->_uploadsPath
+			);
+
+			echo $dropbox->prepare_export();
+		}
+    }
+
     public function dropbox_do_export() {
 		if ( wpsho_fr()->is__premium_only() ) {
-			$archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
-			$archiveName = rtrim($archiveDir, '/');
-			$siteroot = $archiveName . '/';
-			$dropboxAccessToken = filter_input(INPUT_POST, 'dropboxAccessToken');
-			$dropboxFolder = filter_input(INPUT_POST, 'dropboxFolder');
+			$this->wsLog('DROPBOX EXPORT: Transferring files...');
 
-			$this->wsLog('DROPBOX EXPORT: Doing one synchronous export to your ' . $dropboxFolder . ' directory');
+			$dropbox = new StaticHtmlOutput_Dropbox(
+				filter_input(INPUT_POST, 'dropboxAccessToken'),
+				filter_input(INPUT_POST, 'dropboxFolder'),
+				$this->_uploadsPath
+			);
 
-			function FolderToDropbox($dir, $siteroot, $dropboxFolder, $pluginInstance, $dropboxAccessToken){
-				$files = scandir($dir);
-				foreach($files as $item){
-					if($item != '.' && $item != '..' && $item != '.git'){
-						if(is_dir($dir.'/'.$item)) {
-							FolderToDropbox($dir.'/'.$item, $siteroot, $dropboxFolder, $pluginInstance, $dropboxAccessToken);
-						} else if(is_file($dir.'/'.$item)) {
-							$clean_dir = str_replace($siteroot, '', $dir.'/'.$item);
-							$targetPath =  $dropboxFolder . $clean_dir;
-
-							$pluginInstance->wsLog('DROPBOX EXPORT: transferring:' . $targetPath);
-
-
-							$api_url = 'https://content.dropboxapi.com/2/files/upload'; //dropbox api url
-
-							$headers = array('Authorization: Bearer '. $dropboxAccessToken,
-								'Content-Type: application/octet-stream',
-								'Dropbox-API-Arg: '.
-								json_encode(
-									array(
-										"path"=> $targetPath,
-										"mode" => "overwrite",
-										"autorename" => false
-									)
-								)
-
-							);
-
-							$ch = curl_init($api_url);
-
-							curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-							curl_setopt($ch, CURLOPT_POST, true);
-
-							$fp = fopen($dropboxFile, 'rb');
-							$filesize = filesize($path);
-
-							curl_setopt($ch, CURLOPT_POSTFIELDS, fread($fp, $filesize));
-							curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-							$response = curl_exec($ch);
-							$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-							if ($http_code == 200) {
-							} else {
-								error_log($response);
-								$pluginInstance->wsLog($response);
-								echo 'FAIL';die();
-							}
-
-							curl_close($ch);
-
-						} 
-					}
-				}
-
-			}
-
-			FolderToDropbox($siteroot, $siteroot, $dropboxFolder, $this, $dropboxAccessToken);
-
-			echo 'SUCCESS';
+			echo $dropbox->transfer_files();
 		}
     }
 
