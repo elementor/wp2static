@@ -1,61 +1,26 @@
 <?php
 namespace Aws;
-
 use Aws\Exception\AwsException;
 use GuzzleHttp\Promise\RejectedPromise;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
-
-/**
- * Traces state changes between middlewares.
- */
 class TraceMiddleware
 {
     private $prevOutput;
     private $prevInput;
     private $config;
-
     private static $authHeaders = [
         'X-Amz-Security-Token' => '[TOKEN]',
     ];
-
     private static $authStrings = [
-        // S3Signature
         '/AWSAccessKeyId=[A-Z0-9]{20}&/i' => 'AWSAccessKeyId=[KEY]&',
-        // SignatureV4 Signature and S3Signature
         '/Signature=.+/i' => 'Signature=[SIGNATURE]',
-        // SignatureV4 access key ID
-        '/Credential=[A-Z0-9]{20}\//i' => 'Credential=[KEY]/',
-        // S3 signatures
+        '/Credential=[A-Z0-9]{20}\
         '/AWS [A-Z0-9]{20}:.+/' => 'AWS AKI[KEY]:[SIGNATURE]',
-        // STS Presigned URLs
         '/X-Amz-Security-Token=[^&]+/i' => 'X-Amz-Security-Token=[TOKEN]',
-        // Crypto *Stream Keys
         '/\["key.{27,36}Stream.{9}\]=>\s+.{7}\d{2}\) "\X{16,64}"/U' => '["key":[CONTENT KEY]]',
     ];
-
-    /**
-     * Configuration array can contain the following key value pairs.
-     *
-     * - logfn: (callable) Function that is invoked with log messages. By
-     *   default, PHP's "echo" function will be utilized.
-     * - stream_size: (int) When the size of a stream is greater than this
-     *   number, the stream data will not be logged. Set to "0" to not log any
-     *   stream data.
-     * - scrub_auth: (bool) Set to false to disable the scrubbing of auth data
-     *   from the logged messages.
-     * - http: (bool) Set to false to disable the "debug" feature of lower
-     *   level HTTP adapters (e.g., verbose curl output).
-     * - auth_strings: (array) A mapping of authentication string regular
-     *   expressions to scrubbed strings. These mappings are passed directly to
-     *   preg_replace (e.g., preg_replace($key, $value, $debugOutput) if
-     *   "scrub_auth" is set to true.
-     * - auth_headers: (array) A mapping of header names known to contain
-     *   sensitive data to what the scrubbed value should be. The value of any
-     *   headers contained in this array will be replaced with the if
-     *   "scrub_auth" is set to true.
-     */
     public function __construct(array $config = [])
     {
         $this->config = $config + [
@@ -66,15 +31,12 @@ class TraceMiddleware
             'auth_strings' => [],
             'auth_headers' => [],
         ];
-
         $this->config['auth_strings'] += self::$authStrings;
         $this->config['auth_headers'] += self::$authHeaders;
     }
-
     public function __invoke($step, $name)
     {
         $this->prevOutput = $this->prevInput = [];
-
         return function (callable $next) use ($step, $name) {
             return function (
                 CommandInterface $command,
@@ -88,7 +50,6 @@ class TraceMiddleware
                     'request' => $this->requestArray($request),
                     'command' => $this->commandArray($command)
                 ]);
-
                 return $next($command, $request)->then(
                     function ($value) use ($step, $name, $command, $start) {
                         $this->flushHttpDebug($command);
@@ -114,7 +75,6 @@ class TraceMiddleware
             };
         };
     }
-
     private function stepInput($entry)
     {
         static $keys = ['command', 'request'];
@@ -122,7 +82,6 @@ class TraceMiddleware
         $this->write("\n");
         $this->prevInput = $entry;
     }
-
     private function stepOutput($start, $entry)
     {
         static $keys = ['result', 'error'];
@@ -131,7 +90,6 @@ class TraceMiddleware
         $this->write("  Inclusive step time: " . $totalTime . "\n\n");
         $this->prevOutput = $entry;
     }
-
     private function compareStep(array $a, array $b, $title, array $keys)
     {
         $changes = [];
@@ -147,7 +105,6 @@ class TraceMiddleware
             : 'no changes';
         $this->write($str . "\n");
     }
-
     private function commandArray(CommandInterface $cmd)
     {
         return [
@@ -156,7 +113,6 @@ class TraceMiddleware
             'params'   => $cmd->toArray()
         ];
     }
-
     private function requestArray(RequestInterface $request = null)
     {
         return !$request ? [] : array_filter([
@@ -170,7 +126,6 @@ class TraceMiddleware
             'query'    => $request->getUri()->getQuery(),
         ]);
     }
-
     private function responseArray(ResponseInterface $response = null)
     {
         return !$response ? [] : [
@@ -180,7 +135,6 @@ class TraceMiddleware
             'body'       => $this->streamStr($response->getBody())
         ];
     }
-
     private function resultArray($value)
     {
         return $value instanceof ResultInterface
@@ -189,13 +143,11 @@ class TraceMiddleware
                 'data'     => $value->toArray()
             ] : $value;
     }
-
     private function exceptionArray($e)
     {
         if (!($e instanceof \Exception)) {
             return $e;
         }
-
         $result = [
             'instance'   => spl_object_hash($e),
             'class'      => get_class($e),
@@ -204,7 +156,6 @@ class TraceMiddleware
             'line'       => $e->getLine(),
             'trace'      => $e->getTraceAsString(),
         ];
-
         if ($e instanceof AwsException) {
             $result += [
                 'type'       => $e->getAwsErrorType(),
@@ -216,16 +167,13 @@ class TraceMiddleware
                 'response'   => $this->responseArray($e->getResponse()),
             ];
         }
-
         return $result;
     }
-
     private function compareArray($a, $b, $path, array &$diff)
     {
         if ($a === $b) {
             return;
         }
-
         if (is_array($a)) {
             $b = (array) $b;
             $keys = array_unique(array_merge(array_keys($a), array_keys($b)));
@@ -246,36 +194,30 @@ class TraceMiddleware
             $diff[] = sprintf("%s changed from %s to %s", $path, $this->str($a), $this->str($b));
         }
     }
-
     private function str($value)
     {
         if (is_scalar($value)) {
             return (string) $value;
         }
-
         if ($value instanceof \Exception) {
             $value = $this->exceptionArray($value);
         }
-
         ob_start();
         var_dump($value);
         return ob_get_clean();
     }
-
     private function streamStr(StreamInterface $body)
     {
         return $body->getSize() < $this->config['stream_size']
             ? (string) $body
             : 'stream(size=' . $body->getSize() . ')';
     }
-
     private function createHttpDebug(CommandInterface $command)
     {
         if ($this->config['http'] && !isset($command['@http']['debug'])) {
-            $command['@http']['debug'] = fopen('php://temp', 'w+');
+            $command['@http']['debug'] = fopen('php:
         }
     }
-
     private function flushHttpDebug(CommandInterface $command)
     {
         if ($res = $command['@http']['debug']) {
@@ -285,7 +227,6 @@ class TraceMiddleware
             $command['@http']['debug'] = null;
         }
     }
-
     private function write($value)
     {
         if ($this->config['scrub_auth']) {
@@ -293,16 +234,13 @@ class TraceMiddleware
                 $value = preg_replace($pattern, $replacement, $value);
             }
         }
-
         call_user_func($this->config['logfn'], $value);
     }
-
     private function redactHeaders(array $headers)
     {
         if ($this->config['scrub_auth']) {
             $headers = $this->config['auth_headers'] + $headers;
         }
-
         return $headers;
     }
 }

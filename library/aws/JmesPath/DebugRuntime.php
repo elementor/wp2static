@@ -1,16 +1,11 @@
 <?php
 namespace JmesPath;
-
-/**
- * Provides CLI debugging information for the AST and Compiler runtimes.
- */
 class DebugRuntime
 {
     private $runtime;
     private $out;
     private $lexer;
     private $parser;
-
     public function __construct(callable $runtime, $output = null)
     {
         $this->runtime = $runtime;
@@ -18,16 +13,13 @@ class DebugRuntime
         $this->lexer = new Lexer();
         $this->parser = new Parser($this->lexer);
     }
-
     public function __invoke($expression, $data)
     {
         if ($this->runtime instanceof CompilerRuntime) {
             return $this->debugCompiled($expression, $data);
         }
-
         return $this->debugInterpreted($expression, $data);
     }
-
     private function debugInterpreted($expression, $data)
     {
         return $this->debugCallback(
@@ -39,7 +31,6 @@ class DebugRuntime
             $data
         );
     }
-
     private function debugCompiled($expression, $data)
     {
         $result = $this->debugCallback(
@@ -51,16 +42,13 @@ class DebugRuntime
             $data
         );
         $this->dumpCompiledCode($expression);
-
         return $result;
     }
-
     private function dumpTokens($expression)
     {
         $lexer = new Lexer();
         fwrite($this->out, "Tokens\n======\n\n");
         $tokens = $lexer->tokenize($expression);
-
         foreach ($tokens as $t) {
             fprintf(
                 $this->out,
@@ -68,10 +56,8 @@ class DebugRuntime
                 json_encode($t['value'])
             );
         }
-
         fwrite($this->out, "\n");
     }
-
     private function dumpAst($expression)
     {
         $parser = new Parser();
@@ -79,7 +65,6 @@ class DebugRuntime
         fwrite($this->out, "AST\n========\n\n");
         fwrite($this->out, json_encode($ast, JSON_PRETTY_PRINT) . "\n");
     }
-
     private function dumpCompiledCode($expression)
     {
         fwrite($this->out, "Code\n========\n\n");
@@ -90,7 +75,6 @@ class DebugRuntime
         fwrite($this->out, "File: {$filename}\n\n");
         fprintf($this->out, file_get_contents($filename));
     }
-
     private function debugCallback(callable $debugFn, $expression, $data)
     {
         fprintf($this->out, "Expression\n==========\n\n%s\n\n", $expression);
@@ -103,7 +87,6 @@ class DebugRuntime
         fprintf($this->out, "\nResult\n======\n\n%s\n\n", json_encode($result, JSON_PRETTY_PRINT));
         fwrite($this->out, "Time\n====\n\n");
         fprintf($this->out, "Total time:     %f ms\n\n", $total);
-
         return $result;
     }
 }
