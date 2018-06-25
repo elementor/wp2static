@@ -106,6 +106,7 @@ class StaticHtmlOutput_GitHub
 	
     public function upload_blobs() {
 		if ( wpsho_fr()->is__premium_only() ) {
+			require_once dirname(__FILE__) . '/../GuzzleHttp/autoloader.php';
 			require_once(__DIR__.'/../Github/autoload.php');
 
 			if ($this->get_remaining_items_count() < 0) {
@@ -155,6 +156,7 @@ class StaticHtmlOutput_GitHub
 
     public function commit_new_tree() {
 		if ( wpsho_fr()->is__premium_only() ) {
+			require_once dirname(__FILE__) . '/../GuzzleHttp/autoloader.php';
 			require_once(__DIR__.'/../Github/autoload.php');
 
 			if ($this->get_remaining_items_count() < 0) {
