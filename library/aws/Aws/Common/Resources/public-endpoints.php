@@ -2,7 +2,23 @@
 return array(
     'version' => 2,
     'endpoints' => array(
-        '*cloudfront' => array(
+        '*/*' => array(
+            'endpoint' => '{service}.{region}.amazonaws.com'
+        ),
+        'cn-north-1/*' => array(
+            'endpoint' => '{service}.{region}.amazonaws.com.cn',
+            'signatureVersion' => 'v4'
+        ),
+        'us-gov-west-1/iam' => array(
+            'endpoint' => 'iam.us-gov.amazonaws.com'
+        ),
+        'us-gov-west-1/sts' => array(
+            'endpoint' => 'sts.us-gov-west-1.amazonaws.com'
+        ),
+        'us-gov-west-1/s3' => array(
+            'endpoint' => 's3-{region}.amazonaws.com'
+        ),
+        '*/cloudfront' => array(
             'endpoint' => 'cloudfront.amazonaws.com',
             'credentialScope' => array(
                 'region' => 'us-east-1'

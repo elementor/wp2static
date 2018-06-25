@@ -1,9 +1,16 @@
 <?php
 namespace Aws\S3;
+
 use Aws\Api\Parser\AbstractParser;
 use Aws\CommandInterface;
 use Aws\Exception\AwsException;
 use Psr\Http\Message\ResponseInterface;
+
+/**
+ * Converts errors returned with a status code of 200 to a retryable error type.
+ *
+ * @internal
+ */
 class AmbiguousSuccessParser extends AbstractParser
 {
     private static $ambiguousSuccesses = [
@@ -11,9 +18,14 @@ class AmbiguousSuccessParser extends AbstractParser
         'CopyObject' => true,
         'CompleteMultipartUpload' => true,
     ];
+
+    /** @var callable */
     private $parser;
+    /** @var callable */
     private $errorParser;
+    /** @var string */
     private $exceptionClass;
+
     public function __construct(
         callable $parser,
         callable $errorParser,
@@ -23,6 +35,7 @@ class AmbiguousSuccessParser extends AbstractParser
         $this->errorParser = $errorParser;
         $this->exceptionClass = $exceptionClass;
     }
+
     public function __invoke(
         CommandInterface $command,
         ResponseInterface $response
@@ -40,6 +53,7 @@ class AmbiguousSuccessParser extends AbstractParser
                 );
             }
         }
+
         $fn = $this->parser;
         return $fn($command, $response);
     }

@@ -1,4 +1,19 @@
 <?php
+/**
+ * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ * http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 return array (
     'apiVersion' => '2006-03-01',
     'endpointPrefix' => 's3',
@@ -73,7 +88,7 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'AbortMultipartUploadOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/mpUploadAbort.html',
             'parameters' => array(
                 'Bucket' => array(
                     'required' => true,
@@ -114,12 +129,12 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'CompleteMultipartUploadOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/mpUploadComplete.html',
             'data' => array(
                 'xmlRoot' => array(
                     'name' => 'CompleteMultipartUpload',
                     'namespaces' => array(
-                        'http:
+                        'http://s3.amazonaws.com/doc/2006-03-01/',
                     ),
                 ),
             ),
@@ -181,12 +196,12 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'CopyObjectOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectCOPY.html',
             'data' => array(
                 'xmlRoot' => array(
                     'name' => 'CopyObjectRequest',
                     'namespaces' => array(
-                        'http:
+                        'http://s3.amazonaws.com/doc/2006-03-01/',
                     ),
                 ),
             ),
@@ -390,12 +405,12 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'CreateBucketOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUT.html',
             'data' => array(
                 'xmlRoot' => array(
                     'name' => 'CreateBucketConfiguration',
                     'namespaces' => array(
-                        'http:
+                        'http://s3.amazonaws.com/doc/2006-03-01/',
                     ),
                 ),
             ),
@@ -457,12 +472,12 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'CreateMultipartUploadOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/mpUploadInitiate.html',
             'data' => array(
                 'xmlRoot' => array(
                     'name' => 'CreateMultipartUploadRequest',
                     'namespaces' => array(
-                        'http:
+                        'http://s3.amazonaws.com/doc/2006-03-01/',
                     ),
                 ),
             ),
@@ -604,7 +619,7 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'DeleteBucketOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETE.html',
             'parameters' => array(
                 'Bucket' => array(
                     'required' => true,
@@ -619,7 +634,7 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'DeleteBucketCorsOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETEcors.html',
             'parameters' => array(
                 'Bucket' => array(
                     'required' => true,
@@ -634,7 +649,7 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'DeleteBucketLifecycleOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETElifecycle.html',
             'parameters' => array(
                 'Bucket' => array(
                     'required' => true,
@@ -649,7 +664,7 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'DeleteBucketPolicyOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETEpolicy.html',
             'parameters' => array(
                 'Bucket' => array(
                     'required' => true,
@@ -678,7 +693,7 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'DeleteBucketTaggingOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETEtagging.html',
             'parameters' => array(
                 'Bucket' => array(
                     'required' => true,
@@ -693,7 +708,7 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'DeleteBucketWebsiteOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETEwebsite.html',
             'parameters' => array(
                 'Bucket' => array(
                     'required' => true,
@@ -708,7 +723,7 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'DeleteObjectOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectDELETE.html',
             'parameters' => array(
                 'Bucket' => array(
                     'required' => true,
@@ -747,12 +762,12 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'DeleteObjectsOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/multiobjectdeleteapi.html',
             'data' => array(
                 'xmlRoot' => array(
                     'name' => 'Delete',
                     'namespaces' => array(
-                        'http:
+                        'http://s3.amazonaws.com/doc/2006-03-01/',
                     ),
                 ),
                 'contentMd5' => true,
@@ -813,7 +828,7 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'GetBucketAclOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETacl.html',
             'parameters' => array(
                 'Bucket' => array(
                     'required' => true,
@@ -832,7 +847,7 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'GetBucketCorsOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETcors.html',
             'parameters' => array(
                 'Bucket' => array(
                     'required' => true,
@@ -851,7 +866,7 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'GetBucketLifecycleOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETlifecycle.html',
             'parameters' => array(
                 'Bucket' => array(
                     'required' => true,
@@ -888,7 +903,7 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'GetBucketLocationOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETlocation.html',
             'parameters' => array(
                 'Bucket' => array(
                     'required' => true,
@@ -903,7 +918,7 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'GetBucketLoggingOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETlogging.html',
             'parameters' => array(
                 'Bucket' => array(
                     'required' => true,
@@ -922,7 +937,7 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'NotificationConfigurationDeprecated',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETnotification.html',
             'parameters' => array(
                 'Bucket' => array(
                     'required' => true,
@@ -959,7 +974,7 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'GetBucketPolicyOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETpolicy.html',
             'parameters' => array(
                 'Bucket' => array(
                     'required' => true,
@@ -992,7 +1007,7 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'GetBucketRequestPaymentOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTrequestPaymentGET.html',
             'parameters' => array(
                 'Bucket' => array(
                     'required' => true,
@@ -1011,7 +1026,7 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'GetBucketTaggingOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETtagging.html',
             'parameters' => array(
                 'Bucket' => array(
                     'required' => true,
@@ -1030,7 +1045,7 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'GetBucketVersioningOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETversioningStatus.html',
             'parameters' => array(
                 'Bucket' => array(
                     'required' => true,
@@ -1049,7 +1064,7 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'GetBucketWebsiteOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETwebsite.html',
             'parameters' => array(
                 'Bucket' => array(
                     'required' => true,
@@ -1068,7 +1083,7 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'GetObjectOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectGET.html',
             'parameters' => array(
                 'Bucket' => array(
                     'required' => true,
@@ -1195,7 +1210,7 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'GetObjectAclOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectGETacl.html',
             'parameters' => array(
                 'Bucket' => array(
                     'required' => true,
@@ -1239,7 +1254,7 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'GetObjectTorrentOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectGETtorrent.html',
             'parameters' => array(
                 'Bucket' => array(
                     'required' => true,
@@ -1268,7 +1283,7 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'HeadBucketOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketHEAD.html',
             'parameters' => array(
                 'Bucket' => array(
                     'required' => true,
@@ -1289,7 +1304,7 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'HeadObjectOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectHEAD.html',
             'parameters' => array(
                 'Bucket' => array(
                     'required' => true,
@@ -1378,7 +1393,7 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'ListBucketsOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTServiceGET.html',
             'parameters' => array(
                 'command.expects' => array(
                     'static' => true,
@@ -1392,7 +1407,7 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'ListMultipartUploadsOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/mpUploadListMPUpload.html',
             'parameters' => array(
                 'Bucket' => array(
                     'required' => true,
@@ -1441,7 +1456,7 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'ListObjectVersionsOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETVersion.html',
             'parameters' => array(
                 'Bucket' => array(
                     'required' => true,
@@ -1490,7 +1505,7 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'ListObjectsOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGET.html',
             'parameters' => array(
                 'Bucket' => array(
                     'required' => true,
@@ -1540,7 +1555,7 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'ListPartsOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/mpUploadListParts.html',
             'parameters' => array(
                 'Bucket' => array(
                     'required' => true,
@@ -1589,12 +1604,12 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'PutBucketAclOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUTacl.html',
             'data' => array(
                 'xmlRoot' => array(
                     'name' => 'AccessControlPolicy',
                     'namespaces' => array(
-                        'http:
+                        'http://s3.amazonaws.com/doc/2006-03-01/',
                     ),
                 ),
             ),
@@ -1630,7 +1645,7 @@ return array (
                                         'sentAs' => 'xsi:type',
                                         'data' => array(
                                             'xmlAttribute' => true,
-                                            'xmlNamespace' => 'http:
+                                            'xmlNamespace' => 'http://www.w3.org/2001/XMLSchema-instance',
                                         ),
                                     ),
                                     'URI' => array(
@@ -1698,12 +1713,12 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'PutBucketCorsOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUTcors.html',
             'data' => array(
                 'xmlRoot' => array(
                     'name' => 'CORSConfiguration',
                     'namespaces' => array(
-                        'http:
+                        'http://s3.amazonaws.com/doc/2006-03-01/',
                     ),
                 ),
                 'contentMd5' => true,
@@ -1786,12 +1801,12 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'PutBucketLifecycleOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUTlifecycle.html',
             'data' => array(
                 'xmlRoot' => array(
                     'name' => 'LifecycleConfiguration',
                     'namespaces' => array(
-                        'http:
+                        'http://s3.amazonaws.com/doc/2006-03-01/',
                     ),
                 ),
                 'contentMd5' => true,
@@ -1894,7 +1909,7 @@ return array (
                 'xmlRoot' => array(
                     'name' => 'LifecycleConfiguration',
                     'namespaces' => array(
-                        'http:
+                        'http://s3.amazonaws.com/doc/2006-03-01/',
                     ),
                 ),
             ),
@@ -2008,12 +2023,12 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'PutBucketLoggingOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUTlogging.html',
             'data' => array(
                 'xmlRoot' => array(
                     'name' => 'BucketLoggingStatus',
                     'namespaces' => array(
-                        'http:
+                        'http://s3.amazonaws.com/doc/2006-03-01/',
                     ),
                 ),
                 'xmlAllowEmpty' => true,
@@ -2055,7 +2070,7 @@ return array (
                                                 'sentAs' => 'xsi:type',
                                                 'data' => array(
                                                     'xmlAttribute' => true,
-                                                    'xmlNamespace' => 'http:
+                                                    'xmlNamespace' => 'http://www.w3.org/2001/XMLSchema-instance',
                                                 ),
                                             ),
                                             'URI' => array(
@@ -2082,12 +2097,12 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'PutBucketNotificationOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUTnotification.html',
             'data' => array(
                 'xmlRoot' => array(
                     'name' => 'NotificationConfiguration',
                     'namespaces' => array(
-                        'http:
+                        'http://s3.amazonaws.com/doc/2006-03-01/',
                     ),
                 ),
                 'xmlAllowEmpty' => true,
@@ -2188,7 +2203,7 @@ return array (
                 'xmlRoot' => array(
                     'name' => 'NotificationConfiguration',
                     'namespaces' => array(
-                        'http:
+                        'http://s3.amazonaws.com/doc/2006-03-01/',
                     ),
                 ),
             ),
@@ -2398,12 +2413,12 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'PutBucketPolicyOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUTpolicy.html',
             'data' => array(
                 'xmlRoot' => array(
                     'name' => 'PutBucketPolicyRequest',
                     'namespaces' => array(
-                        'http:
+                        'http://s3.amazonaws.com/doc/2006-03-01/',
                     ),
                 ),
             ),
@@ -2433,7 +2448,7 @@ return array (
                 'xmlRoot' => array(
                     'name' => 'ReplicationConfiguration',
                     'namespaces' => array(
-                        'http:
+                        'http://s3.amazonaws.com/doc/2006-03-01/',
                     ),
                 ),
             ),
@@ -2495,12 +2510,12 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'PutBucketRequestPaymentOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTrequestPaymentPUT.html',
             'data' => array(
                 'xmlRoot' => array(
                     'name' => 'RequestPaymentConfiguration',
                     'namespaces' => array(
-                        'http:
+                        'http://s3.amazonaws.com/doc/2006-03-01/',
                     ),
                 ),
             ),
@@ -2523,12 +2538,12 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'PutBucketTaggingOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUTtagging.html',
             'data' => array(
                 'xmlRoot' => array(
                     'name' => 'Tagging',
                     'namespaces' => array(
-                        'http:
+                        'http://s3.amazonaws.com/doc/2006-03-01/',
                     ),
                 ),
                 'contentMd5' => true,
@@ -2567,12 +2582,12 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'PutBucketVersioningOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUTVersioningStatus.html',
             'data' => array(
                 'xmlRoot' => array(
                     'name' => 'VersioningConfiguration',
                     'namespaces' => array(
-                        'http:
+                        'http://s3.amazonaws.com/doc/2006-03-01/',
                     ),
                 ),
             ),
@@ -2604,12 +2619,12 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'PutBucketWebsiteOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUTwebsite.html',
             'data' => array(
                 'xmlRoot' => array(
                     'name' => 'WebsiteConfiguration',
                     'namespaces' => array(
-                        'http:
+                        'http://s3.amazonaws.com/doc/2006-03-01/',
                     ),
                 ),
                 'xmlAllowEmpty' => true,
@@ -2704,12 +2719,12 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'PutObjectOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPUT.html',
             'data' => array(
                 'xmlRoot' => array(
                     'name' => 'PutObjectRequest',
                     'namespaces' => array(
-                        'http:
+                        'http://s3.amazonaws.com/doc/2006-03-01/',
                     ),
                 ),
             ),
@@ -2867,12 +2882,12 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'PutObjectAclOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPUTacl.html',
             'data' => array(
                 'xmlRoot' => array(
                     'name' => 'AccessControlPolicy',
                     'namespaces' => array(
-                        'http:
+                        'http://s3.amazonaws.com/doc/2006-03-01/',
                     ),
                 ),
             ),
@@ -2908,7 +2923,7 @@ return array (
                                         'sentAs' => 'xsi:type',
                                         'data' => array(
                                             'xmlAttribute' => true,
-                                            'xmlNamespace' => 'http:
+                                            'xmlNamespace' => 'http://www.w3.org/2001/XMLSchema-instance',
                                         ),
                                     ),
                                     'URI' => array(
@@ -2996,12 +3011,12 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'RestoreObjectOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectRestore.html',
             'data' => array(
                 'xmlRoot' => array(
                     'name' => 'RestoreRequest',
                     'namespaces' => array(
-                        'http:
+                        'http://s3.amazonaws.com/doc/2006-03-01/',
                     ),
                 ),
             ),
@@ -3049,12 +3064,12 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'UploadPartOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/mpUploadUploadPart.html',
             'data' => array(
                 'xmlRoot' => array(
                     'name' => 'UploadPartRequest',
                     'namespaces' => array(
-                        'http:
+                        'http://s3.amazonaws.com/doc/2006-03-01/',
                     ),
                 ),
             ),
@@ -3138,12 +3153,12 @@ return array (
             'class' => 'Aws\\S3\\Command\\S3Command',
             'responseClass' => 'UploadPartCopyOutput',
             'responseType' => 'model',
-            'documentationUrl' => 'http:
+            'documentationUrl' => 'http://docs.aws.amazon.com/AmazonS3/latest/API/mpUploadUploadPartCopy.html',
             'data' => array(
                 'xmlRoot' => array(
                     'name' => 'UploadPartCopyRequest',
                     'namespaces' => array(
-                        'http:
+                        'http://s3.amazonaws.com/doc/2006-03-01/',
                     ),
                 ),
             ),
@@ -3648,7 +3663,7 @@ return array (
                                         'sentAs' => 'xsi:type',
                                         'data' => array(
                                             'xmlAttribute' => true,
-                                            'xmlNamespace' => 'http:
+                                            'xmlNamespace' => 'http://www.w3.org/2001/XMLSchema-instance',
                                         ),
                                     ),
                                     'URI' => array(
@@ -3968,7 +3983,7 @@ return array (
                                                 'sentAs' => 'xsi:type',
                                                 'data' => array(
                                                     'xmlAttribute' => true,
-                                                    'xmlNamespace' => 'http:
+                                                    'xmlNamespace' => 'http://www.w3.org/2001/XMLSchema-instance',
                                                 ),
                                             ),
                                             'URI' => array(
@@ -4681,7 +4696,7 @@ return array (
                                         'sentAs' => 'xsi:type',
                                         'data' => array(
                                             'xmlAttribute' => true,
-                                            'xmlNamespace' => 'http:
+                                            'xmlNamespace' => 'http://www.w3.org/2001/XMLSchema-instance',
                                         ),
                                     ),
                                     'URI' => array(
