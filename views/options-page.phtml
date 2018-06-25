@@ -429,6 +429,7 @@ jQuery(document).ready(function($){
 				's3Secret',
 				's3Region',
 				's3Bucket',
+				's3RemotePath',
 				'cfDistributionId',
 				'dropboxAccessToken',
 				'dropboxFolder',
@@ -655,6 +656,7 @@ function displayTextfield($template_variables, $field_name, $field_label, $descr
 	<br>
 
 	<?php echo displayTextfield($this, 's3Bucket', 'S3 Bucket', 'ie, my-static-site'); ?>
+	<?php echo displayTextfield($this, 's3RemotePath', 'Subfolder in your bucket', 'ie, static-website'); ?>
 	<?php echo displayTextfield($this, 'cfDistributionId', 'CloudFront Distribution ID', 'ie, ABC123DEFX'); ?>
 </span>
 

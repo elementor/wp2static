@@ -67,6 +67,7 @@ if ( ! function_exists( 'wpsho_fr' ) ) {
 	require_once 'library/StaticHtmlOutput/FTP.php';
 	require_once 'library/StaticHtmlOutput/GitHub.php';
 	require_once 'library/StaticHtmlOutput/Dropbox.php';
+	require_once 'library/StaticHtmlOutput/S3.php';
 	require_once 'library/StaticHtmlOutput.php';
 
 	StaticHtmlOutput_Controller::init( __FILE__ );
