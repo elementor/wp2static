@@ -511,6 +511,7 @@ class StaticHtmlOutput_Controller {
 			$this->wsLog('FTP EXPORT: Checking credentials..:');
 
 			$ftp = new StaticHtmlOutput_FTP(
+				$this,
 				filter_input(INPUT_POST, 'ftpServer'),
 				filter_input(INPUT_POST, 'ftpUsername'),
 				filter_input(INPUT_POST, 'ftpPassword'),
@@ -525,9 +526,9 @@ class StaticHtmlOutput_Controller {
 
     public function ftp_transfer_files($batch_size = 5) {
 		if ( wpsho_fr()->is__premium_only() ) {
-			$this->wsLog('FTP EXPORT: transferring files..:');
 
 			$ftp = new StaticHtmlOutput_FTP(
+				$this,
 				filter_input(INPUT_POST, 'ftpServer'),
 				filter_input(INPUT_POST, 'ftpUsername'),
 				filter_input(INPUT_POST, 'ftpPassword'),
@@ -545,6 +546,7 @@ class StaticHtmlOutput_Controller {
 			$this->wsLog('BUNNYCDN EXPORT: Preparing export..:');
 
 			$bunnyCDN = new StaticHtmlOutput_BunnyCDN(
+				$this,
 				filter_input(INPUT_POST, 'bunnycdnPullZoneName'),
 				filter_input(INPUT_POST, 'bunnycdnAPIKey'),
 				filter_input(INPUT_POST, 'bunnycdnRemotePath'),
@@ -557,9 +559,9 @@ class StaticHtmlOutput_Controller {
 
     public function bunnycdn_transfer_files() {
 		if ( wpsho_fr()->is__premium_only() ) {
-			$this->wsLog('BUNNYCDN EXPORT: transferring files'); 
 
 			$bunnyCDN = new StaticHtmlOutput_BunnyCDN(
+				$this,
 				filter_input(INPUT_POST, 'bunnycdnPullZoneName'),
 				filter_input(INPUT_POST, 'bunnycdnAPIKey'),
 				filter_input(INPUT_POST, 'bunnycdnRemotePath'),
@@ -575,6 +577,7 @@ class StaticHtmlOutput_Controller {
 			$this->wsLog('BUNNYCDN EXPORT: purging cache'); 
 
 			$bunnyCDN = new StaticHtmlOutput_BunnyCDN(
+				$this,
 				filter_input(INPUT_POST, 'bunnycdnPullZoneName'),
 				filter_input(INPUT_POST, 'bunnycdnAPIKey'),
 				filter_input(INPUT_POST, 'bunnycdnRemotePath'),
@@ -610,6 +613,7 @@ class StaticHtmlOutput_Controller {
 			$this->wsLog('S3 EXPORT: preparing export...');
 
 			$s3 = new StaticHtmlOutput_S3(
+				$this,
 				filter_input(INPUT_POST, 's3Key'),
 				filter_input(INPUT_POST, 's3Secret'),
 				filter_input(INPUT_POST, 's3Region'),
@@ -624,9 +628,9 @@ class StaticHtmlOutput_Controller {
 
     public function s3_transfer_files() {
 		if ( wpsho_fr()->is__premium_only() ) {
-			$this->wsLog('S3 EXPORT: Transferring files...');
 
 			$s3 = new StaticHtmlOutput_S3(
+				$this,
 				filter_input(INPUT_POST, 's3Key'),
 				filter_input(INPUT_POST, 's3Secret'),
 				filter_input(INPUT_POST, 's3Region'),
@@ -672,6 +676,7 @@ class StaticHtmlOutput_Controller {
 			$this->wsLog('DROPBOX EXPORT: preparing export');
 
 			$dropbox = new StaticHtmlOutput_Dropbox(
+				$this,
 				filter_input(INPUT_POST, 'dropboxAccessToken'),
 				filter_input(INPUT_POST, 'dropboxFolder'),
 				$this->_uploadsPath
@@ -683,9 +688,9 @@ class StaticHtmlOutput_Controller {
 
     public function dropbox_do_export() {
 		if ( wpsho_fr()->is__premium_only() ) {
-			$this->wsLog('DROPBOX EXPORT: Transferring files...');
 
 			$dropbox = new StaticHtmlOutput_Dropbox(
+				$this,
 				filter_input(INPUT_POST, 'dropboxAccessToken'),
 				filter_input(INPUT_POST, 'dropboxFolder'),
 				$this->_uploadsPath

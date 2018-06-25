@@ -13,10 +13,12 @@ class StaticHtmlOutput_Dropbox
 	protected $_uploadsPath;
 	protected $_exportFileList;
 	protected $_archiveName;
+	protected $_plugin;
 	
-	public function __construct($accessToken, $remotePath, $uploadsPath) {
+	public function __construct($plugin, $accessToken, $remotePath, $uploadsPath) {
 		$this->_accessToken = $accessToken;
 		$this->_remotePath = $remotePath;
+		$this->_plugin = $plugin;
 		$this->_uploadsPath = $uploadsPath;
 		$this->_exportFileList = $uploadsPath . '/WP-STATIC-EXPORT-DROPBOX-FILES-TO-EXPORT';
 		$archiveDir = file_get_contents($uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
@@ -99,7 +101,7 @@ class StaticHtmlOutput_Dropbox
 			$targetPath = rtrim($targetPath);
 
 
-			//$this->wsLog('BUNNYCDN EXPORT: transferring ' .  basename($fileToTransfer) . ' TO ' . $targetPath);
+			$this->_plugin->wsLog('DROPBOX EXPORT: transferring ' .  basename($fileToTransfer) . ' TO ' . $targetPath);
 		  
 			// vendor specific 
  
@@ -143,10 +145,11 @@ class StaticHtmlOutput_Dropbox
 
 			// end vendor specific 
 
-			//$this->wsLog('BUNNYCDN EXPORT: ' . $filesRemaining . ' files remaining to transfer');
+			$filesRemaining = $this->get_remaining_items_count();
 
-			if ( $this->get_remaining_items_count() > 0 ) {
-				echo $this->get_remaining_items_count();
+			if ( $filesRemaining > 0 ) {
+				$this->_plugin->wsLog('DROPBOX EXPORT: ' . $filesRemaining . ' files remaining to transfer');
+				echo $filesRemaining;
 			} else {
 				echo 'SUCCESS';
 			}
