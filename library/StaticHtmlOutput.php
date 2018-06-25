@@ -613,45 +613,6 @@ class StaticHtmlOutput_Controller {
 		}	
     }
 
-	public function s3_put_object($Bucket, $Key, $Data, $ContentType = "text/plain", $pluginInstance) {
-		if ( wpsho_fr()->is__premium_only() ) {
-		
-			require_once(__DIR__.'/S3/S3.php');
-
-			$client = new S3(
-				filter_input(INPUT_POST, 's3Key'),
-				filter_input(INPUT_POST, 's3Secret'),
-				's3.' . filter_input(INPUT_POST, 's3Region') .  '.amazonaws.com'
-			);
-
-			// [OPTIONAL] Specify different curl options
-			$client->useCurlOpts(array(
-				CURLOPT_MAX_RECV_SPEED_LARGE => 1048576,
-				CURLOPT_CONNECTTIMEOUT => 10
-			));
-
-			$response = $client->putObject(
-				$Bucket, // bucket name without s3.amazonaws.com
-				$Key, // path to create in bucket
-				$Data, // file contents - path to stream or fopen result
-				array(
-					'Content-Type' => $ContentType,
-					'x-amz-acl' => 'public-read', // public read for static site
-				)
-			);
-
-			if ($response->code == 200) {
-				return true;
-			} else {
-				$pluginInstance->wsLog('S3 EXPORT: following error returned from S3:');
-				$pluginInstance->wsLog(print_r($response, true));
-				error_log(print_r($response, true));
-				return false;
-			}
-		}
-	}
-
-	// TODO: make this a generic func, calling vendor specific files
     public function s3_transfer_files() {
 		if ( wpsho_fr()->is__premium_only() ) {
 			$this->wsLog('S3 EXPORT: Transferring files...');
@@ -666,8 +627,6 @@ class StaticHtmlOutput_Controller {
 			);
 
 			$s3->transfer_files();
-
-		  
 		}
     }
 

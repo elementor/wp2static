@@ -128,12 +128,12 @@ class StaticHtmlOutput_S3
 			);
 
 			if ($response->code == 200) {
-				return true;
+				echo 'SUCCESS';
 			} else {
 				//$pluginInstance->wsLog('S3 EXPORT: following error returned from S3:');
 				//$pluginInstance->wsLog(print_r($response, true));
 				error_log(print_r($response, true));
-				return false;
+				echo 'FAIL';
 			}
 		}
 	}
