@@ -1,9 +1,5 @@
 <?php
 namespace Aws\Api;
-
-/**
- * Represents a timestamp shape.
- */
 class TimestampShape extends Shape
 {
     public function __construct(array $definition, ShapeMap $shapeMap)
@@ -11,17 +7,6 @@ class TimestampShape extends Shape
         $definition['type'] = 'timestamp';
         parent::__construct($definition, $shapeMap);
     }
-
-    /**
-     * Formats a timestamp value for a service.
-     *
-     * @param mixed  $value  Value to format
-     * @param string $format Format used to serialize the value
-     *
-     * @return int|string
-     * @throws \UnexpectedValueException if the format is unknown.
-     * @throws \InvalidArgumentException if the value is an unsupported type.
-     */
     public static function format($value, $format)
     {
         if ($value instanceof \DateTime) {
@@ -32,7 +17,6 @@ class TimestampShape extends Shape
             throw new \InvalidArgumentException('Unable to handle the provided'
                 . ' timestamp type: ' . gettype($value));
         }
-
         switch ($format) {
             case 'iso8601':
                 return gmdate('Y-m-d\TH:i:s\Z', $value);

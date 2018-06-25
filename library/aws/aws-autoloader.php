@@ -1,5 +1,4 @@
 <?php
-
 $mapping = array(
     'Aws\functions' => __DIR__ . '/Aws/functions.php',
     'Aws\MarketplaceCommerceAnalytics\MarketplaceCommerceAnalyticsClient' => __DIR__ . '/Aws/MarketplaceCommerceAnalytics/MarketplaceCommerceAnalyticsClient.php',
@@ -132,8 +131,6 @@ $mapping = array(
     'Aws\S3\S3MultiRegionClient' => __DIR__ . '/Aws/S3/S3MultiRegionClient.php',
     'Aws\S3\S3UriParser' => __DIR__ . '/Aws/S3/S3UriParser.php',
     'Aws\S3\Crypto\S3EncryptionClient' => __DIR__ . '/Aws/S3/Crypto/S3EncryptionClient.php',
-#    'Aws\S3\Crypto\HeadersMetadataStrategy' => __DIR__ . '/Aws/S3/Crypto/HeadersMetadataStrategy.php',
-#    'Aws\S3\Crypto\InstructionFileMetadataStrategy' => __DIR__ . '/Aws/S3/Crypto/InstructionFileMetadataStrategy.php',
     'Aws\S3\Crypto\S3EncryptionMultipartUploader' => __DIR__ . '/Aws/S3/Crypto/S3EncryptionMultipartUploader.php',
     'Aws\S3\Crypto\CryptoParamsTrait' => __DIR__ . '/Aws/S3/Crypto/CryptoParamsTrait.php',
     'Aws\S3\S3EndpointMiddleware' => __DIR__ . '/Aws/S3/S3EndpointMiddleware.php',
@@ -225,10 +222,8 @@ $mapping = array(
     'Aws\Crypto\DecryptionTrait' => __DIR__ . '/Aws/Crypto/DecryptionTrait.php',
     'Aws\Crypto\MaterialsProvider' => __DIR__ . '/Aws/Crypto/MaterialsProvider.php',
     'Aws\Crypto\AbstractCryptoClient' => __DIR__ . '/Aws/Crypto/AbstractCryptoClient.php',
-#    'Aws\Crypto\MetadataEnvelope' => __DIR__ . '/Aws/Crypto/MetadataEnvelope.php',
     'Aws\Crypto\AesDecryptingStream' => __DIR__ . '/Aws/Crypto/AesDecryptingStream.php',
     'Aws\Crypto\AesGcmEncryptingStream' => __DIR__ . '/Aws/Crypto/AesGcmEncryptingStream.php',
-#    'Aws\Crypto\MetadataStrategyInterface' => __DIR__ . '/Aws/Crypto/MetadataStrategyInterface.php',
     'Aws\Crypto\Cipher\Cbc' => __DIR__ . '/Aws/Crypto/Cipher/Cbc.php',
     'Aws\Crypto\Cipher\CipherBuilderTrait' => __DIR__ . '/Aws/Crypto/Cipher/CipherBuilderTrait.php',
     'Aws\Crypto\Cipher\CipherMethod' => __DIR__ . '/Aws/Crypto/Cipher/CipherMethod.php',
@@ -471,12 +466,10 @@ $mapping = array(
     'JmesPath\CompilerRuntime' => __DIR__ . '/JmesPath/CompilerRuntime.php',
     'JmesPath\AstRuntime' => __DIR__ . '/JmesPath/AstRuntime.php',
 );
-
 spl_autoload_register(function ($class) use ($mapping) {
     if (isset($mapping[$class])) {
         require $mapping[$class];
     }
 }, true);
-
 require __DIR__ . '/Aws/functions.php';
 require __DIR__ . '/JmesPath/JmesPath.php';
