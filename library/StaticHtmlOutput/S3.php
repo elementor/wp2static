@@ -5,6 +5,7 @@
  * Copyright (c) 2011 Leon Stafford
  */
 
+use Aws\S3\S3Client;
 
 class StaticHtmlOutput_S3
 {
@@ -102,38 +103,31 @@ class StaticHtmlOutput_S3
 
 	public function s3_put_object($targetPath, $fileContents, $contentType = "text/plain", $pluginInstance) {
 		if ( wpsho_fr()->is__premium_only() ) {
-		
-			require_once(__DIR__.'/../S3/S3.php');
+			require_once dirname(__FILE__) . '/../aws/aws-autoloader.php';	
+			require_once dirname(__FILE__) . '/../GuzzleHttp/autoloader.php';
 
-			$client = new S3(
-				$this->_key,
-				$this->_secret,
-				's3.' . $this->_region .  '.amazonaws.com'
-			);
-
-			// [OPTIONAL] Specify different curl options
-			$client->useCurlOpts(array(
-				CURLOPT_MAX_RECV_SPEED_LARGE => 1048576,
-				CURLOPT_CONNECTTIMEOUT => 10
-			));
-
-			$response = $client->putObject(
-				$this->_bucket, // bucket name without s3.amazonaws.com
-				$targetPath, // path to create in bucket
-				$fileContents, // file contents - path to stream or fopen result
-				array(
-					'Content-Type' => $contentType,
-					'x-amz-acl' => 'public-read', // public read for static site
+			$S3 = Aws\S3\S3Client::factory(array(
+				'version'=> '2006-03-01',
+				'region' => $this->_region,
+				'credentials' => array(
+					'key' => $this->_key,
+					'secret'  => $this->_secret,
+				  )    
 				)
 			);
 
-			if ($response->code == 200) {
-				echo 'SUCCESS';
-			} else {
+			try {
+				$S3->PutObject(array(
+							'Bucket'      => $this->_bucket,
+							'Key'         => $targetPath,
+							'Body'        => $fileContents,
+							'ACL'         => 'public-read',
+							'ContentType' => $contentType));
+				
+			} catch (Aws\S3\Exception\S3Exception $e) {
+				error_log($e);
 				//$pluginInstance->wsLog('S3 EXPORT: following error returned from S3:');
-				//$pluginInstance->wsLog(print_r($response, true));
-				error_log(print_r($response, true));
-				echo 'FAIL';
+				echo "There was an error uploading the file.\n";
 			}
 		}
 	}
