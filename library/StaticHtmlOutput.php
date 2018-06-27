@@ -154,14 +154,13 @@ class StaticHtmlOutput_Controller {
         $first_line = array_shift($exportTargets);
         file_put_contents($exportTargetsFile, implode("\r\n", $exportTargets));
         
-        $this->wsLog('PROGRESS: Starting export type:' . $target . PHP_EOL);
+        WsLog::l('PROGRESS: Starting export type:' . $target . PHP_EOL);
     }
 
 	public function github_upload_blobs() {
 		if ( wpsho_fr()->is__premium_only() ) {
-			$this->wsLog('GITHUB EXPORT: Uploading file blobs...');
+			WsLog::l('GITHUB EXPORT: Uploading file blobs...');
 			$github = new StaticHtmlOutput_GitHub(
-				$this,
 				filter_input(INPUT_POST, 'githubRepo'),
 				filter_input(INPUT_POST, 'githubPersonalAccessToken'),
 				filter_input(INPUT_POST, 'githubBranch'),
@@ -175,10 +174,9 @@ class StaticHtmlOutput_Controller {
 
     public function github_prepare_export () {
 		if ( wpsho_fr()->is__premium_only() ) {
-			$this->wsLog('GITHUB EXPORT: Preparing files for deployment...');
+			WsLog::l('GITHUB EXPORT: Preparing files for deployment...');
 
 			$github = new StaticHtmlOutput_GitHub(
-				$this,
 				filter_input(INPUT_POST, 'githubRepo'),
 				filter_input(INPUT_POST, 'githubPersonalAccessToken'),
 				filter_input(INPUT_POST, 'githubBranch'),
@@ -192,10 +190,9 @@ class StaticHtmlOutput_Controller {
 
     public function github_finalise_export() {
 		if ( wpsho_fr()->is__premium_only() ) {
-			$this->wsLog('GITHUB EXPORT: Finalising deployment...');
+			WsLog::l('GITHUB EXPORT: Finalising deployment...');
 
 			$github = new StaticHtmlOutput_GitHub(
-				$this,
 				filter_input(INPUT_POST, 'githubRepo'),
 				filter_input(INPUT_POST, 'githubPersonalAccessToken'),
 				filter_input(INPUT_POST, 'githubBranch'),
@@ -208,12 +205,12 @@ class StaticHtmlOutput_Controller {
     }
 
 	public function cleanup_leftover_archives() {
-		$this->wsLog('CLEANUP LEFTOVER ARCHIVES: ' . $this->_uploadsPath);
+		WsLog::l('CLEANUP LEFTOVER ARCHIVES: ' . $this->_uploadsPath);
 		$leftover_files = preg_grep('/^([^.])/', scandir($this->_uploadsPath));
 
 		foreach ($leftover_files as $fileName) {
 			if( strpos($fileName, 'wp-static-html-output-') !== false ) {
-				$this->wsLog('cleaning up a previous export dir or zip: ' . $fileName);
+				WsLog::l('cleaning up a previous export dir or zip: ' . $fileName);
 
 				if (is_dir($this->_uploadsPath . '/' . $fileName)) {
 					StaticHtmlOutput_FilesHelper::delete_dir_with_files($this->_uploadsPath . '/' . $fileName);
@@ -228,7 +225,7 @@ class StaticHtmlOutput_Controller {
 
 	// clean up files possibly left behind by a partial export
 	public function cleanup_working_files() {
-		$this->wsLog('CLEANING WORKING FILES:');
+		WsLog::l('CLEANING WORKING FILES:');
 
 		$files_to_clean = array(
 			'/WP-STATIC-EXPORT-TARGETS',
@@ -291,15 +288,15 @@ class StaticHtmlOutput_Controller {
 
 		// initilise log with environmental info
 
-        $this->wsLog('STARTING EXPORT' . date("Y-m-d h:i:s") );
-        $this->wsLog('STARTING EXPORT: PHP VERSION ' . phpversion() );
-        $this->wsLog('STARTING EXPORT: PHP MAX EXECUTION TIME ' . ini_get('max_execution_time') );
-        $this->wsLog('STARTING EXPORT: OS VERSION ' . php_uname() );
-        $this->wsLog('STARTING EXPORT: WP VERSION ' . get_bloginfo('version') );
-        $this->wsLog('STARTING EXPORT: WP URL ' . get_bloginfo('url') );
-        $this->wsLog('STARTING EXPORT: WP ADDRESS ' . get_bloginfo('wpurl') );
-        $this->wsLog('STARTING EXPORT: VIA CLI? ' . $viaCLI);
-        $this->wsLog('STARTING EXPORT: STATIC EXPORT URL ' . filter_input(INPUT_POST, 'baseUrl') );
+        WsLog::l('STARTING EXPORT' . date("Y-m-d h:i:s") );
+        WsLog::l('STARTING EXPORT: PHP VERSION ' . phpversion() );
+        WsLog::l('STARTING EXPORT: PHP MAX EXECUTION TIME ' . ini_get('max_execution_time') );
+        WsLog::l('STARTING EXPORT: OS VERSION ' . php_uname() );
+        WsLog::l('STARTING EXPORT: WP VERSION ' . get_bloginfo('version') );
+        WsLog::l('STARTING EXPORT: WP URL ' . get_bloginfo('url') );
+        WsLog::l('STARTING EXPORT: WP ADDRESS ' . get_bloginfo('wpurl') );
+        WsLog::l('STARTING EXPORT: VIA CLI? ' . $viaCLI);
+        WsLog::l('STARTING EXPORT: STATIC EXPORT URL ' . filter_input(INPUT_POST, 'baseUrl') );
 
         // set options from GUI or CLI
         $additionalUrls = filter_input(INPUT_POST, 'additionalUrls');
@@ -322,7 +319,7 @@ class StaticHtmlOutput_Controller {
 			! filter_input(INPUT_POST, 'dontIncludeAllUploadFiles') // TODO: neg neg here inelegant
 		);
 
-        $this->wsLog('STARTING EXPORT: initial crawl list contains ' . $initial_file_list_count . ' files');
+        WsLog::l('STARTING EXPORT: initial crawl list contains ' . $initial_file_list_count . ' files');
 
         echo 'SUCCESS';
 	}
@@ -337,7 +334,7 @@ class StaticHtmlOutput_Controller {
         $first_line = array_shift($initial_crawl_list);
         file_put_contents($initial_crawl_list_file, implode("\r\n", $initial_crawl_list));
         $currentUrl = $first_line;
-        $this->wsLog('CRAWLING URL: ' . $currentUrl);
+        WsLog::l('CRAWLING URL: ' . $currentUrl);
 
         $newBaseUrl = untrailingslashit(filter_input(INPUT_POST, 'baseUrl', FILTER_SANITIZE_URL));
 
@@ -349,7 +346,7 @@ class StaticHtmlOutput_Controller {
         }
 
         if (empty($currentUrl)){
-            $this->wsLog('EMPTY FILE ENCOUNTERED');
+            WsLog::l('EMPTY FILE ENCOUNTERED');
 			// skip this empty file
 			echo 'SUCCESS';
 			return;
@@ -365,10 +362,10 @@ class StaticHtmlOutput_Controller {
         $urlResponseForFurtherExtraction = new StaticHtmlOutput_UrlRequest($currentUrl, $basicAuth);
 
         if ($urlResponse->checkResponse() == 'FAIL') {
-            $this->wsLog('FAILED TO CRAWL FILE: ' . $currentUrl);
+            WsLog::l('FAILED TO CRAWL FILE: ' . $currentUrl);
         } else {
             file_put_contents($crawled_links_file, $currentUrl . PHP_EOL, FILE_APPEND | LOCK_EX);
-            $this->wsLog('CRAWLED FILE: ' . $currentUrl);
+            WsLog::l('CRAWLED FILE: ' . $currentUrl);
         }
 
         $baseUrl = untrailingslashit(home_url());
@@ -383,16 +380,16 @@ class StaticHtmlOutput_Controller {
 		// this seems to do it...
         foreach ($urlResponseForFurtherExtraction->extractAllUrls($baseUrl) as $newUrl) {
             if ($newUrl != $currentUrl && !in_array($newUrl, $crawled_links) && !in_array($newUrl, $initial_crawl_list)) {
-                $this->wsLog('DISCOVERED NEW FILE: ' . $newUrl);
+                WsLog::l('DISCOVERED NEW FILE: ' . $newUrl);
                 
                 $urlResponse = new StaticHtmlOutput_UrlRequest($newUrl, $basicAuth);
 
                 if ($urlResponse->checkResponse() == 'FAIL') {
-                    $this->wsLog('FAILED TO CRAWL FILE: ' . $newUrl);
+                    WsLog::l('FAILED TO CRAWL FILE: ' . $newUrl);
                 } else {
                     file_put_contents($crawled_links_file, $newUrl . PHP_EOL, FILE_APPEND | LOCK_EX);
                     $crawled_links[] = $newUrl;
-                    $this->wsLog('CRAWLED FILE: ' . $newUrl);
+                    WsLog::l('CRAWLED FILE: ' . $newUrl);
                 }
 
                 $urlResponse->cleanup();
@@ -405,7 +402,7 @@ class StaticHtmlOutput_Controller {
 		// TODO: could avoid reading file again here as we should have it above
         $f = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
         $filesRemaining = count($f);
-		$this->wsLog('CRAWLING SITE: ' . $filesRemaining . ' files remaining');
+		WsLog::l('CRAWLING SITE: ' . $filesRemaining . ' files remaining');
 		if ($filesRemaining > 0) {
 			echo $filesRemaining;
 		} else {
@@ -428,7 +425,7 @@ class StaticHtmlOutput_Controller {
     }
 
     public function create_zip() {
-        $this->wsLog('CREATING ZIP FILE...');
+        WsLog::l('CREATING ZIP FILE...');
         $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
         $archiveName = rtrim($archiveDir, '/');
 		$tempZip = $archiveName . '.tmp';
@@ -451,7 +448,7 @@ class StaticHtmlOutput_Controller {
         $zipDownloadLink = $archiveName . '.zip';
 		rename($tempZip, $zipDownloadLink); 
         $publicDownloadableZip = str_replace(ABSPATH, trailingslashit(home_url()), $archiveName . '.zip');
-        $this->wsLog('ZIP CREATED: Download at ' . $publicDownloadableZip);
+        WsLog::l('ZIP CREATED: Download at ' . $publicDownloadableZip);
 
 		echo 'SUCCESS';
 		// TODO: put the zip url somewhere in the interface
@@ -460,10 +457,9 @@ class StaticHtmlOutput_Controller {
 
     public function ftp_prepare_export() {
 		if ( wpsho_fr()->is__premium_only() ) {
-			$this->wsLog('FTP EXPORT: Checking credentials..:');
+			WsLog::l('FTP EXPORT: Checking credentials..:');
 
 			$ftp = new StaticHtmlOutput_FTP(
-				$this,
 				filter_input(INPUT_POST, 'ftpServer'),
 				filter_input(INPUT_POST, 'ftpUsername'),
 				filter_input(INPUT_POST, 'ftpPassword'),
@@ -480,7 +476,6 @@ class StaticHtmlOutput_Controller {
 		if ( wpsho_fr()->is__premium_only() ) {
 
 			$ftp = new StaticHtmlOutput_FTP(
-				$this,
 				filter_input(INPUT_POST, 'ftpServer'),
 				filter_input(INPUT_POST, 'ftpUsername'),
 				filter_input(INPUT_POST, 'ftpPassword'),
@@ -495,10 +490,9 @@ class StaticHtmlOutput_Controller {
 
     public function bunnycdn_prepare_export() {
 		if ( wpsho_fr()->is__premium_only() ) {
-			$this->wsLog('BUNNYCDN EXPORT: Preparing export..:');
+			WsLog::l('BUNNYCDN EXPORT: Preparing export..:');
 
 			$bunnyCDN = new StaticHtmlOutput_BunnyCDN(
-				$this,
 				filter_input(INPUT_POST, 'bunnycdnPullZoneName'),
 				filter_input(INPUT_POST, 'bunnycdnAPIKey'),
 				filter_input(INPUT_POST, 'bunnycdnRemotePath'),
@@ -513,7 +507,6 @@ class StaticHtmlOutput_Controller {
 		if ( wpsho_fr()->is__premium_only() ) {
 
 			$bunnyCDN = new StaticHtmlOutput_BunnyCDN(
-				$this,
 				filter_input(INPUT_POST, 'bunnycdnPullZoneName'),
 				filter_input(INPUT_POST, 'bunnycdnAPIKey'),
 				filter_input(INPUT_POST, 'bunnycdnRemotePath'),
@@ -526,10 +519,9 @@ class StaticHtmlOutput_Controller {
 
     public function bunnycdn_purge_cache() {
 		if ( wpsho_fr()->is__premium_only() ) {
-			$this->wsLog('BUNNYCDN EXPORT: purging cache'); 
+			WsLog::l('BUNNYCDN EXPORT: purging cache'); 
 
 			$bunnyCDN = new StaticHtmlOutput_BunnyCDN(
-				$this,
 				filter_input(INPUT_POST, 'bunnycdnPullZoneName'),
 				filter_input(INPUT_POST, 'bunnycdnAPIKey'),
 				filter_input(INPUT_POST, 'bunnycdnRemotePath'),
@@ -541,7 +533,7 @@ class StaticHtmlOutput_Controller {
     }
 
 	public function prepare_file_list($export_target) {
-        $this->wsLog($export_target . ' EXPORT: Preparing list of files to export');
+        WsLog::l($export_target . ' EXPORT: Preparing list of files to export');
 
          $file_list_path = $this->_uploadsPath . '/WP-STATIC-EXPORT-' . $export_target . '-FILES-TO-EXPORT';
 
@@ -557,15 +549,14 @@ class StaticHtmlOutput_Controller {
         $siteroot = $archiveName . '/';
 
         StaticHtmlOutput_FilesHelper::recursively_scan_dir($siteroot, $siteroot, $file_list_path);
-        $this->wsLog('GENERIC EXPORT: File list prepared');
+        WsLog::l('GENERIC EXPORT: File list prepared');
 	}
 
     public function s3_prepare_export() {
 		if ( wpsho_fr()->is__premium_only() ) {
-			$this->wsLog('S3 EXPORT: preparing export...');
+			WsLog::l('S3 EXPORT: preparing export...');
 
 			$s3 = new StaticHtmlOutput_S3(
-				$this,
 				filter_input(INPUT_POST, 's3Key'),
 				filter_input(INPUT_POST, 's3Secret'),
 				filter_input(INPUT_POST, 's3Region'),
@@ -582,7 +573,6 @@ class StaticHtmlOutput_Controller {
 		if ( wpsho_fr()->is__premium_only() ) {
 
 			$s3 = new StaticHtmlOutput_S3(
-				$this,
 				filter_input(INPUT_POST, 's3Key'),
 				filter_input(INPUT_POST, 's3Secret'),
 				filter_input(INPUT_POST, 's3Region'),
@@ -597,12 +587,12 @@ class StaticHtmlOutput_Controller {
 
 	public function cloudfront_invalidate_all_items() {
 		if ( wpsho_fr()->is__premium_only() ) {
-			$this->wsLog('S3 EXPORT: Checking whether to invalidate CF cache');
+			WsLog::l('S3 EXPORT: Checking whether to invalidate CF cache');
 			require_once(__DIR__.'/CloudFront/CloudFront.php');
 			$cloudfront_id = filter_input(INPUT_POST, 'cfDistributionId');
 
 			if( !empty($cloudfront_id) ) {
-				$this->wsLog('CLOUDFRONT INVALIDATING CACHE...');
+				WsLog::l('CLOUDFRONT INVALIDATING CACHE...');
 
 				$cf = new CloudFront(
 					filter_input(INPUT_POST, 's3Key'), 
@@ -614,10 +604,10 @@ class StaticHtmlOutput_Controller {
 				if ( $cf->getResponseMessage() == 200 || $cf->getResponseMessage() == 201 )	{
 					echo 'SUCCESS';
 				} else {
-					$this->wsLog('CF ERROR: ' . $cf->getResponseMessage());
+					WsLog::l('CF ERROR: ' . $cf->getResponseMessage());
 				}
 			} else {
-				$this->wsLog('S3 EXPORT: Skipping CF cache invalidation');
+				WsLog::l('S3 EXPORT: Skipping CF cache invalidation');
 				echo 'SUCCESS';
 			}
 		}
@@ -625,10 +615,9 @@ class StaticHtmlOutput_Controller {
 
     public function dropbox_prepare_export() {
 		if ( wpsho_fr()->is__premium_only() ) {
-			$this->wsLog('DROPBOX EXPORT: preparing export');
+			WsLog::l('DROPBOX EXPORT: preparing export');
 
 			$dropbox = new StaticHtmlOutput_Dropbox(
-				$this,
 				filter_input(INPUT_POST, 'dropboxAccessToken'),
 				filter_input(INPUT_POST, 'dropboxFolder'),
 				$this->_uploadsPath
@@ -642,7 +631,6 @@ class StaticHtmlOutput_Controller {
 		if ( wpsho_fr()->is__premium_only() ) {
 
 			$dropbox = new StaticHtmlOutput_Dropbox(
-				$this,
 				filter_input(INPUT_POST, 'dropboxAccessToken'),
 				filter_input(INPUT_POST, 'dropboxFolder'),
 				$this->_uploadsPath
@@ -656,7 +644,7 @@ class StaticHtmlOutput_Controller {
     public function netlify_do_export () {
 		if ( wpsho_fr()->is__premium_only() ) {
 
-			$this->wsLog('NETLIFY EXPORT: starting to deploy ZIP file');
+			WsLog::l('NETLIFY EXPORT: starting to deploy ZIP file');
 
 			// will exclude the siteroot when copying
 			$archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
@@ -724,7 +712,7 @@ class StaticHtmlOutput_Controller {
 
 	
     public function post_process_archive_dir() {
-        $this->wsLog('POST PROCESSING ARCHIVE DIR: ...');
+        WsLog::l('POST PROCESSING ARCHIVE DIR: ...');
 
 
         $archiveDir = untrailingslashit(file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE'));
@@ -803,10 +791,10 @@ class StaticHtmlOutput_Controller {
         $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
 
 		if (is_link($this->outputPath() . '/latest-' . $blog_id)) {
-			$this->wsLog('REMOVING SYMLINK: '. $this->outputPath() . '/latest-' . $blog_id);
+			WsLog::l('REMOVING SYMLINK: '. $this->outputPath() . '/latest-' . $blog_id);
 			unlink($this->outputPath() . '/latest-' . $blog_id );
 		} else {
-			$this->wsLog('REMOVING SYMLINK: NO LINK FOUND AT'. $this->outputPath() . '/latest-' . $blog_id);
+			WsLog::l('REMOVING SYMLINK: NO LINK FOUND AT'. $this->outputPath() . '/latest-' . $blog_id);
 		}
 	}	
 
@@ -817,7 +805,7 @@ class StaticHtmlOutput_Controller {
 		// rm and recreate
 		$this->remove_symlink_to_latest_archive();
 
-        $this->wsLog('(RE)CREATING SYMLINK TO LATEST EXPORT FOLDER: '. $this->outputPath() . '/latest-' . $blog_id);
+        WsLog::l('(RE)CREATING SYMLINK TO LATEST EXPORT FOLDER: '. $this->outputPath() . '/latest-' . $blog_id);
 
         symlink($archiveDir, $this->outputPath() . '/latest-' . $blog_id );
 
@@ -825,7 +813,7 @@ class StaticHtmlOutput_Controller {
 	}	
 
     public function post_export_teardown() {
-        $this->wsLog('POST EXPORT CLEANUP: starting...');
+        WsLog::l('POST EXPORT CLEANUP: starting...');
 
         $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
 
@@ -836,7 +824,7 @@ class StaticHtmlOutput_Controller {
         if ($retainStaticFiles != 1) {
 			$this->remove_symlink_to_latest_archive();
 
-			$this->wsLog('POST EXPORT CLEANUP: removing dir: ' . $archiveDir);
+			WsLog::l('POST EXPORT CLEANUP: removing dir: ' . $archiveDir);
             $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($archiveDir), RecursiveIteratorIterator::CHILD_FIRST);
             foreach ($iterator as $fileName => $fileObject) {
 
@@ -859,7 +847,7 @@ class StaticHtmlOutput_Controller {
 			$archiveName = rtrim($archiveDir, '/');
 			$zipFile = $archiveName . '.zip';
 			if( file_exists($zipFile) ) {
-				$this->wsLog('POST EXPORT CLEANUP: removing zip: ' . $zipFile);
+				WsLog::l('POST EXPORT CLEANUP: removing zip: ' . $zipFile);
 				unlink($zipFile);
 			}
 		}
@@ -867,30 +855,16 @@ class StaticHtmlOutput_Controller {
 		
 		$this->cleanup_working_files();
 
-		$this->wsLog('POST EXPORT CLEANUP: complete');
+		WsLog::l('POST EXPORT CLEANUP: complete');
 
 		// has SUCCESS returned already from cleanup working files..
 	}
-
-    public function wsLog($text) {
-        $exportLog = $this->_uploadsPath . '/WP-STATIC-EXPORT-LOG';
-       
-        $src = fopen($exportLog, (file_exists($exportLog)) ? 'r+' : 'w');
-        $dest = fopen('php://temp', 'w');
-        fwrite($dest,  date("Y-m-d h:i:s") . ' ' . $text . PHP_EOL);
-        stream_copy_to_stream($src, $dest);
-        rewind($dest);
-        rewind($src);
-        stream_copy_to_stream($dest, $src);
-        fclose($src);
-        fclose($dest);
-    }
 
 	protected function _saveUrlData(StaticHtmlOutput_UrlRequest $url, $archiveDir) {
 		$urlInfo = parse_url($url->getUrl());
 		$pathInfo = array();
 
-		//$this->wsLog('urlInfo :' . $urlInfo['path']);
+		//WsLog::l('urlInfo :' . $urlInfo['path']);
 		/* will look like
 			
 			(homepage)
@@ -917,7 +891,7 @@ class StaticHtmlOutput_Controller {
 
 		// validate our inputs
 		if ( !isset($urlInfo['path']) ) {
-			$this->wsLog('PREPARING URL: Invalid URL given, aborting');
+			WsLog::l('PREPARING URL: Invalid URL given, aborting');
 			return false;
 		}
 
@@ -975,12 +949,12 @@ class StaticHtmlOutput_Controller {
 
 		$fileContents = $url->getResponseBody();
 		
-		$this->wsLog('SAVING URL: ' . $urlInfo['path'] . ' to new path' . $fileName);
+		WsLog::l('SAVING URL: ' . $urlInfo['path'] . ' to new path' . $fileName);
 		// TODO: what was the 'F' check for?1? Comments exist for a reason
 		if ($fileContents != '' && $fileContents != 'F') {
 			file_put_contents($fileName, $fileContents);
 		} else {
-			$this->wsLog('SAVING URL: UNABLE TO SAVE FOR SOME REASON');
+			WsLog::l('SAVING URL: UNABLE TO SAVE FOR SOME REASON');
 		}
 	}
 }
