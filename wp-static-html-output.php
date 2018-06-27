@@ -60,6 +60,7 @@ if ( ! function_exists( 'wpsho_fr' ) ) {
 	// TODO: find way to enable these based on detected capabilities
 	require_once 'library/StaticHtmlOutput/Options.php';
 	require_once 'library/StaticHtmlOutput/View.php';
+	require_once 'library/StaticHtmlOutput/WsLog.php';
 	require_once 'library/StaticHtmlOutput/UrlRequest.php';
 	require_once 'library/StaticHtmlOutput/FilesHelper.php';
 	require_once 'library/StaticHtmlOutput/Netlify.php';
