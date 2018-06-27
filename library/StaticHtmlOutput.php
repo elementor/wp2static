@@ -240,6 +240,7 @@ class StaticHtmlOutput_Controller {
 			'/WP-STATIC-CRAWLED-LINKS',
 			'/WP-STATIC-INITIAL-CRAWL-LIST',
 			'/WP-STATIC-CURRENT-ARCHIVE',
+			'WP-STATIC-EXPORT-LOG'
 		);
 
 		foreach ($files_to_clean as $file_to_clean) {
@@ -288,18 +289,19 @@ class StaticHtmlOutput_Controller {
             file_put_contents($exportTargetsFile, 'DROPBOX' . PHP_EOL, FILE_APPEND | LOCK_EX);
         }
 
-        $archiveUrl = $this->_prepareInitialFileList($viaCLI);
+		// initilise log with environmental info
 
-        echo 'SUCCESS';
-	}
-
-	protected function _prepareInitialFileList($viaCLI = false) {
-		global $blog_id;
-		set_time_limit(0);
+        $this->wsLog('STARTING EXPORT' . date("Y-m-d h:i:s") );
+        $this->wsLog('STARTING EXPORT: PHP VERSION ' . phpversion() );
+        $this->wsLog('STARTING EXPORT: PHP MAX EXECUTION TIME ' . ini_get('max_execution_time') );
+        $this->wsLog('STARTING EXPORT: OS VERSION ' . php_uname() );
+        $this->wsLog('STARTING EXPORT: WP VERSION ' . get_bloginfo('version') );
+        $this->wsLog('STARTING EXPORT: WP URL ' . get_bloginfo('url') );
+        $this->wsLog('STARTING EXPORT: WP ADDRESS ' . get_bloginfo('wpurl') );
+        $this->wsLog('STARTING EXPORT: VIA CLI? ' . $viaCLI);
+        $this->wsLog('STARTING EXPORT: STATIC EXPORT URL ' . filter_input(INPUT_POST, 'baseUrl') );
 
         // set options from GUI or CLI
-        $newBaseUrl = untrailingslashit(filter_input(INPUT_POST, 'baseUrl', FILTER_SANITIZE_URL));
-
         $additionalUrls = filter_input(INPUT_POST, 'additionalUrls');
 
         if ($viaCLI) {
@@ -310,71 +312,21 @@ class StaticHtmlOutput_Controller {
             $additionalUrls = $pluginOptions['additionalUrls'];
         }
 
+        $initial_file_list_count = StaticHtmlOutput_FilesHelper::buildInitialFileList(
+			$viaCLI,
+			$additionalUrls,
+			$this->_uploadsPath,
+			$this->_uploadsURL,
+			$this->outputPath(),
+			self::HOOK,
+			! filter_input(INPUT_POST, 'dontIncludeAllUploadFiles') // TODO: neg neg here inelegant
+		);
 
-		$exporter = wp_get_current_user();
-		// setting path to store the archive dir path
-		$_SERVER['currentArchive'] = $this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE';
-		$_SERVER['exportLog'] = $this->_uploadsPath . '/WP-STATIC-EXPORT-LOG';
-		$_SERVER['githubFilesToExport'] = $this->_uploadsPath . '/WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT';
+        $this->wsLog('STARTING EXPORT: initial crawl list contains ' . $initial_file_list_count . ' files');
 
-		$archiveName = $this->outputPath() . '/' . self::HOOK . '-' . $blog_id . '-' . time();
-		// append username if done via UI
-		if ( $exporter->user_login ) {
-			$archiveName .= '-' . $exporter->user_login;
-		}
+        echo 'SUCCESS';
+	}
 
-		$archiveDir = $archiveName . '/';
-
-		// writing the archive dir into the `$this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE'` path
-        file_put_contents($_SERVER['currentArchive'], $archiveDir);
-
-		if (!file_exists($archiveDir)) {
-			wp_mkdir_p($archiveDir);
-		}
-
-		if (file_exists($_SERVER['exportLog'])) {
-			unlink($_SERVER['exportLog']);
-		}
-
-        file_put_contents($_SERVER['exportLog'], date("Y-m-d h:i:s") . ' STARTING EXPORT', FILE_APPEND | LOCK_EX);
-
-        $this->wsLog('STARTING EXPORT: PHP VERSION ' . phpversion() );
-        $this->wsLog('STARTING EXPORT: PHP MAX EXECUTION TIME ' . ini_get('max_execution_time') );
-        $this->wsLog('STARTING EXPORT: OS VERSION ' . php_uname() );
-        $this->wsLog('STARTING EXPORT: WP VERSION ' . get_bloginfo('version') );
-        $this->wsLog('STARTING EXPORT: WP URL ' . get_bloginfo('url') );
-        $this->wsLog('STARTING EXPORT: WP ADDRESS ' . get_bloginfo('wpurl') );
-        $this->wsLog('STARTING EXPORT: VIA CLI? ' . $viaCLI);
-        $this->wsLog('STARTING EXPORT: STATIC EXPORT URL ' . filter_input(INPUT_POST, 'baseUrl') );
-
-		$baseUrl = untrailingslashit(home_url());
-		
-		$urlsQueue = array_unique(array_merge(
-					array(trailingslashit($baseUrl)),
-					StaticHtmlOutput_FilesHelper::getListOfLocalFilesByUrl(array(get_template_directory_uri())),
-                    $this->_getAllWPPostURLs(),
-					explode("\n", $additionalUrls)
-					));
-
-
-        $dontIncludeAllUploadFiles = filter_input(INPUT_POST, 'dontIncludeAllUploadFiles');
-
-		if (!$dontIncludeAllUploadFiles) {
-            $this->wsLog('NOT INCLUDING ALL FILES FROM UPLOADS DIR');
-			$urlsQueue = array_unique(array_merge(
-					$urlsQueue,
-					StaticHtmlOutput_FilesHelper::getListOfLocalFilesByUrl(array($this->_uploadsURL))
-			));
-		}
-
-        $this->wsLog('INITIAL CRAWL LIST CONTAINS ' . count($urlsQueue) . ' FILES');
-
-        $str = implode("\n", $urlsQueue);
-        file_put_contents($this->_uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST', $str);
-        file_put_contents($this->_uploadsPath . '/WP-STATIC-CRAWLED-LINKS', '');
-
-        return 'initial crawl list ready';
-    }
 
 	public function crawlABitMore($viaCLI = false) {
 		$initial_crawl_list_file = $this->_uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST';
@@ -920,39 +872,10 @@ class StaticHtmlOutput_Controller {
 		// has SUCCESS returned already from cleanup working files..
 	}
 
-    protected function _getAllWPPostURLs(){
-        global $wpdb;
-        $posts = $wpdb->get_results("
-            SELECT ID,post_type,post_title
-            FROM {$wpdb->posts}
-            WHERE post_status = 'publish' AND post_type NOT IN ('revision','nav_menu_item')
-        ");
-
-        $postURLs = array();
-
-        foreach($posts as $post) {
-            switch ($post->post_type) {
-                case 'page':
-                    $permalink = get_page_link($post->ID);
-                    break;
-                case 'post':
-                    $permalink = get_permalink($post->ID);
-                    break;
-                case 'attachment':
-                    $permalink = get_attachment_link($post->ID);
-                    break;
-            }
-            
-            $postURLs[] = $permalink;
-        }
-
-        return $postURLs;
-    }
-
     public function wsLog($text) {
         $exportLog = $this->_uploadsPath . '/WP-STATIC-EXPORT-LOG';
-        
-        $src = fopen($exportLog, 'r+');
+       
+        $src = fopen($exportLog, (file_exists($exportLog)) ? 'r+' : 'w');
         $dest = fopen('php://temp', 'w');
         fwrite($dest,  date("Y-m-d h:i:s") . ' ' . $text . PHP_EOL);
         stream_copy_to_stream($src, $dest);
