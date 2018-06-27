@@ -48,6 +48,8 @@ Using the [WP Crontrol](https://wordpress.org/plugins/wp-crontrol/) plugin, you 
 
 ## Roadmap
 
+A [Waffle.io project board](https://waffle.io/leonstafford/wordpress-static-html-plugin) shows what is upcoming and being worked on. You can filter the board by bugs, new features, enhancements, etc.
+
 ### other things in the works
 
  - selectively export only changed pages since last output
