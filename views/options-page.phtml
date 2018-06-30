@@ -744,11 +744,14 @@ function displayTextfield($template_variables, $field_name, $field_label, $descr
 
 
 
+<br />
 
+                  <strong class="advanced_settings_header"><label><?php echo __('Advanced settings (click to toggle)', 'static-html-output-plugin');?></label></strong>
 
-                  <strong class="advanced_settings_header"><label><?php echo __('Advanced settings', 'static-html-output-plugin');?></label></strong>
 
 <div class="advanced_settings" style="display:none;">
+
+<br />
 
 
 <?php echo displayCheckbox($this, 'retainStaticFiles', 'Retain the last exported site folder on server, along with a symlink to it named "latest-1"'); ?>
