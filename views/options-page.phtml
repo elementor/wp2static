@@ -121,6 +121,11 @@ jQuery(document).ready(function($){
 		updateBaseURLReferences($(this).val());
     });
 
+	$(document).on('click', '.advanced_settings_header' , function() {
+		console.log('toggling');
+		$('.advanced_settings').toggle();
+	});
+
 	// TODO: move initial call of this to after settings are rendered/populated,
 	// so that existing baseUrl is also picked up and applied to fields 
 	// IF baseUrl is not empty
@@ -607,17 +612,60 @@ function displayTextfield($template_variables, $field_name, $field_label, $descr
 				<p class="intro-text"> Exporting your static site is easy - just set the options you need below and click on the "Start static site export" at the bottom of the page!
 				</p>	
 
+
+                  <strong><label><?php echo __('Where do you want to deploy your static site to?', 'static-html-output-plugin');?></label></strong>
+
+<style>
+.brand input {
+	background: #ccc;
+	padding: 1em;
+	display: inline-block;
+}
+</style>
+
+	<div style="margin-top:10px;margin-bottom:10px;">
+
+<select>
+  <option value="zip">ZIP - a downloadable ZIP file of your statically exported site</option>
+  <option value="folder">Folder - a directory on this server</option>
+  <option disabled="disabled" value="ftp">FTP - Transfer your static site to another server</option>
+  <option disabled="disabled" value="s3">S3 - Amazon's Simple Storage Service</option>
+  <option disabled="disabled" value="bunnycdn">BunnyCDN - a low cost CDN allowing static website hosting</option>
+  <option disabled="disabled" value="dropbox">Dropbox - send your static site to Dropbox</option>
+  <option disabled="disabled" value="github">GitHub - host your site for free on GitHub Pages or commit to a specific repo/branch</option>
+  <option disabled="disabled" value="netlify">BunnyCDN - a low cost CDN allowing static website hosting</option>
+</select>
+
+<?php
+	if ( wpsho_fr()->is_not_paying()) {
+		echo ' <a href="' . wpsho_fr()->get_upgrade_url() . '">' .
+			__('Enable premium options', 'static-html-output-plugin') .
+		'</a>';
+	}
+?>
+
+    </div>
+
+<br style="clear:both;" />
+
+<img style="width:40px;float:left;margin-right:10px;" src="<?php echo plugins_url( 'images/zip_icon.jpg', dirname(__FILE__)) ?>" />
+
+<p>Create a ZIP file of your statically exported site, ready for you to manually deploy. Download link will appear in the Export Log below</p>
+
+<br style="clear:both;" />
+
+                  <strong><label><?php echo __('Settings for the ZIP deplyment method', 'static-html-output-plugin');?></label></strong>
+
                 <p>
+
+
                   <strong><label for="baseUrl"><?php echo __('Base Url', 'static-html-output-plugin');?></label></strong>
                   <p>
-                    <i><?php echo __("Set this to the URL you intend to host your static exported sie on, ie http://mystaticsite.com. Do not set this to the same URL as the WordPress site you're currently using (the address in your browser above). This plugin will rewrite all URLs in the exported static html from your current WordPress URL to what you set here. Supports http, https and protocol relative URLs.", 'static-html-output-plugin');?></i>
+                    <i><?php echo __("Set this to the URL you intend to host your static exported site on, ie http://mystaticsite.com. Do not set this to the same URL as the WordPress site you're currently using (the address in your browser above). This plugin will rewrite all URLs in the exported static html from your current WordPress URL to what you set here. Supports http, https and protocol relative URLs.", 'static-html-output-plugin');?></i>
                   </p> 
                   <input type="text" id="baseUrl" name="baseUrl" value="<?php echo esc_attr($this->baseUrl) ?>" size="50" placeholder="http://mystaticsite.com" />
                 </p>
 
-<?php echo displayCheckbox($this, 'createZip', 'Create a ZIP file of your statically exported site, ready for you to manually deploy. Download link will appear in the Export Log below'); ?>
-<?php echo displayCheckbox($this, 'retainStaticFiles', 'Retain the last exported site folder on server, along with a symlink to it named "latest-1"'); ?>
-<?php echo displayCheckbox($this, 'retainZipFile', 'Retain generated zip file on server (this option is soon to be deprecated, but currently required if you chose to generate the ZIP file above)'); ?>
 <?php echo displayCheckbox($this, 'sendViaFTP', 'Transfer files via FTP', 1); ?>
 
 <span class="ftp">
@@ -694,13 +742,24 @@ function displayTextfield($template_variables, $field_name, $field_label, $descr
 	<?php echo displayTextfield($this, 'netlifySiteID', 'Netlify Site ID', 'ie, mystaticsite'); ?>
 </span>
 
+
+
+
+
+                  <strong class="advanced_settings_header"><label><?php echo __('Advanced settings', 'static-html-output-plugin');?></label></strong>
+
+<div class="advanced_settings" style="display:none;">
+
+
+<?php echo displayCheckbox($this, 'retainStaticFiles', 'Retain the last exported site folder on server, along with a symlink to it named "latest-1"'); ?>
+<?php echo displayCheckbox($this, 'retainZipFile', 'Retain generated zip file on server (this option is soon to be deprecated, but currently required if you chose to generate the ZIP file above)'); ?>
+
 <?php echo displayCheckbox($this, 'sendViaBasic', 'My WP site requires Basic Auth to access'); ?>
 
 <span class="basic">
 	<?php echo displayTextfield($this, 'basicAuthUser', 'Basic Auth user', '', ''); ?>
 	<?php echo displayTextfield($this, 'basicAuthPassword', 'Basic Auth password', '', 'password'); ?>
 </span>
-
 
                 <p>
                   <strong><label for="outputDirectory"><?php echo __('Override Output Directory', 'static-html-output-plugin');?></label></strong>
@@ -765,7 +824,7 @@ http://172.17.0.3/my_pricelist.pdf</pre>
             '</a>';
 	}
 ?>
-
+</div> <!-- end advanced settings -->
 
 		<br>
 
