@@ -87,6 +87,27 @@ jQuery(document).ready(function($){
 
 	/* 
 		event handler
+		render the information and settings blocks based on the deployment method selected
+	*/
+
+	function renderSettingsBlock(selected_deployment_method) {
+		console.log(selected_deployment_method);
+
+		switch(selected_deployment_method) {
+			case 'zip':
+				$('.zip_settings_block').show();
+			break;
+
+			default:
+				console.log('unknown or empty deployment method selected');
+				console.log('resetting settings block');
+				$('.zip_settings_block').hide();
+			break;
+		}
+	}
+
+	/* 
+		event handler
 		show any export setting details if the export option is enabled
 	*/
 
@@ -114,6 +135,13 @@ jQuery(document).ready(function($){
 	// call handler on any checkbox change events
 	$('input[type="checkbox"]').change(function() {
 		setExportSettingDetailsVisibility(this);
+    });
+
+	// handler when deployment method is changed
+	$('.selected_deployment_method').change(function() {
+		console.log('deployment method changed');
+
+		renderSettingsBlock(this.value);
     });
 
 	// update base url previews in realtime
@@ -625,7 +653,8 @@ function displayTextfield($template_variables, $field_name, $field_label, $descr
 
 	<div style="margin-top:10px;margin-bottom:10px;">
 
-<select>
+<select class="selected_deployment_method">
+  <option value="">Choose where to deploy your static site to</option>
   <option value="zip">ZIP - a downloadable ZIP file of your statically exported site</option>
   <option value="folder">Folder - a directory on this server</option>
   <option disabled="disabled" value="ftp">FTP - Transfer your static site to another server</option>
@@ -648,23 +677,27 @@ function displayTextfield($template_variables, $field_name, $field_label, $descr
 
 <br style="clear:both;" />
 
-<img style="width:40px;float:left;margin-right:10px;" src="<?php echo plugins_url( 'images/zip_icon.jpg', dirname(__FILE__)) ?>" />
 
-<p>Create a ZIP file of your statically exported site, ready for you to manually deploy. Download link will appear in the Export Log below</p>
+<div class="zip_settings_block" style="display:none;">
+	<img style="width:40px;float:left;margin-right:10px;" src="<?php echo plugins_url( 'images/zip_icon.jpg', dirname(__FILE__)) ?>" />
 
-<br style="clear:both;" />
+	<p>Create a ZIP file of your statically exported site, ready for you to manually deploy. Download link will appear in the Export Log below</p>
 
-                  <strong><label><?php echo __('Settings for the ZIP deplyment method', 'static-html-output-plugin');?></label></strong>
+	<br style="clear:both;" />
 
-                <p>
+					  <strong><label><?php echo __('Settings for the ZIP deplyment method', 'static-html-output-plugin');?></label></strong>
+
+					<p>
 
 
-                  <strong><label for="baseUrl"><?php echo __('Base Url', 'static-html-output-plugin');?></label></strong>
-                  <p>
-                    <i><?php echo __("Set this to the URL you intend to host your static exported site on, ie http://mystaticsite.com. Do not set this to the same URL as the WordPress site you're currently using (the address in your browser above). This plugin will rewrite all URLs in the exported static html from your current WordPress URL to what you set here. Supports http, https and protocol relative URLs.", 'static-html-output-plugin');?></i>
-                  </p> 
-                  <input type="text" id="baseUrl" name="baseUrl" value="<?php echo esc_attr($this->baseUrl) ?>" size="50" placeholder="http://mystaticsite.com" />
-                </p>
+					  <strong><label for="baseUrl"><?php echo __('Base Url', 'static-html-output-plugin');?></label></strong>
+					  <p>
+						<i><?php echo __("Set this to the URL you intend to host your static exported site on, ie http://mystaticsite.com. Do not set this to the same URL as the WordPress site you're currently using (the address in your browser above). This plugin will rewrite all URLs in the exported static html from your current WordPress URL to what you set here. Supports http, https and protocol relative URLs.", 'static-html-output-plugin');?></i>
+					  </p> 
+					  <input type="text" id="baseUrl" name="baseUrl" value="<?php echo esc_attr($this->baseUrl) ?>" size="50" placeholder="http://mystaticsite.com" />
+					</p>
+
+</div>
 
 <?php echo displayCheckbox($this, 'sendViaFTP', 'Transfer files via FTP', 1); ?>
 
