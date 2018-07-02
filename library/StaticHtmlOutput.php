@@ -720,6 +720,15 @@ class StaticHtmlOutput_Controller {
 
 	}	
 
+	public function reset_default_settings() {
+		$this->_options
+			->setOption('static-export-settings', '')
+			->save();
+
+		echo 'SUCCESS';
+
+	}	
+
 	
     public function post_process_archive_dir() {
         WsLog::l('POST PROCESSING ARCHIVE DIR: ...');
