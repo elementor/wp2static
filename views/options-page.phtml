@@ -20,6 +20,7 @@ var uploadsDir = '<?php echo $this->wpUploadsDir; ?>';
 var pluginDir = '<?php echo $this->wpPluginDir; ?>';
 var pollingInterval = 5000;
 var exportTargets = [];
+var current_deployment_method = 'folder';
 
 jQuery(document).ready(function($){
     if (Notification.permission !== "granted") {
@@ -89,6 +90,8 @@ jQuery(document).ready(function($){
 		TODO: quick win to get the select menu options to behave like the sendViaFTP, etc checkboxes
 	*/
 	function setDeploymentMethod(selected_deployment_method) {
+		current_deployment_method = selected_deployment_method;
+
 		switch (selected_deployment_method) {
 			case 'zip':
 				$('#createZip').attr('checked', 'checked');
@@ -159,6 +162,8 @@ jQuery(document).ready(function($){
 			$('.' + selected_deployment_method  + '_settings_block').show();
 		}
 
+	
+
 	}
 
 	/* 
@@ -201,20 +206,22 @@ jQuery(document).ready(function($){
     });
 
 	// update base url previews in realtime
-	$(document).on('input', '#baseUrl' , function() {
-		updateBaseURLReferences($(this).val());
-    });
+	$(document).on('input', 
+		'#baseUrl-s3, #baseUrl-ftp, #baseUrl-folder, #baseUrl-dropbox, #baseUrl-github, #baseUrl-netlify, #baseUrl-bunnycdn, #baseUrl-zip', 
+		function() {
+			updateBaseURLReferences();
+		}
+	);
 
 	$(document).on('click', '.advanced_settings_header' , function() {
 		console.log('toggling');
 		$('.advanced_settings').toggle();
 	});
 
-	// TODO: move initial call of this to after settings are rendered/populated,
-	// so that existing baseUrl is also picked up and applied to fields 
-	// IF baseUrl is not empty
-	function updateBaseURLReferences(base_url) {
+	function updateBaseURLReferences() {
 		var base_url_previews = $('.base_url_preview' );
+
+		base_url = $('#baseUrl-' + current_deployment_method).val(); 
 
 		base_url_previews.text(base_url.replace(/\/$/, "") + '/');
 	}
