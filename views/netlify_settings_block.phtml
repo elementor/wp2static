@@ -21,7 +21,6 @@
 					  <input type="text" id="baseUrl" name="baseUrl" value="<?php echo esc_attr($this->baseUrl) ?>" size="50" placeholder="http://mystaticsite.com" />
 					</p>
 
-<?php echo displayCheckbox($this, 'sendViaNetlify', 'Transfer files via Netlify', 1); ?>
 
 	<?php echo displayTextfield($this, 'netlifyPersonalAccessToken', 'Netlify Personal Access Token', '<a href="https://app.netlify.com/account/applications/personal" target="_blank">How do I get this?</a>', 'password'); ?>
 	<?php echo displayTextfield($this, 'netlifySiteID', 'Netlify Site ID', 'ie, mystaticsite'); ?>

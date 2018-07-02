@@ -21,8 +21,6 @@
 					  <input type="text" id="baseUrl" name="baseUrl" value="<?php echo esc_attr($this->baseUrl) ?>" size="50" placeholder="http://mystaticsite.com" />
 					</p>
 
-<?php echo displayCheckbox($this, 'sendViaBUNNYCDN', 'Transfer files via BunnyCDN', 1); ?>
-
 	<?php echo displayTextfield($this, 'bunnycdnPullZoneName', 'Pull Zone', 'ie, mybunnypullzone, etc . This will do a cache purge once all files are transferred '); ?>
 	<?php echo displayTextfield($this, 'bunnycdnAPIKey', 'API Key', '', 'password'); ?>
 	<?php echo displayTextfield($this, 'bunnycdnPath', 'BunnyCDN Remote Path', 'will attempt to create folder recursively if non-existent'); ?>
