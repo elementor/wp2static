@@ -21,4 +21,4 @@ COPY provisioning/.env-vars /
 
 COPY test_data/ /test_data
 
-COPY provisioning/install/plugins/* /var/www/html/wp-content/plugins/
+COPY provisioning/install/plugins/* /plugins/
