@@ -1,0 +1,30 @@
+
+<div class="bunnycdn_settings_block" style="display:none;">
+
+	<img style="width:40px;float:left;margin-right:10px;" src="<?php echo plugins_url( 'images/bunnycdn_icon.png', dirname(__FILE__)) ?>" />
+
+	<p>Transfer via BunnyCDN</p>
+
+	<br style="clear:both;" />
+
+	<br>
+
+					  <strong><label><?php echo __('Settings for the BunnyCDN deployment method', 'static-html-output-plugin');?></label></strong>
+
+					<p>
+
+
+					  <strong><label for="baseUrl"><?php echo __('Base Url', 'static-html-output-plugin');?></label></strong>
+					  <p>
+						<i><?php echo __("Set this to the URL you intend to host your static exported site on, ie http://mystaticsite.com. Do not set this to the same URL as the WordPress site you're currently using (the address in your browser above). This plugin will rewrite all URLs in the exported static html from your current WordPress URL to what you set here. Supports http, https and protocol relative URLs.", 'static-html-output-plugin');?></i>
+					  </p> 
+					  <input type="text" id="baseUrl" name="baseUrl" value="<?php echo esc_attr($this->baseUrl) ?>" size="50" placeholder="http://mystaticsite.com" />
+					</p>
+
+<?php echo displayCheckbox($this, 'sendViaBUNNYCDN', 'Transfer files via BunnyCDN', 1); ?>
+
+	<?php echo displayTextfield($this, 'bunnycdnPullZoneName', 'Pull Zone', 'ie, mybunnypullzone, etc . This will do a cache purge once all files are transferred '); ?>
+	<?php echo displayTextfield($this, 'bunnycdnAPIKey', 'API Key', '', 'password'); ?>
+	<?php echo displayTextfield($this, 'bunnycdnPath', 'BunnyCDN Remote Path', 'will attempt to create folder recursively if non-existent'); ?>
+
+</div>
