@@ -86,10 +86,50 @@ jQuery(document).ready(function($){
     }
 
 	/* 
-		event handler
+		TODO: quick win to get the select menu options to behave like the sendViaFTP, etc checkboxes
+	*/
+	function setDeploymentMethod(selected_deployment_method) {
+		switch (selected_deployment_method) {
+			case 'zip':
+				$('#createZip').attr('checked', 'checked');
+			break;	
+
+			case 'dropbox':
+				$('#sendViaDropbox').attr('checked', 'checked');
+			break;	
+
+			case 'github':
+				$('#sendViaGithub').attr('checked', 'checked');
+			break;	
+
+			case 'bunnycdn':
+				$('#sendViaBUNNYCDN').attr('checked', 'checked');
+			break;	
+
+			case 's3':
+				$('#sendViaS3').attr('checked', 'checked');
+			break;	
+
+			case 'netlify':
+				$('#sendViaNetlify').attr('checked', 'checked');
+			break;	
+
+			case 'ftp':
+				$('#sendViaFTP').attr('checked', 'checked');
+			break;	
+
+			default:
+				console.log('unable to set unknown deployment option');
+
+			break;
+
+		}
+
+	}
+
+	/* 
 		render the information and settings blocks based on the deployment method selected
 	*/
-
 	function renderSettingsBlock(selected_deployment_method) {
 		console.log(selected_deployment_method);
 
@@ -157,6 +197,7 @@ jQuery(document).ready(function($){
 		console.log('deployment method changed');
 
 		renderSettingsBlock(this.value);
+		setDeploymentMethod(this.value);
     });
 
 	// update base url previews in realtime
@@ -718,9 +759,19 @@ foreach($deployment_options as $deployment_option) {
 
 ?>
 
+<!-- placeholder input fields to allow select menu deployment options to use existing behaviour -->
+<span class="hiddenExportOptions" style="display:none;">
+
+<?php echo displayCheckbox($this, 'createZip', 'Create a ZIP file of your statically exported site, ready for you to manually deploy. Download link will appear in the Export Log below'); ?>
+<?php echo displayCheckbox($this, 'sendViaFTP', 'Transfer files via FTP', 1); ?>
+<?php echo displayCheckbox($this, 'sendViaS3', 'Transfer files via S3', 1); ?>
+<?php echo displayCheckbox($this, 'sendViaBUNNYCDN', 'Transfer files via BunnyCDN', 1); ?>
+<?php echo displayCheckbox($this, 'sendViaDropbox', 'Transfer files via Dropbox', 1); ?>
+<?php echo displayCheckbox($this, 'sendViaGithub', 'Transfer files via GitHub', 1); ?>
+<?php echo displayCheckbox($this, 'sendViaNetlify', 'Transfer files via Netlify', 1); ?>
 
 
-
+</span>
 
 
 <br />

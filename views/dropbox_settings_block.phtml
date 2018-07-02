@@ -21,8 +21,6 @@
 					  <input type="text" id="baseUrl" name="baseUrl" value="<?php echo esc_attr($this->baseUrl) ?>" size="50" placeholder="http://mystaticsite.com" />
 					</p>
 
-<?php echo displayCheckbox($this, 'sendViaDropbox', 'Transfer files via Dropbox', 1); ?>
-
 	<?php echo displayTextfield($this, 'dropboxAccessToken', 'Dropbox Access Token', '<a href="https://blogs.dropbox.com/developers/2014/05/generate-an-access-token-for-your-own-account/" target="_blank">How do I get this?</a>', 'password'); ?>
 	<?php echo displayTextfield($this, 'dropboxFolder', 'Dropbox folder', 'where you want this to be transferred to in your Dropbox account (ie, /teststatic)'); ?>
 
