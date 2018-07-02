@@ -92,6 +92,10 @@ jQuery(document).ready(function($){
 	function setDeploymentMethod(selected_deployment_method) {
 		current_deployment_method = selected_deployment_method;
 
+
+		// TODO: uncheck all options before checking the correct one
+
+
 		switch (selected_deployment_method) {
 			case 'zip':
 				$('#createZip').attr('checked', 'checked');
@@ -158,8 +162,14 @@ jQuery(document).ready(function($){
 		// show the selected deployment option or none if empty
 		if (selected_deployment_method === '') {
 			console.log('no deployment option selected');
+
+			// hide export action window
+			$('.exportActionsPane').hide();
 		} else {
 			$('.' + selected_deployment_method  + '_settings_block').show();
+
+			// show export action window
+			$('.exportActionsPane').show();
 		}
 
 	
@@ -222,6 +232,9 @@ jQuery(document).ready(function($){
 		var base_url_previews = $('.base_url_preview' );
 
 		base_url = $('#baseUrl-' + current_deployment_method).val(); 
+
+		// set hidden baseURL field to current option
+		$('#baseUrl').val( $('#baseUrl-' + current_deployment_method).val() ); 
 
 		base_url_previews.text(base_url.replace(/\/$/, "") + '/');
 	}
@@ -734,19 +747,11 @@ function displayTextfield($template_variables, $field_name, $field_label, $descr
 
                   <strong><label><?php echo __('Where do you want to deploy your static site to?', 'static-html-output-plugin');?></label></strong>
 
-<style>
-.brand input {
-	background: #ccc;
-	padding: 1em;
-	display: inline-block;
-}
-</style>
-
 	<div style="margin-top:10px;margin-bottom:10px;">
 
 <!-- TODO: disable options when not premium -->
 <!-- disabled="disabled" -->
-<select class="selected_deployment_method">
+<select class="selected_deployment_method" name="selected_deployment_option">
   <option value="">Choose where to deploy your static site to</option>
   <option value="zip">ZIP - a downloadable ZIP file of your statically exported site</option>
   <option value="folder">Folder - a directory on this server</option>
@@ -796,6 +801,9 @@ foreach($deployment_options as $deployment_option) {
 
 <!-- placeholder input fields to allow select menu deployment options to use existing behaviour -->
 <span class="hiddenExportOptions" style="display:none;">
+
+<input type="text" id="baseUrl" name="baseUrl" value="<?php echo esc_attr($this->baseUrl) ?>" size="50" placeholder="http://mystaticsite.com" />
+
 
 <?php echo displayCheckbox($this, 'createZip', 'Create a ZIP file of your statically exported site, ready for you to manually deploy. Download link will appear in the Export Log below'); ?>
 <?php echo displayCheckbox($this, 'sendViaFTP', 'Transfer files via FTP', 1); ?>
@@ -919,7 +927,10 @@ http://172.17.0.3/my_pricelist.pdf</pre>
 <?php set_time_limit(600); ?>
 
 				</form>
-					<div class="postbox">
+
+
+
+					<div class="postbox exportActionsPane" style="display:none;">
 						<div class="handlediv" title="Click to toggle"><br /></div>
 
               <h3 class="hndle"><span><?php echo __('Export your site', 'static-html-output-plugin');?></span></h3>
