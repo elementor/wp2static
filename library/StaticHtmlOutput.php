@@ -389,7 +389,19 @@ class StaticHtmlOutput_Controller {
 		// try extracting urls from a response that hasn't been changed yet...
 		// this seems to do it...
         foreach ($urlResponseForFurtherExtraction->extractAllUrls($baseUrl) as $newUrl) {
-            if ($newUrl != $currentUrl && !in_array($newUrl, $crawled_links) && !in_array($newUrl, $initial_crawl_list)) {
+
+			$path = parse_url($newUrl, PHP_URL_PATH);
+			$extension = pathinfo($path, PATHINFO_EXTENSION);
+
+			
+            WsLog::l('DETECTED EXTENSION: ' . $extension);
+
+
+            if ($newUrl != $currentUrl && 
+				!in_array($newUrl, $crawled_links) && 
+				$extension != 'php' && 
+				!in_array($newUrl, $initial_crawl_list)
+			) {
                 WsLog::l('DISCOVERED NEW FILE: ' . $newUrl);
                 
                 $urlResponse = new StaticHtmlOutput_UrlRequest($newUrl, $basicAuth);
