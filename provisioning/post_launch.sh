@@ -9,6 +9,13 @@ else
 	cd /var/www/html/${SUBDIR_TO_INSTALL}
 fi
 
+# copy plugin source files to avoid installing online
+if [ -z "${SUBDIR_TO_INSTALL}" ]; then 
+	cp -r /plugins/* /var/www/html/wp-content/plugins/
+else 
+	cp -r /plugins/* /var/www/html/${SUBDIR_TO_INSTALL}/wp-content/plugins/
+fi
+
 # source env vars to use in Docker run commands (now moved to run cmd using env-file)
 
 # wait for mysql container
