@@ -294,9 +294,12 @@ class StaticHtmlOutput_Controller {
         WsLog::l('STARTING EXPORT: OS VERSION ' . php_uname() );
         WsLog::l('STARTING EXPORT: WP VERSION ' . get_bloginfo('version') );
         WsLog::l('STARTING EXPORT: WP URL ' . get_bloginfo('url') );
+        WsLog::l('STARTING EXPORT: WP SITEURL ' . get_option('siteurl') );
+        WsLog::l('STARTING EXPORT: WP HOME ' . get_option('home') );
         WsLog::l('STARTING EXPORT: WP ADDRESS ' . get_bloginfo('wpurl') );
         WsLog::l('STARTING EXPORT: VIA CLI? ' . $viaCLI);
         WsLog::l('STARTING EXPORT: STATIC EXPORT URL ' . filter_input(INPUT_POST, 'baseUrl') );
+
 
         // set options from GUI or CLI
         $additionalUrls = filter_input(INPUT_POST, 'additionalUrls');
@@ -389,13 +392,8 @@ class StaticHtmlOutput_Controller {
 		// try extracting urls from a response that hasn't been changed yet...
 		// this seems to do it...
         foreach ($urlResponseForFurtherExtraction->extractAllUrls($baseUrl) as $newUrl) {
-
 			$path = parse_url($newUrl, PHP_URL_PATH);
 			$extension = pathinfo($path, PATHINFO_EXTENSION);
-
-			
-            WsLog::l('DETECTED EXTENSION: ' . $extension);
-
 
             if ($newUrl != $currentUrl && 
 				!in_array($newUrl, $crawled_links) && 
@@ -784,7 +782,12 @@ class StaticHtmlOutput_Controller {
 		$new_wp_includes = $archiveDir . '/' . filter_input(INPUT_POST, 'rewriteWPINC');
 
 
-		rename($original_wp_content, $new_wp_content);
+		// TODO: subdir installations are not being correctly detected here
+		// 
+		if (! rename($original_wp_content, $new_wp_content)) {
+			WsLog::l('POST PROCESSING ARCHIVE DIR: Failed to rename ' . $original_wp_content);
+			echo 'FAIL';
+		}
 
 		if (file_exists($updated_uploads_dir)) {
 			rename($updated_uploads_dir, $new_uploads_dir);
