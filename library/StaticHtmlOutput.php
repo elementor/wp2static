@@ -347,8 +347,18 @@ class StaticHtmlOutput_Controller {
 
         if (empty($currentUrl)){
             WsLog::l('EMPTY FILE ENCOUNTERED');
+
 			// skip this empty file
-			echo 'SUCCESS';
+
+			$f = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
+			$filesRemaining = count($f);
+			WsLog::l('CRAWLING SITE: ' . $filesRemaining . ' files remaining');
+			if ($filesRemaining > 0) {
+				echo $filesRemaining;
+			} else {
+				echo 'SUCCESS';
+			}
+			
 			return;
         }
 
