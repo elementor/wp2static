@@ -3,4 +3,4 @@ machine:
 
 test:
   override:
-    - echo 'tests running within repo for now'
+    - ./run_unit_tests.sh
