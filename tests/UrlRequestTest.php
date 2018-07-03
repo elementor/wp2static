@@ -87,4 +87,131 @@ final class StaticHtmlOutput_UrlRequestTest extends TestCase {
 
 		$mockUrlResponse->replaceBaseUrl($wpURL, $baseURL);
     }
+
+    public function testWordpressTopleveldomainExportingToSubdomain(): void {
+		$wpURL = 'http://example.com';
+		$baseURL = 'http://subdomain.google.com';
+
+		$url = 'http://someurl.com';	
+		$basicAuth = null;
+
+		// mock out only the unrelated methods
+		$mockUrlResponse = $this->getMockBuilder('StaticHtmlOutput_UrlRequest')
+			->setMethods([
+				'isRewritable',
+				'getResponseBody',
+				'setResponseBody'
+			])
+			->setConstructorArgs([$url, $basicAuth])
+			->getMock();
+
+
+		$mockUrlResponse->method('isRewritable')
+             ->willReturn(true);
+
+		// mock getResponseBody with testable HTML content
+		$mockUrlResponse->method('getResponseBody')
+             ->willReturn('<html><head></head><body>Something with a <a href="http://example.com">link</a>.</body></html>');
+
+
+		$mockUrlResponse->expects($this->once())
+			 ->method('isRewritable') ;
+
+		$mockUrlResponse->expects($this->once())
+			 ->method('getResponseBody') ;
+
+		// assert that setResponseBody() is called with the correctly rewritten HTML
+		$mockUrlResponse->expects($this->once())
+			->method('setResponseBody')
+			->with('<html><head>
+<base href="http://subdomain.google.com" />
+</head><body>Something with a <a href="http://subdomain.google.com">link</a>.</body></html>') ;
+
+		$mockUrlResponse->replaceBaseUrl($wpURL, $baseURL);
+    }
+
+    public function testWordpressSubdomainExportingToTopleveldomain(): void {
+		$wpURL = 'http://mysite.example.com';
+		$baseURL = 'http://google.com';
+
+		$url = 'http://someurl.com';	
+		$basicAuth = null;
+
+		// mock out only the unrelated methods
+		$mockUrlResponse = $this->getMockBuilder('StaticHtmlOutput_UrlRequest')
+			->setMethods([
+				'isRewritable',
+				'getResponseBody',
+				'setResponseBody'
+			])
+			->setConstructorArgs([$url, $basicAuth])
+			->getMock();
+
+
+		$mockUrlResponse->method('isRewritable')
+             ->willReturn(true);
+
+		// mock getResponseBody with testable HTML content
+		$mockUrlResponse->method('getResponseBody')
+             ->willReturn('<html><head></head><body>Something with a <a href="http://mysite.example.com">link</a>.</body></html>');
+
+
+		$mockUrlResponse->expects($this->once())
+			 ->method('isRewritable') ;
+
+		$mockUrlResponse->expects($this->once())
+			 ->method('getResponseBody') ;
+
+		// assert that setResponseBody() is called with the correctly rewritten HTML
+		$mockUrlResponse->expects($this->once())
+			->method('setResponseBody')
+			->with('<html><head>
+<base href="http://google.com" />
+</head><body>Something with a <a href="http://google.com">link</a>.</body></html>') ;
+
+		$mockUrlResponse->replaceBaseUrl($wpURL, $baseURL);
+    }
+
+    public function testWordpressSubdomainExportingToAnotherSubdomain(): void {
+		$wpURL = 'http://mysite.example.com';
+		$baseURL = 'http://subdomain.google.com';
+
+		$url = 'http://someurl.com';	
+		$basicAuth = null;
+
+		// mock out only the unrelated methods
+		$mockUrlResponse = $this->getMockBuilder('StaticHtmlOutput_UrlRequest')
+			->setMethods([
+				'isRewritable',
+				'getResponseBody',
+				'setResponseBody'
+			])
+			->setConstructorArgs([$url, $basicAuth])
+			->getMock();
+
+
+		$mockUrlResponse->method('isRewritable')
+             ->willReturn(true);
+
+		// mock getResponseBody with testable HTML content
+		$mockUrlResponse->method('getResponseBody')
+             ->willReturn('<html><head></head><body>Something with a <a href="http://mysite.example.com">link</a>.</body></html>');
+
+
+		$mockUrlResponse->expects($this->once())
+			 ->method('isRewritable') ;
+
+		$mockUrlResponse->expects($this->once())
+			 ->method('getResponseBody') ;
+
+		// assert that setResponseBody() is called with the correctly rewritten HTML
+		$mockUrlResponse->expects($this->once())
+			->method('setResponseBody')
+			->with('<html><head>
+<base href="http://subdomain.google.com" />
+</head><body>Something with a <a href="http://subdomain.google.com">link</a>.</body></html>') ;
+
+		$mockUrlResponse->replaceBaseUrl($wpURL, $baseURL);
+    }
+
 }
