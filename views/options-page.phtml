@@ -538,7 +538,7 @@ jQuery(document).ready(function($){
             archive = archive.substring(0, archive.indexOf('&amp;staticExportSettings='));
 
             settingsBlock = JSON.parse('{"' + decodeURI(archive).replace(/\n/g, ",").replace(/\r/g, ",").replace(/"/g, '\\"').replace(/&amp;/g, '","').replace(/=/g,'":"') + '"}');
-        
+       
             $(targetExportSettingsBlock).find('#baseUrl').first().val(decodeURIComponent(settingsBlock.baseUrl));
 
             $(targetExportSettingsBlock).find('#outputDirectory').val(decodeURIComponent(settingsBlock.outputDirectory));
@@ -585,6 +585,14 @@ jQuery(document).ready(function($){
 				'rewriteTHEMEROOT',
 				'rewritePLUGINDIR',
 				'rewriteWPINC',
+				'baseUrl-s3',
+				'baseUrl-ftp',
+				'baseUrl-folder',
+				'baseUrl-dropbox',
+				'baseUrl-github',
+				'baseUrl-netlify',
+				'baseUrl-bunnycdn',
+				'baseUrl-zip'
 			];
 
 			for (var i = 0, len = textfield_settings.length; i < len; i++) {
@@ -750,6 +758,10 @@ function displayTextfield($template_variables, $field_name, $field_label, $descr
 
 	<div style="margin-top:10px;margin-bottom:10px;">
 
+
+<!-- legacy multi-export functionality relied on the baseUrl field being first in the settings block -->
+<input style="display:none;" type="text" id="baseUrl" name="baseUrl" value="<?php echo esc_attr($this->baseUrl) ?>" size="50" placeholder="http://mystaticsite.com" />
+
 <!-- TODO: disable options when not premium -->
 <!-- disabled="disabled" -->
 <select class="selected_deployment_method" name="selected_deployment_option">
@@ -803,7 +815,6 @@ foreach($deployment_options as $deployment_option) {
 <!-- placeholder input fields to allow select menu deployment options to use existing behaviour -->
 <span class="hiddenExportOptions" style="display:none;">
 
-<input type="text" id="baseUrl" name="baseUrl" value="<?php echo esc_attr($this->baseUrl) ?>" size="50" placeholder="http://mystaticsite.com" />
 
 
 <?php echo displayCheckbox($this, 'createZip', 'Create a ZIP file of your statically exported site, ready for you to manually deploy. Download link will appear in the Export Log below'); ?>
