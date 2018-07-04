@@ -15,9 +15,8 @@ class StaticHtmlOutput_FTP
 	protected $_uploadsPath;
 	protected $_exportFileList;
 	protected $_archiveName;
-	protected $_plugin;
 	
-	public function __construct($plugin, $host, $username, $password, $remotePath, $activeMode, $uploadsPath) {
+	public function __construct($host, $username, $password, $remotePath, $activeMode, $uploadsPath) {
 		$this->_host = $host;
 		$this->_username = $username;
 		$this->_password = $password;
@@ -26,7 +25,6 @@ class StaticHtmlOutput_FTP
 		$this->_exportFileList = $uploadsPath . '/WP-STATIC-EXPORT-FTP-FILES-TO-EXPORT';
 		$archiveDir = file_get_contents($uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
 		$this->_archiveName = rtrim($archiveDir, '/');
-		$this->_plugin = $plugin;
 	}
 
 	public function clear_file_list() {
@@ -48,15 +46,15 @@ class StaticHtmlOutput_FTP
 			$ftp->connect(filter_input(INPUT_POST, 'ftpServer'));
 			$ftp->login(filter_input(INPUT_POST, 'ftpUsername'), filter_input(INPUT_POST, 'ftpPassword'));
 		} catch (Exception $e) {
-			$this->_plugin->wsLog('FTP EXPORT: error encountered');
-			$this->_plugin->wsLog($e);
+			WsLog::l('FTP EXPORT: error encountered');
+			WsLog::l($e);
 			throw new Exception($e);
 		}
 
 		if ($ftp->isdir(filter_input(INPUT_POST, 'ftpRemotePath'))) {
-			$this->_plugin->wsLog('FTP EXPORT: Remote dir exists');
+			WsLog::l('FTP EXPORT: Remote dir exists');
 		} else {
-			$this->_plugin->wsLog('FTP EXPORT: Creating remote dir');
+			WsLog::l('FTP EXPORT: Creating remote dir');
 			$ftp->mkdir(filter_input(INPUT_POST, 'ftpRemotePath'), true);
 		}
 
@@ -93,7 +91,7 @@ class StaticHtmlOutput_FTP
 
 			$this->test_connection();
 
-			$this->_plugin->wsLog('FTP EXPORT: Preparing list of files to transfer');
+			WsLog::l('FTP EXPORT: Preparing list of files to transfer');
 
 			$this->clear_file_list();
 
@@ -150,18 +148,18 @@ class StaticHtmlOutput_FTP
 			$ftp->login($this->_username, $this->_password);
 
 			if ( $this->_activeMode ) {
-				$this->_plugin->wsLog('FTP EXPORT: setting ACTIVE transfer mode');
+				WsLog::l('FTP EXPORT: setting ACTIVE transfer mode');
 				$ftp->pasv(false);
 			} else {
 				$ftp->pasv(true);
 			}
 
-			$this->_plugin->wsLog('FTP EXPORT: transferring ' .  basename($fileToTransfer) . ' TO ' . $targetPath);
+			WsLog::l('FTP EXPORT: transferring ' .  basename($fileToTransfer) . ' TO ' . $targetPath);
 		   
 			if ($ftp->isdir($targetPath)) {
-				$this->_plugin->wsLog('FTP EXPORT: Remote dir exists');
+				WsLog::l('FTP EXPORT: Remote dir exists');
 			} else {
-				$this->wsLog('FTP EXPORT: Creating remote dir');
+				WsLog::l('FTP EXPORT: Creating remote dir');
 				$mkdir_result = $ftp->mkdir($targetPath, true); // true = recursive creation
 			}
 
@@ -174,7 +172,7 @@ class StaticHtmlOutput_FTP
 			$filesRemaining = $this->get_remaining_items_count();
 
 			if ( $this->get_remaining_items_count() > 0 ) {
-				$this->_plugin->wsLog('FTP EXPORT: ' . $filesRemaining . ' files remaining to transfer');
+				WsLog::l('FTP EXPORT: ' . $filesRemaining . ' files remaining to transfer');
 				echo $this->get_remaining_items_count();
 			} else {
 				echo 'SUCCESS';
