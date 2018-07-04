@@ -382,7 +382,41 @@ class StaticHtmlOutput_Controller {
         }
 
         $baseUrl = untrailingslashit(home_url());
-        $urlResponse->cleanup();
+
+		$tmp_upload_dir_var = wp_upload_dir(); // need to store as var first
+
+		$wp_site_environment = array(
+			'wp_inc' =>  '/' . WPINC,	
+			'wp_plugin' =>  '',	
+			'wp_content' => '/wp-content', // TODO: check if this has been modified/use constant
+			'wp_uploads' =>  str_replace(ABSPATH, '/', $tmp_upload_dir_var['basedir']),	
+			'wp_plugins' =>  str_replace(ABSPATH, '/', WP_PLUGIN_DIR),	
+			'wp_themes' =>  str_replace(ABSPATH, '/', get_theme_root()),	
+			'wp_active_theme' =>  str_replace(home_url(), '', get_template_directory_uri()),	
+			'site_url' =>  get_site_url(),
+		);
+
+        $new_wp_content = '/' . filter_input(INPUT_POST, 'rewriteWPCONTENT');
+        $new_theme_root = $new_wp_content . '/' . filter_input(INPUT_POST, 'rewriteTHEMEROOT');
+        $new_theme_dir = $new_theme_root . '/' . filter_input(INPUT_POST, 'rewriteTHEMEDIR');
+		$new_uploads_dir = $new_wp_content . '/' . filter_input(INPUT_POST, 'rewriteUPLOADS');
+		$new_plugins_dir = $new_wp_content . '/' . filter_input(INPUT_POST, 'rewritePLUGINDIR');
+
+		$overwrite_slug_targets = array(
+			'new_wp_content_path' => $new_wp_content,
+			'new_themes_path' => $new_theme_root,
+			'new_active_theme_path' => $new_theme_dir,
+			'new_uploads_path' => $new_uploads_dir,
+			'new_plugins_path' => $new_plugins_dir,
+			'new_wpinc_path' => '/' . filter_input(INPUT_POST, 'rewriteWPINC'),
+		);
+
+        $urlResponse->cleanup(
+			$wp_site_environment,
+			$overwrite_slug_targets
+		);
+
+
 		// TODO: if it replaces baseurl here, it will be searching links starting with that...
 		// TODO: shouldn't be doing this here...
         $urlResponse->replaceBaseUrl($baseUrl, $newBaseUrl);
@@ -412,7 +446,11 @@ class StaticHtmlOutput_Controller {
                     WsLog::l('CRAWLED FILE: ' . $newUrl);
                 }
 
-                $urlResponse->cleanup();
+				$urlResponse->cleanup(
+					$wp_site_environment,
+					$overwrite_slug_targets
+				);
+
                 $urlResponse->replaceBaseUrl($baseUrl, $newBaseUrl);
                 $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
                 $this->_saveUrlData($urlResponse, $archiveDir);

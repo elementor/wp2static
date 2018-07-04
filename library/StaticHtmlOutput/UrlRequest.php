@@ -1117,9 +1117,10 @@ class StaticHtmlOutput_UrlRequest
 		$contentType = $this->getContentType();
 		return (stripos($contentType, 'html') !== false) || (stripos($contentType, 'text') !== false);
 	}
-	
-	public function cleanup()
-	{
+
+	// TODO: pass in all WP specific things and constants to make standalone/testing easier	
+	// TODO: pass WP constants in an object like $wp_environments['active_theme_dir'], etc
+	public function cleanup( $wp_site_environment, $overwrite_slug_targets) {
 		$responseBody = $this->getResponseBody();
 
 		// strip WP identifiers from html files
@@ -1148,50 +1149,31 @@ class StaticHtmlOutput_UrlRequest
 
 		// rewrite all the things, starting with longest paths down to shortest
 		// ie, do wp-content/themes/mytheme before wp-content
-
-		// rewrite the theme directory 
-		$original_theme_dir = str_replace(home_url(), '', get_template_directory_uri());
-        $new_wp_content = '/' . filter_input(INPUT_POST, 'rewriteWPCONTENT');
-        $new_theme_root = $new_wp_content . '/' . filter_input(INPUT_POST, 'rewriteTHEMEROOT');
-        $new_theme_dir = $new_theme_root . '/' . filter_input(INPUT_POST, 'rewriteTHEMEDIR');
-
-		$responseBody = str_replace($original_theme_dir, $new_theme_dir, $responseBody);
-
-		// rewrite the theme theme root just in case
-		$original_theme_root = str_replace(ABSPATH, '/', get_theme_root());
-
-		$responseBody = str_replace($original_theme_root, $new_theme_root, $responseBody);
-
-		// rewrite uploads dir
-		$default_upload_dir = wp_upload_dir(); // need to store as var first
-		$original_uploads_dir = str_replace(ABSPATH, '/', $default_upload_dir['basedir']);
-		$new_uploads_dir = $new_wp_content . '/' . filter_input(INPUT_POST, 'rewriteUPLOADS');
-
-		$responseBody = str_replace($original_uploads_dir, $new_uploads_dir, $responseBody);
-
-		// rewrite plugins dir
-		$original_plugins_dir = str_replace(ABSPATH, '/', WP_PLUGIN_DIR);
-		$new_plugins_dir = $new_wp_content . '/' . filter_input(INPUT_POST, 'rewritePLUGINDIR');
-
-		$responseBody = str_replace($original_plugins_dir, $new_plugins_dir, $responseBody);
-
-		// rewrite wp-content  dir
-		$original_wp_content = '/wp-content'; // TODO: check if this has been modified/use constant
-
-		$responseBody = str_replace($original_wp_content, $new_wp_content, $responseBody);
-
-		// rewrite wp-includes  dir
-		$original_wp_includes = '/' . WPINC;
-		$new_wp_includes = '/' . filter_input(INPUT_POST, 'rewriteWPINC');
-
-		$responseBody = str_replace($original_wp_includes, $new_wp_includes, $responseBody);
+		$responseBody = str_replace(
+			array(
+				$wp_site_environment['wp_active_theme'],
+				$wp_site_environment['wp_themes'], 
+				$wp_site_environment['wp_uploads'], 
+				$wp_site_environment['wp_plugins'], 
+				$wp_site_environment['wp_content'], 
+				$wp_site_environment['wp_inc'], 
+			),
+			array(
+				$overwrite_slug_targets['new_active_theme_path'],
+				$overwrite_slug_targets['new_themes_path'],
+				$overwrite_slug_targets['new_uploads_path'],
+				$overwrite_slug_targets['new_plugins_path'],
+				$overwrite_slug_targets['new_wp_content_path'],
+				$overwrite_slug_targets['new_wpinc_path'],
+			),
+			$responseBody);
 
 		// TODO: handle different url protocols
 		$pattern = "/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i";
 		// use preg_match_all to grab all the urls
 		preg_match_all($pattern, $responseBody, $urls_in_html);
 
-		$site_url = get_site_url();
+		$site_url = $wp_site_environment['site_url'];
 
 		foreach( $urls_in_html as $urls ) {
 			foreach ($urls as $url) {
