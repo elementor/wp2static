@@ -387,7 +387,6 @@ class StaticHtmlOutput_Controller {
 
 		$wp_site_environment = array(
 			'wp_inc' =>  '/' . WPINC,	
-			'wp_plugin' =>  '',	
 			'wp_content' => '/wp-content', // TODO: check if this has been modified/use constant
 			'wp_uploads' =>  str_replace(ABSPATH, '/', $tmp_upload_dir_var['basedir']),	
 			'wp_plugins' =>  str_replace(ABSPATH, '/', WP_PLUGIN_DIR),	
