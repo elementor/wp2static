@@ -23,13 +23,6 @@ Allows you to leverage WordPress as a great CMS, but benefit from the speed, sec
  - Website archival
  - Cheap, fast and secure hosting for a digital agency
 
-## Demo site
-
-You can [see a working example here](https://leonstafford.github.io/demo-site-wordpress-static-html-output-plugin) of a vanilla WordPress install with some sample posts. It is hosted on GitHub Pages, but could just as easily be hosted on Dropbox, BitBucket, GitLab, S3, Netlify, BunnyCDN, your own server or anywhere else you can host HTML files. It is prone to breakage as I use it when testing development versions of the plugin.
- 
-Got a site you've used the plugin to export and would like to share it here as a case study? Would love to hear from you!
-
-*TODO: move the demo theme into this repo, along with demonstrations of WP Hide and other useful plugins for WP static sites.*
 
 ### Scheduling exports via CRON/WP-CRON, etc
 
