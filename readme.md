@@ -5,6 +5,25 @@ Allows you to leverage WordPress as a great CMS, but benefit from the speed, sec
 ---
 
 
+## Setting Up
+ 1. From your dashboard, go to `Plugins` > `Add New`.
+    > ![](images/setup1.PNG)
+ 2. Add the plugin either from file or from the Wordpress dashboard.
+    > ![](images/setup2.PNG)
+    - From file: Click the `Upload Plugin` button and upload the plugin file. This file can be found in [the releases tab](https://github.com/leonstafford/wordpress-static-html-plugin/releases) or from [the Wordpress plugin directory](https://wordpress.org/plugins/static-html-output-plugin/).
+    - From the Wordpress dashboard: Search for "**WP Static HTML Output**". Click the `Install Now` button on the top right corner of the plugin by **Leon Stafford**.
+ 3. Once the plugin is done installing, activate the plugin.
+    - If available, click the `Activate` button on the top right corner of the card.
+      > ![](images/setup3.PNG)
+    - Otherwise, from the dashboard, go to `Plugins` > `Installed Plugins`. Locate the newly installed **WP Static HTML Output** plugin, and click `Activate`.
+      > ![](images/setup4.PNG)
+ 4. Choose `Allow & Continue` or `Skip` depending on your preferences.
+    > ![](images/setup5.PNG)
+ 5. To use the plugin, go to your dashboard and go to `Tools` > `WP Static HTML Output`.
+    > ![](images/setup6.PNG)
+ 6. When you're done configuring, scroll down to the **Export your site** section and click the `Start static site export` button. Have fun!
+    > ![](images/setup7.PNG)
+    
 ## Features
 
  - generates a standalone, static html copy of your whole WordPress website
