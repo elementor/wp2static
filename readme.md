@@ -2,13 +2,6 @@
 
 Allows you to leverage WordPress as a great CMS, but benefit from the speed, security and portability that a static website provides.
 
-[![CodeFactor](https://www.codefactor.io/repository/github/leonstafford/wordpress-static-html-plugin/badge)](https://www.codefactor.io/repository/github/leonstafford/wordpress-static-html-plugin)
-[![User support requests](https://img.shields.io/github/issues/leonstafford/wordpress-static-html-plugin/user_support_request.svg)](https://github.com/leonstafford/wordpress-static-html-plugin/labels/user_support_request)
-[![Bugs](https://img.shields.io/github/issues/leonstafford/wordpress-static-html-plugin/bug.svg)](https://github.com/leonstafford/wordpress-static-html-plugin/labels/bug)
-[![New features](https://img.shields.io/github/issues/leonstafford/wordpress-static-html-plugin/new_feature.svg)](https://github.com/leonstafford/wordpress-static-html-plugin/labels/new_feature)
-[![Enhancements](https://img.shields.io/github/issues/leonstafford/wordpress-static-html-plugin/enhancement.svg)](https://github.com/leonstafford/wordpress-static-html-plugin/labels/enhancement)
-[![Translation](https://img.shields.io/github/issues/leonstafford/wordpress-static-html-plugin/translation.svg)](https://github.com/leonstafford/wordpress-static-html-plugin/labels/translation)
-
 ---
 
 
@@ -46,6 +39,16 @@ Using the [WP Crontrol](https://wordpress.org/plugins/wp-crontrol/) plugin, you 
 
 A [Waffle.io project board](https://waffle.io/leonstafford/wordpress-static-html-plugin) shows what is upcoming and being worked on. You can filter the board by bugs, new features, enhancements, etc.
 
+Current key issues and features
+
+[![CodeFactor](https://www.codefactor.io/repository/github/leonstafford/wordpress-static-html-plugin/badge)](https://www.codefactor.io/repository/github/leonstafford/wordpress-static-html-plugin)
+[![User support requests](https://img.shields.io/github/issues/leonstafford/wordpress-static-html-plugin/user_support_request.svg)](https://github.com/leonstafford/wordpress-static-html-plugin/labels/user_support_request)
+[![Bugs](https://img.shields.io/github/issues/leonstafford/wordpress-static-html-plugin/bug.svg)](https://github.com/leonstafford/wordpress-static-html-plugin/labels/bug)
+[![New features](https://img.shields.io/github/issues/leonstafford/wordpress-static-html-plugin/new_feature.svg)](https://github.com/leonstafford/wordpress-static-html-plugin/labels/new_feature)
+[![Enhancements](https://img.shields.io/github/issues/leonstafford/wordpress-static-html-plugin/enhancement.svg)](https://github.com/leonstafford/wordpress-static-html-plugin/labels/enhancement)
+[![Translation](https://img.shields.io/github/issues/leonstafford/wordpress-static-html-plugin/translation.svg)](https://github.com/leonstafford/wordpress-static-html-plugin/labels/translation)
+
+
 ### other things in the works
 
  - selectively export only changed pages since last output
@@ -55,19 +58,6 @@ A [Waffle.io project board](https://waffle.io/leonstafford/wordpress-static-html
  - submission of bug report from within plugin
  - backwards compatibility with older php and wordpress versions (degrade gracefully) (delayed until further release)
 
-
-### Theme & Plugin compatibility
-
-Whilst it would be a challenge to test with every possible combination of plugins and themes, WP Static HTML Output Plugin has been tested with those in the following table and any notes are included. If you would like to see a fix to make it compatible with a certain theme or plugin, contact me.
-
-|Theme/plugin name   |   |Known to work well   |Issues   |Notes   |
-|---|---|---|---|---|
-|Elementor page builder   |   |<img src="https://raw.githubusercontent.com/leonstafford/wordpress-static-html-plugin/master/images/greentick.png" width="20">   |   |   |
-|GeneratePress   |   |<img src="https://raw.githubusercontent.com/leonstafford/wordpress-static-html-plugin/master/images/greentick.png" width="20">   |   |   |
-|Avada Theme   |   |<img src="https://raw.githubusercontent.com/leonstafford/wordpress-static-html-plugin/master/images/greentick.png" width="20"> |  |   |
-|Slider Revolution   |   |   |[see #2](https://github.com/leonstafford/wordpress-static-html-plugin/issues/2)   |   |
-|Contact Form Maker   |   |   |[see #13](https://github.com/leonstafford/wordpress-static-html-plugin/issues/13)   |   |
-|   |   |   |   |   |
 
 ## Development
 
