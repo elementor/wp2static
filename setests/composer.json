@@ -1,0 +1,11 @@
+{
+    "require": {
+        "facebook/webdriver": "^1.6",
+        "phpunit/phpunit": "^7"
+    },
+    "scripts": {
+        "test": [
+            "@php test.php"
+        ]
+    }
+}
