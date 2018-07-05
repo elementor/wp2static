@@ -49,15 +49,6 @@ Using the [WP Crontrol](https://wordpress.org/plugins/wp-crontrol/) plugin, you 
 
 A [Waffle.io project board](https://waffle.io/leonstafford/wordpress-static-html-plugin) shows what is upcoming and being worked on. You can filter the board by bugs, new features, enhancements, etc.
 
-Current key issues and features
-
-[![CodeFactor](https://www.codefactor.io/repository/github/leonstafford/wordpress-static-html-plugin/badge)](https://www.codefactor.io/repository/github/leonstafford/wordpress-static-html-plugin)
-[![User support requests](https://img.shields.io/github/issues/leonstafford/wordpress-static-html-plugin/user_support_request.svg)](https://github.com/leonstafford/wordpress-static-html-plugin/labels/user_support_request)
-[![Bugs](https://img.shields.io/github/issues/leonstafford/wordpress-static-html-plugin/bug.svg)](https://github.com/leonstafford/wordpress-static-html-plugin/labels/bug)
-[![New features](https://img.shields.io/github/issues/leonstafford/wordpress-static-html-plugin/new_feature.svg)](https://github.com/leonstafford/wordpress-static-html-plugin/labels/new_feature)
-[![Enhancements](https://img.shields.io/github/issues/leonstafford/wordpress-static-html-plugin/enhancement.svg)](https://github.com/leonstafford/wordpress-static-html-plugin/labels/enhancement)
-[![Translation](https://img.shields.io/github/issues/leonstafford/wordpress-static-html-plugin/translation.svg)](https://github.com/leonstafford/wordpress-static-html-plugin/labels/translation)
-
 
 ### other things in the works
 
@@ -77,21 +68,6 @@ This repo contains the latest code, which you can clone/download to get the blee
 
 If you'd like to contribute, please follow the usual GitHub procedures (create an Issue, fork repo, submit PR). If you're unsure about any of that, contact me and I'll be happy to help. 
 
-### Libraries
-
-Composer version of plugins will not work within the plugin for most users, so we convert and `require`/`include` them.
-
-### Docker quickstart
-
-To quickly try out the plugin, without affecting your other WordPress installations:
-
- - [install Docker](http://docker.com)
- - `./provisioning/destroy_and_rebuild.sh # view contents of this file to see how it builds
- - `./provisioning/get_webserver_ip.sh # outputs the IP address of the WordPress container
- - open IP in browser and you have a clean WP install, including the plugin (l/p: admin/admin)
-
-Optional use case - for me, I sometimes need to do development on a remote EC2 instance (to overcome terrible internet speeds where I am). In this instance, I need to set the site URL to the public DNS or assigned domain name of my EC2 instance. You can copy the `./provisioning/.env-vars-SAMPLE` file to `./provisioning/.env-vars` and set the `WPSTATICURL` variable within to your publicly accessible URL on port `8091`.
-
 ### Demo website content
 
 Included in the `./demo_site_content/` dir, are the posts used for the demo sites for this plugin, including guides on functionality. 
@@ -108,29 +84,6 @@ A `packages.json` file and `.nvmrc` exist to help show the dependencies required
 
 Our official [translation page](https://translate.wordpress.org/projects/wp-plugins/static-html-output-plugin) on wordpress.org. 
 
-### Debugging
-
-Connect to the container running the Apache instance.
-
-`sudo docker ps` To find the running container.
-
-`sudo docker exec -it {CONTAINER_ID} bash`
-
-Tail the PHP access/error logs as such:
-
-`docker logs -f plugindevwp`
-
-To display only errors and hide the access log, you can pipe stdout to /dev/null:
-
-`docker logs -f plugindevwp >/dev/null`
-
-To follow only the access log, you can pipe stderr to /dev/null:
-
-`docker logs -f your_php_apache_container 2>/dev/null`
-
-*Debugging cURL requests*
-
-Set the `CURLOPT_VERBOSE` to `true`, with an example in the S3 library. 
 
 ## Support
 
@@ -138,11 +91,5 @@ Please [raise an issue](https://github.com/leonstafford/wordpress-static-html-pl
 
 ## Contact
 
-Email me, Leon Stafford, at [leonstafford@protonmail.com](mailto:leonstafford@protonmail.com)
-
-## Donations
-
-Has this plugin helped you save some money on web hosting or otherwise helped you out? Please consider [donating via PayPal](https://www.paypal.me/leonjstafford) to help me help others. 
-
-[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=leonstafford&url=https://github.com/leonstafford/wordpress-static-html-plugin&language=en_US&tags=github&category=software)
+Email the lead developer, Leon Stafford, at [leonstafford@protonmail.com](mailto:leonstafford@protonmail.com), open an issue here on GitHub or make a support request from within the plugin itself. 
 
