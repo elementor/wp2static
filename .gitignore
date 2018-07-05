@@ -9,5 +9,6 @@ plugin_options_backup.sql
 
 
 /vendor/
+/setests/vendor/
 
 static-html-output-plugin.zip
