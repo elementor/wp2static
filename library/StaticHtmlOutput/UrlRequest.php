@@ -1118,9 +1118,8 @@ class StaticHtmlOutput_UrlRequest
 		return (stripos($contentType, 'html') !== false) || (stripos($contentType, 'text') !== false);
 	}
 
-	// TODO: pass in all WP specific things and constants to make standalone/testing easier	
-	// TODO: pass WP constants in an object like $wp_environments['active_theme_dir'], etc
 	public function cleanup( $wp_site_environment, $overwrite_slug_targets) {
+		//error_log(print_r(func_get_args(), true));
 		$responseBody = $this->getResponseBody();
 
 		// strip WP identifiers from html files
@@ -1135,7 +1134,6 @@ class StaticHtmlOutput_UrlRequest
 		}
 
 		if ($this->isCSS()) {
-
 			$regex = array(
 			"`^([\t\s]+)`ism"=>'',
 			"`^\/\*(.+?)\*\/`ism"=>"",
@@ -1148,7 +1146,6 @@ class StaticHtmlOutput_UrlRequest
 		}
 
 		// rewrite all the things, starting with longest paths down to shortest
-		// ie, do wp-content/themes/mytheme before wp-content
 		$responseBody = str_replace(
 			array(
 				$wp_site_environment['wp_active_theme'],
