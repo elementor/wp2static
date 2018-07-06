@@ -3,6 +3,8 @@
 use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\Chrome\ChromeOptions;
+use Facebook\WebDriver\WebDriverSelect;
+use Facebook\WebDriver\WebDriverBy;
 use PHPUnit\Framework\TestCase;
 
 require_once('vendor/autoload.php');
@@ -64,7 +66,7 @@ class WPStaticHtmlOutputPluginTest extends TestCase {
 
 		$this->resetPluginSettingsToDefault();
 
-		$deployment_chooser = $driver->findElement(WebDriverBy::name('selected_deployment_option'));
+		$deployment_chooser = $this->webDriver->findElement(WebDriverBy::name('selected_deployment_option'));
 
 		$deployment_chooser_select = new WebDriverSelect($deployment_chooser);
 
