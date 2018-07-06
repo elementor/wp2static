@@ -37,12 +37,12 @@ class WPStaticHtmlOutputPluginTest extends TestCase {
 
     protected $url = 'http://172.17.0.3/wp-admin/';
 
-    public function testGitHubHome()
+    public function testAdminWorkInProgress()
     {
 
         $this->webDriver->get($this->url);
 		//$driver->get( 'http://172.17.0.3/wp-admin/' );
-		$this->assertContains('Admin screen', $this->webDriver->getTitle());
+		$this->assertContains('Log In ‹ wp plugindev — WordPress', $this->webDriver->getTitle());
     }    
 
 	public function tearDown() {
