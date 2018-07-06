@@ -16,8 +16,8 @@ if [[ $current_branch = $protected_branch ]]; then
     RESULT=$?
     if [ $RESULT -ne 0 ]; then 
         echo "failed $CMD"
-        exit 1
 		echo "use --no-verify to ignore test failures and push anyway"
+        exit 1
     fi
 fi
 exit 0
