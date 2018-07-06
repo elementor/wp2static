@@ -5,6 +5,5 @@ jobs:
       - image: circleci/php:7.2.7-apache-node-browsers
     steps:
       - checkout
-	  - run: sudo apt-get update && sudo apt-get install -y php7.2-zip php7.2-mbstring
       - run: ./run_unit_tests.sh
-      - run: ./run_se_tests.sh
+      #- run: ./run_se_tests.sh
