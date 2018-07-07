@@ -43,6 +43,11 @@ class WPStaticHtmlOutputPluginTest extends TestCase {
 		$this->assertContains('Log In ‹ wp plugindev — WordPress', $this->webDriver->getTitle());
     }    
 
+	public function debugWithScreenshot() {
+		// appears in setests folder
+		$this->webDriver->takeScreenshot('screenshot.png');
+	}
+
 	public function logInToAdmin() {
         $this->webDriver->get($this->url);
 
@@ -52,27 +57,41 @@ class WPStaticHtmlOutputPluginTest extends TestCase {
 
 		$this->webDriver->findElement( WebDriverBy::id('user_pass'))->submit();
 
-		$this->webDriver->takeScreenshot('screenshot.png');
-
-		//wait for dashboard to be visible submit #loginform
 		$this->webDriver->wait()->until(
-			WebDriverExpectedCondition::titleContains('WP Static HTML Output ‹ wp plugindev — WordPress')
+			WebDriverExpectedCondition::titleContains('Dashboard ‹ wp plugindev — WordPress')
 		);
 	}	
 
 	public function resetPluginSettingsToDefault() {
-		$this->logInToAdmin();
-
-        $this->webDriver->get('http://172.17.0.3/wp-admin/tools.php?page=wp-static-html-output-options');
+		$this->goToPluginSettingsPage();
 	
-		// .resetDefaultSettingsButton
+		$this->webDriver->findElement(WebDriverBy::className('resetDefaultSettingsButton'))->click();
+
+		$this->webDriver->wait()->until(
+			WebDriverExpectedCondition::alertIsPresent(),
+			'Settings have been reset to default, the page will now be reloaded.'
+		);
+
+		$this->webDriver->switchTo()->alert()->accept();
+
+		// TODO: replace browser popups with on page notifications and WP messages
+
+		// note, the reload happens after settings reset has happened, so don't need to wait to continue 
 	}	
 
-	public function savePluginOptions() {
-		 
+	public function goToPluginSettingsPage() {
+		// TODO: handle case when license needs entering
 
+        $this->webDriver->get('http://172.17.0.3/wp-admin/tools.php?page=wp-static-html-output-options');
+
+		$this->webDriver->wait()->until(
+			WebDriverExpectedCondition::titleContains('WP Static HTML Output ‹ wp plugindev — WordPress')
+		);
+	}
+
+	public function savePluginOptions() {
 		$save_button = $this->webDriver->findElement(
-			WebDriverBy::class('saveSettingsButton')
+			WebDriverBy::className('saveSettingsButton')
 		);
 		$save_button->click();
 
@@ -84,30 +103,48 @@ class WPStaticHtmlOutputPluginTest extends TestCase {
 		$this->webDriver->switchTo()->alert()->accept();
 	}
 
-    public function testSavedDeploymentMethodIsRetained() {
-
-		$this->logInToAdmin();
-
-		$this->resetPluginSettingsToDefault();
-
+	public function setDeploymentMethod($value) {
 		$deployment_chooser = $this->webDriver->findElement(WebDriverBy::name('selected_deployment_option'));
 
 		$deployment_chooser_select = new WebDriverSelect($deployment_chooser);
 
-		$deployment_chooser_select->selectByValue('s3'); 
+		$deployment_chooser_select->selectByValue($value); 
+	}
+
+	public function getSelectedDeploymentMethod() {
+		$deployment_chooser = $this->webDriver->findElement(WebDriverBy::name('selected_deployment_option'));
+
+		$deployment_chooser_select = new WebDriverSelect($deployment_chooser);
+
+		return array(
+			'value' => $deployment_chooser_select->getFirstSelectedOption()->getAttribute('value'),
+			'text' => $deployment_chooser_select->getFirstSelectedOption()->getText()
+		);
+	}
+
+    public function testSavedDeploymentMethodIsRetained() {
+
+		$this->logInToAdmin();
+
+		// TODO: this needs to reset the interface, also, then no need to reload page to start again
+		$this->resetPluginSettingsToDefault(); 
+
+		$this->goToPluginSettingsPage();
+
+
+		$this->setDeploymentMethod('s3');
 
 		$this->savePluginOptions();
 
-
-		// reload page
-
-		$this->assertContains(
-			'Log In ‹ wp plugindev — WordPress',
-			$deployment_chooser_select->getFirstSelectedOption()->getAttribute('value'));
+		$this->goToPluginSettingsPage();
 
 		$this->assertContains(
-			'Log In ‹ wp plugindev — WordPress',
-			$deployment_chooser_select->getFirstSelectedOption()->getText());
+			"S3 - Amazon's Simple Storage Service",
+			$this->getSelectedDeploymentMethod()['text']);
+
+		$this->assertContains(
+			's3',
+			$this->getSelectedDeploymentMethod()['value']);
     }    
 
 	public function tearDown() {
