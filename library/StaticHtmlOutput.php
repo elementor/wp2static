@@ -236,7 +236,7 @@ class StaticHtmlOutput_Controller {
 			'/WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT',
 			'/WP-STATIC-CRAWLED-LINKS',
 			'/WP-STATIC-INITIAL-CRAWL-LIST',
-			'/WP-STATIC-CURRENT-ARCHIVE',
+//			'/WP-STATIC-CURRENT-ARCHIVE', // needed for zip download, diff deploys, etc
 			'WP-STATIC-EXPORT-LOG'
 		);
 
