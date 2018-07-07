@@ -886,44 +886,7 @@ class StaticHtmlOutput_Controller {
     public function post_export_teardown() {
         WsLog::l('POST EXPORT CLEANUP: starting...');
 
-        $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
 
-		$retainStaticFiles = filter_input(INPUT_POST, 'retainStaticFiles');
-		$retainZipFile = filter_input(INPUT_POST, 'retainZipFile');
-
-        // Remove temporary files unless user requested to keep or needed for FTP transfer
-        if ($retainStaticFiles != 1) {
-			$this->remove_symlink_to_latest_archive();
-
-			WsLog::l('POST EXPORT CLEANUP: removing dir: ' . $archiveDir);
-            $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($archiveDir), RecursiveIteratorIterator::CHILD_FIRST);
-            foreach ($iterator as $fileName => $fileObject) {
-
-                // Remove file
-                if ($fileObject->isDir()) {
-                    // Ignore special dirs
-                    $dirName = basename($fileName);
-					
-                    if($dirName != '.' && $dirName != '..') {
-                        rmdir($fileName);
-                    }
-                } else {
-                    unlink($fileName);
-                }
-            }
-            rmdir($archiveDir);
-        }	
-
-        if ($retainZipFile != 1) {
-			$archiveName = rtrim($archiveDir, '/');
-			$zipFile = $archiveName . '.zip';
-			if( file_exists($zipFile) ) {
-				WsLog::l('POST EXPORT CLEANUP: removing zip: ' . $zipFile);
-				unlink($zipFile);
-			}
-		}
-
-		
 		$this->cleanup_working_files();
 
 		WsLog::l('POST EXPORT CLEANUP: complete');
