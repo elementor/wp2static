@@ -94,8 +94,22 @@ jQuery(document).ready(function($){
 
 
 		// TODO: uncheck all options before checking the correct one
+			var checkbox_settings = [
+				'createZip',
+				'sendViaFTP',
+				'sendViaBUNNYCDN',
+				'sendViaS3',
+				'sendViaDropbox',
+				'sendViaGithub',
+				'sendViaNetlify',
+			];
+
+			for (var i = 0, len = checkbox_settings.length; i < len; i++) {
+				$('#' + checkbox_settings[i]).prop('checked', false);
+			}
 
 
+		// set the correct one
 		switch (selected_deployment_method) {
 			case 'zip':
 				$('#createZip').attr('checked', 'checked');
@@ -999,6 +1013,7 @@ Your progress will update here every few seconds and this text area will automat
 	</div>
 </div>
 
+<?php if (! getenv('LIVESHUSH')) : ?>
 <!-- Start of LiveChat (www.livechatinc.com) code -->
 <script type="text/javascript">
 window.__lc = window.__lc || {};
@@ -1010,3 +1025,4 @@ window.__lc.license = 9890645;
 })();
 </script>
 <!-- End of LiveChat code -->
+<?php endif; ?>
