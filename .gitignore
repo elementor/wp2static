@@ -10,5 +10,6 @@ plugin_options_backup.sql
 
 /vendor/
 /setests/vendor/
+/setests/screenshot.png
 
 static-html-output-plugin.zip

@@ -4,6 +4,7 @@ use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\Chrome\ChromeOptions;
 use Facebook\WebDriver\WebDriverSelect;
+use Facebook\WebDriver\WebDriverExpectedCondition;
 use Facebook\WebDriver\WebDriverBy;
 use PHPUnit\Framework\TestCase;
 
@@ -47,11 +48,16 @@ class WPStaticHtmlOutputPluginTest extends TestCase {
 
 		$this->webDriver->findElement( WebDriverBy::id('user_login'))->sendKeys('admin');
 
-		$this->webDriver->findElement( WebDriverBy::id('user_pass'))->click('admin');
+		$this->webDriver->findElement( WebDriverBy::id('user_pass'))->sendKeys('admin');
 
 		$this->webDriver->findElement( WebDriverBy::id('user_pass'))->submit();
 
+		$this->webDriver->takeScreenshot('screenshot.png');
+
 		//wait for dashboard to be visible submit #loginform
+		$this->webDriver->wait()->until(
+			WebDriverExpectedCondition::titleContains('WP Static HTML Output ‹ wp plugindev — WordPress')
+		);
 	}	
 
 	public function resetPluginSettingsToDefault() {
