@@ -21,8 +21,6 @@ class WPStaticHtmlOutputPluginTest extends TestCase {
 		$host = 'http://localhost:4444/wd/hub';
 
 		$options = new ChromeOptions();
-        $options->setBinary("/usr/bin/chromium-browser");
-//        $options->addArguments(["--headless","--disable-gpu", "--no-sandbox"]);
 
 		// For Chrome
 		$capabilities = DesiredCapabilities::chrome();
@@ -47,11 +45,13 @@ class WPStaticHtmlOutputPluginTest extends TestCase {
 	public function logInToAdmin() {
         $this->webDriver->get($this->url);
 
-		// insert username #user_login
+		$this->webDriver->findElement( WebDriverBy::id('user_login'))->sendKeys('admin');
 
-		// insert password #user_pass
+		$this->webDriver->findElement( WebDriverBy::id('user_pass'))->click('admin');
 
-		// submit and wait for dashboard to be visible submit #loginform
+		$this->webDriver->findElement( WebDriverBy::id('user_pass'))->submit();
+
+		//wait for dashboard to be visible submit #loginform
 	}	
 
 	public function resetPluginSettingsToDefault() {
@@ -62,13 +62,38 @@ class WPStaticHtmlOutputPluginTest extends TestCase {
 		// .resetDefaultSettingsButton
 	}	
 
+	public function savePluginOptions() {
+		 
+
+		$save_button = $this->webDriver->findElement(
+			WebDriverBy::class('saveSettingsButton')
+		);
+		$save_button->click();
+
+		$this->webDriver->wait()->until(
+			WebDriverExpectedCondition::alertIsPresent(),
+			'Options have been saved'
+		);
+
+		$this->webDriver->switchTo()->alert()->accept();
+	}
+
     public function testSavedDeploymentMethodIsRetained() {
+
+		$this->logInToAdmin();
 
 		$this->resetPluginSettingsToDefault();
 
 		$deployment_chooser = $this->webDriver->findElement(WebDriverBy::name('selected_deployment_option'));
 
 		$deployment_chooser_select = new WebDriverSelect($deployment_chooser);
+
+		$deployment_chooser_select->selectByValue('s3'); 
+
+		$this->savePluginOptions();
+
+
+		// reload page
 
 		$this->assertContains(
 			'Log In ‹ wp plugindev — WordPress',
