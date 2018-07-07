@@ -147,6 +147,8 @@ jQuery(document).ready(function($){
 
 		}
 
+		// set the selected option in case calling this from outside the event handler
+		$('.selected_deployment_method').val(selected_deployment_method);
 	}
 
 	/* 
@@ -535,6 +537,13 @@ jQuery(document).ready(function($){
        $('.options-form:last').clone().insertAfter('.options-form:last');
     });
 
+
+	// TODO: move below setup stuff into here
+	function loadPreviousSettings() {
+		return true;
+
+	}
+
     //  load existing settings
     if (settings != 'no existing settings found') {
         archives = settings.split('baseUrl=');
@@ -647,6 +656,14 @@ jQuery(document).ready(function($){
 					$(targetExportSettingsBlock).find('#' + checkbox_settings[i]).first().prop('checked', false);
 				}
             }
+
+		console.log('setting here');
+		// set and show the previous selected deployment method
+		renderSettingsBlock(settingsBlock.selected_deployment_option);
+
+		// set the select to the current deployment type
+		setDeploymentMethod(settingsBlock.selected_deployment_option);
+		
 			
         });
     }
