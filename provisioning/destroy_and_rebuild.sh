@@ -15,7 +15,7 @@ fi
 
 
 # convenience script to destroy any running containers, rebuild (with cache) and output notifications from script watching/syncing source files
-sudo docker rm -f {devmysql,plugindevwp,phpmyadmin,selenium-hub,sechrome,seffox}
+sudo docker rm -f {devmysql,plugindevwp,phpmyadmin}
 
 
 sudo docker build -t leonstafford/wordpress-static-html-plugin:latest . 
