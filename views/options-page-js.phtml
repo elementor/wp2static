@@ -1,0 +1,787 @@
+<?php
+/**
+ * @package WP Static HTML Output
+ *
+ * Copyright (c) 2011 Leon Stafford
+ */
+
+$settings = esc_html($this->staticExportSettings);
+if ($settings == '') {
+    $settings = 'no existing settings found';
+}
+
+
+?>
+
+<script>
+var settings = '<?php echo $settings; ?>';
+var uploadsDir = '<?php echo $this->wpUploadsDir; ?>';
+var pluginDir = '<?php echo $this->wpPluginDir; ?>';
+var pollingInterval = 5000;
+var exportTargets = [];
+var current_deployment_method = 'folder';
+
+jQuery(document).ready(function($){
+    if (Notification.permission !== "granted") {
+        Notification.requestPermission();
+    }
+
+	function callToAction() {
+		// check how many successful exports and present user with a relevant call to action
+        $('.hiddenActionField').val('wp_static_html_output_ajax');
+        $('#hiddenAJAXAction').val('get_number_of_successes');
+        archives = $('.options-form');
+        newSettings = $(".options-form").serialize();
+        $(".hiddenSettingsField").val(newSettings);
+        data = $(archives[0]).serialize();
+        $.ajax({
+            url: ajaxurl,
+            data: data,
+            dataType: 'html',
+            method: 'POST',
+            success: function(number_of_successes) {
+				// get back to main execution
+				processExportTargets();
+            },
+            error: function(serverResponse) {
+				console.log('# successes:');
+				console.log(serverResponse);
+            }
+        });
+
+	}
+	
+    function notifyMe() {
+      if (!Notification) {
+        alert('All exports are complete!.'); 
+        return;
+      }
+
+      if (Notification.permission !== "granted") {
+        Notification.requestPermission();
+      } else {
+        var notification = new Notification('WP Static HTML Export', {
+          icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png',
+          body: "Exports have finished!",
+        });
+
+        notification.onclick = function () {
+          parent.focus();
+          window.focus();
+          this.close();
+        };
+      }
+    }
+
+	/* 
+		TODO: quick win to get the select menu options to behave like the sendViaFTP, etc checkboxes
+	*/
+	function setDeploymentMethod(selected_deployment_method) {
+		current_deployment_method = selected_deployment_method;
+
+
+		// TODO: uncheck all options before checking the correct one
+			var checkbox_settings = [
+				'createZip',
+				'sendViaFTP',
+				'sendViaBUNNYCDN',
+				'sendViaS3',
+				'sendViaDropbox',
+				'sendViaGithub',
+				'sendViaNetlify',
+			];
+
+			for (var i = 0, len = checkbox_settings.length; i < len; i++) {
+				$('#' + checkbox_settings[i]).prop('checked', false);
+			}
+
+			// hide zip dl link for all
+			$('#downloadZIP').hide();
+
+
+		// set the correct one
+		switch (selected_deployment_method) {
+			case 'zip':
+				$('#createZip').attr('checked', 'checked');
+
+				// show disabled zip download button (will enable after creation)
+				$('#downloadZIP').show();
+			break;	
+
+			case 'dropbox':
+				$('#sendViaDropbox').attr('checked', 'checked');
+			break;	
+
+			case 'github':
+				$('#sendViaGithub').attr('checked', 'checked');
+			break;	
+
+			case 'bunnycdn':
+				$('#sendViaBUNNYCDN').attr('checked', 'checked');
+			break;	
+
+			case 's3':
+				$('#sendViaS3').attr('checked', 'checked');
+			break;	
+
+			case 'netlify':
+				$('#sendViaNetlify').attr('checked', 'checked');
+			break;	
+
+			case 'ftp':
+				$('#sendViaFTP').attr('checked', 'checked');
+			break;	
+
+			default:
+				console.log('unable to set unknown deployment option');
+
+			break;
+
+		}
+
+		// set the selected option in case calling this from outside the event handler
+		$('.selected_deployment_method').val(selected_deployment_method);
+	}
+
+	/* 
+		render the information and settings blocks based on the deployment method selected
+	*/
+	function renderSettingsBlock(selected_deployment_method) {
+		deployment_options = [
+			'zip',
+			'ftp',
+			'folder',
+			's3',
+			'dropbox',
+			'bunnycdn',
+			'netlify',
+			'github'
+		];
+
+		
+		// hide those not selected
+        $.each(deployment_options, function(index, deployment_option) {
+			$('.' + deployment_option  + '_settings_block').hide();
+		});
+
+
+		
+		// show the selected deployment option or none if empty
+		if (selected_deployment_method === '') {
+			console.log('no deployment option selected');
+
+			// hide export action window
+			$('.exportActionsPane').hide();
+		} else {
+			$('.' + selected_deployment_method  + '_settings_block').show();
+
+			// show export action window
+			$('.exportActionsPane').show();
+		}
+
+	
+
+	}
+
+	/* 
+		event handler
+		show any export setting details if the export option is enabled
+	*/
+
+	function setExportSettingDetailsVisibility(changed_checkbox) {
+		// get name of changed checkbox, ie sendViaGitHub
+		checkbox_name = $(changed_checkbox).attr('name');
+
+		// rm "sendVia" and lowercase the rest, leaving "github"
+		export_option_name = checkbox_name.replace('sendVia', '').toLowerCase();
+
+		// find all inputs starting with the name, ie "githubRepo"
+		var export_option_elements = $('.' + export_option_name );
+
+		// log which checkbox has changed in order to process it's settings group visibility
+        if($(changed_checkbox).is(":checked")) {
+			export_option_elements.show();
+			// unhide all the inputs, the following span and the following br
+			
+        } else {
+			// hide all the inputs, the following span and the following br
+			export_option_elements.hide();
+		}
+	}
+
+	// call handler on any checkbox change events
+	$('input[type="checkbox"]').change(function() {
+		setExportSettingDetailsVisibility(this);
+    });
+
+	// handler when deployment method is changed
+	$('.selected_deployment_method').change(function() {
+		console.log('deployment method changed');
+
+		renderSettingsBlock(this.value);
+		setDeploymentMethod(this.value);
+    });
+
+	// update base url previews in realtime
+	$(document).on('input', 
+		'#baseUrl-s3, #baseUrl-ftp, #baseUrl-folder, #baseUrl-dropbox, #baseUrl-github, #baseUrl-netlify, #baseUrl-bunnycdn, #baseUrl-zip', 
+		function() {
+			updateBaseURLReferences();
+		}
+	);
+
+	$(document).on('click', '.advanced_settings_header' , function() {
+		$('.advanced_settings').toggle();
+	});
+
+	function updateBaseURLReferences() {
+		var base_url_previews = $('.base_url_preview' );
+
+		if ($('#baseUrl-' + current_deployment_method)) {
+			base_url = $('#baseUrl-' + current_deployment_method).val(); 
+
+			// set hidden baseURL field to current option
+			$('#baseUrl').val( $('#baseUrl-' + current_deployment_method).val() ); 
+
+			base_url_previews.text(base_url.replace(/\/$/, "") + '/');
+		}
+
+	}
+
+    var currentArchive = 1;
+
+	/*
+
+		doAJAXExport can handle from 1 to n actions
+		each action runs, with 3 possible results:
+			SUCCESS - action is complete
+			> 0 - action is in progress inremental task
+			ERROR
+				
+			if an action is successful, and there are other actions queued up,
+			it will call the function again with the remaining arguments/actions
+
+			if an action is succesful, and there are no other actions queued,
+			it will call processExportTargets() to continue any other exports
+
+			if an action is in progress incremental, it will call itself again,
+			with all the same arguments
+
+			if an action fails, ajaxErrorHandler() is called
+	*/
+
+	function doAJAXExport() {
+		// arguments is not a real array, avoid nastiness by capturing as such
+		var args = [];
+		for (var i = 0; i < arguments.length; ++i) args[i] = arguments[i];
+
+		var export_action = args[0];
+
+        $('.hiddenActionField').val('wp_static_html_output_ajax');
+        $('#hiddenAJAXAction').val(export_action);
+        archives = $('.options-form');
+        data = $(archives[0]).serialize();
+
+        $.ajax({
+            url: ajaxurl,
+            data: data,
+            dataType: 'html',
+            method: 'POST',
+            success: function(serverResponse) {
+				// if an action is successful, and there are other actions queued up
+				if (serverResponse === 'SUCCESS' && args.length > 1) {
+					// rm first action now that it's succeeded
+					args.shift();
+					// call function with all other actions
+					doAJAXExport.apply(this, args);
+
+				// if an action is in progress incremental, it will call itself again
+				} else if (serverResponse > 0) {
+					doAJAXExport.apply(this, args);
+				} else if (serverResponse === 'SUCCESS') {
+					// not an incremental action, continue on with export targets
+					processExportTargets();
+				} else {
+					ajaxErrorHandler();
+				}
+            },
+            error: ajaxErrorHandler
+        });
+	}
+
+
+	var protocolAndDomainRE = /^(?:\w+:)?\/\/(\S+)$/;
+	var localhostDomainRE = /^localhost[\:?\d]*(?:[^\:?\d]\S*)?$/
+	var nonLocalhostDomainRE = /^[^\s\.]+\.\S{2,}$/;
+
+	function isUrl(string){
+	  if (typeof string !== 'string') {
+		return false;
+	  }
+
+	  var match = string.match(protocolAndDomainRE);
+	  if (!match) {
+		return false;
+	  }
+
+	  var everythingAfterProtocol = match[1];
+	  if (!everythingAfterProtocol) {
+		return false;
+	  }
+
+	  if (localhostDomainRE.test(everythingAfterProtocol) ||
+		  nonLocalhostDomainRE.test(everythingAfterProtocol)) {
+		return true;
+	  }
+
+	  return false;
+	}
+
+
+	function getValidationErrors() {
+		validation_errors = '';
+
+		// these fields cannot be empty
+		if (current_deployment_method === undefined || current_deployment_method === '') {
+			validation_errors += 'Please select a deployment method';
+		}
+
+		if ($('#baseUrl').val() === undefined || $('#baseUrl').val() == '') {
+			validation_errors += "Please set the Base URL field to the address you will host your static site.\n";
+		}
+
+		console.log(	! isUrl($('#baseUrl').val())  );
+		if (!isUrl($('#baseUrl').val())) {
+			validation_errors += "Please set the Base URL field to a valid URL, ie http://mystaticsite.com.\n";
+		}
+
+		return validation_errors;
+	}
+
+    function startExport() {
+		validation_errors = getValidationErrors();
+		if (validation_errors !== '') {
+			alert(validation_errors);
+
+			return false;
+		}
+
+        $('#progress').attr("src", pluginDir + '../images/dashinfinity.gif');
+        $('#progress').css("width", '102px');
+
+        $('#progress').show();
+        $('#exportStatus').html('');
+
+        pollingInterval = $('#pollIntervalSetting')[0].value;
+        setTimeout(pollStatus, pollingInterval);
+
+
+		// reset UI before export
+
+		$('#downloadZIP button').prop('disabled', true);
+
+		// reset export targets to avoid having left-overs from a failed run
+		exportTargets = [];
+	
+        $('.hiddenActionField').val('wp_static_html_output_ajax');
+        $('#hiddenAJAXAction').val('cleanup_working_files');
+        archives = $('.options-form');
+
+        if ($('#sendViaGithub').attr('checked') == 'checked') {
+            exportTargets.push('GITHUB');
+        }
+        if ($('#sendViaFTP').attr('checked') == 'checked') {
+            exportTargets.push('FTP');
+        }
+        if ($('#sendViaBUNNYCDN').attr('checked') == 'checked') {
+            exportTargets.push('BUNNYCDN');
+        }
+        if ($('#sendViaDropbox').attr('checked') == 'checked') {
+            exportTargets.push('DROPBOX');
+        }
+        if ($('#sendViaS3').attr('checked') == 'checked') {
+            exportTargets.push('S3');
+        }
+        if ($('#sendViaNetlify').attr('checked') == 'checked') {
+            exportTargets.push('NETLIFY');
+        }
+
+		// always run cleanup "exportTarget" (TODO: naming to be improved)
+		exportTargets.push('TEARDOWN');
+
+		// record successful exports into the db
+		exportTargets.push('RECORDSUCCESS');
+
+		// call user to action based on number of exports
+		exportTargets.push('CALLTOACTION');
+
+        data = $(archives[0]).serialize();
+        $.ajax({
+            url: ajaxurl,
+            data: data,
+            dataType: 'html',
+            method: 'POST',
+            success: function(serverResponse) {
+				if ($('#createZip').attr('checked') == 'checked') {
+					doAJAXExport('cleanup_leftover_archives', 'start_export', 'crawl_site', 'create_symlink_to_latest_archive', 'post_process_archive_dir', 'create_zip');
+				} else {
+					doAJAXExport('cleanup_leftover_archives', 'start_export', 'crawl_site', 'create_symlink_to_latest_archive', 'post_process_archive_dir' );
+				}
+            },
+            error: ajaxErrorHandler
+        });
+    }
+    
+    function ajaxErrorHandler () {
+        $('#progress').attr("src", pluginDir + '../images/fail_icon.png');
+        $('#progress').css("width", '123px');
+    }
+
+    function processExportTargets () {
+		// TODO: optimisation: just call doAJAXExport with shifted arr element (req's consistent naming of exports)
+
+		if( exportTargets.length > 0) {
+			switch(target = exportTargets.shift()) {
+				case 'GITHUB':
+					doAJAXExport('github_prepare_export', 'github_upload_blobs', 'github_finalise_export');
+					break;
+
+				case 'FTP':
+					doAJAXExport('ftp_prepare_export', 'ftp_transfer_files');
+					break;
+
+				case 'BUNNYCDN':
+					doAJAXExport('bunnycdn_prepare_export', 'bunnycdn_transfer_files', 'bunnycdn_purge_cache');
+					break;
+
+				case 'S3':
+					doAJAXExport('s3_prepare_export', 's3_transfer_files', 'cloudfront_invalidate_all_items');
+					break;
+
+				case 'DROPBOX':
+					doAJAXExport('dropbox_prepare_export', 'dropbox_do_export');
+					break;
+
+				case 'NETLIFY':
+					doAJAXExport('netlify_do_export');
+					break;
+
+				case 'TEARDOWN':
+					doAJAXExport('post_export_teardown');
+					break;
+
+				case 'RECORDSUCCESS':
+					doAJAXExport('record_successful_export');
+					break;
+
+				case 'CALLTOACTION':
+					callToAction();
+					break;
+
+				default:
+
+					// all complete
+					$('#progress').attr("src", pluginDir + '../images/greentick.png');
+					$('#progress').css("width", '123px');
+					notifyMe();
+					break; 
+			}
+		} else {
+			// if zip was selected, call to get zip name and enable the button with the link to download
+			if (current_deployment_method === 'zip') {
+				
+				zipDownloadLink = uploadsDir + '/WP-STATIC-CURRENT-ARCHIVE';
+
+				// TODO: add better way to get just the archive name/zip name and path
+
+				$.get(zipDownloadLink, function(zipPath){
+					parts = zipPath.split('/');
+					archiveName = parts.pop() || parts.pop();
+					zipURL = uploadsDir + '/' + archiveName + '.zip';
+
+					$('#downloadZIP').attr('href', zipURL);
+					$('#downloadZIP button').prop('disabled', false);
+				});
+			}
+
+			$('#progress').attr("src", pluginDir + '../images/greentick.png');
+			$('#progress').css("width", '123px');
+			notifyMe();
+		}
+    }
+
+    function saveOptions() {
+        $('.hiddenActionField').val('wp_static_html_output_ajax');
+        $('#hiddenAJAXAction').val('save_options');
+        archives = $('.options-form');
+        newSettings = $(".options-form").serialize();
+        $(".hiddenSettingsField").val(newSettings);
+        data = $(archives[0]).serialize();
+        $.ajax({
+            url: ajaxurl,
+            data: data,
+            dataType: 'html',
+            method: 'POST',
+            success: function(serverResponse) {
+                $('#progress').hide();
+                alert('Options have been saved');
+            },
+            error: function(serverResponse) {
+                $('#progress').hide();
+            }
+        });
+    }
+
+    $('#startExportButton').click(function() {
+        startExport();
+    });
+
+
+    function pollStatus() {
+        logFile = uploadsDir + '/WP-STATIC-EXPORT-LOG';
+
+        $.get(logFile, function(data){
+            $('#exportStatus').html(data);
+            heightLimit = 1000;
+            $('#exportStatus').css('height', Math.min($('#exportStatus').prop('scrollHeight'), heightLimit) + "px");
+        });
+        
+        if ($('#progress').attr("src").includes('infinity')) {
+            setTimeout(pollStatus, pollingInterval);
+        }         
+    }
+
+    $('.wrap').on('click', '.removeTargetButton', function(event) {
+        event.preventDefault();
+
+        if ($('.options-form').length === 1) {
+            alert("Sorry, got to keep at least one settings block around. But, you can delete the values if you like");
+        } else {
+            $(event.target).closest('.options-form').remove();
+        }
+    });
+
+    $('.wrap').on('click', '.resetDefaultSettingsButton', function(event) {
+        event.preventDefault();
+
+		// call ajax to wipe options table entries for export options
+        $('.hiddenActionField').val('wp_static_html_output_ajax');
+        $('#hiddenAJAXAction').val('reset_default_settings');
+        archives = $('.options-form');
+        newSettings = $(".options-form").serialize();
+        $(".hiddenSettingsField").val(newSettings);
+        data = $(archives[0]).serialize();
+        $.ajax({
+            url: ajaxurl,
+            data: data,
+            dataType: 'html',
+            method: 'POST',
+            success: function(serverResponse) {
+				alert("Settings have been reset to default, the page will now be reloaded.");
+				window.location.reload(true); 
+            },
+            error: function(serverResponse) {
+				alert("Error encountered in trying to reset settings. Please try refreshing the page.");
+            }
+        });
+
+		// clean load page, just to be sure all fields are refreshed
+
+    });
+
+    $('.wrap').on('click', '.saveSettingsButton', function(event) {
+        event.preventDefault();
+        $('#progress').show();
+        saveOptions();
+    });
+
+    $('.wrap').on('click', '.addAnotherTargetButton', function(event) {
+        event.preventDefault();
+       $('.options-form:last').clone().insertAfter('.options-form:last');
+    });
+
+
+	// TODO: move below setup stuff into here
+	function loadPreviousSettings() {
+		return true;
+
+	}
+
+    //  load existing settings
+    if (settings != 'no existing settings found') {
+        archives = settings.split('baseUrl=');
+        // remove crufty first element
+        archives.shift();
+
+        // first run, will populate only form on page
+        var targetExportSettingsBlock = $('.options-form')[0];
+
+        // iterate each saved settings chunk and create forms for them
+        $.each(archives, function(index, value) {
+            renderedExportSettingsBlocks = $('.options-form').length;
+            targetExportSettingsBlock = $('.options-form:last');
+            archive = 'baseUrl=' + value;
+            archive = archive.substring(0, archive.indexOf('&amp;staticExportSettings='));
+
+            settingsBlock = JSON.parse('{"' + decodeURI(archive).replace(/\n/g, ",").replace(/\r/g, ",").replace(/"/g, '\\"').replace(/&amp;/g, '","').replace(/=/g,'":"') + '"}');
+       
+            $(targetExportSettingsBlock).find('#baseUrl').first().val(decodeURIComponent(settingsBlock.baseUrl));
+
+            $(targetExportSettingsBlock).find('#outputDirectory').val(decodeURIComponent(settingsBlock.outputDirectory));
+
+            additionalUrls = settingsBlock.additionalUrls.split(',');
+            newAdditionalUrls = '';
+
+            $.each(additionalUrls, function(index, value) {
+               if (value != '') {
+                   newAdditionalUrls += decodeURIComponent(value) + "\n"; 
+               }
+            });
+
+            $(targetExportSettingsBlock).find('#additionalUrls').val(newAdditionalUrls);
+
+			// set text fields
+			var textfield_settings = [
+				'ftpServer',
+				'ftpUsername',
+				'ftpPassword',
+				'ftpRemotePath',
+				'bunnycdnPullZoneName',
+				'bunnycdnAPIKey',
+				'bunnycdnPath',
+				's3Key',
+				's3Secret',
+				's3Region',
+				's3Bucket',
+				's3RemotePath',
+				'cfDistributionId',
+				'dropboxAccessToken',
+				'dropboxFolder',
+				'githubPersonalAccessToken',
+				'githubPath',
+				'githubRepo',
+				'githubBranch',
+				'netlifyPersonalAccessToken',
+				'netlifySiteID',
+				'basicAuthUser',
+				'basicAuthPassword',
+				'rewriteWPCONTENT',
+				'rewriteTHEMEDIR',
+				'rewriteUPLOADS',
+				'rewriteTHEMEROOT',
+				'rewritePLUGINDIR',
+				'rewriteWPINC',
+				'baseUrl-s3',
+				'baseUrl-ftp',
+				'baseUrl-folder',
+				'baseUrl-dropbox',
+				'baseUrl-github',
+				'baseUrl-netlify',
+				'baseUrl-bunnycdn',
+				'baseUrl-zip'
+			];
+
+			for (var i = 0, len = textfield_settings.length; i < len; i++) {
+				$(targetExportSettingsBlock).find('#' + textfield_settings[i]).first().val(decodeURIComponent(settingsBlock[textfield_settings[i]]));
+			}
+
+			// set checkboxes
+			var checkbox_settings = [
+				'createZip',
+				'sendViaFTP',
+				'useActiveFTP',
+				'sendViaBUNNYCDN',
+				'sendViaS3',
+				'sendViaDropbox',
+				'sendViaGithub',
+				'sendViaNetlify',
+				'sendViaBasic', // todo: allow for improved naming of this
+				'dontIncludeAllUploadFiles',
+			];
+
+			for (var i = 0, len = checkbox_settings.length; i < len; i++) {
+				$(targetExportSettingsBlock).find('#' + checkbox_settings[i])[0].checked = settingsBlock[checkbox_settings[i]];
+			}
+
+            // if there are more to come, clone and set target
+			// TODO: check if this still works, blanking fields
+            if (index < (archives.length -1)) {
+                $('.options-form:last').clone().insertAfter('.options-form:last');
+                targetExportSettingsBlock =  $('.options-form:last');
+
+				for (var i = 0, len = textfield_settings.length; i < len; i++) {
+					$(targetExportSettingsBlock).find('#' + textfield_settings[i]).first().val('');
+				}
+
+				for (var i = 0, len = checkbox_settings.length; i < len; i++) {
+					$(targetExportSettingsBlock).find('#' + checkbox_settings[i]).first().prop('checked', false);
+				}
+            }
+
+		// set and show the previous selected deployment method
+		renderSettingsBlock(settingsBlock.selected_deployment_option);
+
+		// set the select to the current deployment type
+		setDeploymentMethod(settingsBlock.selected_deployment_option);
+		
+			
+        });
+    }
+
+	// if rewrite values aren't set yet, populate fields with defaults
+	if ( $("#rewriteWPCONTENT").val() == '' || $("#rewriteWPCONTENT").val() == 'undefined') {
+		$("#rewriteWPCONTENT").val('contents');
+	}
+
+	if ( $("#rewriteTHEMEDIR").val() == '' || $("#rewriteTHEMEDIR").val() == 'undefined') {
+		$("#rewriteTHEMEDIR").val('theme');
+	}
+
+	if ( $("#rewriteUPLOADS").val() == '' || $("#rewriteUPLOADS").val() == 'undefined') {
+		$("#rewriteUPLOADS").val('data');
+	}
+
+	if ( $("#rewriteTHEMEROOT").val() == '' || $("#rewriteTHEMEROOT").val() == 'undefined') {
+		$("#rewriteTHEMEROOT").val('ui');
+	}
+
+	if ( $("#rewritePLUGINDIR").val() == '' || $("#rewritePLUGINDIR").val() == 'undefined') {
+		$("#rewritePLUGINDIR").val('lib');
+	}
+
+	if ( $("#rewriteWPINC").val() == '' || $("#rewriteWPINC").val() == 'undefined') {
+		$("#rewriteWPINC").val('inc');
+	}
+	/* 
+		on page load, show enabed export setting details
+		show any export setting details if the export option is checked and not disabled
+	*/
+
+	// do for each checkbox starting with sendVia
+
+
+	$( 'input[id^="sendVia"]' ).each(function( index ) {
+		checkbox_name = $(this).attr('name');
+
+		// rm "sendVia" and lowercase the rest, leaving "github"
+		export_option_name = checkbox_name.replace('sendVia', '').toLowerCase();
+
+		// find all inputs starting with the name, ie "githubRepo"
+		var export_option_elements = $('.' + export_option_name );
+
+		// log which checkbox has changed in order to process it's settings group visibility
+		if($(this).is(":checked") && $(this).is(":enabled")) {
+			export_option_elements.show();
+			// unhide all the inputs, the following span and the following br
+			
+		} else {
+			// hide all the inputs, the following span and the following br
+			export_option_elements.hide();
+		}
+	});
+
+
+	updateBaseURLReferences($('#baseUrl').val());
+});
+</script>
+

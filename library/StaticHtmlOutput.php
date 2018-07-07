@@ -93,12 +93,19 @@ class StaticHtmlOutput_Controller {
 			$wp_upload_dir = wp_upload_dir();
 
 			$this->_view
+				->setTemplate('options-page-js')
+				->assign('staticExportSettings', $this->_options->getOption('static-export-settings'))
+				->assign('wpUploadsDir', $this->_uploadsURL)
+				->assign('wpPluginDir', plugins_url('/', __FILE__))
+				->assign('onceAction', self::HOOK . '-options')
+				->render();
+
+			$this->_view
 				->setTemplate('options-page')
 				->assign('staticExportSettings', $this->_options->getOption('static-export-settings'))
 				->assign('wpUploadsDir', $this->_uploadsURL)
 				->assign('wpPluginDir', plugins_url('/', __FILE__))
 				->assign('onceAction', self::HOOK . '-options')
-				->assign('uploadsPath', $this->_uploadsPath)
 				->render();
 		}
 	}
