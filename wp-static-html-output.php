@@ -63,13 +63,16 @@ if ( ! function_exists( 'wpsho_fr' ) ) {
 	require_once 'library/StaticHtmlOutput/WsLog.php';
 	require_once 'library/StaticHtmlOutput/UrlRequest.php';
 	require_once 'library/StaticHtmlOutput/FilesHelper.php';
-	require_once 'library/StaticHtmlOutput/Netlify.php';
-	require_once 'library/StaticHtmlOutput/BunnyCDN.php';
-	require_once 'library/StaticHtmlOutput/FTP.php';
-	require_once 'library/StaticHtmlOutput/GitHub.php';
-	require_once 'library/StaticHtmlOutput/Dropbox.php';
-	require_once 'library/StaticHtmlOutput/S3.php';
 	require_once 'library/StaticHtmlOutput.php';
+	
+	if ( wpsho_fr()->is__premium_only() ) {
+		require_once 'library/StaticHtmlOutput/Netlify.php';
+		require_once 'library/StaticHtmlOutput/BunnyCDN.php';
+		require_once 'library/StaticHtmlOutput/FTP.php';
+		require_once 'library/StaticHtmlOutput/GitHub.php';
+		require_once 'library/StaticHtmlOutput/Dropbox.php';
+		require_once 'library/StaticHtmlOutput/S3.php';
+	}
 
 	StaticHtmlOutput_Controller::init( __FILE__ );
 
