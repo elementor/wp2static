@@ -216,8 +216,6 @@ jQuery(document).ready(function($){
 
 	// handler when deployment method is changed
 	$('.selected_deployment_method').change(function() {
-		console.log('deployment method changed');
-
 		renderSettingsBlock(this.value);
 		setDeploymentMethod(this.value);
     });
@@ -337,7 +335,6 @@ jQuery(document).ready(function($){
 	  return false;
 	}
 
-
 	function getValidationErrors() {
 		validation_errors = '';
 
@@ -350,9 +347,122 @@ jQuery(document).ready(function($){
 			validation_errors += "Please set the Base URL field to the address you will host your static site.\n";
 		}
 
-		console.log(	! isUrl($('#baseUrl').val())  );
 		if (!isUrl($('#baseUrl').val())) {
 			validation_errors += "Please set the Base URL field to a valid URL, ie http://mystaticsite.com.\n";
+		}
+
+		switch(current_deployment_method) {
+			case 'zip':
+
+			break;
+
+			case 'ftp':
+
+				required_fields = {
+					ftpServer: 'Please specify the FTP server address needed to transfer your files via FTP',
+					ftpUsername: 'Please input an FTP username in order to authenticate when using the FTP deployment method.',
+					ftpPassword: 'Please input an FTP password in order to authenticate when using the FTP deployment method.',
+				};	
+
+				Object.keys(required_fields).forEach(function(key,index) {
+					if ($('#' + key).val() == '') {
+						validation_errors += required_fields[key] + "\n";
+					}
+				});
+
+			break; 
+
+			case 'folder':
+
+			break;
+
+			case 's3':
+
+				required_fields = {
+					s3Key: 'Please input an S3 Key in order to authenticate when using the S3 deployment method.',
+					s3Secret: 'Please input an S3 Secret in order to authenticate when using the S3 deployment method.',
+					s3Bucket: 'Please input the name of the S3 bucket you are trying to deploy to.',
+				};	
+
+				Object.keys(required_fields).forEach(function(key,index) {
+					if ($('#' + key).val() == '') {
+						validation_errors += required_fields[key] + "\n";
+					}
+				});
+
+			break;
+
+			case 'dropbox':
+
+				required_fields = {
+					dropboxAccessToken: 'Please specify your Dropbox access token in order to deploy to Dropbox.',
+				};	
+
+				Object.keys(required_fields).forEach(function(key,index) {
+					if ($('#' + key).val() == '') {
+						validation_errors += required_fields[key] + "\n";
+					}
+				});
+
+			break; 
+
+			case 'bunnycdn':
+
+				required_fields = {
+					bunnycdnPullZoneName: 'Please specify your BunnyCDN pull zone name in order to deploy to BunnyCDN.',
+					bunnycdnAPIKey: 'Please specify your BunnyCDN API/FTP password in order to deploy to BunnyCDN.',
+				};	
+
+				Object.keys(required_fields).forEach(function(key,index) {
+					if ($('#' + key).val() == '') {
+						validation_errors += required_fields[key] + "\n";
+					}
+				});
+
+			break; 
+
+			case 'netlify':
+
+				required_fields = {
+					netlifyPersonalAccessToken: 'Please specify your Netlify personal access token in order to deploy to Netlify.',
+					netlifySiteID: 'Please specify the id of your Netlify site you want to deploy to.',
+				};	
+
+				Object.keys(required_fields).forEach(function(key,index) {
+					if ($('#' + key).val() == '') {
+						validation_errors += required_fields[key] + "\n";
+					}
+				});
+
+			break; 
+
+			case 'github':
+
+				required_fields = {
+					githubPersonalAccessToken: 'Please specify your GitHub personal access token in order to deploy to GitHub.',
+					githubRepo: 'Please specify your GitHub repository name in order to deploy to GitHub.',
+					githubBranch: 'Please specify which branch in your GitHub repository you want to deploy to.',
+				};	
+
+				Object.keys(required_fields).forEach(function(key,index) {
+					if ($('#' + key).val() == '') {
+						validation_errors += required_fields[key] + "\n";
+					}
+				});
+
+				repo = $('#githubRepo').val();
+
+				if (repo != '') {
+					if (repo.split('/').length !== 2) {
+						validation_errors += "Please ensure your GitHub repo is specified as USER_OR_ORG_NAME/REPO_NAME\n";
+					}
+				}
+
+			break; 
+
+			default:
+
+			break; 
 		}
 
 		return validation_errors;
