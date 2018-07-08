@@ -3,7 +3,11 @@
 
 	<img style="width:40px;float:left;margin-right:10px;" src="<?php echo plugins_url( 'images/s3_icon.svg', dirname(__FILE__)) ?>" />
 
-	<p>Transfer via S3</p>
+	<p>With Amazon's CTO, Werner Vogels, blogging about <a href="https://www.allthingsdistributed.com/2011/08/Jekyll-amazon-s3.html" target="_blank">his passion for static website hosting</a>, back in 2011, it's no suprise that this is a popular method for static site hosting.
+
+	There are <a href="http://lmgtfy.com/?q=how+to+host+a+static+site+on+s3" target="_blank">many guides</a> on how to get setup for static hosting on S3. Once you have your credentials and a bucket setup, fill in the required fields in this plugin to start leveraging the power of S3.
+
+	While S3 hosting can cost money, depending on how many requests your bucket receives, you may be eligible for the <a href="https://aws.amazon.com/free/" target="_blank">AWS free tier</a>, making it an affordable option. You can also set usage alerts/billing alarms in AWS to warn if you if it's approaching your budgetary limit. 
 
 	<br style="clear:both;" />
 
@@ -15,16 +19,41 @@
 
 
 					  <strong><label for="baseUrl"><?php echo __('Base Url', 'static-html-output-plugin');?></label></strong>
-					  <p>
-						<i><?php echo __("Set this to the URL you intend to host your static exported site on, ie http://mystaticsite.com. Do not set this to the same URL as the WordPress site you're currently using (the address in your browser above). This plugin will rewrite all URLs in the exported static html from your current WordPress URL to what you set here. Supports http, https and protocol relative URLs.", 'static-html-output-plugin');?></i>
-					  </p> 
-
+<br>
+<br>
 					  <input type="url" id="baseUrl-s3" name="baseUrl-s3" size="50" placeholder="http://mystaticsite.com" />
+
+<p>
+	Set this to the URL your visitors will use to access your site. For an S3 hosted website, you have a few options which will influence what you put in this field. 
+</p>
+
+<ul>
+	<li><b>Direct bucket hosting</b> If you want to serve your site directly from S3, you'll want the Endpoint as shown in your AWS console, when you go to your bucket > properties > Static website hosting, ie for a bucket named 'statictestfrankfurt', hosted in the eu-central-1 region, it will be: http://statictestfrankfurt.s3-website.eu-central-1.amazonaws.com.
+	</li>
+
+	<li>
+		<b>Bucket with a custom domain</b> If you've setup a custom domain to use with your S3 bucket hosted, use that domain. In this case, your bucket name should already be the same as the domain, ie statictest.beautifulmoalboal.org, with an A record alias entry in Route53 or your DNS provider to s3-website-ap-southeast-1.amazonaws.com. So, we would use http://statictest.beautifulmoalboal.org/ as the Base Url in this case. 
+	</li>
+
+		<b>S3 hosted website cached with CloudFront</b> If you've setup CloudFront to speed up your S3 hosted static site, then entering your CloudFront Distribution ID here will send a cache invalidation request after all the files have been deployed to S3. It will use the same AWS credentials as S3, so ensure that IAM user in AWS has the correct permissions for both S3 and CloudFront. You could set the BaseURL to the CloudFront address, ie http://d3fvx8eaa0pipc.cloudfront.net/, but more than likely, you have another domain you want to use for the website, so set the Base Url to that, ie https://mywebsite.com. 
+</ul>
+
+
 					</p>
 
 
+					  <strong><label for="s3Key"><?php echo __('S3 Key', 'static-html-output-plugin');?></label></strong>
+
+<br> <br>
 
 	<?php echo displayTextfield($this, 's3Key', 'S3 Key', 'required, ie, AKIAIOSFODNN7EXAMPLE'); ?>
+
+<br> <br>
+
+					  <strong><label for="s3Secret"><?php echo __('S3 Secret', 'static-html-output-plugin');?></label></strong>
+
+<br> <br>
+
 	<?php echo displayTextfield($this, 's3Secret', 'S3 Secret', 'ie, wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY', 'password'); ?>
 
 	<select name="s3Region" id="s3Region">
