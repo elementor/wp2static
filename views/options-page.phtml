@@ -73,18 +73,39 @@ function displayTextfield($template_variables, $field_name, $field_label, $descr
 <!-- legacy multi-export functionality relied on the baseUrl field being first in the settings block -->
 <input style="display:none;" type="text" id="baseUrl" name="baseUrl" value="<?php echo esc_attr($this->baseUrl) ?>" size="50" placeholder="http://mystaticsite.com" />
 
+
+<?php
+
+function generateDeploymentMethodOptions() {
+	$options = array(
+	  "" => array('Choose where to deploy your static site to', 'free'),
+	  "zip" => array('ZIP - a downloadable ZIP file of your statically exported site', 'free'),
+	  "folder" => array('Folder - a directory on this server', 'free'),
+	  "ftp" => array('FTP - Transfer your static site to another server', 'premium'),
+	  "s3" => array('S3 - Amazon\'s Simple Storage Service', 'premium'),
+	  "bunnycdn" => array('BunnyCDN - a low cost CDN allowing static website hosting', 'premium'),
+	  "dropbox" => array('Dropbox - send your static site to Dropbox', 'premium'),
+	  "github" => array('GitHub - host your site for free on GitHub Pages or commit to a specific repo/branch', 'premium'),
+	  "netlify" => array('Netlify - a static website hosting specialist', 'premium')
+	);
+
+	foreach ($options as $key => $value) {
+		if ($value[1] == 'premium' && wpsho_fr()->is_not_paying()) {
+			echo "<option value='$key' disabled>$value[0]</option>";
+		} else {
+			echo "<option value='$key'>$value[0]</option>";
+		}
+	}
+}
+
+?>
+
 <!-- TODO: disable options when not premium -->
 <!-- disabled="disabled" -->
 <select class="selected_deployment_method" name="selected_deployment_option">
-  <option value="">Choose where to deploy your static site to</option>
-  <option value="zip">ZIP - a downloadable ZIP file of your statically exported site</option>
-  <option value="folder">Folder - a directory on this server</option>
-  <option value="ftp">FTP - Transfer your static site to another server</option>
-  <option  value="s3">S3 - Amazon's Simple Storage Service</option>
-  <option value="bunnycdn">BunnyCDN - a low cost CDN allowing static website hosting</option>
-  <option value="dropbox">Dropbox - send your static site to Dropbox</option>
-  <option value="github">GitHub - host your site for free on GitHub Pages or commit to a specific repo/branch</option>
-  <option value="netlify">Netlify - a static website hosting specialist</option>
+
+<?php generateDeploymentMethodOptions(); ?>
+
 </select>
 
 <?php
