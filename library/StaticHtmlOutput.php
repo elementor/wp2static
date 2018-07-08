@@ -6,7 +6,7 @@
  */
 
 class StaticHtmlOutput_Controller {
-	const VERSION = '3.1';
+	const VERSION = '4.0';
 	const OPTIONS_KEY = 'wp-static-html-output-options';
 	const HOOK = 'wp-static-html-output';
 
@@ -230,10 +230,7 @@ class StaticHtmlOutput_Controller {
 		echo 'SUCCESS';
 	}	
 
-	// clean up files possibly left behind by a partial export
-	public function cleanup_working_files() {
-		WsLog::l('CLEANING WORKING FILES:');
-
+	public function pre_export_cleanup() {
 		$files_to_clean = array(
 			'/WP-STATIC-EXPORT-TARGETS',
 			'/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT',
@@ -248,15 +245,42 @@ class StaticHtmlOutput_Controller {
 		);
 
 		foreach ($files_to_clean as $file_to_clean) {
-			if ( file_exists($this->_uploadsPath . $file_to_clean) ) {
-				unlink($this->_uploadsPath . $file_to_clean);
-			}
+			if ( file_exists($this->_uploadsPath . '/' . $file_to_clean) ) {
+				unlink($this->_uploadsPath . '/' . $file_to_clean);
+			} 
+		}
+		
+	}
+
+	// clean up files possibly left behind by a partial export
+	public function cleanup_working_files() {
+		WsLog::l('CLEANING WORKING FILES:');
+
+		$files_to_clean = array(
+			'/WP-STATIC-EXPORT-TARGETS',
+			'/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT',
+			'/WP-STATIC-EXPORT-FTP-FILES-TO-EXPORT',
+			'/WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT',
+			'/WP-STATIC-EXPORT-DROPBOX-FILES-TO-EXPORT',
+			'/WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT',
+			'/WP-STATIC-CRAWLED-LINKS',
+			'/WP-STATIC-INITIAL-CRAWL-LIST',
+			//'/WP-STATIC-CURRENT-ARCHIVE', // needed for zip download, diff deploys, etc
+			//'WP-STATIC-EXPORT-LOG'
+		);
+
+		foreach ($files_to_clean as $file_to_clean) {
+			if ( file_exists($this->_uploadsPath . '/' . $file_to_clean) ) {
+				unlink($this->_uploadsPath . '/' . $file_to_clean);
+			} 
 		}
 
 		echo 'SUCCESS';
 	}
 
 	public function start_export($viaCLI = false) {
+		$this->pre_export_cleanup();
+
         // set options from GUI or override via CLI
         $sendViaGithub = filter_input(INPUT_POST, 'sendViaGithub');
         $sendViaFTP = filter_input(INPUT_POST, 'sendViaFTP');
@@ -304,6 +328,7 @@ class StaticHtmlOutput_Controller {
         WsLog::l('STARTING EXPORT: WP SITEURL ' . get_option('siteurl') );
         WsLog::l('STARTING EXPORT: WP HOME ' . get_option('home') );
         WsLog::l('STARTING EXPORT: WP ADDRESS ' . get_bloginfo('wpurl') );
+        WsLog::l('STARTING EXPORT: PLUGIN VERSION ' . $this::VERSION );
         WsLog::l('STARTING EXPORT: VIA CLI? ' . $viaCLI);
         WsLog::l('STARTING EXPORT: STATIC EXPORT URL ' . filter_input(INPUT_POST, 'baseUrl') );
 
@@ -889,6 +914,7 @@ class StaticHtmlOutput_Controller {
 
 		echo 'SUCCESS';
 	}	
+
 
     public function post_export_teardown() {
         WsLog::l('POST EXPORT CLEANUP: starting...');

@@ -3,13 +3,13 @@
  * Plugin Name: WP Static HTML Output
  * Plugin URI:  https://leonstafford.github.io
  * Description: The optimum solution to speed up and secure your WordPress site - export to static HTML and hide all traces of WordPress from your site!
- * Version:     3.1
+ * Version:     4.0
  * Author:      Leon Stafford
  * Author URI:  https://leonstafford.github.io
  * Text Domain: static-html-output-plugin
  * Copyright (c) 2017 Leon Stafford
  * 
- * @fs_premium_only /library/FTP/, /library/Github/, /library/CloudFront/, /library/Psr/, /library/S3/, /library/GuzzleHttp/
+ * @fs_premium_only /library/StaticHtmlOutput/BunnyCDN.php, /library/StaticHtmlOutput/Dropbox.php, /library/StaticHtmlOutput/FTP.php, /library/StaticHtmlOutput/GitHub.php, /library/StaticHtmlOutput/Netlify.php, /library/FTP/, /library/Github/, /library/CloudFront/, /library/Psr/, /library/S3/, /library/GuzzleHttp/
  * 
  * @package     WP_Static_HTML_Output
  */

@@ -4,7 +4,7 @@ Donate link: https://www.paypal.me/leonjstafford
 Tags: static,html,export,performance,security,cache,s3,dropbox,github,netlify,bunnycdn
 Requires at least: 3.2
 Tested up to: 4.9.6
-Stable tag: 3.1
+Stable tag: 4.0
 
 
 The optimum solution to speed up and secure your WordPress site - export to static HTML and hide all traces of WordPress from your site!
@@ -13,24 +13,30 @@ The optimum solution to speed up and secure your WordPress site - export to stat
 
 The optimum solution to speed up and secure your WordPress site - export to static HTML and hide all traces of WordPress from your site!
 
+Tired of your WordPress sites getting hacked? 
+
+Your visitors not sticking around due to your site loading too slow?
+
+
 = Features =
 
+ * protects you from malicious attacks/malware
+ * speeds up your site by not hitting the database or executing any PHP code
  * generates a standalone, static html copy of your whole WordPress website
  * removes all traces of WordPress from your exported site
- * protects you from malicious attacks/malware
- * auto-deploy to a local folder or ZIP file
+ * auto-deploy to a folder on your server or download a ZIP file
  * specify extra files to include in the output (ie, dynamically loaded assets)
  * desktop notifications alert you to when exports are complete
  * multi-language support (English/Japanese currently, Spanish and Chinese in progress)
  * realtime logs visible during / saved after export
- * asynchronous exports for some methods overcomes hosting limitations for large site exports
+ * asynchronous exports for deployment methods overcome hosting limitations for large site exports
 
 = Premium features =
 
- * auto-deploy to a FTP, S3, Dropbox, GitHub, Netlify or BunnyCDN
+ * auto-deploy to an FTP server, S3, Dropbox, GitHub, Netlify or BunnyCDN
  * schedule unattended exports via the WP Crontrol plugin or by hitting the custom hook
 
-This plugin produces a static HTML version of your wordpress install, incredibly useful for anyone who would like the publishing power of wordpress but whose webhost doesn't allow dynamic PHP driven sites - such as Dropbox. You can run your development site on a different domain or offline, and the plugin will change all relevant URLs when you publish your site. It's a simple but powerful plugin, and after hitting the publish button, the plugin will output a ZIP file of your entire site, ready to upload straight to it's new home. 
+This plugin produces a static HTML version of your wordpress install, incredibly useful for anyone who would like the publishing power of wordpress but whose webhost doesn't allow dynamic PHP driven sites - such as GitHub Pages. You can run your development site on a different domain or offline, and the plugin will change all relevant URLs when you publish your site. It's a simple but powerful plugin, and after hitting the publish button, the plugin will output a ZIP file of your entire site, ready to upload straight to it's new home. 
 
 = Limitations =
 
@@ -98,6 +104,14 @@ See the readme. In brief: you can't use dynamic WordPress functions such as comm
 2. The main interface (Japanese)
 
 == Changelog ==
+
+= 4.0 =
+
+ * Improvement: simplified UI for easier usage
+ * Improvement: livechat from within plugin for easier support (during support hours)
+ * Improvement: basic auth setting available for free users
+ * Improvement: ability to reset plugin to default settings
+ * Bugfix: fix from crawling prematurely ending when empty files encountered
 
 = 3.1 =
 
@@ -327,6 +341,16 @@ Altered main codebase to fix recursion bug and endless loop. Essential upgrade.
 Initial release to Wordpress community
 
 == Upgrade Notice ==
+
+Major upgrade recommended for all users. Adds new functionality and fixes a major bug.
+
+= 4.0 =
+
+ * Improvement: simplified UI for easier usage
+ * Improvement: livechat from within plugin for easier support (during support hours)
+ * Improvement: basic auth setting available for free users
+ * Improvement: ability to reset plugin to default settings
+ * Bugfix: fix from crawling prematurely ending when empty files encountered
 
 = 3.1 =
 
