@@ -217,6 +217,7 @@ jQuery(document).ready(function($){
 	$('.selected_deployment_method').change(function() {
 		renderSettingsBlock(this.value);
 		setDeploymentMethod(this.value);
+		updateBaseURLReferences();
     });
 
 	// update base url previews in realtime
