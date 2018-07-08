@@ -106,6 +106,7 @@ class StaticHtmlOutput_Controller {
 				->assign('wpUploadsDir', $this->_uploadsURL)
 				->assign('wpPluginDir', plugins_url('/', __FILE__))
 				->assign('onceAction', self::HOOK . '-options')
+				->assign('uploadsPath', $this->_uploadsPath)
 				->render();
 		}
 	}
