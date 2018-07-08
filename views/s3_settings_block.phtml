@@ -46,15 +46,26 @@
 
 <br> <br>
 
-	<?php echo displayTextfield($this, 's3Key', 'S3 Key', 'required, ie, AKIAIOSFODNN7EXAMPLE'); ?>
+	<?php echo displayTextfield($this, 's3Key', 'S3 Key', 'ie, AKIAIOSFODNN7EXAMPLE'); ?>
+
+<p><i>Required</i> Your S3 user will need permissions to put objects into the bucket. Check that the user whose Key you are using has the correct permissions for S3. You may attach the 'AmazonS3FullAccess' to the user or give more fine grained permissions control via <a href="https://aws.amazon.com/iam/" target="_blank">AWS's IAM</a>. 
 
 <br> <br>
 
 					  <strong><label for="s3Secret"><?php echo __('S3 Secret', 'static-html-output-plugin');?></label></strong>
 
+
 <br> <br>
 
 	<?php echo displayTextfield($this, 's3Secret', 'S3 Secret', 'ie, wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY', 'password'); ?>
+
+<p><i>Required</i> The paired Secret to the Key above. 
+
+<br> <br>
+
+					  <strong><label for="s3Region"><?php echo __('S3 Region', 'static-html-output-plugin');?></label></strong>
+
+<br> <br>
 
 	<select name="s3Region" id="s3Region">
 		<option value="us-east-1">US East (N. Virginia)</option>
@@ -76,11 +87,38 @@
 		<option value="cn-north-1">China (Beijing)</option>
 		<option value="cn-northwest-1">China (Ningxia)</option>
 	</select>
-	<span class="description">choose the region your bucket is in</span>
+	<span class="description">choose the region your bucket was created in</span>
 	<br>
 
+<p><i>Required</i> This will be shown next to your bucket in the AWS Console. 
+
+<br> <br>
+
+					  <strong><label for="s3Bucket"><?php echo __('S3 Bucket', 'static-html-output-plugin');?></label></strong>
+
+<br> <br>
+
 	<?php echo displayTextfield($this, 's3Bucket', 'S3 Bucket', 'ie, my-static-site'); ?>
+
+<p><i>Required</i> Your bucket name as it appears in your <a href="https://s3.console.aws.amazon.com/s3/home" target="_blank">AWS Console for S3</a>.
+
+<br> <br>
+
+	  <strong><label for="s3RemotePath"><?php echo __('S3 Sub Folder', 'static-html-output-plugin');?></label></strong>
+
+<br> <br>
+
 	<?php echo displayTextfield($this, 's3RemotePath', 'Subfolder in your bucket', 'ie, static-website'); ?>
+
+<p><i>Optional</i> In case you want to put your site in a sub directory of a bucket, this will deploy all the static website files into the folder name you specify here.
+
+<br> <br>
+
+	  <strong><label for="cfDistributionId"><?php echo __('CloudFront Cache Invalidation', 'static-html-output-plugin');?></label></strong>
+
+<br> <br>
 	<?php echo displayTextfield($this, 'cfDistributionId', 'CloudFront Distribution ID', 'ie, ABC123DEFX'); ?>
+
+<p><i>Optional</i> If using CloudFront in your S3 static website setup, enter the CloudFront Distribution ID here and it will create an invalidation request for all files at the end of the deployment process. The invalidation usually happens within a few minutes. You can check any pending invalidations in your <a href="https://console.aws.amazon.com/cloudfront/home" target="_blank">AWS Console's CloudFront page</a>. You AWS user will need to have the CloudFrontFullAccess permissions or a more controlled policy, that includes the ability to send CloudFront invalidation requests.
 
 </div>
