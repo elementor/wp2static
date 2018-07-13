@@ -1149,19 +1149,31 @@ class StaticHtmlOutput_UrlRequest
 		$responseBody = str_replace(
 			array(
 				$wp_site_environment['wp_active_theme'],
+				addcslashes($wp_site_environment['wp_active_theme'], '/'),
 				$wp_site_environment['wp_themes'], 
+				addcslashes($wp_site_environment['wp_themes'], '/'),
 				$wp_site_environment['wp_uploads'], 
+				addcslashes($wp_site_environment['wp_uploads'], '/'),
 				$wp_site_environment['wp_plugins'], 
+				addcslashes($wp_site_environment['wp_plugins'], '/'),
 				$wp_site_environment['wp_content'], 
+				addcslashes($wp_site_environment['wp_content'], '/'),
 				$wp_site_environment['wp_inc'], 
+				addcslashes($wp_site_environment['wp_inc'], '/'),
 			),
 			array(
 				$overwrite_slug_targets['new_active_theme_path'],
+				addcslashes($overwrite_slug_targets['new_active_theme_path'], '/'),
 				$overwrite_slug_targets['new_themes_path'],
+				addcslashes($overwrite_slug_targets['new_themes_path'], '/'),
 				$overwrite_slug_targets['new_uploads_path'],
+				addcslashes($overwrite_slug_targets['new_uploads_path'], '/'),
 				$overwrite_slug_targets['new_plugins_path'],
+				addcslashes($overwrite_slug_targets['new_plugins_path'], '/'),
 				$overwrite_slug_targets['new_wp_content_path'],
+				addcslashes($overwrite_slug_targets['new_wp_content_path'], '/'),
 				$overwrite_slug_targets['new_wpinc_path'],
+				addcslashes($overwrite_slug_targets['new_wpinc_path'], '/'),
 			),
 			$responseBody);
 
@@ -1254,7 +1266,7 @@ class StaticHtmlOutput_UrlRequest
         }
 		
 	}
-	
+
 	public function replaceBaseUrl($oldBaseUrl, $newBaseUrl)
 	{
 		if ($this->isRewritable())

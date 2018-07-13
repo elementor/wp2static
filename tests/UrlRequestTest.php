@@ -215,11 +215,6 @@ final class StaticHtmlOutput_UrlRequestTest extends TestCase {
     }
 
     public function testRewritesWordpressSlugsAndStripsWordpressMetaFromHtml(): void {
-		//$this->markTestSkipped('Test is a WIP');
-
-		$wpURL = 'http://mysite.example.com';
-		$baseURL = 'http://subdomain.google.com';
-
 		$url = 'http://someurl.com';	
 		$basicAuth = null;
 
@@ -356,11 +351,6 @@ EOHTML;
     }
 
     public function testRewritesEscapedURLs(): void {
-		//$this->markTestSkipped('Test is a WIP');
-
-		$wpURL = 'http://mysite.example.com';
-		$baseURL = 'http://subdomain.google.com';
-
 		$url = 'http://someurl.com';	
 		$basicAuth = null;
 
@@ -387,7 +377,7 @@ $escaped_url_block = <<<EOHTML
 EOHTML;
 
 $escaped_url_block_expected_rewrite = <<<EOHTML
-<section  id="hero"  data-images="[&quot;https:\/\/subdomain.google.com\/contents\/ui\/theme\/assets\/images\/hero5.jpg&quot;]"             class="hero-slideshow-wrapper hero-slideshow-normal">
+<section  id="hero"  data-images="[&quot;https:\/\/mysite.example.com\/contents\/ui\/theme\/assets\/images\/hero5.jpg&quot;]"             class="hero-slideshow-wrapper hero-slideshow-normal">
 EOHTML;
 
 		// mock getResponseBody with testable HTML content
@@ -416,7 +406,7 @@ EOHTML;
 			'wp_uploads' =>  '/wp-content/uploads',	
 			'wp_plugins' =>  '/wp-content/plugins',	
 			'wp_themes' =>  '/wp-content/themes',	
-			'wp_active_theme' =>  '/wp-content/themes/twentyseventeen',	
+			'wp_active_theme' =>  '/wp-content/themes/onepress',	
 			'site_url' =>  'http://172.17.0.3'
 		);
 
