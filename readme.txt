@@ -1,9 +1,10 @@
 === WP Static HTML Output ===
-Contributors: leonstafford
+Contributors: leonstafford,cache1
 Donate link: https://www.paypal.me/leonjstafford
-Tags: static,html,export,performance,security,cache,s3,dropbox,github,netlify,bunnycdn
+Tags: static,cache,wp super cache,wp fastest cache,w3 total cache,security,export,s3,dropbox,github,netlify,bunnycdn,html
 Requires at least: 3.2
 Tested up to: 4.9.7
+Requires PHP: 5
 Stable tag: 4.0
 
 
@@ -15,7 +16,11 @@ The optimum solution to speed up and secure your WordPress site - export to stat
 
 Tired of your WordPress sites getting hacked? 
 
-Your visitors not sticking around due to your site loading too slow?
+A static site closes all the doors that an out of date WordPress, theme or plugin can leave open.
+
+Your visitors not sticking around due to your site loading too slow? 
+
+A pre-generated static site can outperform popular caching plugins like WP Super Cache, WP Fastest Cache and W3 Total Cache.
 
 
 = Features =
