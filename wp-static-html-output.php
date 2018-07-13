@@ -36,6 +36,10 @@ if ( ! function_exists( 'wpsho_fr' ) ) {
 				'has_premium_version' => true,
 				'has_addons'          => false,
 				'has_paid_plans'      => true,
+				'trial'               => array(
+					'days'               => 7,
+					'is_require_payment' => true,
+				),
 				'menu'                => array(
 					'slug'           => 'wp-static-html-output-options',
 					'parent'         => array(

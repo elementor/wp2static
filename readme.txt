@@ -3,7 +3,7 @@ Contributors: leonstafford
 Donate link: https://www.paypal.me/leonjstafford
 Tags: static,html,export,performance,security,cache,s3,dropbox,github,netlify,bunnycdn
 Requires at least: 3.2
-Tested up to: 4.9.6
+Tested up to: 4.9.7
 Stable tag: 4.0
 
 
@@ -23,39 +23,16 @@ Your visitors not sticking around due to your site loading too slow?
  * protects you from malicious attacks/malware
  * speeds up your site by not hitting the database or executing any PHP code
  * generates a standalone, static html copy of your whole WordPress website
- * removes all traces of WordPress from your exported site
- * auto-deploy to a folder on your server or download a ZIP file
- * specify extra files to include in the output (ie, dynamically loaded assets)
+ * removes tell-tale signs your site is running WordPress, making it unattractive to hackers
+ * auto-deploy to a folder on your server, a ZIP file, FTP server, S3, Dropbox, GitHub, Netlify or BunnyCDN
+ * schedule unattended exports via the WP Crontrol plugin or by hitting the custom hook
  * desktop notifications alert you to when exports are complete
  * multi-language support (English/Japanese currently, Spanish and Chinese in progress)
  * realtime logs visible during / saved after export
  * asynchronous exports for deployment methods overcome hosting limitations for large site exports
 
-= Premium features =
-
- * auto-deploy to an FTP server, S3, Dropbox, GitHub, Netlify or BunnyCDN
- * schedule unattended exports via the WP Crontrol plugin or by hitting the custom hook
-
 This plugin produces a static HTML version of your wordpress install, incredibly useful for anyone who would like the publishing power of wordpress but whose webhost doesn't allow dynamic PHP driven sites - such as GitHub Pages. You can run your development site on a different domain or offline, and the plugin will change all relevant URLs when you publish your site. It's a simple but powerful plugin, and after hitting the publish button, the plugin will output a ZIP file of your entire site, ready to upload straight to it's new home. 
 
-= Limitations =
-
- * The nature of a static site implies that any dynamic elements of your wordpress install that reply upon Wordpress plugins or internal functions to operate dynamically will no longer work. Significantly, this means comments. You can workaround this by including a non-Wordpress version of an external comments provider into your theme code, such as the Disqus comment system. Any page elements that rely upon Javascript will function normally. 
- * inability to correctly capture some relative links in posts
- * inability to detect assets dynamically loaded via javascript after page load, these will need to specified separately (but will work)
-
-= Similar plugins =
-
-Having issues with this plugin? I try to support any issues via the official support forum or email, but if you want to try some other plugins for static export, give these a go:
-
- * [Simply Static](https://wordpress.org/plugins/simply-static/)
-
-= Planned upgrades =
-
- * re-write export to relative URLs
- * progress meter to show % of .ZIP creation
- * selectively export only changed pages since last output
- * increase 1-click deployment options
 
 Developed by [**Leon Stafford**](http://leonstafford.github.io). If you have any questions about this plugin's usage, installation or development, please email me at: [leonstafford@protonmail.com](mailto:leonstafford@protonmail.com)
 
