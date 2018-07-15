@@ -89,6 +89,10 @@ See the readme. In brief: you can't use dynamic WordPress functions such as comm
 
 == Changelog ==
 
+= 4.1 =
+
+ * Bugfix: fix for rewriting escaped URLs within JavaScript for some themes
+
 = 4.0 =
 
  * Improvement: simplified UI for easier usage
@@ -326,9 +330,13 @@ Initial release to Wordpress community
 
 == Upgrade Notice ==
 
-Major upgrade recommended for all users. Adds new functionality and fixes a major bug.
+= 4.1 =
+
+ * Bugfix: fix for rewriting escaped URLs within JavaScript for some themes
 
 = 4.0 =
+
+Major upgrade recommended for all users. Adds new functionality and fixes a major bug.
 
  * Improvement: simplified UI for easier usage
  * Improvement: livechat from within plugin for easier support (during support hours)
