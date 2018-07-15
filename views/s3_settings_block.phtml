@@ -16,6 +16,19 @@
 					  <strong><label><?php echo __('Settings for the S3 deployment method', 'static-html-output-plugin');?></label></strong>
 
 					<p>
+<?php if ( wpsho_fr()->is_not_paying() ) : ?>
+
+<div class="card">
+		<h2 class="title">Premium deployment option</h2>
+		<p>Get all the deployment options and advanced features with a 
+			<a href="<?php echo wpsho_fr()->get_upgrade_url(); ?>">premium subscription</a>.</p>
+
+		<p>Exporting to this method will not work without upgrading, but you can stil deploy to a folder, ZIP or to an FTP server.</p>
+</div>
+
+<br>
+
+<?php endif; ?>
 
 
 					  <strong><label for="baseUrl"><?php echo __('Base Url', 'static-html-output-plugin');?></label></strong>

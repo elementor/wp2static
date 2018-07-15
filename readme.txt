@@ -23,6 +23,8 @@ Your visitors not sticking around due to your site loading too slow?
 A pre-generated static site can outperform popular caching plugins like WP Super Cache, WP Fastest Cache and W3 Total Cache.
 
 
+[**https://wp2static.com**](https://wp2static.com/)
+
 = Features =
 
  * protects you from malicious attacks/malware
