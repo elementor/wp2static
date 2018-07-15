@@ -61,7 +61,7 @@
         $plan                       = $fs_addon->get_plan();
         $is_active_subscription     = ( is_object( $subscription ) && $subscription->is_active() );
         $is_paid_trial              = $fs_addon->is_paid_trial();
-        $show_upgrade               = ( ! $is_paying && ! $is_paid_trial && ! $fs_addon->_has_premium_license() );
+        $show_upgrade               = ( $fs_addon->has_paid_plan() && ! $is_paying && ! $is_paid_trial && ! $fs_addon->_has_premium_license() );
         $is_current_license_expired = is_object( $license ) && $license->is_expired();
     }
 ?>
@@ -220,7 +220,7 @@
             }
 
             if ( 0 == count( $buttons ) ) {
-                if ( $fs_addon->is_premium() ) {
+                if ( $show_upgrade && $fs_addon->is_premium() ) {
                     $fs_addon->_add_license_activation_dialog_box();
 
                     $buttons[] = fs_ui_get_action_button(

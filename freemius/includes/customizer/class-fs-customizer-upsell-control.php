@@ -59,7 +59,7 @@
 				$this->fs->get_upgrade_url();
 
 			// Load features.
-			$pricing = $this->fs->get_api_plugin_scope()->get( 'pricing.json' );
+			$pricing = $this->fs->get_api_plugin_scope()->get( $this->fs->add_show_pending( "pricing.json" ) );
 
 			if ( $this->fs->is_api_result_object( $pricing, 'plans' ) ) {
 				// Add support features.
