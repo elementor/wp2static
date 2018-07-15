@@ -87,18 +87,15 @@ class StaticHtmlOutput_FTP
 	
 	// TODO: move this into a parent class as identical to bunny and probably others
     public function prepare_deployment() {
-		if ( wpsho_fr()->is__premium_only() ) {
+		$this->test_connection();
 
-			$this->test_connection();
+		WsLog::l('FTP EXPORT: Preparing list of files to transfer');
 
-			WsLog::l('FTP EXPORT: Preparing list of files to transfer');
+		$this->clear_file_list();
 
-			$this->clear_file_list();
+		$this->create_ftp_deployment_list($this->_archiveName, $this->_archiveName, $this->_remotePath);
 
-			$this->create_ftp_deployment_list($this->_archiveName, $this->_archiveName, $this->_remotePath);
-
-			echo 'SUCCESS';
-		}
+		echo 'SUCCESS';
     }
 
 	public function get_item_to_export() {
@@ -124,59 +121,53 @@ class StaticHtmlOutput_FTP
 
 	
     public function transfer_files() {
-		if ( wpsho_fr()->is__premium_only() ) {
-			require_once(__DIR__.'/../FTP/FtpClient.php');
-			require_once(__DIR__.'/../FTP/FtpException.php');
-			require_once(__DIR__.'/../FTP/FtpWrapper.php');
+		require_once(__DIR__.'/../FTP/FtpClient.php');
+		require_once(__DIR__.'/../FTP/FtpException.php');
+		require_once(__DIR__.'/../FTP/FtpWrapper.php');
 
-			if ($this->get_remaining_items_count() < 0) {
-				echo 'ERROR';
-				die();
-			}
+		if ($this->get_remaining_items_count() < 0) {
+			echo 'ERROR';
+			die();
+		}
 
-			$line = $this->get_item_to_export();
+		$line = $this->get_item_to_export();
+		list($fileToTransfer, $targetPath) = explode(',', $line);
+		$targetPath = rtrim($targetPath);
 
-			list($fileToTransfer, $targetPath) = explode(',', $line);
+		// vendor specific from here
+		$ftp = new \FtpClient\FtpClient();
+		$ftp->connect($this->_host);
+		$ftp->login($this->_username, $this->_password);
 
-			$targetPath = rtrim($targetPath);
+		if ( $this->_activeMode ) {
+			WsLog::l('FTP EXPORT: setting ACTIVE transfer mode');
+			$ftp->pasv(false);
+		} else {
+			$ftp->pasv(true);
+		}
 
+		WsLog::l('FTP EXPORT: transferring ' .  basename($fileToTransfer) . ' TO ' . $targetPath);
+	   
+		if ($ftp->isdir($targetPath)) {
+			WsLog::l('FTP EXPORT: Remote dir exists');
+		} else {
+			WsLog::l('FTP EXPORT: Creating remote dir');
+			$mkdir_result = $ftp->mkdir($targetPath, true); // true = recursive creation
+		}
 
-			// vendor specific from here
-			$ftp = new \FtpClient\FtpClient();
-			
-			$ftp->connect($this->_host);
-			$ftp->login($this->_username, $this->_password);
+		$ftp->chdir($targetPath);
+		$ftp->putFromPath($fileToTransfer);
+	  
+		unset($ftp);
+		// end vendor specific 
 
-			if ( $this->_activeMode ) {
-				WsLog::l('FTP EXPORT: setting ACTIVE transfer mode');
-				$ftp->pasv(false);
-			} else {
-				$ftp->pasv(true);
-			}
+		$filesRemaining = $this->get_remaining_items_count();
 
-			WsLog::l('FTP EXPORT: transferring ' .  basename($fileToTransfer) . ' TO ' . $targetPath);
-		   
-			if ($ftp->isdir($targetPath)) {
-				WsLog::l('FTP EXPORT: Remote dir exists');
-			} else {
-				WsLog::l('FTP EXPORT: Creating remote dir');
-				$mkdir_result = $ftp->mkdir($targetPath, true); // true = recursive creation
-			}
-
-			$ftp->chdir($targetPath);
-			$ftp->putFromPath($fileToTransfer);
-		  
-			unset($ftp);
-			// end vendor specific 
-
-			$filesRemaining = $this->get_remaining_items_count();
-
-			if ( $this->get_remaining_items_count() > 0 ) {
-				WsLog::l('FTP EXPORT: ' . $filesRemaining . ' files remaining to transfer');
-				echo $this->get_remaining_items_count();
-			} else {
-				echo 'SUCCESS';
-			}
+		if ( $this->get_remaining_items_count() > 0 ) {
+			WsLog::l('FTP EXPORT: ' . $filesRemaining . ' files remaining to transfer');
+			echo $this->get_remaining_items_count();
+		} else {
+			echo 'SUCCESS';
 		}
     }
 
