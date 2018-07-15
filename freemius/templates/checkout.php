@@ -121,7 +121,7 @@
 
 		$fs_user = Freemius::_get_user_by_email( $current_user->user_email );
 
-		if ( is_object( $fs_user ) ) {
+		if ( is_object( $fs_user ) && $fs_user->is_verified() ) {
 			$context_params = array_merge( $context_params, FS_Security::instance()->get_context_params(
 				$fs_user,
 				$timestamp,
@@ -233,7 +233,7 @@
 						// passed via query string or hard coded into the child page, it depends on your needs).
 						src          = base_url + '/?<?php echo http_build_query( $query_params ) ?>#' + encodeURIComponent(document.location.href),
 						// Append the i-frame into the DOM.
-						frame        = $('<i' + 'frame " src="' + src + '" width="100%" height="' + frame_height + 'px" scrolling="no" frameborder="0" style="background: transparent;"><\/i' + 'frame>')
+						frame        = $('<i' + 'frame " src="' + src + '" width="100%" height="' + frame_height + 'px" scrolling="no" frameborder="0" style="background: transparent; width: 1px; min-width: 100%;"><\/i' + 'frame>')
 							.appendTo('#frame');
 
 					FS.PostMessage.init(base_url, [frame[0]]);

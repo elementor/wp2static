@@ -101,7 +101,7 @@
             $has_features = false;
             $plans        = false;
 
-            $result = $this->_fs->get_api_plugin_scope()->get( "/addons/{$selected_addon->id}/pricing.json?type=visible" );
+            $result = $this->_fs->get_api_plugin_scope()->get( $this->_fs->add_show_pending( "/addons/{$selected_addon->id}/pricing.json?type=visible" ) );
 
             if ( ! isset( $result->error ) ) {
                 $plans = $result->plans;
@@ -165,6 +165,8 @@
                     // Plugin is missing, not on Freemius nor WP.org.
                     $data->wp_org_missing = true;
                 }
+
+                $data->fs_missing = ( ! $has_free_plan || $data->wp_org_missing );
             } else {
                 $data->wp_org_missing = false;
 
@@ -183,12 +185,7 @@
 
                 // Fetch as much as possible info from local files.
                 $plugin_local_data = $this->_fs->get_plugin_data();
-                $data->name        = $selected_addon->title;
                 $data->author      = $plugin_local_data['Author'];
-                $view_vars         = array( 'plugin' => $selected_addon );
-                $data->sections    = array(
-                    'description' => fs_get_template( '/plugin-info/description.php', $view_vars ),
-                );
 
                 if ( ! empty( $selected_addon->info->banner_url ) ) {
                     $data->banners = array(
@@ -216,6 +213,12 @@
                     // Add message to developer to deploy the plugin through Freemius.
                 }
             }
+
+            $data->name     = $selected_addon->title;
+            $view_vars      = array( 'plugin' => $selected_addon );
+            $data->sections = array(
+                'description' => fs_get_template( '/plugin-info/description.php', $view_vars ),
+            );
 
             if ( $has_pricing ) {
                 // Add plans to data.
@@ -950,7 +953,7 @@
                                 </li>
                                 <?php
                             }
-                            if ( ! empty( $api->slug ) && empty( $api->is_wp_org_compliant ) ) {
+                            if ( ! empty( $api->slug ) && true == $api->is_wp_org_compliant ) {
                                 ?>
                                 <li><a target="_blank"
                                        href="https://wordpress.org/plugins/<?php echo $api->slug; ?>/"><?php fs_esc_html_echo_inline( 'WordPress.org Plugin Page', 'wp-org-plugin-page', $api->slug ) ?>
@@ -1094,7 +1097,7 @@
             echo "</div>\n"; // #plugin-information-scrollable
             echo "<div id='$tab-footer'>\n";
 
-            if ( ! empty( $api->checkout_link ) ) {
+            if ( $api->has_paid_plan && ! empty( $api->checkout_link ) ) {
                 echo $this->get_checkout_cta( $api );
             }
 

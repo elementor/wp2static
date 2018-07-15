@@ -29,6 +29,11 @@
          * @since 1.1.8.1
          */
         private $_update_details;
+        /**
+         * @var array
+         * @since 2.1.2
+         */
+        private $_translation_updates;
 
         #--------------------------------------------------------------------------------
         #region Singleton
@@ -324,6 +329,46 @@
                     (array) $this->_update_details;
             }
 
+            $slug = $this->_fs->get_slug();
+
+            if ( $this->_fs->is_org_repo_compliant() && $this->_fs->is_freemium() ) {
+                if ( ! isset( $this->_translation_updates ) ) {
+                    $this->_translation_updates = array();
+
+                    if ( current_user_can( 'update_languages' ) ) {
+                        $translation_updates = $this->fetch_wp_org_module_translation_updates( $module_type, $slug );
+                        if ( ! empty( $translation_updates ) ) {
+                            $this->_translation_updates = $translation_updates;
+                        }
+                    }
+                }
+
+                if ( ! empty( $this->_translation_updates ) ) {
+                    $all_translation_updates = ( isset( $transient_data->translations ) && is_array( $transient_data->translations ) ) ?
+                        $transient_data->translations :
+                        array();
+
+                    $current_plugin_translation_updates_map = array();
+                    foreach ( $all_translation_updates as $key => $translation_update ) {
+                        if ( $module_type === ( $translation_update['type'] . 's' ) && $slug === $translation_update['slug'] ) {
+                            $current_plugin_translation_updates_map[ $translation_update['language'] ] = $translation_update;
+                            unset( $all_translation_updates[ $key ] );
+                        }
+                    }
+
+                    foreach ( $this->_translation_updates as $translation_update ) {
+                        $lang = $translation_update['language'];
+                        if ( ! isset( $current_plugin_translation_updates_map[ $lang ] ) ||
+                            version_compare( $translation_update['version'], $current_plugin_translation_updates_map[ $lang ]['version'], '>' )
+                        ) {
+                            $current_plugin_translation_updates_map[ $lang ] = $translation_update;
+                        }
+                    }
+
+                    $transient_data->translations = array_merge( $all_translation_updates, array_values( $current_plugin_translation_updates_map ) );
+                }
+            }
+
             return $transient_data;
         }
 
@@ -506,6 +551,138 @@
             }
 
             return $res;
+        }
+
+        /**
+         * Fetches module translation updates from wordpress.org.
+         *
+         * @author Leo Fajardo (@leorw)
+         * @since  2.1.2
+         *
+         * @param string $module_type
+         * @param string $slug
+         *
+         * @return array|null
+         */
+        private function fetch_wp_org_module_translation_updates( $module_type, $slug ) {
+            $plugin_data = $this->_fs->get_plugin_data();
+
+            $locales = array_values( get_available_languages() );
+            $locales = apply_filters( "{$module_type}_update_check_locales", $locales );
+            $locales = array_unique( $locales );
+
+            $plugin_basename = $this->_fs->get_plugin_basename();
+            if ( 'themes' === $module_type ) {
+                $plugin_basename = str_replace( '-premium', '', $plugin_basename );
+            }
+
+            global $wp_version;
+
+            $request_args = array(
+                'timeout' => 15,
+                'body'    => array(
+                    "{$module_type}" => json_encode(
+                        array(
+                            "{$module_type}" => array(
+                                $plugin_basename => array(
+                                    'Name'   => trim( str_replace( '(Premium)', '', $plugin_data['Name'] ) ),
+                                    'Author' => $plugin_data['Author'],
+                                )
+                            )
+                        )
+                    ),
+                    'translations'    => json_encode( $this->get_installed_translations( $module_type, $slug ) ),
+                    'locale'          => json_encode( $locales )
+                ),
+                'user-agent' => ( 'WordPress/' . $wp_version . '; ' . home_url( '/' ) )
+            );
+
+            $url = "http://api.wordpress.org/{$module_type}/update-check/1.1/";
+            if ( $ssl = wp_http_supports( array( 'ssl' ) ) ) {
+                $url = set_url_scheme( $url, 'https' );
+            }
+
+            $raw_response = Freemius::safe_remote_post(
+                $url,
+                $request_args,
+                WP_FS__TIME_24_HOURS_IN_SEC,
+                WP_FS__TIME_12_HOURS_IN_SEC,
+                false
+            );
+
+            if ( is_wp_error( $raw_response ) ) {
+                return null;
+            }
+
+            $response = json_decode( wp_remote_retrieve_body( $raw_response ), true );
+
+            if ( ! is_array( $response ) ) {
+                return null;
+            }
+
+            if ( ! isset( $response['translations'] ) || empty( $response['translations'] ) ) {
+                return null;
+            }
+
+            return $response['translations'];
+        }
+
+        /**
+         * @author Leo Fajardo (@leorw)
+         * @since 2.1.2
+         *
+         * @param string $module_type
+         * @param string $slug
+         *
+         * @return array
+         */
+        private function get_installed_translations( $module_type, $slug ) {
+            if ( function_exists( 'wp_get_installed_translations' ) ) {
+                return wp_get_installed_translations( $module_type );
+            }
+
+            $dir = "/{$module_type}";
+
+            if ( ! is_dir( WP_LANG_DIR . $dir ) )
+                return array();
+
+            $files = scandir( WP_LANG_DIR . $dir );
+            if ( ! $files )
+                return array();
+
+            $language_data = array();
+
+            foreach ( $files as $file ) {
+                if ( 0 !== strpos( $file, $slug ) ) {
+                    continue;
+                }
+
+                if ( '.' === $file[0] || is_dir( WP_LANG_DIR . "{$dir}/{$file}" ) ) {
+                    continue;
+                }
+
+                if ( substr( $file, -3 ) !== '.po' ) {
+                    continue;
+                }
+
+                if ( ! preg_match( '/(?:(.+)-)?([a-z]{2,3}(?:_[A-Z]{2})?(?:_[a-z0-9]+)?).po/', $file, $match ) ) {
+                    continue;
+                }
+
+                if ( ! in_array( substr( $file, 0, -3 ) . '.mo', $files ) )  {
+                    continue;
+                }
+
+                list( , $textdomain, $language ) = $match;
+
+                if ( '' === $textdomain ) {
+                    $textdomain = 'default';
+                }
+
+                $language_data[ $textdomain ][ $language ] = wp_get_pomo_file_data( WP_LANG_DIR . "{$dir}/{$file}" );
+            }
+
+            return $language_data;
         }
 
         /**

@@ -110,9 +110,7 @@
             parent::__construct( $site );
 
             if ( is_object( $site ) ) {
-				// TODO: rm this override for testing Freemius on middle plan
                 $this->plan_id = $site->plan_id;
-                //$this->plan_id = 3369;
             }
 
             if ( ! is_bool( $this->is_disconnected ) ) {
