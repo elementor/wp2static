@@ -9,7 +9,7 @@
  * Text Domain: static-html-output-plugin
  * Copyright (c) 2017 Leon Stafford
  * 
- * @fs_premium_only /library/StaticHtmlOutput/BunnyCDN.php, /library/StaticHtmlOutput/Dropbox.php, /library/StaticHtmlOutput/FTP.php, /library/StaticHtmlOutput/GitHub.php, /library/StaticHtmlOutput/Netlify.php, /library/FTP/, /library/Github/, /library/CloudFront/, /library/Psr/, /library/S3/, /library/GuzzleHttp/
+ * @fs_premium_only /library/StaticHtmlOutput/BunnyCDN.php, /library/StaticHtmlOutput/Dropbox.php, /library/StaticHtmlOutput/S3.php, /library/StaticHtmlOutput/GitHub.php, /library/StaticHtmlOutput/Netlify.php, /library/FTP/, /library/Github/, /library/CloudFront/, /library/Psr/, /library/S3/, /library/GuzzleHttp/
  * 
  * @package     WP_Static_HTML_Output
  */
@@ -68,11 +68,11 @@ if ( ! function_exists( 'wpsho_fr' ) ) {
 	require_once 'library/StaticHtmlOutput/UrlRequest.php';
 	require_once 'library/StaticHtmlOutput/FilesHelper.php';
 	require_once 'library/StaticHtmlOutput.php';
+	require_once 'library/StaticHtmlOutput/FTP.php';
 	
 	if ( wpsho_fr()->is__premium_only() ) {
 		require_once 'library/StaticHtmlOutput/Netlify.php';
 		require_once 'library/StaticHtmlOutput/BunnyCDN.php';
-		require_once 'library/StaticHtmlOutput/FTP.php';
 		require_once 'library/StaticHtmlOutput/GitHub.php';
 		require_once 'library/StaticHtmlOutput/Dropbox.php';
 		require_once 'library/StaticHtmlOutput/S3.php';

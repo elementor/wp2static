@@ -81,7 +81,7 @@ function generateDeploymentMethodOptions() {
 	  "" => array('Choose where to deploy your static site to', 'free'),
 	  "zip" => array('ZIP - a downloadable ZIP file of your statically exported site', 'free'),
 	  "folder" => array('Folder - a directory on this server', 'free'),
-	  "ftp" => array('FTP - Transfer your static site to another server', 'premium'),
+	  "ftp" => array('FTP - Transfer your static site to another server', 'free'),
 	  "s3" => array('S3 - Amazon\'s Simple Storage Service', 'premium'),
 	  "bunnycdn" => array('BunnyCDN - a low cost CDN allowing static website hosting', 'premium'),
 	  "dropbox" => array('Dropbox - send your static site to Dropbox', 'premium'),
@@ -150,7 +150,7 @@ foreach($deployment_options as $deployment_option) {
 
 
 <?php echo displayCheckbox($this, 'createZip', 'Create a ZIP file of your statically exported site, ready for you to manually deploy. Download link will appear in the Export Log below'); ?>
-<?php echo displayCheckbox($this, 'sendViaFTP', 'Transfer files via FTP', 1); ?>
+<?php echo displayCheckbox($this, 'sendViaFTP', 'Transfer files via FTP'); ?>
 <?php echo displayCheckbox($this, 'sendViaS3', 'Transfer files via S3', 1); ?>
 <?php echo displayCheckbox($this, 'sendViaBUNNYCDN', 'Transfer files via BunnyCDN', 1); ?>
 <?php echo displayCheckbox($this, 'sendViaDropbox', 'Transfer files via Dropbox', 1); ?>
