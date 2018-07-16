@@ -435,12 +435,23 @@ EOHTML;
 $escaped_url_block = <<<EOHTML
 <head>
 <link href='https://mydomain.com/wp-content/themes/onepress/css/font.css' rel='stylesheet' type='text/css'>
+
+https:\/\/mydomain.com\/
+mydomain.com
+//mydomain.com
+http://mydomain.com
 EOHTML;
 
 $escaped_url_block_expected_rewrite = <<<EOHTML
 <head>
 <base href="https://subdomain.mydomain.com" />
-<link href='https://subdomain.mydomain.com/contents/ui/theme/css/font.css' rel='stylesheet' type='text/css'>
+
+<link href='https://subdomain.mydomain.com/wp-content/themes/onepress/css/font.css' rel='stylesheet' type='text/css'>
+
+https:\/\/subdomain.mydomain.com\/
+subdomain.mydomain.com
+//subdomain.mydomain.com
+http://subdomain.mydomain.com
 EOHTML;
 
 		// mock getResponseBody with testable HTML content
@@ -463,4 +474,5 @@ EOHTML;
 
 		$mockUrlResponse->replaceBaseUrl($siteURL, $newDomain);
     }
+
 }
