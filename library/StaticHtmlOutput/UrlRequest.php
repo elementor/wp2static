@@ -1269,47 +1269,22 @@ class StaticHtmlOutput_UrlRequest
 
 	public function replaceBaseUrl($oldBaseUrl, $newBaseUrl)
 	{
+		// TODO: don't rewrite mailto links unless specified, re #30
+
 		if ($this->isRewritable())
 		{
-			$responseBody = str_replace($oldBaseUrl, $newBaseUrl, $this->getResponseBody());
-			$responseBody = str_replace('<head>', "<head>\n<base href=\"" . esc_attr($newBaseUrl) . "\" />\n", $responseBody);
 
-			/* fix for cases where URL has been escaped/modified, ie
-				http:\/\/banana.com\/
-				//banana.com
-				https:// -> http:// */
-			$oldDomain = parse_url($oldBaseUrl);
-			$newDomain = parse_url($newBaseUrl);
+			$oldDomain = str_replace('https://', '', $oldBaseUrl);
+			$oldDomain = str_replace('http://', '', $oldDomain);
+			$oldDomain = str_replace('//', '', $oldDomain);
+			$newDomain = str_replace('https://', '', $newBaseUrl);
+			$newDomain = str_replace('http://', '', $newDomain);
+			$newDomain = str_replace('//', '', $newDomain);
 
-			// Fix JSON encoded URLs
-			$oldBaseUrlJsonEncoded = substr(json_encode($oldBaseUrl), 1, -1);
-			$newBaseUrlJsonEncoded = substr(json_encode($newBaseUrl), 1, -1);
-			$responseBody = str_replace($oldBaseUrlJsonEncoded, $newBaseUrlJsonEncoded, $responseBody);
+			$responseBody = $this->getResponseBody();
+			$responseBody = str_replace('<head>', "<head>\n<base href=\"" . esc_attr($oldBaseUrl) . "\" />\n", $responseBody);
 
-			// Fix JSON encoded protocol relative URLs
-			$oldBaseUrlJsonEncodedRelative = substr(json_encode(substr($oldBaseUrl, strlen($oldDomain['scheme']) + 1)), 1, -1);
-			$newBaseUrlJsonEncodedRelative = substr(json_encode(substr($newBaseUrl, strlen($newDomain['scheme']) + 1)), 1, -1);
-			$responseBody = str_replace($oldBaseUrlJsonEncodedRelative, $newBaseUrlJsonEncodedRelative, $responseBody);
-
-			// Fix URL encoded URLs
-			$oldBaseUrlEncoded = urlencode($oldBaseUrl);
-			$newBaseUrlEncoded = urlencode($newBaseUrl);
-			$responseBody = str_replace($oldBaseUrlEncoded, $newBaseUrlEncoded, $responseBody);
-
-			// Fix URL encoded protocol relative URLs
-			$oldBaseUrlEncodedRelative = urlencode(substr($oldBaseUrl, strlen($oldDomain['scheme']) + 1));
-			$newBaseUrlEncodedRelative = urlencode(substr($newBaseUrl, strlen($newDomain['scheme']) + 1));
-			$responseBody = str_replace($oldBaseUrlEncodedRelative, $newBaseUrlEncodedRelative, $responseBody);
-
-			// Fix plain text URLs
-			$responseBody = str_replace($oldBaseUrl, $newBaseUrl, $responseBody);
-
-			// Fix plain text protocol relative URLs
-			$oldBaseUrlRelative = substr($oldBaseUrl, strlen($oldDomain['scheme']) + 1);
-			$newBaseUrlRelative = substr($newBaseUrl, strlen($newDomain['scheme']) + 1);
-			$responseBody = str_replace($oldBaseUrlRelative, $newBaseUrlRelative, $responseBody);
-
-			$responseBody = str_replace($oldDomain['host'], $newDomain['host'], $responseBody);
+			$responseBody = str_replace($oldDomain, $newDomain, $responseBody);
 
 			$this->setResponseBody($responseBody);
 		}
