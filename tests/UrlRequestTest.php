@@ -350,6 +350,7 @@ EOHTML;
 		$mockUrlResponse->cleanup($wp_site_environment, $overwrite_slug_targets);
     }
 
+
     public function testRewritesEscapedURLs(): void {
 		$url = 'http://someurl.com';	
 		$basicAuth = null;
@@ -365,12 +366,6 @@ EOHTML;
 			->setConstructorArgs([$url, $basicAuth])
 			->getMock();
 
-		// simulate a HTML file being detected
-		$mockUrlResponse->method('isHtml')
-             ->willReturn(true);
-
-		$mockUrlResponse->method('isCSS')
-             ->willReturn(false);
 
 $escaped_url_block = <<<EOHTML
 <section  id="hero"  data-images="[&quot;https:\/\/mysite.example.com\/wp-content\/themes\/onepress\/assets\/images\/hero5.jpg&quot;]"             class="hero-slideshow-wrapper hero-slideshow-normal">
@@ -420,5 +415,52 @@ EOHTML;
 		);
 
 		$mockUrlResponse->cleanup($wp_site_environment, $overwrite_slug_targets);
+    }
+
+    public function testRewritingSubdomains(): void {
+		$url = 'http://someurl.com';	
+		$basicAuth = null;
+
+		// mock out only the unrelated methods
+		$mockUrlResponse = $this->getMockBuilder('StaticHtmlOutput_UrlRequest')
+			->setMethods([
+				'isRewritable',
+				'getResponseBody',
+				'setResponseBody'
+			])
+			->setConstructorArgs([$url, $basicAuth])
+			->getMock();
+
+
+$escaped_url_block = <<<EOHTML
+<head>
+<link href='https://mydomain.com/wp-content/themes/onepress/css/font.css' rel='stylesheet' type='text/css'>
+EOHTML;
+
+$escaped_url_block_expected_rewrite = <<<EOHTML
+<head>
+<base href="https://subdomain.mydomain.com" />
+<link href='https://subdomain.mydomain.com/contents/ui/theme/css/font.css' rel='stylesheet' type='text/css'>
+EOHTML;
+
+		// mock getResponseBody with testable HTML content
+		$mockUrlResponse->method('getResponseBody')
+             ->willReturn($escaped_url_block);
+
+		$mockUrlResponse->method('isRewritable')
+             ->willReturn(true);
+
+		$mockUrlResponse->expects($this->once())
+			 ->method('getResponseBody') ;
+
+		// assert that setResponseBody() is called with the correctly rewritten HTML
+		$mockUrlResponse->expects($this->once())
+			->method('setResponseBody')
+			->with($escaped_url_block_expected_rewrite) ;
+
+		$siteURL = 'https://mydomain.com';
+		$newDomain = 'https://subdomain.mydomain.com';
+
+		$mockUrlResponse->replaceBaseUrl($siteURL, $newDomain);
     }
 }
