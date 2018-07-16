@@ -147,7 +147,60 @@ class WPStaticHtmlOutputPluginTest extends TestCase {
 			$this->getSelectedDeploymentMethod()['value']);
     }    
 
+	public function setTargetFolder($target_folder) {
+		$this->webDriver->findElement( WebDriverBy::id('targetFolder'))->sendKeys($target_folder);
+	}
+
+	public function setBaseURL($base_url) {
+		$this->webDriver->findElement( WebDriverBy::id('baseUrl-folder'))->sendKeys($base_url);
+	}
+
+	public function doTheExport() {
+		$this->webDriver->findElement(WebDriverBy::id('startExportButton'))->click();
+
+		$driver = $this->webDriver;	
+	
+		$this->webDriver->wait(30)->until(
+			function () use ($driver) {
+				$progress_indicator = $this->webDriver->findElement(WebDriverBy::id('progress'));
+
+				$progress_icon_src = $progress_indicator->getAttribute('src');
+				
+				return $progress_icon_src == 'http://172.17.0.3/wp-content/plugins/wordpress-static-html-output/images/greentick.png';
+			},
+			'Error waiting for progress icon to show success'
+		);
+	}
+
+    public function testFolderDeployment() {
+
+		$this->logInToAdmin();
+
+		// TODO: this needs to reset the interface, also, then no need to reload page to start again
+		$this->resetPluginSettingsToDefault(); 
+
+		$this->goToPluginSettingsPage();
+
+		$this->setDeploymentMethod('folder');
+
+		$this->setBaseURL('http://google.com');
+
+		$this->setTargetFolder('/apublicfolder');
+
+		$this->doTheExport();
+
+#		$this->savePluginOptions();
+#
+#		$this->goToPluginSettingsPage();
+
+		$this->assertContains(
+			"This feature is yet to be released into the official version",
+			file_get_contents('/apublicfolder/index.html'));
+    }    
+
 	public function tearDown() {
+
+		// TODO: remove any test files
 
         $this->webDriver->close();
         $this->webDriver->quit();
