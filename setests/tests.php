@@ -174,6 +174,8 @@ class WPStaticHtmlOutputPluginTest extends TestCase {
 
     public function testFolderDeployment() {
 
+		$timestamp = (string) time();
+
 		$this->logInToAdmin();
 
 		// TODO: this needs to reset the interface, also, then no need to reload page to start again
@@ -185,7 +187,7 @@ class WPStaticHtmlOutputPluginTest extends TestCase {
 
 		$this->setBaseURL('http://google.com');
 
-		$this->setTargetFolder('/apublicfolder');
+		$this->setTargetFolder($timestamp);
 
 		$this->doTheExport();
 
@@ -195,7 +197,7 @@ class WPStaticHtmlOutputPluginTest extends TestCase {
 
 		$this->assertContains(
 			"This feature is yet to be released into the official version",
-			file_get_contents('/apublicfolder/index.html'));
+			file_get_contents('http://172.17.0.3/' . $timestamp . '/'));
     }    
 
 	public function tearDown() {

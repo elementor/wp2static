@@ -360,6 +360,22 @@ class StaticHtmlOutput_Controller {
         echo 'SUCCESS';
 	}
 
+	public function copyStaticSiteToPublicFolder() {
+		// TODO: switch for CLI driven
+
+		error_log('copying folder to public');
+
+        $publicFolderToCopyTo = filter_input(INPUT_POST, 'targetFolder');
+
+		// if folder isn't empty and current deployment option is "folder"
+
+		// mkdir for the new dir
+
+
+		// copy the contents of the current archive to the targetFolder
+		
+
+	}
 
 	public function crawlABitMore($viaCLI = false) {
 		$initial_crawl_list_file = $this->_uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST';
@@ -885,6 +901,10 @@ class StaticHtmlOutput_Controller {
 		StaticHtmlOutput_FilesHelper::delete_dir_with_files($archiveDir . '/wp-json/');
 		
 		// TODO: remove all text files from theme dir 
+
+
+		$this->copyStaticSiteToPublicFolder();
+
 
 		echo 'SUCCESS';
 	}
