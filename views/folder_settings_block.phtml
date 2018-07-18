@@ -3,21 +3,17 @@
 
 	<img style="width:40px;float:left;margin-right:10px;" src="<?php echo plugins_url( 'images/folder_icon.png', dirname(__FILE__)) ?>" />
 
-Generate a static copy of your site to a directory on this server, from where you can copy it somewhere else or symlink to use in production, for example.
-
-<!--
 	<p>Generating a static copy of the website on your server can be useful in a variety of scenarios. The below example use cases will give you an idea of what to set your Base Url option to.</p>
 
 <ul>
 	<li>
-		<b>Testing the plugin quickly</b> by exporting to a subfolder of your current domain, you can check how it will look when published and make any adjustments needed. In this case, you should set the <b>Base Url</b> to <?php echo get_site_url() . '/mystatictest'; ?> and the <b>Target directory to deploy to</b> to <?php echo ABSPATH; ?>mystatictest.
+		<b>Testing the plugin quickly</b> by exporting to a subfolder of your current domain, you can check how it will look when published and make any adjustments needed. In this case, you should set the <b>Base Url</b> to <?php echo get_site_url() . '/mystatictest'; ?>/ and the <b>Target directory to deploy to</b> to mystatictest. After the export, you should be able to see how your site looks in static html at: <a href="<?php echo get_site_url() . '/mystatictest'; ?>/" target="_blank"><?php echo get_site_url() . '/mystatictest'; ?>/</a>
 	</li>
 
 	<li>
-		<b>Running WordPress from a subfolder and publishing your site on the domain's root</b>
+		<b>Running WordPress from a subfolder and publishing your site on the domain's root</b> - guide to come
 	</li>	
 
--->
 
 	<br style="clear:both;" />
 
@@ -36,6 +32,13 @@ Generate a static copy of your site to a directory on this server, from where yo
 
 					  <input type="url" id="baseUrl-folder" name="baseUrl-folder" size="50" placeholder="http://mystaticsite.com" />
 
+<br>
+<br>
+
+					  <strong><label for="targetFolder"><?php echo __('Target folder to deploy to', 'static-html-output-plugin');?></label></strong>
+					  <p>
+						<i><?php echo __("You don't need to set this in all cases, but if you do, it will deploy your static site to a subdirectory on this same server you are running WordPress on.", 'static-html-output-plugin');?></i>
+					  </p> 
 					  <input type="url" id="targetFolder" name="targetFolder" size="50" placeholder="statictest" />
 					</p>
 

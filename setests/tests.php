@@ -191,10 +191,6 @@ class WPStaticHtmlOutputPluginTest extends TestCase {
 
 		$this->doTheExport();
 
-#		$this->savePluginOptions();
-#
-#		$this->goToPluginSettingsPage();
-
 		$this->assertContains(
 			"This feature is yet to be released into the official version",
 			file_get_contents('http://172.17.0.3/' . $timestamp . '/'));

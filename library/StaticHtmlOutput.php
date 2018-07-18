@@ -398,6 +398,11 @@ class StaticHtmlOutput_Controller {
 			} else {
 				error_log('Couldn\'t create target folder to copy files to');
 			}
+		} else {
+
+			$archiveDir = untrailingslashit(file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE'));
+
+			$this->recursive_copy($archiveDir, $publicFolderToCopyTo);	
 		}
 
 
