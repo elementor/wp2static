@@ -360,6 +360,23 @@ class StaticHtmlOutput_Controller {
         echo 'SUCCESS';
 	}
 
+	public function recursive_copy($srcdir, $dstdir) {
+		$dir = opendir($srcdir);
+		@mkdir($dstdir);
+		while ($file = readdir($dir)) {
+			if ($file != '.'  && $file != '..') {
+				$src = $srcdir . '/' . $file;
+				$dst = $dstdir . '/' . $file;
+				if (is_dir($src)) { 
+					$this->recursive_copy($src, $dst); 
+				} else { 
+					copy($src, $dst); 
+				}
+			}
+		}
+		closedir($dir);
+	}
+
 	public function copyStaticSiteToPublicFolder() {
 		// TODO: switch for CLI driven
 
@@ -368,11 +385,22 @@ class StaticHtmlOutput_Controller {
         $publicFolderToCopyTo = filter_input(INPUT_POST, 'targetFolder');
 
 		// if folder isn't empty and current deployment option is "folder"
+        $publicFolderToCopyTo = ABSPATH . $publicFolderToCopyTo;
 
 		// mkdir for the new dir
+		if (!file_exists($publicFolderToCopyTo)) {
+			if (wp_mkdir_p($publicFolderToCopyTo)) {
+				// copy the contents of the current archive to the targetFolder
+				$archiveDir = untrailingslashit(file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE'));
+
+				$this->recursive_copy($archiveDir, $publicFolderToCopyTo);	
+
+			} else {
+				error_log('Couldn\'t create target folder to copy files to');
+			}
+		}
 
 
-		// copy the contents of the current archive to the targetFolder
 		
 
 	}
