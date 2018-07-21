@@ -91,6 +91,8 @@ See the readme. In brief: you can't use dynamic WordPress functions such as comm
 
 = 4.1 =
 
+ * New feature: deploy directly to a folder on the current server
+ * Improvement: FTP deployments included in the free forever version
  * Bugfix: fix for rewriting escaped URLs within JavaScript for some themes
  * Bugfix: fix for subdomains being duplicated during rewriting
 
@@ -333,6 +335,8 @@ Initial release to Wordpress community
 
 = 4.1 =
 
+ * New feature: deploy directly to a folder on the current server
+ * Improvement: FTP deployments included in the free forever version
  * Bugfix: fix for rewriting escaped URLs within JavaScript for some themes
  * Bugfix: fix for subdomains being duplicated during rewriting
 

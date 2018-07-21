@@ -30,7 +30,7 @@
 					  </p> 
 
 
-					  <input type="url" id="baseUrl-folder" name="baseUrl-folder" size="50" placeholder="http://mystaticsite.com" />
+					  <input type="url" id="baseUrl-folder" name="baseUrl-folder" size="50" placeholder="<?php echo get_site_url() . '/mystatictest'; ?>/ (placeholder)" />
 
 <br>
 <br>
@@ -39,7 +39,7 @@
 					  <p>
 						<i><?php echo __("You don't need to set this in all cases, but if you do, it will deploy your static site to a subdirectory on this same server you are running WordPress on.", 'static-html-output-plugin');?></i>
 					  </p> 
-					  <input type="url" id="targetFolder" name="targetFolder" size="50" placeholder="statictest" />
+					  <input type="url" id="targetFolder" name="targetFolder" size="50" placeholder="mystatictest" />
 					</p>
 
 
