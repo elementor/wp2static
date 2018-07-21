@@ -17,10 +17,6 @@
         define( 'WP_FS__DEV_MODE', false );
     }
 
-    #--------------------------------------------------------------------------------
-    #region API Connectivity Issues Simulation
-    #--------------------------------------------------------------------------------
-
     if ( ! defined( 'WP_FS__SIMULATE_NO_API_CONNECTIVITY' ) ) {
         define( 'WP_FS__SIMULATE_NO_API_CONNECTIVITY', false );
     }
@@ -43,8 +39,6 @@
         define( 'FS_SDK__SIMULATE_NO_API_CONNECTIVITY_SQUID_ACL', true );
     }
 
-    #endregion
-
     if ( ! defined( 'WP_FS__SIMULATE_FREEMIUS_OFF' ) ) {
         define( 'WP_FS__SIMULATE_FREEMIUS_OFF', false );
     }
@@ -54,12 +48,6 @@
          * @since  1.1.7.3
          * @author Vova Feldman (@svovaf)
          *
-         * I'm not sure if shared servers periodically change IP, or the subdomain of the
-         * admin dashboard. Also, I've seen sites that have strange loop of switching
-         * between domains on a daily basis. Therefore, to eliminate the risk of
-         * multiple unwanted connectivity test pings, temporary ignore domain or
-         * server IP changes.
-         */
         define( 'WP_FS__PING_API_ON_IP_OR_HOST_CHANGES', false );
     }
 
@@ -72,29 +60,12 @@
         // VVV default public network IP.
         define( 'WP_FS__VVV_DEFAULT_PUBLIC_IP', '192.168.50.4' );
 
-//		define( 'WP_FS__LOCALHOST_IP', WP_FS__VVV_DEFAULT_PUBLIC_IP );
     }
 
-    /**
-     * If true and running with secret key, the opt-in process
-     * will skip the email activation process which is invoked
-     * when the email of the context user already exist in Freemius
-     * database (as a security precaution, to prevent sharing user
-     * secret with unauthorized entity).
-     *
-     * IMPORTANT:
-     *      AS A SECURITY PRECAUTION, WE VALIDATE THE TIMESTAMP OF THE OPT-IN REQUEST.
-     *      THEREFORE, MAKE SURE THAT WHEN USING THIS PARAMETER,YOUR TESTING ENVIRONMENT'S
-     *      CLOCK IS SYNCED.
-     */
     if ( ! defined( 'WP_FS__SKIP_EMAIL_ACTIVATION' ) ) {
         define( 'WP_FS__SKIP_EMAIL_ACTIVATION', false );
     }
 
-
-    #--------------------------------------------------------------------------------
-    #region Directories
-    #--------------------------------------------------------------------------------
 
     if ( ! defined( 'WP_FS__DIR' ) ) {
         define( 'WP_FS__DIR', dirname( __FILE__ ) );
@@ -121,11 +92,6 @@
         define( 'WP_FS__DIR_SDK', WP_FS__DIR_INCLUDES . '/sdk' );
     }
 
-    #endregion
-
-    /**
-     * Domain / URL / Address
-     */
     define( 'WP_FS__ROOT_DOMAIN_PRODUCTION', 'freemius.com' );
     define( 'WP_FS__DOMAIN_PRODUCTION', 'wp.freemius.com' );
     define( 'WP_FS__ADDRESS_PRODUCTION', 'https://' . WP_FS__DOMAIN_PRODUCTION );
@@ -140,10 +106,6 @@
     if ( ! defined( 'WP_FS__TESTING_DOMAIN' ) ) {
         define( 'WP_FS__TESTING_DOMAIN', 'fswp' );
     }
-
-    #--------------------------------------------------------------------------------
-    #region HTTP
-    #--------------------------------------------------------------------------------
 
     if ( ! defined( 'WP_FS__IS_HTTP_REQUEST' ) ) {
         define( 'WP_FS__IS_HTTP_REQUEST', isset( $_SERVER['HTTP_HOST'] ) );
@@ -336,19 +298,6 @@
         define( 'WP_FS__LOWEST_PRIORITY', 999999999 );
     }
 
-    #--------------------------------------------------------------------------------
-    #region Multisite Network
-    #--------------------------------------------------------------------------------
-
-    /**
-     * Do not use this define directly, it will have the wrong value
-     * during plugin uninstall/deletion when the inclusion of the plugin
-     * is triggered due to registration with register_uninstall_hook().
-     *
-     * Instead, use fs_is_network_admin().
-     *
-     * @author Vova Feldman (@svovaf)
-     */
     if ( ! defined( 'WP_FS__IS_NETWORK_ADMIN' ) ) {
         define( 'WP_FS__IS_NETWORK_ADMIN',
             is_network_admin() ||
@@ -363,25 +312,14 @@
         );
     }
 
-    /**
-     * Do not use this define directly, it will have the wrong value
-     * during plugin uninstall/deletion when the inclusion of the plugin
-     * is triggered due to registration with register_uninstall_hook().
-     *
-     * Instead, use fs_is_blog_admin().
-     *
-     * @author Vova Feldman (@svovaf)
-     */
     if ( ! defined( 'WP_FS__IS_BLOG_ADMIN' ) ) {
         define( 'WP_FS__IS_BLOG_ADMIN', is_blog_admin() || ( defined( 'DOING_AJAX' ) && DOING_AJAX && isset( $_REQUEST['_fs_blog_admin'] ) ) );
     }
 
     if ( ! defined( 'WP_FS__SHOW_NETWORK_EVEN_WHEN_DELEGATED' ) ) {
-        // Set to true to show network level settings even if delegated to site admins.
         define( 'WP_FS__SHOW_NETWORK_EVEN_WHEN_DELEGATED', false );
     }
 
-    #endregion
 
     if ( ! defined( 'WP_FS__DEMO_MODE' ) ) {
         define( 'WP_FS__DEMO_MODE', false );
