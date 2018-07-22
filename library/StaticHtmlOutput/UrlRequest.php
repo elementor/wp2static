@@ -1267,7 +1267,7 @@ class StaticHtmlOutput_UrlRequest
 		
 	}
 
-	public function replaceBaseUrl($oldBaseUrl, $newBaseUrl)
+	public function replaceBaseUrl($oldBaseUrl, $newBaseUrl, $absolutePaths = false)
 	{
 		// TODO: don't rewrite mailto links unless specified, re #30
 
@@ -1282,9 +1282,26 @@ class StaticHtmlOutput_UrlRequest
 			$newDomain = str_replace('//', '', $newDomain);
 
 			$responseBody = $this->getResponseBody();
-			$responseBody = str_replace('<head>', "<head>\n<base href=\"" . esc_attr($oldBaseUrl) . "\" />\n", $responseBody);
 
-			$responseBody = str_replace($oldDomain, $newDomain, $responseBody);
+			if ($absolutePaths) {
+
+				$responseBody = str_replace($oldDomain, $newDomain, $responseBody);
+				$responseBody = str_replace('https://' . $newDomain . '/', '', $responseBody);
+				$responseBody = str_replace('https://' . $newDomain, '', $responseBody);
+				$responseBody = str_replace('http://' . $newDomain . '/', '', $responseBody);
+				$responseBody = str_replace('http://' . $newDomain, '', $responseBody);
+				$responseBody = str_replace('//' . $newDomain . '/', '', $responseBody);
+				$responseBody = str_replace('//' . $newDomain, '', $responseBody);
+
+
+				$responseBody = str_replace($newDomain, '', $responseBody);
+
+				$responseBody = str_replace('<head>', "<head>\n<base href=\"" . esc_attr($newBaseUrl) . "/\" />\n", $responseBody);
+			} else {
+
+				$responseBody = str_replace($oldDomain, $newDomain, $responseBody);
+
+			}
 
 			$this->setResponseBody($responseBody);
 		}
