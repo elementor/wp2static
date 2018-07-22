@@ -81,9 +81,7 @@ final class StaticHtmlOutput_UrlRequestTest extends TestCase {
 		// assert that setResponseBody() is called with the correctly rewritten HTML
 		$mockUrlResponse->expects($this->once())
 			->method('setResponseBody')
-			->with('<html><head>
-<base href="http://google.com" />
-</head><body>Something with a <a href="http://google.com">link</a>.</body></html>') ;
+			->with('<html><head></head><body>Something with a <a href="http://google.com">link</a>.</body></html>') ;
 
 		$mockUrlResponse->replaceBaseUrl($wpURL, $baseURL);
     }
@@ -123,9 +121,7 @@ final class StaticHtmlOutput_UrlRequestTest extends TestCase {
 		// assert that setResponseBody() is called with the correctly rewritten HTML
 		$mockUrlResponse->expects($this->once())
 			->method('setResponseBody')
-			->with('<html><head>
-<base href="http://subdomain.google.com" />
-</head><body>Something with a <a href="http://subdomain.google.com">link</a>.</body></html>') ;
+			->with('<html><head></head><body>Something with a <a href="http://subdomain.google.com">link</a>.</body></html>') ;
 
 		$mockUrlResponse->replaceBaseUrl($wpURL, $baseURL);
     }
@@ -165,9 +161,7 @@ final class StaticHtmlOutput_UrlRequestTest extends TestCase {
 		// assert that setResponseBody() is called with the correctly rewritten HTML
 		$mockUrlResponse->expects($this->once())
 			->method('setResponseBody')
-			->with('<html><head>
-<base href="http://google.com" />
-</head><body>Something with a <a href="http://google.com">link</a>.</body></html>') ;
+			->with('<html><head></head><body>Something with a <a href="http://google.com">link</a>.</body></html>') ;
 
 		$mockUrlResponse->replaceBaseUrl($wpURL, $baseURL);
     }
@@ -207,9 +201,7 @@ final class StaticHtmlOutput_UrlRequestTest extends TestCase {
 		// assert that setResponseBody() is called with the correctly rewritten HTML
 		$mockUrlResponse->expects($this->once())
 			->method('setResponseBody')
-			->with('<html><head>
-<base href="http://subdomain.google.com" />
-</head><body>Something with a <a href="http://subdomain.google.com">link</a>.</body></html>') ;
+			->with('<html><head></head><body>Something with a <a href="http://subdomain.google.com">link</a>.</body></html>') ;
 
 		$mockUrlResponse->replaceBaseUrl($wpURL, $baseURL);
     }
@@ -444,8 +436,6 @@ EOHTML;
 
 $escaped_url_block_expected_rewrite = <<<EOHTML
 <head>
-<base href="https://subdomain.mydomain.com" />
-
 <link href='https://subdomain.mydomain.com/wp-content/themes/onepress/css/font.css' rel='stylesheet' type='text/css'>
 
 https:\/\/subdomain.mydomain.com\/
@@ -473,6 +463,58 @@ EOHTML;
 		$newDomain = 'https://subdomain.mydomain.com';
 
 		$mockUrlResponse->replaceBaseUrl($siteURL, $newDomain);
+    }
+
+    public function testAbosluteURLs(): void {
+		$url = 'http://someurl.com';	
+		$basicAuth = null;
+
+		// mock out only the unrelated methods
+		$mockUrlResponse = $this->getMockBuilder('StaticHtmlOutput_UrlRequest')
+			->setMethods([
+				'isRewritable',
+				'getResponseBody',
+				'setResponseBody'
+			])
+			->setConstructorArgs([$url, $basicAuth])
+			->getMock();
+
+
+$escaped_url_block = <<<EOHTML
+<head>
+<link href='https://mydomain.com/wp-content/themes/onepress/css/font.css' rel='stylesheet' type='text/css'>
+
+http://mydomain.com
+EOHTML;
+
+$escaped_url_block_expected_rewrite = <<<EOHTML
+<head>
+<base href="https://subdomain.mydomain.com/" />
+
+<link href='wp-content/themes/onepress/css/font.css' rel='stylesheet' type='text/css'>
+
+
+EOHTML;
+
+		// mock getResponseBody with testable HTML content
+		$mockUrlResponse->method('getResponseBody')
+             ->willReturn($escaped_url_block);
+
+		$mockUrlResponse->method('isRewritable')
+             ->willReturn(true);
+
+		$mockUrlResponse->expects($this->once())
+			 ->method('getResponseBody') ;
+
+		// assert that setResponseBody() is called with the correctly rewritten HTML
+		$mockUrlResponse->expects($this->once())
+			->method('setResponseBody')
+			->with($escaped_url_block_expected_rewrite) ;
+
+		$siteURL = 'https://mydomain.com';
+		$newDomain = 'https://subdomain.mydomain.com';
+
+		$mockUrlResponse->replaceBaseUrl($siteURL, $newDomain, 'absolute');
     }
 
 }

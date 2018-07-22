@@ -242,7 +242,12 @@ jQuery(document).ready(function($){
 			$('#baseUrl').val( $('#baseUrl-' + current_deployment_method).val() ); 
 
 			base_url_previews.text(base_url.replace(/\/$/, "") + '/');
+
+			// update the clickable preview url in folder options
+			$('#folderPreviewURL').text($('#baseUrl-' + current_deployment_method).val());
+			$('#folderPreviewURL').attr('href', ($('#baseUrl-' + current_deployment_method).val()));
 		}
+
 
 	}
 
@@ -781,6 +786,7 @@ jQuery(document).ready(function($){
 				'rewriteTHEMEROOT',
 				'rewritePLUGINDIR',
 				'rewriteWPINC',
+				'targetFolder',
 				'baseUrl-s3',
 				'baseUrl-ftp',
 				'baseUrl-folder',
@@ -806,6 +812,7 @@ jQuery(document).ready(function($){
 				'sendViaGithub',
 				'sendViaNetlify',
 				'sendViaBasic', // todo: allow for improved naming of this
+				'useRelativeURLs',
 				'dontIncludeAllUploadFiles',
 			];
 

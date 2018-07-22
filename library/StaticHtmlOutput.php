@@ -498,9 +498,11 @@ class StaticHtmlOutput_Controller {
 		);
 
 
+		$useRelativeURLs = filter_input(INPUT_POST, 'useRelativeURLs');
+
 		// TODO: if it replaces baseurl here, it will be searching links starting with that...
 		// TODO: shouldn't be doing this here...
-        $urlResponse->replaceBaseUrl($baseUrl, $newBaseUrl);
+        $urlResponse->replaceBaseUrl($baseUrl, $newBaseUrl, $useRelativeURLs);
         $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
         $this->_saveUrlData($urlResponse, $archiveDir);
 
@@ -532,7 +534,7 @@ class StaticHtmlOutput_Controller {
 					$overwrite_slug_targets
 				);
 
-                $urlResponse->replaceBaseUrl($baseUrl, $newBaseUrl);
+                $urlResponse->replaceBaseUrl($baseUrl, $newBaseUrl, $useRelativeURLs);
                 $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
                 $this->_saveUrlData($urlResponse, $archiveDir);
             } 

@@ -91,7 +91,7 @@ function generateDeploymentMethodOptions() {
 
 	foreach ($options as $key => $value) {
 		if ($value[1] == 'premium' && wpsho_fr()->is_not_paying()) {
-			echo "<option value='$key'>$value[0] (premium)</option>";
+			echo "<option value='$key'>$value[0]</option>";
 		} else {
 			echo "<option value='$key'>$value[0]</option>";
 		}
@@ -108,13 +108,6 @@ function generateDeploymentMethodOptions() {
 
 </select>
 
-<?php
-	if ( wpsho_fr()->is_not_paying()) {
-		echo ' <a href="' . wpsho_fr()->get_upgrade_url() . '">' .
-			__('Enable premium options', 'static-html-output-plugin') .
-		'</a>';
-	}
-?>
 
     </div>
 
@@ -178,6 +171,19 @@ foreach($deployment_options as $deployment_option) {
 	<?php echo displayTextfield($this, 'basicAuthUser', 'Basic Auth user', '', ''); ?>
 	<?php echo displayTextfield($this, 'basicAuthPassword', 'Basic Auth password', '', 'password'); ?>
 </span>
+
+                <p>
+                  <strong><label for="useRelativeURLs"><?php echo __('Use relative URLs', 'static-html-output-plugin');?></label></strong>
+                  </p>
+<?php echo displayCheckbox($this, 'useRelativeURLs', 'Use relative URLS'); ?>
+
+<p>
+URLs in the exported site will be rewritten as <a href="https://www.w3schools.com/tags/tag_base.asp" target="_blank">relative URLs</a>. ie, http://mydomain.com/some_dir/some_file.jpg will become some_dir/some_file.jpg. A base href will be set to http://mydomain.com/, from which all the relative URLs resolve to. 
+</p>
+
+<p>
+An extra benefit of this method is that it reduces the repetitive use of the full URLs in your source code, reducing the download size and making your pages load a little faster for users.
+</p>
 
                 <p>
                   <strong><label for="outputDirectory"><?php echo __('Override Output Directory', 'static-html-output-plugin');?></label></strong>
