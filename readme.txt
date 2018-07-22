@@ -5,7 +5,7 @@ Tags: static,cache,wp super cache,wp fastest cache,w3 total cache,security,expor
 Requires at least: 3.2
 Tested up to: 4.9.7
 Requires PHP: 5
-Stable tag: 4.1
+Stable tag: 4.2
 
 
 The optimum solution to speed up and secure your WordPress site - export to static HTML and hide all traces of WordPress from your site!
@@ -88,6 +88,10 @@ See the readme. In brief: you can't use dynamic WordPress functions such as comm
 2. The main interface (Japanese)
 
 == Changelog ==
+
+= 4.2 =
+
+ * New feature: support for relative URLs with base href
 
 = 4.1 =
 
@@ -332,6 +336,10 @@ Altered main codebase to fix recursion bug and endless loop. Essential upgrade.
 Initial release to Wordpress community
 
 == Upgrade Notice ==
+
+= 4.2 =
+
+ * New feature: support for relative URLs with base href
 
 = 4.1 =
 
