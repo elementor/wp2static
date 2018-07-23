@@ -64,6 +64,19 @@ function displayTextfield($template_variables, $field_name, $field_label, $descr
 				<p class="intro-text"> Exporting your static site is easy - just set the options you need below and click on the "Start static site export" at the bottom of the page!
 				</p>	
 
+<?php if ( wpsho_fr()->is_not_paying() ) : ?>
+<div class="card" style="background-color:#ffee00;">
+	<b>Current license:</b> FREE
+
+	<p>Get better exports with more deployment options, automation and VIP support<p>
+
+	<a href="<?php echo  wpsho_fr()->get_upgrade_url(); ?>">
+		Upgrade to the Professional Edition for better exports
+	</a>
+</div>
+<?php endif; ?>
+
+<br>
 
                   <strong><label><?php echo __('Where do you want to deploy your static site to?', 'static-html-output-plugin');?></label></strong>
 
