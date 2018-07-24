@@ -6,7 +6,7 @@
  */
 
 class StaticHtmlOutput_Controller {
-	const VERSION = '4.1';
+	const VERSION = '4.3';
 	const OPTIONS_KEY = 'wp-static-html-output-options';
 	const HOOK = 'wp-static-html-output';
 
@@ -384,30 +384,31 @@ class StaticHtmlOutput_Controller {
 
         $publicFolderToCopyTo = filter_input(INPUT_POST, 'targetFolder');
 
-		// if folder isn't empty and current deployment option is "folder"
-        $publicFolderToCopyTo = ABSPATH . $publicFolderToCopyTo;
+		if ( ! empty(trim($publicFolderToCopyTo)) ) {
+			// if folder isn't empty and current deployment option is "folder"
+			$publicFolderToCopyTo = ABSPATH . $publicFolderToCopyTo;
 
-		// mkdir for the new dir
-		if (!file_exists($publicFolderToCopyTo)) {
-			if (wp_mkdir_p($publicFolderToCopyTo)) {
-				// copy the contents of the current archive to the targetFolder
+			WsLog::l('DEPLOYING TO PUBLIC URL: ' . $publicFolderToCopyTo);
+
+			// mkdir for the new dir
+			if (!file_exists($publicFolderToCopyTo)) {
+				if (wp_mkdir_p($publicFolderToCopyTo)) {
+					// copy the contents of the current archive to the targetFolder
+					$archiveDir = untrailingslashit(file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE'));
+
+					$this->recursive_copy($archiveDir, $publicFolderToCopyTo);	
+
+				} else {
+					error_log('Couldn\'t create target folder to copy files to');
+				}
+			} else {
+
 				$archiveDir = untrailingslashit(file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE'));
 
 				$this->recursive_copy($archiveDir, $publicFolderToCopyTo);	
-
-			} else {
-				error_log('Couldn\'t create target folder to copy files to');
 			}
-		} else {
 
-			$archiveDir = untrailingslashit(file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE'));
-
-			$this->recursive_copy($archiveDir, $publicFolderToCopyTo);	
 		}
-
-
-		
-
 	}
 
 	public function crawlABitMore($viaCLI = false) {

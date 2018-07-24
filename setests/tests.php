@@ -196,6 +196,38 @@ class WPStaticHtmlOutputPluginTest extends TestCase {
 			file_get_contents('http://172.17.0.3/' . $timestamp . '/'));
     }    
 
+    public function testFolderDeploymentDoesntOverwriteRoot() {
+
+		$timestamp = (string) time();
+
+		$this->logInToAdmin();
+
+		// TODO: this needs to reset the interface, also, then no need to reload page to start again
+		$this->resetPluginSettingsToDefault(); 
+
+		$this->goToPluginSettingsPage();
+
+		$this->setDeploymentMethod('folder');
+
+		$this->setBaseURL('http://google.com');
+
+		$this->setTargetFolder('');
+
+		$this->doTheExport();
+
+		$ch = curl_init("http://172.17.0.3/index.html");
+
+		curl_setopt($ch, CURLOPT_NOBODY, true);
+		curl_exec($ch);
+		$retcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		// $retcode >= 400 -> not found, $retcode = 200, found.
+		curl_close($ch);
+
+		$this->assertEquals(
+			"404",
+			$retcode);
+    }    
+
 	public function tearDown() {
 
 		// TODO: remove any test files
