@@ -89,6 +89,10 @@ See the readme. In brief: you can't use dynamic WordPress functions such as comm
 
 == Changelog ==
 
+= 4.3 =
+
+ * Bugfix: fix cases where exported site is placed in site root
+
 = 4.2 =
 
  * New feature: support for relative URLs with base href
@@ -336,6 +340,10 @@ Altered main codebase to fix recursion bug and endless loop. Essential upgrade.
 Initial release to Wordpress community
 
 == Upgrade Notice ==
+
+= 4.3 =
+
+ * Bugfix: fix cases where exported site is placed in site root
 
 = 4.2 =
 
