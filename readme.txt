@@ -5,7 +5,7 @@ Tags: static,cache,wp super cache,wp fastest cache,w3 total cache,security,expor
 Requires at least: 3.2
 Tested up to: 4.9.7
 Requires PHP: 5
-Stable tag: 4.2
+Stable tag: 4.3
 
 
 The optimum solution to speed up and secure your WordPress site - export to static HTML and hide all traces of WordPress from your site!
