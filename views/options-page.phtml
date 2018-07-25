@@ -71,8 +71,12 @@ function displayTextfield($template_variables, $field_name, $field_label, $descr
 	<p>Get better exports with more deployment options, automation and VIP support<p>
 
 	<a href="<?php echo  wpsho_fr()->get_upgrade_url(); ?>">
-		Upgrade to the Professional Edition for better exports
+		Upgrade to a <b>premium edition</b> for better exports
 	</a>
+
+	<p>Use the coupon <b>WELCOMETOPREMIUM</b> for 25% off any subscription level<p>
+
+	<p>Cancel at anytime - If you're not happy with the plugin, your money will be refunded - just state the reason, so the plugin can be improved for other users.</p>
 </div>
 <?php endif; ?>
 
@@ -310,7 +314,17 @@ http://172.17.0.3/my_pricelist.pdf</pre>
 
     <div>
         <img src="<?php echo plugins_url('../images/dashinfinity.gif', __FILE__); ?>" id="progress" />
+
+		<div class="card error-help-text">
+
+			<p>Everyone's WordPress hosting environment and configuration is unique, with different plugins, themes, PHP versions, to name a few. Whilst the plugin does its best to support all environments, sometimes you'll encounter a new issue. Sometimes we can adjust the settings in the plugin to overcome an issue, other times, it will require a bugfix and a new release of the plugin (usually a quick process). </p>
+
+			<p> When you have an issue, send the contents of your "Export Log" on the plugin screen to the developer, at <a href="mailto:leonstafford@protonmail.com">leonstafford@protonmail.com</a>. He'll usually respond within 12 hrs, often sooner.</p>
+
+		</div>
         <h2 style="clear:both;">Export Log</h2>
+
+
 
         <textarea id="exportStatus">
 Your progress will update here every few seconds and this text area will automatically resize to fit the contents of the full log...
@@ -326,17 +340,3 @@ Your progress will update here every few seconds and this text area will automat
 		</div>
 	</div>
 </div>
-
-<?php if (! getenv('LIVESHUSH')) : ?>
-<!-- Start of LiveChat (www.livechatinc.com) code -->
-<script type="text/javascript">
-window.__lc = window.__lc || {};
-window.__lc.license = 9890645;
-(function() {
-  var lc = document.createElement('script'); lc.type = 'text/javascript'; lc.async = true;
-  lc.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'cdn.livechatinc.com/tracking.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(lc, s);
-})();
-</script>
-<!-- End of LiveChat code -->
-<?php endif; ?>

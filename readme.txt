@@ -5,7 +5,7 @@ Tags: static,cache,wp super cache,wp fastest cache,w3 total cache,security,expor
 Requires at least: 3.2
 Tested up to: 4.9.7
 Requires PHP: 5
-Stable tag: 4.3
+Stable tag: 4.4
 
 
 The optimum solution to speed up and secure your WordPress site - export to static HTML and hide all traces of WordPress from your site!
@@ -67,20 +67,27 @@ Developed by [**Leon Stafford**](http://leonstafford.github.io). If you have any
 
 == Frequently Asked Questions ==
 
+= How do I configure all the options? =
+
+There's some useful information on the page once you select a deployment method. There are also some good tutorials linked at https://wp2static.html
+
 = Where can I publish my static site to? =
 
 Anywhere that allows HTML files to be uploaded, ie:
 
+ * Any FTP server
  * GitHub/GitLab/BitBucket Pages (GitHub API integration now included)
  * S3 / CloudFront
+ * Netlify
  * Dropbox
  * BunnyCDN
- * Any FTP server
- * Netlify
+ * Rackspace Cloud Files
 
-= My comments don't work anymore! = 
+= My export failed - how do I proceed? =
 
-See the readme. In brief: you can't use dynamic WordPress functions such as comments on a static site. Use an external comments provider such as Disqus, or live without them.
+Everyone's WordPress hosting environment and configuration is unique, with different plugins, themes, PHP versions, to name a few. Whilst the plugin does its best to support all environments, sometimes you'll encounter a new issue. Sometimes we can adjust the settings in the plugin to overcome an issue, other times, it will require a bugfix and a new release of the plugin (usually a quick process). 
+
+When you have an issue, send the contents of your "Export Log" on the plugin screen to the developer, at [leonstafford@protonmail.com](mailto:leonstafford@protonmail.com). He'll usually respond within 12 hrs, often sooner.
 
 == Screenshots ==
 
@@ -88,6 +95,11 @@ See the readme. In brief: you can't use dynamic WordPress functions such as comm
 2. The main interface (Japanese)
 
 == Changelog ==
+
+= 4.4 =
+
+ * Enhancement: More feedback on export errors with troubleshooting tips
+ * Enhancement: Updated Frequently Asked Questions
 
 = 4.3 =
 
@@ -340,6 +352,11 @@ Altered main codebase to fix recursion bug and endless loop. Essential upgrade.
 Initial release to Wordpress community
 
 == Upgrade Notice ==
+
+= 4.4 =
+
+ * Enhancement: More feedback on export errors with troubleshooting tips
+ * Enhancement: Updated Frequently Asked Questions
 
 = 4.3 =
 
