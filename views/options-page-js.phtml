@@ -481,6 +481,7 @@ jQuery(document).ready(function($){
 			return false;
 		}
 
+        $('.error-help-text').hide();
         $('#progress').attr("src", pluginDir + '../images/dashinfinity.gif');
         $('#progress').css("width", '102px');
 
@@ -550,6 +551,7 @@ jQuery(document).ready(function($){
     function ajaxErrorHandler () {
         $('#progress').attr("src", pluginDir + '../images/fail_icon.png');
         $('#progress').css("width", '123px');
+        $('.error-help-text').show();
     }
 
     function processExportTargets () {
