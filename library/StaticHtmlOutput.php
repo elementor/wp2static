@@ -380,38 +380,39 @@ class StaticHtmlOutput_Controller {
 	public function copyStaticSiteToPublicFolder() {
 		// TODO: switch for CLI driven
 
-		error_log('copying folder to public');
+		if ( filter_input( INPUT_POST, 'selected_deployment_option' ) == 'folder' ) {
+			$publicFolderToCopyTo = filter_input(INPUT_POST, 'targetFolder');
 
-        $publicFolderToCopyTo = filter_input(INPUT_POST, 'targetFolder');
+			if ( ! empty(trim($publicFolderToCopyTo)) ) {
+				// if folder isn't empty and current deployment option is "folder"
+				$publicFolderToCopyTo = ABSPATH . $publicFolderToCopyTo;
 
-		if ( ! empty(trim($publicFolderToCopyTo)) ) {
-			// if folder isn't empty and current deployment option is "folder"
-			$publicFolderToCopyTo = ABSPATH . $publicFolderToCopyTo;
+				WsLog::l('DEPLOYING TO PUBLIC URL: ' . $publicFolderToCopyTo);
 
-			WsLog::l('DEPLOYING TO PUBLIC URL: ' . $publicFolderToCopyTo);
+				// mkdir for the new dir
+				if (!file_exists($publicFolderToCopyTo)) {
+					if (wp_mkdir_p($publicFolderToCopyTo)) {
+						// file permissions to allow public viewing of files within
+						chmod($publicFolderToCopyTo, 0755);
 
-			// mkdir for the new dir
-			if (!file_exists($publicFolderToCopyTo)) {
-				if (wp_mkdir_p($publicFolderToCopyTo)) {
-					// file permissions to allow public viewing of files within
-					chmod($publicFolderToCopyTo, 0755);
+						// copy the contents of the current archive to the targetFolder
+						$archiveDir = untrailingslashit(file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE'));
 
-					// copy the contents of the current archive to the targetFolder
+						$this->recursive_copy($archiveDir, $publicFolderToCopyTo);	
+
+					} else {
+						error_log('Couldn\'t create target folder to copy files to');
+					}
+				} else {
+
 					$archiveDir = untrailingslashit(file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE'));
 
 					$this->recursive_copy($archiveDir, $publicFolderToCopyTo);	
-
-				} else {
-					error_log('Couldn\'t create target folder to copy files to');
 				}
-			} else {
 
-				$archiveDir = untrailingslashit(file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE'));
-
-				$this->recursive_copy($archiveDir, $publicFolderToCopyTo);	
 			}
-
 		}
+	
 	}
 
 	public function crawlABitMore($viaCLI = false) {
