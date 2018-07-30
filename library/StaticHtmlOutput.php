@@ -393,6 +393,9 @@ class StaticHtmlOutput_Controller {
 			// mkdir for the new dir
 			if (!file_exists($publicFolderToCopyTo)) {
 				if (wp_mkdir_p($publicFolderToCopyTo)) {
+					// file permissions to allow public viewing of files within
+					chmod($publicFolderToCopyTo, 0755);
+
 					// copy the contents of the current archive to the targetFolder
 					$archiveDir = untrailingslashit(file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE'));
 
