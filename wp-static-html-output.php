@@ -3,7 +3,7 @@
  * Plugin Name: WP Static HTML Output
  * Plugin URI:  https://leonstafford.github.io
  * Description: The optimum solution to speed up and secure your WordPress site - export to static HTML and hide all traces of WordPress from your site!
- * Version:     4.4
+ * Version:     5.0
  * Author:      Leon Stafford
  * Author URI:  https://leonstafford.github.io
  * Text Domain: static-html-output-plugin
@@ -41,10 +41,8 @@ if ( ! function_exists( 'wpsho_fr' ) ) {
 					'is_require_payment' => true,
 				),
 				'menu'                => array(
-					'slug'           => 'wp-static-html-output-options',
-					'parent'         => array(
-						'slug' => 'tools.php',
-					),
+					'slug'           => 'wp-static-html-output',
+					
 				),
 				// Set the SDK to work in a sandbox mode (for development & testing).
 				// IMPORTANT: MAKE SURE TO REMOVE SECRET KEY BEFORE DEPLOYMENT.
