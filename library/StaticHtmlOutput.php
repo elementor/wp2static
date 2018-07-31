@@ -58,7 +58,16 @@ class StaticHtmlOutput_Controller {
 	}
 
 	public function registerOptionsPage() {
-		$page = add_submenu_page('tools.php', __('WP Static HTML Output', 'static-html-output-plugin'), __('WP Static HTML Output', 'static-html-output-plugin'), 'manage_options', self::HOOK . '-options', array($this, 'renderOptionsPage'));
+		$page = add_menu_page(
+			__('WP Static HTML Output', 'static-html-output-plugin'), 
+			__('WP Static HTML Output', 'static-html-output-plugin'), 
+			'manage_options', 
+			//self::HOOK . '-options', 
+			self::HOOK, 
+			array(self::$_instance, 'renderOptionsPage'),
+			'dashicons-shield-alt'
+		);
+
 		add_action('admin_print_styles-' . $page, array($this, 'enqueueAdminStyles'));
 	}
 
