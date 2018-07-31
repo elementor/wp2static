@@ -87,13 +87,15 @@ class StaticHtmlOutput_Controller {
 	}
 
 	public function registerOptionsPage() {
+		$pluginDirUrl = plugin_dir_url(dirname(__FILE__));
 		$page = add_menu_page(
 			__('WP Static HTML Output', 'static-html-output-plugin'), 
 			__('WP Static HTML Output', 'static-html-output-plugin'), 
 			'manage_options', 
 			self::HOOK, 
 			array(self::$_instance, 'renderOptionsPage'),
-			'dashicons-shield-alt'
+			//'dashicons-shield-alt'
+			$pluginDirUrl . 'images/menu_icon_32x32.png'
 		);
 
 		add_action('admin_print_styles-' . $page, array($this, 'enqueueAdminStyles'));
