@@ -39,10 +39,39 @@ class StaticHtmlOutput_Controller {
 		if (is_admin()) {
 			add_action('admin_menu', array($instance, 'registerOptionsPage'));
 			add_action(self::HOOK . '-saveOptions', array($instance, 'saveOptions'));
+			add_action( 'admin_enqueue_scripts', array($instance, 'load_custom_wp_admin_script') );
+
+            add_filter( 'custom_menu_order', '__return_true' );
+            add_filter( 'menu_order', array( $instance, 'set_menu_order' ) );
+
 		}
 
 		return $instance;
 	}
+
+    public function set_menu_order( $menu_order ) {
+        $order = array();
+        $file  = plugin_basename( __FILE__ );
+        foreach ( $menu_order as $index => $item ) {
+            if ( $item == 'index.php') {
+                $order[] = $item;
+            } 
+        }
+
+		$order = array(
+			'index.php',
+			'wp-static-html-output'
+		);
+
+        return $order;
+    }
+
+
+	public function load_custom_wp_admin_script() {
+		$pluginDirUrl = plugin_dir_url(dirname(__FILE__));
+		wp_enqueue_script( 'wsho_custom_js', $pluginDirUrl . '/js/index.js' );
+	}
+
 
 	public function saveOptions() {
     // required
@@ -62,7 +91,6 @@ class StaticHtmlOutput_Controller {
 			__('WP Static HTML Output', 'static-html-output-plugin'), 
 			__('WP Static HTML Output', 'static-html-output-plugin'), 
 			'manage_options', 
-			//self::HOOK . '-options', 
 			self::HOOK, 
 			array(self::$_instance, 'renderOptionsPage'),
 			'dashicons-shield-alt'
