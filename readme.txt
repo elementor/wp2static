@@ -5,7 +5,7 @@ Tags: static,cache,wp super cache,wp fastest cache,w3 total cache,security,expor
 Requires at least: 3.2
 Tested up to: 4.9.7
 Requires PHP: 5
-Stable tag: 5.0
+Stable tag: 5.1
 
 
 The optimum solution to speed up and secure your WordPress site - export to static HTML and hide all traces of WordPress from your site!
@@ -95,6 +95,10 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
 2. The main interface (Japanese)
 
 == Changelog ==
+
+= 5.1 =
+
+ * Enhancement: improved accessibility of plugin menu
 
 = 5.0 =
 
@@ -357,6 +361,10 @@ Altered main codebase to fix recursion bug and endless loop. Essential upgrade.
 Initial release to Wordpress community
 
 == Upgrade Notice ==
+
+= 5.1 =
+
+ * Enhancement: improved accessibility of plugin menu
 
 = 5.0 =
 
