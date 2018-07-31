@@ -45,20 +45,6 @@ Allows you to leverage WordPress as a great CMS, but benefit from the speed, sec
 
 Using the [WP Crontrol](https://wordpress.org/plugins/wp-crontrol/) plugin, you can add this hook to a schedule to trigger an export: `wp_static_html_output_server_side_export_hook`. This will run your export using the settings you've saved via the GUI. Via this method, you can schedule your exports to happen daily or if you're after an *on-post publish* kind of behaviour, you could set this to every few minutes.
 
-## Roadmap
-
-A [Waffle.io project board](https://waffle.io/leonstafford/wordpress-static-html-plugin) shows what is upcoming and being worked on. You can filter the board by bugs, new features, enhancements, etc.
-
-
-### other things in the works
-
- - selectively export only changed pages since last output
- - more export targets (GitLab, BitBucket and more)
- - auto trigger an export on a post/page publish action
- - WP CLI integration
- - submission of bug report from within plugin
- - backwards compatibility with older php and wordpress versions (degrade gracefully) (delayed until further release)
-
 
 ## Development
 
