@@ -6,4 +6,3 @@ jobs:
     steps:
       - checkout
       - run: ./run_unit_tests.sh
-      #- run: ./run_se_tests.sh
