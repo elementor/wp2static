@@ -1,11 +1,11 @@
-=== WP Static HTML Output ===
+=== WP Static Site Generator ===
 Contributors: leonstafford,cache1
 Donate link: https://www.paypal.me/leonjstafford
 Tags: static,cache,wp super cache,wp fastest cache,w3 total cache,security,export,s3,dropbox,github,netlify,bunnycdn,html
 Requires at least: 3.2
-Tested up to: 4.9.7
+Tested up to: 4.9.8
 Requires PHP: 5
-Stable tag: 5.1
+Stable tag: 5.2
 
 
 The optimum solution to speed up and secure your WordPress site - export to static HTML and hide all traces of WordPress from your site!
@@ -48,7 +48,7 @@ Developed by [**Leon Stafford**](http://leonstafford.github.io). If you have any
 = via WP Admin panel =
 
 1. Go to Plugins > Add New
-2. Search for "WP Static HTML Output"
+2. Search for "WP Static Site Generator"
 3. Click on the Install Now button
 4. Activate the plugin and find it under the Tools menu
 
@@ -95,6 +95,11 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
 2. The main interface (Japanese)
 
 == Changelog ==
+
+= 5.2 =
+
+ * Support for latest WordPress 4.9.8
+ * Plugin name change to WP Static Site Generator
 
 = 5.1 =
 
@@ -361,6 +366,11 @@ Altered main codebase to fix recursion bug and endless loop. Essential upgrade.
 Initial release to Wordpress community
 
 == Upgrade Notice ==
+
+= 5.2 =
+
+ * Support for latest WordPress 4.9.8
+ * Plugin name change to WP Static Site Generator
 
 = 5.1 =
 
