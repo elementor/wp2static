@@ -1,12 +1,12 @@
 <?php
 /**
- * @package WP Static HTML Output
+ * @package WP Static Site Generator
  *
  * Copyright (c) 2011 Leon Stafford
  */
 
 class StaticHtmlOutput_Controller {
-	const VERSION = '5.1';
+	const VERSION = '5.2';
 	const OPTIONS_KEY = 'wp-static-html-output-options';
 	const HOOK = 'wp-static-html-output';
 
@@ -89,8 +89,8 @@ class StaticHtmlOutput_Controller {
 	public function registerOptionsPage() {
 		$pluginDirUrl = plugin_dir_url(dirname(__FILE__));
 		$page = add_menu_page(
-			__('WP Static HTML Output', 'static-html-output-plugin'), 
-			__('WP Static HTML Output', 'static-html-output-plugin'), 
+			__('WP Static Site Generator', 'static-html-output-plugin'), 
+			__('WP Static Site Generator', 'static-html-output-plugin'), 
 			'manage_options', 
 			self::HOOK, 
 			array(self::$_instance, 'renderOptionsPage'),
@@ -152,7 +152,7 @@ class StaticHtmlOutput_Controller {
 
     public function save_options () {
 		if (!check_admin_referer(self::HOOK . '-options') || !current_user_can('manage_options')) {
-			exit('You cannot change WP Static HTML Output Plugin options.');
+			exit('You cannot change WP Static Site Generator Plugin options.');
 		}
 
 		$this->_options
