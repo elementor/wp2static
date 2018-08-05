@@ -909,21 +909,20 @@ class StaticHtmlOutput_Controller {
 		$site_url = get_option( 'siteurl' );
 		$home = get_option( 'home' );
 
-		error_log($site_url);
-		error_log($home);
-
+		// case for when WP is installed in a different place then being served
 		if ( $site_url !== $home ) {
-			error_log('detected a subdirectory installation');
-
 			$this->_subdirectory = '/mysubdirectory';
 		}
 
+		$base_url = parse_url($site_url);
+
+		if ( $base_url['path'] != '/' ) {
+			$this->_subdirectory = $base_url['path'];
+		}
 	}	
 
     public function post_process_archive_dir() {
         WsLog::l('POST PROCESSING ARCHIVE DIR: ...');
-
-
         $archiveDir = untrailingslashit(file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE'));
 
 		$this->detect_base_url();
