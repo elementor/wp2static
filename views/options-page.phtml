@@ -61,24 +61,8 @@ function displayTextfield($template_variables, $field_name, $field_label, $descr
               </h3>
 
               <div class="inside">
-				<p class="intro-text"> Exporting your static site is easy - just set the options you need below and click on the "Start static site export" at the bottom of the page!
+				<p class="intro-text">Get better exports by following the documentation and tutorials at <a href="https://wp2static.com" target="_blank">https://wp2static.com</a>
 				</p>	
-
-<?php if ( wpsho_fr()->is_not_paying() ) : ?>
-<div class="card" style="background-color:#ffee00;">
-	<b>Current license:</b> FREE
-
-	<p>Get better exports with more deployment options, automation and VIP support<p>
-
-	<a href="<?php echo  wpsho_fr()->get_upgrade_url(); ?>">
-		Upgrade to a <b>premium edition</b> for better exports
-	</a>
-
-	<p>Use the coupon <b>WELCOMETOPREMIUM</b> for 25% off any subscription level<p>
-
-	<p>Cancel at anytime - If you're not happy with the plugin, your money will be refunded - just state the reason, so the plugin can be improved for other users.</p>
-</div>
-<?php endif; ?>
 
 <br>
 
