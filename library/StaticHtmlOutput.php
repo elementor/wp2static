@@ -14,6 +14,7 @@ class StaticHtmlOutput_Controller {
 	protected $_options = null;
 	protected $_view = null;
 	protected $_uploadsPath;
+	protected $_subdirectory;
 	protected $_uploadsURL;
 	protected function __construct() {}
 	protected function __clone() {}
@@ -904,12 +905,30 @@ class StaticHtmlOutput_Controller {
 
 	}	
 
-	
+	public function detect_base_url() {
+		$site_url = get_option( 'siteurl' );
+		$home = get_option( 'home' );
+
+		error_log($site_url);
+		error_log($home);
+
+		if ( $site_url !== $home ) {
+			error_log('detected a subdirectory installation');
+
+			$this->_subdirectory = '/mysubdirectory';
+		}
+
+	}	
+
     public function post_process_archive_dir() {
         WsLog::l('POST PROCESSING ARCHIVE DIR: ...');
 
 
         $archiveDir = untrailingslashit(file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE'));
+
+		$this->detect_base_url();
+
+		$archiveDir .= $this->_subdirectory;
 
 		// rename dirs (in reverse order than when doing in responsebody)
 		// rewrite wp-content  dir
