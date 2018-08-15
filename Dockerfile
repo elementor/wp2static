@@ -8,6 +8,8 @@ RUN apt-get update \
 && rm -rf /var/lib/apt/lists/* \
 && docker-php-ext-install zip
 
+# trigger rebuild
+
 # install wp cli
 RUN curl -L https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -o /usr/local/bin/wp
 RUN chmod +x /usr/local/bin/wp
