@@ -75,7 +75,5 @@ Our official [translation page](https://translate.wordpress.org/projects/wp-plug
 
 Please [raise an issue](https://github.com/leonstafford/wordpress-static-html-plugin/issues/new) here on GitHub or on the plugin's [support forum](https://wordpress.org/support/plugin/static-html-output-plugin).
 
-## Contact
-
-Email the lead developer, Leon Stafford, at [leonstafford@protonmail.com](mailto:leonstafford@protonmail.com), open an issue here on GitHub or make a support request from within the plugin itself. 
+Email for support: [help@wp2static.com](mailto:help@wp2static.com).
 

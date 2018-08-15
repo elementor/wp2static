@@ -6,7 +6,7 @@
  */
 
 class StaticHtmlOutput_Controller {
-	const VERSION = '5.3';
+	const VERSION = '5.4';
 	const OPTIONS_KEY = 'wp-static-html-output-options';
 	const HOOK = 'wp-static-html-output';
 
@@ -846,21 +846,16 @@ class StaticHtmlOutput_Controller {
     }
 
     public function doExportWithoutGUI() {
-		if ( wpsho_fr()->is_plan('professional_edition') ) {
-			// TODO: get parity with UI export options
-			
-
-			// start export, including build initial file list
-			$this->start_export(true);
-
-			// do the crawl
-			$this->crawl_site(true);
-
-			// create zip
-			$this->create_zip();
-
-			// TODO: run any other enabled exports
-		}
+      if ( wpsho_fr()->is_plan('professional_edition') ) {
+      
+        $this->cleanup_leftover_archives(true);
+        $this->start_export(true);
+        $this->crawl_site(true);
+        $this->create_symlink_to_latest_archive(true);
+        $this->post_process_archive_dir(true);
+        $this->deploy();
+        //$this->create_zip();
+      }
     }
 
 	public function get_number_of_successes($viaCLI = false) {
