@@ -5,7 +5,7 @@ Tags: static,cache,wp super cache,wp fastest cache,w3 total cache,security,expor
 Requires at least: 3.2
 Tested up to: 4.9.8
 Requires PHP: 5
-Stable tag: 5.3
+Stable tag: 5.4
 
 
 The optimum solution to speed up and secure your WordPress site - export to static HTML and hide all traces of WordPress from your site!
@@ -41,7 +41,7 @@ A pre-generated static site can outperform popular caching plugins like WP Super
 This plugin produces a static HTML version of your wordpress install, incredibly useful for anyone who would like the publishing power of wordpress but whose webhost doesn't allow dynamic PHP driven sites - such as GitHub Pages. You can run your development site on a different domain or offline, and the plugin will change all relevant URLs when you publish your site. It's a simple but powerful plugin, and after hitting the publish button, the plugin will output a ZIP file of your entire site, ready to upload straight to it's new home. 
 
 
-Developed by [**Leon Stafford**](http://leonstafford.github.io). If you have any questions about this plugin's usage, installation or development, please email me at: [leonstafford@protonmail.com](mailto:leonstafford@protonmail.com)
+Developed by [**Leon Stafford**](http://leonstafford.github.io). If you have any questions about this plugin's usage, installation or development, please email me at: [help@wp2static.com](mailto:help@wp2static.com)
 
 == Installation ==
 
@@ -87,7 +87,7 @@ Anywhere that allows HTML files to be uploaded, ie:
 
 Everyone's WordPress hosting environment and configuration is unique, with different plugins, themes, PHP versions, to name a few. Whilst the plugin does its best to support all environments, sometimes you'll encounter a new issue. Sometimes we can adjust the settings in the plugin to overcome an issue, other times, it will require a bugfix and a new release of the plugin (usually a quick process). 
 
-When you have an issue, send the contents of your "Export Log" on the plugin screen to the developer, at [leonstafford@protonmail.com](mailto:leonstafford@protonmail.com). He'll usually respond within 12 hrs, often sooner.
+When you have an issue, send the contents of your "Export Log" on the plugin screen to the developer, at [help@wp2static.com](mailto:help@wp2static.com). He'll usually respond within 12 hrs, often sooner.
 
 == Screenshots ==
 
@@ -445,13 +445,13 @@ Critical upgrade with bugfixes and improvements
 
 = 2.8 =
 
-Critical upgrade - recommended for all users. If you have troubles upgrading, please contact the developer at leonstafford@protonmail.com for assistance.
+Critical upgrade - recommended for all users. If you have troubles upgrading, please contact the developer at help@wp2static.com for assistance.
 
  * Bugfix: critical fix for Dropbox, BunnyCDN and Netlify exports
 
 = 2.7 =
 
-Critical upgrade - recommended for all users. If you have troubles upgrading, please contact the developer at leonstafford@protonmail.com for assistance.
+Critical upgrade - recommended for all users. If you have troubles upgrading, please contact the developer at help@wp2static.com for assistance.
 
  * Bugfix: Fixes major issue where a failed first export blocked subsequent ones unless page was refreshed
  * Bugfix: Plugin was not respecting the Output Directory Override
