@@ -42,6 +42,7 @@ class StaticHtmlOutput_Controller {
   protected $_githubPersonalAccessToken;
   protected $_githubBranch;
   protected $_githubPath;
+  protected $_useRelativeURLs;
 
 	public static function getInstance() {
 		if (null === self::$_instance) {
@@ -70,6 +71,14 @@ class StaticHtmlOutput_Controller {
         self::$_instance->_githubPersonalAccessToken = filter_input(INPUT_POST, 'githubPersonalAccessToken');
         self::$_instance->_githubBranch = filter_input(INPUT_POST, 'githubBranch');
         self::$_instance->_githubPath = filter_input(INPUT_POST, 'githubPath');
+        self::$_instance->_rewriteWPCONTENT = filter_input(INPUT_POST, 'rewriteWPCONTENT');
+        self::$_instance->_rewriteTHEMEROOT = filter_input(INPUT_POST, 'rewriteTHEMEROOT');
+        self::$_instance->_rewriteTHEMEDIR = filter_input(INPUT_POST, 'rewriteTHEMEDIR');
+        self::$_instance->_rewriteUPLOADS = filter_input(INPUT_POST, 'rewriteUPLOADS');
+        self::$_instance->_rewritePLUGINDIR = filter_input(INPUT_POST, 'rewritePLUGINDIR');
+        self::$_instance->_rewriteWPINC = filter_input(INPUT_POST, 'rewriteWPINC');
+        self::$_instance->_useRelativeURLs = filter_input(INPUT_POST, 'useRelativeURLs');
+
       } else {
         // export being triggered via Cron/CLI, load settings from DB
         parse_str(self::$_instance->_options->getOption('static-export-settings'), $pluginOptions);
@@ -128,6 +137,34 @@ class StaticHtmlOutput_Controller {
 
 		    if ( array_key_exists('githubPath', $pluginOptions )) {
           self::$_instance->_githubPath = $pluginOptions['githubPath'];
+        }
+
+		    if ( array_key_exists('rewriteWPCONTENT', $pluginOptions )) {
+          self::$_instance->_rewriteWPCONTENT = $pluginOptions['rewriteWPCONTENT'];
+        }
+
+		    if ( array_key_exists('rewriteTHEMEROOT', $pluginOptions )) {
+          self::$_instance->_rewriteTHEMEROOT = $pluginOptions['rewriteTHEMEROOT'];
+        }
+
+		    if ( array_key_exists('rewriteTHEMEDIR', $pluginOptions )) {
+          self::$_instance->_rewriteTHEMEDIR = $pluginOptions['rewriteTHEMEDIR'];
+        }
+
+		    if ( array_key_exists('rewriteUPLOADS', $pluginOptions )) {
+          self::$_instance->_rewriteUPLOADS = $pluginOptions['rewriteUPLOADS'];
+        }
+
+		    if ( array_key_exists('rewritePLUGINDIR', $pluginOptions )) {
+          self::$_instance->_rewritePLUGINDIR = $pluginOptions['rewritePLUGINDIR'];
+        }
+
+		    if ( array_key_exists('rewriteWPINC', $pluginOptions )) {
+          self::$_instance->_rewriteWPINC = $pluginOptions['rewriteWPINC'];
+        }
+
+		    if ( array_key_exists('useRelativeURLs', $pluginOptions )) {
+          self::$_instance->_useRelativeURLs = $pluginOptions['useRelativeURLs'];
         }
       }
 		}
@@ -593,11 +630,11 @@ class StaticHtmlOutput_Controller {
 			'site_url' =>  get_site_url(),
 		);
 
-        $new_wp_content = '/' . filter_input(INPUT_POST, 'rewriteWPCONTENT');
-        $new_theme_root = $new_wp_content . '/' . filter_input(INPUT_POST, 'rewriteTHEMEROOT');
-        $new_theme_dir = $new_theme_root . '/' . filter_input(INPUT_POST, 'rewriteTHEMEDIR');
-		$new_uploads_dir = $new_wp_content . '/' . filter_input(INPUT_POST, 'rewriteUPLOADS');
-		$new_plugins_dir = $new_wp_content . '/' . filter_input(INPUT_POST, 'rewritePLUGINDIR');
+        $new_wp_content = '/' . $this->_rewriteWPCONTENT;
+        $new_theme_root = $new_wp_content . '/' . $this->_rewriteTHEMEROOT;
+        $new_theme_dir = $new_theme_root . '/' . $this->_rewriteTHEMEDIR;
+		$new_uploads_dir = $new_wp_content . '/' . $this->_rewriteUPLOADS;
+		$new_plugins_dir = $new_wp_content . '/' . $this->_rewritePLUGINDIR;
 
 		$overwrite_slug_targets = array(
 			'new_wp_content_path' => $new_wp_content,
@@ -605,7 +642,7 @@ class StaticHtmlOutput_Controller {
 			'new_active_theme_path' => $new_theme_dir,
 			'new_uploads_path' => $new_uploads_dir,
 			'new_plugins_path' => $new_plugins_dir,
-			'new_wpinc_path' => '/' . filter_input(INPUT_POST, 'rewriteWPINC'),
+			'new_wpinc_path' => '/' . $this->_rewriteWPINC,
 		);
 
         $urlResponse->cleanup(
@@ -614,7 +651,7 @@ class StaticHtmlOutput_Controller {
 		);
 
 
-		$useRelativeURLs = filter_input(INPUT_POST, 'useRelativeURLs');
+		$useRelativeURLs = $this->_useRelativeURLs;
 
 		// TODO: if it replaces baseurl here, it will be searching links starting with that...
 		// TODO: shouldn't be doing this here...
