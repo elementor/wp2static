@@ -107,7 +107,7 @@ if ( ! function_exists( 'wpsho_fr' ) ) {
 		 * @return null
 		 */
 		function wp_static_html_output_server_side_export() {
-			$plugin = StaticHtmlOutput::getInstance();
+			$plugin = StaticHtmlOutput_Controller::getInstance();
 			$plugin->doExportWithoutGUI();
 			wp_die();
 			return null;

@@ -19,11 +19,78 @@ class StaticHtmlOutput_Controller {
 	protected function __construct() {}
 	protected function __clone() {}
 
+  // new options for simplifying CLI/Client based exports
+  protected $_selected_deployment_option;
+  protected $_base_url;
+  protected $_target_folder;
+  protected $_rewrite_wp_content;
+  protected $_rewrite_theme_dir;
+  protected $_rewrite_uploads;
+  protected $_rewrite_theme_root;
+  protected $_rewrite_plugin_dir;
+  protected $_rewrite_wp_includes;
+  protected $_sendViaGithub;
+  protected $_sendViaFTP;
+  protected $_sendViaS3;
+  protected $_sendViaNetlify;
+  protected $_sendViaDropbox;
+  protected $_additionalUrls;
+  protected $_dontIncludeAllUploadFiles;
+  protected $_outputDirectory;
+
 	public static function getInstance() {
 		if (null === self::$_instance) {
 			self::$_instance = new self();
 			self::$_instance->_options = new StaticHtmlOutput_Options(self::OPTIONS_KEY);
 			self::$_instance->_view = new StaticHtmlOutput_View();
+
+      // load settings via Client or from DB if run from CLI
+      if (null !== (filter_input(INPUT_POST, 'selected_deployment_option'))) {
+        // export being triggered via GUI, set all options from filtered posts
+        self::$_instance->_sendViaGithub = filter_input(INPUT_POST, 'sendViaGithub');
+        self::$_instance->_sendViaFTP = filter_input(INPUT_POST, 'sendViaFTP');
+        self::$_instance->_sendViaS3 = filter_input(INPUT_POST, 'sendViaS3');
+        self::$_instance->_sendViaNetlify = filter_input(INPUT_POST, 'sendViaNetlify');
+        self::$_instance->_sendViaDropbox = filter_input(INPUT_POST, 'sendViaDropbox');
+        self::$_instance->_additionalUrls = filter_input(INPUT_POST, 'additionalUrls');
+        self::$_instance->_dontIncludeAllUploadFiles = filter_input(INPUT_POST, 'dontIncludeAllUploadFiles');
+        self::$_instance->_outputDirectory = filter_input(INPUT_POST, 'outputDirectory');
+      } else {
+        // export being triggered via Cron/CLI, load settings from DB
+        parse_str(self::$_instance->_options->getOption('static-export-settings'), $pluginOptions);
+
+		    if ( array_key_exists('sendViaGithub', $pluginOptions )) {
+          self::$_instance->_sendViaGithub = $pluginOptions['sendViaGithub'];
+        }
+
+		    if ( array_key_exists('sendViaFTP', $pluginOptions )) {
+          self::$_instance->_sendViaFTP = $pluginOptions['sendViaFTP'];
+        }
+
+		    if ( array_key_exists('sendViaS3', $pluginOptions )) {
+          self::$_instance->_sendViaS3 = $pluginOptions['sendViaS3'];
+        }
+
+		    if ( array_key_exists('sendViaNetlify', $pluginOptions )) {
+          self::$_instance->_sendViaNetlify = $pluginOptions['sendViaNetlify'];
+        }
+
+		    if ( array_key_exists('sendViaDropbox', $pluginOptions )) {
+          self::$_instance->_sendViaDropbox = $pluginOptions['sendViaDropbox'];
+        }
+
+		    if ( array_key_exists('additionalUrls', $pluginOptions )) {
+          self::$_instance->_additionalUrls = $pluginOptions['additionalUrls'];
+        }
+
+		    if ( array_key_exists('dontIncludeAllUploadFiles', $pluginOptions )) {
+          self::$_instance->_dontIncludeAllUploadFiles = $pluginOptions['dontIncludeAllUploadFiles'];
+        }
+
+		    if ( array_key_exists('outputDirectory', $pluginOptions )) {
+          self::$_instance->_outputDirectory = $pluginOptions['outputDirectory'];
+        }
+      }
 		}
 
 		return self::$_instance;
@@ -322,83 +389,53 @@ class StaticHtmlOutput_Controller {
 	public function start_export($viaCLI = false) {
 		$this->pre_export_cleanup();
 
-        // set options from GUI or override via CLI
-        $sendViaGithub = filter_input(INPUT_POST, 'sendViaGithub');
-        $sendViaFTP = filter_input(INPUT_POST, 'sendViaFTP');
-        $sendViaS3 = filter_input(INPUT_POST, 'sendViaS3');
-        $sendViaNetlify = filter_input(INPUT_POST, 'sendViaNetlify');
-        $sendViaDropbox = filter_input(INPUT_POST, 'sendViaDropbox');
+    $exportTargetsFile = $this->_uploadsPath . '/WP-STATIC-EXPORT-TARGETS';
 
-        if ($viaCLI) {
-            parse_str($this->_options->getOption('static-export-settings'), $pluginOptions);
+    // add each export target to file
+    if ($this->_sendViaGithub == 1) {
+        file_put_contents($exportTargetsFile, 'GITHUB' . PHP_EOL, FILE_APPEND | LOCK_EX);
+    }
+    if ($this->_sendViaFTP == 1) {
+        file_put_contents($exportTargetsFile, 'FTP' . PHP_EOL, FILE_APPEND | LOCK_EX);
+    }
+    if ($this->_sendViaS3 == 1) {
+        file_put_contents($exportTargetsFile, 'S3' . PHP_EOL, FILE_APPEND | LOCK_EX);
+    }
+    if ($this->_sendViaNetlify == 1) {
+        file_put_contents($exportTargetsFile, 'NETLIFY' . PHP_EOL, FILE_APPEND | LOCK_EX);
+    }
+    if ($this->_sendViaDropbox == 1) {
+        file_put_contents($exportTargetsFile, 'DROPBOX' . PHP_EOL, FILE_APPEND | LOCK_EX);
+    }
 
-            $sendViaGithub = $pluginOptions['sendViaGithub'];
-            $sendViaFTP = $pluginOptions['sendViaFTP'];
-            $sendViaS3 = $pluginOptions['sendViaS3'];
-            $sendViaNetlify = $pluginOptions['sendViaNetlify'];
-            $sendViaDropbox = $pluginOptions['sendViaDropbox'];
-        }
+    // initilise log with environmental info
+    WsLog::l('STARTING EXPORT' . date("Y-m-d h:i:s") );
+    WsLog::l('STARTING EXPORT: PHP VERSION ' . phpversion() );
+    WsLog::l('STARTING EXPORT: PHP MAX EXECUTION TIME ' . ini_get('max_execution_time') );
+    WsLog::l('STARTING EXPORT: OS VERSION ' . php_uname() );
+    WsLog::l('STARTING EXPORT: WP VERSION ' . get_bloginfo('version') );
+    WsLog::l('STARTING EXPORT: WP URL ' . get_bloginfo('url') );
+    WsLog::l('STARTING EXPORT: WP SITEURL ' . get_option('siteurl') );
+    WsLog::l('STARTING EXPORT: WP HOME ' . get_option('home') );
+    WsLog::l('STARTING EXPORT: WP ADDRESS ' . get_bloginfo('wpurl') );
+    WsLog::l('STARTING EXPORT: PLUGIN VERSION ' . $this::VERSION );
+    WsLog::l('STARTING EXPORT: VIA CLI? ' . $viaCLI);
+    WsLog::l('STARTING EXPORT: STATIC EXPORT URL ' . filter_input(INPUT_POST, 'baseUrl') );
 
-        $exportTargetsFile = $this->_uploadsPath . '/WP-STATIC-EXPORT-TARGETS';
+    $initial_file_list_count = StaticHtmlOutput_FilesHelper::buildInitialFileList(
+      $viaCLI,
+      $this->_additionalUrls,
+      $this->_uploadsPath,
+      $this->_uploadsURL,
+      $this->outputPath(),
+      self::HOOK,
+      ! $this->_dontIncludeAllUploadFiles // TODO: neg neg here inelegant
+);
 
-        // add each export target to file
-        if ($sendViaGithub == 1) {
-            file_put_contents($exportTargetsFile, 'GITHUB' . PHP_EOL, FILE_APPEND | LOCK_EX);
-        }
-        if ($sendViaFTP == 1) {
-            file_put_contents($exportTargetsFile, 'FTP' . PHP_EOL, FILE_APPEND | LOCK_EX);
-        }
-        if ($sendViaS3 == 1) {
-            file_put_contents($exportTargetsFile, 'S3' . PHP_EOL, FILE_APPEND | LOCK_EX);
-        }
-        if ($sendViaNetlify == 1) {
-            file_put_contents($exportTargetsFile, 'NETLIFY' . PHP_EOL, FILE_APPEND | LOCK_EX);
-        }
-        if ($sendViaDropbox == 1) {
-            file_put_contents($exportTargetsFile, 'DROPBOX' . PHP_EOL, FILE_APPEND | LOCK_EX);
-        }
+    WsLog::l('STARTING EXPORT: initial crawl list contains ' . $initial_file_list_count . ' files');
 
-		// initilise log with environmental info
-
-        WsLog::l('STARTING EXPORT' . date("Y-m-d h:i:s") );
-        WsLog::l('STARTING EXPORT: PHP VERSION ' . phpversion() );
-        WsLog::l('STARTING EXPORT: PHP MAX EXECUTION TIME ' . ini_get('max_execution_time') );
-        WsLog::l('STARTING EXPORT: OS VERSION ' . php_uname() );
-        WsLog::l('STARTING EXPORT: WP VERSION ' . get_bloginfo('version') );
-        WsLog::l('STARTING EXPORT: WP URL ' . get_bloginfo('url') );
-        WsLog::l('STARTING EXPORT: WP SITEURL ' . get_option('siteurl') );
-        WsLog::l('STARTING EXPORT: WP HOME ' . get_option('home') );
-        WsLog::l('STARTING EXPORT: WP ADDRESS ' . get_bloginfo('wpurl') );
-        WsLog::l('STARTING EXPORT: PLUGIN VERSION ' . $this::VERSION );
-        WsLog::l('STARTING EXPORT: VIA CLI? ' . $viaCLI);
-        WsLog::l('STARTING EXPORT: STATIC EXPORT URL ' . filter_input(INPUT_POST, 'baseUrl') );
-
-
-        // set options from GUI or CLI
-        $additionalUrls = filter_input(INPUT_POST, 'additionalUrls');
-
-        if ($viaCLI) {
-            // read options from DB as array
-            parse_str($this->_options->getOption('static-export-settings'), $pluginOptions);
-
-            $newBaseURL = $pluginOptions['baseUrl'];
-            $additionalUrls = $pluginOptions['additionalUrls'];
-        }
-
-        $initial_file_list_count = StaticHtmlOutput_FilesHelper::buildInitialFileList(
-			$viaCLI,
-			$additionalUrls,
-			$this->_uploadsPath,
-			$this->_uploadsURL,
-			$this->outputPath(),
-			self::HOOK,
-			! filter_input(INPUT_POST, 'dontIncludeAllUploadFiles') // TODO: neg neg here inelegant
-		);
-
-        WsLog::l('STARTING EXPORT: initial crawl list contains ' . $initial_file_list_count . ' files');
-
-        echo 'SUCCESS';
-	}
+    echo 'SUCCESS';
+}
 
 	public function recursive_copy($srcdir, $dstdir) {
 		$dir = opendir($srcdir);
