@@ -38,12 +38,20 @@ class StaticHtmlOutput_Controller {
   protected $_dontIncludeAllUploadFiles;
   protected $_outputDirectory;
   protected $_targetFolder;
+  protected $_githubRepo;
+  protected $_githubPersonalAccessToken;
+  protected $_githubBranch;
+  protected $_githubPath;
 
 	public static function getInstance() {
 		if (null === self::$_instance) {
 			self::$_instance = new self();
 			self::$_instance->_options = new StaticHtmlOutput_Options(self::OPTIONS_KEY);
 			self::$_instance->_view = new StaticHtmlOutput_View();
+
+        $tmp_var_to_hold_return_array = wp_upload_dir();
+        self::$_instance->_uploadsPath = $tmp_var_to_hold_return_array['basedir'];
+        self::$_instance->_uploadsURL = $tmp_var_to_hold_return_array['baseurl'];
 
       // load settings via Client or from DB if run from CLI
       if (null !== (filter_input(INPUT_POST, 'selected_deployment_option'))) {
@@ -58,6 +66,10 @@ class StaticHtmlOutput_Controller {
         self::$_instance->_dontIncludeAllUploadFiles = filter_input(INPUT_POST, 'dontIncludeAllUploadFiles');
         self::$_instance->_outputDirectory = filter_input(INPUT_POST, 'outputDirectory');
         self::$_instance->_targetFolder = filter_input(INPUT_POST, 'targetFolder');
+        self::$_instance->_githubRepo = filter_input(INPUT_POST, 'githubRepo');
+        self::$_instance->_githubPersonalAccessToken = filter_input(INPUT_POST, 'githubPersonalAccessToken');
+        self::$_instance->_githubBranch = filter_input(INPUT_POST, 'githubBranch');
+        self::$_instance->_githubPath = filter_input(INPUT_POST, 'githubPath');
       } else {
         // export being triggered via Cron/CLI, load settings from DB
         parse_str(self::$_instance->_options->getOption('static-export-settings'), $pluginOptions);
@@ -101,6 +113,22 @@ class StaticHtmlOutput_Controller {
 		    if ( array_key_exists('selected_deployment_option', $pluginOptions )) {
           self::$_instance->_selected_deployment_option = $pluginOptions['selected_deployment_option'];
         }
+
+		    if ( array_key_exists('githubRepo', $pluginOptions )) {
+          self::$_instance->_githubRepo = $pluginOptions['githubRepo'];
+        }
+
+		    if ( array_key_exists('githubPersonalAccessToken', $pluginOptions )) {
+          self::$_instance->_githubPersonalAccessToken = $pluginOptions['githubPersonalAccessToken'];
+        }
+
+		    if ( array_key_exists('githubBranch', $pluginOptions )) {
+          self::$_instance->_githubBranch = $pluginOptions['githubBranch'];
+        }
+
+		    if ( array_key_exists('githubPath', $pluginOptions )) {
+          self::$_instance->_githubPath = $pluginOptions['githubPath'];
+        }
       }
 		}
 
@@ -109,9 +137,6 @@ class StaticHtmlOutput_Controller {
 
 	public static function init($bootstrapFile) {
 		$instance = self::getInstance();
-        $tmp_var_to_hold_return_array = wp_upload_dir();
-		$instance->_uploadsPath = $tmp_var_to_hold_return_array['basedir'];
-		$instance->_uploadsURL = $tmp_var_to_hold_return_array['baseurl'];
 
 		register_activation_hook($bootstrapFile, array($instance, 'activate'));
 
@@ -287,10 +312,10 @@ class StaticHtmlOutput_Controller {
 		if ( wpsho_fr()->is__premium_only() ) {
 			WsLog::l('GITHUB EXPORT: Uploading file blobs...');
 			$github = new StaticHtmlOutput_GitHub(
-				filter_input(INPUT_POST, 'githubRepo'),
-				filter_input(INPUT_POST, 'githubPersonalAccessToken'),
-				filter_input(INPUT_POST, 'githubBranch'),
-				filter_input(INPUT_POST, 'githubPath'),
+				$this->_githubRepo,
+				$this->_githubPersonalAccessToken,
+				$this->_githubBranch,
+				$this->_githubPath,
 				$this->_uploadsPath
 			);
 
@@ -303,10 +328,10 @@ class StaticHtmlOutput_Controller {
 			WsLog::l('GITHUB EXPORT: Preparing files for deployment...');
 
 			$github = new StaticHtmlOutput_GitHub(
-				filter_input(INPUT_POST, 'githubRepo'),
-				filter_input(INPUT_POST, 'githubPersonalAccessToken'),
-				filter_input(INPUT_POST, 'githubBranch'),
-				filter_input(INPUT_POST, 'githubPath'),
+				$this->_githubRepo,
+				$this->_githubPersonalAccessToken,
+				$this->_githubBranch,
+				$this->_githubPath,
 				$this->_uploadsPath
 			);
 
@@ -319,10 +344,10 @@ class StaticHtmlOutput_Controller {
 			WsLog::l('GITHUB EXPORT: Finalising deployment...');
 
 			$github = new StaticHtmlOutput_GitHub(
-				filter_input(INPUT_POST, 'githubRepo'),
-				filter_input(INPUT_POST, 'githubPersonalAccessToken'),
-				filter_input(INPUT_POST, 'githubBranch'),
-				filter_input(INPUT_POST, 'githubPath'),
+				$this->_githubRepo,
+				$this->_githubPersonalAccessToken,
+				$this->_githubBranch,
+				$this->_githubPath,
 				$this->_uploadsPath
 			);
 
@@ -892,7 +917,17 @@ class StaticHtmlOutput_Controller {
     }
 
     public function deploy() {
-      $this->copyStaticSiteToPublicFolder();
+      switch($this->_selected_deployment_option) {
+        case 'folder':
+          $this->copyStaticSiteToPublicFolder();
+        break;
+
+        case 'github':
+          $this->github_prepare_export();
+        break;
+
+
+      }
     }
 
     public function doExportWithoutGUI() {

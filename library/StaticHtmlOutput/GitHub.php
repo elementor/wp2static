@@ -18,10 +18,8 @@ class StaticHtmlOutput_GitHub
 	protected $_exportFileList;
 	protected $_globHashAndPathList;
 	protected $_archiveName;
-	protected $_plugin;
 	
-	public function __construct($plugin, $userRepository, $accessToken, $branch, $remotePath, $uploadsPath) {
-
+	public function __construct($userRepository, $accessToken, $branch, $remotePath, $uploadsPath) {
 		list($this->_user, $this->_repository) = explode('/', $userRepository);
 		$this->_accessToken = $accessToken;
 		$this->_branch = $branch;
@@ -30,7 +28,6 @@ class StaticHtmlOutput_GitHub
 		$this->_globHashAndPathList = $uploadsPath . '/WP-STATIC-EXPORT-GITHUB-GLOBS-PATHS';
 		$archiveDir = file_get_contents($uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
 		$this->_archiveName = rtrim($archiveDir, '/');
-		$this->_plugin = $plugin;
 	}
 
 	public function clear_file_list() {
@@ -74,10 +71,9 @@ class StaticHtmlOutput_GitHub
     public function prepare_deployment() {
 		if ( wpsho_fr()->is__premium_only() ) {
 
-			$this->_plugin->wsLog('GITHUB EXPORT: Preparing list of files to transfer');
+			WsLog::l('GITHUB EXPORT: Preparing list of files to transfer');
 
 			$this->clear_file_list();
-
 			$this->create_github_deployment_list($this->_archiveName, $this->_archiveName, $this->_remotePath);
 
 			echo 'SUCCESS';
@@ -135,19 +131,17 @@ class StaticHtmlOutput_GitHub
 						array('content' => $encodedFile, 'encoding' => 'base64')
 						); # utf-8 or base64
 			} catch (Exception $e) {
-				$this->_plugin->wsLog('GITHUB: Error creating blob:' . $e );
+				WsLog::l('GITHUB: Error creating blob:' . $e );
 			}
 
 			$globHashPathLine = $globHash['sha'] . ',' . rtrim($targetPath) . basename($fileToTransfer) . "\n";
 			file_put_contents($this->_globHashAndPathList, $globHashPathLine, FILE_APPEND | LOCK_EX);
 
-			// $this->wsLog('GITHUB: Creating blob for ' . rtrim($targetPath));
-		   
 			// end vendor specific 
 			$filesRemaining = $this->get_remaining_items_count();
 
 			if ( $this->get_remaining_items_count() > 0 ) {
-				$this->_plugin->wsLog('GITHUB EXPORT: ' . $filesRemaining . ' files remaining to transfer');
+				WsLog::l('GITHUB EXPORT: ' . $filesRemaining . ' files remaining to transfer');
 				echo $this->get_remaining_items_count();
 			} else {
 				echo 'SUCCESS';
@@ -221,7 +215,7 @@ class StaticHtmlOutput_GitHub
 			$filesRemaining = $this->get_remaining_items_count();
 
 			if ( $this->get_remaining_items_count() > 0 ) {
-				$this->_plugin->wsLog('GITHUB EXPORT: ' . $filesRemaining . ' files remaining to transfer');
+				WsLog::l('GITHUB EXPORT: ' . $filesRemaining . ' files remaining to transfer');
 				echo $this->get_remaining_items_count();
 			} else {
 				echo 'SUCCESS';
