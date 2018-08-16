@@ -102,7 +102,7 @@ class StaticHtmlOutput_GitHub
 	}
 
 	
-    public function upload_blobs() {
+    public function upload_blobs($viaCLI = false) {
 		if ( wpsho_fr()->is__premium_only() ) {
 			require_once dirname(__FILE__) . '/../GuzzleHttp/autoloader.php';
 			require_once(__DIR__.'/../Github/autoload.php');
@@ -141,6 +141,13 @@ class StaticHtmlOutput_GitHub
 			$filesRemaining = $this->get_remaining_items_count();
 
 			if ( $this->get_remaining_items_count() > 0 ) {
+
+        // if this is via CLI, then call this function again here
+        if ($viaCLI) {
+          error_log('uploading blobs via cli');
+          $this->upload_blobs(true); 
+        }
+
 				WsLog::l('GITHUB EXPORT: ' . $filesRemaining . ' files remaining to transfer');
 				echo $this->get_remaining_items_count();
 			} else {

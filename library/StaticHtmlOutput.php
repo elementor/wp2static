@@ -308,7 +308,7 @@ class StaticHtmlOutput_Controller {
         WsLog::l('PROGRESS: Starting export type:' . $target . PHP_EOL);
     }
 
-	public function github_upload_blobs() {
+	public function github_upload_blobs($viaCLI = false) {
 		if ( wpsho_fr()->is__premium_only() ) {
 			WsLog::l('GITHUB EXPORT: Uploading file blobs...');
 			$github = new StaticHtmlOutput_GitHub(
@@ -319,11 +319,11 @@ class StaticHtmlOutput_Controller {
 				$this->_uploadsPath
 			);
 
-			$github->upload_blobs();
+			$github->upload_blobs($viaCLI);
 		}
     }
 
-    public function github_prepare_export () {
+    public function github_prepare_export() {
 		if ( wpsho_fr()->is__premium_only() ) {
 			WsLog::l('GITHUB EXPORT: Preparing files for deployment...');
 
@@ -924,6 +924,8 @@ class StaticHtmlOutput_Controller {
 
         case 'github':
           $this->github_prepare_export();
+          $this->github_upload_blobs(true);
+          $this->github_finalise_export();
         break;
 
 
