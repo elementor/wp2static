@@ -37,6 +37,7 @@ class StaticHtmlOutput_Controller {
   protected $_additionalUrls;
   protected $_dontIncludeAllUploadFiles;
   protected $_outputDirectory;
+  protected $_targetFolder;
 
 	public static function getInstance() {
 		if (null === self::$_instance) {
@@ -47,6 +48,7 @@ class StaticHtmlOutput_Controller {
       // load settings via Client or from DB if run from CLI
       if (null !== (filter_input(INPUT_POST, 'selected_deployment_option'))) {
         // export being triggered via GUI, set all options from filtered posts
+        self::$_instance->_selected_deployment_option = filter_input(INPUT_POST, 'selected_deployment_option');
         self::$_instance->_sendViaGithub = filter_input(INPUT_POST, 'sendViaGithub');
         self::$_instance->_sendViaFTP = filter_input(INPUT_POST, 'sendViaFTP');
         self::$_instance->_sendViaS3 = filter_input(INPUT_POST, 'sendViaS3');
@@ -55,6 +57,7 @@ class StaticHtmlOutput_Controller {
         self::$_instance->_additionalUrls = filter_input(INPUT_POST, 'additionalUrls');
         self::$_instance->_dontIncludeAllUploadFiles = filter_input(INPUT_POST, 'dontIncludeAllUploadFiles');
         self::$_instance->_outputDirectory = filter_input(INPUT_POST, 'outputDirectory');
+        self::$_instance->_targetFolder = filter_input(INPUT_POST, 'targetFolder');
       } else {
         // export being triggered via Cron/CLI, load settings from DB
         parse_str(self::$_instance->_options->getOption('static-export-settings'), $pluginOptions);
@@ -89,6 +92,14 @@ class StaticHtmlOutput_Controller {
 
 		    if ( array_key_exists('outputDirectory', $pluginOptions )) {
           self::$_instance->_outputDirectory = $pluginOptions['outputDirectory'];
+        }
+
+		    if ( array_key_exists('targetFolder', $pluginOptions )) {
+          self::$_instance->_targetFolder = $pluginOptions['targetFolder'];
+        }
+
+		    if ( array_key_exists('selected_deployment_option', $pluginOptions )) {
+          self::$_instance->_selected_deployment_option = $pluginOptions['selected_deployment_option'];
         }
       }
 		}
@@ -455,10 +466,8 @@ class StaticHtmlOutput_Controller {
 	}
 
 	public function copyStaticSiteToPublicFolder() {
-		// TODO: switch for CLI driven
-
-		if ( filter_input( INPUT_POST, 'selected_deployment_option' ) == 'folder' ) {
-			$publicFolderToCopyTo = filter_input(INPUT_POST, 'targetFolder');
+		if ( $this->_selected_deployment_option == 'folder' ) {
+			$publicFolderToCopyTo = $this->_targetFolder;
 
 			if ( ! empty(trim($publicFolderToCopyTo)) ) {
 				// if folder isn't empty and current deployment option is "folder"
@@ -882,6 +891,10 @@ class StaticHtmlOutput_Controller {
 		}
     }
 
+    public function deploy() {
+      $this->copyStaticSiteToPublicFolder();
+    }
+
     public function doExportWithoutGUI() {
       if ( wpsho_fr()->is_plan('professional_edition') ) {
       
@@ -890,7 +903,7 @@ class StaticHtmlOutput_Controller {
         $this->crawl_site(true);
         $this->create_symlink_to_latest_archive(true);
         $this->post_process_archive_dir(true);
-        //$this->deploy();
+        $this->deploy();
         //$this->create_zip();
       }
     }
