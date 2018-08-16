@@ -224,7 +224,7 @@ http://172.17.0.3/my_pricelist.pdf</pre>
 		<p>In order to hide any trace that your site uses WordPress, the following paths will be rewritten. You can leave these default options in, but for more control, you can overwrite them. They cannot be empty.</p>
 			
 
-		<b>/wp-contents</b> will be re-written to <b class="base_url_preview"></b> <input name="rewriteWPCONTENT" class="regular-text rewrite" id="rewriteWPCONTENT" value="<?php echo esc_attr($this->rewriteWPCONTENT) ?>" placeholder="<?php echo __('contents', 'static-html-output-plugin');?>" />
+		<b>/wp-content</b> will be re-written to <b class="base_url_preview"></b> <input name="rewriteWPCONTENT" class="regular-text rewrite" id="rewriteWPCONTENT" value="<?php echo esc_attr($this->rewriteWPCONTENT) ?>" placeholder="<?php echo __('contents', 'static-html-output-plugin');?>" />
 		<br>
 		<b><?php echo str_replace(home_url(), '', get_template_directory_uri()); ?></b> will be re-written to <b class="base_url_preview"></b><b>wp-content/themes/</b> <input name="rewriteTHEMEDIR" class="regular-text rewrite" id="rewriteTHEMEDIR" value="<?php echo esc_attr($this->rewriteTHEMEDIR) ?>" placeholder="<?php echo __('theme', 'static-html-output-plugin');?>" />
 		<br>
