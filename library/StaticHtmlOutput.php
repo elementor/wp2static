@@ -890,7 +890,7 @@ class StaticHtmlOutput_Controller {
         $this->crawl_site(true);
         $this->create_symlink_to_latest_archive(true);
         $this->post_process_archive_dir(true);
-        $this->deploy();
+        //$this->deploy();
         //$this->create_zip();
       }
     }
@@ -948,7 +948,7 @@ class StaticHtmlOutput_Controller {
 
 		$base_url = parse_url($site_url);
 
-		if ( $base_url['path'] != '/' ) {
+		if ( array_key_exists('path', $base_url ) && $base_url['path'] != '/' ) {
 			$this->_subdirectory = $base_url['path'];
 		}
 	}	
@@ -998,24 +998,21 @@ class StaticHtmlOutput_Controller {
 
 
 		// TODO: subdir installations are not being correctly detected here
-		// 
-		if (! rename($original_wp_content, $new_wp_content)) {
-			WsLog::l('POST PROCESSING ARCHIVE DIR: Failed to rename ' . $original_wp_content);
-			echo 'FAIL';
-		}
+
+    $this->rename_populated_directory($original_wp_content, $new_wp_content);
 
 		if (file_exists($updated_uploads_dir)) {
-			rename($updated_uploads_dir, $new_uploads_dir);
+			$this->rename_populated_directory($updated_uploads_dir, $new_uploads_dir);
 		}
 
-		rename($updated_theme_root, $new_theme_root);
-		rename($updated_theme_dir, $new_theme_dir);
+		$this->rename_populated_directory($updated_theme_root, $new_theme_root);
+		$this->rename_populated_directory($updated_theme_dir, $new_theme_dir);
 
 		if( file_exists($updated_plugins_dir) ) {
-			rename($updated_plugins_dir, $new_plugins_dir);
+			$this->rename_populated_directory($updated_plugins_dir, $new_plugins_dir);
 
 		}
-		rename($original_wp_includes, $new_wp_includes);
+		$this->rename_populated_directory($original_wp_includes, $new_wp_includes);
 
 		// rm other left over WP identifying files
 
@@ -1037,7 +1034,13 @@ class StaticHtmlOutput_Controller {
 
 		echo 'SUCCESS';
 	}
+  
+  // default rename in PHP throws warnings if dir is populated
+  public function rename_populated_directory($source, $target) {
+    $this->recursive_copy($source, $target);
 
+    StaticHtmlOutput_FilesHelper::delete_dir_with_files($source);
+  }
 
 	public function remove_symlink_to_latest_archive() {
         global $blog_id;
