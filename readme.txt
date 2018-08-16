@@ -1,10 +1,10 @@
 === WP Static Site Generator ===
 Contributors: leonstafford,cache1
 Donate link: https://www.paypal.me/leonjstafford
-Tags: static,cache,wp super cache,wp fastest cache,w3 total cache,security,export,s3,dropbox,github,netlify,bunnycdn,html
+Tags: static site generator,cache,wp super cache,wp fastest cache,w3 total cache,security,export,s3,dropbox,github,netlify,bunnycdn,html
 Requires at least: 3.2
 Tested up to: 4.9.8
-Requires PHP: 5
+Requires PHP: 5.4
 Stable tag: 5.4
 
 
@@ -95,6 +95,11 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
 2. The main interface (Japanese)
 
 == Changelog ==
+
+= 5.4 =
+
+ * Bugfix: certain cases where inline style images are written with incorrect filenames
+ * Bugfix: fix for cron-scheduled exports failing 
 
 = 5.3 =
 
@@ -371,6 +376,11 @@ Altered main codebase to fix recursion bug and endless loop. Essential upgrade.
 Initial release to Wordpress community
 
 == Upgrade Notice ==
+
+= 5.4 =
+
+ * Bugfix: certain cases where inline style images are written with incorrect filenames
+ * Bugfix: fix for cron-scheduled exports failing 
 
 = 5.3 =
 
