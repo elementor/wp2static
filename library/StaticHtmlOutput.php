@@ -1120,7 +1120,11 @@ class StaticHtmlOutput_Controller {
 		} else {
 			$fileName = $fileDir . '/' . $pathInfo['filename'] . '.' . $fileExtension;
 		}
+
+    // fix for # 103 - weird case with inline style images in nested subdirs
+    // should be a non-issue if using DOMDoc instead of regex parsing
 		
+		$fileName = str_replace(');', '', $fileName);
 		// TODO: find where this extra . is coming from (current dir indicator?)
 		$fileName = str_replace('.index.html', 'index.html', $fileName);
 		// remove 2 or more slashes from paths
