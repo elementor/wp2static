@@ -8,7 +8,8 @@ Requires PHP: 5.4
 Stable tag: 5.4
 
 
-The optimum solution to speed up and secure your WordPress site - export to static HTML and hide all traces of WordPress from your site!
+
+WP Static Site Generator is the optimum solution to speed up and secure your WordPress site - export to static HTML and hide all traces of WordPress from your site!
 
 == Description ==
 
