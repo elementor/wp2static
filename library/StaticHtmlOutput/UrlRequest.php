@@ -1269,8 +1269,8 @@ class StaticHtmlOutput_UrlRequest
 
 	public function replaceBaseUrl($oldBaseUrl, $newBaseUrl, $absolutePaths = false)
 	{
-		// TODO: don't rewrite mailto links unless specified, re #30
 
+		// TODO: don't rewrite mailto links unless specified, re #30
 		if ($this->isRewritable())
 		{
 
@@ -1298,8 +1298,15 @@ class StaticHtmlOutput_UrlRequest
 
 				$responseBody = str_replace('<head>', "<head>\n<base href=\"" . esc_attr($newBaseUrl) . "/\" />\n", $responseBody);
 			} else {
+          // note: as it's stripping urls first, the replacing, it will not keep the desired
+          // url protocol if the old url is http and the new is https, for example 
+          $responseBody = str_replace($oldDomain, $newDomain, $responseBody);
 
-				$responseBody = str_replace($oldDomain, $newDomain, $responseBody);
+          // do another pass, detecting any incorrect protocols and correcting to the desired one
+          $responseBody = str_replace('http://' . $newDomain, $newBaseUrl, $responseBody);
+          $responseBody = str_replace('https://' . $newDomain, $newBaseUrl, $responseBody);
+
+          // TODO: cater for protocol rel links
 
 			}
 
