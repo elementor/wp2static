@@ -132,6 +132,9 @@ class StaticHtmlOutput_GitHub
 						); # utf-8 or base64
 			} catch (Exception $e) {
 				WsLog::l('GITHUB: Error creating blob:' . $e );
+        error_log('error creating blog in GitHub');
+        error_log($targetPath);
+        
 			}
 
 			$globHashPathLine = $globHash['sha'] . ',' . rtrim($targetPath) . basename($fileToTransfer) . "\n";
@@ -144,7 +147,6 @@ class StaticHtmlOutput_GitHub
 
         // if this is via CLI, then call this function again here
         if ($viaCLI) {
-          error_log('uploading blobs via cli');
           $this->upload_blobs(true); 
         }
 
@@ -157,77 +159,66 @@ class StaticHtmlOutput_GitHub
     }
 
     public function commit_new_tree() {
-		if ( wpsho_fr()->is__premium_only() ) {
-			require_once dirname(__FILE__) . '/../GuzzleHttp/autoloader.php';
-			require_once(__DIR__.'/../Github/autoload.php');
+      if ( wpsho_fr()->is__premium_only() ) {
+        require_once dirname(__FILE__) . '/../GuzzleHttp/autoloader.php';
+        require_once(__DIR__.'/../Github/autoload.php');
 
-			if ($this->get_remaining_items_count() < 0) {
-				echo 'ERROR';
-				die();
-			}
+        // vendor specific from here
 
-			$line = $this->get_item_to_export();
+        $client = new \Github\Client();
 
-			list($fileToTransfer, $targetPath) = explode(',', $line);
+        $client->authenticate($this->_accessToken, Github\Client::AUTH_HTTP_TOKEN);
+        $reference = $client->api('gitData')->references()->show($this->_user, $this->_repository, 'heads/' . $this->_branch);
+        $commit = $client->api('gitData')->commits()->show($this->_user, $this->_repository, $reference['object']['sha']);
+        $commitSHA = $commit['sha'];
+        $treeSHA = $commit['tree']['sha'];
+        $treeURL = $commit['tree']['url'];
+        $treeContents = array();
+        $contents = file($this->_globHashAndPathList);
 
-			$targetPath = rtrim($targetPath);
+        foreach($contents as $line) {
+          list($blobHash, $targetPath) = explode(',', $line);
 
-			// vendor specific from here
+          $treeContents[] = array(
+              'path' => trim($targetPath),
+              'mode' => '100644',
+              'type' => 'blob',
+              'sha' => $blobHash
+              );
+        }
 
-			$client = new \Github\Client();
+        $treeData = array(
+            'base_tree' => $treeSHA,
+            'tree' => $treeContents
+            );
 
-			$client->authenticate($this->_accessToken, Github\Client::AUTH_HTTP_TOKEN);
-			$reference = $client->api('gitData')->references()->show($this->_user, $this->_repository, 'heads/' . $this->_branch);
-			$commit = $client->api('gitData')->commits()->show($this->_user, $this->_repository, $reference['object']['sha']);
-			$commitSHA = $commit['sha'];
-			$treeSHA = $commit['tree']['sha'];
-			$treeURL = $commit['tree']['url'];
-			$treeContents = array();
-			$contents = file($this->_globHashAndPathList);
+        $newTree = $client->api('gitData')->trees()->create($this->_user, $this->_repository, $treeData);
 
-			foreach($contents as $line) {
-				list($blobHash, $targetPath) = explode(',', $line);
+        $commitData = array('message' => 'WP Static HTML Output plugin: ' . date("Y-m-d h:i:s"), 'tree' => $newTree['sha'], 'parents' => array($commitSHA));
+        $commit = $client->api('gitData')->commits()->create($this->_user, $this->_repository, $commitData);
+        $referenceData = array('sha' => $commit['sha'], 'force' => true); //Force is default false
 
-				$treeContents[] = array(
-					'path' => trim($targetPath),
-					'mode' => '100644',
-					'type' => 'blob',
-					'sha' => $blobHash
-				);
-			}
+        try {
+          $reference = $client->api('gitData')->references()->update(
+              $this->_user,
+              $this->_repository,
+              'heads/' . $this->_branch,
+              $referenceData);
+        } catch (Exception $e) {
+          $this->wsLog($e);
+          throw new Exception($e);
+        }
 
-			$treeData = array(
-				'base_tree' => $treeSHA,
-				'tree' => $treeContents
-			);
+        // end vendor specific 
+        $filesRemaining = $this->get_remaining_items_count();
 
-			$newTree = $client->api('gitData')->trees()->create($this->_user, $this->_repository, $treeData);
-			
-			$commitData = array('message' => 'WP Static HTML Output plugin: ' . date("Y-m-d h:i:s"), 'tree' => $newTree['sha'], 'parents' => array($commitSHA));
-			$commit = $client->api('gitData')->commits()->create($this->_user, $this->_repository, $commitData);
-			$referenceData = array('sha' => $commit['sha'], 'force' => true); //Force is default false
-
-			try {
-				$reference = $client->api('gitData')->references()->update(
-						$this->_user,
-						$this->_repository,
-						'heads/' . $this->_branch,
-						$referenceData);
-			} catch (Exception $e) {
-				$this->wsLog($e);
-				throw new Exception($e);
-			}
-		   
-			// end vendor specific 
-			$filesRemaining = $this->get_remaining_items_count();
-
-			if ( $this->get_remaining_items_count() > 0 ) {
-				WsLog::l('GITHUB EXPORT: ' . $filesRemaining . ' files remaining to transfer');
-				echo $this->get_remaining_items_count();
-			} else {
-				echo 'SUCCESS';
-			}
-		}
+        if ( $this->get_remaining_items_count() > 0 ) {
+          WsLog::l('GITHUB EXPORT: ' . $filesRemaining . ' files remaining to transfer');
+          echo $this->get_remaining_items_count();
+        } else {
+          echo 'SUCCESS';
+        }
+      }
     }
 
 }
