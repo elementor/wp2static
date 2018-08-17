@@ -131,10 +131,8 @@ class StaticHtmlOutput_GitHub
 						array('content' => $encodedFile, 'encoding' => 'base64')
 						); # utf-8 or base64
 			} catch (Exception $e) {
-				WsLog::l('GITHUB: Error creating blob:' . $e );
-        error_log('error creating blog in GitHub');
-        error_log($targetPath);
-        
+				WsLog::l('GITHUB: Error creating blob (API limits exceeded?):' . $e );
+        error_log('error creating blog in GitHub (API limits exceeded?)');
 			}
 
 			$globHashPathLine = $globHash['sha'] . ',' . rtrim($targetPath) . basename($fileToTransfer) . "\n";
