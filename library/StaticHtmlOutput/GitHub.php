@@ -133,6 +133,9 @@ class StaticHtmlOutput_GitHub
 			} catch (Exception $e) {
 				WsLog::l('GITHUB: Error creating blob (API limits exceeded?):' . $e );
         error_log('error creating blog in GitHub (API limits exceeded?)');
+        // TODO: show current rate limits: https://developer.github.com/v3/rate_limit/
+        $coreLimit = $client->api('rate_limit')->getCoreLimit();
+        error_log($coreLimit);
 			}
 
 			$globHashPathLine = $globHash['sha'] . ',' . rtrim($targetPath) . basename($fileToTransfer) . "\n";
