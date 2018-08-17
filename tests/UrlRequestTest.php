@@ -441,7 +441,7 @@ $escaped_url_block_expected_rewrite = <<<EOHTML
 https:\/\/subdomain.mydomain.com\/
 subdomain.mydomain.com
 //subdomain.mydomain.com
-http://subdomain.mydomain.com
+https://subdomain.mydomain.com
 EOHTML;
 
 		// mock getResponseBody with testable HTML content
