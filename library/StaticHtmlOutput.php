@@ -21,14 +21,14 @@ class StaticHtmlOutput_Controller {
 
   // new options for simplifying CLI/Client based exports
   protected $_selected_deployment_option;
-  protected $_base_url;
+  protected $_baseUrl;
   protected $_target_folder;
-  protected $_rewrite_wp_content;
-  protected $_rewrite_theme_dir;
-  protected $_rewrite_uploads;
-  protected $_rewrite_theme_root;
-  protected $_rewrite_plugin_dir;
-  protected $_rewrite_wp_includes;
+  protected $_rewriteWPCONTENT;
+  protected $_rewriteTHEMEROOT;
+  protected $_rewriteTHEMEDIR;
+  protected $_rewriteUPLOADS;
+  protected $_rewritePLUGINDIR;
+  protected $_rewriteWPINC;
   protected $_sendViaGithub;
   protected $_sendViaFTP;
   protected $_sendViaS3;
@@ -43,6 +43,22 @@ class StaticHtmlOutput_Controller {
   protected $_githubBranch;
   protected $_githubPath;
   protected $_useRelativeURLs;
+  protected $_useBasicAuth;
+  protected $_basicAuthUser;
+  protected $_basicAuthPassword;
+  protected $_bunnycdnPullZoneName;
+  protected $_bunnycdnAPIKey;
+  protected $_bunnycdnRemotePath;
+  protected $_cfDistributionId;
+  protected $_s3Key;
+  protected $_s3Secret;
+  protected $_s3Region;
+  protected $_s3Bucket;
+  protected $_s3RemotePath;
+  protected $_dropboxAccessToken;
+  protected $_dropboxFolder;
+  protected $_netlifySiteID;
+  protected $_netlifyPersonalAccessToken;
 
 	public static function getInstance() {
 		if (null === self::$_instance) {
@@ -58,6 +74,7 @@ class StaticHtmlOutput_Controller {
       if (null !== (filter_input(INPUT_POST, 'selected_deployment_option'))) {
         // export being triggered via GUI, set all options from filtered posts
         self::$_instance->_selected_deployment_option = filter_input(INPUT_POST, 'selected_deployment_option');
+        self::$_instance->_baseUrl = untrailingslashit(filter_input(INPUT_POST, 'baseUrl', FILTER_SANITIZE_URL));
         self::$_instance->_sendViaGithub = filter_input(INPUT_POST, 'sendViaGithub');
         self::$_instance->_sendViaFTP = filter_input(INPUT_POST, 'sendViaFTP');
         self::$_instance->_sendViaS3 = filter_input(INPUT_POST, 'sendViaS3');
@@ -78,6 +95,22 @@ class StaticHtmlOutput_Controller {
         self::$_instance->_rewritePLUGINDIR = filter_input(INPUT_POST, 'rewritePLUGINDIR');
         self::$_instance->_rewriteWPINC = filter_input(INPUT_POST, 'rewriteWPINC');
         self::$_instance->_useRelativeURLs = filter_input(INPUT_POST, 'useRelativeURLs');
+        self::$_instance->_useBasicAuth = filter_input(INPUT_POST, 'sendViaBasic');
+        self::$_instance->_basicAuthUser = filter_input(INPUT_POST, 'basicAuthUser');
+        self::$_instance->_basicAuthPassword = filter_input(INPUT_POST, 'basicAuthPassword');
+        self::$_instance->_bunnycdnPullZoneName = filter_input(INPUT_POST, 'bunnycdnPullZoneName');
+        self::$_instance->_bunnycdnAPIKey = filter_input(INPUT_POST, 'bunnycdnAPIKey');
+        self::$_instance->_bunnycdnRemotePath = filter_input(INPUT_POST, 'bunnycdnRemotePath');
+        self::$_instance->_cfDistributionId = filter_input(INPUT_POST, 'cfDistributionId');
+        self::$_instance->_s3Key = filter_input(INPUT_POST, 's3Key');
+        self::$_instance->_s3Secret = filter_input(INPUT_POST, 's3Secret');
+        self::$_instance->_s3Region = filter_input(INPUT_POST, 's3Region');
+        self::$_instance->_s3Bucket = filter_input(INPUT_POST, 's3Bucket');
+        self::$_instance->_s3RemotePath = filter_input(INPUT_POST, 's3RemotePath');
+        self::$_instance->_dropboxAccessToken = filter_input(INPUT_POST, 'dropboxAccessToken');
+        self::$_instance->_dropboxFolder = filter_input(INPUT_POST, 'dropboxFolder');
+        self::$_instance->_netlifySiteID = filter_input(INPUT_POST, 'netlifySiteID');
+        self::$_instance->_netlifyPersonalAccessToken = filter_input(INPUT_POST, 'netlifyPersonalAccessToken');
 
       } else {
         // export being triggered via Cron/CLI, load settings from DB
@@ -165,6 +198,73 @@ class StaticHtmlOutput_Controller {
 
 		    if ( array_key_exists('useRelativeURLs', $pluginOptions )) {
           self::$_instance->_useRelativeURLs = $pluginOptions['useRelativeURLs'];
+        }
+
+		    if ( array_key_exists('baseUrl', $pluginOptions )) {
+          self::$_instance->_baseUrl = $pluginOptions['baseUrl'];
+        }
+		    if ( array_key_exists('sendViaBasic', $pluginOptions )) {
+          self::$_instance->_useBasicAuth = $pluginOptions['sendViaBasic'];
+        }
+
+		    if ( array_key_exists('basicAuthUser', $pluginOptions )) {
+          self::$_instance->_basicAuthUser = $pluginOptions['basicAuthUser'];
+        }
+
+		    if ( array_key_exists('basicAuthPassword', $pluginOptions )) {
+          self::$_instance->_basicAuthUser = $pluginOptions['basicAuthUser'];
+        }
+
+		    if ( array_key_exists('bunnycdnPullZoneName', $pluginOptions )) {
+          self::$_instance->_bunnycdnPullZoneName = $pluginOptions['bunnycdnPullZoneName'];
+        }
+
+		    if ( array_key_exists('bunnycdnAPIKey', $pluginOptions )) {
+          self::$_instance->_bunnycdnAPIKey = $pluginOptions['bunnycdnAPIKey'];
+        }
+
+		    if ( array_key_exists('bunnycdnRemotePath', $pluginOptions )) {
+          self::$_instance->_bunnycdnRemotePath = $pluginOptions['bunnycdnRemotePath'];
+        }
+
+		    if ( array_key_exists('cfDistributionId', $pluginOptions )) {
+          self::$_instance->_cfDistributionId = $pluginOptions['cfDistributionId'];
+        }
+
+		    if ( array_key_exists('s3Key', $pluginOptions )) {
+          self::$_instance->_s3Key = $pluginOptions['s3Key'];
+        }
+
+		    if ( array_key_exists('s3Secret', $pluginOptions )) {
+          self::$_instance->_s3Secret = $pluginOptions['s3Secret'];
+        }
+
+		    if ( array_key_exists('s3Region', $pluginOptions )) {
+          self::$_instance->_s3Region = $pluginOptions['s3Region'];
+        }
+
+		    if ( array_key_exists('s3Bucket', $pluginOptions )) {
+          self::$_instance->_s3Bucket = $pluginOptions['s3Bucket'];
+        }
+
+		    if ( array_key_exists('s3RemotePath', $pluginOptions )) {
+          self::$_instance->_s3RemotePath = $pluginOptions['s3RemotePath'];
+        }
+
+		    if ( array_key_exists('dropboxFolder', $pluginOptions )) {
+          self::$_instance->_dropboxFolder = $pluginOptions['dropboxFolder'];
+        }
+
+		    if ( array_key_exists('dropboxAccessToken', $pluginOptions )) {
+          self::$_instance->_dropboxAccessToken = $pluginOptions['dropboxAccessToken'];
+        }
+
+		    if ( array_key_exists('netlifySiteID', $pluginOptions )) {
+          self::$_instance->_netlifySiteID = $pluginOptions['netlifySiteID'];
+        }
+
+		    if ( array_key_exists('netlifyPersonalAccessToken', $pluginOptions )) {
+          self::$_instance->_netlifyPersonalAccessToken = $pluginOptions['netlifyPersonalAccessToken'];
         }
       }
 		}
@@ -316,8 +416,8 @@ class StaticHtmlOutput_Controller {
 		} 
 
 		// override if user has specified it in the UI
-		if ( ! filter_input(INPUT_POST, 'outputDirectory' ) ) {
-			$outputDir = filter_input(INPUT_POST, 'outputDirectory');
+		if ( ! $this->_outputDirectory ) {
+			$outputDir = $this->_outputDirectory;
 		} 
 
 		if ( !is_dir($outputDir) ) {
@@ -493,7 +593,7 @@ class StaticHtmlOutput_Controller {
     WsLog::l('STARTING EXPORT: WP ADDRESS ' . get_bloginfo('wpurl') );
     WsLog::l('STARTING EXPORT: PLUGIN VERSION ' . $this::VERSION );
     WsLog::l('STARTING EXPORT: VIA CLI? ' . $viaCLI);
-    WsLog::l('STARTING EXPORT: STATIC EXPORT URL ' . filter_input(INPUT_POST, 'baseUrl') );
+    WsLog::l('STARTING EXPORT: STATIC EXPORT URL ' . $this->_baseUrl );
 
     $initial_file_list_count = StaticHtmlOutput_FilesHelper::buildInitialFileList(
       $viaCLI,
@@ -563,151 +663,141 @@ class StaticHtmlOutput_Controller {
 	
 	}
 
-	public function crawlABitMore($viaCLI = false) {
-		$initial_crawl_list_file = $this->_uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST';
-        $crawled_links_file = $this->_uploadsPath . '/WP-STATIC-CRAWLED-LINKS';
-        $initial_crawl_list = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
-        $crawled_links = file($crawled_links_file, FILE_IGNORE_NEW_LINES);
+public function crawlABitMore($viaCLI = false) {
+  $initial_crawl_list_file = $this->_uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST';
+  $crawled_links_file = $this->_uploadsPath . '/WP-STATIC-CRAWLED-LINKS';
+  $initial_crawl_list = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
+  $crawled_links = file($crawled_links_file, FILE_IGNORE_NEW_LINES);
 
-        $first_line = array_shift($initial_crawl_list);
-        file_put_contents($initial_crawl_list_file, implode("\r\n", $initial_crawl_list));
-        $currentUrl = $first_line;
-        WsLog::l('CRAWLING URL: ' . $currentUrl);
+  $first_line = array_shift($initial_crawl_list);
+  file_put_contents($initial_crawl_list_file, implode("\r\n", $initial_crawl_list));
+  $currentUrl = $first_line;
+  WsLog::l('CRAWLING URL: ' . $currentUrl);
 
-        $newBaseUrl = untrailingslashit(filter_input(INPUT_POST, 'baseUrl', FILTER_SANITIZE_URL));
+  if (empty($currentUrl)){
+    WsLog::l('EMPTY FILE ENCOUNTERED');
 
-        // override options if running via CLI
-        if ($viaCLI) {
-            parse_str($this->_options->getOption('static-export-settings'), $pluginOptions);
+    // skip this empty file
 
-            $newBaseUrl = $pluginOptions['baseUrl'];
-        }
-
-        if (empty($currentUrl)){
-            WsLog::l('EMPTY FILE ENCOUNTERED');
-
-			// skip this empty file
-
-			$f = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
-			$filesRemaining = count($f);
-			WsLog::l('CRAWLING SITE: ' . $filesRemaining . ' files remaining');
-			if ($filesRemaining > 0) {
-				echo $filesRemaining;
-			} else {
-				echo 'SUCCESS';
-			}
-			
-			return;
-        }
-
-		$basicAuth = array(
-			'useBasicAuth' => filter_input(INPUT_POST, 'sendViaBasic'),
-			'basicAuthUser' => filter_input(INPUT_POST, 'basicAuthUser'),
-			'basicAuthPassword' => filter_input(INPUT_POST, 'basicAuthPassword')
-		);
-
-        $urlResponse = new StaticHtmlOutput_UrlRequest($currentUrl, $basicAuth);
-        $urlResponseForFurtherExtraction = new StaticHtmlOutput_UrlRequest($currentUrl, $basicAuth);
-
-        if ($urlResponse->checkResponse() == 'FAIL') {
-            WsLog::l('FAILED TO CRAWL FILE: ' . $currentUrl);
-        } else {
-            file_put_contents($crawled_links_file, $currentUrl . PHP_EOL, FILE_APPEND | LOCK_EX);
-            WsLog::l('CRAWLED FILE: ' . $currentUrl);
-        }
-
-        $baseUrl = untrailingslashit(home_url());
-
-		$tmp_upload_dir_var = wp_upload_dir(); // need to store as var first
-
-		$wp_site_environment = array(
-			'wp_inc' =>  '/' . WPINC,	
-			'wp_content' => '/wp-content', // TODO: check if this has been modified/use constant
-			'wp_uploads' =>  str_replace(ABSPATH, '/', $tmp_upload_dir_var['basedir']),	
-			'wp_plugins' =>  str_replace(ABSPATH, '/', WP_PLUGIN_DIR),	
-			'wp_themes' =>  str_replace(ABSPATH, '/', get_theme_root()),	
-			'wp_active_theme' =>  str_replace(home_url(), '', get_template_directory_uri()),	
-			'site_url' =>  get_site_url(),
-		);
-
-        $new_wp_content = '/' . $this->_rewriteWPCONTENT;
-        $new_theme_root = $new_wp_content . '/' . $this->_rewriteTHEMEROOT;
-        $new_theme_dir = $new_theme_root . '/' . $this->_rewriteTHEMEDIR;
-		$new_uploads_dir = $new_wp_content . '/' . $this->_rewriteUPLOADS;
-		$new_plugins_dir = $new_wp_content . '/' . $this->_rewritePLUGINDIR;
-
-		$overwrite_slug_targets = array(
-			'new_wp_content_path' => $new_wp_content,
-			'new_themes_path' => $new_theme_root,
-			'new_active_theme_path' => $new_theme_dir,
-			'new_uploads_path' => $new_uploads_dir,
-			'new_plugins_path' => $new_plugins_dir,
-			'new_wpinc_path' => '/' . $this->_rewriteWPINC,
-		);
-
-        $urlResponse->cleanup(
-			$wp_site_environment,
-			$overwrite_slug_targets
-		);
-
-
-		$useRelativeURLs = $this->_useRelativeURLs;
-
-		// TODO: if it replaces baseurl here, it will be searching links starting with that...
-		// TODO: shouldn't be doing this here...
-        $urlResponse->replaceBaseUrl($baseUrl, $newBaseUrl, $useRelativeURLs);
-        $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
-        $this->_saveUrlData($urlResponse, $archiveDir);
-
-		// try extracting urls from a response that hasn't been changed yet...
-		// this seems to do it...
-        foreach ($urlResponseForFurtherExtraction->extractAllUrls($baseUrl) as $newUrl) {
-			$path = parse_url($newUrl, PHP_URL_PATH);
-			$extension = pathinfo($path, PATHINFO_EXTENSION);
-
-            if ($newUrl != $currentUrl && 
-				!in_array($newUrl, $crawled_links) && 
-				$extension != 'php' && 
-				!in_array($newUrl, $initial_crawl_list)
-			) {
-                WsLog::l('DISCOVERED NEW FILE: ' . $newUrl);
-                
-                $urlResponse = new StaticHtmlOutput_UrlRequest($newUrl, $basicAuth);
-
-                if ($urlResponse->checkResponse() == 'FAIL') {
-                    WsLog::l('FAILED TO CRAWL FILE: ' . $newUrl);
-                } else {
-                    file_put_contents($crawled_links_file, $newUrl . PHP_EOL, FILE_APPEND | LOCK_EX);
-                    $crawled_links[] = $newUrl;
-                    WsLog::l('CRAWLED FILE: ' . $newUrl);
-                }
-
-				$urlResponse->cleanup(
-					$wp_site_environment,
-					$overwrite_slug_targets
-				);
-
-                $urlResponse->replaceBaseUrl($baseUrl, $newBaseUrl, $useRelativeURLs);
-                $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
-                $this->_saveUrlData($urlResponse, $archiveDir);
-            } 
-        }
-		
-		// TODO: could avoid reading file again here as we should have it above
-        $f = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
-        $filesRemaining = count($f);
-		WsLog::l('CRAWLING SITE: ' . $filesRemaining . ' files remaining');
-		if ($filesRemaining > 0) {
-			echo $filesRemaining;
-		} else {
-			echo 'SUCCESS';
-		}
-	
-        // if being called via the CLI, just keep crawling (TODO: until when?)
-        if ($viaCLI) {
-            $this->crawl_site($viaCLI);
-        }
+    $f = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
+    $filesRemaining = count($f);
+    WsLog::l('CRAWLING SITE: ' . $filesRemaining . ' files remaining');
+    if ($filesRemaining > 0) {
+      echo $filesRemaining;
+    } else {
+      echo 'SUCCESS';
     }
+
+    return;
+  }
+
+  $basicAuth = array(
+      'useBasicAuth' => $this->_useBasicAuth,
+      'basicAuthUser' => $this->_basicAuthUser,
+      'basicAuthPassword' => $this->_basicAuthPassword);
+
+  $urlResponse = new StaticHtmlOutput_UrlRequest($currentUrl, $basicAuth);
+  $urlResponseForFurtherExtraction = new StaticHtmlOutput_UrlRequest($currentUrl, $basicAuth);
+
+  if ($urlResponse->checkResponse() == 'FAIL') {
+    WsLog::l('FAILED TO CRAWL FILE: ' . $currentUrl);
+  } else {
+    file_put_contents($crawled_links_file, $currentUrl . PHP_EOL, FILE_APPEND | LOCK_EX);
+    WsLog::l('CRAWLED FILE: ' . $currentUrl);
+  }
+
+  $baseUrl = untrailingslashit(home_url());
+
+  $tmp_upload_dir_var = wp_upload_dir(); // need to store as var first
+
+  $wp_site_environment = array(
+      'wp_inc' =>  '/' . WPINC,	
+      'wp_content' => '/wp-content', // TODO: check if this has been modified/use constant
+      'wp_uploads' =>  str_replace(ABSPATH, '/', $tmp_upload_dir_var['basedir']),	
+      'wp_plugins' =>  str_replace(ABSPATH, '/', WP_PLUGIN_DIR),	
+      'wp_themes' =>  str_replace(ABSPATH, '/', get_theme_root()),	
+      'wp_active_theme' =>  str_replace(home_url(), '', get_template_directory_uri()),	
+      'site_url' =>  get_site_url(),
+      );
+
+  $new_wp_content = '/' . $this->_rewriteWPCONTENT;
+  $new_theme_root = $new_wp_content . '/' . $this->_rewriteTHEMEROOT;
+  $new_theme_dir = $new_theme_root . '/' . $this->_rewriteTHEMEDIR;
+  $new_uploads_dir = $new_wp_content . '/' . $this->_rewriteUPLOADS;
+  $new_plugins_dir = $new_wp_content . '/' . $this->_rewritePLUGINDIR;
+
+  $overwrite_slug_targets = array(
+      'new_wp_content_path' => $new_wp_content,
+      'new_themes_path' => $new_theme_root,
+      'new_active_theme_path' => $new_theme_dir,
+      'new_uploads_path' => $new_uploads_dir,
+      'new_plugins_path' => $new_plugins_dir,
+      'new_wpinc_path' => '/' . $this->_rewriteWPINC,
+      );
+
+  $urlResponse->cleanup(
+      $wp_site_environment,
+      $overwrite_slug_targets
+      );
+
+
+  $useRelativeURLs = $this->_useRelativeURLs;
+
+  // TODO: if it replaces baseurl here, it will be searching links starting with that...
+  // TODO: shouldn't be doing this here...
+  $urlResponse->replaceBaseUrl($baseUrl, $this->_baseUrl, $useRelativeURLs);
+  $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
+  $this->_saveUrlData($urlResponse, $archiveDir);
+
+  // try extracting urls from a response that hasn't been changed yet...
+  // this seems to do it...
+  foreach ($urlResponseForFurtherExtraction->extractAllUrls($baseUrl) as $newUrl) {
+    $path = parse_url($newUrl, PHP_URL_PATH);
+    $extension = pathinfo($path, PATHINFO_EXTENSION);
+
+    if ($newUrl != $currentUrl && 
+        !in_array($newUrl, $crawled_links) && 
+        $extension != 'php' && 
+        !in_array($newUrl, $initial_crawl_list)
+       ) {
+      WsLog::l('DISCOVERED NEW FILE: ' . $newUrl);
+
+      $urlResponse = new StaticHtmlOutput_UrlRequest($newUrl, $basicAuth);
+
+      if ($urlResponse->checkResponse() == 'FAIL') {
+        WsLog::l('FAILED TO CRAWL FILE: ' . $newUrl);
+      } else {
+        file_put_contents($crawled_links_file, $newUrl . PHP_EOL, FILE_APPEND | LOCK_EX);
+        $crawled_links[] = $newUrl;
+        WsLog::l('CRAWLED FILE: ' . $newUrl);
+      }
+
+      $urlResponse->cleanup(
+          $wp_site_environment,
+          $overwrite_slug_targets
+          );
+
+      $urlResponse->replaceBaseUrl($baseUrl, $this->_baseUrl, $useRelativeURLs);
+      $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
+      $this->_saveUrlData($urlResponse, $archiveDir);
+    } 
+  }
+
+  // TODO: could avoid reading file again here as we should have it above
+  $f = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
+  $filesRemaining = count($f);
+  WsLog::l('CRAWLING SITE: ' . $filesRemaining . ' files remaining');
+  if ($filesRemaining > 0) {
+    echo $filesRemaining;
+  } else {
+    echo 'SUCCESS';
+  }
+
+  // if being called via the CLI, just keep crawling (TODO: until when?)
+  if ($viaCLI) {
+    $this->crawl_site($viaCLI);
+  }
+}
 
 	public function crawl_site($viaCLI = false) {
 		$initial_crawl_list_file = $this->_uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST';
@@ -754,11 +844,11 @@ class StaticHtmlOutput_Controller {
 			WsLog::l('FTP EXPORT: Checking credentials..:');
 
 			$ftp = new StaticHtmlOutput_FTP(
-				filter_input(INPUT_POST, 'ftpServer'),
-				filter_input(INPUT_POST, 'ftpUsername'),
-				filter_input(INPUT_POST, 'ftpPassword'),
-				filter_input(INPUT_POST, 'ftpRemotePath'),
-				filter_input(INPUT_POST, 'useActiveFTP'),
+				$this->_ftpServer,
+				$this->_ftpUsername,
+				$this->_ftpPassword,
+				$this->_ftpRemotePath,
+				$this->_useActiveFTP,
 				$this->_uploadsPath
 			);
 
@@ -770,11 +860,11 @@ class StaticHtmlOutput_Controller {
 		if ( wpsho_fr()->is__premium_only() ) {
 
 			$ftp = new StaticHtmlOutput_FTP(
-				filter_input(INPUT_POST, 'ftpServer'),
-				filter_input(INPUT_POST, 'ftpUsername'),
-				filter_input(INPUT_POST, 'ftpPassword'),
-				filter_input(INPUT_POST, 'ftpRemotePath'),
-				filter_input(INPUT_POST, 'useActiveFTP'),
+				$this->_ftpServer,
+				$this->_ftpUsername,
+				$this->_ftpPassword,
+				$this->_ftpRemotePath,
+				$this->_useActiveFTP,
 				$this->_uploadsPath
 			);
 
@@ -787,9 +877,9 @@ class StaticHtmlOutput_Controller {
 			WsLog::l('BUNNYCDN EXPORT: Preparing export..:');
 
 			$bunnyCDN = new StaticHtmlOutput_BunnyCDN(
-				filter_input(INPUT_POST, 'bunnycdnPullZoneName'),
-				filter_input(INPUT_POST, 'bunnycdnAPIKey'),
-				filter_input(INPUT_POST, 'bunnycdnRemotePath'),
+				$this->_bunnycdnPullZoneName,
+				$this->_bunnycdnAPIKey,
+				$this->_bunnycdnRemotePath,
 				$this->_uploadsPath
 			);
 
@@ -801,9 +891,9 @@ class StaticHtmlOutput_Controller {
 		if ( wpsho_fr()->is__premium_only() ) {
 
 			$bunnyCDN = new StaticHtmlOutput_BunnyCDN(
-				filter_input(INPUT_POST, 'bunnycdnPullZoneName'),
-				filter_input(INPUT_POST, 'bunnycdnAPIKey'),
-				filter_input(INPUT_POST, 'bunnycdnRemotePath'),
+				$this->_bunnycdnPullZoneName,
+				$this->_bunnycdnAPIKey,
+				$this->_bunnycdnRemotePath,
 				$this->_uploadsPath
 			);
 
@@ -816,9 +906,9 @@ class StaticHtmlOutput_Controller {
 			WsLog::l('BUNNYCDN EXPORT: purging cache'); 
 
 			$bunnyCDN = new StaticHtmlOutput_BunnyCDN(
-				filter_input(INPUT_POST, 'bunnycdnPullZoneName'),
-				filter_input(INPUT_POST, 'bunnycdnAPIKey'),
-				filter_input(INPUT_POST, 'bunnycdnRemotePath'),
+				$this->_bunnycdnPullZoneName,
+				$this->_bunnycdnAPIKey,
+				$this->_bunnycdnRemotePath,
 				$this->_uploadsPath
 			);
 
@@ -851,11 +941,11 @@ class StaticHtmlOutput_Controller {
 			WsLog::l('S3 EXPORT: preparing export...');
 
 			$s3 = new StaticHtmlOutput_S3(
-				filter_input(INPUT_POST, 's3Key'),
-				filter_input(INPUT_POST, 's3Secret'),
-				filter_input(INPUT_POST, 's3Region'),
-				filter_input(INPUT_POST, 's3Bucket'),
-				filter_input(INPUT_POST, 's3RemotePath'),
+				$this->_s3Key,
+				$this->_s3Secret,
+				$this->_s3Region,
+				$this->_s3Bucket,
+				$this->_s3RemotePath,
 				$this->_uploadsPath
 			);
 
@@ -867,11 +957,11 @@ class StaticHtmlOutput_Controller {
 		if ( wpsho_fr()->is__premium_only() ) {
 
 			$s3 = new StaticHtmlOutput_S3(
-				filter_input(INPUT_POST, 's3Key'),
-				filter_input(INPUT_POST, 's3Secret'),
-				filter_input(INPUT_POST, 's3Region'),
-				filter_input(INPUT_POST, 's3Bucket'),
-				filter_input(INPUT_POST, 's3RemotePath'),
+				$this->_s3Key,
+				$this->_s3Secret,
+				$this->_s3Region,
+				$this->_s3Bucket,
+				$this->_s3RemotePath,
 				$this->_uploadsPath
 			);
 
@@ -883,14 +973,14 @@ class StaticHtmlOutput_Controller {
 		if ( wpsho_fr()->is__premium_only() ) {
 			WsLog::l('S3 EXPORT: Checking whether to invalidate CF cache');
 			require_once(__DIR__.'/CloudFront/CloudFront.php');
-			$cloudfront_id = filter_input(INPUT_POST, 'cfDistributionId');
+			$cloudfront_id = $this->_cfDistributionId;
 
 			if( !empty($cloudfront_id) ) {
 				WsLog::l('CLOUDFRONT INVALIDATING CACHE...');
 
 				$cf = new CloudFront(
-					filter_input(INPUT_POST, 's3Key'), 
-					filter_input(INPUT_POST, 's3Secret'),
+				$this->_s3Key,
+				$this->_s3Secret,
 					$cloudfront_id);
 
 				$cf->invalidate('/*');
@@ -912,8 +1002,8 @@ class StaticHtmlOutput_Controller {
 			WsLog::l('DROPBOX EXPORT: preparing export');
 
 			$dropbox = new StaticHtmlOutput_Dropbox(
-				filter_input(INPUT_POST, 'dropboxAccessToken'),
-				filter_input(INPUT_POST, 'dropboxFolder'),
+				$this->_dropboxAccessToken,
+				$this->_dropboxFolder,
 				$this->_uploadsPath
 			);
 
@@ -925,8 +1015,8 @@ class StaticHtmlOutput_Controller {
 		if ( wpsho_fr()->is__premium_only() ) {
 
 			$dropbox = new StaticHtmlOutput_Dropbox(
-				filter_input(INPUT_POST, 'dropboxAccessToken'),
-				filter_input(INPUT_POST, 'dropboxFolder'),
+				$this->_dropboxAccessToken,
+				$this->_dropboxFolder,
 				$this->_uploadsPath
 			);
 
@@ -945,8 +1035,8 @@ class StaticHtmlOutput_Controller {
 			$archiveName = rtrim($archiveDir, '/') . '.zip';
 
 			$netlify = new StaticHtmlOutput_Netlify(
-				filter_input(INPUT_POST, 'netlifySiteID'),
-				filter_input(INPUT_POST, 'netlifyPersonalAccessToken')
+				$this->_netlifySiteID,
+				$this->_netlifyPersonalAccessToken
 			);
 
 			echo $netlify->deploy($archiveName);
@@ -967,6 +1057,17 @@ class StaticHtmlOutput_Controller {
 
 
       }
+
+      error_log('scheduled deploy complete');
+      // TODO: email upon successful cron deploy
+      // $current_user = wp_get_current_user();
+
+      // $to = $current_user->user_email;
+      // $subject = 'Static site deployment: ' . $site_title = get_bloginfo( 'name' );;
+      // $body = 'Your WordPress site has been automatically deployed.';
+      // $headers = array('Content-Type: text/html; charset=UTF-8');
+      //  
+      // wp_mail( $to, $subject, $body, $headers );
     }
 
     public function doExportWithoutGUI() {
@@ -1054,9 +1155,9 @@ class StaticHtmlOutput_Controller {
 
 		// rename the theme theme root before the nested theme dir
 		// rename the theme directory 
-        $new_wp_content = $archiveDir .'/' . filter_input(INPUT_POST, 'rewriteWPCONTENT');
-        $new_theme_root = $new_wp_content . '/' . filter_input(INPUT_POST, 'rewriteTHEMEROOT');
-        $new_theme_dir =  $new_theme_root . '/' . filter_input(INPUT_POST, 'rewriteTHEMEDIR');
+    $new_wp_content = $archiveDir .'/' . $this->_rewriteWPCONTENT;
+    $new_theme_root = $new_wp_content . '/' . $this->_rewriteTHEMEROOT;
+    $new_theme_dir =  $new_theme_root . '/' . $this->_rewriteTHEMEDIR;
 
 		// rewrite uploads dir
 		$default_upload_dir = wp_upload_dir(); // need to store as var first
@@ -1064,7 +1165,7 @@ class StaticHtmlOutput_Controller {
 		
 		$updated_uploads_dir =  str_replace('wp-content/', '', $updated_uploads_dir);
 		$updated_uploads_dir = $new_wp_content . '/' . $updated_uploads_dir;
-		$new_uploads_dir = $new_wp_content . '/' . filter_input(INPUT_POST, 'rewriteUPLOADS');
+		$new_uploads_dir = $new_wp_content . '/' . $this->_rewriteUPLOADS;
 
 
 		$updated_theme_root = str_replace(ABSPATH, '/', get_theme_root());
@@ -1077,11 +1178,11 @@ class StaticHtmlOutput_Controller {
 		$updated_plugins_dir = str_replace(ABSPATH, '/', WP_PLUGIN_DIR);
 		$updated_plugins_dir = str_replace('wp-content/', '', $updated_plugins_dir);
 		$updated_plugins_dir = $new_wp_content . $updated_plugins_dir;
-		$new_plugins_dir = $new_wp_content . '/' . filter_input(INPUT_POST, 'rewritePLUGINDIR');
+		$new_plugins_dir = $new_wp_content . '/' . $this->_rewritePLUGINDIR;
 
 		// rewrite wp-includes  dir
 		$original_wp_includes = $archiveDir . '/' . WPINC;
-		$new_wp_includes = $archiveDir . '/' . filter_input(INPUT_POST, 'rewriteWPINC');
+		$new_wp_includes = $archiveDir . '/' . $this->_rewriteWPINC;
 
 
 		// TODO: subdir installations are not being correctly detected here
