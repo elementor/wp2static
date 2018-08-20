@@ -22,28 +22,9 @@ Allows you to leverage WordPress as a great CMS, but benefit from the speed, sec
  - Website archival
  - Cheap, fast and secure hosting for a digital agency
 
-## Setting Up
- 1. From your dashboard, go to `Plugins` > `Add New`.
-    > ![](documentation/images/setup1.PNG)
- 2. Add the plugin either from file or from the Wordpress dashboard.
-    > ![](documentation/images/setup2.PNG)
-    - From file: Click the `Upload Plugin` button and upload the plugin file. This file can be found in [the releases tab](https://github.com/leonstafford/wordpress-static-html-plugin/releases) or from [the Wordpress plugin directory](https://wordpress.org/plugins/static-html-output-plugin/).
-    - From the Wordpress dashboard: Search for "**WP Static HTML Output**". Click the `Install Now` button on the top right corner of the plugin by **Leon Stafford**.
- 3. Once the plugin is done installing, activate the plugin.
-    - If available, click the `Activate` button on the top right corner of the card.
-      > ![](documentation/images/setup3.PNG)
-    - Otherwise, from the dashboard, go to `Plugins` > `Installed Plugins`. Locate the newly installed **WP Static HTML Output** plugin, and click `Activate`.
-      > ![](documentation/images/setup4.PNG)
- 4. Choose `Allow & Continue` or `Skip` depending on your preferences.
-    > ![](documentation/images/setup5.PNG)
- 5. To use the plugin, go to your dashboard and go to `Tools` > `WP Static HTML Output`.
-    > ![](documentation/images/setup6.PNG)
- 6. When you're done configuring, scroll down to the **Export your site** section and click the `Start static site export` button. Have fun!
-    > ![](documentation/images/setup7.PNG)
+## Getting started
 
-### Scheduling exports via CRON/WP-CRON, etc
-
-Using the [WP Crontrol](https://wordpress.org/plugins/wp-crontrol/) plugin, you can add this hook to a schedule to trigger an export: `wp_static_html_output_server_side_export_hook`. This will run your export using the settings you've saved via the GUI. Via this method, you can schedule your exports to happen daily or if you're after an *on-post publish* kind of behaviour, you could set this to every few minutes.
+Please refer to the [documentation](https://wp2static.com).
 
 
 ## Development
@@ -54,13 +35,8 @@ This repo contains the latest code, which you can clone/download to get the blee
 
 If you'd like to contribute, please follow the usual GitHub procedures (create an Issue, fork repo, submit PR). If you're unsure about any of that, contact me and I'll be happy to help. 
 
-### Demo website content
+To get a local development environment setup, copy the `./provisioning/.env-vars-SAMPLE` to `./provisioning/.env-vars` and run `./provisioning/destroy_and_rebuild.sh`, the development site will be accessible at [http://172.18.0.3](http://172.18.0.3).
 
-Included in the `./demo_site_content/` dir, are the posts used for the demo sites for this plugin, including guides on functionality. 
-
-To capture content from the development instance, run `./provisioning/backup_demo_content.sh`
-
-There is a great [Dockerized FTP server](https://github.com/stilliard/docker-pure-ftpd) which I've found useful in development. I may extend this to also serve the hosted files for more complete test capabilities. So long as you can install Docker, this is a much less painful way to get a local FTP server and users setup than what I've experienced before.
 
 ### Localisation / translations
 

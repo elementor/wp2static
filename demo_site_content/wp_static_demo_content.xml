@@ -21,13 +21,13 @@
 <rss version="2.0" xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:wfw="http://wellformedweb.org/CommentAPI/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:wp="http://wordpress.org/export/1.2/">
   <channel>
 <title>wp plugindev</title>
-<link>http://172.17.0.3</link>
+<link>http://172.18.0.3</link>
 <description>Just another WordPress site</description>
 <pubDate>Wed, 20 Jun 2018 14:49:40 +0000</pubDate>
 <language>en-US</language>
 <wp:wxr_version>1.2</wp:wxr_version>
-<wp:base_site_url>http://172.17.0.3</wp:base_site_url>
-<wp:base_blog_url>http://172.17.0.3</wp:base_blog_url>
+<wp:base_site_url>http://172.18.0.3</wp:base_site_url>
+<wp:base_blog_url>http://172.18.0.3</wp:base_blog_url>
 <wp:author>
   <wp:author_id>1</wp:author_id>
   <wp:author_login>admin</wp:author_login>
@@ -39,10 +39,10 @@
 <generator>https://wordpress.org/?v=4.9.6</generator>
 <item>
   <title>Removing comments for a WordPress static website</title>
-  <link>http://172.17.0.3/2018/04/28/removing-comments-for-a-wordpress-static-website/</link>
+  <link>http://172.18.0.3/2018/04/28/removing-comments-for-a-wordpress-static-website/</link>
   <pubDate>Sat, 28 Apr 2018 08:27:26 +0000</pubDate>
   <dc:creator>admin</dc:creator>
-  <guid isPermaLink="false">http://172.17.0.3/?p=3</guid>
+  <guid isPermaLink="false">http://172.18.0.3/?p=3</guid>
   <description/>
   <content:encoded><![CDATA[This is demo content]]></content:encoded>
   <excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -66,10 +66,10 @@
 </item>
 <item>
   <title>Scheduling exports of your static site from WordPress</title>
-  <link>http://172.17.0.3/2018/05/11/scheduling-exports-of-your-static-site-from-wordpress/</link>
+  <link>http://172.18.0.3/2018/05/11/scheduling-exports-of-your-static-site-from-wordpress/</link>
   <pubDate>Fri, 11 May 2018 14:27:47 +0000</pubDate>
   <dc:creator>admin</dc:creator>
-  <guid isPermaLink="false">http://172.17.0.3/?p=5</guid>
+  <guid isPermaLink="false">http://172.18.0.3/?p=5</guid>
   <description/>
   <content:encoded><![CDATA[You can use the <a href="https://wordpress.org/plugins/wp-crontrol/">WP Crontrol</a> plugin to schedule the export of your static site.
 
@@ -78,15 +78,15 @@ This feature is yet to be released into the official version of <a href="http://
 <ol>
  	<li>Install the <a href="https://wordpress.org/plugins/wp-crontrol/">WP Crontrol</a> plugin.</li>
  	<li>Go to your Cron Schedules via Settings &gt; Cron Schedules
-<a href="http://172.17.0.3/wp-content/uploads/go_to_cron_schedules.png"><img class="alignnone wp-image-11 size-full" src="http://172.17.0.3/wp-content/uploads/go_to_cron_schedules.png" alt="" width="406" height="375" /></a></li>
+<a href="http://172.18.0.3/wp-content/uploads/go_to_cron_schedules.png"><img class="alignnone wp-image-11 size-full" src="http://172.18.0.3/wp-content/uploads/go_to_cron_schedules.png" alt="" width="406" height="375" /></a></li>
  	<li>Add a new Cron Schedule, using WP Static HTML Output's custom hook, setting the following options:
 <ol>
  	<li><strong> Internal name:</strong> <em>wp_static_html_output_server_side_export_hook</em></li>
  	<li><strong>Interval (seconds):</strong> ie <em>3600</em> to run your export every hour, <em>86400</em> for daily exports, etc</li>
- 	<li><strong>Display name:</strong> This can be whatever you like. Something that makes sense to you is recommended, ie "<em>Static site export to S3 once a day</em>" <a style="font-size: 1rem;" href="http://172.17.0.3/wp-content/uploads/wpcrontrol_add_scheduled_task.png"><img class="alignnone wp-image-8" src="http://172.17.0.3/wp-content/uploads/wpcrontrol_add_scheduled_task-1024x545.png" alt="" width="800" height="426" /></a></li>
+ 	<li><strong>Display name:</strong> This can be whatever you like. Something that makes sense to you is recommended, ie "<em>Static site export to S3 once a day</em>" <a style="font-size: 1rem;" href="http://172.18.0.3/wp-content/uploads/wpcrontrol_add_scheduled_task.png"><img class="alignnone wp-image-8" src="http://172.18.0.3/wp-content/uploads/wpcrontrol_add_scheduled_task-1024x545.png" alt="" width="800" height="426" /></a></li>
 </ol>
 </li>
- 	<li>Click on Add Cron Schedule to save your scheduled task. It should now appear in your list of tasks, as below: <a style="font-size: 1rem;" href="http://172.17.0.3/wp-content/uploads/wp_crontrol_added_task.png"><img class="alignnone wp-image-7" src="http://172.17.0.3/wp-content/uploads/wp_crontrol_added_task-1024x490.png" alt="" width="800" height="383" /></a></li>
+ 	<li>Click on Add Cron Schedule to save your scheduled task. It should now appear in your list of tasks, as below: <a style="font-size: 1rem;" href="http://172.18.0.3/wp-content/uploads/wp_crontrol_added_task.png"><img class="alignnone wp-image-7" src="http://172.18.0.3/wp-content/uploads/wp_crontrol_added_task-1024x490.png" alt="" width="800" height="383" /></a></li>
 </ol>
 &nbsp;]]></content:encoded>
   <excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -110,10 +110,10 @@ This feature is yet to be released into the official version of <a href="http://
 </item>
 <item>
   <title>Documentation</title>
-  <link>http://172.17.0.3/documentation/</link>
+  <link>http://172.18.0.3/documentation/</link>
   <pubDate>Mon, 18 Jun 2018 14:42:16 +0000</pubDate>
   <dc:creator>admin</dc:creator>
-  <guid isPermaLink="false">http://172.17.0.3/?page_id=9</guid>
+  <guid isPermaLink="false">http://172.18.0.3/?page_id=9</guid>
   <description/>
   <content:encoded><![CDATA[]]></content:encoded>
   <excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -136,10 +136,10 @@ This feature is yet to be released into the official version of <a href="http://
 </item>
 <item>
   <title>Calibration test page - ensure each part of this page exports properly</title>
-  <link>http://172.17.0.3/calibration-test-page-ensure-each-part-of-this-page-exports-properly/</link>
+  <link>http://172.18.0.3/calibration-test-page-ensure-each-part-of-this-page-exports-properly/</link>
   <pubDate>Wed, 20 Jun 2018 14:31:42 +0000</pubDate>
   <dc:creator>admin</dc:creator>
-  <guid isPermaLink="false">http://172.17.0.3/?page_id=12</guid>
+  <guid isPermaLink="false">http://172.18.0.3/?page_id=12</guid>
   <description/>
   <content:encoded><![CDATA[These are areas which need to be tested on each new build to ensure the expected output is exported.
 
@@ -147,7 +147,7 @@ This feature is yet to be released into the official version of <a href="http://
 
 A div with a background image URL set to a file from the theme dir, but not linked to anywhere else:
 
-<div style="background-image: url('http://172.17.0.3/wp-content/themes/twentyseventeen/1px_yellow_background.png');">Assert that this text has a yellow background</div>
+<div style="background-image: url('http://172.18.0.3/wp-content/themes/twentyseventeen/1px_yellow_background.png');">Assert that this text has a yellow background</div>
 
 ]]></content:encoded>
   <excerpt:encoded><![CDATA[]]></excerpt:encoded>
