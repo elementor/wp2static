@@ -25,7 +25,7 @@ sudo docker run --name plugindevwp  --net devwp  --ip 172.18.0.3 --env-file ./pr
 
 
 sudo docker run --name phpmyadmin  --net devwp -d --link devmysql:db -p 3008:80 phpmyadmin/phpmyadmin
-sudo docker run -d --name ftpserver  --net devwp -p 21:21 -p 30000-30009:30000-30009 -e "PUBLICHOST=localhost"  -e FTP_USER_NAME=admin -e FTP_USER_PASS=banana -e FTP_USER_HOME=/home/admin  stilliard/pure-ftpd:latest
+sudo docker run -d --name ftpserver  --net devwp -p 21:21 -p 30000-30009:30000-30009 -e "PUBLICHOST=ftpserver"  -e FTP_USER_NAME=admin -e FTP_USER_PASS=banana -e FTP_USER_HOME=/home/admin  stilliard/pure-ftpd:latest
 sudo docker exec plugindevwp bash /post_launch.sh
 sudo docker exec -it plugindevwp sh /watch_source_files.sh
 

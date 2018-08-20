@@ -59,6 +59,11 @@ class StaticHtmlOutput_Controller {
   protected $_dropboxFolder;
   protected $_netlifySiteID;
   protected $_netlifyPersonalAccessToken;
+  protected $_ftpServer;
+  protected $_ftpUsername;
+  protected $_ftpPassword;
+  protected $_ftpRemotePath;
+  protected $_useActiveFTP;
 
 	public static function getInstance() {
 		if (null === self::$_instance) {
@@ -111,6 +116,11 @@ class StaticHtmlOutput_Controller {
         self::$_instance->_dropboxFolder = filter_input(INPUT_POST, 'dropboxFolder');
         self::$_instance->_netlifySiteID = filter_input(INPUT_POST, 'netlifySiteID');
         self::$_instance->_netlifyPersonalAccessToken = filter_input(INPUT_POST, 'netlifyPersonalAccessToken');
+        self::$_instance->_ftpServer = filter_input(INPUT_POST, 'ftpServer');
+        self::$_instance->_ftpUsername = filter_input(INPUT_POST, 'ftpUsername');
+        self::$_instance->_ftpPassword = filter_input(INPUT_POST, 'ftpPassword');
+        self::$_instance->_ftpRemotePath = filter_input(INPUT_POST, 'ftpRemotePath');
+        self::$_instance->_useActiveFTP = filter_input(INPUT_POST, 'useActiveFTP');
 
       } else {
         // export being triggered via Cron/CLI, load settings from DB
@@ -265,6 +275,26 @@ class StaticHtmlOutput_Controller {
 
 		    if ( array_key_exists('netlifyPersonalAccessToken', $pluginOptions )) {
           self::$_instance->_netlifyPersonalAccessToken = $pluginOptions['netlifyPersonalAccessToken'];
+        }
+
+		    if ( array_key_exists('ftpServer', $pluginOptions )) {
+          self::$_instance->_ftpServer = $pluginOptions['ftpServer'];
+        }
+
+		    if ( array_key_exists('ftpUsername', $pluginOptions )) {
+          self::$_instance->_ftpUsername = $pluginOptions['ftpUsername'];
+        }
+
+		    if ( array_key_exists('ftpPassword', $pluginOptions )) {
+          self::$_instance->_ftpPassword = $pluginOptions['ftpPassword'];
+        }
+
+		    if ( array_key_exists('ftpRemotePath', $pluginOptions )) {
+          self::$_instance->_ftpRemotePath = $pluginOptions['ftpRemotePath'];
+        }
+
+		    if ( array_key_exists('useActiveFTP', $pluginOptions )) {
+          self::$_instance->_useActiveFTP = $pluginOptions['useActiveFTP'];
         }
       }
 		}
@@ -856,7 +886,7 @@ public function crawlABitMore($viaCLI = false) {
 		}
     }
 
-    public function ftp_transfer_files($batch_size = 5) {
+    public function ftp_transfer_files($viaCLI = false) {
 		if ( wpsho_fr()->is__premium_only() ) {
 
 			$ftp = new StaticHtmlOutput_FTP(
@@ -868,7 +898,7 @@ public function crawlABitMore($viaCLI = false) {
 				$this->_uploadsPath
 			);
 
-			$ftp->transfer_files();
+			$ftp->transfer_files($viaCLI);
 		}
     }
 
@@ -1053,6 +1083,11 @@ public function crawlABitMore($viaCLI = false) {
           $this->github_prepare_export();
           $this->github_upload_blobs(true);
           $this->github_finalise_export();
+        break;
+
+        case 'ftp':
+          $this->ftp_prepare_export();
+          $this->ftp_transfer_files(true);
         break;
 
 

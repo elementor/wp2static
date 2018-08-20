@@ -43,19 +43,19 @@ class StaticHtmlOutput_FTP
 		$ftp = new \FtpClient\FtpClient();
 		
 		try {
-			$ftp->connect(filter_input(INPUT_POST, 'ftpServer'));
-			$ftp->login(filter_input(INPUT_POST, 'ftpUsername'), filter_input(INPUT_POST, 'ftpPassword'));
+			$ftp->connect($this->_host);
+			$ftp->login($this->_username, $this->_password);
 		} catch (Exception $e) {
 			WsLog::l('FTP EXPORT: error encountered');
 			WsLog::l($e);
 			throw new Exception($e);
 		}
 
-		if ($ftp->isdir(filter_input(INPUT_POST, 'ftpRemotePath'))) {
+		if ($ftp->isdir($this->_remotePath)) {
 			WsLog::l('FTP EXPORT: Remote dir exists');
 		} else {
 			WsLog::l('FTP EXPORT: Creating remote dir');
-			$ftp->mkdir(filter_input(INPUT_POST, 'ftpRemotePath'), true);
+			$ftp->mkdir($this->_remotePath, true);
 		}
 
 		unset($ftp);
@@ -120,55 +120,69 @@ class StaticHtmlOutput_FTP
 	}
 
 	
-    public function transfer_files() {
-		require_once(__DIR__.'/../FTP/FtpClient.php');
-		require_once(__DIR__.'/../FTP/FtpException.php');
-		require_once(__DIR__.'/../FTP/FtpWrapper.php');
+  public function transfer_files($viaCLI = false) {
+    require_once(__DIR__.'/../FTP/FtpClient.php');
+    require_once(__DIR__.'/../FTP/FtpException.php');
+    require_once(__DIR__.'/../FTP/FtpWrapper.php');
 
-		if ($this->get_remaining_items_count() < 0) {
-			echo 'ERROR';
-			die();
-		}
-
-		$line = $this->get_item_to_export();
-		list($fileToTransfer, $targetPath) = explode(',', $line);
-		$targetPath = rtrim($targetPath);
-
-		// vendor specific from here
-		$ftp = new \FtpClient\FtpClient();
-		$ftp->connect($this->_host);
-		$ftp->login($this->_username, $this->_password);
-
-		if ( $this->_activeMode ) {
-			WsLog::l('FTP EXPORT: setting ACTIVE transfer mode');
-			$ftp->pasv(false);
-		} else {
-			$ftp->pasv(true);
-		}
-
-		WsLog::l('FTP EXPORT: transferring ' .  basename($fileToTransfer) . ' TO ' . $targetPath);
-	   
-		if ($ftp->isdir($targetPath)) {
-			WsLog::l('FTP EXPORT: Remote dir exists');
-		} else {
-			WsLog::l('FTP EXPORT: Creating remote dir');
-			$mkdir_result = $ftp->mkdir($targetPath, true); // true = recursive creation
-		}
-
-		$ftp->chdir($targetPath);
-		$ftp->putFromPath($fileToTransfer);
-	  
-		unset($ftp);
-		// end vendor specific 
-
-		$filesRemaining = $this->get_remaining_items_count();
-
-		if ( $this->get_remaining_items_count() > 0 ) {
-			WsLog::l('FTP EXPORT: ' . $filesRemaining . ' files remaining to transfer');
-			echo $this->get_remaining_items_count();
-		} else {
-			echo 'SUCCESS';
-		}
+    if ($this->get_remaining_items_count() < 0) {
+      echo 'ERROR';
+      die();
     }
+
+    $line = $this->get_item_to_export();
+    list($fileToTransfer, $targetPath) = explode(',', $line);
+    $targetPath = rtrim($targetPath);
+
+    // vendor specific from here
+    $ftp = new \FtpClient\FtpClient();
+    $ftp->connect($this->_host);
+
+
+    try {
+
+      $ftp->login($this->_username, $this->_password);
+    } catch (Exception $e) {
+      WsLog::l('FTP EXPORT: unable to login');
+      WsLog::l($e);
+      throw new Exception($e);
+    }
+
+    if ( $this->_activeMode ) {
+      WsLog::l('FTP EXPORT: setting ACTIVE transfer mode');
+      $ftp->pasv(false);
+    } else {
+      $ftp->pasv(true);
+    }
+
+    WsLog::l('FTP EXPORT: transferring ' .  basename($fileToTransfer) . ' TO ' . $targetPath);
+
+    if ($ftp->isdir($targetPath)) {
+      WsLog::l('FTP EXPORT: Remote dir exists');
+    } else {
+      WsLog::l('FTP EXPORT: Creating remote dir');
+      $mkdir_result = $ftp->mkdir($targetPath, true); // true = recursive creation
+    }
+
+    $ftp->chdir($targetPath);
+    $ftp->putFromPath($fileToTransfer);
+
+    unset($ftp);
+    // end vendor specific 
+
+    $filesRemaining = $this->get_remaining_items_count();
+
+    if ( $this->get_remaining_items_count() > 0 ) {
+
+      if ($viaCLI) {
+        $this->transfer_files(true); 
+      }
+
+      WsLog::l('FTP EXPORT: ' . $filesRemaining . ' files remaining to transfer');
+      echo $this->get_remaining_items_count();
+    } else {
+      echo 'SUCCESS';
+    }
+  }
 
 }
