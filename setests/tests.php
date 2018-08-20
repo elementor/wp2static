@@ -36,7 +36,7 @@ class WPStaticHtmlOutputPluginTest extends TestCase {
         $this->webDriver = RemoteWebDriver::create('http://localhost:4444/wd/hub', $capabilities);
     }
 
-    protected $url = 'http://172.17.0.3/wp-admin/';
+    protected $url = 'http://172.18.0.3/wp-admin/';
 
     public function testAdminWorkInProgress() {
         $this->webDriver->get($this->url);
@@ -82,7 +82,7 @@ class WPStaticHtmlOutputPluginTest extends TestCase {
 	public function goToPluginSettingsPage() {
 		// TODO: handle case when license needs entering
 
-        $this->webDriver->get('http://172.17.0.3/wp-admin/tools.php?page=wp-static-html-output-options');
+        $this->webDriver->get('http://172.18.0.3/wp-admin/tools.php?page=wp-static-html-output-options');
 
 		$this->webDriver->wait()->until(
 			WebDriverExpectedCondition::titleContains('WP Static HTML Output ‹ wp plugindev — WordPress')
@@ -166,7 +166,7 @@ class WPStaticHtmlOutputPluginTest extends TestCase {
 
 				$progress_icon_src = $progress_indicator->getAttribute('src');
 				
-				return $progress_icon_src == 'http://172.17.0.3/wp-content/plugins/wordpress-static-html-output/images/greentick.png';
+				return $progress_icon_src == 'http://172.18.0.3/wp-content/plugins/wordpress-static-html-output/images/greentick.png';
 			},
 			'Error waiting for progress icon to show success'
 		);
@@ -193,7 +193,7 @@ class WPStaticHtmlOutputPluginTest extends TestCase {
 
 		$this->assertContains(
 			"This feature is yet to be released into the official version",
-			file_get_contents('http://172.17.0.3/' . $timestamp . '/'));
+			file_get_contents('http://172.18.0.3/' . $timestamp . '/'));
     }    
 
     public function testFolderDeploymentDoesntOverwriteRoot() {
@@ -215,7 +215,7 @@ class WPStaticHtmlOutputPluginTest extends TestCase {
 
 		$this->doTheExport();
 
-		$ch = curl_init("http://172.17.0.3/index.html");
+		$ch = curl_init("http://172.18.0.3/index.html");
 
 		curl_setopt($ch, CURLOPT_NOBODY, true);
 		curl_exec($ch);

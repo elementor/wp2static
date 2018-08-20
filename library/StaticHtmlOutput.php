@@ -1278,19 +1278,19 @@ public function crawlABitMore($viaCLI = false) {
 			(homepage)
 
 			[scheme] => http
-			[host] => 172.17.0.3
+			[host] => 172.18.0.3
 			[path] => /
 
 			(closed url segment)
 
 			[scheme] => http
-			[host] => 172.17.0.3
+			[host] => 172.18.0.3
 			[path] => /feed/
 
 			(file with extension)
 
 			[scheme] => http
-			[host] => 172.17.0.3
+			[host] => 172.18.0.3
 			[path] => /wp-content/themes/twentyseventeen/assets/css/ie8.css
 
 		*/

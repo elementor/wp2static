@@ -86,10 +86,15 @@ else
 	wp --allow-root core download --version="$WP_INSTALL_VERSION" --force
 fi
 
-
+pwd
+ls 
+echo "$INSTALL_URL"
 
 # install default
 wp --allow-root core install --url="$INSTALL_URL" --title='wp plugindev' --admin_user=admin --admin_password=admin --admin_email=leonstafford@protonmail.com --skip-email
+
+
+# before this
 
 if [ -z "${INSTALL_PLUGIN_FROM_SOURCES}" ]; then 
 	echo "Launching without any plugin files synced"; 
