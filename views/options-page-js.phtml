@@ -538,7 +538,7 @@ jQuery(document).ready(function($){
             dataType: 'html',
             method: 'POST',
             success: function(serverResponse) {
-				if ($('#createZip').attr('checked') == 'checked') {
+				if (current_deployment_method == 'zip' || current_deployment_method == 'netlify') {
 					doAJAXExport('cleanup_leftover_archives', 'start_export', 'crawl_site', 'create_symlink_to_latest_archive', 'post_process_archive_dir', 'create_zip');
 				} else {
 					doAJAXExport('cleanup_leftover_archives', 'start_export', 'crawl_site', 'create_symlink_to_latest_archive', 'post_process_archive_dir' );
@@ -657,10 +657,14 @@ jQuery(document).ready(function($){
     function pollStatus() {
         logFile = uploadsDir + '/WP-STATIC-EXPORT-LOG';
 
-        $.get(logFile, function(data){
+        $.ajax({
+          mimeType: 'text/plain; charset=x-user-defined',
+          url: logFile,
+          success: function(data){
             $('#exportStatus').html(data);
             heightLimit = 1000;
             $('#exportStatus').css('height', Math.min($('#exportStatus').prop('scrollHeight'), heightLimit) + "px");
+        }
         });
         
         if ($('#progress').attr("src").includes('infinity')) {
