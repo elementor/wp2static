@@ -907,7 +907,7 @@ public function crawlABitMore($viaCLI = false) {
 		}
     }
 
-    public function bunnycdn_transfer_files() {
+    public function bunnycdn_transfer_files($viaCLI = false) {
 		if ( wpsho_fr()->is__premium_only() ) {
 
 			$bunnyCDN = new StaticHtmlOutput_BunnyCDN(
@@ -917,7 +917,7 @@ public function crawlABitMore($viaCLI = false) {
 				$this->_uploadsPath
 			);
 
-			$bunnyCDN->transfer_files();
+			$bunnyCDN->transfer_files($viaCLI);
 		}
     }
 
@@ -973,7 +973,7 @@ public function crawlABitMore($viaCLI = false) {
 		}	
     }
 
-    public function s3_transfer_files() {
+    public function s3_transfer_files($viaCLI = false) {
 		if ( wpsho_fr()->is__premium_only() ) {
 
 			$s3 = new StaticHtmlOutput_S3(
@@ -985,7 +985,7 @@ public function crawlABitMore($viaCLI = false) {
 				$this->_uploadsPath
 			);
 
-			$s3->transfer_files();
+			$s3->transfer_files($viaCLI);
 		}
     }
 
@@ -1079,6 +1079,16 @@ public function crawlABitMore($viaCLI = false) {
           $this->netlify_do_export();
         break;
 
+        case 's3':
+          $this->s3_prepare_export();
+          $this->s3_transfer_files(true);
+          $this->cloudfront_invalidate_all_items();
+        break;
+
+        case 'bunnycdn':
+          $this->bunnycdn_prepare_export();
+          $this->bunnycdn_transfer_files(true);
+        break;
       }
 
       error_log('scheduled deploy complete');
