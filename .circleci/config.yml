@@ -5,4 +5,4 @@ jobs:
       - image: circleci/php:7.2.8-apache-node
     steps:
       - checkout
-      - run: ./run_unit_tests.sh
+      - run: ./provisioning/run_unit_tests.sh
