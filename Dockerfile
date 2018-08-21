@@ -21,6 +21,6 @@ RUN chmod +x /usr/local/bin/phpunit
 COPY provisioning/*.sh /
 COPY provisioning/.env-vars /
 
-COPY test_data/ /test_data
+COPY provisioning/test_data/ /test_data
 
 COPY provisioning/install/plugins/* /plugins/

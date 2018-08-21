@@ -133,7 +133,7 @@ class StaticHtmlOutput_S3
 	}
 
 	
-    public function transfer_files() {
+    public function transfer_files($viaCLI) {
 		if ( wpsho_fr()->is__premium_only() ) {
 
 			if ($this->get_remaining_items_count() < 0) {
@@ -164,6 +164,10 @@ class StaticHtmlOutput_S3
 
 			$filesRemaining = $this->get_remaining_items_count();
 			if ( $filesRemaining > 0 ) {
+        // if this is via CLI, then call this function again here
+        if ($viaCLI) {
+          $this->transfer_files(true); 
+        }
 				WsLog::l('S3 EXPORT: ' . $filesRemaining . ' files remaining to transfer');
 				echo $filesRemaining;
 			} else {

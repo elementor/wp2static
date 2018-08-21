@@ -143,10 +143,10 @@ wp --allow-root post delete 3 --force
 wp --allow-root db query "update wp_options set option_value = 0 where option_name = 'uploads_use_yearmonth_folders';"
 
 # import demo content media before post import
-wp --allow-root media import /app/demo_site_content/images/*.png
-wp --allow-root media import /app/demo_site_content/images/*.jpg
+wp --allow-root media import /app/provisioning/demo_site_content/images/*.png
+wp --allow-root media import /app/provisioning/demo_site_content/images/*.jpg
 # import the demo site content
-wp --allow-root import /app/demo_site_content/wp_static_demo_content.xml --authors=create
+wp --allow-root import /app/provisioning/demo_site_content/wp_static_demo_content.xml --authors=create
 
 
 # import data used for testing
