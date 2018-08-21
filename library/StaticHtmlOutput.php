@@ -1074,6 +1074,10 @@ public function crawlABitMore($viaCLI = false) {
           $this->ftp_transfer_files(true);
         break;
 
+        case 'netlify':
+          $this->create_zip();
+          $this->netlify_do_export();
+        break;
 
       }
 
