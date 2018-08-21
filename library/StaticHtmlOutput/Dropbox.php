@@ -13,12 +13,10 @@ class StaticHtmlOutput_Dropbox
 	protected $_uploadsPath;
 	protected $_exportFileList;
 	protected $_archiveName;
-	protected $_plugin;
 	
-	public function __construct($plugin, $accessToken, $remotePath, $uploadsPath) {
+	public function __construct($accessToken, $remotePath, $uploadsPath) {
 		$this->_accessToken = $accessToken;
 		$this->_remotePath = $remotePath;
-		$this->_plugin = $plugin;
 		$this->_uploadsPath = $uploadsPath;
 		$this->_exportFileList = $uploadsPath . '/WP-STATIC-EXPORT-DROPBOX-FILES-TO-EXPORT';
 		$archiveDir = file_get_contents($uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
@@ -86,7 +84,7 @@ class StaticHtmlOutput_Dropbox
 		return count($contents);
 	}
 
-    public function transfer_files() {
+    public function transfer_files($viaCLI) {
 		if ( wpsho_fr()->is__premium_only() ) {
 
 			if ($this->get_remaining_items_count() < 0) {
@@ -101,7 +99,7 @@ class StaticHtmlOutput_Dropbox
 			$targetPath = rtrim($targetPath);
 
 
-			$this->_plugin->wsLog('DROPBOX EXPORT: transferring ' .  basename($fileToTransfer) . ' TO ' . $targetPath);
+			WsLog::l('DROPBOX EXPORT: transferring ' .  basename($fileToTransfer) . ' TO ' . $targetPath);
 		  
 			// vendor specific 
  
@@ -148,7 +146,12 @@ class StaticHtmlOutput_Dropbox
 			$filesRemaining = $this->get_remaining_items_count();
 
 			if ( $filesRemaining > 0 ) {
-				$this->_plugin->wsLog('DROPBOX EXPORT: ' . $filesRemaining . ' files remaining to transfer');
+        // if this is via CLI, then call this function again here
+        if ($viaCLI) {
+          $this->transfer_files(true); 
+        }
+
+				WsLog::l('DROPBOX EXPORT: ' . $filesRemaining . ' files remaining to transfer');
 				echo $filesRemaining;
 			} else {
 				echo 'SUCCESS';

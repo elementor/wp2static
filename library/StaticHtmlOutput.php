@@ -1029,7 +1029,7 @@ public function crawlABitMore($viaCLI = false) {
 			$dropbox->prepare_export();
     }
 
-    public function dropbox_do_export() {
+    public function dropbox_do_export($viaCLI = false) {
 
 			$dropbox = new StaticHtmlOutput_Dropbox(
 				$this->_dropboxAccessToken,
@@ -1037,7 +1037,7 @@ public function crawlABitMore($viaCLI = false) {
 				$this->_uploadsPath
 			);
 
-			$dropbox->transfer_files();
+			$dropbox->transfer_files($viaCLI);
     }
 
 
@@ -1079,6 +1079,10 @@ public function crawlABitMore($viaCLI = false) {
           $this->netlify_do_export();
         break;
 
+        case 'zip':
+          $this->create_zip();
+        break;
+
         case 's3':
           $this->s3_prepare_export();
           $this->s3_transfer_files(true);
@@ -1088,6 +1092,11 @@ public function crawlABitMore($viaCLI = false) {
         case 'bunnycdn':
           $this->bunnycdn_prepare_export();
           $this->bunnycdn_transfer_files(true);
+        break;
+
+        case 'dropbox':
+          $this->dropbox_prepare_export();
+          $this->dropbox_do_export(true);
         break;
       }
 
