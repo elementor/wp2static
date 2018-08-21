@@ -476,7 +476,6 @@ class StaticHtmlOutput_Controller {
     }
 
 	public function github_upload_blobs($viaCLI = false) {
-		if ( wpsho_fr()->is__premium_only() ) {
 			WsLog::l('GITHUB EXPORT: Uploading file blobs...');
 			$github = new StaticHtmlOutput_GitHub(
 				$this->_githubRepo,
@@ -487,11 +486,9 @@ class StaticHtmlOutput_Controller {
 			);
 
 			$github->upload_blobs($viaCLI);
-		}
     }
 
     public function github_prepare_export() {
-		if ( wpsho_fr()->is__premium_only() ) {
 			WsLog::l('GITHUB EXPORT: Preparing files for deployment...');
 
 			$github = new StaticHtmlOutput_GitHub(
@@ -503,11 +500,9 @@ class StaticHtmlOutput_Controller {
 			);
 
 			$github->prepare_deployment();
-		}
     }
 
     public function github_finalise_export() {
-		if ( wpsho_fr()->is__premium_only() ) {
 			WsLog::l('GITHUB EXPORT: Finalising deployment...');
 
 			$github = new StaticHtmlOutput_GitHub(
@@ -519,7 +514,6 @@ class StaticHtmlOutput_Controller {
 			);
 
 			$github->commit_new_tree();
-		}
     }
 
 	public function cleanup_leftover_archives() {
@@ -870,7 +864,6 @@ public function crawlABitMore($viaCLI = false) {
     }
 
     public function ftp_prepare_export() {
-		if ( wpsho_fr()->is__premium_only() ) {
 			WsLog::l('FTP EXPORT: Checking credentials..:');
 
 			$ftp = new StaticHtmlOutput_FTP(
@@ -883,11 +876,9 @@ public function crawlABitMore($viaCLI = false) {
 			);
 
 			$ftp->prepare_deployment();
-		}
     }
 
     public function ftp_transfer_files($viaCLI = false) {
-		if ( wpsho_fr()->is__premium_only() ) {
 
 			$ftp = new StaticHtmlOutput_FTP(
 				$this->_ftpServer,
@@ -899,7 +890,6 @@ public function crawlABitMore($viaCLI = false) {
 			);
 
 			$ftp->transfer_files($viaCLI);
-		}
     }
 
     public function bunnycdn_prepare_export() {
@@ -1028,7 +1018,6 @@ public function crawlABitMore($viaCLI = false) {
 	}
 
     public function dropbox_prepare_export() {
-		if ( wpsho_fr()->is__premium_only() ) {
 			WsLog::l('DROPBOX EXPORT: preparing export');
 
 			$dropbox = new StaticHtmlOutput_Dropbox(
@@ -1038,11 +1027,9 @@ public function crawlABitMore($viaCLI = false) {
 			);
 
 			$dropbox->prepare_export();
-		}
     }
 
     public function dropbox_do_export() {
-		if ( wpsho_fr()->is__premium_only() ) {
 
 			$dropbox = new StaticHtmlOutput_Dropbox(
 				$this->_dropboxAccessToken,
@@ -1051,12 +1038,10 @@ public function crawlABitMore($viaCLI = false) {
 			);
 
 			$dropbox->transfer_files();
-		}
     }
 
 
     public function netlify_do_export () {
-		if ( wpsho_fr()->is__premium_only() ) {
 
 			WsLog::l('NETLIFY EXPORT: starting to deploy ZIP file');
 
@@ -1070,7 +1055,6 @@ public function crawlABitMore($viaCLI = false) {
 			);
 
 			echo $netlify->deploy($archiveName);
-		}
     }
 
     public function deploy() {
