@@ -69,7 +69,6 @@ class StaticHtmlOutput_GitHub
 	
 	// TODO: move this into a parent class as identical to bunny and probably others
     public function prepare_deployment() {
-		if ( wpsho_fr()->is__premium_only() ) {
 
 			WsLog::l('GITHUB EXPORT: Preparing list of files to transfer');
 
@@ -77,7 +76,6 @@ class StaticHtmlOutput_GitHub
 			$this->create_github_deployment_list($this->_archiveName, $this->_archiveName, $this->_remotePath);
 
 			echo 'SUCCESS';
-		}
     }
 
 	public function get_item_to_export() {
@@ -103,7 +101,6 @@ class StaticHtmlOutput_GitHub
 
 	
     public function upload_blobs($viaCLI = false) {
-		if ( wpsho_fr()->is__premium_only() ) {
 			require_once dirname(__FILE__) . '/../GuzzleHttp/autoloader.php';
 			require_once(__DIR__.'/../Github/autoload.php');
 
@@ -156,11 +153,9 @@ class StaticHtmlOutput_GitHub
 			} else {
 				echo 'SUCCESS';
 			}
-		}
     }
 
     public function commit_new_tree() {
-      if ( wpsho_fr()->is__premium_only() ) {
         require_once dirname(__FILE__) . '/../GuzzleHttp/autoloader.php';
         require_once(__DIR__.'/../Github/autoload.php');
 
@@ -219,7 +214,6 @@ class StaticHtmlOutput_GitHub
         } else {
           echo 'SUCCESS';
         }
-      }
     }
 
 }
