@@ -211,7 +211,7 @@ class StaticHtmlOutput_Controller {
         }
 
 		    if ( array_key_exists('baseUrl', $pluginOptions )) {
-          self::$_instance->_baseUrl = $pluginOptions['baseUrl'];
+          self::$_instance->_baseUrl = untrailingslashit($pluginOptions['baseUrl']);
         }
 		    if ( array_key_exists('sendViaBasic', $pluginOptions )) {
           self::$_instance->_useBasicAuth = $pluginOptions['sendViaBasic'];
