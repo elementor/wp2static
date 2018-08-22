@@ -23,11 +23,8 @@
 					</p>
 
 					  <strong><label for="allowOfflineUsage"><?php echo __('Allow offline usage', 'static-html-output-plugin');?></label></strong>
-					  <p>
-						<i><?php echo __("Check this to enable you to run your site without any internet access, ie a USB drive given to a client. All links will be made relative and no Base Url will be used.", 'static-html-output-plugin');?></i>
-					  </p> 
 
-					  <input type="checkbox" id="allowOfflineUsage" name="allowOfflineUsage" value="1"  />
 
+<?php echo displayCheckbox($this, 'allowOfflineUsage', 'Check this to enable you to run your site without any internet access, ie a USB drive given to a client. All links will be made relative and no Base Url will be used.'); ?>
 
 </div>

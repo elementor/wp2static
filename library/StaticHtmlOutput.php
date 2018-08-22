@@ -64,6 +64,7 @@ class StaticHtmlOutput_Controller {
   protected $_ftpPassword;
   protected $_ftpRemotePath;
   protected $_useActiveFTP;
+  protected $_allowOfflineUsage;
 
 	public static function getInstance() {
 		if (null === self::$_instance) {
@@ -121,6 +122,7 @@ class StaticHtmlOutput_Controller {
         self::$_instance->_ftpPassword = filter_input(INPUT_POST, 'ftpPassword');
         self::$_instance->_ftpRemotePath = filter_input(INPUT_POST, 'ftpRemotePath');
         self::$_instance->_useActiveFTP = filter_input(INPUT_POST, 'useActiveFTP');
+        self::$_instance->_allowOfflineUsage = filter_input(INPUT_POST, 'allowOfflineUsage');
 
       } else {
         // export being triggered via Cron/CLI, load settings from DB
@@ -295,6 +297,10 @@ class StaticHtmlOutput_Controller {
 
 		    if ( array_key_exists('useActiveFTP', $pluginOptions )) {
           self::$_instance->_useActiveFTP = $pluginOptions['useActiveFTP'];
+        }
+
+		    if ( array_key_exists('allowOfflineUsage', $pluginOptions )) {
+          self::$_instance->_allowOfflineUsage = $pluginOptions['allowOfflineUsage'];
         }
       }
 		}
@@ -769,7 +775,7 @@ public function crawlABitMore($viaCLI = false) {
 
   // TODO: if it replaces baseurl here, it will be searching links starting with that...
   // TODO: shouldn't be doing this here...
-  $urlResponse->replaceBaseUrl($baseUrl, $this->_baseUrl, $useRelativeURLs);
+  $urlResponse->replaceBaseUrl($baseUrl, $this->_baseUrl, $this->_allowOfflineUsage, $useRelativeURLs);
   $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
   $this->_saveUrlData($urlResponse, $archiveDir);
 
@@ -801,7 +807,7 @@ public function crawlABitMore($viaCLI = false) {
           $overwrite_slug_targets
           );
 
-      $urlResponse->replaceBaseUrl($baseUrl, $this->_baseUrl, $useRelativeURLs);
+      $urlResponse->replaceBaseUrl($baseUrl, $this->_baseUrl, $this->_allowOfflineUsage, $useRelativeURLs);
       $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
       $this->_saveUrlData($urlResponse, $archiveDir);
     } 
