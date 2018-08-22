@@ -99,8 +99,10 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
 
 = 5.4 =
 
+ * Improvement: more deployment options included (Netlify, GitHub Pages)
  * Bugfix: certain cases where inline style images are written with incorrect filenames
  * Bugfix: fix for cron-scheduled exports failing 
+ * Bugfix: offline copy not rewriting home URLs
 
 = 5.3 =
 
@@ -380,8 +382,10 @@ Initial release to Wordpress community
 
 = 5.4 =
 
+ * Improvement: more deployment options included (Netlify, GitHub Pages)
  * Bugfix: certain cases where inline style images are written with incorrect filenames
  * Bugfix: fix for cron-scheduled exports failing 
+ * Bugfix: offline copy not rewriting home URLs
 
 = 5.3 =
 
