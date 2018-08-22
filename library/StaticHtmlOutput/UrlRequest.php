@@ -1299,6 +1299,25 @@ class StaticHtmlOutput_UrlRequest
         // TODO: use DOMDoc here
 				$responseBody = str_replace('<head>', "<head>\n<base href=\"" . esc_attr($newBaseUrl) . "/\" />\n", $responseBody);
 			} elseif ($allowOfflineUsage) {
+          // detect urls starting with our domain and append index.html to the end if they end in /
+          $xml = new DOMDocument(); 
+        
+          // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
+          libxml_use_internal_errors(true);
+          $xml->loadHTML($responseBody); 
+          libxml_use_internal_errors(false);
+
+          foreach($xml->getElementsByTagName('a') as $link) { 
+             $original_link = $link->getAttribute("href");
+             
+              // process links from our site only 
+              if (strpos($original_link, $oldDomain) !== false) {
+              }
+
+             $link->setAttribute('href', $original_link . 'index.html');
+          }
+          $responseBody =  $xml->saveHtml(); 
+
           $responseBody = str_replace('https://' . $oldDomain . '/', '', $responseBody);
           $responseBody = str_replace('https://' . $oldDomain . '', '', $responseBody);
           $responseBody = str_replace('http://' . $oldDomain . '/', '', $responseBody);
