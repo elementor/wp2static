@@ -1267,7 +1267,7 @@ class StaticHtmlOutput_UrlRequest
 		
 	}
 
-	public function replaceBaseUrl($oldBaseUrl, $newBaseUrl, $absolutePaths = false)
+	public function replaceBaseUrl($oldBaseUrl, $newBaseUrl, $allowOfflineUsage, $absolutePaths = false)
 	{
 
 		// TODO: don't rewrite mailto links unless specified, re #30
@@ -1296,7 +1296,17 @@ class StaticHtmlOutput_UrlRequest
 
 				$responseBody = str_replace($newDomain, '', $responseBody);
 
+        // TODO: use DOMDoc here
 				$responseBody = str_replace('<head>', "<head>\n<base href=\"" . esc_attr($newBaseUrl) . "/\" />\n", $responseBody);
+			} elseif ($allowOfflineUsage) {
+          $responseBody = str_replace('https://' . $oldDomain . '/', '', $responseBody);
+          $responseBody = str_replace('https://' . $oldDomain . '', '', $responseBody);
+          $responseBody = str_replace('http://' . $oldDomain . '/', '', $responseBody);
+          $responseBody = str_replace('http://' . $oldDomain . '', '', $responseBody);
+          $responseBody = str_replace('//' . $oldDomain . '/', '', $responseBody);
+          $responseBody = str_replace('//' . $oldDomain . '', '', $responseBody);
+          $responseBody = str_replace($oldDomain . '/', '', $responseBody);
+          $responseBody = str_replace($oldDomain, '', $responseBody);
 			} else {
           // note: as it's stripping urls first, the replacing, it will not keep the desired
           // url protocol if the old url is http and the new is https, for example 
