@@ -53,14 +53,12 @@ class StaticHtmlOutput_Dropbox
 	}
 
     public function prepare_export() {
-		if ( wpsho_fr()->is__premium_only() ) {
 
 			$this->clear_file_list();
 
 			$this->create_dropbox_deployment_list($this->_archiveName, $this->_archiveName, $this->_remotePath);
 
 			echo 'SUCCESS';
-		}
     }
 
 	public function get_item_to_export() {
@@ -85,7 +83,6 @@ class StaticHtmlOutput_Dropbox
 	}
 
     public function transfer_files($viaCLI) {
-		if ( wpsho_fr()->is__premium_only() ) {
 
 			if ($this->get_remaining_items_count() < 0) {
 				echo 'ERROR';
@@ -156,6 +153,5 @@ class StaticHtmlOutput_Dropbox
 			} else {
 				echo 'SUCCESS';
 			}
-		}
     }
 }
