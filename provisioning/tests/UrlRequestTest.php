@@ -83,7 +83,7 @@ final class StaticHtmlOutput_UrlRequestTest extends TestCase {
 			->method('setResponseBody')
 			->with('<html><head></head><body>Something with a <a href="http://google.com">link</a>.</body></html>') ;
 
-		$mockUrlResponse->replaceBaseUrl($wpURL, $baseURL);
+		$mockUrlResponse->replaceBaseUrl($wpURL, $baseURL, false);
     }
 
     public function testWordpressTopleveldomainExportingToSubdomain(): void {
@@ -123,7 +123,7 @@ final class StaticHtmlOutput_UrlRequestTest extends TestCase {
 			->method('setResponseBody')
 			->with('<html><head></head><body>Something with a <a href="http://subdomain.google.com">link</a>.</body></html>') ;
 
-		$mockUrlResponse->replaceBaseUrl($wpURL, $baseURL);
+		$mockUrlResponse->replaceBaseUrl($wpURL, $baseURL, false);
     }
 
     public function testWordpressSubdomainExportingToTopleveldomain(): void {
@@ -163,7 +163,7 @@ final class StaticHtmlOutput_UrlRequestTest extends TestCase {
 			->method('setResponseBody')
 			->with('<html><head></head><body>Something with a <a href="http://google.com">link</a>.</body></html>') ;
 
-		$mockUrlResponse->replaceBaseUrl($wpURL, $baseURL);
+		$mockUrlResponse->replaceBaseUrl($wpURL, $baseURL, false);
     }
 
     public function testWordpressSubdomainExportingToAnotherSubdomain(): void {
@@ -203,7 +203,7 @@ final class StaticHtmlOutput_UrlRequestTest extends TestCase {
 			->method('setResponseBody')
 			->with('<html><head></head><body>Something with a <a href="http://subdomain.google.com">link</a>.</body></html>') ;
 
-		$mockUrlResponse->replaceBaseUrl($wpURL, $baseURL);
+		$mockUrlResponse->replaceBaseUrl($wpURL, $baseURL, false);
     }
 
     public function testRewritesWordpressSlugsAndStripsWordpressMetaFromHtml(): void {
@@ -462,7 +462,7 @@ EOHTML;
 		$siteURL = 'https://mydomain.com';
 		$newDomain = 'https://subdomain.mydomain.com';
 
-		$mockUrlResponse->replaceBaseUrl($siteURL, $newDomain);
+		$mockUrlResponse->replaceBaseUrl($siteURL, $newDomain, false);
     }
 
     public function testAbosluteURLs(): void {
@@ -514,56 +514,6 @@ EOHTML;
 		$siteURL = 'https://mydomain.com';
 		$newDomain = 'https://subdomain.mydomain.com';
 
-		$mockUrlResponse->replaceBaseUrl($siteURL, $newDomain, 'absolute');
-    }
-
-    public function testRewritingForOfflineUsage(): void {
-      $url = 'http://someurl.com';	
-        $basicAuth = null;
-
-      // mock out only the unrelated methods
-      $mockUrlResponse = $this->getMockBuilder('StaticHtmlOutput_UrlRequest')
-        ->setMethods([
-            'isRewritable',
-            'getResponseBody',
-            'setResponseBody'
-        ])
-        ->setConstructorArgs([$url, $basicAuth])
-        ->getMock();
-
-
-$escaped_url_block = <<<EOHTML
-<head>
-<link href='https://mydomain.com/wp-content/themes/onepress/css/font.css' rel='stylesheet' type='text/css'>
-
-http://mydomain.com/banana/photo.jpg
-EOHTML;
-
-$escaped_url_block_expected_rewrite = <<<EOHTML
-<head>
-<link href='wp-content/themes/onepress/css/font.css' rel='stylesheet' type='text/css'>
-
-banana/photo.jpg
-EOHTML;
-
-      // mock getResponseBody with testable HTML content
-      $mockUrlResponse->method('getResponseBody')
-        ->willReturn($escaped_url_block);
-
-      $mockUrlResponse->method('isRewritable')
-        ->willReturn(true);
-
-      $mockUrlResponse->expects($this->once())
-        ->method('getResponseBody') ;
-
-      // assert that setResponseBody() is called with the correctly rewritten HTML
-      $mockUrlResponse->expects($this->once())
-        ->method('setResponseBody')
-        ->with($escaped_url_block_expected_rewrite) ;
-
-      $siteURL = 'https://mydomain.com';
-      $newDomain = 'https://subdomain.mydomain.com';
-
-      $mockUrlResponse->replaceBaseUrl($siteURL, $newDomain);
+		$mockUrlResponse->replaceBaseUrl($siteURL, $newDomain, false, 'absolute');
     }
 }
