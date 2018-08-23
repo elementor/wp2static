@@ -54,14 +54,18 @@ class StaticHtmlOutput_FilesHelper
 			$directory = str_replace(home_url('/'), ABSPATH, $url);
 
 			if (stripos($url, home_url('/')) === 0 && is_dir($directory)) {
-				$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory), RecursiveDirectoryIterator::SKIP_DOTS);
+				$iterator = new RecursiveIteratorIterator(
+          new RecursiveDirectoryIterator(
+            $directory, 
+          RecursiveDirectoryIterator::SKIP_DOTS));
+
 				foreach ($iterator as $fileName => $fileObject) {
 					if (is_file($fileName)) {
 						$pathinfo = pathinfo($fileName);
 						if (isset($pathinfo['extension']) && !in_array($pathinfo['extension'], array('php', 'phtml', 'tpl'))) {
 							array_push($files, home_url(str_replace(ABSPATH, '', $fileName)));
 						}
-					}
+					} 
 				}
 			} else {
 				if ($url != '') {
@@ -124,6 +128,7 @@ class StaticHtmlOutput_FilesHelper
 					self::getListOfLocalFilesByUrl(array($uploadsURL))
 			));
 		}
+
 
         $str = implode("\n", $urlsQueue);
         file_put_contents($uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST', $str);
