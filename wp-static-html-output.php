@@ -9,7 +9,7 @@
  * Text Domain: static-html-output-plugin
  * Copyright (c) 2017 Leon Stafford
  * 
- * @fs_premium_only /library/StaticHtmlOutput/BunnyCDN.php, /library/StaticHtmlOutput/S3.php, /library/CloudFront/, /library/Psr/, /library/S3/, /library/GuzzleHttp/
+ * @fs_premium_only /library/StaticHtmlOutput/BunnyCDN.php, /library/StaticHtmlOutput/S3.php, /library/CloudFront/, /library/S3/
  * 
  * @package     WP_Static_HTML_Output
  */
