@@ -187,6 +187,15 @@ An extra benefit of this method is that it reduces the repetitive use of the ful
 </p>
 
                 <p>
+                  <strong><label for="diffBasedDeploys"><?php echo __('Diff-based deployment', 'static-html-output-plugin');?></label></strong>
+                  </p>
+<?php echo displayCheckbox($this, 'diffBasedDeploys', 'Only deploy changed files since last export'); ?>
+
+<p>
+As this works off of your last export, if you have changed the deployment method or settings since your last deployment, you may end up with missing files. In this case, uncheck this option, do one complete deployment with your new settings, then re-enable this to get faster deployments of changes only going forward.
+</p>
+
+                <p>
                   <strong><label for="outputDirectory"><?php echo __('Override Output Directory', 'static-html-output-plugin');?></label></strong>
                   <p>
                     <i>Just leave this blank and it will write any export files to your WordPress uploads directory at: <?php echo $this->uploadsPath; ?> else, give the full path to the directory on your server</i>
