@@ -525,7 +525,6 @@ class StaticHtmlOutput_Controller {
   public function capture_last_deployment() {
 		WsLog::l('CAPTURING LAST EXPORT FOR DIFF-BASED DEPLOYMENTS');
 		error_log('CAPTURING LAST EXPORT FOR DIFF-BASED DEPLOYMENTS');
-    global $blog_id;
     $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
 
     $previous_export = $archiveDir;
@@ -1288,13 +1287,34 @@ public function crawlABitMore($viaCLI = false) {
 		StaticHtmlOutput_FilesHelper::delete_dir_with_files($archiveDir . '/wp-json/');
 		
 		// TODO: remove all text files from theme dir 
+    $this->remove_files_idential_to_previous_export();
 
+    // remove files identical to previous export
 
 		$this->copyStaticSiteToPublicFolder();
 
 
 		echo 'SUCCESS';
 	}
+
+  public function remove_files_idential_to_previous_export() {
+	  WsLog::l('REMOVING FILES IDENTICAL TO PREVIOUS EXPORT');
+    $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
+    $dir_to_diff_against = $this->outputPath() . '/previous-export';
+
+
+    shell_exec("cd $dir_to_diff_against && find . -type f -exec rm -f $archiveDir/{} \;");
+
+    $files_in_previous_export = exec("find $dir_to_diff_against -type f | wc -l"); 
+    $files_to_be_deployed = exec("find $archiveDir -type f | wc -l"); 
+ 
+    // TODO: cleanup empty dirs in archiveDir to prevent them being attempted to export
+ 
+	  WsLog::l('FILES PREVIOUSLY EXPORTED: ' . $files_in_previous_export);
+	  WsLog::l('FILES TO BE DEPLOYED: ' . $files_to_be_deployed);
+
+    // TODO: this works the first time, but will fail the diff on subsequent runs, alternating each time`
+  }
   
   // default rename in PHP throws warnings if dir is populated
   public function rename_populated_directory($source, $target) {
