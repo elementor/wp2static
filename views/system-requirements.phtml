@@ -8,12 +8,6 @@
 $fail = array();
 $pass = array();
 
-if (!$this->supportsZipArchives):
-	$fail[] = 'You are missing the <strong>zip</strong> extension';
-else:
-	$pass[] = 'You have the <strong>zip</strong> extension';
-endif;
-
 if (!$this->supports_cURL):
 	$fail[] = 'You are missing the <strong>cURL</strong> extension for PHP';
 else:
@@ -47,16 +41,6 @@ endif;
 
 		<h3>Missing the ZIP extension?</h3>
 
-        <p> This can be a common issue but easy to fix. It means that the installation of the PHP programming language on your web host does not currently have support for reading and generating compressed ZIP files. This is needed for the plugin to be able to generate a .zip archive of your static website. Here's some hosting company and platform specific guides on how to fix:</p>
-
-        <ul>
-            <li><a target="_blank" href="https://godaddy.com/help/enable-custom-php-modules-12036">GoDaddy</a></li>
-            <li><a target="_blank" href="https://stackoverflow.com/questions/23564138/how-to-enable-zip-dll-in-xampp">XAMPP</a></li>
-            <li><a target="_blank" href="https://stackoverflow.com/questions/38104348/install-php-zip-on-php-5-6-on-ubuntu">Ubuntu</a></li>
-            <li><a target="_blank" href="https://www.digitalocean.com/community/questions/php-7-0-ziparchive-library-is-missing-or-disabled">DigitalOcean</a></li>
-            <li><a target="_blank" href="http://lmgtfy.com/?q=how+to+get+zip+extension+php">Ask Dr. Google</a></li>
-        </ul>
-	</p>
 
 		<h3>Missing the cURL extension?</h3>
 
