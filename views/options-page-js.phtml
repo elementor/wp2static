@@ -17,6 +17,7 @@ if ($settings == '') {
 var settings = '<?php echo $settings; ?>';
 var uploadsDir = '<?php echo $this->wpUploadsDir; ?>';
 var pluginDir = '<?php echo $this->wpPluginDir; ?>';
+var wpSiteURL = '<?php echo get_site_url(); ?>';
 var pollingInterval = 5000;
 var exportTargets = [];
 var current_deployment_method = 'folder';
@@ -165,18 +166,12 @@ jQuery(document).ready(function($){
 
 
 		
-		// show the selected deployment option or none if empty
-		if (selected_deployment_method === '') {
-			console.log('no deployment option selected');
 
-			// hide export action window
-			$('.exportActionsPane').hide();
-		} else {
-			$('.' + selected_deployment_method  + '_settings_block').show();
 
-			// show export action window
-			$('.exportActionsPane').show();
-		}
+    $('.' + selected_deployment_method  + '_settings_block').show();
+
+    // show export action window
+    $('.exportActionsPane').show();
 
 	
 
@@ -213,6 +208,7 @@ jQuery(document).ready(function($){
 		setExportSettingDetailsVisibility(this);
     });
 
+
 	// handler when deployment method is changed
 	$('.selected_deployment_method').change(function() {
 		renderSettingsBlock(this.value);
@@ -222,7 +218,7 @@ jQuery(document).ready(function($){
 
 	// update base url previews in realtime
 	$(document).on('input', 
-		'#baseUrl-s3, #baseUrl-ftp, #baseUrl-folder, #baseUrl-dropbox, #baseUrl-github, #baseUrl-netlify, #baseUrl-bunnycdn, #baseUrl-zip', 
+		'#baseUrl-s3, #baseUrl-ftp, #baseUrl-folder, #baseUrl-dropbox, #baseUrl-github, #baseUrl-netlify, #baseUrl-bunnycdn, #baseUrl-zip, #targetFolder', 
 		function() {
 			updateBaseURLReferences();
 		}
@@ -244,8 +240,8 @@ jQuery(document).ready(function($){
 			base_url_previews.text(base_url.replace(/\/$/, "") + '/');
 
 			// update the clickable preview url in folder options
-			$('#folderPreviewURL').text($('#baseUrl-' + current_deployment_method).val());
-			$('#folderPreviewURL').attr('href', ($('#baseUrl-' + current_deployment_method).val()));
+			$('#folderPreviewURL').text(wpSiteURL + '/' + $('#targetFolder').val() + '/');
+			$('#folderPreviewURL').attr('href', (wpSiteURL + '/' + $('#targetFolder').val() + '/'));
 		}
 
 
@@ -903,7 +899,6 @@ jQuery(document).ready(function($){
 			export_option_elements.hide();
 		}
 	});
-
 
 	updateBaseURLReferences($('#baseUrl').val());
 });

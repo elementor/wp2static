@@ -22,6 +22,7 @@ class StaticHtmlOutput_Controller {
   // new options for simplifying CLI/Client based exports
   protected $_selected_deployment_option;
   protected $_baseUrl;
+  protected $_diffBasedDeploys;
   protected $_target_folder;
   protected $_rewriteWPCONTENT;
   protected $_rewriteTHEMEROOT;
@@ -72,6 +73,7 @@ class StaticHtmlOutput_Controller {
 			self::$_instance->_options = new StaticHtmlOutput_Options(self::OPTIONS_KEY);
 			self::$_instance->_view = new StaticHtmlOutput_View();
 
+
         $tmp_var_to_hold_return_array = wp_upload_dir();
         self::$_instance->_uploadsPath = $tmp_var_to_hold_return_array['basedir'];
         self::$_instance->_uploadsURL = $tmp_var_to_hold_return_array['baseurl'];
@@ -81,6 +83,7 @@ class StaticHtmlOutput_Controller {
         // export being triggered via GUI, set all options from filtered posts
         self::$_instance->_selected_deployment_option = filter_input(INPUT_POST, 'selected_deployment_option');
         self::$_instance->_baseUrl = untrailingslashit(filter_input(INPUT_POST, 'baseUrl', FILTER_SANITIZE_URL));
+        self::$_instance->_diffBasedDeploys = filter_input(INPUT_POST, 'diffBasedDeploys');
         self::$_instance->_sendViaGithub = filter_input(INPUT_POST, 'sendViaGithub');
         self::$_instance->_sendViaFTP = filter_input(INPUT_POST, 'sendViaFTP');
         self::$_instance->_sendViaS3 = filter_input(INPUT_POST, 'sendViaS3');
@@ -130,6 +133,10 @@ class StaticHtmlOutput_Controller {
 
 		    if ( array_key_exists('sendViaGithub', $pluginOptions )) {
           self::$_instance->_sendViaGithub = $pluginOptions['sendViaGithub'];
+        }
+
+		    if ( array_key_exists('diffBasedDeploys', $pluginOptions )) {
+          self::$_instance->_diffBasedDeploys = $pluginOptions['diffBasedDeploys'];
         }
 
 		    if ( array_key_exists('sendViaFTP', $pluginOptions )) {
@@ -302,6 +309,8 @@ class StaticHtmlOutput_Controller {
 		    if ( array_key_exists('allowOfflineUsage', $pluginOptions )) {
           self::$_instance->_allowOfflineUsage = $pluginOptions['allowOfflineUsage'];
         }
+
+
       }
 		}
 
@@ -317,9 +326,8 @@ class StaticHtmlOutput_Controller {
 			add_action('admin_menu', array($instance, 'registerOptionsPage'));
 			add_action(self::HOOK . '-saveOptions', array($instance, 'saveOptions'));
 			add_action( 'admin_enqueue_scripts', array($instance, 'load_custom_wp_admin_script') );
-
-            add_filter( 'custom_menu_order', '__return_true' );
-            add_filter( 'menu_order', array( $instance, 'set_menu_order' ) );
+      add_filter( 'custom_menu_order', '__return_true' );
+      add_filter( 'menu_order', array( $instance, 'set_menu_order' ) );
 
 		}
 
@@ -520,20 +528,36 @@ class StaticHtmlOutput_Controller {
     }
 
   public function capture_last_deployment() {
-		WsLog::l('CAPTURING LAST EXPORT FOR DIFF-BASED DEPLOYMENTS');
-		error_log('CAPTURING LAST EXPORT FOR DIFF-BASED DEPLOYMENTS');
-    $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
+      $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
+      $previous_export = $archiveDir;
+      $dir_to_diff_against = $this->outputPath() . '/previous-export';
 
-    $previous_export = $archiveDir;
-    $dir_to_diff_against = $this->outputPath() . '/previous-export';
-		if (is_dir($previous_export)) {
-      error_log('copying ' . $previous_export . ' to '. $dir_to_diff_against);
+    if ($this->_diffBasedDeploys) {
+      WsLog::l('CAPTURING LAST EXPORT FOR DIFF-BASED DEPLOYMENTS');
+      error_log('CAPTURING LAST EXPORT FOR DIFF-BASED DEPLOYMENTS');
+      $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
 
-      shell_exec("rm -Rf $dir_to_diff_against && mkdir -p $dir_to_diff_against && cp -r $previous_export/* $dir_to_diff_against");
+      $previous_export = $archiveDir;
+      $dir_to_diff_against = $this->outputPath() . '/previous-export';
 
-		} else {
-			WsLog::l('NO PREVIOUS EXPORT FOUND');
-		}
+      error_log('PREVIOUS EXPORT');
+      error_log($previous_export);
+      
+      if (is_dir($previous_export)) {
+        error_log('copying ' . $previous_export . ' to '. $dir_to_diff_against);
+
+        shell_exec("rm -Rf $dir_to_diff_against && mkdir -p $dir_to_diff_against && cp -r $previous_export/* $dir_to_diff_against");
+
+      } else {
+        WsLog::l('NO PREVIOUS EXPORT FOUND');
+      }
+    } else {
+        WsLog::l('FORCING A FULL DEPLOYMENT');
+					StaticHtmlOutput_FilesHelper::delete_dir_with_files($dir_to_diff_against);
+					StaticHtmlOutput_FilesHelper::delete_dir_with_files($archiveDir);
+
+    }
+
 
 		echo 'SUCCESS';
   }
@@ -1339,6 +1363,9 @@ public function crawlABitMore($viaCLI = false) {
           $filename = str_replace($archiveDir, '', $current_file);
    
           $previously_exported_file = $dir_to_diff_against . '/' . $filename;
+
+          error_log('########################################################');
+          error_log($previously_exported_file);
 
           // if file doesn't exist at all in previous export:
           if (is_file($previously_exported_file)) {
