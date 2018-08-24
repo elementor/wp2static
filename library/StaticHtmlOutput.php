@@ -588,6 +588,14 @@ class StaticHtmlOutput_Controller {
     // won't show this first time in log as it is clearing log
 		WsLog::l('CLEANING WORKING FILES:');
 
+	  WsLog::l('RESTORING EXPORTED DIR TO ENABLE SUBSEQUENT DIFFS');
+    $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
+    $dir_to_diff_against = $this->outputPath() . '/previous-export';
+
+    // TODO: rewrite to php native in case of shared hosting 
+    // delete archivedir and then recursively copy 
+    shell_exec("cp -r $dir_to_diff_against/* $archiveDir/");
+
 		$files_to_clean = array(
 			'/WP-STATIC-EXPORT-TARGETS',
 			'/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT',
@@ -1151,6 +1159,10 @@ public function crawlABitMore($viaCLI = false) {
         $this->create_symlink_to_latest_archive(true);
         $this->post_process_archive_dir(true);
         $this->deploy();
+        $this->post_export_teardown();
+        $this->record_successful_export();
+
+
         //$this->create_zip();
       }
     }
@@ -1297,18 +1309,61 @@ public function crawlABitMore($viaCLI = false) {
 		echo 'SUCCESS';
 	}
 
+  public function files_are_equal($a, $b) {
+    // if image, use sha, if html, use something else
+    $pathinfo = pathinfo($a);
+    if (isset($pathinfo['extension']) && in_array($pathinfo['extension'], array('jpg', 'png', 'gif', 'jpeg'))) {
+      return sha1_file($a) === sha1_file($b);
+    }
+
+    $diff = exec("diff $a $b");
+
+    error_log($diff);
+
+    $result = $diff === '';
+
+    return $result;
+  }
+
   public function remove_files_idential_to_previous_export() {
 	  WsLog::l('REMOVING FILES IDENTICAL TO PREVIOUS EXPORT');
     $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
     $dir_to_diff_against = $this->outputPath() . '/previous-export';
 
+    // iterate each file in current export, check the size and contents in previous, delete if match
+    $objects = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator(
+          $archiveDir, 
+          RecursiveDirectoryIterator::SKIP_DOTS));
 
-    shell_exec("cd $dir_to_diff_against && find . -type f -exec rm -f $archiveDir/{} \;");
+    foreach($objects as $current_file => $object){
+        if (is_file($current_file)) {
+          // get relative filename
+          $filename = str_replace($archiveDir, '', $current_file);
+   
+          $previously_exported_file = $dir_to_diff_against . '/' . $filename;
+
+          // if file doesn't exist at all in previous export:
+          if (is_file($previously_exported_file)) {
+            if ( $this->files_are_equal($current_file, $previously_exported_file)) {
+              WsLog::l('SKIPPING UNCHANGED FILE: ' . $filename);
+              unlink($current_file);
+            } else {
+              WsLog::l('INCUDING CHANGED FILE: ' . $filename);
+            }
+          } else {
+              WsLog::l('INCUDING NEW FILE: ' . $filename);
+          }
+        }
+    }
+
+    // TODO: cleanup empty dirs in archiveDir to prevent them being attempted to export
 
     $files_in_previous_export = exec("find $dir_to_diff_against -type f | wc -l"); 
     $files_to_be_deployed = exec("find $archiveDir -type f | wc -l"); 
  
-    // TODO: cleanup empty dirs in archiveDir to prevent them being attempted to export
+    // copy the newly changed files back into the previous export dir, else will never capture changes
+
  
 	  WsLog::l('FILES PREVIOUSLY EXPORTED: ' . $files_in_previous_export);
 	  WsLog::l('FILES TO BE DEPLOYED: ' . $files_to_be_deployed);
