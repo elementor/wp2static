@@ -386,20 +386,17 @@ class StaticHtmlOutput_Controller {
 	public function renderOptionsPage() {
 		// Check system requirements
 		$uploadsFolderWritable = $this->_uploadsPath && is_writable($this->_uploadsPath);
-		$supportsZipArchives = extension_loaded('zip');
 		$supports_cURL = extension_loaded('curl');
 		$permalinksStructureDefined = strlen(get_option('permalink_structure'));
 
 		if (
 			!$uploadsFolderWritable || 
-			!$supportsZipArchives || 
 			!$permalinksStructureDefined ||
 		    !$supports_cURL
 		) {
 			$this->_view
 				->setTemplate('system-requirements')
 				->assign('uploadsFolderWritable', $uploadsFolderWritable)
-				->assign('supportsZipArchives', $supportsZipArchives)
 				->assign('supports_cURL', $supports_cURL)
 				->assign('permalinksStructureDefined', $permalinksStructureDefined)
 				->assign('uploadsPath', $this->_uploadsPath)
