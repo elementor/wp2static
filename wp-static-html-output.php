@@ -3,7 +3,7 @@
  * Plugin Name: WP Static Site Generator
  * Plugin URI:  https://wp2static.com
  * Description: The optimum solution to speed up and secure your WordPress site - export to static HTML and hide all traces of WordPress from your site!
- * Version:     5.4.2
+ * Version:     5.5
  * Author:      Leon Stafford
  * Author URI:  https://leonstafford.github.io
  * Text Domain: static-html-output-plugin
