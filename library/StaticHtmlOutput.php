@@ -522,6 +522,26 @@ class StaticHtmlOutput_Controller {
 			$github->commit_new_tree();
     }
 
+  public function capture_last_deployment() {
+		WsLog::l('CAPTURING LAST EXPORT FOR DIFF-BASED DEPLOYMENTS');
+		error_log('CAPTURING LAST EXPORT FOR DIFF-BASED DEPLOYMENTS');
+    global $blog_id;
+    $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
+
+    $previous_export = $archiveDir;
+    $dir_to_diff_against = $this->outputPath() . '/previous-export';
+		if (is_dir($previous_export)) {
+      error_log('copying ' . $previous_export . ' to '. $dir_to_diff_against);
+
+      shell_exec("rm -Rf $dir_to_diff_against && mkdir -p $dir_to_diff_against && cp -r $previous_export/* $dir_to_diff_against");
+
+		} else {
+			WsLog::l('NO PREVIOUS EXPORT FOUND');
+		}
+
+		echo 'SUCCESS';
+  }
+
 	public function cleanup_leftover_archives() {
 		WsLog::l('CLEANUP LEFTOVER ARCHIVES: ' . $this->_uploadsPath);
 		$leftover_files = preg_grep('/^([^.])/', scandir($this->_uploadsPath));
@@ -565,6 +585,8 @@ class StaticHtmlOutput_Controller {
 
 	// clean up files possibly left behind by a partial export
 	public function cleanup_working_files() {
+
+    // won't show this first time in log as it is clearing log
 		WsLog::l('CLEANING WORKING FILES:');
 
 		$files_to_clean = array(
@@ -590,6 +612,8 @@ class StaticHtmlOutput_Controller {
 	}
 
 	public function start_export($viaCLI = false) {
+
+
 		$this->pre_export_cleanup();
 
     $exportTargetsFile = $this->_uploadsPath . '/WP-STATIC-EXPORT-TARGETS';
@@ -640,22 +664,22 @@ class StaticHtmlOutput_Controller {
     echo 'SUCCESS';
 }
 
-	public function recursive_copy($srcdir, $dstdir) {
-		$dir = opendir($srcdir);
-		@mkdir($dstdir);
-		while ($file = readdir($dir)) {
-			if ($file != '.'  && $file != '..') {
-				$src = $srcdir . '/' . $file;
-				$dst = $dstdir . '/' . $file;
-				if (is_dir($src)) { 
-					$this->recursive_copy($src, $dst); 
-				} else { 
-					copy($src, $dst); 
-				}
-			}
-		}
-		closedir($dir);
-	}
+public function recursive_copy($srcdir, $dstdir) {
+  $dir = opendir($srcdir);
+  @mkdir($dstdir);
+  while ($file = readdir($dir)) {
+    if ($file != '.'  && $file != '..') {
+      $src = $srcdir . '/' . $file;
+      $dst = $dstdir . '/' . $file;
+      if (is_dir($src)) { 
+          $this->recursive_copy($src, $dst); 
+      } else { 
+        copy($src, $dst); 
+      }
+    }
+  }
+  closedir($dir);
+}
 
 	public function copyStaticSiteToPublicFolder() {
 		if ( $this->_selected_deployment_option == 'folder' ) {
@@ -1120,7 +1144,8 @@ public function crawlABitMore($viaCLI = false) {
 
     public function doExportWithoutGUI() {
       if ( wpsho_fr()->is_plan('professional_edition') ) {
-      
+    
+        //$this->capture_last_deployment(); 
         $this->cleanup_leftover_archives(true);
         $this->start_export(true);
         $this->crawl_site(true);
