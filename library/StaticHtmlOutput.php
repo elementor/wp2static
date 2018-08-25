@@ -534,18 +534,12 @@ class StaticHtmlOutput_Controller {
 
     if ($this->_diffBasedDeploys) {
       WsLog::l('CAPTURING LAST EXPORT FOR DIFF-BASED DEPLOYMENTS');
-      error_log('CAPTURING LAST EXPORT FOR DIFF-BASED DEPLOYMENTS');
       $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
 
       $previous_export = $archiveDir;
       $dir_to_diff_against = $this->outputPath() . '/previous-export';
 
-      error_log('PREVIOUS EXPORT');
-      error_log($previous_export);
-      
       if (is_dir($previous_export)) {
-        error_log('copying ' . $previous_export . ' to '. $dir_to_diff_against);
-
         shell_exec("rm -Rf $dir_to_diff_against && mkdir -p $dir_to_diff_against && cp -r $previous_export/* $dir_to_diff_against");
 
       } else {
@@ -1338,9 +1332,6 @@ public function crawlABitMore($viaCLI = false) {
     }
 
     $diff = exec("diff $a $b");
-
-    error_log($diff);
-
     $result = $diff === '';
 
     return $result;
@@ -1363,9 +1354,6 @@ public function crawlABitMore($viaCLI = false) {
           $filename = str_replace($archiveDir, '', $current_file);
    
           $previously_exported_file = $dir_to_diff_against . '/' . $filename;
-
-          error_log('########################################################');
-          error_log($previously_exported_file);
 
           // if file doesn't exist at all in previous export:
           if (is_file($previously_exported_file)) {

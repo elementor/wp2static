@@ -295,13 +295,17 @@ http://172.17.0.3/my_pricelist.pdf</pre>
 			<p> When you have an issue, send the contents of your "Export Log" on the plugin screen to the developer, at <a href="mailto:leonstafford@protonmail.com">leonstafford@protonmail.com</a>. He'll usually respond within 12 hrs, often sooner.</p>
 
 		</div>
-        <h2 style="clear:both;">Export Log</h2>
 
 
 
-        <textarea id="exportStatus">
-Your progress will update here every few seconds and this text area will automatically resize to fit the contents of the full log...
-        </textarea>
+<link rel="stylesheet" type="text/css" href="<?php echo plugins_url('../css/loading-bar.css', __FILE__); ?>" />
+<script type="text/javascript" src="<?php echo plugins_url('../js/loading-bar.min.js', __FILE__); ?>"></script>
+<div data-preset="stripe" class="ldBar label-center" style="float:left;" data-value="35" ></div>
+<div id="current_action">Doing a thing</div>
+
+        <br />
+
+						<button class="button-secondary">View error logs</button>
     </div>
 
 
