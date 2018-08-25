@@ -149,6 +149,17 @@ wp --allow-root media import /app/provisioning/demo_site_content/images/*.jpg
 wp --allow-root import /app/provisioning/demo_site_content/wp_static_demo_content.xml --authors=create
 
 
+if [ -z "${DUMMY_POSTS_PAGES_TO_CREATE}" ]; then 
+	echo "not creating any dummy data"; 
+	cd /var/www/html
+else 
+	echo "generating dummy post data: ${DUMMY_POSTS_PAGES_TO_CREATE}"; 
+  wp --allow-root post generate --count=${DUMMY_POSTS_PAGES_TO_CREATE} --post_type=page
+  wp --allow-root post generate --count=${DUMMY_POSTS_PAGES_TO_CREATE} --post_type=post
+fi
+
+
+
 # import data used for testing
 cp /test_data/1px_yellow_background.png /var/www/html/wp-content/themes/twentyseventeen/
 
