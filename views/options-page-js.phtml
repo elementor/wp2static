@@ -224,8 +224,13 @@ jQuery(document).ready(function($){
 		}
 	);
 
-	$(document).on('click', '.advanced_settings_header' , function() {
+	$(document).on('click', '.advanced_settings_header' , function(evt) {
+    evt.preventDefault();
 		$('.advanced_settings').toggle();
+	});
+
+	$(document).on('submit', '#general-options' , function(evt) {
+    evt.preventDefault();
 	});
 
 	function updateBaseURLReferences() {
