@@ -45,9 +45,6 @@ function displayTextfield($template_variables, $field_name, $field_label, $descr
 
 
 <div class="wrap">
-	
-	<h2><?php echo __('WP Static Site Generator - Configure & Run', 'static-html-output-plugin');?></h2>
-
 	<div class="postbox-container">
 		<div class="metabox-holder">
 			<div class="meta-box-sortables ui-sortable">
@@ -56,17 +53,12 @@ function displayTextfield($template_variables, $field_name, $field_label, $descr
 
 					<div class="postbox">
 
-              <h3>
-                <span><?php echo __('Configurable options', 'static-html-output-plugin');?></span>
-              </h3>
 
               <div class="inside">
-				<p class="intro-text">Get better exports by following the documentation and tutorials at <a href="https://wp2static.com" target="_blank">https://wp2static.com</a>
-				</p>	
 
 <br>
 
-                  <strong><label><?php echo __('Where do you want to deploy your static site to?', 'static-html-output-plugin');?></label></strong>
+                  <strong><label><?php echo __('Where will you host the static version of your site?', 'static-html-output-plugin');?></label></strong>
 
 	<div style="margin-top:10px;margin-bottom:10px;">
 
@@ -79,15 +71,14 @@ function displayTextfield($template_variables, $field_name, $field_label, $descr
 
 function generateDeploymentMethodOptions() {
 	$options = array(
-	  "" => array('Choose where to deploy your static site to', 'free'),
-	  "zip" => array('ZIP - a downloadable ZIP file of your statically exported site', 'free'),
-	  "folder" => array('Folder - a directory on this server', 'free'),
-	  "ftp" => array('FTP - Transfer your static site to another server', 'free'),
-	  "s3" => array('S3 - Amazon\'s Simple Storage Service', 'premium'),
-	  "bunnycdn" => array('BunnyCDN - a low cost CDN allowing static website hosting', 'premium'),
-	  "dropbox" => array('Dropbox - send your static site to Dropbox', 'premium'),
-	  "github" => array('GitHub - host your site for free on GitHub Pages or commit to a specific repo/branch', 'premium'),
-	  "netlify" => array('Netlify - a static website hosting specialist', 'premium')
+	  "folder" => array('Same server - a sub-directory on this server', 'free'),
+	  "zip" => array('Give me a ZIP file, so I can manually deploy it somewhere', 'free'),
+	  "ftp" => array("I want to FTP it automatically, using this plugin", 'free'),
+	  "github" => array("On, GitHub Pages, using this plugin's auto-deployment", 'premium'),
+	  "netlify" => array("On, Netlify, using this plugin's auto-deployment", 'premium'),
+	  "s3" => array("On, Amazon S3, using this plugin's auto-deployment", 'premium'),
+	  "bunnycdn" => array("On, BunnyCDN, using this plugin's auto-deployment", 'premium'),
+	  "dropbox" => array("Backup to Dropbox, using this plugin's auto-deployment", 'premium'),
 	);
 
 	foreach ($options as $key => $value) {
@@ -157,8 +148,9 @@ foreach($deployment_options as $deployment_option) {
 
 <br />
 
-                  <strong class="advanced_settings_header"><label><?php echo __('Advanced settings (click to toggle)', 'static-html-output-plugin');?></label></strong>
-
+                  <button class="advanced_settings_header button-secondary"><?php echo __('Advanced settings', 'static-html-output-plugin');?></button>
+                  <a href="https://wp2static.com" target="_blank"><button class="button-secondary"><?php echo __('Help & Documentation', 'static-html-output-plugin');?></button></a>
+				</p>	
 
 <div class="advanced_settings" style="display:none;">
 
@@ -262,22 +254,14 @@ http://172.17.0.3/my_pricelist.pdf</pre>
 
 		<br>
 
-					<p class="submit">
+					<p class="submit" style="display:none;">
             <?php wp_nonce_field($this->onceAction) ?>
 						<input id="formActionHiddenField" class="hiddenActionField" type="hidden" name="action" value="wp_static_html_output_ajax" />
 						<input id="hiddenNonceField" type="hidden" name="nonce" value="<?php echo $ajax_nonce; ?>" />
 						<input id="hiddenAJAXAction" type="hidden" name="ajax_action" value="" />
 						<input name="staticExportSettings" class="hiddenSettingsField" type="hidden" name="action" value="" />
-						<button class="saveSettingsButton button-primary">Save current options</button>
 
-<!-- TODO: refactor multiple export targets functionality -->
-<span style="display:none;">
 
-                        <button class="button addAnotherTargetButton" disabled>Add another export target</button>
-                        <button class="button removeTargetButton">Remove this export target</button>
-</span>
-
-                        <button class="button resetDefaultSettingsButton">Reset to default settings</button>
 					</p>
 						</div>
 					</div>
@@ -288,19 +272,16 @@ http://172.17.0.3/my_pricelist.pdf</pre>
 
 
 
-					<div class="postbox exportActionsPane" style="display:none;">
+					<div class="postbox exportActionsPane">
 						<div class="handlediv" title="Click to toggle"><br /></div>
 
-              <h3 class="hndle"><span><?php echo __('Export your site', 'static-html-output-plugin');?></span></h3>
-
               <div class="inside">
-                  <p>
-                    <i>Clicking the button below will start the process of generating a static site from your WordPress installation. Depending on the size of your website, this process may take some time.</i>
-                  </p>
 
 					<p class="submit">
             <?php wp_nonce_field($this->onceAction) ?>
 						<button id="startExportButton" class="button-primary">Start static site export</button>
+						<button class="saveSettingsButton button-secondary">Save current options</button>
+            <button class="button resetDefaultSettingsButton">Reset to default settings</button>
 						<a id="downloadZIP" ref="#" target="_blank"><button  class="button-secondary" disabled>Download your ZIP file (when export is complete)</button></a>
 					</p>
                 <p>

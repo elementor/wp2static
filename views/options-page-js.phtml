@@ -235,7 +235,12 @@ jQuery(document).ready(function($){
 			base_url = $('#baseUrl-' + current_deployment_method).val(); 
 
 			// set hidden baseURL field to current option
-			$('#baseUrl').val( $('#baseUrl-' + current_deployment_method).val() ); 
+      if (current_deployment_method === 'folder') {
+        $('#baseUrl').val( wpSiteURL + '/' + $('#targetFolder').val() + '/'); 
+      } else {
+        $('#baseUrl').val( $('#baseUrl-' + current_deployment_method).val() ); 
+      }
+
 
 			base_url_previews.text(base_url.replace(/\/$/, "") + '/');
 
@@ -338,17 +343,23 @@ jQuery(document).ready(function($){
 
 	function getValidationErrors() {
 		validation_errors = '';
-
-		// these fields cannot be empty
-		if (current_deployment_method === undefined || current_deployment_method === '') {
-			validation_errors += 'Please select a deployment method';
+    // check for when targetFolder is showing (plugin reset state)
+		if ($('#targetFolder').is(':visible') &&
+      (
+        $('#targetFolder').val() == '' ||
+        ! $('#targetFolder').val().match(/^[0-9a-z]+$/)
+      )
+    ) {
+			validation_errors += 'Target folder may not be empty and only supports a-z, A-Z, 0-9, - and _. Please adjust your settings.';
 		}
 
-		if ($('#baseUrl').val() === undefined || $('#baseUrl').val() == '') {
+		if (( $('#baseUrl').val() === undefined ||
+        $('#baseUrl').val() == '' ) &&
+        !$('#allowOfflineUsage').is(":checked")) {
 			validation_errors += "Please set the Base URL field to the address you will host your static site.\n";
 		}
 
-		if (!isUrl($('#baseUrl').val())) {
+		if (!isUrl($('#baseUrl').val()) && !$('#allowOfflineUsage').is(":checked")) {
 			validation_errors += "Please set the Base URL field to a valid URL, ie http://mystaticsite.com.\n";
 		}
 

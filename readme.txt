@@ -101,7 +101,7 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
 
  * Improvement: Diff-based deploys to only copy changed files (for folder, S3 and FTP deployments only)
  * Improvement: Don't block other plugin usage if ZIP extension is not available
- * Improvement: Simplified folder deployments user flow
+ * Improvement: UX - 1-click same-server deployments; defaults to same-server for new installs
 
 = 5.4.2 =
 
