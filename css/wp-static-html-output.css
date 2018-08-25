@@ -1,5 +1,12 @@
 @CHARSET "UTF-8";
 
+.postbox p, li {
+  font-size: 1em;
+  line-height: 1.375em;
+  
+
+}
+
 .github, .bunnycdn, .ftp, .dropbox, .netlify, .s3 {
 	display: none;
 }
@@ -46,12 +53,6 @@ div.postbox div.inside {
 
 #exportStatus {
     width: 100%;
-}
-
-#happy1stExport, #happy5thExport, #happy10thExport, #rateThisPlugin, #donateText {
-    font-size: 23px;
-    line-height: 32px;
-    display: none;
 }
 
 #progress {
