@@ -21,6 +21,8 @@ var wpSiteURL = '<?php echo get_site_url(); ?>';
 var pollingInterval = 5000;
 var exportTargets = [];
 var current_deployment_method = 'folder';
+var exportCommenceTime = '';
+var exportDuration = '';
 
 jQuery(document).ready(function($){
     if (Notification.permission !== "granted") {
@@ -486,12 +488,15 @@ jQuery(document).ready(function($){
 	}
 
     function startExport() {
-		validation_errors = getValidationErrors();
-		if (validation_errors !== '') {
-			alert(validation_errors);
+      // start timer
+      exportCommenceTime = + new Date();
 
-			return false;
-		}
+      validation_errors = getValidationErrors();
+      if (validation_errors !== '') {
+        alert(validation_errors);
+
+        return false;
+      }
 
         $('.error-help-text').hide();
         $('#progress').attr("src", pluginDir + '../images/dashinfinity.gif');
@@ -608,8 +613,8 @@ jQuery(document).ready(function($){
 					break;
 
 				default:
-
-					// all complete
+          console.log('unexpected return value from export target processing');
+          // TODO: verify what should happen if this state is met
 					$('#progress').attr("src", pluginDir + '../images/greentick.png');
 					$('#progress').css("width", '123px');
 					notifyMe();
@@ -633,10 +638,22 @@ jQuery(document).ready(function($){
 				});
 			}
 
+      // all complete
+      exportCompleteTime = + new Date();
+      exportDuration = exportCompleteTime - exportCommenceTime;
+
+      $('#exportDuration').val(millisToMinutesAndSeconds(exportDuration));
+
 			$('#progress').attr("src", pluginDir + '../images/greentick.png');
 			$('#progress').css("width", '123px');
 			notifyMe();
 		}
+    }
+
+    function millisToMinutesAndSeconds(millis) {
+      var minutes = Math.floor(millis / 60000);
+      var seconds = ((millis % 60000) / 1000).toFixed(0);
+      return minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
     }
 
     function saveOptions() {
