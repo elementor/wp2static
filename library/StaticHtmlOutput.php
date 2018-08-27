@@ -822,13 +822,9 @@ public function crawlABitMore($viaCLI = false) {
       $overwrite_slug_targets
       );
 
-
-	$useRelativeURLs = $this->_useRelativeURLs;
-	$useBaseHref = $this->_useBaseHref;
-
   // TODO: if it replaces baseurl here, it will be searching links starting with that...
   // TODO: shouldn't be doing this here...
-  $urlResponse->replaceBaseUrl($baseUrl, $this->_baseUrl, $this->_allowOfflineUsage, $useRelativeURLs, $useBaseHref);
+  $urlResponse->replaceBaseUrl($baseUrl, $this->_baseUrl, $this->_allowOfflineUsage, $this->_useRelativeURLs, $this->_useBaseHref);
   $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
   $this->_saveUrlData($urlResponse, $archiveDir);
 
