@@ -1267,7 +1267,7 @@ class StaticHtmlOutput_UrlRequest
 		
 	}
 
-	public function replaceBaseUrl($oldBaseUrl, $newBaseUrl, $allowOfflineUsage, $absolutePaths = false)
+	public function replaceBaseUrl($oldBaseUrl, $newBaseUrl, $allowOfflineUsage, $absolutePaths = false, $useBaseHref = true)
 	{
 
 		// TODO: don't rewrite mailto links unless specified, re #30
@@ -1296,8 +1296,15 @@ class StaticHtmlOutput_UrlRequest
 
 				$responseBody = str_replace($newDomain, '', $responseBody);
 
-        // TODO: use DOMDoc here
-				$responseBody = str_replace('<head>', "<head>\n<base href=\"" . esc_attr($newBaseUrl) . "/\" />\n", $responseBody);
+		// TODO: use DOMDoc here
+				if ($useBaseHref)
+				{
+					$responseBody = str_replace('<head>', "<head>\n<base href=\"" . esc_attr($newBaseUrl) . "/\" />\n", $responseBody);
+				}
+				else
+				{
+					$responseBody = str_replace('<head>', "<head>\n<base href=\"/\" />\n", $responseBody);
+				}
 			} elseif ($allowOfflineUsage) {
           // detect urls starting with our domain and append index.html to the end if they end in /
           $xml = new DOMDocument(); 
