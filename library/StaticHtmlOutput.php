@@ -43,7 +43,8 @@ class StaticHtmlOutput_Controller {
   protected $_githubPersonalAccessToken;
   protected $_githubBranch;
   protected $_githubPath;
-  protected $_useRelativeURLs;
+	protected $_useRelativeURLs;
+	protected $_useBaseHref;
   protected $_useBasicAuth;
   protected $_basicAuthUser;
   protected $_basicAuthPassword;
@@ -103,7 +104,8 @@ class StaticHtmlOutput_Controller {
         self::$_instance->_rewriteUPLOADS = filter_input(INPUT_POST, 'rewriteUPLOADS');
         self::$_instance->_rewritePLUGINDIR = filter_input(INPUT_POST, 'rewritePLUGINDIR');
         self::$_instance->_rewriteWPINC = filter_input(INPUT_POST, 'rewriteWPINC');
-        self::$_instance->_useRelativeURLs = filter_input(INPUT_POST, 'useRelativeURLs');
+				self::$_instance->_useRelativeURLs = filter_input(INPUT_POST, 'useRelativeURLs');
+				self::$_instance->_useBaseHref = filter_input(INPUT_POST, 'useBaseHref');
         self::$_instance->_useBasicAuth = filter_input(INPUT_POST, 'sendViaBasic');
         self::$_instance->_basicAuthUser = filter_input(INPUT_POST, 'basicAuthUser');
         self::$_instance->_basicAuthPassword = filter_input(INPUT_POST, 'basicAuthPassword');
@@ -217,6 +219,10 @@ class StaticHtmlOutput_Controller {
 
 		    if ( array_key_exists('useRelativeURLs', $pluginOptions )) {
           self::$_instance->_useRelativeURLs = $pluginOptions['useRelativeURLs'];
+				}
+				
+				if ( array_key_exists('useBaseHref', $pluginOptions )) {
+          self::$_instance->_useBaseHref = $pluginOptions['useBaseHref'];
         }
 
 		    if ( array_key_exists('baseUrl', $pluginOptions )) {
@@ -817,11 +823,12 @@ public function crawlABitMore($viaCLI = false) {
       );
 
 
-  $useRelativeURLs = $this->_useRelativeURLs;
+	$useRelativeURLs = $this->_useRelativeURLs;
+	$useBaseHref = $this->_useBaseHref;
 
   // TODO: if it replaces baseurl here, it will be searching links starting with that...
   // TODO: shouldn't be doing this here...
-  $urlResponse->replaceBaseUrl($baseUrl, $this->_baseUrl, $this->_allowOfflineUsage, $useRelativeURLs);
+  $urlResponse->replaceBaseUrl($baseUrl, $this->_baseUrl, $this->_allowOfflineUsage, $useRelativeURLs, $useBaseHref);
   $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
   $this->_saveUrlData($urlResponse, $archiveDir);
 
@@ -853,7 +860,7 @@ public function crawlABitMore($viaCLI = false) {
           $overwrite_slug_targets
           );
 
-      $urlResponse->replaceBaseUrl($baseUrl, $this->_baseUrl, $this->_allowOfflineUsage, $useRelativeURLs);
+      $urlResponse->replaceBaseUrl($baseUrl, $this->_baseUrl, $this->_allowOfflineUsage, $useRelativeURLs, $useBaseHref);
       $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
       $this->_saveUrlData($urlResponse, $archiveDir);
     } 

@@ -168,6 +168,7 @@ foreach($deployment_options as $deployment_option) {
                   <strong><label for="useRelativeURLs"><?php echo __('Use relative URLs', 'static-html-output-plugin');?></label></strong>
                   </p>
 <?php echo displayCheckbox($this, 'useRelativeURLs', 'Use relative URLS'); ?>
+<?php echo displayCheckbox($this, 'useBaseHref', 'Write Base Href for relative URLS'); ?>
 
 <p>
 URLs in the exported site will be rewritten as <a href="https://www.w3schools.com/tags/tag_base.asp" target="_blank">relative URLs</a>. ie, http://mydomain.com/some_dir/some_file.jpg will become some_dir/some_file.jpg. A base href will be set to http://mydomain.com/, from which all the relative URLs resolve to. 
