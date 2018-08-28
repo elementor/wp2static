@@ -107,7 +107,7 @@ fi
 # error around here
 
 wp --allow-root config set WP_DEBUG true --raw
-wp --allow-root config set WP_FS__DEV_MODE true --type=constant --raw
+# wp --allow-root config set WP_FS__DEV_MODE true --type=constant --raw
 wp --allow-root config set SAVEQUERIES true --type=constant --raw
 wp --allow-root config set WP_FS__static-html-output-plugin_SECRET_KEY $FREEMIUM_SECRET_KEY --type=constant --raw 
 wp --allow-root config set WP_FS__SKIP_EMAIL_ACTIVATION true --type=constant --raw 
