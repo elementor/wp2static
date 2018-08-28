@@ -5,7 +5,7 @@ Tags: static site generator,cache,wp super cache,wp fastest cache,w3 total cache
 Requires at least: 3.2
 Tested up to: 4.9.8
 Requires PHP: 5.4
-Stable tag: 5.5
+Stable tag: 5.5.1
 
 
 
@@ -97,7 +97,7 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
 
 == Changelog ==
 
-= 5.5 =
+= 5.5.1 =
 
  * Improvement: Deploy times reduced by ~ 30%, amount of data transferred by client minimized
  * Improvement: Diff-based deploys to only copy changed files (for folder, S3 and FTP deployments only)
@@ -396,7 +396,7 @@ Initial release to Wordpress community
 
 == Upgrade Notice ==
 
-= 5.5 =
+= 5.5.1 =
 
  * Improvement: Deploy times reduced by ~ 30%, amount of data transferred by client minimized
  * Improvement: Diff-based deploys to only copy changed files (for folder, S3 and FTP deployments only)
