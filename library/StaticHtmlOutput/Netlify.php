@@ -38,6 +38,8 @@ class StaticHtmlOutput_Netlify
 			return 'SUCCESS';
 
 		} catch (Exception $e) {
+      WsLog::l('NETLIFY EXPORT ERROR');
+      WsLog::l($e);
 			error_log($e);
 			throw new Exception($e);
 		}
