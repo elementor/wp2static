@@ -542,9 +542,10 @@ class StaticHtmlOutput_Controller {
 
       } 
     } else {
-					StaticHtmlOutput_FilesHelper::delete_dir_with_files($dir_to_diff_against);
-					StaticHtmlOutput_FilesHelper::delete_dir_with_files($archiveDir);
-
+        if(is_dir($dir_to_diff_against)) {
+            StaticHtmlOutput_FilesHelper::delete_dir_with_files($dir_to_diff_against);
+            StaticHtmlOutput_FilesHelper::delete_dir_with_files($archiveDir);
+          }
     }
 
 		echo 'SUCCESS';
@@ -594,9 +595,11 @@ class StaticHtmlOutput_Controller {
     $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
     $dir_to_diff_against = $this->outputPath() . '/previous-export';
 
-    // TODO: rewrite to php native in case of shared hosting 
-    // delete archivedir and then recursively copy 
-    shell_exec("cp -r $dir_to_diff_against/* $archiveDir/");
+    if(is_dir($dir_to_diff_against)) {
+      // TODO: rewrite to php native in case of shared hosting 
+      // delete archivedir and then recursively copy 
+      shell_exec("cp -r $dir_to_diff_against/* $archiveDir/");
+    }
 
 		$files_to_clean = array(
 			'/WP-STATIC-EXPORT-TARGETS',
@@ -827,7 +830,7 @@ public function crawlABitMore($viaCLI = false) {
           $overwrite_slug_targets
           );
 
-      $urlResponse->replaceBaseUrl($baseUrl, $this->_baseUrl, $this->_allowOfflineUsage, $useRelativeURLs, $useBaseHref);
+      $urlResponse->replaceBaseUrl($baseUrl, $this->_baseUrl, $this->_allowOfflineUsage, $this->_useRelativeURLs, $this->_useBaseHref);
       $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
       $this->_saveUrlData($urlResponse, $archiveDir);
     } 
@@ -1272,9 +1275,10 @@ public function crawlABitMore($viaCLI = false) {
 		StaticHtmlOutput_FilesHelper::delete_dir_with_files($archiveDir . '/wp-json/');
 		
 		// TODO: remove all text files from theme dir 
-    $this->remove_files_idential_to_previous_export();
 
-    // remove files identical to previous export
+    if ($this->_diffBasedDeploys) {
+      $this->remove_files_idential_to_previous_export();
+    } 
 
 		$this->copyStaticSiteToPublicFolder();
 
