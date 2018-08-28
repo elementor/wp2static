@@ -502,7 +502,7 @@ jQuery(document).ready(function($){
 		$('#downloadZIP button').hide();
     $('#goToMyStaticSite').hide();
     $('#exportDuration').hide();
-        $('.error-help-text').hide();
+    $('.error-help-text').hide();
   }
 
   function showProgress() {
@@ -655,7 +655,7 @@ jQuery(document).ready(function($){
       exportCompleteTime = + new Date();
       exportDuration = exportCompleteTime - exportCommenceTime;
 
-      $('#exportDuration').val('Export completed in ' +  millisToMinutesAndSeconds(exportDuration) + ' (mins:ss)');
+      $('#exportDuration').text('Process completed in ' +  millisToMinutesAndSeconds(exportDuration) + ' (mins:ss)');
       $('#exportDuration').show();
 
 			$('#progress').hide();

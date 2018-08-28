@@ -63,7 +63,7 @@ div.postbox div.inside {
 
 
 .error-help-text {
-	display: block;	
+	display: none;	
 }
 
 .warning {
