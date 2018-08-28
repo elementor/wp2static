@@ -7,7 +7,7 @@
 rm -Rf /tmp/wordpress-static-html-plugin
 mkdir /tmp/wordpress-static-html-plugin
 
-cp -r ./{css,images,languages,library,readme.txt,views,wp-static-html-output.php,freemius} /tmp/wordpress-static-html-plugin/
+cp -r ./{css,js,images,languages,library,readme.txt,views,wp-static-html-output.php,freemius} /tmp/wordpress-static-html-plugin/
 
 cd /tmp
 
