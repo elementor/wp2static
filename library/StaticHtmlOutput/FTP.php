@@ -51,10 +51,7 @@ class StaticHtmlOutput_FTP
 			throw new Exception($e);
 		}
 
-		if ($ftp->isdir($this->_remotePath)) {
-			WsLog::l('FTP EXPORT: Remote dir exists');
-		} else {
-			WsLog::l('FTP EXPORT: Creating remote dir');
+		if (! $ftp->isdir($this->_remotePath)) {
 			$ftp->mkdir($this->_remotePath, true);
 		}
 
@@ -89,7 +86,6 @@ class StaticHtmlOutput_FTP
     public function prepare_deployment() {
 		$this->test_connection();
 
-		WsLog::l('FTP EXPORT: Preparing list of files to transfer');
 
 		$this->clear_file_list();
 
@@ -149,19 +145,13 @@ class StaticHtmlOutput_FTP
     }
 
     if ( $this->_activeMode ) {
-      WsLog::l('FTP EXPORT: setting ACTIVE transfer mode');
       $ftp->pasv(false);
     } else {
       $ftp->pasv(true);
     }
 
-    WsLog::l('FTP EXPORT: transferring ' .  basename($fileToTransfer) . ' TO ' . $targetPath);
-
-    if ($ftp->isdir($targetPath)) {
-      WsLog::l('FTP EXPORT: Remote dir exists');
-    } else {
-      WsLog::l('FTP EXPORT: Creating remote dir');
-      $mkdir_result = $ftp->mkdir($targetPath, true); // true = recursive creation
+    if (! $ftp->isdir($targetPath)) {
+      $mkdir_result = $ftp->mkdir($targetPath, true);
     }
 
     $ftp->chdir($targetPath);
@@ -178,7 +168,6 @@ class StaticHtmlOutput_FTP
         $this->transfer_files(true); 
       }
 
-      WsLog::l('FTP EXPORT: ' . $filesRemaining . ' files remaining to transfer');
       echo $this->get_remaining_items_count();
     } else {
       echo 'SUCCESS';

@@ -96,8 +96,6 @@ class StaticHtmlOutput_Dropbox
 			$targetPath = rtrim($targetPath);
 
 
-			WsLog::l('DROPBOX EXPORT: transferring ' .  basename($fileToTransfer) . ' TO ' . $targetPath);
-		  
 			// vendor specific 
  
 			$api_url = 'https://content.dropboxapi.com/2/files/upload'; //dropbox api url
@@ -132,7 +130,8 @@ class StaticHtmlOutput_Dropbox
 			if ($http_code == 200) {
 			} else {
 				error_log($response);
-				//$pluginInstance->wsLog($response);
+				WsLog::l('DROPBOX EXPORT: ERROR');
+				WsLog::l($response);
 				echo 'FAIL';die();
 			}
 
@@ -148,7 +147,6 @@ class StaticHtmlOutput_Dropbox
           $this->transfer_files(true); 
         }
 
-				WsLog::l('DROPBOX EXPORT: ' . $filesRemaining . ' files remaining to transfer');
 				echo $filesRemaining;
 			} else {
 				echo 'SUCCESS';
