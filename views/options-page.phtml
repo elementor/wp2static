@@ -282,32 +282,42 @@ http://172.17.0.3/my_pricelist.pdf</pre>
 						<button id="startExportButton" class="button-primary">Start static site export</button>
 						<button class="saveSettingsButton button-secondary">Save current options</button>
             <button class="button resetDefaultSettingsButton">Reset to default settings</button>
-						<a id="downloadZIP" ref="#" target="_blank"><button  class="button-secondary" disabled>Download your ZIP file (when export is complete)</button></a>
 					</p>
-                <p>
 
     <div>
-        <img src="<?php echo plugins_url('../images/dashinfinity.gif', __FILE__); ?>" id="progress" />
 
 
 
 
-<link rel="stylesheet" type="text/css" href="<?php echo plugins_url('../css/loading-bar.css', __FILE__); ?>" />
-<script type="text/javascript" src="<?php echo plugins_url('../js/loading-bar.min.js', __FILE__); ?>"></script>
-<div data-preset="stripe" class="ldBar label-center" style="float:left;" data-value="35" ></div>
-<div id="current_action">Doing a thing</div>
+<div id="progress">
+  <div class="pulsate-css"></div>
+      <div id="current_action">Doing a thing</div>
+</div>
 
         <br />
 
-						<button class="button-secondary">View error log</button>
 
-						<button class="button-secondary">Got to my deployed site</button>
+						<a id="downloadZIP" ref="#" target="_blank"><button  class="button-secondary">Download your ZIP file</button></a>
+
+						<a href="#" target="_blank" id="goToMyStaticSite" style="display:none;"><button class="button-secondary">Go to my deployed site</button></a>
 
 		<div class="card error-help-text">
 
+
 			<p>Everyone's WordPress hosting environment and configuration is unique, with different plugins, themes, PHP versions, to name a few. Whilst the plugin does its best to support all environments, sometimes you'll encounter a new issue. Sometimes we can adjust the settings in the plugin to overcome an issue, other times, it will require a bugfix and a new release of the plugin (usually a quick process). </p>
 
-			<p> When you have an issue, send the contents of your "Export Log" on the plugin screen to the developer, at <a href="mailto:leonstafford@protonmail.com">leonstafford@protonmail.com</a>. He'll usually respond within 12 hrs, often sooner.</p>
+      <b>Troubleshooting:</b>
+
+      <ol>
+        <li><a href="https://docs.wp2static.com" target="_blank">Read the documentation</a></li>
+        <li>Check the error log below</li>
+        <li>Check your PHP error logs on your server</li>
+        <li><a href="https://wp2static.com/community/" target="_blank">Find help in the community</a></li>
+      </ol>
+
+			<p>A link to your error log is provided below</p>
+
+      <a href="#" target="_blank" id="viewErrorLogButton" class="button button-secondary">View error log</a>
 
 		</div>
     </div>
@@ -315,7 +325,7 @@ http://172.17.0.3/my_pricelist.pdf</pre>
 
                 </p>
 		<label style="display:none;">Poll interval <input id="pollIntervalSetting" value="500" /> </label>
-		<label style="display:block;">Export duration (mins:seconds) <input id="exportDuration" value="" /> </label>
+		<p id="exportDuration" style="display:block;"></p>
 						</div>
 					</div>
 			</div>
