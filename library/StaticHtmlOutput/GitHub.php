@@ -70,7 +70,6 @@ class StaticHtmlOutput_GitHub
 	// TODO: move this into a parent class as identical to bunny and probably others
     public function prepare_deployment() {
 
-			WsLog::l('GITHUB EXPORT: Preparing list of files to transfer');
 
 			$this->clear_file_list();
 			$this->create_github_deployment_list($this->_archiveName, $this->_archiveName, $this->_remotePath);
@@ -148,7 +147,6 @@ class StaticHtmlOutput_GitHub
           $this->upload_blobs(true); 
         }
 
-				WsLog::l('GITHUB EXPORT: ' . $filesRemaining . ' files remaining to transfer');
 				echo $this->get_remaining_items_count();
 			} else {
 				echo 'SUCCESS';
@@ -209,7 +207,6 @@ class StaticHtmlOutput_GitHub
         $filesRemaining = $this->get_remaining_items_count();
 
         if ( $this->get_remaining_items_count() > 0 ) {
-          WsLog::l('GITHUB EXPORT: ' . $filesRemaining . ' files remaining to transfer');
           echo $this->get_remaining_items_count();
         } else {
           echo 'SUCCESS';

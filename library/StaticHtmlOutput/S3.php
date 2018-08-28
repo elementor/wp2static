@@ -70,7 +70,6 @@ class StaticHtmlOutput_S3
     public function prepare_deployment() {
 		if ( wpsho_fr()->is__premium_only() ) {
 
-			WsLog::l('S3 EXPORT: Preparing list of files to transfer');
 
 			$this->clear_file_list();
 
@@ -152,7 +151,6 @@ class StaticHtmlOutput_S3
 
 			require_once(__DIR__.'/MimeTypes.php'); 
 
-			WsLog::l('S3 EXPORT: transferring ' .  basename($fileToTransfer) . ' TO ' . $targetPath);
 			$this->s3_put_object(
 				$targetPath . basename($fileToTransfer),
 				file_get_contents($fileToTransfer),
@@ -168,7 +166,6 @@ class StaticHtmlOutput_S3
         if ($viaCLI) {
           $this->transfer_files(true); 
         }
-				WsLog::l('S3 EXPORT: ' . $filesRemaining . ' files remaining to transfer');
 				echo $filesRemaining;
 			} else {
 				echo 'SUCCESS';

@@ -488,12 +488,9 @@ class StaticHtmlOutput_Controller {
         $filesRemaining = count($exportTargets) - 1;
         $first_line = array_shift($exportTargets);
         file_put_contents($exportTargetsFile, implode("\r\n", $exportTargets));
-        
-        WsLog::l('PROGRESS: Starting export type:' . $target . PHP_EOL);
     }
 
 	public function github_upload_blobs($viaCLI = false) {
-			WsLog::l('GITHUB EXPORT: Uploading file blobs...');
 			$github = new StaticHtmlOutput_GitHub(
 				$this->_githubRepo,
 				$this->_githubPersonalAccessToken,
@@ -506,8 +503,6 @@ class StaticHtmlOutput_Controller {
     }
 
     public function github_prepare_export() {
-			WsLog::l('GITHUB EXPORT: Preparing files for deployment...');
-
 			$github = new StaticHtmlOutput_GitHub(
 				$this->_githubRepo,
 				$this->_githubPersonalAccessToken,
@@ -520,8 +515,6 @@ class StaticHtmlOutput_Controller {
     }
 
     public function github_finalise_export() {
-			WsLog::l('GITHUB EXPORT: Finalising deployment...');
-
 			$github = new StaticHtmlOutput_GitHub(
 				$this->_githubRepo,
 				$this->_githubPersonalAccessToken,
@@ -539,7 +532,6 @@ class StaticHtmlOutput_Controller {
       $dir_to_diff_against = $this->outputPath() . '/previous-export';
 
     if ($this->_diffBasedDeploys) {
-      WsLog::l('CAPTURING LAST EXPORT FOR DIFF-BASED DEPLOYMENTS');
       $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
 
       $previous_export = $archiveDir;
@@ -548,27 +540,21 @@ class StaticHtmlOutput_Controller {
       if (is_dir($previous_export)) {
         shell_exec("rm -Rf $dir_to_diff_against && mkdir -p $dir_to_diff_against && cp -r $previous_export/* $dir_to_diff_against");
 
-      } else {
-        WsLog::l('NO PREVIOUS EXPORT FOUND');
-      }
+      } 
     } else {
-        WsLog::l('FORCING A FULL DEPLOYMENT');
 					StaticHtmlOutput_FilesHelper::delete_dir_with_files($dir_to_diff_against);
 					StaticHtmlOutput_FilesHelper::delete_dir_with_files($archiveDir);
 
     }
 
-
 		echo 'SUCCESS';
   }
 
 	public function cleanup_leftover_archives() {
-		WsLog::l('CLEANUP LEFTOVER ARCHIVES: ' . $this->_uploadsPath);
 		$leftover_files = preg_grep('/^([^.])/', scandir($this->_uploadsPath));
 
 		foreach ($leftover_files as $fileName) {
 			if( strpos($fileName, 'wp-static-html-output-') !== false ) {
-				WsLog::l('cleaning up a previous export dir or zip: ' . $fileName);
 
 				if (is_dir($this->_uploadsPath . '/' . $fileName)) {
 					StaticHtmlOutput_FilesHelper::delete_dir_with_files($this->_uploadsPath . '/' . $fileName);
@@ -605,11 +591,6 @@ class StaticHtmlOutput_Controller {
 
 	// clean up files possibly left behind by a partial export
 	public function cleanup_working_files() {
-
-    // won't show this first time in log as it is clearing log
-		WsLog::l('CLEANING WORKING FILES:');
-
-	  WsLog::l('RESTORING EXPORTED DIR TO ENABLE SUBSEQUENT DIFFS');
     $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
     $dir_to_diff_against = $this->outputPath() . '/previous-export';
 
@@ -687,7 +668,6 @@ class StaticHtmlOutput_Controller {
       ! $this->_dontIncludeAllUploadFiles // TODO: neg neg here inelegant
 );
 
-    WsLog::l('STARTING EXPORT: initial crawl list contains ' . $initial_file_list_count . ' files');
 
     echo 'SUCCESS';
 }
@@ -716,8 +696,6 @@ public function recursive_copy($srcdir, $dstdir) {
 			if ( ! empty(trim($publicFolderToCopyTo)) ) {
 				// if folder isn't empty and current deployment option is "folder"
 				$publicFolderToCopyTo = ABSPATH . $publicFolderToCopyTo;
-
-				WsLog::l('DEPLOYING TO PUBLIC URL: ' . $publicFolderToCopyTo);
 
 				// mkdir for the new dir
 				if (!file_exists($publicFolderToCopyTo)) {
@@ -754,16 +732,12 @@ public function crawlABitMore($viaCLI = false) {
   $first_line = array_shift($initial_crawl_list);
   file_put_contents($initial_crawl_list_file, implode("\r\n", $initial_crawl_list));
   $currentUrl = $first_line;
-  WsLog::l('CRAWLING URL: ' . $currentUrl);
 
   if (empty($currentUrl)){
-    WsLog::l('EMPTY FILE ENCOUNTERED');
-
     // skip this empty file
 
     $f = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
     $filesRemaining = count($f);
-    WsLog::l('CRAWLING SITE: ' . $filesRemaining . ' files remaining');
     if ($filesRemaining > 0) {
       echo $filesRemaining;
     } else {
@@ -785,7 +759,6 @@ public function crawlABitMore($viaCLI = false) {
     WsLog::l('FAILED TO CRAWL FILE: ' . $currentUrl);
   } else {
     file_put_contents($crawled_links_file, $currentUrl . PHP_EOL, FILE_APPEND | LOCK_EX);
-    WsLog::l('CRAWLED FILE: ' . $currentUrl);
   }
 
   $baseUrl = untrailingslashit(home_url());
@@ -839,7 +812,6 @@ public function crawlABitMore($viaCLI = false) {
         $extension != 'php' && 
         !in_array($newUrl, $initial_crawl_list)
        ) {
-      WsLog::l('DISCOVERED NEW FILE: ' . $newUrl);
 
       $urlResponse = new StaticHtmlOutput_UrlRequest($newUrl, $basicAuth);
 
@@ -848,7 +820,6 @@ public function crawlABitMore($viaCLI = false) {
       } else {
         file_put_contents($crawled_links_file, $newUrl . PHP_EOL, FILE_APPEND | LOCK_EX);
         $crawled_links[] = $newUrl;
-        WsLog::l('CRAWLED FILE: ' . $newUrl);
       }
 
       $urlResponse->cleanup(
@@ -865,7 +836,6 @@ public function crawlABitMore($viaCLI = false) {
   // TODO: could avoid reading file again here as we should have it above
   $f = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
   $filesRemaining = count($f);
-  WsLog::l('CRAWLING SITE: ' . $filesRemaining . ' files remaining');
   if ($filesRemaining > 0) {
     echo $filesRemaining;
   } else {
@@ -888,7 +858,6 @@ public function crawlABitMore($viaCLI = false) {
     }
 
     public function create_zip() {
-        WsLog::l('CREATING ZIP FILE...');
         $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
         $archiveName = rtrim($archiveDir, '/');
 		$tempZip = $archiveName . '.tmp';
@@ -911,7 +880,6 @@ public function crawlABitMore($viaCLI = false) {
         $zipDownloadLink = $archiveName . '.zip';
 		rename($tempZip, $zipDownloadLink); 
         $publicDownloadableZip = str_replace(ABSPATH, trailingslashit(home_url()), $archiveName . '.zip');
-        WsLog::l('ZIP CREATED: Download at ' . $publicDownloadableZip);
 
 		echo 'SUCCESS';
 		// TODO: put the zip url somewhere in the interface
@@ -919,7 +887,6 @@ public function crawlABitMore($viaCLI = false) {
     }
 
     public function ftp_prepare_export() {
-			WsLog::l('FTP EXPORT: Checking credentials..:');
 
 			$ftp = new StaticHtmlOutput_FTP(
 				$this->_ftpServer,
@@ -949,8 +916,6 @@ public function crawlABitMore($viaCLI = false) {
 
     public function bunnycdn_prepare_export() {
 		if ( wpsho_fr()->is__premium_only() ) {
-			WsLog::l('BUNNYCDN EXPORT: Preparing export..:');
-
 			$bunnyCDN = new StaticHtmlOutput_BunnyCDN(
 				$this->_bunnycdnPullZoneName,
 				$this->_bunnycdnAPIKey,
@@ -978,7 +943,6 @@ public function crawlABitMore($viaCLI = false) {
 
     public function bunnycdn_purge_cache() {
 		if ( wpsho_fr()->is__premium_only() ) {
-			WsLog::l('BUNNYCDN EXPORT: purging cache'); 
 
 			$bunnyCDN = new StaticHtmlOutput_BunnyCDN(
 				$this->_bunnycdnPullZoneName,
@@ -992,7 +956,6 @@ public function crawlABitMore($viaCLI = false) {
     }
 
 	public function prepare_file_list($export_target) {
-        WsLog::l($export_target . ' EXPORT: Preparing list of files to export');
 
          $file_list_path = $this->_uploadsPath . '/WP-STATIC-EXPORT-' . $export_target . '-FILES-TO-EXPORT';
 
@@ -1008,12 +971,10 @@ public function crawlABitMore($viaCLI = false) {
         $siteroot = $archiveName . '/';
 
         StaticHtmlOutput_FilesHelper::recursively_scan_dir($siteroot, $siteroot, $file_list_path);
-        WsLog::l('GENERIC EXPORT: File list prepared');
 	}
 
     public function s3_prepare_export() {
 		if ( wpsho_fr()->is__premium_only() ) {
-			WsLog::l('S3 EXPORT: preparing export...');
 
 			$s3 = new StaticHtmlOutput_S3(
 				$this->_s3Key,
@@ -1046,12 +1007,10 @@ public function crawlABitMore($viaCLI = false) {
 
 	public function cloudfront_invalidate_all_items() {
 		if ( wpsho_fr()->is__premium_only() ) {
-			WsLog::l('S3 EXPORT: Checking whether to invalidate CF cache');
 			require_once(__DIR__.'/CloudFront/CloudFront.php');
 			$cloudfront_id = $this->_cfDistributionId;
 
 			if( !empty($cloudfront_id) ) {
-				WsLog::l('CLOUDFRONT INVALIDATING CACHE...');
 
 				$cf = new CloudFront(
 				$this->_s3Key,
@@ -1066,14 +1025,12 @@ public function crawlABitMore($viaCLI = false) {
 					WsLog::l('CF ERROR: ' . $cf->getResponseMessage());
 				}
 			} else {
-				WsLog::l('S3 EXPORT: Skipping CF cache invalidation');
 				echo 'SUCCESS';
 			}
 		}
 	}
 
     public function dropbox_prepare_export() {
-			WsLog::l('DROPBOX EXPORT: preparing export');
 
 			$dropbox = new StaticHtmlOutput_Dropbox(
 				$this->_dropboxAccessToken,
@@ -1098,7 +1055,6 @@ public function crawlABitMore($viaCLI = false) {
 
     public function netlify_do_export () {
 
-			WsLog::l('NETLIFY EXPORT: starting to deploy ZIP file');
 
 			// will exclude the siteroot when copying
 			$archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
@@ -1244,7 +1200,6 @@ public function crawlABitMore($viaCLI = false) {
 	}	
 
     public function post_process_archive_dir() {
-        WsLog::l('POST PROCESSING ARCHIVE DIR: ...');
         $archiveDir = untrailingslashit(file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE'));
 
 		$this->detect_base_url();
@@ -1341,7 +1296,6 @@ public function crawlABitMore($viaCLI = false) {
   }
 
   public function remove_files_idential_to_previous_export() {
-	  WsLog::l('REMOVING FILES IDENTICAL TO PREVIOUS EXPORT');
     $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
     $dir_to_diff_against = $this->outputPath() . '/previous-export';
 
@@ -1361,14 +1315,9 @@ public function crawlABitMore($viaCLI = false) {
           // if file doesn't exist at all in previous export:
           if (is_file($previously_exported_file)) {
             if ( $this->files_are_equal($current_file, $previously_exported_file)) {
-              WsLog::l('SKIPPING UNCHANGED FILE: ' . $filename);
               unlink($current_file);
-            } else {
-              WsLog::l('INCUDING CHANGED FILE: ' . $filename);
-            }
-          } else {
-              WsLog::l('INCUDING NEW FILE: ' . $filename);
-          }
+            } 
+          } 
         }
     }
 
@@ -1380,8 +1329,6 @@ public function crawlABitMore($viaCLI = false) {
     // copy the newly changed files back into the previous export dir, else will never capture changes
 
  
-	  WsLog::l('FILES PREVIOUSLY EXPORTED: ' . $files_in_previous_export);
-	  WsLog::l('FILES TO BE DEPLOYED: ' . $files_to_be_deployed);
 
     // TODO: this works the first time, but will fail the diff on subsequent runs, alternating each time`
   }
@@ -1398,11 +1345,8 @@ public function crawlABitMore($viaCLI = false) {
         $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
 
 		if (is_link($this->outputPath() . '/latest-' . $blog_id)) {
-			WsLog::l('REMOVING SYMLINK: '. $this->outputPath() . '/latest-' . $blog_id);
 			unlink($this->outputPath() . '/latest-' . $blog_id );
-		} else {
-			WsLog::l('REMOVING SYMLINK: NO LINK FOUND AT'. $this->outputPath() . '/latest-' . $blog_id);
-		}
+		} 
 	}	
 
 	public function create_symlink_to_latest_archive() {
@@ -1412,7 +1356,6 @@ public function crawlABitMore($viaCLI = false) {
 		// rm and recreate
 		$this->remove_symlink_to_latest_archive();
 
-        WsLog::l('(RE)CREATING SYMLINK TO LATEST EXPORT FOLDER: '. $this->outputPath() . '/latest-' . $blog_id);
 
         symlink($archiveDir, $this->outputPath() . '/latest-' . $blog_id );
 
@@ -1421,12 +1364,10 @@ public function crawlABitMore($viaCLI = false) {
 
 
     public function post_export_teardown() {
-        WsLog::l('POST EXPORT CLEANUP: starting...');
 
 
 		$this->cleanup_working_files();
 
-		WsLog::l('POST EXPORT CLEANUP: complete');
 
 		// has SUCCESS returned already from cleanup working files..
 	}
@@ -1462,7 +1403,6 @@ public function crawlABitMore($viaCLI = false) {
 
 		// validate our inputs
 		if ( !isset($urlInfo['path']) ) {
-			WsLog::l('PREPARING URL: Invalid URL given, aborting');
 			return false;
 		}
 
@@ -1524,7 +1464,6 @@ public function crawlABitMore($viaCLI = false) {
 
 		$fileContents = $url->getResponseBody();
 		
-		WsLog::l('SAVING URL: ' . $urlInfo['path'] . ' to new path' . $fileName);
 		// TODO: what was the 'F' check for?1? Comments exist for a reason
 		if ($fileContents != '' && $fileContents != 'F') {
 			file_put_contents($fileName, $fileContents);

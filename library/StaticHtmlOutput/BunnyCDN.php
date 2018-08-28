@@ -104,8 +104,6 @@ class StaticHtmlOutput_BunnyCDN
 
 			$targetPath = rtrim($targetPath);
 
-			WsLog::l('BUNNYCDN EXPORT: transferring ' .  basename($fileToTransfer) . ' TO ' . $targetPath);
-		   
 			// do the bunny export
 			$client = new Client(array(
 					'base_uri' => $this->_baseURL
@@ -134,7 +132,6 @@ class StaticHtmlOutput_BunnyCDN
           $this->transfer_files(true); 
         }
 
-				WsLog::l('BUNNYCDN EXPORT: ' . $filesRemaining . ' files remaining to transfer');
 				echo $filesRemaining;
 			} else {
 				echo 'SUCCESS';
