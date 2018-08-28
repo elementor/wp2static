@@ -99,6 +99,7 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
 
 = 5.5 =
 
+ * Improvement: Deploy times reduced by ~ 30%, amount of data transferred by client minimized
  * Improvement: Diff-based deploys to only copy changed files (for folder, S3 and FTP deployments only)
  * Improvement: Don't block other plugin usage if ZIP extension is not available
  * Improvement: UX - 1-click same-server deployments; defaults to same-server for new installs
@@ -397,6 +398,7 @@ Initial release to Wordpress community
 
 = 5.5 =
 
+ * Improvement: Deploy times reduced by ~ 30%, amount of data transferred by client minimized
  * Improvement: Diff-based deploys to only copy changed files (for folder, S3 and FTP deployments only)
  * Improvement: Don't block other plugin usage if ZIP extension is not available
  * Improvement: UX - 1-click same-server deployments; defaults to same-server for new installs
