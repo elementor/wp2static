@@ -16,47 +16,48 @@
 
 if ( ! function_exists( 'wpsho_fr' ) ) {
 
-	function wpsho_fr() {
-		global $wpsho_fr;
+function wpsho_fr() {
+    global $wpsho_fr;
 
-		if ( ! isset( $wpsho_fr ) ) {
-			if ( ! defined( 'WP_FS__PRODUCT_2226_MULTISITE' ) ) {
-				define( 'WP_FS__PRODUCT_2226_MULTISITE', true );
-			}
+    if ( ! isset( $wpsho_fr ) ) {
+        // Activate multisite network integration.
+        if ( ! defined( 'WP_FS__PRODUCT_2226_MULTISITE' ) ) {
+            define( 'WP_FS__PRODUCT_2226_MULTISITE', true );
+        }
 
-			require_once dirname(__FILE__) . '/freemius/start.php';
+        // Include Freemius SDK.
+        require_once dirname(__FILE__) . '/freemius/start.php';
 
-			$wpsho_fr = fs_dynamic_init( array(
-				'id'                  => '2226',
-				'slug'                => 'static-html-output-plugin',
-				'type'                => 'plugin',
-				'public_key'          => 'pk_8874b676a9189a1b13450673a921f',
-				'is_premium'          => true,
-				// If your plugin is a serviceware, set this option to false.
-				'has_premium_version' => true,
-				'has_addons'          => false,
-				'has_paid_plans'      => true,
-				'trial'               => array(
-					'days'               => 7,
-					'is_require_payment' => true,
-				),
-				'menu'                => array(
-					'slug'           => 'wp-static-html-output',
-					
-				),
-				// Set the SDK to work in a sandbox mode (for development & testing).
-				// IMPORTANT: MAKE SURE TO REMOVE SECRET KEY BEFORE DEPLOYMENT.
-				//'secret_key'          => getenv('FREEMIUM_SECRET_KEY'),
-			) );
-		}
+        $wpsho_fr = fs_dynamic_init( array(
+            'id'                  => '2226',
+            'slug'                => 'static-html-output-plugin',
+            'type'                => 'plugin',
+            'public_key'          => 'pk_8874b676a9189a1b13450673a921f',
+            'is_premium'          => true,
+            'has_addons'          => false,
+            'has_paid_plans'      => true,
+            'trial'               => array(
+                'days'               => 7,
+                'is_require_payment' => true,
+            ),
+            'menu'                => array(
+                'slug'           => 'wp-static-html-output',
+                'support'        => false,
+                'network'        => true,
+            ),
+            // Set the SDK to work in a sandbox mode (for development & testing).
+            // IMPORTANT: MAKE SURE TO REMOVE SECRET KEY BEFORE DEPLOYMENT.
+            //'secret_key'          => getenv('FREEMIUM_SECRET_KEY'),
+        ) );
+    }
 
-		return $wpsho_fr;
-	}
+    return $wpsho_fr;
+}
 
-	// Init Freemius.
-	wpsho_fr();
-	// Signal that SDK was initiated.
-	do_action( 'wpsho_fr_loaded' );
+// Init Freemius.
+wpsho_fr();
+// Signal that SDK was initiated.
+do_action( 'wpsho_fr_loaded' );
 
 
 	// TODO: find way to enable these based on detected capabilities

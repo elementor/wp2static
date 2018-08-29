@@ -106,6 +106,14 @@ fi
 # sh: 1: -t: not found
 # error around here
 
+
+if [ -z "${WPMU_ENABLED}" ]; then 
+	echo "NOT installing plugin from sources"; 
+else 
+  wp --allow-root config set WP_ALLOW_MULTISITE true --type=constant --raw
+fi
+
+
 wp --allow-root config set WP_DEBUG true --raw
 # wp --allow-root config set WP_FS__DEV_MODE true --type=constant --raw
 wp --allow-root config set SAVEQUERIES true --type=constant --raw

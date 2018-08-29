@@ -368,13 +368,30 @@ class StaticHtmlOutput_Controller {
     // required
     }
 
-	public function activate() {
-		if (null === $this->_options->getOption('version')) {
-			$this->_options
-				->setOption('version', self::VERSION)
-				->setOption('static_export_settings', self::VERSION)
-				->save();
-		}
+	public function activate($network_wide) {
+    if ( $network_wide ) {
+      global $wpdb;
+
+      $site_ids = $wpdb->get_col( "SELECT blog_id FROM $wpdb->blogs WHERE site_id = $wpdb->siteid;" );
+
+      foreach ( $site_ids as $site_id ) {
+        switch_to_blog( $site_id );
+        if (null === $this->_options->getOption('version')) {
+          $this->_options
+            ->setOption('version', self::VERSION)
+            ->setOption('static_export_settings', self::VERSION)
+            ->save();
+        }
+        restore_current_blog();
+      }
+    } else {
+        if (null === $this->_options->getOption('version')) {
+          $this->_options
+            ->setOption('version', self::VERSION)
+            ->setOption('static_export_settings', self::VERSION)
+            ->save();
+        }
+    } 
 	}
 
 	public function registerOptionsPage() {
