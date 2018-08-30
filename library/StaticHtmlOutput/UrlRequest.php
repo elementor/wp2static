@@ -1223,7 +1223,7 @@ class StaticHtmlOutput_UrlRequest
         // looks only for urls starting with base name, also needs to search for relative links
         if (
             preg_match_all(
-                '/' . str_replace('/', '\/', $baseUrl) . '[^"\'#\? ]+/i', // find this
+                '/' . str_replace('/', '\/', $baseUrl) . '[^"\'#\?); ]+/i',
                 $this->_response['body'], // in this
                 $matches // save matches into this array
             )
