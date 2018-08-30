@@ -335,7 +335,9 @@ class StaticHtmlOutput_Controller {
       add_filter( 'custom_menu_order', '__return_true' );
       add_filter( 'menu_order', array( $instance, 'set_menu_order' ) );
 
-		}
+		} else {
+      error_log('isnt admin during init');
+    }
 
 		return $instance;
 	}
@@ -368,6 +370,16 @@ class StaticHtmlOutput_Controller {
     // required
     }
 
+  public function activate_for_single_site() {
+      if (null === $this->_options->getOption('version')) {
+        $this->_options
+          ->setOption('version', self::VERSION)
+          ->setOption('static_export_settings', self::VERSION)
+          ->save();
+      }
+  }
+
+
 	public function activate($network_wide) {
     if ( $network_wide ) {
       global $wpdb;
@@ -376,21 +388,14 @@ class StaticHtmlOutput_Controller {
 
       foreach ( $site_ids as $site_id ) {
         switch_to_blog( $site_id );
-        if (null === $this->_options->getOption('version')) {
-          $this->_options
-            ->setOption('version', self::VERSION)
-            ->setOption('static_export_settings', self::VERSION)
-            ->save();
-        }
-        restore_current_blog();
+        $this->activate_for_single_site();  
       }
+
+      restore_current_blog();
+
+
     } else {
-        if (null === $this->_options->getOption('version')) {
-          $this->_options
-            ->setOption('version', self::VERSION)
-            ->setOption('static_export_settings', self::VERSION)
-            ->save();
-        }
+        $this->activate_for_single_site();  
     } 
 	}
 
