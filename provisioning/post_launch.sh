@@ -173,6 +173,10 @@ fi
 # import data used for testing
 cp /test_data/1px_yellow_background.png /var/www/html/wp-content/themes/twentyseventeen/
 
+# test the nested subdirs are crawled within themes
+mkdir -p /var/www/html/wp-content/themes/twentyseventeen/cache/images/
+cp /test_data/1px_yellow_background.png /var/www/html/wp-content/themes/twentyseventeen/cache/images/testsubdircrawling.png
+
 # OPTIONAL: install latest static plugin from WP plugins site vs local src
 #wp --allow-root plugin install static-html-output-plugin --activate
 
