@@ -17,13 +17,13 @@
  7. WordPress will then import each of the posts, pages, comments, categories, etc.
     contained in this file into your site.
 -->
-<!-- generator="WordPress/4.9.6" created="2018-06-20 14:49" -->
+<!-- generator="WordPress/4.9.8" created="2018-08-30 22:36" -->
 <rss version="2.0" xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:wfw="http://wellformedweb.org/CommentAPI/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:wp="http://wordpress.org/export/1.2/">
   <channel>
 <title>wp plugindev</title>
 <link>http://172.18.0.3</link>
 <description>Just another WordPress site</description>
-<pubDate>Wed, 20 Jun 2018 14:49:40 +0000</pubDate>
+<pubDate>Thu, 30 Aug 2018 22:36:35 +0000</pubDate>
 <language>en-US</language>
 <wp:wxr_version>1.2</wp:wxr_version>
 <wp:base_site_url>http://172.18.0.3</wp:base_site_url>
@@ -36,7 +36,7 @@
   <wp:author_first_name><![CDATA[]]></wp:author_first_name>
   <wp:author_last_name><![CDATA[]]></wp:author_last_name>
 </wp:author>
-<generator>https://wordpress.org/?v=4.9.6</generator>
+<generator>https://wordpress.org/?v=4.9.8</generator>
 <item>
   <title>Removing comments for a WordPress static website</title>
   <link>http://172.18.0.3/2018/04/28/removing-comments-for-a-wordpress-static-website/</link>
@@ -146,10 +146,13 @@ This feature is yet to be released into the official version of <a href="http://
 <strong>Test 1 - an inline CSS referenced image located in the theme dir is crawled and properly saved</strong>
 
 A div with a background image URL set to a file from the theme dir, but not linked to anywhere else:
-
 <div style="background-image: url('http://172.18.0.3/wp-content/themes/twentyseventeen/1px_yellow_background.png');">Assert that this text has a yellow background</div>
-
-]]></content:encoded>
+<div></div>
+<div><strong>Test 2 - building initial file list should recursively crawl any paths given</strong></div>
+<div></div>
+<div>This simulated cases like YooThemes, where an image cache dir is nested within the theme dir</div>
+<div></div>
+<div>Assert that the equivalent rewrite of wp-content/themes/twentyseventeen/cache/images/testsubdircrawling.png exists, ie  contents/ui/theme/cache/images/testsubdircrawling.png</div>]]></content:encoded>
   <excerpt:encoded><![CDATA[]]></excerpt:encoded>
   <wp:post_id>12</wp:post_id>
   <wp:post_date>2018-06-20 14:31:42</wp:post_date>
