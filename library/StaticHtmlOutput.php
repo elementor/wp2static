@@ -335,10 +335,8 @@ class StaticHtmlOutput_Controller {
       add_filter( 'custom_menu_order', '__return_true' );
       add_filter( 'menu_order', array( $instance, 'set_menu_order' ) );
 
-		} else {
-      error_log('isnt admin during init');
-    }
-
+		}
+ 
 		return $instance;
 	}
 
@@ -549,26 +547,29 @@ class StaticHtmlOutput_Controller {
     }
 
   public function capture_last_deployment() {
-      $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
-      $previous_export = $archiveDir;
-      $dir_to_diff_against = $this->outputPath() . '/previous-export';
+      // skip for first export state
+      if (is_file($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE')) {
+        $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
+        $previous_export = $archiveDir;
+        $dir_to_diff_against = $this->outputPath() . '/previous-export';
 
-    if ($this->_diffBasedDeploys) {
-      $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
+        if ($this->_diffBasedDeploys) {
+          $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
 
-      $previous_export = $archiveDir;
-      $dir_to_diff_against = $this->outputPath() . '/previous-export';
+          $previous_export = $archiveDir;
+          $dir_to_diff_against = $this->outputPath() . '/previous-export';
 
-      if (is_dir($previous_export)) {
-        shell_exec("rm -Rf $dir_to_diff_against && mkdir -p $dir_to_diff_against && cp -r $previous_export/* $dir_to_diff_against");
+          if (is_dir($previous_export)) {
+            shell_exec("rm -Rf $dir_to_diff_against && mkdir -p $dir_to_diff_against && cp -r $previous_export/* $dir_to_diff_against");
 
-      } 
-    } else {
-        if(is_dir($dir_to_diff_against)) {
-            StaticHtmlOutput_FilesHelper::delete_dir_with_files($dir_to_diff_against);
-            StaticHtmlOutput_FilesHelper::delete_dir_with_files($archiveDir);
-          }
-    }
+          } 
+        } else {
+            if(is_dir($dir_to_diff_against)) {
+                StaticHtmlOutput_FilesHelper::delete_dir_with_files($dir_to_diff_against);
+                StaticHtmlOutput_FilesHelper::delete_dir_with_files($archiveDir);
+              }
+        }
+      }
 
 		echo 'SUCCESS';
   }
@@ -614,13 +615,16 @@ class StaticHtmlOutput_Controller {
 
 	// clean up files possibly left behind by a partial export
 	public function cleanup_working_files() {
-    $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
-    $dir_to_diff_against = $this->outputPath() . '/previous-export';
+    // skip first explort state
+    if (is_file($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE')) {
+      $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
+      $dir_to_diff_against = $this->outputPath() . '/previous-export';
 
-    if(is_dir($dir_to_diff_against)) {
-      // TODO: rewrite to php native in case of shared hosting 
-      // delete archivedir and then recursively copy 
-      shell_exec("cp -r $dir_to_diff_against/* $archiveDir/");
+      if(is_dir($dir_to_diff_against)) {
+        // TODO: rewrite to php native in case of shared hosting 
+        // delete archivedir and then recursively copy 
+        shell_exec("cp -r $dir_to_diff_against/* $archiveDir/");
+      }
     }
 
 		$files_to_clean = array(
@@ -994,6 +998,8 @@ public function crawlABitMore($viaCLI = false) {
         $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
         $archiveName = rtrim($archiveDir, '/');
         $siteroot = $archiveName . '/';
+
+        error_log('preparing file list');
 
         StaticHtmlOutput_FilesHelper::recursively_scan_dir($siteroot, $siteroot, $file_list_path);
 	}
