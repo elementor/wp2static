@@ -27,7 +27,7 @@ class StaticHtmlOutput_FilesHelper
 		// rm duplicate slashes in path (TODO: fix cause)
 		$dir = str_replace('//', '/', $dir);
 		$files = scandir($dir);
-
+   
 		foreach($files as $item){
 			if($item != '.' && $item != '..' && $item != '.git'){
 				if(is_dir($dir.'/'.$item)) {
@@ -53,9 +53,8 @@ class StaticHtmlOutput_FilesHelper
     foreach ($urls as $url) {
       $directory = str_replace(home_url('/'), ABSPATH, $url);
 
-      // exclude previous export used for diff
-      if ( ! strpos($url, 'previous-export') === false ) {
-
+      // TODO:  exclude previous export used for diff
+      //if ( ! strpos($url, 'previous-export') === false ) {
         if (stripos($url, home_url('/')) === 0 && is_dir($directory)) {
           $iterator = new RecursiveIteratorIterator(
               new RecursiveDirectoryIterator(
@@ -75,7 +74,6 @@ class StaticHtmlOutput_FilesHelper
             array_push($files, $url);
           }
         }
-      }
     }
 
 
