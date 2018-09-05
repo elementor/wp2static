@@ -150,6 +150,7 @@
                 fs_starts_with( $subdomain, 'local.' ) ||
                 fs_starts_with( $subdomain, 'dev.' ) ||
                 fs_starts_with( $subdomain, 'test.' ) ||
+                fs_starts_with( $subdomain, 'stage.' ) ||
                 fs_starts_with( $subdomain, 'staging.' ) ||
 
                 // Ends with.
@@ -171,7 +172,9 @@
                 ( fs_ends_with($subdomain, 'pantheonsite.io') &&
                   (fs_starts_with($subdomain, 'test-') || fs_starts_with($subdomain, 'dev-'))) ||
                 // Cloudways
-                fs_ends_with( $subdomain, '.cloudwaysapps.com' )
+                fs_ends_with( $subdomain, '.cloudwaysapps.com' ) ||
+                // Kinsta
+                (fs_ends_with($subdomain, '.kinsta.com') && fs_starts_with($subdomain, 'staging-'))
             );
         }
 

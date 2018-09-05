@@ -82,7 +82,7 @@
 
             $this->add_transient_filters();
 
-            if ( ! $this->_fs->has_active_valid_license() ) {
+            if ( ! $this->_fs->has_any_active_valid_license() ) {
                 /**
                  * If user has the premium plugin's code but do NOT have an active license,
                  * encourage him to upgrade by showing that there's a new release, but instead
@@ -114,7 +114,7 @@
                     add_filter( 'upgrader_post_install', array( &$this, '_maybe_update_folder_name' ), 10, 3 );
                 }
 
-                if ( ! $this->_fs->has_active_valid_license() ) {
+                if ( ! $this->_fs->has_any_active_valid_license() ) {
                     add_filter( 'wp_prepare_themes_for_js', array( &$this, 'change_theme_update_info_html' ), 10, 1 );
                 }
             }

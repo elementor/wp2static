@@ -253,6 +253,17 @@
 					<a class="show-license-resend-modal show-license-resend-modal-<?php echo $fs->get_unique_affix() ?>"
 					   href="#"><?php fs_esc_html_echo_inline( "Can't find your license key?", 'cant-find-license-key', $slug ); ?></a>
 				</div>
+
+				<?php
+				/**
+				 * Allows developers to include custom HTML after the license input container.
+				 *
+				 * @author Vova Feldman
+				 * @since 2.1.2
+				 */
+				 $fs->do_action( 'connect/after_license_input' );
+				?>
+
                 <?php
                     $send_updates_text = sprintf(
                         '%s<span class="action-description"> - %s</span>',

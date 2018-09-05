@@ -86,6 +86,16 @@
                 <button class="button button-primary"><?php fs_esc_html_echo_inline( 'Sync Data From Server' ) ?></button>
             </form>
         </td>
+        <?php if ( fs_is_network_admin() && true !== $fs_options->get_option( 'ms_migration_complete', false, true ) ) : ?>
+        <td>
+            <!-- Migrate Options to Network -->
+            <form action="" method="POST">
+                <input type="hidden" name="fs_action" value="migrate_options_to_network">
+                <?php wp_nonce_field( 'migrate_options_to_network' ) ?>
+                <button class="button button-primary"><?php fs_esc_html_echo_inline( 'Migrate Options to Network' ) ?></button>
+            </form>
+        </td>
+        <?php endif ?>
         <td>
             <button id="fs_load_db_option" class="button"><?php fs_esc_html_echo_inline( 'Load DB Option' ) ?></button>
         </td>

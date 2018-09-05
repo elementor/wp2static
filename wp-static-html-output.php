@@ -43,7 +43,7 @@ function wpsho_fr() {
             'menu'                => array(
                 'slug'           => 'wp-static-html-output',
                 'support'        => false,
-                'network'        => true,
+                'network'        => false,
             ),
             // Set the SDK to work in a sandbox mode (for development & testing).
             // IMPORTANT: MAKE SURE TO REMOVE SECRET KEY BEFORE DEPLOYMENT.
