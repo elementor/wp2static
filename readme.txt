@@ -5,7 +5,7 @@ Tags: static site generator,cache,wp super cache,wp fastest cache,w3 total cache
 Requires at least: 3.2
 Tested up to: 4.9.8
 Requires PHP: 5.4
-Stable tag: 5.6
+Stable tag: 5.7
 
 
 
@@ -96,6 +96,11 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
 2. The main interface (Japanese)
 
 == Changelog ==
+
+= 5.7 =
+
+ * Bugfix: Allow for WPMU/network site activation
+ * Bugfix: Include gallery files for NextGEN Gallery 
 
 = 5.6 =
 
@@ -400,6 +405,11 @@ Altered main codebase to fix recursion bug and endless loop. Essential upgrade.
 Initial release to Wordpress community
 
 == Upgrade Notice ==
+
+= 5.7 =
+
+ * Bugfix: Allow for WPMU/network site activation
+ * Bugfix: Include gallery files for NextGEN Gallery 
 
 = 5.6 =
 
