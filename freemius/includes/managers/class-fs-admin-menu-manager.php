@@ -280,6 +280,18 @@
 			return $this->_network_menu_exists;
 		}
 
+        /**
+         * @author Leo Fajardo (@leorw)
+         *
+         * @param string $menu_slug
+         *
+         * @since 2.1.3
+         */
+		function set_slug_and_network_menu_exists_flag($menu_slug ) {
+		    $this->_menu_slug           = $menu_slug;
+		    $this->_network_menu_exists = false;
+        }
+
 		/**
 		 * @author Vova Feldman (@svovaf)
 		 * @since  1.1.3

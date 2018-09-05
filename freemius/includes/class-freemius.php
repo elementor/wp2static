@@ -5308,7 +5308,7 @@
             if ( ! isset( $this->_is_anonymous ) ) {
                 if ( $this->is_network_anonymous() ) {
                     $this->_is_anonymous = true;
-                } else {
+                } else if ( ! fs_is_network_admin() ) {
                     if ( ! isset( $this->_storage->is_anonymous ) ) {
                         // Not skipped.
                         $this->_is_anonymous = false;
@@ -7222,6 +7222,23 @@
         }
 
         /**
+         * This is used to ensure that before redirecting to the opt-in page after resetting the anonymous mode or
+         * deleting the account in the network level, the URL of the page to redirect to is correct.
+         *
+         * @author Leo Fajardo (@leorw)
+         *
+         * @since 2.1.3
+         */
+        private function maybe_set_slug_and_network_menu_exists_flag() {
+            if ( ! empty( $this->_dynamically_added_top_level_page_hook_name ) ) {
+                $this->_menu->set_slug_and_network_menu_exists_flag( $this->_menu->has_menu() ?
+                    $this->_menu->get_slug() :
+                    $this->_slug
+                );
+            }
+        }
+
+        /**
          * Clears the anonymous mode and redirects to the opt-in screen.
          *
          * @author Vova Feldman (@svovaf)
@@ -7233,6 +7250,8 @@
             }
 
             $this->reset_anonymous_mode( fs_is_network_admin() );
+
+            $this->maybe_set_slug_and_network_menu_exists_flag();
 
             fs_redirect( $this->get_activation_url() );
         }
@@ -14572,7 +14591,7 @@
 
             $hook = false;
 
-            if ( ! $this->_menu->has_menu() ) {
+            if ( ! $this->has_settings_menu() ) {
                 // Add the opt-in page without a menu item.
                 $hook = FS_Admin_Menu_Manager::add_subpage(
                     null,
@@ -14954,16 +14973,6 @@
 
             foreach ( $this->_menu_items as $priority => $items ) {
                 foreach ( $items as $item ) {
-                    if ( $item['show_submenu'] && $is_first_submenu_item ) {
-                        if ( $this->_is_network_active && ! empty( $this->_dynamically_added_top_level_page_hook_name ) ) {
-                            $item['menu_slug'] = '';
-
-                            $this->_menu->override_menu_item( $item['render_function'] );
-                        }
-
-                        $is_first_submenu_item = false;
-                    }
-
                     $capability = ( ! empty( $item['capability'] ) ? $item['capability'] : $top_level_menu_capability );
 
                     $menu_item = sprintf(
@@ -14974,12 +14983,13 @@
                         $item['menu_title']
                     );
 
-                    $menu_slug = $this->_menu->get_slug( $item['menu_slug'] );
+                    $top_level_menu_slug = $this->get_top_level_menu_slug();
+                    $menu_slug           = $this->_menu->get_slug( $item['menu_slug'] );
 
                     if ( ! isset( $item['url'] ) ) {
                         $hook = FS_Admin_Menu_Manager::add_subpage(
                             $item['show_submenu'] ?
-                                $this->get_top_level_menu_slug() :
+                                $top_level_menu_slug :
                                 null,
                             $item['page_title'],
                             $menu_item,
@@ -14994,7 +15004,7 @@
                     } else {
                         FS_Admin_Menu_Manager::add_subpage(
                             $item['show_submenu'] ?
-                                $this->get_top_level_menu_slug() :
+                                $top_level_menu_slug :
                                 null,
                             $item['page_title'],
                             $menu_item,
@@ -15002,6 +15012,24 @@
                             $menu_slug,
                             array( $this, '' )
                         );
+                    }
+
+                    if ( $item['show_submenu'] && $is_first_submenu_item ) {
+                        if ( $this->_is_network_active && ! empty( $this->_dynamically_added_top_level_page_hook_name ) ) {
+                            /**
+                             * If the top-level menu has been dynamically created, remove the first submenu item that
+                             * WordPress automatically creates when there's no submenu item whose slug matches the
+                             * parent's. In the following example, the `Awesome Plugin` submenu item will be removed.
+                             *
+                             * Awesome Plugin
+                             *     - Awesome Plugin <-- we want to remove this since there's no real setting page for the top-level
+                             *
+                             * @author Leo Fajardo (@leorw)
+                             */
+                            remove_submenu_page( $top_level_menu_slug, $top_level_menu_slug );
+                        }
+
+                        $is_first_submenu_item = false;
                     }
                 }
             }
@@ -18102,6 +18130,8 @@
                         // Clear user and site.
                         $this->_site = null;
                         $this->_user = null;
+
+                        $this->maybe_set_slug_and_network_menu_exists_flag();
 
                         fs_redirect( $this->get_activation_url() );
                     } else {
