@@ -94,7 +94,7 @@ HTML;
 		isAnonymous           = <?php echo ( $is_anonymous ? 'true' : 'false' ); ?>,
 		otherReasonID         = <?php echo Freemius::REASON_OTHER; ?>,
 		dontShareDataReasonID = <?php echo Freemius::REASON_DONT_LIKE_TO_SHARE_MY_INFORMATION; ?>,
-        deleteThemeUpdateData = <?php echo $fs->is_theme() && $fs->is_premium() && ! $fs->has_active_valid_license() ? 'true' : 'false' ?>;
+        deleteThemeUpdateData = <?php echo $fs->is_theme() && $fs->is_premium() && ! $fs->has_any_active_valid_license() ? 'true' : 'false' ?>;
 
 	$modal.appendTo($('body'));
 

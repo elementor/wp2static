@@ -203,7 +203,7 @@
 
                 if ( is_object( $latest ) ) {
                     $data->version      = $latest->version;
-                    $data->last_updated = ! is_null( $latest->updated ) ? $latest->updated : $latest->created;
+                    $data->last_updated = $latest->created;
                     $data->requires     = $latest->requires_platform_version;
                     $data->tested       = $latest->tested_up_to_version;
                 } else {
