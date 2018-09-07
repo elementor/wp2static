@@ -6,7 +6,7 @@
  */
 
 class StaticHtmlOutput_Controller {
-	const VERSION = '5.7';
+	const VERSION = '5.8';
 	const OPTIONS_KEY = 'wp-static-html-output-options';
 	const HOOK = 'wp-static-html-output';
 
@@ -720,9 +720,9 @@ public function recursive_copy($srcdir, $dstdir) {
 
 	public function copyStaticSiteToPublicFolder() {
 		if ( $this->_selected_deployment_option == 'folder' ) {
-			$publicFolderToCopyTo = $this->_targetFolder;
+			$publicFolderToCopyTo = trim($this->_targetFolder);
 
-			if ( ! empty(trim($publicFolderToCopyTo)) ) {
+			if ( ! empty($publicFolderToCopyTo) ) {
 				// if folder isn't empty and current deployment option is "folder"
 				$publicFolderToCopyTo = ABSPATH . $publicFolderToCopyTo;
 
