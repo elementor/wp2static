@@ -73,11 +73,9 @@ class StaticHtmlOutput_Controller {
 			self::$_instance = new self();
 			self::$_instance->_options = new StaticHtmlOutput_Options(self::OPTIONS_KEY);
 			self::$_instance->_view = new StaticHtmlOutput_View();
-
-
-        $tmp_var_to_hold_return_array = wp_upload_dir();
-        self::$_instance->_uploadsPath = $tmp_var_to_hold_return_array['basedir'];
-        self::$_instance->_uploadsURL = $tmp_var_to_hold_return_array['baseurl'];
+      $tmp_var_to_hold_return_array = wp_upload_dir();
+      self::$_instance->_uploadsPath = $tmp_var_to_hold_return_array['basedir'];
+      self::$_instance->_uploadsURL = $tmp_var_to_hold_return_array['baseurl'];
 
       // load settings via Client or from DB if run from CLI
       if (null !== (filter_input(INPUT_POST, 'selected_deployment_option'))) {
@@ -818,6 +816,8 @@ public function crawlABitMore($viaCLI = false) {
       'new_plugins_path' => $new_plugins_dir,
       'new_wpinc_path' => '/' . $this->_rewriteWPINC,
       );
+
+  $urlResponse->normalizeURLs();
 
   $urlResponse->cleanup(
       $wp_site_environment,

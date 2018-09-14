@@ -71,6 +71,7 @@ do_action( 'wpsho_fr_loaded' );
   require_once 'library/StaticHtmlOutput/Netlify.php';
   require_once 'library/StaticHtmlOutput/GitHub.php';
   require_once 'library/StaticHtmlOutput/Dropbox.php';
+  require_once 'library/URL2/URL2.php';
 	
 	if ( wpsho_fr()->is__premium_only() ) {
 		require_once 'library/StaticHtmlOutput/BunnyCDN.php';

@@ -583,4 +583,73 @@ EOHTML;
 
       $mockUrlResponse->cleanup($wp_site_environment, $overwrite_slug_targets);
     }
+
+    public function testURLNormalization(): void {
+      $url = 'http://someurl.com';	
+      $basicAuth = null;
+
+      $mockUrlResponse = $this->getMockBuilder('StaticHtmlOutput_UrlRequest')
+        ->setMethods([
+          'isHtml',
+          'isCSS',
+          'getResponseBody',
+          'setResponseBody'
+        ])
+        ->setConstructorArgs([$url, $basicAuth])
+        ->getMock();
+
+$input_html = <<<EOHTML
+<a href="http://172.17.0.3/wp-content/themes/twentyseventeen/afile.css">Some CSS link</a>
+
+<a href="/wp-content/themes/twentyseventeen/anotherfile.css">Some CSS link</a>
+
+<a href="http://someexternaldomain.com/wp-content/themes/twentyseventeen/afile.css">Some CSS link</a>
+EOHTML;
+
+$expected_output_html = <<<EOHTML
+<a href="http://172.17.0.3/wp-content/themes/twentyseventeen/afile.css">Some CSS link</a>
+
+<a href="http://172.17.0.3/wp-content/themes/twentyseventeen/anotherfile.css">Some CSS link</a>
+
+<a href="http://someexternaldomain.com/wp-content/themes/twentyseventeen/afile.css">Some CSS link</a>
+EOHTML;
+
+      $mockUrlResponse->method('getResponseBody')
+               ->willReturn($input_html);
+
+      $mockUrlResponse->expects($this->once())
+         ->method('isHtml') ;
+
+      $mockUrlResponse->expects($this->once())
+         ->method('isCSS') ;
+
+      $mockUrlResponse->expects($this->once())
+         ->method('getResponseBody') ;
+
+      $mockUrlResponse->expects($this->once())
+        ->method('setResponseBody')
+        ->with($expected_output_html) ;
+
+      $wp_site_environment = array(
+        'wp_inc' =>  '/wp-includes',	
+        'wp_plugin' =>  '',	
+        'wp_content' => '/wp-content', // TODO: check if this has been modified/use constant
+        'wp_uploads' =>  '/wp-content/uploads',	
+        'wp_plugins' =>  '/wp-content/plugins',	
+        'wp_themes' =>  '/wp-content/themes',	
+        'wp_active_theme' =>  '/wp-content/themes/onepress',	
+        'site_url' =>  'http://172.17.0.3'
+      );
+
+      $overwrite_slug_targets = array(
+        'new_wp_content_path' => '/contents',
+        'new_themes_path' => '/contents/ui',
+        'new_active_theme_path' => '/contents/ui/theme',
+        'new_uploads_path' => '/contents/data',
+        'new_plugins_path' => '/contents/lib',
+        'new_wpinc_path' => '/inc'
+      );
+
+      $mockUrlResponse->normalizeURLs();
+    }
 }
