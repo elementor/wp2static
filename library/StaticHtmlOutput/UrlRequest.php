@@ -1118,8 +1118,36 @@ class StaticHtmlOutput_UrlRequest
 		return (stripos($contentType, 'html') !== false) || (stripos($contentType, 'text') !== false);
 	}
 
+	public function normalizeURLs() {
+    if (! $this->isRewritable() ) {
+      return;
+    }
+ 
+		$responseBody = $this->getResponseBody();
+    $xml = new DOMDocument(); 
+  
+    // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
+    libxml_use_internal_errors(true);
+    $xml->loadHTML($responseBody); 
+    libxml_use_internal_errors(false);
+
+    $base = new Net_URL2($this->_url);
+
+    foreach($xml->getElementsByTagName('a') as $link) { 
+      $original_link = $link->getAttribute("href");
+
+      // TODO: apply only to links starting with .,..,/, or any with just a path, like banana.png
+      $abs = $base->resolve($original_link);
+      $link->setAttribute('href', $abs);
+    }
+
+    $responseBody = $xml->saveHtml(); 
+
+		$this->setResponseBody($responseBody);
+  }
+
 	public function cleanup( $wp_site_environment, $overwrite_slug_targets) {
-		//error_log(print_r(func_get_args(), true));
+    // TODO: skip binary file processing in func
 		$responseBody = $this->getResponseBody();
 
 		// strip WP identifiers from html files
