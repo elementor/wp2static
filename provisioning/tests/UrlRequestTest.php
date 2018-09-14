@@ -590,8 +590,7 @@ EOHTML;
 
       $mockUrlResponse = $this->getMockBuilder('StaticHtmlOutput_UrlRequest')
         ->setMethods([
-          'isHtml',
-          'isCSS',
+          'isRewritable',
           'getResponseBody',
           'setResponseBody'
         ])
@@ -617,11 +616,11 @@ EOHTML;
       $mockUrlResponse->method('getResponseBody')
                ->willReturn($input_html);
 
-      $mockUrlResponse->expects($this->once())
-         ->method('isHtml') ;
+      $mockUrlResponse->method('isRewritable')
+               ->willReturn(true);
 
       $mockUrlResponse->expects($this->once())
-         ->method('isCSS') ;
+         ->method('isRewritable') ;
 
       $mockUrlResponse->expects($this->once())
          ->method('getResponseBody') ;
@@ -629,26 +628,6 @@ EOHTML;
       $mockUrlResponse->expects($this->once())
         ->method('setResponseBody')
         ->with($expected_output_html) ;
-
-      $wp_site_environment = array(
-        'wp_inc' =>  '/wp-includes',	
-        'wp_plugin' =>  '',	
-        'wp_content' => '/wp-content', // TODO: check if this has been modified/use constant
-        'wp_uploads' =>  '/wp-content/uploads',	
-        'wp_plugins' =>  '/wp-content/plugins',	
-        'wp_themes' =>  '/wp-content/themes',	
-        'wp_active_theme' =>  '/wp-content/themes/onepress',	
-        'site_url' =>  'http://172.17.0.3'
-      );
-
-      $overwrite_slug_targets = array(
-        'new_wp_content_path' => '/contents',
-        'new_themes_path' => '/contents/ui',
-        'new_active_theme_path' => '/contents/ui/theme',
-        'new_uploads_path' => '/contents/data',
-        'new_plugins_path' => '/contents/lib',
-        'new_wpinc_path' => '/inc'
-      );
 
       $mockUrlResponse->normalizeURLs();
     }
