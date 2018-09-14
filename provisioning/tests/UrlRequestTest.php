@@ -516,4 +516,71 @@ EOHTML;
 
 		$mockUrlResponse->replaceBaseUrl($siteURL, $newDomain, false, 'absolute');
     }
+
+    public function testDontRewriteExternalDomains(): void {
+      $url = 'http://someurl.com';	
+      $basicAuth = null;
+
+      // mock out only the unrelated methods
+      $mockUrlResponse = $this->getMockBuilder('StaticHtmlOutput_UrlRequest')
+        ->setMethods([
+          'isHtml',
+          'isCSS',
+          'getResponseBody',
+          'setResponseBody'
+        ])
+        ->setConstructorArgs([$url, $basicAuth])
+        ->getMock();
+
+
+$escaped_url_block = <<<EOHTML
+<a href="http://172.17.0.3/wp-content/themes/twentyseventeen/afile.css">Some CSS link</a>
+
+<a href="http://someexternaldomain.com/wp-content/themes/twentyseventeen/afile.css">Some CSS link</a>
+EOHTML;
+
+$escaped_url_block_expected_rewrite = <<<EOHTML
+<a href="http://172.17.0.3/content/ui/theme/afile.css">Some CSS link</a>
+
+<a href="http://someexternaldomain.com/wp-content/themes/twentyseventeen/afile.css">Some CSS link</a>
+EOHTML;
+
+      $mockUrlResponse->method('getResponseBody')
+               ->willReturn($escaped_url_block);
+
+      $mockUrlResponse->expects($this->once())
+         ->method('isHtml') ;
+
+      $mockUrlResponse->expects($this->once())
+         ->method('isCSS') ;
+
+      $mockUrlResponse->expects($this->once())
+         ->method('getResponseBody') ;
+
+      $mockUrlResponse->expects($this->once())
+        ->method('setResponseBody')
+        ->with($escaped_url_block_expected_rewrite) ;
+
+      $wp_site_environment = array(
+        'wp_inc' =>  '/wp-includes',	
+        'wp_plugin' =>  '',	
+        'wp_content' => '/wp-content', // TODO: check if this has been modified/use constant
+        'wp_uploads' =>  '/wp-content/uploads',	
+        'wp_plugins' =>  '/wp-content/plugins',	
+        'wp_themes' =>  '/wp-content/themes',	
+        'wp_active_theme' =>  '/wp-content/themes/onepress',	
+        'site_url' =>  'http://172.17.0.3'
+      );
+
+      $overwrite_slug_targets = array(
+        'new_wp_content_path' => '/contents',
+        'new_themes_path' => '/contents/ui',
+        'new_active_theme_path' => '/contents/ui/theme',
+        'new_uploads_path' => '/contents/data',
+        'new_plugins_path' => '/contents/lib',
+        'new_wpinc_path' => '/inc'
+      );
+
+      $mockUrlResponse->cleanup($wp_site_environment, $overwrite_slug_targets);
+    }
 }
