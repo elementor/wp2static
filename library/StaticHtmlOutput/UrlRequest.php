@@ -1146,20 +1146,167 @@ class StaticHtmlOutput_UrlRequest
 		$this->setResponseBody($responseBody);
   }
 
+	public function rewriteWPPaths($wp_site_environment, $overwrite_slug_targets) {
+		$responseBody = $this->getResponseBody();
+    $xml = new DOMDocument(); 
+  
+    // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
+    libxml_use_internal_errors(true);
+    $xml->loadHTML($responseBody); 
+    libxml_use_internal_errors(false);
+
+    // NOTE: drier code but costlier memory usage
+    foreach($xml->getElementsByTagName('*') as $element) { 
+      $attribute_to_change = '';
+      $url_to_change = '';
+
+      if ($element->hasAttribute('href')) {
+        $attribute_to_change = 'href';
+      } elseif ($element->hasAttribute('src')) {
+        $attribute_to_change = 'src';
+      // skip elements without href or src 
+      } else {
+        continue; 
+      }
+
+      $url_to_change = $element->getAttribute($attribute_to_change);
+
+      if ($this->isInternalLink($url_to_change)) {
+        // rewrite all the things, starting with longest paths down to shortest
+        $rewritten_url = str_replace(
+          array(
+            $wp_site_environment['wp_active_theme'],
+            addcslashes($wp_site_environment['wp_active_theme'], '/'),
+            $wp_site_environment['wp_themes'], 
+            addcslashes($wp_site_environment['wp_themes'], '/'),
+            $wp_site_environment['wp_uploads'], 
+            addcslashes($wp_site_environment['wp_uploads'], '/'),
+            $wp_site_environment['wp_plugins'], 
+            addcslashes($wp_site_environment['wp_plugins'], '/'),
+            $wp_site_environment['wp_content'], 
+            addcslashes($wp_site_environment['wp_content'], '/'),
+            $wp_site_environment['wp_inc'], 
+            addcslashes($wp_site_environment['wp_inc'], '/'),
+          ),
+          array(
+            $overwrite_slug_targets['new_active_theme_path'],
+            addcslashes($overwrite_slug_targets['new_active_theme_path'], '/'),
+            $overwrite_slug_targets['new_themes_path'],
+            addcslashes($overwrite_slug_targets['new_themes_path'], '/'),
+            $overwrite_slug_targets['new_uploads_path'],
+            addcslashes($overwrite_slug_targets['new_uploads_path'], '/'),
+            $overwrite_slug_targets['new_plugins_path'],
+            addcslashes($overwrite_slug_targets['new_plugins_path'], '/'),
+            $overwrite_slug_targets['new_wp_content_path'],
+            addcslashes($overwrite_slug_targets['new_wp_content_path'], '/'),
+            $overwrite_slug_targets['new_wpinc_path'],
+            addcslashes($overwrite_slug_targets['new_wpinc_path'], '/'),
+          ),
+          $url_to_change);
+      }
+      
+      $element->setAttribute($attribute_to_change, $rewritten_url);
+    }
+
+    $responseBody = $xml->saveHtml(); 
+
+		$this->setResponseBody($responseBody);
+  }
+
+  public function isInternalLink($link) {
+    // check link is same host as $this->_url and not a subdomain
+
+    return true;
+  }
+
+  public function removeQueryStringsFromInternalLinks() {
+		$responseBody = $this->getResponseBody();
+    $xml = new DOMDocument(); 
+  
+    // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
+    libxml_use_internal_errors(true);
+    $xml->loadHTML($responseBody); 
+    libxml_use_internal_errors(false);
+
+    $base = new Net_URL2($this->_url);
+
+    foreach($xml->getElementsByTagName('a') as $link) { 
+      $link_href = $link->getAttribute("href");
+
+      // check if it's an internal link not a subdomain
+      if ($this->isInternalLink($link_href)) {
+        // strip anything from the ? onwards
+        // https://stackoverflow.com/a/42476194/1668057 
+        $link->setAttribute('href', strtok($link_href, '?'));
+      } 
+    }
+
+    $responseBody = $xml->saveHtml();
+		$this->setResponseBody($responseBody);
+  }
+
+  public function stripWPMetaElements() {
+		$responseBody = $this->getResponseBody();
+    $xml = new DOMDocument(); 
+  
+    // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
+    libxml_use_internal_errors(true);
+    $xml->loadHTML($responseBody); 
+    libxml_use_internal_errors(false);
+
+    foreach($xml->getElementsByTagName('meta') as $meta) { 
+      $meta_name = $meta->getAttribute("name");
+
+      if (strpos($meta_name, 'generator') !== false) {
+        $meta->parentNode->removeChild($meta);
+      }
+    }
+
+    $responseBody = $xml->saveHtml(); 
+		$this->setResponseBody($responseBody);
+  }
+
+  public function stripWPLinkElements() {
+		$responseBody = $this->getResponseBody();
+    $xml = new DOMDocument(); 
+  
+    // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
+    libxml_use_internal_errors(true);
+    $xml->loadHTML($responseBody); 
+    libxml_use_internal_errors(false);
+
+    $relativeLinksToRemove = array(
+      'shortlink',
+      'canonical',
+      'pingback',
+      'alternate',
+      'EditURI',
+      'wlwmanifest',
+      'index',
+      'profile',
+      'prev',
+      'next',
+      'wlwmanifest',
+    );
+
+    foreach($xml->getElementsByTagName('link') as $link) { 
+      $link_rel = $link->getAttribute("rel");
+
+      if (in_array($link_rel, $relativeLinksToRemove)) {
+        $link->parentNode->removeChild($link);
+      } elseif (strpos($link_rel, '.w.org') !== false) {
+        $link->parentNode->removeChild($link);
+      }
+        
+    }
+
+    $responseBody = $xml->saveHtml(); 
+		$this->setResponseBody($responseBody);
+  }
+
 	public function cleanup( $wp_site_environment, $overwrite_slug_targets) {
     // TODO: skip binary file processing in func
 		$responseBody = $this->getResponseBody();
-
-		// strip WP identifiers from html files
-		// note: pregreplace over DOMDocument acceptable here as we're dealing with constant
-		// WP geerated output, not varying texts
-		if ($this->isHtml()) {
-				$responseBody = preg_replace('/<link rel=["\' ](shortlink|canonical|pingback|alternate|EditURI|wlwmanifest|index|profile|prev|next|wlwmanifest)["\' ](.*?)>/si', '', $responseBody);
-				$responseBody = preg_replace('/<meta name=["\' ]generator["\' ](.*?)>/si', '', $responseBody);
-				$responseBody = preg_replace('/<link(.*).w.org(.*)\/>/i', '', $responseBody);
-
-
-		}
 
 		if ($this->isCSS()) {
 			$regex = array(
@@ -1171,66 +1318,18 @@ class StaticHtmlOutput_UrlRequest
 			);
 
 			$responseBody = preg_replace(array_keys($regex), $regex, $responseBody);
+      $this->setResponseBody($responseBody);
 		}
 
-		// rewrite all the things, starting with longest paths down to shortest
-		$responseBody = str_replace(
-			array(
-				$wp_site_environment['wp_active_theme'],
-				addcslashes($wp_site_environment['wp_active_theme'], '/'),
-				$wp_site_environment['wp_themes'], 
-				addcslashes($wp_site_environment['wp_themes'], '/'),
-				$wp_site_environment['wp_uploads'], 
-				addcslashes($wp_site_environment['wp_uploads'], '/'),
-				$wp_site_environment['wp_plugins'], 
-				addcslashes($wp_site_environment['wp_plugins'], '/'),
-				$wp_site_environment['wp_content'], 
-				addcslashes($wp_site_environment['wp_content'], '/'),
-				$wp_site_environment['wp_inc'], 
-				addcslashes($wp_site_environment['wp_inc'], '/'),
-			),
-			array(
-				$overwrite_slug_targets['new_active_theme_path'],
-				addcslashes($overwrite_slug_targets['new_active_theme_path'], '/'),
-				$overwrite_slug_targets['new_themes_path'],
-				addcslashes($overwrite_slug_targets['new_themes_path'], '/'),
-				$overwrite_slug_targets['new_uploads_path'],
-				addcslashes($overwrite_slug_targets['new_uploads_path'], '/'),
-				$overwrite_slug_targets['new_plugins_path'],
-				addcslashes($overwrite_slug_targets['new_plugins_path'], '/'),
-				$overwrite_slug_targets['new_wp_content_path'],
-				addcslashes($overwrite_slug_targets['new_wp_content_path'], '/'),
-				$overwrite_slug_targets['new_wpinc_path'],
-				addcslashes($overwrite_slug_targets['new_wpinc_path'], '/'),
-			),
-			$responseBody);
+		if ($this->isRewritable()) {
 
-		// TODO: handle different url protocols
-		$pattern = "/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i";
-		// use preg_match_all to grab all the urls
-		preg_match_all($pattern, $responseBody, $urls_in_html);
+      if ($this->isHtml()) {
+        $this->stripWPMetaElements();
+        $this->stripWPLinkElements();
+      }
 
-		$site_url = $wp_site_environment['site_url'];
-
-		foreach( $urls_in_html as $urls ) {
-			foreach ($urls as $url) {
-				// check for query string in url
-				if ( preg_match('/\?(.+?)/', $url) ) {
-					// we have a query string, check if the domain matches ours
-					if ( strpos($url, $site_url) !== false ) {
-						// get the url without query string
-						$cleaned_url = preg_replace('/\?.*/', '', $url);
-
-						$responseBody = str_replace($url, $cleaned_url, $responseBody);
-					} 
-				}
-			}
-		} 
-
-
-		// TODO: strip comments from JS files
-
-		$this->setResponseBody($responseBody);
+      $this->rewriteWPPaths($wp_site_environment, $overwrite_slug_targets);
+    }
 	}
     
 	public function extractAllUrls($baseUrl) {
