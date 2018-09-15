@@ -121,7 +121,6 @@ class StaticHtmlOutput_UrlRequest {
 		$responseBody = $this->getResponseBody();
 
     if (strpos($responseBody, $escaped_site_url) !== false) {
-      error_log('ESCAPED URL FOUND ON PAGE!');
       $this->rewriteEscapedURLs($wp_site_environment, $overwrite_slug_targets);
     }
   }
