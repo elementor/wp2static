@@ -64,6 +64,7 @@ do_action( 'wpsho_fr_loaded' );
 	require_once 'library/StaticHtmlOutput/Options.php';
 	require_once 'library/StaticHtmlOutput/View.php';
 	require_once 'library/StaticHtmlOutput/WsLog.php';
+	require_once 'library/StaticHtmlOutput/UrlHelper.php';
 	require_once 'library/StaticHtmlOutput/UrlRequest.php';
 	require_once 'library/StaticHtmlOutput/FilesHelper.php';
 	require_once 'library/StaticHtmlOutput.php';
