@@ -557,15 +557,24 @@ EOHTML;
 
 
 $escaped_url_block = <<<EOHTML
+<!DOCTYPE html>
+<html lang="en-US" class="no-js no-svg">
+<body>
 <a href="http://172.17.0.3/wp-content/themes/twentyseventeen/afile.css">Some CSS link</a>
 
 <a href="http://someexternaldomain.com/wp-content/themes/twentyseventeen/afile.css">Some CSS link</a>
+</body>
+</html>
 EOHTML;
 
 $escaped_url_block_expected_rewrite = <<<EOHTML
+<!DOCTYPE html>
+<html lang="en-US" class="no-js no-svg"><body>
 <a href="http://172.17.0.3/contents/ui/theme/afile.css">Some CSS link</a>
 
 <a href="http://someexternaldomain.com/wp-content/themes/twentyseventeen/afile.css">Some CSS link</a>
+</body></html>
+
 EOHTML;
 
       $mockUrlResponse->method('getResponseBody')
@@ -580,7 +589,7 @@ EOHTML;
       $mockUrlResponse->expects($this->once())
          ->method('isCSS') ;
 
-      $mockUrlResponse->expects($this->once())
+      $mockUrlResponse->expects($this->exactly(2))
          ->method('getResponseBody') ;
 
       $mockUrlResponse->expects($this->once())
