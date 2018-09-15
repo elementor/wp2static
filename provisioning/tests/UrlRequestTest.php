@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require_once 'library/StaticHtmlOutput/UrlRequest.php';
+require_once 'library/URL2/URL2.php';
 
 use PHPUnit\Framework\TestCase;
 
@@ -584,7 +585,9 @@ EOHTML;
       $mockUrlResponse->cleanup($wp_site_environment, $overwrite_slug_targets);
     }
 
-    public function testURLNormalization(): void {
+    public function testURLNormalizationAtSiteRoot(): void {
+      // requires php-xml installed where running tests, ie apt install php-xml
+
       $url = 'http://someurl.com';	
       $basicAuth = null;
 
@@ -598,20 +601,31 @@ EOHTML;
         ->getMock();
 
 $input_html = <<<EOHTML
-<a href="http://172.17.0.3/wp-content/themes/twentyseventeen/afile.css">Some CSS link</a>
+<!DOCTYPE html>
+<html lang="en-US" class="no-js no-svg">
+<body>
+<a href="http://someurl.com/wp-content/themes/twentyseventeen/afile.css">Some CSS link</a>
 
 <a href="/wp-content/themes/twentyseventeen/anotherfile.css">Some CSS link</a>
 
 <a href="http://someexternaldomain.com/wp-content/themes/twentyseventeen/afile.css">Some CSS link</a>
+</body>
+</html>
 EOHTML;
 
+// NOTE: linebreaks not being preserved for html/body
 $expected_output_html = <<<EOHTML
-<a href="http://172.17.0.3/wp-content/themes/twentyseventeen/afile.css">Some CSS link</a>
+<!DOCTYPE html>
+<html lang="en-US" class="no-js no-svg"><body>
+<a href="http://someurl.com/wp-content/themes/twentyseventeen/afile.css">Some CSS link</a>
 
-<a href="http://172.17.0.3/wp-content/themes/twentyseventeen/anotherfile.css">Some CSS link</a>
+<a href="http://someurl.com/wp-content/themes/twentyseventeen/anotherfile.css">Some CSS link</a>
 
 <a href="http://someexternaldomain.com/wp-content/themes/twentyseventeen/afile.css">Some CSS link</a>
+</body></html>
+
 EOHTML;
+
 
       $mockUrlResponse->method('getResponseBody')
                ->willReturn($input_html);
