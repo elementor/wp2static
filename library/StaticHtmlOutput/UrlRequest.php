@@ -170,9 +170,10 @@ class StaticHtmlOutput_UrlRequest {
             addcslashes($overwrite_slug_targets['new_wpinc_path'], '/'),
           ),
           $url_to_change);
+
+        $element->setAttribute($attribute_to_change, $rewritten_url);
       }
       
-      $element->setAttribute($attribute_to_change, $rewritten_url);
     }
 
     $responseBody = $xml->saveHtml(); 
@@ -182,8 +183,7 @@ class StaticHtmlOutput_UrlRequest {
 
   public function isInternalLink($link) {
     // check link is same host as $this->url and not a subdomain
-
-    return true;
+    return parse_url($link, PHP_URL_HOST) == parse_url(get_option( 'siteurl' ), PHP_URL_HOST);
   }
 
   public function removeQueryStringsFromInternalLinks() {
@@ -293,6 +293,7 @@ class StaticHtmlOutput_UrlRequest {
       if ($this->isHtml()) {
         $this->stripWPMetaElements();
         $this->stripWPLinkElements();
+        $this->removeQueryStringsFromInternalLinks();
       }
 
       $this->rewriteWPPaths($wp_site_environment, $overwrite_slug_targets);
