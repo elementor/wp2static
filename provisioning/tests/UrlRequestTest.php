@@ -214,6 +214,7 @@ final class StaticHtmlOutput_UrlRequestTest extends TestCase {
 		// mock out only the unrelated methods
 		$mockUrlResponse = $this->getMockBuilder('StaticHtmlOutput_UrlRequest')
 			->setMethods([
+				'isRewritable',
 				'isHtml',
 				'isCSS',
 				'getResponseBody',
@@ -222,15 +223,21 @@ final class StaticHtmlOutput_UrlRequestTest extends TestCase {
 			->setConstructorArgs([$url, $basicAuth])
 			->getMock();
 
+		$mockUrlResponse->method('isRewritable')
+             ->willReturn(true);
+
 		// simulate a HTML file being detected
 		$mockUrlResponse->method('isHtml')
              ->willReturn(true);
+
 
 		$mockUrlResponse->method('isCSS')
              ->willReturn(false);
 
 $twenty_seventeen_home = <<<EOHTML
 <!DOCTYPE html>
+<html>
+<head>
 <link rel='stylesheet' id='twentyseventeen-style-css'  href='http://172.17.0.3/wp-content/themes/twentyseventeen/style.css?ver=4.9.6' type='text/css' media='all' />
 <!--[if lt IE 9]>
 <link rel='stylesheet' id='twentyseventeen-ie8-css'  href='http://172.17.0.3/wp-content/themes/twentyseventeen/assets/css/ie8.css?ver=1.0' type='text/css' media='all' />
@@ -263,6 +270,8 @@ $twenty_seventeen_home = <<<EOHTML
 		
 		<div class="site-branding-text">
 							<h1 class="site-title"><a href="http://172.17.0.3/" rel="home">wp plugindev</a></h1>
+</body>
+</html>
 EOHTML;
 
 $twenty_seventeen_home_expected_rewrite = <<<EOHTML
@@ -312,7 +321,7 @@ EOHTML;
 		$mockUrlResponse->expects($this->once())
 			 ->method('isCSS') ;
 
-		$mockUrlResponse->expects($this->once())
+		$mockUrlResponse->expects($this->exactly(3))
 			 ->method('getResponseBody') ;
 
 		// assert that setResponseBody() is called with the correctly rewritten HTML
@@ -541,7 +550,7 @@ $escaped_url_block = <<<EOHTML
 EOHTML;
 
 $escaped_url_block_expected_rewrite = <<<EOHTML
-<a href="http://172.17.0.3/content/ui/theme/afile.css">Some CSS link</a>
+<a href="http://172.17.0.3/contents/ui/theme/afile.css">Some CSS link</a>
 
 <a href="http://someexternaldomain.com/wp-content/themes/twentyseventeen/afile.css">Some CSS link</a>
 EOHTML;
@@ -569,7 +578,7 @@ EOHTML;
         'wp_uploads' =>  '/wp-content/uploads',	
         'wp_plugins' =>  '/wp-content/plugins',	
         'wp_themes' =>  '/wp-content/themes',	
-        'wp_active_theme' =>  '/wp-content/themes/onepress',	
+        'wp_active_theme' =>  '/wp-content/themes/twentyseventeen',	
         'site_url' =>  'http://172.17.0.3'
       );
 
