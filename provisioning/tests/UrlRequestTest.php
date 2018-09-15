@@ -25,6 +25,15 @@ final class StaticHtmlOutput_UrlRequestTest extends TestCase {
 				return false;
 			}
 
+			// dummy up the is_wp_error call 
+			function get_option($argument) {
+        if ($argument == 'siteurl') {
+          return 'http://172.17.0.3';
+        }
+
+				return '';
+			}
+
 			function esc_attr($some_string) {
 				// TODO: replicate esc_attr here
 				return $some_string;
@@ -542,6 +551,7 @@ EOHTML;
     public function testDontRewriteExternalDomains(): void {
       $url = 'http://someurl.com';	
       $basicAuth = null;
+
 
       // mock out only the unrelated methods
       $mockUrlResponse = $this->getMockBuilder('StaticHtmlOutput_UrlRequest')
