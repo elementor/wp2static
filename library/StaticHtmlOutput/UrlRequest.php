@@ -39,14 +39,9 @@ class StaticHtmlOutput_UrlRequest {
 	}
 
 	public function setResponseBody($newBody) {
-		if (is_array($this->response))
-		{
+		if (is_array($this->response)) {
 			$this->response['body'] = $newBody;
 		}
-	}
-	
-	public function getResponseBody() {
-		return isset($this->response['body']) ? $this->response['body'] : '';
 	}
 	
 	public function getContentType() {
@@ -90,12 +85,11 @@ class StaticHtmlOutput_UrlRequest {
       return;
     }
  
-		$responseBody = $this->getResponseBody();
     $xml = new DOMDocument(); 
   
     // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
     libxml_use_internal_errors(true);
-    $xml->loadHTML($responseBody); 
+    $xml->loadHTML($this->response['body']); 
     libxml_use_internal_errors(false);
 
     $base = new Net_URL2($this->url);
@@ -108,9 +102,7 @@ class StaticHtmlOutput_UrlRequest {
       $link->setAttribute('href', $abs);
     }
 
-    $responseBody = $xml->saveHtml(); 
-
-		$this->setResponseBody($responseBody);
+		$this->setResponseBody($xml->saveHtml());
   }
 
   public function detectEscapedSiteURLs($wp_site_environment, $overwrite_slug_targets) {
@@ -118,9 +110,7 @@ class StaticHtmlOutput_UrlRequest {
     // but the PHP error log will escape again and show http:\\/\\/172.18.0.3
     $escaped_site_url = addcslashes(get_option('siteurl'), '/');
 
-		$responseBody = $this->getResponseBody();
-
-    if (strpos($responseBody, $escaped_site_url) !== false) {
+    if (strpos($this->response['body'], $escaped_site_url) !== false) {
       $this->rewriteEscapedURLs($wp_site_environment, $overwrite_slug_targets);
     }
   }
@@ -133,7 +123,6 @@ class StaticHtmlOutput_UrlRequest {
     from the onepress(?) theme, for example
 
     */
-		$responseBody = $this->getResponseBody();
 
     $rewritten_source = str_replace(
       array(
@@ -152,18 +141,17 @@ class StaticHtmlOutput_UrlRequest {
         addcslashes($overwrite_slug_targets['new_wp_content_path'], '/'),
         addcslashes($overwrite_slug_targets['new_wpinc_path'], '/'),
       ),
-      $responseBody);
+      $this->response['body']);
 
       $this->setResponseBody($rewritten_source);
   }
 
 	public function rewriteWPPaths($wp_site_environment, $overwrite_slug_targets) {
-		$responseBody = $this->getResponseBody();
     $xml = new DOMDocument(); 
   
     // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
     libxml_use_internal_errors(true);
-    $xml->loadHTML($responseBody); 
+    $xml->loadHTML($this->response['body']); 
     libxml_use_internal_errors(false);
 
     // NOTE: drier code but costlier memory usage
@@ -208,9 +196,7 @@ class StaticHtmlOutput_UrlRequest {
       
     }
 
-    $responseBody = $xml->saveHtml(); 
-
-		$this->setResponseBody($responseBody);
+		$this->setResponseBody($xml->saveHtml());
   }
 
   public function isInternalLink($link) {
@@ -219,15 +205,12 @@ class StaticHtmlOutput_UrlRequest {
   }
 
   public function removeQueryStringsFromInternalLinks() {
-		$responseBody = $this->getResponseBody();
     $xml = new DOMDocument(); 
   
     // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
     libxml_use_internal_errors(true);
-    $xml->loadHTML($responseBody); 
+    $xml->loadHTML($this->response['body']); 
     libxml_use_internal_errors(false);
-
-    $base = new Net_URL2($this->url);
 
     foreach($xml->getElementsByTagName('a') as $link) { 
       $link_href = $link->getAttribute("href");
@@ -240,17 +223,15 @@ class StaticHtmlOutput_UrlRequest {
       } 
     }
 
-    $responseBody = $xml->saveHtml();
-		$this->setResponseBody($responseBody);
+		$this->setResponseBody($xml->saveHtml());
   }
 
   public function stripWPMetaElements() {
-		$responseBody = $this->getResponseBody();
     $xml = new DOMDocument(); 
   
     // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
     libxml_use_internal_errors(true);
-    $xml->loadHTML($responseBody); 
+    $xml->loadHTML($this->response['body']); 
     libxml_use_internal_errors(false);
 
     foreach($xml->getElementsByTagName('meta') as $meta) { 
@@ -261,17 +242,14 @@ class StaticHtmlOutput_UrlRequest {
       }
     }
 
-    $responseBody = $xml->saveHtml(); 
-		$this->setResponseBody($responseBody);
+		$this->setResponseBody($xml->saveHtml());
   }
 
   public function stripWPLinkElements() {
-		$responseBody = $this->getResponseBody();
     $xml = new DOMDocument(); 
   
-    // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
     libxml_use_internal_errors(true);
-    $xml->loadHTML($responseBody); 
+    $xml->loadHTML($this->response['body']); 
     libxml_use_internal_errors(false);
 
     $relativeLinksToRemove = array(
@@ -299,14 +277,11 @@ class StaticHtmlOutput_UrlRequest {
         
     }
 
-    $responseBody = $xml->saveHtml(); 
-		$this->setResponseBody($responseBody);
+		$this->setResponseBody($xml->saveHtml());
   }
 
 	public function cleanup($wp_site_environment, $overwrite_slug_targets) {
     // TODO: skip binary file processing in func
-		$responseBody = $this->getResponseBody();
-
 		if ($this->isCSS()) {
 			$regex = array(
 			"`^([\t\s]+)`ism"=>'',
@@ -316,8 +291,8 @@ class StaticHtmlOutput_UrlRequest {
 			"`(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+`ism"=>"\n"
 			);
 
-			$responseBody = preg_replace(array_keys($regex), $regex, $responseBody);
-      $this->setResponseBody($responseBody);
+			$rewritten_CSS = preg_replace(array_keys($regex), $regex, $this->response['body']);
+      $this->setResponseBody($rewritten_CSS);
 		}
 
 		if ($this->isRewritable()) {
@@ -409,7 +384,7 @@ class StaticHtmlOutput_UrlRequest {
 			$newDomain = str_replace('http://', '', $newDomain);
 			$newDomain = str_replace('//', '', $newDomain);
 
-			$responseBody = $this->getResponseBody();
+			$responseBody = $this->response['body'];
 
 			if ($absolutePaths) {
 
