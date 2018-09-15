@@ -360,6 +360,7 @@ EOHTML;
 		// mock out only the unrelated methods
 		$mockUrlResponse = $this->getMockBuilder('StaticHtmlOutput_UrlRequest')
 			->setMethods([
+				'isRewritable',
 				'isHtml',
 				'isCSS',
 				'getResponseBody',
@@ -370,17 +371,28 @@ EOHTML;
 
 
 $escaped_url_block = <<<EOHTML
+<!DOCTYPE html>
+<html lang="en-US" class="no-js no-svg">
+<body>
 <section  id="hero"  data-images="[&quot;https:\/\/mysite.example.com\/wp-content\/themes\/onepress\/assets\/images\/hero5.jpg&quot;]"             class="hero-slideshow-wrapper hero-slideshow-normal">
+</section>
+</body>
+</html>
 EOHTML;
 
+
 $escaped_url_block_expected_rewrite = <<<EOHTML
-<section  id="hero"  data-images="[&quot;https:\/\/mysite.example.com\/contents\/ui\/theme\/assets\/images\/hero5.jpg&quot;]"             class="hero-slideshow-wrapper hero-slideshow-normal">
+<!DOCTYPE html>
+<html lang="en-US" class="no-js no-svg"></body>
+<section id="hero" data-images='["https:\/\/mysite.example.com\/contents\/ui\/theme\/assets\/images\/hero5.jpg"]' class="hero-slideshow-wrapper hero-slideshow-normal"></section></body></html>
 EOHTML;
 
 		// mock getResponseBody with testable HTML content
 		$mockUrlResponse->method('getResponseBody')
              ->willReturn($escaped_url_block);
 
+    $mockUrlResponse->method('isRewritable')
+             ->willReturn(true);
 
 		$mockUrlResponse->expects($this->once())
 			 ->method('isHtml') ;
@@ -388,7 +400,7 @@ EOHTML;
 		$mockUrlResponse->expects($this->once())
 			 ->method('isCSS') ;
 
-		$mockUrlResponse->expects($this->once())
+		$mockUrlResponse->expects($this->exactly(2))
 			 ->method('getResponseBody') ;
 
 		// assert that setResponseBody() is called with the correctly rewritten HTML
@@ -534,6 +546,7 @@ EOHTML;
       // mock out only the unrelated methods
       $mockUrlResponse = $this->getMockBuilder('StaticHtmlOutput_UrlRequest')
         ->setMethods([
+          'isRewritable',
           'isHtml',
           'isCSS',
           'getResponseBody',
@@ -557,6 +570,9 @@ EOHTML;
 
       $mockUrlResponse->method('getResponseBody')
                ->willReturn($escaped_url_block);
+
+      $mockUrlResponse->method('isRewritable')
+               ->willReturn(true);
 
       $mockUrlResponse->expects($this->once())
          ->method('isHtml') ;
