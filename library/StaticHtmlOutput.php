@@ -782,7 +782,7 @@ public function crawlABitMore($viaCLI = false) {
   $urlResponse = new StaticHtmlOutput_UrlRequest($currentUrl, $basicAuth);
   $urlResponseForFurtherExtraction = new StaticHtmlOutput_UrlRequest($currentUrl, $basicAuth);
 
-  if ($urlResponse->checkResponse() == 'FAIL') {
+  if ($urlResponse->response == 'FAIL') {
     WsLog::l('FAILED TO CRAWL FILE: ' . $currentUrl);
   } else {
     file_put_contents($crawled_links_file, $currentUrl . PHP_EOL, FILE_APPEND | LOCK_EX);
@@ -844,7 +844,7 @@ public function crawlABitMore($viaCLI = false) {
 
       $urlResponse = new StaticHtmlOutput_UrlRequest($newUrl, $basicAuth);
 
-      if ($urlResponse->checkResponse() == 'FAIL') {
+      if ($urlResponse->response == 'FAIL') {
         WsLog::l('FAILED TO CRAWL FILE: ' . $newUrl);
       } else {
         file_put_contents($crawled_links_file, $newUrl . PHP_EOL, FILE_APPEND | LOCK_EX);
@@ -1405,7 +1405,7 @@ public function crawlABitMore($viaCLI = false) {
 	}
 
 	protected function _saveUrlData(StaticHtmlOutput_UrlRequest $url, $archiveDir) {
-		$urlInfo = parse_url($url->getUrl());
+		$urlInfo = parse_url($url->url);
 		$pathInfo = array();
 
 		//WsLog::l('urlInfo :' . $urlInfo['path']);
@@ -1472,7 +1472,7 @@ public function crawlABitMore($viaCLI = false) {
 		} else {
 			// guess mime type
 			
-			$fileExtension = $url->getExtensionFromContentType(); 
+			$fileExtension = StaticHtmlOutput_UrlHelper::getExtensionFromContentType($url->getContentType()); 
 		}
 
 		$fileName = '';
