@@ -113,6 +113,51 @@ class StaticHtmlOutput_UrlRequest {
 		$this->setResponseBody($responseBody);
   }
 
+  public function detectEscapedSiteURLs($wp_site_environment, $overwrite_slug_targets) {
+    // NOTE: this does return the expected http:\/\/172.18.0.3
+    // but the PHP error log will escape again and show http:\\/\\/172.18.0.3
+    $escaped_site_url = addcslashes(get_option('siteurl'), '/');
+
+		$responseBody = $this->getResponseBody();
+
+    if (strpos($responseBody, $escaped_site_url) !== false) {
+      error_log('ESCAPED URL FOUND ON PAGE!');
+      $this->rewriteEscapedURLs($wp_site_environment, $overwrite_slug_targets);
+    }
+  }
+
+  public function rewriteEscapedURLs($wp_site_environment, $overwrite_slug_targets) {
+    /* this function will be a bit more costly. To cover bases like:
+
+<section  id="hero"  data-images="[&quot;https:\/\/mysite.example.com\/wp-content\/themes\/onepress\/assets\/images\/hero5.jpg&quot;]"             class="hero-slideshow-wrapper hero-slideshow-normal">
+
+    from the onepress(?) theme, for example
+
+    */
+		$responseBody = $this->getResponseBody();
+
+    $rewritten_source = str_replace(
+      array(
+        addcslashes($wp_site_environment['wp_active_theme'], '/'),
+        addcslashes($wp_site_environment['wp_themes'], '/'),
+        addcslashes($wp_site_environment['wp_uploads'], '/'),
+        addcslashes($wp_site_environment['wp_plugins'], '/'),
+        addcslashes($wp_site_environment['wp_content'], '/'),
+        addcslashes($wp_site_environment['wp_inc'], '/'),
+      ),
+      array(
+        addcslashes($overwrite_slug_targets['new_active_theme_path'], '/'),
+        addcslashes($overwrite_slug_targets['new_themes_path'], '/'),
+        addcslashes($overwrite_slug_targets['new_uploads_path'], '/'),
+        addcslashes($overwrite_slug_targets['new_plugins_path'], '/'),
+        addcslashes($overwrite_slug_targets['new_wp_content_path'], '/'),
+        addcslashes($overwrite_slug_targets['new_wpinc_path'], '/'),
+      ),
+      $responseBody);
+
+      $this->setResponseBody($rewritten_source);
+  }
+
 	public function rewriteWPPaths($wp_site_environment, $overwrite_slug_targets) {
 		$responseBody = $this->getResponseBody();
     $xml = new DOMDocument(); 
@@ -143,31 +188,19 @@ class StaticHtmlOutput_UrlRequest {
         $rewritten_url = str_replace(
           array(
             $wp_site_environment['wp_active_theme'],
-            addcslashes($wp_site_environment['wp_active_theme'], '/'),
             $wp_site_environment['wp_themes'], 
-            addcslashes($wp_site_environment['wp_themes'], '/'),
             $wp_site_environment['wp_uploads'], 
-            addcslashes($wp_site_environment['wp_uploads'], '/'),
             $wp_site_environment['wp_plugins'], 
-            addcslashes($wp_site_environment['wp_plugins'], '/'),
             $wp_site_environment['wp_content'], 
-            addcslashes($wp_site_environment['wp_content'], '/'),
             $wp_site_environment['wp_inc'], 
-            addcslashes($wp_site_environment['wp_inc'], '/'),
           ),
           array(
             $overwrite_slug_targets['new_active_theme_path'],
-            addcslashes($overwrite_slug_targets['new_active_theme_path'], '/'),
             $overwrite_slug_targets['new_themes_path'],
-            addcslashes($overwrite_slug_targets['new_themes_path'], '/'),
             $overwrite_slug_targets['new_uploads_path'],
-            addcslashes($overwrite_slug_targets['new_uploads_path'], '/'),
             $overwrite_slug_targets['new_plugins_path'],
-            addcslashes($overwrite_slug_targets['new_plugins_path'], '/'),
             $overwrite_slug_targets['new_wp_content_path'],
-            addcslashes($overwrite_slug_targets['new_wp_content_path'], '/'),
             $overwrite_slug_targets['new_wpinc_path'],
-            addcslashes($overwrite_slug_targets['new_wpinc_path'], '/'),
           ),
           $url_to_change);
 
@@ -271,7 +304,7 @@ class StaticHtmlOutput_UrlRequest {
 		$this->setResponseBody($responseBody);
   }
 
-	public function cleanup( $wp_site_environment, $overwrite_slug_targets) {
+	public function cleanup($wp_site_environment, $overwrite_slug_targets) {
     // TODO: skip binary file processing in func
 		$responseBody = $this->getResponseBody();
 
@@ -294,9 +327,10 @@ class StaticHtmlOutput_UrlRequest {
         $this->stripWPMetaElements();
         $this->stripWPLinkElements();
         $this->removeQueryStringsFromInternalLinks();
+        $this->rewriteWPPaths($wp_site_environment, $overwrite_slug_targets);
+        $this->detectEscapedSiteURLs($wp_site_environment, $overwrite_slug_targets);
       }
 
-      $this->rewriteWPPaths($wp_site_environment, $overwrite_slug_targets);
     }
 	}
     
