@@ -1494,7 +1494,7 @@ public function crawlABitMore($viaCLI = false) {
 		$fileName = preg_replace('/(\/+)/', '/', $fileName);
 
 
-		$fileContents = $url->getResponseBody();
+		$fileContents = $url->response['body'];
 		
 		// TODO: what was the 'F' check for?1? Comments exist for a reason
 		if ($fileContents != '' && $fileContents != 'F') {
