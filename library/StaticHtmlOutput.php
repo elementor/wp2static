@@ -751,10 +751,6 @@ public function recursive_copy($srcdir, $dstdir) {
 	}
 
 public function crawlABitMore($viaCLI = false) {
-  unset($t);
-  $t['start'] = microtime(true); 
-
-
   $initial_crawl_list_file = $this->_uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST';
   $crawled_links_file = $this->_uploadsPath . '/WP-STATIC-CRAWLED-LINKS';
   $initial_crawl_list = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
@@ -783,9 +779,10 @@ public function crawlABitMore($viaCLI = false) {
       'basicAuthUser' => $this->_basicAuthUser,
       'basicAuthPassword' => $this->_basicAuthPassword);
 
-  $t['start_response'] = microtime(true);
+  // PERF: ~ 36% of function time when HTML content (50% when other)
   $urlResponse = new StaticHtmlOutput_UrlRequest($currentUrl, $basicAuth);
-  $t['start_second_response'] = microtime(true);
+
+  // PERF: ~ 36% of function time when HTML content (50% when other)
   $urlResponseForFurtherExtraction = new StaticHtmlOutput_UrlRequest($currentUrl, $basicAuth);
 
   if ($urlResponse->response == 'FAIL') {
@@ -823,16 +820,14 @@ public function crawlABitMore($viaCLI = false) {
       'new_wpinc_path' => '/' . $this->_rewriteWPINC,
       );
 
-  $t['normalize_urls'] = microtime(true);
   $urlResponse->normalizeURLs();
 
-  $t['cleanup'] = microtime(true);
+  // PERF: ~ 18% of function time
   $urlResponse->cleanup(
       $wp_site_environment,
       $overwrite_slug_targets
       );
 
-  $t['replace_base_url'] = microtime(true);
   // TODO: if it replaces baseurl here, it will be searching links starting with that...
   // TODO: shouldn't be doing this here...
   $urlResponse->replaceBaseUrl($baseUrl, $this->_baseUrl, $this->_allowOfflineUsage, $this->_useRelativeURLs, $this->_useBaseHref);
@@ -840,7 +835,6 @@ public function crawlABitMore($viaCLI = false) {
   $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
   $this->_saveUrlData($urlResponse, $archiveDir);
 
-  $t['extract_urls'] = microtime(true);
   // try extracting urls from a response that hasn't been changed yet...
   // this seems to do it...
   foreach ($urlResponseForFurtherExtraction->extractAllUrls($baseUrl) as $newUrl) {
@@ -887,24 +881,21 @@ public function crawlABitMore($viaCLI = false) {
     $this->crawl_site($viaCLI);
   }
 
-  $str_result_bench=mini_bench_to($t);
-  error_log($str_result_bench); // string return
-  $tab_result_bench=mini_bench_to($t,true);
-//  error_log(var_export($tab_result_bench,true));
-
   // reclaim memory after each crawl
   $urlResponse = null;
   unset($urlResponse);
 }
 
-	public function crawl_site($viaCLI = false) {
-		$initial_crawl_list_file = $this->_uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST';
-        $initial_crawl_list = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
+  public function crawl_site($viaCLI = false) {
+    // PERF: 1% of function time
+    $initial_crawl_list_file = $this->_uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST';
+    $initial_crawl_list = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
 
-		if ( !empty($initial_crawl_list) ) {
-            $this->crawlABitMore($viaCLI);
-		} 
-    }
+    // PERF: 99% of function time
+    if ( !empty($initial_crawl_list) ) {
+      $this->crawlABitMore($viaCLI);
+    } 
+  }
 
     public function create_zip() {
         $archiveDir = file_get_contents($this->_uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');

@@ -5,9 +5,11 @@ class StaticHtmlOutput_UrlRequest {
 
 	public function __construct($url, $basicAuth) {
 		$this->url = filter_var(trim($url), FILTER_VALIDATE_URL);
+		$this->response = '';
+    $this->xml_doc = null;
 
 		$args = array(
-			'timeout' => 300, //set a long time out
+			'timeout' => 20, // set timeout to within shared hosting common execution limit
 			'sslverify'   => apply_filters( 'https_local_ssl_verify', false )
 		);
 
@@ -18,12 +20,12 @@ class StaticHtmlOutput_UrlRequest {
 		
 		$response = wp_remote_get( $this->url, $args); 
 
-		$this->response = '';
 
 		if (is_wp_error($response)) {
-			error_log('error in wp_remote_get response for URL:');
-			error_log($this->url);
+			error_log('error in wp_remote_get response for URL:' . $this->url);
 			error_log(print_r($response, true));
+      WsLog::l('error in wp_remote_get response for URL: ' . $this->url);
+			WsLog::l(print_r($response, true));
 			$this->response = 'FAIL';
 		} else {
 			$this->response = $response;
@@ -147,15 +149,8 @@ class StaticHtmlOutput_UrlRequest {
   }
 
 	public function rewriteWPPaths($wp_site_environment, $overwrite_slug_targets) {
-    $xml = new DOMDocument(); 
-  
-    // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
-    libxml_use_internal_errors(true);
-    $xml->loadHTML($this->response['body']); 
-    libxml_use_internal_errors(false);
-
     // NOTE: drier code but costlier memory usage
-    foreach($xml->getElementsByTagName('*') as $element) { 
+    foreach($this->xml_doc->getElementsByTagName('*') as $element) { 
       $attribute_to_change = '';
       $url_to_change = '';
 
@@ -193,10 +188,7 @@ class StaticHtmlOutput_UrlRequest {
 
         $element->setAttribute($attribute_to_change, $rewritten_url);
       }
-      
     }
-
-		$this->setResponseBody($xml->saveHtml());
   }
 
   public function isInternalLink($link) {
@@ -205,14 +197,7 @@ class StaticHtmlOutput_UrlRequest {
   }
 
   public function removeQueryStringsFromInternalLinks() {
-    $xml = new DOMDocument(); 
-  
-    // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
-    libxml_use_internal_errors(true);
-    $xml->loadHTML($this->response['body']); 
-    libxml_use_internal_errors(false);
-
-    foreach($xml->getElementsByTagName('a') as $link) { 
+    foreach($this->xml_doc->getElementsByTagName('a') as $link) { 
       $link_href = $link->getAttribute("href");
 
       // check if it's an internal link not a subdomain
@@ -222,19 +207,10 @@ class StaticHtmlOutput_UrlRequest {
         $link->setAttribute('href', strtok($link_href, '?'));
       } 
     }
-
-		$this->setResponseBody($xml->saveHtml());
   }
 
   public function stripWPMetaElements() {
-    $xml = new DOMDocument(); 
-  
-    // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
-    libxml_use_internal_errors(true);
-    $xml->loadHTML($this->response['body']); 
-    libxml_use_internal_errors(false);
-
-    foreach($xml->getElementsByTagName('meta') as $meta) { 
+    foreach($this->xml_doc->getElementsByTagName('meta') as $meta) { 
       $meta_name = $meta->getAttribute("name");
 
       if (strpos($meta_name, 'generator') !== false) {
@@ -242,16 +218,9 @@ class StaticHtmlOutput_UrlRequest {
       }
     }
 
-		$this->setResponseBody($xml->saveHtml());
   }
 
   public function stripWPLinkElements() {
-    $xml = new DOMDocument(); 
-  
-    libxml_use_internal_errors(true);
-    $xml->loadHTML($this->response['body']); 
-    libxml_use_internal_errors(false);
-
     $relativeLinksToRemove = array(
       'shortlink',
       'canonical',
@@ -266,7 +235,7 @@ class StaticHtmlOutput_UrlRequest {
       'wlwmanifest',
     );
 
-    foreach($xml->getElementsByTagName('link') as $link) { 
+    foreach($this->xml_doc->getElementsByTagName('link') as $link) { 
       $link_rel = $link->getAttribute("rel");
 
       if (in_array($link_rel, $relativeLinksToRemove)) {
@@ -274,13 +243,11 @@ class StaticHtmlOutput_UrlRequest {
       } elseif (strpos($link_rel, '.w.org') !== false) {
         $link->parentNode->removeChild($link);
       }
-        
     }
-
-		$this->setResponseBody($xml->saveHtml());
   }
 
 	public function cleanup($wp_site_environment, $overwrite_slug_targets) {
+    // PERF: ~ 30ms for HTML or CSS
     // TODO: skip binary file processing in func
 		if ($this->isCSS()) {
 			$regex = array(
@@ -296,16 +263,33 @@ class StaticHtmlOutput_UrlRequest {
 		}
 
 		if ($this->isRewritable()) {
-
       if ($this->isHtml()) {
+
+        // instantiate the XML body here 
+        $this->xml_doc = new DOMDocument(); 
+      
+        // PERF: 70% of function time
+        // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
+        libxml_use_internal_errors(true);
+        $this->xml_doc->loadHTML($this->response['body']); 
+        libxml_use_internal_errors(false);
+        
+
+        // PERF: 22% of function time
         $this->stripWPMetaElements();
+        // PERF: 20% of function time
         $this->stripWPLinkElements();
+        // PERF: 25% of function time
         $this->removeQueryStringsFromInternalLinks();
+        // PERF: 30% of function time
         $this->rewriteWPPaths($wp_site_environment, $overwrite_slug_targets);
         $this->detectEscapedSiteURLs($wp_site_environment, $overwrite_slug_targets);
-      }
 
+        // write the response body here
+        $this->setResponseBody($this->xml_doc->saveHtml());
+      }
     }
+
 	}
     
 	public function extractAllUrls($baseUrl) {
