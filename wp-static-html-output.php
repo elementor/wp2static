@@ -79,6 +79,13 @@ do_action( 'wpsho_fr_loaded' );
 		require_once 'library/StaticHtmlOutput/S3.php';
 	}
 
+  // debug/benchmarking utilities
+	//if ( getenv('DEVELOPER_MODE') ) {
+	if ( true ) {
+		require_once 'library/StaticHtmlOutput/DeveloperTools.php';
+		require_once 'library/StaticHtmlOutput/Ubench.php';
+	}
+
 	StaticHtmlOutput_Controller::init( __FILE__ );
 
 	/**

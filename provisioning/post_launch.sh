@@ -198,3 +198,7 @@ echo "WordPress installed and accessible on $containerIP"
 echo "WordPress siteurl:"
 
 wp --allow-root option get siteurl
+
+echo "reloading apache"
+echo 'ErrorLogFormat "\n \"%M\" \n  "' >> /etc/apache2/apache2.conf
+service apache2 reload
