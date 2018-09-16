@@ -80,8 +80,7 @@ do_action( 'wpsho_fr_loaded' );
 	}
 
   // debug/benchmarking utilities
-	//if ( getenv('DEVELOPER_MODE') ) {
-	if ( true ) {
+	if ( getenv('DEVELOPER_MODE') ) {
 		require_once 'library/StaticHtmlOutput/DeveloperTools.php';
 		require_once 'library/StaticHtmlOutput/Ubench.php';
 	}
