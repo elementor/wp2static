@@ -12,10 +12,13 @@ if ($settings == '') { $settings = 'no existing settings found'; }
 <script>
 var settings = '<?php echo $settings; ?>';
 var uploadsDir = '<?php echo $this->wpUploadsDir; ?>';
+
+<?php $upload_dir = wp_upload_dir();?>
+var wp_uploads_path = '<?php echo $upload_dir['basedir']; ?>';
 var logFileURL = uploadsDir + '/WP-STATIC-EXPORT-LOG';
 var pluginDir = '<?php echo $this->wpPluginDir; ?>';
 var basedir = '<?php echo $this->basedir; ?>';
-var wpSiteURL = '<?php echo get_site_url(); ?>';
+var wpSiteURL = '<?php echo get_site_url(); ?>/';
 var exportTargets = [];
 var current_deployment_method = 'folder';
 var exportCommenceTime = '';
@@ -32,7 +35,6 @@ jQuery(document).ready(function($){
 	function callToAction() {
 		// check how many successful exports and present user with a relevant call to action
         $('.hiddenActionField').val('wp_static_html_output_ajax');
-        $('#basedir').val(basedir);
         $('#hiddenAJAXAction').val('get_number_of_successes');
         archives = $('.options-form');
         newSettings = $(".options-form").serialize();
@@ -243,7 +245,7 @@ jQuery(document).ready(function($){
 
 			// set hidden baseURL field to current option
       if (current_deployment_method === 'folder') {
-        $('#baseUrl').val( wpSiteURL + '/' + $('#targetFolder').val() + '/'); 
+        $('#baseUrl').val( wpSiteURL + $('#targetFolder').val() + '/'); 
       } else {
         $('#baseUrl').val( $('#baseUrl-' + current_deployment_method).val() ); 
       }
@@ -252,8 +254,8 @@ jQuery(document).ready(function($){
 			base_url_previews.text(base_url.replace(/\/$/, "") + '/');
 
 			// update the clickable preview url in folder options
-			$('#folderPreviewURL').text(wpSiteURL + '/' + $('#targetFolder').val() + '/');
-			$('#folderPreviewURL').attr('href', (wpSiteURL + '/' + $('#targetFolder').val() + '/'));
+			$('#folderPreviewURL').text(wpSiteURL + $('#targetFolder').val() + '/');
+			$('#folderPreviewURL').attr('href', (wpSiteURL + $('#targetFolder').val() + '/'));
 		}
 
 
@@ -522,6 +524,7 @@ jQuery(document).ready(function($){
 
         return false;
       }
+
 
       showProgress();
 
@@ -877,6 +880,11 @@ jQuery(document).ready(function($){
 			
         });
     }
+
+  // populate some hidden fields
+  $('#basedir').val(basedir);
+  $('#wp_site_url').val(wpSiteURL);
+  $('#wp_uploads_path').val(wp_uploads_path);
 
 	// if rewrite values aren't set yet, populate fields with defaults
 	if ( $("#rewriteWPCONTENT").val() == '' || $("#rewriteWPCONTENT").val() == 'undefined') {

@@ -275,6 +275,8 @@ http://172.17.0.3/my_pricelist.pdf</pre>
             <?php wp_nonce_field($this->onceAction) ?>
 						<input id="formActionHiddenField" class="hiddenActionField" type="hidden" name="action" value="wp_static_html_output_ajax" />
 						<input id="basedir" type="hidden" name="basedir" value="" />
+						<input id="wp_site_url" type="hidden" name="wp_site_url" value="" />
+						<input id="wp_uploads_path" type="hidden" name="wp_uploads_path" value="" />
 						<input id="hiddenNonceField" type="hidden" name="nonce" value="<?php echo $ajax_nonce; ?>" />
 						<input id="hiddenAJAXAction" type="hidden" name="ajax_action" value="" />
 						<input name="staticExportSettings" class="hiddenSettingsField" type="hidden" name="action" value="" />

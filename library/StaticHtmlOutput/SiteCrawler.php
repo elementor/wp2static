@@ -17,7 +17,9 @@ class SiteCrawler {
 
     // WP env settings
     $this->baseUrl = $_POST['baseUrl'];
-    $this->basedir = $_POST['basedir'];
+    $this->basedir = $_POST['basedir']; // // TODO: location of uploads dir?
+    $this->wp_site_url = $_POST['wp_site_url']; 
+    $this->uploads_path = $_POST['wp_uploads_path'];
 
     // processing related settings
     $this->rewriteWPCONTENT = $_POST['rewriteWPCONTENT'];
@@ -43,8 +45,6 @@ class SiteCrawler {
 
   public function crawl_site($viaCLI = false) {
 
-    $this->uploads_path = '/var/www/html/wp-content/uploads';
-
     // PERF: 1% of function time
     $initial_crawl_list_file = $this->uploads_path . '/WP-STATIC-INITIAL-CRAWL-LIST';
     $initial_crawl_list = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
@@ -58,7 +58,6 @@ class SiteCrawler {
   public function crawlABitMore($viaCLI = false) {
     require_once dirname(__FILE__) . '/../StaticHtmlOutput/WsLog.php';
 
-    // TODO: use this somewhere
     $archiveDir = file_get_contents($this->uploads_path . '/WP-STATIC-CURRENT-ARCHIVE');
 
     $initial_crawl_list_file = $this->uploads_path . '/WP-STATIC-INITIAL-CRAWL-LIST';
@@ -123,7 +122,7 @@ class SiteCrawler {
         'wp_plugins' =>  str_replace(ABSPATH, '/', WP_PLUGIN_DIR),	
         'wp_themes' =>  str_replace(ABSPATH, '/', get_theme_root()),	
         'wp_active_theme' =>  str_replace(home_url(), '', get_template_directory_uri()),	
-        'site_url' =>  get_site_url(),
+        'site_url' =>  $this->wp_site_url,
         );
 
     $new_wp_content = '/' . $this->rewriteWPCONTENT;
@@ -158,7 +157,7 @@ class SiteCrawler {
             );
 
         $processor->replaceBaseUrl(
-          $baseUrl,
+          $this->wp_site_url,
           $this->baseUrl,
           $this->allowOfflineUsage,
           $this->useRelativeURLs,
