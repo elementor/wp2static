@@ -43,9 +43,15 @@ class CSSProcessor {
     require_once dirname(__FILE__) . '/../CSSParser/CSSList/Document.php';
     require_once dirname(__FILE__) . '/../CSSParser/CSSList/KeyFrame.php';
 
-    $oCssParser = new Sabberworm\CSS\Parser(file_get_contents($css_document));
+    $oCssParser = new Sabberworm\CSS\Parser($css_document);
     $oCssDocument = $oCssParser->parse();
 
+    foreach($oCssDocument->getAllValues() as $mValue) {
+      error_log(print_r($mValue, true));
+//      if($mValue instanceof CSSSize && !$mValue->isRelative()) {
+//        $mValue->setSize($mValue->getSize()/2);
+//      }
+    }
 
 
   }
