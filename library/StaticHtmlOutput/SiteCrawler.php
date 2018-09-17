@@ -151,6 +151,7 @@ class SiteCrawler {
         $processor = new HTMLProcessor($this->response->getBody());
 
         $processor->normalizeURLs($currentUrl);
+
         $processor->cleanup(
             $wp_site_environment,
             $overwrite_slug_targets
@@ -169,7 +170,24 @@ class SiteCrawler {
 
       case 'css':
         error_log('processing CSS');
+        require_once dirname(__FILE__) . '/../StaticHtmlOutput/CSSProcessor.php';
+        $processor = new CSSProcessor($this->response->getBody());
 
+        $processor->normalizeURLs($currentUrl);
+
+        $processor->cleanup(
+            $wp_site_environment,
+            $overwrite_slug_targets
+            );
+
+        $processor->replaceBaseUrl(
+          $this->wp_site_url,
+          $this->baseUrl,
+          $this->allowOfflineUsage,
+          $this->useRelativeURLs,
+          $this->useBaseHref);
+
+        $this->processed_file = $processor->getHTML();
 
       break;
     }
