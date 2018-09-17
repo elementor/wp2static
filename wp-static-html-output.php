@@ -14,6 +14,11 @@
  * @package     WP_Static_HTML_Output
  */
 
+
+// TODO: this file / methods are being called on public site page loads, should only be triggered when in the dashboard!
+
+
+// minimal loading of libs for specific AJAX requests
 if (isset($_POST['ajax_action']) && $_POST['ajax_action'] == 'crawl_site') {
   error_log('crawl site ajax only');
 

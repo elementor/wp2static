@@ -27,6 +27,16 @@ class SiteCrawler {
     $this->rewritePLUGINDIR = $_POST['rewritePLUGINDIR'];
     $this->rewriteWPINC = $_POST['rewriteWPINC'];
 
+    $this->allowOfflineUsage = isset($_POST['allowOfflineUsage']) ?  $_POST['allowOfflineUsage'] :  false;
+    $this->useRelativeURLs = isset($_POST['useRelativeURLs']) ?  $_POST['useRelativeURLs'] :  false;
+    $this->useBaseHref = isset($_POST['useBaseHref']) ?  $_POST['useBaseHref'] :  false;
+
+    // internal pointers
+    $this->processed_file = '';
+    $this->file_type = '';
+    $this->response = '';
+    $this->content_type = '';
+
     // trigger the crawl
     $this->crawl_site();
   }
@@ -48,6 +58,9 @@ class SiteCrawler {
   public function crawlABitMore($viaCLI = false) {
     require_once dirname(__FILE__) . '/../StaticHtmlOutput/WsLog.php';
 
+    // TODO: use this somewhere
+    $archiveDir = file_get_contents($this->uploads_path . '/WP-STATIC-CURRENT-ARCHIVE');
+
     $initial_crawl_list_file = $this->uploads_path . '/WP-STATIC-INITIAL-CRAWL-LIST';
     $crawled_links_file = $this->uploads_path . '/WP-STATIC-CRAWLED-LINKS';
     $initial_crawl_list = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
@@ -56,6 +69,8 @@ class SiteCrawler {
     $first_line = array_shift($initial_crawl_list);
     file_put_contents($initial_crawl_list_file, implode("\r\n", $initial_crawl_list));
     $currentUrl = $first_line;
+
+    error_log('url: ' . $currentUrl);
 
     if (empty($currentUrl)){
       // skip this empty file
@@ -81,7 +96,7 @@ class SiteCrawler {
 
     $client = new \GuzzleHttp\Client();
     // TODO: set basic auth and any other args
-    $response = $client->request('GET', $currentUrl);
+    $this->response = $client->request('GET', $currentUrl);
 
     // PERF: ~ 36% of function time when HTML content (50% when other)
     //$urlResponse = new StaticHtmlOutput_UrlRequest($currentUrl, $basicAuth);
@@ -90,7 +105,7 @@ class SiteCrawler {
     //$urlResponseForFurtherExtraction = new StaticHtmlOutput_UrlRequest($currentUrl, $basicAuth);
 
     $successful_response_codes = array('200', '201', '301', '302', '304');
-    if (! in_array($response->getStatusCode(),  $successful_response_codes)) {
+    if (! in_array($this->response->getStatusCode(),  $successful_response_codes)) {
       WsLog::l('FAILED TO CRAWL FILE: ' . $currentUrl);
     } else {
       file_put_contents($crawled_links_file, $currentUrl . PHP_EOL, FILE_APPEND | LOCK_EX);
@@ -126,70 +141,50 @@ class SiteCrawler {
         'new_wpinc_path' => '/' . $this->rewriteWPINC,
         );
 
-    require_once dirname(__FILE__) . '/../StaticHtmlOutput/HTMLProcessor.php';
+    
+    $this->detectFileType($currentUrl);
 
-    // TODO: detect which processor to use here (HTML, CSS, IMAGE, other)
-    $processor = new HTMLProcessor($response->getBody());
+    // process based on filetype
+    switch ($this->file_type) {
+      case 'html':
+        error_log('processing HTML');
+        require_once dirname(__FILE__) . '/../StaticHtmlOutput/HTMLProcessor.php';
+        $processor = new HTMLProcessor($this->response->getBody());
 
-    $processor->normalizeURLs();
+        $processor->normalizeURLs($currentUrl);
+        $processor->cleanup(
+            $wp_site_environment,
+            $overwrite_slug_targets
+            );
 
-    // PERF: ~ 18% of function time
-    $processor->cleanup(
-        $wp_site_environment,
-        $overwrite_slug_targets
-        );
+        $processor->replaceBaseUrl(
+          $baseUrl,
+          $this->baseUrl,
+          $this->allowOfflineUsage,
+          $this->useRelativeURLs,
+          $this->useBaseHref);
 
-    $processor->replaceBaseUrl(
-      $baseUrl,
-      $this->baseUrl,
-      $this->allowOfflineUsage,
-      $this->useRelativeURLs,
-      $this->useBaseHref);
+        $this->processed_file = $processor->getHTML();
 
-    $processed_html = $processor->getHTML();
+      break;
 
-    $archiveDir = file_get_contents($this->uploads_path . '/WP-STATIC-CURRENT-ARCHIVE');
+      case 'css':
+        error_log('processing CSS');
+
+
+      break;
+    }
+
+    // response body processing is complete, now time to save the file contents to the archive
 
     require_once dirname(__FILE__) . '/../StaticHtmlOutput/FileWriter.php';
 
-    $file_writer = new FileWriter($url, $processed_html);
+    $file_writer = new FileWriter($currentUrl, $this->processed_file, $this->file_type);
 
-    $file_wirter->saveFile();
+    $file_writer->saveFile($archiveDir);
 
 
-// TODO: rethink this part    
-
-//    // try extracting urls from a response that hasn't been changed yet...
-//    // this seems to do it...
-//    foreach ($urlResponseForFurtherExtraction->extractAllUrls($baseUrl) as $newUrl) {
-//      $path = parse_url($newUrl, PHP_URL_PATH);
-//      $extension = pathinfo($path, PATHINFO_EXTENSION);
-//
-//      if ($newUrl != $currentUrl && 
-//          !in_array($newUrl, $crawled_links) && 
-//          $extension != 'php' && 
-//          !in_array($newUrl, $initial_crawl_list)
-//         ) {
-//
-//        $urlResponse = new StaticHtmlOutput_UrlRequest($newUrl, $basicAuth);
-//
-//        if ($urlResponse->response == 'FAIL') {
-//          WsLog::l('FAILED TO CRAWL FILE: ' . $newUrl);
-//        } else {
-//          file_put_contents($crawled_links_file, $newUrl . PHP_EOL, FILE_APPEND | LOCK_EX);
-//          $crawled_links[] = $newUrl;
-//        }
-//
-//        $urlResponse->cleanup(
-//            $wp_site_environment,
-//            $overwrite_slug_targets
-//            );
-//
-//        $urlResponse->replaceBaseUrl($baseUrl, $this->baseUrl, $this->allowOfflineUsage, $this->useRelativeURLs, $this->useBaseHref);
-//        $archiveDir = file_get_contents($this->uploads_path . '/WP-STATIC-CURRENT-ARCHIVE');
-//        $this->saveUrlData($urlResponse, $archiveDir);
-//      } 
-//    }
+    // iteration complete, check if we will signal to the client to continue processing, continue ourself for CLI usage, or signal completetion to either
 
     // TODO: could avoid reading file again here as we should have it above
     $f = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
@@ -210,6 +205,58 @@ class SiteCrawler {
     unset($urlResponse);
   }
 
+	public function isRewritable($response) {
+		$contentType = $this->response->getHeaderLine('content-type');
+
+		return (stripos($contentType, 'html') !== false) || (stripos($contentType, 'text') !== false);
+	}
+
+
+	public function isCrawlableContentType() {
+        $crawable_types = array(
+            "text/plain",
+            "application/javascript",
+            "application/json",
+            "application/xml",
+            "text/css",
+        );
+
+        if (in_array($this->getContentType(), $crawable_types)) {
+            //error_log($this->url);
+            //error_log($this->getContentType());
+            return true;
+        }
+
+        return false;
+	}
+  
+  public function detectFileType($url) {
+    // TODO: detect which processor to use here (HTML, CSS, IMAGE, other)
+    $file_info = pathinfo($url);
+
+    $file_extension = isset($file_info['extension']) ? $file_info['extension'] : false;
+
+
+    if ($file_extension) {
+          error_log('file extension detected as: ' . $file_extension);
+          $this->file_type = $file_extension;
+    } else {
+      // further detect type based on content type
+      $this->content_type = $this->response->getHeaderLine('content-type');
+    
+	    if (stripos($this->content_type, 'text/html') !== false) {
+        $this->file_type = 'html';
+      } else {
+        error_log('couldnt get filetype from content-type header in response, all we got was:');
+        error_log($this->response->getHeaderLine('content-type'));
+      
+      }
+       
+
+      error_log('file extension detected (via content type) as: ' . $this->file_type);
+    }
+
+  }
 }
 
 $site_crawler = new SiteCrawler();
