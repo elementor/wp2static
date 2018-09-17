@@ -62,14 +62,15 @@ class HTMLProcessor {
   }
 
   public function stripWPMetaElements() {
-    foreach($this->xml_doc->getElementsByTagName('meta') as $meta) { 
+    $metas = iterator_to_array($this->xml_doc->getElementsByTagName('meta'));
+
+    foreach ($metas as $meta) {
       $meta_name = $meta->getAttribute("name");
 
       if (strpos($meta_name, 'generator') !== false) {
         $meta->parentNode->removeChild($meta);
       }
     }
-
   }
 
   public function stripWPLinkElements() {
@@ -87,14 +88,15 @@ class HTMLProcessor {
       'wlwmanifest',
     );
 
-    foreach($this->xml_doc->getElementsByTagName('link') as $link) { 
-      $link_rel = $link->getAttribute("rel");
+    $links = iterator_to_array($this->xml_doc->getElementsByTagName('link'));
 
+    foreach ($links as $link) {
+      $link_rel = $link->getAttribute("rel");
       if (in_array($link_rel, $relativeLinksToRemove)) {
         $link->parentNode->removeChild($link);
       } elseif (strpos($link_rel, '.w.org') !== false) {
         $link->parentNode->removeChild($link);
-      }
+      } 
     }
   }
 
