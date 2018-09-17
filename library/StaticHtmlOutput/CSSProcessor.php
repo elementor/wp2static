@@ -44,13 +44,19 @@ class CSSProcessor {
     require_once dirname(__FILE__) . '/../CSSParser/CSSList/KeyFrame.php';
 
     $oCssParser = new Sabberworm\CSS\Parser($css_document);
-    $oCssDocument = $oCssParser->parse();
+    $this->css_doc = $oCssParser->parse();
 
-    foreach($oCssDocument->getAllValues() as $mValue) {
-      error_log(print_r($mValue, true));
-//      if($mValue instanceof CSSSize && !$mValue->isRelative()) {
-//        $mValue->setSize($mValue->getSize()/2);
-//      }
+    foreach($this->css_doc->getAllValues() as $mValue) {
+
+        if($mValue instanceof Sabberworm\CSS\Value\URL) {
+//          error_log(print_r($mValue, true));
+//          error_log($mValue->getURL());
+
+          $new_url = new Sabberworm\CSS\Value\CSSString('BANANA');
+
+          $mValue->setURL($new_url);
+        }
+
     }
 
 
@@ -72,6 +78,10 @@ class CSSProcessor {
 			$rewritten_CSS = preg_replace(array_keys($regex), $regex, $this->response['body']);
       $this->setResponseBody($rewritten_CSS);
 		}
+  }
+
+  public function getCSS() {
+    return $this->css_doc->render();
   }
 }
 

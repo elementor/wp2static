@@ -1,8 +1,5 @@
 <?php
 
-error_log('standalone script called via AJAX');
-
-
 use GuzzleHttp\Client;
 
 class SiteCrawler {
@@ -69,7 +66,7 @@ class SiteCrawler {
     file_put_contents($initial_crawl_list_file, implode("\r\n", $initial_crawl_list));
     $currentUrl = $first_line;
 
-    error_log('url: ' . $currentUrl);
+    // error_log('url: ' . $currentUrl);
 
     if (empty($currentUrl)){
       // skip this empty file
@@ -146,7 +143,6 @@ class SiteCrawler {
     // process based on filetype
     switch ($this->file_type) {
       case 'html':
-        error_log('processing HTML');
         require_once dirname(__FILE__) . '/../StaticHtmlOutput/HTMLProcessor.php';
         $processor = new HTMLProcessor($this->response->getBody());
 
@@ -169,25 +165,24 @@ class SiteCrawler {
       break;
 
       case 'css':
-        error_log('processing CSS');
         require_once dirname(__FILE__) . '/../StaticHtmlOutput/CSSProcessor.php';
         $processor = new CSSProcessor($this->response->getBody());
 
-        $processor->normalizeURLs($currentUrl);
-
-        $processor->cleanup(
-            $wp_site_environment,
-            $overwrite_slug_targets
-            );
-
-        $processor->replaceBaseUrl(
-          $this->wp_site_url,
-          $this->baseUrl,
-          $this->allowOfflineUsage,
-          $this->useRelativeURLs,
-          $this->useBaseHref);
-
-        $this->processed_file = $processor->getHTML();
+//        $processor->normalizeURLs($currentUrl);
+//
+//        $processor->cleanup(
+//            $wp_site_environment,
+//            $overwrite_slug_targets
+//            );
+//
+//        $processor->replaceBaseUrl(
+//          $this->wp_site_url,
+//          $this->baseUrl,
+//          $this->allowOfflineUsage,
+//          $this->useRelativeURLs,
+//          $this->useBaseHref);
+//
+        $this->processed_file = $processor->getCSS();
 
       break;
     }
@@ -255,7 +250,6 @@ class SiteCrawler {
 
 
     if ($file_extension) {
-          error_log('file extension detected as: ' . $file_extension);
           $this->file_type = $file_extension;
     } else {
       // further detect type based on content type
@@ -268,11 +262,7 @@ class SiteCrawler {
         error_log($this->response->getHeaderLine('content-type'));
       
       }
-       
-
-      error_log('file extension detected (via content type) as: ' . $this->file_type);
     }
-
   }
 }
 

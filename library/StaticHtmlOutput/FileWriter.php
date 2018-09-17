@@ -2,8 +2,6 @@
 
 class FileWriter {
   public function __construct($url, $content, $file_type){
-    error_log('calling FileWriter');
-    
     $this->url = $url;
     $this->content = $content;
     $this->file_type = $file_type;
@@ -14,6 +12,8 @@ class FileWriter {
   }
 
 	public function saveFile($archiveDir) {
+    //error_log('saving into archiveDir: ' . $archiveDir);
+
 		$urlInfo = parse_url($this->url);
 		$pathInfo = array();
 
