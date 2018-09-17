@@ -194,7 +194,10 @@ class HTMLProcessor {
   // TODO: some optimization to be gained by doing this in same loop as rewriteWPPaths loop
 	public function replaceBaseUrl($oldBaseUrl, $newBaseUrl, $allowOfflineUsage, $absolutePaths = false, $useBaseHref = true) {
 
-    foreach($this->xml_doc->getElementsByTagName('a') as $element) { 
+    error_log('old base url: ' . $oldBaseUrl);
+    error_log('new base url: ' . $newBaseUrl);
+
+    foreach($this->xml_doc->getElementsByTagName('*') as $element) { 
       if ($element->hasAttribute('href')) {
         $attribute_to_change = 'href';
       } elseif ($element->hasAttribute('src')) {
@@ -206,9 +209,15 @@ class HTMLProcessor {
 
       $url_to_change = $element->getAttribute($attribute_to_change);
 
-      $rewritten_url = str_replace($oldBaseUrl, $newBaseUrl, $url_to_change);
+      // check it actually needs to be changed
+      if (strpos($url_to_change, $oldBaseUrl) !== false) {
+        $rewritten_url = str_replace($oldBaseUrl, $newBaseUrl, $url_to_change);
 
-      $element->setAttribute($attribute_to_change, $rewritten_url);
+        $element->setAttribute($attribute_to_change, $rewritten_url);
+      } else {
+        error_log('URL donesnt need baseurl rewriting: ' . $url_to_change);
+      }
+
     }
 
 
