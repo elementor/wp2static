@@ -1,13 +1,13 @@
 <?php
 
 
+// TODO: deal with inline CSS blocks or style attributes on tags
+
 // TODO: don't rewrite mailto links unless specified, re #30
 
 class HTMLProcessor {
 
   public function __construct($html_document){
-    error_log('instantiating HTMLProcessor');
-
     // instantiate the XML body here 
     $this->xml_doc = new DOMDocument(); 
     $this->raw_html = $html_document;
@@ -108,7 +108,7 @@ class HTMLProcessor {
     if (strpos($this->raw_html, $escaped_site_url) !== false) {
       // TODO: renable this function being called. needs to be on raw HTML, so ideally after the Processor has done all other XML things, so no need to parse again
       // suggest adding a processRawHTML function, that includes this stuff.. and call it within the getHTML function or finalizeProcessing or such.... 
-      error_log('skipping rewriting of escaped URLs');// leave this error log in until fixed
+      // error_log('skipping rewriting of escaped URLs');// leave this error log in until fixed
       //$this->rewriteEscapedURLs($wp_site_environment, $overwrite_slug_targets);
     }
   }
@@ -196,8 +196,8 @@ class HTMLProcessor {
   // TODO: some optimization to be gained by doing this in same loop as rewriteWPPaths loop
 	public function replaceBaseUrl($oldBaseUrl, $newBaseUrl, $allowOfflineUsage, $absolutePaths = false, $useBaseHref = true) {
 
-    error_log('old base url: ' . $oldBaseUrl);
-    error_log('new base url: ' . $newBaseUrl);
+    // error_log('old base url: ' . $oldBaseUrl);
+    // error_log('new base url: ' . $newBaseUrl);
 
     foreach($this->xml_doc->getElementsByTagName('*') as $element) { 
       if ($element->hasAttribute('href')) {
@@ -216,10 +216,7 @@ class HTMLProcessor {
         $rewritten_url = str_replace($oldBaseUrl, $newBaseUrl, $url_to_change);
 
         $element->setAttribute($attribute_to_change, $rewritten_url);
-      } else {
-        error_log('URL donesnt need baseurl rewriting: ' . $url_to_change);
-      }
-
+      } 
     }
 
 
@@ -227,7 +224,7 @@ class HTMLProcessor {
 
       // TODO: re-implement as separate function as another processing layer
 
-      error_log('SKIPPING absolute path rewriting');
+      // error_log('SKIPPING absolute path rewriting');
 
       if ($useBaseHref) {
         $responseBody = str_replace('<head>', "<head>\n<base href=\"" . esc_attr($newBaseUrl) . "/\" />\n", $responseBody);
@@ -240,7 +237,7 @@ class HTMLProcessor {
 
       // TODO: re-implement as separate function as another processing layer
 
-      error_log('SKIPPING offline usage rewriting');
+      // error_log('SKIPPING offline usage rewriting');
 
 
 //        foreach($xml->getElementsByTagName('a') as $link) { 

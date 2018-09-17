@@ -20,8 +20,6 @@
 
 // minimal loading of libs for specific AJAX requests
 if (isset($_POST['ajax_action']) && $_POST['ajax_action'] == 'crawl_site') {
-  error_log('crawl site ajax only');
-
   // standalone script should do all the the crawling, echo'ing the usual number, else 
   require_once dirname(__FILE__) . '/library/StaticHtmlOutput/SiteCrawler.php';
 
@@ -35,7 +33,8 @@ if (isset($_POST['ajax_action']) && $_POST['ajax_action'] == 'crawl_site') {
   if ( ! function_exists( 'wpsho_fr' ) ) {
 
   function wpsho_fr() {
-      error_log('calling freemius func');
+      // TODO: this is called on regular page load
+      // error_log('calling freemius func');
       global $wpsho_fr;
 
       if ( ! isset( $wpsho_fr ) ) {

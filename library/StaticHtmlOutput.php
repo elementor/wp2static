@@ -15,7 +15,7 @@ class StaticHtmlOutput_Controller {
 	protected function __clone() {}
 
 	public static function getInstance() {
-    error_log('getInstance');
+    // error_log('getInstance');
 		if (null === self::$_instance) {
 			self::$_instance = new self();
 			self::$_instance->options = new StaticHtmlOutput_Options(self::OPTIONS_KEY);
@@ -267,7 +267,7 @@ class StaticHtmlOutput_Controller {
 	}
 
 	public static function init($bootstrapFile) {
-    error_log('init');
+    // error_log('init');
 		$instance = self::getInstance();
 
 		register_activation_hook($bootstrapFile, array($instance, 'activate'));
