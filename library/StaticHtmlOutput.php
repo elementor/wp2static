@@ -15,6 +15,7 @@ class StaticHtmlOutput_Controller {
 	protected function __clone() {}
 
 	public static function getInstance() {
+    error_log('getInstance');
 		if (null === self::$_instance) {
 			self::$_instance = new self();
 			self::$_instance->options = new StaticHtmlOutput_Options(self::OPTIONS_KEY);
@@ -259,8 +260,6 @@ class StaticHtmlOutput_Controller {
 		    if ( array_key_exists('allowOfflineUsage', $pluginOptions )) {
           self::$_instance->allowOfflineUsage = $pluginOptions['allowOfflineUsage'];
         }
-
-
       }
 		}
 
@@ -268,6 +267,7 @@ class StaticHtmlOutput_Controller {
 	}
 
 	public static function init($bootstrapFile) {
+    error_log('init');
 		$instance = self::getInstance();
 
 		register_activation_hook($bootstrapFile, array($instance, 'activate'));
@@ -275,7 +275,6 @@ class StaticHtmlOutput_Controller {
 		if (is_admin()) {
 			add_action('admin_menu', array($instance, 'registerOptionsPage'));
 			add_action(self::HOOK . '-saveOptions', array($instance, 'saveOptions'));
-			add_action( 'admin_enqueue_scripts', array($instance, 'load_custom_wp_admin_script') );
       add_filter( 'custom_menu_order', '__return_true' );
       add_filter( 'menu_order', array( $instance, 'set_menu_order' ) );
 
@@ -300,12 +299,6 @@ class StaticHtmlOutput_Controller {
 
         return $order;
     }
-
-
-	public function load_custom_wp_admin_script() {
-		$pluginDirUrl = plugin_dir_url(dirname(__FILE__));
-		wp_enqueue_script( 'wsho_custom_js', $pluginDirUrl . '/js/index.js' );
-	}
 
 
 	public function saveOptions() {
@@ -383,9 +376,13 @@ class StaticHtmlOutput_Controller {
 			do_action(self::HOOK . '-saveOptions');
 			$wp_upload_dir = wp_upload_dir();
 
+      $tmp_upload_dir_var = wp_upload_dir();
+      
+
 			$this->view
 				->setTemplate('options-page-js')
 				->assign('staticExportSettings', $this->options->getOption('static-export-settings'))
+				->assign('basedir', $tmp_upload_dir_var['basedir'])
 				->assign('wpUploadsDir', $this->uploadsURL)
 				->assign('wpPluginDir', plugins_url('/', __FILE__))
 				->assign('onceAction', self::HOOK . '-options')

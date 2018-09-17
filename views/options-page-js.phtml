@@ -14,6 +14,7 @@ var settings = '<?php echo $settings; ?>';
 var uploadsDir = '<?php echo $this->wpUploadsDir; ?>';
 var logFileURL = uploadsDir + '/WP-STATIC-EXPORT-LOG';
 var pluginDir = '<?php echo $this->wpPluginDir; ?>';
+var basedir = '<?php echo $this->basedir; ?>';
 var wpSiteURL = '<?php echo get_site_url(); ?>';
 var exportTargets = [];
 var current_deployment_method = 'folder';
@@ -31,6 +32,7 @@ jQuery(document).ready(function($){
 	function callToAction() {
 		// check how many successful exports and present user with a relevant call to action
         $('.hiddenActionField').val('wp_static_html_output_ajax');
+        $('#basedir').val(basedir);
         $('#hiddenAJAXAction').val('get_number_of_successes');
         archives = $('.options-form');
         newSettings = $(".options-form").serialize();

@@ -4,6 +4,7 @@ class StaticHtmlOutput_UrlRequest {
 	protected $_basicAuthCredentials;
 
 	public function __construct($url, $basicAuth) {
+    error_log('url request');
 		$this->url = filter_var(trim($url), FILTER_VALIDATE_URL);
 		$this->response = '';
     $this->xml_doc = null;
