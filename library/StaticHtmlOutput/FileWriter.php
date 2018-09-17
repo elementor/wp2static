@@ -1,16 +1,20 @@
 <?php
 
 class FileWriter {
-  public function __construct($url, $content){
+  public function __construct($url, $content, $file_type){
     error_log('calling FileWriter');
+    
+    $this->url = $url;
+    $this->content = $content;
+    $this->file_type = $file_type;
   }
 
-  public function filePathFromOriginalURL($url) {
+  public function filePathFromOriginalURL() {
     // take origin URL, spit out path for writing file in archive
   }
 
-	public function saveUrlData(StaticHtmlOutput_UrlRequest $url, $archiveDir) {
-		$urlInfo = parse_url($url->url);
+	public function saveFile($archiveDir) {
+		$urlInfo = parse_url($this->url);
 		$pathInfo = array();
 
 		//WsLog::l('urlInfo :' . $urlInfo['path']);
@@ -72,7 +76,7 @@ class FileWriter {
 		// TODO: seems to be flawed for say /feed/ urls, which would not be xml content type..
 		if(  isset($pathInfo['extension'])) {
 			$fileExtension = $pathInfo['extension']; 
-		} else if( $url->isHtml() ) {
+		} else if( $this->file_type == 'html' ) {
 			$fileExtension = 'html'; 
 		} else {
 			// guess mime type
@@ -89,17 +93,8 @@ class FileWriter {
 			$fileName = $fileDir . '/' . $pathInfo['filename'] . '.' . $fileExtension;
 		}
 
-    // fix for # 103 - weird case with inline style images in nested subdirs
-    // should be a non-issue if using DOMDoc instead of regex parsing
-		
-		$fileName = str_replace(');', '', $fileName);
-		// TODO: find where this extra . is coming from (current dir indicator?)
-		$fileName = str_replace('.index.html', 'index.html', $fileName);
-		// remove 2 or more slashes from paths
-		$fileName = preg_replace('/(\/+)/', '/', $fileName);
 
-
-		$fileContents = $url->response['body'];
+		$fileContents = $this->content;
 		
 		// TODO: what was the 'F' check for?1? Comments exist for a reason
 		if ($fileContents != '' && $fileContents != 'F') {
