@@ -48,12 +48,9 @@ class SiteCrawler {
   }
 
   public function crawl_site($viaCLI = false) {
-
-    // PERF: 1% of function time
     $this->initial_crawl_list_file = $this->uploads_path . '/WP-STATIC-INITIAL-CRAWL-LIST';
     $this->initial_crawl_list = file($this->initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
 
-    // PERF: 99% of function time
     if ( !empty($this->initial_crawl_list) ) {
       $this->crawlABitMore($this->viaCLI);
     } 
@@ -63,21 +60,16 @@ class SiteCrawler {
     require_once dirname(__FILE__) . '/../StaticHtmlOutput/WsLog.php';
 
     $this->archive_dir = file_get_contents($this->uploads_path . '/WP-STATIC-CURRENT-ARCHIVE');
-
     $this->initial_crawl_list_file = $this->uploads_path . '/WP-STATIC-INITIAL-CRAWL-LIST';
     $this->crawled_links_file = $this->uploads_path . '/WP-STATIC-CRAWLED-LINKS';
     $this->initial_crawl_list = file($this->initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
     $crawled_links = file($this->crawled_links_file, FILE_IGNORE_NEW_LINES);
-
     $first_line = array_shift($this->initial_crawl_list);
     file_put_contents($this->initial_crawl_list_file, implode("\r\n", $this->initial_crawl_list));
     $this->url = $first_line;
 
-    // error_log('url: ' . $this->url);
-
     if (empty($this->url)){
-      // skip this empty file
-
+      // skip this empty file, check for more
       $f = file($this->initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
       $filesRemaining = count($f);
       if ($filesRemaining > 0) {
@@ -138,7 +130,6 @@ class SiteCrawler {
     // TODO: what's the difference between this and $this->baseUrl in original code?
     $baseUrl = $this->baseUrl;
 
-
     $wp_site_environment = array(
         'wp_inc' =>  '/' . WPINC,	
         'wp_content' => '/wp-content', // TODO: check if this has been modified/use constant
@@ -192,7 +183,6 @@ class SiteCrawler {
       break;
 
       case 'css':
-
         require_once dirname(__FILE__) . '/../StaticHtmlOutput/CSSProcessor.php';
         $processor = new CSSProcessor($this->response->getBody(), $this->wp_site_url);
 
@@ -236,24 +226,17 @@ class SiteCrawler {
 
 
   public function saveFile() {
-
     // response body processing is complete, now time to save the file contents to the archive
-
     require_once dirname(__FILE__) . '/../StaticHtmlOutput/FileWriter.php';
 
-
-
     $file_writer = new FileWriter($this->url, $this->processed_file, $this->file_type);
-
     $file_writer->saveFile($this->archive_dir);
   }
 
   public function copyFile() {
-
     require_once dirname(__FILE__) . '/../StaticHtmlOutput/FileCopier.php';
 
     $file_copier = new FileCopier($this->url, $this->wp_site_url, $this->wp_site_path);
-
     $file_copier->copyFile($this->archive_dir);
   }
 
@@ -267,7 +250,6 @@ class SiteCrawler {
     }
  
     return $extension;
-
   }
 
   public function canFileBeCopiedWithoutProcessing() {
@@ -301,8 +283,6 @@ class SiteCrawler {
         );
 
         if (in_array($this->getContentType(), $crawable_types)) {
-            //error_log($this->url);
-            //error_log($this->getContentType());
             return true;
         }
 
@@ -310,28 +290,17 @@ class SiteCrawler {
 	}
   
   public function detectFileType() {
-      error_log('is HP?');
-      error_log($this->url);
-      error_log('extension:');
-      error_log($this->file_extension);
-
-      
     if ($this->file_extension) {
-          error_log('file ext found');
-          error_log($file_extension);
           $this->file_type = $this->file_extension;
     } else {
-          error_log('file ext not found');
       // further detect type based on content type
       $this->content_type = $this->response->getHeaderLine('content-type');
-    
 
 	    if (stripos($this->content_type, 'text/html') !== false) {
         $this->file_type = 'html';
       } else {
         error_log('couldnt get filetype from content-type header in response, all we got was:');
         error_log($this->response->getHeaderLine('content-type'));
-      
       }
     }
   }
