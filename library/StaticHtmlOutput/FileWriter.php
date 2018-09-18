@@ -80,7 +80,6 @@ class FileWriter {
 			$fileExtension = 'html'; 
 		} else {
 			// guess mime type
-			
 			$fileExtension = StaticHtmlOutput_UrlHelper::getExtensionFromContentType($url->getContentType()); 
 		}
 
@@ -88,7 +87,8 @@ class FileWriter {
 
 		// set path for homepage to index.html, else build filename
 		if ($urlInfo['path'] == '/') {
-			$fileName = $fileDir . 'index.html';
+      // TODO: isolate and fix the cause requiring this:
+			$fileName = rtrim($fileDir, '.') . 'index.html';
 		} else {
 			$fileName = $fileDir . '/' . $pathInfo['filename'] . '.' . $fileExtension;
 		}

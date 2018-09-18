@@ -89,6 +89,9 @@ class SiteCrawler {
       return;
     }
 
+    // detect and set file_extension
+    $this->file_extension = $this->getExtensionFromURL();
+
     // TODO: if not a rewriteable file and exists on server, copy it into archive without reading
     if ($this->canFileBeCopiedWithoutProcessing()) {
       error_log('skipping processing for: ' . $this->file_extension);
@@ -125,6 +128,7 @@ class SiteCrawler {
 
     $successful_response_codes = array('200', '201', '301', '302', '304');
     if (! in_array($this->response->getStatusCode(),  $successful_response_codes)) {
+      error_log('BAD RESPONSE');
       WsLog::l('FAILED TO CRAWL FILE: ' . $this->url);
     } else {
       file_put_contents($this->crawled_links_file, $this->url . PHP_EOL, FILE_APPEND | LOCK_EX);
@@ -237,6 +241,8 @@ class SiteCrawler {
 
     require_once dirname(__FILE__) . '/../StaticHtmlOutput/FileWriter.php';
 
+
+
     $file_writer = new FileWriter($this->url, $this->processed_file, $this->file_type);
 
     $file_writer->saveFile($this->archive_dir);
@@ -251,13 +257,20 @@ class SiteCrawler {
     $file_copier->copyFile($this->archive_dir);
   }
 
-  public function canFileBeCopiedWithoutProcessing() {
-    // first check for extension 
-    $file_info = pathinfo($this->url);
-    $this->file_extension = isset($file_info['extension']) ? $file_info['extension'] : false;
+  public function getExtensionFromURL() {
+    $url_path = parse_url($this->url, PHP_URL_PATH);
 
-    // TODO: secondly check for content type from header, though this means making the request
+    $extension = pathinfo($url_path, PATHINFO_EXTENSION);   
+
+    if (! $extension) {
+      return '';
+    }
  
+    return $extension;
+
+  }
+
+  public function canFileBeCopiedWithoutProcessing() {
     // whitelisted extensions, so as not catch html/xml/json served at domain.com/path/  
     $extensions_to_skip = array(
       'jpg', 'jpeg', 'pdf', 'png', 'gif', 'svg'
@@ -297,17 +310,22 @@ class SiteCrawler {
 	}
   
   public function detectFileType() {
-    // TODO: detect which processor to use here (HTML, CSS, IMAGE, other)
-    $file_info = pathinfo($this->url);
+      error_log('is HP?');
+      error_log($this->url);
+      error_log('extension:');
+      error_log($this->file_extension);
 
-    $file_extension = isset($file_info['extension']) ? $file_info['extension'] : false;
-
-    if ($file_extension) {
-          $this->file_type = $file_extension;
+      
+    if ($this->file_extension) {
+          error_log('file ext found');
+          error_log($file_extension);
+          $this->file_type = $this->file_extension;
     } else {
+          error_log('file ext not found');
       // further detect type based on content type
       $this->content_type = $this->response->getHeaderLine('content-type');
     
+
 	    if (stripos($this->content_type, 'text/html') !== false) {
         $this->file_type = 'html';
       } else {
