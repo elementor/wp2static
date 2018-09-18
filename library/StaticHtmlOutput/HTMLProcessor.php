@@ -7,7 +7,9 @@
 
 class HTMLProcessor {
 
-  public function __construct($html_document){
+  public function __construct($html_document, $wp_site_url){
+    $this->wp_site_url = $wp_site_url;
+
     // instantiate the XML body here 
     $this->xml_doc = new DOMDocument(); 
     $this->raw_html = $html_document;
@@ -27,9 +29,11 @@ class HTMLProcessor {
     foreach($this->xml_doc->getElementsByTagName('a') as $link) { 
       $original_link = $link->getAttribute("href");
 
-      // TODO: apply only to links starting with .,..,/, or any with just a path, like banana.png
-      $abs = $base->resolve($original_link);
-      $link->setAttribute('href', $abs);
+      if ($this->isInternalLink($original_link)) {
+        // TODO: apply only to links starting with .,..,/, or any with just a path, like banana.png
+        $abs = $base->resolve($original_link);
+        $link->setAttribute('href', $abs);
+      }
     }
   }
 
@@ -39,13 +43,11 @@ class HTMLProcessor {
     $this->removeQueryStringsFromInternalLinks();
     $this->rewriteWPPaths($wp_site_environment, $overwrite_slug_targets);
     $this->detectEscapedSiteURLs($wp_site_environment, $overwrite_slug_targets);
-
-
 	}
 
   public function isInternalLink($link) {
     // check link is same host as $this->url and not a subdomain
-    return parse_url($link, PHP_URL_HOST) == parse_url(get_option( 'siteurl' ), PHP_URL_HOST);
+    return parse_url($link, PHP_URL_HOST) == parse_url($this->wp_site_url, PHP_URL_HOST);
   }
 
   public function removeQueryStringsFromInternalLinks() {

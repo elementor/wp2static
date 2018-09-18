@@ -15,6 +15,7 @@ var uploadsDir = '<?php echo $this->wpUploadsDir; ?>';
 
 <?php $upload_dir = wp_upload_dir();?>
 var wp_uploads_path = '<?php echo $upload_dir['basedir']; ?>';
+var wp_site_path = '<?php echo $this->wp_site_path; ?>';
 var logFileURL = uploadsDir + '/WP-STATIC-EXPORT-LOG';
 var pluginDir = '<?php echo $this->wpPluginDir; ?>';
 var basedir = '<?php echo $this->basedir; ?>';
@@ -885,6 +886,7 @@ jQuery(document).ready(function($){
   $('#basedir').val(basedir);
   $('#wp_site_url').val(wpSiteURL);
   $('#wp_uploads_path').val(wp_uploads_path);
+  $('#wp_site_path').val(wp_site_path);
 
 	// if rewrite values aren't set yet, populate fields with defaults
 	if ( $("#rewriteWPCONTENT").val() == '' || $("#rewriteWPCONTENT").val() == 'undefined') {

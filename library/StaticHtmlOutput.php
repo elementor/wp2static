@@ -23,6 +23,7 @@ class StaticHtmlOutput_Controller {
       $tmp_var_to_hold_return_array = wp_upload_dir();
       self::$_instance->uploadsPath = $tmp_var_to_hold_return_array['basedir'];
       self::$_instance->uploadsURL = $tmp_var_to_hold_return_array['baseurl'];
+      self::$_instance->wp_site_path = ABSPATH;
 
       // load settings via Client or from DB if run from CLI
       if (null !== (filter_input(INPUT_POST, 'selected_deployment_option'))) {
@@ -384,6 +385,7 @@ class StaticHtmlOutput_Controller {
 				->assign('staticExportSettings', $this->options->getOption('static-export-settings'))
 				->assign('basedir', $tmp_upload_dir_var['basedir'])
 				->assign('wpUploadsDir', $this->uploadsURL)
+				->assign('wp_site_path', $this->wp_site_path)
 				->assign('wpPluginDir', plugins_url('/', __FILE__))
 				->assign('onceAction', self::HOOK . '-options')
 				->render();

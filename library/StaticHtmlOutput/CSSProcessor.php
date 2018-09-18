@@ -3,9 +3,9 @@
 
 class CSSProcessor {
 
-  public function __construct($css_document){
-    error_log('instantiating CSS Processor');
-    
+  public function __construct($css_document, $wp_site_url){
+    $this->wp_site_url = $wp_site_url;   
+ 
     // parse CSS into easily modifiable form
     require_once dirname(__FILE__) . '/../CSSParser/Parser.php';
     require_once dirname(__FILE__) . '/../CSSParser/Settings.php';
@@ -45,21 +45,31 @@ class CSSProcessor {
 
     $oCssParser = new Sabberworm\CSS\Parser($css_document);
     $this->css_doc = $oCssParser->parse();
+  }
+
+  public function isInternalLink($link) {
+    // check link is same host as $this->url and not a subdomain
+    return parse_url($link, PHP_URL_HOST) == parse_url($this->wp_site_url, PHP_URL_HOST);
+  }
+
+	public function normalizeURLs($url) {
+    require_once dirname(__FILE__) . '/../URL2/URL2.php';
+    $base = new Net_URL2($url);
 
     foreach($this->css_doc->getAllValues() as $mValue) {
-
         if($mValue instanceof Sabberworm\CSS\Value\URL) {
-//          error_log(print_r($mValue, true));
-//          error_log($mValue->getURL());
+          $original_link = $mValue->getURL();
+   
+          // TODO: benchmark trim vs str_replace
+          // returned value contains surrounding quotes
+          $original_link = trim(trim($original_link,"'"),'"');
 
-          $new_url = new Sabberworm\CSS\Value\CSSString('BANANA');
-
-          $mValue->setURL($new_url);
+          if ($this->isInternalLink($original_link)) {
+            $absolute_url = new Sabberworm\CSS\Value\CSSString($base->resolve($original_link));
+            $mValue->setURL($absolute_url);
+          }
         }
-
     }
-
-
   }
 
 	public function cleanup($wp_site_environment, $overwrite_slug_targets) {

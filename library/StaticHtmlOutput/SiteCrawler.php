@@ -16,6 +16,7 @@ class SiteCrawler {
     $this->baseUrl = $_POST['baseUrl'];
     $this->basedir = $_POST['basedir']; // // TODO: location of uploads dir?
     $this->wp_site_url = $_POST['wp_site_url']; 
+    $this->wp_site_path = $_POST['wp_site_path']; 
     $this->uploads_path = $_POST['wp_uploads_path'];
 
     // processing related settings
@@ -35,6 +36,12 @@ class SiteCrawler {
     $this->file_type = '';
     $this->response = '';
     $this->content_type = '';
+    $this->url = '';
+    $this->extension = '';
+    $this->archive_dir = '';
+    $this->initial_crawl_list_file = '';
+
+    $this->viaCLI = false; 
 
     // trigger the crawl
     $this->crawl_site();
@@ -43,35 +50,35 @@ class SiteCrawler {
   public function crawl_site($viaCLI = false) {
 
     // PERF: 1% of function time
-    $initial_crawl_list_file = $this->uploads_path . '/WP-STATIC-INITIAL-CRAWL-LIST';
-    $initial_crawl_list = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
+    $this->initial_crawl_list_file = $this->uploads_path . '/WP-STATIC-INITIAL-CRAWL-LIST';
+    $this->initial_crawl_list = file($this->initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
 
     // PERF: 99% of function time
-    if ( !empty($initial_crawl_list) ) {
-      $this->crawlABitMore($viaCLI);
+    if ( !empty($this->initial_crawl_list) ) {
+      $this->crawlABitMore($this->viaCLI);
     } 
   }
 
   public function crawlABitMore($viaCLI = false) {
     require_once dirname(__FILE__) . '/../StaticHtmlOutput/WsLog.php';
 
-    $archiveDir = file_get_contents($this->uploads_path . '/WP-STATIC-CURRENT-ARCHIVE');
+    $this->archive_dir = file_get_contents($this->uploads_path . '/WP-STATIC-CURRENT-ARCHIVE');
 
-    $initial_crawl_list_file = $this->uploads_path . '/WP-STATIC-INITIAL-CRAWL-LIST';
-    $crawled_links_file = $this->uploads_path . '/WP-STATIC-CRAWLED-LINKS';
-    $initial_crawl_list = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
-    $crawled_links = file($crawled_links_file, FILE_IGNORE_NEW_LINES);
+    $this->initial_crawl_list_file = $this->uploads_path . '/WP-STATIC-INITIAL-CRAWL-LIST';
+    $this->crawled_links_file = $this->uploads_path . '/WP-STATIC-CRAWLED-LINKS';
+    $this->initial_crawl_list = file($this->initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
+    $crawled_links = file($this->crawled_links_file, FILE_IGNORE_NEW_LINES);
 
-    $first_line = array_shift($initial_crawl_list);
-    file_put_contents($initial_crawl_list_file, implode("\r\n", $initial_crawl_list));
-    $currentUrl = $first_line;
+    $first_line = array_shift($this->initial_crawl_list);
+    file_put_contents($this->initial_crawl_list_file, implode("\r\n", $this->initial_crawl_list));
+    $this->url = $first_line;
 
-    // error_log('url: ' . $currentUrl);
+    // error_log('url: ' . $this->url);
 
-    if (empty($currentUrl)){
+    if (empty($this->url)){
       // skip this empty file
 
-      $f = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
+      $f = file($this->initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
       $filesRemaining = count($f);
       if ($filesRemaining > 0) {
         echo $filesRemaining;
@@ -82,29 +89,45 @@ class SiteCrawler {
       return;
     }
 
+    // TODO: if not a rewriteable file and exists on server, copy it into archive without reading
+    if ($this->canFileBeCopiedWithoutProcessing()) {
+      error_log('skipping processing for: ' . $this->file_extension);
+      $this->copyFile();
+    } else {
+      $this->loadFileForProcessing();
+      $this->saveFile();
+    }
+
+    $this->checkIfMoreCrawlingNeeded();
+
+    // reclaim memory after each crawl
+    $urlResponse = null;
+    unset($urlResponse);
+  }
+
+  public function loadFileForProcessing() {
+    require_once dirname(__FILE__) . '/../GuzzleHttp/autoloader.php';
+
     $basicAuth = array(
         'useBasicAuth' => $this->useBasicAuth,
         'basicAuthUser' => $this->basicAuthUser,
         'basicAuthPassword' => $this->basicAuthPassword);
 
-    require_once dirname(__FILE__) . '/../GuzzleHttp/autoloader.php';
-
-
     $client = new \GuzzleHttp\Client();
     // TODO: set basic auth and any other args
-    $this->response = $client->request('GET', $currentUrl);
+    $this->response = $client->request('GET', $this->url);
 
     // PERF: ~ 36% of function time when HTML content (50% when other)
-    //$urlResponse = new StaticHtmlOutput_UrlRequest($currentUrl, $basicAuth);
+    //$urlResponse = new StaticHtmlOutput_UrlRequest($this->url, $basicAuth);
 
     // PERF: ~ 36% of function time when HTML content (50% when other)
-    //$urlResponseForFurtherExtraction = new StaticHtmlOutput_UrlRequest($currentUrl, $basicAuth);
+    //$urlResponseForFurtherExtraction = new StaticHtmlOutput_UrlRequest($this->url, $basicAuth);
 
     $successful_response_codes = array('200', '201', '301', '302', '304');
     if (! in_array($this->response->getStatusCode(),  $successful_response_codes)) {
-      WsLog::l('FAILED TO CRAWL FILE: ' . $currentUrl);
+      WsLog::l('FAILED TO CRAWL FILE: ' . $this->url);
     } else {
-      file_put_contents($crawled_links_file, $currentUrl . PHP_EOL, FILE_APPEND | LOCK_EX);
+      file_put_contents($this->crawled_links_file, $this->url . PHP_EOL, FILE_APPEND | LOCK_EX);
     }
 
 
@@ -138,15 +161,15 @@ class SiteCrawler {
         );
 
     
-    $this->detectFileType($currentUrl);
+    $this->detectFileType($this->url);
 
     // process based on filetype
     switch ($this->file_type) {
       case 'html':
         require_once dirname(__FILE__) . '/../StaticHtmlOutput/HTMLProcessor.php';
-        $processor = new HTMLProcessor($this->response->getBody());
+        $processor = new HTMLProcessor($this->response->getBody(), $this->wp_site_url);
 
-        $processor->normalizeURLs($currentUrl);
+        $processor->normalizeURLs($this->url);
 
         $processor->cleanup(
             $wp_site_environment,
@@ -165,10 +188,11 @@ class SiteCrawler {
       break;
 
       case 'css':
-        require_once dirname(__FILE__) . '/../StaticHtmlOutput/CSSProcessor.php';
-        $processor = new CSSProcessor($this->response->getBody());
 
-//        $processor->normalizeURLs($currentUrl);
+        require_once dirname(__FILE__) . '/../StaticHtmlOutput/CSSProcessor.php';
+        $processor = new CSSProcessor($this->response->getBody(), $this->wp_site_url);
+
+        $processor->normalizeURLs($this->url);
 //
 //        $processor->cleanup(
 //            $wp_site_environment,
@@ -186,20 +210,13 @@ class SiteCrawler {
 
       break;
     }
-
-    // response body processing is complete, now time to save the file contents to the archive
-
-    require_once dirname(__FILE__) . '/../StaticHtmlOutput/FileWriter.php';
-
-    $file_writer = new FileWriter($currentUrl, $this->processed_file, $this->file_type);
-
-    $file_writer->saveFile($archiveDir);
-
-
+  }
+  
+  public function checkIfMoreCrawlingNeeded() {
     // iteration complete, check if we will signal to the client to continue processing, continue ourself for CLI usage, or signal completetion to either
 
     // TODO: could avoid reading file again here as we should have it above
-    $f = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
+    $f = file($this->initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
     $filesRemaining = count($f);
     if ($filesRemaining > 0) {
       echo $filesRemaining;
@@ -208,16 +225,53 @@ class SiteCrawler {
     }
 
     // if being called via the CLI, just keep crawling (TODO: until when?)
-    if ($viaCLI) {
-      $this->crawl_site($viaCLI);
+    if ($this->viaCLI) {
+      $this->crawl_site($this->viaCLI);
     }
-
-    // reclaim memory after each crawl
-    $urlResponse = null;
-    unset($urlResponse);
   }
 
-	public function isRewritable($response) {
+
+  public function saveFile() {
+
+    // response body processing is complete, now time to save the file contents to the archive
+
+    require_once dirname(__FILE__) . '/../StaticHtmlOutput/FileWriter.php';
+
+    $file_writer = new FileWriter($this->url, $this->processed_file, $this->file_type);
+
+    $file_writer->saveFile($this->archive_dir);
+  }
+
+  public function copyFile() {
+
+    require_once dirname(__FILE__) . '/../StaticHtmlOutput/FileCopier.php';
+
+    $file_copier = new FileCopier($this->url, $this->wp_site_url, $this->wp_site_path);
+
+    $file_copier->copyFile($this->archive_dir);
+  }
+
+  public function canFileBeCopiedWithoutProcessing() {
+    // first check for extension 
+    $file_info = pathinfo($this->url);
+    $this->file_extension = isset($file_info['extension']) ? $file_info['extension'] : false;
+
+    // TODO: secondly check for content type from header, though this means making the request
+ 
+    // whitelisted extensions, so as not catch html/xml/json served at domain.com/path/  
+    $extensions_to_skip = array(
+      'jpg', 'jpeg', 'pdf', 'png', 'gif', 'svg'
+    );
+ 
+    if ( $this->file_extension && in_array($this->file_extension, $extensions_to_skip)) {
+      return true;
+    }
+
+    return false;
+  }
+
+
+	public function isRewritable($url) {
 		$contentType = $this->response->getHeaderLine('content-type');
 
 		return (stripos($contentType, 'html') !== false) || (stripos($contentType, 'text') !== false);
@@ -242,12 +296,11 @@ class SiteCrawler {
         return false;
 	}
   
-  public function detectFileType($url) {
+  public function detectFileType() {
     // TODO: detect which processor to use here (HTML, CSS, IMAGE, other)
-    $file_info = pathinfo($url);
+    $file_info = pathinfo($this->url);
 
     $file_extension = isset($file_info['extension']) ? $file_info['extension'] : false;
-
 
     if ($file_extension) {
           $this->file_type = $file_extension;
