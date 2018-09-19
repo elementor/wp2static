@@ -670,7 +670,7 @@ public function recursive_copy($srcdir, $dstdir) {
 				$publicFolderToCopyTo = ABSPATH . $publicFolderToCopyTo;
 
 				// mkdir for the new dir
-				if (!file_exists($publicFolderToCopyTo)) {
+				if (! file_exists($publicFolderToCopyTo)) {
 					if (wp_mkdir_p($publicFolderToCopyTo)) {
 						// file permissions to allow public viewing of files within
 						chmod($publicFolderToCopyTo, 0755);
@@ -1234,20 +1234,30 @@ public function crawlABitMore($viaCLI = false) {
 
 		// TODO: subdir installations are not being correctly detected here
 
-    $this->rename_populated_directory($original_wp_content, $new_wp_content);
+		if (file_exists($original_wp_content)) {
+      $this->rename_populated_directory($original_wp_content, $new_wp_content);
+    }
 
 		if (file_exists($updated_uploads_dir)) {
 			$this->rename_populated_directory($updated_uploads_dir, $new_uploads_dir);
 		}
 
-		$this->rename_populated_directory($updated_theme_root, $new_theme_root);
-		$this->rename_populated_directory($updated_theme_dir, $new_theme_dir);
+		if (file_exists($updated_theme_root)) {
+      $this->rename_populated_directory($updated_theme_root, $new_theme_root);
+    }
+
+		if (file_exists($updated_theme_dir)) {
+      $this->rename_populated_directory($updated_theme_dir, $new_theme_dir);
+    }
 
 		if( file_exists($updated_plugins_dir) ) {
 			$this->rename_populated_directory($updated_plugins_dir, $new_plugins_dir);
 
 		}
-		$this->rename_populated_directory($original_wp_includes, $new_wp_includes);
+
+		if (file_exists($original_wp_includes)) {
+      $this->rename_populated_directory($original_wp_includes, $new_wp_includes);
+    }
 
 		// rm other left over WP identifying files
 

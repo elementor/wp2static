@@ -8,8 +8,9 @@ Requires PHP: 5.4
 Stable tag: 5.9
 
 
+WP Static Site Generator protects the admin area of your WP site, whilst allowing you to serve your content to users on free and fast hosting options. 
 
-WP Static Site Generator is the optimum solution to speed up and secure your WordPress site - export to static HTML and hide all traces of WordPress from your site!
+Keep using WordPress for what it's best at - managing content, but remove the security and performance headaches by publishing the site as static HTML.
 
 == Description ==
 
@@ -28,18 +29,53 @@ A pre-generated static site can outperform popular caching plugins like WP Super
 
 = Features =
 
- * protects you from malicious attacks/malware
- * speeds up your site by not hitting the database or executing any PHP code
- * generates a standalone, static html copy of your whole WordPress website
+ * publishes a standalone, static html copy of your whole WordPress website
  * removes tell-tale signs your site is running WordPress, making it unattractive to hackers
  * auto-deploy to a folder on your server, a ZIP file, FTP server, S3, Dropbox, GitHub, Netlify or BunnyCDN
  * schedule unattended exports via the WP Crontrol plugin or by hitting the custom hook
  * desktop notifications alert you to when exports are complete
- * multi-language support (English/Japanese currently, Spanish and Chinese in progress)
- * realtime logs visible during / saved after export
- * asynchronous exports for deployment methods overcome hosting limitations for large site exports
+
+
+= Benefits =
+
+ * protects you from malicious attacks/malware
+ * speeds up your site by not hitting the database or executing any PHP code
+ * allows you to host your site for free on GitHub Pages, Netlify or the free tier of AWS S3, Azure, etc
+ * allows you to deploy to crazy fast hosting options, like S3, behind CloudFront
+ * have a nice development -> staging -> production workflow and integrate with your CI tools
+
+
+= Who loves this? =
+
+ - Digital Agencies with many sites to manage, no need to worry about WP/plugin updates for client sites
+ - Internet Marketers can create a bunch of quick sites/landing pages that load fast and are free to host
+ - Solo website owners and content creators who like WordPress but don't want to worry about how to secure it
+ - Operations people at large corporations don't often like dealing with WordPress, this allows them to close the security holes and have more control over the hosting
+ - Budget conscious people like free hosting (who doesn't?!?)
+ - Government agencies who have strict security requirements, but have users who prefer to use WordPress
+ * Thos who want to use it to archive an old WordPress website, keeping the content online, but not worrying about keeping WP up to date
 
 This plugin produces a static HTML version of your wordpress install, incredibly useful for anyone who would like the publishing power of wordpress but whose webhost doesn't allow dynamic PHP driven sites - such as GitHub Pages. You can run your development site on a different domain or offline, and the plugin will change all relevant URLs when you publish your site. It's a simple but powerful plugin, and after hitting the publish button, the plugin will output a ZIP file of your entire site, ready to upload straight to it's new home. 
+
+
+= Getting started =
+
+Here is the basic premise:
+
+You need 2 URLs of some sort (they can be on the same server, different servers, subdomains, etc).
+
+ - 1st URL is for where you keep WP - this doesn't need to be accessible or known to anyone but you, if you're the only one working on your content
+
+ - 2nd URL is where you'll "publish" the static version of your site to. This is likely to be your main domain (ie, http://mywordpresssite.com).
+
+That said, you can install the plugin and do an easy test without any other configuration. This will publish a static version to a subdirectory, such as http://mywordpresssite.com/mystatictest/. That's a good way to check the static site is publishing properly, then you can switch to another deployment option, such as FTP or GitHub Pages and deploy to your live site.
+
+As WordPress allows infinite customization and configurations, I don't think any plugin author would be willing to guarantee complete compatibility with every theme, plugin and custom coding on every site. But my aim is to get as high a % of people as possible able to take advantage of static hosting with their WP site.
+
+If you haven't read on why you may want to host statically, please have a read of this article:
+
+http://docs.wp2static.com/blog/how-and-why-to-host-your-wordpress-site-for-free/
+
 
 
 Developed by [**Leon Stafford**](http://leonstafford.github.io). If you have any questions about this plugin's usage, installation or development, please email me at: [help@wp2static.com](mailto:help@wp2static.com)
