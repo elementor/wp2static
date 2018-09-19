@@ -125,8 +125,7 @@ class SiteCrawler {
     $successful_response_codes = array('200', '201', '301', '302', '304');
     $status_code = $this->response->getStatusCode();
     if (! in_array($status_code,  $successful_response_codes)) {
-      error_log('BAD RESPONSE STATUS (' . $status_code . '): ' . $this->url);
-      WsLog::l('FAILED TO CRAWL FILE: ' . $this->url);
+      WsLog::l('BAD RESPONSE STATUS (' . $status_code . '): ' . $this->url);
     } else {
       file_put_contents($this->crawled_links_file, $this->url . PHP_EOL, FILE_APPEND | LOCK_EX);
     }

@@ -718,6 +718,14 @@ jQuery(document).ready(function($){
         startExport();
     });
 
+    $('.cancelExportButton').click(function() {
+      var reallyCancel = confirm("Stop current export and reload page?");
+      if (reallyCancel) {
+        window.location = window.location.href;
+      }
+    });
+
+
     $('.wrap').on('click', '.removeTargetButton', function(event) {
         event.preventDefault();
 
