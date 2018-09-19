@@ -120,7 +120,7 @@ class StaticHtmlOutput_FilesHelper
 		$urlsQueue = array_unique(array_merge(
 					array(trailingslashit($baseUrl)),
 					self::getListOfLocalFilesByUrl(array(get_template_directory_uri())),
-                    self::getAllWPPostURLs(),
+                    self::getAllWPPostURLs($baseUrl),
 					explode("\n", $additionalUrls)
 					));
 
@@ -140,12 +140,16 @@ class StaticHtmlOutput_FilesHelper
         return count($urlsQueue);
     }
 
-    public function getAllWPPostURLs(){
+    public function getAllWPPostURLs($wp_site_url){
         global $wpdb;
 
-		// TODO: is this the most optimum call?
+        // NOTE: re using $wpdb->ret_results vs WP_Query
+        // https://wordpress.stackexchange.com/a/151843/20982
+        // get_results may be faster, but more error prone
+        // TODO: benchmark the difference and use WP_Query if not noticably slower
+
         $posts = $wpdb->get_results("
-            SELECT ID,post_type,post_title
+            SELECT ID,post_type
             FROM {$wpdb->posts}
             WHERE post_status = 'publish' AND post_type NOT IN ('revision','nav_menu_item')
         ");
@@ -163,12 +167,67 @@ class StaticHtmlOutput_FilesHelper
                 case 'attachment':
                     $permalink = get_attachment_link($post->ID);
                     break;
+                default:
+                    $permalink = get_post_permalink($post->ID);
+                    break;
             }
-            
-            $postURLs[] = $permalink;
+
+            /* get the post's URL and each sub-chunk of the path as a URL
+
+              ie http://domain.com/2018/01/01/my-post/ to yield:
+
+                http://domain.com/2018/01/01/my-post/
+                http://domain.com/2018/01/01/
+                http://domain.com/2018/01/
+                http://domain.com/2018/
+            */ 
+
+            $parsed_link = parse_url($permalink);
+            $link_host = $wp_site_url . '/'; // rely on WP's site URL vs reconstructing from parsed
+            $link_path = $parsed_link['path'];
+
+            // TODO: Windows filepath support?
+            $path_segments = explode('/', $link_path);
+
+            // remove first and last empty elements 
+            array_shift($path_segments);
+            array_pop($path_segments);
+
+            $number_of_segments = sizeOf($path_segments);
+      
+            // build each URL
+            for($i = 0; $i < $number_of_segments; $i += 1) {
+              $full_url = $link_host;
+
+              for ($x = 0; $x <= $i; $x += 1) {
+                $full_url .= $path_segments[$x] . '/';
+              }
+              $postURLs[] = $full_url;
+            }
         }
 
-        return $postURLs;
-    }
+        // gets all category page links
+        $args = array(
+          'public'   => true
+        );
 
+        $taxonomies = get_taxonomies($args, 'objects');
+        foreach ($taxonomies as $taxonomy){
+          $terms = get_terms(
+            $taxonomy->name,
+            array(
+              'hide_empty' => true,
+            )
+          );
+
+          foreach ($terms as $term) {
+            $permalink = get_term_link($term);
+
+            $postURLs[] = trim($permalink);
+          }
+        }
+
+        // de-duplicate the array 
+        return array_unique($postURLs);
+    }
 }

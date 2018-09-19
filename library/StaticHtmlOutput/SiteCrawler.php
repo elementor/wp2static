@@ -86,7 +86,6 @@ class SiteCrawler {
 
     // TODO: if not a rewriteable file and exists on server, copy it into archive without reading
     if ($this->canFileBeCopiedWithoutProcessing()) {
-      error_log('skipping processing for: ' . $this->file_extension);
       $this->copyFile();
     } else {
       $this->loadFileForProcessing();
@@ -108,9 +107,16 @@ class SiteCrawler {
         'basicAuthUser' => $this->basicAuthUser,
         'basicAuthPassword' => $this->basicAuthPassword);
 
+
     $client = new \GuzzleHttp\Client();
+
+    $request_options = array(
+      'http_errors' => false,
+    );
+
     // TODO: set basic auth and any other args
-    $this->response = $client->request('GET', $this->url);
+
+    $this->response = $client->request('GET', $this->url, $request_options);
 
     // PERF: ~ 36% of function time when HTML content (50% when other)
     //$urlResponse = new StaticHtmlOutput_UrlRequest($this->url, $basicAuth);
@@ -119,8 +125,9 @@ class SiteCrawler {
     //$urlResponseForFurtherExtraction = new StaticHtmlOutput_UrlRequest($this->url, $basicAuth);
 
     $successful_response_codes = array('200', '201', '301', '302', '304');
-    if (! in_array($this->response->getStatusCode(),  $successful_response_codes)) {
-      error_log('BAD RESPONSE');
+    $status_code = $this->response->getStatusCode();
+    if (! in_array($status_code,  $successful_response_codes)) {
+      error_log('BAD RESPONSE STATUS (' . $status_code . '): ' . $this->url);
       WsLog::l('FAILED TO CRAWL FILE: ' . $this->url);
     } else {
       file_put_contents($this->crawled_links_file, $this->url . PHP_EOL, FILE_APPEND | LOCK_EX);
