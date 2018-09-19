@@ -14,13 +14,15 @@ class StaticHtmlOutput_FilesHelper
 	}
 
 	public static function delete_dir_with_files($dir) { 
-		$files = array_diff(scandir($dir), array('.','..')); 
+    if (is_dir($dir)) {
+      $files = array_diff(scandir($dir), array('.','..')); 
 
-		foreach ($files as $file) { 
-			(is_dir("$dir/$file")) ? self::delete_dir_with_files("$dir/$file") : unlink("$dir/$file"); 
-		} 
+      foreach ($files as $file) { 
+        (is_dir("$dir/$file")) ? self::delete_dir_with_files("$dir/$file") : unlink("$dir/$file"); 
+      } 
 
-		return rmdir($dir); 
+      return rmdir($dir); 
+    }
 	} 
 
 	public static function recursively_scan_dir($dir, $siteroot, $file_list_path){
@@ -147,6 +149,7 @@ class StaticHtmlOutput_FilesHelper
         // https://wordpress.stackexchange.com/a/151843/20982
         // get_results may be faster, but more error prone
         // TODO: benchmark the difference and use WP_Query if not noticably slower
+        // NOTE: inheret post_status allows unlinked attachment pages to be created
 
         $posts = $wpdb->get_results("
             SELECT ID,post_type

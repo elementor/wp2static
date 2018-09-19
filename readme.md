@@ -12,7 +12,6 @@ Allows you to leverage WordPress as a great CMS, but benefit from the speed, sec
  - one site to unlimited export targets
  - specify extra files to include in the output (ie, dynamically loaded assets)
  - desktop notifications alert you to when exports are complete
- - multi-language support (English/Japanese currently)
 
 ## Use cases
 
