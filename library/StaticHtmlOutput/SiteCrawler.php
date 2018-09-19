@@ -102,19 +102,17 @@ class SiteCrawler {
   public function loadFileForProcessing() {
     require_once dirname(__FILE__) . '/../GuzzleHttp/autoloader.php';
 
-    $basicAuth = array(
-        'useBasicAuth' => $this->useBasicAuth,
-        'basicAuthUser' => $this->basicAuthUser,
-        'basicAuthPassword' => $this->basicAuthPassword);
-
-
     $client = new \GuzzleHttp\Client();
 
     $request_options = array(
       'http_errors' => false,
     );
 
-    // TODO: set basic auth and any other args
+    if ($this->useBasicAuth) {
+      $request_options['auth'] = array(
+         $this->basicAuthUser, $this->basicAuthPassword
+      );
+    }
 
     $this->response = $client->request('GET', $this->url, $request_options);
 
