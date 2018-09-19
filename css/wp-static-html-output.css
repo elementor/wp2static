@@ -100,3 +100,10 @@ div.postbox div.inside {
   
 }
 
+.button-call-to-action {
+  background-color: greenyellow !important;
+}
+
+.cancelExportButton{
+  background-color: orange !important;
+}
