@@ -588,6 +588,11 @@ jQuery(document).ready(function($){
         $('#viewErrorLogButton').show();
 
         $('.error-help-text').show();
+        $("#viewErrorLogButton").focus();
+        $('#startExportButton').prop('disabled', false);
+        $('.saveSettingsButton').prop('disabled', false);
+        $('.resetDefaultSettingsButton').prop('disabled', false);
+        $('.cancelExportButton').hide();
     }
 
     function processExportTargets () {
@@ -665,6 +670,14 @@ jQuery(document).ready(function($){
       $('#exportDuration').show();
 
 			$('#progress').hide();
+
+      $("#goToMyStaticSite").focus();
+
+      $('#startExportButton').prop('disabled', false);
+      $('.saveSettingsButton').prop('disabled', false);
+      $('.resetDefaultSettingsButton').prop('disabled', false);
+      $('.cancelExportButton').hide();
+
 			notifyMe();
 		}
     }
@@ -698,6 +711,10 @@ jQuery(document).ready(function($){
     }
 
     $('#startExportButton').click(function() {
+        $(this).prop('disabled', true);
+        $('.saveSettingsButton').prop('disabled', true);
+        $('.resetDefaultSettingsButton').prop('disabled', true);
+        $('.cancelExportButton').show();
         startExport();
     });
 
