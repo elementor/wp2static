@@ -1232,8 +1232,6 @@ public function crawlABitMore($viaCLI = false) {
 		$new_wp_includes = $archiveDir . '/' . $this->rewriteWPINC;
 
 
-		// TODO: subdir installations are not being correctly detected here
-
 		if (file_exists($original_wp_content)) {
       $this->rename_populated_directory($original_wp_content, $new_wp_content);
     }
