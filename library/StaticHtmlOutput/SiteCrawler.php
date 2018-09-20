@@ -67,6 +67,11 @@ class SiteCrawler {
     $this->crawled_links_file = $this->uploads_path . '/WP-STATIC-CRAWLED-LINKS';
     $this->initial_crawl_list = file($this->initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
     $crawled_links = file($this->crawled_links_file, FILE_IGNORE_NEW_LINES);
+    $total_links = sizeOf($this->initial_crawl_list);
+
+    if ($this->crawl_increment > $total_links) {
+      $this->crawl_increment = $total_links;
+    }
 
     for($i = 0; $i < $this->crawl_increment; $i += 1) {
       $link_from_crawl_list = array_shift($this->initial_crawl_list);
@@ -75,10 +80,6 @@ class SiteCrawler {
         $batch_of_links_to_crawl[] = $link_from_crawl_list;
       }
     }
-
-    error_log(sizeOf($batch_of_links_to_crawl));
-
-    // remove empty elements from array, in case of increment of 10 and only 3 lines in file
 
     // resave crawl list file, minus those from this batch
     file_put_contents($this->initial_crawl_list_file, implode("\r\n", $this->initial_crawl_list));
