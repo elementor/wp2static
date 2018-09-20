@@ -256,6 +256,23 @@ http://172.17.0.3/my_pricelist.pdf</pre>
 
 		<br>
 		<br>
+
+    <b>Crawl Increment</b>
+
+    <p>This is set to 1, by default, in order to allow exporting on low-resource environments, such as shared hosting servers. Each increment is the amount of files the server will try to process on each request that the browser sends it. Incrementing this will speed up your exports, by processing more are a time. If your export is failing, due to resource (memory, CPU) limits being reached, try setting this to a lower number.</p>
+
+    <select name="crawl_increment">
+      <option value="1">1</option>
+      <option value="5">5</option>
+      <option value="10">10</option>
+      <option value="25">25</option>
+      <option value="50">50</option>
+      <option value="100">100</option>
+      <option value="500">500</option>
+    </select>
+
+		<br>
+		<br>
 		<strong><label><?php echo __('Scheduled / programmatic exports via WP-Cron', 'static-html-output-plugin');?></label></strong>
 		<p>Using the <a href="https://wordpress.org/plugins/wp-crontrol/" target="_blank">WP Crontrol</a> plugin, you can add the following hook to a schedule to trigger an export. This will run your export using the settings you've saved via this screen. Using this method, you can schedule your exports to happen daily or if you're after an on-post publish kind of behaviour, you could set this to every few minutes.</p>
 		<input type="text" style="width:340px;" value="wp_static_html_output_server_side_export_hook" disabled />

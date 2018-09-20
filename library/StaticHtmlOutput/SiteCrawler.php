@@ -30,6 +30,7 @@ class SiteCrawler {
     $this->allowOfflineUsage = isset($_POST['allowOfflineUsage']) ?  $_POST['allowOfflineUsage'] :  false;
     $this->useRelativeURLs = isset($_POST['useRelativeURLs']) ?  $_POST['useRelativeURLs'] :  false;
     $this->useBaseHref = isset($_POST['useBaseHref']) ?  $_POST['useBaseHref'] :  false;
+    $this->crawl_increment = (int) $_POST['crawl_increment'];
 
     // internal pointers
     $this->processed_file = '';
@@ -59,37 +60,51 @@ class SiteCrawler {
   public function crawlABitMore($viaCLI = false) {
     require_once dirname(__FILE__) . '/../StaticHtmlOutput/WsLog.php';
 
+    $batch_of_links_to_crawl = array();
+
     $this->archive_dir = file_get_contents($this->uploads_path . '/WP-STATIC-CURRENT-ARCHIVE');
     $this->initial_crawl_list_file = $this->uploads_path . '/WP-STATIC-INITIAL-CRAWL-LIST';
     $this->crawled_links_file = $this->uploads_path . '/WP-STATIC-CRAWLED-LINKS';
     $this->initial_crawl_list = file($this->initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
     $crawled_links = file($this->crawled_links_file, FILE_IGNORE_NEW_LINES);
-    $first_line = array_shift($this->initial_crawl_list);
-    file_put_contents($this->initial_crawl_list_file, implode("\r\n", $this->initial_crawl_list));
-    $this->url = $first_line;
 
-    if (empty($this->url)){
-      // skip this empty file, check for more
-      $f = file($this->initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
-      $filesRemaining = count($f);
-      if ($filesRemaining > 0) {
-        echo $filesRemaining;
-      } else {
-        echo 'SUCCESS';
+    for($i = 0; $i < $this->crawl_increment; $i += 1) {
+      $link_from_crawl_list = array_shift($this->initial_crawl_list);
+
+      if ($link_from_crawl_list) {
+        $batch_of_links_to_crawl[] = $link_from_crawl_list;
       }
-
-      return;
     }
 
-    // detect and set file_extension
-    $this->file_extension = $this->getExtensionFromURL();
+    error_log(sizeOf($batch_of_links_to_crawl));
 
-    // TODO: if not a rewriteable file and exists on server, copy it into archive without reading
-    if ($this->canFileBeCopiedWithoutProcessing()) {
-      $this->copyFile();
-    } else {
-      $this->loadFileForProcessing();
-      $this->saveFile();
+    // remove empty elements from array, in case of increment of 10 and only 3 lines in file
+
+    // resave crawl list file, minus those from this batch
+    file_put_contents($this->initial_crawl_list_file, implode("\r\n", $this->initial_crawl_list));
+
+    // for each link in batch, do the crawl and save
+    foreach($batch_of_links_to_crawl as $link_to_crawl) {
+
+      $this->url = $link_to_crawl;
+
+      if (empty($this->url)){
+        // skip this empty URL, check for more
+        $this->checkIfMoreCrawlingNeeded();
+
+        return;
+      }
+
+      // detect and set file_extension
+      $this->file_extension = $this->getExtensionFromURL();
+
+      // TODO: if not a rewriteable file and exists on server, copy it into archive without reading
+      if ($this->canFileBeCopiedWithoutProcessing()) {
+        $this->copyFile();
+      } else {
+        $this->loadFileForProcessing();
+        $this->saveFile();
+      }
     }
 
     $this->checkIfMoreCrawlingNeeded();
