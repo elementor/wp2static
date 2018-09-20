@@ -261,7 +261,7 @@ http://172.17.0.3/my_pricelist.pdf</pre>
 
     <p>This is set to 1, by default, in order to allow exporting on low-resource environments, such as shared hosting servers. Each increment is the amount of files the server will try to process on each request that the browser sends it. Incrementing this will speed up your exports, by processing more are a time. If your export is failing, due to resource (memory, CPU) limits being reached, try setting this to a lower number.</p>
 
-    <select name="crawl_increment">
+    <select name="crawl_increment" id="crawl_increment">
       <option value="1">1</option>
       <option value="5">5</option>
       <option value="10">10</option>
