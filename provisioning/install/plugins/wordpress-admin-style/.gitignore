@@ -1,0 +1,19 @@
+.settings/*
+.buildpath
+.project
+
+# IDE PhpStorm
+.idea/
+*.ipr
+*.iws
+
+# Vendor (e.g. Composer)
+vendor
+!vendor/.gitkeep
+composer.lock
+
+# General
+.DS_Store
+
+# npm
+/node_modules

@@ -223,9 +223,20 @@ As this works off of your last export, if you have changed the deployment method
                     </label>
                 </fieldset>
                 </p>
-                
+              
+ 
+<b>Initial crawl list</b>
+
+<p>Before it starts to export your site, the plugin first generates a list of all WordPress URLs it thinks it should include. It takes these from what it knows about your posts, pages, tags, archives and media.</p>
+
+<button class="button button-secondary">Preview initial crawl list</button>
+
+<p>Where the plugin fails to detect certain URLs that you know you want to include, please add these in the Additional URLs field</p>
+
+<p>Where the plugin has included too much and you want to exclude certain URLs, please add these URLs in the Exclude URLs</p>
+ 
                 <p>
-                  <strong><label for="additionalUrls"><?php echo __('Additional Urls', 'static-html-output-plugin');?></label></strong>
+                  <strong><label for="additionalUrls"><?php echo __('Additional URLs', 'static-html-output-plugin');?></label></strong>
                   <p>
                     <i>For a few themes, certain files may not be detected as part of the export process. Enter any such files here, one per line.
 

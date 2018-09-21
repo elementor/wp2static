@@ -135,6 +135,7 @@ chown -R www-data:www-data wp-content/uploads
 # OPTIONAL: install convenience / common plugins here
 wp --allow-root plugin activate wp-crontrol 
 #wp --allow-root plugin activate simply-static  
+wp --allow-root plugin activate WpAdminStyle # help when developing UI
 wp --allow-root plugin activate wordpress-importer 
 #wp --allow-root plugin activate debug-bar  
 
