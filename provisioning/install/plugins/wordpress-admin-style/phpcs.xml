@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<ruleset name="marksimple">
+ <description>Rules for WordPress Admin Style PHP projects</description>
+
+ <file>./inc</file>
+ <file>./WpAdminStyle.php</file>
+
+ <!-- Code Reviews Rules -->
+ <rule ref="WordPress"/>
+
+</ruleset>
+
