@@ -120,6 +120,7 @@ function generateDeploymentMethodOptions() {
 <?php require_once(__DIR__ . '/tab_crawling.phtml'); ?>
 <?php require_once(__DIR__ . '/tab_processing.phtml'); ?>
 <?php require_once(__DIR__ . '/tab_advanced.phtml'); ?>
+<?php require_once(__DIR__ . '/tab_help.phtml'); ?>
 
 
 
@@ -149,7 +150,7 @@ function generateDeploymentMethodOptions() {
 
 					<p class="submit">
             <?php wp_nonce_field($this->onceAction) ?>
-						<button id="startExportButton" class="button-primary">Start static site export</button>
+						<button id="startExportButton" class="button-primary button-hero">Start static site export</button>
 						<button class="saveSettingsButton button-secondary">Save current options</button>
             <button class="button resetDefaultSettingsButton">Reset to default settings</button>
             <button style="display:none;" class="button cancelExportButton">Cancel export</button>

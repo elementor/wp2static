@@ -1,57 +1,75 @@
 <div class="advanced_settings" style="display:none;">
 
-                <p>
-                  <strong><label for="diffBasedDeploys"><?php echo __('Diff-based deployment', 'static-html-output-plugin');?></label></strong>
-                  </p>
-<?php echo displayCheckbox($this, 'diffBasedDeploys', 'Only deploy changed files since last export'); ?>
+<table class="form-table">
+  <tbody>
+    <tr>
+      <th scope="row">
+        <label for="diffBasedDeploys"><?php echo __('Diff-based deployment', 'static-html-output-plugin');?></label>
+      </th>
+      <td>
 
-<p>
-As this works off of your last export, if you have changed the deployment method or settings since your last deployment, you may end up with missing files. In this case, uncheck this option, do one complete deployment with your new settings, then re-enable this to get faster deployments of changes only going forward.
-</p>
+        <?php echo displayCheckbox($this, 'diffBasedDeploys', 'Only deploy changed files since last export'); ?>
 
-                <p>
-                  <strong><label for="outputDirectory"><?php echo __('Override Output Directory', 'static-html-output-plugin');?></label></strong>
-                  <p>
-                    <i>Just leave this blank and it will write any export files to your WordPress uploads directory at: <?php echo $this->uploadsPath; ?> else, give the full path to the directory on your server</i>
-                  </p>
+        <p>
+        As this works off of your last export, if you have changed the deployment method or settings since your last deployment, you may end up with missing files. In this case, uncheck this option, do one complete deployment with your new settings, then re-enable this to get faster deployments of changes only going forward.
+        </p>
 
-                  <input type="text" id="outputDirectory" name="outputDirectory" value="<?php echo esc_html($this->outputDirectory) ?>" size="50" />
-                </p>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <label for="outputDirectory"><?php echo __('Override Output Directory', 'static-html-output-plugin');?></label>
+      </th>
+      <td>
+          <input type="text" id="outputDirectory" name="outputDirectory" value="<?php echo esc_html($this->outputDirectory) ?>" class="regular-text" /><br>
+
+          <p><i>Just leave this blank and it will write any export files to your WordPress uploads directory at: <?php echo $this->uploadsPath; ?> else, give the full path to the directory on your server</i></p>
+
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <label for="crawl_increment"><?php echo __('Crawl Increment', 'static-html-output-plugin');?></label>
+      </th>
+      <td>
+        <select name="crawl_increment" id="crawl_increment">
+          <option value="1">1</option>
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+          <option value="500">500</option>
+          <option value="1000">1000</option>
+          <option value="999999">Maximum</option>
+        </select><br>
+
+        <p>This is set to 1, by default, in order to allow exporting on low-resource environments, such as shared hosting servers. Each increment is the amount of files the server will try to process on each request that the browser sends it. Incrementing this will speed up your exports, by processing more are a time. If your export is failing, due to resource (memory, CPU) limits being reached, try setting this to a lower number.</p>
+
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <label for="wp_static_html_output_server_side_export_hook"><?php echo __('Scheduled deploys', 'static-html-output-plugin');?></label>
+      </th>
+      <td>
+          <input type="text" style="width:340px;" value="wp_static_html_output_server_side_export_hook" disabled /><br>
+
+          <p>Using the <a href="https://wordpress.org/plugins/wp-crontrol/" target="_blank">WP Crontrol</a> plugin, you can add the following hook to a schedule to trigger an export. This will run your export using the settings you've saved via this screen. Using this method, you can schedule your exports to happen daily or if you're after an on-post publish kind of behaviour, you could set this to every few minutes.</p><br>
+
+      <?php if ( ! wpsho_fr()->is_plan('professional_edition') ) : ?>
+           <a href="<?php echo wpsho_fr()->get_upgrade_url(); ?>">
+                  Upgrade to the Professional Edition for programmatic access
+                  </a>
+      <?php endif;?>
+
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 
 
 
-		<br>
-		<br>
-
-    <b>Crawl Increment</b>
-
-    <p>This is set to 1, by default, in order to allow exporting on low-resource environments, such as shared hosting servers. Each increment is the amount of files the server will try to process on each request that the browser sends it. Incrementing this will speed up your exports, by processing more are a time. If your export is failing, due to resource (memory, CPU) limits being reached, try setting this to a lower number.</p>
-
-    <select name="crawl_increment" id="crawl_increment">
-      <option value="1">1</option>
-      <option value="5">5</option>
-      <option value="10">10</option>
-      <option value="25">25</option>
-      <option value="50">50</option>
-      <option value="100">100</option>
-      <option value="500">500</option>
-      <option value="1000">1000</option>
-      <option value="999999">Maximum</option>
-    </select>
-
-		<br>
-		<br>
-		<strong><label><?php echo __('Scheduled / programmatic exports via WP-Cron', 'static-html-output-plugin');?></label></strong>
-		<p>Using the <a href="https://wordpress.org/plugins/wp-crontrol/" target="_blank">WP Crontrol</a> plugin, you can add the following hook to a schedule to trigger an export. This will run your export using the settings you've saved via this screen. Using this method, you can schedule your exports to happen daily or if you're after an on-post publish kind of behaviour, you could set this to every few minutes.</p>
-		<input type="text" style="width:340px;" value="wp_static_html_output_server_side_export_hook" disabled />
-<?php
-	// show upgrade link for those not on professional_edition
-	if ( ! wpsho_fr()->is_plan('professional_edition') ) {
-		 echo '<a href="' . wpsho_fr()->get_upgrade_url() . '">' .
-            __('Upgrade to the Professional Edition for programmatic access', 'static-html-output-plugin') .
-            '</a>';
-	}
-?>
 </div> <!-- end advanced settings -->
 
