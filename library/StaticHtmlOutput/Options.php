@@ -1,9 +1,7 @@
 <?php
 
-class StaticHtmlOutput_Options
-{
+class StaticHtmlOutput_Options {
 	protected $_options = array();
-	
 	protected $_optionKey = null;
 	
 	public function __construct($optionKey) {
@@ -44,4 +42,61 @@ class StaticHtmlOutput_Options
 	public function delete() {
 		return delete_option($this->_optionKey);
 	}
+
+  public function saveAllPostData() {
+    $options_to_save = array(
+        'selected_deployment_option',
+        'baseUrl',
+        'diffBasedDeploys',
+        'sendViaGithub',
+        'sendViaFTP',
+        'sendViaS3',
+        'sendViaNetlify',
+        'sendViaDropbox',
+        'additionalUrls',
+        'outputDirectory',
+        'targetFolder',
+        'githubRepo',
+        'githubPersonalAccessToken',
+        'githubBranch',
+        'githubPath',
+        'rewriteWPCONTENT',
+        'rewriteTHEMEROOT',
+        'rewriteTHEMEDIR',
+        'rewriteUPLOADS',
+        'rewritePLUGINDIR',
+        'rewriteWPINC',
+				'useRelativeURLs',
+				'useBaseHref',
+        'useBasicAuth',
+        'basicAuthUser',
+        'basicAuthPassword',
+        'bunnycdnPullZoneName',
+        'bunnycdnAPIKey',
+        'bunnycdnRemotePath',
+        'cfDistributionId',
+        's3Key',
+        's3Secret',
+        's3Region',
+        's3Bucket',
+        's3RemotePath',
+        'dropboxAccessToken',
+        'dropboxFolder',
+        'netlifySiteID',
+        'netlifyPersonalAccessToken',
+        'ftpServer',
+        'ftpUsername',
+        'ftpPassword',
+        'ftpRemotePath',
+        'useActiveFTP',
+        'allowOfflineUsage'
+    );
+
+    foreach($options_to_save as $option) {
+      // TODO: set which fields should get which sanitzation upon saving
+      // TODO: validate before saving to avoid empty settings fields created for each
+      $this->setOption($option, filter_input(INPUT_POST, $option));
+      $this->save();
+    }
+  }
 }
