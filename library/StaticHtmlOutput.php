@@ -397,15 +397,14 @@ class StaticHtmlOutput_Controller {
 		}
 	}
 
-    public function save_options () {
+  public function save_options () {
 		if (!check_admin_referer(self::HOOK . '-options') || !current_user_can('manage_options')) {
 			exit('You cannot change WP Static Site Generator Plugin options.');
 		}
 
-		$this->options
-			->setOption('static-export-settings', filter_input(INPUT_POST, 'staticExportSettings', FILTER_SANITIZE_URL))
-			->save();
-    }
+
+		$this->options->saveAllPostData();
+  }
 
 	public function outputPath(){
 		// TODO: a costly function, think about optimisations, we don't want this running for each request if possible
@@ -691,154 +690,6 @@ public function recursive_copy($srcdir, $dstdir) {
 	
 	}
 
-public function crawlABitMore($viaCLI = false) {
-  $initial_crawl_list_file = $this->uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST';
-  $crawled_links_file = $this->uploadsPath . '/WP-STATIC-CRAWLED-LINKS';
-  $initial_crawl_list = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
-  $crawled_links = file($crawled_links_file, FILE_IGNORE_NEW_LINES);
-
-  $first_line = array_shift($initial_crawl_list);
-  file_put_contents($initial_crawl_list_file, implode("\r\n", $initial_crawl_list));
-  $currentUrl = $first_line;
-
-  if (empty($currentUrl)){
-    // skip this empty file
-
-    $f = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
-    $filesRemaining = count($f);
-    if ($filesRemaining > 0) {
-      echo $filesRemaining;
-    } else {
-      echo 'SUCCESS';
-    }
-
-    return;
-  }
-
-  $basicAuth = array(
-      'useBasicAuth' => $this->useBasicAuth,
-      'basicAuthUser' => $this->basicAuthUser,
-      'basicAuthPassword' => $this->basicAuthPassword);
-
-  // PERF: ~ 36% of function time when HTML content (50% when other)
-  $urlResponse = new StaticHtmlOutput_UrlRequest($currentUrl, $basicAuth);
-
-  // PERF: ~ 36% of function time when HTML content (50% when other)
-  $urlResponseForFurtherExtraction = new StaticHtmlOutput_UrlRequest($currentUrl, $basicAuth);
-
-  if ($urlResponse->response == 'FAIL') {
-    WsLog::l('FAILED TO CRAWL FILE: ' . $currentUrl);
-  } else {
-    file_put_contents($crawled_links_file, $currentUrl . PHP_EOL, FILE_APPEND | LOCK_EX);
-  }
-
-  $baseUrl = untrailingslashit(home_url());
-
-  $tmp_upload_dir_var = wp_upload_dir(); // need to store as var first
-
-  $wp_site_environment = array(
-      'wp_inc' =>  '/' . WPINC,	
-      'wp_content' => '/wp-content', // TODO: check if this has been modified/use constant
-      'wp_uploads' =>  str_replace(ABSPATH, '/', $tmp_upload_dir_var['basedir']),	
-      'wp_plugins' =>  str_replace(ABSPATH, '/', WP_PLUGIN_DIR),	
-      'wp_themes' =>  str_replace(ABSPATH, '/', get_theme_root()),	
-      'wp_active_theme' =>  str_replace(home_url(), '', get_template_directory_uri()),	
-      'site_url' =>  get_site_url(),
-      );
-
-  $new_wp_content = '/' . $this->rewriteWPCONTENT;
-  $new_theme_root = $new_wp_content . '/' . $this->rewriteTHEMEROOT;
-  $new_theme_dir = $new_theme_root . '/' . $this->rewriteTHEMEDIR;
-  $new_uploads_dir = $new_wp_content . '/' . $this->rewriteUPLOADS;
-  $new_plugins_dir = $new_wp_content . '/' . $this->rewritePLUGINDIR;
-
-  $overwrite_slug_targets = array(
-      'new_wp_content_path' => $new_wp_content,
-      'new_themes_path' => $new_theme_root,
-      'new_active_theme_path' => $new_theme_dir,
-      'new_uploads_path' => $new_uploads_dir,
-      'new_plugins_path' => $new_plugins_dir,
-      'new_wpinc_path' => '/' . $this->rewriteWPINC,
-      );
-
-  $urlResponse->normalizeURLs();
-
-  // PERF: ~ 18% of function time
-  $urlResponse->cleanup(
-      $wp_site_environment,
-      $overwrite_slug_targets
-      );
-
-  // TODO: if it replaces baseurl here, it will be searching links starting with that...
-  // TODO: shouldn't be doing this here...
-  $urlResponse->replaceBaseUrl($baseUrl, $this->baseUrl, $this->allowOfflineUsage, $this->useRelativeURLs, $this->useBaseHref);
-
-  $archiveDir = file_get_contents($this->uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
-  $this->saveUrlData($urlResponse, $archiveDir);
-
-// TODO: rethink this part, just add it to the files to crawl list if we want to crawl it again...
-
-  // try extracting urls from a response that hasn't been changed yet...
-  // this seems to do it...
-  foreach ($urlResponseForFurtherExtraction->extractAllUrls($baseUrl) as $newUrl) {
-    $path = parse_url($newUrl, PHP_URL_PATH);
-    $extension = pathinfo($path, PATHINFO_EXTENSION);
-
-    if ($newUrl != $currentUrl && 
-        !in_array($newUrl, $crawled_links) && 
-        $extension != 'php' && 
-        !in_array($newUrl, $initial_crawl_list)
-       ) {
-
-      $urlResponse = new StaticHtmlOutput_UrlRequest($newUrl, $basicAuth);
-
-      if ($urlResponse->response == 'FAIL') {
-        WsLog::l('FAILED TO CRAWL FILE: ' . $newUrl);
-      } else {
-        file_put_contents($crawled_links_file, $newUrl . PHP_EOL, FILE_APPEND | LOCK_EX);
-        $crawled_links[] = $newUrl;
-      }
-
-      $urlResponse->cleanup(
-          $wp_site_environment,
-          $overwrite_slug_targets
-          );
-
-      $urlResponse->replaceBaseUrl($baseUrl, $this->baseUrl, $this->allowOfflineUsage, $this->useRelativeURLs, $this->useBaseHref);
-      $archiveDir = file_get_contents($this->uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
-      $this->saveUrlData($urlResponse, $archiveDir);
-    } 
-  }
-
-  // TODO: could avoid reading file again here as we should have it above
-  $f = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
-  $filesRemaining = count($f);
-  if ($filesRemaining > 0) {
-    echo $filesRemaining;
-  } else {
-    echo 'SUCCESS';
-  }
-
-  // if being called via the CLI, just keep crawling (TODO: until when?)
-  if ($viaCLI) {
-    $this->crawl_site($viaCLI);
-  }
-
-  // reclaim memory after each crawl
-  $urlResponse = null;
-  unset($urlResponse);
-}
-
-  public function crawl_site($viaCLI = false) {
-    // PERF: 1% of function time
-    $initial_crawl_list_file = $this->uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST';
-    $initial_crawl_list = file($initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
-
-    // PERF: 99% of function time
-    if ( !empty($initial_crawl_list) ) {
-      $this->crawlABitMore($viaCLI);
-    } 
-  }
 
     public function create_zip() {
         $archiveDir = file_get_contents($this->uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
@@ -1336,8 +1187,8 @@ public function crawlABitMore($viaCLI = false) {
   }
 
 	public function remove_symlink_to_latest_archive() {
-        global $blog_id;
-        $archiveDir = file_get_contents($this->uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
+    global $blog_id;
+    $archiveDir = file_get_contents($this->uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
 
 		if (is_link($this->outputPath() . '/latest-' . $blog_id)) {
 			unlink($this->outputPath() . '/latest-' . $blog_id );
@@ -1345,125 +1196,17 @@ public function crawlABitMore($viaCLI = false) {
 	}	
 
 	public function create_symlink_to_latest_archive() {
-        global $blog_id;
-        $archiveDir = file_get_contents($this->uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
+    global $blog_id;
+    $archiveDir = file_get_contents($this->uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
 
-		// rm and recreate
 		$this->remove_symlink_to_latest_archive();
-
-
-        symlink($archiveDir, $this->outputPath() . '/latest-' . $blog_id );
+    symlink($archiveDir, $this->outputPath() . '/latest-' . $blog_id );
 
 		echo 'SUCCESS';
 	}	
 
-
     public function post_export_teardown() {
 
-
 		$this->cleanup_working_files();
-
-
-		// has SUCCESS returned already from cleanup working files..
-	}
-
-	public function saveUrlData(StaticHtmlOutput_UrlRequest $url, $archiveDir) {
-		$urlInfo = parse_url($url->url);
-		$pathInfo = array();
-
-		//WsLog::l('urlInfo :' . $urlInfo['path']);
-		/* will look like
-			
-			(homepage)
-
-			[scheme] => http
-			[host] => 172.18.0.3
-			[path] => /
-
-			(closed url segment)
-
-			[scheme] => http
-			[host] => 172.18.0.3
-			[path] => /feed/
-
-			(file with extension)
-
-			[scheme] => http
-			[host] => 172.18.0.3
-			[path] => /wp-content/themes/twentyseventeen/assets/css/ie8.css
-
-		*/
-
-		// TODO: here we can allow certain external host files to be crawled
-
-		// validate our inputs
-		if ( !isset($urlInfo['path']) ) {
-			return false;
-		}
-
-		// set what the new path will be based on the given url
-		if( $urlInfo['path'] != '/' ) {
-			$pathInfo = pathinfo($urlInfo['path']);
-		} else {
-			$pathInfo = pathinfo('index.html');
-		}
-
-		// set fileDir to the directory name else empty	
-		$fileDir = $archiveDir . (isset($pathInfo['dirname']) ? $pathInfo['dirname'] : '');
-
-		// set filename to index if there is no extension and basename and filename are the same
-		if (empty($pathInfo['extension']) && $pathInfo['basename'] == $pathInfo['filename']) {
-			$fileDir .= '/' . $pathInfo['basename'];
-			$pathInfo['filename'] = 'index';
-		}
-
-		//$fileDir = preg_replace('/(\/+)/', '/', $fileDir);
-
-		if (!file_exists($fileDir)) {
-			wp_mkdir_p($fileDir);
-		}
-
-		$fileExtension = ''; 
-
-		// TODO: was isHtml() method modified to include more than just html
-		// if there's no extension set or content type matches html, set it to html
-		// TODO: seems to be flawed for say /feed/ urls, which would not be xml content type..
-		if(  isset($pathInfo['extension'])) {
-			$fileExtension = $pathInfo['extension']; 
-		} else if( $url->isHtml() ) {
-			$fileExtension = 'html'; 
-		} else {
-			// guess mime type
-			
-			$fileExtension = StaticHtmlOutput_UrlHelper::getExtensionFromContentType($url->getContentType()); 
-		}
-
-		$fileName = '';
-
-		// set path for homepage to index.html, else build filename
-		if ($urlInfo['path'] == '/') {
-			$fileName = $fileDir . 'index.html';
-		} else {
-			$fileName = $fileDir . '/' . $pathInfo['filename'] . '.' . $fileExtension;
-		}
-
-    // fix for # 103 - weird case with inline style images in nested subdirs
-    // should be a non-issue if using DOMDoc instead of regex parsing
-		
-		$fileName = str_replace(');', '', $fileName);
-		// TODO: find where this extra . is coming from (current dir indicator?)
-		$fileName = str_replace('.index.html', 'index.html', $fileName);
-		// remove 2 or more slashes from paths
-		$fileName = preg_replace('/(\/+)/', '/', $fileName);
-
-
-		$fileContents = $url->response['body'];
-		
-		// TODO: what was the 'F' check for?1? Comments exist for a reason
-		if ($fileContents != '' && $fileContents != 'F') {
-			file_put_contents($fileName, $fileContents);
-		} else {
-			WsLog::l('SAVING URL: UNABLE TO SAVE FOR SOME REASON');
-		}
 	}
 }
