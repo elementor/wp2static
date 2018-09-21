@@ -8,12 +8,7 @@
 $ajax_nonce = wp_create_nonce( 'wpstatichtmloutput' );
 
 function displayCheckbox($template_variables, $field_name, $field_label, $premium = false) {
-	// unlock premium options if user has access to use them
-	if ( wpsho_fr()->is_not_paying() && $premium) {
-		$premium = true;
-	} else {
-		$premium = false;
-	}
+  $premium = ( wpsho_fr()->is_not_paying() && $premium) ? true : false;
 
 	echo "
 		<fieldset>
@@ -43,160 +38,143 @@ function displayTextfield($template_variables, $field_name, $field_label, $descr
 }
 ?>
 
-
-
-
 <div class="wrap">
+  <h1 class="wp-heading-inline">WP Static Site Generator</h1>
 
-<h1 class="wp-heading-inline">WP Static Site Generator</h1>
+  <?php if ( PHP_VERSION < 5.4 ) : ?>
 
-<?php if ( PHP_VERSION < 5.4 ) : ?>
-
-  <div class="notice notice-error inline">
+   <div class="notice notice-error inline">
       <h2 class="title">Outdated PHP version detected</h2>
       <p>The current officially supported PHP versions can be found on <a href="http://php.net/supported-versions.php" target="_blank">PHP.net</a></p>
 
       <p>Whilst the plugin tries to work on the most common PHP environments, it currently requires PHP 5.4 or higher.</p>
 
-      <p>As official security support drops for PHP 5.6 at the end of 2018, it is strongly recommended to upgraded your WordPress hosting environment to PHP 7, ideally, PHP 7.1 or 7.2, as 7.0 will also stop being supported in December, 2018.<br><br>For help on upgrading your environment, please join our support community at <a href="https://wp2static.com/community/" target="_blank">https://wp2static.com/community/</a>
+      <p>As official security support drops for PHP 5.6 at the end of 2018, it is strongly recommended to upgraded your WordPress hosting environment to PHP 7, ideally, PHP 7.1 or 7.2, as 7.0 will also stop being supported in December, 2018.<br><br>For help on upgrading your environment, please join our support community at <a href="https://wp2static.com/community/" target="_blank">https://wp2static.com/community/</a></p>
 
-      <p>Your current PHP version is: <?php echo PHP_VERSION; ?>
-  </div>
-
-<?php endif; ?>
-
-<h2 class="nav-tab-wrapper">
-  <a href="#" class="nav-tab nav-tab-active">Export your site</a>
-  <a href="#" class="nav-tab">Crawling</a>
-  <a href="#" class="nav-tab">Processing</a>
-  <a href="#" class="nav-tab">Advanced Options</a>
-  <a href="#" class="nav-tab">Help / Troubleshooting</a>
-</h2>
-
-
-<!-- main form containing options that get sent -->
-<form id="general-options" class="options-form" method="post" action="">
-
-<!-- placeholder input fields to allow select menu deployment options to use existing behaviour -->
-<span class="hiddenExportOptions" style="display:none;">
-  <?php echo displayCheckbox($this, 'createZip', 'Create a ZIP file of your statically exported site, ready for you to manually deploy. Download link will appear in the Export Log below'); ?>
-  <?php echo displayCheckbox($this, 'sendViaFTP', 'Transfer files via FTP'); ?>
-  <?php echo displayCheckbox($this, 'sendViaS3', 'Transfer files via S3', 1); ?>
-  <?php echo displayCheckbox($this, 'sendViaBUNNYCDN', 'Transfer files via BunnyCDN', 1); ?>
-  <?php echo displayCheckbox($this, 'sendViaDropbox', 'Transfer files via Dropbox', 1); ?>
-  <?php echo displayCheckbox($this, 'sendViaGithub', 'Transfer files via GitHub', 1); ?>
-  <?php echo displayCheckbox($this, 'sendViaNetlify', 'Transfer files via Netlify', 1); ?>
-</span>
-
-<?php
-
-function generateDeploymentMethodOptions() {
-	$options = array(
-	  "folder" => array('Same server - a sub-directory on this server', 'free'),
-	  "zip" => array('Give me a ZIP file, so I can manually deploy it somewhere', 'free'),
-	  "ftp" => array("I want to FTP it automatically, using this plugin", 'free'),
-	  "github" => array("On, GitHub Pages, using this plugin's auto-deployment", 'premium'),
-	  "netlify" => array("On, Netlify, using this plugin's auto-deployment", 'premium'),
-	  "s3" => array("On, Amazon S3, using this plugin's auto-deployment", 'premium'),
-	  "bunnycdn" => array("On, BunnyCDN, using this plugin's auto-deployment", 'premium'),
-	  "dropbox" => array("Backup to Dropbox, using this plugin's auto-deployment", 'premium'),
-	);
-
-	foreach ($options as $key => $value) {
-		if ($value[1] == 'premium' && wpsho_fr()->is_not_paying()) {
-			echo "<option value='$key'>$value[0]</option>";
-		} else {
-			echo "<option value='$key'>$value[0]</option>";
-		}
-	}
-}
-
-?>
-
-
-
-
-<?php require_once(__DIR__ . '/tab_export.phtml'); ?>
-<?php require_once(__DIR__ . '/tab_crawling.phtml'); ?>
-<?php require_once(__DIR__ . '/tab_processing.phtml'); ?>
-<?php require_once(__DIR__ . '/tab_advanced.phtml'); ?>
-<?php require_once(__DIR__ . '/tab_help.phtml'); ?>
-
-
-
-		<br>
-
-					<p class="submit" style="display:none;">
-            <?php wp_nonce_field($this->onceAction) ?>
-						<input id="formActionHiddenField" class="hiddenActionField" type="hidden" name="action" value="wp_static_html_output_ajax" />
-						<input id="basedir" type="hidden" name="basedir" value="" />
-						<input id="wp_site_url" type="hidden" name="wp_site_url" value="" />
-						<input id="wp_uploads_path" type="hidden" name="wp_uploads_path" value="" />
-						<input id="wp_site_path" type="hidden" name="wp_site_path" value="" />
-						<input id="hiddenNonceField" type="hidden" name="nonce" value="<?php echo $ajax_nonce; ?>" />
-						<input id="hiddenAJAXAction" type="hidden" name="ajax_action" value="" />
-						<input name="staticExportSettings" class="hiddenSettingsField" type="hidden" name="action" value="" />
-
-
-					</p>
-
-<?php set_time_limit(600); ?>
-
-				</form>
-
-
-
-              <div class="inside">
-
-					<p class="submit">
-            <?php wp_nonce_field($this->onceAction) ?>
-						<button id="startExportButton" class="button-primary button-hero">Start static site export</button>
-						<button class="saveSettingsButton button-secondary">Save current options</button>
-            <button class="button resetDefaultSettingsButton">Reset to default settings</button>
-            <button style="display:none;" class="button cancelExportButton">Cancel export</button>
-					</p>
-
-    <div>
-
-
-
-
-<div id="progress">
-  <div class="pulsate-css"></div>
-      <div id="current_action">Doing a thing</div>
-</div>
-
-        <br />
-
-		<p id="exportDuration" style="display:block;"></p>
-
-						<a id="downloadZIP" class="button button-secondary" href="#" target="_blank">Download ZIP</a>
-
-						<a href="#" class="button button-secondary button-call-to-action" target="_blank" id="goToMyStaticSite" style="display:none;">Go to my deployed site</a>
-
-		<div class="card error-help-text">
-
-      <b>Error encountered</b>
-
-			<p>Everyone's WordPress hosting environment and configuration is unique, with different plugins, themes, PHP versions, to name a few. Whilst the plugin does its best to support all environments, sometimes you'll encounter a new issue. Sometimes we can adjust the settings in the plugin to overcome an issue, other times, it will require a bugfix and a new release of the plugin (usually a quick process). </p>
-
-      <b>Troubleshooting:</b>
-
-      <ol>
-        <li><a href="https://docs.wp2static.com" target="_blank">Read the documentation</a></li>
-        <li>Check the error log below</li>
-        <li>Check your PHP error logs on your server</li>
-        <li><a href="https://wp2static.com/community/" target="_blank">Find help in the community</a></li>
-      </ol>
-
-			<p>A link to your error log is provided below</p>
-
-      <a href="#" target="_blank" id="viewErrorLogButton" class="button button-secondary">View error log</a>
-
-		</div>
+      <p>Your current PHP version is: <?php echo PHP_VERSION; ?></p>
     </div>
 
+  <?php endif; ?>
 
-                </p>
-						</div>
+  <h2 class="nav-tab-wrapper">
+    <a href="#" class="nav-tab nav-tab-active">Export your site</a>
+    <a href="#" class="nav-tab">Crawling</a>
+    <a href="#" class="nav-tab">Processing</a>
+    <a href="#" class="nav-tab">Advanced Options</a>
+    <a href="#" class="nav-tab">Help / Troubleshooting</a>
+  </h2>
+
+
+  <!-- main form containing options that get sent -->
+  <form id="general-options" class="options-form" method="post" action="">
+
+    <!-- placeholder input fields to allow select menu deployment options to use existing behaviour -->
+    <span class="hiddenExportOptions" style="display:none;">
+      <?php echo displayCheckbox($this, 'createZip', 'Create a ZIP file of your statically exported site, ready for you to manually deploy. Download link will appear in the Export Log below'); ?>
+      <?php echo displayCheckbox($this, 'sendViaFTP', 'Transfer files via FTP'); ?>
+      <?php echo displayCheckbox($this, 'sendViaS3', 'Transfer files via S3', 1); ?>
+      <?php echo displayCheckbox($this, 'sendViaBUNNYCDN', 'Transfer files via BunnyCDN', 1); ?>
+      <?php echo displayCheckbox($this, 'sendViaDropbox', 'Transfer files via Dropbox', 1); ?>
+      <?php echo displayCheckbox($this, 'sendViaGithub', 'Transfer files via GitHub', 1); ?>
+      <?php echo displayCheckbox($this, 'sendViaNetlify', 'Transfer files via Netlify', 1); ?>
+    </span>
+
+    <?php
+
+    function generateDeploymentMethodOptions() {
+      $options = array(
+        "folder" => array('Same server - a sub-directory on this server', 'free'),
+        "zip" => array('Give me a ZIP file, so I can manually deploy it somewhere', 'free'),
+        "ftp" => array("I want to FTP it automatically, using this plugin", 'free'),
+        "github" => array("On, GitHub Pages, using this plugin's auto-deployment", 'premium'),
+        "netlify" => array("On, Netlify, using this plugin's auto-deployment", 'premium'),
+        "s3" => array("On, Amazon S3, using this plugin's auto-deployment", 'premium'),
+        "bunnycdn" => array("On, BunnyCDN, using this plugin's auto-deployment", 'premium'),
+        "dropbox" => array("Backup to Dropbox, using this plugin's auto-deployment", 'premium'),
+      );
+
+      foreach ($options as $key => $value) {
+        if ($value[1] == 'premium' && wpsho_fr()->is_not_paying()) {
+          echo "<option value='$key'>$value[0]</option>";
+        } else {
+          echo "<option value='$key'>$value[0]</option>";
+        }
+      }
+    }
+
+    ?>
+
+    <?php require_once(__DIR__ . '/tab_export.phtml'); ?>
+    <?php require_once(__DIR__ . '/tab_crawling.phtml'); ?>
+    <?php require_once(__DIR__ . '/tab_processing.phtml'); ?>
+    <?php require_once(__DIR__ . '/tab_advanced.phtml'); ?>
+    <?php require_once(__DIR__ . '/tab_help.phtml'); ?>
+
+    <br>
+
+    <span class="submit" style="display:none;">
+      <?php wp_nonce_field($this->onceAction) ?>
+      <input id="formActionHiddenField" class="hiddenActionField" type="hidden" name="action" value="wp_static_html_output_ajax" />
+      <input id="basedir" type="hidden" name="basedir" value="" />
+      <input id="wp_site_url" type="hidden" name="wp_site_url" value="" />
+      <input id="wp_uploads_path" type="hidden" name="wp_uploads_path" value="" />
+      <input id="wp_site_path" type="hidden" name="wp_site_path" value="" />
+      <input id="hiddenNonceField" type="hidden" name="nonce" value="<?php echo $ajax_nonce; ?>" />
+      <input id="hiddenAJAXAction" type="hidden" name="ajax_action" value="" />
+      <input name="staticExportSettings" class="hiddenSettingsField" type="hidden" name="action" value="" />
+    </span>
+
+      
+    <?php 
+      // TODO: check on what kind of hosts this is allowed to be set and how to verify
+      // that it has been increased; ie, have a test execution time script on debug page
+      set_time_limit(600); 
+    ?>
+
+  </form>
+
+  <div class="inside">
+    <p class="submit">
+      <?php wp_nonce_field($this->onceAction) ?>
+      <button id="startExportButton" class="button-primary button-hero">Start static site export</button>
+      <button class="saveSettingsButton button-secondary">Save current options</button>
+      <button class="button resetDefaultSettingsButton">Reset to default settings</button>
+      <button style="display:none;" class="button cancelExportButton">Cancel export</button>
+    </p>
+
+    <div>
+      <div id="progress">
+        <div class="pulsate-css"></div>
+        <div id="current_action">Starting export</div>
+      </div>
+
+      <br />
+
+      <p id="exportDuration" style="display:block;"></p>
+
+      <a id="downloadZIP" class="button button-secondary" href="#" target="_blank">Download ZIP</a>
+
+      <a href="#" class="button button-secondary button-call-to-action" target="_blank" id="goToMyStaticSite" style="display:none;">Go to my deployed site</a>
+
+     <div class="notice notice-error inline error-help-text">
+        <h2>Error encountered</h2>
+
+        <p>Everyone's WordPress hosting environment and configuration is unique, with different plugins, themes, PHP versions, to name a few. Whilst the plugin does its best to support all environments, sometimes you'll encounter a new issue. Sometimes we can adjust the settings in the plugin to overcome an issue, other times, it will require a bugfix and a new release of the plugin (usually a quick process). </p>
+
+        <b>Troubleshooting:</b>
+
+        <ol>
+          <li><a href="https://docs.wp2static.com" target="_blank">Read the documentation</a></li>
+          <li>Check the error log below</li>
+          <li>Check your PHP error logs on your server</li>
+          <li><a href="https://wp2static.com/community/" target="_blank">Find help in the community</a></li>
+        </ol>
+
+        <p>A link to your error log is provided below</p>
+
+        <a href="#" target="_blank" id="viewErrorLogButton" class="button button-secondary">View error log</a>
+      </div>
+
+    </div>
+  </div>
 </div>

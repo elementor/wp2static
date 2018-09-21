@@ -64,6 +64,7 @@ div.postbox div.inside {
 
 .error-help-text {
 	display: none;	
+  padding-bottom: 25px;
 }
 
 .warning {
