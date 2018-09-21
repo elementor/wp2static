@@ -1,32 +1,127 @@
 <div class="processing_settings" style="display:none;">
-  <p>
-  <strong><label for="useRelativeURLs"><?php echo __('Use relative URLs', 'static-html-output-plugin');?></label></strong>
-  </p>
-  <?php echo displayCheckbox($this, 'useRelativeURLs', 'Use relative URLS'); ?>
-  <?php echo displayCheckbox($this, 'useBaseHref', 'Write Base Href for relative URLS'); ?>
 
-  <p>
-  URLs in the exported site will be rewritten as <a href="https://www.w3schools.com/tags/tag_base.asp" target="_blank">relative URLs</a>. ie, http://mydomain.com/some_dir/some_file.jpg will become some_dir/some_file.jpg. A base href will be set to http://mydomain.com/, from which all the relative URLs resolve to. 
-  </p>
 
-  <p>
-  An extra benefit of this method is that it reduces the repetitive use of the full URLs in your source code, reducing the download size and making your pages load a little faster for users.
-  </p>
 
-		<strong><label><?php echo __('Path rewriting', 'static-html-output-plugin');?></label></strong>
-		<p>In order to hide any trace that your site uses WordPress, the following paths will be rewritten. You can leave these default options in, but for more control, you can overwrite them. They cannot be empty.</p>
-			
+<table class="form-table">
+  <tbody>
+    <tr>
+      <th scope="row">
+        <label for="useRelativeURLs"><?php echo __('Use relative URLs', 'static-html-output-plugin');?></label>
+      </th>
+      <td>
 
-		<b>/wp-content</b> will be re-written to <b class="base_url_preview"></b> <input name="rewriteWPCONTENT" class="regular-text rewrite" id="rewriteWPCONTENT" value="<?php echo esc_attr($this->rewriteWPCONTENT) ?>" placeholder="<?php echo __('contents', 'static-html-output-plugin');?>" />
-		<br>
-		<b><?php echo str_replace(home_url(), '', get_template_directory_uri()); ?></b> will be re-written to <b class="base_url_preview"></b><b>wp-content/themes/</b> <input name="rewriteTHEMEDIR" class="regular-text rewrite" id="rewriteTHEMEDIR" value="<?php echo esc_attr($this->rewriteTHEMEDIR) ?>" placeholder="<?php echo __('theme', 'static-html-output-plugin');?>" />
-		<br>
-		<b><?php $default_upload_dir = wp_upload_dir(); echo str_replace(ABSPATH, '/', $default_upload_dir['basedir']); ?></b> will be re-written to <b class="base_url_preview"></b><b>wp-content/</b>  <input name="rewriteUPLOADS" class="regular-text rewrite" id="rewriteUPLOADS" value="<?php echo esc_attr($this->rewriteUPLOADS) ?>" placeholder="<?php echo __('data', 'static-html-output-plugin');?>" />
-		<br>
-		<b><?php echo str_replace(ABSPATH, '/', get_theme_root()); ?></b> will be re-written to <b class="base_url_preview"></b><b>wp-content/</b>  <input name="rewriteTHEMEROOT" class="regular-text rewrite" id="rewriteTHEMEROOT" value="<?php echo esc_attr($this->rewriteTHEMEROOT) ?>" placeholder="<?php echo __('ui', 'static-html-output-plugin');?>" />
-		<br>
-		<b><?php echo str_replace(ABSPATH, '/', WP_PLUGIN_DIR); ?></b> will be re-written to <b class="base_url_preview"></b><b>wp-content/</b>  <input name="rewritePLUGINDIR" class="regular-text rewrite" id="rewritePLUGINDIR" value="<?php echo esc_attr($this->rewritePLUGINDIR) ?>" placeholder="<?php echo __('lib', 'static-html-output-plugin');?>" />
-		<br>
-		<b><?php echo '/' . WPINC; ?></b> will be re-written to <b class="base_url_preview"></b> <input name="rewriteWPINC" class="regular-text rewrite" id="rewriteWPINC" value="<?php echo esc_attr($this->rewriteWPINC) ?>" placeholder="<?php echo __('inc', 'static-html-output-plugin');?>" />
+        <?php echo displayCheckbox($this, 'useRelativeURLs', 'Use relative URLs'); ?>
+
+        <p> URLs in the exported site will be rewritten as <a href="https://www.w3schools.com/tags/tag_base.asp" target="_blank">relative URLs</a>. ie, http://mydomain.com/some_dir/some_file.jpg will become some_dir/some_file.jpg. A base href will be set to http://mydomain.com/, from which all the relative URLs resolve to.  </p><br>
+
+        <?php echo displayCheckbox($this, 'useBaseHref', 'Write Base Href for relative URLs'); ?>
+
+        <p> A base href will be set to http://mydomain.com/, from which all the relative URLs resolve to.  </p><br>
+
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <label><?php echo __('Path rewriting', 'static-html-output-plugin');?></label>
+      </th>
+      <td>
+        <p>In order to hide any trace that your site uses WordPress, the following paths will be rewritten. You can leave these default options in, but for more control, you can overwrite them.</p><br>
+      
+        <?php echo displayCheckbox($this, 'useRelativeURLs', "Don't rewrite WP paths"); ?>
+
+
+<?php 
+
+$tokens = explode('/', get_template_directory_uri());
+$original_theme_dir = $tokens[sizeof($tokens)-1];
+$original_theme_root = $tokens[sizeof($tokens)-2];
+// TODO: use this as a safer way to get wp-content in rewriting areas
+// in case user has changed their wp-content path
+$original_wp_contents = $tokens[sizeof($tokens)-3];
+
+$default_upload_dir = wp_upload_dir(); 
+$tokens = explode('/', str_replace(ABSPATH, '/', $default_upload_dir['basedir']));
+$original_upload_dir = $tokens[sizeof($tokens)-1];
+
+
+$tokens = explode('/', WP_PLUGIN_DIR);
+$original_plugin_dir = $tokens[sizeof($tokens)-1];
+
+$tokens = explode('/', WPINC);
+$original_includes_dir = $tokens[sizeof($tokens)-1];
+
+?>
+
+
+<table class="form-table">
+  <tbody>
+    <tr>
+      <th scope="row">
+        <label for="rewriteWPCONTENT"><?php echo __('WP content', 'static-html-output-plugin');?></label>
+      </th>
+      <td>
+        <input name="rewriteWPCONTENT" class="regular-text rewrite" id="rewriteWPCONTENT" value="<?php echo esc_attr($this->rewriteWPCONTENT) ?>" placeholder="<?php echo __('contents', 'static-html-output-plugin');?>" /><br>
+
+        <i>original: <?php echo $original_wp_contents; ?></i>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <label for="rewriteTHEMEROOT"><?php echo __('Theme root', 'static-html-output-plugin');?></label>
+      </th>
+      <td>
+        <input name="rewriteTHEMEROOT" class="regular-text rewrite" id="rewriteTHEMEROOT" value="<?php echo esc_attr($this->rewriteTHEMEROOT) ?>" placeholder="<?php echo __('ui', 'static-html-output-plugin');?>" /><br>
+
+        <i>original: <?php echo $original_theme_root; ?></i>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <label for="rewriteTHEMEDIR"><?php echo __('Theme', 'static-html-output-plugin');?></label>
+      </th>
+      <td>
+        <input name="rewriteTHEMEDIR" class="regular-text rewrite" id="rewriteTHEMEDIR" value="<?php echo esc_attr($this->rewriteTHEMEDIR) ?>" placeholder="<?php echo __('theme', 'static-html-output-plugin');?>" /><br>
+
+        <i>original: <?php echo $original_theme_dir; ?></i>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <label for="rewriteUPLOADS"><?php echo __('Uploads', 'static-html-output-plugin');?></label>
+      </th>
+      <td>
+        <input name="rewriteUPLOADS" class="regular-text rewrite" id="rewriteUPLOADS" value="<?php echo esc_attr($this->rewriteUPLOADS) ?>" placeholder="<?php echo __('data', 'static-html-output-plugin');?>" /><br>
+
+        <i>original: <?php echo $original_upload_dir; ?></i>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <label for="rewritePLUGINDIR"><?php echo __('Plugins', 'static-html-output-plugin');?></label>
+      </th>
+      <td>
+        <input name="rewritePLUGINDIR" class="regular-text rewrite" id="rewritePLUGINDIR" value="<?php echo esc_attr($this->rewritePLUGINDIR) ?>" placeholder="<?php echo __('lib', 'static-html-output-plugin');?>" /><br>
+
+        <i>original: <?php echo $original_plugin_dir; ?></i>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <label for="rewriteWPINC"><?php echo __('WP includes', 'static-html-output-plugin');?></label>
+      </th>
+      <td>
+        <input name="rewriteWPINC" class="regular-text rewrite" id="rewriteWPINC" value="<?php echo esc_attr($this->rewriteWPINC) ?>" placeholder="<?php echo __('inc', 'static-html-output-plugin');?>" /><br>
+
+        <i>original: <?php echo $original_includes_dir; ?></i>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 </div><!-- end processing_setings -->
 
