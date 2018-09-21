@@ -26,59 +26,35 @@ var exportCommenceTime = '';
 var exportDuration = '';
 var batchIncrement = 0;
 
+function notifyMe() {
+  if (!Notification) {
+    alert('All exports are complete!.'); 
+    return;
+  }
+
+  if (Notification.permission !== "granted") {
+    Notification.requestPermission();
+  } else {
+    var notification = new Notification('WP Static HTML Export', {
+      icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png',
+      body: "Exports have finished!",
+    });
+
+    notification.onclick = function () {
+      parent.focus();
+      window.focus();
+      this.close();
+    };
+  }
+}
+
 jQuery(document).ready(function($){
     if (Notification.permission !== "granted") {
         Notification.requestPermission();
     }
 
+
   $('#viewErrorLogButton').attr('href', logFileURL);
-
-	function callToAction() {
-		// check how many successful exports and present user with a relevant call to action
-        $('.hiddenActionField').val('wp_static_html_output_ajax');
-        $('#hiddenAJAXAction').val('get_number_of_successes');
-        archives = $('.options-form');
-        newSettings = $(".options-form").serialize();
-        $(".hiddenSettingsField").val(newSettings);
-        data = $(archives[0]).serialize();
-        $.ajax({
-            url: ajaxurl,
-            data: data,
-            dataType: 'html',
-            method: 'POST',
-            success: function(number_of_successes) {
-				// get back to main execution
-				processExportTargets();
-            },
-            error: function(serverResponse) {
-				console.log('# successes:');
-				console.log(serverResponse);
-            }
-        });
-
-	}
-	
-    function notifyMe() {
-      if (!Notification) {
-        alert('All exports are complete!.'); 
-        return;
-      }
-
-      if (Notification.permission !== "granted") {
-        Notification.requestPermission();
-      } else {
-        var notification = new Notification('WP Static HTML Export', {
-          icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png',
-          body: "Exports have finished!",
-        });
-
-        notification.onclick = function () {
-          parent.focus();
-          window.focus();
-          this.close();
-        };
-      }
-    }
 
 	/* 
 		TODO: quick win to get the select menu options to behave like the sendViaFTP, etc checkboxes
@@ -86,31 +62,28 @@ jQuery(document).ready(function($){
 	function setDeploymentMethod(selected_deployment_method) {
 		current_deployment_method = selected_deployment_method;
 
-
 		// TODO: uncheck all options before checking the correct one
-			var checkbox_settings = [
-				'createZip',
-				'sendViaFTP',
-				'sendViaBUNNYCDN',
-				'sendViaS3',
-				'sendViaDropbox',
-				'sendViaGithub',
-				'sendViaNetlify',
-			];
+    var checkbox_settings = [
+      'createZip',
+      'sendViaFTP',
+      'sendViaBUNNYCDN',
+      'sendViaS3',
+      'sendViaDropbox',
+      'sendViaGithub',
+      'sendViaNetlify',
+    ];
 
-			for (var i = 0, len = checkbox_settings.length; i < len; i++) {
-				$('#' + checkbox_settings[i]).prop('checked', false);
-			}
+    for (var i = 0, len = checkbox_settings.length; i < len; i++) {
+      $('#' + checkbox_settings[i]).prop('checked', false);
+    }
 
-			// hide zip dl link for all
-			$('#downloadZIP').hide();
-
+    // hide zip dl link for all
+    $('#downloadZIP').hide();
 
 		// set the correct one
 		switch (selected_deployment_method) {
 			case 'zip':
 				$('#createZip').attr('checked', 'checked');
-
 			break;	
 
 			case 'dropbox':
@@ -140,7 +113,6 @@ jQuery(document).ready(function($){
 			default:
 
 			break;
-
 		}
 
 		// set the selected option in case calling this from outside the event handler
@@ -201,6 +173,19 @@ jQuery(document).ready(function($){
 		setExportSettingDetailsVisibility(this);
     });
 
+
+	function offlineUsageChangeHandler(checkbox) {
+    if ($(checkbox).is(':checked')) {
+        $('#baseUrl-zip').prop('disabled', true);
+    } else {
+        $('#baseUrl-zip').prop('disabled', false);
+    }
+  }
+
+	// disable zip base url field when offline usage is checked
+	$('#allowOfflineUsage').change(function() {
+    offlineUsageChangeHandler($(this));
+  });
 
 	// handler when deployment method is changed
 	$('.selected_deployment_method').change(function() {
@@ -676,10 +661,6 @@ jQuery(document).ready(function($){
 					doAJAXExport('record_successful_export');
 					break;
 
-				case 'CALLTOACTION':
-					callToAction();
-					break;
-
 				default:
           console.log('unexpected return value from export target processing');
 					break; 
@@ -735,10 +716,14 @@ jQuery(document).ready(function($){
     function saveOptions() {
         $('.hiddenActionField').val('wp_static_html_output_ajax');
         $('#hiddenAJAXAction').val('save_options');
-        archives = $('.options-form');
-        newSettings = $(".options-form").serialize();
-        $(".hiddenSettingsField").val(newSettings);
-        data = $(archives[0]).serialize();
+
+        // send only non-empty values for smaller payload
+        data = $(".options-form :input")
+            .filter(function(index, element) {
+                return $(element).val() != '';
+            })
+            .serialize();
+
         $.ajax({
             url: ajaxurl,
             data: data,
@@ -783,13 +768,17 @@ jQuery(document).ready(function($){
     $('.wrap').on('click', '.resetDefaultSettingsButton', function(event) {
         event.preventDefault();
 
-		// call ajax to wipe options table entries for export options
+        // TODO: doesn't need to do so much
+        // just POST to reset data function
+        // empty all wpsho optoins from wp_meta
+        // change from AJAX to a form submit
+
+        // call ajax to wipe options table entries for export options
         $('.hiddenActionField').val('wp_static_html_output_ajax');
         $('#hiddenAJAXAction').val('reset_default_settings');
         archives = $('.options-form');
-        newSettings = $(".options-form").serialize();
-        $(".hiddenSettingsField").val(newSettings);
         data = $(archives[0]).serialize();
+
         $.ajax({
             url: ajaxurl,
             data: data,
@@ -826,137 +815,28 @@ jQuery(document).ready(function($){
 
 	}
 
-    //  load existing settings
-    if (settings != 'no existing settings found') {
-        archives = settings.split('baseUrl=');
-        // remove crufty first element
-        archives.shift();
 
-        // first run, will populate only form on page
-        var targetExportSettingsBlock = $('.options-form')[0];
 
-        // iterate each saved settings chunk and create forms for them
-        $.each(archives, function(index, value) {
-            renderedExportSettingsBlocks = $('.options-form').length;
-            targetExportSettingsBlock = $('.options-form:last');
-            archive = 'baseUrl=' + value;
-            archive = archive.substring(0, archive.indexOf('&amp;staticExportSettings='));
+// TODO: These may still be needed
 
-            settingsBlock = JSON.parse('{"' + decodeURI(archive).replace(/\n/g, ",").replace(/\r/g, ",").replace(/"/g, '\\"').replace(/&amp;/g, '","').replace(/=/g,'":"') + '"}');
-       
-            $(targetExportSettingsBlock).find('#baseUrl').first().val(decodeURIComponent(settingsBlock.baseUrl));
-
-            $(targetExportSettingsBlock).find('#outputDirectory').val(decodeURIComponent(settingsBlock.outputDirectory));
-
-            additionalUrls = settingsBlock.additionalUrls.split(',');
-            newAdditionalUrls = '';
-
-            $.each(additionalUrls, function(index, value) {
-               if (value != '') {
-                   newAdditionalUrls += decodeURIComponent(value) + "\n"; 
-               }
-            });
-
-            $(targetExportSettingsBlock).find('#additionalUrls').val(newAdditionalUrls);
-
-			// set text fields
-			var textfield_settings = [
-				'ftpServer',
-				'ftpUsername',
-				'ftpPassword',
-				'ftpRemotePath',
-				'bunnycdnPullZoneName',
-				'bunnycdnAPIKey',
-				'bunnycdnPath',
-				's3Key',
-				's3Secret',
-				's3Region',
-				's3Bucket',
-				's3RemotePath',
-				'cfDistributionId',
-				'dropboxAccessToken',
-				'dropboxFolder',
-				'githubPersonalAccessToken',
-				'githubPath',
-				'githubRepo',
-				'githubBranch',
-				'netlifyPersonalAccessToken',
-				'netlifySiteID',
-				'basicAuthUser',
-				'basicAuthPassword',
-				'rewriteWPCONTENT',
-				'rewriteTHEMEDIR',
-				'rewriteUPLOADS',
-				'rewriteTHEMEROOT',
-				'rewritePLUGINDIR',
-				'rewriteWPINC',
-				'targetFolder',
-				'baseUrl-s3',
-				'baseUrl-ftp',
-				'baseUrl-folder',
-				'baseUrl-dropbox',
-				'baseUrl-github',
-				'baseUrl-netlify',
-				'baseUrl-bunnycdn',
-				'baseUrl-zip'
-			];
-
-			for (var i = 0, len = textfield_settings.length; i < len; i++) {
-				$(targetExportSettingsBlock).find('#' + textfield_settings[i]).first().val(decodeURIComponent(settingsBlock[textfield_settings[i]]));
-			}
-
-			// set checkboxes
-			var checkbox_settings = [
-				'createZip',
-				'sendViaFTP',
-				'useActiveFTP',
-				'sendViaBUNNYCDN',
-				'sendViaS3',
-				'sendViaDropbox',
-				'sendViaGithub',
-				'sendViaNetlify',
-				'sendViaBasic', // todo: allow for improved naming of this
-				'useRelativeURLs',
-				'useBaseHref', 
-				'allowOfflineUsage',
-			];
-
-			for (var i = 0, len = checkbox_settings.length; i < len; i++) {
-				$(targetExportSettingsBlock).find('#' + checkbox_settings[i])[0].checked = settingsBlock[checkbox_settings[i]];
-			}
-
-            // if there are more to come, clone and set target
-			// TODO: check if this still works, blanking fields
-            if (index < (archives.length -1)) {
-                $('.options-form:last').clone().insertAfter('.options-form:last');
-                targetExportSettingsBlock =  $('.options-form:last');
-
-				for (var i = 0, len = textfield_settings.length; i < len; i++) {
-					$(targetExportSettingsBlock).find('#' + textfield_settings[i]).first().val('');
-				}
-
-				for (var i = 0, len = checkbox_settings.length; i < len; i++) {
-					$(targetExportSettingsBlock).find('#' + checkbox_settings[i]).first().prop('checked', false);
-				}
-            }
-
-        $('#crawl_increment').val(settingsBlock.crawl_increment)
 
 		// set and show the previous selected deployment method
-		renderSettingsBlock(settingsBlock.selected_deployment_option);
-
-		// set the select to the current deployment type
-		setDeploymentMethod(settingsBlock.selected_deployment_option);
+//		renderSettingsBlock(settingsBlock.selected_deployment_option);
+//
+//		// set the select to the current deployment type
+//		setDeploymentMethod(settingsBlock.selected_deployment_option);
 		
 			
-        });
-    }
+
 
   // populate some hidden fields
   $('#basedir').val(basedir);
   $('#wp_site_url').val(wpSiteURL);
   $('#wp_uploads_path').val(wp_uploads_path);
   $('#wp_site_path').val(wp_site_path);
+
+  // call change handler on page load, to set correct state
+  offlineUsageChangeHandler($('#allowOfflineUsage'));
 
 	// if rewrite values aren't set yet, populate fields with defaults
 	if ( $("#rewriteWPCONTENT").val() == '' || $("#rewriteWPCONTENT").val() == 'undefined') {
