@@ -44,45 +44,49 @@ function displayTextfield($template_variables, $field_name, $field_label, $descr
 ?>
 
 
+
+
 <div class="wrap">
-	<div class="postbox-container">
-		<div class="metabox-holder">
-			<div class="meta-box-sortables ui-sortable">
 
-				<form id="general-options" class="options-form" method="post" action="">
-
-					<div class="postbox">
-
-
-              <div class="inside">
-
-<br>
+<h1 class="wp-heading-inline">WP Static Site Generator</h1>
 
 <?php if ( PHP_VERSION < 5.4 ) : ?>
 
-<div class="card warning">
-		<h2 class="title">Outdated PHP version detected</h2>
-    <p>The current officially supported PHP versions can be found on <a href="http://php.net/supported-versions.php" target="_blank">PHP.net</a></p>
+  <div class="notice notice-error inline">
+      <h2 class="title">Outdated PHP version detected</h2>
+      <p>The current officially supported PHP versions can be found on <a href="http://php.net/supported-versions.php" target="_blank">PHP.net</a></p>
 
-    <p>Whilst the plugin tries to work on the most common PHP environments, it currently requires PHP 5.4 or higher.</p>
+      <p>Whilst the plugin tries to work on the most common PHP environments, it currently requires PHP 5.4 or higher.</p>
 
-    <p>As official security support drops for PHP 5.6 at the end of 2018, it is strongly recommended to upgraded your WordPress hosting environment to PHP 7, ideally, PHP 7.1 or 7.2, as 7.0 will also stop being supported in December, 2018.<br><br>For help on upgrading your environment, please join our support community at <a href="https://wp2static.com/community/" target="_blank">https://wp2static.com/community/</a>
+      <p>As official security support drops for PHP 5.6 at the end of 2018, it is strongly recommended to upgraded your WordPress hosting environment to PHP 7, ideally, PHP 7.1 or 7.2, as 7.0 will also stop being supported in December, 2018.<br><br>For help on upgrading your environment, please join our support community at <a href="https://wp2static.com/community/" target="_blank">https://wp2static.com/community/</a>
 
-    <p>Your current PHP version is: <?php echo PHP_VERSION; ?>
-</div>
-
-<br>
+      <p>Your current PHP version is: <?php echo PHP_VERSION; ?>
+  </div>
 
 <?php endif; ?>
 
-                  <strong><label><?php echo __('Where will you host the static version of your site?', 'static-html-output-plugin');?></label></strong>
+<h2 class="nav-tab-wrapper">
+  <a href="#" class="nav-tab nav-tab-active">Export your site</a>
+  <a href="#" class="nav-tab">Crawling</a>
+  <a href="#" class="nav-tab">Processing</a>
+  <a href="#" class="nav-tab">Advanced Options</a>
+  <a href="#" class="nav-tab">Help / Troubleshooting</a>
+</h2>
 
-	<div style="margin-top:10px;margin-bottom:10px;">
 
+<!-- main form containing options that get sent -->
+<form id="general-options" class="options-form" method="post" action="">
 
-<!-- legacy multi-export functionality relied on the baseUrl field being first in the settings block -->
-<input style="display:none;" type="text" id="baseUrl" name="baseUrl" value="<?php echo esc_attr($this->baseUrl) ?>" size="50" placeholder="http://mystaticsite.com" />
-
+<!-- placeholder input fields to allow select menu deployment options to use existing behaviour -->
+<span class="hiddenExportOptions" style="display:none;">
+  <?php echo displayCheckbox($this, 'createZip', 'Create a ZIP file of your statically exported site, ready for you to manually deploy. Download link will appear in the Export Log below'); ?>
+  <?php echo displayCheckbox($this, 'sendViaFTP', 'Transfer files via FTP'); ?>
+  <?php echo displayCheckbox($this, 'sendViaS3', 'Transfer files via S3', 1); ?>
+  <?php echo displayCheckbox($this, 'sendViaBUNNYCDN', 'Transfer files via BunnyCDN', 1); ?>
+  <?php echo displayCheckbox($this, 'sendViaDropbox', 'Transfer files via Dropbox', 1); ?>
+  <?php echo displayCheckbox($this, 'sendViaGithub', 'Transfer files via GitHub', 1); ?>
+  <?php echo displayCheckbox($this, 'sendViaNetlify', 'Transfer files via Netlify', 1); ?>
+</span>
 
 <?php
 
@@ -109,195 +113,15 @@ function generateDeploymentMethodOptions() {
 
 ?>
 
-<!-- TODO: disable options when not premium -->
-<!-- disabled="disabled" -->
-<select class="selected_deployment_method" name="selected_deployment_option">
-
-<?php generateDeploymentMethodOptions(); ?>
-
-</select>
-
-
-    </div>
-
-<br style="clear:both;" />
-
-<?php
-
-// load up each deployment settings block
-
-$deployment_options = array(
-	'zip',
-	'ftp',
-	'folder',
-	's3',
-	'dropbox',
-	'bunnycdn',
-	'netlify',
-	'github'
-
-);
-
-foreach($deployment_options as $deployment_option) {
-
-	require_once(__DIR__ . '/' . $deployment_option . '_settings_block.phtml');
-
-}
-
-?>
-
-<!-- placeholder input fields to allow select menu deployment options to use existing behaviour -->
-<span class="hiddenExportOptions" style="display:none;">
 
 
 
-<?php echo displayCheckbox($this, 'createZip', 'Create a ZIP file of your statically exported site, ready for you to manually deploy. Download link will appear in the Export Log below'); ?>
-<?php echo displayCheckbox($this, 'sendViaFTP', 'Transfer files via FTP'); ?>
-<?php echo displayCheckbox($this, 'sendViaS3', 'Transfer files via S3', 1); ?>
-<?php echo displayCheckbox($this, 'sendViaBUNNYCDN', 'Transfer files via BunnyCDN', 1); ?>
-<?php echo displayCheckbox($this, 'sendViaDropbox', 'Transfer files via Dropbox', 1); ?>
-<?php echo displayCheckbox($this, 'sendViaGithub', 'Transfer files via GitHub', 1); ?>
-<?php echo displayCheckbox($this, 'sendViaNetlify', 'Transfer files via Netlify', 1); ?>
+<?php require_once(__DIR__ . '/tab_export.phtml'); ?>
+<?php require_once(__DIR__ . '/tab_crawling.phtml'); ?>
+<?php require_once(__DIR__ . '/tab_processing.phtml'); ?>
+<?php require_once(__DIR__ . '/tab_advanced.phtml'); ?>
 
 
-</span>
-
-
-<br />
-
-                  <button class="advanced_settings_header button-secondary"><?php echo __('Advanced settings', 'static-html-output-plugin');?></button>
-				</p>	
-
-<div class="advanced_settings" style="display:none;">
-
-<br />
-
-
-
-<?php echo displayCheckbox($this, 'sendViaBasic', 'My WP site requires Basic Auth to access'); ?>
-
-<span class="basic">
-	<?php echo displayTextfield($this, 'basicAuthUser', 'Basic Auth user', '', ''); ?>
-	<?php echo displayTextfield($this, 'basicAuthPassword', 'Basic Auth password', '', 'password'); ?>
-</span>
-
-                <p>
-                  <strong><label for="useRelativeURLs"><?php echo __('Use relative URLs', 'static-html-output-plugin');?></label></strong>
-                  </p>
-<?php echo displayCheckbox($this, 'useRelativeURLs', 'Use relative URLS'); ?>
-<?php echo displayCheckbox($this, 'useBaseHref', 'Write Base Href for relative URLS'); ?>
-
-<p>
-URLs in the exported site will be rewritten as <a href="https://www.w3schools.com/tags/tag_base.asp" target="_blank">relative URLs</a>. ie, http://mydomain.com/some_dir/some_file.jpg will become some_dir/some_file.jpg. A base href will be set to http://mydomain.com/, from which all the relative URLs resolve to. 
-</p>
-
-<p>
-An extra benefit of this method is that it reduces the repetitive use of the full URLs in your source code, reducing the download size and making your pages load a little faster for users.
-</p>
-
-                <p>
-                  <strong><label for="diffBasedDeploys"><?php echo __('Diff-based deployment', 'static-html-output-plugin');?></label></strong>
-                  </p>
-<?php echo displayCheckbox($this, 'diffBasedDeploys', 'Only deploy changed files since last export'); ?>
-
-<p>
-As this works off of your last export, if you have changed the deployment method or settings since your last deployment, you may end up with missing files. In this case, uncheck this option, do one complete deployment with your new settings, then re-enable this to get faster deployments of changes only going forward.
-</p>
-
-                <p>
-                  <strong><label for="outputDirectory"><?php echo __('Override Output Directory', 'static-html-output-plugin');?></label></strong>
-                  <p>
-                    <i>Just leave this blank and it will write any export files to your WordPress uploads directory at: <?php echo $this->uploadsPath; ?> else, give the full path to the directory on your server</i>
-                  </p>
-
-                  <input type="text" id="outputDirectory" name="outputDirectory" value="<?php echo esc_html($this->outputDirectory) ?>" size="50" />
-                </p>
-
-                <p>
-                  <strong><label for="outputDirectory"><?php echo __('Don\'t include all files from your uploads directory', 'static-html-output-plugin');?></label></strong>
-                  <p>
-                <fieldset>
-                    <label for="dontIncludeAllUploadFiles">
-                    <input name="dontIncludeAllUploadFiles" id="dontIncludeAllUploadFiles" value="1" type="checkbox" <?php if ($this->dontIncludeAllUploadFiles == 1) echo "checked"; ?> />
-                        <span><?php echo __('Best to leave this unchecked in most cases. Are there some files in your WP uploads directory you don\'t want included in your export? Check this box to limit the export to only files the plugin finds when crawling your site.', 'static-html-output-plugin');?></span>
-                    </label>
-                </fieldset>
-                </p>
-              
- 
-<b>Initial crawl list</b>
-
-<p>Before it starts to export your site, the plugin first generates a list of all WordPress URLs it thinks it should include. It takes these from what it knows about your posts, pages, tags, archives and media.</p>
-
-<button class="button button-secondary">Preview initial crawl list</button>
-
-<p>Where the plugin fails to detect certain URLs that you know you want to include, please add these in the Additional URLs field</p>
-
-<p>Where the plugin has included too much and you want to exclude certain URLs, please add these URLs in the Exclude URLs</p>
- 
-                <p>
-                  <strong><label for="additionalUrls"><?php echo __('Additional URLs', 'static-html-output-plugin');?></label></strong>
-                  <p>
-                    <i>For a few themes, certain files may not be detected as part of the export process. Enter any such files here, one per line.
-
-                    Enter them as the full URL, including your WordPress site url, ie:</i>
-<pre>http://localhost/wp-content/themes/twentyseventeen/banana.jpg
-http://172.17.0.3/my_pricelist.pdf</pre>
-                  </p>
-                  <textarea class="widefat" name="additionalUrls" id="additionalUrls" rows="5" cols="10"><?php echo esc_html($this->additionalUrls) ?></textarea>
-                </p>
-		<br>
-
-
-		<strong><label><?php echo __('Path rewriting', 'static-html-output-plugin');?></label></strong>
-		<p>In order to hide any trace that your site uses WordPress, the following paths will be rewritten. You can leave these default options in, but for more control, you can overwrite them. They cannot be empty.</p>
-			
-
-		<b>/wp-content</b> will be re-written to <b class="base_url_preview"></b> <input name="rewriteWPCONTENT" class="regular-text rewrite" id="rewriteWPCONTENT" value="<?php echo esc_attr($this->rewriteWPCONTENT) ?>" placeholder="<?php echo __('contents', 'static-html-output-plugin');?>" />
-		<br>
-		<b><?php echo str_replace(home_url(), '', get_template_directory_uri()); ?></b> will be re-written to <b class="base_url_preview"></b><b>wp-content/themes/</b> <input name="rewriteTHEMEDIR" class="regular-text rewrite" id="rewriteTHEMEDIR" value="<?php echo esc_attr($this->rewriteTHEMEDIR) ?>" placeholder="<?php echo __('theme', 'static-html-output-plugin');?>" />
-		<br>
-		<b><?php $default_upload_dir = wp_upload_dir(); echo str_replace(ABSPATH, '/', $default_upload_dir['basedir']); ?></b> will be re-written to <b class="base_url_preview"></b><b>wp-content/</b>  <input name="rewriteUPLOADS" class="regular-text rewrite" id="rewriteUPLOADS" value="<?php echo esc_attr($this->rewriteUPLOADS) ?>" placeholder="<?php echo __('data', 'static-html-output-plugin');?>" />
-		<br>
-		<b><?php echo str_replace(ABSPATH, '/', get_theme_root()); ?></b> will be re-written to <b class="base_url_preview"></b><b>wp-content/</b>  <input name="rewriteTHEMEROOT" class="regular-text rewrite" id="rewriteTHEMEROOT" value="<?php echo esc_attr($this->rewriteTHEMEROOT) ?>" placeholder="<?php echo __('ui', 'static-html-output-plugin');?>" />
-		<br>
-		<b><?php echo str_replace(ABSPATH, '/', WP_PLUGIN_DIR); ?></b> will be re-written to <b class="base_url_preview"></b><b>wp-content/</b>  <input name="rewritePLUGINDIR" class="regular-text rewrite" id="rewritePLUGINDIR" value="<?php echo esc_attr($this->rewritePLUGINDIR) ?>" placeholder="<?php echo __('lib', 'static-html-output-plugin');?>" />
-		<br>
-		<b><?php echo '/' . WPINC; ?></b> will be re-written to <b class="base_url_preview"></b> <input name="rewriteWPINC" class="regular-text rewrite" id="rewriteWPINC" value="<?php echo esc_attr($this->rewriteWPINC) ?>" placeholder="<?php echo __('inc', 'static-html-output-plugin');?>" />
-
-		<br>
-		<br>
-
-    <b>Crawl Increment</b>
-
-    <p>This is set to 1, by default, in order to allow exporting on low-resource environments, such as shared hosting servers. Each increment is the amount of files the server will try to process on each request that the browser sends it. Incrementing this will speed up your exports, by processing more are a time. If your export is failing, due to resource (memory, CPU) limits being reached, try setting this to a lower number.</p>
-
-    <select name="crawl_increment" id="crawl_increment">
-      <option value="1">1</option>
-      <option value="5">5</option>
-      <option value="10">10</option>
-      <option value="25">25</option>
-      <option value="50">50</option>
-      <option value="100">100</option>
-      <option value="500">500</option>
-      <option value="1000">1000</option>
-      <option value="999999">Maximum</option>
-    </select>
-
-		<br>
-		<br>
-		<strong><label><?php echo __('Scheduled / programmatic exports via WP-Cron', 'static-html-output-plugin');?></label></strong>
-		<p>Using the <a href="https://wordpress.org/plugins/wp-crontrol/" target="_blank">WP Crontrol</a> plugin, you can add the following hook to a schedule to trigger an export. This will run your export using the settings you've saved via this screen. Using this method, you can schedule your exports to happen daily or if you're after an on-post publish kind of behaviour, you could set this to every few minutes.</p>
-		<input type="text" style="width:340px;" value="wp_static_html_output_server_side_export_hook" disabled />
-<?php
-	// show upgrade link for those not on professional_edition
-	if ( ! wpsho_fr()->is_plan('professional_edition') ) {
-		 echo '<a href="' . wpsho_fr()->get_upgrade_url() . '">' .
-            __('Upgrade to the Professional Edition for programmatic access', 'static-html-output-plugin') .
-            '</a>';
-	}
-?>
-</div> <!-- end advanced settings -->
 
 		<br>
 
@@ -314,17 +138,12 @@ http://172.17.0.3/my_pricelist.pdf</pre>
 
 
 					</p>
-						</div>
-					</div>
 
 <?php set_time_limit(600); ?>
 
 				</form>
 
 
-
-					<div class="postbox exportActionsPane">
-						<div class="handlediv" title="Click to toggle"><br /></div>
 
               <div class="inside">
 
@@ -379,8 +198,4 @@ http://172.17.0.3/my_pricelist.pdf</pre>
 
                 </p>
 						</div>
-					</div>
-			</div>
-		</div>
-	</div>
 </div>

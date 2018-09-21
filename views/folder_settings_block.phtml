@@ -1,24 +1,27 @@
 
 <div class="folder_settings_block">
 
+<table class="form-table">
+  <tbody>
+    <tr>
+      <th scope="row">
+          <label for="targetFolder"><?php echo __('Target folder to deploy to', 'static-html-output-plugin');?></label>
+      </th>
+      <td>
+          <input id="targetFolder" name="targetFolder" size="50" value="mystaticsite" />
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 	<img style="width:40px;float:left;margin-right:10px;" src="<?php echo plugins_url( 'images/folder_icon.png', dirname(__FILE__)) ?>" />
-
-<ul>
-	<li>
-		<b>Test the plugin quickly</b> by exporting to a subfolder on your current server, you can check how it will look when published and make any adjustments needed. After the export, you should be able to see how your site looks in static html at: <a id="folderPreviewURL" href="<?php echo get_site_url() . '/mystatictest'; ?>/" target="_blank"><?php echo get_site_url() . '/mystatictest'; ?>/</a>
-	</li>
-
+		<p><b>Test the plugin quickly</b> by exporting to a subfolder on your current server, you can check how it will look when published and make any adjustments needed. After the export, you should be able to see how your site looks in static html at: <a id="folderPreviewURL" href="<?php echo get_site_url() . '/mystatictest'; ?>/" target="_blank"><?php echo get_site_url() . '/mystatictest'; ?>/</a></p>
 
 
 					  <input style="display:none;" type="url" id="baseUrl-folder" name="baseUrl-folder" size="50" />
 
 
-<br>
-					  <strong><label for="targetFolder"><?php echo __('Target folder to deploy to', 'static-html-output-plugin');?></label></strong>
-<br>
-<br>
 
-					  <input id="targetFolder" name="targetFolder" size="50" value="mystaticsite" />
 
 
 </div>
