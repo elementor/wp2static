@@ -1,0 +1,47 @@
+<div class="export_your_site">
+
+
+<table class="form-table">
+  <tbody>
+    <tr>
+      <th scope="row">
+        <label for="selected_deployment_option"><?php echo __('Where will you host the static version of your site?', 'static-html-output-plugin');?></label>
+      </th>
+      <td>
+        <select class="selected_deployment_method" name="selected_deployment_option">
+          <?php generateDeploymentMethodOptions(); ?>
+        </select>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+<!-- legacy multi-export functionality relied on the baseUrl field being first in the settings block -->
+<input style="display:none;" type="text" id="baseUrl" name="baseUrl" value="<?php echo esc_attr($this->baseUrl) ?>" size="50" placeholder="http://mystaticsite.com" />
+
+
+<?php
+
+  // load up each deployment settings block
+  $deployment_options = array(
+    'zip',
+    'ftp',
+    'folder',
+    's3',
+    'dropbox',
+    'bunnycdn',
+    'netlify',
+    'github'
+
+  );
+
+  foreach($deployment_options as $deployment_option) {
+    require_once(__DIR__ . '/' . $deployment_option . '_settings_block.phtml');
+  }
+
+?>
+
+</div> <!-- end export_your_site -->
+

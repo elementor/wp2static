@@ -1,0 +1,42 @@
+
+<div class="crawl_settings" style="display:none;">
+  <?php echo displayCheckbox($this, 'sendViaBasic', 'My WP site requires Basic Auth to access'); ?>
+
+    <?php echo displayTextfield($this, 'basicAuthUser', 'Basic Auth user', '', ''); ?>
+    <?php echo displayTextfield($this, 'basicAuthPassword', 'Basic Auth password', '', 'password'); ?>
+
+                <p>
+                  <strong><label for="blah"><?php echo __('Don\'t include all files from your uploads directory', 'static-html-output-plugin');?></label></strong>
+                  <p>
+                <fieldset>
+                    <label for="dontIncludeAllUploadFiles">
+                    <input name="dontIncludeAllUploadFiles" id="dontIncludeAllUploadFiles" value="1" type="checkbox" <?php if ($this->dontIncludeAllUploadFiles == 1) echo "checked"; ?> />
+                        <span><?php echo __('Best to leave this unchecked in most cases. Are there some files in your WP uploads directory you don\'t want included in your export? Check this box to limit the export to only files the plugin finds when crawling your site.', 'static-html-output-plugin');?></span>
+                    </label>
+                </fieldset>
+                </p>
+              
+ 
+<b>Initial crawl list</b>
+
+<p>Before it starts to export your site, the plugin first generates a list of all WordPress URLs it thinks it should include. It takes these from what it knows about your posts, pages, tags, archives and media.</p>
+
+<button class="button button-secondary">Preview initial crawl list</button>
+
+<p>Where the plugin fails to detect certain URLs that you know you want to include, please add these in the Additional URLs field</p>
+
+<p>Where the plugin has included too much and you want to exclude certain URLs, please add these URLs in the Exclude URLs</p>
+ 
+                <p>
+                  <strong><label for="additionalUrls"><?php echo __('Additional URLs', 'static-html-output-plugin');?></label></strong>
+                  <p>
+                    <i>For a few themes, certain files may not be detected as part of the export process. Enter any such files here, one per line.
+
+                    Enter them as the full URL, including your WordPress site url, ie:</i>
+<pre>http://localhost/wp-content/themes/twentyseventeen/banana.jpg
+http://172.17.0.3/my_pricelist.pdf</pre>
+                  </p>
+                  <textarea class="widefat" name="additionalUrls" id="additionalUrls" rows="5" cols="10"><?php echo esc_html($this->additionalUrls) ?></textarea>
+                </p>
+		<br>
+</div><!-- end crawl_setings -->

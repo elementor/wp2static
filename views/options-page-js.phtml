@@ -162,23 +162,12 @@ jQuery(document).ready(function($){
 			'github'
 		];
 
-		
-		// hide those not selected
-        $.each(deployment_options, function(index, deployment_option) {
+    // hide those not selected
+    $.each(deployment_options, function(index, deployment_option) {
 			$('.' + deployment_option  + '_settings_block').hide();
 		});
 
-
-		
-
-
     $('.' + selected_deployment_method  + '_settings_block').show();
-
-    // show export action window
-    $('.exportActionsPane').show();
-
-	
-
 	}
 
 	/* 
@@ -228,6 +217,59 @@ jQuery(document).ready(function($){
 			updateBaseURLReferences();
 		}
 	);
+
+  $(document).on('click', '.nav-tab' , function(evt) {
+    evt.preventDefault();
+    current_tab = $(this);
+    $('.nav-tab').removeClass('nav-tab-active');
+    current_tab.addClass('nav-tab-active');
+    current_tab_text = current_tab.text();
+
+    console.log(current_tab_text);
+
+    switch(current_tab_text) {
+      case 'Advanced Options':
+		    $('.export_your_site').hide();
+		    $('.help_troubleshooting').hide();
+		    $('.crawl_settings').hide();
+		    $('.processing_settings').hide();
+		    $('.advanced_settings').show();
+      break;
+
+      case 'Export your site':
+		    $('.advanced_settings').hide();
+		    $('.help_troubleshooting').hide();
+		    $('.export_your_site').show();
+		    $('.processing_settings').hide();
+		    $('.crawl_settings').hide();
+      break;
+
+      case 'Help / Troubleshooting':
+		    $('.export_your_site').hide();
+		    $('.advanced_settings').hide();
+		    $('.help_troubleshooting').show();
+		    $('.processing_settings').hide();
+		    $('.crawl_settings').hide();
+      break;
+
+      case 'Crawling':
+		    $('.export_your_site').hide();
+		    $('.advanced_settings').hide();
+		    $('.help_troubleshooting').hide();
+		    $('.processing_settings').hide();
+		    $('.crawl_settings').show();
+      break;
+
+      case 'Processing':
+		    $('.export_your_site').hide();
+		    $('.advanced_settings').hide();
+		    $('.help_troubleshooting').hide();
+		    $('.processing_settings').show();
+		    $('.crawl_settings').hide();
+      break;
+
+    }
+  });
 
 	$(document).on('click', '.advanced_settings_header' , function(evt) {
     evt.preventDefault();
