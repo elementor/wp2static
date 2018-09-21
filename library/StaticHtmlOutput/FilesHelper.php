@@ -90,8 +90,7 @@ class StaticHtmlOutput_FilesHelper
 		$uploadsPath, 
 		$uploadsURL, 
 		$outputPath, 
-		$pluginHook,
-		$includeAllUploadDirFiles = true) {
+		$pluginHook) {
 
 		global $blog_id;
 		set_time_limit(0);
@@ -126,20 +125,17 @@ class StaticHtmlOutput_FilesHelper
 					explode("\n", $additionalUrls)
 					));
 
-		if ( $includeAllUploadDirFiles ) {
-            //$this->wsLog('NOT INCLUDING ALL FILES FROM UPLOADS DIR');
+      // TODO: shift this as an option to exclusions area
 			$urlsQueue = array_unique(array_merge(
 					$urlsQueue,
 					self::getListOfLocalFilesByUrl(array($uploadsURL))
 			));
-		}
 
+      $str = implode("\n", $urlsQueue);
+      file_put_contents($uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST', $str);
+      file_put_contents($uploadsPath . '/WP-STATIC-CRAWLED-LINKS', '');
 
-        $str = implode("\n", $urlsQueue);
-        file_put_contents($uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST', $str);
-        file_put_contents($uploadsPath . '/WP-STATIC-CRAWLED-LINKS', '');
-
-        return count($urlsQueue);
+      return count($urlsQueue);
     }
 
     public function getAllWPPostURLs($wp_site_url){
