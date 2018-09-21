@@ -21,7 +21,7 @@
         <label for="outputDirectory"><?php echo __('Override Output Directory', 'static-html-output-plugin');?></label>
       </th>
       <td>
-          <input type="text" id="outputDirectory" name="outputDirectory" value="<?php echo esc_html($this->outputDirectory) ?>" class="regular-text" /><br>
+          <?php echo displayTextfield($this, 'outputDirectory', '', '', ''); ?>
 
           <p><i>Just leave this blank and it will write any export files to your WordPress uploads directory at: <?php echo $this->uploadsPath; ?> else, give the full path to the directory on your server</i></p>
 
@@ -33,15 +33,18 @@
       </th>
       <td>
         <select name="crawl_increment" id="crawl_increment">
-          <option value="1">1</option>
-          <option value="5">5</option>
-          <option value="10">10</option>
-          <option value="25">25</option>
-          <option value="50">50</option>
-          <option value="100">100</option>
-          <option value="500">500</option>
-          <option value="1000">1000</option>
-          <option value="999999">Maximum</option>
+<?php 
+  // TODO: shift this into helper function for select
+  $increments = array(1, 5, 10, 25, 50, 100, 500, 1000, 999999);
+
+  foreach($increments as $increment) :
+     if ($increment == 999999): ?>
+          <option value="999999"<?php echo $this->options->crawl_increment == $increment ? ' selected' : ''; ?>>Maximum</option>
+<?php else: ?>
+          <option value="<?php echo $increment; ?>"<?php echo $this->options->crawl_increment == $increment ? ' selected' : ''; ?>><?php echo $increment; ?></option>
+
+<?php endif; 
+       endforeach; ?>
         </select><br>
 
         <p>This is set to 1, by default, in order to allow exporting on low-resource environments, such as shared hosting servers. Each increment is the amount of files the server will try to process on each request that the browser sends it. Incrementing this will speed up your exports, by processing more are a time. If your export is failing, due to resource (memory, CPU) limits being reached, try setting this to a lower number.</p>

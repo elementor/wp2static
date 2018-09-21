@@ -5,12 +5,9 @@
  * Copyright (c) 2011 Leon Stafford
  */
 
-$settings = esc_html($this->staticExportSettings);
-if ($settings == '') { $settings = 'no existing settings found'; }
 ?>
 
 <script>
-var settings = '<?php echo $settings; ?>';
 var uploadsDir = '<?php echo $this->wpUploadsDir; ?>';
 
 <?php $upload_dir = wp_upload_dir();?>
@@ -21,7 +18,7 @@ var pluginDir = '<?php echo $this->wpPluginDir; ?>';
 var basedir = '<?php echo $this->basedir; ?>';
 var wpSiteURL = '<?php echo get_site_url(); ?>/';
 var exportTargets = [];
-var current_deployment_method = 'folder';
+var current_deployment_method = '<?php echo $this->options->selected_deployment_option ? $this->options->selected_deployment_option : 'folder'; ?>';
 var exportCommenceTime = '';
 var exportDuration = '';
 var batchIncrement = 0;
@@ -93,10 +90,6 @@ jQuery(document).ready(function($){
 
         case 'TEARDOWN':
           doAJAXExport('post_export_teardown');
-          break;
-
-        case 'RECORDSUCCESS':
-          doAJAXExport('record_successful_export');
           break;
 
         default:
@@ -192,12 +185,6 @@ jQuery(document).ready(function($){
 
     // always run cleanup "exportTarget" (TODO: naming to be improved)
     exportTargets.push('TEARDOWN');
-
-    // record successful exports into the db
-    exportTargets.push('RECORDSUCCESS');
-
-    // call user to action based on number of exports
-    exportTargets.push('CALLTOACTION');
 
     data = $(".options-form :input")
         .filter(function(index, element) {
@@ -640,8 +627,6 @@ jQuery(document).ready(function($){
     current_tab.addClass('nav-tab-active');
     current_tab_text = current_tab.text();
 
-    console.log(current_tab_text);
-
     switch(current_tab_text) {
       case 'Advanced Options':
 		    $('.export_your_site').hide();
@@ -772,21 +757,10 @@ jQuery(document).ready(function($){
 // TODO: These may still be needed?
 
 //    set and show the previous selected deployment method
-//		renderSettingsBlock(settingsBlock.selected_deployment_option);
+  renderSettingsBlock(current_deployment_method);
 //
 //		// set the select to the current deployment type
-//		setDeploymentMethod(settingsBlock.selected_deployment_option);
-
-
-	// if rewrite values aren't set yet, populate fields with defaults
-  // TODO: shift this to templating area
-  //		$("#rewriteWPCONTENT").val('contents');
-  //		$("#rewriteTHEMEDIR").val('theme');
-  //		$("#rewriteUPLOADS").val('data');
-  //		$("#rewriteTHEMEROOT").val('ui');
-  //		$("#rewritePLUGINDIR").val('lib');
-  //		$("#rewriteWPINC").val('inc');
-
+  setDeploymentMethod(current_deployment_method);
 });
 </script>
 
