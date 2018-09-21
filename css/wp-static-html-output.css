@@ -109,3 +109,6 @@ div.postbox div.inside {
   background-color: orange !important;
 }
 
+p.submit{
+  margin-top: 0px !important;
+}

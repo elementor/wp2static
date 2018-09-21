@@ -1,55 +1,46 @@
-
 <div class="zip_settings_block" style="display:none;">
 
-	<img style="width:40px;float:left;margin-right:10px;" src="<?php echo plugins_url( 'images/zip_icon.jpg', dirname(__FILE__)) ?>" />
-
-	<p>Create a ZIP file of your statically exported site, ready for you to manually deploy. Download link will appear in the Export Log below</p>
-
-	<br style="clear:both;" />
-
-	<br>
-
-					  <strong><label><?php echo __('Settings for the ZIP deployment method', 'static-html-output-plugin');?></label></strong>
-
-					<p>
-
-
 		<?php if ( ! extension_loaded('zip') ) : ?>
+
+   <div class="notice notice-error inline">
+     <h2 class="title">WARNING: ZIP extension missing</h2>
+
+     <p>This can be a common issue but easy to fix. It means that the installation of the PHP programming language on your web host does not currently have support for reading and generating compressed ZIP files. This is needed for the plugin to be able to generate a .zip archive of your static website. Here's some hosting company and platform specific guides on how to fix:</p>
+
+     <ul>
+         <li><a target="_blank" href="https://godaddy.com/help/enable-custom-php-modules-12036">GoDaddy</a></li>
+         <li><a target="_blank" href="https://stackoverflow.com/questions/23564138/how-to-enable-zip-dll-in-xampp">XAMPP</a></li>
+         <li><a target="_blank" href="https://stackoverflow.com/questions/38104348/install-php-zip-on-php-5-6-on-ubuntu">Ubuntu</a></li>
+         <li><a target="_blank" href="https://www.digitalocean.com/community/questions/php-7-0-ziparchive-library-is-missing-or-disabled">DigitalOcean</a></li>
+         <li><a target="_blank" href="http://lmgtfy.com/?q=how+to+get+zip+extension+php">Ask Dr. Google</a></li>
+     </ul>
+
+     <p>After installing/enabling the ZIP extension for PHP, you will likely also need to restart your webserver (Apache or nginx) for it to be usable within WordPress and this plugin.</p>
+
+  </div>
+
+  <?php endif;?>
       
-<div class="card warning">
-		<h2 class="title">WARNING: ZIP extension missing</h2>
+  <table class="form-table">
+    <tbody>
+      <tr>
+        <th scope="row">
+          <strong><?php echo __('Allow offline usage', 'static-html-output-plugin');?></strong>
+        </th>
+        <td>
+          <?php echo displayCheckbox($this, 'allowOfflineUsage', "Check this if you're going to run your site locally, ie on a USB drive given to a client. All links will be made relative and no Base URL will be used."); ?>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+					  <label for="baseUrl"><?php echo __('Base URL', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <input type="url" id="baseUrl-zip" name="baseUrl-zip" value="" size="50" placeholder="http://mystaticsite.com" /><br>
 
-
-        <p> This can be a common issue but easy to fix. It means that the installation of the PHP programming language on your web host does not currently have support for reading and generating compressed ZIP files. This is needed for the plugin to be able to generate a .zip archive of your static website. Here's some hosting company and platform specific guides on how to fix:</p>
-
-        <ul>
-            <li><a target="_blank" href="https://godaddy.com/help/enable-custom-php-modules-12036">GoDaddy</a></li>
-            <li><a target="_blank" href="https://stackoverflow.com/questions/23564138/how-to-enable-zip-dll-in-xampp">XAMPP</a></li>
-            <li><a target="_blank" href="https://stackoverflow.com/questions/38104348/install-php-zip-on-php-5-6-on-ubuntu">Ubuntu</a></li>
-            <li><a target="_blank" href="https://www.digitalocean.com/community/questions/php-7-0-ziparchive-library-is-missing-or-disabled">DigitalOcean</a></li>
-            <li><a target="_blank" href="http://lmgtfy.com/?q=how+to+get+zip+extension+php">Ask Dr. Google</a></li>
-        </ul>
-
-    <p>After installing/enabling the ZIP extension for PHP, you will likely also need to restart your webserver (Apache or nginx) for it to be usable within WordPress and this plugin.</p>
-
-</div>
-
-<br>
-
-    <?php endif; ?>
-
-
-					  <ssize="50"trong><label for="baseUrl"><?php echo __('Base Url', 'static-html-output-plugin');?></label></strong>
-					  <p>
-						<i><?php echo __("Set this to the URL you intend to host your static exported site on, ie http://mystaticsite.com. Do not set this to the same URL as the WordPress site you're currently using (the address in your browser above). This plugin will rewrite all URLs in the exported static html from your current WordPress URL to what you set here. Supports http, https and protocol relative URLs.", 'static-html-output-plugin');?></i>
-					  </p> 
-
-					  <input type="url" id="baseUrl-zip" name="baseUrl-zip" value="" size="50" placeholder="http://mystaticsite.com" />
-					</p>
-
-					  <strong><label for="allowOfflineUsage"><?php echo __('Allow offline usage', 'static-html-output-plugin');?></label></strong>
-
-
-<?php echo displayCheckbox($this, 'allowOfflineUsage', 'Check this to enable you to run your site without any internet access, ie a USB drive given to a client. All links will be made relative and no Base Url will be used.'); ?>
-
+          <p> <i><?php echo __("Set this to the URL you intend to host your static exported site on, ie http://mystaticsite.com. Do not set this to the same URL as the WordPress site you're currently using (the address in your browser above). This plugin will rewrite all URLs in the exported static html from your current WordPress URL to what you set here. Supports http, https and protocol relative URLs.", 'static-html-output-plugin');?></i> </p> 
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </div>

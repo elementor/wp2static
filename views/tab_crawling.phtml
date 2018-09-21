@@ -1,86 +1,77 @@
-
 <div class="crawl_settings" style="display:none;">
 
-<table class="form-table">
-  <tbody>
-    <tr>
-      <th scope="row">
-        <label for="sendViaBasic"><?php echo __('Use basic authentication', 'static-html-output-plugin');?></label>
-      </th>
-      <td>
-        <?php echo displayCheckbox($this, 'sendViaBasic', 'My WP site requires Basic Auth to access'); ?>
-      </td>
-    </tr>
-    <tr>
-      <th scope="row">
-        <label for="basicAuthUser"><?php echo __('Basic auth user', 'static-html-output-plugin');?></label>
-      </th>
-      <td>
-    <?php echo displayTextfield($this, 'basicAuthUser', 'Basic Auth user', '', ''); ?>
-      </td>
-    </tr>
-    <tr>
-      <th scope="row">
-        <label for="basicAuthPassword"><?php echo __('Basic auth password', 'static-html-output-plugin');?></label>
-      </th>
-      <td>
-    <?php echo displayTextfield($this, 'basicAuthPassword', 'Basic Auth password', '', 'password'); ?>
-      </td>
-    </tr>
-    <tr>
-      <th scope="row">
-        <label><?php echo __('Initial crawl list', 'static-html-output-plugin');?></label>
-      </th>
-      <td>
-        <p>Before it starts to export your site, the plugin first generates a list of all WordPress URLs it thinks it should include. It takes these from what it knows about your posts, pages, tags, archives and media.</p>
-      <br>
-      <button class="button button-secondary">Preview initial crawl list</button>
-      </td>
-    </tr>
-    <tr>
-      <th scope="row">
-        <label><?php echo __('Exclude certain URLs', 'static-html-output-plugin');?></label>
-      </th>
-      <td>
-      <p>Where the plugin has included too much and you want to exclude certain URLs, please specify these URLs here.</p> <br>
+  <table class="form-table">
+    <tbody>
+      <tr>
+        <th scope="row">
+          <label for="sendViaBasic"><?php echo __('Use basic authentication', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <?php echo displayCheckbox($this, 'sendViaBasic', 'My WP site requires Basic Auth to access'); ?>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          <label for="basicAuthUser"><?php echo __('Basic auth user', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+      <?php echo displayTextfield($this, 'basicAuthUser', 'Basic Auth user', '', ''); ?>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          <label for="basicAuthPassword"><?php echo __('Basic auth password', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+      <?php echo displayTextfield($this, 'basicAuthPassword', 'Basic Auth password', '', 'password'); ?>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          <label><?php echo __('Initial crawl list', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <p>Before it starts to export your site, the plugin first generates a list of all WordPress URLs it thinks it should include. It takes these from what it knows about your posts, pages, tags, archives and media.</p>
+        <br>
+        <button class="button button-secondary">Preview initial crawl list</button>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          <label><?php echo __('Exclude certain URLs', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+        <p>Where the plugin has included too much and you want to exclude certain URLs, please specify these URLs here.</p> <br>
 
-      <i><p>Supported formats are fully qualified URLs, relative URLs and regular expressions</p> <br>
+        <i><p>Supported formats are fully qualified URLs, relative URLs and regular expressions</p> <br>
 
-      <?php echo $this->wp_site_url; ?>/wp-content/themes/twentyseventeen/banana.jpg<br>
-      /my_pricelist.pdf<br>
-      /products/<br>
-      </i>
-      <br>
-
-        <textarea class="widefat" name="additionalUrls" id="additionalUrls" rows="5" cols="10"><?php echo esc_html($this->additionalUrls) ?></textarea>
-      </td>
-    </tr>
-    <tr>
-      <th scope="row">
-        <label><?php echo __('Include additional URLs', 'static-html-output-plugin');?></label>
-      </th>
-      <td>
-<p>Where the plugin fails to detect certain URLs that you know you want to include, please add these here. This will be applied after any exclusions, in case you want to exclude a whole directory, then include just one file from it.</p> <br>
-
-        <i><p>Supported formats are fully qualified URLs or relative URLs</p> <br>
-
-        <?php echo $this->wp_site_url; ?><br>
         <?php echo $this->wp_site_url; ?>/wp-content/themes/twentyseventeen/banana.jpg<br>
         /my_pricelist.pdf<br>
+        /products/<br>
         </i>
         <br>
 
-          <textarea class="widefat" name="excludeUrls" id="excludeUrls" rows="5" cols="10"><?php echo esc_html($this->additionalUrls) ?></textarea>
-      </td>
-    </tr>
-  </tbody>
-</table>
+          <textarea class="widefat" name="additionalUrls" id="additionalUrls" rows="5" cols="10"><?php echo esc_html($this->additionalUrls) ?></textarea>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          <label><?php echo __('Include additional URLs', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+  <p>Where the plugin fails to detect certain URLs that you know you want to include, please add these here. This will be applied after any exclusions, in case you want to exclude a whole directory, then include just one file from it.</p> <br>
 
+          <i><p>Supported formats are fully qualified URLs or relative URLs</p> <br>
 
+          <?php echo $this->wp_site_url; ?><br>
+          <?php echo $this->wp_site_url; ?>/wp-content/themes/twentyseventeen/banana.jpg<br>
+          /my_pricelist.pdf<br>
+          </i>
+          <br>
 
- 
-
-                  </p>
-                </p>
-		<br>
+            <textarea class="widefat" name="excludeUrls" id="excludeUrls" rows="5" cols="10"><?php echo esc_html($this->additionalUrls) ?></textarea>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </div><!-- end crawl_setings -->

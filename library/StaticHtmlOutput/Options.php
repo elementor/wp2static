@@ -20,6 +20,7 @@ class StaticHtmlOutput_Options
 	
 	public function __set($name, $value) {
 		$this->_options[$name] = $value;
+
 		return $this;
 	}
 	
