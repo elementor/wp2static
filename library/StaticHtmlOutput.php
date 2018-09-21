@@ -37,7 +37,6 @@ class StaticHtmlOutput_Controller {
         self::$_instance->sendViaNetlify = filter_input(INPUT_POST, 'sendViaNetlify');
         self::$_instance->sendViaDropbox = filter_input(INPUT_POST, 'sendViaDropbox');
         self::$_instance->additionalUrls = filter_input(INPUT_POST, 'additionalUrls');
-        self::$_instance->dontIncludeAllUploadFiles = filter_input(INPUT_POST, 'dontIncludeAllUploadFiles');
         self::$_instance->outputDirectory = filter_input(INPUT_POST, 'outputDirectory');
         self::$_instance->targetFolder = filter_input(INPUT_POST, 'targetFolder');
         self::$_instance->githubRepo = filter_input(INPUT_POST, 'githubRepo');
@@ -105,10 +104,6 @@ class StaticHtmlOutput_Controller {
 
 		    if ( array_key_exists('additionalUrls', $pluginOptions )) {
           self::$_instance->additionalUrls = $pluginOptions['additionalUrls'];
-        }
-
-		    if ( array_key_exists('dontIncludeAllUploadFiles', $pluginOptions )) {
-          self::$_instance->dontIncludeAllUploadFiles = $pluginOptions['dontIncludeAllUploadFiles'];
         }
 
 		    if ( array_key_exists('outputDirectory', $pluginOptions )) {
@@ -396,6 +391,7 @@ class StaticHtmlOutput_Controller {
 				->assign('wpUploadsDir', $this->uploadsURL)
 				->assign('wpPluginDir', plugins_url('/', __FILE__))
 				->assign('onceAction', self::HOOK . '-options')
+				->assign('wp_site_url', get_site_url())
 				->assign('uploadsPath', $this->uploadsPath)
 				->render();
 		}

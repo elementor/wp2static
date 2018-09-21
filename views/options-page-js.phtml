@@ -269,6 +269,8 @@ jQuery(document).ready(function($){
       break;
 
     }
+
+    current_tab.blur();
   });
 
 	$(document).on('click', '.advanced_settings_header' , function(evt) {
@@ -916,7 +918,6 @@ jQuery(document).ready(function($){
 				'sendViaBasic', // todo: allow for improved naming of this
 				'useRelativeURLs',
 				'useBaseHref', 
-				'dontIncludeAllUploadFiles',
 				'allowOfflineUsage',
 			];
 

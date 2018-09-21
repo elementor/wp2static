@@ -1,42 +1,92 @@
 
 <div class="crawl_settings" style="display:none;">
-  <?php echo displayCheckbox($this, 'sendViaBasic', 'My WP site requires Basic Auth to access'); ?>
 
+<table class="form-table">
+  <tbody>
+    <tr>
+      <th scope="row">
+        <label for="sendViaBasic"><?php echo __('Use basic authentication', 'static-html-output-plugin');?></label>
+      </th>
+      <td>
+        <?php echo displayCheckbox($this, 'sendViaBasic', 'My WP site requires Basic Auth to access'); ?>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <label for="basicAuthUser"><?php echo __('Basic auth user', 'static-html-output-plugin');?></label>
+      </th>
+      <td>
     <?php echo displayTextfield($this, 'basicAuthUser', 'Basic Auth user', '', ''); ?>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <label for="basicAuthPassword"><?php echo __('Basic auth password', 'static-html-output-plugin');?></label>
+      </th>
+      <td>
     <?php echo displayTextfield($this, 'basicAuthPassword', 'Basic Auth password', '', 'password'); ?>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <label><?php echo __('Initial crawl list', 'static-html-output-plugin');?></label>
+      </th>
+      <td>
+        <p>Before it starts to export your site, the plugin first generates a list of all WordPress URLs it thinks it should include. It takes these from what it knows about your posts, pages, tags, archives and media.</p>
+      <br>
+      <button class="button button-secondary">Preview initial crawl list</button>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <label><?php echo __('Exclude certain URLs', 'static-html-output-plugin');?></label>
+      </th>
+      <td>
+      <p>Where the plugin has included too much and you want to exclude certain URLs, please add these URLs in the Exclude URLs.</p> <br>
 
-                <p>
-                  <strong><label for="blah"><?php echo __('Don\'t include all files from your uploads directory', 'static-html-output-plugin');?></label></strong>
-                  <p>
-                <fieldset>
-                    <label for="dontIncludeAllUploadFiles">
-                    <input name="dontIncludeAllUploadFiles" id="dontIncludeAllUploadFiles" value="1" type="checkbox" <?php if ($this->dontIncludeAllUploadFiles == 1) echo "checked"; ?> />
-                        <span><?php echo __('Best to leave this unchecked in most cases. Are there some files in your WP uploads directory you don\'t want included in your export? Check this box to limit the export to only files the plugin finds when crawling your site.', 'static-html-output-plugin');?></span>
-                    </label>
-                </fieldset>
-                </p>
-              
+      <i><p>Supported formats are fully qualified URLs, relative URLs and regular expressions</p> <br>
+
+      <?php echo $this->wp_site_url; ?>/wp-content/themes/twentyseventeen/banana.jpg<br>
+      /my_pricelist.pdf<br>
+      /products/<br>
+      </i>
+      <br>
+
+        <textarea class="widefat" name="additionalUrls" id="additionalUrls" rows="5" cols="10"><?php echo esc_html($this->additionalUrls) ?></textarea>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <label><?php echo __('Include additional URLs', 'static-html-output-plugin');?></label>
+      </th>
+      <td>
+<p>Where the plugin fails to detect certain URLs that you know you want to include, please add these in the Additional URLs field. This will be applied after any exclusions, in case you want to exclude a whole directory, then include just one file from it.</p> <br>
+
+        <i><p>Supported formats are fully qualified URLs or relative URLs</p> <br>
+
+        <?php echo $this->wp_site_url; ?><br>
+        <?php echo $this->wp_site_url; ?>/wp-content/themes/twentyseventeen/banana.jpg<br>
+        /my_pricelist.pdf<br>
+        </i>
+        <br>
+
+          <textarea class="widefat" name="additionalUrls" id="additionalUrls" rows="5" cols="10"><?php echo esc_html($this->additionalUrls) ?></textarea>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+      </th>
+      <td>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+
  
-<b>Initial crawl list</b>
 
-<p>Before it starts to export your site, the plugin first generates a list of all WordPress URLs it thinks it should include. It takes these from what it knows about your posts, pages, tags, archives and media.</p>
-
-<button class="button button-secondary">Preview initial crawl list</button>
-
-<p>Where the plugin fails to detect certain URLs that you know you want to include, please add these in the Additional URLs field</p>
-
-<p>Where the plugin has included too much and you want to exclude certain URLs, please add these URLs in the Exclude URLs</p>
- 
-                <p>
-                  <strong><label for="additionalUrls"><?php echo __('Additional URLs', 'static-html-output-plugin');?></label></strong>
-                  <p>
-                    <i>For a few themes, certain files may not be detected as part of the export process. Enter any such files here, one per line.
-
-                    Enter them as the full URL, including your WordPress site url, ie:</i>
-<pre>http://localhost/wp-content/themes/twentyseventeen/banana.jpg
-http://172.17.0.3/my_pricelist.pdf</pre>
                   </p>
-                  <textarea class="widefat" name="additionalUrls" id="additionalUrls" rows="5" cols="10"><?php echo esc_html($this->additionalUrls) ?></textarea>
                 </p>
 		<br>
 </div><!-- end crawl_setings -->
