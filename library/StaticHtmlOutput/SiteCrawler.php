@@ -8,7 +8,7 @@ class SiteCrawler {
     // TODO: security check that this is being called from same server
     
     // basic auth
-    $this->useBasicAuth = isset($_POST['sendViaBasic']) ?  $_POST['sendViaBasic'] :  false;
+    $this->useBasicAuth = isset($_POST['useBasicAuth']) ?  $_POST['useBasicAuth'] :  false;
     $this->basicAuthUser = $_POST['basicAuthUser'];
     $this->basicAuthPassword = $_POST['basicAuthPassword'];
 

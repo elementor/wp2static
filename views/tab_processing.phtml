@@ -48,9 +48,8 @@ $original_plugin_dir = $tokens[sizeof($tokens)-1];
 $tokens = explode('/', WPINC);
 $original_includes_dir = $tokens[sizeof($tokens)-1];
 
+// TODO: get all data MVC style vs this mess:
 ?>
-
-
         <table class="form-table">
           <tbody>
             <tr>
@@ -58,7 +57,7 @@ $original_includes_dir = $tokens[sizeof($tokens)-1];
                 <label for="rewriteWPCONTENT"><?php echo __('WP content', 'static-html-output-plugin');?></label>
               </th>
               <td>
-                <input name="rewriteWPCONTENT" class="regular-text rewrite" id="rewriteWPCONTENT" value="<?php echo esc_attr($this->rewriteWPCONTENT) ?>" placeholder="<?php echo __('contents', 'static-html-output-plugin');?>" /><br>
+                <input name="rewriteWPCONTENT" class="regular-text rewrite" id="rewriteWPCONTENT" value="<?php echo $this->rewriteWPCONTENT; ?>" placeholder="<?php echo __('contents', 'static-html-output-plugin');?>" /><br>
 
                 <i>original: <?php echo $original_wp_contents; ?></i>
               </td>
@@ -68,7 +67,7 @@ $original_includes_dir = $tokens[sizeof($tokens)-1];
                 <label for="rewriteTHEMEROOT"><?php echo __('Theme root', 'static-html-output-plugin');?></label>
               </th>
               <td>
-                <input name="rewriteTHEMEROOT" class="regular-text rewrite" id="rewriteTHEMEROOT" value="<?php echo esc_attr($this->rewriteTHEMEROOT) ?>" placeholder="<?php echo __('ui', 'static-html-output-plugin');?>" /><br>
+                <input name="rewriteTHEMEROOT" class="regular-text rewrite" id="rewriteTHEMEROOT" value="<?php echo $this->rewriteTHEMEROOT; ?>" placeholder="<?php echo __('ui', 'static-html-output-plugin');?>" /><br>
 
                 <i>original: <?php echo $original_theme_root; ?></i>
               </td>
@@ -78,7 +77,7 @@ $original_includes_dir = $tokens[sizeof($tokens)-1];
                 <label for="rewriteTHEMEDIR"><?php echo __('Theme', 'static-html-output-plugin');?></label>
               </th>
               <td>
-                <input name="rewriteTHEMEDIR" class="regular-text rewrite" id="rewriteTHEMEDIR" value="<?php echo esc_attr($this->rewriteTHEMEDIR) ?>" placeholder="<?php echo __('theme', 'static-html-output-plugin');?>" /><br>
+                <input name="rewriteTHEMEDIR" class="regular-text rewrite" id="rewriteTHEMEDIR" value="<?php echo $this->rewriteTHEMEDIR; ?>" placeholder="<?php echo __('theme', 'static-html-output-plugin');?>" /><br>
 
                 <i>original: <?php echo $original_theme_dir; ?></i>
               </td>
@@ -88,7 +87,7 @@ $original_includes_dir = $tokens[sizeof($tokens)-1];
                 <label for="rewriteUPLOADS"><?php echo __('Uploads', 'static-html-output-plugin');?></label>
               </th>
               <td>
-                <input name="rewriteUPLOADS" class="regular-text rewrite" id="rewriteUPLOADS" value="<?php echo esc_attr($this->rewriteUPLOADS) ?>" placeholder="<?php echo __('data', 'static-html-output-plugin');?>" /><br>
+                <input name="rewriteUPLOADS" class="regular-text rewrite" id="rewriteUPLOADS" value="<?php echo $this->rewriteUPLOADS; ?>" placeholder="<?php echo __('data', 'static-html-output-plugin');?>" /><br>
 
                 <i>original: <?php echo $original_upload_dir; ?></i>
               </td>
@@ -98,7 +97,7 @@ $original_includes_dir = $tokens[sizeof($tokens)-1];
                 <label for="rewritePLUGINDIR"><?php echo __('Plugins', 'static-html-output-plugin');?></label>
               </th>
               <td>
-                <input name="rewritePLUGINDIR" class="regular-text rewrite" id="rewritePLUGINDIR" value="<?php echo esc_attr($this->rewritePLUGINDIR) ?>" placeholder="<?php echo __('lib', 'static-html-output-plugin');?>" /><br>
+                <input name="rewritePLUGINDIR" class="regular-text rewrite" id="rewritePLUGINDIR" value="<?php echo $this->rewritePLUGINDIR; ?>" placeholder="<?php echo __('lib', 'static-html-output-plugin');?>" /><br>
 
                 <i>original: <?php echo $original_plugin_dir; ?></i>
               </td>
@@ -108,7 +107,7 @@ $original_includes_dir = $tokens[sizeof($tokens)-1];
                 <label for="rewriteWPINC"><?php echo __('WP includes', 'static-html-output-plugin');?></label>
               </th>
               <td>
-                <input name="rewriteWPINC" class="regular-text rewrite" id="rewriteWPINC" value="<?php echo esc_attr($this->rewriteWPINC) ?>" placeholder="<?php echo __('inc', 'static-html-output-plugin');?>" /><br>
+                <input name="rewriteWPINC" class="regular-text rewrite" id="rewriteWPINC" value="<?php echo $this->rewriteWPINC; ?>" placeholder="<?php echo __('inc', 'static-html-output-plugin');?>" /><br>
 
                 <i>original: <?php echo $original_includes_dir; ?></i>
               </td>
@@ -122,4 +121,3 @@ $original_includes_dir = $tokens[sizeof($tokens)-1];
 </table>
 
 </div><!-- end processing_setings -->
-

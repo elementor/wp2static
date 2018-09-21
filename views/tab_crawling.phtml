@@ -4,10 +4,10 @@
     <tbody>
       <tr>
         <th scope="row">
-          <label for="sendViaBasic"><?php echo __('Use basic authentication', 'static-html-output-plugin');?></label>
+          <label for="useBasicAuth"><?php echo __('Use basic authentication', 'static-html-output-plugin');?></label>
         </th>
         <td>
-          <?php echo displayCheckbox($this, 'sendViaBasic', 'My WP site requires Basic Auth to access'); ?>
+          <?php echo displayCheckbox($this, 'useBasicAuth', 'My WP site requires Basic Auth to access'); ?>
         </td>
       </tr>
       <tr>
@@ -15,7 +15,7 @@
           <label for="basicAuthUser"><?php echo __('Basic auth user', 'static-html-output-plugin');?></label>
         </th>
         <td>
-      <?php echo displayTextfield($this, 'basicAuthUser', 'Basic Auth user', '', ''); ?>
+          <?php echo displayTextfield($this, 'basicAuthUser', 'Basic Auth user', '', ''); ?>
         </td>
       </tr>
       <tr>
@@ -23,7 +23,7 @@
           <label for="basicAuthPassword"><?php echo __('Basic auth password', 'static-html-output-plugin');?></label>
         </th>
         <td>
-      <?php echo displayTextfield($this, 'basicAuthPassword', 'Basic Auth password', '', 'password'); ?>
+          <?php echo displayTextfield($this, 'basicAuthPassword', 'Basic Auth password', '', 'password'); ?>
         </td>
       </tr>
       <tr>
@@ -51,7 +51,7 @@
         </i>
         <br>
 
-          <textarea class="widefat" name="additionalUrls" id="additionalUrls" rows="5" cols="10"><?php echo esc_html($this->additionalUrls) ?></textarea>
+          <textarea class="widefat" name="additionalUrls" id="additionalUrls" rows="5" cols="10"><?php echo $this->options->additionalUrls ? $this->options->additionalUrls : ''  ?></textarea>
         </td>
       </tr>
       <tr>

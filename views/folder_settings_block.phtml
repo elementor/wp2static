@@ -8,7 +8,8 @@
           <label for="targetFolder"><?php echo __('Target folder to deploy to', 'static-html-output-plugin');?></label>
       </th>
       <td>
-        <input id="targetFolder" name="targetFolder" class="regular-text" value="mystaticsite" /><br>
+        <input id="targetFolder" name="targetFolder" class="regular-text" 
+          value="<?php echo $this->options->targetFolder ? $this->options->targetFolder : 'mystaticsite'; ?>" /><br>
 
         <p>By exporting to a subfolder on your current server, you can check how it will look when published and make any adjustments needed. After the export, you should be able to see how your site looks in static html at: <a id="folderPreviewURL" href="<?php echo get_site_url() . '/mystatictest'; ?>/" target="_blank"><?php echo get_site_url() . '/mystatictest'; ?>/</a></p>
       </td>
@@ -17,11 +18,7 @@
 </table>
 
 
-
-					  <input style="display:none;" type="url" id="baseUrl-folder" name="baseUrl-folder" size="50" />
-
-
-
+<input style="display:none;" type="url" id="baseUrl-folder" name="baseUrl-folder" />
 
 
 </div>

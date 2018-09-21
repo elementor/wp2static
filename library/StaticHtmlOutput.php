@@ -22,7 +22,6 @@ class StaticHtmlOutput_Controller {
 
       // all options are available here
       error_log(print_r(self::$_instance->options, true));
-      error_log(print_r(self::$_instance->options->selected_deployment_option, true));
 
 			self::$_instance->view = new StaticHtmlOutput_View();
       $tmp_var_to_hold_return_array = wp_upload_dir();
@@ -56,7 +55,7 @@ class StaticHtmlOutput_Controller {
         self::$_instance->rewriteWPINC = filter_input(INPUT_POST, 'rewriteWPINC');
 				self::$_instance->useRelativeURLs = filter_input(INPUT_POST, 'useRelativeURLs');
 				self::$_instance->useBaseHref = filter_input(INPUT_POST, 'useBaseHref');
-        self::$_instance->useBasicAuth = filter_input(INPUT_POST, 'sendViaBasic');
+        self::$_instance->useBasicAuth = filter_input(INPUT_POST, 'useBasicAuth');
         self::$_instance->basicAuthUser = filter_input(INPUT_POST, 'basicAuthUser');
         self::$_instance->basicAuthPassword = filter_input(INPUT_POST, 'basicAuthPassword');
         self::$_instance->bunnycdnPullZoneName = filter_input(INPUT_POST, 'bunnycdnPullZoneName');
@@ -118,10 +117,9 @@ class StaticHtmlOutput_Controller {
     return $order;
   }
 
-
-	public function saveOptions() {
+  public function saveOptions() {
     // required
-    }
+  }
 
   public function activate_for_single_site() {
       if (null === $this->options->getOption('version')) {
@@ -131,7 +129,6 @@ class StaticHtmlOutput_Controller {
           ->save();
       }
   }
-
 
 	public function activate($network_wide) {
     if ( $network_wide ) {
@@ -145,8 +142,6 @@ class StaticHtmlOutput_Controller {
       }
 
       restore_current_blog();
-
-
     } else {
         $this->activate_for_single_site();  
     } 
@@ -196,12 +191,11 @@ class StaticHtmlOutput_Controller {
 
       $tmp_upload_dir_var = wp_upload_dir();
       
-
 			$this->view
 				->setTemplate('options-page-js')
-				->assign('staticExportSettings', $this->options->getOption('static-export-settings'))
 				->assign('basedir', $tmp_upload_dir_var['basedir'])
 				->assign('wpUploadsDir', $this->uploadsURL)
+				->assign('options', $this->options)
 				->assign('wp_site_path', $this->wp_site_path)
 				->assign('wpPluginDir', plugins_url('/', __FILE__))
 				->assign('onceAction', self::HOOK . '-options')
@@ -209,8 +203,20 @@ class StaticHtmlOutput_Controller {
 
 			$this->view
 				->setTemplate('options-page')
-				->assign('staticExportSettings', $this->options->getOption('static-export-settings'))
+        ->assign('rewriteWPCONTENT', 
+          $this->options->rewriteWPCONTENT ? $this->options->rewriteWPCONTENT : 'contents')
+        ->assign('rewriteTHEMEDIR',
+          $this->options->rewriteTHEMEDIR ? $this->options->rewriteTHEMEDIR : 'theme')
+        ->assign('rewriteUPLOADS',
+          $this->options->rewriteUPLOADS ? $this->options->rewriteUPLOADS : 'data')
+        ->assign('rewriteTHEMEROOT',
+          $this->options->rewriteTHEMEROOT ? $this->options->rewriteTHEMEROOT : 'ui')
+        ->assign('rewritePLUGINDIR',
+          $this->options->rewritePLUGINDIR ? $this->options->rewritePLUGINDIR : 'lib')
+        ->assign('rewriteWPINC',
+          $this->options->rewriteWPINC ? $this->options->rewriteWPINC : 'inc')
 				->assign('wpUploadsDir', $this->uploadsURL)
+				->assign('options', $this->options)
 				->assign('wpPluginDir', plugins_url('/', __FILE__))
 				->assign('onceAction', self::HOOK . '-options')
 				->assign('wp_site_url', get_site_url())
@@ -771,8 +777,6 @@ class StaticHtmlOutput_Controller {
         $this->post_process_archive_dir(true);
         $this->deploy();
         $this->post_export_teardown();
-        $this->record_successful_export();
-
 
         //$this->create_zip();
       }
