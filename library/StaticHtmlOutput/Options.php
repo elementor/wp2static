@@ -52,6 +52,7 @@ class StaticHtmlOutput_Options {
         'baseUrl-s3',
         'baseUrl-ftp',
         'baseUrl-folder',
+        'baseUrl-github',
         'baseUrl-netlify',
         'baseUrl-bunnycdn',
         'baseUrl-zip',

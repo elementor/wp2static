@@ -1,30 +1,50 @@
-
 <div class="github_settings_block" style="display:none;">
+  <table class="form-table">
+    <tbody>
+      <tr>
+        <th scope="row">
+          <label for="baseUrl-github"><?php echo __('Base Url', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <?php echo displayTextfield($this, 'baseUrl-github', 'http://mystaticsite.com', '', ''); ?><br>
 
-	<img style="width:40px;float:left;margin-right:10px;" src="<?php echo plugins_url( 'images/github_icon.png', dirname(__FILE__)) ?>" />
+          <p><i><?php echo __("Set this to the URL you intend to host your static exported site on, ie http://mystaticsite.com. Do not set this to the same URL as the WordPress site you're currently using (the address in your browser above). This plugin will rewrite all URLs in the exported static html from your current WordPress URL to what you set here. Supports http, https and protocol relative URLs.", 'static-html-output-plugin');?></i></p> 
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          <label for="githubPersonalAccessToken"><?php echo __('Personl Access Token', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <?php echo displayTextfield($this, 'githubPersonalAccessToken', 'GitHub Personal Access Token', '<a href="https://github.com/settings/tokens/new" target="_blank">How do I get this?</a>', 'password'); ?>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          <label for="githubRepo"><?php echo __('Account & Repository Name', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <?php echo displayTextfield($this, 'githubRepo', 'Account / Repository Name', 'ie, leonstafford/wordpress-static-html-plugin'); ?><br>
 
-	<p>Transfer via GitHub</p>
-
-	<br style="clear:both;" />
-
-	<br>
-
-					  <strong><label><?php echo __('Settings for the GitHub deployment method', 'static-html-output-plugin');?></label></strong>
-
-					<p>
-
-
-					  <strong><label for="baseUrl"><?php echo __('Base Url', 'static-html-output-plugin');?></label></strong>
-					  <p>
-						<i><?php echo __("Set this to the URL you intend to host your static exported site on, ie http://mystaticsite.com. Do not set this to the same URL as the WordPress site you're currently using (the address in your browser above). This plugin will rewrite all URLs in the exported static html from your current WordPress URL to what you set here. Supports http, https and protocol relative URLs.", 'static-html-output-plugin');?></i>
-					  </p> 
-					  <input type="url" id="baseUrl-github" name="baseUrl-github" size="50" placeholder="http://mystaticsite.com" />
-					</p>
-
-
-	<?php echo displayTextfield($this, 'githubPersonalAccessToken', 'GitHub Personal Access Token', '<a href="https://github.com/settings/tokens/new" target="_blank">How do I get this?</a>', 'password'); ?>
-	<?php echo displayTextfield($this, 'githubRepo', 'Account / Repository Name', 'ie, leonstafford/wordpress-static-html-plugin'); ?>
-	<?php echo displayTextfield($this, 'githubBranch', 'Branch', 'usually \'master\' or \'gh-pages\''); ?>
-	<?php echo displayTextfield($this, 'githubPath', 'Path within repository', 'Usually the repository root (leave this blank) or the \'doc\' folder'); ?>
-
+          <p><i>Repository cannot be empty, just create any file via the GitHub UI if needed</i></p>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          <label for="githubBranch"><?php echo __('Branch', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <?php echo displayTextfield($this, 'githubBranch', 'Branch', 'usually \'master\' or \'gh-pages\''); ?>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          <label for="githubPath"><?php echo __('Path within repo', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <?php echo displayTextfield($this, 'githubPath', 'Path within repository', 'Usually the repository root (leave this blank) or the \'doc\' folder'); ?>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </div>
