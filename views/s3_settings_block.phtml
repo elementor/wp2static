@@ -1,138 +1,125 @@
-
 <div class="s3_settings_block" style="display:none;">
 
-	<img style="width:40px;float:left;margin-right:10px;" src="<?php echo plugins_url( 'images/s3_icon.svg', dirname(__FILE__)) ?>" />
+  <?php if (  wpsho_fr()->is_not_paying() ) : ?>
 
-	<p>With Amazon's CTO, Werner Vogels, blogging about <a href="https://www.allthingsdistributed.com/2011/08/Jekyll-amazon-s3.html" target="_blank">his passion for static website hosting</a>, back in 2011, it's no suprise that this is a popular method for static site hosting.
+  <div class="notice notice-error inline">
+    <h2 class="title">Premium deployment option</h2>
 
-	There are <a href="http://lmgtfy.com/?q=how+to+host+a+static+site+on+s3" target="_blank">many guides</a> on how to get setup for static hosting on S3. Once you have your credentials and a bucket setup, fill in the required fields in this plugin to start leveraging the power of S3.
+    <p>Get all the deployment options and advanced features with a 
+      <a href="<?php echo wpsho_fr()->get_upgrade_url(); ?>">premium subscription</a>.</p>
 
-	While S3 hosting can cost money, depending on how many requests your bucket receives, you may be eligible for the <a href="https://aws.amazon.com/free/" target="_blank">AWS free tier</a>, making it an affordable option. You can also set usage alerts/billing alarms in AWS to warn if you if it's approaching your budgetary limit. 
+    <p>Exporting to this method will not work without upgrading, but you can stil deploy to S3 using the ZIP option and manually uploading to S3.</p>
 
-	<br style="clear:both;" />
+  </div>
 
-	<br>
+  <br>
 
-					  <strong><label><?php echo __('Settings for the S3 deployment method', 'static-html-output-plugin');?></label></strong>
+  <?php endif; ?>
 
-					<p>
-<?php if ( wpsho_fr()->is_not_paying() ) : ?>
+  <table class="form-table">
+    <tbody>
+      <tr>
+        <th scope="row">
+          <label for="baseUrl-s3"><?php echo __('Base URL', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <?php echo displayTextfield($this, 'baseUrl-s3', 'http://mystaticsite.com', '', ''); ?><br>
 
-<div class="card">
-		<h2 class="title">Premium deployment option</h2>
-		<p>Get all the deployment options and advanced features with a 
-			<a href="<?php echo wpsho_fr()->get_upgrade_url(); ?>">premium subscription</a>.</p>
+          <p><i>Set this to the URL your visitors will use to access your site. For an S3 hosted website, you have a few options which will influence what you put in this field.</i></p>
 
-		<p>Exporting to this method will not work without upgrading, but you can stil deploy to a folder, ZIP or to an FTP server.</p>
-</div>
+          <ul>
+            <li><b>Direct bucket hosting</b> If you want to serve your site directly from S3, you'll want the Endpoint as shown in your AWS console, when you go to your bucket > properties > Static website hosting, ie for a bucket named 'statictestfrankfurt', hosted in the eu-central-1 region, it will be: http://statictestfrankfurt.s3-website.eu-central-1.amazonaws.com.  </li>
 
-<br>
+            <li><b>Bucket with a custom domain</b> If you've setup a custom domain to use with your S3 bucket hosted, use that domain. In this case, your bucket name should already be the same as the domain, ie statictest.mydomain.org, with an A record alias entry in Route53 or your DNS provider to s3-website-ap-southeast-1.amazonaws.com. So, we would use http://statictest.mydomain.org/ as the Base Url in this case. 
+            </li>
 
-<?php endif; ?>
+            <li><b>S3 hosted website cached with CloudFront</b> If you've setup CloudFront to speed up your S3 hosted static site, then entering your CloudFront Distribution ID here will send a cache invalidation request after all the files have been deployed to S3. It will use the same AWS credentials as S3, so ensure that IAM user in AWS has the correct permissions for both S3 and CloudFront. You could set the BaseURL to the CloudFront address, ie http://d3fvx8eaa0pipc.cloudfront.net/, but more than likely, you have another domain you want to use for the website, so set the Base Url to that, ie https://mywebsite.com.</li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          <label for="s3Key"><?php echo __('Access Key ID', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+         <?php echo displayTextfield($this, 's3Key', 'Access Key ID', 'ie, AKIAIOSFODNN7EXAMPLE'); ?><br>
 
+          <p><i>Your S3 user will need permissions to put objects into the bucket. Check that the user whose Key you are using has the correct permissions for S3. You may attach the 'AmazonS3FullAccess' to the user or give more fine grained permissions control via <a href="https://aws.amazon.com/iam/" target="_blank">AWS's IAM</a>.</i></p>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          <label for="s3Key"><?php echo __('Secret Access Key', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <?php echo displayTextfield($this, 's3Secret', 'Secret Access Key', 'ie, wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY', 'password'); ?>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          <label for="s3Region"><?php echo __('Region', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+        <?php 
 
-					  <strong><label for="baseUrl"><?php echo __('Base Url', 'static-html-output-plugin');?></label></strong>
-<br>
-<br>
-					  <input type="url" id="baseUrl-s3" name="baseUrl-s3" size="50" placeholder="http://mystaticsite.com" />
+        // TODO: shift to S3 model/helper
+        $s3_regions = array(
+          "us-east-1" => "US East (N. Virginia)",
+          "us-east-2" => "US East (Ohio)",
+          "us-west-1" => "US West (N. California)",
+          "us-west-2" => "US West (Oregon)",
+          "ca-central-1" => "Canada (Central)",
+          "ap-south-1" => "Asia Pacific (Mumbai)",
+          "ap-northeast-2" => "Asia Pacific (Seoul)",
+          "ap-southeast-1" => "Asia Pacific (Singapore)",
+          "ap-southeast-2" => "Asia Pacific (Sydney)",
+          "ap-northeast-1" => "Asia Pacific (Tokyo)",
+          "ap-northeast-3" => "Asia Pacific (Osaka-Local)",
+          "eu-central-1" => "EU (Frankfurt)",
+          "eu-west-1" => "EU (Ireland)",
+          "eu-west-2" => "EU (London)",
+          "eu-west-3" => "EU (Paris)",
+          "sa-east-1" => "South America (São Paulo)",
+          "cn-north-1" => "China (Beijing)",
+          "cn-northwest-1" => "China (Ningxia)",
+        );
+        ?>
 
-<p>
-	Set this to the URL your visitors will use to access your site. For an S3 hosted website, you have a few options which will influence what you put in this field. 
-</p>
+          <?php echo displaySelectMenu($this, $s3_regions, 's3Region', 'Region', 'ie, my-static-site'); ?><br>
 
-<ul>
-	<li><b>Direct bucket hosting</b> If you want to serve your site directly from S3, you'll want the Endpoint as shown in your AWS console, when you go to your bucket > properties > Static website hosting, ie for a bucket named 'statictestfrankfurt', hosted in the eu-central-1 region, it will be: http://statictestfrankfurt.s3-website.eu-central-1.amazonaws.com.
-	</li>
+          <span class="description">choose the AWS region your bucket was created in</span>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          <label for="s3Bucket"><?php echo __('Bucket', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <?php echo displayTextfield($this, 's3Bucket', 'S3 Bucket', 'ie, my-static-site'); ?><br>
 
-	<li>
-		<b>Bucket with a custom domain</b> If you've setup a custom domain to use with your S3 bucket hosted, use that domain. In this case, your bucket name should already be the same as the domain, ie statictest.beautifulmoalboal.org, with an A record alias entry in Route53 or your DNS provider to s3-website-ap-southeast-1.amazonaws.com. So, we would use http://statictest.beautifulmoalboal.org/ as the Base Url in this case. 
-	</li>
+          <p><i>Your bucket name as it appears in your <a href="https://s3.console.aws.amazon.com/s3/home" target="_blank">AWS Console for S3</a>.</i></p>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          <label for="s3RemotePath"><?php echo __('Subdirectory', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <?php echo displayTextfield($this, 's3RemotePath', 'Subfolder in your bucket', 'ie, static-website'); ?><br>
 
-		<b>S3 hosted website cached with CloudFront</b> If you've setup CloudFront to speed up your S3 hosted static site, then entering your CloudFront Distribution ID here will send a cache invalidation request after all the files have been deployed to S3. It will use the same AWS credentials as S3, so ensure that IAM user in AWS has the correct permissions for both S3 and CloudFront. You could set the BaseURL to the CloudFront address, ie http://d3fvx8eaa0pipc.cloudfront.net/, but more than likely, you have another domain you want to use for the website, so set the Base Url to that, ie https://mywebsite.com. 
-</ul>
+          <p><i>In case you want to put your site in a sub directory of a bucket, this will deploy all the static website files into the folder name you specify here.</i></p> 
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          <label for="cfDistributionId"><?php echo __('CloudFront Cache Invalidation', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <?php echo displayTextfield($this, 'cfDistributionId', 'CloudFront Distribution ID', 'ie, ABC123DEFX'); ?><br>
 
-
-					</p>
-
-
-					  <strong><label for="s3Key"><?php echo __('S3 Key', 'static-html-output-plugin');?></label></strong>
-
-<br> <br>
-
-	<?php echo displayTextfield($this, 's3Key', 'S3 Key', 'ie, AKIAIOSFODNN7EXAMPLE'); ?>
-
-<p><i>Required</i> Your S3 user will need permissions to put objects into the bucket. Check that the user whose Key you are using has the correct permissions for S3. You may attach the 'AmazonS3FullAccess' to the user or give more fine grained permissions control via <a href="https://aws.amazon.com/iam/" target="_blank">AWS's IAM</a>. 
-
-<br> <br>
-
-					  <strong><label for="s3Secret"><?php echo __('S3 Secret', 'static-html-output-plugin');?></label></strong>
-
-
-<br> <br>
-
-	<?php echo displayTextfield($this, 's3Secret', 'S3 Secret', 'ie, wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY', 'password'); ?>
-
-<p><i>Required</i> The paired Secret to the Key above. 
-
-<br> <br>
-
-					  <strong><label for="s3Region"><?php echo __('S3 Region', 'static-html-output-plugin');?></label></strong>
-
-<br> <br>
-
-	<select name="s3Region" id="s3Region">
-		<option></option>
-		<option value="us-east-1">US East (N. Virginia)</option>
-		<option value="us-east-2">US East (Ohio)</option>
-		<option value="us-west-1">US West (N. California)</option>
-		<option value="us-west-2">US West (Oregon)</option>
-		<option value="ca-central-1">Canada (Central)</option>
-		<option value="ap-south-1">Asia Pacific (Mumbai)</option>
-		<option value="ap-northeast-2">Asia Pacific (Seoul)</option>
-		<option value="ap-southeast-1">Asia Pacific (Singapore)</option>
-		<option value="ap-southeast-2">Asia Pacific (Sydney)</option>
-		<option value="ap-northeast-1">Asia Pacific (Tokyo)</option>
-		<option value="ap-northeast-3">Asia Pacific (Osaka-Local)</option>
-		<option value="eu-central-1">EU (Frankfurt)</option>
-		<option value="eu-west-1">EU (Ireland)</option>
-		<option value="eu-west-2">EU (London)</option>
-		<option value="eu-west-3">EU (Paris)</option>
-		<option value="sa-east-1">South America (São Paulo)</option>
-		<option value="cn-north-1">China (Beijing)</option>
-		<option value="cn-northwest-1">China (Ningxia)</option>
-	</select>
-	<span class="description">choose the region your bucket was created in</span>
-	<br>
-
-<p><i>Required</i> This will be shown next to your bucket in the AWS Console. 
-
-<br> <br>
-
-					  <strong><label for="s3Bucket"><?php echo __('S3 Bucket', 'static-html-output-plugin');?></label></strong>
-
-<br> <br>
-
-	<?php echo displayTextfield($this, 's3Bucket', 'S3 Bucket', 'ie, my-static-site'); ?>
-
-<p><i>Required</i> Your bucket name as it appears in your <a href="https://s3.console.aws.amazon.com/s3/home" target="_blank">AWS Console for S3</a>.
-
-<br> <br>
-
-	  <strong><label for="s3RemotePath"><?php echo __('S3 Sub Folder', 'static-html-output-plugin');?></label></strong>
-
-<br> <br>
-
-	<?php echo displayTextfield($this, 's3RemotePath', 'Subfolder in your bucket', 'ie, static-website'); ?>
-
-<p><i>Optional</i> In case you want to put your site in a sub directory of a bucket, this will deploy all the static website files into the folder name you specify here.
-
-<br> <br>
-
-	  <strong><label for="cfDistributionId"><?php echo __('CloudFront Cache Invalidation', 'static-html-output-plugin');?></label></strong>
-
-<br> <br>
-	<?php echo displayTextfield($this, 'cfDistributionId', 'CloudFront Distribution ID', 'ie, ABC123DEFX'); ?>
-
-<p><i>Optional</i> If using CloudFront in your S3 static website setup, enter the CloudFront Distribution ID here and it will create an invalidation request for all files at the end of the deployment process. The invalidation usually happens within a few minutes. You can check any pending invalidations in your <a href="https://console.aws.amazon.com/cloudfront/home" target="_blank">AWS Console's CloudFront page</a>. You AWS user will need to have the CloudFrontFullAccess permissions or a more controlled policy, that includes the ability to send CloudFront invalidation requests.
-
+          <p><i>If using CloudFront in your S3 static website setup, enter the CloudFront Distribution ID here and it will create an invalidation request for all files at the end of the deployment process. The invalidation usually happens within a few minutes. You can check any pending invalidations in your <a href="https://console.aws.amazon.com/cloudfront/home" target="_blank">AWS Console's CloudFront page</a>. You AWS user will need to have the CloudFrontFullAccess permissions or a more controlled policy, that includes the ability to send CloudFront invalidation requests.</i></p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </div>

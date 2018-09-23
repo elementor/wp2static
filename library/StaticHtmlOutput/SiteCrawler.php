@@ -14,7 +14,7 @@ class SiteCrawler {
 
     // WP env settings
     $this->baseUrl = $_POST['baseUrl'];
-    $this->basedir = $_POST['basedir']; // // TODO: location of uploads dir?
+    $this->working_dir = $_POST['basedir']; // // TODO: location of uploads dir?
     $this->wp_site_url = $_POST['wp_site_url']; 
     $this->wp_site_path = $_POST['wp_site_path']; 
     $this->uploads_path = $_POST['wp_uploads_path'];
@@ -49,7 +49,7 @@ class SiteCrawler {
   }
 
   public function crawl_site($viaCLI = false) {
-    $this->initial_crawl_list_file = $this->uploads_path . '/WP-STATIC-INITIAL-CRAWL-LIST';
+    $this->initial_crawl_list_file = $this->working_dir . '/WP-STATIC-INITIAL-CRAWL-LIST';
     $this->initial_crawl_list = file($this->initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
 
     if ( !empty($this->initial_crawl_list) ) {
@@ -62,9 +62,9 @@ class SiteCrawler {
 
     $batch_of_links_to_crawl = array();
 
-    $this->archive_dir = file_get_contents($this->uploads_path . '/WP-STATIC-CURRENT-ARCHIVE');
-    $this->initial_crawl_list_file = $this->uploads_path . '/WP-STATIC-INITIAL-CRAWL-LIST';
-    $this->crawled_links_file = $this->uploads_path . '/WP-STATIC-CRAWLED-LINKS';
+    $this->archive_dir = file_get_contents($this->working_dir . '/WP-STATIC-CURRENT-ARCHIVE');
+    $this->initial_crawl_list_file = $this->working_dir . '/WP-STATIC-INITIAL-CRAWL-LIST';
+    $this->crawled_links_file = $this->working_dir . '/WP-STATIC-CRAWLED-LINKS';
     $this->initial_crawl_list = file($this->initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
     $crawled_links = file($this->crawled_links_file, FILE_IGNORE_NEW_LINES);
     $total_links = sizeOf($this->initial_crawl_list);
@@ -153,7 +153,7 @@ class SiteCrawler {
     $wp_site_environment = array(
         'wp_inc' =>  '/' . WPINC,	
         'wp_content' => '/wp-content', // TODO: check if this has been modified/use constant
-        'wp_uploads' =>  str_replace(ABSPATH, '/', $this->basedir),	
+        'wp_uploads' =>  str_replace(ABSPATH, '/', $this->uploads_path),	
         'wp_plugins' =>  str_replace(ABSPATH, '/', WP_PLUGIN_DIR),	
         'wp_themes' =>  str_replace(ABSPATH, '/', get_theme_root()),	
         'wp_active_theme' =>  str_replace(home_url(), '', get_template_directory_uri()),	

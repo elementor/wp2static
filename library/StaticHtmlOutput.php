@@ -12,17 +12,11 @@ class StaticHtmlOutput_Controller {
 
 	protected static $_instance = null;
 	protected function __construct() {}
-	protected function __clone() {}
 
 	public static function getInstance() {
-    // error_log('getInstance');
 		if (null === self::$_instance) {
 			self::$_instance = new self();
 			self::$_instance->options = new StaticHtmlOutput_Options(self::OPTIONS_KEY);
-
-      // all options are available here
-      error_log(print_r(self::$_instance->options, true));
-
 			self::$_instance->view = new StaticHtmlOutput_View();
       $tmp_var_to_hold_return_array = wp_upload_dir();
       self::$_instance->uploadsPath = $tmp_var_to_hold_return_array['basedir'];
@@ -77,9 +71,7 @@ class StaticHtmlOutput_Controller {
         self::$_instance->ftpRemotePath = filter_input(INPUT_POST, 'ftpRemotePath');
         self::$_instance->useActiveFTP = filter_input(INPUT_POST, 'useActiveFTP');
         self::$_instance->allowOfflineUsage = filter_input(INPUT_POST, 'allowOfflineUsage');
-      } else {
-        // pull options out of the instance's options object
-      }
+      } 
 		}
 
 		return self::$_instance;
@@ -92,9 +84,8 @@ class StaticHtmlOutput_Controller {
 
 		if (is_admin()) {
 			add_action('admin_menu', array($instance, 'registerOptionsPage'));
-			add_action(self::HOOK . '-saveOptions', array($instance, 'saveOptions'));
-      add_filter( 'custom_menu_order', '__return_true' );
-      add_filter( 'menu_order', array( $instance, 'set_menu_order' ) );
+      add_filter('custom_menu_order', '__return_true' );
+      add_filter('menu_order', array( $instance, 'set_menu_order'));
 		}
  
 		return $instance;
@@ -115,10 +106,6 @@ class StaticHtmlOutput_Controller {
     );
 
     return $order;
-  }
-
-  public function saveOptions() {
-    // required
   }
 
   public function activate_for_single_site() {
@@ -155,7 +142,6 @@ class StaticHtmlOutput_Controller {
 			'manage_options', 
 			self::HOOK, 
 			array(self::$_instance, 'renderOptionsPage'),
-			//'dashicons-shield-alt'
 			$pluginDirUrl . 'images/menu_icon_32x32.png'
 		);
 
@@ -186,14 +172,9 @@ class StaticHtmlOutput_Controller {
 				->assign('uploadsPath', $this->uploadsPath)
 				->render();
 		} else {
-			do_action(self::HOOK . '-saveOptions');
-			$wp_upload_dir = wp_upload_dir();
-
-      $tmp_upload_dir_var = wp_upload_dir();
-      
 			$this->view
 				->setTemplate('options-page-js')
-				->assign('basedir', $tmp_upload_dir_var['basedir'])
+				->assign('basedir', $this->getWorkingDirectory())
 				->assign('wpUploadsDir', $this->uploadsURL)
 				->assign('options', $this->options)
 				->assign('wp_site_path', $this->wp_site_path)
@@ -203,6 +184,7 @@ class StaticHtmlOutput_Controller {
 
 			$this->view
 				->setTemplate('options-page')
+        ->assign('wp_uploads_path', $this->uploadsPath)
         ->assign('rewriteWPCONTENT', 
           $this->options->rewriteWPCONTENT ? $this->options->rewriteWPCONTENT : 'contents')
         ->assign('rewriteTHEMEDIR',
@@ -233,42 +215,33 @@ class StaticHtmlOutput_Controller {
 		$this->options->saveAllPostData();
   }
 
-	public function outputPath(){
-		// TODO: a costly function, think about optimisations, we don't want this running for each request if possible
+	public function getWorkingDirectory(){
+		$outputDir = '';
 
-		// set default uploads path as output path
-		$outputDir = $this->uploadsPath;
-
-		// check for outputDir set in saved options
-		parse_str($this->options->getOption('static-export-settings'), $pluginOptions);
-		if ( array_key_exists('outputDirectory', $pluginOptions )) {
-			if ( !empty($pluginOptions['outputDirectory']) ) {
-				$outputDir = $pluginOptions['outputDirectory'];
-			}
-		} 
-
-		// override if user has specified it in the UI
-		if ( ! $this->outputDirectory ) {
+		// priorities: from UI; from settings; fallback to WP uploads path
+		if ( isset($this->outputDirectory) ) {
 			$outputDir = $this->outputDirectory;
-		} 
+		} elseif ($this->options->outputDirectory) {
+      $outputDir = $this->options->outputDirectory;
+    } else {
+      $outputDir = $this->uploadsPath;
+    }
 
-		if ( !is_dir($outputDir) ) {
-			// reverting back to default uploads path	
-			$outputDir = $this->uploadsPath;
-		}
+		if ( ! is_dir($outputDir) && ! wp_mkdir_p($outputDir)) {
+      $outputDir = $this->uploadsPath;
+      error_log('user defined outputPath does not exist and could not be created, reverting to ' . $outputDir);
+    } 
 
-		// if path is not writeable, revert back to default	
 		if ( empty($outputDir) || !is_writable($outputDir) ) {
 			$outputDir = $this->uploadsPath;
+      error_log('user defined outputPath is not writable, reverting to ' . $outputDir);
 		}
 
 		return $outputDir;
 	}
 
   public function progressThroughExportTargets() {
-    $exportTargetsFile = $this->uploadsPath . '/WP-STATIC-EXPORT-TARGETS';
-
-    // remove first line from file (disabled while testing)
+    $exportTargetsFile = $this->getWorkingDirectory() . '/WP-STATIC-EXPORT-TARGETS';
     $exportTargets = file($exportTargetsFile, FILE_IGNORE_NEW_LINES);
     $filesRemaining = count($exportTargets) - 1;
     $first_line = array_shift($exportTargets);
@@ -281,7 +254,7 @@ class StaticHtmlOutput_Controller {
       $this->githubPersonalAccessToken,
       $this->githubBranch,
       $this->githubPath,
-      $this->uploadsPath
+      $this->getWorkingDirectory()
     );
 
     $github->upload_blobs($viaCLI);
@@ -293,7 +266,7 @@ class StaticHtmlOutput_Controller {
       $this->githubPersonalAccessToken,
       $this->githubBranch,
       $this->githubPath,
-      $this->uploadsPath
+      $this->getWorkingDirectory()
     );
 
     $github->prepare_deployment();
@@ -305,7 +278,7 @@ class StaticHtmlOutput_Controller {
       $this->githubPersonalAccessToken,
       $this->githubBranch,
       $this->githubPath,
-      $this->uploadsPath
+      $this->getWorkingDirectory()
     );
 
     $github->commit_new_tree();
@@ -313,16 +286,16 @@ class StaticHtmlOutput_Controller {
 
   public function capture_last_deployment() {
       // skip for first export state
-      if (is_file($this->uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE')) {
-        $archiveDir = file_get_contents($this->uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
+      if (is_file($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE')) {
+        $archiveDir = file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE');
         $previous_export = $archiveDir;
-        $dir_to_diff_against = $this->outputPath() . '/previous-export';
+        $dir_to_diff_against = $this->getWorkingDirectory() . '/previous-export';
 
         if ($this->diffBasedDeploys) {
-          $archiveDir = file_get_contents($this->uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
+          $archiveDir = file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE');
 
           $previous_export = $archiveDir;
-          $dir_to_diff_against = $this->outputPath() . '/previous-export';
+          $dir_to_diff_against = $this->getWorkingDirectory() . '/previous-export';
 
           if (is_dir($previous_export)) {
             shell_exec("rm -Rf $dir_to_diff_against && mkdir -p $dir_to_diff_against && cp -r $previous_export/* $dir_to_diff_against");
@@ -340,15 +313,15 @@ class StaticHtmlOutput_Controller {
   }
 
 	public function cleanup_leftover_archives() {
-		$leftover_files = preg_grep('/^([^.])/', scandir($this->uploadsPath));
+		$leftover_files = preg_grep('/^([^.])/', scandir($this->getWorkingDirectory()));
 
 		foreach ($leftover_files as $fileName) {
 			if( strpos($fileName, 'wp-static-html-output-') !== false ) {
 
-				if (is_dir($this->uploadsPath . '/' . $fileName)) {
-					StaticHtmlOutput_FilesHelper::delete_dir_with_files($this->uploadsPath . '/' . $fileName);
+				if (is_dir($this->getWorkingDirectory() . '/' . $fileName)) {
+					StaticHtmlOutput_FilesHelper::delete_dir_with_files($this->getWorkingDirectory() . '/' . $fileName);
 				} else {
-					unlink($this->uploadsPath . '/' . $fileName);
+					unlink($this->getWorkingDirectory() . '/' . $fileName);
 				}
 			}
 		}
@@ -371,17 +344,17 @@ class StaticHtmlOutput_Controller {
 		);
 
 		foreach ($files_to_clean as $file_to_clean) {
-			if ( file_exists($this->uploadsPath . '/' . $file_to_clean) ) {
-				unlink($this->uploadsPath . '/' . $file_to_clean);
+			if ( file_exists($this->getWorkingDirectory() . '/' . $file_to_clean) ) {
+				unlink($this->getWorkingDirectory() . '/' . $file_to_clean);
 			} 
 		}
 	}
 
 	public function cleanup_working_files() {
     // skip first explort state
-    if (is_file($this->uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE')) {
-      $archiveDir = file_get_contents($this->uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
-      $dir_to_diff_against = $this->outputPath() . '/previous-export';
+    if (is_file($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE')) {
+      $archiveDir = file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE');
+      $dir_to_diff_against = $this->getWorkingDirectory() . '/previous-export';
 
       if(is_dir($dir_to_diff_against)) {
         // TODO: rewrite to php native in case of shared hosting 
@@ -404,8 +377,8 @@ class StaticHtmlOutput_Controller {
 		);
 
 		foreach ($files_to_clean as $file_to_clean) {
-			if ( file_exists($this->uploadsPath . '/' . $file_to_clean) ) {
-				unlink($this->uploadsPath . '/' . $file_to_clean);
+			if ( file_exists($this->getWorkingDirectory() . '/' . $file_to_clean) ) {
+				unlink($this->getWorkingDirectory() . '/' . $file_to_clean);
 			} 
 		}
 
@@ -414,7 +387,7 @@ class StaticHtmlOutput_Controller {
 
 	public function start_export($viaCLI = false) {
 		$this->pre_export_cleanup();
-    $exportTargetsFile = $this->uploadsPath . '/WP-STATIC-EXPORT-TARGETS';
+    $exportTargetsFile = $this->getWorkingDirectory() . '/WP-STATIC-EXPORT-TARGETS';
 
     if ($this->sendViaGithub == 1) {
         file_put_contents($exportTargetsFile, 'GITHUB' . PHP_EOL, FILE_APPEND | LOCK_EX);
@@ -449,11 +422,10 @@ class StaticHtmlOutput_Controller {
     $initial_file_list_count = StaticHtmlOutput_FilesHelper::buildInitialFileList(
       $viaCLI,
       $this->additionalUrls,
-      $this->uploadsPath,
+      $this->getWorkingDirectory(),
       $this->uploadsURL,
-      $this->outputPath(),
-      self::HOOK,
-      ! $this->dontIncludeAllUploadFiles // TODO: neg neg here inelegant
+      $this->getWorkingDirectory(),
+      self::HOOK
     );
 
     echo 'SUCCESS';
@@ -491,7 +463,7 @@ class StaticHtmlOutput_Controller {
 						chmod($publicFolderToCopyTo, 0755);
 
 						// copy the contents of the current archive to the targetFolder
-						$archiveDir = untrailingslashit(file_get_contents($this->uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE'));
+						$archiveDir = untrailingslashit(file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE'));
 
 						$this->recursive_copy($archiveDir, $publicFolderToCopyTo);	
 
@@ -500,7 +472,7 @@ class StaticHtmlOutput_Controller {
 					}
 				} else {
 
-					$archiveDir = untrailingslashit(file_get_contents($this->uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE'));
+					$archiveDir = untrailingslashit(file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE'));
 
 					$this->recursive_copy($archiveDir, $publicFolderToCopyTo);	
 				}
@@ -509,7 +481,7 @@ class StaticHtmlOutput_Controller {
 	}
 
   public function create_zip() {
-    $archiveDir = file_get_contents($this->uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
+    $archiveDir = file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE');
     $archiveName = rtrim($archiveDir, '/');
     $tempZip = $archiveName . '.tmp';
     $zipArchive = new ZipArchive();
@@ -542,7 +514,7 @@ class StaticHtmlOutput_Controller {
       $this->ftpPassword,
       $this->ftpRemotePath,
       $this->useActiveFTP,
-      $this->uploadsPath
+      $this->getWorkingDirectory()
     );
 
     $ftp->prepare_deployment();
@@ -555,7 +527,7 @@ class StaticHtmlOutput_Controller {
       $this->ftpPassword,
       $this->ftpRemotePath,
       $this->useActiveFTP,
-      $this->uploadsPath
+      $this->getWorkingDirectory()
     );
 
     $ftp->transfer_files($viaCLI);
@@ -567,7 +539,7 @@ class StaticHtmlOutput_Controller {
 				$this->bunnycdnPullZoneName,
 				$this->bunnycdnAPIKey,
 				$this->bunnycdnRemotePath,
-				$this->uploadsPath
+				$this->getWorkingDirectory()
 			);
 
 			$bunnyCDN->prepare_export();
@@ -581,7 +553,7 @@ class StaticHtmlOutput_Controller {
 				$this->bunnycdnPullZoneName,
 				$this->bunnycdnAPIKey,
 				$this->bunnycdnRemotePath,
-				$this->uploadsPath
+				$this->getWorkingDirectory()
 			);
 
 			$bunnyCDN->transfer_files($viaCLI);
@@ -595,7 +567,7 @@ class StaticHtmlOutput_Controller {
 				$this->bunnycdnPullZoneName,
 				$this->bunnycdnAPIKey,
 				$this->bunnycdnRemotePath,
-				$this->uploadsPath
+				$this->getWorkingDirectory()
 			);
 
 			$bunnyCDN->purge_all_cache();
@@ -603,7 +575,7 @@ class StaticHtmlOutput_Controller {
   }
 
 	public function prepare_file_list($export_target) {
-    $file_list_path = $this->uploadsPath . '/WP-STATIC-EXPORT-' . $export_target . '-FILES-TO-EXPORT';
+    $file_list_path = $this->getWorkingDirectory() . '/WP-STATIC-EXPORT-' . $export_target . '-FILES-TO-EXPORT';
 
 // zero file
     $f = @fopen($file_list_path, "r+");
@@ -612,7 +584,7 @@ class StaticHtmlOutput_Controller {
         fclose($f);
     }
 
-    $archiveDir = file_get_contents($this->uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
+    $archiveDir = file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE');
     $archiveName = rtrim($archiveDir, '/');
     $siteroot = $archiveName . '/';
 
@@ -630,7 +602,7 @@ class StaticHtmlOutput_Controller {
 				$this->s3Region,
 				$this->s3Bucket,
 				$this->s3RemotePath,
-				$this->uploadsPath
+				$this->getWorkingDirectory()
 			);
 
 			$s3->prepare_deployment();
@@ -646,7 +618,7 @@ class StaticHtmlOutput_Controller {
         $this->s3Region,
         $this->s3Bucket,
         $this->s3RemotePath,
-        $this->uploadsPath
+        $this->getWorkingDirectory()
       );
 
       $s3->transfer_files($viaCLI);
@@ -682,7 +654,7 @@ class StaticHtmlOutput_Controller {
 			$dropbox = new StaticHtmlOutput_Dropbox(
 				$this->dropboxAccessToken,
 				$this->dropboxFolder,
-				$this->uploadsPath
+				$this->getWorkingDirectory()
 			);
 
 			$dropbox->prepare_export();
@@ -692,7 +664,7 @@ class StaticHtmlOutput_Controller {
 			$dropbox = new StaticHtmlOutput_Dropbox(
 				$this->dropboxAccessToken,
 				$this->dropboxFolder,
-				$this->uploadsPath
+				$this->getWorkingDirectory()
 			);
 
 			$dropbox->transfer_files($viaCLI);
@@ -700,7 +672,7 @@ class StaticHtmlOutput_Controller {
 
     public function netlify_do_export () {
 			// will exclude the siteroot when copying
-			$archiveDir = file_get_contents($this->uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
+			$archiveDir = file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE');
 			$archiveName = rtrim($archiveDir, '/') . '.zip';
 
 			$netlify = new StaticHtmlOutput_Netlify(
@@ -773,7 +745,6 @@ class StaticHtmlOutput_Controller {
         $this->cleanup_leftover_archives(true);
         $this->start_export(true);
         $this->crawl_site(true);
-        $this->create_symlink_to_latest_archive(true);
         $this->post_process_archive_dir(true);
         $this->deploy();
         $this->post_export_teardown();
@@ -809,7 +780,9 @@ class StaticHtmlOutput_Controller {
 	}	
 
     public function post_process_archive_dir() {
-        $archiveDir = untrailingslashit(file_get_contents($this->uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE'));
+      $this->create_symlink_to_latest_archive();
+
+      $archiveDir = untrailingslashit(file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE'));
 
 		$this->detect_base_url();
 
@@ -914,8 +887,8 @@ class StaticHtmlOutput_Controller {
   }
 
   public function remove_files_idential_to_previous_export() {
-    $archiveDir = file_get_contents($this->uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
-    $dir_to_diff_against = $this->outputPath() . '/previous-export';
+    $archiveDir = file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE');
+    $dir_to_diff_against = $this->getWorkingDirectory() . '/previous-export';
 
     // iterate each file in current export, check the size and contents in previous, delete if match
     $objects = new RecursiveIteratorIterator(
@@ -957,26 +930,23 @@ class StaticHtmlOutput_Controller {
   }
 
 	public function remove_symlink_to_latest_archive() {
-    global $blog_id;
-    $archiveDir = file_get_contents($this->uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
+    $archiveDir = file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE');
 
-		if (is_link($this->outputPath() . '/latest-' . $blog_id)) {
-			unlink($this->outputPath() . '/latest-' . $blog_id );
+		if (is_link($this->getWorkingDirectory() . '/latest-export' )) {
+			unlink($this->getWorkingDirectory() . '/latest-export'  );
 		} 
 	}	
 
 	public function create_symlink_to_latest_archive() {
-    global $blog_id;
-    $archiveDir = file_get_contents($this->uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
+    if (is_file(($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE'))) {
+      $archiveDir = file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE');
 
-		$this->remove_symlink_to_latest_archive();
-    symlink($archiveDir, $this->outputPath() . '/latest-' . $blog_id );
-
-		echo 'SUCCESS';
+      $this->remove_symlink_to_latest_archive();
+      symlink($archiveDir, $this->getWorkingDirectory() . '/latest-export' );
+    }
 	}	
 
-    public function post_export_teardown() {
-
+  public function post_export_teardown() {
 		$this->cleanup_working_files();
 	}
 }
