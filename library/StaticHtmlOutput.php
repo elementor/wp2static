@@ -84,8 +84,8 @@ class StaticHtmlOutput_Controller {
 
 		if (is_admin()) {
 			add_action('admin_menu', array($instance, 'registerOptionsPage'));
-      add_filter( 'custom_menu_order', '__return_true' );
-      add_filter( 'menu_order', array( $instance, 'set_menu_order' ) );
+      add_filter('custom_menu_order', '__return_true' );
+      add_filter('menu_order', array( $instance, 'set_menu_order'));
 		}
  
 		return $instance;
