@@ -199,9 +199,9 @@ jQuery(document).ready(function($){
         method: 'POST',
         success: function(serverResponse) {
           if (current_deployment_method == 'zip' || current_deployment_method == 'netlify') {
-            doAJAXExport('cleanup_working_files', 'cleanup_leftover_archives', 'start_export', 'crawl_site', 'create_symlink_to_latest_archive', 'post_process_archive_dir', 'create_zip');
+            doAJAXExport('cleanup_working_files', 'cleanup_leftover_archives', 'start_export', 'crawl_site', 'post_process_archive_dir', 'create_zip');
           } else {
-            doAJAXExport('cleanup_working_files', 'cleanup_leftover_archives', 'start_export', 'crawl_site', 'create_symlink_to_latest_archive', 'post_process_archive_dir' );
+            doAJAXExport('cleanup_working_files', 'cleanup_leftover_archives', 'start_export', 'crawl_site', 'post_process_archive_dir');
           }
         },
         error: ajaxErrorHandler
