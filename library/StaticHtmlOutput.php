@@ -159,6 +159,18 @@ class StaticHtmlOutput_Controller {
 		$supports_cURL = extension_loaded('curl');
 		$permalinksStructureDefined = strlen(get_option('permalink_structure'));
 
+    // pre-generated the initial crawl list
+    $initial_file_list_count = StaticHtmlOutput_FilesHelper::buildInitialFileList(
+      true, // simulate viaCLI for debugging, will only be called via UI, but without response needed
+      '', // simulate additional URLs for debugging, should not be any here yet
+      //$this->getWorkingDirectory(),
+      // NOTE: Working Dir not yet available, so we serve generate list under uploads dir
+      $this->uploadsPath,
+      $this->uploadsURL,
+      $this->getWorkingDirectory(),
+      self::HOOK
+    );
+
 		if (
 			!$uploadsFolderWritable || 
 			!$permalinksStructureDefined ||
@@ -184,6 +196,7 @@ class StaticHtmlOutput_Controller {
 
 			$this->view
 				->setTemplate('options-page')
+        ->assign('initial_file_list_count', $initial_file_list_count)
         ->assign('wp_uploads_path', $this->uploadsPath)
         ->assign('rewriteWPCONTENT', 
           $this->options->rewriteWPCONTENT ? $this->options->rewriteWPCONTENT : 'contents')
@@ -943,6 +956,8 @@ class StaticHtmlOutput_Controller {
 
       $this->remove_symlink_to_latest_archive();
       symlink($archiveDir, $this->getWorkingDirectory() . '/latest-export' );
+    } else {
+      error_log('failed to symlink latest export directory');
     }
 	}	
 
