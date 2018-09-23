@@ -745,7 +745,6 @@ class StaticHtmlOutput_Controller {
         $this->cleanup_leftover_archives(true);
         $this->start_export(true);
         $this->crawl_site(true);
-        $this->create_symlink_to_latest_archive(true);
         $this->post_process_archive_dir(true);
         $this->deploy();
         $this->post_export_teardown();
@@ -781,7 +780,9 @@ class StaticHtmlOutput_Controller {
 	}	
 
     public function post_process_archive_dir() {
-        $archiveDir = untrailingslashit(file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE'));
+      $this->create_symlink_to_latest_archive();
+
+      $archiveDir = untrailingslashit(file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE'));
 
 		$this->detect_base_url();
 
@@ -937,16 +938,15 @@ class StaticHtmlOutput_Controller {
 	}	
 
 	public function create_symlink_to_latest_archive() {
-    $archiveDir = file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE');
+    if (is_file(($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE'))) {
+      $archiveDir = file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE');
 
-		$this->remove_symlink_to_latest_archive();
-    symlink($archiveDir, $this->getWorkingDirectory() . '/latest-export' );
-
-		echo 'SUCCESS';
+      $this->remove_symlink_to_latest_archive();
+      symlink($archiveDir, $this->getWorkingDirectory() . '/latest-export' );
+    }
 	}	
 
-    public function post_export_teardown() {
-
+  public function post_export_teardown() {
 		$this->cleanup_working_files();
 	}
 }
