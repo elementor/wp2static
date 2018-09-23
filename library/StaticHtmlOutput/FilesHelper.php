@@ -86,7 +86,6 @@ class StaticHtmlOutput_FilesHelper
 
 	public static function buildInitialFileList(
 		$viaCLI = false, 
-		$additionalUrls, 
 		$uploadsPath, // TODO: also working dir?
 		$uploadsURL, 
 		$workingDirectory, 
@@ -120,22 +119,59 @@ class StaticHtmlOutput_FilesHelper
 		$urlsQueue = array_merge(
       array(trailingslashit($baseUrl)),
       self::getListOfLocalFilesByUrl(array(get_template_directory_uri())),
+                self::getAllWPPostURLs($baseUrl)
+      );
+
+    // TODO: shift this as an option to exclusions area
+    $urlsQueue = array_unique(array_merge(
+        $urlsQueue,
+        self::getListOfLocalFilesByUrl(array($uploadsURL))
+    ));
+
+    $str = implode("\n", $urlsQueue);
+    file_put_contents($uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST', $str); // TODO: using uploads path for initial file list build, subseqent one will all be done in working dir
+    file_put_contents($workingDirectory . '/WP-STATIC-CRAWLED-LINKS', '');
+
+    return count($urlsQueue);
+  }
+
+  // TODO: copy initial file list and process as per generateModifiedFileList() notes
+	public static function buildFinalFileList(
+		$viaCLI = false, 
+		$additionalUrls, 
+		$uploadsPath, // TODO: also working dir?
+		$uploadsURL, 
+		$workingDirectory, 
+		$pluginHook) {
+
+		// saving the current archive name to file to persist across requests / functions
+    file_put_contents($workingDirectory . '/WP-STATIC-CURRENT-ARCHIVE', $archiveDir);
+
+		if (!file_exists($archiveDir)) {
+			wp_mkdir_p($archiveDir);
+		}
+
+		$baseUrl = untrailingslashit(home_url());
+			
+		$urlsQueue = array_merge(
+      array(trailingslashit($baseUrl)),
+      self::getListOfLocalFilesByUrl(array(get_template_directory_uri())),
                 self::getAllWPPostURLs($baseUrl),
       explode("\n", $additionalUrls)
       );
 
-      // TODO: shift this as an option to exclusions area
-			$urlsQueue = array_unique(array_merge(
-					$urlsQueue,
-					self::getListOfLocalFilesByUrl(array($uploadsURL))
-			));
+    // TODO: shift this as an option to exclusions area
+    $urlsQueue = array_unique(array_merge(
+        $urlsQueue,
+        self::getListOfLocalFilesByUrl(array($uploadsURL))
+    ));
 
-      $str = implode("\n", $urlsQueue);
-      file_put_contents($uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST', $str); // TODO: using uploads path for initial file list build, subseqent one will all be done in working dir
-      file_put_contents($workingDirectory . '/WP-STATIC-CRAWLED-LINKS', '');
+    $str = implode("\n", $urlsQueue);
+    file_put_contents($uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST', $str); // TODO: using uploads path for initial file list build, subseqent one will all be done in working dir
+    file_put_contents($workingDirectory . '/WP-STATIC-CRAWLED-LINKS', '');
 
-      return count($urlsQueue);
-    }
+    return count($urlsQueue);
+  }
 
     public static function getAllWPPostURLs($wp_site_url){
         global $wpdb;

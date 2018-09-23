@@ -153,11 +153,10 @@ class StaticHtmlOutput_Controller {
 		wp_enqueue_style(self::HOOK . '-admin', $pluginDirUrl . '/css/wp-static-html-output.css');
 	}
 
-  public function generate_initial_filelist() {
+  public function generate_filelist_preview() {
     // pre-generated the initial crawl list
     $initial_file_list_count = StaticHtmlOutput_FilesHelper::buildInitialFileList(
       true, // simulate viaCLI for debugging, will only be called via UI, but without response needed
-      '', // simulate additional URLs for debugging, should not be any here yet
       //$this->getWorkingDirectory(),
       // NOTE: Working Dir not yet available, so we serve generate list under uploads dir
       $this->uploadsPath,
@@ -167,6 +166,28 @@ class StaticHtmlOutput_Controller {
     );
 
     echo $initial_file_list_count;
+  }
+
+  public function generateModifiedFileList() {
+    // copy the preview crawl list within uploads dir to "modified list"
+    copy($this->uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST', $this->uploadsPath . '/WP-STATIC-MODIFIED-CRAWL-LIST');
+
+    // process the modified list and make available for previewing from UI
+    $initial_file_list_count = StaticHtmlOutput_FilesHelper::buildFinalFileList(
+      $viaCLI,
+      $this->additionalUrls,
+      $this->getWorkingDirectory(),
+      $this->uploadsURL,
+      $this->getWorkingDirectory(),
+      self::HOOK
+    );
+
+    // copy the modified list to the working dir "finalized crawl list"
+    copy($this->uploadsPath . '/WP-STATIC-MODIFIED-CRAWL-LIST', $this->uploadsPath . '/WP-STATIC-FINAL-CRAWL-LIST');
+
+    // use finalized crawl list from working dir to start the export 
+
+    // if list has been (re)generated in the frontend, use it, else generate again at export time
   }
 
 	public function renderOptionsPage() {
@@ -435,14 +456,7 @@ class StaticHtmlOutput_Controller {
     WsLog::l('STARTING EXPORT: VIA CLI? ' . $viaCLI);
     WsLog::l('STARTING EXPORT: STATIC EXPORT URL ' . $this->baseUrl );
 
-    $initial_file_list_count = StaticHtmlOutput_FilesHelper::buildInitialFileList(
-      $viaCLI,
-      $this->additionalUrls,
-      $this->getWorkingDirectory(),
-      $this->uploadsURL,
-      $this->getWorkingDirectory(),
-      self::HOOK
-    );
+    $this->generateModifiedFileList();
 
     echo 'SUCCESS';
   }
