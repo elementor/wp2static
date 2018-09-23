@@ -422,7 +422,7 @@ class StaticHtmlOutput_Controller {
     $initial_file_list_count = StaticHtmlOutput_FilesHelper::buildInitialFileList(
       $viaCLI,
       $this->additionalUrls,
-      $this->uploadsPath,
+      $this->getWorkingDirectory(),
       $this->uploadsURL,
       $this->getWorkingDirectory(),
       self::HOOK
