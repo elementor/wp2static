@@ -3,8 +3,6 @@
 	<description>Temporary coding standard pending project maintainer review.</description>
 	<arg name="colors" />
 	<arg name="tab-width" value="2" />
-	<!-- Enforce short array syntax for PHP 5.5+ module -->
-	<rule ref="Generic.Arrays.DisallowLongArraySyntax" />
 	<!-- Custom line length validation -->
 	<rule ref="Generic.Files.LineLength">
 		<properties>
@@ -15,7 +13,7 @@
 	<rule ref="Generic.WhiteSpace.ScopeIndent">
 		<properties>
 			<property name="indent" value="2" />
-			<property name="tabIndent" value="true" />
+			<property name="tabIndent" value="false" />
 		</properties>
 	</rule>
 	<rule ref="Squiz.Commenting" />
