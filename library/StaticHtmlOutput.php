@@ -164,6 +164,9 @@ class StaticHtmlOutput_Controller {
 		$supports_cURL = extension_loaded('curl');
 		$permalinksStructureDefined = strlen(get_option('permalink_structure'));
 
+    // TODO: debug
+	  error_log($this->outputPath());
+
 		if (
 			!$uploadsFolderWritable || 
 			!$permalinksStructureDefined ||
@@ -191,6 +194,7 @@ class StaticHtmlOutput_Controller {
 
 			$this->view
 				->setTemplate('options-page')
+        ->assign('outputPath', $this->outputPath())
         ->assign('rewriteWPCONTENT', 
           $this->options->rewriteWPCONTENT ? $this->options->rewriteWPCONTENT : 'contents')
         ->assign('rewriteTHEMEDIR',
@@ -224,30 +228,31 @@ class StaticHtmlOutput_Controller {
 	public function outputPath(){
 		// TODO: a costly function, think about optimisations, we don't want this running for each request if possible
 
-		// set default uploads path as output path
-		$outputDir = $this->uploadsPath;
-
-		// check for outputDir set in saved options
-		parse_str($this->options->getOption('static-export-settings'), $pluginOptions);
-		if ( array_key_exists('outputDirectory', $pluginOptions )) {
-			if ( !empty($pluginOptions['outputDirectory']) ) {
-				$outputDir = $pluginOptions['outputDirectory'];
-			}
-		} 
+		$outputDir = '';
 
 		// override if user has specified it in the UI
-		if ( ! $this->outputDirectory ) {
+		if ( isset($this->outputDirectory) ) {
+      error_log('outputDirectory set via UI');
 			$outputDir = $this->outputDirectory;
-		} 
+		// check for outputDir set in saved options
+		} elseif ($this->options->outputDirectory) {
+      error_log('outputDirectory set in options');
+      $outputDir = $this->options->outputDirectory;
+    } else {
+      $outputDir = $this->uploadsPath;
+    }
 
+    // TODO: limit mutation
+    // reverting back to default uploads path	
 		if ( !is_dir($outputDir) ) {
-			// reverting back to default uploads path	
 			$outputDir = $this->uploadsPath;
+      error_log('user defined outputPath does not exist, reverting to ' . $outputDir);
 		}
 
 		// if path is not writeable, revert back to default	
 		if ( empty($outputDir) || !is_writable($outputDir) ) {
 			$outputDir = $this->uploadsPath;
+      error_log('user defined outputPath is not writable, reverting to ' . $outputDir);
 		}
 
 		return $outputDir;
