@@ -1,0 +1,33 @@
+#
+# Reference: git pre-commit framework
+# URL: https://pre-commit.com/
+#
+# Reference: Hootsuite - PHP Pre-commit Hooks
+# URL: https://github.com/hootsuite/pre-commit-php
+#
+# Installation errata: must move hooks.yaml to .pre-commit-hooks.yaml
+# mv ~/.cache/pre-commit/repoPbRWE_/hooks.yaml ~/.cache/pre-commit/repoPbRWE_/.pre-commit-hooks.yaml
+#
+repos:
+- repo: https://github.com/hootsuite/pre-commit-php.git
+  rev: 1.2.0
+  hooks:
+  - id: php-lint
+#
+# pending test implementation
+#  - id: php-unit
+#
+  - id: php-cs
+    files: \.(php)$
+    args: [-p -s --runtime-set ignore_warnings_on_exit 1 --standard=./phpcs.xml]
+  - id: php-cbf
+    files: \.(php)$
+    args: [-n -p --standard=./phpcs.xml]
+#
+# Reference: csslint mirror
+# URL: https://github.com/pre-commit/mirrors-csslint
+#
+-   repo: https://github.com/pre-commit/mirrors-csslint
+    rev: v1.0.5
+    hooks:
+    -   id: csslint
