@@ -12,7 +12,6 @@ class StaticHtmlOutput_Controller {
 
 	protected static $_instance = null;
 	protected function __construct() {}
-	protected function __clone() {}
 
 	public static function getInstance() {
     // error_log('getInstance');
