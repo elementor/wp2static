@@ -1,12 +1,7 @@
 <?php
-/**
- * @package WP Static HTML Output
- *
- * Copyright (c) 2011 Leon Stafford
- */
 
-class WsLog
-{
+class WsLog {
+
   public static function l($text) {
     $tmp_var_to_hold_return_array = wp_upload_dir();
     $file = $tmp_var_to_hold_return_array['basedir'] . '/WP-STATIC-EXPORT-LOG';
