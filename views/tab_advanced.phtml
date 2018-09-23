@@ -18,12 +18,12 @@
     </tr>
     <tr>
       <th scope="row">
-        <label for="outputDirectory"><?php echo __('Override Output Directory', 'static-html-output-plugin');?></label>
+        <label for="outputDirectory"><?php echo __('Working Directory', 'static-html-output-plugin');?></label>
       </th>
       <td>
-          <input name="outputDirectory" class="regular-text" id="outputDirectory" value="<?php echo $this->options->outputDirectory ? $this->options->outputDirectory : $this->outputPath; ?>" /><br>
+          <input name="outputDirectory" class="regular-text" id="outputDirectory" value="<?php echo $this->options->outputDirectory ? $this->options->outputDirectory : $this->wp_uploads_path; ?>" /><br>
 
-          <p><i>The plugin will use this directory on the server for its working files and saving export cache. If the path you've given does not exist or isn't writable, it will default to your WordPress uploads directory.</i></p>
+          <p><i>The plugin will use this directory on the server for its working files and saving export cache. If the path you've given does not exist or isn't writable, it will default to <?php echo $this->wp_uploads_path; ?></i></p>
 
       </td>
     </tr>
