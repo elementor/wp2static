@@ -218,7 +218,7 @@ class StaticHtmlOutput_Controller {
 		$this->options->saveAllPostData();
   }
 
-	public function outputPath(){
+	public function getWorkingDirectory(){
 		$outputDir = '';
 
 		// priorities: from UI; from settings; fallback to WP uploads path
@@ -245,8 +245,6 @@ class StaticHtmlOutput_Controller {
 
   public function progressThroughExportTargets() {
     $exportTargetsFile = $this->uploadsPath . '/WP-STATIC-EXPORT-TARGETS';
-
-    // remove first line from file (disabled while testing)
     $exportTargets = file($exportTargetsFile, FILE_IGNORE_NEW_LINES);
     $filesRemaining = count($exportTargets) - 1;
     $first_line = array_shift($exportTargets);
@@ -294,13 +292,13 @@ class StaticHtmlOutput_Controller {
       if (is_file($this->uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE')) {
         $archiveDir = file_get_contents($this->uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
         $previous_export = $archiveDir;
-        $dir_to_diff_against = $this->outputPath() . '/previous-export';
+        $dir_to_diff_against = $this->getWorkingDirectory() . '/previous-export';
 
         if ($this->diffBasedDeploys) {
           $archiveDir = file_get_contents($this->uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
 
           $previous_export = $archiveDir;
-          $dir_to_diff_against = $this->outputPath() . '/previous-export';
+          $dir_to_diff_against = $this->getWorkingDirectory() . '/previous-export';
 
           if (is_dir($previous_export)) {
             shell_exec("rm -Rf $dir_to_diff_against && mkdir -p $dir_to_diff_against && cp -r $previous_export/* $dir_to_diff_against");
@@ -359,7 +357,7 @@ class StaticHtmlOutput_Controller {
     // skip first explort state
     if (is_file($this->uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE')) {
       $archiveDir = file_get_contents($this->uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
-      $dir_to_diff_against = $this->outputPath() . '/previous-export';
+      $dir_to_diff_against = $this->getWorkingDirectory() . '/previous-export';
 
       if(is_dir($dir_to_diff_against)) {
         // TODO: rewrite to php native in case of shared hosting 
@@ -429,7 +427,7 @@ class StaticHtmlOutput_Controller {
       $this->additionalUrls,
       $this->uploadsPath,
       $this->uploadsURL,
-      $this->outputPath(),
+      $this->getWorkingDirectory(),
       self::HOOK
     );
 
@@ -892,7 +890,7 @@ class StaticHtmlOutput_Controller {
 
   public function remove_files_idential_to_previous_export() {
     $archiveDir = file_get_contents($this->uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
-    $dir_to_diff_against = $this->outputPath() . '/previous-export';
+    $dir_to_diff_against = $this->getWorkingDirectory() . '/previous-export';
 
     // iterate each file in current export, check the size and contents in previous, delete if match
     $objects = new RecursiveIteratorIterator(
@@ -934,20 +932,18 @@ class StaticHtmlOutput_Controller {
   }
 
 	public function remove_symlink_to_latest_archive() {
-    global $blog_id;
     $archiveDir = file_get_contents($this->uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
 
-		if (is_link($this->outputPath() . '/latest-' . $blog_id)) {
-			unlink($this->outputPath() . '/latest-' . $blog_id );
+		if (is_link($this->getWorkingDirectory() . '/latest-export' )) {
+			unlink($this->getWorkingDirectory() . '/latest-export'  );
 		} 
 	}	
 
 	public function create_symlink_to_latest_archive() {
-    global $blog_id;
     $archiveDir = file_get_contents($this->uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE');
 
 		$this->remove_symlink_to_latest_archive();
-    symlink($archiveDir, $this->outputPath() . '/latest-' . $blog_id );
+    symlink($archiveDir, $this->getWorkingDirectory() . '/latest-export' );
 
 		echo 'SUCCESS';
 	}	
