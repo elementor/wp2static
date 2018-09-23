@@ -14,7 +14,6 @@ class StaticHtmlOutput_Controller {
 	protected function __construct() {}
 
 	public static function getInstance() {
-    // error_log('getInstance');
 		if (null === self::$_instance) {
 			self::$_instance = new self();
 			self::$_instance->options = new StaticHtmlOutput_Options(self::OPTIONS_KEY);
@@ -76,9 +75,7 @@ class StaticHtmlOutput_Controller {
         self::$_instance->ftpRemotePath = filter_input(INPUT_POST, 'ftpRemotePath');
         self::$_instance->useActiveFTP = filter_input(INPUT_POST, 'useActiveFTP');
         self::$_instance->allowOfflineUsage = filter_input(INPUT_POST, 'allowOfflineUsage');
-      } else {
-        // pull options out of the instance's options object
-      }
+      } 
 		}
 
 		return self::$_instance;
