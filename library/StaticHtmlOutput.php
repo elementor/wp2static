@@ -17,10 +17,6 @@ class StaticHtmlOutput_Controller {
 		if (null === self::$_instance) {
 			self::$_instance = new self();
 			self::$_instance->options = new StaticHtmlOutput_Options(self::OPTIONS_KEY);
-
-      // all options are available here
-      error_log(print_r(self::$_instance->options, true));
-
 			self::$_instance->view = new StaticHtmlOutput_View();
       $tmp_var_to_hold_return_array = wp_upload_dir();
       self::$_instance->uploadsPath = $tmp_var_to_hold_return_array['basedir'];
@@ -164,9 +160,6 @@ class StaticHtmlOutput_Controller {
 		$supports_cURL = extension_loaded('curl');
 		$permalinksStructureDefined = strlen(get_option('permalink_structure'));
 
-    // TODO: debug
-	  error_log($this->outputPath());
-
 		if (
 			!$uploadsFolderWritable || 
 			!$permalinksStructureDefined ||
@@ -194,7 +187,7 @@ class StaticHtmlOutput_Controller {
 
 			$this->view
 				->setTemplate('options-page')
-        ->assign('outputPath', $this->outputPath())
+        ->assign('wp_uploads_path', $this->uploadsPath)
         ->assign('rewriteWPCONTENT', 
           $this->options->rewriteWPCONTENT ? $this->options->rewriteWPCONTENT : 'contents')
         ->assign('rewriteTHEMEDIR',
@@ -226,30 +219,22 @@ class StaticHtmlOutput_Controller {
   }
 
 	public function outputPath(){
-		// TODO: a costly function, think about optimisations, we don't want this running for each request if possible
-
 		$outputDir = '';
 
-		// override if user has specified it in the UI
+		// priorities: from UI; from settings; fallback to WP uploads path
 		if ( isset($this->outputDirectory) ) {
-      error_log('outputDirectory set via UI');
 			$outputDir = $this->outputDirectory;
-		// check for outputDir set in saved options
 		} elseif ($this->options->outputDirectory) {
-      error_log('outputDirectory set in options');
       $outputDir = $this->options->outputDirectory;
     } else {
       $outputDir = $this->uploadsPath;
     }
 
-    // TODO: limit mutation
-    // reverting back to default uploads path	
-		if ( !is_dir($outputDir) ) {
-			$outputDir = $this->uploadsPath;
-      error_log('user defined outputPath does not exist, reverting to ' . $outputDir);
-		}
+		if ( ! is_dir($outputDir) && ! wp_mkdir_p($outputDir)) {
+      $outputDir = $this->uploadsPath;
+      error_log('user defined outputPath does not exist and could not be created, reverting to ' . $outputDir);
+    } 
 
-		// if path is not writeable, revert back to default	
 		if ( empty($outputDir) || !is_writable($outputDir) ) {
 			$outputDir = $this->uploadsPath;
       error_log('user defined outputPath is not writable, reverting to ' . $outputDir);
@@ -445,8 +430,7 @@ class StaticHtmlOutput_Controller {
       $this->uploadsPath,
       $this->uploadsURL,
       $this->outputPath(),
-      self::HOOK,
-      ! $this->dontIncludeAllUploadFiles // TODO: neg neg here inelegant
+      self::HOOK
     );
 
     echo 'SUCCESS';
