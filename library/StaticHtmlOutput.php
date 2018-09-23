@@ -153,12 +153,7 @@ class StaticHtmlOutput_Controller {
 		wp_enqueue_style(self::HOOK . '-admin', $pluginDirUrl . '/css/wp-static-html-output.css');
 	}
 
-	public function renderOptionsPage() {
-		// Check system requirements
-		$uploadsFolderWritable = $this->uploadsPath && is_writable($this->uploadsPath);
-		$supports_cURL = extension_loaded('curl');
-		$permalinksStructureDefined = strlen(get_option('permalink_structure'));
-
+  public function generate_initial_filelist() {
     // pre-generated the initial crawl list
     $initial_file_list_count = StaticHtmlOutput_FilesHelper::buildInitialFileList(
       true, // simulate viaCLI for debugging, will only be called via UI, but without response needed
@@ -170,6 +165,15 @@ class StaticHtmlOutput_Controller {
       $this->getWorkingDirectory(),
       self::HOOK
     );
+
+    echo $initial_file_list_count;
+  }
+
+	public function renderOptionsPage() {
+		// Check system requirements
+		$uploadsFolderWritable = $this->uploadsPath && is_writable($this->uploadsPath);
+		$supports_cURL = extension_loaded('curl');
+		$permalinksStructureDefined = strlen(get_option('permalink_structure'));
 
 		if (
 			!$uploadsFolderWritable || 
@@ -196,7 +200,6 @@ class StaticHtmlOutput_Controller {
 
 			$this->view
 				->setTemplate('options-page')
-        ->assign('initial_file_list_count', $initial_file_list_count)
         ->assign('wp_uploads_path', $this->uploadsPath)
         ->assign('rewriteWPCONTENT', 
           $this->options->rewriteWPCONTENT ? $this->options->rewriteWPCONTENT : 'contents')
