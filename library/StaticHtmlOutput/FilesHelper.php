@@ -84,10 +84,10 @@ class StaticHtmlOutput_FilesHelper
     return $files;
   }
 
-	public function buildInitialFileList(
+	public static function buildInitialFileList(
 		$viaCLI = false, 
 		$additionalUrls, 
-		$uploadsPath, 
+		$uploadsPath, // TODO: also working dir?
 		$uploadsURL, 
 		$workingDirectory, 
 		$pluginHook) {
@@ -109,7 +109,7 @@ class StaticHtmlOutput_FilesHelper
 		$archiveDir = $archiveName . '/';
 
 		// saving the current archive name to file to persist across requests / functions
-        file_put_contents($uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE', $archiveDir);
+    file_put_contents($workingDirectory . '/WP-STATIC-CURRENT-ARCHIVE', $archiveDir);
 
 		if (!file_exists($archiveDir)) {
 			wp_mkdir_p($archiveDir);
@@ -117,12 +117,12 @@ class StaticHtmlOutput_FilesHelper
 
 		$baseUrl = untrailingslashit(home_url());
 			
-		$urlsQueue = array_unique(array_merge(
-					array(trailingslashit($baseUrl)),
-					self::getListOfLocalFilesByUrl(array(get_template_directory_uri())),
-                    self::getAllWPPostURLs($baseUrl),
-					explode("\n", $additionalUrls)
-					));
+		$urlsQueue = array_merge(
+      array(trailingslashit($baseUrl)),
+      self::getListOfLocalFilesByUrl(array(get_template_directory_uri())),
+                self::getAllWPPostURLs($baseUrl),
+      explode("\n", $additionalUrls)
+      );
 
       // TODO: shift this as an option to exclusions area
 			$urlsQueue = array_unique(array_merge(
@@ -131,13 +131,13 @@ class StaticHtmlOutput_FilesHelper
 			));
 
       $str = implode("\n", $urlsQueue);
-      file_put_contents($uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST', $str);
-      file_put_contents($uploadsPath . '/WP-STATIC-CRAWLED-LINKS', '');
+      file_put_contents($uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST', $str); // TODO: using uploads path for initial file list build, subseqent one will all be done in working dir
+      file_put_contents($workingDirectory . '/WP-STATIC-CRAWLED-LINKS', '');
 
       return count($urlsQueue);
     }
 
-    public function getAllWPPostURLs($wp_site_url){
+    public static function getAllWPPostURLs($wp_site_url){
         global $wpdb;
 
         // NOTE: re using $wpdb->ret_results vs WP_Query

@@ -32,8 +32,10 @@
         </th>
         <td>
           <p>Before it starts to export your site, the plugin first generates a list of all WordPress URLs it thinks it should include. It takes these from what it knows about your posts, pages, tags, archives and media.</p>
+
+          <p><?php echo $this->initial_file_list_count; ?> URLs were detected on your site that will be attempted to be crawled.</p>
         <br>
-        <button class="button button-secondary">Preview initial crawl list</button>
+        <a href="<?php echo $this->wpUploadsDir; ?>/WP-STATIC-INITIAL-CRAWL-LIST" class="button button-secondary" target="_blank">Preview initial crawl list</a>
         </td>
       </tr>
       <tr>
