@@ -88,7 +88,6 @@ class StaticHtmlOutput_Controller {
 
 		if (is_admin()) {
 			add_action('admin_menu', array($instance, 'registerOptionsPage'));
-			add_action(self::HOOK . '-saveOptions', array($instance, 'saveOptions'));
       add_filter( 'custom_menu_order', '__return_true' );
       add_filter( 'menu_order', array( $instance, 'set_menu_order' ) );
 		}
@@ -111,10 +110,6 @@ class StaticHtmlOutput_Controller {
     );
 
     return $order;
-  }
-
-  public function saveOptions() {
-    // required
   }
 
   public function activate_for_single_site() {
@@ -182,9 +177,6 @@ class StaticHtmlOutput_Controller {
 				->assign('uploadsPath', $this->uploadsPath)
 				->render();
 		} else {
-			do_action(self::HOOK . '-saveOptions');
-			$wp_upload_dir = wp_upload_dir();
-
       $tmp_upload_dir_var = wp_upload_dir();
       
 			$this->view
