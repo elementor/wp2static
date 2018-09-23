@@ -78,6 +78,24 @@
             <textarea class="widefat" name="excludeUrls" id="excludeUrls" rows="5" cols="10"><?php echo esc_html($this->additionalUrls) ?></textarea>
         </td>
       </tr>
+      <tr>
+        <th scope="row">
+          <label><?php echo __('Regenerate crawl list', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+        <a id="preview_modified_crawl_list_button" href="<?php echo $this->wpUploadsDir; ?>/WP-STATIC-MODIFIED-CRAWL-LIST" class="button button-secondary" target="_blank">Regenerate crawl list</a><br><br>
+        
+  <p>Regenerate the crawl list, applying any extra settings specified above. Preview that your include/exclude rules are being applied correctly.</p><br>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          <label><?php echo __('Discover new URLs while crawling', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <?php echo displayCheckbox($this, 'discoverNewURLs', "As each link in the list is crawled, extract any new links within your website that aren't already included, saving them as part of the export."); ?>
+        </td>
+      </tr>
     </tbody>
   </table>
 </div><!-- end crawl_setings -->
