@@ -204,9 +204,6 @@ jQuery(document).ready(function($){
         export_targets.push('NETLIFY');
     }
 
-    // always run cleanup "exportTarget" (TODO: naming to be improved)
-    export_targets.push('TEARDOWN');
-
     data = $(".options-form :input")
         .filter(function(index, element) {
             return $(element).val() != '';
