@@ -11,17 +11,31 @@ class Deployer {
       break;
 
       case 'github':
+        $this->githubRepo = filter_input(INPUT_POST, 'githubRepo');
+        $this->githubPersonalAccessToken = filter_input(INPUT_POST, 'githubPersonalAccessToken');
+        $this->githubBranch = filter_input(INPUT_POST, 'githubBranch');
+        $this->githubPath = filter_input(INPUT_POST, 'githubPath');
+
         $this->github_prepare_export();
         $this->github_upload_blobs(true);
         $this->github_finalise_export();
       break;
 
       case 'ftp':
+        $this->ftpServer = filter_input(INPUT_POST, 'ftpServer');
+        $this->ftpUsername = filter_input(INPUT_POST, 'ftpUsername');
+        $this->ftpPassword = filter_input(INPUT_POST, 'ftpPassword');
+        $this->ftpRemotePath = filter_input(INPUT_POST, 'ftpRemotePath');
+        $this->useActiveFTP = filter_input(INPUT_POST, 'useActiveFTP');
+
         $this->ftp_prepare_export();
         $this->ftp_transfer_files(true);
       break;
 
       case 'netlify':
+        $this->netlifySiteID = filter_input(INPUT_POST, 'netlifySiteID');
+        $this->netlifyPersonalAccessToken = filter_input(INPUT_POST, 'netlifyPersonalAccessToken');
+
         $this->create_zip();
         $this->netlify_do_export();
       break;
@@ -31,17 +45,31 @@ class Deployer {
       break;
 
       case 's3':
+        $this->s3Key = filter_input(INPUT_POST, 's3Key');
+        $this->s3Secret = filter_input(INPUT_POST, 's3Secret');
+        $this->s3Region = filter_input(INPUT_POST, 's3Region');
+        $this->s3Bucket = filter_input(INPUT_POST, 's3Bucket');
+        $this->s3RemotePath = filter_input(INPUT_POST, 's3RemotePath');
+        $this->cfDistributionId = filter_input(INPUT_POST, 'cfDistributionId');
+
         $this->s3_prepare_export();
         $this->s3_transfer_files(true);
         $this->cloudfront_invalidate_all_items();
       break;
 
       case 'bunnycdn':
+        $this->bunnycdnPullZoneName = filter_input(INPUT_POST, 'bunnycdnPullZoneName');
+        $this->bunnycdnAPIKey = filter_input(INPUT_POST, 'bunnycdnAPIKey');
+        $this->bunnycdnRemotePath = filter_input(INPUT_POST, 'bunnycdnRemotePath');
+
         $this->bunnycdn_prepare_export();
         $this->bunnycdn_transfer_files(true);
       break;
 
       case 'dropbox':
+        $this->dropboxAccessToken = filter_input(INPUT_POST, 'dropboxAccessToken');
+        $this->dropboxFolder = filter_input(INPUT_POST, 'dropboxFolder');
+
         $this->dropbox_prepare_export();
         $this->dropbox_do_export(true);
       break;
@@ -235,5 +263,40 @@ class Deployer {
 		}
   }
 
+	public function github_upload_blobs($viaCLI = false) {
+    $github = new StaticHtmlOutput_GitHub(
+      $this->githubRepo,
+      $this->githubPersonalAccessToken,
+      $this->githubBranch,
+      $this->githubPath,
+      $this->getWorkingDirectory()
+    );
+
+    $github->upload_blobs($viaCLI);
+  }
+
+  public function github_prepare_export() {
+    $github = new StaticHtmlOutput_GitHub(
+      $this->githubRepo,
+      $this->githubPersonalAccessToken,
+      $this->githubBranch,
+      $this->githubPath,
+      $this->getWorkingDirectory()
+    );
+
+    $github->prepare_deployment();
+  }
+
+  public function github_finalise_export() {
+    $github = new StaticHtmlOutput_GitHub(
+      $this->githubRepo,
+      $this->githubPersonalAccessToken,
+      $this->githubBranch,
+      $this->githubPath,
+      $this->getWorkingDirectory()
+    );
+
+    $github->commit_new_tree();
+  }
 }
 

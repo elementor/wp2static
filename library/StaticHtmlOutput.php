@@ -1,9 +1,4 @@
 <?php
-/**
- * @package WP Static Site Generator
- *
- * Copyright (c) 2011 Leon Stafford
- */
 
 class StaticHtmlOutput_Controller {
 	const VERSION = '5.9';
@@ -29,48 +24,7 @@ class StaticHtmlOutput_Controller {
         self::$_instance->selected_deployment_option = filter_input(INPUT_POST, 'selected_deployment_option');
         self::$_instance->baseUrl = untrailingslashit(filter_input(INPUT_POST, 'baseUrl', FILTER_SANITIZE_URL));
         self::$_instance->diffBasedDeploys = filter_input(INPUT_POST, 'diffBasedDeploys');
-        self::$_instance->sendViaGithub = filter_input(INPUT_POST, 'sendViaGithub');
-        self::$_instance->sendViaFTP = filter_input(INPUT_POST, 'sendViaFTP');
-        self::$_instance->sendViaS3 = filter_input(INPUT_POST, 'sendViaS3');
-        self::$_instance->sendViaNetlify = filter_input(INPUT_POST, 'sendViaNetlify');
-        self::$_instance->sendViaDropbox = filter_input(INPUT_POST, 'sendViaDropbox');
-        self::$_instance->additionalUrls = filter_input(INPUT_POST, 'additionalUrls');
-        self::$_instance->outputDirectory = filter_input(INPUT_POST, 'outputDirectory');
-        self::$_instance->targetFolder = filter_input(INPUT_POST, 'targetFolder');
-        self::$_instance->githubRepo = filter_input(INPUT_POST, 'githubRepo');
-        self::$_instance->githubPersonalAccessToken = filter_input(INPUT_POST, 'githubPersonalAccessToken');
-        self::$_instance->githubBranch = filter_input(INPUT_POST, 'githubBranch');
-        self::$_instance->githubPath = filter_input(INPUT_POST, 'githubPath');
-        self::$_instance->rewriteWPCONTENT = filter_input(INPUT_POST, 'rewriteWPCONTENT');
-        self::$_instance->rewriteTHEMEROOT = filter_input(INPUT_POST, 'rewriteTHEMEROOT');
-        self::$_instance->rewriteTHEMEDIR = filter_input(INPUT_POST, 'rewriteTHEMEDIR');
-        self::$_instance->rewriteUPLOADS = filter_input(INPUT_POST, 'rewriteUPLOADS');
-        self::$_instance->rewritePLUGINDIR = filter_input(INPUT_POST, 'rewritePLUGINDIR');
-        self::$_instance->rewriteWPINC = filter_input(INPUT_POST, 'rewriteWPINC');
-				self::$_instance->useRelativeURLs = filter_input(INPUT_POST, 'useRelativeURLs');
-				self::$_instance->useBaseHref = filter_input(INPUT_POST, 'useBaseHref');
-        self::$_instance->useBasicAuth = filter_input(INPUT_POST, 'useBasicAuth');
-        self::$_instance->basicAuthUser = filter_input(INPUT_POST, 'basicAuthUser');
-        self::$_instance->basicAuthPassword = filter_input(INPUT_POST, 'basicAuthPassword');
-        self::$_instance->bunnycdnPullZoneName = filter_input(INPUT_POST, 'bunnycdnPullZoneName');
-        self::$_instance->bunnycdnAPIKey = filter_input(INPUT_POST, 'bunnycdnAPIKey');
-        self::$_instance->bunnycdnRemotePath = filter_input(INPUT_POST, 'bunnycdnRemotePath');
-        self::$_instance->cfDistributionId = filter_input(INPUT_POST, 'cfDistributionId');
-        self::$_instance->s3Key = filter_input(INPUT_POST, 's3Key');
-        self::$_instance->s3Secret = filter_input(INPUT_POST, 's3Secret');
-        self::$_instance->s3Region = filter_input(INPUT_POST, 's3Region');
-        self::$_instance->s3Bucket = filter_input(INPUT_POST, 's3Bucket');
-        self::$_instance->s3RemotePath = filter_input(INPUT_POST, 's3RemotePath');
-        self::$_instance->dropboxAccessToken = filter_input(INPUT_POST, 'dropboxAccessToken');
-        self::$_instance->dropboxFolder = filter_input(INPUT_POST, 'dropboxFolder');
-        self::$_instance->netlifySiteID = filter_input(INPUT_POST, 'netlifySiteID');
-        self::$_instance->netlifyPersonalAccessToken = filter_input(INPUT_POST, 'netlifyPersonalAccessToken');
-        self::$_instance->ftpServer = filter_input(INPUT_POST, 'ftpServer');
-        self::$_instance->ftpUsername = filter_input(INPUT_POST, 'ftpUsername');
-        self::$_instance->ftpPassword = filter_input(INPUT_POST, 'ftpPassword');
-        self::$_instance->ftpRemotePath = filter_input(INPUT_POST, 'ftpRemotePath');
-        self::$_instance->useActiveFTP = filter_input(INPUT_POST, 'useActiveFTP');
-        self::$_instance->allowOfflineUsage = filter_input(INPUT_POST, 'allowOfflineUsage');
+
       } 
 		}
 
@@ -196,6 +150,8 @@ class StaticHtmlOutput_Controller {
 		$supports_cURL = extension_loaded('curl');
 		$permalinksStructureDefined = strlen(get_option('permalink_structure'));
 
+    $this->detect_base_url(); // supply views with wp_install_subdir if present
+
 		if (
 			!$uploadsFolderWritable || 
 			!$permalinksStructureDefined ||
@@ -278,154 +234,16 @@ class StaticHtmlOutput_Controller {
 		return $outputDir;
 	}
 
-	public function github_upload_blobs($viaCLI = false) {
-    $github = new StaticHtmlOutput_GitHub(
-      $this->githubRepo,
-      $this->githubPersonalAccessToken,
-      $this->githubBranch,
-      $this->githubPath,
-      $this->getWorkingDirectory()
-    );
-
-    $github->upload_blobs($viaCLI);
-  }
-
-  public function github_prepare_export() {
-    $github = new StaticHtmlOutput_GitHub(
-      $this->githubRepo,
-      $this->githubPersonalAccessToken,
-      $this->githubBranch,
-      $this->githubPath,
-      $this->getWorkingDirectory()
-    );
-
-    $github->prepare_deployment();
-  }
-
-  public function github_finalise_export() {
-    $github = new StaticHtmlOutput_GitHub(
-      $this->githubRepo,
-      $this->githubPersonalAccessToken,
-      $this->githubBranch,
-      $this->githubPath,
-      $this->getWorkingDirectory()
-    );
-
-    $github->commit_new_tree();
-  }
-
-  public function capture_last_deployment() {
-      // skip for first export state
-      if (is_file($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE')) {
-        $archiveDir = file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE');
-        $previous_export = $archiveDir;
-        $dir_to_diff_against = $this->getWorkingDirectory() . '/previous-export';
-
-        if ($this->diffBasedDeploys) {
-          $archiveDir = file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE');
-
-          $previous_export = $archiveDir;
-          $dir_to_diff_against = $this->getWorkingDirectory() . '/previous-export';
-
-          if (is_dir($previous_export)) {
-            shell_exec("rm -Rf $dir_to_diff_against && mkdir -p $dir_to_diff_against && cp -r $previous_export/* $dir_to_diff_against");
-
-          } 
-        } else {
-            if(is_dir($dir_to_diff_against)) {
-                StaticHtmlOutput_FilesHelper::delete_dir_with_files($dir_to_diff_against);
-                StaticHtmlOutput_FilesHelper::delete_dir_with_files($archiveDir);
-              }
-        }
-      }
-
-		echo 'SUCCESS';
-  }
-
-	public function cleanup_leftover_archives() {
-		$leftover_files = preg_grep('/^([^.])/', scandir($this->getWorkingDirectory()));
-
-		foreach ($leftover_files as $fileName) {
-			if( strpos($fileName, 'wp-static-html-output-') !== false ) {
-
-				if (is_dir($this->getWorkingDirectory() . '/' . $fileName)) {
-					StaticHtmlOutput_FilesHelper::delete_dir_with_files($this->getWorkingDirectory() . '/' . $fileName);
-				} else {
-					unlink($this->getWorkingDirectory() . '/' . $fileName);
-				}
-			}
-		}
-
-		echo 'SUCCESS';
-	}	
-
-	public function pre_export_cleanup() {
-    error_log('cleaning up leftover exports');
-		$files_to_clean = array(
-			'/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT',
-			'/WP-STATIC-EXPORT-FTP-FILES-TO-EXPORT',
-			'/WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT',
-			'/WP-STATIC-EXPORT-DROPBOX-FILES-TO-EXPORT',
-			'/WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT',
-			'/WP-STATIC-CRAWLED-LINKS',
-//			'/WP-STATIC-INITIAL-CRAWL-LIST',
-//			'/WP-STATIC-CURRENT-ARCHIVE', // needed for zip download, diff deploys, etc
-			'WP-STATIC-EXPORT-LOG'
-		);
-
-		foreach ($files_to_clean as $file_to_clean) {
-			if ( file_exists($this->getWorkingDirectory() . '/' . $file_to_clean) ) {
-				unlink($this->getWorkingDirectory() . '/' . $file_to_clean);
-			} 
-		}
-	}
-
-	public function cleanup_working_files() {
-    error_log('cleanup_working_files()'); 
-    // skip first explort state
-    if (is_file($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE')) {
-      $archiveDir = file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE');
-      $dir_to_diff_against = $this->getWorkingDirectory() . '/previous-export';
-
-      if(is_dir($dir_to_diff_against)) {
-        // TODO: rewrite to php native in case of shared hosting 
-        // delete archivedir and then recursively copy 
-        shell_exec("cp -r $dir_to_diff_against/* $archiveDir/");
-      }
-    }
-
-		$files_to_clean = array(
-			'/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT',
-			'/WP-STATIC-EXPORT-FTP-FILES-TO-EXPORT',
-			'/WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT',
-			'/WP-STATIC-EXPORT-DROPBOX-FILES-TO-EXPORT',
-			'/WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT',
-			'/WP-STATIC-CRAWLED-LINKS',
-//			'/WP-STATIC-INITIAL-CRAWL-LIST',
-			//'/WP-STATIC-CURRENT-ARCHIVE', // needed for zip download, diff deploys, etc
-//			'WP-STATIC-EXPORT-LOG'
-		);
-
-		foreach ($files_to_clean as $file_to_clean) {
-			if ( file_exists($this->getWorkingDirectory() . '/' . $file_to_clean) ) {
-				unlink($this->getWorkingDirectory() . '/' . $file_to_clean);
-			} 
-		}
-	}
-
-  public function initialize_cache_files() {
-    $this->crawled_links_file = $this->getWorkingDirectory() . '/WP-STATIC-CRAWLED-LINKS';
- 
-    $resource = fopen($this->crawled_links_file, 'w');
-    fwrite($resource, '');
-    fclose($resource);  
-  }
-
 	public function prepare_for_export($viaCLI = false) {
     error_log('prepare_for_export()');
-		$this->pre_export_cleanup();
-    $this->cleanup_working_files();
-    $this->initialize_cache_files();
+
+    require_once dirname(__FILE__) . '/StaticHtmlOutput/Exporter.php';
+    $exporter = new Exporter();
+
+    $exporter->capture_last_deployment();
+		$exporter->pre_export_cleanup();
+    $exporter->cleanup_leftover_archives();
+    $exporter->initialize_cache_files();
 
     // initilise log with environmental info
     WsLog::l('STARTING EXPORT ' . date("Y-m-d h:i:s") );
@@ -441,7 +259,7 @@ class StaticHtmlOutput_Controller {
     WsLog::l('STARTING EXPORT: VIA CLI? ' . $viaCLI);
     WsLog::l('STARTING EXPORT: STATIC EXPORT URL ' . $this->baseUrl );
 
-    $this->generateModifiedFileList();
+    $exporter->generateModifiedFileList();
 
     echo 'SUCCESS';
   }
@@ -473,24 +291,30 @@ class StaticHtmlOutput_Controller {
 			->save();
 
 		echo 'SUCCESS';
-
 	}	
 
   public function post_process_archive_dir() {
       // TODO: bypass plugin instantiating to process
-
-      require_once dirname(__FILE__) . '/../StaticHtmlOutput/ArchiveProcessor.php';
+      require_once dirname(__FILE__) . '/StaticHtmlOutput/ArchiveProcessor.php';
       $processor = new HTMLProcessor();
 
       $processor->create_symlink_to_latest_archive();
-
-      $processor->
 	}
 
+	public function detect_base_url() {
+		$site_url = get_option( 'siteurl' );
+		$home = get_option( 'home' );
+    $this->subdirectory = '';
 
-  public function post_export_teardown() {
-		$this->cleanup_working_files();
+		// case for when WP is installed in a different place then being served
+		if ( $site_url !== $home ) {
+			$this->subdirectory = '/mysubdirectory';
+		}
 
-    echo 'SUCCESS';
-	}
+		$base_url = parse_url($site_url);
+
+		if ( array_key_exists('path', $base_url ) && $base_url['path'] != '/' ) {
+			$this->subdirectory = $base_url['path'];
+		}
+	}	
 }

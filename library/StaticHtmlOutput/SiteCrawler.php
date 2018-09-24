@@ -32,6 +32,7 @@ class SiteCrawler {
     $this->useRelativeURLs = isset($_POST['useRelativeURLs']) ?  $_POST['useRelativeURLs'] :  false;
     $this->useBaseHref = isset($_POST['useBaseHref']) ?  $_POST['useBaseHref'] :  false;
     $this->crawl_increment = (int) $_POST['crawl_increment'];
+    $this->additionalUrls = filter_input(INPUT_POST, 'additionalUrls');
 
     // internal pointers
     $this->processed_file = '';

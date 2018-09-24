@@ -7,6 +7,16 @@ class ArchiveProcessor {
 
     $this->archive_path = isset($_POST['archive_path']) ? $_POST['archive_path'] : '';
     $this->working_directory = isset($_POST['working_directory']) ? $_POST['working_directory'] : '';
+
+    $this->rewriteWPCONTENT = filter_input(INPUT_POST, 'rewriteWPCONTENT');
+    $this->rewriteTHEMEROOT = filter_input(INPUT_POST, 'rewriteTHEMEROOT');
+    $this->rewriteTHEMEDIR = filter_input(INPUT_POST, 'rewriteTHEMEDIR');
+    $this->rewriteUPLOADS = filter_input(INPUT_POST, 'rewriteUPLOADS');
+    $this->rewritePLUGINDIR = filter_input(INPUT_POST, 'rewritePLUGINDIR');
+    $this->rewriteWPINC = filter_input(INPUT_POST, 'rewriteWPINC');
+
+    $this->allowOfflineUsage = filter_input(INPUT_POST, 'allowOfflineUsage');
+    $this->targetFolder = filter_input(INPUT_POST, 'targetFolder');
   }
 
 	public function create_symlink_to_latest_archive() {
