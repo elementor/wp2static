@@ -64,7 +64,7 @@ class StaticHtmlOutput_Options {
         'sendViaNetlify',
         'sendViaDropbox',
         'additionalUrls',
-        'outputDirectory',
+        'workingDirectory',
         'targetFolder',
         'githubRepo',
         'githubPersonalAccessToken',
