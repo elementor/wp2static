@@ -1,4 +1,10 @@
 <?php
+/**
+ * Partition
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Endpoint;
 
 use ArrayAccess;

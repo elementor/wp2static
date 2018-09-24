@@ -1,3 +1,11 @@
+<?php
+/**
+ * Two column layout (2)
+ *
+ * @package WP2Static
+ */
+?>
+
 <h2><?php esc_attr_e( '2 Columns Layout: static (px)', 'WpAdminStyle' ); ?></h2>
 
 <div class="wrap">

@@ -1,4 +1,10 @@
 <?php
+/**
+ * CommandInterface
+ *
+ * @package WP2Static
+ */
+
 namespace Aws;
 interface CommandInterface extends \ArrayAccess, \Countable, \IteratorAggregate
 {

@@ -1,4 +1,10 @@
 <?php
+/**
+ * Fetch_Urls_Task
+ *
+ * @package WP2Static
+ */
+
 namespace Simply_Static;
 
 class Fetch_Urls_Task extends Task {

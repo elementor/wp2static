@@ -1,4 +1,10 @@
 <?php
+/**
+ * Diagnostics
+ *
+ * @package WP2Static
+ */
+
 namespace Simply_Static;
 ?>
 

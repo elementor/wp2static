@@ -1,3 +1,10 @@
+<?php
+/**
+ * Two column layout
+ *
+ * @package WP2Static
+ */
+?>
 <h2><?php esc_attr_e( '2 Columns Layout: relative (%)', 'WpAdminStyle' ); ?></h2>
 
 <div class="wrap">

@@ -1,3 +1,11 @@
+<?php
+/**
+ * Form elements: input
+ *
+ * @package WP2Static
+ */
+?>
+
 <h2><?php esc_attr_e( 'Form Elements: Input Fields', 'WpAdminStyle' ); ?></h2>
 
 <input type="text" value=".regular-text" class="regular-text" /><br>

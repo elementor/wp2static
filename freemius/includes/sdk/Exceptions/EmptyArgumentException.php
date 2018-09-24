@@ -1,4 +1,10 @@
 <?php
+/**
+ * Freemius_EmptyArgumentException
+ *
+ * @package WP2Static
+ */
+
 	if ( ! class_exists( 'Freemius_InvalidArgumentException' ) ) {
 		exit;
 	}

@@ -1,4 +1,10 @@
 <?php
+/**
+ * Plugin
+ *
+ * @package WP2Static
+ */
+
 namespace Simply_Static;
 
 // Exit if accessed directly

@@ -1,4 +1,9 @@
 <?php
+/**
+ * Debug_Bar_PHP
+ *
+ * @package WP2Static
+ */
 
 class Debug_Bar_PHP extends Debug_Bar_Panel {
 	public $warnings = array();

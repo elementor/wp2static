@@ -1,4 +1,10 @@
 <?php
+/**
+ * StructureShape
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Api;
 
 /**

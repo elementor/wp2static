@@ -1,4 +1,10 @@
 <?php
+/**
+ * Endpoint Provider
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Endpoint;
 
 use Aws\Exception\UnresolvedEndpointException;

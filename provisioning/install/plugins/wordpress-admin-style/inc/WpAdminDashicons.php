@@ -1,8 +1,14 @@
 <?php
+/**
+ * WpAdminDashicons
+ *
+ * @package WP2Static
+ */
+
 // avoid direct calls to this file, because now WP core and framework has been used.
 ! defined( 'ABSPATH' ) and exit;
 
-add_action( 
+add_action(
 	'init',
 	array( WpAdminDashicons::get_instance(), 'plugin_setup' )
 );
@@ -31,7 +37,7 @@ class WpAdminDashicons {
 	
 	/**
 	 * Used for regular plugin work.
-	 * 
+	 *
 	 * @wp-hook  admin_init
 	 * @since    05/02/2013
 	 * @return   void

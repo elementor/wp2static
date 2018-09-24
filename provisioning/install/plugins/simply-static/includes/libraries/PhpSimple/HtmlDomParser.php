@@ -1,4 +1,9 @@
 <?php
+/**
+ * HtmlDomParser
+ *
+ * @package WP2Static
+ */
 
 namespace Sunra\PhpSimple;
 

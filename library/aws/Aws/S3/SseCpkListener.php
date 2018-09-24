@@ -1,4 +1,9 @@
 <?php
+/**
+ * SseCpkListener
+ *
+ * @package WP2Static
+ */
 
 namespace Aws\S3;
 

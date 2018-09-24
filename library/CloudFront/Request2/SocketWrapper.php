@@ -1,4 +1,10 @@
 <?php
+/**
+ * HTTP_Request2_SocketWrapper
+ *
+ * @package WP2Static
+ */
+
 require_once 'Exception.php';
 class HTTP_Request2_SocketWrapper
 {

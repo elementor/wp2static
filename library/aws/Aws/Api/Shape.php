@@ -1,4 +1,10 @@
 <?php
+/**
+ * Shape
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Api;
 
 /**

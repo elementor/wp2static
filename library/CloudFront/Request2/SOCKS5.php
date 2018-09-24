@@ -1,4 +1,10 @@
 <?php
+/**
+ * HTTP_Request2_SOCKS5
+ *
+ * @package WP2Static
+ */
+
 require_once 'HTTP/Request2/SocketWrapper.php';
 class HTTP_Request2_SOCKS5 extends HTTP_Request2_SocketWrapper
 {

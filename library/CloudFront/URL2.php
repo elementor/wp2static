@@ -1,4 +1,9 @@
 <?php
+/**
+ * Net_URL2
+ *
+ * @package WP2Static
+ */
 
 class Net_URL2
 {

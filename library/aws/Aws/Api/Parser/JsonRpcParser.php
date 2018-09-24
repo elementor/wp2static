@@ -1,4 +1,10 @@
 <?php
+/**
+ * JsonRpcParser
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Api\Parser;
 
 use Aws\Api\Service;

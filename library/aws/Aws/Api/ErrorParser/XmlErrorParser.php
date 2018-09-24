@@ -1,4 +1,10 @@
 <?php
+/**
+ * XmlErrorParser
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Api\ErrorParser;
 
 use Aws\Api\Parser\PayloadParserTrait;

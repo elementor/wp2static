@@ -1,4 +1,10 @@
 <?php
+/**
+ * ObjectCopier
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\S3;
 
 use Aws\Exception\MultipartUploadException;

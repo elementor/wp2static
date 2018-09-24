@@ -1,4 +1,9 @@
 <?php
+/**
+ * WpAdminJqueryUi
+ *
+ * @package WP2Static
+ */
 
 // avoid direct calls to this file, because now WP core and framework has been used.
 ! defined( 'ABSPATH' ) and exit;

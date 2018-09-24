@@ -1,4 +1,10 @@
 <?php
+/**
+ * SignatureTrait
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Signature;
 
 /**

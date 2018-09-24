@@ -1,4 +1,10 @@
 <?php
+/**
+ * RetryableMalformedResponseParser
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\S3;
 
 use Aws\Api\Parser\AbstractParser;

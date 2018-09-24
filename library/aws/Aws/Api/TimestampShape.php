@@ -1,4 +1,10 @@
 <?php
+/**
+ * TimestampShape
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Api;
 
 /**

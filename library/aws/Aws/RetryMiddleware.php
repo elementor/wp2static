@@ -1,4 +1,10 @@
 <?php
+/**
+ * RetryMiddleware
+ *
+ * @package WP2Static
+ */
+
 namespace Aws;
 use Aws\Exception\AwsException;
 use GuzzleHttp\Exception\RequestException;

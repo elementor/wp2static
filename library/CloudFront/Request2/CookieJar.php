@@ -1,4 +1,10 @@
 <?php
+/**
+ * HTTP_Request2_CookieJar
+ *
+ * @package WP2Static
+ */
+
 require_once 'HTTP/Request2.php';
 class HTTP_Request2_CookieJar implements Serializable
 {

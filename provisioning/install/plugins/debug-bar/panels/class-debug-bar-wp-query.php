@@ -1,4 +1,9 @@
 <?php
+/**
+ * Debug_Bar_WP_Query
+ *
+ * @package WP2Static
+ */
 
 class Debug_Bar_WP_Query extends Debug_Bar_Panel {
 	function init() {

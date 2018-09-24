@@ -1,4 +1,10 @@
 <?php
+/**
+ * FtpClient
+ *
+ * @package WP2Static
+ */
+
 namespace FtpClient;
 class FtpWrapper
 {

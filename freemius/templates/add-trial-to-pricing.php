@@ -1,13 +1,13 @@
 <?php
-	/**
-	 * Add "&trial=true" to pricing menu item href when running in trial
-	 * promotion context.
-	 *
-	 * @package     Freemius
-	 * @copyright   Copyright (c) 2016, Freemius, Inc.
-	 * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License Version 3
-	 * @since       1.2.1.5
-	 */
+/**
+ * Add "&trial=true" to pricing menu item href when running in trial
+ * promotion context.
+ *
+ * @package     Freemius
+ * @copyright   Copyright (c) 2016, Freemius, Inc.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License Version 3
+ * @since       1.2.1.5
+ */
 
 	if ( ! defined( 'ABSPATH' ) ) {
 		exit;

@@ -1,4 +1,10 @@
 <?php
+/**
+ * MultiRegionClient
+ *
+ * @package WP2Static
+ */
+
 namespace Aws;
 use Aws\Endpoint\PartitionEndpointProvider;
 use Aws\Endpoint\PartitionInterface;

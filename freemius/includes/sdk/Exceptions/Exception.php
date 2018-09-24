@@ -1,4 +1,10 @@
 <?php
+/**
+ * Freemius_Exception
+ *
+ * @package WP2Static
+ */
+
 	if ( ! class_exists( 'Freemius_Exception' ) ) {
 		/**
 		 * Thrown when an API call returns an exception.

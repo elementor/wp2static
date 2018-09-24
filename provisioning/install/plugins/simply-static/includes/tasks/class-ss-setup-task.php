@@ -1,4 +1,10 @@
 <?php
+/**
+ * Setup_Task
+ *
+ * @package WP2Static
+ */
+
 namespace Simply_Static;
 
 class Setup_Task extends Task {

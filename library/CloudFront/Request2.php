@@ -1,4 +1,9 @@
 <?php
+/**
+ * Request2
+ *
+ * @package WP2Static
+ */
 
 if (!class_exists('Net_URL2', true)) {
     require_once 'URL2.php';

@@ -1,4 +1,10 @@
 <?php
+/**
+ * S3ClientTrait
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\S3;
 
 use Aws\Api\Parser\PayloadParserTrait;

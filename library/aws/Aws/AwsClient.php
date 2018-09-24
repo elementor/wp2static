@@ -1,4 +1,10 @@
 <?php
+/**
+ * AwsClient
+ *
+ * @package WP2Static
+ */
+
 namespace Aws;
 use Aws\Api\ApiProvider;
 use Aws\Api\DocModel;

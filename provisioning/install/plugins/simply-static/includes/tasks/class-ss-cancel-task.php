@@ -1,4 +1,10 @@
 <?php
+/**
+ * Cancel_Task
+ *
+ * @package WP2Static
+ */
+
 namespace Simply_Static;
 
 class Cancel_Task extends Task {

@@ -1,4 +1,10 @@
 <?php
+/**
+ * GHU_Core
+ *
+ * @package WP2Static
+ */
+
 // @see https://github.com/FacetWP/github-updater-lite
 defined( 'ABSPATH' ) or exit;
 

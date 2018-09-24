@@ -1,12 +1,12 @@
 <?php
-	/**
-	 * @package     Freemius
-	 * @copyright   Copyright (c) 2015, Freemius, Inc.
-	 * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License Version 3
-	 * @since       1.1.4
-     *
-     * @deprecated  This file is no longer in use. It's still in the project for backward compatibility.
-	 */
+/**
+ * @package     Freemius
+ * @copyright   Copyright (c) 2015, Freemius, Inc.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License Version 3
+ * @since       1.1.4
+ *
+ * @deprecated  This file is no longer in use. It's still in the project for backward compatibility.
+ */
 
 	if ( ! defined( 'ABSPATH' ) ) {
 		exit;
