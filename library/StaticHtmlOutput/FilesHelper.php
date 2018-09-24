@@ -98,26 +98,6 @@ class StaticHtmlOutput_FilesHelper
     // TODO: how useful is this?
 		set_time_limit(0);
 
-		$exporter = wp_get_current_user();
-
-		// setting path to store the archive dir path
-
-		$archiveName = $workingDirectory . '/' . $pluginHook . '-' . time();
-
-		// append username if done via UI
-		if ( $exporter->user_login ) {
-			$archiveName .= '-' . $exporter->user_login;
-		}
-
-		$archiveDir = $archiveName . '/';
-
-		// saving the current archive name to file to persist across requests / functions
-    file_put_contents($uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE', $archiveDir);
-
-		if (!file_exists($archiveDir)) {
-			wp_mkdir_p($archiveDir);
-		}
-
 		$baseUrl = untrailingslashit(home_url());
 			
 		$urlsQueue = array_merge(

@@ -193,6 +193,13 @@ class StaticHtmlOutput_Controller {
     $exporter->cleanup_leftover_archives();
     $exporter->initialize_cache_files();
 
+    require_once dirname(__FILE__) . '/StaticHtmlOutput/Archive.php';
+
+    // NOTE: from this point, we will have our archive name/path available
+    //       to other scripts to use, bypassing WP initialization calls per request
+    $archive = new Archive();
+    $archive->create();
+
     // TODO: move to exporter; wp env vars to views
     WsLog::l('STARTING EXPORT ' . date("Y-m-d h:i:s") );
     WsLog::l('STARTING EXPORT: PHP VERSION ' . phpversion() );
