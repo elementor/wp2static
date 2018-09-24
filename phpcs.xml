@@ -75,6 +75,9 @@
 		<exclude name="WordPress.WhiteSpace.PrecisionAlignment" />
 		<exclude name="WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents" />
 		<exclude name="WordPress.WP.AlternativeFunctions.file_system_read_file_put_contents" />
+		<exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fclose" />
+		<exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fopen" />
+		<exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fwrite" />
 		<exclude name="WordPress.WP.AlternativeFunctions.json_encode_json_encode" />
 	</rule>
 </ruleset>

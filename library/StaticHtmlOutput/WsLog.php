@@ -1,9 +1,4 @@
 <?php
-/**
- * WsLog
- *
- * @package WP2Static
- */
 
 class WsLog {
 
