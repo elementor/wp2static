@@ -30,8 +30,6 @@ class ArchiveProcessor {
     $this->archive->setToCurrentArchive();
 
     if (is_file($this->archive->path)) {
-      $archiveDir = file_get_contents($this->archive->path);
-
       $this->remove_symlink_to_latest_archive();
       symlink($this->archive->path, $this->working_directory . '/latest-export' );
     } else {
@@ -73,7 +71,7 @@ class ArchiveProcessor {
     // TODO: cleanup empty dirs in archiveDir to prevent them being attempted to export
 
     $files_in_previous_export = exec("find $dir_to_diff_against -type f | wc -l"); 
-    $files_to_be_deployed = exec("find $archiveDir -type f | wc -l"); 
+    $files_to_be_deployed = exec("find $this->archive->path -type f | wc -l"); 
  
     // copy the newly changed files back into the previous export dir, else will never capture changes
 
@@ -135,37 +133,33 @@ class ArchiveProcessor {
 						chmod($publicFolderToCopyTo, 0755);
 
 						// copy the contents of the current archive to the targetFolder
-						$archiveDir = untrailingslashit(file_get_contents($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE'));
-
-						$this->recursive_copy($archiveDir, $publicFolderToCopyTo);	
+						$this->recursive_copy($this->archive->path, $publicFolderToCopyTo);	
 
 					} else {
 						error_log('Couldn\'t create target folder to copy files to');
 					}
 				} else {
 
-					$archiveDir = untrailingslashit(file_get_contents($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE'));
 
-					$this->recursive_copy($archiveDir, $publicFolderToCopyTo);	
+					$this->recursive_copy($this->archive->path, $publicFolderToCopyTo);	
 				}
 			}
 		}
 	}
 
   public function create_zip() {
-    $archiveDir = file_get_contents($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE');
-    $archiveName = rtrim($archiveDir, '/');
+    $archiveName = rtrim($this->archive->path, '/');
     $tempZip = $archiveName . '.tmp';
     $zipArchive = new ZipArchive();
     if ($zipArchive->open($tempZip, ZIPARCHIVE::CREATE) !== true) {
       return new WP_Error('Could not create archive');
     }
 
-    $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($archiveDir));
+    $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this->archive->path));
     foreach ($iterator as $fileName => $fileObject) {
       $baseName = basename($fileName);
       if($baseName != '.' && $baseName != '..') {
-        if (!$zipArchive->addFile(realpath($fileName), str_replace($archiveDir, '', $fileName))) {
+        if (!$zipArchive->addFile(realpath($fileName), str_replace($this->archive->path, '', $fileName))) {
           return new WP_Error('Could not add file: ' . $fileName);
         }
       }
@@ -174,6 +168,8 @@ class ArchiveProcessor {
     $zipArchive->close();
     $zipDownloadLink = $archiveName . '.zip';
     rename($tempZip, $zipDownloadLink); 
+
+    // TODO: need to make sure this is WP independent and saves to uploads vs working dir?
     $publicDownloadableZip = str_replace(ABSPATH, trailingslashit(home_url()), $archiveName . '.zip');
 
     echo 'SUCCESS';
@@ -182,11 +178,11 @@ class ArchiveProcessor {
   public function renameWPDirectories() {
 		// rename dirs (in reverse order than when doing in responsebody)
 		// rewrite wp-content  dir
-		$original_wp_content = $archiveDir . '/wp-content'; // TODO: check if this has been modified/use constant
+		$original_wp_content = $this->archive->path . '/wp-content'; // TODO: check if this has been modified/use constant
 
 		// rename the theme theme root before the nested theme dir
 		// rename the theme directory 
-    $new_wp_content = $archiveDir .'/' . $this->rewriteWPCONTENT;
+    $new_wp_content = $this->archive->path .'/' . $this->rewriteWPCONTENT;
     $new_theme_root = $new_wp_content . '/' . $this->rewriteTHEMEROOT;
     $new_theme_dir =  $new_theme_root . '/' . $this->rewriteTHEMEDIR;
 
@@ -212,8 +208,8 @@ class ArchiveProcessor {
 		$new_plugins_dir = $new_wp_content . '/' . $this->rewritePLUGINDIR;
 
 		// rewrite wp-includes  dir
-		$original_wp_includes = $archiveDir . '/' . WPINC;
-		$new_wp_includes = $archiveDir . '/' . $this->rewriteWPINC;
+		$original_wp_includes = $this->archive->path . '/' . WPINC;
+		$new_wp_includes = $this->archive->path . '/' . $this->rewriteWPINC;
 
 
 		if (file_exists($original_wp_content)) {
