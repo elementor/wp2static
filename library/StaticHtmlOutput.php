@@ -403,7 +403,7 @@ class StaticHtmlOutput_Controller {
 			'/WP-STATIC-CRAWLED-LINKS',
 //			'/WP-STATIC-INITIAL-CRAWL-LIST',
 			//'/WP-STATIC-CURRENT-ARCHIVE', // needed for zip download, diff deploys, etc
-			'WP-STATIC-EXPORT-LOG'
+//			'WP-STATIC-EXPORT-LOG'
 		);
 
 		foreach ($files_to_clean as $file_to_clean) {
@@ -413,10 +413,19 @@ class StaticHtmlOutput_Controller {
 		}
 	}
 
+  public function initialize_cache_files() {
+    $this->crawled_links_file = $this->getWorkingDirectory() . '/WP-STATIC-CRAWLED-LINKS';
+ 
+    $resource = fopen($this->crawled_links_file, 'w');
+    fwrite($resource, '');
+    fclose($resource);  
+  }
+
 	public function prepare_for_export($viaCLI = false) {
     error_log('prepare_for_export()');
 		$this->pre_export_cleanup();
     $this->cleanup_working_files();
+    $this->initialize_cache_files();
 
     // initilise log with environmental info
     WsLog::l('STARTING EXPORT ' . date("Y-m-d h:i:s") );

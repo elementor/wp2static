@@ -69,14 +69,15 @@ class SiteCrawler {
 
     $this->archive_dir = file_get_contents($this->working_dir . '/WP-STATIC-CURRENT-ARCHIVE');
 
-    $this->initial_crawl_list_file = $this->wp_uploads_url . '/WP-STATIC-INITIAL-CRAWL-LIST';
+    $this->initial_crawl_list_file = $this->wp_uploads_path . '/WP-STATIC-INITIAL-CRAWL-LIST';
+
     $this->crawled_links_file = $this->working_dir . '/WP-STATIC-CRAWLED-LINKS';
 
-    if (is_file($this->crawled_links_file)) {
-      $this->initial_crawl_list = file($this->initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
-    } else {
-      error_log('crawled links file not found');
-      die();
+    $this->initial_crawl_list = file($this->initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
+
+    if (! $this->initial_crawl_list) {
+      error_log('initial crawl list file not found at ' . $this->initial_crawl_list_file);
+      WsLog::l('ERROR: INITIAL CRAWL LIST NOT FOUND AT: ' . $this->initial_crawl_list_file);
     }
 
     $crawled_links = file($this->crawled_links_file, FILE_IGNORE_NEW_LINES);
@@ -215,26 +216,37 @@ class SiteCrawler {
 
       break;
 
+      // TODO: apply other replacement functions to all processors
       case 'css':
         require_once dirname(__FILE__) . '/../StaticHtmlOutput/CSSProcessor.php';
         $processor = new CSSProcessor($this->response->getBody(), $this->wp_site_url);
 
         $processor->normalizeURLs($this->url);
-//
-//        $processor->cleanup(
-//            $wp_site_environment,
-//            $overwrite_slug_targets
-//            );
-//
-//        $processor->replaceBaseUrl(
-//          $this->wp_site_url,
-//          $this->baseUrl,
-//          $this->allowOfflineUsage,
-//          $this->useRelativeURLs,
-//          $this->useBaseHref);
-//
+
         $this->processed_file = $processor->getCSS();
 
+      case 'js':
+        require_once dirname(__FILE__) . '/../StaticHtmlOutput/JSProcessor.php';
+        $processor = new JSProcessor($this->response->getBody(), $this->wp_site_url);
+
+        $processor->normalizeURLs($this->url);
+
+        $this->processed_file = $processor->getJS();
+
+      break;
+
+      case 'txt':
+        require_once dirname(__FILE__) . '/../StaticHtmlOutput/TXTProcessor.php';
+        $processor = new TXTProcessor($this->response->getBody(), $this->wp_site_url);
+
+        $processor->normalizeURLs($this->url);
+
+        $this->processed_file = $processor->getTXT();
+
+      break;
+    
+      default:
+        WsLog::l('WARNING: ENCOUNTERED FILE WITH NO PROCESSOR: ' . $this->url);
       break;
     }
   }
