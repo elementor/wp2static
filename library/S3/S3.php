@@ -1,4 +1,9 @@
 <?php
+/**
+ * S3
+ *
+ * @package WP2Static
+ */
 
 class S3 {
 

@@ -1,5 +1,7 @@
 <?php
 /**
+ * StaticHtmlOutput_UrlHelper
+ *
  * @package WP Static HTML Output
  *
  * Copyright (c) 2011 Leon Stafford

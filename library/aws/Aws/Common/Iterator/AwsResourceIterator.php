@@ -1,4 +1,10 @@
 <?php
+/**
+ * AwsResourceIterator
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Iterator;
 use Aws\Common\Enum\UaString as Ua;
 use Aws\Common\Exception\RuntimeException;

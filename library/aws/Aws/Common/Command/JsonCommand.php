@@ -1,4 +1,10 @@
 <?php
+/**
+ * JsonCommand
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Command;
 use Guzzle\Service\Command\OperationCommand;
 use Guzzle\Http\Curl\CurlHandle;

@@ -1,4 +1,10 @@
 <?php
+/**
+ * AwsClientTrait
+ *
+ * @package WP2Static
+ */
+
 namespace Aws;
 use Aws\Api\Service;
 trait AwsClientTrait

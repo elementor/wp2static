@@ -1,4 +1,9 @@
 <?php
+/**
+ * MessageFactoryDiscovery
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Discovery;
 

@@ -1,4 +1,9 @@
 <?php
+/**
+ * RetryPlugin
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Client\Common\Plugin;
 

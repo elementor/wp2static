@@ -1,4 +1,10 @@
 <?php
+/**
+ * Parser
+ *
+ * @package WP2Static
+ */
+
 namespace JmesPath;
 use JmesPath\Lexer as T;
 class Parser
@@ -36,12 +42,12 @@ class Parser
         T::T_LPAREN            => 60,
     ];
     private static $afterDot = [
-        T::T_IDENTIFIER        => true, 
-        T::T_QUOTED_IDENTIFIER => true, 
-        T::T_STAR              => true, 
-        T::T_LBRACE            => true, 
-        T::T_LBRACKET          => true, 
-        T::T_FILTER            => true, 
+        T::T_IDENTIFIER        => true,
+        T::T_QUOTED_IDENTIFIER => true,
+        T::T_STAR              => true,
+        T::T_LBRACE            => true,
+        T::T_LBRACKET          => true,
+        T::T_FILTER            => true,
     ];
     public function __construct(Lexer $lexer = null)
     {

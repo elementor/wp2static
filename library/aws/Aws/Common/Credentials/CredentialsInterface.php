@@ -1,4 +1,10 @@
 <?php
+/**
+ * CredentialsInterface
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Credentials;
 interface CredentialsInterface extends \Serializable
 {

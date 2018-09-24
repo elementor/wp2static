@@ -1,4 +1,9 @@
 <?php
+/**
+ * DecompressStream
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Message\Encoding;
 

@@ -1,4 +1,10 @@
 <?php
+/**
+ * EndpointSignatureInterface
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Signature;
 interface EndpointSignatureInterface extends SignatureInterface
 {

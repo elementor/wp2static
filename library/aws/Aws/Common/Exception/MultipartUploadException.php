@@ -1,4 +1,10 @@
 <?php
+/**
+ * MultipartUploadException
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Exception;
 use Aws\Common\Model\MultipartUpload\TransferStateInterface;
 class MultipartUploadException extends RuntimeException

@@ -1,4 +1,10 @@
 <?php
+/**
+ * UploadPartInterface
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Model\MultipartUpload;
 interface UploadPartInterface extends \Serializable
 {

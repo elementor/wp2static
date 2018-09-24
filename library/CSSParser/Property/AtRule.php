@@ -1,4 +1,9 @@
 <?php
+/**
+ * AtRule
+ *
+ * @package WP2Static
+ */
 
 namespace Sabberworm\CSS\Property;
 

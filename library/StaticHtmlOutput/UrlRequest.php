@@ -1,4 +1,9 @@
 <?php
+/**
+ * StaticHtmlOutput_UrlRequest
+ *
+ * @package WP2Static
+ */
 
 class StaticHtmlOutput_UrlRequest {
 	protected $_basicAuthCredentials;
@@ -19,7 +24,7 @@ class StaticHtmlOutput_UrlRequest {
 			$args['headers'] = array( 'Authorization' => 'Basic ' . $this->_basicAuthCredentials );
 		}
 		
-		$response = wp_remote_get( $this->url, $args); 
+		$response = wp_remote_get( $this->url, $args);
 
 
 		if (is_wp_error($response)) {
@@ -88,16 +93,16 @@ class StaticHtmlOutput_UrlRequest {
       return;
     }
  
-    $xml = new DOMDocument(); 
+    $xml = new DOMDocument();
   
     // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
     libxml_use_internal_errors(true);
-    $xml->loadHTML($this->response['body']); 
+    $xml->loadHTML($this->response['body']);
     libxml_use_internal_errors(false);
 
     $base = new Net_URL2($this->url);
 
-    foreach($xml->getElementsByTagName('a') as $link) { 
+    foreach($xml->getElementsByTagName('a') as $link) {
       $original_link = $link->getAttribute("href");
 
       // TODO: apply only to links starting with .,..,/, or any with just a path, like banana.png
@@ -151,7 +156,7 @@ class StaticHtmlOutput_UrlRequest {
 
 	public function rewriteWPPaths($wp_site_environment, $overwrite_slug_targets) {
     // NOTE: drier code but costlier memory usage
-    foreach($this->xml_doc->getElementsByTagName('*') as $element) { 
+    foreach($this->xml_doc->getElementsByTagName('*') as $element) {
       $attribute_to_change = '';
       $url_to_change = '';
 
@@ -159,9 +164,9 @@ class StaticHtmlOutput_UrlRequest {
         $attribute_to_change = 'href';
       } elseif ($element->hasAttribute('src')) {
         $attribute_to_change = 'src';
-      // skip elements without href or src 
+      // skip elements without href or src
       } else {
-        continue; 
+        continue;
       }
 
       $url_to_change = $element->getAttribute($attribute_to_change);
@@ -171,11 +176,11 @@ class StaticHtmlOutput_UrlRequest {
         $rewritten_url = str_replace(
           array(
             $wp_site_environment['wp_active_theme'],
-            $wp_site_environment['wp_themes'], 
-            $wp_site_environment['wp_uploads'], 
-            $wp_site_environment['wp_plugins'], 
-            $wp_site_environment['wp_content'], 
-            $wp_site_environment['wp_inc'], 
+            $wp_site_environment['wp_themes'],
+            $wp_site_environment['wp_uploads'],
+            $wp_site_environment['wp_plugins'],
+            $wp_site_environment['wp_content'],
+            $wp_site_environment['wp_inc'],
           ),
           array(
             $overwrite_slug_targets['new_active_theme_path'],
@@ -198,20 +203,20 @@ class StaticHtmlOutput_UrlRequest {
   }
 
   public function removeQueryStringsFromInternalLinks() {
-    foreach($this->xml_doc->getElementsByTagName('a') as $link) { 
+    foreach($this->xml_doc->getElementsByTagName('a') as $link) {
       $link_href = $link->getAttribute("href");
 
       // check if it's an internal link not a subdomain
       if ($this->isInternalLink($link_href)) {
         // strip anything from the ? onwards
-        // https://stackoverflow.com/a/42476194/1668057 
+        // https://stackoverflow.com/a/42476194/1668057
         $link->setAttribute('href', strtok($link_href, '?'));
-      } 
+      }
     }
   }
 
   public function stripWPMetaElements() {
-    foreach($this->xml_doc->getElementsByTagName('meta') as $meta) { 
+    foreach($this->xml_doc->getElementsByTagName('meta') as $meta) {
       $meta_name = $meta->getAttribute("name");
 
       if (strpos($meta_name, 'generator') !== false) {
@@ -236,7 +241,7 @@ class StaticHtmlOutput_UrlRequest {
       'wlwmanifest',
     );
 
-    foreach($this->xml_doc->getElementsByTagName('link') as $link) { 
+    foreach($this->xml_doc->getElementsByTagName('link') as $link) {
       $link_rel = $link->getAttribute("rel");
 
       if (in_array($link_rel, $relativeLinksToRemove)) {
@@ -266,13 +271,13 @@ class StaticHtmlOutput_UrlRequest {
 		if ($this->isRewritable()) {
       if ($this->isHtml()) {
 
-        // instantiate the XML body here 
-        $this->xml_doc = new DOMDocument(); 
+        // instantiate the XML body here
+        $this->xml_doc = new DOMDocument();
       
         // PERF: 70% of function time
         // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
         libxml_use_internal_errors(true);
-        $this->xml_doc->loadHTML($this->response['body']); 
+        $this->xml_doc->loadHTML($this->response['body']);
         libxml_use_internal_errors(false);
         
 
@@ -317,12 +322,12 @@ class StaticHtmlOutput_UrlRequest {
             )
         ) {
 			$allUrls = array_unique($matches[0]);
-		} 
+		}
 
         // do an extra check for url links in CSS file:
         if ($this->getContentType() == 'text/css') {
             if( preg_match_all(
-#                '/url\((.+?)\);/i', // find any links 
+#                '/url\((.+?)\);/i', // find any links
                 '/url\(([\s])?([\"|\'])?(.*?)([\"|\'])?([\s])?\)/i', // find any urls in CSS
                 $this->response['body'], // in this
                 $matches // save matches into this array
@@ -395,23 +400,23 @@ class StaticHtmlOutput_UrlRequest {
 				}
 			} elseif ($allowOfflineUsage) {
           // detect urls starting with our domain and append index.html to the end if they end in /
-          $xml = new DOMDocument(); 
+          $xml = new DOMDocument();
         
           // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
           libxml_use_internal_errors(true);
-          $xml->loadHTML($responseBody); 
+          $xml->loadHTML($responseBody);
           libxml_use_internal_errors(false);
 
-          foreach($xml->getElementsByTagName('a') as $link) { 
+          foreach($xml->getElementsByTagName('a') as $link) {
              $original_link = $link->getAttribute("href");
              
-              // process links from our site only 
+              // process links from our site only
               if (strpos($original_link, $oldDomain) !== false) {
               }
 
              $link->setAttribute('href', $original_link . 'index.html');
           }
-          $responseBody =  $xml->saveHtml(); 
+          $responseBody =  $xml->saveHtml();
 
           $responseBody = str_replace('https://' . $oldDomain . '/', '', $responseBody);
           $responseBody = str_replace('https://' . $oldDomain . '', '', $responseBody);
@@ -423,7 +428,7 @@ class StaticHtmlOutput_UrlRequest {
           $responseBody = str_replace($oldDomain, '', $responseBody);
 			} else {
           // note: as it's stripping urls first, the replacing, it will not keep the desired
-          // url protocol if the old url is http and the new is https, for example 
+          // url protocol if the old url is http and the new is https, for example
           $responseBody = str_replace($oldDomain, $newDomain, $responseBody);
 
           // do another pass, detecting any incorrect protocols and correcting to the desired one

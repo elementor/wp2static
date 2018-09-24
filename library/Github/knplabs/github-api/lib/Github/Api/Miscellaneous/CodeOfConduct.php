@@ -1,4 +1,9 @@
 <?php
+/**
+ * CodeOfConduct
+ *
+ * @package WP2Static
+ */
 
 namespace Github\Api\Miscellaneous;
 

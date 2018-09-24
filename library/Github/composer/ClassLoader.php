@@ -1,4 +1,9 @@
 <?php
+/**
+ * ClassLoader
+ *
+ * @package WP2Static
+ */
 
 /*
  * This file is part of Composer.

@@ -1,4 +1,10 @@
 <?php
+/**
+ * UploadBodyListener
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Client;
 use Aws\Common\Exception\InvalidArgumentException;
 use Guzzle\Common\Event;

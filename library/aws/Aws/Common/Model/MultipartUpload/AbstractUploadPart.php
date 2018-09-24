@@ -1,4 +1,10 @@
 <?php
+/**
+ * AbstractUploadPart
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Model\MultipartUpload;
 use Aws\Common\Exception\InvalidArgumentException;
 abstract class AbstractUploadPart implements UploadPartInterface

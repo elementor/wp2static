@@ -1,4 +1,9 @@
 <?php
+/**
+ * NetworkException
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Client\Exception;
 

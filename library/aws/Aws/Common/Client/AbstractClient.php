@@ -1,4 +1,10 @@
 <?php
+/**
+ * AbstractClient
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Client;
 use Aws\Common\Aws;
 use Aws\Common\Credentials\CredentialsInterface;

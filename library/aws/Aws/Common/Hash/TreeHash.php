@@ -1,4 +1,10 @@
 <?php
+/**
+ * TreeHash
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Hash;
 use Aws\Common\Enum\Size;
 use Aws\Common\Exception\InvalidArgumentException;

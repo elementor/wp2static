@@ -1,4 +1,9 @@
 <?php
+/**
+ * Mapping config
+ *
+ * @package WP2Static
+ */
 
 $mapping = array(
     'Aws\functions' => __DIR__ . '/Aws/functions.php',

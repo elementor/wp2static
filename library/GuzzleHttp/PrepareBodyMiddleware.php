@@ -1,4 +1,10 @@
 <?php
+/**
+ * PrepareBodyMiddleware
+ *
+ * @package WP2Static
+ */
+
 namespace GuzzleHttp;
 
 use GuzzleHttp\Promise\PromiseInterface;

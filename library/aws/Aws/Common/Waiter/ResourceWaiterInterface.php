@@ -1,4 +1,10 @@
 <?php
+/**
+ * ResourceWaiterInterface
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Waiter;
 use Aws\Common\Client\AwsClientInterface;
 interface ResourceWaiterInterface extends WaiterInterface

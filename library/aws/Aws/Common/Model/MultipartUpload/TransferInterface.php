@@ -1,4 +1,10 @@
 <?php
+/**
+ * TransferInterface
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Model\MultipartUpload;
 use Guzzle\Common\HasDispatcherInterface;
 use Guzzle\Service\Resource\Model;

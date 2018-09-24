@@ -1,4 +1,10 @@
 <?php
+/**
+ * AbstractTransferState
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Model\MultipartUpload;
 use Aws\Common\Exception\RuntimeException;
 abstract class AbstractTransferState implements TransferStateInterface

@@ -1,4 +1,9 @@
 <?php
+/**
+ * Comment
+ *
+ * @package WP2Static
+ */
 
 namespace Sabberworm\CSS\Comment;
 

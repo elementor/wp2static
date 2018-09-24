@@ -1,5 +1,7 @@
 <?php
 /**
+ * StaticHtmlOutput_Netlify
+ *
  * @package WP Static HTML Output
  *
  * Copyright (c) 2011 Leon Stafford
@@ -19,10 +21,10 @@ class StaticHtmlOutput_Netlify
 		$this->_baseURL = 'https://api.netlify.com';
 	}
 
-	public function deploy($zipArchivePath) { 
+	public function deploy($zipArchivePath) {
 		require_once dirname(__FILE__) . '/../GuzzleHttp/autoloader.php';
 
-		$client = new Client(array('base_uri' => $this->_baseURL));	
+		$client = new Client(array('base_uri' => $this->_baseURL));
 
 		$zipDeployEndpoint = '/api/v1/sites/' . $this->_siteID . '.netlify.com/deploys';
 
@@ -43,5 +45,5 @@ class StaticHtmlOutput_Netlify
 			error_log($e);
 			throw new Exception($e);
 		}
-	} 
+	}
 }

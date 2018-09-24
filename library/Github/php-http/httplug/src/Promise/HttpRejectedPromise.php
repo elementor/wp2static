@@ -1,4 +1,9 @@
 <?php
+/**
+ * HttpRejectedPromise
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Client\Promise;
 

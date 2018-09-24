@@ -1,4 +1,9 @@
 <?php
+/**
+ * Forks
+ *
+ * @package WP2Static
+ */
 
 namespace Github\Api\Repository;
 

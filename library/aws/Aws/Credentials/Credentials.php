@@ -1,4 +1,10 @@
 <?php
+/**
+ * Credentials
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Credentials;
 
 /**

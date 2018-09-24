@@ -1,4 +1,9 @@
 <?php
+/**
+ * GithubExceptionThrower
+ *
+ * @package WP2Static
+ */
 
 namespace Github\HttpClient\Plugin;
 
@@ -33,7 +38,7 @@ class GithubExceptionThrower implements Plugin
             if (null != $remaining && 1 > $remaining && 'rate_limit' !== substr($request->getRequestTarget(), 1, 10)) {
                 $limit = ResponseMediator::getHeader($response, 'X-RateLimit-Limit');
                 $reset = ResponseMediator::getHeader($response, 'X-RateLimit-Reset');
-                
+
                 throw new ApiLimitExceedException($limit, $reset);
             }
 

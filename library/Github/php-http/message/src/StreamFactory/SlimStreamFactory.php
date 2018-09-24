@@ -1,4 +1,9 @@
 <?php
+/**
+ * SlimStreamFactory
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Message\StreamFactory;
 

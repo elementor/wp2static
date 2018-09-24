@@ -1,4 +1,10 @@
 <?php
+/**
+ * SignatureListener
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Signature;
 use Aws\Common\Credentials\AbstractRefreshableCredentials;
 use Aws\Common\Credentials\CredentialsInterface;

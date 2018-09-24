@@ -1,4 +1,10 @@
 <?php
+/**
+ * SignatureV4
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Signature;
 use Aws\Common\Credentials\CredentialsInterface;
 use Aws\Common\Enum\DateFormat;

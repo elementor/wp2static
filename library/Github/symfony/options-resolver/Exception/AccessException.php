@@ -1,4 +1,9 @@
 <?php
+/**
+ * AccessException
+ *
+ * @package WP2Static
+ */
 
 /*
  * This file is part of the Symfony package.

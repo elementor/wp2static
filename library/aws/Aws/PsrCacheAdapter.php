@@ -1,4 +1,10 @@
 <?php
+/**
+ * PsrCacheAdapter
+ *
+ * @package WP2Static
+ */
+
 namespace Aws;
 use Psr\Cache\CacheItemPoolInterface;
 class PsrCacheAdapter implements CacheInterface

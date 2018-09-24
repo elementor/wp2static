@@ -1,4 +1,9 @@
 <?php
+/**
+ * Selector
+ *
+ * @package WP2Static
+ */
 
 namespace Sabberworm\CSS\Property;
 

@@ -1,4 +1,9 @@
 <?php
+/**
+ * StreamFactory
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Message;
 
@@ -19,7 +24,7 @@ interface StreamFactory
      * @return StreamInterface
      *
      * @throws \InvalidArgumentException If the stream body is invalid.
-     * @throws \RuntimeException         If creating the stream from $body fails. 
+     * @throws \RuntimeException         If creating the stream from $body fails.
      */
     public function createStream($body = null);
 }

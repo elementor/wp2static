@@ -1,4 +1,10 @@
 <?php
+/**
+ * Credentials
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Credentials;
 use Aws\Common\Enum\ClientOptions as Options;
 use Aws\Common\Exception\InvalidArgumentException;

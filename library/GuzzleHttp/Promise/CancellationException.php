@@ -1,4 +1,10 @@
 <?php
+/**
+ * CancellationException
+ *
+ * @package WP2Static
+ */
+
 namespace GuzzleHttp\Promise;
 
 /**

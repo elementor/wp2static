@@ -1,4 +1,10 @@
 <?php
+/**
+ * WaiterConfig
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Waiter;
 use Guzzle\Common\Collection;
 class WaiterConfig extends Collection

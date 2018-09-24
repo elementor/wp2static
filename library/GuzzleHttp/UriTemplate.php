@@ -1,4 +1,10 @@
 <?php
+/**
+ * UriTemplate
+ *
+ * @package WP2Static
+ */
+
 namespace GuzzleHttp;
 
 /**

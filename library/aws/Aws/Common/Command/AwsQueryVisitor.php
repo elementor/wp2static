@@ -1,4 +1,10 @@
 <?php
+/**
+ * AwsQueryVisitor
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Command;
 use Guzzle\Http\Message\RequestInterface;
 use Guzzle\Service\Description\Parameter;

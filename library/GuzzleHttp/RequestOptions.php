@@ -1,4 +1,10 @@
 <?php
+/**
+ * RequestOptions
+ *
+ * @package WP2Static
+ */
+
 namespace GuzzleHttp;
 
 /**

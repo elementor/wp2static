@@ -1,4 +1,10 @@
 <?php
+/**
+ * MockHandler
+ *
+ * @package WP2Static
+ */
+
 namespace GuzzleHttp\Handler;
 
 use GuzzleHttp\Exception\RequestException;

@@ -1,4 +1,10 @@
 <?php
+/**
+ * HostNameUtils
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common;
 use Guzzle\Http\Url;
 class HostNameUtils

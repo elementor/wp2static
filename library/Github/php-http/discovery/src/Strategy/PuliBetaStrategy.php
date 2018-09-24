@@ -1,4 +1,9 @@
 <?php
+/**
+ * PuliBetaStrategy
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Discovery\Strategy;
 

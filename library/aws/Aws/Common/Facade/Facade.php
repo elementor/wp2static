@@ -1,4 +1,10 @@
 <?php
+/**
+ * Facade
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Facade;
 use Aws\Common\Aws;
 abstract class Facade implements FacadeInterface

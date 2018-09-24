@@ -1,4 +1,10 @@
 <?php
+/**
+ * Request
+ *
+ * @package WP2Static
+ */
+
 namespace GuzzleHttp\Psr7;
 
 use InvalidArgumentException;

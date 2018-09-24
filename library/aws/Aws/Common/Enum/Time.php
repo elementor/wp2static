@@ -1,4 +1,10 @@
 <?php
+/**
+ * Time
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Enum;
 use Aws\Common\Enum;
 class Time extends Enum

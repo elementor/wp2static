@@ -1,4 +1,10 @@
 <?php
+/**
+ * Sdk
+ *
+ * @package WP2Static
+ */
+
 namespace Aws;
 class Sdk
 {

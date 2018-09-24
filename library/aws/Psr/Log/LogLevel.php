@@ -1,4 +1,10 @@
 <?php
+/**
+ * LogLevel
+ *
+ * @package WP2Static
+ */
+
 namespace Psr\Log;
 class LogLevel
 {

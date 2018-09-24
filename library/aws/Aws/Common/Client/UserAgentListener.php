@@ -1,4 +1,10 @@
 <?php
+/**
+ * UserAgentListener
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Client;
 use Guzzle\Common\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

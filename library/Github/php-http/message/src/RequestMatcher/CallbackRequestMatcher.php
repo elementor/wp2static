@@ -1,4 +1,9 @@
 <?php
+/**
+ * CallbackRequestMatcher
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Message\RequestMatcher;
 

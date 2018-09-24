@@ -1,4 +1,10 @@
 <?php
+/**
+ * AWS config
+ *
+ * @package WP2Static
+ */
+
 return array(
     'class' => 'Aws\Common\Aws',
     'services' => array(

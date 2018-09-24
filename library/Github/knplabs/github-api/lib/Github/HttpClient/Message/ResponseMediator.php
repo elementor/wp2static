@@ -1,4 +1,9 @@
 <?php
+/**
+ * ResponseMediator
+ *
+ * @package WP2Static
+ */
 
 namespace Github\HttpClient\Message;
 
@@ -61,10 +66,10 @@ class ResponseMediator
         if (null !== $remainingCalls && 1 > $remainingCalls) {
             throw new ApiLimitExceedException($remainingCalls);
         }
-        
+
         return $remainingCalls;
     }
-    
+
     /**
      * Get the value for a single header
      * @param ResponseInterface $response

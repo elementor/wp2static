@@ -1,11 +1,15 @@
 <?php
-
+/**
+ * JSProcessor
+ *
+ * @package WP2Static
+ */
 
 class JSProcessor {
 
   public function __construct($js_document, $wp_site_url){
-    $this->wp_site_url = $wp_site_url;   
-    $this->js_doc = $js_document;   
+    $this->wp_site_url = $wp_site_url;
+    $this->js_doc = $js_document;
   }
 
   public function isInternalLink($link) {

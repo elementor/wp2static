@@ -1,4 +1,10 @@
 <?php
+/**
+ * MultipartUploadException
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Exception;
 
 use Aws\Multipart\UploadState;

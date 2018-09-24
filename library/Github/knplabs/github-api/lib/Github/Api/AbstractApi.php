@@ -1,4 +1,9 @@
 <?php
+/**
+ * AbstractApi
+ *
+ * @package WP2Static
+ */
 
 namespace Github\Api;
 
