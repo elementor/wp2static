@@ -49,45 +49,48 @@ class StaticHtmlOutput_FilesHelper
 		}
 	}
 
-  public static function getListOfLocalFilesByUrl(array $urls) {
+  public static function getListOfLocalFilesByUrl($url) {
     $files = array();
 
-    foreach ($urls as $url) {
-      $directory = str_replace(home_url('/'), ABSPATH, $url);
+    $directory = str_replace(home_url('/'), ABSPATH, $url);
 
-      // TODO:  exclude previous export used for diff
-      //if ( ! strpos($url, 'previous-export') === false ) {
-        if (stripos($url, home_url('/')) === 0 && is_dir($directory)) {
-          $iterator = new RecursiveIteratorIterator(
-              new RecursiveDirectoryIterator(
-                $directory, 
-                RecursiveDirectoryIterator::SKIP_DOTS));
+    if (is_dir($directory)) {
+      $iterator = new RecursiveIteratorIterator(
+          new RecursiveDirectoryIterator(
+            $directory, 
+            RecursiveDirectoryIterator::SKIP_DOTS));
 
-          foreach ($iterator as $fileName => $fileObject) {
-            if (is_file($fileName)) {
-              $pathinfo = pathinfo($fileName);
-              if (isset($pathinfo['extension']) && !in_array($pathinfo['extension'], array('php', 'phtml', 'tpl'))) {
-                array_push($files, home_url(str_replace(ABSPATH, '', $fileName)));
-              }
-            } 
-          }
-        } else {
-          if ($url != '') {
-            array_push($files, $url);
-          }
-        }
-    }
-
-
-    // TODO: remove any dot files, like .gitignore here, only rm'd from dirs above
+      foreach ($iterator as $fileName => $fileObject) {
+        if (self::fileNameLooksCrawlable($fileName) &&
+            self::filePathLooksCrawlable($fileName)) {
+              array_push($files, home_url(str_replace(ABSPATH, '', $fileName)));
+            }
+      }
+    } 
 
     return $files;
   }
 
-	public function buildInitialFileList(
+  public static function fileNameLooksCrawlable($file_name) {
+    return (
+      (! strpos($file_name, 'wp-static-html-output') !== false) &&
+      (! strpos($file_name, 'previous-export') !== false) &&
+      is_file($file_name)
+    );
+  }
+
+  public static function filePathLooksCrawlable($file_name) {
+    $path_info = pathinfo($file_name);
+
+    return (
+      isset($path_info['extension']) &&
+      (! in_array($path_info['extension'], array('php', 'phtml', 'tpl')))
+    );
+  }
+
+	public static function buildInitialFileList(
 		$viaCLI = false, 
-		$additionalUrls, 
-		$uploadsPath, 
+		$uploadsPath,
 		$uploadsURL, 
 		$workingDirectory, 
 		$pluginHook) {
@@ -109,7 +112,7 @@ class StaticHtmlOutput_FilesHelper
 		$archiveDir = $archiveName . '/';
 
 		// saving the current archive name to file to persist across requests / functions
-        file_put_contents($uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE', $archiveDir);
+    file_put_contents($uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE', $archiveDir);
 
 		if (!file_exists($archiveDir)) {
 			wp_mkdir_p($archiveDir);
@@ -117,27 +120,63 @@ class StaticHtmlOutput_FilesHelper
 
 		$baseUrl = untrailingslashit(home_url());
 			
-		$urlsQueue = array_unique(array_merge(
-					array(trailingslashit($baseUrl)),
-					self::getListOfLocalFilesByUrl(array(get_template_directory_uri())),
-                    self::getAllWPPostURLs($baseUrl),
-					explode("\n", $additionalUrls)
-					));
+		$urlsQueue = array_merge(
+      array(trailingslashit($baseUrl)),
+      self::getListOfLocalFilesByUrl(get_template_directory_uri()),
+      self::getAllWPPostURLs($baseUrl)
+    );
 
-      // TODO: shift this as an option to exclusions area
-			$urlsQueue = array_unique(array_merge(
-					$urlsQueue,
-					self::getListOfLocalFilesByUrl(array($uploadsURL))
-			));
+    $urlsQueue = array_unique(array_merge(
+      $urlsQueue,
+      self::getListOfLocalFilesByUrl($uploadsURL)
+    ));
 
-      $str = implode("\n", $urlsQueue);
-      file_put_contents($uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST', $str);
-      file_put_contents($uploadsPath . '/WP-STATIC-CRAWLED-LINKS', '');
+    $str = implode("\n", $urlsQueue);
+    file_put_contents($uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST', $str); // TODO: using uploads path for initial file list build, subseqent one will all be done in working dir
+    file_put_contents($workingDirectory . '/WP-STATIC-CRAWLED-LINKS', '');
 
-      return count($urlsQueue);
-    }
+    return count($urlsQueue);
+  }
 
-    public function getAllWPPostURLs($wp_site_url){
+  // TODO: copy initial file list and process as per generateModifiedFileList() notes
+	public static function buildFinalFileList(
+		$viaCLI = false, 
+		$additionalUrls, 
+		$uploadsPath, // TODO: also working dir?
+		$uploadsURL, 
+		$workingDirectory, 
+		$pluginHook) {
+
+		// saving the current archive name to file to persist across requests / functions
+    file_put_contents($workingDirectory . '/WP-STATIC-CURRENT-ARCHIVE', $archiveDir);
+
+		if (!file_exists($archiveDir)) {
+			wp_mkdir_p($archiveDir);
+		}
+
+		$baseUrl = untrailingslashit(home_url());
+			
+		$urlsQueue = array_merge(
+      array(trailingslashit($baseUrl)),
+      self::getListOfLocalFilesByUrl(get_template_directory_uri()),
+      self::getAllWPPostURLs($baseUrl),
+      explode("\n", $additionalUrls)
+    );
+
+    // TODO: shift this as an option to exclusions area
+    $urlsQueue = array_unique(array_merge(
+        $urlsQueue,
+        self::getListOfLocalFilesByUrl($uploadsURL)
+    ));
+
+    $str = implode("\n", $urlsQueue);
+    file_put_contents($uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST', $str); // TODO: using uploads path for initial file list build, subseqent one will all be done in working dir
+    file_put_contents($workingDirectory . '/WP-STATIC-CRAWLED-LINKS', '');
+
+    return count($urlsQueue);
+  }
+
+    public static function getAllWPPostURLs($wp_site_url){
         global $wpdb;
 
         // NOTE: re using $wpdb->ret_results vs WP_Query

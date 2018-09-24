@@ -9,15 +9,16 @@ class SiteCrawler {
     
     // basic auth
     $this->useBasicAuth = isset($_POST['useBasicAuth']) ?  $_POST['useBasicAuth'] :  false;
-    $this->basicAuthUser = $_POST['basicAuthUser'];
-    $this->basicAuthPassword = $_POST['basicAuthPassword'];
+    $this->basicAuthUser = isset($_POST['basicAuthUser']) ?  $_POST['basicAuthUser'] :  false;
+    $this->basicAuthPassword = isset($_POST['basicAuthPassword']) ?  $_POST['basicAuthPassword'] :  false;
 
     // WP env settings
     $this->baseUrl = $_POST['baseUrl'];
-    $this->working_dir = $_POST['basedir']; // // TODO: location of uploads dir?
+    $this->working_dir = $_POST['outputDirectory'];
     $this->wp_site_url = $_POST['wp_site_url']; 
     $this->wp_site_path = $_POST['wp_site_path']; 
-    $this->uploads_path = $_POST['wp_uploads_path'];
+    $this->wp_uploads_path = $_POST['wp_uploads_path'];
+    $this->wp_uploads_url = $_POST['wp_uploads_url'];
 
     // processing related settings
     $this->rewriteWPCONTENT = $_POST['rewriteWPCONTENT'];
@@ -31,6 +32,7 @@ class SiteCrawler {
     $this->useRelativeURLs = isset($_POST['useRelativeURLs']) ?  $_POST['useRelativeURLs'] :  false;
     $this->useBaseHref = isset($_POST['useBaseHref']) ?  $_POST['useBaseHref'] :  false;
     $this->crawl_increment = (int) $_POST['crawl_increment'];
+    $this->additionalUrls = filter_input(INPUT_POST, 'additionalUrls');
 
     // internal pointers
     $this->processed_file = '';
@@ -49,12 +51,16 @@ class SiteCrawler {
   }
 
   public function crawl_site($viaCLI = false) {
-    $this->initial_crawl_list_file = $this->working_dir . '/WP-STATIC-INITIAL-CRAWL-LIST';
-    $this->initial_crawl_list = file($this->initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
+    $this->initial_crawl_list_file = $this->working_dir . '/WP-STATIC-FINAL-CRAWL-LIST';
+    if (! is_file($this->initial_crawl_list_file)) {
+      error_log('could not find initial crawl list file');
+    } else {
+      $this->initial_crawl_list = file($this->initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
 
-    if ( !empty($this->initial_crawl_list) ) {
-      $this->crawlABitMore($this->viaCLI);
-    } 
+      if ( !empty($this->initial_crawl_list) ) {
+        $this->crawlABitMore($this->viaCLI);
+      } 
+    }
   }
 
   public function crawlABitMore($viaCLI = false) {
@@ -63,9 +69,18 @@ class SiteCrawler {
     $batch_of_links_to_crawl = array();
 
     $this->archive_dir = file_get_contents($this->working_dir . '/WP-STATIC-CURRENT-ARCHIVE');
-    $this->initial_crawl_list_file = $this->working_dir . '/WP-STATIC-INITIAL-CRAWL-LIST';
+
+    $this->initial_crawl_list_file = $this->wp_uploads_path . '/WP-STATIC-INITIAL-CRAWL-LIST';
+
     $this->crawled_links_file = $this->working_dir . '/WP-STATIC-CRAWLED-LINKS';
+
     $this->initial_crawl_list = file($this->initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
+
+    if (! $this->initial_crawl_list) {
+      error_log('initial crawl list file not found at ' . $this->initial_crawl_list_file);
+      WsLog::l('ERROR: INITIAL CRAWL LIST NOT FOUND AT: ' . $this->initial_crawl_list_file);
+    }
+
     $crawled_links = file($this->crawled_links_file, FILE_IGNORE_NEW_LINES);
     $total_links = sizeOf($this->initial_crawl_list);
 
@@ -153,7 +168,7 @@ class SiteCrawler {
     $wp_site_environment = array(
         'wp_inc' =>  '/' . WPINC,	
         'wp_content' => '/wp-content', // TODO: check if this has been modified/use constant
-        'wp_uploads' =>  str_replace(ABSPATH, '/', $this->uploads_path),	
+        'wp_uploads' =>  str_replace(ABSPATH, '/', $this->wp_uploads_path),	
         'wp_plugins' =>  str_replace(ABSPATH, '/', WP_PLUGIN_DIR),	
         'wp_themes' =>  str_replace(ABSPATH, '/', get_theme_root()),	
         'wp_active_theme' =>  str_replace(home_url(), '', get_template_directory_uri()),	
@@ -202,26 +217,37 @@ class SiteCrawler {
 
       break;
 
+      // TODO: apply other replacement functions to all processors
       case 'css':
         require_once dirname(__FILE__) . '/../StaticHtmlOutput/CSSProcessor.php';
         $processor = new CSSProcessor($this->response->getBody(), $this->wp_site_url);
 
         $processor->normalizeURLs($this->url);
-//
-//        $processor->cleanup(
-//            $wp_site_environment,
-//            $overwrite_slug_targets
-//            );
-//
-//        $processor->replaceBaseUrl(
-//          $this->wp_site_url,
-//          $this->baseUrl,
-//          $this->allowOfflineUsage,
-//          $this->useRelativeURLs,
-//          $this->useBaseHref);
-//
+
         $this->processed_file = $processor->getCSS();
 
+      case 'js':
+        require_once dirname(__FILE__) . '/../StaticHtmlOutput/JSProcessor.php';
+        $processor = new JSProcessor($this->response->getBody(), $this->wp_site_url);
+
+        $processor->normalizeURLs($this->url);
+
+        $this->processed_file = $processor->getJS();
+
+      break;
+
+      case 'txt':
+        require_once dirname(__FILE__) . '/../StaticHtmlOutput/TXTProcessor.php';
+        $processor = new TXTProcessor($this->response->getBody(), $this->wp_site_url);
+
+        $processor->normalizeURLs($this->url);
+
+        $this->processed_file = $processor->getTXT();
+
+      break;
+    
+      default:
+        WsLog::l('WARNING: ENCOUNTERED FILE WITH NO PROCESSOR: ' . $this->url);
       break;
     }
   }

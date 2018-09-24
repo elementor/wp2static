@@ -49,6 +49,19 @@ $tokens = explode('/', WPINC);
 $original_includes_dir = $tokens[sizeof($tokens)-1];
 
 // TODO: get all data MVC style vs this mess:
+
+//        ->assign('rewriteWPCONTENT', 
+//          $this->options->rewriteWPCONTENT ? $this->options->rewriteWPCONTENT : 'contents')
+//        ->assign('rewriteTHEMEDIR',
+//          $this->options->rewriteTHEMEDIR ? $this->options->rewriteTHEMEDIR : 'theme')
+//        ->assign('rewriteUPLOADS',
+//          $this->options->rewriteUPLOADS ? $this->options->rewriteUPLOADS : 'data')
+//        ->assign('rewriteTHEMEROOT',
+//          $this->options->rewriteTHEMEROOT ? $this->options->rewriteTHEMEROOT : 'ui')
+//        ->assign('rewritePLUGINDIR',
+//          $this->options->rewritePLUGINDIR ? $this->options->rewritePLUGINDIR : 'lib')
+//        ->assign('rewriteWPINC',
+//          $this->options->rewriteWPINC ? $this->options->rewriteWPINC : 'inc')
 ?>
         <table class="form-table">
           <tbody>
