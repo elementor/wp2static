@@ -710,6 +710,8 @@ jQuery(document).ready(function($){
       $(this).prop('disabled', true);
       $('.saveSettingsButton').prop('disabled', true);
       $('.resetDefaultSettingsButton').prop('disabled', true);
+      $('#preview_initial_crawl_list_button').hide();
+      $('#initial_crawl_list_count').text($('#initial_crawl_list_count').text() + ' Reload page to preview again');
       $('.cancelExportButton').show();
       startExport();
   });
