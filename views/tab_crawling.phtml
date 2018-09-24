@@ -7,7 +7,7 @@
           <label for="useBasicAuth"><?php echo __('Use basic authentication', 'static-html-output-plugin');?></label>
         </th>
         <td>
-          <?php echo displayCheckbox($this, 'useBasicAuth', 'My WP site requires Basic Auth to access'); ?>
+          <?php $tpl->displayCheckbox($this, 'useBasicAuth', 'My WP site requires Basic Auth to access'); ?>
         </td>
       </tr>
       <tr>
@@ -15,7 +15,7 @@
           <label for="basicAuthUser"><?php echo __('Basic auth user', 'static-html-output-plugin');?></label>
         </th>
         <td>
-          <?php echo displayTextfield($this, 'basicAuthUser', 'Basic Auth user', '', ''); ?>
+          <?php $tpl->displayTextfield($this, 'basicAuthUser', 'Basic Auth user', '', ''); ?>
         </td>
       </tr>
       <tr>
@@ -23,7 +23,7 @@
           <label for="basicAuthPassword"><?php echo __('Basic auth password', 'static-html-output-plugin');?></label>
         </th>
         <td>
-          <?php echo displayTextfield($this, 'basicAuthPassword', 'Basic Auth password', '', 'password'); ?>
+          <?php $tpl->displayTextfield($this, 'basicAuthPassword', 'Basic Auth password', '', 'password'); ?>
         </td>
       </tr>
       <tr>
@@ -93,7 +93,7 @@
           <label><?php echo __('Discover new URLs while crawling', 'static-html-output-plugin');?></label>
         </th>
         <td>
-          <?php echo displayCheckbox($this, 'discoverNewURLs', "As each link in the list is crawled, extract any new links within your website that aren't already included, saving them as part of the export."); ?>
+          <?php $tpl->displayCheckbox($this, 'discoverNewURLs', "As each link in the list is crawled, extract any new links within your website that aren't already included, saving them as part of the export."); ?>
         </td>
       </tr>
     </tbody>

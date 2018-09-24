@@ -3,13 +3,12 @@
 class WPSite {
 
   public function __construct() {
-    $wp_upload_path_and_url; = wp_upload_dir();
+    $wp_upload_path_and_url = wp_upload_dir();
     $this->uploadsPath = $wp_upload_path_and_url['basedir'];
     $this->uploadsURL = $wp_upload_path_and_url['baseurl'];
     $this->wp_site_path = ABSPATH;
     $this->wp_site_url = get_site_url();
     $this->wp_plugin_path = plugins_url('/', __FILE__);
-
     $this->detect_base_url();
   }
 
@@ -22,7 +21,7 @@ class WPSite {
   }
 
   public function permalinksAreDefined() {
-    return strlen(get_option('permalink_structure');
+    return strlen(get_option('permalink_structure'));
   }
 
 	public function detect_base_url() {
@@ -41,4 +40,10 @@ class WPSite {
 			$this->subdirectory = $base_url['path'];
 		}
 	}	
+
+  public function systemRequirementsAreMet() {
+    return $this->uploadsPathIsWritable() &&
+      $this->hasCurlSupport() &&
+      $this->permalinksAreDefined();
+  }
 }

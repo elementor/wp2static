@@ -124,13 +124,7 @@ class StaticHtmlOutput_Controller {
         self::$_instance->diffBasedDeploys = filter_input(INPUT_POST, 'diffBasedDeploys');
       } 
 
-    $this->detect_base_url(); // supply views with wp_install_subdir if present
-
-		if (
-			!$uploadsFolderWritable || 
-			!$permalinksStructureDefined ||
-		    !$supports_cURL
-		) {
+		if (! $this->wp_site->systemRequirementsAreMet()) {
 			$this->view
 				->setTemplate('system-requirements')
 				->assign('wp_site', $this->wp_site)

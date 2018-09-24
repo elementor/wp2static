@@ -7,7 +7,7 @@
 					  <label for="baseUrl"><?php echo __('Base URL', 'static-html-output-plugin');?></label>
         </th>
         <td>
-          <?php echo displayTextfield($this, 'baseUrl-ftp', 'http://mystaticsite.com', '', ''); ?><br>
+          <?php $tpl->displayTextfield($this, 'baseUrl-ftp', 'http://mystaticsite.com', '', ''); ?><br>
 
 					  <p> <i><?php echo __("Set this to the URL you intend to host your static exported site on, ie http://mystaticsite.com. Do not set this to the same URL as the WordPress site you're currently using (the address in your browser above). This plugin will rewrite all URLs in the exported static html from your current WordPress URL to what you set here. Supports http, https and protocol relative URLs.", 'static-html-output-plugin');?></i> </p> 
         </td>
@@ -17,7 +17,7 @@
 					  <label for="ftpServer"><?php echo __('FTP Server', 'static-html-output-plugin');?></label>
         </th>
         <td>
-          <?php echo displayTextfield($this, 'baseUrl-zip', 'http://mystaticsite.com', ''); ?>
+          <?php $tpl->displayTextfield($this, 'baseUrl-zip', 'http://mystaticsite.com', ''); ?>
         </td>
       </tr>
       <tr>
@@ -25,7 +25,7 @@
           <label for="ftpUsername"><?php echo __('FTP Username', 'static-html-output-plugin');?></label>
         </th>
         <td>
-          <?php echo displayTextfield($this, 'ftpUsername', 'FTP Username', ''); ?>
+          <?php $tpl->displayTextfield($this, 'ftpUsername', 'FTP Username', ''); ?>
         </td>
       </tr>
       <tr>
@@ -33,7 +33,7 @@
 					  <label for="ftpPassword"><?php echo __('FTP Password', 'static-html-output-plugin');?></label>
         </th>
         <td>
-          <?php echo displayTextfield($this, 'ftpPassword', 'FTP Password', '', 'password'); ?>
+          <?php $tpl->displayTextfield($this, 'ftpPassword', 'FTP Password', '', 'password'); ?>
         </td>
       </tr>
       <tr>
@@ -41,7 +41,7 @@
 					  <label for="ftpRemotePath"><?php echo __('FTP Remote Path', 'static-html-output-plugin');?></label>
         </th>
         <td>
-          <?php echo displayTextfield($this, 'ftpRemotePath', 'FTP Remote Path', 'will attempt to create folder recursively if non-existent'); ?>
+          <?php $tpl->displayTextfield($this, 'ftpRemotePath', 'FTP Remote Path', 'will attempt to create folder recursively if non-existent'); ?>
         </td>
       </tr>
       <tr>
@@ -49,7 +49,7 @@
 					  <label for="useActiveFTP"><?php echo __('Use active FTP', 'static-html-output-plugin');?></label>
         </th>
         <td>
-          <?php echo displayCheckbox($this, 'useActiveFTP', 'Use active FTP (defaults to passive mode) <a href="https://stackoverflow.com/q/1699145/1668057" target="_blank">What\'s the difference?</a>'); ?>
+          <?php $tpl->displayCheckbox($this, 'useActiveFTP', 'Use active FTP (defaults to passive mode) <a href="https://stackoverflow.com/q/1699145/1668057" target="_blank">What\'s the difference?</a>'); ?>
         </td>
       </tr>
     </tbody>
