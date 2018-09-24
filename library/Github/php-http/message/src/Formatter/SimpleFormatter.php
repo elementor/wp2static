@@ -1,4 +1,9 @@
 <?php
+/**
+ * SimpleFormatter
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Message\Formatter;
 

@@ -1,4 +1,9 @@
 <?php
+/**
+ * DiscoveryFailedException
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Discovery\Exception;
 

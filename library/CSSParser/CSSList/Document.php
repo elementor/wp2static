@@ -1,4 +1,9 @@
 <?php
+/**
+ * Document
+ *
+ * @package WP2Static
+ */
 
 namespace Sabberworm\CSS\CSSList;
 

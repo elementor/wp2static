@@ -1,4 +1,9 @@
 <?php
+/**
+ * FileWriter
+ *
+ * @package WP2Static
+ */
 
 class FileWriter {
   public function __construct($url, $content, $file_type){
@@ -22,7 +27,7 @@ class FileWriter {
 			$pathInfo = pathinfo('index.html');
 		}
 
-		// set fileDir to the directory name else empty	
+		// set fileDir to the directory name else empty
 		$fileDir = $archiveDir . (isset($pathInfo['dirname']) ? $pathInfo['dirname'] : '');
 
 		// set filename to index if there is no extension and basename and filename are the same
@@ -35,15 +40,15 @@ class FileWriter {
 			wp_mkdir_p($fileDir);
 		}
 
-		$fileExtension = ''; 
+		$fileExtension = '';
 
 		if(isset($pathInfo['extension'])) {
-			$fileExtension = $pathInfo['extension']; 
+			$fileExtension = $pathInfo['extension'];
 		} else if( $this->file_type == 'html' ) {
-			$fileExtension = 'html'; 
+			$fileExtension = 'html';
 		} else {
 			// TODO: is this being called or too late?
-			$fileExtension = StaticHtmlOutput_UrlHelper::getExtensionFromContentType($url->getContentType()); 
+			$fileExtension = StaticHtmlOutput_UrlHelper::getExtensionFromContentType($url->getContentType());
 		}
 
 		$fileName = '';

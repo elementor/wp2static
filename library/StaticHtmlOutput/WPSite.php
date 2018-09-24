@@ -1,4 +1,9 @@
 <?php
+/**
+ * WPSite
+ *
+ * @package WP2Static
+ */
 
 class WPSite {
 
@@ -40,5 +45,5 @@ class WPSite {
 		if ( array_key_exists('path', $base_url ) && $base_url['path'] != '/' ) {
 			$this->subdirectory = $base_url['path'];
 		}
-	}	
+	}
 }

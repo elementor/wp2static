@@ -1,4 +1,9 @@
 <?php
+/**
+ * Journal
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Client\Common\Plugin;
 

@@ -1,4 +1,10 @@
 <?php
+/**
+ * FnDispatcher
+ *
+ * @package WP2Static
+ */
+
 namespace JmesPath;
 class FnDispatcher
 {

@@ -1,4 +1,9 @@
 <?php
+/**
+ * MessgeInterface
+ *
+ * @package WP2Static
+ */
 
 namespace Psr\Http\Message;
 

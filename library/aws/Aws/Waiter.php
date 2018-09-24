@@ -1,4 +1,10 @@
 <?php
+/**
+ * Waiter
+ *
+ * @package WP2Static
+ */
+
 namespace Aws;
 use Aws\Exception\AwsException;
 use GuzzleHttp\Promise;

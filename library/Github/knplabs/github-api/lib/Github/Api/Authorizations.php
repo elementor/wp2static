@@ -1,4 +1,9 @@
 <?php
+/**
+ * Authorizations
+ *
+ * @package WP2Static
+ */
 
 namespace Github\Api;
 

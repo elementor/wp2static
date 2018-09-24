@@ -1,4 +1,9 @@
 <?php
+/**
+ * OutputException
+ *
+ * @package WP2Static
+ */
 
 namespace Sabberworm\CSS\Parsing;
 

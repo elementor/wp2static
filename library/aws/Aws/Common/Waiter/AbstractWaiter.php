@@ -1,4 +1,10 @@
 <?php
+/**
+ * AbstractWaiter
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Waiter;
 use Aws\Common\Exception\RuntimeException;
 use Guzzle\Common\AbstractHasDispatcher;

@@ -1,4 +1,10 @@
 <?php
+/**
+ * NamespaceExceptionFactory
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Exception;
 use Aws\Common\Exception\Parser\ExceptionParserInterface;
 use Guzzle\Http\Message\RequestInterface;

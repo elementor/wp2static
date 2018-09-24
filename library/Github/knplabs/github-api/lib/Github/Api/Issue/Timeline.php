@@ -1,4 +1,9 @@
 <?php
+/**
+ * Timeline
+ *
+ * @package WP2Static
+ */
 
 namespace Github\Api\Issue;
 

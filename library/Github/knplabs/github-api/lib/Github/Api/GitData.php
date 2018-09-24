@@ -1,4 +1,9 @@
 <?php
+/**
+ * GitData
+ *
+ * @package WP2Static
+ */
 
 namespace Github\Api;
 

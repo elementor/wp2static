@@ -1,4 +1,9 @@
 <?php
+/**
+ * SlimMessageFactory
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Message\MessageFactory;
 

@@ -1,4 +1,9 @@
 <?php
+/**
+ * Settings
+ *
+ * @package WP2Static
+ */
 
 namespace Sabberworm\CSS;
 

@@ -1,4 +1,9 @@
 <?php
+/**
+ * Wsse
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Message\Authentication;
 

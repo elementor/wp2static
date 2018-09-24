@@ -1,4 +1,9 @@
 <?php
+/**
+ * HeaderSetPlugin
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Client\Common\Plugin;
 

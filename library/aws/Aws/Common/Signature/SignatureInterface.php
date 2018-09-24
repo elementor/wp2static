@@ -1,4 +1,10 @@
 <?php
+/**
+ * SignatureInterface
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Signature;
 use Aws\Common\Credentials\CredentialsInterface;
 use Guzzle\Http\Message\RequestInterface;

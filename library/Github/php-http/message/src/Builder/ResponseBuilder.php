@@ -1,4 +1,9 @@
 <?php
+/**
+ * ResponseBuilder
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Message\Builder;
 

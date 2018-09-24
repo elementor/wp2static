@@ -1,4 +1,9 @@
 <?php
+/**
+ * CallbackFilter
+ *
+ * @package WP2Static
+ */
 
 namespace Clue\StreamFilter;
 

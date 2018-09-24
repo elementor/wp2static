@@ -1,4 +1,9 @@
 <?php
+/**
+ * AtRuleSet
+ *
+ * @package WP2Static
+ */
 
 namespace Sabberworm\CSS\RuleSet;
 

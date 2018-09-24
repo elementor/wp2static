@@ -1,4 +1,10 @@
 <?php
+/**
+ * ChunkHashInterface
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Hash;
 interface ChunkHashInterface
 {

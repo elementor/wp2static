@@ -1,4 +1,10 @@
 <?php
+/**
+ * DebugRuntime
+ *
+ * @package WP2Static
+ */
+
 namespace JmesPath;
 class DebugRuntime
 {

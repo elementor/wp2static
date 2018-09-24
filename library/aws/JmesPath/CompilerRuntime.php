@@ -1,4 +1,10 @@
 <?php
+/**
+ * CompilerRuntime
+ *
+ * @package WP2Static
+ */
+
 namespace JmesPath;
 class CompilerRuntime
 {

@@ -1,4 +1,10 @@
 <?php
+/**
+ * LoggerTrait
+ *
+ * @package WP2Static
+ */
+
 namespace Psr\Log;
 trait LoggerTrait
 {

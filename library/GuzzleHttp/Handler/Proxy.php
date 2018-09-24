@@ -1,4 +1,10 @@
 <?php
+/**
+ * Proxy
+ *
+ * @package WP2Static
+ */
+
 namespace GuzzleHttp\Handler;
 
 use GuzzleHttp\RequestOptions;

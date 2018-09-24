@@ -1,4 +1,10 @@
 <?php
+/**
+ * WaiterFactoryInterface
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Waiter;
 interface WaiterFactoryInterface
 {

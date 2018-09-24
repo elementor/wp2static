@@ -1,4 +1,9 @@
 <?php
+/**
+ * PrimitiveValue
+ *
+ * @package WP2Static
+ */
 
 namespace Sabberworm\CSS\Value;
 

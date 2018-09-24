@@ -1,4 +1,9 @@
 <?php
+/**
+ * SiteCrawler
+ *
+ * @package WP2Static
+ */
 
 use GuzzleHttp\Client;
 
@@ -15,8 +20,8 @@ class SiteCrawler {
     // WP env settings
     $this->baseUrl = $_POST['baseUrl'];
     $this->working_dir = $_POST['outputDirectory'];
-    $this->wp_site_url = $_POST['wp_site_url']; 
-    $this->wp_site_path = $_POST['wp_site_path']; 
+    $this->wp_site_url = $_POST['wp_site_url'];
+    $this->wp_site_path = $_POST['wp_site_path'];
     $this->wp_uploads_path = $_POST['wp_uploads_path'];
     $this->wp_uploads_url = $_POST['wp_uploads_url'];
 
@@ -44,7 +49,7 @@ class SiteCrawler {
     $this->archive_dir = '';
     $this->initial_crawl_list_file = '';
 
-    $this->viaCLI = false; 
+    $this->viaCLI = false;
 
     // trigger the crawl
     $this->crawl_site();
@@ -59,7 +64,7 @@ class SiteCrawler {
 
       if ( !empty($this->initial_crawl_list) ) {
         $this->crawlABitMore($this->viaCLI);
-      } 
+      }
     }
   }
 
@@ -166,12 +171,12 @@ class SiteCrawler {
     $baseUrl = $this->baseUrl;
 
     $wp_site_environment = array(
-        'wp_inc' =>  '/' . WPINC,	
+        'wp_inc' =>  '/' . WPINC,
         'wp_content' => '/wp-content', // TODO: check if this has been modified/use constant
-        'wp_uploads' =>  str_replace(ABSPATH, '/', $this->wp_uploads_path),	
-        'wp_plugins' =>  str_replace(ABSPATH, '/', WP_PLUGIN_DIR),	
-        'wp_themes' =>  str_replace(ABSPATH, '/', get_theme_root()),	
-        'wp_active_theme' =>  str_replace(home_url(), '', get_template_directory_uri()),	
+        'wp_uploads' =>  str_replace(ABSPATH, '/', $this->wp_uploads_path),
+        'wp_plugins' =>  str_replace(ABSPATH, '/', WP_PLUGIN_DIR),
+        'wp_themes' =>  str_replace(ABSPATH, '/', get_theme_root()),
+        'wp_active_theme' =>  str_replace(home_url(), '', get_template_directory_uri()),
         'site_url' =>  $this->wp_site_url,
         );
 
@@ -289,7 +294,7 @@ class SiteCrawler {
   public function getExtensionFromURL() {
     $url_path = parse_url($this->url, PHP_URL_PATH);
 
-    $extension = pathinfo($url_path, PATHINFO_EXTENSION);   
+    $extension = pathinfo($url_path, PATHINFO_EXTENSION);
 
     if (! $extension) {
       return '';
@@ -299,7 +304,7 @@ class SiteCrawler {
   }
 
   public function canFileBeCopiedWithoutProcessing() {
-    // whitelisted extensions, so as not catch html/xml/json served at domain.com/path/  
+    // whitelisted extensions, so as not catch html/xml/json served at domain.com/path/
     $extensions_to_skip = array(
       'jpg', 'jpeg', 'pdf', 'png', 'gif', 'svg'
     );

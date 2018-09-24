@@ -1,4 +1,9 @@
 <?php
+/**
+ * Blobs
+ *
+ * @package WP2Static
+ */
 
 namespace Github\Api\GitData;
 

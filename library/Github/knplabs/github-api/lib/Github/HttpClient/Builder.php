@@ -1,4 +1,9 @@
 <?php
+/**
+ * Builder
+ *
+ * @package WP2Static
+ */
 
 namespace Github\HttpClient;
 

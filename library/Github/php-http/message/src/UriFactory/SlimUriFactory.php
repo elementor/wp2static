@@ -1,4 +1,9 @@
 <?php
+/**
+ * SlimUriFactory
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Message\UriFactory;
 

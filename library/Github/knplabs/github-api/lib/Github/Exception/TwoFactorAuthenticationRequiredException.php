@@ -1,4 +1,9 @@
 <?php
+/**
+ * 2FA exception
+ *
+ * @package WP2Static
+ */
 
 namespace Github\Exception;
 

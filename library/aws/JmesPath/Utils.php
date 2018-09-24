@@ -1,4 +1,10 @@
 <?php
+/**
+ * Utils
+ *
+ * @package WP2Static
+ */
+
 namespace JmesPath;
 class Utils
 {

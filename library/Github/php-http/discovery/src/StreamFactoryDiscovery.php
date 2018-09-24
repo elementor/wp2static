@@ -1,4 +1,9 @@
 <?php
+/**
+ * StreamFactoryDiscovery
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Discovery;
 

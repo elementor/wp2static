@@ -1,4 +1,10 @@
 <?php
+/**
+ * ThrottlingErrorChecker
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Client;
 use Aws\Common\Exception\Parser\ExceptionParserInterface;
 use Guzzle\Http\Exception\HttpException;

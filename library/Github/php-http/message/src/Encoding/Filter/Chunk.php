@@ -1,4 +1,9 @@
 <?php
+/**
+ * Chunk
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Message\Encoding\Filter;
 

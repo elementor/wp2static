@@ -1,4 +1,9 @@
 <?php
+/**
+ * Exception
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Discovery;
 

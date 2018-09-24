@@ -1,4 +1,9 @@
 <?php
+/**
+ * StaticHtmlOutput_Controller
+ *
+ * @package WP2Static
+ */
 
 class StaticHtmlOutput_Controller {
 	const VERSION = '5.9';
@@ -38,7 +43,7 @@ class StaticHtmlOutput_Controller {
     foreach ( $menu_order as $index => $item ) {
         if ( $item == 'index.php') {
             $order[] = $item;
-        } 
+        }
     }
 
     $order = array(
@@ -66,22 +71,22 @@ class StaticHtmlOutput_Controller {
 
       foreach ( $site_ids as $site_id ) {
         switch_to_blog( $site_id );
-        $this->activate_for_single_site();  
+        $this->activate_for_single_site();
       }
 
       restore_current_blog();
     } else {
-        $this->activate_for_single_site();  
-    } 
+        $this->activate_for_single_site();
+    }
 	}
 
 	public function registerOptionsPage() {
 		$pluginDirUrl = plugin_dir_url(dirname(__FILE__));
 		$page = add_menu_page(
-			__('WP Static Site Generator', 'static-html-output-plugin'), 
-			__('WP Static Site Generator', 'static-html-output-plugin'), 
-			'manage_options', 
-			self::HOOK, 
+			__('WP Static Site Generator', 'static-html-output-plugin'),
+			__('WP Static Site Generator', 'static-html-output-plugin'),
+			'manage_options',
+			self::HOOK,
 			array(self::$_instance, 'renderOptionsPage'),
 			$pluginDirUrl . 'images/menu_icon_32x32.png'
 		);
@@ -122,12 +127,12 @@ class StaticHtmlOutput_Controller {
         self::$_instance->selected_deployment_option = filter_input(INPUT_POST, 'selected_deployment_option');
         self::$_instance->baseUrl = untrailingslashit(filter_input(INPUT_POST, 'baseUrl', FILTER_SANITIZE_URL));
         self::$_instance->diffBasedDeploys = filter_input(INPUT_POST, 'diffBasedDeploys');
-      } 
+      }
 
     $this->detect_base_url(); // supply views with wp_install_subdir if present
 
 		if (
-			!$uploadsFolderWritable || 
+			!$uploadsFolderWritable ||
 			!$permalinksStructureDefined ||
 		    !$supports_cURL
 		) {
@@ -176,7 +181,7 @@ class StaticHtmlOutput_Controller {
 		if ( ! is_dir($outputDir) && ! wp_mkdir_p($outputDir)) {
       $outputDir = $this->uploadsPath;
       error_log('user defined outputPath does not exist and could not be created, reverting to ' . $outputDir);
-    } 
+    }
 
 		if ( empty($outputDir) || !is_writable($outputDir) ) {
 			$outputDir = $this->uploadsPath;
@@ -223,7 +228,7 @@ class StaticHtmlOutput_Controller {
   public function doExportWithoutGUI() {
     if ( wpsho_fr()->is_plan('professional_edition') ) {
   
-      //$this->capture_last_deployment(); 
+      //$this->capture_last_deployment();
       $this->cleanup_leftover_archives(true);
       $this->start_export(true);
       $this->crawl_site(true);
@@ -241,7 +246,7 @@ class StaticHtmlOutput_Controller {
 			->save();
 
 		echo 'SUCCESS';
-	}	
+	}
 
   public function post_process_archive_dir() {
       // TODO: bypass plugin instantiating to process

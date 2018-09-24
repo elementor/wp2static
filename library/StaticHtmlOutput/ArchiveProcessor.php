@@ -1,4 +1,9 @@
 <?php
+/**
+ * ArchiveProcessor
+ *
+ * @package WP2Static
+ */
 
 class ArchiveProcessor {
 
@@ -31,15 +36,15 @@ class ArchiveProcessor {
     } else {
       error_log('failed to symlink latest export directory');
     }
-	}	
+	}
 
 	public function remove_symlink_to_latest_archive() {
     $archiveDir = file_get_contents($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE');
 
 		if (is_link($this->working_directory . '/latest-export' )) {
 			unlink($this->working_directory . '/latest-export'  );
-		} 
-	}	
+		}
+	}
 
   public function remove_files_idential_to_previous_export() {
     $archiveDir = file_get_contents($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE');
@@ -48,7 +53,7 @@ class ArchiveProcessor {
     // iterate each file in current export, check the size and contents in previous, delete if match
     $objects = new RecursiveIteratorIterator(
         new RecursiveDirectoryIterator(
-          $archiveDir, 
+          $archiveDir,
           RecursiveDirectoryIterator::SKIP_DOTS));
 
     foreach($objects as $current_file => $object){
@@ -62,15 +67,15 @@ class ArchiveProcessor {
           if (is_file($previously_exported_file)) {
             if ( $this->files_are_equal($current_file, $previously_exported_file)) {
               unlink($current_file);
-            } 
-          } 
+            }
+          }
         }
     }
 
     // TODO: cleanup empty dirs in archiveDir to prevent them being attempted to export
 
-    $files_in_previous_export = exec("find $dir_to_diff_against -type f | wc -l"); 
-    $files_to_be_deployed = exec("find $archiveDir -type f | wc -l"); 
+    $files_in_previous_export = exec("find $dir_to_diff_against -type f | wc -l");
+    $files_to_be_deployed = exec("find $archiveDir -type f | wc -l");
  
     // copy the newly changed files back into the previous export dir, else will never capture changes
 
@@ -106,10 +111,10 @@ class ArchiveProcessor {
       if ($file != '.'  && $file != '..') {
         $src = $srcdir . '/' . $file;
         $dst = $dstdir . '/' . $file;
-        if (is_dir($src)) { 
-            $this->recursive_copy($src, $dst); 
-        } else { 
-          copy($src, $dst); 
+        if (is_dir($src)) {
+            $this->recursive_copy($src, $dst);
+        } else {
+          copy($src, $dst);
         }
       }
     }
@@ -134,7 +139,7 @@ class ArchiveProcessor {
 						// copy the contents of the current archive to the targetFolder
 						$archiveDir = untrailingslashit(file_get_contents($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE'));
 
-						$this->recursive_copy($archiveDir, $publicFolderToCopyTo);	
+						$this->recursive_copy($archiveDir, $publicFolderToCopyTo);
 
 					} else {
 						error_log('Couldn\'t create target folder to copy files to');
@@ -143,7 +148,7 @@ class ArchiveProcessor {
 
 					$archiveDir = untrailingslashit(file_get_contents($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE'));
 
-					$this->recursive_copy($archiveDir, $publicFolderToCopyTo);	
+					$this->recursive_copy($archiveDir, $publicFolderToCopyTo);
 				}
 			}
 		}
@@ -170,7 +175,7 @@ class ArchiveProcessor {
 
     $zipArchive->close();
     $zipDownloadLink = $archiveName . '.zip';
-    rename($tempZip, $zipDownloadLink); 
+    rename($tempZip, $zipDownloadLink);
     $publicDownloadableZip = str_replace(ABSPATH, trailingslashit(home_url()), $archiveName . '.zip');
 
     echo 'SUCCESS';
@@ -182,7 +187,7 @@ class ArchiveProcessor {
 		$original_wp_content = $archiveDir . '/wp-content'; // TODO: check if this has been modified/use constant
 
 		// rename the theme theme root before the nested theme dir
-		// rename the theme directory 
+		// rename the theme directory
     $new_wp_content = $archiveDir .'/' . $this->rewriteWPCONTENT;
     $new_theme_root = $new_wp_content . '/' . $this->rewriteTHEMEROOT;
     $new_theme_dir =  $new_theme_root . '/' . $this->rewriteTHEMEDIR;
@@ -250,11 +255,11 @@ class ArchiveProcessor {
 
 		StaticHtmlOutput_FilesHelper::delete_dir_with_files($archiveDir . '/wp-json/');
 		
-		// TODO: remove all text files from theme dir 
+		// TODO: remove all text files from theme dir
 
     if ($this->diffBasedDeploys) {
       $this->remove_files_idential_to_previous_export();
-    } 
+    }
 
 		$this->copyStaticSiteToPublicFolder();
 

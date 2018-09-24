@@ -1,4 +1,9 @@
 <?php
+/**
+ * RequestMatcher
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Message;
 

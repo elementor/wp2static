@@ -1,4 +1,9 @@
 <?php
+/**
+ * Labels
+ *
+ * @package WP2Static
+ */
 
 namespace Github\Api\Issue;
 

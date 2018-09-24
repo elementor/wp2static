@@ -1,4 +1,10 @@
 <?php
+/**
+ * AwsExceptionInterface
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Exception;
 interface AwsExceptionInterface
 {

@@ -1,4 +1,9 @@
 <?php
+/**
+ * Stargazers
+ *
+ * @package WP2Static
+ */
 
 namespace Github\Api\Repository;
 

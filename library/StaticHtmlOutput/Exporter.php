@@ -1,4 +1,9 @@
 <?php
+/**
+ * Exporter
+ *
+ * @package WP2Static
+ */
 
 class Exporter {
 
@@ -9,8 +14,8 @@ class Exporter {
     // WP env settings
     $this->baseUrl = $_POST['baseUrl'];
     $this->working_directory = $_POST['working_directory'];
-    $this->wp_site_url = $_POST['wp_site_url']; 
-    $this->wp_site_path = $_POST['wp_site_path']; 
+    $this->wp_site_url = $_POST['wp_site_url'];
+    $this->wp_site_path = $_POST['wp_site_path'];
     $this->wp_uploads_path = $_POST['wp_uploads_path'];
     $this->wp_uploads_url = $_POST['wp_uploads_url'];
   }
@@ -31,7 +36,7 @@ class Exporter {
         if (is_dir($previous_export)) {
           shell_exec("rm -Rf $dir_to_diff_against && mkdir -p $dir_to_diff_against && cp -r $previous_export/* $dir_to_diff_against");
 
-        } 
+        }
       } else {
           if(is_dir($dir_to_diff_against)) {
               StaticHtmlOutput_FilesHelper::delete_dir_with_files($dir_to_diff_against);
@@ -59,20 +64,20 @@ class Exporter {
 		foreach ($files_to_clean as $file_to_clean) {
 			if ( file_exists($this->working_directory . '/' . $file_to_clean) ) {
 				unlink($this->working_directory . '/' . $file_to_clean);
-			} 
+			}
 		}
 	}
 
 	public function cleanup_working_files() {
-    error_log('cleanup_working_files()'); 
+    error_log('cleanup_working_files()');
     // skip first explort state
     if (is_file($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE')) {
       $archiveDir = file_get_contents($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE');
       $dir_to_diff_against = $this->working_directory . '/previous-export';
 
       if(is_dir($dir_to_diff_against)) {
-        // TODO: rewrite to php native in case of shared hosting 
-        // delete archivedir and then recursively copy 
+        // TODO: rewrite to php native in case of shared hosting
+        // delete archivedir and then recursively copy
         shell_exec("cp -r $dir_to_diff_against/* $archiveDir/");
       }
     }
@@ -92,7 +97,7 @@ class Exporter {
 		foreach ($files_to_clean as $file_to_clean) {
 			if ( file_exists($this->working_directory . '/' . $file_to_clean) ) {
 				unlink($this->working_directory . '/' . $file_to_clean);
-			} 
+			}
 		}
 	}
 
@@ -101,7 +106,7 @@ class Exporter {
  
     $resource = fopen($this->crawled_links_file, 'w');
     fwrite($resource, '');
-    fclose($resource);  
+    fclose($resource);
   }
 
 	public function cleanup_leftover_archives() {
@@ -119,7 +124,7 @@ class Exporter {
 		}
 
 		echo 'SUCCESS';
-	}	
+	}
 
   public function generateModifiedFileList() {
     // copy the preview crawl list within uploads dir to "modified list"
@@ -138,7 +143,7 @@ class Exporter {
     // copy the modified list to the working dir "finalized crawl list"
     copy($this->wp_uploads_path . '/WP-STATIC-MODIFIED-CRAWL-LIST', $this->working_directory . '/WP-STATIC-FINAL-CRAWL-LIST');
 
-    // use finalized crawl list from working dir to start the export 
+    // use finalized crawl list from working dir to start the export
 
     // if list has been (re)generated in the frontend, use it, else generate again at export time
   }

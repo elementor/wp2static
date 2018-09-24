@@ -1,4 +1,10 @@
 <?php
+/**
+ * Exception
+ *
+ * @package WP2Static
+ */
+ 
 namespace Aws\S3\Exception;
 
 use Aws\CommandInterface;

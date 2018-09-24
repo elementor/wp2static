@@ -1,4 +1,10 @@
 <?php
+/**
+ * ServiceResponseException
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Exception;
 use Guzzle\Http\Message\RequestInterface;
 use Guzzle\Http\Message\Response;

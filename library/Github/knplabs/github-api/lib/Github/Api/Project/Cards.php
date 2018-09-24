@@ -1,4 +1,9 @@
 <?php
+/**
+ * Cards
+ *
+ * @package WP2Static
+ */
 
 namespace Github\Api\Project;
 

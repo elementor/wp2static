@@ -1,4 +1,10 @@
 <?php
+/**
+ * ExpiredCredentialsChecker
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Client;
 use Aws\Common\Credentials\AbstractRefreshableCredentials;
 use Aws\Common\Client\AwsClientInterface;

@@ -1,4 +1,10 @@
 <?php
+/**
+ * ClientBuilder
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Client;
 use Aws\Common\Credentials\Credentials;
 use Aws\Common\Credentials\CredentialsInterface;

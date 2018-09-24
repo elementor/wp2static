@@ -1,4 +1,10 @@
 <?php
+/**
+ * WaiterConfigFactory
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Waiter;
 use Aws\Common\Exception\InvalidArgumentException;
 use Guzzle\Inflection\Inflector;

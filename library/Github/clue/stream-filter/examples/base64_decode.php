@@ -1,4 +1,9 @@
 <?php
+/**
+ * Base 64 decode
+ *
+ * @package WP2Static
+ */
 
 // $ echo test | php examples/base64_encode.php | php examples/base64_decode.php
 

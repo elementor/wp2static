@@ -1,4 +1,10 @@
 <?php
+/**
+ * DateFormat
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Enum;
 use Aws\Common\Enum;
 class DateFormat extends Enum

@@ -1,4 +1,9 @@
 <?php
+/**
+ * BufferedStream
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Message\Stream;
 

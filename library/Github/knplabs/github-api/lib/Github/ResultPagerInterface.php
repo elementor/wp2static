@@ -1,4 +1,9 @@
 <?php
+/**
+ * ResultPagerInterface
+ *
+ * @package WP2Static
+ */
 
 namespace Github;
 

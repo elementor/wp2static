@@ -1,4 +1,9 @@
 <?php
+/**
+ * Autoloader
+ *
+ * @package WP2Static
+ */
 
 $mapping = array(
     'GuzzleHttp\Client' => __DIR__ . '/Client.php',

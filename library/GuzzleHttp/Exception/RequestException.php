@@ -1,4 +1,10 @@
 <?php
+/**
+ * RequestException
+ *
+ * @package WP2Static
+ */
+
 namespace GuzzleHttp\Exception;
 
 use Psr\Http\Message\RequestInterface;

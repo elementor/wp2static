@@ -1,4 +1,10 @@
 <?php
+/**
+ * Lever
+ *
+ * @package WP2Static
+ */
+
 namespace JmesPath;
 class Lexer
 {

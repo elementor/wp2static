@@ -1,4 +1,9 @@
 <?php
+/**
+ * UnexpectedTokenException
+ *
+ * @package WP2Static
+ */
 
 namespace Sabberworm\CSS\Parsing;
 

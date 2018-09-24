@@ -1,4 +1,10 @@
 <?php
+/**
+ * Enum
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common;
 abstract class Enum
 {

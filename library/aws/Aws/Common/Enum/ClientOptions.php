@@ -1,4 +1,10 @@
 <?php
+/**
+ * ClientOptions
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Enum;
 use Aws\Common\Enum;
 class ClientOptions extends Enum

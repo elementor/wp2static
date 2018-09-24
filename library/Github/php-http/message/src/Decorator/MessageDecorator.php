@@ -1,4 +1,9 @@
 <?php
+/**
+ * MessageDecorator
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Message\Decorator;
 

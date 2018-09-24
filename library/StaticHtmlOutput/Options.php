@@ -1,4 +1,9 @@
 <?php
+/**
+ * StaticHtmlOutput_Options
+ *
+ * @package WP2Static
+ */
 
 class StaticHtmlOutput_Options {
 	protected $_options = array();

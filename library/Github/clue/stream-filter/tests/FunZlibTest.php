@@ -1,4 +1,9 @@
 <?php
+/**
+ * Test
+ *
+ * @package WP2Static
+ */
 
 use Clue\StreamFilter;
 

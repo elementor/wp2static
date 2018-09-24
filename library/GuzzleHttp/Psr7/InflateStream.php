@@ -1,4 +1,10 @@
 <?php
+/**
+ * InflateStream
+ *
+ * @package WP2Static
+ */
+
 namespace GuzzleHttp\Psr7;
 
 use Psr\Http\Message\StreamInterface;

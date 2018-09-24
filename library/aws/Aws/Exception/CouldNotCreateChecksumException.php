@@ -1,4 +1,10 @@
 <?php
+/**
+ * CouldNotCreateChecksumException
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Exception;
 
 class CouldNotCreateChecksumException extends \RuntimeException

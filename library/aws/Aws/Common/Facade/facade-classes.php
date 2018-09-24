@@ -1,4 +1,10 @@
 <?php
+/**
+ * AutoScaling
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Facade;
 class AutoScaling extends Facade
 {

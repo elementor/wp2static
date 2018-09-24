@@ -1,4 +1,9 @@
 <?php
+/**
+ * RequestConditional
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Message\Authentication;
 

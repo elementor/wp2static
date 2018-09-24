@@ -1,4 +1,9 @@
 <?php
+/**
+ * Ubench
+ *
+ * @package WP2Static
+ */
 
 // https://github.com/devster/ubench
 class Ubench

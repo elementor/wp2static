@@ -1,4 +1,10 @@
 <?php
+/**
+ * XmlResponseLocationVisitor
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Command;
 use Guzzle\Service\Description\Operation;
 use Guzzle\Service\Command\CommandInterface;

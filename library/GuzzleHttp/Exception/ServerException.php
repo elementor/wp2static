@@ -1,4 +1,10 @@
 <?php
+/**
+ * ServerException
+ *
+ * @package WP2Static
+ */
+
 namespace GuzzleHttp\Exception;
 
 /**

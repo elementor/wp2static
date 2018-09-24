@@ -1,4 +1,10 @@
 <?php
+/**
+ * JsonRestExceptionParser
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Exception\Parser;
 use Guzzle\Http\Message\Response;
 class JsonRestExceptionParser extends AbstractJsonExceptionParser

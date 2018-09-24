@@ -1,4 +1,10 @@
 <?php
+/**
+ * FulfilledPromise
+ *
+ * @package WP2Static
+ */
+
 namespace GuzzleHttp\Promise;
 
 /**

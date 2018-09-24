@@ -1,4 +1,9 @@
 <?php
+/**
+ * Emojis
+ *
+ * @package WP2Static
+ */
 
 namespace Github\Api\Miscellaneous;
 

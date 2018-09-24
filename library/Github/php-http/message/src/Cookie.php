@@ -1,4 +1,9 @@
 <?php
+/**
+ * Cookie
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Message;
 

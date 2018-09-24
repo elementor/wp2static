@@ -1,4 +1,9 @@
 <?php
+/**
+ * UriFactory
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Message;
 

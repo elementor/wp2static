@@ -1,4 +1,10 @@
 <?php
+/**
+ * CurlFactoryInterface
+ *
+ * @package WP2Static
+ */
+
 namespace GuzzleHttp\Handler;
 
 use Psr\Http\Message\RequestInterface;

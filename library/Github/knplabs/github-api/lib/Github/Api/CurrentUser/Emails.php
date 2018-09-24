@@ -1,4 +1,9 @@
 <?php
+/**
+ * Emails
+ *
+ * @package WP2Static
+ */
 
 namespace Github\Api\CurrentUser;
 

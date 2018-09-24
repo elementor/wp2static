@@ -1,4 +1,10 @@
 <?php
+/**
+ * AssumeRoleCredentialProvider
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Credentials;
 
 use Aws\Exception\CredentialsException;

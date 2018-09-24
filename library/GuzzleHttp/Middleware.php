@@ -1,4 +1,10 @@
 <?php
+/**
+ * Middleware
+ *
+ * @package WP2Static
+ */
+
 namespace GuzzleHttp;
 
 use GuzzleHttp\Cookie\CookieJarInterface;

@@ -1,4 +1,10 @@
 <?php
+/**
+ * UriInterface
+ *
+ * @package WP2Static
+ */
+
 namespace Psr\Http\Message;
 interface UriInterface
 {

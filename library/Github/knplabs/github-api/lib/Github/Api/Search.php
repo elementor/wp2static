@@ -1,4 +1,9 @@
 <?php
+/**
+ * Search
+ *
+ * @package WP2Static
+ */
 
 namespace Github\Api;
 
