@@ -220,9 +220,9 @@ jQuery(document).ready(function($){
         method: 'POST',
         success: function(serverResponse) {
           if (current_deployment_method == 'zip' || current_deployment_method == 'netlify') {
-            doAJAXExport('cleanup_working_files', 'cleanup_leftover_archives', 'start_export', 'crawl_site', 'post_process_archive_dir', 'create_zip');
+            doAJAXExport('prepare_for_export', 'crawl_site', 'post_process_archive_dir', 'create_zip');
           } else {
-            doAJAXExport('cleanup_working_files', 'cleanup_leftover_archives', 'start_export', 'crawl_site', 'post_process_archive_dir');
+            doAJAXExport('prepare_for_export', 'crawl_site', 'post_process_archive_dir');
           }
         },
         error: ajaxErrorHandler
@@ -777,6 +777,7 @@ jQuery(document).ready(function($){
   $('#working_directory').val(working_directory);
   $('#wp_site_url').val(wp_site_url);
   $('#wp_uploads_path').val(wp_uploads_path);
+  $('#wp_uploads_url').val(wp_uploads_url);
   $('#wp_site_path').val(wp_site_path);
 
   // call change handler on page load, to set correct state

@@ -278,14 +278,6 @@ class StaticHtmlOutput_Controller {
 		return $outputDir;
 	}
 
-  public function progressThroughExportTargets() {
-    $exportTargetsFile = $this->getWorkingDirectory() . '/WP-STATIC-EXPORT-TARGETS';
-    $exportTargets = file($exportTargetsFile, FILE_IGNORE_NEW_LINES);
-    $filesRemaining = count($exportTargets) - 1;
-    $first_line = array_shift($exportTargets);
-    file_put_contents($exportTargetsFile, implode("\r\n", $exportTargets));
-  }
-
 	public function github_upload_blobs($viaCLI = false) {
     $github = new StaticHtmlOutput_GitHub(
       $this->githubRepo,
@@ -370,7 +362,6 @@ class StaticHtmlOutput_Controller {
 	public function pre_export_cleanup() {
     error_log('cleaning up leftover exports');
 		$files_to_clean = array(
-			'/WP-STATIC-EXPORT-TARGETS',
 			'/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT',
 			'/WP-STATIC-EXPORT-FTP-FILES-TO-EXPORT',
 			'/WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT',
@@ -390,6 +381,7 @@ class StaticHtmlOutput_Controller {
 	}
 
 	public function cleanup_working_files() {
+    error_log('cleanup_working_files()'); 
     // skip first explort state
     if (is_file($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE')) {
       $archiveDir = file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE');
@@ -403,7 +395,6 @@ class StaticHtmlOutput_Controller {
     }
 
 		$files_to_clean = array(
-			'/WP-STATIC-EXPORT-TARGETS',
 			'/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT',
 			'/WP-STATIC-EXPORT-FTP-FILES-TO-EXPORT',
 			'/WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT',
@@ -420,29 +411,12 @@ class StaticHtmlOutput_Controller {
 				unlink($this->getWorkingDirectory() . '/' . $file_to_clean);
 			} 
 		}
-
-		echo 'SUCCESS';
 	}
 
-	public function start_export($viaCLI = false) {
+	public function prepare_for_export($viaCLI = false) {
+    error_log('prepare_for_export()');
 		$this->pre_export_cleanup();
-    $exportTargetsFile = $this->getWorkingDirectory() . '/WP-STATIC-EXPORT-TARGETS';
-
-    if ($this->sendViaGithub == 1) {
-        file_put_contents($exportTargetsFile, 'GITHUB' . PHP_EOL, FILE_APPEND | LOCK_EX);
-    }
-    if ($this->sendViaFTP == 1) {
-        file_put_contents($exportTargetsFile, 'FTP' . PHP_EOL, FILE_APPEND | LOCK_EX);
-    }
-    if ($this->sendViaS3 == 1) {
-        file_put_contents($exportTargetsFile, 'S3' . PHP_EOL, FILE_APPEND | LOCK_EX);
-    }
-    if ($this->sendViaNetlify == 1) {
-        file_put_contents($exportTargetsFile, 'NETLIFY' . PHP_EOL, FILE_APPEND | LOCK_EX);
-    }
-    if ($this->sendViaDropbox == 1) {
-        file_put_contents($exportTargetsFile, 'DROPBOX' . PHP_EOL, FILE_APPEND | LOCK_EX);
-    }
+    $this->cleanup_working_files();
 
     // initilise log with environmental info
     WsLog::l('STARTING EXPORT ' . date("Y-m-d h:i:s") );
