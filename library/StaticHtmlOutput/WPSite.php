@@ -4,16 +4,16 @@ class WPSite {
 
   public function __construct() {
     $wp_upload_path_and_url = wp_upload_dir();
-    $this->uploadsPath = $wp_upload_path_and_url['basedir'];
-    $this->uploadsURL = $wp_upload_path_and_url['baseurl'];
-    $this->wp_site_path = ABSPATH;
-    $this->wp_site_url = get_site_url();
-    $this->wp_plugin_path = plugins_url('/', __FILE__);
+    $this->uploads_path = $wp_upload_path_and_url['basedir'];
+    $this->uploads_url = $wp_upload_path_and_url['baseurl'];
+    $this->site_path = ABSPATH;
+    $this->site_url = get_site_url();
+    $this->plugin_path = plugins_url('/', __FILE__);
     $this->detect_base_url();
   }
 
   public function uploadsPathIsWritable() {
-    return $this->uploadsPath && is_writable($this->uploadsPath);
+    return $this->uploads_path && is_writable($this->uploads_path);
   }
 
   public function hasCurlSupport() {

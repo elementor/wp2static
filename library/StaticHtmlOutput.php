@@ -95,15 +95,19 @@ class StaticHtmlOutput_Controller {
 	}
 
   public function generate_filelist_preview() {
+    // TODO: get independent from WP calls
+    $uploads_path = isset($_POST['wp_uploads_path']) ? $_POST['wp_uploads_path'] : '';
+    $uploads_url = isset($_POST['wp_uploads_url']) ? $_POST['wp_uploads_url'] : '';
+    $working_directory = isset($_POST['working_directory']) ? $_POST['working_directory'] : '';
+    $plugin_hook = 'wp-static-html-output';
+
     // pre-generated the initial crawl list
     $initial_file_list_count = StaticHtmlOutput_FilesHelper::buildInitialFileList(
-      true, // simulate viaCLI for debugging, will only be called via UI, but without response needed
-      //$this->getWorkingDirectory(),
-      // NOTE: Working Dir not yet available, so we serve generate list under uploads dir
-      $this->uploadsPath,
-      $this->uploadsURL,
-      $this->getWorkingDirectory(),
-      self::HOOK
+      true,
+      $uploads_path,
+      $uploads_url,
+      $working_directory,
+      $plugin_hook
     );
 
     echo $initial_file_list_count;
