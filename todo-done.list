@@ -4,3 +4,4 @@
 ./library/Github/clue/stream-filter/examples/uppercase.php
 ./library/StaticHtmlOutput/Options.php
 ./library/StaticHtmlOutput/WsLog.php
+./library/StaticHtmlOutput/UrlRequest.php

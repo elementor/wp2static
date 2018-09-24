@@ -1,6 +1,12 @@
 <?xml version="1.0"?>
 <ruleset name="WP2Static">
 	<description>WP2Static Project Coding Standard</description>
+	<!--
+		Note: Applied WP standard override to allow tabs instead
+		      of spaces, however, PHP CBF is using 4 spaces - Gray
+
+		Reference: https://stackoverflow.com/a/45154669/3701444
+	-->
 	<arg name="colors" />
 	<arg name="tab-width" value="2" />
 	<!-- Custom line length validation -->
@@ -58,6 +64,7 @@
 		<exclude name="WordPress.NamingConventions.ValidVariableName.NotSnakeCaseMemberVar" />
 		<exclude name="WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace" />
 		<exclude name="WordPress.PHP.DevelopmentFunctions.error_log_error_log" />
+		<exclude name="WordPress.PHP.DevelopmentFunctions.error_log_print_r" />
 		<exclude name="WordPress.PHP.DevelopmentFunctions.error_log_var_export" />
 		<exclude name="WordPress.PHP.DevelopmentFunctions.prevent_path_disclosure_error_reporting" />
 		<exclude name="WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration_apache_setenv" />
@@ -79,5 +86,6 @@
 		<exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fopen" />
 		<exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fwrite" />
 		<exclude name="WordPress.WP.AlternativeFunctions.json_encode_json_encode" />
+		<exclude name="WordPress.WP.AlternativeFunctions.parse_url_parse_url" />
 	</rule>
 </ruleset>
