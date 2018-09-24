@@ -13,17 +13,6 @@ class StaticHtmlOutput_Controller {
 			self::$_instance = new self();
 			self::$_instance->options = new StaticHtmlOutput_Options(self::OPTIONS_KEY);
 			self::$_instance->view = new StaticHtmlOutput_View();
-      $tmp_var_to_hold_return_array = wp_upload_dir();
-      self::$_instance->uploadsPath = $tmp_var_to_hold_return_array['basedir'];
-      self::$_instance->uploadsURL = $tmp_var_to_hold_return_array['baseurl'];
-      self::$_instance->wp_site_path = ABSPATH;
-
-      // load settings via Client or from DB if run from CLI
-      if (null !== (filter_input(INPUT_POST, 'selected_deployment_option'))) {
-        self::$_instance->selected_deployment_option = filter_input(INPUT_POST, 'selected_deployment_option');
-        self::$_instance->baseUrl = untrailingslashit(filter_input(INPUT_POST, 'baseUrl', FILTER_SANITIZE_URL));
-        self::$_instance->diffBasedDeploys = filter_input(INPUT_POST, 'diffBasedDeploys');
-      } 
 		}
 
 		return self::$_instance;
@@ -121,10 +110,19 @@ class StaticHtmlOutput_Controller {
   }
 
 	public function renderOptionsPage() {
-		// Check system requirements
-		$uploadsFolderWritable = $this->uploadsPath && is_writable($this->uploadsPath);
-		$supports_cURL = extension_loaded('curl');
-		$permalinksStructureDefined = strlen(get_option('permalink_structure'));
+
+    require_once dirname(__FILE__) . '/StaticHtmlOutput/WPSite.php';
+
+    $this->wp_site = new WPSite();
+
+    $this->current_archive = '';
+
+      // load settings via Client or from DB if run from CLI
+      if (null !== (filter_input(INPUT_POST, 'selected_deployment_option'))) {
+        self::$_instance->selected_deployment_option = filter_input(INPUT_POST, 'selected_deployment_option');
+        self::$_instance->baseUrl = untrailingslashit(filter_input(INPUT_POST, 'baseUrl', FILTER_SANITIZE_URL));
+        self::$_instance->diffBasedDeploys = filter_input(INPUT_POST, 'diffBasedDeploys');
+      } 
 
     $this->detect_base_url(); // supply views with wp_install_subdir if present
 
@@ -135,44 +133,22 @@ class StaticHtmlOutput_Controller {
 		) {
 			$this->view
 				->setTemplate('system-requirements')
-				->assign('uploadsFolderWritable', $uploadsFolderWritable)
-				->assign('supports_cURL', $supports_cURL)
-				->assign('permalinksStructureDefined', $permalinksStructureDefined)
-				->assign('uploadsPath', $this->uploadsPath)
+				->assign('wp_site', $this->wp_site)
 				->render();
 		} else {
 			$this->view
 				->setTemplate('options-page-js')
 				->assign('working_directory', $this->getWorkingDirectory())
-				->assign('wp_uploads_path', $this->uploadsPath)
-				->assign('wp_uploads_url', $this->uploadsURL)
 				->assign('options', $this->options)
-				->assign('wp_site_path', $this->wp_site_path)
-				->assign('wpPluginDir', plugins_url('/', __FILE__))
+				->assign('wp_site', $this->wp_site)
 				->assign('onceAction', self::HOOK . '-options')
 				->render();
 
 			$this->view
 				->setTemplate('options-page')
-        ->assign('wp_uploads_path', $this->uploadsPath)
-        ->assign('rewriteWPCONTENT', 
-          $this->options->rewriteWPCONTENT ? $this->options->rewriteWPCONTENT : 'contents')
-        ->assign('rewriteTHEMEDIR',
-          $this->options->rewriteTHEMEDIR ? $this->options->rewriteTHEMEDIR : 'theme')
-        ->assign('rewriteUPLOADS',
-          $this->options->rewriteUPLOADS ? $this->options->rewriteUPLOADS : 'data')
-        ->assign('rewriteTHEMEROOT',
-          $this->options->rewriteTHEMEROOT ? $this->options->rewriteTHEMEROOT : 'ui')
-        ->assign('rewritePLUGINDIR',
-          $this->options->rewritePLUGINDIR ? $this->options->rewritePLUGINDIR : 'lib')
-        ->assign('rewriteWPINC',
-          $this->options->rewriteWPINC ? $this->options->rewriteWPINC : 'inc')
-				->assign('wpUploadsDir', $this->uploadsURL)
+				->assign('wp_site', $this->wp_site)
 				->assign('options', $this->options)
-				->assign('wpPluginDir', plugins_url('/', __FILE__))
 				->assign('onceAction', self::HOOK . '-options')
-				->assign('wp_site_url', get_site_url())
-				->assign('uploadsPath', $this->uploadsPath)
 				->render();
 		}
 	}
@@ -189,7 +165,7 @@ class StaticHtmlOutput_Controller {
 		$outputDir = '';
 
 		// priorities: from UI; from settings; fallback to WP uploads path
-		if ( isset($this->outputDirectory) ) {
+		if (isset($this->outputDirectory) ) {
 			$outputDir = $this->outputDirectory;
 		} elseif ($this->options->outputDirectory) {
       $outputDir = $this->options->outputDirectory;
@@ -274,21 +250,4 @@ class StaticHtmlOutput_Controller {
 
       $processor->create_symlink_to_latest_archive();
 	}
-
-	public function detect_base_url() {
-		$site_url = get_option( 'siteurl' );
-		$home = get_option( 'home' );
-    $this->subdirectory = '';
-
-		// case for when WP is installed in a different place then being served
-		if ( $site_url !== $home ) {
-			$this->subdirectory = '/mysubdirectory';
-		}
-
-		$base_url = parse_url($site_url);
-
-		if ( array_key_exists('path', $base_url ) && $base_url['path'] != '/' ) {
-			$this->subdirectory = $base_url['path'];
-		}
-	}	
 }
