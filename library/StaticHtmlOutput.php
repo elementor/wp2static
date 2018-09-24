@@ -168,16 +168,16 @@ class StaticHtmlOutput_Controller {
 		} elseif ($this->options->outputDirectory) {
       $outputDir = $this->options->outputDirectory;
     } else {
-      $outputDir = $this->uploadsPath;
+      $outputDir = $this->wp_site->uploads_path;
     }
 
 		if ( ! is_dir($outputDir) && ! wp_mkdir_p($outputDir)) {
-      $outputDir = $this->uploadsPath;
+      $outputDir = $this->wp_site->uploads_path;
       error_log('user defined outputPath does not exist and could not be created, reverting to ' . $outputDir);
     } 
 
 		if ( empty($outputDir) || !is_writable($outputDir) ) {
-			$outputDir = $this->uploadsPath;
+			$outputDir = $this->wp_site->uploads_path;
       error_log('user defined outputPath is not writable, reverting to ' . $outputDir);
 		}
 
@@ -234,9 +234,9 @@ class StaticHtmlOutput_Controller {
   }
 
 	public function reset_default_settings() {
-		$this->options
-			->setOption('static-export-settings', '')
-			->save();
+    if (! delete_option('wp-static-html-output-options')) {
+      error_log("Couldn't reset plugin to default settings");
+    }
 
 		echo 'SUCCESS';
 	}	
