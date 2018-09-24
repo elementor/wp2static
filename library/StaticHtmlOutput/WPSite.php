@@ -1,5 +1,6 @@
 <?php
 
+// TODO: better named WPEnvironment
 class WPSite {
 
   public function __construct() {
