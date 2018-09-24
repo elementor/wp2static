@@ -446,327 +446,26 @@ class StaticHtmlOutput_Controller {
     echo 'SUCCESS';
   }
 
-  public function recursive_copy($srcdir, $dstdir) {
-    $dir = opendir($srcdir);
-    @mkdir($dstdir);
-    while ($file = readdir($dir)) {
-      if ($file != '.'  && $file != '..') {
-        $src = $srcdir . '/' . $file;
-        $dst = $dstdir . '/' . $file;
-        if (is_dir($src)) { 
-            $this->recursive_copy($src, $dst); 
-        } else { 
-          copy($src, $dst); 
-        }
-      }
-    }
-    closedir($dir);
+  public function deploy() {
+    require_once dirname(__FILE__) . '/../StaticHtmlOutput/Deployer.php';
+    $deployer = new Deployer();
+    $deployer->deploy();
   }
 
-	public function copyStaticSiteToPublicFolder() {
-		if ( $this->selected_deployment_option == 'folder' ) {
-			$publicFolderToCopyTo = trim($this->targetFolder);
+  public function doExportWithoutGUI() {
+    if ( wpsho_fr()->is_plan('professional_edition') ) {
+  
+      //$this->capture_last_deployment(); 
+      $this->cleanup_leftover_archives(true);
+      $this->start_export(true);
+      $this->crawl_site(true);
+      $this->post_process_archive_dir(true);
+      $this->deploy();
+      $this->post_export_teardown();
 
-			if ( ! empty($publicFolderToCopyTo) ) {
-				// if folder isn't empty and current deployment option is "folder"
-				$publicFolderToCopyTo = ABSPATH . $publicFolderToCopyTo;
-
-				// mkdir for the new dir
-				if (! file_exists($publicFolderToCopyTo)) {
-					if (wp_mkdir_p($publicFolderToCopyTo)) {
-						// file permissions to allow public viewing of files within
-						chmod($publicFolderToCopyTo, 0755);
-
-						// copy the contents of the current archive to the targetFolder
-						$archiveDir = untrailingslashit(file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE'));
-
-						$this->recursive_copy($archiveDir, $publicFolderToCopyTo);	
-
-					} else {
-						error_log('Couldn\'t create target folder to copy files to');
-					}
-				} else {
-
-					$archiveDir = untrailingslashit(file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE'));
-
-					$this->recursive_copy($archiveDir, $publicFolderToCopyTo);	
-				}
-			}
-		}
-	}
-
-  public function create_zip() {
-    $archiveDir = file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE');
-    $archiveName = rtrim($archiveDir, '/');
-    $tempZip = $archiveName . '.tmp';
-    $zipArchive = new ZipArchive();
-    if ($zipArchive->open($tempZip, ZIPARCHIVE::CREATE) !== true) {
-      return new WP_Error('Could not create archive');
-    }
-
-    $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($archiveDir));
-    foreach ($iterator as $fileName => $fileObject) {
-      $baseName = basename($fileName);
-      if($baseName != '.' && $baseName != '..') {
-        if (!$zipArchive->addFile(realpath($fileName), str_replace($archiveDir, '', $fileName))) {
-          return new WP_Error('Could not add file: ' . $fileName);
-        }
-      }
-    }
-
-    $zipArchive->close();
-    $zipDownloadLink = $archiveName . '.zip';
-    rename($tempZip, $zipDownloadLink); 
-    $publicDownloadableZip = str_replace(ABSPATH, trailingslashit(home_url()), $archiveName . '.zip');
-
-    echo 'SUCCESS';
-  }
-
-  public function ftp_prepare_export() {
-    $ftp = new StaticHtmlOutput_FTP(
-      $this->ftpServer,
-      $this->ftpUsername,
-      $this->ftpPassword,
-      $this->ftpRemotePath,
-      $this->useActiveFTP,
-      $this->getWorkingDirectory()
-    );
-
-    $ftp->prepare_deployment();
-  }
-
-  public function ftp_transfer_files($viaCLI = false) {
-    $ftp = new StaticHtmlOutput_FTP(
-      $this->ftpServer,
-      $this->ftpUsername,
-      $this->ftpPassword,
-      $this->ftpRemotePath,
-      $this->useActiveFTP,
-      $this->getWorkingDirectory()
-    );
-
-    $ftp->transfer_files($viaCLI);
-  }
-
-  public function bunnycdn_prepare_export() {
-		if ( wpsho_fr()->is__premium_only() ) {
-			$bunnyCDN = new StaticHtmlOutput_BunnyCDN(
-				$this->bunnycdnPullZoneName,
-				$this->bunnycdnAPIKey,
-				$this->bunnycdnRemotePath,
-				$this->getWorkingDirectory()
-			);
-
-			$bunnyCDN->prepare_export();
-		}
-  }
-
-  public function bunnycdn_transfer_files($viaCLI = false) {
-		if ( wpsho_fr()->is__premium_only() ) {
-
-			$bunnyCDN = new StaticHtmlOutput_BunnyCDN(
-				$this->bunnycdnPullZoneName,
-				$this->bunnycdnAPIKey,
-				$this->bunnycdnRemotePath,
-				$this->getWorkingDirectory()
-			);
-
-			$bunnyCDN->transfer_files($viaCLI);
-		}
-  }
-
-  public function bunnycdn_purge_cache() {
-		if ( wpsho_fr()->is__premium_only() ) {
-
-			$bunnyCDN = new StaticHtmlOutput_BunnyCDN(
-				$this->bunnycdnPullZoneName,
-				$this->bunnycdnAPIKey,
-				$this->bunnycdnRemotePath,
-				$this->getWorkingDirectory()
-			);
-
-			$bunnyCDN->purge_all_cache();
-		}
-  }
-
-	public function prepare_file_list($export_target) {
-    $file_list_path = $this->getWorkingDirectory() . '/WP-STATIC-EXPORT-' . $export_target . '-FILES-TO-EXPORT';
-
-// zero file
-    $f = @fopen($file_list_path, "r+");
-    if ($f !== false) {
-        ftruncate($f, 0);
-        fclose($f);
-    }
-
-    $archiveDir = file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE');
-    $archiveName = rtrim($archiveDir, '/');
-    $siteroot = $archiveName . '/';
-
-    error_log('preparing file list');
-
-    StaticHtmlOutput_FilesHelper::recursively_scan_dir($siteroot, $siteroot, $file_list_path);
-	}
-
-  public function s3_prepare_export() {
-		if ( wpsho_fr()->is__premium_only() ) {
-
-			$s3 = new StaticHtmlOutput_S3(
-				$this->s3Key,
-				$this->s3Secret,
-				$this->s3Region,
-				$this->s3Bucket,
-				$this->s3RemotePath,
-				$this->getWorkingDirectory()
-			);
-
-			$s3->prepare_deployment();
-		}	
-  }
-
-  public function s3_transfer_files($viaCLI = false) {
-    if ( wpsho_fr()->is__premium_only() ) {
-
-      $s3 = new StaticHtmlOutput_S3(
-        $this->s3Key,
-        $this->s3Secret,
-        $this->s3Region,
-        $this->s3Bucket,
-        $this->s3RemotePath,
-        $this->getWorkingDirectory()
-      );
-
-      $s3->transfer_files($viaCLI);
+      //$this->create_zip();
     }
   }
-
-	public function cloudfront_invalidate_all_items() {
-		if ( wpsho_fr()->is__premium_only() ) {
-			require_once(__DIR__.'/CloudFront/CloudFront.php');
-			$cloudfront_id = $this->cfDistributionId;
-
-			if( !empty($cloudfront_id) ) {
-
-				$cf = new CloudFront(
-				$this->s3Key,
-				$this->s3Secret,
-					$cloudfront_id);
-
-				$cf->invalidate('/*');
-			
-				if ( $cf->getResponseMessage() == 200 || $cf->getResponseMessage() == 201 )	{
-					echo 'SUCCESS';
-				} else {
-					WsLog::l('CF ERROR: ' . $cf->getResponseMessage());
-				}
-			} else {
-				echo 'SUCCESS';
-			}
-		}
-	}
-
-    public function dropbox_prepare_export() {
-			$dropbox = new StaticHtmlOutput_Dropbox(
-				$this->dropboxAccessToken,
-				$this->dropboxFolder,
-				$this->getWorkingDirectory()
-			);
-
-			$dropbox->prepare_export();
-    }
-
-    public function dropbox_do_export($viaCLI = false) {
-			$dropbox = new StaticHtmlOutput_Dropbox(
-				$this->dropboxAccessToken,
-				$this->dropboxFolder,
-				$this->getWorkingDirectory()
-			);
-
-			$dropbox->transfer_files($viaCLI);
-    }
-
-    public function netlify_do_export () {
-			// will exclude the siteroot when copying
-			$archiveDir = file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE');
-			$archiveName = rtrim($archiveDir, '/') . '.zip';
-
-			$netlify = new StaticHtmlOutput_Netlify(
-				$this->netlifySiteID,
-				$this->netlifyPersonalAccessToken
-			);
-
-			echo $netlify->deploy($archiveName);
-    }
-
-    public function deploy() {
-      switch($this->selected_deployment_option) {
-        case 'folder':
-          $this->copyStaticSiteToPublicFolder();
-        break;
-
-        case 'github':
-          $this->github_prepare_export();
-          $this->github_upload_blobs(true);
-          $this->github_finalise_export();
-        break;
-
-        case 'ftp':
-          $this->ftp_prepare_export();
-          $this->ftp_transfer_files(true);
-        break;
-
-        case 'netlify':
-          $this->create_zip();
-          $this->netlify_do_export();
-        break;
-
-        case 'zip':
-          $this->create_zip();
-        break;
-
-        case 's3':
-          $this->s3_prepare_export();
-          $this->s3_transfer_files(true);
-          $this->cloudfront_invalidate_all_items();
-        break;
-
-        case 'bunnycdn':
-          $this->bunnycdn_prepare_export();
-          $this->bunnycdn_transfer_files(true);
-        break;
-
-        case 'dropbox':
-          $this->dropbox_prepare_export();
-          $this->dropbox_do_export(true);
-        break;
-      }
-
-      error_log('scheduled deploy complete');
-      // TODO: email upon successful cron deploy
-      // $current_user = wp_get_current_user();
-
-      // $to = $current_user->user_email;
-      // $subject = 'Static site deployment: ' . $site_title = get_bloginfo( 'name' );;
-      // $body = 'Your WordPress site has been automatically deployed.';
-      // $headers = array('Content-Type: text/html; charset=UTF-8');
-      //  
-      // wp_mail( $to, $subject, $body, $headers );
-    }
-
-    public function doExportWithoutGUI() {
-      if ( wpsho_fr()->is_plan('professional_edition') ) {
-    
-        //$this->capture_last_deployment(); 
-        $this->cleanup_leftover_archives(true);
-        $this->start_export(true);
-        $this->crawl_site(true);
-        $this->post_process_archive_dir(true);
-        $this->deploy();
-        $this->post_export_teardown();
-
-        //$this->create_zip();
-      }
-    }
 
 	public function reset_default_settings() {
 		$this->options
@@ -777,87 +476,17 @@ class StaticHtmlOutput_Controller {
 
 	}	
 
-	public function detect_base_url() {
-		$site_url = get_option( 'siteurl' );
-		$home = get_option( 'home' );
-    $this->subdirectory = '';
-
-		// case for when WP is installed in a different place then being served
-		if ( $site_url !== $home ) {
-			$this->subdirectory = '/mysubdirectory';
-		}
-
-		$base_url = parse_url($site_url);
-
-		if ( array_key_exists('path', $base_url ) && $base_url['path'] != '/' ) {
-			$this->subdirectory = $base_url['path'];
-		}
-	}	
-
-    public function post_process_archive_dir() {
+  public function post_process_archive_dir() {
       // TODO: bypass plugin instantiating to process
 
       require_once dirname(__FILE__) . '/../StaticHtmlOutput/ArchiveProcessor.php';
       $processor = new HTMLProcessor();
 
       $processor->create_symlink_to_latest_archive();
+
+      $processor->
 	}
 
-  public function files_are_equal($a, $b) {
-    // if image, use sha, if html, use something else
-    $pathinfo = pathinfo($a);
-    if (isset($pathinfo['extension']) && in_array($pathinfo['extension'], array('jpg', 'png', 'gif', 'jpeg'))) {
-      return sha1_file($a) === sha1_file($b);
-    }
-
-    $diff = exec("diff $a $b");
-    $result = $diff === '';
-
-    return $result;
-  }
-
-  public function remove_files_idential_to_previous_export() {
-    $archiveDir = file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE');
-    $dir_to_diff_against = $this->getWorkingDirectory() . '/previous-export';
-
-    // iterate each file in current export, check the size and contents in previous, delete if match
-    $objects = new RecursiveIteratorIterator(
-        new RecursiveDirectoryIterator(
-          $archiveDir, 
-          RecursiveDirectoryIterator::SKIP_DOTS));
-
-    foreach($objects as $current_file => $object){
-        if (is_file($current_file)) {
-          // get relative filename
-          $filename = str_replace($archiveDir, '', $current_file);
-   
-          $previously_exported_file = $dir_to_diff_against . '/' . $filename;
-
-          // if file doesn't exist at all in previous export:
-          if (is_file($previously_exported_file)) {
-            if ( $this->files_are_equal($current_file, $previously_exported_file)) {
-              unlink($current_file);
-            } 
-          } 
-        }
-    }
-
-    // TODO: cleanup empty dirs in archiveDir to prevent them being attempted to export
-
-    $files_in_previous_export = exec("find $dir_to_diff_against -type f | wc -l"); 
-    $files_to_be_deployed = exec("find $archiveDir -type f | wc -l"); 
- 
-    // copy the newly changed files back into the previous export dir, else will never capture changes
-
-    // TODO: this works the first time, but will fail the diff on subsequent runs, alternating each time`
-  }
-  
-  // default rename in PHP throws warnings if dir is populated
-  public function rename_populated_directory($source, $target) {
-    $this->recursive_copy($source, $target);
-
-    StaticHtmlOutput_FilesHelper::delete_dir_with_files($source);
-  }
 
   public function post_export_teardown() {
 		$this->cleanup_working_files();

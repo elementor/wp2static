@@ -28,7 +28,158 @@ class ArchiveProcessor {
 		} 
 	}	
 
+  public function remove_files_idential_to_previous_export() {
+    $archiveDir = file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE');
+    $dir_to_diff_against = $this->getWorkingDirectory() . '/previous-export';
 
+    // iterate each file in current export, check the size and contents in previous, delete if match
+    $objects = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator(
+          $archiveDir, 
+          RecursiveDirectoryIterator::SKIP_DOTS));
+
+    foreach($objects as $current_file => $object){
+        if (is_file($current_file)) {
+          // get relative filename
+          $filename = str_replace($archiveDir, '', $current_file);
+   
+          $previously_exported_file = $dir_to_diff_against . '/' . $filename;
+
+          // if file doesn't exist at all in previous export:
+          if (is_file($previously_exported_file)) {
+            if ( $this->files_are_equal($current_file, $previously_exported_file)) {
+              unlink($current_file);
+            } 
+          } 
+        }
+    }
+
+    // TODO: cleanup empty dirs in archiveDir to prevent them being attempted to export
+
+    $files_in_previous_export = exec("find $dir_to_diff_against -type f | wc -l"); 
+    $files_to_be_deployed = exec("find $archiveDir -type f | wc -l"); 
+ 
+    // copy the newly changed files back into the previous export dir, else will never capture changes
+
+    // TODO: this works the first time, but will fail the diff on subsequent runs, alternating each time`
+  }
+
+  // default rename in PHP throws warnings if dir is populated
+  public function rename_populated_directory($source, $target) {
+    $this->recursive_copy($source, $target);
+
+    StaticHtmlOutput_FilesHelper::delete_dir_with_files($source);
+  }
+
+
+  public function files_are_equal($a, $b) {
+    // if image, use sha, if html, use something else
+    $pathinfo = pathinfo($a);
+    if (isset($pathinfo['extension']) && in_array($pathinfo['extension'], array('jpg', 'png', 'gif', 'jpeg'))) {
+      return sha1_file($a) === sha1_file($b);
+    }
+
+    $diff = exec("diff $a $b");
+    $result = $diff === '';
+
+    return $result;
+  }
+
+	public function detect_base_url() {
+		$site_url = get_option( 'siteurl' );
+		$home = get_option( 'home' );
+    $this->subdirectory = '';
+
+		// case for when WP is installed in a different place then being served
+		if ( $site_url !== $home ) {
+			$this->subdirectory = '/mysubdirectory';
+		}
+
+		$base_url = parse_url($site_url);
+
+		if ( array_key_exists('path', $base_url ) && $base_url['path'] != '/' ) {
+			$this->subdirectory = $base_url['path'];
+		}
+	}	
+
+  public function recursive_copy($srcdir, $dstdir) {
+    $dir = opendir($srcdir);
+    @mkdir($dstdir);
+    while ($file = readdir($dir)) {
+      if ($file != '.'  && $file != '..') {
+        $src = $srcdir . '/' . $file;
+        $dst = $dstdir . '/' . $file;
+        if (is_dir($src)) { 
+            $this->recursive_copy($src, $dst); 
+        } else { 
+          copy($src, $dst); 
+        }
+      }
+    }
+    closedir($dir);
+  }
+
+
+	public function copyStaticSiteToPublicFolder() {
+		if ( $this->selected_deployment_option == 'folder' ) {
+			$publicFolderToCopyTo = trim($this->targetFolder);
+
+			if ( ! empty($publicFolderToCopyTo) ) {
+				// if folder isn't empty and current deployment option is "folder"
+				$publicFolderToCopyTo = ABSPATH . $publicFolderToCopyTo;
+
+				// mkdir for the new dir
+				if (! file_exists($publicFolderToCopyTo)) {
+					if (wp_mkdir_p($publicFolderToCopyTo)) {
+						// file permissions to allow public viewing of files within
+						chmod($publicFolderToCopyTo, 0755);
+
+						// copy the contents of the current archive to the targetFolder
+						$archiveDir = untrailingslashit(file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE'));
+
+						$this->recursive_copy($archiveDir, $publicFolderToCopyTo);	
+
+					} else {
+						error_log('Couldn\'t create target folder to copy files to');
+					}
+				} else {
+
+					$archiveDir = untrailingslashit(file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE'));
+
+					$this->recursive_copy($archiveDir, $publicFolderToCopyTo);	
+				}
+			}
+		}
+	}
+
+  public function create_zip() {
+    $archiveDir = file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE');
+    $archiveName = rtrim($archiveDir, '/');
+    $tempZip = $archiveName . '.tmp';
+    $zipArchive = new ZipArchive();
+    if ($zipArchive->open($tempZip, ZIPARCHIVE::CREATE) !== true) {
+      return new WP_Error('Could not create archive');
+    }
+
+    $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($archiveDir));
+    foreach ($iterator as $fileName => $fileObject) {
+      $baseName = basename($fileName);
+      if($baseName != '.' && $baseName != '..') {
+        if (!$zipArchive->addFile(realpath($fileName), str_replace($archiveDir, '', $fileName))) {
+          return new WP_Error('Could not add file: ' . $fileName);
+        }
+      }
+    }
+
+    $zipArchive->close();
+    $zipDownloadLink = $archiveName . '.zip';
+    rename($tempZip, $zipDownloadLink); 
+    $publicDownloadableZip = str_replace(ABSPATH, trailingslashit(home_url()), $archiveName . '.zip');
+
+    echo 'SUCCESS';
+  }
+
+// TODO: re-apply below block
 
       $archiveDir = untrailingslashit(file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE'));
 
