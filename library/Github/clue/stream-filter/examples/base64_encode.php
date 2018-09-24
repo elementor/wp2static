@@ -25,3 +25,4 @@ Clue\StreamFilter\append(
 );
 
 fpassthru( STDIN );
+
