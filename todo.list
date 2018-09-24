@@ -1,4 +1,3 @@
-./library/Github/clue/stream-filter/examples/uppercase.php
 ./library/Github/clue/stream-filter/examples/base64_decode.php
 ./library/Github/clue/stream-filter/tests/FunZlibTest.php
 ./library/Github/clue/stream-filter/tests/FilterTest.php
