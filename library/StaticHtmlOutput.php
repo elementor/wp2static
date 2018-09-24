@@ -20,11 +20,9 @@ class StaticHtmlOutput_Controller {
 
       // load settings via Client or from DB if run from CLI
       if (null !== (filter_input(INPUT_POST, 'selected_deployment_option'))) {
-        // export being triggered via GUI, set all options from filtered posts
         self::$_instance->selected_deployment_option = filter_input(INPUT_POST, 'selected_deployment_option');
         self::$_instance->baseUrl = untrailingslashit(filter_input(INPUT_POST, 'baseUrl', FILTER_SANITIZE_URL));
         self::$_instance->diffBasedDeploys = filter_input(INPUT_POST, 'diffBasedDeploys');
-
       } 
 		}
 
@@ -122,28 +120,6 @@ class StaticHtmlOutput_Controller {
     echo $initial_file_list_count;
   }
 
-  public function generateModifiedFileList() {
-    // copy the preview crawl list within uploads dir to "modified list"
-    copy($this->uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST', $this->uploadsPath . '/WP-STATIC-MODIFIED-CRAWL-LIST');
-
-//    // process the modified list and make available for previewing from UI
-//    $initial_file_list_count = StaticHtmlOutput_FilesHelper::buildFinalFileList(
-//      $viaCLI,
-//      $this->additionalUrls,
-//      $this->getWorkingDirectory(),
-//      $this->uploadsURL,
-//      $this->getWorkingDirectory(),
-//      self::HOOK
-//    );
-
-    // copy the modified list to the working dir "finalized crawl list"
-    copy($this->uploadsPath . '/WP-STATIC-MODIFIED-CRAWL-LIST', $this->uploadsPath . '/WP-STATIC-FINAL-CRAWL-LIST');
-
-    // use finalized crawl list from working dir to start the export 
-
-    // if list has been (re)generated in the frontend, use it, else generate again at export time
-  }
-
 	public function renderOptionsPage() {
 		// Check system requirements
 		$uploadsFolderWritable = $this->uploadsPath && is_writable($this->uploadsPath);
@@ -235,8 +211,6 @@ class StaticHtmlOutput_Controller {
 	}
 
 	public function prepare_for_export($viaCLI = false) {
-    error_log('prepare_for_export()');
-
     require_once dirname(__FILE__) . '/StaticHtmlOutput/Exporter.php';
     $exporter = new Exporter();
 
@@ -245,7 +219,7 @@ class StaticHtmlOutput_Controller {
     $exporter->cleanup_leftover_archives();
     $exporter->initialize_cache_files();
 
-    // initilise log with environmental info
+    // TODO: move to exporter; wp env vars to views
     WsLog::l('STARTING EXPORT ' . date("Y-m-d h:i:s") );
     WsLog::l('STARTING EXPORT: PHP VERSION ' . phpversion() );
     WsLog::l('STARTING EXPORT: PHP MAX EXECUTION TIME ' . ini_get('max_execution_time') );
@@ -296,7 +270,7 @@ class StaticHtmlOutput_Controller {
   public function post_process_archive_dir() {
       // TODO: bypass plugin instantiating to process
       require_once dirname(__FILE__) . '/StaticHtmlOutput/ArchiveProcessor.php';
-      $processor = new HTMLProcessor();
+      $processor = new ArchiveProcessor();
 
       $processor->create_symlink_to_latest_archive();
 	}

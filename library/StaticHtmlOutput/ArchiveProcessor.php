@@ -2,7 +2,7 @@
 
 class ArchiveProcessor {
 
-  public function __construct($html_document, $wp_site_url){
+  public function __construct(){
     // TODO: prepare_export func to return archive name to client, then we use that directly here
 
     $this->archive_path = isset($_POST['archive_path']) ? $_POST['archive_path'] : '';
@@ -17,30 +17,33 @@ class ArchiveProcessor {
 
     $this->allowOfflineUsage = filter_input(INPUT_POST, 'allowOfflineUsage');
     $this->targetFolder = filter_input(INPUT_POST, 'targetFolder');
+
+		$this->wp_site_url = '';
+		$this->wp_site_subdir = '';
   }
 
 	public function create_symlink_to_latest_archive() {
-    if (is_file(($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE'))) {
-      $archiveDir = file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE');
+    if (is_file(($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE'))) {
+      $archiveDir = file_get_contents($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE');
 
       $this->remove_symlink_to_latest_archive();
-      symlink($archiveDir, $this->getWorkingDirectory() . '/latest-export' );
+      symlink($archiveDir, $this->working_directory . '/latest-export' );
     } else {
       error_log('failed to symlink latest export directory');
     }
 	}	
 
 	public function remove_symlink_to_latest_archive() {
-    $archiveDir = file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE');
+    $archiveDir = file_get_contents($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE');
 
-		if (is_link($this->getWorkingDirectory() . '/latest-export' )) {
-			unlink($this->getWorkingDirectory() . '/latest-export'  );
+		if (is_link($this->working_directory . '/latest-export' )) {
+			unlink($this->working_directory . '/latest-export'  );
 		} 
 	}	
 
   public function remove_files_idential_to_previous_export() {
-    $archiveDir = file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE');
-    $dir_to_diff_against = $this->getWorkingDirectory() . '/previous-export';
+    $archiveDir = file_get_contents($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE');
+    $dir_to_diff_against = $this->working_directory . '/previous-export';
 
     // iterate each file in current export, check the size and contents in previous, delete if match
     $objects = new RecursiveIteratorIterator(
@@ -95,22 +98,6 @@ class ArchiveProcessor {
     return $result;
   }
 
-	public function detect_base_url() {
-		$site_url = get_option( 'siteurl' );
-		$home = get_option( 'home' );
-    $this->subdirectory = '';
-
-		// case for when WP is installed in a different place then being served
-		if ( $site_url !== $home ) {
-			$this->subdirectory = '/mysubdirectory';
-		}
-
-		$base_url = parse_url($site_url);
-
-		if ( array_key_exists('path', $base_url ) && $base_url['path'] != '/' ) {
-			$this->subdirectory = $base_url['path'];
-		}
-	}	
 
   public function recursive_copy($srcdir, $dstdir) {
     $dir = opendir($srcdir);
@@ -145,7 +132,7 @@ class ArchiveProcessor {
 						chmod($publicFolderToCopyTo, 0755);
 
 						// copy the contents of the current archive to the targetFolder
-						$archiveDir = untrailingslashit(file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE'));
+						$archiveDir = untrailingslashit(file_get_contents($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE'));
 
 						$this->recursive_copy($archiveDir, $publicFolderToCopyTo);	
 
@@ -154,7 +141,7 @@ class ArchiveProcessor {
 					}
 				} else {
 
-					$archiveDir = untrailingslashit(file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE'));
+					$archiveDir = untrailingslashit(file_get_contents($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE'));
 
 					$this->recursive_copy($archiveDir, $publicFolderToCopyTo);	
 				}
@@ -163,7 +150,7 @@ class ArchiveProcessor {
 	}
 
   public function create_zip() {
-    $archiveDir = file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE');
+    $archiveDir = file_get_contents($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE');
     $archiveName = rtrim($archiveDir, '/');
     $tempZip = $archiveName . '.tmp';
     $zipArchive = new ZipArchive();
@@ -189,14 +176,7 @@ class ArchiveProcessor {
     echo 'SUCCESS';
   }
 
-// TODO: re-apply below block
-
-      $archiveDir = untrailingslashit(file_get_contents($this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE'));
-
-		$this->detect_base_url();
-
-		$archiveDir .= $this->subdirectory;
-
+  public function renameWPDirectories() {
 		// rename dirs (in reverse order than when doing in responsebody)
 		// rewrite wp-content  dir
 		$original_wp_content = $archiveDir . '/wp-content'; // TODO: check if this has been modified/use constant
@@ -280,5 +260,6 @@ class ArchiveProcessor {
 
 
 		echo 'SUCCESS';
+  }
 }
 
