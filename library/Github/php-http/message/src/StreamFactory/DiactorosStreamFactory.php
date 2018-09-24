@@ -1,4 +1,9 @@
 <?php
+/**
+ * DiactorosStreamFactory
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Message\StreamFactory;
 

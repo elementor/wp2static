@@ -1,4 +1,10 @@
 <?php
+/**
+ * DefaultClient
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Client;
 use Aws\Common\Enum\ClientOptions as Options;
 use Guzzle\Common\Collection;

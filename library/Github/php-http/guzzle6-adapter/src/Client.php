@@ -1,4 +1,9 @@
 <?php
+/**
+ * Client
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Adapter\Guzzle6;
 

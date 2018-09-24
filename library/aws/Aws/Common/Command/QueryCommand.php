@@ -1,4 +1,10 @@
 <?php
+/**
+ * QueryCommand
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Command;
 use Guzzle\Service\Command\OperationCommand;
 class QueryCommand extends OperationCommand

@@ -1,4 +1,10 @@
 <?php
+/**
+ * CallableWaiter
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Waiter;
 use Aws\Common\Exception\InvalidArgumentException;
 use Aws\Common\Exception\RuntimeException;

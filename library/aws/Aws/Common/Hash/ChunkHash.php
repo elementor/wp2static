@@ -1,4 +1,10 @@
 <?php
+/**
+ * ChunkHash
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Hash;
 use Aws\Common\Exception\LogicException;
 class ChunkHash implements ChunkHashInterface

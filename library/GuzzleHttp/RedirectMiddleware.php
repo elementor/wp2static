@@ -1,4 +1,10 @@
 <?php
+/**
+ * RedirectMiddleware
+ *
+ * @package WP2Static
+ */
+
 namespace GuzzleHttp;
 
 use GuzzleHttp\Exception\BadResponseException;

@@ -1,4 +1,10 @@
 <?php
+/**
+ * AstRuntime
+ *
+ * @package WP2Static
+ */
+
 namespace JmesPath;
 class AstRuntime
 {

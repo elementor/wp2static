@@ -1,4 +1,9 @@
 <?php
+/**
+ * StrategyUnavailableException
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Discovery\Exception;
 

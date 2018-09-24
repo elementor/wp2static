@@ -1,4 +1,10 @@
 <?php
+/**
+ * Pool
+ *
+ * @package WP2Static
+ */
+
 namespace GuzzleHttp;
 
 use GuzzleHttp\Promise\PromisorInterface;

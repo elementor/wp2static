@@ -1,4 +1,9 @@
 <?php
+/**
+ * CommonClassesStrategy
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Discovery\Strategy;
 

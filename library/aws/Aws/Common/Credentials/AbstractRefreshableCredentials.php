@@ -1,4 +1,10 @@
 <?php
+/**
+ * AbstractRefreshableCredentials
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Credentials;
 abstract class AbstractRefreshableCredentials extends AbstractCredentialsDecorator
 {

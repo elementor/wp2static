@@ -1,4 +1,9 @@
 <?php
+/**
+ * StreamInterface
+ *
+ * @package WP2Static
+ */
 
 namespace Psr\Http\Message;
 

@@ -1,4 +1,9 @@
 <?php
+/**
+ * Rule
+ *
+ * @package WP2Static
+ */
 
 namespace Sabberworm\CSS\Rule;
 

@@ -1,4 +1,10 @@
 <?php
+/**
+ * HandlerStack
+ *
+ * @package WP2Static
+ */
+
 namespace GuzzleHttp;
 
 use Psr\Http\Message\RequestInterface;

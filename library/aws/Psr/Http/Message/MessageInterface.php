@@ -1,4 +1,10 @@
 <?php
+/**
+ * MessageInterface
+ *
+ * @package WP2Static
+ */
+
 namespace Psr\Http\Message;
 interface MessageInterface
 {

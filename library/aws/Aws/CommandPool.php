@@ -1,4 +1,10 @@
 <?php
+/**
+ * CommandPool
+ *
+ * @package WP2Static
+ */
+
 namespace Aws;
 use GuzzleHttp\Promise\PromisorInterface;
 use GuzzleHttp\Promise\EachPromise;

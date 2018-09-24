@@ -1,4 +1,10 @@
 <?php
+/**
+ * Functions
+ *
+ * @package WP2Static
+ */
+
 namespace GuzzleHttp;
 
 use GuzzleHttp\Handler\CurlHandler;

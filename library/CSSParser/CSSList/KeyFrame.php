@@ -1,4 +1,9 @@
 <?php
+/**
+ * KeyFrame
+ *
+ * @package WP2Static
+ */
 
 namespace Sabberworm\CSS\CSSList;
 

@@ -1,4 +1,10 @@
 <?php
+/**
+ * TaskQueueInterface
+ *
+ * @package WP2Static
+ */
+
 namespace GuzzleHttp\Promise;
 
 interface TaskQueueInterface

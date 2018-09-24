@@ -1,5 +1,7 @@
 <?php
 /**
+ * StaticHtmlOutput_Dropbox
+ *
  * @package WP Static HTML Output
  *
  * Copyright (c) 2011 Leon Stafford
@@ -47,7 +49,7 @@ class StaticHtmlOutput_Dropbox
 					$targetPath = ltrim($targetPath, '/');
 					$export_line = $dir .'/' . $item . ',' . $targetPath . "\n";
 					file_put_contents($this->_exportFileList, $export_line, FILE_APPEND | LOCK_EX);
-				} 
+				}
 			}
 		}
 	}
@@ -96,7 +98,7 @@ class StaticHtmlOutput_Dropbox
 			$targetPath = rtrim($targetPath);
 
 
-			// vendor specific 
+			// vendor specific
  
 			$api_url = 'https://content.dropboxapi.com/2/files/upload'; //dropbox api url
 
@@ -137,14 +139,14 @@ class StaticHtmlOutput_Dropbox
 
 			curl_close($ch);
 
-			// end vendor specific 
+			// end vendor specific
 
 			$filesRemaining = $this->get_remaining_items_count();
 
 			if ( $filesRemaining > 0 ) {
         // if this is via CLI, then call this function again here
         if ($viaCLI) {
-          $this->transfer_files(true); 
+          $this->transfer_files(true);
         }
 
 				echo $filesRemaining;

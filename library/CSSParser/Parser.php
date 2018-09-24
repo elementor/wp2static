@@ -1,4 +1,9 @@
 <?php
+/**
+ * Parser
+ *
+ * @package WP2Static
+ */
 
 namespace Sabberworm\CSS;
 

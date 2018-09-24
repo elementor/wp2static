@@ -1,5 +1,7 @@
 <?php
 /**
+ * StaticHtmlOutput_FilesHelper
+ *
  * @package WP Static HTML Output
  *
  * Copyright (c) 2011 Leon Stafford
@@ -13,17 +15,17 @@ class StaticHtmlOutput_FilesHelper
 		$this->_directory = '';
 	}
 
-	public static function delete_dir_with_files($dir) { 
+	public static function delete_dir_with_files($dir) {
     if (is_dir($dir)) {
-      $files = array_diff(scandir($dir), array('.','..')); 
+      $files = array_diff(scandir($dir), array('.','..'));
 
-      foreach ($files as $file) { 
-        (is_dir("$dir/$file")) ? self::delete_dir_with_files("$dir/$file") : unlink("$dir/$file"); 
-      } 
+      foreach ($files as $file) {
+        (is_dir("$dir/$file")) ? self::delete_dir_with_files("$dir/$file") : unlink("$dir/$file");
+      }
 
-      return rmdir($dir); 
+      return rmdir($dir);
     }
-	} 
+	}
 
 	public static function recursively_scan_dir($dir, $siteroot, $file_list_path){
 		// rm duplicate slashes in path (TODO: fix cause)
@@ -44,7 +46,7 @@ class StaticHtmlOutput_FilesHelper
 					//$this->wsLog('FILE TO ADD:');
 					//$this->wsLog($filename);
 					file_put_contents($file_list_path, $filename, FILE_APPEND | LOCK_EX);
-				} 
+				}
 			}
 		}
 	}
@@ -57,7 +59,7 @@ class StaticHtmlOutput_FilesHelper
     if (is_dir($directory)) {
       $iterator = new RecursiveIteratorIterator(
           new RecursiveDirectoryIterator(
-            $directory, 
+            $directory,
             RecursiveDirectoryIterator::SKIP_DOTS));
 
       foreach ($iterator as $fileName => $fileObject) {
@@ -66,7 +68,7 @@ class StaticHtmlOutput_FilesHelper
               array_push($files, home_url(str_replace(ABSPATH, '', $fileName)));
             }
       }
-    } 
+    }
 
     return $files;
   }
@@ -89,10 +91,10 @@ class StaticHtmlOutput_FilesHelper
   }
 
 	public static function buildInitialFileList(
-		$viaCLI = false, 
+		$viaCLI = false,
 		$uploadsPath,
-		$uploadsURL, 
-		$workingDirectory, 
+		$uploadsURL,
+		$workingDirectory,
 		$pluginHook) {
 
 		$baseUrl = untrailingslashit(home_url());
@@ -116,11 +118,11 @@ class StaticHtmlOutput_FilesHelper
 
   // TODO: copy initial file list and process as per generateModifiedFileList() notes
 	public static function buildFinalFileList(
-		$viaCLI = false, 
-		$additionalUrls, 
+		$viaCLI = false,
+		$additionalUrls,
 		$uploadsPath, // TODO: also working dir?
-		$uploadsURL, 
-		$workingDirectory, 
+		$uploadsURL,
+		$workingDirectory,
 		$pluginHook) {
 
 		// saving the current archive name to file to persist across requests / functions
@@ -193,7 +195,7 @@ class StaticHtmlOutput_FilesHelper
                 http://domain.com/2018/01/01/
                 http://domain.com/2018/01/
                 http://domain.com/2018/
-            */ 
+            */
 
             $parsed_link = parse_url($permalink);
             $link_host = $wp_site_url . '/'; // rely on WP's site URL vs reconstructing from parsed
@@ -202,7 +204,7 @@ class StaticHtmlOutput_FilesHelper
             // TODO: Windows filepath support?
             $path_segments = explode('/', $link_path);
 
-            // remove first and last empty elements 
+            // remove first and last empty elements
             array_shift($path_segments);
             array_pop($path_segments);
 
@@ -241,7 +243,7 @@ class StaticHtmlOutput_FilesHelper
           }
         }
 
-        // de-duplicate the array 
+        // de-duplicate the array
         return array_unique($postURLs);
     }
 }

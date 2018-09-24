@@ -1,4 +1,10 @@
 <?php
+/**
+ * SyntaxErrorException
+ *
+ * @package WP2Static
+ */
+
 namespace JmesPath;
 class SyntaxErrorException extends \InvalidArgumentException
 {

@@ -1,4 +1,10 @@
 <?php
+/**
+ * UploadedFileInterface
+ *
+ * @package WP2Static
+ */
+
 namespace Psr\Http\Message;
 interface UploadedFileInterface
 {

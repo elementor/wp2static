@@ -1,4 +1,10 @@
 <?php
+/**
+ * S3UriParser
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\S3;
 
 use GuzzleHttp\Psr7;

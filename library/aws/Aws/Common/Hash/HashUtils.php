@@ -1,4 +1,10 @@
 <?php
+/**
+ * HashUtils
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Hash;
 use Aws\Common\Exception\InvalidArgumentException;
 class HashUtils

@@ -1,4 +1,10 @@
 <?php
+/**
+ * AwsResourceIteratorFactory
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Iterator;
 use Aws\Common\Exception\InvalidArgumentException;
 use Guzzle\Common\Collection;

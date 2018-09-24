@@ -1,4 +1,10 @@
 <?php
+/**
+ * Middleware
+ *
+ * @package WP2Static
+ */
+
 namespace Aws;
 use Aws\Api\Service;
 use Aws\Api\Validator;

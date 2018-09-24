@@ -1,4 +1,10 @@
 <?php
+/**
+ * CookieJar
+ *
+ * @package WP2Static
+ */
+
 namespace GuzzleHttp\Cookie;
 
 use Psr\Http\Message\RequestInterface;

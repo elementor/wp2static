@@ -1,4 +1,9 @@
 <?php
+/**
+ * PathPrepend
+ *
+ * @package WP2Static
+ */
 
 namespace Github\HttpClient\Plugin;
 

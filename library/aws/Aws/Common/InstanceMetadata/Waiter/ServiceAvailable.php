@@ -1,4 +1,10 @@
 <?php
+/**
+ * ServiceAvailable
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\InstanceMetadata\Waiter;
 use Aws\Common\Waiter\AbstractResourceWaiter;
 use Guzzle\Http\Exception\CurlException;

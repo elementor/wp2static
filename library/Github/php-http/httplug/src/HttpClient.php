@@ -1,4 +1,9 @@
 <?php
+/**
+ * HttpClient
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Client;
 

@@ -1,6 +1,11 @@
 <?php
+/**
+ * FileCopier
+ *
+ * @package WP2Static
+ */
 
-// TODO: if this fails to locate the local file for the remote, 
+// TODO: if this fails to locate the local file for the remote,
 //        it should fall back to regular crawl processing method
 //         (where response status will also be checked in case of 404)
 
@@ -12,7 +17,7 @@ class FileCopier {
   }
 
   public function getLocalFileForURL() {
-    /* 
+    /*
       take the public URL and return the location on the filesystem
 
       ie http://domain.com/wp-content/somefile.jpg
@@ -23,7 +28,7 @@ class FileCopier {
 
       replace http://domain.com/ with /var/www/domain.com/html/
 
-      resulting in 
+      resulting in
 
       ie /var/www/domain.com/html/wp-content/somefile.jpg
 
@@ -37,7 +42,7 @@ class FileCopier {
 
     $local_file = $this->getLocalFileForURL();
 
-		/* 
+		/*
 		  $urlInfo['path'] will look like:
 
 			(file with extension)
@@ -56,14 +61,14 @@ class FileCopier {
 
 	  $pathInfo = pathinfo($urlInfo['path']);
 
-		// set fileDir to the directory name else empty	
+		// set fileDir to the directory name else empty
 		$fileDir = $archiveDir . (isset($pathInfo['dirname']) ? $pathInfo['dirname'] : '');
 
 		if (!file_exists($fileDir)) {
 			wp_mkdir_p($fileDir);
 		}
 
-    $fileExtension = $pathInfo['extension']; 
+    $fileExtension = $pathInfo['extension'];
 			
     $fileName = $fileDir . '/' . $pathInfo['filename'] . '.' . $fileExtension;
 

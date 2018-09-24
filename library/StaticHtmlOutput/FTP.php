@@ -1,5 +1,7 @@
 <?php
 /**
+ * StaticHtmlOutput_FTP
+ *
  * @package WP Static HTML Output
  *
  * Copyright (c) 2011 Leon Stafford
@@ -76,7 +78,7 @@ class StaticHtmlOutput_FTP
 					$targetPath = ltrim($targetPath, '/');
 					$export_line = $dir .'/' . $item . ',' . $targetPath . "\n";
 					file_put_contents($this->_exportFileList, $export_line, FILE_APPEND | LOCK_EX);
-				} 
+				}
 			}
 		}
 	}
@@ -158,14 +160,14 @@ class StaticHtmlOutput_FTP
     $ftp->putFromPath($fileToTransfer);
 
     unset($ftp);
-    // end vendor specific 
+    // end vendor specific
 
     $filesRemaining = $this->get_remaining_items_count();
 
     if ( $this->get_remaining_items_count() > 0 ) {
 
       if ($viaCLI) {
-        $this->transfer_files(true); 
+        $this->transfer_files(true);
       }
 
       echo $this->get_remaining_items_count();

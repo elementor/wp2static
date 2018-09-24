@@ -1,4 +1,10 @@
 <?php
+/**
+ * AbstractLogger
+ *
+ * @package WP2Static
+ */
+
 namespace Psr\Log;
 abstract class AbstractLogger implements LoggerInterface
 {

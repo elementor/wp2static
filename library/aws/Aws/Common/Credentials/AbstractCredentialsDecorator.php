@@ -1,4 +1,10 @@
 <?php
+/**
+ * AbstractCredentialsDecorator
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Credentials;
 class AbstractCredentialsDecorator implements CredentialsInterface
 {

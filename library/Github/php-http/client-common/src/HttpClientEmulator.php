@@ -1,4 +1,9 @@
 <?php
+/**
+ * HttpClientEmulator
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Client\Common;
 

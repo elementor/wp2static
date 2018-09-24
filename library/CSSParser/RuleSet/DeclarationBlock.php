@@ -1,4 +1,9 @@
 <?php
+/**
+ * DeclarationBlock
+ *
+ * @package WP2Static
+ */
 
 namespace Sabberworm\CSS\RuleSet;
 
@@ -87,7 +92,7 @@ class DeclarationBlock extends RuleSet {
 	public function createShorthands() {
 		$this->createBackgroundShorthand();
 		$this->createDimensionsShorthand();
-		// border must be shortened after dimensions 
+		// border must be shortened after dimensions
 		$this->createBorderShorthand();
 		$this->createFontShorthand();
 		$this->createListStyleShorthand();
@@ -446,7 +451,7 @@ class DeclarationBlock extends RuleSet {
 
 	/*
 	 * Looks for long format CSS dimensional properties
-	 * (margin, padding, border-color, border-style and border-width) 
+	 * (margin, padding, border-color, border-style and border-width)
 	 * and converts them into shorthand CSS properties.
 	 * */
 
@@ -501,7 +506,7 @@ class DeclarationBlock extends RuleSet {
 						$oNewRule->addValue($aValues['bottom']);
 					}
 				} else {
-					// No sides are equal 
+					// No sides are equal
 					$oNewRule->addValue($aValues['top']);
 					$oNewRule->addValue($aValues['left']);
 					$oNewRule->addValue($aValues['bottom']);
@@ -516,8 +521,8 @@ class DeclarationBlock extends RuleSet {
 	}
 
 	/**
-	 * Looks for long format CSS font properties (e.g. <tt>font-weight</tt>) and 
-	 * tries to convert them into a shorthand CSS <tt>font</tt> property. 
+	 * Looks for long format CSS font properties (e.g. <tt>font-weight</tt>) and
+	 * tries to convert them into a shorthand CSS <tt>font</tt> property.
 	 * At least font-size AND font-family must be present in order to create a shorthand declaration.
 	 * */
 	public function createFontShorthand() {

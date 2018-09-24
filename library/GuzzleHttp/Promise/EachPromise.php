@@ -1,4 +1,10 @@
 <?php
+/**
+ * EachPromise
+ *
+ * @package WP2Static
+ */
+
 namespace GuzzleHttp\Promise;
 
 /**

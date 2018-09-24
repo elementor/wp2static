@@ -1,4 +1,9 @@
 <?php
+/**
+ * FilteredStream
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Message\Encoding;
 

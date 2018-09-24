@@ -1,4 +1,10 @@
 <?php
+/**
+ * SetCookie
+ *
+ * @package WP2Static
+ */
+
 namespace GuzzleHttp\Cookie;
 
 /**

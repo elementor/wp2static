@@ -1,4 +1,9 @@
 <?php
+/**
+ * CookieJar
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Message;
 

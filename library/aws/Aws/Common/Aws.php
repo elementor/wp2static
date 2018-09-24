@@ -1,4 +1,10 @@
 <?php
+/**
+ * Aws
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common;
 use Aws\Common\Facade\Facade;
 use Guzzle\Service\Builder\ServiceBuilder;

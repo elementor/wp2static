@@ -1,4 +1,10 @@
 <?php
+/**
+ * Env
+ *
+ * @package WP2Static
+ */
+
 namespace JmesPath;
 final class Env
 {

@@ -1,4 +1,10 @@
 <?php
+/**
+ * CacheableCredentials
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Credentials;
 use Guzzle\Cache\CacheAdapterInterface;
 class CacheableCredentials extends AbstractRefreshableCredentials

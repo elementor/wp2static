@@ -1,4 +1,9 @@
 <?php
+/**
+ * HeaderCacheKeyGenerator
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Client\Common\Plugin\Cache\Generator;
 

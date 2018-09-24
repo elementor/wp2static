@@ -1,4 +1,10 @@
 <?php
+/**
+ * PhpHash
+ *
+ * @package WP2Static
+ */
+
 namespace Aws;
 class PhpHash implements HashInterface
 {

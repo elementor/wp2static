@@ -1,4 +1,9 @@
 <?php
+/**
+ * History
+ *
+ * @package WP2Static
+ */
 
 namespace Github\HttpClient\Plugin;
 

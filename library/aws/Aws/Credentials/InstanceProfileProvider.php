@@ -1,4 +1,10 @@
 <?php
+/**
+ * InstanceProfileBuilder
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Credentials;
 
 use Aws\Exception\CredentialsException;

@@ -1,4 +1,9 @@
 <?php
+/**
+ * DeployKeys
+ *
+ * @package WP2Static
+ */
 
 namespace Github\Api\Repository;
 

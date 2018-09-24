@@ -1,5 +1,7 @@
 <?php
 /**
+ * StaticHtmlOutput_GitHub
+ *
  * @package WP Static HTML Output
  *
  * Copyright (c) 2011 Leon Stafford
@@ -61,7 +63,7 @@ class StaticHtmlOutput_GitHub
 					$targetPath = ltrim($targetPath, '/');
 					$export_line = $dir .'/' . $item . ',' . $targetPath . "\n";
 					file_put_contents($this->_exportFileList, $export_line, FILE_APPEND | LOCK_EX);
-				} 
+				}
 			}
 		}
 	}
@@ -122,8 +124,8 @@ class StaticHtmlOutput_GitHub
 			
 			try {
 				$globHash = $client->api('gitData')->blobs()->create(
-						$this->_user, 
-						$this->_repository, 
+						$this->_user,
+						$this->_repository,
 						array('content' => $encodedFile, 'encoding' => 'base64')
 						); # utf-8 or base64
 			} catch (Exception $e) {
@@ -137,14 +139,14 @@ class StaticHtmlOutput_GitHub
 			$globHashPathLine = $globHash['sha'] . ',' . rtrim($targetPath) . basename($fileToTransfer) . "\n";
 			file_put_contents($this->_globHashAndPathList, $globHashPathLine, FILE_APPEND | LOCK_EX);
 
-			// end vendor specific 
+			// end vendor specific
 			$filesRemaining = $this->get_remaining_items_count();
 
 			if ( $this->get_remaining_items_count() > 0 ) {
 
         // if this is via CLI, then call this function again here
         if ($viaCLI) {
-          $this->upload_blobs(true); 
+          $this->upload_blobs(true);
         }
 
 				echo $this->get_remaining_items_count();
@@ -203,7 +205,7 @@ class StaticHtmlOutput_GitHub
           throw new Exception($e);
         }
 
-        // end vendor specific 
+        // end vendor specific
         $filesRemaining = $this->get_remaining_items_count();
 
         if ( $this->get_remaining_items_count() > 0 ) {

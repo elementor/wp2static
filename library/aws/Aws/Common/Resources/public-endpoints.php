@@ -1,4 +1,10 @@
 <?php
+/**
+ * Public endpoints
+ *
+ * @package WP2Static
+ */
+
 return array(
     'version' => 2,
     'endpoints' => array(

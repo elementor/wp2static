@@ -1,4 +1,10 @@
 <?php
+/**
+ * AbstractTransfer
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Model\MultipartUpload;
 use Aws\Common\Client\AwsClientInterface;
 use Aws\Common\Exception\MultipartUploadException;

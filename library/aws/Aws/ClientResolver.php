@@ -1,4 +1,10 @@
 <?php
+/**
+ * ClientResolver
+ *
+ * @package WP2Static
+ */
+
 namespace Aws;
 
 use Aws\Api\Validator;

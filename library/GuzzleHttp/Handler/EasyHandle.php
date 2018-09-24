@@ -1,4 +1,10 @@
 <?php
+/**
+ * EasyHandle
+ *
+ * @package WP2Static
+ */
+
 namespace GuzzleHttp\Handler;
 
 use GuzzleHttp\Psr7\Response;

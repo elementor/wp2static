@@ -1,4 +1,10 @@
 <?php
+/**
+ * Region
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Enum;
 use Aws\Common\Enum;
 class Region extends Enum

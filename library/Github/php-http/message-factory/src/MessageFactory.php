@@ -1,4 +1,9 @@
 <?php
+/**
+ * MessageFactory
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Message;
 

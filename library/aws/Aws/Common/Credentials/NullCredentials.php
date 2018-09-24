@@ -1,4 +1,10 @@
 <?php
+/**
+ * NullCredentials
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Credentials;
 class NullCredentials implements CredentialsInterface
 {

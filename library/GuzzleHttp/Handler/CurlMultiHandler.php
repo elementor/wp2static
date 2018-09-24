@@ -1,4 +1,10 @@
 <?php
+/**
+ * CurlMultiHandler
+ *
+ * @package WP2Static
+ */
+
 namespace GuzzleHttp\Handler;
 
 use GuzzleHttp\Promise as P;

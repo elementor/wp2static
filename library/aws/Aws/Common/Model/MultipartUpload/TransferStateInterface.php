@@ -1,4 +1,10 @@
 <?php
+/**
+ * TransferStateInterface
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Model\MultipartUpload;
 use Aws\Common\Client\AwsClientInterface;
 interface TransferStateInterface extends \Countable, \IteratorAggregate, \Serializable

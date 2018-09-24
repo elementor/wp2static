@@ -1,4 +1,10 @@
 <?php
+/**
+ * SessionCookieJar
+ *
+ * @package WP2Static
+ */
+
 namespace GuzzleHttp\Cookie;
 
 /**

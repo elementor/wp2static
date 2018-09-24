@@ -1,10 +1,14 @@
 <?php
-
+/**
+ * CSSProcessor
+ *
+ * @package WP2Static
+ */
 
 class CSSProcessor {
 
   public function __construct($css_document, $wp_site_url){
-    $this->wp_site_url = $wp_site_url;   
+    $this->wp_site_url = $wp_site_url;
  
     // parse CSS into easily modifiable form
     require_once dirname(__FILE__) . '/../CSSParser/Parser.php';

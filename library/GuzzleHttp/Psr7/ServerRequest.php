@@ -1,4 +1,9 @@
 <?php
+/**
+ * ServerRequest
+ *
+ * @package WP2Static
+ */
 
 namespace GuzzleHttp\Psr7;
 

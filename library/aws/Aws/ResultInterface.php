@@ -1,4 +1,10 @@
 <?php
+/**
+ * ResultInterface
+ *
+ * @package WP2Static
+ */
+
 namespace Aws;
 interface ResultInterface extends \ArrayAccess, \IteratorAggregate, \Countable
 {

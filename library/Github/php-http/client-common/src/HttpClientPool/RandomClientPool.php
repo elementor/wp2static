@@ -1,4 +1,9 @@
 <?php
+/**
+ * RandomClientPool
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Client\Common\HttpClientPool;
 

@@ -1,4 +1,9 @@
 <?php
+/**
+ * GraphQL
+ *
+ * @package WP2Static
+ */
 
 namespace Github\Api;
 
@@ -13,7 +18,7 @@ namespace Github\Api;
 class GraphQL extends AbstractApi
 {
     use AcceptHeaderTrait;
-    
+
     /**
      * @param string $query
      * @param array $variables
@@ -32,7 +37,7 @@ class GraphQL extends AbstractApi
 
         return $this->post('/graphql', $params);
     }
-    
+
     /**
      * @param string $file
      * @param array $variables

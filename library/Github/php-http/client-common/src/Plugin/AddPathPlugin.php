@@ -1,4 +1,9 @@
 <?php
+/**
+ * AddPathPlugin
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Client\Common\Plugin;
 

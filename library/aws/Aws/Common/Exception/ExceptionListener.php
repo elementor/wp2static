@@ -1,4 +1,10 @@
 <?php
+/**
+ * ExceptionListener
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Exception;
 use Guzzle\Common\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

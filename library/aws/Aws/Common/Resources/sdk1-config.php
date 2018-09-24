@@ -1,4 +1,10 @@
 <?php
+/**
+ * SDK1 config
+ *
+ * @package WP2Static
+ */
+
 return array(
     'includes' => array('_aws'),
     'services' => array(

@@ -1,4 +1,9 @@
 <?php
+/**
+ * ErrorPlugin
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Client\Common\Plugin;
 

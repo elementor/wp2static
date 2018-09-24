@@ -1,4 +1,10 @@
 <?php
+/**
+ * InstanceProfileCredentialsException
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Exception;
 use Aws\Common\Exception\RuntimeException;
 class InstanceProfileCredentialsException extends RuntimeException

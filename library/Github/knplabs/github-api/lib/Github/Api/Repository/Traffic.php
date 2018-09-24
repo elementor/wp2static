@@ -1,4 +1,10 @@
 <?php
+/**
+ * Traffic
+ *
+ * @package WP2Static
+ */
+
 namespace Github\Api\Repository;
 
 use Github\Api\AbstractApi;

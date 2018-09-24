@@ -1,4 +1,10 @@
 <?php
+/**
+ * LoggerInterface
+ *
+ * @package WP2Static
+ */
+
 namespace Psr\Log;
 interface LoggerInterface
 {

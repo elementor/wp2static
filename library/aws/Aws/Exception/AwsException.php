@@ -1,4 +1,10 @@
 <?php
+/**
+ * AwsException
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Exception;
 
 use Psr\Http\Message\ResponseInterface;

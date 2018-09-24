@@ -1,4 +1,10 @@
 <?php
+/**
+ * Refreshable...
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Credentials;
 use Aws\Common\InstanceMetadata\InstanceMetadataClient;
 use Aws\Common\Exception\InstanceProfileCredentialsException;

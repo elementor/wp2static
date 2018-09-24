@@ -1,4 +1,9 @@
 <?php
+/**
+ * FulfilledPromise
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Promise;
 

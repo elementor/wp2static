@@ -1,4 +1,9 @@
 <?php
+/**
+ * Promise
+ *
+ * @package WP2Static
+ */
 
 namespace Http\Promise;
 

@@ -1,4 +1,10 @@
 <?php
+/**
+ * AbstractResourceWaiter
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Common\Waiter;
 use Aws\Common\Client\AwsClientInterface;
 use Aws\Common\Exception\RuntimeException;

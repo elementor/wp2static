@@ -1,4 +1,9 @@
 <?php
+/**
+ * Assets
+ *
+ * @package WP2Static
+ */
 
 namespace Github\Api\Repository;
 

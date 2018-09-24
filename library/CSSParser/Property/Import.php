@@ -1,4 +1,9 @@
 <?php
+/**
+ * Import
+ *
+ * @package WP2Static
+ */
 
 namespace Sabberworm\CSS\Property;
 
