@@ -4,22 +4,30 @@
  *
  * @package WP2Static
  */
-
 class WsLog {
 
-  public static function l($text) {
-    $tmp_var_to_hold_return_array = wp_upload_dir();
-    $file = $tmp_var_to_hold_return_array['basedir'] . '/WP-STATIC-EXPORT-LOG';
+    /**
+     * Log
+     *
+     * @param string $text Log message
+     * @return void
+     */
+    public static function l( $text ) {
+        $tmp_var_to_hold_return_array = wp_upload_dir();
 
-    $src = fopen($file, (file_exists($file)) ? 'r+' : 'w');
-    $dest = fopen('php://temp', 'w');
+        $file = $tmp_var_to_hold_return_array['basedir'] .
+            '/WP-STATIC-EXPORT-LOG';
 
-    fwrite($dest,  date("Y-m-d h:i:s") . ' ' . $text . PHP_EOL);
-    stream_copy_to_stream($src, $dest);
-    rewind($dest);
-    rewind($src);
-    stream_copy_to_stream($dest, $src);
-    fclose($src);
-    fclose($dest);
-  }
+        $src = fopen( $file, ( file_exists( $file ) ) ? 'r+' : 'w' );
+        $dest = fopen( 'php://temp', 'w' );
+
+        fwrite( $dest, date( 'Y-m-d h:i:s' ) . ' ' . $text . PHP_EOL );
+        stream_copy_to_stream( $src, $dest );
+        rewind( $dest );
+        rewind( $src );
+        stream_copy_to_stream( $dest, $src );
+        fclose( $src );
+        fclose( $dest );
+    }
 }
+

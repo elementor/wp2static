@@ -3,3 +3,4 @@
 ./library/Github/clue/stream-filter/examples/base64_encode.php
 ./library/Github/clue/stream-filter/examples/uppercase.php
 ./library/StaticHtmlOutput/Options.php
+./library/StaticHtmlOutput/WsLog.php
