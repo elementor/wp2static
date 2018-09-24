@@ -163,10 +163,10 @@ class StaticHtmlOutput_Controller {
 		$outputDir = '';
 
 		// priorities: from UI; from settings; fallback to WP uploads path
-		if (isset($this->outputDirectory) ) {
-			$outputDir = $this->outputDirectory;
-		} elseif ($this->options->outputDirectory) {
-      $outputDir = $this->options->outputDirectory;
+		if (isset($this->workingDirectory) ) {
+			$outputDir = $this->workingDirectory;
+		} elseif ($this->options->oworkingDirectory) {
+      $outputDir = $this->options->workingDirectory;
     } else {
       $outputDir = $this->wp_site->uploads_path;
     }
@@ -205,7 +205,7 @@ class StaticHtmlOutput_Controller {
     WsLog::l('STARTING EXPORT: WP ADDRESS ' . get_bloginfo('wpurl') );
     WsLog::l('STARTING EXPORT: PLUGIN VERSION ' . $this::VERSION );
     WsLog::l('STARTING EXPORT: VIA CLI? ' . $viaCLI);
-    WsLog::l('STARTING EXPORT: STATIC EXPORT URL ' . $this->baseUrl );
+    WsLog::l('STARTING EXPORT: STATIC EXPORT URL ' . $exporter->baseUrl);
 
     $exporter->generateModifiedFileList();
 
@@ -247,5 +247,7 @@ class StaticHtmlOutput_Controller {
       $processor = new ArchiveProcessor();
 
       $processor->create_symlink_to_latest_archive();
+
+      $processor->renameWPDirectories();
 	}
 }

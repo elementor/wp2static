@@ -14,7 +14,7 @@ class SiteCrawler {
 
     // WP env settings
     $this->baseUrl = $_POST['baseUrl'];
-    $this->working_dir = $_POST['outputDirectory'];
+    $this->working_directory = $_POST['workingDirectory'];
     $this->wp_site_url = $_POST['wp_site_url']; 
     $this->wp_site_path = $_POST['wp_site_path']; 
     $this->wp_uploads_path = $_POST['wp_uploads_path'];
@@ -51,7 +51,7 @@ class SiteCrawler {
   }
 
   public function crawl_site($viaCLI = false) {
-    $this->initial_crawl_list_file = $this->working_dir . '/WP-STATIC-FINAL-CRAWL-LIST';
+    $this->initial_crawl_list_file = $this->working_directory . '/WP-STATIC-FINAL-CRAWL-LIST';
     if (! is_file($this->initial_crawl_list_file)) {
       error_log('could not find initial crawl list file');
     } else {
@@ -68,11 +68,11 @@ class SiteCrawler {
 
     $batch_of_links_to_crawl = array();
 
-    $this->archive_dir = file_get_contents($this->working_dir . '/WP-STATIC-CURRENT-ARCHIVE');
+    $this->archive_dir = file_get_contents($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE');
 
     $this->initial_crawl_list_file = $this->wp_uploads_path . '/WP-STATIC-INITIAL-CRAWL-LIST';
 
-    $this->crawled_links_file = $this->working_dir . '/WP-STATIC-CRAWLED-LINKS';
+    $this->crawled_links_file = $this->working_directory . '/WP-STATIC-CRAWLED-LINKS';
 
     $this->initial_crawl_list = file($this->initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
 
