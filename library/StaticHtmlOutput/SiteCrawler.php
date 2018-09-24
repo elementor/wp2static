@@ -14,10 +14,11 @@ class SiteCrawler {
 
     // WP env settings
     $this->baseUrl = $_POST['baseUrl'];
-    $this->working_dir = $_POST['outputDirectory']; // // TODO: location of uploads dir?
+    $this->working_dir = $_POST['outputDirectory'];
     $this->wp_site_url = $_POST['wp_site_url']; 
     $this->wp_site_path = $_POST['wp_site_path']; 
-    $this->uploads_path = $_POST['wp_uploads_path'];
+    $this->wp_uploads_path = $_POST['wp_uploads_path'];
+    $this->wp_uploads_url = $_POST['wp_uploads_url'];
 
     // processing related settings
     $this->rewriteWPCONTENT = $_POST['rewriteWPCONTENT'];
@@ -68,9 +69,16 @@ class SiteCrawler {
 
     $this->archive_dir = file_get_contents($this->working_dir . '/WP-STATIC-CURRENT-ARCHIVE');
 
-    $this->initial_crawl_list_file = $this->working_dir . '/WP-STATIC-INITIAL-CRAWL-LIST';
+    $this->initial_crawl_list_file = $this->wp_uploads_url . '/WP-STATIC-INITIAL-CRAWL-LIST';
     $this->crawled_links_file = $this->working_dir . '/WP-STATIC-CRAWLED-LINKS';
-    $this->initial_crawl_list = file($this->initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
+
+    if (is_file($this->crawled_links_file)) {
+      $this->initial_crawl_list = file($this->initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
+    } else {
+      error_log('crawled links file not found');
+      die();
+    }
+
     $crawled_links = file($this->crawled_links_file, FILE_IGNORE_NEW_LINES);
     $total_links = sizeOf($this->initial_crawl_list);
 
@@ -158,7 +166,7 @@ class SiteCrawler {
     $wp_site_environment = array(
         'wp_inc' =>  '/' . WPINC,	
         'wp_content' => '/wp-content', // TODO: check if this has been modified/use constant
-        'wp_uploads' =>  str_replace(ABSPATH, '/', $this->uploads_path),	
+        'wp_uploads' =>  str_replace(ABSPATH, '/', $this->wp_uploads_path),	
         'wp_plugins' =>  str_replace(ABSPATH, '/', WP_PLUGIN_DIR),	
         'wp_themes' =>  str_replace(ABSPATH, '/', get_theme_root()),	
         'wp_active_theme' =>  str_replace(home_url(), '', get_template_directory_uri()),	
