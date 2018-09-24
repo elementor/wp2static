@@ -2,14 +2,17 @@
 //TODO: in help screen and error dialog, give button to display all client settings (excluding pwds) for easier troubleshooting
 
 
-var wp_site = <?php echo json_encode($this->wp_site, JSON_FORCE_OBJECT); ?>
+var wp_site = <?php echo json_encode($this->wp_site, JSON_FORCE_OBJECT|JSON_UNESCAPED_SLASHES); ?>
+
+// TODO: update this from prapre_for_export() response;
+var current_archive = {}; 
 
 var current_deployment_method = '<?php echo $this->options->selected_deployment_option ? $this->options->selected_deployment_option : 'folder'; ?>';
 
 var working_directory = '<?php echo $this->working_directory; ?>';
 
 // TODO: get the log out of the archive, along with it's meta infos
-var log_file_url = wp_uploads_url + '/WP-STATIC-EXPORT-LOG';
+var log_file_url = wp_site.uploads_url + '/WP-STATIC-EXPORT-LOG';
 
 var export_targets = [];
 var export_commence_time = '';
@@ -123,13 +126,13 @@ jQuery(document).ready(function($){
       // if zip was selected, call to get zip name and enable the button with the link to download
       if (current_deployment_method === 'zip') {
         
-        zipDownloadLink = wp_uploads_path + '/WP-STATIC-CURRENT-ARCHIVE';
+        zipDownloadLink = wp_site.uploads_path + '/WP-STATIC-CURRENT-ARCHIVE';
 
         // TODO: add better way to get just the archive name/zip name and path
         $.get(zipDownloadLink, function(zipPath){
           parts = zipPath.split('/');
           archiveName = parts.pop() || parts.pop();
-          zipURL = wp_uploads_path + '/' + archiveName + '.zip';
+          zipURL = wp_site.uploads_path + '/' + archiveName + '.zip';
           $('#downloadZIP').attr('href', zipURL);
           $('#downloadZIP').show();
         });
@@ -460,7 +463,7 @@ jQuery(document).ready(function($){
 
       // set hidden baseURL field to current option
       if (current_deployment_method === 'folder') {
-        $('#baseUrl').val(wp_site_url + $('#targetFolder').val() + '/'); 
+        $('#baseUrl').val(wp_site.site_url + $('#targetFolder').val() + '/'); 
       } else {
         $('#baseUrl').val($('#baseUrl-' + current_deployment_method).val()); 
       }
@@ -468,8 +471,8 @@ jQuery(document).ready(function($){
       base_url_previews.text(base_url.replace(/\/$/, "") + '/');
 
       // update the clickable preview url in folder options
-      $('#folderPreviewURL').text(wp_site_url + $('#targetFolder').val() + '/');
-      $('#folderPreviewURL').attr('href', (wp_site_url + $('#targetFolder').val() + '/'));
+      $('#folderPreviewURL').text(wp_site.site_url + $('#targetFolder').val() + '/');
+      $('#folderPreviewURL').attr('href', (wp_site.site_url + $('#targetFolder').val() + '/'));
     }
   }
 
@@ -772,10 +775,10 @@ jQuery(document).ready(function($){
 
   // populate some hidden fields
   $('#working_directory').val(working_directory);
-  $('#wp_site_url').val(wp_site_url);
-  $('#wp_uploads_path').val(wp_uploads_path);
-  $('#wp_uploads_url').val(wp_uploads_url);
-  $('#wp_site_path').val(wp_site_path);
+  $('#wp_site_url').val(wp_site.site_url);
+  $('#wp_uploads_path').val(wp_site.uploads_path);
+  $('#wp_uploads_url').val(wp_site.uploads_url);
+  $('#wp_site_path').val(wp_site.site_path);
 
   // call change handler on page load, to set correct state
   offlineUsageChangeHandler($('#allowOfflineUsage'));
