@@ -1,13 +1,14 @@
 <script>
 //TODO: in help screen and error dialog, give button to display all client settings (excluding pwds) for easier troubleshooting
 
-var wp_uploads_url = '<?php echo $this->wp_uploads_url; ?>';
-var wp_uploads_path = '<?php echo $this->wp_uploads_path; ?>';
-var wp_site_path = '<?php echo $this->wp_site_path; ?>';
-var wp_site_url = '<?php echo get_site_url(); ?>/';
+
+var wp_site = <?php echo json_encode($this->wp_site, JSON_FORCE_OBJECT); ?>
 
 var current_deployment_method = '<?php echo $this->options->selected_deployment_option ? $this->options->selected_deployment_option : 'folder'; ?>';
+
 var working_directory = '<?php echo $this->working_directory; ?>';
+
+// TODO: get the log out of the archive, along with it's meta infos
 var log_file_url = wp_uploads_url + '/WP-STATIC-EXPORT-LOG';
 
 var export_targets = [];
@@ -224,7 +225,6 @@ jQuery(document).ready(function($){
         },
         error: ajaxErrorHandler
     });
-
   }
 
   function clearProgressAndResults() {

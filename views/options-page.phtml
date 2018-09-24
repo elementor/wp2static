@@ -7,43 +7,9 @@
 
 $ajax_nonce = wp_create_nonce( 'wpstatichtmloutput' );
 
-function displayCheckbox($template_variables, $field_name, $field_label, $premium = false) {
+require_once(__DIR__ . '/../library/StaticHtmlOutput/TemplateHelper.php');
 
-	echo "
-		<fieldset>
-			<label for='{$field_name}'>
-				<input name='{$field_name}' id='{$field_name}' value='1' type='checkbox' " . ( $template_variables->options->{$field_name} == 1 ? 'checked' : '' )  . " />
-				<span>" .  __($field_label, 'static-html-output-plugin') . "</span>
-	    </label>
-		</fieldset>
-	";
-}
-
-function displayTextfield($template_variables, $field_name, $field_label, $description, $type = 'text') {
-	echo "
-		<input name='{$field_name}' class='regular-text' id='{$field_name}' type='{$type}' value='". esc_attr($template_variables->options->{$field_name}) . "' placeholder='" .  __($field_label, 'static-html-output-plugin') . "' />
-		<span class='description'>$description</span>
-		<br>
-	";
-}
-
-function displaySelectMenu($template_variables, $menu_options, $field_name, $field_label, $description, $type = 'text') {
-?>
-
-  <select name="<?php echo $field_name; ?>" id="<?php echo $field_name; ?>">
-    <option></option>
-    <?php  foreach ($menu_options as $value => $text):?>
-      <?php if ($template_variables->options->{$field_name} == $value): ?>
-        <option value="<?php echo $value; ?>" selected><?php echo $text; ?></option>
-      <?php else: ?>
-        <option value="<?php echo $value; ?>"><?php echo $text; ?></option>
-      <?php endif; ?>
-    <?php  endforeach; ?>
-  </select>
-
-<?php 
-
-}
+$tpl = new TemplateHelper();
 
 ?>
 
@@ -79,13 +45,13 @@ function displaySelectMenu($template_variables, $menu_options, $field_name, $fie
 
     <!-- placeholder input fields to allow select menu deployment options to use existing behaviour -->
     <span class="hiddenExportOptions" style="display:none;">
-      <?php echo displayCheckbox($this, 'createZip', 'Create a ZIP file of your statically exported site, ready for you to manually deploy. Download link will appear in the Export Log below'); ?>
-      <?php echo displayCheckbox($this, 'sendViaFTP', 'Transfer files via FTP'); ?>
-      <?php echo displayCheckbox($this, 'sendViaS3', 'Transfer files via S3', 1); ?>
-      <?php echo displayCheckbox($this, 'sendViaBUNNYCDN', 'Transfer files via BunnyCDN', 1); ?>
-      <?php echo displayCheckbox($this, 'sendViaDropbox', 'Transfer files via Dropbox', 1); ?>
-      <?php echo displayCheckbox($this, 'sendViaGithub', 'Transfer files via GitHub', 1); ?>
-      <?php echo displayCheckbox($this, 'sendViaNetlify', 'Transfer files via Netlify', 1); ?>
+      <?php $tpl->displayCheckbox($this, 'createZip', 'Create a ZIP file of your statically exported site, ready for you to manually deploy. Download link will appear in the Export Log below'); ?>
+      <?php $tpl->displayCheckbox($this, 'sendViaFTP', 'Transfer files via FTP'); ?>
+      <?php $tpl->displayCheckbox($this, 'sendViaS3', 'Transfer files via S3', 1); ?>
+      <?php $tpl->displayCheckbox($this, 'sendViaBUNNYCDN', 'Transfer files via BunnyCDN', 1); ?>
+      <?php $tpl->displayCheckbox($this, 'sendViaDropbox', 'Transfer files via Dropbox', 1); ?>
+      <?php $tpl->displayCheckbox($this, 'sendViaGithub', 'Transfer files via GitHub', 1); ?>
+      <?php $tpl->displayCheckbox($this, 'sendViaNetlify', 'Transfer files via Netlify', 1); ?>
     </span>
 
     <?php

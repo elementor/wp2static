@@ -6,7 +6,7 @@
           <label for="baseUrl-github"><?php echo __('Base URL', 'static-html-output-plugin');?></label>
         </th>
         <td>
-          <?php echo displayTextfield($this, 'baseUrl-github', 'http://mystaticsite.com', '', ''); ?><br>
+          <?php $tpl->displayTextfield($this, 'baseUrl-github', 'http://mystaticsite.com', '', ''); ?><br>
 
           <p><i><?php echo __("Set this to the URL you intend to host your static exported site on, ie http://mystaticsite.com. Do not set this to the same URL as the WordPress site you're currently using (the address in your browser above). This plugin will rewrite all URLs in the exported static html from your current WordPress URL to what you set here. Supports http, https and protocol relative URLs.", 'static-html-output-plugin');?></i></p> 
         </td>
@@ -16,7 +16,7 @@
           <label for="githubPersonalAccessToken"><?php echo __('Personl Access Token', 'static-html-output-plugin');?></label>
         </th>
         <td>
-          <?php echo displayTextfield($this, 'githubPersonalAccessToken', 'GitHub Personal Access Token', '<a href="https://github.com/settings/tokens/new" target="_blank">How do I get this?</a>', 'password'); ?>
+          <?php $tpl->displayTextfield($this, 'githubPersonalAccessToken', 'GitHub Personal Access Token', '<a href="https://github.com/settings/tokens/new" target="_blank">How do I get this?</a>', 'password'); ?>
         </td>
       </tr>
       <tr>
@@ -24,7 +24,7 @@
           <label for="githubRepo"><?php echo __('Account & Repository Name', 'static-html-output-plugin');?></label>
         </th>
         <td>
-          <?php echo displayTextfield($this, 'githubRepo', 'Account / Repository Name', 'ie, leonstafford/wordpress-static-html-plugin'); ?><br>
+          <?php $tpl->displayTextfield($this, 'githubRepo', 'Account / Repository Name', 'ie, leonstafford/wordpress-static-html-plugin'); ?><br>
 
           <p><i>Repository cannot be empty, just create any file via the GitHub UI if needed</i></p>
         </td>
@@ -34,7 +34,7 @@
           <label for="githubBranch"><?php echo __('Branch', 'static-html-output-plugin');?></label>
         </th>
         <td>
-          <?php echo displayTextfield($this, 'githubBranch', 'Branch', 'usually \'master\' or \'gh-pages\''); ?>
+          <?php $tpl->displayTextfield($this, 'githubBranch', 'Branch', 'usually \'master\' or \'gh-pages\''); ?>
         </td>
       </tr>
       <tr>
@@ -42,7 +42,7 @@
           <label for="githubPath"><?php echo __('Path within repo', 'static-html-output-plugin');?></label>
         </th>
         <td>
-          <?php echo displayTextfield($this, 'githubPath', 'Path within repository', 'Usually the repository root (leave this blank) or the \'doc\' folder'); ?>
+          <?php $tpl->displayTextfield($this, 'githubPath', 'Path within repository', 'Usually the repository root (leave this blank) or the \'doc\' folder'); ?>
         </td>
       </tr>
     </tbody>

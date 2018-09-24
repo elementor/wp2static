@@ -6,7 +6,7 @@
           <label for="baseUrl-netlify"><?php echo __('Base URL', 'static-html-output-plugin');?></label>
         </th>
         <td>
-          <?php echo displayTextfield($this, 'baseUrl-netlify', 'http://mystaticsite.com', '', ''); ?><br>
+          <?php $tpl->displayTextfield($this, 'baseUrl-netlify', 'http://mystaticsite.com', '', ''); ?><br>
 
           <p><i><?php echo __("Set this to the URL you intend to host your static exported site on, ie http://mystaticsite.com. Do not set this to the same URL as the WordPress site you're currently using (the address in your browser above). This plugin will rewrite all URLs in the exported static html from your current WordPress URL to what you set here. Supports http, https and protocol relative URLs.", 'static-html-output-plugin');?></i></p> 
         </td>
@@ -16,7 +16,7 @@
           <label for="netlifyPersonalAccessToken"><?php echo __('Personal Access Token', 'static-html-output-plugin');?></label>
         </th>
         <td>
-          <?php echo displayTextfield($this, 'netlifyPersonalAccessToken', 'Netlify Personal Access Token', '<a href="https://app.netlify.com/account/applications/personal" target="_blank">How do I get this?</a>', 'password'); ?>
+          <?php $tpl->displayTextfield($this, 'netlifyPersonalAccessToken', 'Netlify Personal Access Token', '<a href="https://app.netlify.com/account/applications/personal" target="_blank">How do I get this?</a>', 'password'); ?>
         </td>
       </tr>
       <tr>
@@ -24,7 +24,7 @@
           <label for="netlifySiteID"><?php echo __('Site ID', 'static-html-output-plugin');?></label>
         </th>
         <td>
-          <?php echo displayTextfield($this, 'netlifySiteID', 'Netlify Site ID', 'ie, mystaticsite'); ?>
+          <?php $tpl->displayTextfield($this, 'netlifySiteID', 'Netlify Site ID', 'ie, mystaticsite'); ?>
         </td>
       </tr>
     </tbody>
