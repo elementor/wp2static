@@ -16,8 +16,14 @@ class Exporter {
   }
 
   public function capture_last_deployment() {
+    require_once dirname(__FILE__) . '/../StaticHtmlOutput/Archive.php';
+    $archive = new Archive();
+    $archive->setToCurrentArchive();
+
+    // TODO: big cleanup required here, very iffy code
+
     // skip for first export state
-    if (is_file($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE')) {
+    if (is_file($archive->path)) {
       $archiveDir = file_get_contents($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE');
       $previous_export = $archiveDir;
       $dir_to_diff_against = $this->working_directory . '/previous-export';

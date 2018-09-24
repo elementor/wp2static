@@ -125,7 +125,6 @@ class StaticHtmlOutput_Controller {
       if (null !== (filter_input(INPUT_POST, 'selected_deployment_option'))) {
         self::$_instance->selected_deployment_option = filter_input(INPUT_POST, 'selected_deployment_option');
         self::$_instance->baseUrl = untrailingslashit(filter_input(INPUT_POST, 'baseUrl', FILTER_SANITIZE_URL));
-        self::$_instance->diffBasedDeploys = filter_input(INPUT_POST, 'diffBasedDeploys');
       } 
 
 		if (! $this->wp_site->systemRequirementsAreMet()) {

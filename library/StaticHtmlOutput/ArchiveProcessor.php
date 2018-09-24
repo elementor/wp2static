@@ -4,8 +4,9 @@ class ArchiveProcessor {
 
   public function __construct(){
     // TODO: prepare_export func to return archive name to client, then we use that directly here
+    require_once dirname(__FILE__) . '/../StaticHtmlOutput/Archive.php';
+    $this->archive = new Archive();
 
-    $this->archive_path = isset($_POST['archive_path']) ? $_POST['archive_path'] : '';
     $this->working_directory = isset($_POST['working_directory']) ? $_POST['working_directory'] : '';
 
     $this->rewriteWPCONTENT = filter_input(INPUT_POST, 'rewriteWPCONTENT');
@@ -18,43 +19,45 @@ class ArchiveProcessor {
     $this->allowOfflineUsage = filter_input(INPUT_POST, 'allowOfflineUsage');
     $this->targetFolder = filter_input(INPUT_POST, 'targetFolder');
 
+    $this->selected_deployment_option = isset($_POST['selected_deployment_option']) ? $_POST['selected_deployment_option'] : '';
+    $this->diffBasedDeploys = isset($_POST['diffBasedDeploys']) ? $_POST['diffBasedDeploys'] : false;
+
 		$this->wp_site_url = '';
 		$this->wp_site_subdir = '';
   }
 
 	public function create_symlink_to_latest_archive() {
-    if (is_file(($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE'))) {
-      $archiveDir = file_get_contents($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE');
+    $this->archive->setToCurrentArchive();
+
+    if (is_file($this->archive->path)) {
+      $archiveDir = file_get_contents($this->archive->path);
 
       $this->remove_symlink_to_latest_archive();
-      symlink($archiveDir, $this->working_directory . '/latest-export' );
+      symlink($this->archive->path, $this->working_directory . '/latest-export' );
     } else {
       error_log('failed to symlink latest export directory');
     }
 	}	
 
 	public function remove_symlink_to_latest_archive() {
-    $archiveDir = file_get_contents($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE');
-
 		if (is_link($this->working_directory . '/latest-export' )) {
 			unlink($this->working_directory . '/latest-export'  );
 		} 
 	}	
 
   public function remove_files_idential_to_previous_export() {
-    $archiveDir = file_get_contents($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE');
     $dir_to_diff_against = $this->working_directory . '/previous-export';
 
     // iterate each file in current export, check the size and contents in previous, delete if match
     $objects = new RecursiveIteratorIterator(
         new RecursiveDirectoryIterator(
-          $archiveDir, 
+          $this->archive->path, 
           RecursiveDirectoryIterator::SKIP_DOTS));
 
     foreach($objects as $current_file => $object){
         if (is_file($current_file)) {
           // get relative filename
-          $filename = str_replace($archiveDir, '', $current_file);
+          $filename = str_replace($this->archive->path, '', $current_file);
    
           $previously_exported_file = $dir_to_diff_against . '/' . $filename;
 
@@ -240,15 +243,15 @@ class ArchiveProcessor {
 
 		// rm other left over WP identifying files
 
-		if( file_exists($archiveDir . '/xmlrpc.php') ) {
-			unlink($archiveDir . '/xmlrpc.php');
+		if( file_exists($this->archive->path . '/xmlrpc.php') ) {
+			unlink($this->archive->path . '/xmlrpc.php');
 		}
 
-		if( file_exists($archiveDir . '/wp-login.php') ) {
-			unlink($archiveDir . '/wp-login.php');
+		if( file_exists($this->archive->path . '/wp-login.php') ) {
+			unlink($this->archive->path . '/wp-login.php');
 		}
 
-		StaticHtmlOutput_FilesHelper::delete_dir_with_files($archiveDir . '/wp-json/');
+		StaticHtmlOutput_FilesHelper::delete_dir_with_files($this->archive->path . '/wp-json/');
 		
 		// TODO: remove all text files from theme dir 
 
