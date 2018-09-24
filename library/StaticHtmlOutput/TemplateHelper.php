@@ -45,4 +45,10 @@ class TemplateHelper {
 
     echo $menu_code;
   }
+
+  public function ifNotEmpty($value, $substitute = '') {
+    $value = $value ? $value : $substitute;
+
+    echo $value;
+  }
 }
