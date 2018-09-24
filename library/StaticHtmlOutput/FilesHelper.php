@@ -49,44 +49,49 @@ class StaticHtmlOutput_FilesHelper
 		}
 	}
 
-  public static function getListOfLocalFilesByUrl(array $urls) {
+  public static function getListOfLocalFilesByUrl($url) {
     $files = array();
 
-    foreach ($urls as $url) {
-      $directory = str_replace(home_url('/'), ABSPATH, $url);
+    $directory = str_replace(home_url('/'), ABSPATH, $url);
 
-      // TODO:  exclude previous export used for diff
-      //if ( ! strpos($url, 'previous-export') === false ) {
-        if (stripos($url, home_url('/')) === 0 && is_dir($directory)) {
-          $iterator = new RecursiveIteratorIterator(
-              new RecursiveDirectoryIterator(
-                $directory, 
-                RecursiveDirectoryIterator::SKIP_DOTS));
+    if (is_dir($directory)) {
+      $iterator = new RecursiveIteratorIterator(
+          new RecursiveDirectoryIterator(
+            $directory, 
+            RecursiveDirectoryIterator::SKIP_DOTS));
 
-          foreach ($iterator as $fileName => $fileObject) {
-            if (is_file($fileName)) {
-              $pathinfo = pathinfo($fileName);
-              if (isset($pathinfo['extension']) && !in_array($pathinfo['extension'], array('php', 'phtml', 'tpl'))) {
-                array_push($files, home_url(str_replace(ABSPATH, '', $fileName)));
-              }
-            } 
-          }
-        } else {
-          if ($url != '') {
-            array_push($files, $url);
-          }
-        }
-    }
-
-
-    // TODO: remove any dot files, like .gitignore here, only rm'd from dirs above
+      foreach ($iterator as $fileName => $fileObject) {
+        if (self::fileNameLooksCrawlable($fileName) &&
+            self::filePathLooksCrawlable($fileName)) {
+              error_log('passed tests');
+              array_push($files, home_url(str_replace(ABSPATH, '', $fileName)));
+            }
+      }
+    } 
 
     return $files;
   }
 
+  public static function fileNameLooksCrawlable($file_name) {
+    return (
+      (! strpos($file_name, 'wp-static-html-output') !== false) &&
+      (! strpos($file_name, 'previous-export') !== false) &&
+      is_file($file_name)
+    );
+  }
+
+  public static function filePathLooksCrawlable($file_name) {
+    $path_info = pathinfo($file_name);
+
+    return (
+      isset($path_info['extension']) &&
+      (! in_array($path_info['extension'], array('php', 'phtml', 'tpl')))
+    );
+  }
+
 	public static function buildInitialFileList(
 		$viaCLI = false, 
-		$uploadsPath, // TODO: also working dir?
+		$uploadsPath,
 		$uploadsURL, 
 		$workingDirectory, 
 		$pluginHook) {
@@ -108,7 +113,7 @@ class StaticHtmlOutput_FilesHelper
 		$archiveDir = $archiveName . '/';
 
 		// saving the current archive name to file to persist across requests / functions
-    file_put_contents($workingDirectory . '/WP-STATIC-CURRENT-ARCHIVE', $archiveDir);
+    file_put_contents($uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE', $archiveDir);
 
 		if (!file_exists($archiveDir)) {
 			wp_mkdir_p($archiveDir);
@@ -118,14 +123,13 @@ class StaticHtmlOutput_FilesHelper
 			
 		$urlsQueue = array_merge(
       array(trailingslashit($baseUrl)),
-      self::getListOfLocalFilesByUrl(array(get_template_directory_uri())),
-                self::getAllWPPostURLs($baseUrl)
-      );
+      self::getListOfLocalFilesByUrl(get_template_directory_uri()),
+      self::getAllWPPostURLs($baseUrl)
+    );
 
-    // TODO: shift this as an option to exclusions area
     $urlsQueue = array_unique(array_merge(
-        $urlsQueue,
-        self::getListOfLocalFilesByUrl(array($uploadsURL))
+      $urlsQueue,
+      self::getListOfLocalFilesByUrl($uploadsURL)
     ));
 
     $str = implode("\n", $urlsQueue);
@@ -155,15 +159,15 @@ class StaticHtmlOutput_FilesHelper
 			
 		$urlsQueue = array_merge(
       array(trailingslashit($baseUrl)),
-      self::getListOfLocalFilesByUrl(array(get_template_directory_uri())),
-                self::getAllWPPostURLs($baseUrl),
+      self::getListOfLocalFilesByUrl(get_template_directory_uri()),
+      self::getAllWPPostURLs($baseUrl),
       explode("\n", $additionalUrls)
-      );
+    );
 
     // TODO: shift this as an option to exclusions area
     $urlsQueue = array_unique(array_merge(
         $urlsQueue,
-        self::getListOfLocalFilesByUrl(array($uploadsURL))
+        self::getListOfLocalFilesByUrl($uploadsURL)
     ));
 
     $str = implode("\n", $urlsQueue);

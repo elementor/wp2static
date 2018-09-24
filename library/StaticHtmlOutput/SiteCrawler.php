@@ -9,12 +9,12 @@ class SiteCrawler {
     
     // basic auth
     $this->useBasicAuth = isset($_POST['useBasicAuth']) ?  $_POST['useBasicAuth'] :  false;
-    $this->basicAuthUser = $_POST['basicAuthUser'];
-    $this->basicAuthPassword = $_POST['basicAuthPassword'];
+    $this->basicAuthUser = isset($_POST['basicAuthUser']) ?  $_POST['basicAuthUser'] :  false;
+    $this->basicAuthPassword = isset($_POST['basicAuthPassword']) ?  $_POST['basicAuthPassword'] :  false;
 
     // WP env settings
     $this->baseUrl = $_POST['baseUrl'];
-    $this->working_dir = $_POST['basedir']; // // TODO: location of uploads dir?
+    $this->working_dir = $_POST['outputDirectory']; // // TODO: location of uploads dir?
     $this->wp_site_url = $_POST['wp_site_url']; 
     $this->wp_site_path = $_POST['wp_site_path']; 
     $this->uploads_path = $_POST['wp_uploads_path'];
@@ -49,12 +49,16 @@ class SiteCrawler {
   }
 
   public function crawl_site($viaCLI = false) {
-    $this->initial_crawl_list_file = $this->working_dir . '/WP-STATIC-INITIAL-CRAWL-LIST';
-    $this->initial_crawl_list = file($this->initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
+    $this->initial_crawl_list_file = $this->working_dir . '/WP-STATIC-FINAL-CRAWL-LIST';
+    if (! is_file($this->initial_crawl_list_file)) {
+      error_log('could not find initial crawl list file');
+    } else {
+      $this->initial_crawl_list = file($this->initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
 
-    if ( !empty($this->initial_crawl_list) ) {
-      $this->crawlABitMore($this->viaCLI);
-    } 
+      if ( !empty($this->initial_crawl_list) ) {
+        $this->crawlABitMore($this->viaCLI);
+      } 
+    }
   }
 
   public function crawlABitMore($viaCLI = false) {
@@ -63,6 +67,7 @@ class SiteCrawler {
     $batch_of_links_to_crawl = array();
 
     $this->archive_dir = file_get_contents($this->working_dir . '/WP-STATIC-CURRENT-ARCHIVE');
+
     $this->initial_crawl_list_file = $this->working_dir . '/WP-STATIC-INITIAL-CRAWL-LIST';
     $this->crawled_links_file = $this->working_dir . '/WP-STATIC-CRAWLED-LINKS';
     $this->initial_crawl_list = file($this->initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
@@ -255,6 +260,11 @@ class SiteCrawler {
 
   public function copyFile() {
     require_once dirname(__FILE__) . '/../StaticHtmlOutput/FileCopier.php';
+
+    error_log($this->archive_dir);
+    error_log($this->url);
+    error_log($this->wp_site_url);
+    error_log($this->wp_site_path);
 
     $file_copier = new FileCopier($this->url, $this->wp_site_url, $this->wp_site_path);
     $file_copier->copyFile($this->archive_dir);
