@@ -1,5 +1,10 @@
 <?php
-/* vim: set expandtab tabstop=4 shiftwidth=4 foldmethod=marker: */
+/**
+ * PEAR_Exception
+ *
+ * @package WP2Static
+ */
+
 /**
  * PEAR_Exception
  *

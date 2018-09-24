@@ -1,4 +1,10 @@
 <?php
+/**
+ * HTTP_Request2_Observer_UncompressingDownload
+ *
+ * @package WP2Static
+ */
+
 require_once 'HTTP/Request2/Response.php';
 class HTTP_Request2_Observer_UncompressingDownload implements SplObserver
 {

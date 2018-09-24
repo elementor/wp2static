@@ -1,4 +1,10 @@
 <?php
+/**
+ * JsonCompiler
+ *
+ * @package WP2Static
+ */
+
 namespace Aws;
 class JsonCompiler
 {

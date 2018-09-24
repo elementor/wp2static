@@ -1,4 +1,10 @@
 <?php
+/**
+ * CloudFront
+ *
+ * @package WP2Static
+ */
+
 require_once 'Request2.php';
 
 class CloudFront {

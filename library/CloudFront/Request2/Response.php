@@ -1,4 +1,9 @@
 <?php
+/**
+ * HTTP_Request2_Response
+ *
+ * @package WP2Static
+ */
 
 require_once 'Exception.php';
 class HTTP_Request2_Response

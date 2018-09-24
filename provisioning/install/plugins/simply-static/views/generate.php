@@ -1,4 +1,10 @@
 <?php
+/**
+ * Generate
+ *
+ * @package WP2Static
+ */
+
 namespace Simply_Static;
 ?>
 

@@ -1,4 +1,10 @@
 <?php
+/**
+ * DateTimeResult
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Api;
 
 /**

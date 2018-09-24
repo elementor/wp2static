@@ -1,3 +1,10 @@
+<?php
+/**
+ * Redirect
+ *
+ * @package WP2Static
+ */
+?>
 <!DOCTYPE html>
 <html>
 	<head>

@@ -1,4 +1,9 @@
 <?php
+/**
+ * WPStaticHtmlOutputPluginTest
+ *
+ * @package WP2Static
+ */
 
 use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
@@ -41,7 +46,7 @@ class WPStaticHtmlOutputPluginTest extends TestCase {
     public function testAdminWorkInProgress() {
         $this->webDriver->get($this->url);
 		$this->assertContains('Log In ‹ wp plugindev — WordPress', $this->webDriver->getTitle());
-    }    
+    }
 
 	public function debugWithScreenshot() {
 		// appears in setests folder
@@ -60,7 +65,7 @@ class WPStaticHtmlOutputPluginTest extends TestCase {
 		$this->webDriver->wait()->until(
 			WebDriverExpectedCondition::titleContains('Dashboard ‹ wp plugindev — WordPress')
 		);
-	}	
+	}
 
 	public function resetPluginSettingsToDefault() {
 		$this->goToPluginSettingsPage();
@@ -76,8 +81,8 @@ class WPStaticHtmlOutputPluginTest extends TestCase {
 
 		// TODO: replace browser popups with on page notifications and WP messages
 
-		// note, the reload happens after settings reset has happened, so don't need to wait to continue 
-	}	
+		// note, the reload happens after settings reset has happened, so don't need to wait to continue
+	}
 
 	public function goToPluginSettingsPage() {
 		// TODO: handle case when license needs entering
@@ -108,7 +113,7 @@ class WPStaticHtmlOutputPluginTest extends TestCase {
 
 		$deployment_chooser_select = new WebDriverSelect($deployment_chooser);
 
-		$deployment_chooser_select->selectByValue($value); 
+		$deployment_chooser_select->selectByValue($value);
 	}
 
 	public function getSelectedDeploymentMethod() {
@@ -127,7 +132,7 @@ class WPStaticHtmlOutputPluginTest extends TestCase {
 		$this->logInToAdmin();
 
 		// TODO: this needs to reset the interface, also, then no need to reload page to start again
-		$this->resetPluginSettingsToDefault(); 
+		$this->resetPluginSettingsToDefault();
 
 		$this->goToPluginSettingsPage();
 
@@ -145,7 +150,7 @@ class WPStaticHtmlOutputPluginTest extends TestCase {
 		$this->assertContains(
 			's3',
 			$this->getSelectedDeploymentMethod()['value']);
-    }    
+    }
 
 	public function setTargetFolder($target_folder) {
 		$this->webDriver->findElement( WebDriverBy::id('targetFolder'))->sendKeys($target_folder);
@@ -158,7 +163,7 @@ class WPStaticHtmlOutputPluginTest extends TestCase {
 	public function doTheExport() {
 		$this->webDriver->findElement(WebDriverBy::id('startExportButton'))->click();
 
-		$driver = $this->webDriver;	
+		$driver = $this->webDriver;
 	
 		$this->webDriver->wait(30)->until(
 			function () use ($driver) {
@@ -179,7 +184,7 @@ class WPStaticHtmlOutputPluginTest extends TestCase {
 		$this->logInToAdmin();
 
 		// TODO: this needs to reset the interface, also, then no need to reload page to start again
-		$this->resetPluginSettingsToDefault(); 
+		$this->resetPluginSettingsToDefault();
 
 		$this->goToPluginSettingsPage();
 
@@ -194,7 +199,7 @@ class WPStaticHtmlOutputPluginTest extends TestCase {
 		$this->assertContains(
 			"This feature is yet to be released into the official version",
 			file_get_contents('http://172.18.0.3/' . $timestamp . '/'));
-    }    
+    }
 
     public function testFolderDeploymentDoesntOverwriteRoot() {
 
@@ -203,7 +208,7 @@ class WPStaticHtmlOutputPluginTest extends TestCase {
 		$this->logInToAdmin();
 
 		// TODO: this needs to reset the interface, also, then no need to reload page to start again
-		$this->resetPluginSettingsToDefault(); 
+		$this->resetPluginSettingsToDefault();
 
 		$this->goToPluginSettingsPage();
 
@@ -226,7 +231,7 @@ class WPStaticHtmlOutputPluginTest extends TestCase {
 		$this->assertEquals(
 			"404",
 			$retcode);
-    }    
+    }
 
 	public function tearDown() {
 

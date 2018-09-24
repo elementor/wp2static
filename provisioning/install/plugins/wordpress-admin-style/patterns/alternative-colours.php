@@ -1,3 +1,10 @@
+<?php
+/**
+ * Alternative colours
+ *
+ * @package WP2Static
+ */
+?>
 <h2><?php esc_attr_e( 'Alternative Colors', 'WpAdminStyle' ); ?></h2>
 
 <div style="width:99%; padding: 5px;"><?php esc_attr_e( 'without class', 'WpAdminStyle' ); ?></div>

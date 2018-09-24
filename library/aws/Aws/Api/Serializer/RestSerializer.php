@@ -1,4 +1,10 @@
 <?php
+/**
+ * RestSerializer
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Api\Serializer;
 
 use Aws\Api\MapShape;

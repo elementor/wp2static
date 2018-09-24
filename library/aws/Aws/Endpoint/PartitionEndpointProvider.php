@@ -1,4 +1,10 @@
 <?php
+/**
+ * PartitionEndpointBuilder
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Endpoint;
 
 class PartitionEndpointProvider
@@ -51,7 +57,7 @@ class PartitionEndpointProvider
      * the provided name can be found.
      *
      * @param string $name
-     * 
+     *
      * @return Partition|null
      */
     public function getPartitionByName($name)

@@ -1,4 +1,10 @@
 <?php
+/**
+ * HTTP_Request2_Adapter_Curl
+ *
+ * @package WP2Static
+ */
+
 require_once 'HTTP/Request2/Adapter.php';
 class HTTP_Request2_Adapter_Curl extends HTTP_Request2_Adapter
 {

@@ -1,10 +1,10 @@
 <?php
-	/**
-	 * @package     Freemius
-	 * @copyright   Copyright (c) 2015, Freemius, Inc.
-	 * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License Version 3
-	 * @since       1.1.2
-	 */
+/**
+ * @package     Freemius
+ * @copyright   Copyright (c) 2015, Freemius, Inc.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License Version 3
+ * @since       1.1.2
+ */
 
 	if ( ! defined( 'ABSPATH' ) ) {
 		exit;
@@ -119,7 +119,7 @@ HTML;
 		 *
 		 * @author Leo Fajardo (@leorw)
 		 * @since 1.2.2
-		 *        
+		 *
 		 * @since 1.2.2.7 Don't trigger the deactivation feedback form if activating the premium version of the theme.
 		 */
 		} else { ?>

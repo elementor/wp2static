@@ -1,4 +1,10 @@
 <?php
+/**
+ * PayloadParserTrait
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Api\Parser;
 
 use Aws\Api\Parser\Exception\ParserException;

@@ -1,4 +1,9 @@
 <?php
+/**
+ * Simple HTML DOM
+ *
+ * @package WP2Static
+ */
 
 namespace simplehtmldom_1_5;
 

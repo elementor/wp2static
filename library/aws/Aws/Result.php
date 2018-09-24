@@ -1,4 +1,10 @@
 <?php
+/**
+ * Result
+ *
+ * @package WP2Static
+ */
+
 namespace Aws;
 use JmesPath\Env as JmesPath;
 class Result implements ResultInterface

@@ -1,4 +1,10 @@
 <?php
+/**
+ * HTTP_Request2_Observer_Log
+ *
+ * @package WP2Static
+ */
+
 require_once 'HTTP/Request2/Exception.php';
 class HTTP_Request2_Observer_Log implements SplObserver
 {

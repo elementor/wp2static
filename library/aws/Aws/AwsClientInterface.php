@@ -1,4 +1,10 @@
 <?php
+/**
+ * AwsClientInterface
+ *
+ * @package WP2Static
+ */
+
 namespace Aws;
 use Psr\Http\Message\UriInterface;
 use GuzzleHttp\Promise\PromiseInterface;

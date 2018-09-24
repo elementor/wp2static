@@ -1,4 +1,10 @@
 <?php
+/**
+ * XmlParser
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Api\Parser;
 
 use Aws\Api\DateTimeResult;

@@ -1,4 +1,10 @@
 <?php
+/**
+ * WrappedHttpHandler
+ *
+ * @package WP2Static
+ */
+
 namespace Aws;
 use Aws\Api\Parser\Exception\ParserException;
 use GuzzleHttp\Promise;

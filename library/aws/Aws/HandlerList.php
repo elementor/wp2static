@@ -1,4 +1,10 @@
 <?php
+/**
+ * HandlerList
+ *
+ * @package WP2Static
+ */
+
 namespace Aws;
 class HandlerList implements \Countable
 {

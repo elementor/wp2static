@@ -1,4 +1,10 @@
 <?php
+/**
+ * HTTP_Request2_Adapter_Mock
+ *
+ * @package WP2Static
+ */
+
 require_once 'HTTP/Request2/Adapter.php';
 class HTTP_Request2_Adapter_Mock extends HTTP_Request2_Adapter
 {

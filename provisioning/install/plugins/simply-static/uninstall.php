@@ -1,6 +1,8 @@
 <?php
 /**
  * Uninstall Simply Static
+ *
+ * @package WP2Static
  */
 
 // exit if accessed directly

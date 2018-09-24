@@ -1,4 +1,9 @@
 <?php
+/**
+ * Debug_Bar_JS
+ *
+ * @package WP2Static
+ */
 
 class Debug_Bar_JS extends Debug_Bar_Panel {
 	public $real_error_handler = array();

@@ -1,4 +1,10 @@
 <?php
+/**
+ * S3ClientInterface
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\S3;
 
 use Aws\AwsClientInterface;

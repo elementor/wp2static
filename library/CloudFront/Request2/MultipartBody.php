@@ -1,4 +1,10 @@
 <?php
+/**
+ * HTTP_Request2_MultipartBody
+ *
+ * @package WP2Static
+ */
+
 require_once 'HTTP/Request2/Exception.php';
 class HTTP_Request2_MultipartBody
 {

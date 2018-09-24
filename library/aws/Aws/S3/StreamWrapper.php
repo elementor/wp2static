@@ -1,4 +1,10 @@
 <?php
+/**
+ * StreamWrapper
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\S3;
 
 use Aws\CacheInterface;

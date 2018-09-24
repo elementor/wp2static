@@ -1,4 +1,10 @@
 <?php
+/**
+ * ApiProvider
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Api;
 
 use Aws\Exception\UnresolvedApiException;

@@ -1,3 +1,10 @@
+<?php
+/**
+ * Pagination
+ *
+ * @package WP2Static
+ */
+?>
 <h2><?php _e( 'Pagination', 'WpAdminStyle' ); ?></h2>
 
 <div class="tablenav">

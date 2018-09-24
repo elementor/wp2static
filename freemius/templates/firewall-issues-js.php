@@ -1,14 +1,14 @@
 <?php
-	/**
-	 * API connectivity issues (CloudFlare's firewall) handler for handling different
-	 * scenarios selected by the user after connectivity issue is detected, by sending
-	 * AJAX call to the server in order to make the actual actions.
-	 *
-	 * @package     Freemius
-	 * @copyright   Copyright (c) 2015, Freemius, Inc.
-	 * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License Version 3
-	 * @since       1.0.9
-	 */
+/**
+ * API connectivity issues (CloudFlare's firewall) handler for handling different
+ * scenarios selected by the user after connectivity issue is detected, by sending
+ * AJAX call to the server in order to make the actual actions.
+ *
+ * @package     Freemius
+ * @copyright   Copyright (c) 2015, Freemius, Inc.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License Version 3
+ * @since       1.0.9
+ */
 
 	if ( ! defined( 'ABSPATH' ) ) {
 		exit;

@@ -1,4 +1,10 @@
 <?php
+/**
+ * DoctrineCacheAdapter
+ *
+ * @package WP2Static
+ */
+
 namespace Aws;
 use Doctrine\Common\Cache\Cache;
 class DoctrineCacheAdapter implements CacheInterface, Cache

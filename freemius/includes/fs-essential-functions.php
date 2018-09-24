@@ -1,15 +1,15 @@
 <?php
-	/**
-	 * IMPORTANT:
-	 *      This file will be loaded based on the order of the plugins/themes load.
-	 *      If there's a theme and a plugin using Freemius, the plugin's essential
-	 *      file will always load first.
-	 *
-	 * @package     Freemius
-	 * @copyright   Copyright (c) 2015, Freemius, Inc.
-	 * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License Version 3
-	 * @since       1.1.5
-	 */
+/**
+ * IMPORTANT:
+ *      This file will be loaded based on the order of the plugins/themes load.
+ *      If there's a theme and a plugin using Freemius, the plugin's essential
+ *      file will always load first.
+ *
+ * @package     Freemius
+ * @copyright   Copyright (c) 2015, Freemius, Inc.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License Version 3
+ * @since       1.1.5
+ */
 
 	if ( ! function_exists( 'fs_normalize_path' ) ) {
 		if ( function_exists( 'wp_normalize_path' ) ) {
