@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<ruleset name="temporary">
-	<description>Temporary coding standard pending project maintainer review.</description>
+<ruleset name="WP2Static">
+	<description>WP2Static Project Coding Standard</description>
 	<arg name="colors" />
 	<arg name="tab-width" value="2" />
 	<!-- Custom line length validation -->
@@ -10,6 +10,7 @@
 			<property name="absoluteLineLimit" value="100" />
 		</properties>
 	</rule>
+	<rule ref="Generic.WhiteSpace.DisallowTabIndent" />
 	<rule ref="Generic.WhiteSpace.ScopeIndent">
 		<properties>
 			<property name="indent" value="2" />
@@ -25,8 +26,10 @@
 		<exclude name="Generic.Functions.OpeningFunctionBraceKernighanRitchie.BraceOnNewLine" />
 		<exclude name="Generic.PHP.NoSilencedErrors.Discouraged" />
 		<exclude name="Generic.Strings.UnnecessaryStringConcat.Found" />
+		<exclude name="Generic.WhiteSpace.DisallowSpaceIndent" />
 		<exclude name="PSR2.Methods.MethodDeclaration.Underscore" />
 		<exclude name="Squiz.Commenting.ClassComment.Missing" />
+		<exclude name="Squiz.Commenting.FileComment.Missing" />
 		<exclude name="Squiz.Commenting.FunctionComment.ParamCommentFullStop" />
 		<exclude name="Squiz.Commenting.FunctionComment.ThrowsNoFullStop" />
 		<exclude name="Squiz.Commenting.InlineComment.InvalidEndChar" />
@@ -49,6 +52,8 @@
 		<exclude name="WordPress.DB.PreparedSQL.NotPrepared" />
 		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
 		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
+		<exclude name="WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid" />
+		<exclude name="WordPress.NamingConventions.ValidVariableName.MemberNotSnakeCase" />
 		<exclude name="WordPress.NamingConventions.ValidVariableName.NotSnakeCase" />
 		<exclude name="WordPress.NamingConventions.ValidVariableName.NotSnakeCaseMemberVar" />
 		<exclude name="WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace" />
@@ -67,6 +72,7 @@
 		<exclude name="WordPress.Security.EscapeOutput.OutputNotEscaped" />
 		<exclude name="WordPress.Security.NonceVerification.NoNonceVerification" />
 		<exclude name="WordPress.Security.ValidatedSanitizedInput" />
+		<exclude name="WordPress.WhiteSpace.PrecisionAlignment" />
 		<exclude name="WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents" />
 		<exclude name="WordPress.WP.AlternativeFunctions.file_system_read_file_put_contents" />
 		<exclude name="WordPress.WP.AlternativeFunctions.json_encode_json_encode" />

@@ -1,4 +1,3 @@
-./library/StaticHtmlOutput/Options.php
 ./library/StaticHtmlOutput/WsLog.php
 ./library/StaticHtmlOutput/UrlRequest.php
 ./library/StaticHtmlOutput/Dropbox.php
