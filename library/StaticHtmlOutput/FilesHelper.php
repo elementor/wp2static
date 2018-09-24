@@ -63,7 +63,6 @@ class StaticHtmlOutput_FilesHelper
       foreach ($iterator as $fileName => $fileObject) {
         if (self::fileNameLooksCrawlable($fileName) &&
             self::filePathLooksCrawlable($fileName)) {
-              error_log('passed tests');
               array_push($files, home_url(str_replace(ABSPATH, '', $fileName)));
             }
       }

@@ -261,11 +261,6 @@ class SiteCrawler {
   public function copyFile() {
     require_once dirname(__FILE__) . '/../StaticHtmlOutput/FileCopier.php';
 
-    error_log($this->archive_dir);
-    error_log($this->url);
-    error_log($this->wp_site_url);
-    error_log($this->wp_site_path);
-
     $file_copier = new FileCopier($this->url, $this->wp_site_url, $this->wp_site_path);
     $file_copier->copyFile($this->archive_dir);
   }
