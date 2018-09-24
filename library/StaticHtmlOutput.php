@@ -172,15 +172,15 @@ class StaticHtmlOutput_Controller {
     // copy the preview crawl list within uploads dir to "modified list"
     copy($this->uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST', $this->uploadsPath . '/WP-STATIC-MODIFIED-CRAWL-LIST');
 
-    // process the modified list and make available for previewing from UI
-    $initial_file_list_count = StaticHtmlOutput_FilesHelper::buildFinalFileList(
-      $viaCLI,
-      $this->additionalUrls,
-      $this->getWorkingDirectory(),
-      $this->uploadsURL,
-      $this->getWorkingDirectory(),
-      self::HOOK
-    );
+//    // process the modified list and make available for previewing from UI
+//    $initial_file_list_count = StaticHtmlOutput_FilesHelper::buildFinalFileList(
+//      $viaCLI,
+//      $this->additionalUrls,
+//      $this->getWorkingDirectory(),
+//      $this->uploadsURL,
+//      $this->getWorkingDirectory(),
+//      self::HOOK
+//    );
 
     // copy the modified list to the working dir "finalized crawl list"
     copy($this->uploadsPath . '/WP-STATIC-MODIFIED-CRAWL-LIST', $this->uploadsPath . '/WP-STATIC-FINAL-CRAWL-LIST');
@@ -211,8 +211,9 @@ class StaticHtmlOutput_Controller {
 		} else {
 			$this->view
 				->setTemplate('options-page-js')
-				->assign('basedir', $this->getWorkingDirectory())
-				->assign('wpUploadsDir', $this->uploadsURL)
+				->assign('working_directory', $this->getWorkingDirectory())
+				->assign('wp_uploads_path', $this->uploadsPath)
+				->assign('wp_uploads_url', $this->uploadsURL)
 				->assign('options', $this->options)
 				->assign('wp_site_path', $this->wp_site_path)
 				->assign('wpPluginDir', plugins_url('/', __FILE__))
@@ -367,6 +368,7 @@ class StaticHtmlOutput_Controller {
 	}	
 
 	public function pre_export_cleanup() {
+    error_log('cleaning up leftover exports');
 		$files_to_clean = array(
 			'/WP-STATIC-EXPORT-TARGETS',
 			'/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT',
@@ -375,7 +377,7 @@ class StaticHtmlOutput_Controller {
 			'/WP-STATIC-EXPORT-DROPBOX-FILES-TO-EXPORT',
 			'/WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT',
 			'/WP-STATIC-CRAWLED-LINKS',
-			'/WP-STATIC-INITIAL-CRAWL-LIST',
+//			'/WP-STATIC-INITIAL-CRAWL-LIST',
 //			'/WP-STATIC-CURRENT-ARCHIVE', // needed for zip download, diff deploys, etc
 			'WP-STATIC-EXPORT-LOG'
 		);
@@ -408,9 +410,9 @@ class StaticHtmlOutput_Controller {
 			'/WP-STATIC-EXPORT-DROPBOX-FILES-TO-EXPORT',
 			'/WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT',
 			'/WP-STATIC-CRAWLED-LINKS',
-			'/WP-STATIC-INITIAL-CRAWL-LIST',
+//			'/WP-STATIC-INITIAL-CRAWL-LIST',
 			//'/WP-STATIC-CURRENT-ARCHIVE', // needed for zip download, diff deploys, etc
-			//'WP-STATIC-EXPORT-LOG'
+			'WP-STATIC-EXPORT-LOG'
 		);
 
 		foreach ($files_to_clean as $file_to_clean) {
@@ -443,7 +445,7 @@ class StaticHtmlOutput_Controller {
     }
 
     // initilise log with environmental info
-    WsLog::l('STARTING EXPORT' . date("Y-m-d h:i:s") );
+    WsLog::l('STARTING EXPORT ' . date("Y-m-d h:i:s") );
     WsLog::l('STARTING EXPORT: PHP VERSION ' . phpversion() );
     WsLog::l('STARTING EXPORT: PHP MAX EXECUTION TIME ' . ini_get('max_execution_time') );
     WsLog::l('STARTING EXPORT: OS VERSION ' . php_uname() );
