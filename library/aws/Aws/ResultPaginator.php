@@ -1,4 +1,10 @@
 <?php
+/**
+ * ResultPaginator
+ *
+ * @package WP2Static
+ */
+
 namespace Aws;
 use GuzzleHttp\Promise;
 class ResultPaginator implements \Iterator

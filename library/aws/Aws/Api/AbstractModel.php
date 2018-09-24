@@ -1,4 +1,10 @@
 <?php
+/**
+ * AbstractModel
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Api;
 
 /**

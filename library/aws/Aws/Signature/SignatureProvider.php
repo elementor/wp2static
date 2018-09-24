@@ -1,4 +1,10 @@
 <?php
+/**
+ * Signature providers
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Signature;
 
 use Aws\Exception\UnresolvedSignatureException;

@@ -1,4 +1,10 @@
 <?php
+/**
+ * JsonRpcErrorParser
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Api\ErrorParser;
 
 use Psr\Http\Message\ResponseInterface;

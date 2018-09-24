@@ -1,4 +1,10 @@
 <?php
+/**
+ * HTTP_Request2_Adapter_Socket
+ *
+ * @package WP2Static
+ */
+
 require_once __DIR__. '/../Adapter.php';
 require_once __DIR__. '/../SocketWrapper.php';
 class HTTP_Request2_Adapter_Socket extends HTTP_Request2_Adapter

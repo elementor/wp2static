@@ -1,4 +1,10 @@
 <?php
+/**
+ * Task
+ *
+ * @package WP2Static
+ */
+
 namespace Simply_Static;
 
 abstract class Task {

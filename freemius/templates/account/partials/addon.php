@@ -1,4 +1,10 @@
 <?php
+/**
+ * Addon
+ *
+ * @package WP2Static
+ */
+
     /**
      * @var array    $VARS
      * @var Freemius $fs

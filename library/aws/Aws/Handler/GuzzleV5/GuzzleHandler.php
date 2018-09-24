@@ -1,4 +1,10 @@
 <?php
+/**
+ * GuzzleHandler
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Handler\GuzzleV5;
 
 use Exception;

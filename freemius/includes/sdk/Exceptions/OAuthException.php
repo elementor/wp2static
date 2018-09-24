@@ -1,4 +1,10 @@
 <?php
+/**
+ * Freemius_OAuthException
+ *
+ * @package WP2Static
+ */
+
 	if ( ! class_exists( 'Freemius_Exception' ) ) {
 		exit;
 	}

@@ -1,4 +1,10 @@
 <?php
+/**
+ * MapShape
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Api;
 
 /**

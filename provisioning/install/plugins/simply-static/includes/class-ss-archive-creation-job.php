@@ -1,4 +1,10 @@
 <?php
+/**
+ * Archive_Creation_Job
+ *
+ * @package WP2Static
+ */
+
 namespace Simply_Static;
 
 // Exit if accessed directly

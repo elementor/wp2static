@@ -1,4 +1,10 @@
 <?php
+/**
+ * GuzzleStream
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Handler\GuzzleV5;
 
 use GuzzleHttp\Stream\StreamDecoratorTrait;

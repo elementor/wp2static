@@ -1,4 +1,10 @@
 <?php
+/**
+ * LruArrayCache
+ *
+ * @package WP2Static
+ */
+
 namespace Aws;
 class LruArrayCache implements CacheInterface, \Countable
 {

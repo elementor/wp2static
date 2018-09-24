@@ -1,3 +1,11 @@
+<?php
+/**
+ * Pagination
+ *
+ * @package WP2Static
+ */
+?>
+
 <div class='alignleft'>
 	<div class='http-status'><?php _e( '1xx Informational:', 'simply-static' ); ?> <b><?php echo $this->http_status_codes['1']; ?></b> |
 		<?php _e( '2xx Success:', 'simply-static' ); ?> <b><?php echo $this->http_status_codes['2']; ?></b> |

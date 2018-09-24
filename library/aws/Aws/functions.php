@@ -1,4 +1,10 @@
 <?php
+/**
+ * AWS functions
+ *
+ * @package WP2Static
+ */
+
 namespace Aws;
 use Psr\Http\Message\RequestInterface;
 use GuzzleHttp\ClientInterface;

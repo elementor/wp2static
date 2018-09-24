@@ -1,4 +1,10 @@
 <?php
+/**
+ * DeleteMultipleObjectsException
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\S3\Exception;
 
 /**

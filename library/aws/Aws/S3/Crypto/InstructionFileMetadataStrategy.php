@@ -1,4 +1,10 @@
 <?php
+/**
+ * InstructionFileMetadataStrategy
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\S3\Crypto;
 
 use \Aws\Crypto\MetadataStrategyInterface;

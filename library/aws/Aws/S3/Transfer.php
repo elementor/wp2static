@@ -1,4 +1,10 @@
 <?php
+/**
+ * Transfer
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\S3;
 
 use Aws;

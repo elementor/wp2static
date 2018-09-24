@@ -1,4 +1,10 @@
 <?php
+/**
+ * RestXmlParser
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Api\Parser;
 
 use Aws\Api\StructureShape;

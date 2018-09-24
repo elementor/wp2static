@@ -1,4 +1,10 @@
 <?php
+/**
+ * Operation
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Api;
 
 /**

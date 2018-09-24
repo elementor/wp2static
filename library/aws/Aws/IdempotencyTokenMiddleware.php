@@ -1,4 +1,10 @@
 <?php
+/**
+ * IdempotencyTokenMiddleware
+ *
+ * @package WP2Static
+ */
+
 namespace Aws;
 use Aws\Api\Service;
 use Psr\Http\Message\RequestInterface;

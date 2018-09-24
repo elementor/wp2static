@@ -1,4 +1,10 @@
 <?php
+/**
+ * JsonBody
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Api\Serializer;
 
 use Aws\Api\Service;

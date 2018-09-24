@@ -1,4 +1,10 @@
 <?php
+/**
+ * Export log
+ *
+ * @package WP2Static
+ */
+
 namespace Simply_Static;
 
 if ( is_array( $this->static_pages ) && count( $this->static_pages ) ) : ?>

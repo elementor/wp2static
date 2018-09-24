@@ -1,4 +1,9 @@
 <?php
+/**
+ * Debug_Bar_Object_Cache
+ *
+ * @package WP2Static
+ */
 
 class Debug_Bar_Object_Cache extends Debug_Bar_Panel {
 	function init() {

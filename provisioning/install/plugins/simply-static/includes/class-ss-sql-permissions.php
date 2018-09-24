@@ -1,4 +1,10 @@
 <?php
+/**
+ * Sql_Permissions
+ *
+ * @package WP2Static
+ */
+
 namespace Simply_Static;
 
 // Exit if accessed directly

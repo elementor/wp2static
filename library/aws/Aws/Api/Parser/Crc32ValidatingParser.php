@@ -1,4 +1,10 @@
 <?php
+/**
+ * Crc32ValidatingParser
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Api\Parser;
 
 use Aws\CommandInterface;

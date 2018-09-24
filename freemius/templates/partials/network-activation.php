@@ -1,4 +1,10 @@
 <?php
+/**
+ * Network Activation
+ *
+ * @package WP2Static
+ */
+
     /**
      * @var array $VARS
      * @var Freemius $fs

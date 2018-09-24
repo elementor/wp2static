@@ -1,1 +1,8 @@
-<?php // Silence is golden
+<?php
+/**
+ * Index placeholder
+ *
+ * @package WP2Static
+ */
+
+// Silence is golden

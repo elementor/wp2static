@@ -1,4 +1,10 @@
 <?php
+/**
+ * HasDataTrait
+ *
+ * @package WP2Static
+ */
+
 namespace Aws;
 trait HasDataTrait
 {

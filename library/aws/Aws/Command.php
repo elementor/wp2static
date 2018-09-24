@@ -1,4 +1,10 @@
 <?php
+/**
+ * Command
+ *
+ * @package WP2Static
+ */
+
 namespace Aws;
 class Command implements CommandInterface
 {

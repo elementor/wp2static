@@ -1,4 +1,9 @@
 <?php
+/**
+ * Debug_Bar_Panel
+ *
+ * @package WP2Static
+ */
 
 class Debug_Bar_Panel {
 	public $_title = '';

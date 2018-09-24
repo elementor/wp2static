@@ -1,4 +1,10 @@
 <?php
+/**
+ * DocModel
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Api;
 
 /**

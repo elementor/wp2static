@@ -1,4 +1,10 @@
 <?php
+/**
+ * HTTP_Request2_Exception
+ *
+ * @package WP2Static
+ */
+
 require_once 'PEAR/Exception.php';
 class HTTP_Request2_Exception extends PEAR_Exception
 {

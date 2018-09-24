@@ -1,4 +1,10 @@
 <?php
+/**
+ * S3Exception
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\S3\Exception;
 
 use Aws\Exception\AwsException;

@@ -1,4 +1,10 @@
 <?php
+/**
+ * HashInterface
+ *
+ * @package WP2Static
+ */
+
 namespace Aws;
 interface HashInterface
 {

@@ -1,7 +1,11 @@
 <?php
+/**
+ * Debug_Bar_Deprecated
+ *
+ * @package WP2Static
+ */
 
 // Alot of this code is massaged from Andrew Nacin's log-deprecated-notices plugin
-
 class Debug_Bar_Deprecated extends Debug_Bar_Panel {
 	private $deprecated_functions = array();
 	private $deprecated_files = array();

@@ -1,4 +1,10 @@
 <?php
+/**
+ * PatternEndpointProvider
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Endpoint;
 
 /**

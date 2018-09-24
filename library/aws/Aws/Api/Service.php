@@ -1,4 +1,10 @@
 <?php
+/**
+ * Service
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Api;
 
 use Aws\Api\Serializer\QuerySerializer;

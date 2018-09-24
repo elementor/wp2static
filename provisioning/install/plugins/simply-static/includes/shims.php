@@ -1,4 +1,10 @@
 <?php
+/**
+ * Shims
+ *
+ * @package WP2Static
+ */
+
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

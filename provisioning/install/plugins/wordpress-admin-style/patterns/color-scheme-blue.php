@@ -1,3 +1,11 @@
+<?php
+/**
+ * Color scheme blue
+ *
+ * @package WP2Static
+ */
+?>
+
 <h2><?php esc_attr_e( 'Color Scheme: Blue', 'WpAdminStyle' ); ?></h2>
 <table style="width: 80%;text-align: center;border: 0 none">
 	<tbody>

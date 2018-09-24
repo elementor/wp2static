@@ -1,4 +1,10 @@
 <?php
+/**
+ * SignatureInterface
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Signature;
 
 use Aws\Credentials\CredentialsInterface;

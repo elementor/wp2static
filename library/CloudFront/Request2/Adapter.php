@@ -1,4 +1,10 @@
 <?php
+/**
+ * HTTP_Request2_Adapter
+ *
+ * @package WP2Static
+ */
+
 require_once 'Response.php';
 abstract class HTTP_Request2_Adapter
 {

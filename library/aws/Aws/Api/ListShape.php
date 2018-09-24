@@ -1,4 +1,10 @@
 <?php
+/**
+ * ListShape
+ *
+ * @package WP2Static
+ */
+
 namespace Aws\Api;
 
 /**
