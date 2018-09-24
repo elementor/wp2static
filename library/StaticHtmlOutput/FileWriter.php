@@ -37,7 +37,7 @@ class FileWriter {
 
 		$fileExtension = ''; 
 
-		if(  isset($pathInfo['extension'])) {
+		if(isset($pathInfo['extension'])) {
 			$fileExtension = $pathInfo['extension']; 
 		} else if( $this->file_type == 'html' ) {
 			$fileExtension = 'html'; 
@@ -62,6 +62,8 @@ class FileWriter {
 			file_put_contents($fileName, $fileContents);
 		} else {
 			WsLog::l('SAVING URL: FILE IS EMPTY ' . $this->url);
+      error_log($this->url);
+      error_log($this->content);
 		}
 	}
 }
