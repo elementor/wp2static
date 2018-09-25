@@ -19,3 +19,4 @@
 ./library/StaticHtmlOutput/FilesHelper.php
 ./library/StaticHtmlOutput/Ubench.php
 ./library/StaticHtmlOutput/BunnyCDN.php
+./library/StaticHtmlOutput/HTMLProcessor.php
