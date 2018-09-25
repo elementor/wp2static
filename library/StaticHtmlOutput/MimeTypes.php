@@ -1,9 +1,4 @@
 <?php
-/**
- * MIME types
- *
- * @package WP2Static
- */
 
 function GuessMimeType($File) {
 static $mime_types = array(

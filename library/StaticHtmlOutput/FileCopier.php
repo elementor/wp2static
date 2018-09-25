@@ -1,104 +1,72 @@
 <?php
-/**
- * FileCopier
- *
- * @package WP2Static
- */
+
+// TODO: if this fails to locate the local file for the remote, 
+//        it should fall back to regular crawl processing method
+//         (where response status will also be checked in case of 404)
+
 class FileCopier {
+  public function __construct($url, $wp_site_url, $wp_site_path){
+    $this->url = $url;
+    $this->wp_site_url = $wp_site_url;
+    $this->wp_site_path = $wp_site_path;
+  }
 
-    /**
-     * TODO: if this fails to locate the local file for the remote,
-     * TODO: ... it should fall back to regular crawl processing method
-     * TODO: ... (where response status will also be checked in case of 404)
-     */
+  public function getLocalFileForURL() {
+    /* 
+      take the public URL and return the location on the filesystem
 
-    /**
-     * Constructor
-     *
-     * @param string $url          URL
-     * @param string $wp_site_url  Site URL
-     * @param string $wp_site_path Site path
-     */
-    public function __construct( $url, $wp_site_url, $wp_site_path ) {
-        $this->url = $url;
-        $this->wp_site_url = $wp_site_url;
-        $this->wp_site_path = $wp_site_path;
-    }
+      ie http://domain.com/wp-content/somefile.jpg
 
+      replace the WP site url with the WP site path
 
-    /**
-     * Get local file for URL
-     *
-     * @return string
-     */
-    public function getLocalFileForURL() {
-        /**
-         * Take the public URL and return the location on the filesystem
-         *
-         * Ex: http://domain.com/wp-content/somefile.jpg
-         *
-         * replace the WP site url with the WP site path
-         *
-         * Ex: replace http://domain.com/ with /var/www/domain.com/html/
-         *
-         * resulting in
-         *
-         * Ex: /var/www/domain.com/html/wp-content/somefile.jpg
-         */
-        return( str_replace(
-            $this->wp_site_url,
-            $this->wp_site_path,
-            $this->url
-        ) );
-    }
+      ie
 
+      replace http://domain.com/ with /var/www/domain.com/html/
 
-    /**
-     * Copy file
-     *
-     * @param string $archiveDir Archive directory
-     * @return mixed
-     */
-    public function copyFile( $archiveDir ) {
-        $urlInfo = parse_url( $this->url );
-        $pathInfo = array();
+      resulting in 
 
-        $local_file = $this->getLocalFileForURL();
+      ie /var/www/domain.com/html/wp-content/somefile.jpg
 
-        /*
-          $urlInfo['path'] will look like:
+    */
+    return(str_replace($this->wp_site_url, $this->wp_site_path, $this->url));
+  }
 
-            (file with extension)
+	public function copyFile($archiveDir) {
+		$urlInfo = parse_url($this->url);
+		$pathInfo = array();
 
-            [scheme] => http
-            [host] => 172.18.0.3
-            [path] => /wp-content/themes/twentyseventeen/assets/css/ie8.css
+    $local_file = $this->getLocalFileForURL();
 
-        */
+		/* 
+		  $urlInfo['path'] will look like:
 
-        // TODO: here we can allow certain external host files to be crawled
-        if ( ! isset( $urlInfo['path'] ) ) {
-            return false;
-        }
+			(file with extension)
 
-        $pathInfo = pathinfo( $urlInfo['path'] );
+			[scheme] => http
+			[host] => 172.18.0.3
+			[path] => /wp-content/themes/twentyseventeen/assets/css/ie8.css
 
-        // set fileDir to the directory name else empty
-        $fileDir = $archiveDir . (
-            isset( $pathInfo['dirname'] )
-                ? $pathInfo['dirname']
-                : ''
-        );
+		*/
 
-        if ( ! file_exists( $fileDir ) ) {
-            wp_mkdir_p( $fileDir );
-        }
+		// TODO: here we can allow certain external host files to be crawled
 
-        $fileExtension = $pathInfo['extension'];
+		if ( !isset($urlInfo['path']) ) {
+			return false;
+		}
 
-        $fileName = $fileDir . '/' . $pathInfo['filename'] . '.' .
-            $fileExtension;
+	  $pathInfo = pathinfo($urlInfo['path']);
 
-        copy( $local_file, $fileName );
-    }
+		// set fileDir to the directory name else empty	
+		$fileDir = $archiveDir . (isset($pathInfo['dirname']) ? $pathInfo['dirname'] : '');
+
+		if (!file_exists($fileDir)) {
+			wp_mkdir_p($fileDir);
+		}
+
+    $fileExtension = $pathInfo['extension']; 
+			
+    $fileName = $fileDir . '/' . $pathInfo['filename'] . '.' . $fileExtension;
+
+    copy($local_file, $fileName);
+	}
 }

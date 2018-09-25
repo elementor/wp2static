@@ -1,7 +1,5 @@
 <?php
 /**
- * StaticHtmlOutput_BunnyCDN
- *
  * @package WP Static HTML Output
  *
  * Copyright (c) 2011 Leon Stafford
@@ -54,7 +52,7 @@ class StaticHtmlOutput_BunnyCDN
 					$targetPath = ltrim($targetPath, '/');
 					$export_line = $dir .'/' . $item . ',' . $targetPath . "\n";
 					file_put_contents($this->_exportFileList, $export_line, FILE_APPEND | LOCK_EX);
-				}
+				} 
 			}
 		}
 	}
@@ -109,7 +107,7 @@ class StaticHtmlOutput_BunnyCDN
 			// do the bunny export
 			$client = new Client(array(
 					'base_uri' => $this->_baseURL
-			));
+			));	
 
 			try {
 				$response = $client->request('PUT', '/' . $this->_zoneID . '/' . $targetPath . basename($fileToTransfer), array(
@@ -131,7 +129,7 @@ class StaticHtmlOutput_BunnyCDN
 			if ( $filesRemaining > 0 ) {
         // if this is via CLI, then call this function again here
         if ($viaCLI) {
-          $this->transfer_files(true);
+          $this->transfer_files(true); 
         }
 
 				echo $filesRemaining;
@@ -144,7 +142,7 @@ class StaticHtmlOutput_BunnyCDN
 	public function purge_all_cache() {
 		require_once dirname(__FILE__) . '/../GuzzleHttp/autoloader.php';
 		// purege cache for each file
-		$client = new Client();
+		$client = new Client();	
 
 		try {
 			$response = $client->request('POST', 'https://bunnycdn.com/api/pullzone/' . $this->_zoneID . '/purgeCache', array(

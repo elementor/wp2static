@@ -1,14 +1,10 @@
 <?php
-/**
- * TXTProcessor
- *
- * @package WP2Static
- */
+
 
 class TXTProcessor {
 
   public function __construct($txt_document, $wp_site_url){
-    $this->wp_site_url = $wp_site_url;
+    $this->wp_site_url = $wp_site_url;   
     $this->txt_doc = $txt_document;
   }
 

@@ -1,9 +1,4 @@
 <?php
-/**
- * Archive
- *
- * @package WP2Static
- */
 
 class Archive {
 

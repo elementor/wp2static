@@ -13,3 +13,4 @@
 ./library/StaticHtmlOutput/CSSProcessor.php
 ./library/StaticHtmlOutput/DeveloperTools.php
 ./library/StaticHtmlOutput/Netlify.php
+./library/StaticHtmlOutput/FileWriter.php

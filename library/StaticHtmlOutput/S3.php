@@ -1,7 +1,5 @@
 <?php
 /**
- * StaticHtmlOutput_S3
- *
  * @package WP Static HTML Output
  *
  * Copyright (c) 2011 Leon Stafford
@@ -63,7 +61,7 @@ class StaticHtmlOutput_S3
 					$targetPath = ltrim($targetPath, '/');
 					$export_line = $dir .'/' . $item . ',' . $targetPath . "\n";
 					file_put_contents($this->_exportFileList, $export_line, FILE_APPEND | LOCK_EX);
-				}
+				} 
 			}
 		}
 	}
@@ -104,7 +102,7 @@ class StaticHtmlOutput_S3
 
 	public function s3_put_object($targetPath, $fileContents, $contentType = "text/plain", $pluginInstance) {
 		if ( wpsho_fr()->is__premium_only() ) {
-			require_once dirname(__FILE__) . '/../aws/aws-autoloader.php';
+			require_once dirname(__FILE__) . '/../aws/aws-autoloader.php';	
 			require_once dirname(__FILE__) . '/../GuzzleHttp/autoloader.php';
 
 			$S3 = Aws\S3\S3Client::factory(array(
@@ -113,7 +111,7 @@ class StaticHtmlOutput_S3
 				'credentials' => array(
 					'key' => $this->_key,
 					'secret'  => $this->_secret,
-				  )
+				  )    
 				)
 			);
 
@@ -151,22 +149,22 @@ class StaticHtmlOutput_S3
 
 			// vendor specific from here
 
-			require_once(__DIR__.'/MimeTypes.php');
+			require_once(__DIR__.'/MimeTypes.php'); 
 
 			$this->s3_put_object(
 				$targetPath . basename($fileToTransfer),
 				file_get_contents($fileToTransfer),
 				GuessMimeType($fileToTransfer),
 				$this
-			);
+			); 
 		   
-			// end vendor specific
+			// end vendor specific 
 
 			$filesRemaining = $this->get_remaining_items_count();
 			if ( $filesRemaining > 0 ) {
         // if this is via CLI, then call this function again here
         if ($viaCLI) {
-          $this->transfer_files(true);
+          $this->transfer_files(true); 
         }
 				echo $filesRemaining;
 			} else {

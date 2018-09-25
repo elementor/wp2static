@@ -1,10 +1,4 @@
 <?php
-/**
- * StaticHtmlOutput_View
- *
- * @package WP2Static
- */
-
 class StaticHtmlOutput_View
 {
 	protected $_variables = array();
