@@ -16,3 +16,4 @@
 ./library/StaticHtmlOutput/FileWriter.php
 ./library/StaticHtmlOutput/SiteCrawler.php
 ./library/StaticHtmlOutput/S3.php
+./library/StaticHtmlOutput/FilesHelper.php
