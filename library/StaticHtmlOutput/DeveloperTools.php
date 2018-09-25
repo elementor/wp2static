@@ -19,6 +19,20 @@
   $str_result_bench=mini_bench_to($t);
   error_log($str_result_bench); // string return
 
+or more simply:
+
+
+  $start_time = microtime(TRUE);
+   
+  for($i = 0; $i < 10000; $i += 1) {
+    $this->archive_dir = file_get_contents($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE');
+  }
+
+
+  $end_time = microtime(TRUE);
+
+  error_log($end_time - $start_time);
+
 
  */
 function mini_bench_to($arg_t, $arg_ra=false) {
