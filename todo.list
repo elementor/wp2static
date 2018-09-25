@@ -1,4 +1,3 @@
-./library/StaticHtmlOutput/DeveloperTools.php
 ./library/StaticHtmlOutput/Netlify.php
 ./library/StaticHtmlOutput/FileWriter.php
 ./library/StaticHtmlOutput/SiteCrawler.php

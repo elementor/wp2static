@@ -1,25 +1,20 @@
 <?php
-/**
- * Developer tools
- *
- * @package WP2Static
- */
 
 /*
    http://php.net/manual/en/function.microtime.php
 
   Example usage:
 
-  unset($t);
-  $t['start'] = microtime(true);
+  unset($t);  
+  $t['start'] = microtime(true); 
 
   // some code
 
-  $t['start_of_some_action'] = microtime(true);
+  $t['start_of_some_action'] = microtime(true); 
     
   // some code
 
-  $t['start_of_another_action'] = microtime(true);
+  $t['start_of_another_action'] = microtime(true); 
 
   $str_result_bench=mini_bench_to($t);
   error_log($str_result_bench); // string return
@@ -51,7 +46,7 @@ function mini_bench_to($arg_t, $arg_ra=false) {
 
   foreach ($arg_t as $cle=>$val)
   {
-      if($cle!='start')
+      if($cle!='start')   
       {
           $prcnt_t=round(((round(($val-$prv_val)*1000,4)/$tttime)*100),1);
           if ($arg_ra) $ar_aff[$prv_cle.' -> '.$cle]=$prcnt_t;
