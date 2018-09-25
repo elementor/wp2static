@@ -8,3 +8,4 @@
 ./library/StaticHtmlOutput/Dropbox.php
 ./library/StaticHtmlOutput/FTP.php
 ./library/StaticHtmlOutput/GitHub.php
+./library/StaticHtmlOutput/MimeTypes.php
