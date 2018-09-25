@@ -76,7 +76,7 @@ class SiteCrawler {
 
     $this->urls_to_crawl = file($this->list_of_urls_to_crawl_path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
-    $total_links = sizeOf($this->urls_to_crawl);
+    $total_links = count($this->urls_to_crawl);
 
     if ($total_links < 1) {
       error_log('list of URLs to crawl not found at ' . $this->list_of_urls_to_crawl_path);
@@ -97,7 +97,7 @@ class SiteCrawler {
       }
     }
 
-    $this->remaining_urls_to_crawl = sizeOf($this->urls_to_crawl);
+    $this->remaining_urls_to_crawl = count($this->urls_to_crawl);
 
     // resave crawl list file, minus those from this batch
     file_put_contents($this->list_of_urls_to_crawl_path, implode("\r\n", $this->urls_to_crawl));
@@ -108,13 +108,10 @@ class SiteCrawler {
 
     // for each link in batch, do the crawl and save
     foreach($batch_of_links_to_crawl as $link_to_crawl) {
-
       $this->url = $link_to_crawl;
 
-      // detect and set file_extension
       $this->file_extension = $this->getExtensionFromURL();
 
-      // TODO: if not a rewriteable file and exists on server, copy it into archive without reading
       if ($this->canFileBeCopiedWithoutProcessing()) {
         $this->copyFile();
       } else {
