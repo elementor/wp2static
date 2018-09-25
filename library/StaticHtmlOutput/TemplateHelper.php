@@ -10,7 +10,7 @@ class TemplateHelper {
     echo "
       <fieldset>
         <label for='{$field_name}'>
-          <input name='{$field_name}' id='{$field_name}' value='1' type='checkbox' " . ( $template_variables->options->{$field_name} == 1 ? 'checked' : '' )  . " />
+          <input name='{$field_name}' id='{$field_name}' value='1' type='checkbox' " . ( $template_variables->options->{$field_name} === 1 ? 'checked' : '' )  . " />
           <span>" .  __($field_label, 'static-html-output-plugin') . "</span>
         </label>
       </fieldset>
@@ -32,7 +32,7 @@ class TemplateHelper {
         <option></option>";
 
     foreach ($menu_options as $value => $text) {
-      if ($template_variables->options->{$field_name} == $value) {
+      if ($template_variables->options->{$field_name} === $value) {
         $menu_code .= "
             <option value='{$value}' selected>{$text}</option>";
       } else {

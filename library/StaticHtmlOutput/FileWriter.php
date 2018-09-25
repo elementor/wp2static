@@ -26,7 +26,7 @@ class FileWriter {
 		$fileDir = $archiveDir . (isset($pathInfo['dirname']) ? $pathInfo['dirname'] : '');
 
 		// set filename to index if there is no extension and basename and filename are the same
-		if (empty($pathInfo['extension']) && $pathInfo['basename'] == $pathInfo['filename']) {
+		if (empty($pathInfo['extension']) && $pathInfo['basename'] === $pathInfo['filename']) {
 			$fileDir .= '/' . $pathInfo['basename'];
 			$pathInfo['filename'] = 'index';
 		}

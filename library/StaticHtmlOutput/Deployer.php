@@ -133,7 +133,7 @@ class Deployer {
 
 				$cf->invalidate('/*');
 			
-				if ( $cf->getResponseMessage() == 200 || $cf->getResponseMessage() == 201 )	{
+				if ( $cf->getResponseMessage() === 200 || $cf->getResponseMessage() === 201 )	{
 					echo 'SUCCESS';
 				} else {
 					WsLog::l('CF ERROR: ' . $cf->getResponseMessage());

@@ -121,7 +121,7 @@ class ArchiveProcessor {
 
 
 	public function copyStaticSiteToPublicFolder() {
-		if ( $this->selected_deployment_option == 'folder' ) {
+		if ( $this->selected_deployment_option === 'folder' ) {
 			$publicFolderToCopyTo = trim($this->targetFolder);
 
 			if ( ! empty($publicFolderToCopyTo) ) {
