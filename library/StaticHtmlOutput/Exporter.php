@@ -18,9 +18,12 @@ class Exporter {
   public function capture_last_deployment() {
     require_once dirname(__FILE__) . '/../StaticHtmlOutput/Archive.php';
     $archive = new Archive();
-    $archive->setToCurrentArchive();
 
-     
+    if (! $archive->currentArchiveExists()) {
+      return;
+    }
+
+
     error_log('capturing last deployment: ' . $archive->path);
 
     // TODO: big cleanup required here, very iffy code
@@ -49,7 +52,6 @@ class Exporter {
       }
     }
 
-		echo 'SUCCESS';
   }
 
 	public function pre_export_cleanup() {

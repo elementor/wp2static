@@ -21,6 +21,10 @@ class Archive {
     $this->path = stream_get_line($handle, 0);
   }
 
+  public function currentArchiveExists() {
+    return is_file($this->uploads_path . '/WP-STATIC-CURRENT-ARCHIVE');
+  }
+
   public function create() {
 		$this->name = $this->working_directory . '/wp-static-html-output-' . time();
 
