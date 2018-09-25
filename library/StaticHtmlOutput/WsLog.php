@@ -3,10 +3,15 @@
 class WsLog {
 
   public static function l($text) {
-    $tmp_var_to_hold_return_array = wp_upload_dir();
-    $file = $tmp_var_to_hold_return_array['basedir'] . '/WP-STATIC-EXPORT-LOG';
+    $wp_uploads_path = $_POST['wp_uploads_path'];
+    $working_directory = isset($_POST['workingDirectory']) ? $_POST['workingDirectory'] : $this->wp_uploads_path;
 
-    $src = fopen($file, (file_exists($file)) ? 'r+' : 'w');
+    $log_file_path = $working_directory . '/WP-STATIC-EXPORT-LOG';
+
+    // TODO: create file when initializing the log with header information, reducing each call here
+
+
+    $src = fopen($log_file_path, (file_exists($log_file_path)) ? 'r+' : 'w');
     $dest = fopen('php://temp', 'w');
 
     fwrite($dest,  date("Y-m-d h:i:s") . ' ' . $text . PHP_EOL);

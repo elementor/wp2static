@@ -6,7 +6,8 @@ class Archive {
     $this->path = '';
     $this->crawl_list = '';
     $this->export_log = '';
-    $this->working_directory = isset($_POST['workingDirectory']) ? $_POST['workingDirectory'] : '';
+    $this->uploads_path = isset($_POST['wp_uploads_path']) ? $_POST['wp_uploads_path'] : '';
+    $this->working_directory = isset($_POST['workingDirectory']) ? $_POST['workingDirectory'] : $this->uploads_path;
   }
 
   public function addFiles() {
@@ -16,7 +17,7 @@ class Archive {
   public function setToCurrentArchive() {
     // TODO: someting like setScopeToCurrentArchive?
     // refreshes the instance properties in case called out of context
-    $handle = fopen($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE', 'r');
+    $handle = fopen($this->uploads_path . '/WP-STATIC-CURRENT-ARCHIVE', 'r');
     $this->path = stream_get_line($handle, 0);
   }
 
@@ -27,7 +28,7 @@ class Archive {
 
     if (wp_mkdir_p($this->path)) {
       // saving the current archive name to file to persist across requests / functions
-      file_put_contents($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE', $this->path);
+      file_put_contents($this->uploads_path . '/WP-STATIC-CURRENT-ARCHIVE', $this->path);
     } else {
       error_log("Couldn't create the archive directory at " . $this->path);
     }

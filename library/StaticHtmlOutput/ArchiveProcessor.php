@@ -24,6 +24,8 @@ class ArchiveProcessor {
 
 		$this->wp_site_url = '';
 		$this->wp_site_subdir = '';
+    $this->wp_uploads_path = $_POST['wp_uploads_path'];
+    $this->working_directory = isset($_POST['workingDirectory']) ? $_POST['workingDirectory'] : $this->wp_uploads_path;
   }
 
 	public function create_symlink_to_latest_archive() {
@@ -31,20 +33,20 @@ class ArchiveProcessor {
 
     if (is_dir($this->archive->path)) {
       $this->remove_symlink_to_latest_archive();
-      symlink($this->archive->path, $this->working_directory . '/latest-export' );
+      symlink($this->archive->path, $this->wp_uploads_path . '/latest-export' );
     } else {
       error_log('failed to symlink latest export directory');
     }
 	}	
 
 	public function remove_symlink_to_latest_archive() {
-		if (is_link($this->working_directory . '/latest-export' )) {
-			unlink($this->working_directory . '/latest-export'  );
+		if (is_link($this->wp_uploads_path . '/latest-export' )) {
+			unlink($this->wp_uploads_path . '/latest-export'  );
 		} 
 	}	
 
   public function remove_files_idential_to_previous_export() {
-    $dir_to_diff_against = $this->working_directory . '/previous-export';
+    $dir_to_diff_against = $this->wp_uploads_path . '/previous-export';
 
     // iterate each file in current export, check the size and contents in previous, delete if match
     $objects = new RecursiveIteratorIterator(
