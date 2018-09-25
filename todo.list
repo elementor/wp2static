@@ -1,4 +1,3 @@
-./library/StaticHtmlOutput/HTMLProcessor.php
 ./library/StaticHtmlOutput/UrlHelper.php
 ./library/StaticHtmlOutput/View.php
 ./library/StaticHtmlOutput.php
