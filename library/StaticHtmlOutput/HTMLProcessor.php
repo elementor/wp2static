@@ -1,9 +1,5 @@
 <?php
-/**
- * HTMLProcessor
- *
- * @package WP2Static
- */
+
 
 // TODO: deal with inline CSS blocks or style attributes on tags
 
@@ -14,14 +10,14 @@ class HTMLProcessor {
   public function __construct($html_document, $wp_site_url){
     $this->wp_site_url = $wp_site_url;
 
-    // instantiate the XML body here
-    $this->xml_doc = new DOMDocument();
+    // instantiate the XML body here 
+    $this->xml_doc = new DOMDocument(); 
     $this->raw_html = $html_document;
   
     // PERF: 70% of function time
     // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
     libxml_use_internal_errors(true);
-    $this->xml_doc->loadHTML($html_document);
+    $this->xml_doc->loadHTML($html_document); 
     libxml_use_internal_errors(false);
   }
 
@@ -30,7 +26,7 @@ class HTMLProcessor {
     require_once dirname(__FILE__) . '/../URL2/URL2.php';
     $base = new Net_URL2($url);
 
-    foreach($this->xml_doc->getElementsByTagName('a') as $link) {
+    foreach($this->xml_doc->getElementsByTagName('a') as $link) { 
       $original_link = $link->getAttribute("href");
 
       if ($this->isInternalLink($original_link)) {
@@ -55,15 +51,15 @@ class HTMLProcessor {
   }
 
   public function removeQueryStringsFromInternalLinks() {
-    foreach($this->xml_doc->getElementsByTagName('a') as $link) {
+    foreach($this->xml_doc->getElementsByTagName('a') as $link) { 
       $link_href = $link->getAttribute("href");
 
       // check if it's an internal link not a subdomain
       if ($this->isInternalLink($link_href)) {
         // strip anything from the ? onwards
-        // https://stackoverflow.com/a/42476194/1668057
+        // https://stackoverflow.com/a/42476194/1668057 
         $link->setAttribute('href', strtok($link_href, '?'));
-      }
+      } 
     }
   }
 
@@ -102,7 +98,7 @@ class HTMLProcessor {
         $link->parentNode->removeChild($link);
       } elseif (strpos($link_rel, '.w.org') !== false) {
         $link->parentNode->removeChild($link);
-      }
+      } 
     }
   }
 
@@ -113,7 +109,7 @@ class HTMLProcessor {
 
     if (strpos($this->raw_html, $escaped_site_url) !== false) {
       // TODO: renable this function being called. needs to be on raw HTML, so ideally after the Processor has done all other XML things, so no need to parse again
-      // suggest adding a processRawHTML function, that includes this stuff.. and call it within the getHTML function or finalizeProcessing or such....
+      // suggest adding a processRawHTML function, that includes this stuff.. and call it within the getHTML function or finalizeProcessing or such.... 
       // error_log('skipping rewriting of escaped URLs');// leave this error log in until fixed
       //$this->rewriteEscapedURLs($wp_site_environment, $overwrite_slug_targets);
     }
@@ -152,7 +148,7 @@ class HTMLProcessor {
 
 	public function rewriteWPPaths($wp_site_environment, $overwrite_slug_targets) {
     // NOTE: drier code but costlier memory usage
-    foreach($this->xml_doc->getElementsByTagName('*') as $element) {
+    foreach($this->xml_doc->getElementsByTagName('*') as $element) { 
       $attribute_to_change = '';
       $url_to_change = '';
 
@@ -160,9 +156,9 @@ class HTMLProcessor {
         $attribute_to_change = 'href';
       } elseif ($element->hasAttribute('src')) {
         $attribute_to_change = 'src';
-      // skip elements without href or src
+      // skip elements without href or src 
       } else {
-        continue;
+        continue; 
       }
 
       $url_to_change = $element->getAttribute($attribute_to_change);
@@ -172,11 +168,11 @@ class HTMLProcessor {
         $rewritten_url = str_replace(
           array(
             $wp_site_environment['wp_active_theme'],
-            $wp_site_environment['wp_themes'],
-            $wp_site_environment['wp_uploads'],
-            $wp_site_environment['wp_plugins'],
-            $wp_site_environment['wp_content'],
-            $wp_site_environment['wp_inc'],
+            $wp_site_environment['wp_themes'], 
+            $wp_site_environment['wp_uploads'], 
+            $wp_site_environment['wp_plugins'], 
+            $wp_site_environment['wp_content'], 
+            $wp_site_environment['wp_inc'], 
           ),
           array(
             $overwrite_slug_targets['new_active_theme_path'],
@@ -205,14 +201,14 @@ class HTMLProcessor {
     // error_log('old base url: ' . $oldBaseUrl);
     // error_log('new base url: ' . $newBaseUrl);
 
-    foreach($this->xml_doc->getElementsByTagName('*') as $element) {
+    foreach($this->xml_doc->getElementsByTagName('*') as $element) { 
       if ($element->hasAttribute('href')) {
         $attribute_to_change = 'href';
       } elseif ($element->hasAttribute('src')) {
         $attribute_to_change = 'src';
-      // skip elements without href or src
+      // skip elements without href or src 
       } else {
-        continue;
+        continue; 
       }
 
       $url_to_change = $element->getAttribute($attribute_to_change);
@@ -222,7 +218,7 @@ class HTMLProcessor {
         $rewritten_url = str_replace($oldBaseUrl, $newBaseUrl, $url_to_change);
 
         $element->setAttribute($attribute_to_change, $rewritten_url);
-      }
+      } 
     }
 
 
@@ -246,10 +242,10 @@ class HTMLProcessor {
       // error_log('SKIPPING offline usage rewriting');
 
 
-//        foreach($xml->getElementsByTagName('a') as $link) {
+//        foreach($xml->getElementsByTagName('a') as $link) { 
 //           $original_link = $link->getAttribute("href");
-//
-//            // process links from our site only
+//           
+//            // process links from our site only 
 //            if (strpos($original_link, $oldDomain) !== false) {
 //
 //            }
@@ -257,7 +253,7 @@ class HTMLProcessor {
 //           $link->setAttribute('href', $original_link . 'index.html');
 //        }
 //
-    }
+    } 
 
     // TODO: should we check for incorrectly linked references? like an http link on a WP site served from https? - probably not
 

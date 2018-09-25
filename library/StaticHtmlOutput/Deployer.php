@@ -1,9 +1,5 @@
 <?php
-/**
- * Deployer
- *
- * @package WP2Static
- */
+
 
 class Deployer {
 
@@ -87,7 +83,7 @@ class Deployer {
     // $subject = 'Static site deployment: ' . $site_title = get_bloginfo( 'name' );;
     // $body = 'Your WordPress site has been automatically deployed.';
     // $headers = array('Content-Type: text/html; charset=UTF-8');
-    //
+    //  
     // wp_mail( $to, $subject, $body, $headers );
   }
 
@@ -104,7 +100,7 @@ class Deployer {
 			);
 
 			$s3->prepare_deployment();
-		}
+		}	
   }
 
   public function s3_transfer_files($viaCLI = false) {
