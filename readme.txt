@@ -8,11 +8,11 @@ Requires PHP: 5.4
 Stable tag: 5.9
 
 
+== Description ==
+
 WP Static Site Generator protects the admin area of your WP site, whilst allowing you to serve your content to users on free and fast hosting options. 
 
 Keep using WordPress for what it's best at - managing content, but remove the security and performance headaches by publishing the site as static HTML.
-
-== Description ==
 
 The optimum solution to speed up and secure your WordPress site - export to static HTML and hide all traces of WordPress from your site!
 
@@ -23,7 +23,6 @@ A static site closes all the doors that an out of date WordPress, theme or plugi
 Your visitors not sticking around due to your site loading too slow? 
 
 A pre-generated static site can outperform popular caching plugins like WP Super Cache, WP Fastest Cache and W3 Total Cache.
-
 
 [**https://wp2static.com**](https://wp2static.com/)
 
@@ -136,6 +135,7 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
 = 5.9 =
 
  * Bugfix: Prevent rewriting URLs on external domains
+ * Enhancement: preview initial crawl list before starting your export
 
 = 5.8 =
 
@@ -453,6 +453,7 @@ Initial release to Wordpress community
 = 5.9 =
 
  * Bugfix: Prevent rewriting URLs on external domains
+ * Enhancement: preview initial crawl list before starting your export
 
 = 5.8 =
 
