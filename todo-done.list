@@ -17,3 +17,4 @@
 ./library/StaticHtmlOutput/SiteCrawler.php
 ./library/StaticHtmlOutput/S3.php
 ./library/StaticHtmlOutput/FilesHelper.php
+./library/StaticHtmlOutput/Ubench.php
