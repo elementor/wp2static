@@ -6,6 +6,9 @@ class SiteCrawler {
 
   public function __construct(){
     // TODO: security check that this is being called from same server
+
+    // TODO: move to actual Crawler class, rename this to SiteScraper
+    //$crawled_links = file($this->crawled_links_file, FILE_IGNORE_NEW_LINES);
     
     // basic auth
     $this->useBasicAuth = isset($_POST['useBasicAuth']) ?  $_POST['useBasicAuth'] :  false;
@@ -73,18 +76,14 @@ class SiteCrawler {
 
     $this->urls_to_crawl = file($this->list_of_urls_to_crawl_path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
-    if (empty($this->urls_to_crawl)) {
+    $total_links = sizeOf($this->urls_to_crawl);
+
+    if ($total_links < 1) {
       error_log('list of URLs to crawl not found at ' . $this->list_of_urls_to_crawl_path);
       require_once dirname(__FILE__) . '/../StaticHtmlOutput/WsLog.php';
       WsLog::l('ERROR: LIST OF URLS TO CRAWL NOT FOUND AT: ' . $this->list_of_urls_to_crawl_path);
       die();
     }
-
-
-
-    // TODO: move to actual Crawler class, rename this to SiteScraper
-    //$crawled_links = file($this->crawled_links_file, FILE_IGNORE_NEW_LINES);
-    $total_links = sizeOf($this->urls_to_crawl);
 
     if ($this->crawl_increment > $total_links) {
       $this->crawl_increment = $total_links;
@@ -110,13 +109,6 @@ class SiteCrawler {
 
       $this->url = $link_to_crawl;
 
-      if (empty($this->url)){
-        // skip this empty URL, check for more
-        $this->checkIfMoreCrawlingNeeded();
-
-        return;
-      }
-
       // detect and set file_extension
       $this->file_extension = $this->getExtensionFromURL();
 
@@ -131,7 +123,7 @@ class SiteCrawler {
 
     $this->checkIfMoreCrawlingNeeded();
 
-    // reclaim memory after each crawl
+    // reclaim memory after each crawl 
     $urlResponse = null;
     unset($urlResponse);
   }
