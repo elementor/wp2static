@@ -42,7 +42,8 @@ class SiteCrawler {
     $this->url = '';
     $this->extension = '';
     $this->archive_dir = '';
-    $this->list_of_urls_to_crawl = '';
+    $this->list_of_urls_to_crawl_path = '';
+    $this->urls_to_crawl = '';
 
     $this->viaCLI = false; 
 
@@ -51,14 +52,15 @@ class SiteCrawler {
   }
 
   public function crawl_site($viaCLI = false) {
+    $this->list_of_urls_to_crawl_path = $this->working_directory . '/WP-STATIC-FINAL-CRAWL-LIST';
 
-    $this->list_of_urls_to_crawl = $this->working_directory . '/WP-STATIC-FINAL-CRAWL-LIST';
-    if (! is_file($this->list_of_urls_to_crawl)) {
-      error_log('could not find initial crawl list file');
+    if (! is_file($this->list_of_urls_to_crawl_path)) {
+      error_log('could not find list of files to crawl');
+      WsLog::l('ERROR: LIST OF URLS TO CRAWL NOT FOUND AT: ' . $this->list_of_urls_to_crawl_path);
+      die();
     } else {
-      $this->initial_crawl_list = file($this->list_of_urls_to_crawl, FILE_IGNORE_NEW_LINES);
-
-      if ( !empty($this->initial_crawl_list) ) {
+      // TODO: check when this is actually hitting empty state, not leaving behind some chars..
+      if (filesize($this->list_of_urls_to_crawl_path)) {
         $this->crawlABitMore($this->viaCLI);
       } 
     }
@@ -72,27 +74,30 @@ class SiteCrawler {
     $handle = fopen($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE');
     $this->archive_dir = stream_get_line($handle, 0);
 
-    $this->list_of_urls_to_crawl = $this->wp_uploads_path . '/WP-STATIC-FINAL-CRAWL-LIST';
+    $this->list_of_urls_to_crawl_path = $this->wp_uploads_path . '/WP-STATIC-FINAL-CRAWL-LIST';
 
-    $this->crawled_links_file = $this->working_directory . '/WP-STATIC-CRAWLED-LINKS';
 
-    $this->initial_crawl_list = file($this->list_of_urls_to_crawl, FILE_IGNORE_NEW_LINES);
 
-    if (! $this->initial_crawl_list) {
-      error_log('list of URLs to crawl not found at ' . $this->list_of_urls_to_crawl);
-      WsLog::l('ERROR: LIST OF URLS TO CRAWL NOT FOUND AT: ' . $this->list_of_urls_to_crawl);
+
+    $this->urls_to_crawl = file($this->list_of_urls_to_crawl_path, FILE_IGNORE_NEW_LINES);
+
+    // TODO: kill this, check already done in crawl_site()
+    if (! $this->urls_to_crawl) {
+      error_log('list of URLs to crawl not found at ' . $this->list_of_urls_to_crawl_path);
+      WsLog::l('ERROR: LIST OF URLS TO CRAWL NOT FOUND AT: ' . $this->list_of_urls_to_crawl_path);
       die();
     }
 
-    $crawled_links = file($this->crawled_links_file, FILE_IGNORE_NEW_LINES);
-    $total_links = sizeOf($this->initial_crawl_list);
+    // TODO: move to actual Crawler class, rename this to SiteScraper
+    //$crawled_links = file($this->crawled_links_file, FILE_IGNORE_NEW_LINES);
+    $total_links = sizeOf($this->urls_to_crawl);
 
     if ($this->crawl_increment > $total_links) {
       $this->crawl_increment = $total_links;
     }
 
     for($i = 0; $i < $this->crawl_increment; $i += 1) {
-      $link_from_crawl_list = array_shift($this->initial_crawl_list);
+      $link_from_crawl_list = array_shift($this->urls_to_crawl);
 
       if ($link_from_crawl_list) {
         $batch_of_links_to_crawl[] = $link_from_crawl_list;
@@ -100,7 +105,7 @@ class SiteCrawler {
     }
 
     // resave crawl list file, minus those from this batch
-    file_put_contents($this->list_of_urls_to_crawl, implode("\r\n", $this->initial_crawl_list));
+    file_put_contents($this->list_of_urls_to_crawl_path, implode("\r\n", $this->urls_to_crawl));
 
     // for each link in batch, do the crawl and save
     foreach($batch_of_links_to_crawl as $link_to_crawl) {
@@ -149,6 +154,8 @@ class SiteCrawler {
     }
 
     $this->response = $client->request('GET', $this->url, $request_options);
+
+    $this->crawled_links_file = $this->working_directory . '/WP-STATIC-CRAWLED-LINKS';
 
     // PERF: ~ 36% of function time when HTML content (50% when other)
     //$urlResponse = new StaticHtmlOutput_UrlRequest($this->url, $basicAuth);
@@ -259,7 +266,7 @@ class SiteCrawler {
     // iteration complete, check if we will signal to the client to continue processing, continue ourself for CLI usage, or signal completetion to either
 
     // TODO: could avoid reading file again here as we should have it above
-    $f = file($this->list_of_urls_to_crawl, FILE_IGNORE_NEW_LINES);
+    $f = file($this->list_of_urls_to_crawl_path, FILE_IGNORE_NEW_LINES);
     $filesRemaining = count($f);
     if ($filesRemaining > 0) {
       echo $filesRemaining;
