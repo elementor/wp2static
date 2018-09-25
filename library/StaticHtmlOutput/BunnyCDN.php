@@ -151,7 +151,7 @@ class StaticHtmlOutput_BunnyCDN
 					)
 			));
 
-			if ($response->getStatusCode() == 200) {
+			if ($response->getStatusCode() === 200) {
 				echo 'SUCCESS';
 			} else {
 				echo 'FAIL';

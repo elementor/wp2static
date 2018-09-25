@@ -103,7 +103,7 @@ class SiteCrawler {
     file_put_contents($this->list_of_urls_to_crawl_path, implode("\r\n", $this->urls_to_crawl));
 
     // TODO: required in saving/copying, but not here? optimize...
-    $handle = fopen($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE', 'r');
+    $handle = fopen($this->wp_uploads_path . '/WP-STATIC-CURRENT-ARCHIVE', 'r');
     $this->archive_dir = stream_get_line($handle, 0);
 
     // for each link in batch, do the crawl and save

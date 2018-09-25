@@ -36,7 +36,7 @@ class StaticHtmlOutput_Controller {
     $order = array();
     $file  = plugin_basename( __FILE__ );
     foreach ( $menu_order as $index => $item ) {
-        if ( $item == 'index.php') {
+        if ( $item === 'index.php') {
             $order[] = $item;
         } 
     }
