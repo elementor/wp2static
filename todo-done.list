@@ -20,3 +20,4 @@
 ./library/StaticHtmlOutput/Ubench.php
 ./library/StaticHtmlOutput/BunnyCDN.php
 ./library/StaticHtmlOutput/HTMLProcessor.php
+./library/StaticHtmlOutput/UrlHelper.php
