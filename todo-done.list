@@ -12,3 +12,4 @@
 ./library/StaticHtmlOutput/FileCopier.php
 ./library/StaticHtmlOutput/CSSProcessor.php
 ./library/StaticHtmlOutput/DeveloperTools.php
+./library/StaticHtmlOutput/Netlify.php
