@@ -1,4 +1,3 @@
-./wp-static-html-output.php
 ./provisioning/tests/UrlRequestTest.php
 ./provisioning/tests/bootstrap.php
 ./provisioning/tests/test-sample.php
