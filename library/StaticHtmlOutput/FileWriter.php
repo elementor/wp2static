@@ -4,71 +4,102 @@
  *
  * @package WP2Static
  */
-
 class FileWriter {
-  public function __construct($url, $content, $file_type){
-    $this->url = $url;
-    $this->content = $content;
-    $this->file_type = $file_type;
-  }
 
-	public function saveFile($archiveDir) {
-		$urlInfo = parse_url($this->url);
-		$pathInfo = array();
+    /**
+     * Constructor
+     *
+     * @param string $url       URL
+     * @param string $content   Content
+     * @param string $file_type File type
+     */
+    public function __construct( $url, $content, $file_type ) {
+        $this->url = $url;
+        $this->content = $content;
+        $this->file_type = $file_type;
+    }
 
-		if ( !isset($urlInfo['path']) ) {
-			return false;
-		}
 
-		// set what the new path will be based on the given url
-		if( $urlInfo['path'] != '/' ) {
-			$pathInfo = pathinfo($urlInfo['path']);
-		} else {
-			$pathInfo = pathinfo('index.html');
-		}
+    /**
+     * Save file
+     *
+     * @param string $archiveDir Archive directory
+     * @return boolean
+     */
+    public function saveFile( $archiveDir ) {
+        $urlInfo = parse_url( $this->url );
+        $pathInfo = array();
 
-		// set fileDir to the directory name else empty
-		$fileDir = $archiveDir . (isset($pathInfo['dirname']) ? $pathInfo['dirname'] : '');
+        if ( ! isset( $urlInfo['path'] ) ) {
+            return false;
+        }
 
-		// set filename to index if there is no extension and basename and filename are the same
-		if (empty($pathInfo['extension']) && $pathInfo['basename'] == $pathInfo['filename']) {
-			$fileDir .= '/' . $pathInfo['basename'];
-			$pathInfo['filename'] = 'index';
-		}
+        // set what the new path will be based on the given url
+        if ( $urlInfo['path'] != '/' ) {
+            $pathInfo = pathinfo( $urlInfo['path'] );
+        } else {
+            $pathInfo = pathinfo( 'index.html' );
+        }
 
-		if (!file_exists($fileDir)) {
-			wp_mkdir_p($fileDir);
-		}
+        // set fileDir to the directory name else empty
+        $fileDir = $archiveDir . (
+            isset( $pathInfo['dirname'] )
+                ? $pathInfo['dirname']
+                : ''
+        );
 
-		$fileExtension = '';
+        /**
+         * set filename to index if there is no extension and basename and
+         * filename are the same
+         */
+        if (
+            empty( $pathInfo['extension'] ) &&
+            $pathInfo['basename'] == $pathInfo['filename']
+        ) {
+            $fileDir .= '/' . $pathInfo['basename'];
+            $pathInfo['filename'] = 'index';
+        }
 
-		if(isset($pathInfo['extension'])) {
-			$fileExtension = $pathInfo['extension'];
-		} else if( $this->file_type == 'html' ) {
-			$fileExtension = 'html';
-		} else {
-			// TODO: is this being called or too late?
-			$fileExtension = StaticHtmlOutput_UrlHelper::getExtensionFromContentType($url->getContentType());
-		}
+        if ( ! file_exists( $fileDir ) ) {
+            wp_mkdir_p( $fileDir );
+        }
 
-		$fileName = '';
+        $fileExtension = '';
 
-		// set path for homepage to index.html, else build filename
-		if ($urlInfo['path'] == '/') {
-      // TODO: isolate and fix the cause requiring this trim:
-			$fileName = rtrim($fileDir, '.') . 'index.html';
-		} else {
-			$fileName = $fileDir . '/' . $pathInfo['filename'] . '.' . $fileExtension;
-		}
+        if ( isset( $pathInfo['extension'] ) ) {
+            $fileExtension = $pathInfo['extension'];
+        } elseif ( $this->file_type == 'html' ) {
+            $fileExtension = 'html';
+        } else {
+            // TODO: is this being called or too late?
+            $fileExtension = call_user_func(
+                [
+                    'StaticHtmlOutput_UrlHelper',
+                    'getExtensionFromContentType',
+                ],
+                $url->getContentType()
+            );
+        }
 
-		$fileContents = $this->content;
-		
-    if ($fileContents) {
-			file_put_contents($fileName, $fileContents);
-		} else {
-			WsLog::l('SAVING URL: FILE IS EMPTY ' . $this->url);
-      error_log($this->url);
-      error_log($this->content);
-		}
-	}
+        $fileName = '';
+
+        // set path for homepage to index.html, else build filename
+        if ( $urlInfo['path'] == '/' ) {
+            // TODO: isolate and fix the cause requiring this trim:
+            $fileName = rtrim( $fileDir, '.' ) . 'index.html';
+        } else {
+            $fileName = $fileDir . '/' . $pathInfo['filename'] . '.' .
+                $fileExtension;
+        }
+
+        $fileContents = $this->content;
+
+        if ( $fileContents ) {
+            file_put_contents( $fileName, $fileContents );
+        } else {
+            WsLog::l( 'SAVING URL: FILE IS EMPTY ' . $this->url );
+            error_log( $this->url );
+            error_log( $this->content );
+        }
+    }
 }
