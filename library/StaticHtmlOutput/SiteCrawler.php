@@ -101,7 +101,7 @@ class SiteCrawler {
     file_put_contents($this->list_of_urls_to_crawl_path, implode("\r\n", $this->urls_to_crawl));
 
     // TODO: required in saving/copying, but not here? optimize...
-    $handle = fopen($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE');
+    $handle = fopen($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE', 'r');
     $this->archive_dir = stream_get_line($handle, 0);
 
     // for each link in batch, do the crawl and save
@@ -156,6 +156,7 @@ class SiteCrawler {
     $successful_response_codes = array('200', '201', '301', '302', '304');
     $status_code = $this->response->getStatusCode();
     if (! in_array($status_code,  $successful_response_codes)) {
+      require_once dirname(__FILE__) . '/../StaticHtmlOutput/WsLog.php';
       WsLog::l('BAD RESPONSE STATUS (' . $status_code . '): ' . $this->url);
     } else {
       file_put_contents($this->crawled_links_file, $this->url . PHP_EOL, FILE_APPEND | LOCK_EX);
@@ -247,6 +248,7 @@ class SiteCrawler {
       break;
     
       default:
+        require_once dirname(__FILE__) . '/../StaticHtmlOutput/WsLog.php';
         WsLog::l('WARNING: ENCOUNTERED FILE WITH NO PROCESSOR: ' . $this->url);
       break;
     }

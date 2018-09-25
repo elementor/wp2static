@@ -6,7 +6,7 @@ class Archive {
     $this->path = '';
     $this->crawl_list = '';
     $this->export_log = '';
-    $this->working_directory = isset($_POST['working_directory']) ? $_POST['working_directory'] : '';
+    $this->working_directory = isset($_POST['workingDirectory']) ? $_POST['workingDirectory'] : '';
   }
 
   public function addFiles() {
@@ -14,11 +14,10 @@ class Archive {
   }
 
   public function setToCurrentArchive() {
-    // refreshes the archive properties in case called out of context
-    
-    // TODO: improve this by auto-detecting the current archive within the construct
-
-    $this->path = file_get_contents($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE');
+    // TODO: someting like setScopeToCurrentArchive?
+    // refreshes the instance properties in case called out of context
+    $handle = fopen($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE', 'r');
+    $this->path = stream_get_line($handle, 0);
   }
 
   public function create() {
