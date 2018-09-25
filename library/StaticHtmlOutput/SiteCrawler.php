@@ -42,7 +42,7 @@ class SiteCrawler {
     $this->url = '';
     $this->extension = '';
     $this->archive_dir = '';
-    $this->initial_crawl_list_file = '';
+    $this->list_of_urls_to_crawl = '';
 
     $this->viaCLI = false; 
 
@@ -51,11 +51,12 @@ class SiteCrawler {
   }
 
   public function crawl_site($viaCLI = false) {
-    $this->initial_crawl_list_file = $this->working_directory . '/WP-STATIC-FINAL-CRAWL-LIST';
-    if (! is_file($this->initial_crawl_list_file)) {
+
+    $this->list_of_urls_to_crawl = $this->working_directory . '/WP-STATIC-FINAL-CRAWL-LIST';
+    if (! is_file($this->list_of_urls_to_crawl)) {
       error_log('could not find initial crawl list file');
     } else {
-      $this->initial_crawl_list = file($this->initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
+      $this->initial_crawl_list = file($this->list_of_urls_to_crawl, FILE_IGNORE_NEW_LINES);
 
       if ( !empty($this->initial_crawl_list) ) {
         $this->crawlABitMore($this->viaCLI);
@@ -68,17 +69,19 @@ class SiteCrawler {
 
     $batch_of_links_to_crawl = array();
 
-    $this->archive_dir = file_get_contents($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE');
+    $handle = fopen($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE');
+    $this->archive_dir = stream_get_line($handle, 0);
 
-    $this->initial_crawl_list_file = $this->wp_uploads_path . '/WP-STATIC-INITIAL-CRAWL-LIST';
+    $this->list_of_urls_to_crawl = $this->wp_uploads_path . '/WP-STATIC-FINAL-CRAWL-LIST';
 
     $this->crawled_links_file = $this->working_directory . '/WP-STATIC-CRAWLED-LINKS';
 
-    $this->initial_crawl_list = file($this->initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
+    $this->initial_crawl_list = file($this->list_of_urls_to_crawl, FILE_IGNORE_NEW_LINES);
 
     if (! $this->initial_crawl_list) {
-      error_log('initial crawl list file not found at ' . $this->initial_crawl_list_file);
-      WsLog::l('ERROR: INITIAL CRAWL LIST NOT FOUND AT: ' . $this->initial_crawl_list_file);
+      error_log('list of URLs to crawl not found at ' . $this->list_of_urls_to_crawl);
+      WsLog::l('ERROR: LIST OF URLS TO CRAWL NOT FOUND AT: ' . $this->list_of_urls_to_crawl);
+      die();
     }
 
     $crawled_links = file($this->crawled_links_file, FILE_IGNORE_NEW_LINES);
@@ -97,7 +100,7 @@ class SiteCrawler {
     }
 
     // resave crawl list file, minus those from this batch
-    file_put_contents($this->initial_crawl_list_file, implode("\r\n", $this->initial_crawl_list));
+    file_put_contents($this->list_of_urls_to_crawl, implode("\r\n", $this->initial_crawl_list));
 
     // for each link in batch, do the crawl and save
     foreach($batch_of_links_to_crawl as $link_to_crawl) {
@@ -256,7 +259,7 @@ class SiteCrawler {
     // iteration complete, check if we will signal to the client to continue processing, continue ourself for CLI usage, or signal completetion to either
 
     // TODO: could avoid reading file again here as we should have it above
-    $f = file($this->initial_crawl_list_file, FILE_IGNORE_NEW_LINES);
+    $f = file($this->list_of_urls_to_crawl, FILE_IGNORE_NEW_LINES);
     $filesRemaining = count($f);
     if ($filesRemaining > 0) {
       echo $filesRemaining;
