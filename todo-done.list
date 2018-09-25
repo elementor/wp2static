@@ -23,3 +23,4 @@
 ./library/StaticHtmlOutput/UrlHelper.php
 ./library/StaticHtmlOutput/View.php
 ./library/StaticHtmlOutput.php
+./wp-static-html-output.php
