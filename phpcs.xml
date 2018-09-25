@@ -80,10 +80,16 @@
 		<exclude name="WordPress.Security.NonceVerification.NoNonceVerification" />
 		<exclude name="WordPress.Security.ValidatedSanitizedInput" />
 		<exclude name="WordPress.WhiteSpace.PrecisionAlignment" />
+		<exclude name="WordPress.WP.AlternativeFunctions.curl_curl_close" />
+		<exclude name="WordPress.WP.AlternativeFunctions.curl_curl_exec" />
+		<exclude name="WordPress.WP.AlternativeFunctions.curl_curl_getinfo" />
+		<exclude name="WordPress.WP.AlternativeFunctions.curl_curl_init" />
+		<exclude name="WordPress.WP.AlternativeFunctions.curl_curl_setopt" />
 		<exclude name="WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents" />
 		<exclude name="WordPress.WP.AlternativeFunctions.file_system_read_file_put_contents" />
 		<exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fclose" />
 		<exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fopen" />
+		<exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fread" />
 		<exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fwrite" />
 		<exclude name="WordPress.WP.AlternativeFunctions.json_encode_json_encode" />
 		<exclude name="WordPress.WP.AlternativeFunctions.parse_url_parse_url" />
