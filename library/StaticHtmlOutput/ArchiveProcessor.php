@@ -29,7 +29,7 @@ class ArchiveProcessor {
 	public function create_symlink_to_latest_archive() {
     $this->archive->setToCurrentArchive();
 
-    if (is_file($this->archive->path)) {
+    if (is_dir($this->archive->path)) {
       $this->remove_symlink_to_latest_archive();
       symlink($this->archive->path, $this->working_directory . '/latest-export' );
     } else {
