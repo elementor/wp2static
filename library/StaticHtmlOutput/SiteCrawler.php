@@ -17,10 +17,10 @@ class SiteCrawler {
 
     // WP env settings
     $this->baseUrl = $_POST['baseUrl'];
-    $this->working_directory = $_POST['workingDirectory'];
     $this->wp_site_url = $_POST['wp_site_url']; 
     $this->wp_site_path = $_POST['wp_site_path']; 
     $this->wp_uploads_path = $_POST['wp_uploads_path'];
+    $this->working_directory = isset($_POST['workingDirectory']) ? $_POST['workingDirectory'] : $this->wp_uploads_path;
     $this->wp_uploads_url = $_POST['wp_uploads_url'];
 
     // processing related settings
@@ -72,7 +72,7 @@ class SiteCrawler {
   public function crawlABitMore($viaCLI = false) {
     $batch_of_links_to_crawl = array();
 
-    $this->list_of_urls_to_crawl_path = $this->wp_uploads_path . '/WP-STATIC-FINAL-CRAWL-LIST';
+    $this->list_of_urls_to_crawl_path = $this->working_directory . '/WP-STATIC-FINAL-CRAWL-LIST';
 
     $this->urls_to_crawl = file($this->list_of_urls_to_crawl_path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 

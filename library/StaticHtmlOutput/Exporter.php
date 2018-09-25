@@ -8,10 +8,10 @@ class Exporter {
 
     // WP env settings
     $this->baseUrl = $_POST['baseUrl'];
-    $this->working_directory = $_POST['working_directory'];
     $this->wp_site_url = $_POST['wp_site_url']; 
     $this->wp_site_path = $_POST['wp_site_path']; 
     $this->wp_uploads_path = $_POST['wp_uploads_path'];
+    $this->working_directory = isset($_POST['workingDirectory']) ? $_POST['workingDirectory'] : $this->wp_uploads_path;
     $this->wp_uploads_url = $_POST['wp_uploads_url'];
   }
 
@@ -29,13 +29,13 @@ class Exporter {
     if (is_file($archive->path)) {
       $archiveDir = file_get_contents($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE');
       $previous_export = $archiveDir;
-      $dir_to_diff_against = $this->working_directory . '/previous-export';
+      $dir_to_diff_against = $this->wp_uploads_path . '/previous-export';
 
       if ($this->diffBasedDeploys) {
         $archiveDir = file_get_contents($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE');
 
         $previous_export = $archiveDir;
-        $dir_to_diff_against = $this->working_directory . '/previous-export';
+        $dir_to_diff_against = $this->wp_uploads_path . '/previous-export';
 
         if (is_dir($previous_export)) {
           shell_exec("rm -Rf $dir_to_diff_against && mkdir -p $dir_to_diff_against && cp -r $previous_export/* $dir_to_diff_against");
