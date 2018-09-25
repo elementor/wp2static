@@ -24,3 +24,8 @@
 ./library/StaticHtmlOutput/View.php
 ./library/StaticHtmlOutput.php
 ./wp-static-html-output.php
+./provisioning/tests/UrlRequestTest.php
+./provisioning/tests/bootstrap.php
+./provisioning/tests/test-sample.php
+./provisioning/php53tests/phpinfo.php
+./provisioning/setests/tests.php
