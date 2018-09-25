@@ -6,3 +6,4 @@
 ./library/StaticHtmlOutput/WsLog.php
 ./library/StaticHtmlOutput/UrlRequest.php
 ./library/StaticHtmlOutput/Dropbox.php
+./library/StaticHtmlOutput/FTP.php
