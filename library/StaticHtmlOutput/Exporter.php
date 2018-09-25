@@ -20,6 +20,9 @@ class Exporter {
     $archive = new Archive();
     $archive->setToCurrentArchive();
 
+     
+    error_log('capturing last deployment: ' . $archive->path);
+
     // TODO: big cleanup required here, very iffy code
 
     // skip for first export state
@@ -73,13 +76,17 @@ class Exporter {
     error_log('cleanup_working_files()'); 
     // skip first explort state
     if (is_file($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE')) {
-      $archiveDir = file_get_contents($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE');
+
+
+      $handle = fopen($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE', 'r');
+      $this->archive_dir = stream_get_line($handle, 0);
+
       $dir_to_diff_against = $this->working_directory . '/previous-export';
 
       if(is_dir($dir_to_diff_against)) {
         // TODO: rewrite to php native in case of shared hosting 
         // delete archivedir and then recursively copy 
-        shell_exec("cp -r $dir_to_diff_against/* $archiveDir/");
+        shell_exec("cp -r $dir_to_diff_against/* $this->archiveDir/");
       }
     }
 
@@ -104,7 +111,7 @@ class Exporter {
 
   public function initialize_cache_files() {
     $this->crawled_links_file = $this->working_directory . '/WP-STATIC-CRAWLED-LINKS';
- 
+
     $resource = fopen($this->crawled_links_file, 'w');
     fwrite($resource, '');
     fclose($resource);  
@@ -115,6 +122,8 @@ class Exporter {
 
 		foreach ($leftover_files as $fileName) {
 			if( strpos($fileName, 'wp-static-html-output-') !== false ) {
+
+        error_log('removing previous deployment: ' . $this->working_directory . '/' . $fileName);
 
 				if (is_dir($this->working_directory . '/' . $fileName)) {
 					StaticHtmlOutput_FilesHelper::delete_dir_with_files($this->working_directory . '/' . $fileName);

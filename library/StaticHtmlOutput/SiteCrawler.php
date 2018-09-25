@@ -147,6 +147,7 @@ class SiteCrawler {
 
     $successful_response_codes = array('200', '201', '301', '302', '304');
     $status_code = $this->response->getStatusCode();
+
     if (! in_array($status_code,  $successful_response_codes)) {
       require_once dirname(__FILE__) . '/../StaticHtmlOutput/WsLog.php';
       WsLog::l('BAD RESPONSE STATUS (' . $status_code . '): ' . $this->url);

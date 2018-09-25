@@ -95,9 +95,6 @@ class StaticHtmlOutput_FilesHelper
 		$workingDirectory, 
 		$pluginHook) {
 
-    // TODO: how useful is this?
-		set_time_limit(0);
-
 		$baseUrl = untrailingslashit(home_url());
 			
 		$urlsQueue = array_merge(
@@ -113,7 +110,6 @@ class StaticHtmlOutput_FilesHelper
 
     $str = implode("\n", $urlsQueue);
     file_put_contents($uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST', $str); // TODO: using uploads path for initial file list build, subseqent one will all be done in working dir
-    file_put_contents($workingDirectory . '/WP-STATIC-CRAWLED-LINKS', '');
 
     return count($urlsQueue);
   }
@@ -210,7 +206,7 @@ class StaticHtmlOutput_FilesHelper
             array_shift($path_segments);
             array_pop($path_segments);
 
-            $number_of_segments = sizeOf($path_segments);
+            $number_of_segments = count($path_segments);
       
             // build each URL
             for($i = 0; $i < $number_of_segments; $i += 1) {
@@ -229,6 +225,7 @@ class StaticHtmlOutput_FilesHelper
         );
 
         $taxonomies = get_taxonomies($args, 'objects');
+
         foreach ($taxonomies as $taxonomy){
           $terms = get_terms(
             $taxonomy->name,

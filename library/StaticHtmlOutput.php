@@ -198,6 +198,7 @@ class StaticHtmlOutput_Controller {
     //       to other scripts to use, bypassing WP initialization calls per request
     $archive = new Archive();
     $archive->create();
+    error_log('new archive created at: ' . $archive->path);
 
     // TODO: move to exporter; wp env vars to views
     WsLog::l('STARTING EXPORT ' . date("Y-m-d h:i:s") );
