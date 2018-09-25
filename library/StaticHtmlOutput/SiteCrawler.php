@@ -97,6 +97,8 @@ class SiteCrawler {
       }
     }
 
+    $this->remaining_urls_to_crawl = sizeOf($this->urls_to_crawl);
+
     // resave crawl list file, minus those from this batch
     file_put_contents($this->list_of_urls_to_crawl_path, implode("\r\n", $this->urls_to_crawl));
 
@@ -257,11 +259,8 @@ class SiteCrawler {
   public function checkIfMoreCrawlingNeeded() {
     // iteration complete, check if we will signal to the client to continue processing, continue ourself for CLI usage, or signal completetion to either
 
-    // TODO: could avoid reading file again here as we should have it above
-    $f = file($this->list_of_urls_to_crawl_path, FILE_IGNORE_NEW_LINES);
-    $filesRemaining = count($f);
-    if ($filesRemaining > 0) {
-      echo $filesRemaining;
+    if ($this->remaining_urls_to_crawl > 0) {
+      echo $this->remaining_urls_to_crawl;
     } else {
       echo 'SUCCESS';
     }
