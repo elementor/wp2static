@@ -143,14 +143,7 @@ class SiteCrawler {
     }
 
     $this->response = $client->request('GET', $this->url, $request_options);
-
     $this->crawled_links_file = $this->working_directory . '/WP-STATIC-CRAWLED-LINKS';
-
-    // PERF: ~ 36% of function time when HTML content (50% when other)
-    //$urlResponse = new StaticHtmlOutput_UrlRequest($this->url, $basicAuth);
-
-    // PERF: ~ 36% of function time when HTML content (50% when other)
-    //$urlResponseForFurtherExtraction = new StaticHtmlOutput_UrlRequest($this->url, $basicAuth);
 
     $successful_response_codes = array('200', '201', '301', '302', '304');
     $status_code = $this->response->getStatusCode();
