@@ -10,3 +10,4 @@
 ./library/StaticHtmlOutput/GitHub.php
 ./library/StaticHtmlOutput/MimeTypes.php
 ./library/StaticHtmlOutput/FileCopier.php
+./library/StaticHtmlOutput/CSSProcessor.php
