@@ -21,10 +21,11 @@
 
 or more simply:
 
+  $increment = 10000;
 
   $start_time = microtime(TRUE);
    
-  for($i = 0; $i < 10000; $i += 1) {
+  for($i = 0; $i < $increment; $i += 1) {
     $this->archive_dir = file_get_contents($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE');
   }
 
