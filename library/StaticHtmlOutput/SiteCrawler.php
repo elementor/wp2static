@@ -47,7 +47,6 @@ class SiteCrawler {
 
     $this->viaCLI = false; 
 
-    // trigger the crawl
     $this->crawl_site();
   }
 
@@ -56,6 +55,7 @@ class SiteCrawler {
 
     if (! is_file($this->list_of_urls_to_crawl_path)) {
       error_log('could not find list of files to crawl');
+      require_once dirname(__FILE__) . '/../StaticHtmlOutput/WsLog.php';
       WsLog::l('ERROR: LIST OF URLS TO CRAWL NOT FOUND AT: ' . $this->list_of_urls_to_crawl_path);
       die();
     } else {
@@ -67,26 +67,20 @@ class SiteCrawler {
   }
 
   public function crawlABitMore($viaCLI = false) {
-    require_once dirname(__FILE__) . '/../StaticHtmlOutput/WsLog.php';
-
     $batch_of_links_to_crawl = array();
-
-    $handle = fopen($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE');
-    $this->archive_dir = stream_get_line($handle, 0);
 
     $this->list_of_urls_to_crawl_path = $this->wp_uploads_path . '/WP-STATIC-FINAL-CRAWL-LIST';
 
+    $this->urls_to_crawl = file($this->list_of_urls_to_crawl_path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
-
-
-    $this->urls_to_crawl = file($this->list_of_urls_to_crawl_path, FILE_IGNORE_NEW_LINES);
-
-    // TODO: kill this, check already done in crawl_site()
-    if (! $this->urls_to_crawl) {
+    if (empty($this->urls_to_crawl)) {
       error_log('list of URLs to crawl not found at ' . $this->list_of_urls_to_crawl_path);
+      require_once dirname(__FILE__) . '/../StaticHtmlOutput/WsLog.php';
       WsLog::l('ERROR: LIST OF URLS TO CRAWL NOT FOUND AT: ' . $this->list_of_urls_to_crawl_path);
       die();
     }
+
+
 
     // TODO: move to actual Crawler class, rename this to SiteScraper
     //$crawled_links = file($this->crawled_links_file, FILE_IGNORE_NEW_LINES);
@@ -106,6 +100,10 @@ class SiteCrawler {
 
     // resave crawl list file, minus those from this batch
     file_put_contents($this->list_of_urls_to_crawl_path, implode("\r\n", $this->urls_to_crawl));
+
+    // TODO: required in saving/copying, but not here? optimize...
+    $handle = fopen($this->working_directory . '/WP-STATIC-CURRENT-ARCHIVE');
+    $this->archive_dir = stream_get_line($handle, 0);
 
     // for each link in batch, do the crawl and save
     foreach($batch_of_links_to_crawl as $link_to_crawl) {
