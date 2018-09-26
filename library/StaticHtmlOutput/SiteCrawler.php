@@ -195,6 +195,9 @@ class SiteCrawler {
 
         $processor->normalizeURLs($this->url);
 
+        
+        $processor->writeDiscoveredURLs();
+
         $processor->cleanup(
             $wp_site_environment,
             $overwrite_slug_targets
@@ -297,13 +300,15 @@ class SiteCrawler {
         return false;
     }
 
-    error_log($this->url);
-
     $file_extensions_to_process = array(
-      'html', 'css', 'js', 'json', 'xml', 'txt'
+        'html',
+        'css',
+        'js',
+        'json',
+        'xml',
+        'txt',
     );
 
- 
     if ( ! in_array( $this->file_extension, $file_extensions_to_process)) {
       return true;
     }

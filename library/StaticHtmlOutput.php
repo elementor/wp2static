@@ -155,7 +155,6 @@ class StaticHtmlOutput_Controller {
     }
 
     public function renderOptionsPage() {
-
         require_once dirname( __FILE__ ) . '/StaticHtmlOutput/WPSite.php';
 
         $this->wp_site = new WPSite();
