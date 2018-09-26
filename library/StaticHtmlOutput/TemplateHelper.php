@@ -6,8 +6,6 @@ class TemplateHelper {
   }
 
   public function displayCheckbox($template_variables, $field_name, $field_label, $premium = false) {
-    error_log($field_name);
-    error_log($template_variables->options->{$field_name});
 
     echo "
       <fieldset>
