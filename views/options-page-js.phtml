@@ -220,10 +220,11 @@ jQuery(document).ready(function($){
         dataType: 'html',
         method: 'POST',
         success: function(serverResponse) {
+          // TODO: change doAJAXExport args to array, for easier loading
           if (current_deployment_method == 'zip' || current_deployment_method == 'netlify') {
-            doAJAXExport('crawl_site', 'post_process_archive_dir', 'create_zip');
+            doAJAXExport('crawl_site', 'crawl_again', 'post_process_archive_dir', 'create_zip');
           } else {
-            doAJAXExport('crawl_site', 'post_process_archive_dir');
+            doAJAXExport('crawl_site', 'crawl_again', 'post_process_archive_dir');
           }
         },
         error: ajaxErrorHandler

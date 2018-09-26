@@ -15,19 +15,17 @@
  */
 
 
-// TODO: this file / methods are being called on public site page loads, should only be triggered when in the dashboard!
+// TODO: this file / methods are being called on public site page loads,
+// should only be triggered when in the dashboard!
+$ajax_action = isset($_POST['ajax_action']) ? $_POST['ajax_action'] : '';
 
+// bypass instantiating plugin for specific AJAX requests
+if ( $ajax_action === 'crawl_site' || $ajax_action === 'crawl_again' ) {
+    require_once dirname(__FILE__) .
+        '/library/StaticHtmlOutput/SiteCrawler.php';
 
-// minimal loading of libs for specific AJAX requests
-if (isset($_POST['ajax_action']) && $_POST['ajax_action'] == 'crawl_site') {
-  // standalone script should do all the the crawling, echo'ing the usual number, else 
-  require_once dirname(__FILE__) . '/library/StaticHtmlOutput/SiteCrawler.php';
-
-
-  // TODO: reduce request size for the crawl_site call coming from JS to only include the needed params
-
-  wp_die();
-  return null;
+    wp_die();
+    return null;
 } else {
 // normal plugin instantiation/freemius check, etc
   if ( ! function_exists( 'wpsho_fr' ) ) {
