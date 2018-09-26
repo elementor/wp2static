@@ -19,7 +19,7 @@ jobs:
             ls
             ls library
             ls ./library
-            /tmp/phpcs/bin/phpcs library/StaticHTMLOutput.php
+            /tmp/phpcs/bin/phpcs library/StaticHtmlOutput.php
       - run: 
           name: Run Unit Tests
           command: ./provisioning/run_unit_tests.sh
