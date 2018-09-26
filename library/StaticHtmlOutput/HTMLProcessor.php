@@ -1,16 +1,38 @@
 <?php
+// TODO: rewerite to be one loop of all elements, 
+// applying multiple transformations at once per link, reducing iterations
 
 
 // TODO: deal with inline CSS blocks or style attributes on tags
 // TODO: don't rewrite mailto links unless specified, re #30
 class HTMLProcessor {
 
-    public function __construct( $html_document, $wp_site_url ) {
-        $this->wp_site_url = $wp_site_url;
+    public function processHTML(
+        $html_document,
+        $page_url,
+        $wp_site_env,
+        $new_site_paths,
+        $wp_site_url,
+        $baseUrl,
+        $allowOfflineUsage,
+        $useRelativeURLs,
+        $useBaseHref
+        ) {
 
         // instantiate the XML body here
         $this->xml_doc = new DOMDocument();
         $this->raw_html = $html_document;
+        $this->page_url = $page_url;
+        $this->wp_site_env = $wp_site_env;
+        $this->new_site_paths = $new_site_paths;
+        $this->wp_site_url = $wp_site_url;
+        $this->baseUrl = $baseUrl;
+        $this->allowOfflineUsage = $allowOfflineUsage;
+        $this->useRelativeURLs = $useRelativeURLs;
+        $this->useBaseHref = $useBaseHref;
+
+        require_once dirname( __FILE__ ) . '/../URL2/URL2.php';
+        $this->page_url = new Net_URL2( $page_url );
 
         $this->discoverNewURLs = (
             isset( $_POST['discoverNewURLs'] ) &&
@@ -34,6 +56,63 @@ class HTMLProcessor {
         libxml_use_internal_errors( true );
         $this->xml_doc->loadHTML( $html_document );
         libxml_use_internal_errors( false );
+
+        // start the full iterator here, along with copy of dom
+
+        $elements = iterator_to_array(
+            $this->xml_doc->getElementsByTagName( '*' )
+        );
+
+        foreach ( $elements as $element ) {
+            error_log(print_r($element, true));
+
+            switch ( $element->tagName ) {
+                case 'meta':
+                    $this->processMeta($element);
+                    break;
+                case 'a':
+                    die();
+                    $this->processLink($element);
+                    break;
+
+            }
+        }
+
+
+        if ( $this->discoverNewURLs && $_POST['ajax_action'] === 'crawl_site' ) {
+            $processor->writeDiscoveredURLs();
+        }
+
+        $processor->cleanup(
+            $wp_site_environment,
+            $overwrite_slug_targets
+        );
+
+        $processor->replaceBaseUrl(
+            $this->wp_site_url,
+            $this->baseUrl,
+            $this->allowOfflineUsage,
+            $this->useRelativeURLs,
+            $this->useBaseHref
+        );
+    }
+
+
+
+    public function processAnchor( $element ) {
+        $this->normalizeURL( $element, 'href' );
+        $this->rewriteWPPaths( $element );
+        $this->rewriteBaseURL( $element );
+
+        
+    }
+
+    public function processMeta($element) {
+        $meta_name = $element->getAttribute( 'name' );
+
+        if ( strpos( $meta_name, 'generator' ) !== false ) {
+            $element->parentNode->removeChild( $element );
+        }
     }
 
     public function writeDiscoveredURLs() {
@@ -45,34 +124,30 @@ class HTMLProcessor {
         );
     }
 
-    // make all links absolute and relative to the current document
-    public function normalizeURLs( $url ) {
-        require_once dirname( __FILE__ ) . '/../URL2/URL2.php';
-        $base = new Net_URL2( $url );
-
-        foreach ( $this->xml_doc->getElementsByTagName( 'a' ) as $link ) {
-            $original_link = $link->getAttribute( 'href' );
-
-            if ( $this->isInternalLink( $original_link ) ) {
-                $abs = $base->resolve( $original_link );
-                $link->setAttribute( 'href', $abs );
-
-                if ( $this->discoverNewURLs ) {
-                    $this->discovered_urls[] = $abs;
-                }
-            }
+    public function addDiscoveredURL( $url ) {
+        if ( $this->discoverNewURLs ) {
+            $this->discovered_urls[] = $url;
         }
     }
 
-    public function cleanup( $wp_site_env, $new_site_paths ) {
+    // make all links absolute and relative to the current document
+    public function normalizeURL($element, $attribute) {
+        $original_link = $link->getAttribute( $attribute );
+
+        if ( $this->isInternalLink( $original_link ) ) {
+            $abs = $this->page_url->resolve( $original_link );
+            $element->setAttribute( $attribute, $abs );
+
+            $this->addDiscoveredURL( $abs );
+        }
+    }
+
+    public function cleanup() {
         $this->stripWPMetaElements();
         $this->stripWPLinkElements();
         $this->removeQueryStringsFromInternalLinks();
-        $this->rewriteWPPaths( $wp_site_env, $new_site_paths );
-        $this->detectEscapedSiteURLs(
-            $wp_site_env,
-            $new_site_paths
-        );
+        $this->rewriteWPPaths();
+        $this->detectEscapedSiteURLs();
     }
 
     public function isInternalLink( $link ) {
@@ -164,10 +239,7 @@ class HTMLProcessor {
         }
     }
 
-    public function detectEscapedSiteURLs(
-        $wp_site_env,
-        $new_site_paths
-    ) {
+    public function detectEscapedSiteURLs() {
         // NOTE: this does return the expected http:\/\/172.18.0.3
         // but the PHP error log will escape again and
         // show http:\\/\\/172.18.0.3
@@ -185,9 +257,7 @@ class HTMLProcessor {
         // }
     }
 
-    public function rewriteEscapedURLs(
-        $wp_site_env,
-        $new_site_paths ) {
+    public function rewriteEscapedURLs() {
         /*
         This function will be a bit more costly. To cover bases like:
 
@@ -271,7 +341,8 @@ class HTMLProcessor {
     // TODO: damn, this is going to take a while to cleanup...
     // TODO: some optimization to be gained by doing this in same
     // loop as rewriteWPPaths loop
-    public function replaceBaseUrl(
+    public function rewriteBaseURL(
+        $element,
         $old_URL,
         $new_URL,
         $allowOfflineUsage,
