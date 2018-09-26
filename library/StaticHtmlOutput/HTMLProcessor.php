@@ -51,6 +51,8 @@ class HTMLProcessor {
   }
 
   public function removeQueryStringsFromInternalLinks() {
+    // TODO: benchmark 3 calls vs * elements perf
+
     foreach($this->xml_doc->getElementsByTagName('a') as $link) { 
       $link_href = $link->getAttribute("href");
 
@@ -59,6 +61,28 @@ class HTMLProcessor {
         // strip anything from the ? onwards
         // https://stackoverflow.com/a/42476194/1668057 
         $link->setAttribute('href', strtok($link_href, '?'));
+      } 
+    }
+
+    foreach($this->xml_doc->getElementsByTagName('img') as $link) { 
+      $link_href = $link->getAttribute("src");
+
+      // check if it's an internal link not a subdomain
+      if ($this->isInternalLink($link_href)) {
+        // strip anything from the ? onwards
+        // https://stackoverflow.com/a/42476194/1668057 
+        $link->setAttribute('src', strtok($link_href, '?'));
+      } 
+    }
+
+    foreach($this->xml_doc->getElementsByTagName('script') as $link) { 
+      $link_href = $link->getAttribute("src");
+
+      // check if it's an internal link not a subdomain
+      if ($this->isInternalLink($link_href)) {
+        // strip anything from the ? onwards
+        // https://stackoverflow.com/a/42476194/1668057 
+        $link->setAttribute('src', strtok($link_href, '?'));
       } 
     }
   }
