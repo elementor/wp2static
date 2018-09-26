@@ -1,10 +1,11 @@
 <?php
 
 class FileWriter {
-  public function __construct($url, $content, $file_type){
+  public function __construct($url, $content, $file_type, $content_type){
     $this->url = $url;
     $this->content = $content;
     $this->file_type = $file_type;
+    $this->content_type = $content_type;
   }
 
 	public function saveFile($archiveDir) {
@@ -43,7 +44,12 @@ class FileWriter {
 			$fileExtension = 'html'; 
 		} else {
 			// TODO: is this being called or too late?
-			$fileExtension = StaticHtmlOutput_UrlHelper::getExtensionFromContentType($url->getContentType()); 
+            require_once dirname(__FILE__) . '/../StaticHtmlOutput/UrlHelper.php';
+			$fileExtension =
+                StaticHtmlOutput_UrlHelper::getExtensionFromContentType(
+                    $this->content_type
+                );
+             
 		}
 
 		$fileName = '';

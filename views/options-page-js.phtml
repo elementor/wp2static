@@ -433,6 +433,7 @@ jQuery(document).ready(function($){
             success: function(serverResponse) {
               // if an action is successful, and there are other actions queued up
               if (serverResponse === 'SUCCESS' && args.length > 1) {
+                batch_increment = 0;
                 // rm first action now that it's succeeded
                 args.shift();
                 // call function with all other actions
