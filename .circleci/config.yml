@@ -15,7 +15,7 @@ jobs:
       - run: 
           name: Run Code Sniffs
           command: |
-            /tmp/phpcs/bin/phpcs ./
+            /tmp/phpcs/bin/phpcs library/StaticHtmlOutput.php library/StaticHtmlOutput/*.php
       - run: 
           name: Run Unit Tests
           command: ./provisioning/run_unit_tests.sh
