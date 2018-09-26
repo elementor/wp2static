@@ -5,9 +5,16 @@ jobs:
       - image: circleci/php:7.2.8-apache-node
     steps:
       - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            git clone -b master https://github.com/squizlabs/PHP_CodeSniffer.git /tmp/phpcs
+            
+            git clone -b master https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards.git /tmp/wpcs
+            /tmp/phpcs/bin/phpcs --config-set installed_paths /tmp/wpcs
       - run: 
           name: Run Code Sniffs
-          command: phpcs library/StaticHTMLOutput.php
+          command: /tmp/phpcs/bin/phpcs library/StaticHTMLOutput.php
       - run: 
           name: Run Unit Tests
           command: ./provisioning/run_unit_tests.sh
