@@ -6,11 +6,13 @@ class TemplateHelper {
   }
 
   public function displayCheckbox($template_variables, $field_name, $field_label, $premium = false) {
+    error_log($field_name);
+    error_log($template_variables->options->{$field_name});
 
     echo "
       <fieldset>
         <label for='{$field_name}'>
-          <input name='{$field_name}' id='{$field_name}' value='1' type='checkbox' " . ( $template_variables->options->{$field_name} === 1 ? 'checked' : '' )  . " />
+          <input name='{$field_name}' id='{$field_name}' value='1' type='checkbox' " . ( $template_variables->options->{$field_name} === '1' ? 'checked' : '' )  . " />
           <span>" .  __($field_label, 'static-html-output-plugin') . "</span>
         </label>
       </fieldset>
