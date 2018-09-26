@@ -220,6 +220,8 @@ class SiteCrawler {
 
         $this->processed_file = $processor->getCSS();
 
+        break;
+
       case 'js':
         require_once dirname(__FILE__) . '/../StaticHtmlOutput/JSProcessor.php';
         $processor = new JSProcessor($this->response->getBody(), $this->wp_site_url);
@@ -228,7 +230,7 @@ class SiteCrawler {
 
         $this->processed_file = $processor->getJS();
 
-      break;
+        break;
 
       case 'txt':
         require_once dirname(__FILE__) . '/../StaticHtmlOutput/TXTProcessor.php';
@@ -238,7 +240,7 @@ class SiteCrawler {
 
         $this->processed_file = $processor->getTXT();
 
-      break;
+        break;
     
       default:
         require_once dirname(__FILE__) . '/../StaticHtmlOutput/WsLog.php';
@@ -291,42 +293,25 @@ class SiteCrawler {
   }
 
   public function canFileBeCopiedWithoutProcessing() {
-    // whitelisted extensions, so as not catch html/xml/json served at domain.com/path/  
-    $extensions_to_skip = array(
-      'jpg', 'jpeg', 'pdf', 'png', 'gif', 'svg'
+    if ( ! $this->file_extension ) {
+        return false;
+    }
+
+    error_log($this->url);
+
+    $file_extensions_to_process = array(
+      'html', 'css', 'js', 'json', 'xml', 'txt'
     );
+
  
-    if ( $this->file_extension && in_array($this->file_extension, $extensions_to_skip)) {
+    if ( ! in_array( $this->file_extension, $file_extensions_to_process)) {
       return true;
     }
+
 
     return false;
   }
 
-
-	public function isRewritable($url) {
-		$contentType = $this->response->getHeaderLine('content-type');
-
-		return (stripos($contentType, 'html') !== false) || (stripos($contentType, 'text') !== false);
-	}
-
-
-	public function isCrawlableContentType() {
-        $crawable_types = array(
-            "text/plain",
-            "application/javascript",
-            "application/json",
-            "application/xml",
-            "text/css",
-        );
-
-        if (in_array($this->getContentType(), $crawable_types)) {
-            return true;
-        }
-
-        return false;
-	}
-  
   public function detectFileType() {
     if ($this->file_extension) {
           $this->file_type = $this->file_extension;

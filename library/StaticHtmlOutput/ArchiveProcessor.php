@@ -210,8 +210,8 @@ class ArchiveProcessor {
 		$new_plugins_dir = $new_wp_content . '/' . $this->rewritePLUGINDIR;
 
 		// rewrite wp-includes  dir
-		$original_wp_includes = $this->archive->path . '/' . WPINC;
-		$new_wp_includes = $this->archive->path . '/' . $this->rewriteWPINC;
+		$original_wp_includes = $this->archive->path . WPINC;
+		$new_wp_includes = $this->archive->path . $this->rewriteWPINC;
 
 
 		if (file_exists($original_wp_content)) {
@@ -235,9 +235,12 @@ class ArchiveProcessor {
 
 		}
 
+        
 		if (file_exists($original_wp_includes)) {
       $this->rename_populated_directory($original_wp_includes, $new_wp_includes);
-    }
+    } else {
+        error_log('original INC not found' . $original_wp_includes);
+        }
 
 		// rm other left over WP identifying files
 
