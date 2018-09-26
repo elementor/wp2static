@@ -12,10 +12,11 @@ class HTMLProcessor {
         $this->xml_doc = new DOMDocument();
         $this->raw_html = $html_document;
 
-        $this->discoverNewURLs =
-        isset( $_POST['discoverNewURLs'] ) ?
-        $_POST['discoverNewURLs'] :
-        false;
+        $this->discoverNewURLs = (
+            isset( $_POST['discoverNewURLs'] ) &&
+             $_POST['discoverNewURLs'] == 1 &&
+             $_POST['ajax_action'] === 'crawl_site'
+        );
 
         if ( $this->discoverNewURLs ) {
             $this->discovered_urls = [];
@@ -38,7 +39,8 @@ class HTMLProcessor {
     public function writeDiscoveredURLs() {
         file_put_contents(
             $this->working_directory . '/WP-STATIC-DISCOVERED-URLS',
-            implode( PHP_EOL, array_unique( $this->discovered_urls ) ),
+            PHP_EOL .
+                implode( PHP_EOL, array_unique( $this->discovered_urls ) ),
             FILE_APPEND | LOCK_EX
         );
     }
@@ -54,8 +56,10 @@ class HTMLProcessor {
             if ( $this->isInternalLink( $original_link ) ) {
                 $abs = $base->resolve( $original_link );
                 $link->setAttribute( 'href', $abs );
-
-                $this->discovered_urls[] = $abs;
+                
+                if ( $this->discoverNewURLs ) {
+                    $this->discovered_urls[] = $abs;
+                }
             }
         }
     }

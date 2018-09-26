@@ -4,6 +4,7 @@ use GuzzleHttp\Client;
 
 class SiteCrawler {
 
+
   public function __construct(){
     // TODO: security check that this is being called from same server
 
@@ -48,14 +49,68 @@ class SiteCrawler {
     $this->list_of_urls_to_crawl_path = '';
     $this->urls_to_crawl = '';
 
+    $this->discoverNewURLs = 
+        isset( $_POST['discoverNewURLs'] ) ? 
+        $_POST['discoverNewURLs'] :
+        false;
+
+    // crawl links discovered in first run
+    if( $_POST['ajax_action'] === 'crawl_again') {
+        if ( ! $this->discoverNewURLs ) {
+            echo 'SUCCESS';
+            die();
+        }
+
+        $second_crawl_file_path = $this->working_directory .
+            '/WP-STATIC-2ND-CRAWL-LIST';
+
+        if ( ! is_file( $second_crawl_file_path ) ) {
+
+            // TODO: read in WP-STATIC-FINAL-CRAWL-LIST clone vs INITIAL
+            $already_crawled = file(
+                $this->working_directory . '/WP-STATIC-INITIAL-CRAWL-LIST',
+                FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
+            );
+
+            //  read WP-STATIC-DISCOVERED-URLS into $discovered_links
+            $discovered_links = file(
+                $this->working_directory .  '/WP-STATIC-DISCOVERED-URLS',
+                FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
+            );
+
+            $unique_discovered_links = array_unique( $discovered_links );
+
+            $discovered_links = array_diff(
+                $unique_discovered_links,
+                $already_crawled
+            );
+
+            file_put_contents(
+                $second_crawl_file_path,
+                implode(PHP_EOL, $discovered_links)
+            );
+
+            copy(
+                $second_crawl_file_path, 
+                $this->working_directory . '/WP-STATIC-FINAL-2ND-CRAWL-LIST'
+            );
+        }
+
+
+
+        $this->list_of_urls_to_crawl_path = $this->working_directory .
+            '/WP-STATIC-FINAL-2ND-CRAWL-LIST';
+    } else {
+        $this->list_of_urls_to_crawl_path = $this->working_directory .
+            '/WP-STATIC-FINAL-CRAWL-LIST';
+    }
+
     $this->viaCLI = false; 
 
     $this->crawl_site();
   }
 
   public function crawl_site($viaCLI = false) {
-    $this->list_of_urls_to_crawl_path = $this->working_directory . '/WP-STATIC-FINAL-CRAWL-LIST';
-
     if (! is_file($this->list_of_urls_to_crawl_path)) {
       error_log('could not find list of files to crawl');
       require_once dirname(__FILE__) . '/../StaticHtmlOutput/WsLog.php';
@@ -71,8 +126,6 @@ class SiteCrawler {
 
   public function crawlABitMore($viaCLI = false) {
     $batch_of_links_to_crawl = array();
-
-    $this->list_of_urls_to_crawl_path = $this->working_directory . '/WP-STATIC-FINAL-CRAWL-LIST';
 
     $this->urls_to_crawl = file($this->list_of_urls_to_crawl_path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
@@ -195,8 +248,9 @@ class SiteCrawler {
 
         $processor->normalizeURLs($this->url);
 
-        
-        $processor->writeDiscoveredURLs();
+        if ( $this->discoverNewURLs && $_POST['ajax_action'] === 'crawl_site') {
+            $processor->writeDiscoveredURLs();
+        }
 
         $processor->cleanup(
             $wp_site_environment,
@@ -272,7 +326,13 @@ class SiteCrawler {
     // response body processing is complete, now time to save the file contents to the archive
     require_once dirname(__FILE__) . '/../StaticHtmlOutput/FileWriter.php';
 
-    $file_writer = new FileWriter($this->url, $this->processed_file, $this->file_type);
+    $file_writer = new FileWriter(
+        $this->url,
+        $this->processed_file,
+        $this->file_type,
+        $this->content_type
+    );
+
     $file_writer->saveFile($this->archive_dir);
   }
 
