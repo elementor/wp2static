@@ -14,7 +14,9 @@ jobs:
             /tmp/phpcs/bin/phpcs --config-set installed_paths /tmp/wpcs
       - run: 
           name: Run Code Sniffs
-          command: /tmp/phpcs/bin/phpcs library/StaticHTMLOutput.php
+          command: |
+            pwd
+            /tmp/phpcs/bin/phpcs library/StaticHTMLOutput.php
       - run: 
           name: Run Unit Tests
           command: ./provisioning/run_unit_tests.sh
