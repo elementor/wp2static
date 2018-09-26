@@ -239,7 +239,21 @@ class SiteCrawler {
         switch ( $this->file_type ) {
             case 'html':
                 require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/HTMLProcessor.php';
-                $processor = new HTMLProcessor( $this->response->getBody(), $this->wp_site_url );
+
+                $processor = new HTMLProcessor();
+
+                // new single call to process the HTML file
+                $this->processed_file = $processor->processHTML(
+                    $this->response->getBody(),
+                    $this->url,
+                    $wp_site_environment,
+                    $overwrite_slug_targets,
+                    $this->wp_site_url,
+                    $this->baseUrl,
+                    $this->allowOfflineUsage,
+                    $this->useRelativeURLs,
+                    $this->useBaseHref
+                );
 
                 $processor->normalizeURLs( $this->url );
 
@@ -260,7 +274,6 @@ class SiteCrawler {
                     $this->useBaseHref
                 );
 
-                $this->processed_file = $processor->getHTML();
 
                 break;
 
