@@ -56,7 +56,7 @@ class HTMLProcessor {
             if ( $this->isInternalLink( $original_link ) ) {
                 $abs = $base->resolve( $original_link );
                 $link->setAttribute( 'href', $abs );
-                
+
                 if ( $this->discoverNewURLs ) {
                     $this->discovered_urls[] = $abs;
                 }

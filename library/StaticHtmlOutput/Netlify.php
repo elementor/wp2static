@@ -7,41 +7,45 @@
 
 use GuzzleHttp\Client;
 
-class StaticHtmlOutput_Netlify
-{
-	protected $_siteID;
-	protected $_personalAccessToken;
-	protected $_baseURL;
-	
-	public function __construct($siteID, $personalAccessToken) {
-		$this->_siteID = $siteID;
-		$this->_personalAccessToken = $personalAccessToken;
-		$this->_baseURL = 'https://api.netlify.com';
-	}
+class StaticHtmlOutput_Netlify {
 
-	public function deploy($zipArchivePath) { 
-		require_once dirname(__FILE__) . '/../GuzzleHttp/autoloader.php';
+    protected $_siteID;
+    protected $_personalAccessToken;
+    protected $_baseURL;
 
-		$client = new Client(array('base_uri' => $this->_baseURL));	
+    public function __construct( $siteID, $personalAccessToken ) {
+        $this->_siteID = $siteID;
+        $this->_personalAccessToken = $personalAccessToken;
+        $this->_baseURL = 'https://api.netlify.com';
+    }
 
-		$zipDeployEndpoint = '/api/v1/sites/' . $this->_siteID . '.netlify.com/deploys';
+    public function deploy( $zipArchivePath ) {
+        require_once dirname( __FILE__ ) . '/../GuzzleHttp/autoloader.php';
 
-		try {
-			$response = $client->request('POST', $zipDeployEndpoint, array(
-					'headers'  => array(
-						'Content-Type' => 'application/zip',
-						'Authorization' => 'Bearer ' . $this->_personalAccessToken
-					),
-					'body' => fopen($zipArchivePath, 'rb')
-			));
-			
-			return 'SUCCESS';
+        $client = new Client( array( 'base_uri' => $this->_baseURL ) );
 
-		} catch (Exception $e) {
-      WsLog::l('NETLIFY EXPORT ERROR');
-      WsLog::l($e);
-			error_log($e);
-			throw new Exception($e);
-		}
-	} 
+        $zipDeployEndpoint = '/api/v1/sites/' . $this->_siteID . '.netlify.com/deploys';
+
+        try {
+            $response = $client->request(
+                'POST',
+                $zipDeployEndpoint,
+                array(
+                    'headers'  => array(
+                        'Content-Type' => 'application/zip',
+                        'Authorization' => 'Bearer ' . $this->_personalAccessToken,
+                    ),
+                    'body' => fopen( $zipArchivePath, 'rb' ),
+                )
+            );
+
+            return 'SUCCESS';
+
+        } catch ( Exception $e ) {
+            WsLog::l( 'NETLIFY EXPORT ERROR' );
+            WsLog::l( $e );
+            error_log( $e );
+            throw new Exception( $e );
+        }
+    }
 }
