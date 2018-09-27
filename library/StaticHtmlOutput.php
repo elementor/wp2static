@@ -247,7 +247,6 @@ class StaticHtmlOutput_Controller {
 
         $archive = new Archive();
         $archive->create();
-        error_log( 'new archive created at: ' . $archive->path );
 
         // TODO: move to exporter; wp env vars to views
         $exec_time = ini_get( 'max_execution_time' );
