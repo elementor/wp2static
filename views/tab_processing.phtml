@@ -25,7 +25,7 @@
       <td>
         <p>In order to hide any trace that your site uses WordPress, the following paths will be rewritten. You can leave these default options in, but for more control, you can overwrite them.</p><br>
       
-        <?php $tpl->displayCheckbox($this, 'useRelativeURLs', "Don't rewrite WP paths"); ?>
+        <?php $tpl->displayCheckbox($this, 'rewriteWPPaths', "Rewrite WP paths"); ?>
 
 <?php 
 
@@ -96,6 +96,25 @@ $original = $this->wp_site->getOriginalPaths();
             </tr>
           </tbody>
         </table>
+
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <label for="stripping"><?php echo __('Remove cruft', 'static-html-output-plugin');?></label>
+      </th>
+      <td>
+
+        <?php $tpl->displayCheckbox($this, 'removeConditionalHeadComments', 'Remove conditional comments within HEAD', 'checked'); ?>
+
+        <p>Mostly obsolete, previously used for detecting versions of Internet Explorer and serving different CSS or JS.</p><br>
+
+        <?php $tpl->displayCheckbox($this, 'removeWPMeta', 'Remove WP Meta tags'); ?>
+
+        <p>The <code>&lt;meta&gt; name="generator" content="WordPress 4.9.8" /&gt;</code> type tags.</p><br>
+        <?php $tpl->displayCheckbox($this, 'removeWPLinks', 'Remove WP &lt;link&gt; tags'); ?>
+
+        <p>ie, <code>&lt;link& rel="EditURI"...</code> type tags that usually aren't needed.</p><br>
 
       </td>
     </tr>

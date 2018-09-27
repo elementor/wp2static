@@ -46,12 +46,6 @@ $tpl = new TemplateHelper();
     <!-- placeholder input fields to allow select menu deployment options to use existing behaviour -->
     <span class="hiddenExportOptions" style="display:none;">
       <?php $tpl->displayCheckbox($this, 'createZip', 'Create a ZIP file of your statically exported site, ready for you to manually deploy. Download link will appear in the Export Log below'); ?>
-      <?php $tpl->displayCheckbox($this, 'sendViaFTP', 'Transfer files via FTP'); ?>
-      <?php $tpl->displayCheckbox($this, 'sendViaS3', 'Transfer files via S3', 1); ?>
-      <?php $tpl->displayCheckbox($this, 'sendViaBUNNYCDN', 'Transfer files via BunnyCDN', 1); ?>
-      <?php $tpl->displayCheckbox($this, 'sendViaDropbox', 'Transfer files via Dropbox', 1); ?>
-      <?php $tpl->displayCheckbox($this, 'sendViaGithub', 'Transfer files via GitHub', 1); ?>
-      <?php $tpl->displayCheckbox($this, 'sendViaNetlify', 'Transfer files via Netlify', 1); ?>
     </span>
 
     <?php
