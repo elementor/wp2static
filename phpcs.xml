@@ -73,6 +73,8 @@
 		<exclude name="WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration_error_reporting" />
 		<exclude name="WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize" />
 		<exclude name="WordPress.PHP.DiscouragedPHPFunctions.serialize_unserialize" />
+		<!-- TODO: refactor to eliminate use of `exec` for compatibility w/shared hosts -->
+		<exclude name="WordPress.PHP.DiscouragedPHPFunctions.system_calls_exec" />
 		<exclude name="WordPress.PHP.DontExtract.extract_extract" />
 		<exclude name="WordPress.PHP.StrictComparisons.LooseComparison" />
 		<exclude name="WordPress.PHP.StrictInArray.MissingTrueStrict" />
