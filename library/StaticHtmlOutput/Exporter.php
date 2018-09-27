@@ -23,8 +23,6 @@ class Exporter {
             return;
         }
 
-        error_log( 'capturing last deployment: ' . $archive->path );
-
         // TODO: big cleanup required here, very iffy code
         // skip for first export state
         if ( is_file( $archive->path ) ) {
@@ -127,9 +125,6 @@ class Exporter {
 
         foreach ( $leftover_files as $fileName ) {
             if ( strpos( $fileName, 'wp-static-html-output-' ) !== false ) {
-
-                error_log( 'removing previous deployment: ' . $this->working_directory . '/' . $fileName );
-
                 if ( is_dir( $this->working_directory . '/' . $fileName ) ) {
                     StaticHtmlOutput_FilesHelper::delete_dir_with_files( $this->working_directory . '/' . $fileName );
                 } else {
