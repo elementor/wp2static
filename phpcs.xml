@@ -75,6 +75,8 @@
 		<exclude name="WordPress.PHP.DiscouragedPHPFunctions.serialize_unserialize" />
 		<!-- TODO: refactor to eliminate use of `exec` for compatibility w/shared hosts -->
 		<exclude name="WordPress.PHP.DiscouragedPHPFunctions.system_calls_exec" />
+		<!-- TODO: refactor to eliminate use of `shell_exec` for compat w/shared hosts -->
+		<exclude name="WordPress.PHP.DiscouragedPHPFunctions.system_calls_shell_exec" />
 		<exclude name="WordPress.PHP.DontExtract.extract_extract" />
 		<exclude name="WordPress.PHP.StrictComparisons.LooseComparison" />
 		<exclude name="WordPress.PHP.StrictInArray.MissingTrueStrict" />
