@@ -60,13 +60,22 @@ class StaticHtmlOutput_Controller {
         return $order;
     }
 
-    public function activate_for_single_site() {
+    public function setDefaultOptions() {
         if ( null === $this->options->getOption( 'version' ) ) {
             $this->options
             ->setOption( 'version', self::VERSION )
             ->setOption( 'static_export_settings', self::VERSION )
+            // set default options
+            ->setOption( 'rewriteWPPaths', '1' )
+            ->setOption( 'removeConditionalHeadComments', '1' )
+            ->setOption( 'removeWPMeta', '1' )
+            ->setOption( 'removeWPLinks', '1' )
             ->save();
         }
+    }
+
+    public function activate_for_single_site() {
+        $this->setDefaultOptions();
     }
 
     public function activate( $network_wide ) {
@@ -285,6 +294,9 @@ class StaticHtmlOutput_Controller {
         if ( ! delete_option( 'wp-static-html-output-options' ) ) {
             error_log( "Couldn't reset plugin to default settings" );
         }
+
+        $this->options = new StaticHtmlOutput_Options( self::OPTIONS_KEY );
+        $this->setDefaultOptions();                
 
         echo 'SUCCESS';
     }

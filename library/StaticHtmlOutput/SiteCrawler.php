@@ -292,6 +292,9 @@ class SiteCrawler {
 
                 break;
 
+            case 'rss':
+                error_log('no handler for rss without extension yet');
+
             default:
                 require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/WsLog.php';
                 WsLog::l( 'WARNING: ENCOUNTERED FILE WITH NO PROCESSOR: ' . $this->url );
@@ -377,6 +380,8 @@ class SiteCrawler {
 
             if ( stripos( $this->content_type, 'text/html' ) !== false ) {
                 $this->file_type = 'html';
+            } elseif ( stripos( $this->content_type, 'rss+xml' ) !== false ) {
+                $this->file_type = 'rss';
             } else {
                 error_log( 'couldnt get filetype from content-type header in response, all we got was:' );
                 error_log( $this->response->getHeaderLine( 'content-type' ) );

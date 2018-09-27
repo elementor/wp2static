@@ -5,7 +5,7 @@ class TemplateHelper {
 
     }
 
-    public function displayCheckbox( $template_variables, $field_name, $field_label, $premium = false ) {
+    public function displayCheckbox( $template_variables, $field_name, $field_label ) {
 
         echo "
       <fieldset>

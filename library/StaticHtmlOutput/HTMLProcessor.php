@@ -42,6 +42,18 @@ class HTMLProcessor {
              $_POST['ajax_action'] === 'crawl_site'
         );
 
+        $this->removeConditionalHeadComments = isset(
+            $_POST['removeConditionalHeadComments']);
+
+        $this->rewriteWPPaths = isset(
+            $_POST['rewriteWPPaths']);
+
+        $this->removeWPMeta = isset(
+            $_POST['removeWPMeta']);
+
+        $this->removeWPLinks = isset(
+            $_POST['removeWPLinks']);
+
         $this->discovered_urls = [];
 
         $this->wp_uploads_path = $_POST['wp_uploads_path'];
@@ -73,6 +85,9 @@ class HTMLProcessor {
                 case 'img':
                     $this->processImage($element);
                     break;
+                case 'head':
+                    $this->processHead($element);
+                    break;
                 case 'link':
                     // NOTE: not to confuse with anchor element
                     $this->processLink($element);
@@ -98,26 +113,28 @@ class HTMLProcessor {
     }
 
     public function processLink( $element ) {
-        $relativeLinksToRemove = array(
-            'shortlink',
-            'canonical',
-            'pingback',
-            'alternate',
-            'EditURI',
-            'wlwmanifest',
-            'index',
-            'profile',
-            'prev',
-            'next',
-            'wlwmanifest',
-        );
+        if ( $this->removeWPLinks ) {
+            $relativeLinksToRemove = array(
+                'shortlink',
+                'canonical',
+                'pingback',
+                'alternate',
+                'EditURI',
+                'wlwmanifest',
+                'index',
+                'profile',
+                'prev',
+                'next',
+                'wlwmanifest',
+            );
 
-        $link_rel = $element->getAttribute( 'rel' );
+            $link_rel = $element->getAttribute( 'rel' );
 
-        if ( in_array( $link_rel, $relativeLinksToRemove ) ) {
-            $element->parentNode->removeChild( $element );
-        } elseif ( strpos( $link_rel, '.w.org' ) !== false ) {
-            $element->parentNode->removeChild( $element );
+            if ( in_array( $link_rel, $relativeLinksToRemove ) ) {
+                $element->parentNode->removeChild( $element );
+            } elseif ( strpos( $link_rel, '.w.org' ) !== false ) {
+                $element->parentNode->removeChild( $element );
+            }
         }
     }
 
@@ -137,6 +154,28 @@ class HTMLProcessor {
         $this->rewriteBaseURL( $element );
     }
 
+    public function processHead( $element ) {
+        $this->setBaseHref( $element, 'src' );
+
+        $head_elements = iterator_to_array(
+            $element->childNodes
+        );
+
+        foreach($head_elements as $node) {
+            if($node instanceof DOMComment) {
+                if ( $this->removeConditionalHeadComments ) {
+                    $node->parentNode->removeChild( $node );
+                }
+            } elseif ( $node->tagName === 'base' ) {
+                // detecting here, as smaller iteration to run conditional against
+                $this->base_tag_exists = true;
+            }            
+        }
+
+
+        // TODO: optionally strip conditional comments from head
+    }
+
     public function processScript( $element ) {
         $this->normalizeURL( $element, 'src' );
         $this->removeQueryStringFromInternalLink( $element );
@@ -154,10 +193,12 @@ class HTMLProcessor {
     }
 
     public function processMeta($element) {
-        $meta_name = $element->getAttribute( 'name' );
+        if ( $this->removeWPMeta ) {
+            $meta_name = $element->getAttribute( 'name' );
 
-        if ( strpos( $meta_name, 'generator' ) !== false ) {
-            $element->parentNode->removeChild( $element );
+            if ( strpos( $meta_name, 'generator' ) !== false ) {
+                $element->parentNode->removeChild( $element );
+            }
         }
     }
 
@@ -272,6 +313,10 @@ class HTMLProcessor {
     }
 
     public function rewriteWPPaths( $element ) {
+        if ( ! $this->rewriteWPPaths ) {
+            return;
+        }
+
         $attribute_to_change = '';
         $url_to_change = '';
 
