@@ -31,6 +31,8 @@ class HTMLProcessor {
         $this->useRelativeURLs = $useRelativeURLs;
         $this->useBaseHref = $useBaseHref;
 
+        $this->base_tag_exists = false;
+
         require_once dirname( __FILE__ ) . '/../URL2/URL2.php';
         $this->page_url = new Net_URL2( $page_url );
 
@@ -40,16 +42,13 @@ class HTMLProcessor {
              $_POST['ajax_action'] === 'crawl_site'
         );
 
-        if ( $this->discoverNewURLs ) {
-            $this->discovered_urls = [];
-            // $this->excludes_list = [];
-            // $this->includes_list = [];
-            $this->wp_uploads_path = $_POST['wp_uploads_path'];
-            $this->working_directory =
-                isset( $_POST['workingDirectory'] ) ?
-                $_POST['workingDirectory'] :
-                $this->wp_uploads_path;
-        }
+        $this->discovered_urls = [];
+
+        $this->wp_uploads_path = $_POST['wp_uploads_path'];
+        $this->working_directory =
+            isset( $_POST['workingDirectory'] ) ?
+            $_POST['workingDirectory'] :
+            $this->wp_uploads_path;
 
         // PERF: 70% of function time
         // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
@@ -64,8 +63,6 @@ class HTMLProcessor {
         );
 
         foreach ( $elements as $element ) {
-            error_log(print_r($element, true));
-
             switch ( $element->tagName ) {
                 case 'meta':
                     $this->processMeta($element);
@@ -80,29 +77,24 @@ class HTMLProcessor {
                     // NOTE: not to confuse with anchor element
                     $this->processLink($element);
                     break;
+                case 'script':
+                    // can contain src=, 
+                    // can also contain URLs within scripts
+                    // and escaped urls
+                    $this->processScript($element);
+                    break;
 
+                    // TODO: how about other places that can contain URLs
+                    // data attr, reacty stuff, etc?
             }
         }
 
-        $this->removeQueryStringsFromInternalLinks();
-        $this->rewriteWPPaths();
 
         // funcs to apply to whole page
         $this->detectEscapedSiteURLs();
+        $this->setBaseHref(); 
 
-        $processor->replaceBaseUrl(
-            $this->wp_site_url,
-            $this->baseUrl,
-            $this->allowOfflineUsage,
-            $this->useRelativeURLs,
-            $this->useBaseHref
-        );
-
-        // TODO: this whole 1-layer only discovery needs to be redone
-        //       was a quick add-on to get some real crawling in 5.9 
-        if ( $this->discoverNewURLs && $_POST['ajax_action'] === 'crawl_site' ) {
-            $processor->writeDiscoveredURLs();
-        }
+        $this->writeDiscoveredURLs();
     }
 
     public function processLink( $element ) {
@@ -131,24 +123,34 @@ class HTMLProcessor {
 
     public function addDiscoveredURL( $url ) {
         if ( $this->discoverNewURLs ) {
-            $this->discovered_urls[] = $url;
+            if ( $this->isInternalLink( $url ) ) {
+                $this->discovered_urls[] = $url;
+            }
         }
     }
 
     public function processImage( $element ) {
         $this->normalizeURL( $element, 'src' );
-        $this->discovered_urls[] = $element->getAttribute( 'src' );
+        $this->removeQueryStringFromInternalLink( $element );
+        $this->addDiscoveredURL( $element->getAttribute( 'src' ) );
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
-        
+    }
+
+    public function processScript( $element ) {
+        $this->normalizeURL( $element, 'src' );
+        $this->removeQueryStringFromInternalLink( $element );
+        $this->addDiscoveredURL( $element->getAttribute( 'src' ) );
+        $this->rewriteWPPaths( $element );
+        $this->rewriteBaseURL( $element );
     }
 
     public function processAnchor( $element ) {
         $this->normalizeURL( $element, 'href' );
-        $this->discovered_urls[] = $element->getAttribute( 'href' );
+        $this->removeQueryStringFromInternalLink( $element );
+        $this->addDiscoveredURL( $element->getAttribute( 'href' ) );
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
-        
     }
 
     public function processMeta($element) {
@@ -173,7 +175,7 @@ class HTMLProcessor {
         );
     }
 
-    // make all links absolute and relative to the current document
+    // make link absolute, using current page to determine full path
     public function normalizeURL($element, $attribute) {
         $original_link = $element->getAttribute( $attribute );
 
@@ -181,9 +183,6 @@ class HTMLProcessor {
             $abs = $this->page_url->resolve( $original_link );
             $element->setAttribute( $attribute, $abs );
         }
-    }
-
-    public function cleanup() {
     }
 
     public function isInternalLink( $link ) {
@@ -196,39 +195,28 @@ class HTMLProcessor {
         );
     }
 
-    public function removeQueryStringsFromInternalLinks() {
-        // TODO: benchmark 3 calls vs * elements perf
-        foreach ( $this->xml_doc->getElementsByTagName( 'a' ) as $link ) {
-            $link_href = $link->getAttribute( 'href' );
+    public function removeQueryStringFromInternalLink( $element ) {
+        $attribute_to_change = '';
+        $url_to_change = '';
 
-            // check if it's an internal link not a subdomain
-            if ( $this->isInternalLink( $link_href ) ) {
-                // strip anything from the ? onwards
-                // https://stackoverflow.com/a/42476194/1668057
-                $link->setAttribute( 'href', strtok( $link_href, '?' ) );
-            }
+        if ( $element->hasAttribute( 'href' ) ) {
+            $attribute_to_change = 'href';
+        } elseif ( $element->hasAttribute( 'src' ) ) {
+            $attribute_to_change = 'src';
+            // skip elements without href or src
+        } else {
+            return;
         }
 
-        foreach ( $this->xml_doc->getElementsByTagName( 'img' ) as $link ) {
-            $link_href = $link->getAttribute( 'src' );
+        $url_to_change = $element->getAttribute( $attribute_to_change );
 
-            // check if it's an internal link not a subdomain
-            if ( $this->isInternalLink( $link_href ) ) {
-                // strip anything from the ? onwards
-                // https://stackoverflow.com/a/42476194/1668057
-                $link->setAttribute( 'src', strtok( $link_href, '?' ) );
-            }
-        }
-
-        foreach ( $this->xml_doc->getElementsByTagName( 'script' ) as $link ) {
-            $link_href = $link->getAttribute( 'src' );
-
-            // check if it's an internal link not a subdomain
-            if ( $this->isInternalLink( $link_href ) ) {
-                // strip anything from the ? onwards
-                // https://stackoverflow.com/a/42476194/1668057
-                $link->setAttribute( 'src', strtok( $link_href, '?' ) );
-            }
+        if ( $this->isInternalLink( $url_to_change ) ) {
+            // strip anything from the ? onwards
+            // https://stackoverflow.com/a/42476194/1668057
+            $element->setAttribute(
+                $attribute_to_change,
+                strtok( $url_to_change, '?' )
+            );
         }
     }
 
@@ -262,20 +250,20 @@ class HTMLProcessor {
 
         $rewritten_source = str_replace(
             array(
-                addcslashes( $wp_site_env['wp_active_theme'], '/' ),
-                addcslashes( $wp_site_env['wp_themes'], '/' ),
-                addcslashes( $wp_site_env['wp_uploads'], '/' ),
-                addcslashes( $wp_site_env['wp_plugins'], '/' ),
-                addcslashes( $wp_site_env['wp_content'], '/' ),
-                addcslashes( $wp_site_env['wp_inc'], '/' ),
+                addcslashes( $this->wp_site_env['wp_active_theme'], '/' ),
+                addcslashes( $this->wp_site_env['wp_themes'], '/' ),
+                addcslashes( $this->wp_site_env['wp_uploads'], '/' ),
+                addcslashes( $this->wp_site_env['wp_plugins'], '/' ),
+                addcslashes( $this->wp_site_env['wp_content'], '/' ),
+                addcslashes( $this->wp_site_env['wp_inc'], '/' ),
             ),
             array(
-                addcslashes( $new_site_paths['new_active_theme_path'], '/' ),
-                addcslashes( $new_site_paths['new_themes_path'], '/' ),
-                addcslashes( $new_site_paths['new_uploads_path'], '/' ),
-                addcslashes( $new_site_paths['new_plugins_path'], '/' ),
-                addcslashes( $new_site_paths['new_wp_content_path'], '/' ),
-                addcslashes( $new_site_paths['new_wpinc_path'], '/' ),
+                addcslashes( $this->new_site_paths['new_active_theme_path'], '/' ),
+                addcslashes( $this->new_site_paths['new_themes_path'], '/' ),
+                addcslashes( $this->new_site_paths['new_uploads_path'], '/' ),
+                addcslashes( $this->new_site_paths['new_plugins_path'], '/' ),
+                addcslashes( $this->new_site_paths['new_wp_content_path'], '/' ),
+                addcslashes( $this->new_site_paths['new_wpinc_path'], '/' ),
             ),
             $this->response['body']
         );
@@ -300,6 +288,8 @@ class HTMLProcessor {
 
         if ( $this->isInternalLink( $url_to_change ) ) {
             // rewrite URLs, starting with longest paths down to shortest
+            // TODO: is the internal link check needed here or these
+            // arr values are already normalized?
             $rewritten_url = str_replace(
                 array(
                     $this->wp_site_env['wp_active_theme'],
@@ -334,7 +324,6 @@ class HTMLProcessor {
             $attribute_to_change = 'href';
         } elseif ( $element->hasAttribute( 'src' ) ) {
             $attribute_to_change = 'src';
-            // skip elements without href or src
         } else {
             return;
         }
@@ -342,9 +331,9 @@ class HTMLProcessor {
         $url_to_change = $element->getAttribute( $attribute_to_change );
 
         // check it actually needs to be changed
-        // TODO: is this check not done already by isInternalLink()?
-        if ( strpos( $url_to_change, $this->wp_site_url ) !== false ) {
+        if ( $this->isInternalLink( $url_to_change) ) {
             $rewritten_url = str_replace(
+                // TODO: test this won't touch subdomains, shouldn't
                 $this->wp_site_url,
                 $this->baseUrl,
                 $url_to_change
@@ -352,26 +341,37 @@ class HTMLProcessor {
 
             $element->setAttribute( $attribute_to_change, $rewritten_url );
         }
+    }
 
-        if ( $absolutePaths ) {
+    public function setBaseHref() {
+        // TODO: don't set for offline usage?
+        if ( $this->useBaseHref ) {
+            // TODO: create DOM node properly here
 
-            // TODO: re-implement as separate func as another processing layer
-            // error_log('SKIPPING absolute path rewriting');
-            if ( $this->useBaseHref ) {
-                $responseBody = str_replace(
-                    '<head>',
-                    "<head>\n<base href=\"" .
-                    esc_attr( $new_URL ) . "/\" />\n",
-                    $responseBody
-                );
-            } else {
-                $responseBody = str_replace(
-                    '<head>',
-                    "<head>\n<base href=\"/\" />\n",
-                    $responseBody
-                );
-            }
+        } else {
+
         }
+
+        // TODO: re-implement as separate func as another processing layer
+        // error_log('SKIPPING absolute path rewriting');
+        // if ( $this->useBaseHref ) {
+        //     $responseBody = str_replace(
+        //         '<head>',
+        //         "<head>\n<base href=\"" .
+        //         esc_attr( $new_URL ) . "/\" />\n",
+        //         $responseBody
+        //     );
+        // } else {
+        //     $responseBody = str_replace(
+        //         '<head>',
+        //         "<head>\n<base href=\"/\" />\n",
+        //         $responseBody
+        //     );
+        // }
+    }
+
+    public function rewriteForOfflineUsage( $element ) {
+        
 
         // elseif ( $allowOfflineUsage ) {
         // detect urls starting with our domain and append index.html to
