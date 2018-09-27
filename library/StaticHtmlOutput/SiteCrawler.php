@@ -210,6 +210,7 @@ class SiteCrawler {
 
         $wp_site_environment = array(
             'wp_inc' => '/' . WPINC,
+            // TODO: use the better method for getting wp-content (prev slug from theme dir)
             'wp_content' => '/wp-content', // TODO: check if this has been modified/use constant
             'wp_uploads' => str_replace( ABSPATH, '/', $this->wp_uploads_path ),
             'wp_plugins' => str_replace( ABSPATH, '/', WP_PLUGIN_DIR ),
@@ -235,14 +236,15 @@ class SiteCrawler {
 
         $this->detectFileType( $this->url );
 
-        // process based on filetype
         switch ( $this->file_type ) {
             case 'html':
-                require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/HTMLProcessor.php';
+                require_once dirname( __FILE__ ) .
+                    '/../StaticHtmlOutput/HTMLProcessor.php';
 
                 $processor = new HTMLProcessor();
 
-                // new single call to process the HTML file
+                // TODO: if not reusing the instance, switch to 
+                //       static functions for performance
                 $this->processed_file = $processor->processHTML(
                     $this->response->getBody(),
                     $this->url,
@@ -255,25 +257,7 @@ class SiteCrawler {
                     $this->useBaseHref
                 );
 
-                $processor->normalizeURLs( $this->url );
-
-                if ( $this->discoverNewURLs && $_POST['ajax_action'] === 'crawl_site' ) {
-                    $processor->writeDiscoveredURLs();
-                }
-
-                $processor->cleanup(
-                    $wp_site_environment,
-                    $overwrite_slug_targets
-                );
-
-                $processor->replaceBaseUrl(
-                    $this->wp_site_url,
-                    $this->baseUrl,
-                    $this->allowOfflineUsage,
-                    $this->useRelativeURLs,
-                    $this->useBaseHref
-                );
-
+                $this->processed_file = $processor->getHTML();
 
                 break;
 

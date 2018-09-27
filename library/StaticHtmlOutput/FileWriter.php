@@ -67,6 +67,7 @@ class FileWriter {
         if ( $fileContents ) {
             file_put_contents( $fileName, $fileContents );
         } else {
+            require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/WsLog.php';
             WsLog::l( 'SAVING URL: FILE IS EMPTY ' . $this->url );
             error_log( $this->url );
             error_log( $this->content );
