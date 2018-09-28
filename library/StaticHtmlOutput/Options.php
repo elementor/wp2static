@@ -26,7 +26,8 @@ class StaticHtmlOutput_Options {
     }
 
     public function __get( $name ) {
-        $value = array_key_exists( $name, $this->_options ) ? $this->_options[ $name ] : null;
+        $value = array_key_exists( $name, $this->_options ) ?
+            $this->_options[ $name ] : null;
         return $value;
     }
 
@@ -103,7 +104,7 @@ class StaticHtmlOutput_Options {
 
         foreach ( $options_to_save as $option ) {
             // TODO: set which fields should get which sanitzation upon saving
-            // TODO: validate before saving to avoid empty settings fields created for each
+            // TODO: validate before save & avoid making empty settings fields
             $this->setOption( $option, filter_input( INPUT_POST, $option ) );
             $this->save();
         }
