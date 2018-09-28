@@ -32,7 +32,7 @@ class StaticHtmlOutput_FTP {
 
     public function clear_file_list() {
         // TODO: avoid suppressing
-        $f = @fopen( $this->_exportFileList, 'r+' );
+        $f = fopen( $this->_exportFileList, 'r+' );
         if ( $f !== false ) {
             ftruncate( $f, 0 );
             fclose( $f );
