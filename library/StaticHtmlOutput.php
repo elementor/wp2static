@@ -295,7 +295,7 @@ class StaticHtmlOutput_Controller {
         }
 
         $this->options = new StaticHtmlOutput_Options( self::OPTIONS_KEY );
-        $this->setDefaultOptions(); 
+        $this->setDefaultOptions();
 
         echo 'SUCCESS';
     }
