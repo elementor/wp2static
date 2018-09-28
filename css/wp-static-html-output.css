@@ -3,52 +3,52 @@
 .postbox p, li {
   font-size: 1em;
   line-height: 1.375em;
-  
+
 
 }
 
 .github, .bunnycdn, .ftp, .dropbox, .netlify, .s3 {
-	display: none;
+    display: none;
 }
 
 #downloadZIP {
-	display: none;
+    display: none;
 }
 
 .intro-text {
-	font-size: large;
+    font-size: large;
 }
 
 div.postbox-container {
-	float: none;
-	padding: 0;
-	min-width: 650px;
-	width: 100%;
+    float: none;
+    padding: 0;
+    min-width: 650px;
+    width: 100%;
 }
 
 div.postbox div.inside {
-	margin: 14px 18px 18px;
-	position: relative;
+    margin: 14px 18px 18px;
+    position: relative;
 }
 
 .wpsho-report ul {
-	list-style: disc;
-	list-style-position: inside;
+    list-style: disc;
+    list-style-position: inside;
 }
 
 .wpsho-report ul li {
-	padding-left: 2em;
+    padding-left: 2em;
 }
 
 .wpsho-export-log {
-	height: 200px;
-	overflow: auto;
-	border: 1px solid #DFDFDF;
-	color: #000;
-	background: #fff;
-	margin: 0 0 15px;
-	padding: 3px 4px;
-	width: 95%;
+    height: 200px;
+    overflow: auto;
+    border: 1px solid #DFDFDF;
+    color: #000;
+    background: #fff;
+    margin: 0 0 15px;
+    padding: 3px 4px;
+    width: 95%;
 }
 
 #exportStatus {
@@ -56,14 +56,14 @@ div.postbox div.inside {
 }
 
 #progress {
-    display: none; 
+    display: none;
 }
 
 
 
 
 .error-help-text {
-	display: none;	
+    display: none;
   padding-bottom: 25px;
 }
 
@@ -80,7 +80,7 @@ div.postbox div.inside {
 
 .pulsate-css {
     animation: pulsate 1s ease-out;
-    animation-iteration-count: infinite; 
+    animation-iteration-count: infinite;
     opacity: 0.0;
 
     border: 3px solid #999;
@@ -98,7 +98,7 @@ div.postbox div.inside {
 #current_action {
   padding-top: 3px;
   font-size: 14px;
-  
+
 }
 
 .button-call-to-action {

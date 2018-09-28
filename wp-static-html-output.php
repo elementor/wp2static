@@ -8,234 +8,232 @@
  * Author URI:  https://leonstafford.github.io
  * Text Domain: static-html-output-plugin
  * Copyright (c) 2017 Leon Stafford
- * 
+ *
  * @fs_premium_only /library/StaticHtmlOutput/BunnyCDN.php, /library/StaticHtmlOutput/S3.php, /library/CloudFront/, /library/S3/
- * 
+ *
  * @package     WP_Static_HTML_Output
  */
 
 
 // TODO: this file / methods are being called on public site page loads,
 // should only be triggered when in the dashboard!
-$ajax_action = isset($_POST['ajax_action']) ? $_POST['ajax_action'] : '';
+$ajax_action = isset( $_POST['ajax_action'] ) ? $_POST['ajax_action'] : '';
 
 // bypass instantiating plugin for specific AJAX requests
 if ( $ajax_action === 'crawl_site' || $ajax_action === 'crawl_again' ) {
-    require_once dirname(__FILE__) .
+    require_once dirname( __FILE__ ) .
         '/library/StaticHtmlOutput/SiteCrawler.php';
 
     wp_die();
     return null;
 } else {
-// normal plugin instantiation/freemius check, etc
-  if ( ! function_exists( 'wpsho_fr' ) ) {
+    // normal plugin instantiation/freemius check, etc
+    if ( ! function_exists( 'wpsho_fr' ) ) {
 
-  function wpsho_fr() {
-      // TODO: this is called on regular page load
-      // error_log('calling freemius func');
-      global $wpsho_fr;
+        function wpsho_fr() {
+              // TODO: this is called on regular page load
+              // error_log('calling freemius func');
+              global $wpsho_fr;
 
-      if ( ! isset( $wpsho_fr ) ) {
-          // Activate multisite network integration.
-          if ( ! defined( 'WP_FS__PRODUCT_2226_MULTISITE' ) ) {
-              define( 'WP_FS__PRODUCT_2226_MULTISITE', true );
-          }
+            if ( ! isset( $wpsho_fr ) ) {
+                // Activate multisite network integration.
+                if ( ! defined( 'WP_FS__PRODUCT_2226_MULTISITE' ) ) {
+                      define( 'WP_FS__PRODUCT_2226_MULTISITE', true );
+                }
 
-          // Include Freemius SDK.
-          require_once dirname(__FILE__) . '/freemius/start.php';
+                // Include Freemius SDK.
+                require_once dirname( __FILE__ ) . '/freemius/start.php';
 
-          $wpsho_fr = fs_dynamic_init( array(
-              'id'                  => '2226',
-              'slug'                => 'static-html-output-plugin',
-              'type'                => 'plugin',
-              'public_key'          => 'pk_8874b676a9189a1b13450673a921f',
-              'is_premium'          => true,
-              'has_addons'          => false,
-              'has_paid_plans'      => true,
-              'trial'               => array(
-                  'days'               => 7,
-                  'is_require_payment' => true,
-              ),
-              'menu'                => array(
-                  'slug'           => 'wp-static-html-output',
-                  'support'        => false,
-                  'network'        => false,
-              ),
-              // Set the SDK to work in a sandbox mode (for development & testing).
-              // IMPORTANT: MAKE SURE TO REMOVE SECRET KEY BEFORE DEPLOYMENT.
-              //'secret_key'          => getenv('FREEMIUM_SECRET_KEY'),
-          ) );
-      }
+                $wpsho_fr = fs_dynamic_init(
+                    array(
+                        'id'                  => '2226',
+                        'slug'                => 'static-html-output-plugin',
+                        'type'                => 'plugin',
+                        'public_key'          => 'pk_8874b676a9189a1b13450673a921f',
+                        'is_premium'          => true,
+                        'has_addons'          => false,
+                        'has_paid_plans'      => true,
+                        'trial'               => array(
+                            'days'               => 7,
+                            'is_require_payment' => true,
+                        ),
+                        'menu'                => array(
+                            'slug'           => 'wp-static-html-output',
+                            'support'        => false,
+                            'network'        => false,
+                        ),
+                    // Set the SDK to work in a sandbox mode (for development & testing).
+                    // IMPORTANT: MAKE SURE TO REMOVE SECRET KEY BEFORE DEPLOYMENT.
+                    // 'secret_key'          => getenv('FREEMIUM_SECRET_KEY'),
+                    )
+                );
+            }
 
-      return $wpsho_fr;
-  }
+            return $wpsho_fr;
+        }
 
-  // Init Freemius.
-  wpsho_fr();
-  // Signal that SDK was initiated.
-  do_action( 'wpsho_fr_loaded' );
+        // Init Freemius.
+        wpsho_fr();
+        // Signal that SDK was initiated.
+        do_action( 'wpsho_fr_loaded' );
 
-  // TODO: find way to enable these based on detected capabilities
-  require_once 'library/StaticHtmlOutput/Options.php';
-  require_once 'library/StaticHtmlOutput/TemplateHelper.php';
-  require_once 'library/StaticHtmlOutput/View.php';
-  require_once 'library/StaticHtmlOutput/WsLog.php';
-  require_once 'library/StaticHtmlOutput/UrlHelper.php';
-  require_once 'library/StaticHtmlOutput/FilesHelper.php';
-  require_once 'library/StaticHtmlOutput.php';
-  require_once 'library/StaticHtmlOutput/FTP.php';
-  require_once 'library/StaticHtmlOutput/Netlify.php';
-  require_once 'library/StaticHtmlOutput/GitHub.php';
-  require_once 'library/StaticHtmlOutput/Dropbox.php';
-  require_once 'library/URL2/URL2.php';
-  
-  if ( wpsho_fr()->is__premium_only() ) {
-    require_once 'library/StaticHtmlOutput/BunnyCDN.php';
-    require_once 'library/StaticHtmlOutput/S3.php';
-  }
+        // TODO: find way to enable these based on detected capabilities
+        require_once 'library/StaticHtmlOutput/Options.php';
+        require_once 'library/StaticHtmlOutput/TemplateHelper.php';
+        require_once 'library/StaticHtmlOutput/View.php';
+        require_once 'library/StaticHtmlOutput/WsLog.php';
+        require_once 'library/StaticHtmlOutput/UrlHelper.php';
+        require_once 'library/StaticHtmlOutput/FilesHelper.php';
+        require_once 'library/StaticHtmlOutput.php';
+        require_once 'library/StaticHtmlOutput/FTP.php';
+        require_once 'library/StaticHtmlOutput/Netlify.php';
+        require_once 'library/StaticHtmlOutput/GitHub.php';
+        require_once 'library/StaticHtmlOutput/Dropbox.php';
+        require_once 'library/URL2/URL2.php';
 
-  StaticHtmlOutput_Controller::init( __FILE__ );
+        if ( wpsho_fr()->is__premium_only() ) {
+            require_once 'library/StaticHtmlOutput/BunnyCDN.php';
+            require_once 'library/StaticHtmlOutput/S3.php';
+        }
 
-  /**
-   * Settings link for WP Static HTML Output plugin
-   *
-   * This creates the link(s) on the installed/active plugins screen
-   *
-   * @since 1.0.0
-   *
-   * @link https://codex.wordpress.org/Plugin_API/Filter_Reference/plugin_action_links_(plugin_file_name)
-   *
-   * @param array $links The links to show on the plugins overview page in an array.
-   * @return array The links to show on the plugins overview page in an array.
-   */
-  function plugin_action_links( $links ) {
-    $settings_link = '<a href="admin.php?page=wp-static-html-output">' . __( 'Settings', 'static-html-output-plugin' ) . '</a>';
-    array_unshift( $links, $settings_link );
+        StaticHtmlOutput_Controller::init( __FILE__ );
 
-    return $links;
-  }
+        /**
+         * Settings link for WP Static HTML Output plugin
+         *
+         * This creates the link(s) on the installed/active plugins screen
+         *
+         * @since 1.0.0
+         *
+         * @link https://codex.wordpress.org/Plugin_API/Filter_Reference/plugin_action_links_(plugin_file_name)
+         *
+         * @param array $links The links to show on the plugins overview page in an array.
+         * @return array The links to show on the plugins overview page in an array.
+         */
+        function plugin_action_links( $links ) {
+            $settings_link = '<a href="admin.php?page=wp-static-html-output">' . __( 'Settings', 'static-html-output-plugin' ) . '</a>';
+            array_unshift( $links, $settings_link );
 
-
-  if ( wpsho_fr()->is_plan('professional_edition') ) {
-    /**
-     * Allow triggering export via CRON/custom function
-     *
-     * @since 2.3
-     *
-     * @return null
-     */
-    function wp_static_html_output_server_side_export() {
-      $plugin = StaticHtmlOutput_Controller::getInstance();
-      $plugin->doExportWithoutGUI();
-      wp_die();
-      return null;
-    }
-
-    add_action( 'wp_static_html_output_server_side_export_hook', 'wp_static_html_output_server_side_export', 10, 0 );
-  }
+            return $links;
+        }
 
 
-  /**
-   * This hook is called once any activated plugins have been loaded. Is generally used for immediate filter setup, or plugin overrides.
-   *
-   * @since 1.0.0
-   *
-   * @return null
-   */
-  function plugins_have_been_loaded() {
-      load_plugin_textdomain( 'static-html-output-plugin', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
-      return null;
-  }
+        if ( wpsho_fr()->is_plan( 'professional_edition' ) ) {
+            /**
+             * Allow triggering export via CRON/custom function
+             *
+             * @since 2.3
+             *
+             * @return null
+             */
+            function wp_static_html_output_server_side_export() {
+                $plugin = StaticHtmlOutput_Controller::getInstance();
+                $plugin->doExportWithoutGUI();
+                wp_die();
+                return null;
+            }
 
-  add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'plugin_action_links' );
-  add_action( 'plugins_loaded', 'plugins_have_been_loaded' );
-  add_action( 'wp_ajax_wp_static_html_output_ajax', 'wp_static_html_output_ajax' );
+            add_action( 'wp_static_html_output_server_side_export_hook', 'wp_static_html_output_server_side_export', 10, 0 );
+        }
 
-  /**
-   * Routes AJAX requests from the client to plugin instance.
-   *
-   * Reduces code by not adding an add_action for each AJAX method. Instead, a parameter
-   * in the payload determines which of the plugin's instance methods to run
-   *
-   * @since 2.5
-   *
-   * @return null
-   */
-  function wp_static_html_output_ajax() {
-    check_ajax_referer( 'wpstatichtmloutput', 'nonce' );
-    $instance_method = filter_input( INPUT_POST, 'ajax_action' );
 
-    // TODO: avoid loading ALL the WP stuff on each AJAX request 
-    // require_once dirname(__FILE__) . '/standalone_script.php';
+        /**
+         * This hook is called once any activated plugins have been loaded. Is generally used for immediate filter setup, or plugin overrides.
+         *
+         * @since 1.0.0
+         *
+         * @return null
+         */
+        function plugins_have_been_loaded() {
+              load_plugin_textdomain( 'static-html-output-plugin', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+              return null;
+        }
 
-    // ie, if crawl_site is the method, avoid instantiating main class, call small script directly
+        add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'plugin_action_links' );
+        add_action( 'plugins_loaded', 'plugins_have_been_loaded' );
+        add_action( 'wp_ajax_wp_static_html_output_ajax', 'wp_static_html_output_ajax' );
 
-    // else, do the usual
+        /**
+         * Routes AJAX requests from the client to plugin instance.
+         *
+         * Reduces code by not adding an add_action for each AJAX method. Instead, a parameter
+         * in the payload determines which of the plugin's instance methods to run
+         *
+         * @since 2.5
+         *
+         * @return null
+         */
+        function wp_static_html_output_ajax() {
+            check_ajax_referer( 'wpstatichtmloutput', 'nonce' );
+            $instance_method = filter_input( INPUT_POST, 'ajax_action' );
 
-    if ( '' !== $instance_method && is_string( $instance_method ) ) {
-      $plugin_instance = StaticHtmlOutput_Controller::getInstance();
-      call_user_func( array( $plugin_instance, $instance_method ) );
-    }
+            // TODO: avoid loading ALL the WP stuff on each AJAX request
+            // require_once dirname(__FILE__) . '/standalone_script.php';
+            // ie, if crawl_site is the method, avoid instantiating main class, call small script directly
+            // else, do the usual
+            if ( '' !== $instance_method && is_string( $instance_method ) ) {
+                $plugin_instance = StaticHtmlOutput_Controller::getInstance();
+                call_user_func( array( $plugin_instance, $instance_method ) );
+            }
 
-    wp_die();
-    return null;
-  }
+            wp_die();
+            return null;
+        }
 
-  // rm wp emoji
-  remove_action('wp_head', 'print_emoji_detection_script', 7);
-  remove_action('wp_print_styles', 'print_emoji_styles');
+        // rm wp emoji
+        remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
+        remove_action( 'wp_print_styles', 'print_emoji_styles' );
 
-  /**
-   * Add a widget to the dashboard.
-   *
-   * Enable users to statically publish theeir site from the WP Dashboard
-   */
-  function wp_static_html_output_add_dashboard_widgets() {
+        /**
+         * Add a widget to the dashboard.
+         *
+         * Enable users to statically publish theeir site from the WP Dashboard
+         */
+        function wp_static_html_output_add_dashboard_widgets() {
 
-    wp_add_dashboard_widget(
-           'wp_static_html_output_dashboard_widget',
-           'Static HTML Output',
-           'wp_static_html_output_dashboard_widget_function'
-      );	
-  }
-  //add_action( 'wp_dashboard_setup', 'wp_static_html_output_add_dashboard_widgets' );
+            wp_add_dashboard_widget(
+                'wp_static_html_output_dashboard_widget',
+                'Static HTML Output',
+                'wp_static_html_output_dashboard_widget_function'
+            );
+        }
+        // add_action( 'wp_dashboard_setup', 'wp_static_html_output_add_dashboard_widgets' );
+        function wp_static_html_output_dashboard_widget_function() {
 
-  function wp_static_html_output_dashboard_widget_function() {
+            echo '<p>Publish whole site as static HTML</p>';
+            echo "<button class='button button-primary'>Publish whole site</button>";
+        }
 
-    echo "<p>Publish whole site as static HTML</p>";
-    echo "<button class='button button-primary'>Publish whole site</button>";
-  }
+        function wp_static_html_output_deregister_scripts() {
+            wp_deregister_script( 'wp-embed' );
+            wp_deregister_script( 'comment-reply' );
+        }
+        add_action( 'wp_footer', 'wp_static_html_output_deregister_scripts' );
+        remove_action( 'wp_head', 'wlwmanifest_link' );
 
-  function wp_static_html_output_deregister_scripts(){
-    wp_deregister_script( 'wp-embed' );
-    wp_deregister_script( 'comment-reply' );
-  }
-  add_action( 'wp_footer', 'wp_static_html_output_deregister_scripts' );
-  remove_action('wp_head', 'wlwmanifest_link');
-
-  function wpsho_fr_custom_connect_message_on_update(
-      $message,
-      $user_first_name,
-      $plugin_title,
-      $user_login,
-      $site_link,
-      $freemius_link
-    ) {
-      return sprintf(
-        __( 'Want better exports? %2$s improves by sending non-sensitive diagnostics to %5$s.', 'static-html-output-plugin' ),
+        function wpsho_fr_custom_connect_message_on_update(
+        $message,
         $user_first_name,
-        '<b>' . $plugin_title . '</b>',
-        '<b>' . $user_login . '</b>',
+        $plugin_title,
+        $user_login,
         $site_link,
         $freemius_link
-      );
+        ) {
+            return sprintf(
+                __( 'Want better exports? %2$s improves by sending non-sensitive diagnostics to %5$s.', 'static-html-output-plugin' ),
+                $user_first_name,
+                '<b>' . $plugin_title . '</b>',
+                '<b>' . $user_login . '</b>',
+                $site_link,
+                $freemius_link
+            );
+        }
+
+        wpsho_fr()->add_filter( 'connect_message_on_update', 'wpsho_fr_custom_connect_message_on_update', 10, 6 );
+
+        wpsho_fr()->add_filter( 'connect_message', 'wpsho_fr_custom_connect_message_on_update', 10, 6 );
+
     }
-
-    wpsho_fr()->add_filter('connect_message_on_update', 'wpsho_fr_custom_connect_message_on_update', 10, 6);
-
-    wpsho_fr()->add_filter('connect_message', 'wpsho_fr_custom_connect_message_on_update', 10, 6);
-
-  }
 }
 
 

@@ -108,7 +108,6 @@ class HTMLProcessor {
         // funcs to apply to whole page
         $this->detectEscapedSiteURLs();
         // $this->setBaseHref();
-
         $this->writeDiscoveredURLs();
     }
 
@@ -155,8 +154,7 @@ class HTMLProcessor {
     }
 
     public function processHead( $element ) {
-        //$this->setBaseHref( $element, 'src' );
-
+        // $this->setBaseHref( $element, 'src' );
         $head_elements = iterator_to_array(
             $element->childNodes
         );

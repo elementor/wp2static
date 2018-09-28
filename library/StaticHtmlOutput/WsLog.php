@@ -11,8 +11,9 @@ class WsLog {
 
         $log_file_path = $working_directory . '/WP-STATIC-EXPORT-LOG';
 
-        file_put_contents (
-            $log_file_path, $text . PHP_EOL,
+        file_put_contents(
+            $log_file_path,
+            $text . PHP_EOL,
             FILE_APPEND | LOCK_EX
         );
     }
