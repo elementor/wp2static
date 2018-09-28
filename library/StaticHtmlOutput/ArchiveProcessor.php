@@ -81,10 +81,12 @@ class ArchiveProcessor {
     }
 
     // default rename in PHP throws warnings if dir is populated
-    public function rename_populated_directory( $source, $target ) {
-        $this->recursive_copy( $source, $target );
+    public function renameWPDirectory( $source, $target ) {
+        if ( isset( $_POST['rewriteWPPaths'] ) ) {
+            $this->recursive_copy( $source, $target );
 
-        StaticHtmlOutput_FilesHelper::delete_dir_with_files( $source );
+            StaticHtmlOutput_FilesHelper::delete_dir_with_files( $source );
+        }
     }
 
 
@@ -217,28 +219,28 @@ class ArchiveProcessor {
         $new_wp_includes = $this->archive->path . $this->rewriteWPINC;
 
         if ( file_exists( $original_wp_content ) ) {
-            $this->rename_populated_directory( $original_wp_content, $new_wp_content );
+            $this->renameWPDirectory( $original_wp_content, $new_wp_content );
         }
 
         if ( file_exists( $updated_uploads_dir ) ) {
-            $this->rename_populated_directory( $updated_uploads_dir, $new_uploads_dir );
+            $this->renameWPDirectory( $updated_uploads_dir, $new_uploads_dir );
         }
 
         if ( file_exists( $updated_theme_root ) ) {
-            $this->rename_populated_directory( $updated_theme_root, $new_theme_root );
+            $this->renameWPDirectory( $updated_theme_root, $new_theme_root );
         }
 
         if ( file_exists( $updated_theme_dir ) ) {
-            $this->rename_populated_directory( $updated_theme_dir, $new_theme_dir );
+            $this->renameWPDirectory( $updated_theme_dir, $new_theme_dir );
         }
 
         if ( file_exists( $updated_plugins_dir ) ) {
-            $this->rename_populated_directory( $updated_plugins_dir, $new_plugins_dir );
+            $this->renameWPDirectory( $updated_plugins_dir, $new_plugins_dir );
 
         }
 
         if ( file_exists( $original_wp_includes ) ) {
-            $this->rename_populated_directory( $original_wp_includes, $new_wp_includes );
+            $this->renameWPDirectory( $original_wp_includes, $new_wp_includes );
         } 
 
         // TODO: add to options
