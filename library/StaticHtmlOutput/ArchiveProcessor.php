@@ -103,6 +103,7 @@ class ArchiveProcessor {
 
         // TODO: cleanup empty archiveDirs to prevent them exporting
         // TODO: replace `exec` calls with native PHP
+        // phpcs:disable
         $files_in_previous_export = exec(
             "find $dir_to_diff_against -type f | wc -l"
         );
@@ -111,6 +112,7 @@ class ArchiveProcessor {
             "find $this->archive->path -type f | wc -l"
         );
 
+        // phpcs:enable
         // copy the newly changed files back into the previous export dir,
         // else will never capture changes
         // TODO: this works the first time, but will fail the diff on
@@ -138,7 +140,10 @@ class ArchiveProcessor {
             return sha1_file( $a ) === sha1_file( $b );
         }
 
+        // TODO: replace with native calls
+        // phpcs:disable
         $diff = exec( "diff $a $b" );
+        // phpcs:enable
         $result = $diff === '';
 
         return $result;
@@ -148,7 +153,7 @@ class ArchiveProcessor {
     public function recursive_copy( $srcdir, $dstdir ) {
         $dir = opendir( $srcdir );
         // TODO: check condition, avoid suppression
-        @mkdir( $dstdir );
+        mkdir( $dstdir );
 
         while ( $file = readdir( $dir ) ) {
             if ( $file != '.' && $file != '..' ) {
