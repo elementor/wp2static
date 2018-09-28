@@ -152,8 +152,10 @@ class ArchiveProcessor {
 
     public function recursive_copy( $srcdir, $dstdir ) {
         $dir = opendir( $srcdir );
-        // TODO: check condition, avoid suppression
-        mkdir( $dstdir );
+
+        if ( ! is_dir( $dstdir ) ) {
+            mkdir( $dstdir );
+        }
 
         while ( $file = readdir( $dir ) ) {
             if ( $file != '.' && $file != '..' ) {
