@@ -203,8 +203,13 @@ class StaticHtmlOutput_FilesHelper {
                 http://domain.com/2018/
             */
 
+
+            // TODO: failing on subdir installs here
+        
             $parsed_link = parse_url( $permalink );
-            $link_host = $wp_site_url . '/'; // rely on WP's site URL vs reconstructing from parsed
+            // rely on WP's site URL vs reconstructing from parsed
+            // subdomain, ie http://domain.com/mywpinstall/
+            $link_host = $wp_site_url . '/'; 
             $link_path = $parsed_link['path'];
 
             // TODO: Windows filepath support?
@@ -214,6 +219,13 @@ class StaticHtmlOutput_FilesHelper {
             array_shift( $path_segments );
             array_pop( $path_segments );
 
+
+            // if subdomain, rm first segment from URL to avoid duplicates
+            if ( isset( $_POST['subdirectory'] ) ) {
+                error_log('subdir detected, rming segment');
+                array_shift( $path_segments );
+            }
+            
             $number_of_segments = count( $path_segments );
 
             // build each URL

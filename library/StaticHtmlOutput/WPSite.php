@@ -21,11 +21,22 @@ class WPSite {
         $this->child_theme_active =
             $this->parent_theme_path !== $this->child_theme_path;
 
+        $this->permalink_structure = get_option( 'permalink_structure' );
+        error_log($this->permalink_structure);
 
         // TODO: pre-generate as much as possible here to avoid
         //       extra overhead during the high cyclical functions
 
         $this->detect_base_url();
+        
+        $this->subdirectory = $this->isSiteInstalledInSubdomain();
+    }
+
+    public function isSiteInstalledInSubdomain() {
+        $parsed_site_url = parse_url( rtrim($this->site_url, '/') );
+
+
+        return isset( $parsed_site_url['path'] );
     }
 
     public function uploadsPathIsWritable() {

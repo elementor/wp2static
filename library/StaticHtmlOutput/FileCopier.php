@@ -30,22 +30,11 @@ class FileCopier {
         return( str_replace( $this->wp_site_url, $this->wp_site_path, $this->url ) );
     }
 
-    public function copyFile( $archiveDir ) {
+    public function copyFile( $archive_dir ) {
         $urlInfo = parse_url( $this->url );
         $pathInfo = array();
 
         $local_file = $this->getLocalFileForURL();
-
-        /*
-          $urlInfo['path'] will look like:
-
-            (file with extension)
-
-            [scheme] => http
-            [host] => 172.18.0.3
-            [path] => /wp-content/themes/twentyseventeen/assets/css/ie8.css
-
-        */
 
         // TODO: here we can allow certain external host files to be crawled
         if ( ! isset( $urlInfo['path'] ) ) {
@@ -55,7 +44,7 @@ class FileCopier {
         $pathInfo = pathinfo( $urlInfo['path'] );
 
         // set fileDir to the directory name else empty
-        $fileDir = $archiveDir . ( isset( $pathInfo['dirname'] ) ? $pathInfo['dirname'] : '' );
+        $fileDir = $archive_dir . ( isset( $pathInfo['dirname'] ) ? $pathInfo['dirname'] : '' );
 
         if ( ! file_exists( $fileDir ) ) {
             wp_mkdir_p( $fileDir );
