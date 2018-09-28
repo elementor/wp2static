@@ -33,7 +33,10 @@ class StaticHtmlOutput_View {
     }
 
     public function __get( $name ) {
-        $value = array_key_exists( $name, $this->_variables ) ? $this->_variables[ $name ] : null;
+        $value = array_key_exists( $name, $this->_variables ) ?
+        $this->_variables[ $name ] :
+        null;
+
         return $value;
     }
 
