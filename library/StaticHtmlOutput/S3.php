@@ -35,13 +35,13 @@ class StaticHtmlOutput_S3 {
 
     public function clear_file_list() {
         // TODO: avoid suppression
-        $f = @fopen( $this->_exportFileList, 'r+' );
+        $f = fopen( $this->_exportFileList, 'r+' );
         if ( $f !== false ) {
             ftruncate( $f, 0 );
             fclose( $f );
         }
 
-        $f = @fopen( $this->_globHashAndPathList, 'r+' );
+        $f = fopen( $this->_globHashAndPathList, 'r+' );
         if ( $f !== false ) {
             ftruncate( $f, 0 );
             fclose( $f );
