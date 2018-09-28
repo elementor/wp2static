@@ -66,6 +66,10 @@ class FileCopier {
 
         $fileName = $fileDir . '/' . $pathInfo['filename'] . '.' . $fileExtension;
 
-        copy( $local_file, $fileName );
+        if ( is_file( $local_file ) ) {
+            copy( $local_file, $fileName );
+        } else {
+            error_log( 'Fail trying to copy local file: ' . $local_file );
+        }
     }
 }
