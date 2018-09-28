@@ -3,29 +3,45 @@
 class ArchiveProcessor {
 
     public function __construct() {
-        // TODO: prepare_export func to return archive name to client, then we use that directly here
         require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/Archive.php';
         $this->archive = new Archive();
 
-        $this->working_directory = isset( $_POST['working_directory'] ) ? $_POST['working_directory'] : '';
+        $this->working_directory =
+            isset( $_POST['working_directory'] ) ?
+            $_POST['working_directory'] :
+            '';
 
-        $this->rewriteWPCONTENT = filter_input( INPUT_POST, 'rewriteWPCONTENT' );
-        $this->rewriteTHEMEROOT = filter_input( INPUT_POST, 'rewriteTHEMEROOT' );
-        $this->rewriteTHEMEDIR = filter_input( INPUT_POST, 'rewriteTHEMEDIR' );
-        $this->rewriteUPLOADS = filter_input( INPUT_POST, 'rewriteUPLOADS' );
-        $this->rewritePLUGINDIR = filter_input( INPUT_POST, 'rewritePLUGINDIR' );
-        $this->rewriteWPINC = filter_input( INPUT_POST, 'rewriteWPINC' );
-
-        $this->allowOfflineUsage = filter_input( INPUT_POST, 'allowOfflineUsage' );
-        $this->targetFolder = filter_input( INPUT_POST, 'targetFolder' );
-
-        $this->selected_deployment_option = isset( $_POST['selected_deployment_option'] ) ? $_POST['selected_deployment_option'] : '';
-        $this->diffBasedDeploys = isset( $_POST['diffBasedDeploys'] ) ? $_POST['diffBasedDeploys'] : false;
-
+        $this->rewriteWPCONTENT =
+            filter_input( INPUT_POST, 'rewriteWPCONTENT' );
+        $this->rewriteTHEMEROOT =
+            filter_input( INPUT_POST, 'rewriteTHEMEROOT' );
+        $this->rewriteTHEMEDIR =
+            filter_input( INPUT_POST, 'rewriteTHEMEDIR' );
+        $this->rewriteUPLOADS =
+            filter_input( INPUT_POST, 'rewriteUPLOADS' );
+        $this->rewritePLUGINDIR =
+            filter_input( INPUT_POST, 'rewritePLUGINDIR' );
+        $this->rewriteWPINC =
+            filter_input( INPUT_POST, 'rewriteWPINC' );
+        $this->allowOfflineUsage =
+            filter_input( INPUT_POST, 'allowOfflineUsage' );
+        $this->targetFolder =
+            filter_input( INPUT_POST, 'targetFolder' );
+        $this->selected_deployment_option =
+            isset( $_POST['selected_deployment_option'] ) ?
+            $_POST['selected_deployment_option'] :
+            '';
+        $this->diffBasedDeploys =
+            isset( $_POST['diffBasedDeploys'] ) ?
+            $_POST['diffBasedDeploys'] :
+            false;
         $this->wp_site_url = '';
         $this->wp_site_subdir = '';
         $this->wp_uploads_path = $_POST['wp_uploads_path'];
-        $this->working_directory = isset( $_POST['workingDirectory'] ) ? $_POST['workingDirectory'] : $this->wp_uploads_path;
+        $this->working_directory =
+            isset( $_POST['workingDirectory'] ) ?
+            $_POST['workingDirectory'] :
+            $this->wp_uploads_path;
     }
 
     public function create_symlink_to_latest_archive() {
@@ -33,7 +49,11 @@ class ArchiveProcessor {
 
         if ( is_dir( $this->archive->path ) ) {
             $this->remove_symlink_to_latest_archive();
-            symlink( $this->archive->path, $this->wp_uploads_path . '/latest-export' );
+            symlink(
+                $this->archive->path,
+                $this->wp_uploads_path .
+                '/latest-export'
+            );
         } else {
             error_log( 'failed to symlink latest export directory' );
         }
@@ -48,7 +68,8 @@ class ArchiveProcessor {
     public function remove_files_idential_to_previous_export() {
         $dir_to_diff_against = $this->wp_uploads_path . '/previous-export';
 
-        // iterate each file in current export, check the size and contents in previous, delete if match
+        // iterate each file in current export, check the size and contents in
+        // previous, delete if match
         $objects = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator(
                 $this->archive->path,
@@ -59,25 +80,41 @@ class ArchiveProcessor {
         foreach ( $objects as $current_file => $object ) {
             if ( is_file( $current_file ) ) {
                 // get relative filename
-                $filename = str_replace( $this->archive->path, '', $current_file );
+                $filename = str_replace(
+                    $this->archive->path,
+                    '',
+                    $current_file
+                );
 
-                $previously_exported_file = $dir_to_diff_against . '/' . $filename;
+                $previously_exported_file =
+                    $dir_to_diff_against . '/' . $filename;
 
                 // if file doesn't exist at all in previous export:
                 if ( is_file( $previously_exported_file ) ) {
-                    if ( $this->files_are_equal( $current_file, $previously_exported_file ) ) {
+                    if ( $this->files_are_equal(
+                        $current_file,
+                        $previously_exported_file
+                    ) ) {
                         unlink( $current_file );
                     }
                 }
             }
         }
 
-        // TODO: cleanup empty dirs in archiveDir to prevent them being attempted to export
-        $files_in_previous_export = exec( "find $dir_to_diff_against -type f | wc -l" );
-        $files_to_be_deployed = exec( "find $this->archive->path -type f | wc -l" );
+        // TODO: cleanup empty archiveDirs to prevent them exporting
+        // TODO: replace `exec` calls with native PHP
+        $files_in_previous_export = exec(
+            "find $dir_to_diff_against -type f | wc -l"
+        );
 
-        // copy the newly changed files back into the previous export dir, else will never capture changes
-        // TODO: this works the first time, but will fail the diff on subsequent runs, alternating each time`
+        $files_to_be_deployed = exec(
+            "find $this->archive->path -type f | wc -l"
+        );
+
+        // copy the newly changed files back into the previous export dir,
+        // else will never capture changes
+        // TODO: this works the first time, but will fail the diff on
+        // subsequent runs, alternating each time`
     }
 
     // default rename in PHP throws warnings if dir is populated
@@ -93,7 +130,11 @@ class ArchiveProcessor {
     public function files_are_equal( $a, $b ) {
         // if image, use sha, if html, use something else
         $pathinfo = pathinfo( $a );
-        if ( isset( $pathinfo['extension'] ) && in_array( $pathinfo['extension'], array( 'jpg', 'png', 'gif', 'jpeg' ) ) ) {
+        if ( isset( $pathinfo['extension'] ) &&
+            in_array(
+                $pathinfo['extension'],
+                array( 'jpg', 'png', 'gif', 'jpeg' )
+            ) ) {
             return sha1_file( $a ) === sha1_file( $b );
         }
 
@@ -106,7 +147,9 @@ class ArchiveProcessor {
 
     public function recursive_copy( $srcdir, $dstdir ) {
         $dir = opendir( $srcdir );
+        // TODO: check condition, avoid suppression
         @mkdir( $dstdir );
+
         while ( $file = readdir( $dir ) ) {
             if ( $file != '.' && $file != '..' ) {
                 $src = $srcdir . '/' . $file;
@@ -127,24 +170,29 @@ class ArchiveProcessor {
             $publicFolderToCopyTo = trim( $this->targetFolder );
 
             if ( ! empty( $publicFolderToCopyTo ) ) {
-                // if folder isn't empty and current deployment option is "folder"
+                // if dir isn't empty and current deployment option is "folder"
                 $publicFolderToCopyTo = ABSPATH . $publicFolderToCopyTo;
 
                 // mkdir for the new dir
                 if ( ! file_exists( $publicFolderToCopyTo ) ) {
                     if ( wp_mkdir_p( $publicFolderToCopyTo ) ) {
-                        // file permissions to allow public viewing of files within
+                        // file permissions for public viewing of files within
                         chmod( $publicFolderToCopyTo, 0755 );
 
-                        // copy the contents of the current archive to the targetFolder
-                        $this->recursive_copy( $this->archive->path, $publicFolderToCopyTo );
+                        // copy contents of current archive to the targetFolder
+                        $this->recursive_copy(
+                            $this->archive->path,
+                            $publicFolderToCopyTo
+                        );
 
                     } else {
-                        error_log( 'Couldn\'t create target folder to copy files to' );
+                        error_log( 'Target folder could not be made ERR#A5' );
                     }
                 } else {
-
-                    $this->recursive_copy( $this->archive->path, $publicFolderToCopyTo );
+                    $this->recursive_copy(
+                        $this->archive->path,
+                        $publicFolderToCopyTo
+                    );
                 }
             }
         }
@@ -158,11 +206,18 @@ class ArchiveProcessor {
             return new WP_Error( 'Could not create archive' );
         }
 
-        $iterator = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $this->archive->path ) );
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator( $this->archive->path )
+        );
+
         foreach ( $iterator as $fileName => $fileObject ) {
             $baseName = basename( $fileName );
             if ( $baseName != '.' && $baseName != '..' ) {
-                if ( ! $zipArchive->addFile( realpath( $fileName ), str_replace( $this->archive->path, '', $fileName ) ) ) {
+                if ( ! $zipArchive->addFile(
+                    realpath( $fileName ),
+                    str_replace( $this->archive->path, '', $fileName )
+                )
+                ) {
                     return new WP_Error( 'Could not add file: ' . $fileName );
                 }
             }
@@ -172,8 +227,12 @@ class ArchiveProcessor {
         $zipDownloadLink = $archiveName . '.zip';
         rename( $tempZip, $zipDownloadLink );
 
-        // TODO: need to make sure this is WP independent and saves to uploads vs working dir?
-        $publicDownloadableZip = str_replace( ABSPATH, trailingslashit( home_url() ), $archiveName . '.zip' );
+        // TODO: make sure this is WP-free and saves to uploads vs working dir?
+        $publicDownloadableZip = str_replace(
+            ABSPATH,
+            trailingslashit( home_url() ),
+            $archiveName . '.zip'
+        );
 
         echo 'SUCCESS';
     }
@@ -185,7 +244,8 @@ class ArchiveProcessor {
         $wp_content_dir = WP_CONTENT_DIR;
         $wp_content_dir_name = str_replace( ABSPATH, '', $wp_content_dir );
 
-        $original_wp_content = $this->archive->path . '/' . $wp_content_dir_name;
+        $original_wp_content = $this->archive->path .
+            '/' . $wp_content_dir_name;
 
         // rename the theme theme root before the nested theme dir
         // rename the theme directory
@@ -195,21 +255,32 @@ class ArchiveProcessor {
 
         // rewrite uploads dir
         $default_upload_dir = wp_upload_dir(); // need to store as var first
-        $updated_uploads_dir = str_replace( WP_CONTENT_DIR, '', $default_upload_dir['basedir'] );
-        // $updated_uploads_dir = str_replace( ABSPATH, '', $default_upload_dir['basedir'] );
-        // $updated_uploads_dir = str_replace( 'wp-content/', '', $updated_uploads_dir );
+        $updated_uploads_dir = str_replace(
+            WP_CONTENT_DIR,
+            '',
+            $default_upload_dir['basedir']
+        );
+
         $updated_uploads_dir = $new_wp_content . '/' . $updated_uploads_dir;
         $new_uploads_dir = $new_wp_content . '/' . $this->rewriteUPLOADS;
 
         $updated_theme_root = str_replace( ABSPATH, '/', get_theme_root() );
-        $updated_theme_root = $new_wp_content . str_replace( 'wp-content', '/', $updated_theme_root );
+        $updated_theme_root = $new_wp_content .
+            str_replace( 'wp-content', '/', $updated_theme_root );
 
-        $updated_theme_dir = $new_theme_root . '/' . basename( get_template_directory_uri() );
+        $updated_theme_dir = $new_theme_root .
+            '/' . basename( get_template_directory_uri() );
+
         $updated_theme_dir = str_replace( '\/\/', '', $updated_theme_dir );
 
         // rewrite plugins dir
         $updated_plugins_dir = str_replace( ABSPATH, '/', WP_PLUGIN_DIR );
-        $updated_plugins_dir = str_replace( 'wp-content/', '', $updated_plugins_dir );
+        $updated_plugins_dir = str_replace(
+            'wp-content/',
+            '',
+            $updated_plugins_dir
+        );
+
         $updated_plugins_dir = $new_wp_content . $updated_plugins_dir;
         $new_plugins_dir = $new_wp_content . '/' . $this->rewritePLUGINDIR;
 
@@ -239,7 +310,11 @@ class ArchiveProcessor {
         }
 
         if ( file_exists( $original_wp_includes ) ) {
-            $this->renameWPDirectory( $original_wp_includes, $new_wp_includes );
+            $this->renameWPDirectory(
+                $original_wp_includes,
+                $new_wp_includes
+            );
+
         }
 
         // TODO: add to options
@@ -252,7 +327,9 @@ class ArchiveProcessor {
             unlink( $this->archive->path . '/wp-login.php' );
         }
 
-        StaticHtmlOutput_FilesHelper::delete_dir_with_files( $this->archive->path . '/wp-json/' );
+        StaticHtmlOutput_FilesHelper::delete_dir_with_files(
+            $this->archive->path . '/wp-json/'
+        );
 
         // TODO: remove all text files from theme dir
         if ( $this->diffBasedDeploys ) {
