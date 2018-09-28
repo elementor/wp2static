@@ -7,41 +7,42 @@ class CSSProcessor {
         $this->wp_site_url = $wp_site_url;
 
         // parse CSS into easily modifiable form
-        require_once dirname( __FILE__ ) . '/../CSSParser/Parser.php';
-        require_once dirname( __FILE__ ) . '/../CSSParser/Settings.php';
-        require_once dirname( __FILE__ ) . '/../CSSParser/Renderable.php';
-        require_once dirname( __FILE__ ) . '/../CSSParser/OutputFormat.php';
-        require_once dirname( __FILE__ ) . '/../CSSParser/Comment/Comment.php';
-        require_once dirname( __FILE__ ) . '/../CSSParser/Comment/Commentable.php';
-        require_once dirname( __FILE__ ) . '/../CSSParser/Parsing/SourceException.php';
-        require_once dirname( __FILE__ ) . '/../CSSParser/Parsing/OutputException.php';
-        require_once dirname( __FILE__ ) . '/../CSSParser/Parsing/UnexpectedTokenException.php';
-        require_once dirname( __FILE__ ) . '/../CSSParser/Property/AtRule.php';
-        require_once dirname( __FILE__ ) . '/../CSSParser/Property/Charset.php';
-        require_once dirname( __FILE__ ) . '/../CSSParser/Property/CSSNamespace.php';
-        require_once dirname( __FILE__ ) . '/../CSSParser/Property/Import.php';
-        require_once dirname( __FILE__ ) . '/../CSSParser/Property/Selector.php';
-        require_once dirname( __FILE__ ) . '/../CSSParser/RuleSet/RuleSet.php';
-        require_once dirname( __FILE__ ) . '/../CSSParser/Rule/Rule.php';
-        require_once dirname( __FILE__ ) . '/../CSSParser/RuleSet/AtRuleSet.php';
-        require_once dirname( __FILE__ ) . '/../CSSParser/RuleSet/DeclarationBlock.php';
-        require_once dirname( __FILE__ ) . '/../CSSParser/Value/Value.php';
-        require_once dirname( __FILE__ ) . '/../CSSParser/Value/ValueList.php';
-        require_once dirname( __FILE__ ) . '/../CSSParser/Value/RuleValueList.php';
-        require_once dirname( __FILE__ ) . '/../CSSParser/Value/CSSFunction.php';
-        require_once dirname( __FILE__ ) . '/../CSSParser/Value/CalcFunction.php';
-        require_once dirname( __FILE__ ) . '/../CSSParser/Value/CalcRuleValueList.php';
-        require_once dirname( __FILE__ ) . '/../CSSParser/Value/PrimitiveValue.php';
-        require_once dirname( __FILE__ ) . '/../CSSParser/Value/Color.php';
-        require_once dirname( __FILE__ ) . '/../CSSParser/Value/CSSString.php';
-        require_once dirname( __FILE__ ) . '/../CSSParser/Value/LineName.php';
-        require_once dirname( __FILE__ ) . '/../CSSParser/Value/Size.php';
-        require_once dirname( __FILE__ ) . '/../CSSParser/Value/URL.php';
-        require_once dirname( __FILE__ ) . '/../CSSParser/CSSList/CSSList.php';
-        require_once dirname( __FILE__ ) . '/../CSSParser/CSSList/CSSBlockList.php';
-        require_once dirname( __FILE__ ) . '/../CSSParser/CSSList/AtRuleBlockList.php';
-        require_once dirname( __FILE__ ) . '/../CSSParser/CSSList/Document.php';
-        require_once dirname( __FILE__ ) . '/../CSSParser/CSSList/KeyFrame.php';
+        $path = dirname( __FILE__ ) . '/../CSSParser/';
+        require_once $path . 'Parser.php';
+        require_once $path . 'Settings.php';
+        require_once $path . 'Renderable.php';
+        require_once $path . 'OutputFormat.php';
+        require_once $path . 'Comment/Comment.php';
+        require_once $path . 'Comment/Commentable.php';
+        require_once $path . 'Parsing/SourceException.php';
+        require_once $path . 'Parsing/OutputException.php';
+        require_once $path . 'Parsing/UnexpectedTokenException.php';
+        require_once $path . 'Property/AtRule.php';
+        require_once $path . 'Property/Charset.php';
+        require_once $path . 'Property/CSSNamespace.php';
+        require_once $path . 'Property/Import.php';
+        require_once $path . 'Property/Selector.php';
+        require_once $path . 'RuleSet/RuleSet.php';
+        require_once $path . 'Rule/Rule.php';
+        require_once $path . 'RuleSet/AtRuleSet.php';
+        require_once $path . 'RuleSet/DeclarationBlock.php';
+        require_once $path . 'Value/Value.php';
+        require_once $path . 'Value/ValueList.php';
+        require_once $path . 'Value/RuleValueList.php';
+        require_once $path . 'Value/CSSFunction.php';
+        require_once $path . 'Value/CalcFunction.php';
+        require_once $path . 'Value/CalcRuleValueList.php';
+        require_once $path . 'Value/PrimitiveValue.php';
+        require_once $path . 'Value/Color.php';
+        require_once $path . 'Value/CSSString.php';
+        require_once $path . 'Value/LineName.php';
+        require_once $path . 'Value/Size.php';
+        require_once $path . 'Value/URL.php';
+        require_once $path . 'CSSList/CSSList.php';
+        require_once $path . 'CSSList/CSSBlockList.php';
+        require_once $path . 'CSSList/AtRuleBlockList.php';
+        require_once $path . 'CSSList/Document.php';
+        require_once $path . 'CSSList/KeyFrame.php';
 
         $oCssParser = new Sabberworm\CSS\Parser( $css_document );
         $this->css_doc = $oCssParser->parse();
@@ -49,7 +50,8 @@ class CSSProcessor {
 
     public function isInternalLink( $link ) {
         // check link is same host as $this->url and not a subdomain
-        return parse_url( $link, PHP_URL_HOST ) === parse_url( $this->wp_site_url, PHP_URL_HOST );
+        return parse_url( $link, PHP_URL_HOST ) ===
+            parse_url( $this->wp_site_url, PHP_URL_HOST );
     }
 
     public function normalizeURLs( $url ) {
@@ -65,7 +67,9 @@ class CSSProcessor {
                 $original_link = trim( trim( $original_link, "'" ), '"' );
 
                 if ( $this->isInternalLink( $original_link ) ) {
-                    $absolute_url = new Sabberworm\CSS\Value\CSSString( $base->resolve( $original_link ) );
+                    $absolute_url = new Sabberworm\CSS\Value\CSSString(
+                        $base->resolve( $original_link )
+                    );
                     $mValue->setURL( $absolute_url );
                 }
             }
@@ -85,7 +89,12 @@ class CSSProcessor {
                 "`(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+`ism" => "\n",
             );
 
-            $rewritten_CSS = preg_replace( array_keys( $regex ), $regex, $this->response['body'] );
+            $rewritten_CSS = preg_replace(
+                array_keys( $regex ),
+                $regex,
+                $this->response['body']
+            );
+
             $this->setResponseBody( $rewritten_CSS );
         }
     }
