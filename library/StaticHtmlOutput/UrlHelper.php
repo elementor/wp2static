@@ -1,9 +1,4 @@
 <?php
-/**
- * @package WP Static HTML Output
- *
- * Copyright (c) 2011 Leon Stafford
- */
 
 class StaticHtmlOutput_UrlHelper {
 
@@ -11,10 +6,10 @@ class StaticHtmlOutput_UrlHelper {
         error_log( 'url helper instantiated' );
     }
 
-
+    // TODO: use sane sized array here
     public static function getExtensionFromContentType( $content_type ) {
         // return the file extension (without dot) based on content type
-        $content_types_and_extensions = array(
+        $content_types = array(
             '123' => 'application/vnd.lotus-1-2-3',
             '3dml' => 'text/vnd.in3d.3dml',
             '3ds' => 'image/x-3ds',
@@ -40,7 +35,8 @@ class StaticHtmlOutput_UrlHelper {
             'aif' => 'audio/x-aiff',
             'aifc' => 'audio/x-aiff',
             'aiff' => 'audio/x-aiff',
-            'air' => 'application/vnd.adobe.air-application-installer-package+zip',
+            'air' =>
+                'application/vnd.adobe.air-application-installer-package+zip',
             'ait' => 'application/vnd.dvb.ait',
             'ami' => 'application/vnd.amiga.ami',
             'apk' => 'application/vnd.android.package-archive',
@@ -186,11 +182,8 @@ class StaticHtmlOutput_UrlHelper {
             'dms' => 'application/octet-stream',
             'dna' => 'application/vnd.dna',
             'doc' => 'application/msword',
-            'docm' => 'application/vnd.ms-word.document.macroenabled.12',
-            'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
             'dot' => 'application/msword',
             'dotm' => 'application/vnd.ms-word.template.macroenabled.12',
-            'dotx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.template',
             'dp' => 'application/vnd.osgi.dp',
             'dpg' => 'application/vnd.dpgraph',
             'dra' => 'audio/vnd.dra',
@@ -566,8 +559,6 @@ class StaticHtmlOutput_UrlHelper {
             'otg' => 'application/vnd.oasis.opendocument.graphics-template',
             'oth' => 'application/vnd.oasis.opendocument.text-web',
             'oti' => 'application/vnd.oasis.opendocument.image-template',
-            'otp' => 'application/vnd.oasis.opendocument.presentation-template',
-            'ots' => 'application/vnd.oasis.opendocument.spreadsheet-template',
             'ott' => 'application/vnd.oasis.opendocument.text-template',
             'oxps' => 'application/oxps',
             'oxt' => 'application/vnd.openofficeorg.extension',
@@ -614,17 +605,11 @@ class StaticHtmlOutput_UrlHelper {
             'pnm' => 'image/x-portable-anymap',
             'portpkg' => 'application/vnd.macports.portpkg',
             'pot' => 'application/vnd.ms-powerpoint',
-            'potm' => 'application/vnd.ms-powerpoint.template.macroenabled.12',
-            'potx' => 'application/vnd.openxmlformats-officedocument.presentationml.template',
             'ppam' => 'application/vnd.ms-powerpoint.addin.macroenabled.12',
             'ppd' => 'application/vnd.cups-ppd',
             'ppm' => 'image/x-portable-pixmap',
             'pps' => 'application/vnd.ms-powerpoint',
-            'ppsm' => 'application/vnd.ms-powerpoint.slideshow.macroenabled.12',
-            'ppsx' => 'application/vnd.openxmlformats-officedocument.presentationml.slideshow',
             'ppt' => 'application/vnd.ms-powerpoint',
-            'pptm' => 'application/vnd.ms-powerpoint.presentation.macroenabled.12',
-            'pptx' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
             'pqa' => 'application/vnd.palm',
             'prc' => 'application/x-mobipocket-ebook',
             'pre' => 'application/vnd.lotus-freelance',
@@ -732,7 +717,6 @@ class StaticHtmlOutput_UrlHelper {
             'skp' => 'application/vnd.koan',
             'skt' => 'application/vnd.koan',
             'sldm' => 'application/vnd.ms-powerpoint.slide.macroenabled.12',
-            'sldx' => 'application/vnd.openxmlformats-officedocument.presentationml.slide',
             'slt' => 'application/vnd.epson.salt',
             'sm' => 'application/vnd.stepmania.stepchart',
             'smf' => 'application/vnd.stardivision.math',
@@ -959,10 +943,8 @@ class StaticHtmlOutput_UrlHelper {
             'xls' => 'application/vnd.ms-excel',
             'xlsb' => 'application/vnd.ms-excel.sheet.binary.macroenabled.12',
             'xlsm' => 'application/vnd.ms-excel.sheet.macroenabled.12',
-            'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             'xlt' => 'application/vnd.ms-excel',
             'xltm' => 'application/vnd.ms-excel.template.macroenabled.12',
-            'xltx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.template',
             'xlw' => 'application/vnd.ms-excel',
             'xm' => 'audio/xm',
             'xml' => 'application/xml',
@@ -1003,7 +985,7 @@ class StaticHtmlOutput_UrlHelper {
         );
 
         $content_type = str_replace( '; charset=UTF-8', '', $content_type );
-        $extension = array_search( $content_type, $content_types_and_extensions );
+        $extension = array_search( $content_type, $content_types );
 
         if ( empty( $extension ) ) {
             error_log( 'NO EXTENSION GUESSED, SETTING TO HTML' );
