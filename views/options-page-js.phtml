@@ -356,9 +356,9 @@ jQuery(document).ready(function($){
 
       case 'github':
         required_fields = {
-          githubPersonalAccessToken: 'Please specify your GitHub personal access token in order to deploy to GitHub.',
-          githubRepo: 'Please specify your GitHub repository name in order to deploy to GitHub.',
-          githubBranch: 'Please specify which branch in your GitHub repository you want to deploy to.',
+          ghToken: 'Please specify your GitHub personal access token in order to deploy to GitHub.',
+          ghRepo: 'Please specify your GitHub repository name in order to deploy to GitHub.',
+          ghBranch: 'Please specify which branch in your GitHub repository you want to deploy to.',
         };	
 
         Object.keys(required_fields).forEach(function(key,index) {
@@ -367,7 +367,7 @@ jQuery(document).ready(function($){
           }
         });
 
-        repo = $('#githubRepo').val();
+        repo = $('#ghRepo').val();
 
         if (repo != '') {
           if (repo.split('/').length !== 2) {

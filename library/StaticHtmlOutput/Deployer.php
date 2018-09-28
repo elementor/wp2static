@@ -11,9 +11,9 @@ class Deployer {
                 break;
 
             case 'github':
-                $this->githubRepo = filter_input( INPUT_POST, 'githubRepo' );
-                $this->githubPersonalAccessToken = filter_input( INPUT_POST, 'githubPersonalAccessToken' );
-                $this->githubBranch = filter_input( INPUT_POST, 'githubBranch' );
+                $this->ghRepo = filter_input( INPUT_POST, 'ghRepo' );
+                $this->ghToken = filter_input( INPUT_POST, 'ghToken' );
+                $this->ghBranch = filter_input( INPUT_POST, 'ghBranch' );
                 $this->githubPath = filter_input( INPUT_POST, 'githubPath' );
 
                 $this->github_prepare_export();
@@ -265,9 +265,9 @@ class Deployer {
 
     public function github_upload_blobs( $viaCLI = false ) {
         $github = new StaticHtmlOutput_GitHub(
-            $this->githubRepo,
-            $this->githubPersonalAccessToken,
-            $this->githubBranch,
+            $this->ghRepo,
+            $this->ghToken,
+            $this->ghBranch,
             $this->githubPath,
             $this->getWorkingDirectory()
         );
@@ -277,9 +277,9 @@ class Deployer {
 
     public function github_prepare_export() {
         $github = new StaticHtmlOutput_GitHub(
-            $this->githubRepo,
-            $this->githubPersonalAccessToken,
-            $this->githubBranch,
+            $this->ghRepo,
+            $this->ghToken,
+            $this->ghBranch,
             $this->githubPath,
             $this->getWorkingDirectory()
         );
@@ -289,9 +289,9 @@ class Deployer {
 
     public function github_finalise_export() {
         $github = new StaticHtmlOutput_GitHub(
-            $this->githubRepo,
-            $this->githubPersonalAccessToken,
-            $this->githubBranch,
+            $this->ghRepo,
+            $this->ghToken,
+            $this->ghBranch,
             $this->githubPath,
             $this->getWorkingDirectory()
         );

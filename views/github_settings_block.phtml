@@ -13,36 +13,36 @@
       </tr>
       <tr>
         <th scope="row">
-          <label for="githubPersonalAccessToken"><?php echo __('Personl Access Token', 'static-html-output-plugin');?></label>
+          <label for="ghToken"><?php echo __('Personl Access Token', 'static-html-output-plugin');?></label>
         </th>
         <td>
-          <?php $tpl->displayTextfield($this, 'githubPersonalAccessToken', 'GitHub Personal Access Token', '<a href="https://github.com/settings/tokens/new" target="_blank">How do I get this?</a>', 'password'); ?>
+          <?php $tpl->displayTextfield($this, 'ghToken', 'GitHub Personal Access Token', '<a href="https://github.com/settings/tokens/new" target="_blank">How do I get this?</a>', 'password'); ?>
         </td>
       </tr>
       <tr>
         <th scope="row">
-          <label for="githubRepo"><?php echo __('Account & Repository Name', 'static-html-output-plugin');?></label>
+          <label for="ghRepo"><?php echo __('Account & Repository Name', 'static-html-output-plugin');?></label>
         </th>
         <td>
-          <?php $tpl->displayTextfield($this, 'githubRepo', 'Account / Repository Name', 'ie, leonstafford/wordpress-static-html-plugin'); ?><br>
+          <?php $tpl->displayTextfield($this, 'ghRepo', 'Account / Repository Name', 'ie, leonstafford/wordpress-static-html-plugin'); ?><br>
 
           <p><i>Repository cannot be empty, just create any file via the GitHub UI if needed</i></p>
         </td>
       </tr>
       <tr>
         <th scope="row">
-          <label for="githubBranch"><?php echo __('Branch', 'static-html-output-plugin');?></label>
+          <label for="ghBranch"><?php echo __('Branch', 'static-html-output-plugin');?></label>
         </th>
         <td>
-          <?php $tpl->displayTextfield($this, 'githubBranch', 'Branch', 'usually \'master\' or \'gh-pages\''); ?>
+          <?php $tpl->displayTextfield($this, 'ghBranch', 'Branch', 'usually \'master\' or \'gh-pages\''); ?>
         </td>
       </tr>
       <tr>
         <th scope="row">
-          <label for="githubPath"><?php echo __('Path within repo', 'static-html-output-plugin');?></label>
+          <label for="ghPath"><?php echo __('Path within repo', 'static-html-output-plugin');?></label>
         </th>
         <td>
-          <?php $tpl->displayTextfield($this, 'githubPath', 'Path within repository', 'Usually the repository root (leave this blank) or the \'doc\' folder'); ?>
+          <?php $tpl->displayTextfield($this, 'ghPath', 'Path within repository', 'Usually the repository root (leave this blank) or the \'doc\' folder'); ?>
         </td>
       </tr>
     </tbody>
