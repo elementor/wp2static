@@ -4,12 +4,27 @@
 class WPSite {
 
     public function __construct() {
+        // WP URL paths
         $wp_upload_path_and_url = wp_upload_dir();
-        $this->uploads_path = $wp_upload_path_and_url['basedir'];
         $this->uploads_url = $wp_upload_path_and_url['baseurl'];
-        $this->site_path = ABSPATH;
         $this->site_url = get_site_url() . '/';
-        $this->plugin_path = plugins_url('/', __FILE__);
+
+        // WP dir paths
+        $this->site_path = ABSPATH;
+        $this->plugins_path = $this->getWPDirFullPath( 'plugins' );
+        $this->uploads_path = $this->getWPDirFullPath( 'uploads' );
+        $this->wp_includes_path = $this->getWPDirFullPath( 'wp-includes' );
+        $this->wp_contents_path = $this->getWPDirFullPath( 'wp-contents' );
+        $this->theme_root_path = $this->getWPDirFullPath( 'theme-root' );
+        $this->parent_theme_path = $this->getWPDirFullPath( 'parent-theme' );
+        $this->child_theme_path = $this->getWPDirFullPath( 'child-theme' );
+        $this->child_theme_active =
+            $this->parent_theme_path !== $this->child_theme_path;
+
+
+        // TODO: pre-generate as much as possible here to avoid
+        //       extra overhead during the high cyclical functions
+
         $this->detect_base_url();
     }
 
@@ -69,35 +84,6 @@ class WPSite {
         $tokens = explode('/', WPINC);
         $original_directory_names['includes_dir'] = $tokens[sizeof($tokens)-1];
 
-        // DEBUG: 
-        error_log('wp-content:');
-        error_log($this->getWPDirFullPath('wp-content'));
-        error_log($this->getWPDirNameOnly('wp-content'));
-
-        error_log('uploads:');
-        error_log($this->getWPDirFullPath('uploads'));
-        error_log($this->getWPDirNameOnly('uploads'));
-
-        error_log('wp-includes:');
-        error_log($this->getWPDirFullPath('wp-includes'));
-        error_log($this->getWPDirNameOnly('wp-includes'));
-
-        error_log('plugins:');
-        error_log($this->getWPDirFullPath('plugins'));
-        error_log($this->getWPDirNameOnly('plugins'));
-
-        error_log('theme-root:');
-        error_log($this->getWPDirFullPath('theme-root'));
-        error_log($this->getWPDirNameOnly('theme-root'));
-
-        error_log('active-parent-theme:');
-        error_log($this->getWPDirFullPath('active-parent-theme'));
-        error_log($this->getWPDirNameOnly('active-parent-theme'));
-
-        error_log('active-child-theme:');
-        error_log($this->getWPDirFullPath('active-child-theme'));
-        error_log($this->getWPDirNameOnly('active-child-theme'));
-
         return $original_directory_names;
 
     }
@@ -141,12 +127,12 @@ class WPSite {
 
                 break;
 
-            case 'active-parent-theme':
+            case 'parent-theme':
                 $full_path = get_template_directory() ;
 
                 break;
 
-            case 'active-child-theme':
+            case 'child-theme':
                 $full_path = get_stylesheet_directory() ;
 
                 break;
@@ -159,8 +145,8 @@ class WPSite {
         $wp_dir_name = '';
 
         switch ( $wp_dir ) {
-            case 'active-child-theme':
-            case 'active-parent-theme':
+            case 'child-theme':
+            case 'parent-theme':
             case 'wp-content':
             case 'wp-includes':
             case 'uploads':
