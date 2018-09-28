@@ -204,7 +204,7 @@ class Deployer {
 
         // zero write the file
         // TODO: avoid suppression
-        $f = @fopen( $file_list_path, 'r+' );
+        $f = fopen( $file_list_path, 'r+' );
         if ( $f !== false ) {
             ftruncate( $f, 0 );
             fclose( $f );
