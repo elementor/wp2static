@@ -9,7 +9,7 @@ class HTMLProcessor {
         $html_document,
         $page_url,
         $wp_site_env,
-        $new_site_paths,
+        $new_paths,
         $wp_site_url,
         $baseUrl,
         $allowOfflineUsage,
@@ -22,7 +22,7 @@ class HTMLProcessor {
         $this->raw_html = $html_document;
         $this->page_url = $page_url;
         $this->wp_site_env = $wp_site_env;
-        $this->new_site_paths = $new_site_paths;
+        $this->new_paths = $new_paths;
         $this->wp_site_url = $wp_site_url;
         $this->baseUrl = $baseUrl;
         $this->allowOfflineUsage = $allowOfflineUsage;
@@ -167,7 +167,7 @@ class HTMLProcessor {
                     $node->parentNode->removeChild( $node );
                 }
             } elseif ( $node->tagName === 'base' ) {
-                // detecting here, as smaller iteration to run conditional against
+                // as smaller iteration to run conditional against here
                 $this->base_tag_exists = true;
             }
         }
@@ -275,7 +275,7 @@ class HTMLProcessor {
         // includes this stuff.. and call it within the getHTML function
         // or finalizeProcessing or such....
         // $this->rewriteEscapedURLs($wp_site_env,
-        // $new_site_paths);
+        // $new_paths);
         // }
     }
 
@@ -298,12 +298,12 @@ class HTMLProcessor {
                 addcslashes( $this->wp_site_env['wp_inc'], '/' ),
             ),
             array(
-                addcslashes( $this->new_site_paths['new_active_theme_path'], '/' ),
-                addcslashes( $this->new_site_paths['new_themes_path'], '/' ),
-                addcslashes( $this->new_site_paths['new_uploads_path'], '/' ),
-                addcslashes( $this->new_site_paths['new_plugins_path'], '/' ),
-                addcslashes( $this->new_site_paths['new_wp_content_path'], '/' ),
-                addcslashes( $this->new_site_paths['new_wpinc_path'], '/' ),
+                addcslashes( $this->new_paths['new_active_theme_path'], '/' ),
+                addcslashes( $this->new_paths['new_themes_path'], '/' ),
+                addcslashes( $this->new_paths['new_uploads_path'], '/' ),
+                addcslashes( $this->new_paths['new_plugins_path'], '/' ),
+                addcslashes( $this->new_paths['new_wp_content_path'], '/' ),
+                addcslashes( $this->new_paths['new_wpinc_path'], '/' ),
             ),
             $this->response['body']
         );
@@ -344,12 +344,12 @@ class HTMLProcessor {
                     $this->wp_site_env['wp_inc'],
                 ),
                 array(
-                    $this->new_site_paths['new_active_theme_path'],
-                    $this->new_site_paths['new_themes_path'],
-                    $this->new_site_paths['new_uploads_path'],
-                    $this->new_site_paths['new_plugins_path'],
-                    $this->new_site_paths['new_wp_content_path'],
-                    $this->new_site_paths['new_wpinc_path'],
+                    $this->new_paths['new_active_theme_path'],
+                    $this->new_paths['new_themes_path'],
+                    $this->new_paths['new_uploads_path'],
+                    $this->new_paths['new_plugins_path'],
+                    $this->new_paths['new_wp_content_path'],
+                    $this->new_paths['new_wpinc_path'],
                 ),
                 $url_to_change
             );
@@ -387,6 +387,8 @@ class HTMLProcessor {
         }
     }
 
+    /*
+    TODO
     public function setBaseHref() {
         // TODO: don't set for offline usage?
         if ( $this->useBaseHref ) {
@@ -412,6 +414,7 @@ class HTMLProcessor {
         // );
         // }
     }
+    */
 
     public function rewriteForOfflineUsage( $element ) {
 
