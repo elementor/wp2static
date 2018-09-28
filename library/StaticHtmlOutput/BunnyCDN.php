@@ -1,9 +1,4 @@
 <?php
-/**
- * @package WP Static HTML Output
- *
- * Copyright (c) 2011 Leon Stafford
- */
 
 use GuzzleHttp\Client;
 
@@ -17,18 +12,21 @@ class StaticHtmlOutput_BunnyCDN {
     protected $_exportFileList;
     protected $_archiveName;
 
-    public function __construct( $zoneID, $APIKey, $remotePath, $uploadsPath ) {
+    public function __construct( $zoneID, $APIKey, $rem_path, $uploadsPath ) {
         $this->_zoneID = $zoneID;
         $this->_APIKey = $APIKey;
-        $this->_remotePath = $remotePath;
+        $this->_remotePath = $rem_path;
         $this->_baseURL = 'https://storage.bunnycdn.com';
         $this->_uploadsPath = $uploadsPath;
-        $this->_exportFileList = $uploadsPath . '/WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT';
-        $archiveDir = file_get_contents( $uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE' );
+        $this->_exportFileList =
+            $uploadsPath . '/WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT';
+        $archiveDir =
+            file_get_contents( $uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE' );
         $this->_archiveName = rtrim( $archiveDir, '/' );
     }
 
     public function clear_file_list() {
+        // TODO; avoid suppressions
         $f = @fopen( $this->_exportFileList, 'r+' );
         if ( $f !== false ) {
             ftruncate( $f, 0 );
@@ -36,22 +34,35 @@ class StaticHtmlOutput_BunnyCDN {
         }
     }
 
-    public function create_bunny_deployment_list( $dir, $archiveName, $remotePath ) {
+    public function create_bunny_deployment_list( $dir, $archive, $rem_path ) {
         $files = scandir( $dir );
 
         foreach ( $files as $item ) {
             if ( $item != '.' && $item != '..' && $item != '.git' ) {
                 if ( is_dir( $dir . '/' . $item ) ) {
-                    $this->create_bunny_deployment_list( $dir . '/' . $item, $archiveName, $remotePath );
+                    $this->create_bunny_deployment_list(
+                        $dir . '/' . $item,
+                        $archive,
+                        $rem_path
+                    );
                 } elseif ( is_file( $dir . '/' . $item ) ) {
-                    $subdir = str_replace( '/wp-admin/admin-ajax.php', '', $_SERVER['REQUEST_URI'] );
+                    $subdir = str_replace(
+                        '/wp-admin/admin-ajax.php',
+                        '',
+                        $_SERVER['REQUEST_URI']
+                    );
                     $subdir = ltrim( $subdir, '/' );
-                    $clean_dir = str_replace( $archiveName . '/', '', $dir . '/' );
+                    $clean_dir = str_replace( $archive . '/', '', $dir . '/' );
                     $clean_dir = str_replace( $subdir, '', $clean_dir );
-                    $targetPath = $remotePath . $clean_dir;
+                    $targetPath = $rem_path . $clean_dir;
                     $targetPath = ltrim( $targetPath, '/' );
-                    $export_line = $dir . '/' . $item . ',' . $targetPath . "\n";
-                    file_put_contents( $this->_exportFileList, $export_line, FILE_APPEND | LOCK_EX );
+                    $export_line =
+                        $dir . '/' . $item . ',' . $targetPath . "\n";
+                    file_put_contents(
+                        $this->_exportFileList,
+                        $export_line,
+                        FILE_APPEND | LOCK_EX
+                    );
                 }
             }
         }
@@ -62,7 +73,11 @@ class StaticHtmlOutput_BunnyCDN {
 
             $this->clear_file_list();
 
-            $this->create_bunny_deployment_list( $this->_archiveName, $this->_archiveName, $this->_remotePath );
+            $this->create_bunny_deployment_list(
+                $this->_archiveName,
+                $this->_archiveName,
+                $this->_remotePath
+            );
 
             echo 'SUCCESS';
         }
@@ -73,10 +88,12 @@ class StaticHtmlOutput_BunnyCDN {
         $line = fgets( $f );
         fclose( $f );
 
-        // TODO reduce the 2 file reads here, this one is just trimming the first line
         $contents = file( $this->_exportFileList, FILE_IGNORE_NEW_LINES );
         array_shift( $contents );
-        file_put_contents( $this->_exportFileList, implode( "\r\n", $contents ) );
+        file_put_contents(
+            $this->_exportFileList,
+            implode( "\r\n", $contents )
+        );
 
         return $line;
     }
@@ -112,9 +129,12 @@ class StaticHtmlOutput_BunnyCDN {
             );
 
             try {
+                $target_path = '/' . $this->_zoneID . '/' .
+                    $targetPath . basename( $fileToTransfer );
+
                 $response = $client->request(
                     'PUT',
-                    '/' . $this->_zoneID . '/' . $targetPath . basename( $fileToTransfer ),
+                    $target_path,
                     array(
                         'headers'  => array(
                             'AccessKey' => ' ' . $this->_APIKey,
@@ -150,9 +170,12 @@ class StaticHtmlOutput_BunnyCDN {
         $client = new Client();
 
         try {
+            $endpoint = 'https://bunnycdn.com/api/pullzone/' .
+                $this->_zoneID . '/purgeCache';
+
             $response = $client->request(
                 'POST',
-                'https://bunnycdn.com/api/pullzone/' . $this->_zoneID . '/purgeCache',
+                $endpoint,
                 array(
                     'headers'  => array(
                         'AccessKey' => ' ' . $this->_APIKey,
