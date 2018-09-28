@@ -1,9 +1,4 @@
 <?php
-/**
- * @package WP Static HTML Output
- *
- * Copyright (c) 2011 Leon Stafford
- */
 
 class StaticHtmlOutput_FilesHelper {
 
@@ -18,14 +13,16 @@ class StaticHtmlOutput_FilesHelper {
             $files = array_diff( scandir( $dir ), array( '.', '..' ) );
 
             foreach ( $files as $file ) {
-                ( is_dir( "$dir/$file" ) ) ? self::delete_dir_with_files( "$dir/$file" ) : unlink( "$dir/$file" );
+                ( is_dir( "$dir/$file" ) ) ?
+                self::delete_dir_with_files( "$dir/$file" ) :
+                unlink( "$dir/$file" );
             }
 
             return rmdir( $dir );
         }
     }
 
-    public static function recursively_scan_dir( $dir, $siteroot, $file_list_path ) {
+    public static function recursively_scan_dir( $dir, $siteroot, $list_path ) {
         // rm duplicate slashes in path (TODO: fix cause)
         $dir = str_replace( '//', '/', $dir );
         $files = scandir( $dir );
@@ -33,17 +30,30 @@ class StaticHtmlOutput_FilesHelper {
         foreach ( $files as $item ) {
             if ( $item != '.' && $item != '..' && $item != '.git' ) {
                 if ( is_dir( $dir . '/' . $item ) ) {
-                    self::recursively_scan_dir( $dir . '/' . $item, $siteroot, $file_list_path );
+                    self::recursively_scan_dir(
+                        $dir . '/' . $item,
+                        $siteroot,
+                        $list_path
+                    );
                 } elseif ( is_file( $dir . '/' . $item ) ) {
-                    $subdir = str_replace( '/wp-admin/admin-ajax.php', '', $_SERVER['REQUEST_URI'] );
+                    $subdir = str_replace(
+                        '/wp-admin/admin-ajax.php',
+                        '',
+                        $_SERVER['REQUEST_URI']
+                    );
                     $subdir = ltrim( $subdir, '/' );
-                    $clean_dir = str_replace( $siteroot . '/', '', $dir . '/' );
+                    $clean_dir =
+                        str_replace( $siteroot . '/', '', $dir . '/' );
                     $clean_dir = str_replace( $subdir, '', $clean_dir );
                     $filename = $dir . '/' . $item . "\n";
                     $filename = str_replace( '//', '/', $filename );
                     // $this->wsLog('FILE TO ADD:');
                     // $this->wsLog($filename);
-                    file_put_contents( $file_list_path, $filename, FILE_APPEND | LOCK_EX );
+                    file_put_contents(
+                        $list_path,
+                        $filename,
+                        FILE_APPEND | LOCK_EX
+                    );
                 }
             }
         }
@@ -64,8 +74,12 @@ class StaticHtmlOutput_FilesHelper {
 
             foreach ( $iterator as $fileName => $fileObject ) {
                 if ( self::fileNameLooksCrawlable( $fileName ) &&
-                  self::filePathLooksCrawlable( $fileName ) ) {
-                      array_push( $files, home_url( str_replace( ABSPATH, '', $fileName ) ) );
+                  self::filePathLooksCrawlable( $fileName )
+                ) {
+                    array_push(
+                        $files,
+                        home_url( str_replace( ABSPATH, '', $fileName ) )
+                    );
                 }
             }
         }
@@ -86,7 +100,10 @@ class StaticHtmlOutput_FilesHelper {
 
         return (
         isset( $path_info['extension'] ) &&
-        ( ! in_array( $path_info['extension'], array( 'php', 'phtml', 'tpl' ) ) )
+        ( ! in_array(
+            $path_info['extension'],
+            array( 'php', 'phtml', 'tpl' )
+        ) )
         );
     }
 
@@ -113,22 +130,27 @@ class StaticHtmlOutput_FilesHelper {
         );
 
         $str = implode( "\n", $urlsQueue );
-        file_put_contents( $uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST', $str ); // TODO: using uploads path for initial file list build, subseqent one will all be done in working dir
+        file_put_contents(
+            $uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST',
+            $str
+        );
 
         return count( $urlsQueue );
     }
 
-    // TODO: copy initial file list and process as per generateModifiedFileList() notes
+    // TODO: connect from Exporter
     public static function buildFinalFileList(
         $viaCLI = false,
         $additionalUrls,
-        $uploadsPath, // TODO: also working dir?
+        $uploadsPath,
         $uploadsURL,
         $workingDirectory,
         $pluginHook ) {
 
-        // saving the current archive name to file to persist across requests / functions
-        file_put_contents( $workingDirectory . '/WP-STATIC-CURRENT-ARCHIVE', $archiveDir );
+        file_put_contents(
+            $workingDirectory . '/WP-STATIC-CURRENT-ARCHIVE',
+            $archiveDir
+        );
 
         if ( ! file_exists( $archiveDir ) ) {
             wp_mkdir_p( $archiveDir );
@@ -152,8 +174,15 @@ class StaticHtmlOutput_FilesHelper {
         );
 
         $str = implode( "\n", $urlsQueue );
-        file_put_contents( $uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST', $str ); // TODO: using uploads path for initial file list build, subseqent one will all be done in working dir
-        file_put_contents( $workingDirectory . '/WP-STATIC-CRAWLED-LINKS', '' );
+        file_put_contents(
+            $uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST',
+            $str
+        );
+
+        file_put_contents(
+            $workingDirectory . '/WP-STATIC-CRAWLED-LINKS',
+            ''
+        );
 
         return count( $urlsQueue );
     }
@@ -164,14 +193,22 @@ class StaticHtmlOutput_FilesHelper {
         // NOTE: re using $wpdb->ret_results vs WP_Query
         // https://wordpress.stackexchange.com/a/151843/20982
         // get_results may be faster, but more error prone
-        // TODO: benchmark the difference and use WP_Query if not noticably slower
-        // NOTE: inheret post_status allows unlinked attachment pages to be created
-        $posts = $wpdb->get_results(
-            "
+        // TODO: benchmark the diff and use WP_Query if not noticably slower
+        // NOTE: inheret post_status allows unlinked attchmnt page creation
+        $query = "
             SELECT ID,post_type
-            FROM {$wpdb->posts}
-            WHERE post_status = 'publish' AND post_type NOT IN ('revision','nav_menu_item')
-        "
+            FROM %s
+            WHERE post_status = '%s'
+            AND post_type NOT IN ('%s','%s')";
+
+        $posts = $wpdb->get_results(
+            sprintf(
+                $query,
+                $wpdb->posts,
+                'publish',
+                'revision',
+                'nav_menu_item'
+            )
         );
 
         $postURLs = array();
@@ -193,14 +230,14 @@ class StaticHtmlOutput_FilesHelper {
             }
 
             /*
-             get the post's URL and each sub-chunk of the path as a URL
+                Get the post's URL and each sub-chunk of the path as a URL
 
-              ie http://domain.com/2018/01/01/my-post/ to yield:
+                  ie http://domain.com/2018/01/01/my-post/ to yield:
 
-                http://domain.com/2018/01/01/my-post/
-                http://domain.com/2018/01/01/
-                http://domain.com/2018/01/
-                http://domain.com/2018/
+                    http://domain.com/2018/01/01/my-post/
+                    http://domain.com/2018/01/01/
+                    http://domain.com/2018/01/
+                    http://domain.com/2018/
             */
 
             // TODO: failing on subdir installs here
@@ -226,10 +263,10 @@ class StaticHtmlOutput_FilesHelper {
             $number_of_segments = count( $path_segments );
 
             // build each URL
-            for ( $i = 0; $i < $number_of_segments; $i += 1 ) {
+            for ( $i = 0; $i < $number_of_segments; $i++ ) {
                 $full_url = $link_host;
 
-                for ( $x = 0; $x <= $i; $x += 1 ) {
+                for ( $x = 0; $x <= $i; $x++ ) {
                     $full_url .= $path_segments[ $x ] . '/';
                 }
                 $postURLs[] = $full_url;
