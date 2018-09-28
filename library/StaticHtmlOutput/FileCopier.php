@@ -52,7 +52,7 @@ class FileCopier {
             $directory_in_archive = str_replace(
                 $_POST['subdirectory'],
                 '',
-                 $directory_in_archive
+                $directory_in_archive
             );
         }
 

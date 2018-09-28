@@ -1,8 +1,6 @@
 <?php
-// TODO: rewerite to be one loop of all elements, 
+// TODO: rewerite to be one loop of all elements,
 // applying multiple transformations at once per link, reducing iterations
-
-
 // TODO: deal with inline CSS blocks or style attributes on tags
 // TODO: don't rewrite mailto links unless specified, re #30
 class HTMLProcessor {
@@ -43,16 +41,20 @@ class HTMLProcessor {
         );
 
         $this->removeConditionalHeadComments = isset(
-            $_POST['removeConditionalHeadComments']);
+            $_POST['removeConditionalHeadComments']
+        );
 
         $this->rewriteWPPaths = isset(
-            $_POST['rewriteWPPaths']);
+            $_POST['rewriteWPPaths']
+        );
 
         $this->removeWPMeta = isset(
-            $_POST['removeWPMeta']);
+            $_POST['removeWPMeta']
+        );
 
         $this->removeWPLinks = isset(
-            $_POST['removeWPLinks']);
+            $_POST['removeWPLinks']
+        );
 
         $this->discovered_urls = [];
 
@@ -69,7 +71,6 @@ class HTMLProcessor {
         libxml_use_internal_errors( false );
 
         // start the full iterator here, along with copy of dom
-
         $elements = iterator_to_array(
             $this->xml_doc->getElementsByTagName( '*' )
         );
@@ -77,26 +78,26 @@ class HTMLProcessor {
         foreach ( $elements as $element ) {
             switch ( $element->tagName ) {
                 case 'meta':
-                    $this->processMeta($element);
+                    $this->processMeta( $element );
                     break;
                 case 'a':
-                    $this->processAnchor($element);
+                    $this->processAnchor( $element );
                     break;
                 case 'img':
-                    $this->processImage($element);
+                    $this->processImage( $element );
                     break;
                 case 'head':
-                    $this->processHead($element);
+                    $this->processHead( $element );
                     break;
                 case 'link':
                     // NOTE: not to confuse with anchor element
-                    $this->processLink($element);
+                    $this->processLink( $element );
                     break;
                 case 'script':
-                    // can contain src=, 
+                    // can contain src=,
                     // can also contain URLs within scripts
                     // and escaped urls
-                    $this->processScript($element);
+                    $this->processScript( $element );
                     break;
 
                     // TODO: how about other places that can contain URLs
@@ -104,10 +105,9 @@ class HTMLProcessor {
             }
         }
 
-
         // funcs to apply to whole page
         $this->detectEscapedSiteURLs();
-        $this->setBaseHref(); 
+        $this->setBaseHref();
 
         $this->writeDiscoveredURLs();
     }
@@ -161,17 +161,16 @@ class HTMLProcessor {
             $element->childNodes
         );
 
-        foreach($head_elements as $node) {
-            if($node instanceof DOMComment) {
+        foreach ( $head_elements as $node ) {
+            if ( $node instanceof DOMComment ) {
                 if ( $this->removeConditionalHeadComments ) {
                     $node->parentNode->removeChild( $node );
                 }
             } elseif ( $node->tagName === 'base' ) {
                 // detecting here, as smaller iteration to run conditional against
                 $this->base_tag_exists = true;
-            }            
+            }
         }
-
 
         // TODO: optionally strip conditional comments from head
     }
@@ -192,7 +191,7 @@ class HTMLProcessor {
         $this->rewriteBaseURL( $element );
     }
 
-    public function processMeta($element) {
+    public function processMeta( $element ) {
         if ( $this->removeWPMeta ) {
             $meta_name = $element->getAttribute( 'name' );
 
@@ -217,7 +216,7 @@ class HTMLProcessor {
     }
 
     // make link absolute, using current page to determine full path
-    public function normalizeURL($element, $attribute) {
+    public function normalizeURL( $element, $attribute ) {
         $original_link = $element->getAttribute( $attribute );
 
         if ( $this->isInternalLink( $original_link ) ) {
@@ -376,7 +375,7 @@ class HTMLProcessor {
         $url_to_change = $element->getAttribute( $attribute_to_change );
 
         // check it actually needs to be changed
-        if ( $this->isInternalLink( $url_to_change) ) {
+        if ( $this->isInternalLink( $url_to_change ) ) {
             $rewritten_url = str_replace(
                 // TODO: test this won't touch subdomains, shouldn't
                 $this->wp_site_url,
@@ -392,7 +391,6 @@ class HTMLProcessor {
         // TODO: don't set for offline usage?
         if ( $this->useBaseHref ) {
             // TODO: create DOM node properly here
-
         } else {
 
         }
@@ -400,23 +398,22 @@ class HTMLProcessor {
         // TODO: re-implement as separate func as another processing layer
         // error_log('SKIPPING absolute path rewriting');
         // if ( $this->useBaseHref ) {
-        //     $responseBody = str_replace(
-        //         '<head>',
-        //         "<head>\n<base href=\"" .
-        //         esc_attr( $new_URL ) . "/\" />\n",
-        //         $responseBody
-        //     );
+        // $responseBody = str_replace(
+        // '<head>',
+        // "<head>\n<base href=\"" .
+        // esc_attr( $new_URL ) . "/\" />\n",
+        // $responseBody
+        // );
         // } else {
-        //     $responseBody = str_replace(
-        //         '<head>',
-        //         "<head>\n<base href=\"/\" />\n",
-        //         $responseBody
-        //     );
+        // $responseBody = str_replace(
+        // '<head>',
+        // "<head>\n<base href=\"/\" />\n",
+        // $responseBody
+        // );
         // }
     }
 
     public function rewriteForOfflineUsage( $element ) {
-        
 
         // elseif ( $allowOfflineUsage ) {
         // detect urls starting with our domain and append index.html to

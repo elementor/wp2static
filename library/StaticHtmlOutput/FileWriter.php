@@ -29,7 +29,7 @@ class FileWriter {
             $directory_in_archive = str_replace(
                 $_POST['subdirectory'],
                 '',
-                 $directory_in_archive
+                $directory_in_archive
             );
         }
 
@@ -70,7 +70,7 @@ class FileWriter {
             // TODO: deal with this hard to read, but functioning code
             if ( isset( $_POST['subdirectory'] ) ) {
                 $fileDir = str_replace(
-                    '/' . $_POST['subdirectory'] ,
+                    '/' . $_POST['subdirectory'],
                     '/',
                     $fileDir
                 );
@@ -78,7 +78,6 @@ class FileWriter {
 
             $fileName = $fileDir . '/' . $pathInfo['filename'] . '.' . $fileExtension;
         }
-
 
         $fileContents = $this->content;
 

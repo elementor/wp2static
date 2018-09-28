@@ -242,8 +242,8 @@ class SiteCrawler {
 
                 $processor = new HTMLProcessor();
 
-                // TODO: if not reusing the instance, switch to 
-                //       static functions for performance
+                // TODO: if not reusing the instance, switch to
+                // static functions for performance
                 $this->processed_file = $processor->processHTML(
                     $this->response->getBody(),
                     $this->url,
@@ -292,7 +292,7 @@ class SiteCrawler {
                 break;
 
             case 'rss':
-                error_log('no handler for rss without extension yet');
+                error_log( 'no handler for rss without extension yet' );
 
             default:
                 require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/WsLog.php';
