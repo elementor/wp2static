@@ -1,9 +1,4 @@
 <?php
-/**
- * @package WP Static HTML Output
- *
- * Copyright (c) 2011 Leon Stafford
- */
 
 use GuzzleHttp\Client;
 
@@ -24,7 +19,8 @@ class StaticHtmlOutput_Netlify {
 
         $client = new Client( array( 'base_uri' => $this->_baseURL ) );
 
-        $zipDeployEndpoint = '/api/v1/sites/' . $this->_siteID . '.netlify.com/deploys';
+        $zipDeployEndpoint =
+            '/api/v1/sites/' . $this->_siteID . '.netlify.com/deploys';
 
         try {
             $response = $client->request(
@@ -33,7 +29,8 @@ class StaticHtmlOutput_Netlify {
                 array(
                     'headers'  => array(
                         'Content-Type' => 'application/zip',
-                        'Authorization' => 'Bearer ' . $this->_personalAccessToken,
+                        'Authorization' => 'Bearer ' .
+                            $this->_personalAccessToken,
                     ),
                     'body' => fopen( $zipArchivePath, 'rb' ),
                 )
