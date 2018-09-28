@@ -81,7 +81,6 @@ if ( $ajax_action === 'crawl_site' || $ajax_action === 'crawl_again' ) {
   require_once 'library/StaticHtmlOutput/View.php';
   require_once 'library/StaticHtmlOutput/WsLog.php';
   require_once 'library/StaticHtmlOutput/UrlHelper.php';
-  require_once 'library/StaticHtmlOutput/UrlRequest.php';
   require_once 'library/StaticHtmlOutput/FilesHelper.php';
   require_once 'library/StaticHtmlOutput.php';
   require_once 'library/StaticHtmlOutput/FTP.php';
