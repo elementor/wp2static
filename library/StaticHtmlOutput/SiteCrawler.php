@@ -7,19 +7,29 @@ class SiteCrawler {
 
     public function __construct() {
         // TODO: security check that this is being called from same server
-        // TODO: move to actual Crawler class, rename this to SiteScraper
-        // $crawled_links = file($this->crawled_links_file, FILE_IGNORE_NEW_LINES);
         // basic auth
-        $this->useBasicAuth = isset( $_POST['useBasicAuth'] ) ? $_POST['useBasicAuth'] : false;
-        $this->basicAuthUser = isset( $_POST['basicAuthUser'] ) ? $_POST['basicAuthUser'] : false;
-        $this->basicAuthPassword = isset( $_POST['basicAuthPassword'] ) ? $_POST['basicAuthPassword'] : false;
+        $this->useBasicAuth =
+            isset( $_POST['useBasicAuth'] ) ?
+            $_POST['useBasicAuth'] :
+            false;
+        $this->basicAuthUser =
+            isset( $_POST['basicAuthUser'] ) ?
+            $_POST['basicAuthUser'] :
+            false;
+        $this->basicAuthPassword =
+            isset( $_POST['basicAuthPassword'] ) ?
+            $_POST['basicAuthPassword'] :
+            false;
 
         // WP env settings
         $this->baseUrl = $_POST['baseUrl'];
         $this->wp_site_url = $_POST['wp_site_url'];
         $this->wp_site_path = $_POST['wp_site_path'];
         $this->wp_uploads_path = $_POST['wp_uploads_path'];
-        $this->working_directory = isset( $_POST['workingDirectory'] ) ? $_POST['workingDirectory'] : $this->wp_uploads_path;
+        $this->working_directory =
+            isset( $_POST['workingDirectory'] ) ?
+            $_POST['workingDirectory'] :
+            $this->wp_uploads_path;
         $this->wp_uploads_url = $_POST['wp_uploads_url'];
 
         // processing related settings
@@ -30,9 +40,18 @@ class SiteCrawler {
         $this->rewritePLUGINDIR = $_POST['rewritePLUGINDIR'];
         $this->rewriteWPINC = $_POST['rewriteWPINC'];
 
-        $this->allowOfflineUsage = isset( $_POST['allowOfflineUsage'] ) ? $_POST['allowOfflineUsage'] : false;
-        $this->useRelativeURLs = isset( $_POST['useRelativeURLs'] ) ? $_POST['useRelativeURLs'] : false;
-        $this->useBaseHref = isset( $_POST['useBaseHref'] ) ? $_POST['useBaseHref'] : false;
+        $this->allowOfflineUsage =
+            isset( $_POST['allowOfflineUsage'] ) ?
+            $_POST['allowOfflineUsage'] :
+            false;
+        $this->useRelativeURLs =
+            isset( $_POST['useRelativeURLs'] ) ?
+            $_POST['useRelativeURLs'] :
+            false;
+        $this->useBaseHref =
+            isset( $_POST['useBaseHref'] ) ?
+            $_POST['useBaseHref'] :
+            false;
         $this->crawl_increment = (int) $_POST['crawl_increment'];
         $this->additionalUrls = filter_input( INPUT_POST, 'additionalUrls' );
 
@@ -90,7 +109,8 @@ class SiteCrawler {
 
                 copy(
                     $second_crawl_file_path,
-                    $this->working_directory . '/WP-STATIC-FINAL-2ND-CRAWL-LIST'
+                    $this->working_directory .
+                        '/WP-STATIC-FINAL-2ND-CRAWL-LIST'
                 );
             }
 
@@ -109,11 +129,14 @@ class SiteCrawler {
     public function crawl_site( $viaCLI = false ) {
         if ( ! is_file( $this->list_of_urls_to_crawl_path ) ) {
             error_log( 'could not find list of files to crawl' );
-            require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/WsLog.php';
-            WsLog::l( 'ERROR: LIST OF URLS TO CRAWL NOT FOUND AT: ' . $this->list_of_urls_to_crawl_path );
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/WsLog.php';
+            WsLog::l(
+                'ERROR: LIST OF URLS TO CRAWL NOT FOUND AT: ' .
+                    $this->list_of_urls_to_crawl_path
+            );
             die();
         } else {
-            // TODO: check when this is actually hitting empty state, not leaving behind some chars..
             if ( filesize( $this->list_of_urls_to_crawl_path ) ) {
                 $this->crawlABitMore( $this->viaCLI );
             }
@@ -123,14 +146,24 @@ class SiteCrawler {
     public function crawlABitMore( $viaCLI = false ) {
         $batch_of_links_to_crawl = array();
 
-        $this->urls_to_crawl = file( $this->list_of_urls_to_crawl_path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
+        $this->urls_to_crawl = file(
+            $this->list_of_urls_to_crawl_path,
+            FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
+        );
 
         $total_links = count( $this->urls_to_crawl );
 
         if ( $total_links < 1 ) {
-            error_log( 'list of URLs to crawl not found at ' . $this->list_of_urls_to_crawl_path );
-            require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/WsLog.php';
-            WsLog::l( 'ERROR: LIST OF URLS TO CRAWL NOT FOUND AT: ' . $this->list_of_urls_to_crawl_path );
+            error_log(
+                'list of URLs to crawl not found at ' .
+                $this->list_of_urls_to_crawl_path
+            );
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/WsLog.php';
+            WsLog::l(
+                'ERROR: LIST OF URLS TO CRAWL NOT FOUND AT: ' .
+                $this->list_of_urls_to_crawl_path
+            );
             die();
         }
 
@@ -138,7 +171,7 @@ class SiteCrawler {
             $this->crawl_increment = $total_links;
         }
 
-        for ( $i = 0; $i < $this->crawl_increment; $i += 1 ) {
+        for ( $i = 0; $i < $this->crawl_increment; $i++ ) {
             $link_from_crawl_list = array_shift( $this->urls_to_crawl );
 
             if ( $link_from_crawl_list ) {
@@ -149,10 +182,16 @@ class SiteCrawler {
         $this->remaining_urls_to_crawl = count( $this->urls_to_crawl );
 
         // resave crawl list file, minus those from this batch
-        file_put_contents( $this->list_of_urls_to_crawl_path, implode( "\r\n", $this->urls_to_crawl ) );
+        file_put_contents(
+            $this->list_of_urls_to_crawl_path,
+            implode( "\r\n", $this->urls_to_crawl )
+        );
 
         // TODO: required in saving/copying, but not here? optimize...
-        $handle = fopen( $this->wp_uploads_path . '/WP-STATIC-CURRENT-ARCHIVE', 'r' );
+        $handle = fopen(
+            $this->wp_uploads_path . '/WP-STATIC-CURRENT-ARCHIVE',
+            'r'
+        );
         $this->archive_dir = stream_get_line( $handle, 0 );
 
         foreach ( $batch_of_links_to_crawl as $link_to_crawl ) {
@@ -191,30 +230,40 @@ class SiteCrawler {
             );
         }
 
-        $this->response = $client->request( 'GET', $this->url, $request_options );
-        $this->crawled_links_file = $this->working_directory . '/WP-STATIC-CRAWLED-LINKS';
+        $this->response =
+            $client->request( 'GET', $this->url, $request_options );
+        $this->crawled_links_file =
+            $this->working_directory . '/WP-STATIC-CRAWLED-LINKS';
 
-        $successful_response_codes = array( '200', '201', '301', '302', '304' );
+        $good_response_codes = array( '200', '201', '301', '302', '304' );
         $status_code = $this->response->getStatusCode();
 
-        if ( ! in_array( $status_code, $successful_response_codes ) ) {
+        if ( ! in_array( $status_code, $good_response_codes ) ) {
             require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/WsLog.php';
-            WsLog::l( 'BAD RESPONSE STATUS (' . $status_code . '): ' . $this->url );
+            WsLog::l(
+                'BAD RESPONSE STATUS (' . $status_code . '): ' . $this->url
+            );
         } else {
-            file_put_contents( $this->crawled_links_file, $this->url . PHP_EOL, FILE_APPEND | LOCK_EX );
+            file_put_contents(
+                $this->crawled_links_file,
+                $this->url . PHP_EOL,
+                FILE_APPEND | LOCK_EX
+            );
         }
 
-        // TODO: what's the difference between this and $this->baseUrl in original code?
+        // TODO: what difference between this and $this->baseUrl originally?
         $baseUrl = $this->baseUrl;
 
         $wp_site_environment = array(
             'wp_inc' => '/' . WPINC,
-            // TODO: use the better method for getting wp-content (prev slug from theme dir)
-            'wp_content' => '/wp-content', // TODO: check if this has been modified/use constant
-            'wp_uploads' => str_replace( ABSPATH, '/', $this->wp_uploads_path ),
+            // TODO: use reliable method for getting wp-content
+            'wp_content' => '/wp-content',
+            'wp_uploads' =>
+                str_replace( ABSPATH, '/', $this->wp_uploads_path ),
             'wp_plugins' => str_replace( ABSPATH, '/', WP_PLUGIN_DIR ),
             'wp_themes' => str_replace( ABSPATH, '/', get_theme_root() ),
-            'wp_active_theme' => str_replace( home_url(), '', get_template_directory_uri() ),
+            'wp_active_theme' =>
+                str_replace( home_url(), '', get_template_directory_uri() ),
             'site_url' => $this->wp_site_url,
         );
 
@@ -262,8 +311,12 @@ class SiteCrawler {
 
             // TODO: apply other replacement functions to all processors
             case 'css':
-                require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/CSSProcessor.php';
-                $processor = new CSSProcessor( $this->response->getBody(), $this->wp_site_url );
+                require_once dirname( __FILE__ ) .
+                    '/../StaticHtmlOutput/CSSProcessor.php';
+                $processor = new CSSProcessor(
+                    $this->response->getBody(),
+                    $this->wp_site_url
+                );
 
                 $processor->normalizeURLs( $this->url );
 
@@ -272,8 +325,12 @@ class SiteCrawler {
                 break;
 
             case 'js':
-                require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/JSProcessor.php';
-                $processor = new JSProcessor( $this->response->getBody(), $this->wp_site_url );
+                require_once dirname( __FILE__ ) .
+                    '/../StaticHtmlOutput/JSProcessor.php';
+                $processor = new JSProcessor(
+                    $this->response->getBody(),
+                    $this->wp_site_url
+                );
 
                 $processor->normalizeURLs( $this->url );
 
@@ -282,8 +339,12 @@ class SiteCrawler {
                 break;
 
             case 'txt':
-                require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/TXTProcessor.php';
-                $processor = new TXTProcessor( $this->response->getBody(), $this->wp_site_url );
+                require_once dirname( __FILE__ ) .
+                    '/../StaticHtmlOutput/TXTProcessor.php';
+                $processor = new TXTProcessor(
+                    $this->response->getBody(),
+                    $this->wp_site_url
+                );
 
                 $processor->normalizeURLs( $this->url );
 
@@ -294,15 +355,17 @@ class SiteCrawler {
             case 'rss':
                 error_log( 'no handler for rss without extension yet' );
 
+                break;
+
             default:
-                require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/WsLog.php';
-                WsLog::l( 'WARNING: ENCOUNTERED FILE WITH NO PROCESSOR: ' . $this->url );
+                require_once dirname( __FILE__ ) .
+                    '/../StaticHtmlOutput/WsLog.php';
+                WsLog::l( 'WARNING: NO PROCESSOR FOR FILE: ' . $this->url );
                 break;
         }
     }
 
     public function checkIfMoreCrawlingNeeded() {
-        // iteration complete, check if we will signal to the client to continue processing, continue ourself for CLI usage, or signal completetion to either
         if ( $this->remaining_urls_to_crawl > 0 ) {
             echo $this->remaining_urls_to_crawl;
         } else {
@@ -317,8 +380,10 @@ class SiteCrawler {
 
 
     public function saveFile() {
-        // response body processing is complete, now time to save the file contents to the archive
-        require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/FileWriter.php';
+        // response body processing is complete, now time to save the file
+        // contents to the archive
+        require_once dirname( __FILE__ ) .
+            '/../StaticHtmlOutput/FileWriter.php';
 
         $file_writer = new FileWriter(
             $this->url,
@@ -331,15 +396,20 @@ class SiteCrawler {
     }
 
     public function copyFile() {
-        require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/FileCopier.php';
+        require_once dirname( __FILE__ ) .
+            '/../StaticHtmlOutput/FileCopier.php';
 
-        $file_copier = new FileCopier( $this->url, $this->wp_site_url, $this->wp_site_path );
+        $file_copier = new FileCopier(
+            $this->url,
+            $this->wp_site_url,
+            $this->wp_site_path
+        );
+
         $file_copier->copyFile( $this->archive_dir );
     }
 
     public function getExtensionFromURL() {
         $url_path = parse_url( $this->url, PHP_URL_PATH );
-
         $extension = pathinfo( $url_path, PATHINFO_EXTENSION );
 
         if ( ! $extension ) {
@@ -354,7 +424,7 @@ class SiteCrawler {
             return false;
         }
 
-        $file_extensions_to_process = array(
+        $extensions_to_process = array(
             'html',
             'css',
             'js',
@@ -363,7 +433,7 @@ class SiteCrawler {
             'txt',
         );
 
-        if ( ! in_array( $this->file_extension, $file_extensions_to_process ) ) {
+        if ( ! in_array( $this->file_extension, $extensions_to_process ) ) {
             return true;
         }
 
@@ -375,14 +445,15 @@ class SiteCrawler {
             $this->file_type = $this->file_extension;
         } else {
             // further detect type based on content type
-            $this->content_type = $this->response->getHeaderLine( 'content-type' );
+            $this->content_type =
+                $this->response->getHeaderLine( 'content-type' );
 
             if ( stripos( $this->content_type, 'text/html' ) !== false ) {
                 $this->file_type = 'html';
             } elseif ( stripos( $this->content_type, 'rss+xml' ) !== false ) {
                 $this->file_type = 'rss';
             } else {
-                error_log( 'couldnt get filetype from content-type header in response, all we got was:' );
+                error_log( 'no filetype inferred from content-type:' );
                 error_log( $this->response->getHeaderLine( 'content-type' ) );
             }
         }
