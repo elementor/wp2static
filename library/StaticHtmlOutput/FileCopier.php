@@ -12,7 +12,7 @@ class FileCopier {
 
     public function getLocalFileForURL() {
         /*
-        take the public URL and return the location on the filesystem
+        Take the public URL and return the location on the filesystem
 
         ie http://domain.com/wp-content/somefile.jpg
 
@@ -27,7 +27,9 @@ class FileCopier {
         ie /var/www/domain.com/html/wp-content/somefile.jpg
 
         */
-        return( str_replace( $this->wp_site_url, $this->wp_site_path, $this->url ) );
+        return(
+            str_replace( $this->wp_site_url, $this->wp_site_path, $this->url )
+        );
     }
 
     public function copyFile( $archive_dir ) {
@@ -64,7 +66,8 @@ class FileCopier {
 
         $fileExtension = $pathInfo['extension'];
 
-        $fileName = $fileDir . '/' . $pathInfo['filename'] . '.' . $fileExtension;
+        $fileName =
+            $fileDir . '/' . $pathInfo['filename'] . '.' . $fileExtension;
 
         if ( is_file( $local_file ) ) {
             copy( $local_file, $fileName );
