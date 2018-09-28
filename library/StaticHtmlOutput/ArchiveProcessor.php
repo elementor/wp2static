@@ -176,10 +176,14 @@ class ArchiveProcessor {
         echo 'SUCCESS';
     }
 
+
     public function renameWPDirectories() {
         // rename dirs (in reverse order than when doing in responsebody)
         // rewrite wp-content  dir
-        $original_wp_content = $this->archive->path . '/wp-content'; // TODO: check if this has been modified/use constant
+        $wp_content_dir = WP_CONTENT_DIR;
+        $wp_content_dir_name = str_replace( ABSPATH, '', $wp_content_dir );
+
+        $original_wp_content = $this->archive->path . '/' . $wp_content_dir_name; 
 
         // rename the theme theme root before the nested theme dir
         // rename the theme directory
@@ -189,9 +193,10 @@ class ArchiveProcessor {
 
         // rewrite uploads dir
         $default_upload_dir = wp_upload_dir(); // need to store as var first
-        $updated_uploads_dir = str_replace( ABSPATH, '', $default_upload_dir['basedir'] );
+        $updated_uploads_dir = str_replace( WP_CONTENT_DIR, '', $default_upload_dir['basedir'] );
+        //$updated_uploads_dir = str_replace( ABSPATH, '', $default_upload_dir['basedir'] );
+        //$updated_uploads_dir = str_replace( 'wp-content/', '', $updated_uploads_dir );
 
-        $updated_uploads_dir = str_replace( 'wp-content/', '', $updated_uploads_dir );
         $updated_uploads_dir = $new_wp_content . '/' . $updated_uploads_dir;
         $new_uploads_dir = $new_wp_content . '/' . $this->rewriteUPLOADS;
 

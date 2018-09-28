@@ -24,4 +24,5 @@ COPY provisioning/.env-vars /
 
 COPY provisioning/test_data/ /test_data
 
-COPY provisioning/install/plugins/* /plugins/
+COPY provisioning/install/plugins/ /plugins/
+COPY provisioning/install/themes/ /themes/
