@@ -25,16 +25,20 @@ class Deployer {
                 $this->ftpServer = filter_input( INPUT_POST, 'ftpServer' );
                 $this->ftpUsername = filter_input( INPUT_POST, 'ftpUsername' );
                 $this->ftpPassword = filter_input( INPUT_POST, 'ftpPassword' );
-                $this->ftpRemotePath = filter_input( INPUT_POST, 'ftpRemotePath' );
-                $this->useActiveFTP = filter_input( INPUT_POST, 'useActiveFTP' );
+                $this->ftpRemotePath =
+                    filter_input( INPUT_POST, 'ftpRemotePath' );
+                $this->useActiveFTP =
+                    filter_input( INPUT_POST, 'useActiveFTP' );
 
                 $this->ftp_prepare_export();
                 $this->ftp_transfer_files( true );
                 break;
 
             case 'netlify':
-                $this->netlifySiteID = filter_input( INPUT_POST, 'netlifySiteID' );
-                $this->netlifyPersonalAccessToken = filter_input( INPUT_POST, 'netlifyPersonalAccessToken' );
+                $this->netlifySiteID =
+                    filter_input( INPUT_POST, 'netlifySiteID' );
+                $this->netlifyPersonalAccessToken =
+                    filter_input( INPUT_POST, 'netlifyPersonalAccessToken' );
 
                 $this->create_zip();
                 $this->netlify_do_export();
@@ -49,8 +53,10 @@ class Deployer {
                 $this->s3Secret = filter_input( INPUT_POST, 's3Secret' );
                 $this->s3Region = filter_input( INPUT_POST, 's3Region' );
                 $this->s3Bucket = filter_input( INPUT_POST, 's3Bucket' );
-                $this->s3RemotePath = filter_input( INPUT_POST, 's3RemotePath' );
-                $this->cfDistributionId = filter_input( INPUT_POST, 'cfDistributionId' );
+                $this->s3RemotePath =
+                    filter_input( INPUT_POST, 's3RemotePath' );
+                $this->cfDistributionId =
+                    filter_input( INPUT_POST, 'cfDistributionId' );
 
                 $this->s3_prepare_export();
                 $this->s3_transfer_files( true );
@@ -58,32 +64,42 @@ class Deployer {
                 break;
 
             case 'bunnycdn':
-                $this->bunnycdnPullZoneName = filter_input( INPUT_POST, 'bunnycdnPullZoneName' );
-                $this->bunnycdnAPIKey = filter_input( INPUT_POST, 'bunnycdnAPIKey' );
-                $this->bunnycdnRemotePath = filter_input( INPUT_POST, 'bunnycdnRemotePath' );
+                $this->bunnycdnPullZoneName =
+                    filter_input( INPUT_POST, 'bunnycdnPullZoneName' );
+                $this->bunnycdnAPIKey =
+                    filter_input( INPUT_POST, 'bunnycdnAPIKey' );
+                $this->bunnycdnRemotePath =
+                    filter_input( INPUT_POST, 'bunnycdnRemotePath' );
 
                 $this->bunnycdn_prepare_export();
                 $this->bunnycdn_transfer_files( true );
                 break;
 
             case 'dropbox':
-                $this->dropboxAccessToken = filter_input( INPUT_POST, 'dropboxAccessToken' );
-                $this->dropboxFolder = filter_input( INPUT_POST, 'dropboxFolder' );
+                $this->dropboxAccessToken =
+                    filter_input( INPUT_POST, 'dropboxAccessToken' );
+                $this->dropboxFolder =
+                    filter_input( INPUT_POST, 'dropboxFolder' );
 
                 $this->dropbox_prepare_export();
                 $this->dropbox_do_export( true );
                 break;
         }
 
-        error_log( 'scheduled deploy complete' );
         // TODO: email upon successful cron deploy
-        // $current_user = wp_get_current_user();
-        // $to = $current_user->user_email;
-        // $subject = 'Static site deployment: ' . $site_title = get_bloginfo( 'name' );;
-        // $body = 'Your WordPress site has been automatically deployed.';
-        // $headers = array('Content-Type: text/html; charset=UTF-8');
-        //
-        // wp_mail( $to, $subject, $body, $headers );
+        // $this->emailDeployNotification();
+        error_log( 'scheduled deploy complete' );
+    }
+
+    public function emailDeployNotification() {
+        $current_user = wp_get_current_user();
+        $to = $current_user->user_email;
+        $subject = 'Static site deployment: ' .
+            $site_title = get_bloginfo( 'name' );
+        $body = 'Your WordPress site has been automatically deployed.';
+        $headers = array( 'Content-Type: text/html; charset=UTF-8' );
+
+        wp_mail( $to, $subject, $body, $headers );
     }
 
     public function s3_prepare_export() {
@@ -133,7 +149,8 @@ class Deployer {
 
                 $cf->invalidate( '/*' );
 
-                if ( $cf->getResponseMessage() === 200 || $cf->getResponseMessage() === 201 ) {
+                if ( $cf->getResponseMessage() === 200 ||
+                    $cf->getResponseMessage() === 201 ) {
                     echo 'SUCCESS';
                 } else {
                     WsLog::l( 'CF ERROR: ' . $cf->getResponseMessage() );
@@ -166,7 +183,11 @@ class Deployer {
 
     public function netlify_do_export() {
         // will exclude the siteroot when copying
-        $archiveDir = file_get_contents( $this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE' );
+        $archiveDir = file_get_contents(
+            $this->getWorkingDirectory() .
+            '/WP-STATIC-CURRENT-ARCHIVE'
+        );
+
         $archiveName = rtrim( $archiveDir, '/' ) . '.zip';
 
         $netlify = new StaticHtmlOutput_Netlify(
@@ -178,22 +199,31 @@ class Deployer {
     }
 
     public function prepare_file_list( $export_target ) {
-        $file_list_path = $this->getWorkingDirectory() . '/WP-STATIC-EXPORT-' . $export_target . '-FILES-TO-EXPORT';
+        $file_list_path = $this->getWorkingDirectory() .
+            '/WP-STATIC-EXPORT-' . $export_target . '-FILES-TO-EXPORT';
 
-        // zero file
+        // zero write the file
+        // TODO: avoid suppression
         $f = @fopen( $file_list_path, 'r+' );
         if ( $f !== false ) {
             ftruncate( $f, 0 );
             fclose( $f );
         }
 
-        $archiveDir = file_get_contents( $this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE' );
+        $archiveDir = file_get_contents(
+            $this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE'
+        );
+
         $archiveName = rtrim( $archiveDir, '/' );
         $siteroot = $archiveName . '/';
 
         error_log( 'preparing file list' );
 
-        StaticHtmlOutput_FilesHelper::recursively_scan_dir( $siteroot, $siteroot, $file_list_path );
+        StaticHtmlOutput_FilesHelper::recursively_scan_dir(
+            $siteroot,
+            $siteroot,
+            $file_list_path
+        );
     }
 
     public function ftp_prepare_export() {
