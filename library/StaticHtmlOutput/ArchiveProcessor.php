@@ -239,10 +239,9 @@ class ArchiveProcessor {
 
         if ( file_exists( $original_wp_includes ) ) {
             $this->rename_populated_directory( $original_wp_includes, $new_wp_includes );
-        } else {
-            error_log( 'original INC not found' . $original_wp_includes );
-        }
+        } 
 
+        // TODO: add to options
         // rm other left over WP identifying files
         if ( file_exists( $this->archive->path . '/xmlrpc.php' ) ) {
             unlink( $this->archive->path . '/xmlrpc.php' );
