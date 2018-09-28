@@ -22,18 +22,17 @@ class WPSite {
             $this->parent_theme_path !== $this->child_theme_path;
 
         $this->permalink_structure = get_option( 'permalink_structure' );
-        error_log($this->permalink_structure);
+        error_log( $this->permalink_structure );
 
         // TODO: pre-generate as much as possible here to avoid
-        //       extra overhead during the high cyclical functions
-
+        // extra overhead during the high cyclical functions
         $this->detect_base_url();
-        
+
         $this->subdirectory = $this->isSiteInstalledInSubdomain();
     }
 
     public function isSiteInstalledInSubdomain() {
-        $parsed_site_url = parse_url( rtrim($this->site_url, '/') );
+        $parsed_site_url = parse_url( rtrim( $this->site_url, '/' ) );
 
         if ( isset( $parsed_site_url['path'] ) ) {
             return $parsed_site_url['path'];
@@ -43,21 +42,21 @@ class WPSite {
     }
 
     public function uploadsPathIsWritable() {
-        return $this->uploads_path && is_writable($this->uploads_path);
+        return $this->uploads_path && is_writable( $this->uploads_path );
     }
 
     public function hasCurlSupport() {
-        return extension_loaded('curl');
+        return extension_loaded( 'curl' );
     }
 
     public function permalinksAreDefined() {
-        return strlen(get_option('permalink_structure'));
+        return strlen( get_option( 'permalink_structure' ) );
     }
 
     public function detect_base_url() {
         $site_url = get_option( 'siteurl' );
         $home = get_option( 'home' );
-    }	
+    }
 
     public function systemRequirementsAreMet() {
         return $this->uploadsPathIsWritable() &&
@@ -68,30 +67,29 @@ class WPSite {
     public function getOriginalPaths() {
         $original_directory_names = array();
 
-        $tokens = explode('/', get_template_directory_uri());
-        $original_directory_names['theme_dir'] = $tokens[sizeof($tokens)-1];
-        $original_directory_names['theme_root'] = $tokens[sizeof($tokens)-2];
+        $tokens = explode( '/', get_template_directory_uri() );
+        $original_directory_names['theme_dir'] = $tokens[ sizeof( $tokens ) - 1 ];
+        $original_directory_names['theme_root'] = $tokens[ sizeof( $tokens ) - 2 ];
         // TODO: use this as a safer way to get wp-content in rewriting areas
         // in case user has changed their wp-content path
-        $original_directory_names['wp_contents'] = $tokens[sizeof($tokens)-3];
+        $original_directory_names['wp_contents'] = $tokens[ sizeof( $tokens ) - 3 ];
 
-        $default_upload_dir = wp_upload_dir(); 
-        $tokens = explode('/', str_replace(ABSPATH, '/', $default_upload_dir['basedir']));
-        $original_directory_names['upload_dir'] = $tokens[sizeof($tokens)-1];
+        $default_upload_dir = wp_upload_dir();
+        $tokens = explode( '/', str_replace( ABSPATH, '/', $default_upload_dir['basedir'] ) );
+        $original_directory_names['upload_dir'] = $tokens[ sizeof( $tokens ) - 1 ];
 
+        $tokens = explode( '/', WP_PLUGIN_DIR );
+        $original_directory_names['plugin_dir'] = $tokens[ sizeof( $tokens ) - 1 ];
 
-        $tokens = explode('/', WP_PLUGIN_DIR);
-        $original_directory_names['plugin_dir'] = $tokens[sizeof($tokens)-1];
-
-        $tokens = explode('/', WPINC);
-        $original_directory_names['includes_dir'] = $tokens[sizeof($tokens)-1];
+        $tokens = explode( '/', WPINC );
+        $original_directory_names['includes_dir'] = $tokens[ sizeof( $tokens ) - 1 ];
 
         return $original_directory_names;
 
     }
 
     /*
-        function below assumes people may have changed the default 
+        function below assumes people may have changed the default
         paths for WP directories
 
         ie,
@@ -109,13 +107,13 @@ class WPSite {
 
             case 'uploads':
                 $upload_dir_info = wp_upload_dir();
-                $full_path =  $upload_dir_info['basedir'];
+                $full_path = $upload_dir_info['basedir'];
 
                 break;
 
             case 'wp-includes':
                 // NOTE: currently cannot be changed outside WP core
-                $full_path =  ABSPATH . WPINC;
+                $full_path = ABSPATH . WPINC;
 
                 break;
 
@@ -130,12 +128,12 @@ class WPSite {
                 break;
 
             case 'parent-theme':
-                $full_path = get_template_directory() ;
+                $full_path = get_template_directory();
 
                 break;
 
             case 'child-theme':
-                $full_path = get_stylesheet_directory() ;
+                $full_path = get_stylesheet_directory();
 
                 break;
         }
@@ -168,6 +166,6 @@ class WPSite {
     public function getLastPathSegment( $path ) {
         $path_segments = explode( '/', $path );
 
-        return end( $path_segments ); 
-    } 
+        return end( $path_segments );
+    }
 }
