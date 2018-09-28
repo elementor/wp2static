@@ -43,8 +43,20 @@ class FileCopier {
 
         $pathInfo = pathinfo( $urlInfo['path'] );
 
-        // set fileDir to the directory name else empty
-        $fileDir = $archive_dir . ( isset( $pathInfo['dirname'] ) ? $pathInfo['dirname'] : '' );
+        $directory_in_archive =
+            isset( $pathInfo['dirname'] ) ?
+            $pathInfo['dirname'] :
+            '';
+
+        if ( isset( $_POST['subdirectory'] ) ) {
+            $directory_in_archive = str_replace(
+                $_POST['subdirectory'],
+                '',
+                 $directory_in_archive
+            );
+        }
+
+        $fileDir = $archive_dir . ltrim( $directory_in_archive, '/' );
 
         if ( ! file_exists( $fileDir ) ) {
             wp_mkdir_p( $fileDir );

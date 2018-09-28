@@ -35,8 +35,11 @@ class WPSite {
     public function isSiteInstalledInSubdomain() {
         $parsed_site_url = parse_url( rtrim($this->site_url, '/') );
 
+        if ( isset( $parsed_site_url['path'] ) ) {
+            return $parsed_site_url['path'];
+        }
 
-        return isset( $parsed_site_url['path'] );
+        return false;
     }
 
     public function uploadsPathIsWritable() {
@@ -54,18 +57,6 @@ class WPSite {
     public function detect_base_url() {
         $site_url = get_option( 'siteurl' );
         $home = get_option( 'home' );
-        $this->subdirectory = '';
-
-        // case for when WP is installed in a different place then being served
-        if ( $site_url !== $home ) {
-            $this->subdirectory = '/mysubdirectory';
-        }
-
-        $base_url = parse_url($site_url);
-
-        if ( array_key_exists('path', $base_url ) && $base_url['path'] != '/' ) {
-            $this->subdirectory = $base_url['path'];
-        }
     }	
 
     public function systemRequirementsAreMet() {

@@ -8,7 +8,7 @@ class FileWriter {
         $this->content_type = $content_type;
     }
 
-    public function saveFile( $archiveDir ) {
+    public function saveFile( $archive_dir ) {
         $urlInfo = parse_url( $this->url );
         $pathInfo = array();
 
@@ -23,8 +23,17 @@ class FileWriter {
             $pathInfo = pathinfo( 'index.html' );
         }
 
-        // set fileDir to the directory name else empty
-        $fileDir = $archiveDir . ( isset( $pathInfo['dirname'] ) ? $pathInfo['dirname'] : '' );
+        $directory_in_archive = isset( $pathInfo['dirname'] ) ? $pathInfo['dirname'] : '';
+
+        if ( isset( $_POST['subdirectory'] ) ) {
+            $directory_in_archive = str_replace(
+                $_POST['subdirectory'],
+                '',
+                 $directory_in_archive
+            );
+        }
+
+        $fileDir = $archive_dir . ltrim( $directory_in_archive, '/' );
 
         // set filename to index if there is no extension and basename and filename are the same
         if ( empty( $pathInfo['extension'] ) && $pathInfo['basename'] === $pathInfo['filename'] ) {
@@ -49,7 +58,6 @@ class FileWriter {
                 StaticHtmlOutput_UrlHelper::getExtensionFromContentType(
                     $this->content_type
                 );
-
         }
 
         $fileName = '';
@@ -59,8 +67,18 @@ class FileWriter {
             // TODO: isolate and fix the cause requiring this trim:
             $fileName = rtrim( $fileDir, '.' ) . 'index.html';
         } else {
+            // TODO: deal with this hard to read, but functioning code
+            if ( isset( $_POST['subdirectory'] ) ) {
+                $fileDir = str_replace(
+                    '/' . $_POST['subdirectory'] ,
+                    '/',
+                    $fileDir
+                );
+            }
+
             $fileName = $fileDir . '/' . $pathInfo['filename'] . '.' . $fileExtension;
         }
+
 
         $fileContents = $this->content;
 
