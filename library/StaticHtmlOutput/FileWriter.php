@@ -23,7 +23,8 @@ class FileWriter {
             $pathInfo = pathinfo( 'index.html' );
         }
 
-        $directory_in_archive = isset( $pathInfo['dirname'] ) ? $pathInfo['dirname'] : '';
+        $directory_in_archive =
+            isset( $pathInfo['dirname'] ) ? $pathInfo['dirname'] : '';
 
         if ( isset( $_POST['subdirectory'] ) ) {
             $directory_in_archive = str_replace(
@@ -35,8 +36,9 @@ class FileWriter {
 
         $fileDir = $archive_dir . ltrim( $directory_in_archive, '/' );
 
-        // set filename to index if there is no extension and basename and filename are the same
-        if ( empty( $pathInfo['extension'] ) && $pathInfo['basename'] === $pathInfo['filename'] ) {
+        // set filename to index if no extension && base and filename are  same
+        if ( empty( $pathInfo['extension'] ) &&
+            $pathInfo['basename'] === $pathInfo['filename'] ) {
             $fileDir .= '/' . $pathInfo['basename'];
             $pathInfo['filename'] = 'index';
         }
@@ -53,7 +55,8 @@ class FileWriter {
             $fileExtension = 'html';
         } else {
             // TODO: is this being called or too late?
-            require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/UrlHelper.php';
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/UrlHelper.php';
             $fileExtension =
                 StaticHtmlOutput_UrlHelper::getExtensionFromContentType(
                     $this->content_type
@@ -76,7 +79,8 @@ class FileWriter {
                 );
             }
 
-            $fileName = $fileDir . '/' . $pathInfo['filename'] . '.' . $fileExtension;
+            $fileName =
+                $fileDir . '/' . $pathInfo['filename'] . '.' . $fileExtension;
         }
 
         $fileContents = $this->content;
