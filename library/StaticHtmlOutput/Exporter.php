@@ -45,11 +45,14 @@ class Exporter {
                     $this->wp_uploads_path . '/previous-export';
 
                 if ( is_dir( $previous_export ) ) {
+                    // TODO: replace shell calles with native
+                    // phpcs:disable
                     shell_exec(
                         "rm -Rf $dir_to_diff_against && mkdir -p " .
                         "$dir_to_diff_against && cp -r $previous_export/* " .
                         "$dir_to_diff_against"
                     );
+                    // phpcs:enable
                 }
             } else {
                 if ( is_dir( $dir_to_diff_against ) ) {
@@ -107,9 +110,11 @@ class Exporter {
             if ( is_dir( $dir_to_diff_against ) ) {
                 // TODO: rewrite to php native in case of shared hosting
                 // delete archivedir and then recursively copy
+                // phpcs:disable
                 shell_exec(
                     "cp -r $dir_to_diff_against/* $this->archiveDir/"
                 );
+                // phpcs:enable
             }
         }
 
