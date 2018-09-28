@@ -105,8 +105,11 @@ else
 fi
 
 
-# sh: 1: -t: not found
-# error around here
+if [ -z "${SUBDIR_TO_INSTALL}" ]; then 
+	echo "Not setting permalinks for subdir"; 
+else
+  wp --allow-root rewrite structure '/%year%/%monthnum%/%day%/%postname%/'
+fi
 
 
 if [ -z "${WPMU_ENABLED}" ]; then 
