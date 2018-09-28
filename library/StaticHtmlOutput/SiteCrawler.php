@@ -155,7 +155,6 @@ class SiteCrawler {
         $handle = fopen( $this->wp_uploads_path . '/WP-STATIC-CURRENT-ARCHIVE', 'r' );
         $this->archive_dir = stream_get_line( $handle, 0 );
 
-        // for each link in batch, do the crawl and save
         foreach ( $batch_of_links_to_crawl as $link_to_crawl ) {
             $this->url = $link_to_crawl;
 
