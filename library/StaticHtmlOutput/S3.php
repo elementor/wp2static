@@ -1,9 +1,4 @@
 <?php
-/**
- * @package WP Static HTML Output
- *
- * Copyright (c) 2011 Leon Stafford
- */
 
 use Aws\S3\S3Client;
 
@@ -18,19 +13,28 @@ class StaticHtmlOutput_S3 {
     protected $_exportFileList;
     protected $_archiveName;
 
-    public function __construct( $key, $secret, $region, $bucket, $remotePath, $uploadsPath ) {
+    public function __construct(
+        $key,
+        $secret,
+        $region,
+        $bucket,
+        $rem_path,
+        $uploadsPath ) {
 
         $this->_key = $key;
         $this->_secret = $secret;
         $this->_region = $region;
         $this->_bucket = $bucket;
-        $this->_remotePath = $remotePath;
-        $this->_exportFileList = $uploadsPath . '/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT';
-        $archiveDir = file_get_contents( $uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE' );
+        $this->_remotePath = $rem_path;
+        $this->_exportFileList =
+            $uploadsPath . '/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT';
+        $archiveDir =
+            file_get_contents( $uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE' );
         $this->_archiveName = rtrim( $archiveDir, '/' );
     }
 
     public function clear_file_list() {
+        // TODO: avoid suppression
         $f = @fopen( $this->_exportFileList, 'r+' );
         if ( $f !== false ) {
             ftruncate( $f, 0 );
@@ -44,35 +48,52 @@ class StaticHtmlOutput_S3 {
         }
     }
 
-    // TODO: move this into a parent class as identical to bunny and probably others
-    public function create_s3_deployment_list( $dir, $archiveName, $remotePath ) {
+    // TODO: move into a parent class as identical to bunny and probably others
+    public function create_s3_deployment_list( $dir, $archive, $rem_path ) {
         $files = scandir( $dir );
 
         foreach ( $files as $item ) {
             if ( $item != '.' && $item != '..' && $item != '.git' ) {
                 if ( is_dir( $dir . '/' . $item ) ) {
-                    $this->create_s3_deployment_list( $dir . '/' . $item, $archiveName, $remotePath );
+                    $this->create_s3_deployment_list(
+                        $dir . '/' . $item,
+                        $archive,
+                        $rem_path
+                    );
                 } elseif ( is_file( $dir . '/' . $item ) ) {
-                    $subdir = str_replace( '/wp-admin/admin-ajax.php', '', $_SERVER['REQUEST_URI'] );
+                    $subdir = str_replace(
+                        '/wp-admin/admin-ajax.php',
+                        '',
+                        $_SERVER['REQUEST_URI']
+                    );
                     $subdir = ltrim( $subdir, '/' );
-                    $clean_dir = str_replace( $archiveName . '/', '', $dir . '/' );
+                    $clean_dir = str_replace( $archive . '/', '', $dir . '/' );
                     $clean_dir = str_replace( $subdir, '', $clean_dir );
-                    $targetPath = $remotePath . $clean_dir;
+                    $targetPath = $rem_path . $clean_dir;
                     $targetPath = ltrim( $targetPath, '/' );
-                    $export_line = $dir . '/' . $item . ',' . $targetPath . "\n";
-                    file_put_contents( $this->_exportFileList, $export_line, FILE_APPEND | LOCK_EX );
+                    $export_line =
+                        $dir . '/' . $item . ',' . $targetPath . "\n";
+                    file_put_contents(
+                        $this->_exportFileList,
+                        $export_line,
+                        FILE_APPEND | LOCK_EX
+                    );
                 }
             }
         }
     }
 
-    // TODO: move this into a parent class as identical to bunny and probably others
+    // TODO: move to parent class as identical to bunny and probably others
     public function prepare_deployment() {
         if ( wpsho_fr()->is__premium_only() ) {
 
             $this->clear_file_list();
 
-            $this->create_s3_deployment_list( $this->_archiveName, $this->_archiveName, $this->_remotePath );
+            $this->create_s3_deployment_list(
+                $this->_archiveName,
+                $this->_archiveName,
+                $this->_remotePath
+            );
 
             echo 'SUCCESS';
         }
@@ -83,10 +104,12 @@ class StaticHtmlOutput_S3 {
         $line = fgets( $f );
         fclose( $f );
 
-        // TODO reduce the 2 file reads here, this one is just trimming the first line
         $contents = file( $this->_exportFileList, FILE_IGNORE_NEW_LINES );
         array_shift( $contents );
-        file_put_contents( $this->_exportFileList, implode( "\r\n", $contents ) );
+        file_put_contents(
+            $this->_exportFileList,
+            implode( "\r\n", $contents )
+        );
 
         return $line;
     }
@@ -99,7 +122,12 @@ class StaticHtmlOutput_S3 {
         return count( $contents );
     }
 
-    public function s3_put_object( $targetPath, $fileContents, $contentType = 'text/plain', $pluginInstance ) {
+    public function s3_put_object(
+        $targetPath,
+        $fileContents,
+        $contentType = 'text/plain',
+        $pluginInstance
+        ) {
         if ( wpsho_fr()->is__premium_only() ) {
             require_once dirname( __FILE__ ) . '/../aws/aws-autoloader.php';
             require_once dirname( __FILE__ ) . '/../GuzzleHttp/autoloader.php';
@@ -128,7 +156,10 @@ class StaticHtmlOutput_S3 {
 
             } catch ( Aws\S3\Exception\S3Exception $e ) {
                 error_log( $e );
-                // $pluginInstance->wsLog('S3 EXPORT: following error returned from S3:');
+                require_once dirname( __FILE__ ) .
+                    '/../StaticHtmlOutput/WsLog.php';
+
+                WsLog::l( 'S3 ERROR RETURNED: ' . $e );
                 echo "There was an error uploading the file.\n";
             }
         }
