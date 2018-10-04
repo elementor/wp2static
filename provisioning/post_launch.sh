@@ -149,6 +149,7 @@ fi
 
 
 wp --allow-root plugin activate wp-crontrol 
+wp --allow-root plugin activate autoptimize 
 #wp --allow-root plugin activate simply-static  
 wp --allow-root plugin activate WpAdminStyle # help when developing UI
 wp --allow-root plugin activate wordpress-importer 
