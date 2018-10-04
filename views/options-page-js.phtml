@@ -126,16 +126,16 @@ jQuery(document).ready(function($){
       // if zip was selected, call to get zip name and enable the button with the link to download
       if (current_deployment_method === 'zip') {
         
-        zipDownloadLink = wp_site.uploads_path + '/WP-STATIC-CURRENT-ARCHIVE';
-
-        // TODO: add better way to get just the archive name/zip name and path
-        $.get(zipDownloadLink, function(zipPath){
-          parts = zipPath.split('/');
-          archiveName = parts.pop() || parts.pop();
-          zipURL = wp_site.uploads_path + '/' + archiveName + '.zip';
-          $('#downloadZIP').attr('href', zipURL);
-          $('#downloadZIP').show();
-        });
+        $.get( wp_site.uploads_url + '/WP-STATIC-CURRENT-ARCHIVE',
+            function( archive_path ) {
+                path_segments = archive_path.split('/');
+                current_archive.name = path_segments[path_segments.length - 2];
+                zipURL = wp_site.uploads_url + '/' + current_archive.name + '.zip';
+                $('#downloadZIP').attr('href', zipURL);
+                $('#downloadZIP').show();
+            },
+            'text'
+        );
       } else {
         // for other methods, show the Go to my static site link
         $('#goToMyStaticSite').attr('href', $('#baseUrl').val());
@@ -177,6 +177,13 @@ jQuery(document).ready(function($){
 
     if (validation_errors !== '') {
       alert(validation_errors);
+
+      // TODO: place in function that resets any in progress counters, etc
+      $('#progress').hide();
+      $('#startExportButton').prop('disabled', false);
+      $('.saveSettingsButton').prop('disabled', false);
+      $('.resetDefaultSettingsButton').prop('disabled', false);
+      $('.cancelExportButton').hide();
 
       return false;
     }
@@ -236,12 +243,7 @@ jQuery(document).ready(function($){
         dataType: 'html',
         method: 'POST',
         success: function(serverResponse) {
-          // TODO: change doAJAXExport args to array, for easier loading
-          if (current_deployment_method == 'zip' || current_deployment_method == 'netlify') {
-            doAJAXExport('crawl_site', 'crawl_again', 'post_process_archive_dir', 'create_zip');
-          } else {
-            doAJAXExport('crawl_site', 'crawl_again', 'post_process_archive_dir');
-          }
+          doAJAXExport('crawl_site', 'crawl_again', 'post_process_archive_dir');
         },
         error: ajaxErrorHandler
     });
