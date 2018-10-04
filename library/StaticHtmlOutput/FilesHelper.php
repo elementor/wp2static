@@ -30,6 +30,20 @@ class StaticHtmlOutput_FilesHelper {
         return self::getListOfLocalFilesByUrl( get_stylesheet_directory_uri() );
     }
 
+    public static function detectVendorFiles() {
+        $vendor_files = [];
+
+        if ( class_exists( 'autoptimizeMain' ) ) {
+            $autoptimize_cache_dir = WP_CONTENT_DIR . '/cache/autoptimize';
+
+            $vendor_files = self::getListOfLocalFilesByUrl(
+                $autoptimize_cache_dir
+            );
+        }
+
+        return $vendor_files;
+    }
+
     public static function recursively_scan_dir( $dir, $siteroot, $list_path ) {
         // rm duplicate slashes in path (TODO: fix cause)
         $dir = str_replace( '//', '/', $dir );
@@ -128,6 +142,7 @@ class StaticHtmlOutput_FilesHelper {
             array( trailingslashit( $baseUrl ) ),
             self::getParentThemeFiles(),
             self::getChildThemeFiles(),
+            self::detectVendorFiles(),
             self::getAllWPPostURLs( $baseUrl )
         );
 
