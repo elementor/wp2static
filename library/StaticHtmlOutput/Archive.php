@@ -4,6 +4,7 @@ class Archive {
 
     public function __construct() {
         $this->path = '';
+        $this->name = '';
         $this->crawl_list = '';
         $this->export_log = '';
         $this->uploads_path =
@@ -25,6 +26,7 @@ class Archive {
         );
 
         $this->path = stream_get_line( $handle, 0 );
+        $this->name = basename( $this->path );
     }
 
     public function currentArchiveExists() {
@@ -36,6 +38,7 @@ class Archive {
             '/wp-static-html-output-' . time();
 
         $this->path = $this->name . '/';
+        $this->name = basename( $this->path );
 
         if ( wp_mkdir_p( $this->path ) ) {
             file_put_contents(

@@ -6,6 +6,8 @@ class ArchiveProcessor {
         require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/Archive.php';
         $this->archive = new Archive();
 
+        $this->archive->setToCurrentArchive();
+
         $this->working_directory =
             isset( $_POST['working_directory'] ) ?
             $_POST['working_directory'] :
@@ -38,10 +40,17 @@ class ArchiveProcessor {
         $this->wp_site_url = '';
         $this->wp_site_subdir = '';
         $this->wp_uploads_path = $_POST['wp_uploads_path'];
+        $this->wp_uploads_url = $_POST['wp_uploads_url'];
         $this->working_directory =
             isset( $_POST['workingDirectory'] ) ?
             $_POST['workingDirectory'] :
             $this->wp_uploads_path;
+
+        if ( $this->selected_deployment_option === 'zip' ||
+            $this->selected_deployment_option === 'netlify'
+            ) {
+            $this->create_zip();
+        } 
     }
 
     public function create_symlink_to_latest_archive() {
@@ -206,9 +215,11 @@ class ArchiveProcessor {
     }
 
     public function create_zip() {
-        $archiveName = rtrim( $this->archive->path, '/' );
-        $tempZip = $archiveName . '.tmp';
+        $archivePath = rtrim( $this->archive->path, '/' );
+        $tempZip = $archivePath . '.tmp';
+
         $zipArchive = new ZipArchive();
+
         if ( $zipArchive->open( $tempZip, ZIPARCHIVE::CREATE ) !== true ) {
             return new WP_Error( 'Could not create archive' );
         }
@@ -231,17 +242,11 @@ class ArchiveProcessor {
         }
 
         $zipArchive->close();
-        $zipDownloadLink = $archiveName . '.zip';
-        rename( $tempZip, $zipDownloadLink );
 
-        // TODO: make sure this is WP-free and saves to uploads vs working dir?
-        $publicDownloadableZip = str_replace(
-            ABSPATH,
-            trailingslashit( home_url() ),
-            $archiveName . '.zip'
-        );
+        $zipPath = $this->wp_uploads_path . '/' . 
+            $this->archive->name . '.zip';
 
-        echo 'SUCCESS';
+        rename( $tempZip, $zipPath );
     }
 
 
