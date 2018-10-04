@@ -111,6 +111,9 @@ else
   wp --allow-root rewrite structure '/%year%/%monthnum%/%day%/%postname%/'
 fi
 
+# disable annoying admin overlay when viewing site
+wp --allow-root user update 1 --show_admin_bar_front='false'
+
 
 if [ -z "${WPMU_ENABLED}" ]; then 
 	echo "NOT installing plugin from sources"; 
