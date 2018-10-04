@@ -117,6 +117,7 @@ class HTMLProcessor {
         $this->addDiscoveredURL( $element->getAttribute( 'href' ) );
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
+        $this->convertToRelativeURL( $element );
 
         if ( $this->removeWPLinks ) {
             $relativeLinksToRemove = array(
@@ -157,6 +158,7 @@ class HTMLProcessor {
         $this->addDiscoveredURL( $element->getAttribute( 'src' ) );
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
+        $this->convertToRelativeURL( $element );
     }
 
     public function processHead( $element ) {
@@ -185,6 +187,7 @@ class HTMLProcessor {
         $this->addDiscoveredURL( $element->getAttribute( 'src' ) );
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
+        $this->convertToRelativeURL( $element );
     }
 
     public function processAnchor( $element ) {
@@ -193,6 +196,7 @@ class HTMLProcessor {
         $this->addDiscoveredURL( $element->getAttribute( 'href' ) );
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
+        $this->convertToRelativeURL( $element );
     }
 
     public function processMeta( $element ) {
@@ -230,12 +234,16 @@ class HTMLProcessor {
         }
     }
 
-    public function isInternalLink( $link ) {
+    public function isInternalLink( $link, $domain = false ) {
+        if ( ! $domain ) {
+            $domain = $this->wp_site_url;
+        }
+
         // TODO: apply only to links starting with .,..,/,
         // or any with just a path, like banana.png
         // check link is same host as $this->url and not a subdomain
         return parse_url( $link, PHP_URL_HOST ) === parse_url(
-            $this->wp_site_url,
+            $domain,
             PHP_URL_HOST
         );
     }
@@ -365,6 +373,41 @@ class HTMLProcessor {
 
     public function getHTML() {
         return $this->xml_doc->saveHtml();
+    }
+
+    public function convertToRelativeURL ( $element ) {
+        if ( ! $this->useRelativeURLs ) {
+            return;
+        }
+
+        if ( $element->hasAttribute( 'href' ) ) {
+            $attribute_to_change = 'href';
+        } elseif ( $element->hasAttribute( 'src' ) ) {
+            $attribute_to_change = 'src';
+        } else {
+            return;
+        }
+
+        $url_to_change = $element->getAttribute( $attribute_to_change );
+
+        $site_root = '/';
+
+        // for same server test deploys, we'll need the subdir after root
+        if ( isset( $_POST['targetFolder'] ) && 
+            $_POST['selected_deployment_option'] === 'folder' ) {
+            $site_root .= $_POST['targetFolder'] . '/';
+        }
+
+        // check it actually needs to be changed
+        if ( $this->isInternalLink( $url_to_change, $this->baseUrl ) ) {
+            $rewritten_url = str_replace(
+                $this->baseUrl,
+                $site_root,
+                $url_to_change
+            );
+
+            $element->setAttribute( $attribute_to_change, $rewritten_url );
+        }
     }
 
     // NOTE: separate from WP rewrites in case people have disabled that

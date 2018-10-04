@@ -46,11 +46,6 @@ class ArchiveProcessor {
             $_POST['workingDirectory'] :
             $this->wp_uploads_path;
 
-        if ( $this->selected_deployment_option === 'zip' ||
-            $this->selected_deployment_option === 'netlify'
-            ) {
-            $this->create_zip();
-        } 
     }
 
     public function create_symlink_to_latest_archive() {
@@ -215,6 +210,12 @@ class ArchiveProcessor {
     }
 
     public function create_zip() {
+        if ( ! $this->selected_deployment_option === 'zip' ||
+            $this->selected_deployment_option === 'netlify'
+            ) {
+            return;
+        } 
+
         $archivePath = rtrim( $this->archive->path, '/' );
         $tempZip = $archivePath . '.tmp';
 

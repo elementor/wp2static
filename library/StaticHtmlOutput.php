@@ -308,5 +308,6 @@ class StaticHtmlOutput_Controller {
         $processor->create_symlink_to_latest_archive();
 
         $processor->renameWPDirectories();
+        $processor->create_zip();
     }
 }
