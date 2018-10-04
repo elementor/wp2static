@@ -23,7 +23,7 @@ Allows you to leverage WordPress as a great CMS, but benefit from the speed, sec
 
 ## Getting started
 
-Please refer to the [documentation](https://wp2static.com).
+Please refer to the [documentation](https://docs.wp2static.com).
 
 
 ## Development
