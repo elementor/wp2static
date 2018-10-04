@@ -112,6 +112,12 @@ class HTMLProcessor {
     }
 
     public function processLink( $element ) {
+        $this->normalizeURL( $element, 'href' );
+        $this->removeQueryStringFromInternalLink( $element );
+        $this->addDiscoveredURL( $element->getAttribute( 'href' ) );
+        $this->rewriteWPPaths( $element );
+        $this->rewriteBaseURL( $element );
+
         if ( $this->removeWPLinks ) {
             $relativeLinksToRemove = array(
                 'shortlink',
@@ -190,6 +196,7 @@ class HTMLProcessor {
     }
 
     public function processMeta( $element ) {
+        // TODO: detect meta redirects here + build list for rewriting
         if ( $this->removeWPMeta ) {
             $meta_name = $element->getAttribute( 'name' );
 

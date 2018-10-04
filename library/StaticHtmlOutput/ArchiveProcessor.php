@@ -249,7 +249,6 @@ class ArchiveProcessor {
         rename( $tempZip, $zipPath );
     }
 
-
     public function renameWPDirectories() {
         // rename dirs (in reverse order than when doing in responsebody)
         // rewrite wp-content  dir
