@@ -189,7 +189,7 @@ class StaticHtmlOutput_Controller {
                 ->assign( 'options', $this->options )
                 ->assign( 'onceAction', self::HOOK . '-options' )
                 ->render();
-        }//end if
+        } //end if
     }
 
     public function userIsAllowed() {
