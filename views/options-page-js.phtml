@@ -279,6 +279,7 @@ jQuery(document).ready(function($){
       validation_errors += "Please set the Base URL field to the address you will host your static site.\n";
     }
 
+    // TODO: on new Debian package-managed environment, this was falsely erroring
     if (!isUrl($('#baseUrl').val()) && !$('#allowOfflineUsage').is(":checked")) {
       validation_errors += "Please set the Base URL field to a valid URL, ie http://mystaticsite.com.\n";
     }

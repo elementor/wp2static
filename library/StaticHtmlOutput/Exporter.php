@@ -7,7 +7,6 @@ class Exporter {
         $this->crawled_links_file = '';
 
         // WP env settings
-        $this->baseUrl = $_POST['baseUrl'];
         $this->wp_site_url = $_POST['wp_site_url'];
         $this->wp_site_path = $_POST['wp_site_path'];
         $this->wp_uploads_path = $_POST['wp_uploads_path'];
