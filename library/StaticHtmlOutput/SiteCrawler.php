@@ -21,10 +21,9 @@ class SiteCrawler {
             $_POST['basicAuthPassword'] :
             false;
 
-
         // require a baseUrl if creating an offline ZIP
-        if ( isset( $_POST['baseUrl'] )  ) {
-            $this->baseUrl = rtrim( $_POST['baseUrl'], "/" ) . '/';
+        if ( isset( $_POST['baseUrl'] ) ) {
+            $this->baseUrl = rtrim( $_POST['baseUrl'], '/' ) . '/';
         } else {
             $this->baseUrl = 'http://example.com/';
         }
