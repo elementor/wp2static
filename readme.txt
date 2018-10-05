@@ -135,7 +135,9 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
 = 5.9 =
 
  * Bugfix: Prevent rewriting URLs on external domains
+ * Bugfix: Offline ZIP creation now functioning properly
  * Enhancement: preview initial crawl list before starting your export
+ * Enhancement: improved export speeds
 
 = 5.8 =
 
@@ -453,7 +455,9 @@ Initial release to Wordpress community
 = 5.9 =
 
  * Bugfix: Prevent rewriting URLs on external domains
+ * Bugfix: Offline ZIP creation now functioning properly
  * Enhancement: preview initial crawl list before starting your export
+ * Enhancement: improved export speeds
 
 = 5.8 =
 
