@@ -118,6 +118,7 @@ class HTMLProcessor {
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
         $this->convertToRelativeURL( $element );
+        $this->convertToOfflineURL( $element );
 
         if ( $this->removeWPLinks ) {
             $relativeLinksToRemove = array(
@@ -159,6 +160,7 @@ class HTMLProcessor {
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
         $this->convertToRelativeURL( $element );
+        $this->convertToOfflineURL( $element );
     }
 
     public function processHead( $element ) {
@@ -188,6 +190,7 @@ class HTMLProcessor {
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
         $this->convertToRelativeURL( $element );
+        $this->convertToOfflineURL( $element );
     }
 
     public function processAnchor( $element ) {
@@ -197,6 +200,7 @@ class HTMLProcessor {
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
         $this->convertToRelativeURL( $element );
+        $this->convertToOfflineURL( $element );
     }
 
     public function processMeta( $element ) {
@@ -407,6 +411,56 @@ class HTMLProcessor {
             );
 
             $element->setAttribute( $attribute_to_change, $rewritten_url );
+        }
+    }
+
+    public function getDotsBackToRoot ( $url ) {
+        $dots_path = '';
+
+
+    
+        return $dots_path;
+    }
+
+    public function convertToOfflineURL ( $element ) {
+        if ( ! $this->allowOfflineUsage ) {
+            return;
+        }
+
+        if ( $element->hasAttribute( 'href' ) ) {
+            $attribute_to_change = 'href';
+        } elseif ( $element->hasAttribute( 'src' ) ) {
+            $attribute_to_change = 'src';
+        } else {
+            return;
+        }
+
+        $url_to_change = $element->getAttribute( $attribute_to_change );
+        $current_page_path_to_root = ''; 
+        $current_page_path = parse_url( $this->page_url, PHP_URL_PATH );
+        $number_of_segments_in_path = explode( '/', $current_page_path );
+        $num_dots_to_root = count( $number_of_segments_in_path ) - 2;
+
+        for ( $i = 0; $i < $num_dots_to_root; $i++ ) {
+            $current_page_path_to_root .= '../';
+        }  
+       
+        if ( $this->isInternalLink( $url_to_change, $this->baseUrl ) ) {
+            $rewritten_url = str_replace(
+                $this->baseUrl,
+                '',
+                $url_to_change
+            );
+
+            $offline_url = $current_page_path_to_root . $rewritten_url;       
+
+            // add index.html if no extension
+            if ( substr($offline_url, -1) === '/' ) {
+                // TODO: check XML/RSS case
+                $offline_url .= 'index.html';
+            } 
+        
+            $element->setAttribute( $attribute_to_change, $offline_url );
         }
     }
 

@@ -21,8 +21,14 @@ class SiteCrawler {
             $_POST['basicAuthPassword'] :
             false;
 
-        // WP env settings
-        $this->baseUrl = rtrim( $_POST['baseUrl'], "/" ) . '/';
+
+        // require a baseUrl if creating an offline ZIP
+        if ( isset( $_POST['baseUrl'] )  ) {
+            $this->baseUrl = rtrim( $_POST['baseUrl'], "/" ) . '/';
+        } else {
+            $this->baseUrl = 'http://example.com/';
+        }
+
         $this->wp_site_url = $_POST['wp_site_url'];
         $this->wp_site_path = $_POST['wp_site_path'];
         $this->wp_uploads_path = $_POST['wp_uploads_path'];
