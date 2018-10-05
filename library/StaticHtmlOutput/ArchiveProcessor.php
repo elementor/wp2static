@@ -214,7 +214,7 @@ class ArchiveProcessor {
             $this->selected_deployment_option === 'netlify'
             ) {
             return;
-        } 
+        }
 
         $archivePath = rtrim( $this->archive->path, '/' );
         $tempZip = $archivePath . '.tmp';
@@ -244,7 +244,7 @@ class ArchiveProcessor {
 
         $zipArchive->close();
 
-        $zipPath = $this->wp_uploads_path . '/' . 
+        $zipPath = $this->wp_uploads_path . '/' .
             $this->archive->name . '.zip';
 
         rename( $tempZip, $zipPath );
