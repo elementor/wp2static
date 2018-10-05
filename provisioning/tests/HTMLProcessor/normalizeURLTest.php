@@ -7,7 +7,7 @@ require_once 'library/URL2/URL2.php';
 
 use PHPUnit\Framework\TestCase;
 
-final class HTMLProcessorTest extends TestCase {
+final class HTMLProcessorNormalizeURLTest extends TestCase {
 
     public function testNormalizePartialURLInAnchor(): void {
         $html_doc = new DOMDocument();
