@@ -1,3 +1,3 @@
 #!/bin/bash
 
-./provisioning/tests/phpunit --testdox ./provisioning/tests/UrlRequestTest.php
+./provisioning/tests/phpunit --testdox ./provisioning/tests/HTMLProcessorTest.php
