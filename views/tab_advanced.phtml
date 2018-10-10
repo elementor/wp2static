@@ -76,6 +76,22 @@
           <p>If you're happy with how your site is looking after exporting to a subdirectory, you can choose to start serving this content to your visitors, instead of your current WordPress site. To do this, you will need to adjust your <code>.htaccess</code> file. This <a href="" target="_blank">community guide</a> may be able to help you.
       </td>
     </tr>
+    <tr>
+      <th scope="row">
+        <label for="completionEmail"><?php echo __('Email upon completion', 'static-html-output-plugin');?></label>
+      </th>
+      <td>
+        <?php
+         $current_user = wp_get_current_user();
+         $to = $current_user->user_email;
+         $tpl->displayCheckbox($this, 'completionEmail', 'Will send to: ' . $to); ?>
+
+        <p>
+            Be alerted when your deployment process is complete.
+        </p>
+
+      </td>
+    </tr>
   </tbody>
 </table>
 

@@ -62,6 +62,7 @@ class StaticHtmlOutput_Options {
             'bunnycdnAPIKey',
             'bunnycdnPullZoneName',
             'bunnycdnRemotePath',
+            'completionEmail',
             'cfDistributionId',
             'crawl_increment',
             'diffBasedDeploys',

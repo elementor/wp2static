@@ -55,6 +55,7 @@ class WPSHO_PostSettings {
             'workingDirectory',
             'crawl_increment',
             'diffBasedDeploys',
+            'completionEmail',
         );
 
         $key_sets['folder'] = array(
