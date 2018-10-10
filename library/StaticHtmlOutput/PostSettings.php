@@ -15,7 +15,6 @@ class WPSHO_PostSettings {
 
         $key_sets['crawling'] = array(
             'additionalUrls',
-            'allowOfflineUsage',
             'basicAuthPassword',
             'basicAuthUser',
             'discoverNewURLs',
@@ -23,6 +22,7 @@ class WPSHO_PostSettings {
 
         $key_sets['processing'] = array(
             'removeConditionalHeadComments',
+            'allowOfflineUsage',
             'rewritePLUGINDIR',
             'rewriteTHEMEDIR',
             'rewriteTHEMEROOT',
