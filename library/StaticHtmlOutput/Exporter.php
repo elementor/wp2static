@@ -3,17 +3,14 @@
 class Exporter {
 
     public function __construct() {
-        $this->diffBasedDeploys = '';
-        $this->crawled_links_file = '';
+        if ( isset( $_POST['selected_deployment_option'] ) ) {
+            require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/PostSettings.php';
+            $this->settings = StaticHtmlOutput_PostSettings::get(); 
 
-        // WP env settings
-        $this->wp_site_url = $_POST['wp_site_url'];
-        $this->wp_site_path = $_POST['wp_site_path'];
-        $this->wp_uploads_path = $_POST['wp_uploads_path'];
-        $this->working_directory = isset( $_POST['workingDirectory'] ) ?
-            $_POST['workingDirectory'] :
-            $this->wp_uploads_path;
-        $this->wp_uploads_url = $_POST['wp_uploads_url'];
+            error_log(print_r($this->settings, true));
+        } else {
+            error_log('TODO: load settings from DB');
+        }
     }
 
     public function capture_last_deployment() {
