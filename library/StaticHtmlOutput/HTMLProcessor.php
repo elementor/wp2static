@@ -381,7 +381,10 @@ class HTMLProcessor {
         }
 
         // check it actually needs to be changed
-        if ( $this->isInternalLink( $url_to_change, $this->settings['baseUrl'] ) ) {
+        if ( $this->isInternalLink(
+            $url_to_change,
+            $this->settings['baseUrl']
+        ) ) {
             $rewritten_url = str_replace(
                 $this->settings['baseUrl'],
                 $site_root,
@@ -421,7 +424,10 @@ class HTMLProcessor {
             $current_page_path_to_root .= '../';
         }
 
-        if ( $this->isInternalLink( $url_to_change, $this->settings['baseUrl'] ) ) {
+        if ( $this->isInternalLink(
+            $url_to_change,
+            $this->settings['baseUrl']
+        ) ) {
             $rewritten_url = str_replace(
                 $this->settings['baseUrl'],
                 '',

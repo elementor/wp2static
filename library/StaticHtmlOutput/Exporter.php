@@ -37,11 +37,13 @@ class Exporter {
                     '/WP-STATIC-CURRENT-ARCHIVE'
             );
             $previous_export = $archiveDir;
-            $dir_to_diff_against = $this->settings['wp_uploads_path'] . '/previous-export';
+            $dir_to_diff_against = $this->settings['wp_uploads_path'] .
+                '/previous-export';
 
             if ( $this->settings['diffBasedDeploys'] ) {
                 $archiveDir = file_get_contents(
-                    $this->settings['working_directory'] . '/WP-STATIC-CURRENT-ARCHIVE'
+                    $this->settings['working_directory'] .
+                        '/WP-STATIC-CURRENT-ARCHIVE'
                 );
 
                 $previous_export = $archiveDir;
@@ -90,7 +92,10 @@ class Exporter {
             if ( file_exists(
                 $this->settings['working_directory'] . '/' . $file_to_clean
             ) ) {
-                unlink( $this->settings['working_directory'] . '/' . $file_to_clean );
+                unlink(
+                    $this->settings['working_directory'] . '/' .
+                        $file_to_clean
+                );
             }
         }
     }
@@ -103,20 +108,21 @@ class Exporter {
         ) ) {
 
             $handle = fopen(
-                $this->settings['working_directory'] . '/WP-STATIC-CURRENT-ARCHIVE',
+                $this->settings['working_directory'] .
+                    '/WP-STATIC-CURRENT-ARCHIVE',
                 'r'
             );
             $this->settings['archive_dir'] = stream_get_line( $handle, 0 );
 
-            $dir_to_diff_against =
+            $src_dir =
                 $this->settings['working_directory'] . '/previous-export';
 
-            if ( is_dir( $dir_to_diff_against ) ) {
+            if ( is_dir( $src_dir ) ) {
                 // TODO: rewrite to php native in case of shared hosting
                 // delete archivedir and then recursively copy
                 // phpcs:disable
                 shell_exec(
-                    "cp -r $dir_to_diff_against/* $this->settings['archiveDir']/"
+                    "cp -r $src_dir/* $this->settings['archiveDir']/"
                 );
                 // phpcs:enable
             }
@@ -139,7 +145,9 @@ class Exporter {
             if ( file_exists(
                 $this->settings['working_directory'] . '/' . $file_to_clean
             ) ) {
-                unlink( $this->settings['working_directory'] . '/' . $file_to_clean );
+                unlink(
+                    $this->settings['working_directory'] . '/' . $file_to_clean
+                );
             }
         }
     }
@@ -155,16 +163,21 @@ class Exporter {
 
     public function cleanup_leftover_archives() {
         $leftover_files =
-            preg_grep( '/^([^.])/', scandir( $this->settings['working_directory'] ) );
+            preg_grep(
+                '/^([^.])/',
+                scandir( $this->settings['working_directory'] )
+            );
 
         foreach ( $leftover_files as $fileName ) {
             if ( strpos( $fileName, 'wp-static-html-output-' ) !== false ) {
-                if ( is_dir( $this->settings['working_directory'] . '/' . $fileName ) ) {
+                $deletion_target = $this->settings['working_directory'] .
+                    '/' . $fileName;
+                if ( is_dir( $deletion_target ) ) {
                     StaticHtmlOutput_FilesHelper::delete_dir_with_files(
-                        $this->settings['working_directory'] . '/' . $fileName
+                        $deletion_target
                     );
                 } else {
-                    unlink( $this->settings['working_directory'] . '/' . $fileName );
+                    unlink( $deletion_target );
                 }
             }
         }
@@ -175,8 +188,10 @@ class Exporter {
     public function generateModifiedFileList() {
         // copy the preview crawl list within uploads dir to "modified list"
         copy(
-            $this->settings['wp_uploads_path'] . '/WP-STATIC-INITIAL-CRAWL-LIST',
-            $this->settings['wp_uploads_path'] . '/WP-STATIC-MODIFIED-CRAWL-LIST'
+            $this->settings['wp_uploads_path'] .
+                '/WP-STATIC-INITIAL-CRAWL-LIST',
+            $this->settings['wp_uploads_path'] .
+                '/WP-STATIC-MODIFIED-CRAWL-LIST'
         );
 
         // process  modified list and make available for previewing from UI
@@ -190,8 +205,10 @@ class Exporter {
         // );
         // copy the modified list to the working dir "finalized crawl list"
         copy(
-            $this->settings['wp_uploads_path'] . '/WP-STATIC-MODIFIED-CRAWL-LIST',
-            $this->settings['working_directory'] . '/WP-STATIC-FINAL-CRAWL-LIST'
+            $this->settings['wp_uploads_path'] .
+                '/WP-STATIC-MODIFIED-CRAWL-LIST',
+            $this->settings['working_directory'] .
+                '/WP-STATIC-FINAL-CRAWL-LIST'
         );
 
         // use finalized crawl list from working dir to start the export

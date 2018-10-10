@@ -51,7 +51,8 @@ class Archive {
 
         if ( wp_mkdir_p( $this->path ) ) {
             file_put_contents(
-                $this->settings['wp_uploads_path'] . '/WP-STATIC-CURRENT-ARCHIVE',
+                $this->settings['wp_uploads_path'] .
+                    '/WP-STATIC-CURRENT-ARCHIVE',
                 $this->path
             );
         } else {
