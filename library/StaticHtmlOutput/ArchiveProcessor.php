@@ -18,9 +18,9 @@ class ArchiveProcessor {
 
         if ( isset( $_POST['selected_deployment_option'] ) ) {
             require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/PostSettings.php';
-            $this->settings = WPSHO_PostSettings::get( $target_settings ); 
+            $this->settings = WPSHO_PostSettings::get( $target_settings );
         } else {
-            error_log('TODO: load settings from DB');
+            error_log( 'TODO: load settings from DB' );
         }
     }
 

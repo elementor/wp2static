@@ -25,7 +25,7 @@ class WPSite {
 
         $this->wp_inc = '/' . WPINC;
         $this->wp_content = '/' . WP_CONTENT_DIR;
-        $this->wp_uploads = 
+        $this->wp_uploads =
                 str_replace( ABSPATH, '/', $this->wp_uploads_path );
         $this->wp_plugins = str_replace( ABSPATH, '/', WP_PLUGIN_DIR );
         $this->wp_themes = str_replace( ABSPATH, '/', get_theme_root() );

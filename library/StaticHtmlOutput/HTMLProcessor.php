@@ -19,7 +19,7 @@ class HTMLProcessor {
 
             $this->settings = WPSHO_PostSettings::get( $target_settings );
         } else {
-            error_log('TODO: load settings from DB');
+            error_log( 'TODO: load settings from DB' );
         }
 
         // instantiate the XML body here
