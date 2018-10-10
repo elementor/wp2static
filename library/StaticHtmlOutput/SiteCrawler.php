@@ -49,13 +49,15 @@ class SiteCrawler {
 
                 // TODO: read in WP-STATIC-FINAL-CRAWL-LIST clone vs INITIAL
                 $already_crawled = file(
-                    $this->settings['working_directory'] . '/WP-STATIC-INITIAL-CRAWL-LIST',
+                    $this->settings['working_directory'] .
+                        '/WP-STATIC-INITIAL-CRAWL-LIST',
                     FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
                 );
 
                 // read WP-STATIC-DISCOVERED-URLS into $discovered_links
                 $discovered_links = file(
-                    $this->settings['working_directory'] . '/WP-STATIC-DISCOVERED-URLS',
+                    $this->settings['working_directory'] .
+                        '/WP-STATIC-DISCOVERED-URLS',
                     FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
                 );
 
@@ -78,11 +80,13 @@ class SiteCrawler {
                 );
             }
 
-            $this->list_of_urls_to_crawl_path = $this->settings['working_directory'] .
-            '/WP-STATIC-FINAL-2ND-CRAWL-LIST';
+            $this->list_of_urls_to_crawl_path =
+                $this->settings['working_directory'] .
+                '/WP-STATIC-FINAL-2ND-CRAWL-LIST';
         } else {
-            $this->list_of_urls_to_crawl_path = $this->settings['working_directory'] .
-            '/WP-STATIC-FINAL-CRAWL-LIST';
+            $this->list_of_urls_to_crawl_path =
+                $this->settings['working_directory'] .
+                '/WP-STATIC-FINAL-CRAWL-LIST';
         }
 
         $this->viaCLI = false;
@@ -215,7 +219,7 @@ class SiteCrawler {
             );
         }
 
-        // TODO: what difference between this and $this->settings['baseUrl'] originally?
+        // TODO: remove/rename
         $baseUrl = $this->settings['baseUrl'];
 
         $this->detectFileType( $this->url );

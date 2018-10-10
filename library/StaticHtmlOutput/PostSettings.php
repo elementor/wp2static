@@ -140,7 +140,7 @@ class WPSHO_PostSettings {
         }
 
         /*
-            settings requiring transformation
+            Settings requiring transformation
         */
 
         // TODO: shift this logic to places it's actually used

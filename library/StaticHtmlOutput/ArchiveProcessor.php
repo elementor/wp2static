@@ -17,7 +17,8 @@ class ArchiveProcessor {
         );
 
         if ( isset( $_POST['selected_deployment_option'] ) ) {
-            require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/PostSettings.php';
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/PostSettings.php';
             $this->settings = WPSHO_PostSettings::get( $target_settings );
         } else {
             error_log( 'TODO: load settings from DB' );
@@ -40,13 +41,16 @@ class ArchiveProcessor {
     }
 
     public function remove_symlink_to_latest_archive() {
-        if ( is_link( $this->settings['wp_uploads_path'] . '/latest-export' ) ) {
+        if (
+            is_link( $this->settings['wp_uploads_path'] . '/latest-export' )
+            ) {
             unlink( $this->settings['wp_uploads_path'] . '/latest-export' );
         }
     }
 
     public function remove_files_idential_to_previous_export() {
-        $dir_to_diff_against = $this->settings['wp_uploads_path'] . '/previous-export';
+        $dir_to_diff_against = $this->settings['wp_uploads_path'] .
+            '/previous-export';
 
         // iterate each file in current export, check the size and contents in
         // previous, delete if match
