@@ -166,21 +166,6 @@ class StaticHtmlOutput_Controller {
     // TODO: send these to initial page load and pass as new settings set
     public function setOldNewPaths() {
 
-        // TODO: this can be done in JS, saved as settings
-        $new_wp_content = '/' . $this->settings['rewriteWPCONTENT'];
-        $new_theme_root = $new_wp_content . '/' . $this->settings['rewriteTHEMEROOT'];
-        $new_theme_dir = $new_theme_root . '/' . $this->settings['rewriteTHEMEDIR'];
-        $new_uploads_dir = $new_wp_content . '/' . $this->settings['rewriteUPLOADS'];
-        $new_plugins_dir = $new_wp_content . '/' . $this->settings['rewritePLUGINDIR'];
-
-        $overwrite_slug_targets = array(
-            'new_wp_content_path' => $new_wp_content,
-            'new_themes_path' => $new_theme_root,
-            'new_active_theme_path' => $new_theme_dir,
-            'new_uploads_path' => $new_uploads_dir,
-            'new_plugins_path' => $new_plugins_dir,
-            'new_wpinc_path' => '/' . $this->settings['rewriteWPINC'],
-        );
     }
 
     public function renderOptionsPage() {
