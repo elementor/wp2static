@@ -16,7 +16,9 @@ final class HTMLProcessorIsInternalLinkTest extends TestCase {
 
         $processor = new HTMLProcessor();
 
-        $processor->wp_site_url = 'http://mywpsite.com';
+        $processor->settings = array(
+            'wp_site_url' => 'http://mywpsite.com'
+        );
 
         $result = $processor->isInternalLink( $link, $domain );
 
