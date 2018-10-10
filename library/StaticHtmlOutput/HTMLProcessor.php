@@ -83,6 +83,18 @@ class HTMLProcessor {
             }
         }
 
+        if ( $this->base_tag_exists ) {
+            $base_element =
+                $this->xml_doc->getElementsByTagName( 'base' )->item( 0 );
+            $base_element->setAttribute( 'href', $this->settings['baseUrl'] );
+        } else {
+            $base_element = $this->xml_doc->createElement( 'base' );
+            $base_element->setAttribute( 'href', $this->settings['baseUrl'] );
+            $head_element =
+                $this->xml_doc->getElementsByTagName( 'head' )->item( 0 );
+            $head_element->appendChild( $base_element );
+        }
+
         // funcs to apply to whole page
         $this->detectEscapedSiteURLs();
         // $this->setBaseHref();
@@ -98,7 +110,7 @@ class HTMLProcessor {
         $this->convertToRelativeURL( $element );
         $this->convertToOfflineURL( $element );
 
-        if ( $this->settings['removeWPLinks'] ) {
+        if ( isset( $this->settings['removeWPLinks'] ) ) {
             $relativeLinksToRemove = array(
                 'shortlink',
                 'canonical',
@@ -149,7 +161,9 @@ class HTMLProcessor {
 
         foreach ( $head_elements as $node ) {
             if ( $node instanceof DOMComment ) {
-                if ( $this->settings['removeConditionalHeadComments'] ) {
+                if (
+                    isset( $this->settings['removeConditionalHeadComments'] )
+                ) {
                     $node->parentNode->removeChild( $node );
                 }
             } elseif ( $node->tagName === 'base' ) {
@@ -183,7 +197,7 @@ class HTMLProcessor {
 
     public function processMeta( $element ) {
         // TODO: detect meta redirects here + build list for rewriting
-        if ( $this->settings['removeWPMeta'] ) {
+        if ( isset( $this->settings['removeWPMeta'] ) ) {
             $meta_name = $element->getAttribute( 'name' );
 
             if ( strpos( $meta_name, 'generator' ) !== false ) {
