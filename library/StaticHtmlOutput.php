@@ -231,6 +231,12 @@ class StaticHtmlOutput_Controller {
             error_log( 'USER WORKING DIRECTORY NOT WRITABLE' );
         }
 
+        // convert to Windows-safe filepath
+        $outputDir = realpath( $outputDir) ;
+        // escape Win URLs for JS
+        $outputDir = json_encode( $outputDir );
+
+
         return $outputDir;
     }
 
