@@ -186,9 +186,15 @@ class HTMLProcessor {
     }
 
     public function processAnchor( $element ) {
+        $url = $element->getAttribute( 'href' );
+
+        if ( substr( $url, 0, 7 ) == 'mailto:' ) {
+            return;
+        }
+
         $this->normalizeURL( $element, 'href' );
         $this->removeQueryStringFromInternalLink( $element );
-        $this->addDiscoveredURL( $element->getAttribute( 'href' ) );
+        $this->addDiscoveredURL( $url );
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
         $this->convertToRelativeURL( $element );
