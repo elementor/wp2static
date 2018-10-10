@@ -281,7 +281,6 @@ class StaticHtmlOutput_FilesHelper {
 
             // if subdomain, rm first segment from URL to avoid duplicates
             if ( isset( $_POST['subdirectory'] ) ) {
-                error_log( 'subdir detected, rming segment' );
                 array_shift( $path_segments );
             }
 
