@@ -3,16 +3,17 @@
 class Exporter {
 
     public function __construct() {
+        $target_settings = array(
+            'general',
+            'wpenv',
+            'crawling',
+            'advanced',
+        );
+
         if ( isset( $_POST['selected_deployment_option'] ) ) {
             require_once dirname( __FILE__ ) .
                 '/../StaticHtmlOutput/PostSettings.php';
 
-            $target_settings = array(
-                'general',
-                'wpenv',
-                'crawling',
-                'advanced',
-            );
             $this->settings = WPSHO_PostSettings::get( $target_settings );
 
         } else {

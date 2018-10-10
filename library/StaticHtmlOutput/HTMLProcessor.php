@@ -5,64 +5,44 @@
 // TODO: don't rewrite mailto links unless specified, re #30
 class HTMLProcessor {
 
-    public function processHTML(
-        $html_document,
-        $page_url,
-        $wp_site_env,
-        $new_paths,
-        $wp_site_url,
-        $baseUrl,
-        $allowOfflineUsage,
-        $useRelativeURLs,
-        $useBaseHref
-        ) {
+    public function processHTML( $html_document, $page_url, $new_paths ) {
+        $target_settings = array(
+            'general',
+            'wpenv',
+            'processing',
+            'advanced',
+        );
+
+        if ( isset( $_POST['selected_deployment_option'] ) ) {
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/PostSettings.php';
+
+            $this->settings = WPSHO_PostSettings::get( $target_settings );
+
+        } else {
+            error_log('TODO: load settings from DB');
+        }
 
         // instantiate the XML body here
         $this->xml_doc = new DOMDocument();
         $this->raw_html = $html_document;
         $this->page_url = $page_url;
-        $this->wp_site_env = $wp_site_env;
         $this->new_paths = $new_paths;
-        $this->wp_site_url = $wp_site_url;
-        $this->baseUrl = $baseUrl;
-        $this->allowOfflineUsage = $allowOfflineUsage;
-        $this->useRelativeURLs = $useRelativeURLs;
-        $this->useBaseHref = $useBaseHref;
 
+        // detect if a base tag exists while in the loop
+        // use in later base href creation to decide: append or create
         $this->base_tag_exists = false;
 
         require_once dirname( __FILE__ ) . '/../URL2/URL2.php';
         $this->page_url = new Net_URL2( $page_url );
 
         $this->discoverNewURLs = (
-            isset( $_POST['discoverNewURLs'] ) &&
-             $_POST['discoverNewURLs'] == 1 &&
+            isset( $this->settings['discoverNewURLs'] ) &&
+             $this->settings['discoverNewURLs'] == 1 &&
              $_POST['ajax_action'] === 'crawl_site'
         );
 
-        $this->removeConditionalHeadComments = isset(
-            $_POST['removeConditionalHeadComments']
-        );
-
-        $this->rewriteWPPaths = isset(
-            $_POST['rewriteWPPaths']
-        );
-
-        $this->removeWPMeta = isset(
-            $_POST['removeWPMeta']
-        );
-
-        $this->removeWPLinks = isset(
-            $_POST['removeWPLinks']
-        );
-
         $this->discovered_urls = [];
-
-        $this->wp_uploads_path = $_POST['wp_uploads_path'];
-        $this->working_directory =
-            isset( $_POST['workingDirectory'] ) ?
-            $_POST['workingDirectory'] :
-            $this->wp_uploads_path;
 
         // PERF: 70% of function time
         // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
@@ -120,7 +100,7 @@ class HTMLProcessor {
         $this->convertToRelativeURL( $element );
         $this->convertToOfflineURL( $element );
 
-        if ( $this->removeWPLinks ) {
+        if ( $this->settings['removeWPLinks'] ) {
             $relativeLinksToRemove = array(
                 'shortlink',
                 'canonical',
@@ -146,7 +126,7 @@ class HTMLProcessor {
     }
 
     public function addDiscoveredURL( $url ) {
-        if ( $this->discoverNewURLs ) {
+        if ( $this->settings['discoverNewURLs'] ) {
             if ( $this->isInternalLink( $url ) ) {
                 $this->discovered_urls[] = $url;
             }
@@ -171,7 +151,7 @@ class HTMLProcessor {
 
         foreach ( $head_elements as $node ) {
             if ( $node instanceof DOMComment ) {
-                if ( $this->removeConditionalHeadComments ) {
+                if ( $this->settings['removeConditionalHeadComments'] ) {
                     $node->parentNode->removeChild( $node );
                 }
             } elseif ( $node->tagName === 'base' ) {
@@ -205,7 +185,7 @@ class HTMLProcessor {
 
     public function processMeta( $element ) {
         // TODO: detect meta redirects here + build list for rewriting
-        if ( $this->removeWPMeta ) {
+        if ( $this->settings['removeWPMeta'] ) {
             $meta_name = $element->getAttribute( 'name' );
 
             if ( strpos( $meta_name, 'generator' ) !== false ) {
@@ -215,13 +195,13 @@ class HTMLProcessor {
     }
 
     public function writeDiscoveredURLs() {
-        if ( ! $this->discoverNewURLs &&
+        if ( ! $this->settings['discoverNewURLs'] &&
             $_POST['ajax_action'] === 'crawl_site' ) {
             return;
         }
 
         file_put_contents(
-            $this->working_directory . '/WP-STATIC-DISCOVERED-URLS',
+            $this->settings['working_directory'] . '/WP-STATIC-DISCOVERED-URLS',
             PHP_EOL .
                 implode( PHP_EOL, array_unique( $this->discovered_urls ) ),
             FILE_APPEND | LOCK_EX
@@ -240,7 +220,7 @@ class HTMLProcessor {
 
     public function isInternalLink( $link, $domain = false ) {
         if ( ! $domain ) {
-            $domain = $this->wp_site_url;
+            $domain = $this->settings['wp_site_url'];
         }
 
         // TODO: apply only to links starting with .,..,/,
@@ -307,20 +287,20 @@ class HTMLProcessor {
 
         $rewritten_source = str_replace(
             array(
-                addcslashes( $this->wp_site_env['wp_active_theme'], '/' ),
-                addcslashes( $this->wp_site_env['wp_themes'], '/' ),
-                addcslashes( $this->wp_site_env['wp_uploads'], '/' ),
-                addcslashes( $this->wp_site_env['wp_plugins'], '/' ),
-                addcslashes( $this->wp_site_env['wp_content'], '/' ),
-                addcslashes( $this->wp_site_env['wp_inc'], '/' ),
+                addcslashes( $this->settings['wp_site_env']['wp_active_theme'], '/' ),
+                addcslashes( $this->settings['wp_site_env']['wp_themes'], '/' ),
+                addcslashes( $this->settings['wp_site_env']['wp_uploads'], '/' ),
+                addcslashes( $this->settings['wp_site_env']['wp_plugins'], '/' ),
+                addcslashes( $this->settings['wp_site_env']['wp_content'], '/' ),
+                addcslashes( $this->settings['wp_site_env']['wp_inc'], '/' ),
             ),
             array(
-                addcslashes( $this->new_paths['new_active_theme_path'], '/' ),
-                addcslashes( $this->new_paths['new_themes_path'], '/' ),
-                addcslashes( $this->new_paths['new_uploads_path'], '/' ),
-                addcslashes( $this->new_paths['new_plugins_path'], '/' ),
-                addcslashes( $this->new_paths['new_wp_content_path'], '/' ),
-                addcslashes( $this->new_paths['new_wpinc_path'], '/' ),
+                addcslashes( $this->settings['new_paths']['new_active_theme_path'], '/' ),
+                addcslashes( $this->settings['new_paths']['new_themes_path'], '/' ),
+                addcslashes( $this->settings['new_paths']['new_uploads_path'], '/' ),
+                addcslashes( $this->settings['new_paths']['new_plugins_path'], '/' ),
+                addcslashes( $this->settings['new_paths']['new_wp_content_path'], '/' ),
+                addcslashes( $this->settings['new_paths']['new_wpinc_path'], '/' ),
             ),
             $this->response['body']
         );
@@ -329,7 +309,7 @@ class HTMLProcessor {
     }
 
     public function rewriteWPPaths( $element ) {
-        if ( ! $this->rewriteWPPaths ) {
+        if ( ! $this->settings['rewriteWPPaths'] ) {
             return;
         }
 
@@ -353,20 +333,20 @@ class HTMLProcessor {
             // arr values are already normalized?
             $rewritten_url = str_replace(
                 array(
-                    $this->wp_site_env['wp_active_theme'],
-                    $this->wp_site_env['wp_themes'],
-                    $this->wp_site_env['wp_uploads'],
-                    $this->wp_site_env['wp_plugins'],
-                    $this->wp_site_env['wp_content'],
-                    $this->wp_site_env['wp_inc'],
+                    $this->settings['wp_site_env']['wp_active_theme'],
+                    $this->settings['wp_site_env']['wp_themes'],
+                    $this->settings['wp_site_env']['wp_uploads'],
+                    $this->settings['wp_site_env']['wp_plugins'],
+                    $this->settings['wp_site_env']['wp_content'],
+                    $this->settings['wp_site_env']['wp_inc'],
                 ),
                 array(
-                    $this->new_paths['new_active_theme_path'],
-                    $this->new_paths['new_themes_path'],
-                    $this->new_paths['new_uploads_path'],
-                    $this->new_paths['new_plugins_path'],
-                    $this->new_paths['new_wp_content_path'],
-                    $this->new_paths['new_wpinc_path'],
+                    $this->settings['new_paths']['new_active_theme_path'],
+                    $this->settings['new_paths']['new_themes_path'],
+                    $this->settings['new_paths']['new_uploads_path'],
+                    $this->settings['new_paths']['new_plugins_path'],
+                    $this->settings['new_paths']['new_wp_content_path'],
+                    $this->settings['new_paths']['new_wpinc_path'],
                 ),
                 $url_to_change
             );
@@ -380,7 +360,7 @@ class HTMLProcessor {
     }
 
     public function convertToRelativeURL( $element ) {
-        if ( ! $this->useRelativeURLs ) {
+        if ( ! $this->settings['useRelativeURLs'] ) {
             return;
         }
 
@@ -403,9 +383,9 @@ class HTMLProcessor {
         }
 
         // check it actually needs to be changed
-        if ( $this->isInternalLink( $url_to_change, $this->baseUrl ) ) {
+        if ( $this->isInternalLink( $url_to_change, $this->settings['baseUrl'] ) ) {
             $rewritten_url = str_replace(
-                $this->baseUrl,
+                $this->settings['baseUrl'],
                 $site_root,
                 $url_to_change
             );
@@ -421,7 +401,7 @@ class HTMLProcessor {
     }
 
     public function convertToOfflineURL( $element ) {
-        if ( ! $this->allowOfflineUsage ) {
+        if ( ! $this->settings['allowOfflineUsage'] ) {
             return;
         }
 
@@ -443,9 +423,9 @@ class HTMLProcessor {
             $current_page_path_to_root .= '../';
         }
 
-        if ( $this->isInternalLink( $url_to_change, $this->baseUrl ) ) {
+        if ( $this->isInternalLink( $url_to_change, $this->settings['baseUrl'] ) ) {
             $rewritten_url = str_replace(
-                $this->baseUrl,
+                $this->settings['baseUrl'],
                 '',
                 $url_to_change
             );
@@ -478,8 +458,8 @@ class HTMLProcessor {
         if ( $this->isInternalLink( $url_to_change ) ) {
             $rewritten_url = str_replace(
                 // TODO: test this won't touch subdomains, shouldn't
-                $this->wp_site_url,
-                $this->baseUrl,
+                $this->settings['wp_site_url'],
+                $this->settings['baseUrl'],
                 $url_to_change
             );
 

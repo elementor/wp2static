@@ -6,18 +6,18 @@ class ArchiveProcessor {
         require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/Archive.php';
         $this->archive = new Archive();
         $this->archive->setToCurrentArchive();
+        $target_settings = array(
+            'general',
+            'wpenv',
+            'crawling',
+            'advanced',
+            'processing',
+            'zip',
+            'folder',
+        );
 
         if ( isset( $_POST['selected_deployment_option'] ) ) {
             require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/PostSettings.php';
-            $target_settings = array(
-                'general',
-                'wpenv',
-                'crawling',
-                'advanced',
-                'processing',
-                'zip',
-                'folder',
-            );
             $this->settings = WPSHO_PostSettings::get( $target_settings ); 
         } else {
             error_log('TODO: load settings from DB');

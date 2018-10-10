@@ -3,25 +3,31 @@
 class Archive {
 
     public function __construct() {
+        $target_settings = array(
+            'general',
+            'wpenv',
+        );
+
+        if ( isset( $_POST['selected_deployment_option'] ) ) {
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/PostSettings.php';
+
+            $this->settings = WPSHO_PostSettings::get( $target_settings );
+
+        } else {
+            error_log('TODO: load settings from DB');
+        }
+
         $this->path = '';
         $this->name = '';
         $this->crawl_list = '';
         $this->export_log = '';
-        $this->uploads_path =
-            isset( $_POST['wp_uploads_path'] ) ?
-            $_POST['wp_uploads_path'] :
-            '';
-
-        $this->working_directory =
-            isset( $_POST['workingDirectory'] ) ?
-            $_POST['workingDirectory'] :
-            $this->uploads_path;
     }
 
     public function setToCurrentArchive() {
         // makes this archive's instance link to the current export's
         $handle = fopen(
-            $this->uploads_path . '/WP-STATIC-CURRENT-ARCHIVE',
+            $this->settings['wp_uploads_path'] . '/WP-STATIC-CURRENT-ARCHIVE',
             'r'
         );
 
@@ -30,11 +36,12 @@ class Archive {
     }
 
     public function currentArchiveExists() {
-        return is_file( $this->uploads_path . '/WP-STATIC-CURRENT-ARCHIVE' );
+        return is_file( $this->settings['wp_uploads_path'] .
+            '/WP-STATIC-CURRENT-ARCHIVE' );
     }
 
     public function create() {
-        $this->name = $this->working_directory .
+        $this->name = $this->settings['working_directory'] .
             '/wp-static-html-output-' . time();
 
         $this->path = $this->name . '/';
@@ -42,7 +49,7 @@ class Archive {
 
         if ( wp_mkdir_p( $this->path ) ) {
             file_put_contents(
-                $this->uploads_path . '/WP-STATIC-CURRENT-ARCHIVE',
+                $this->settings['wp_uploads_path'] . '/WP-STATIC-CURRENT-ARCHIVE',
                 $this->path
             );
         } else {
