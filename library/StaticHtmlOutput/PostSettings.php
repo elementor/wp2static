@@ -1,38 +1,27 @@
 <?php
 
-class StaticHtmlOutput_PostSettings {
+class WPSHO_PostSettings {
 
-    public static function get() {
+    public static function get( $sets = array() ) {
 
         $settings = array();
+        $key_sets = array();
+        $target_keys = array();
 
-
-        $post_array_keys = array(
-
-            // deployment method
+        $key_sets['general'] = array(
             'selected_deployment_option',
-
-            // generic
             'baseUrl',
+        );
 
-            // crawling settings
+        $key_sets['crawling'] = array(
             'additionalUrls',
             'allowOfflineUsage',
             'basicAuthPassword',
             'basicAuthUser',
             'discoverNewURLs',
+        );
 
-            'baseUrl-bunnycdn',
-            'baseUrl-dropbox',
-            'baseUrl-folder',
-            'baseUrl-ftp',
-            'baseUrl-github',
-            'baseUrl-netlify',
-            'baseUrl-s3',
-            'baseUrl-zip',
-
-
-            // processor
+        $key_sets['processing'] = array(
             'removeConditionalHeadComments',
             'rewritePLUGINDIR',
             'rewriteTHEMEDIR',
@@ -46,53 +35,71 @@ class StaticHtmlOutput_PostSettings {
             'useBaseHref',
             'useBasicAuth',
             'useRelativeURLs',
+        );
 
-            // advanced
+        $key_sets['advanced'] = array(
             'workingDirectory',
             'crawl_increment',
             'diffBasedDeploys',
+        );
 
-            // folder
+        $key_sets['folder'] = array(
+            'baseUrl-folder',
             'targetFolder',
+        );
 
-            //zip
+        $key_sets['zip'] = array(
+            'baseUrl-zip',
             'allowOfflineUsage',
+        );
 
-            // github
+        $key_sets['github'] = array(
+            'baseUrl-github',
             'ghBranch',
             'ghPath',
             'ghToken',
             'ghRepo',
+        );
 
-            // ftp 
+        $key_sets['ftp'] = array(
+            'baseUrl-ftp',
             'ftpPassword',
             'ftpRemotePath',
             'ftpServer',
             'ftpUsername',
             'useActiveFTP',
+        );
 
-            // bunnyDN
+        $key_sets['bunnycdn'] = array(
+            'baseUrl-bunnycdn',
             'bunnycdnAPIKey',
             'bunnycdnPullZoneName',
             'bunnycdnRemotePath',
+        );
 
-            // s3 / cloudfront
+        $key_sets['s3'] = array(
+            'baseUrl-s3',
             's3Bucket',
             's3Key',
             's3Region',
             's3RemotePath',
             's3Secret',
             'cfDistributionId',
+        );
 
-            // dropbox
+        $key_sets['dropbox'] = array(
+            'baseUrl-dropbox',
             'dropboxAccessToken',
             'dropboxFolder',
+        );
 
-            // netlify
+        $key_sets['netlify'] = array(
+            'baseUrl-netlify',
             'netlifyPersonalAccessToken',
             'netlifySiteID',
+        );
 
-            // wp environment
+        $key_sets['wpenv'] = array(
             'wp_site_url',
             'wp_site_path',
             'wp_site_subdir',
@@ -101,7 +108,11 @@ class StaticHtmlOutput_PostSettings {
             'baseUrl',
         );
 
-        foreach ( $post_array_keys as $key ) {
+        foreach ( $sets as $set ) {
+            $target_keys = array_merge( $target_keys, $key_sets[$set] );
+        }
+
+        foreach ( $target_keys as $key ) {
             $settings[$key] =
                 isset( $_POST[$key] ) ?
                 $_POST[$key] :
@@ -113,6 +124,8 @@ class StaticHtmlOutput_PostSettings {
             isset( $_POST['workingDirectory'] ) ?
             $_POST['workingDirectory'] :
             $settings['wp_uploads_path'];
+
+        return array_filter($settings);
 
         return $settings;
     }

@@ -9,9 +9,16 @@ class ArchiveProcessor {
 
         if ( isset( $_POST['selected_deployment_option'] ) ) {
             require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/PostSettings.php';
-            $this->settings = StaticHtmlOutput_PostSettings::get(); 
-
-            error_log(print_r($this->settings, true));
+            $target_settings = array(
+                'general',
+                'wpenv',
+                'crawling',
+                'advanced',
+                'processing',
+                'zip',
+                'folder',
+            );
+            $this->settings = WPSHO_PostSettings::get( $target_settings ); 
         } else {
             error_log('TODO: load settings from DB');
         }
@@ -319,8 +326,7 @@ class ArchiveProcessor {
             $this->archive->path . '/wp-json/'
         );
 
-        // TODO: remove all text files from theme dir
-        if ( $this->settings['diffBasedDeploys'] ) {
+        if ( isset( $this->settings['diffBasedDeploys'] ) ) {
             $this->remove_files_idential_to_previous_export();
         }
 
