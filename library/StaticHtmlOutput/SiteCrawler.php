@@ -7,60 +7,24 @@ class SiteCrawler {
 
     public function __construct() {
         // TODO: security check that this is being called from same server
-        // basic auth
-        $this->useBasicAuth =
-            isset( $_POST['useBasicAuth'] ) ?
-            $_POST['useBasicAuth'] :
-            false;
-        $this->basicAuthUser =
-            isset( $_POST['basicAuthUser'] ) ?
-            $_POST['basicAuthUser'] :
-            false;
-        $this->basicAuthPassword =
-            isset( $_POST['basicAuthPassword'] ) ?
-            $_POST['basicAuthPassword'] :
-            false;
+        $target_settings = array(
+            'general',
+            'wpenv',
+            'crawling',
+            'processing',
+            'advanced',
+        );
 
-        // require a baseUrl if creating an offline ZIP
-        if ( isset( $_POST['baseUrl'] ) ) {
-            $this->baseUrl = rtrim( $_POST['baseUrl'], '/' ) . '/';
+        if ( isset( $_POST['selected_deployment_option'] ) ) {
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/PostSettings.php';
+
+            $this->settings = WPSHO_PostSettings::get( $target_settings );
+
         } else {
-            $this->baseUrl = 'http://example.com/';
+            error_log('TODO: load settings from DB');
         }
 
-        $this->wp_site_url = $_POST['wp_site_url'];
-        $this->wp_site_path = $_POST['wp_site_path'];
-        $this->wp_uploads_path = $_POST['wp_uploads_path'];
-        $this->working_directory =
-            isset( $_POST['workingDirectory'] ) ?
-            $_POST['workingDirectory'] :
-            $this->wp_uploads_path;
-        $this->wp_uploads_url = $_POST['wp_uploads_url'];
-
-        // processing related settings
-        $this->rewriteWPCONTENT = $_POST['rewriteWPCONTENT'];
-        $this->rewriteTHEMEROOT = $_POST['rewriteTHEMEROOT'];
-        $this->rewriteTHEMEDIR = $_POST['rewriteTHEMEDIR'];
-        $this->rewriteUPLOADS = $_POST['rewriteUPLOADS'];
-        $this->rewritePLUGINDIR = $_POST['rewritePLUGINDIR'];
-        $this->rewriteWPINC = $_POST['rewriteWPINC'];
-
-        $this->allowOfflineUsage =
-            isset( $_POST['allowOfflineUsage'] ) ?
-            $_POST['allowOfflineUsage'] :
-            false;
-        $this->useRelativeURLs =
-            isset( $_POST['useRelativeURLs'] ) ?
-            $_POST['useRelativeURLs'] :
-            false;
-        $this->useBaseHref =
-            isset( $_POST['useBaseHref'] ) ?
-            $_POST['useBaseHref'] :
-            false;
-        $this->crawl_increment = (int) $_POST['crawl_increment'];
-        $this->additionalUrls = filter_input( INPUT_POST, 'additionalUrls' );
-
-        // internal pointers
         $this->processed_file = '';
         $this->file_type = '';
         $this->response = '';
@@ -71,32 +35,27 @@ class SiteCrawler {
         $this->list_of_urls_to_crawl_path = '';
         $this->urls_to_crawl = '';
 
-        $this->discoverNewURLs =
-        isset( $_POST['discoverNewURLs'] ) ?
-        $_POST['discoverNewURLs'] :
-        false;
-
         // crawl links discovered in first run
         if ( $_POST['ajax_action'] === 'crawl_again' ) {
-            if ( ! $this->discoverNewURLs ) {
+            if ( ! isset( $this->settings['discoverNewURLs'] ) ) {
                 echo 'SUCCESS';
                 die();
             }
 
-            $second_crawl_file_path = $this->working_directory .
+            $second_crawl_file_path = $this->settings['working_directory'] .
             '/WP-STATIC-2ND-CRAWL-LIST';
 
             if ( ! is_file( $second_crawl_file_path ) ) {
 
                 // TODO: read in WP-STATIC-FINAL-CRAWL-LIST clone vs INITIAL
                 $already_crawled = file(
-                    $this->working_directory . '/WP-STATIC-INITIAL-CRAWL-LIST',
+                    $this->settings['working_directory'] . '/WP-STATIC-INITIAL-CRAWL-LIST',
                     FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
                 );
 
                 // read WP-STATIC-DISCOVERED-URLS into $discovered_links
                 $discovered_links = file(
-                    $this->working_directory . '/WP-STATIC-DISCOVERED-URLS',
+                    $this->settings['working_directory'] . '/WP-STATIC-DISCOVERED-URLS',
                     FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
                 );
 
@@ -114,15 +73,15 @@ class SiteCrawler {
 
                 copy(
                     $second_crawl_file_path,
-                    $this->working_directory .
+                    $this->settings['working_directory'] .
                         '/WP-STATIC-FINAL-2ND-CRAWL-LIST'
                 );
             }
 
-            $this->list_of_urls_to_crawl_path = $this->working_directory .
+            $this->list_of_urls_to_crawl_path = $this->settings['working_directory'] .
             '/WP-STATIC-FINAL-2ND-CRAWL-LIST';
         } else {
-            $this->list_of_urls_to_crawl_path = $this->working_directory .
+            $this->list_of_urls_to_crawl_path = $this->settings['working_directory'] .
             '/WP-STATIC-FINAL-CRAWL-LIST';
         }
 
@@ -172,11 +131,11 @@ class SiteCrawler {
             die();
         }
 
-        if ( $this->crawl_increment > $total_links ) {
-            $this->crawl_increment = $total_links;
+        if ( $this->settings['crawl_increment'] > $total_links ) {
+            $this->settings['crawl_increment'] = $total_links;
         }
 
-        for ( $i = 0; $i < $this->crawl_increment; $i++ ) {
+        for ( $i = 0; $i < $this->settings['crawl_increment']; $i++ ) {
             $link_from_crawl_list = array_shift( $this->urls_to_crawl );
 
             if ( $link_from_crawl_list ) {
@@ -194,7 +153,7 @@ class SiteCrawler {
 
         // TODO: required in saving/copying, but not here? optimize...
         $handle = fopen(
-            $this->wp_uploads_path . '/WP-STATIC-CURRENT-ARCHIVE',
+            $this->settings['wp_uploads_path'] . '/WP-STATIC-CURRENT-ARCHIVE',
             'r'
         );
         $this->archive_dir = stream_get_line( $handle, 0 );
@@ -228,17 +187,17 @@ class SiteCrawler {
             'http_errors' => false,
         );
 
-        if ( $this->useBasicAuth ) {
+        if ( $this->settings['useBasicAuth'] ) {
             $request_options['auth'] = array(
-                $this->basicAuthUser,
-                $this->basicAuthPassword,
+                $this->settings['basicAuthUser'],
+                $this->settings['basicAuthPassword'],
             );
         }
 
         $this->response =
             $client->request( 'GET', $this->url, $request_options );
         $this->crawled_links_file =
-            $this->working_directory . '/WP-STATIC-CRAWLED-LINKS';
+            $this->settings['working_directory'] . '/WP-STATIC-CRAWLED-LINKS';
 
         $good_response_codes = array( '200', '201', '301', '302', '304' );
         $status_code = $this->response->getStatusCode();
@@ -256,27 +215,27 @@ class SiteCrawler {
             );
         }
 
-        // TODO: what difference between this and $this->baseUrl originally?
-        $baseUrl = $this->baseUrl;
+        // TODO: what difference between this and $this->settings['baseUrl'] originally?
+        $baseUrl = $this->settings['baseUrl'];
 
         $wp_site_environment = array(
             'wp_inc' => '/' . WPINC,
             // TODO: use reliable method for getting wp-content
             'wp_content' => '/wp-content',
             'wp_uploads' =>
-                str_replace( ABSPATH, '/', $this->wp_uploads_path ),
+                str_replace( ABSPATH, '/', $this->settings['wp_uploads_path'] ),
             'wp_plugins' => str_replace( ABSPATH, '/', WP_PLUGIN_DIR ),
             'wp_themes' => str_replace( ABSPATH, '/', get_theme_root() ),
             'wp_active_theme' =>
                 str_replace( home_url(), '', get_template_directory_uri() ),
-            'site_url' => $this->wp_site_url,
+            'site_url' => $this->settings['wp_site_url'],
         );
 
-        $new_wp_content = '/' . $this->rewriteWPCONTENT;
-        $new_theme_root = $new_wp_content . '/' . $this->rewriteTHEMEROOT;
-        $new_theme_dir = $new_theme_root . '/' . $this->rewriteTHEMEDIR;
-        $new_uploads_dir = $new_wp_content . '/' . $this->rewriteUPLOADS;
-        $new_plugins_dir = $new_wp_content . '/' . $this->rewritePLUGINDIR;
+        $new_wp_content = '/' . $this->settings['rewriteWPCONTENT'];
+        $new_theme_root = $new_wp_content . '/' . $this->settings['rewriteTHEMEROOT'];
+        $new_theme_dir = $new_theme_root . '/' . $this->settings['rewriteTHEMEDIR'];
+        $new_uploads_dir = $new_wp_content . '/' . $this->settings['rewriteUPLOADS'];
+        $new_plugins_dir = $new_wp_content . '/' . $this->settings['rewritePLUGINDIR'];
 
         $overwrite_slug_targets = array(
             'new_wp_content_path' => $new_wp_content,
@@ -284,7 +243,7 @@ class SiteCrawler {
             'new_active_theme_path' => $new_theme_dir,
             'new_uploads_path' => $new_uploads_dir,
             'new_plugins_path' => $new_plugins_dir,
-            'new_wpinc_path' => '/' . $this->rewriteWPINC,
+            'new_wpinc_path' => '/' . $this->settings['rewriteWPINC'],
         );
 
         $this->detectFileType( $this->url );
@@ -301,13 +260,7 @@ class SiteCrawler {
                 $this->processed_file = $processor->processHTML(
                     $this->response->getBody(),
                     $this->url,
-                    $wp_site_environment,
                     $overwrite_slug_targets,
-                    $this->wp_site_url,
-                    $this->baseUrl,
-                    $this->allowOfflineUsage,
-                    $this->useRelativeURLs,
-                    $this->useBaseHref
                 );
 
                 $this->processed_file = $processor->getHTML();
@@ -320,7 +273,7 @@ class SiteCrawler {
                     '/../StaticHtmlOutput/CSSProcessor.php';
                 $processor = new CSSProcessor(
                     $this->response->getBody(),
-                    $this->wp_site_url
+                    $this->settings['wp_site_url']
                 );
 
                 $processor->normalizeURLs( $this->url );
@@ -334,7 +287,7 @@ class SiteCrawler {
                     '/../StaticHtmlOutput/JSProcessor.php';
                 $processor = new JSProcessor(
                     $this->response->getBody(),
-                    $this->wp_site_url
+                    $this->settings['wp_site_url']
                 );
 
                 $processor->normalizeURLs( $this->url );
@@ -348,7 +301,7 @@ class SiteCrawler {
                     '/../StaticHtmlOutput/TXTProcessor.php';
                 $processor = new TXTProcessor(
                     $this->response->getBody(),
-                    $this->wp_site_url
+                    $this->settings['wp_site_url']
                 );
 
                 $processor->normalizeURLs( $this->url );
@@ -406,8 +359,8 @@ class SiteCrawler {
 
         $file_copier = new FileCopier(
             $this->url,
-            $this->wp_site_url,
-            $this->wp_site_path
+            $this->settings['wp_site_url'],
+            $this->settings['wp_site_path']
         );
 
         $file_copier->copyFile( $this->archive_dir );

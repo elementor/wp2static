@@ -35,6 +35,9 @@ class WPSHO_PostSettings {
             'useBaseHref',
             'useBasicAuth',
             'useRelativeURLs',
+            'removeConditionalHeadComments',
+            'removeWPMeta',
+            'removeWPLinks',
         );
 
         $key_sets['advanced'] = array(
@@ -119,14 +122,27 @@ class WPSHO_PostSettings {
                 null;
         }
 
+        /*
+            settings requiring transformation
+        */
+
         // TODO: shift this logic to places it's actually used
         $settings['working_directory'] =
             isset( $_POST['workingDirectory'] ) ?
             $_POST['workingDirectory'] :
             $settings['wp_uploads_path'];
 
-        return array_filter($settings);
+        $settings['crawl_increment'] =
+            isset( $_POST['crawl_increment'] ) ?
+            (int) $_POST['crawl_increment'] :
+            1;
 
-        return $settings;
+        // any baseUrl required if creating an offline ZIP
+        $settings['baseUrl'] =
+            isset( $_POST['baseUrl'] ) ?
+            rtrim( $_POST['baseUrl'], '/' ) . '/' :
+            'http://example.com/';
+
+        return array_filter($settings);
     }
 }
