@@ -109,6 +109,12 @@ class WPSHO_PostSettings {
             'wp_uploads_path',
             'wp_uploads_url',
             'baseUrl',
+            'wp_active_theme',
+            'wp_themes',
+            'wp_uploads',
+            'wp_plugins',
+            'wp_content',
+            'wp_inc',
         );
 
         foreach ( $sets as $set ) {

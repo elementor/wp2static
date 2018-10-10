@@ -738,9 +738,15 @@ jQuery(document).ready(function($){
   // populate some hidden fields
   $('#working_directory').val(working_directory);
   $('#wp_site_url').val(wp_site.site_url);
-  $('#wp_uploads_path').val(wp_site.uploads_path);
+  $('#wp_uploads_path').val(wp_site.wp_uploads_path);
   $('#wp_uploads_url').val(wp_site.uploads_url);
   $('#wp_site_path').val(wp_site.site_path);
+  $('#wp_inc').val(wp_site.wp_inc);
+  $('#wp_active_theme').val(wp_site.wp_active_theme);
+  $('#wp_themes').val(wp_site.wp_themes);
+  $('#wp_uploads').val(wp_site.wp_uploads);
+  $('#wp_plugins').val(wp_site.wp_plugins);
+  $('#wp_content').val(wp_site.wp_content);
 
   // call change handler on page load, to set correct state
   offlineUsageChangeHandler($('#allowOfflineUsage'));
