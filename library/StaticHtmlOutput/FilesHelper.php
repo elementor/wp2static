@@ -120,6 +120,10 @@ class StaticHtmlOutput_FilesHelper {
     public static function filePathLooksCrawlable( $file_name ) {
         $path_info = pathinfo( $file_name );
 
+        if ( $path_info['basename'][0] === '.' ) {
+            return false;
+        }
+
         return (
         isset( $path_info['extension'] ) &&
         ( ! in_array(
