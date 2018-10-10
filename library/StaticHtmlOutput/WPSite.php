@@ -12,7 +12,7 @@ class WPSite {
         // WP dir paths
         $this->site_path = ABSPATH;
         $this->plugins_path = $this->getWPDirFullPath( 'plugins' );
-        $this->uploads_path = $this->getWPDirFullPath( 'uploads' );
+        $this->wp_uploads_path = $this->getWPDirFullPath( 'uploads' );
         $this->wp_includes_path = $this->getWPDirFullPath( 'wp-includes' );
         $this->wp_contents_path = $this->getWPDirFullPath( 'wp-contents' );
         $this->theme_root_path = $this->getWPDirFullPath( 'theme-root' );
@@ -22,6 +22,15 @@ class WPSite {
             $this->parent_theme_path !== $this->child_theme_path;
 
         $this->permalink_structure = get_option( 'permalink_structure' );
+
+        $this->wp_inc = '/' . WPINC;
+        $this->wp_content = '/' . WP_CONTENT_DIR;
+        $this->wp_uploads = 
+                str_replace( ABSPATH, '/', $this->wp_uploads_path );
+        $this->wp_plugins = str_replace( ABSPATH, '/', WP_PLUGIN_DIR );
+        $this->wp_themes = str_replace( ABSPATH, '/', get_theme_root() );
+        $this->wp_active_theme =
+            str_replace( home_url(), '', get_template_directory_uri() );
 
         // TODO: pre-generate as much as possible here to avoid
         // extra overhead during the high cyclical functions
@@ -41,7 +50,7 @@ class WPSite {
     }
 
     public function uploadsPathIsWritable() {
-        return $this->uploads_path && is_writable( $this->uploads_path );
+        return $this->wp_uploads_path && is_writable( $this->wp_uploads_path );
     }
 
     public function hasCurlSupport() {

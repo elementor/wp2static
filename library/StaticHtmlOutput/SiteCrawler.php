@@ -218,33 +218,6 @@ class SiteCrawler {
         // TODO: what difference between this and $this->settings['baseUrl'] originally?
         $baseUrl = $this->settings['baseUrl'];
 
-        $wp_site_environment = array(
-            'wp_inc' => '/' . WPINC,
-            // TODO: use reliable method for getting wp-content
-            'wp_content' => '/wp-content',
-            'wp_uploads' =>
-                str_replace( ABSPATH, '/', $this->settings['wp_uploads_path'] ),
-            'wp_plugins' => str_replace( ABSPATH, '/', WP_PLUGIN_DIR ),
-            'wp_themes' => str_replace( ABSPATH, '/', get_theme_root() ),
-            'wp_active_theme' =>
-                str_replace( home_url(), '', get_template_directory_uri() ),
-            'site_url' => $this->settings['wp_site_url'],
-        );
-
-        $new_wp_content = '/' . $this->settings['rewriteWPCONTENT'];
-        $new_theme_root = $new_wp_content . '/' . $this->settings['rewriteTHEMEROOT'];
-        $new_theme_dir = $new_theme_root . '/' . $this->settings['rewriteTHEMEDIR'];
-        $new_uploads_dir = $new_wp_content . '/' . $this->settings['rewriteUPLOADS'];
-        $new_plugins_dir = $new_wp_content . '/' . $this->settings['rewritePLUGINDIR'];
-
-        $overwrite_slug_targets = array(
-            'new_wp_content_path' => $new_wp_content,
-            'new_themes_path' => $new_theme_root,
-            'new_active_theme_path' => $new_theme_dir,
-            'new_uploads_path' => $new_uploads_dir,
-            'new_plugins_path' => $new_plugins_dir,
-            'new_wpinc_path' => '/' . $this->settings['rewriteWPINC'],
-        );
 
         $this->detectFileType( $this->url );
 
@@ -259,8 +232,7 @@ class SiteCrawler {
                 // static functions for performance
                 $this->processed_file = $processor->processHTML(
                     $this->response->getBody(),
-                    $this->url,
-                    $overwrite_slug_targets,
+                    $this->url
                 );
 
                 $this->processed_file = $processor->getHTML();

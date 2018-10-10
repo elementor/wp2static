@@ -5,7 +5,7 @@
 // TODO: don't rewrite mailto links unless specified, re #30
 class HTMLProcessor {
 
-    public function processHTML( $html_document, $page_url, $new_paths ) {
+    public function processHTML( $html_document, $page_url ) {
         $target_settings = array(
             'general',
             'wpenv',
@@ -18,7 +18,6 @@ class HTMLProcessor {
                 '/../StaticHtmlOutput/PostSettings.php';
 
             $this->settings = WPSHO_PostSettings::get( $target_settings );
-
         } else {
             error_log('TODO: load settings from DB');
         }
@@ -27,7 +26,6 @@ class HTMLProcessor {
         $this->xml_doc = new DOMDocument();
         $this->raw_html = $html_document;
         $this->page_url = $page_url;
-        $this->new_paths = $new_paths;
 
         // detect if a base tag exists while in the loop
         // use in later base href creation to decide: append or create
@@ -126,7 +124,7 @@ class HTMLProcessor {
     }
 
     public function addDiscoveredURL( $url ) {
-        if ( $this->settings['discoverNewURLs'] ) {
+        if ( isset( $this->settings['discoverNewURLs'] ) ) {
             if ( $this->isInternalLink( $url ) ) {
                 $this->discovered_urls[] = $url;
             }
@@ -195,7 +193,7 @@ class HTMLProcessor {
     }
 
     public function writeDiscoveredURLs() {
-        if ( ! $this->settings['discoverNewURLs'] &&
+        if ( ! isset( $this->settings['discoverNewURLs'] ) &&
             $_POST['ajax_action'] === 'crawl_site' ) {
             return;
         }
@@ -287,20 +285,20 @@ class HTMLProcessor {
 
         $rewritten_source = str_replace(
             array(
-                addcslashes( $this->settings['wp_site_env']['wp_active_theme'], '/' ),
-                addcslashes( $this->settings['wp_site_env']['wp_themes'], '/' ),
-                addcslashes( $this->settings['wp_site_env']['wp_uploads'], '/' ),
-                addcslashes( $this->settings['wp_site_env']['wp_plugins'], '/' ),
-                addcslashes( $this->settings['wp_site_env']['wp_content'], '/' ),
-                addcslashes( $this->settings['wp_site_env']['wp_inc'], '/' ),
+                addcslashes( $this->settings['wp_active_theme'], '/' ),
+                addcslashes( $this->settings['wp_themes'], '/' ),
+                addcslashes( $this->settings['wp_uploads'], '/' ),
+                addcslashes( $this->settings['wp_plugins'], '/' ),
+                addcslashes( $this->settings['wp_content'], '/' ),
+                addcslashes( $this->settings['wp_inc'], '/' ),
             ),
             array(
-                addcslashes( $this->settings['new_paths']['new_active_theme_path'], '/' ),
-                addcslashes( $this->settings['new_paths']['new_themes_path'], '/' ),
-                addcslashes( $this->settings['new_paths']['new_uploads_path'], '/' ),
-                addcslashes( $this->settings['new_paths']['new_plugins_path'], '/' ),
-                addcslashes( $this->settings['new_paths']['new_wp_content_path'], '/' ),
-                addcslashes( $this->settings['new_paths']['new_wpinc_path'], '/' ),
+                addcslashes( $this->settings['new_active_theme_path'], '/' ),
+                addcslashes( $this->settings['new_themes_path'], '/' ),
+                addcslashes( $this->settings['new_uploads_path'], '/' ),
+                addcslashes( $this->settings['new_plugins_path'], '/' ),
+                addcslashes( $this->settings['new_wp_content_path'], '/' ),
+                addcslashes( $this->settings['new_wpinc_path'], '/' ),
             ),
             $this->response['body']
         );
@@ -309,7 +307,7 @@ class HTMLProcessor {
     }
 
     public function rewriteWPPaths( $element ) {
-        if ( ! $this->settings['rewriteWPPaths'] ) {
+        if ( ! isset( $this->settings['rewriteWPPaths'] ) ) {
             return;
         }
 
@@ -333,20 +331,20 @@ class HTMLProcessor {
             // arr values are already normalized?
             $rewritten_url = str_replace(
                 array(
-                    $this->settings['wp_site_env']['wp_active_theme'],
-                    $this->settings['wp_site_env']['wp_themes'],
-                    $this->settings['wp_site_env']['wp_uploads'],
-                    $this->settings['wp_site_env']['wp_plugins'],
-                    $this->settings['wp_site_env']['wp_content'],
-                    $this->settings['wp_site_env']['wp_inc'],
+                    $this->settings['wp_active_theme'],
+                    $this->settings['wp_themes'],
+                    $this->settings['wp_uploads'],
+                    $this->settings['wp_plugins'],
+                    $this->settings['wp_content'],
+                    $this->settings['wp_inc'],
                 ),
                 array(
-                    $this->settings['new_paths']['new_active_theme_path'],
-                    $this->settings['new_paths']['new_themes_path'],
-                    $this->settings['new_paths']['new_uploads_path'],
-                    $this->settings['new_paths']['new_plugins_path'],
-                    $this->settings['new_paths']['new_wp_content_path'],
-                    $this->settings['new_paths']['new_wpinc_path'],
+                    $this->settings['new_active_theme_path'],
+                    $this->settings['new_themes_path'],
+                    $this->settings['new_uploads_path'],
+                    $this->settings['new_plugins_path'],
+                    $this->settings['new_wp_content_path'],
+                    $this->settings['new_wpinc_path'],
                 ),
                 $url_to_change
             );
@@ -360,7 +358,7 @@ class HTMLProcessor {
     }
 
     public function convertToRelativeURL( $element ) {
-        if ( ! $this->settings['useRelativeURLs'] ) {
+        if ( ! isset( $this->settings['useRelativeURLs'] ) ) {
             return;
         }
 
@@ -401,7 +399,7 @@ class HTMLProcessor {
     }
 
     public function convertToOfflineURL( $element ) {
-        if ( ! $this->settings['allowOfflineUsage'] ) {
+        if ( ! isset( $this->settings['allowOfflineUsage'] ) ) {
             return;
         }
 
