@@ -134,6 +134,7 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
 
 = 5.9 =
 
+ * Bugfix: Prevent rewriting mailto: links containing domain
  * Bugfix: Prevent rewriting URLs on external domains
  * Bugfix: Offline ZIP creation now functioning properly
  * Enhancement: preview initial crawl list before starting your export
@@ -454,6 +455,7 @@ Initial release to Wordpress community
 
 = 5.9 =
 
+ * Bugfix: Prevent rewriting mailto: links containing domain
  * Bugfix: Prevent rewriting URLs on external domains
  * Bugfix: Offline ZIP creation now functioning properly
  * Enhancement: preview initial crawl list before starting your export
