@@ -5,47 +5,16 @@ class ArchiveProcessor {
     public function __construct() {
         require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/Archive.php';
         $this->archive = new Archive();
-
         $this->archive->setToCurrentArchive();
 
-        $this->working_directory =
-            isset( $_POST['working_directory'] ) ?
-            $_POST['working_directory'] :
-            '';
+        if ( isset( $_POST['selected_deployment_option'] ) ) {
+            require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/PostSettings.php';
+            $this->settings = StaticHtmlOutput_PostSettings::get(); 
 
-        $this->rewriteWPCONTENT =
-            filter_input( INPUT_POST, 'rewriteWPCONTENT' );
-        $this->rewriteTHEMEROOT =
-            filter_input( INPUT_POST, 'rewriteTHEMEROOT' );
-        $this->rewriteTHEMEDIR =
-            filter_input( INPUT_POST, 'rewriteTHEMEDIR' );
-        $this->rewriteUPLOADS =
-            filter_input( INPUT_POST, 'rewriteUPLOADS' );
-        $this->rewritePLUGINDIR =
-            filter_input( INPUT_POST, 'rewritePLUGINDIR' );
-        $this->rewriteWPINC =
-            filter_input( INPUT_POST, 'rewriteWPINC' );
-        $this->allowOfflineUsage =
-            filter_input( INPUT_POST, 'allowOfflineUsage' );
-        $this->targetFolder =
-            filter_input( INPUT_POST, 'targetFolder' );
-        $this->selected_deployment_option =
-            isset( $_POST['selected_deployment_option'] ) ?
-            $_POST['selected_deployment_option'] :
-            '';
-        $this->diffBasedDeploys =
-            isset( $_POST['diffBasedDeploys'] ) ?
-            $_POST['diffBasedDeploys'] :
-            false;
-        $this->wp_site_url = '';
-        $this->wp_site_subdir = '';
-        $this->wp_uploads_path = $_POST['wp_uploads_path'];
-        $this->wp_uploads_url = $_POST['wp_uploads_url'];
-        $this->working_directory =
-            isset( $_POST['workingDirectory'] ) ?
-            $_POST['workingDirectory'] :
-            $this->wp_uploads_path;
-
+            error_log(print_r($this->settings, true));
+        } else {
+            error_log('TODO: load settings from DB');
+        }
     }
 
     public function create_symlink_to_latest_archive() {
@@ -55,7 +24,7 @@ class ArchiveProcessor {
             $this->remove_symlink_to_latest_archive();
             symlink(
                 $this->archive->path,
-                $this->wp_uploads_path .
+                $this->settings['wp_uploads_path'] .
                 '/latest-export'
             );
         } else {
@@ -64,13 +33,13 @@ class ArchiveProcessor {
     }
 
     public function remove_symlink_to_latest_archive() {
-        if ( is_link( $this->wp_uploads_path . '/latest-export' ) ) {
-            unlink( $this->wp_uploads_path . '/latest-export' );
+        if ( is_link( $this->settings['wp_uploads_path'] . '/latest-export' ) ) {
+            unlink( $this->settings['wp_uploads_path'] . '/latest-export' );
         }
     }
 
     public function remove_files_idential_to_previous_export() {
-        $dir_to_diff_against = $this->wp_uploads_path . '/previous-export';
+        $dir_to_diff_against = $this->settings['wp_uploads_path'] . '/previous-export';
 
         // iterate each file in current export, check the size and contents in
         // previous, delete if match
@@ -125,7 +94,7 @@ class ArchiveProcessor {
 
     // default rename in PHP throws warnings if dir is populated
     public function renameWPDirectory( $source, $target ) {
-        if ( isset( $_POST['rewriteWPPaths'] ) ) {
+        if ( $this->settings['rewriteWPPaths'] ) {
             $this->recursive_copy( $source, $target );
 
             StaticHtmlOutput_FilesHelper::delete_dir_with_files( $source );
@@ -177,8 +146,8 @@ class ArchiveProcessor {
 
 
     public function copyStaticSiteToPublicFolder() {
-        if ( $this->selected_deployment_option === 'folder' ) {
-            $publicFolderToCopyTo = trim( $this->targetFolder );
+        if ( $this->settings['selected_deployment_option'] === 'folder' ) {
+            $publicFolderToCopyTo = trim( $this->settings['targetFolder'] );
 
             if ( ! empty( $publicFolderToCopyTo ) ) {
                 // if dir isn't empty and current deployment option is "folder"
@@ -210,8 +179,8 @@ class ArchiveProcessor {
     }
 
     public function create_zip() {
-        if ( ! $this->selected_deployment_option === 'zip' ||
-            $this->selected_deployment_option === 'netlify'
+        if ( ! $this->settings['selected_deployment_option'] === 'zip' ||
+            $this->settings['selected_deployment_option'] === 'netlify'
             ) {
             return;
         }
@@ -244,7 +213,7 @@ class ArchiveProcessor {
 
         $zipArchive->close();
 
-        $zipPath = $this->wp_uploads_path . '/' .
+        $zipPath = $this->settings['wp_uploads_path'] . '/' .
             $this->archive->name . '.zip';
 
         rename( $tempZip, $zipPath );
@@ -261,9 +230,12 @@ class ArchiveProcessor {
 
         // rename the theme theme root before the nested theme dir
         // rename the theme directory
-        $new_wp_content = $this->archive->path . '/' . $this->rewriteWPCONTENT;
-        $new_theme_root = $new_wp_content . '/' . $this->rewriteTHEMEROOT;
-        $new_theme_dir = $new_theme_root . '/' . $this->rewriteTHEMEDIR;
+        $new_wp_content = $this->archive->path . '/' .
+            $this->settings['rewriteWPCONTENT'];
+        $new_theme_root = $new_wp_content . '/' .
+            $this->settings['rewriteTHEMEROOT'];
+        $new_theme_dir = $new_theme_root . '/' .
+            $this->settings['rewriteTHEMEDIR'];
 
         // rewrite uploads dir
         $default_upload_dir = wp_upload_dir(); // need to store as var first
@@ -274,8 +246,10 @@ class ArchiveProcessor {
         );
 
         $updated_uploads_dir = $new_wp_content . '/' . $updated_uploads_dir;
-        $new_uploads_dir = $new_wp_content . '/' . $this->rewriteUPLOADS;
+        $new_uploads_dir = $new_wp_content . '/' .
+            $this->settings['rewriteUPLOADS'];
 
+        // TODO: get these WP vars out from here
         $updated_theme_root = str_replace( ABSPATH, '/', get_theme_root() );
         $updated_theme_root = $new_wp_content .
             str_replace( 'wp-content', '/', $updated_theme_root );
@@ -294,11 +268,13 @@ class ArchiveProcessor {
         );
 
         $updated_plugins_dir = $new_wp_content . $updated_plugins_dir;
-        $new_plugins_dir = $new_wp_content . '/' . $this->rewritePLUGINDIR;
+        $new_plugins_dir = $new_wp_content . '/' .
+            $this->settings['rewritePLUGINDIR'];
 
         // rewrite wp-includes  dir
         $original_wp_includes = $this->archive->path . WPINC;
-        $new_wp_includes = $this->archive->path . $this->rewriteWPINC;
+        $new_wp_includes = $this->archive->path .
+            $this->settings['rewriteWPINC'];
 
         if ( file_exists( $original_wp_content ) ) {
             $this->renameWPDirectory( $original_wp_content, $new_wp_content );
@@ -344,7 +320,7 @@ class ArchiveProcessor {
         );
 
         // TODO: remove all text files from theme dir
-        if ( $this->diffBasedDeploys ) {
+        if ( $this->settings['diffBasedDeploys'] ) {
             $this->remove_files_idential_to_previous_export();
         }
 
