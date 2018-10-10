@@ -187,7 +187,7 @@ class SiteCrawler {
             'http_errors' => false,
         );
 
-        if ( $this->settings['useBasicAuth'] ) {
+        if ( isset( $this->settings['useBasicAuth'] ) ) {
             $request_options['auth'] = array(
                 $this->settings['basicAuthUser'],
                 $this->settings['basicAuthPassword'],
