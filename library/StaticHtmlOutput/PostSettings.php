@@ -129,13 +129,13 @@ class WPSHO_PostSettings {
         );
 
         foreach ( $sets as $set ) {
-            $target_keys = array_merge( $target_keys, $key_sets[$set] );
+            $target_keys = array_merge( $target_keys, $key_sets[ $set ] );
         }
 
         foreach ( $target_keys as $key ) {
-            $settings[$key] =
-                isset( $_POST[$key] ) ?
-                $_POST[$key] :
+            $settings[ $key ] =
+                isset( $_POST[ $key ] ) ?
+                $_POST[ $key ] :
                 null;
         }
 
@@ -160,6 +160,6 @@ class WPSHO_PostSettings {
             rtrim( $_POST['baseUrl'], '/' ) . '/' :
             'http://example.com/';
 
-        return array_filter($settings);
+        return array_filter( $settings );
     }
 }

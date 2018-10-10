@@ -22,7 +22,7 @@ class SiteCrawler {
             $this->settings = WPSHO_PostSettings::get( $target_settings );
 
         } else {
-            error_log('TODO: load settings from DB');
+            error_log( 'TODO: load settings from DB' );
         }
 
         $this->processed_file = '';
@@ -217,7 +217,6 @@ class SiteCrawler {
 
         // TODO: what difference between this and $this->settings['baseUrl'] originally?
         $baseUrl = $this->settings['baseUrl'];
-
 
         $this->detectFileType( $this->url );
 

@@ -15,7 +15,7 @@ class Archive {
             $this->settings = WPSHO_PostSettings::get( $target_settings );
 
         } else {
-            error_log('TODO: load settings from DB');
+            error_log( 'TODO: load settings from DB' );
         }
 
         $this->path = '';
@@ -36,8 +36,10 @@ class Archive {
     }
 
     public function currentArchiveExists() {
-        return is_file( $this->settings['wp_uploads_path'] .
-            '/WP-STATIC-CURRENT-ARCHIVE' );
+        return is_file(
+            $this->settings['wp_uploads_path'] .
+            '/WP-STATIC-CURRENT-ARCHIVE'
+        );
     }
 
     public function create() {
