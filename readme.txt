@@ -139,6 +139,7 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
  * Bugfix: Offline ZIP creation now functioning properly
  * Enhancement: preview initial crawl list before starting your export
  * Enhancement: improved export speeds
+ * New feature: send email upon completion
 
 = 5.8 =
 
@@ -460,6 +461,7 @@ Initial release to Wordpress community
  * Bugfix: Offline ZIP creation now functioning properly
  * Enhancement: preview initial crawl list before starting your export
  * Enhancement: improved export speeds
+ * New feature: send email upon completion
 
 = 5.8 =
 
