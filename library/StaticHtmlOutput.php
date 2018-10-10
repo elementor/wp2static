@@ -237,10 +237,9 @@ class StaticHtmlOutput_Controller {
         }
 
         // convert to Windows-safe filepath
-        $outputDir = realpath( $outputDir) ;
+        $outputDir = realpath( $outputDir );
         // escape Win URLs for JS
         $outputDir = json_encode( $outputDir );
-
 
         return $outputDir;
     }
@@ -272,7 +271,10 @@ class StaticHtmlOutput_Controller {
         WsLog::l( 'STARTING EXPORT: WP ADDRESS ' . get_bloginfo( 'wpurl' ) );
         WsLog::l( 'STARTING EXPORT: PLUGIN VERSION ' . $this::VERSION );
         WsLog::l( 'STARTING EXPORT: VIA CLI? ' . $viaCLI );
-        WsLog::l( 'STARTING EXPORT: STATIC EXPORT URL ' . $exporter->settings['baseUrl'] );
+        WsLog::l(
+            'STARTING EXPORT: STATIC EXPORT URL ' .
+            $exporter->settings['baseUrl']
+        );
 
         $exporter->generateModifiedFileList();
 
