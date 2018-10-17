@@ -6,7 +6,7 @@
 class HTMLProcessor {
 
     public function processHTML( $html_document, $page_url ) {
-        if ( empty( $html_documen ) ) {
+        if ( empty( $html_document ) ) {
             return false;
         }
 
