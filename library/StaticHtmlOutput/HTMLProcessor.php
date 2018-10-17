@@ -6,10 +6,6 @@
 class HTMLProcessor {
 
     public function processHTML( $html_document, $page_url ) {
-        if ( empty( $html_document ) ) {
-            return false;
-        }
-
         $target_settings = array(
             'general',
             'crawling',
@@ -52,6 +48,11 @@ class HTMLProcessor {
         libxml_use_internal_errors( true );
         $this->xml_doc->loadHTML( $html_document );
         libxml_use_internal_errors( false );
+
+        // prevent processing empty HTML docs
+        if ( ! $this->xml_doc ) {
+                return false;
+        }
 
         // start the full iterator here, along with copy of dom
         $elements = iterator_to_array(
