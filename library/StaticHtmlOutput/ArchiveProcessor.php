@@ -105,7 +105,7 @@ class ArchiveProcessor {
 
     // default rename in PHP throws warnings if dir is populated
     public function renameWPDirectory( $source, $target ) {
-        if ( $this->settings['rewriteWPPaths'] ) {
+        if ( isset( $this->settings['rewriteWPPaths'] ) ) {
             $this->recursive_copy( $source, $target );
 
             StaticHtmlOutput_FilesHelper::delete_dir_with_files( $source );

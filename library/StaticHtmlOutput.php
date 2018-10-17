@@ -237,9 +237,9 @@ class StaticHtmlOutput_Controller {
         }
 
         // convert to Windows-safe filepath
-        $outputDir = realpath( $outputDir );
+        //$outputDir = realpath( $outputDir );
         // escape Win URLs for JS
-        $outputDir = json_encode( $outputDir );
+        //$outputDir = json_encode( $outputDir );
 
         return $outputDir;
     }

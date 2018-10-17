@@ -45,8 +45,8 @@ class SiteCrawler {
             $second_crawl_file_path = $this->settings['working_directory'] .
             '/WP-STATIC-2ND-CRAWL-LIST';
 
+            // generate the 2nd crawl list on the first request
             if ( ! is_file( $second_crawl_file_path ) ) {
-
                 // TODO: read in WP-STATIC-FINAL-CRAWL-LIST clone vs INITIAL
                 $already_crawled = file(
                     $this->settings['working_directory'] .
@@ -107,6 +107,9 @@ class SiteCrawler {
         } else {
             if ( filesize( $this->list_of_urls_to_crawl_path ) ) {
                 $this->crawlABitMore( $this->viaCLI );
+            } else {
+                // TODO: added to handle case where 2nd crawl list is empty
+                echo 'SUCCESS';
             }
         }
     }
@@ -260,12 +263,12 @@ class SiteCrawler {
             case 'js':
                 require_once dirname( __FILE__ ) .
                     '/../StaticHtmlOutput/JSProcessor.php';
-                $processor = new JSProcessor(
-                    $this->response->getBody(),
-                    $this->settings['wp_site_url']
-                );
+                $processor = new JSProcessor();
 
-                $processor->normalizeURLs( $this->url );
+                $processor->processJS(
+                    $this->response->getBody(),
+                    $this->url
+                );
 
                 $this->processed_file = $processor->getJS();
 
@@ -287,6 +290,11 @@ class SiteCrawler {
 
             case 'rss':
                 error_log( 'no handler for rss without extension yet' );
+
+                break;
+
+            case 'json':
+                error_log( 'no handler for json without extension yet' );
 
                 break;
 
@@ -385,9 +393,12 @@ class SiteCrawler {
                 $this->file_type = 'html';
             } elseif ( stripos( $this->content_type, 'rss+xml' ) !== false ) {
                 $this->file_type = 'rss';
+            } elseif ( stripos( $this->content_type, 'application/json' ) !== false ) {
+                $this->file_type = 'json';
             } else {
                 error_log( 'no filetype inferred from content-type:' );
                 error_log( $this->response->getHeaderLine( 'content-type' ) );
+                error_log( $this->url );
             }
         }
     }
