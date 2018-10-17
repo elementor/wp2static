@@ -241,7 +241,9 @@ class SiteCrawler {
                     $this->url
                 );
 
-                $this->processed_file = $processor->getHTML();
+                if ( $this->processed_file ) {
+                    $this->processed_file = $processor->getHTML();
+                }
 
                 break;
 

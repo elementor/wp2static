@@ -6,6 +6,10 @@
 class HTMLProcessor {
 
     public function processHTML( $html_document, $page_url ) {
+        if ( empty( $html_documen ) ) {
+            return false;
+        }
+
         $target_settings = array(
             'general',
             'crawling',
@@ -100,6 +104,8 @@ class HTMLProcessor {
         $this->detectEscapedSiteURLs();
         // $this->setBaseHref();
         $this->writeDiscoveredURLs();
+
+        return true;
     }
 
     public function processLink( $element ) {
