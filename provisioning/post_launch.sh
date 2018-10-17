@@ -220,7 +220,8 @@ echo "reloading apache"
 echo 'ErrorLogFormat "\n \"%M\" \n  "' >> /etc/apache2/apache2.conf
 service apache2 reload
 if [ -z "${SUBDIR_TO_INSTALL}" ]; then 
-else 
+  echo 'installing into site root:'
+else
   echo 'USING SUBDIR, ADJUST HTACCESS LIKE:'
   echo 'RewriteRule . /mysubdir/index.php [L]'
   echo 'else subpages will br broken'
