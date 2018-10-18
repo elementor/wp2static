@@ -126,16 +126,16 @@ jQuery(document).ready(function($){
       // if zip was selected, call to get zip name and enable the button with the link to download
       if (current_deployment_method === 'zip') {
         
-        zipDownloadLink = wp_site.uploads_path + '/WP-STATIC-CURRENT-ARCHIVE';
-
-        // TODO: add better way to get just the archive name/zip name and path
-        $.get(zipDownloadLink, function(zipPath){
-          parts = zipPath.split('/');
-          archiveName = parts.pop() || parts.pop();
-          zipURL = wp_site.uploads_path + '/' + archiveName + '.zip';
-          $('#downloadZIP').attr('href', zipURL);
-          $('#downloadZIP').show();
-        });
+        $.get( wp_site.uploads_url + '/WP-STATIC-CURRENT-ARCHIVE',
+            function( archive_path ) {
+                path_segments = archive_path.split('/');
+                current_archive.name = path_segments[path_segments.length - 2];
+                zipURL = wp_site.uploads_url + '/' + current_archive.name + '.zip';
+                $('#downloadZIP').attr('href', zipURL);
+                $('#downloadZIP').show();
+            },
+            'text'
+        );
       } else {
         // for other methods, show the Go to my static site link
         $('#goToMyStaticSite').attr('href', $('#baseUrl').val());
@@ -178,6 +178,13 @@ jQuery(document).ready(function($){
     if (validation_errors !== '') {
       alert(validation_errors);
 
+      // TODO: place in function that resets any in progress counters, etc
+      $('#progress').hide();
+      $('#startExportButton').prop('disabled', false);
+      $('.saveSettingsButton').prop('disabled', false);
+      $('.resetDefaultSettingsButton').prop('disabled', false);
+      $('.cancelExportButton').hide();
+
       return false;
     }
 
@@ -186,26 +193,44 @@ jQuery(document).ready(function($){
     // reset export targets to avoid having left-overs from a failed run
     export_targets = [];
 
+    setWPPathRewrites();
+
     $('.hiddenActionField').val('wp_static_html_output_ajax');
     $('#hiddenAJAXAction').val('prepare_for_export');
 
-    if ($('#sendViaGithub').attr('checked') == 'checked') {
-        export_targets.push('GITHUB');
-    }
-    if ($('#sendViaFTP').attr('checked') == 'checked') {
-        export_targets.push('FTP');
-    }
-    if ($('#sendViaBUNNYCDN').attr('checked') == 'checked') {
-        export_targets.push('BUNNYCDN');
-    }
-    if ($('#sendViaDropbox').attr('checked') == 'checked') {
+    // set the correct one
+    switch (current_deployment_method) {
+      case 'zip':
+        $('#createZip').attr('checked', 'checked');
+      break;	
+
+      case 'dropbox':
         export_targets.push('DROPBOX');
-    }
-    if ($('#sendViaS3').attr('checked') == 'checked') {
+      break;	
+
+      case 'github':
+        export_targets.push('GITHUB');
+      break;	
+
+      case 'bunnycdn':
+        export_targets.push('BUNNYCDN');
+      break;	
+
+      case 's3':
         export_targets.push('S3');
-    }
-    if ($('#sendViaNetlify').attr('checked') == 'checked') {
+      break;	
+
+      case 'netlify':
         export_targets.push('NETLIFY');
+      break;	
+
+      case 'ftp':
+        export_targets.push('FTP');
+      break;	
+
+      default:
+
+      break;
     }
 
     data = $(".options-form :input")
@@ -220,11 +245,7 @@ jQuery(document).ready(function($){
         dataType: 'html',
         method: 'POST',
         success: function(serverResponse) {
-          if (current_deployment_method == 'zip' || current_deployment_method == 'netlify') {
-            doAJAXExport('crawl_site', 'post_process_archive_dir', 'create_zip');
-          } else {
-            doAJAXExport('crawl_site', 'post_process_archive_dir');
-          }
+          doAJAXExport('crawl_site', 'crawl_again', 'post_process_archive_dir');
         },
         error: ajaxErrorHandler
     });
@@ -248,7 +269,7 @@ jQuery(document).ready(function($){
     if ($('#targetFolder').is(':visible') &&
       (
         $('#targetFolder').val() == '' ||
-        ! $('#targetFolder').val().match(/^[0-9a-z]+$/)
+        ! $('#targetFolder').val().match(/^[0-9a-zA-Z]+$/)
       )
     ) {
       validation_errors += 'Target folder may not be empty and only supports a-z, A-Z, 0-9, - and _. Please adjust your settings.';
@@ -260,6 +281,7 @@ jQuery(document).ready(function($){
       validation_errors += "Please set the Base URL field to the address you will host your static site.\n";
     }
 
+    // TODO: on new Debian package-managed environment, this was falsely erroring
     if (!isUrl($('#baseUrl').val()) && !$('#allowOfflineUsage').is(":checked")) {
       validation_errors += "Please set the Base URL field to a valid URL, ie http://mystaticsite.com.\n";
     }
@@ -339,9 +361,9 @@ jQuery(document).ready(function($){
 
       case 'github':
         required_fields = {
-          githubPersonalAccessToken: 'Please specify your GitHub personal access token in order to deploy to GitHub.',
-          githubRepo: 'Please specify your GitHub repository name in order to deploy to GitHub.',
-          githubBranch: 'Please specify which branch in your GitHub repository you want to deploy to.',
+          ghToken: 'Please specify your GitHub personal access token in order to deploy to GitHub.',
+          ghRepo: 'Please specify your GitHub repository name in order to deploy to GitHub.',
+          ghBranch: 'Please specify which branch in your GitHub repository you want to deploy to.',
         };	
 
         Object.keys(required_fields).forEach(function(key,index) {
@@ -350,7 +372,7 @@ jQuery(document).ready(function($){
           }
         });
 
-        repo = $('#githubRepo').val();
+        repo = $('#ghRepo').val();
 
         if (repo != '') {
           if (repo.split('/').length !== 2) {
@@ -432,6 +454,7 @@ jQuery(document).ready(function($){
             success: function(serverResponse) {
               // if an action is successful, and there are other actions queued up
               if (serverResponse === 'SUCCESS' && args.length > 1) {
+                batch_increment = 0;
                 // rm first action now that it's succeeded
                 args.shift();
                 // call function with all other actions
@@ -479,61 +502,11 @@ jQuery(document).ready(function($){
   /* 
     TODO: quick win to get the select menu options to behave like the sendViaFTP, etc checkboxes
   */
+    // TODO: remove this completely?
   function setDeploymentMethod(selected_deployment_method) {
-    current_deployment_method = selected_deployment_method;
-
-    // TODO: uncheck all options before checking the correct one
-    var checkbox_settings = [
-      'createZip',
-      'sendViaFTP',
-      'sendViaBUNNYCDN',
-      'sendViaS3',
-      'sendViaDropbox',
-      'sendViaGithub',
-      'sendViaNetlify',
-    ];
-
-    for (var i = 0, len = checkbox_settings.length; i < len; i++) {
-      $('#' + checkbox_settings[i]).prop('checked', false);
-    }
-
     // hide zip dl link for all
     $('#downloadZIP').hide();
-
-    // set the correct one
-    switch (selected_deployment_method) {
-      case 'zip':
-        $('#createZip').attr('checked', 'checked');
-      break;	
-
-      case 'dropbox':
-        $('#sendViaDropbox').attr('checked', 'checked');
-      break;	
-
-      case 'github':
-        $('#sendViaGithub').attr('checked', 'checked');
-      break;	
-
-      case 'bunnycdn':
-        $('#sendViaBUNNYCDN').attr('checked', 'checked');
-      break;	
-
-      case 's3':
-        $('#sendViaS3').attr('checked', 'checked');
-      break;	
-
-      case 'netlify':
-        $('#sendViaNetlify').attr('checked', 'checked');
-      break;	
-
-      case 'ftp':
-        $('#sendViaFTP').attr('checked', 'checked');
-      break;	
-
-      default:
-
-      break;
-    }
+    current_deployment_method = selected_deployment_method;
 
     // set the selected option in case calling this from outside the event handler
     $('.selected_deployment_method').val(selected_deployment_method);
@@ -605,6 +578,24 @@ jQuery(document).ready(function($){
         this.close();
       };
     }
+  }
+
+  function setWPPathRewrites() {
+    $('#new_wp_content_path').val( '/' + $('#rewriteWPCONTENT').val());
+  
+    $('#new_themes_path').val(
+      $('#new_wp_content_path').val() + '/' + $('#rewriteTHEMEROOT').val());
+  
+    $('#new_active_theme_path').val(
+      $('#new_themes_path').val() + '/' + $('#rewriteTHEMEDIR').val());
+  
+    $('#new_uploads_path').val(
+      $('#new_wp_content_path').val() + '/' + $('#rewriteUPLOADS').val());
+  
+    $('#new_plugins_path').val(
+      $('#new_wp_content_path').val() + '/' + $('#rewritePLUGINDIR').val());
+  
+    $('#new_wpinc_path').val('/' + $('#rewriteWPINC').val());
   }
 
 
@@ -767,9 +758,15 @@ jQuery(document).ready(function($){
   // populate some hidden fields
   $('#working_directory').val(working_directory);
   $('#wp_site_url').val(wp_site.site_url);
-  $('#wp_uploads_path').val(wp_site.uploads_path);
+  $('#wp_uploads_path').val(wp_site.wp_uploads_path);
   $('#wp_uploads_url').val(wp_site.uploads_url);
   $('#wp_site_path').val(wp_site.site_path);
+  $('#wp_inc').val(wp_site.wp_inc);
+  $('#wp_active_theme').val(wp_site.wp_active_theme);
+  $('#wp_themes').val(wp_site.wp_themes);
+  $('#wp_uploads').val(wp_site.wp_uploads);
+  $('#wp_plugins').val(wp_site.wp_plugins);
+  $('#wp_content').val(wp_site.wp_content);
 
   // call change handler on page load, to set correct state
   offlineUsageChangeHandler($('#allowOfflineUsage'));

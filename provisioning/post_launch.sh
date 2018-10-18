@@ -36,8 +36,10 @@ fi
 # copy plugin source files to avoid installing online
 if [ -z "${SUBDIR_TO_INSTALL}" ]; then 
 	cp -r /plugins/* /var/www/html/wp-content/plugins/
+	cp -r /themes/* /var/www/html/wp-content/themes/
 else 
 	cp -r /plugins/* /var/www/html/${SUBDIR_TO_INSTALL}/wp-content/plugins/
+	cp -r /themes/* /var/www/html/${SUBDIR_TO_INSTALL}/wp-content/themes/
 fi
 
 # source env vars to use in Docker run commands (now moved to run cmd using env-file)
@@ -103,8 +105,14 @@ else
 fi
 
 
-# sh: 1: -t: not found
-# error around here
+if [ -z "${SUBDIR_TO_INSTALL}" ]; then 
+	echo "Not setting permalinks for subdir"; 
+else
+  wp --allow-root rewrite structure '/%year%/%monthnum%/%day%/%postname%/'
+fi
+
+# disable annoying admin overlay when viewing site
+wp --allow-root user update 1 --show_admin_bar_front='false'
 
 
 if [ -z "${WPMU_ENABLED}" ]; then 
@@ -132,8 +140,16 @@ fi
 # ensure additional plugin dirs are at correct permissions before activating
 chown -R www-data:www-data wp-content/uploads
 
-# OPTIONAL: install convenience / common plugins here
+# OPTIONAL: install convenience / common plugins, themes here
+if [ -z "${ACTIVATE_CHILD_THEME}" ]; then 
+	echo "NOT installing child theme"; 
+else 
+  wp --allow-root theme activate childoftwentyseventeen
+fi
+
+
 wp --allow-root plugin activate wp-crontrol 
+wp --allow-root plugin activate autoptimize 
 #wp --allow-root plugin activate simply-static  
 wp --allow-root plugin activate WpAdminStyle # help when developing UI
 wp --allow-root plugin activate wordpress-importer 
@@ -203,3 +219,10 @@ wp --allow-root option get siteurl
 echo "reloading apache"
 echo 'ErrorLogFormat "\n \"%M\" \n  "' >> /etc/apache2/apache2.conf
 service apache2 reload
+if [ -z "${SUBDIR_TO_INSTALL}" ]; then 
+  echo 'installing into site root:'
+else
+  echo 'USING SUBDIR, ADJUST HTACCESS LIKE:'
+  echo 'RewriteRule . /mysubdir/index.php [L]'
+  echo 'else subpages will br broken'
+fi

@@ -4,5 +4,18 @@ jobs:
     docker: 
       - image: circleci/php:7.2.8-apache-node
     steps:
+      - run:
+          name: Install dependencies
+          command: |
+            git clone -b master https://github.com/squizlabs/PHP_CodeSniffer.git /tmp/phpcs
+            
+            git clone -b master https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards.git /tmp/wpcs
+            /tmp/phpcs/bin/phpcs --config-set installed_paths /tmp/wpcs
       - checkout
-      - run: ./provisioning/run_unit_tests.sh
+      - run: 
+          name: Run Code Sniffs
+          command: |
+            /tmp/phpcs/bin/phpcs --ignore=*/provisioning/*,*/freemius/*,*/GuzzleHttp/*,*/Github/*,*/aws/*,*/CloudFront/*,*/Psr/*,*/CSSParser/*,*/FTP/*,*/S3/*,*/URL2/*,wp-static-html-output.php ./
+      - run: 
+          name: Run Unit Tests
+          command: ./provisioning/run_unit_tests.sh
