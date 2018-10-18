@@ -204,3 +204,4 @@ class StaticHtmlOutput_S3 {
         }
     }
 }
+

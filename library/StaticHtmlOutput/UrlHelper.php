@@ -996,3 +996,4 @@ class StaticHtmlOutput_UrlHelper {
         return $extension;
     }
 }
+

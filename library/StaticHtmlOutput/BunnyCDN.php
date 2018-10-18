@@ -196,3 +196,4 @@ class StaticHtmlOutput_BunnyCDN {
         }
     }
 }
+

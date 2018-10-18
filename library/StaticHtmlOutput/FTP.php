@@ -200,3 +200,4 @@ class StaticHtmlOutput_FTP {
     }
 
 }
+
