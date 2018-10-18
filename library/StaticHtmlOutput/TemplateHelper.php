@@ -53,3 +53,4 @@ class TemplateHelper {
     }
 }
 // phpcs:enable
+

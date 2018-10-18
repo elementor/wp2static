@@ -6,6 +6,7 @@ class StaticHtmlOutput_Controller {
     const HOOK = 'wp-static-html-output';
 
     protected static $_instance = null;
+
     protected function __construct() {}
 
     public static function getInstance() {
@@ -19,6 +20,7 @@ class StaticHtmlOutput_Controller {
 
         return self::$_instance;
     }
+
 
     public static function init( $bootstrapFile ) {
         $instance = self::getInstance();
@@ -43,6 +45,7 @@ class StaticHtmlOutput_Controller {
         return $instance;
     }
 
+
     public function set_menu_order( $menu_order ) {
         $order = array();
         $file  = plugin_basename( __FILE__ );
@@ -59,6 +62,7 @@ class StaticHtmlOutput_Controller {
 
         return $order;
     }
+
 
     public function setDefaultOptions() {
         if ( null === $this->options->getOption( 'version' ) ) {
@@ -212,6 +216,7 @@ class StaticHtmlOutput_Controller {
         $this->options->saveAllPostData();
     }
 
+
     public function getWorkingDirectory() {
         $outputDir = '';
 
@@ -237,15 +242,15 @@ class StaticHtmlOutput_Controller {
         }
 
         // convert to Windows-safe filepath
-        //$outputDir = realpath( $outputDir );
+        // $outputDir = realpath( $outputDir );
         // escape Win URLs for JS
-        //$outputDir = json_encode( $outputDir );
-
+        // $outputDir = json_encode( $outputDir );
         return $outputDir;
     }
 
     public function prepare_for_export( $viaCLI = false ) {
         require_once dirname( __FILE__ ) . '/StaticHtmlOutput/Exporter.php';
+
         $exporter = new Exporter();
 
         $exporter->capture_last_deployment();
@@ -281,11 +286,13 @@ class StaticHtmlOutput_Controller {
         echo 'SUCCESS';
     }
 
+
     public function deploy() {
         require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/Deployer.php';
         $deployer = new Deployer();
         $deployer->deploy();
     }
+
 
     public function doExportWithoutGUI() {
         if ( wpsho_fr()->is_plan( 'professional_edition' ) ) {
@@ -323,4 +330,5 @@ class StaticHtmlOutput_Controller {
         $processor->renameWPDirectories();
         $processor->create_zip();
     }
+
 }

@@ -63,3 +63,4 @@ class StaticHtmlOutput_View {
         return $contents;
     }
 }
+

@@ -224,7 +224,7 @@ class HTMLProcessor {
             $_POST['ajax_action'] === 'crawl_site' ) {
             return;
         }
- 
+
         file_put_contents(
             $this->settings['working_directory'] . '/WP-STATIC-DISCOVERED-URLS',
             PHP_EOL .
