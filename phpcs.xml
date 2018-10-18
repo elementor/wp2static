@@ -23,8 +23,13 @@
 			<property name="tabIndent" value="false" />
 		</properties>
 	</rule>
-	<rule ref="Squiz.Commenting" />
-	<rule ref="Squiz.Commenting.ClosingDeclarationComment.Missing" />
+  <rule ref="Squiz.Commenting">
+    <exclude name="Squiz.Commenting.ClassComment"/>
+    <exclude name="Squiz.Commenting.FileComment"/>
+    <exclude name="Squiz.Commenting.FunctionComment"/>
+    <exclude name="Squiz.Commenting.VariableComment"/>
+    <exclude name="Squiz.Commenting.LongConditionClosingComment"/>
+  </rule>
 	<rule ref="WordPress">
 		<exclude name="Generic.CodeAnalysis.ForLoopWithTestFunctionCall.NotAllowed" />
 		<exclude name="Generic.Commenting.DocComment.ShortNotCapital" />

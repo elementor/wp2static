@@ -16,6 +16,7 @@
 
   <?php endif; ?>
 
+
   <table class="form-table">
     <tbody>
       <tr>
@@ -25,16 +26,8 @@
         <td>
           <?php $tpl->displayTextfield($this, 'baseUrl-s3', 'http://mystaticsite.com', '', ''); ?><br>
 
-          <p><i>Set this to the URL your visitors will use to access your site. For an S3 hosted website, you have a few options which will influence what you put in this field.</i></p>
+          <p><i>Set this to the URL your visitors will use to access your site. For an S3 hosted website, you have a few options which will influence what you put in this field. </i></p>
 
-          <ul>
-            <li><b>Direct bucket hosting</b> If you want to serve your site directly from S3, you'll want the Endpoint as shown in your AWS console, when you go to your bucket > properties > Static website hosting, ie for a bucket named 'statictestfrankfurt', hosted in the eu-central-1 region, it will be: http://statictestfrankfurt.s3-website.eu-central-1.amazonaws.com.  </li>
-
-            <li><b>Bucket with a custom domain</b> If you've setup a custom domain to use with your S3 bucket hosted, use that domain. In this case, your bucket name should already be the same as the domain, ie statictest.mydomain.org, with an A record alias entry in Route53 or your DNS provider to s3-website-ap-southeast-1.amazonaws.com. So, we would use http://statictest.mydomain.org/ as the Base Url in this case. 
-            </li>
-
-            <li><b>S3 hosted website cached with CloudFront</b> If you've setup CloudFront to speed up your S3 hosted static site, then entering your CloudFront Distribution ID here will send a cache invalidation request after all the files have been deployed to S3. It will use the same AWS credentials as S3, so ensure that IAM user in AWS has the correct permissions for both S3 and CloudFront. You could set the BaseURL to the CloudFront address, ie http://d3fvx8eaa0pipc.cloudfront.net/, but more than likely, you have another domain you want to use for the website, so set the Base Url to that, ie https://mywebsite.com.</li>
-          </ul>
         </td>
       </tr>
       <tr>
@@ -122,4 +115,6 @@
       </tr>
     </tbody>
   </table>
+
+<a href="https://docs.wp2static.com/en/deploying/deployment-options/amazon-s3/" target="_blank">Read the docs</a> for more on deploying your WordPress site to S3
 </div>

@@ -11,18 +11,8 @@ class StaticHtmlOutput_Controller {
 
     protected static $_instance = null;
 
-
-    /**
-     * Singleton protected constructor
-     */
     protected function __construct() {}
 
-
-    /**
-     * Get Singleton instance
-     *
-     * @return object
-     */
     public static function getInstance() {
         if ( null === self::$_instance ) {
             self::$_instance = new self();
@@ -36,12 +26,6 @@ class StaticHtmlOutput_Controller {
     }
 
 
-    /**
-     * Initialize controller
-     *
-     * @param string $bootstrapFile Bootstrap file
-     * @return object
-     */
     public static function init( $bootstrapFile ) {
         $instance = self::getInstance();
 
@@ -53,7 +37,10 @@ class StaticHtmlOutput_Controller {
         if ( is_admin() ) {
             add_action(
                 'admin_menu',
-                array( $instance, 'registerOptionsPage' )
+                array(
+                    $instance,
+                    'registerOptionsPage',
+                )
             );
             add_filter( 'custom_menu_order', '__return_true' );
             add_filter( 'menu_order', array( $instance, 'set_menu_order' ) );
@@ -63,12 +50,6 @@ class StaticHtmlOutput_Controller {
     }
 
 
-    /**
-     * Set menu order
-     *
-     * @param array $menu_order Menu order
-     * @return array
-     */
     public function set_menu_order( $menu_order ) {
         $order = array();
         $file  = plugin_basename( __FILE__ );
@@ -87,41 +68,37 @@ class StaticHtmlOutput_Controller {
     }
 
 
-    /**
-     * Single site activation
-     *
-     * @return void
-     */
-    public function activate_for_single_site() {
+    public function setDefaultOptions() {
         if ( null === $this->options->getOption( 'version' ) ) {
             $this->options
-                ->setOption( 'version', self::VERSION )
-                ->setOption( 'static_export_settings', self::VERSION )
-                ->save();
+            ->setOption( 'version', self::VERSION )
+            ->setOption( 'static_export_settings', self::VERSION )
+            // set default options
+            ->setOption( 'rewriteWPPaths', '1' )
+            ->setOption( 'removeConditionalHeadComments', '1' )
+            ->setOption( 'removeWPMeta', '1' )
+            ->setOption( 'removeWPLinks', '1' )
+            ->save();
         }
     }
 
+    public function activate_for_single_site() {
+        $this->setDefaultOptions();
+    }
 
-    /**
-     * Activate plugin
-     *
-     * @param boolean $network_wide Network-wide flag
-     * @return void
-     */
     public function activate( $network_wide ) {
         if ( $network_wide ) {
             global $wpdb;
 
-            $query_site_ids = <<<SITE_IDS_QUERY
-            SELECT
-                blog_id
-            FROM
-                $wpdb->blogs
-            WHERE
-                site_id = $wpdb->siteid;
-SITE_IDS_QUERY;
+            $query = 'SELECT blog_id FROM %s WHERE site_id = %d;';
 
-            $site_ids = $wpdb->get_col( $query_site_ids );
+            $site_ids = $wpdb->get_col(
+                sprintf(
+                    $query,
+                    $wpdb->blogs,
+                    $wpdb->siteid
+                )
+            );
 
             foreach ( $site_ids as $site_id ) {
                 switch_to_blog( $site_id );
@@ -131,15 +108,9 @@ SITE_IDS_QUERY;
             restore_current_blog();
         } else {
             $this->activate_for_single_site();
-        }//end if
+        }
     }
 
-
-    /**
-     * Register options page
-     *
-     * @return void
-     */
     public function registerOptionsPage() {
         $pluginDirUrl = plugin_dir_url( dirname( __FILE__ ) );
         $page = add_menu_page(
@@ -153,90 +124,63 @@ SITE_IDS_QUERY;
 
         add_action(
             'admin_print_styles-' . $page,
-            array( $this, 'enqueueAdminStyles' )
+            array(
+                $this,
+                'enqueueAdminStyles',
+            )
         );
     }
 
-
-    /**
-     * Enqueue admin styles
-     *
-     * @return void
-     */
     public function enqueueAdminStyles() {
         $pluginDirUrl = plugin_dir_url( dirname( __FILE__ ) );
+
         wp_enqueue_style(
             self::HOOK . '-admin',
             $pluginDirUrl . '/css/wp-static-html-output.css',
-            array(),
+            null,
             $this::VERSION
         );
     }
 
-
-    /**
-     * Generate preview of file list
-     *
-     * @return void
-     */
     public function generate_filelist_preview() {
         // TODO: get independent from WP calls
-        $uploads_path = isset( $_POST['wp_uploads_path'] )
-            ? $_POST['wp_uploads_path']
-            : '';
-
-        $uploads_url = isset( $_POST['wp_uploads_url'] )
-            ? $_POST['wp_uploads_url']
-            : '';
-
-        $working_directory = isset( $_POST['working_directory'] )
-            ? $_POST['working_directory']
-            : '';
-
+        $uploads_path =
+            isset( $_POST['wp_uploads_path'] ) ?
+            $_POST['wp_uploads_path'] :
+            '';
+        $uploads_url =
+            isset( $_POST['wp_uploads_url'] ) ?
+            $_POST['wp_uploads_url'] :
+             '';
+        $working_directory =
+            isset( $_POST['working_directory'] ) ?
+            $_POST['working_directory'] :
+            '';
         $plugin_hook = 'wp-static-html-output';
 
         // pre-generated the initial crawl list
-        $class_helper = 'StaticHtmlOutput_FilesHelper';
-        $initial_file_list_count = $class_helper::buildInitialFileList(
-            true,
-            $uploads_path,
-            $uploads_url,
-            $working_directory,
-            $plugin_hook
-        );
+        $initial_file_list_count =
+            StaticHtmlOutput_FilesHelper::buildInitialFileList(
+                true,
+                $uploads_path,
+                $uploads_url,
+                $working_directory,
+                $plugin_hook
+            );
 
         echo $initial_file_list_count;
     }
 
+    // TODO: send these to initial page load and pass as new settings set
+    public function setOldNewPaths() {
 
-    /**
-     * Render options page
-     *
-     * @return void
-     */
+    }
+
     public function renderOptionsPage() {
-
         require_once dirname( __FILE__ ) . '/StaticHtmlOutput/WPSite.php';
 
         $this->wp_site = new WPSite();
-
         $this->current_archive = '';
-
-        // load settings via Client or from DB if run from CLI
-        if (
-            null !== filter_input(
-                INPUT_POST,
-                'selected_deployment_option'
-            )
-        ) {
-            self::$_instance->selected_deployment_option = filter_input(
-                INPUT_POST,
-                'selected_deployment_option'
-            );
-            self::$_instance->baseUrl = untrailingslashit(
-                filter_input( INPUT_POST, 'baseUrl', FILTER_SANITIZE_URL )
-            );
-        }
 
         if ( ! $this->wp_site->systemRequirementsAreMet() ) {
             $this->view
@@ -258,35 +202,25 @@ SITE_IDS_QUERY;
                 ->assign( 'options', $this->options )
                 ->assign( 'onceAction', self::HOOK . '-options' )
                 ->render();
-        }//end if
+        } //end if
     }
 
+    public function userIsAllowed() {
+        $referred_by_admin = check_admin_referer( self::HOOK . '-options' );
+        $user_can_manage_options = current_user_can( 'manage_options' );
 
-    /**
-     * Save options
-     *
-     * @return void
-     */
+        return $referred_by_admin && $user_can_manage_options;
+    }
+
     public function save_options() {
-        if (
-            ! check_admin_referer( self::HOOK . '-options' ) ||
-            ! current_user_can( 'manage_options' )
-        ) {
-            exit(
-                'You cannot change WP Static Site Generator Plugin ' .
-                'options.'
-            );
+        if ( ! $this->userIsAllowed() ) {
+            exit( 'Not allowed to change plugin options.' );
         }
 
         $this->options->saveAllPostData();
     }
 
 
-    /**
-     * Get working directory
-     *
-     * @return string
-     */
     public function getWorkingDirectory() {
         $outputDir = '';
 
@@ -296,35 +230,29 @@ SITE_IDS_QUERY;
         } elseif ( $this->options->oworkingDirectory ) {
             $outputDir = $this->options->workingDirectory;
         } else {
-            $outputDir = $this->wp_site->uploads_path;
+            $outputDir = $this->wp_site->wp_uploads_path;
         }
 
         if ( ! is_dir( $outputDir ) && ! wp_mkdir_p( $outputDir ) ) {
-            $outputDir = $this->wp_site->uploads_path;
-            error_log(
-                'user defined outputPath does not exist and could not be ' .
-                'created, reverting to ' . $outputDir
-            );
+            $outputDir = $this->wp_site->wp_uploads_path;
+            WsLog::l( 'USER WORKING DIRECTORY UNABLE TO BE SET' );
+            error_log( 'USER WORKING DIRECTORY UNABLE TO BE SET' );
         }
 
         if ( empty( $outputDir ) || ! is_writable( $outputDir ) ) {
-            $outputDir = $this->wp_site->uploads_path;
-            error_log(
-                'user defined outputPath is not writable, reverting to ' .
-                $outputDir
-            );
+            $outputDir = $this->wp_site->wp_uploads_path;
+            WsLog::l( 'USER WORKING DIRECTORY NOT WRITABLE' );
+            error_log( 'USER WORKING DIRECTORY NOT WRITABLE' );
         }
+
+        // convert to Windows-safe filepath
+        //$outputDir = realpath( $outputDir );
+        // escape Win URLs for JS
+        //$outputDir = json_encode( $outputDir );
 
         return $outputDir;
     }
 
-
-    /**
-     * Prepare for export
-     *
-     * @param boolean $viaCLI CLI flag
-     * @return void
-     */
     public function prepare_for_export( $viaCLI = false ) {
         require_once dirname( __FILE__ ) . '/StaticHtmlOutput/Exporter.php';
 
@@ -337,22 +265,14 @@ SITE_IDS_QUERY;
 
         require_once dirname( __FILE__ ) . '/StaticHtmlOutput/Archive.php';
 
-        /**
-         * NOTE: from this point, we will have our archive name/path available
-         * to other scripts to use, bypassing WP initialization calls per
-         * request
-         */
         $archive = new Archive();
         $archive->create();
-        error_log( 'new archive created at: ' . $archive->path );
 
         // TODO: move to exporter; wp env vars to views
-        WsLog::l( 'STARTING EXPORT ' . date( 'Y-m-d h:i:s' ) );
+        $exec_time = ini_get( 'max_execution_time' );
+        WsLog::l( 'STARTING EXPORT: ' . date( 'Y-m-d h:i:s' ) );
         WsLog::l( 'STARTING EXPORT: PHP VERSION ' . phpversion() );
-        WsLog::l(
-            'STARTING EXPORT: PHP MAX EXECUTION TIME ' .
-            ini_get( 'max_execution_time' )
-        );
+        WsLog::l( 'STARTING EXPORT: PHP MAX EXECUTION TIME ' . $exec_time );
         WsLog::l( 'STARTING EXPORT: OS VERSION ' . php_uname() );
         WsLog::l( 'STARTING EXPORT: WP VERSION ' . get_bloginfo( 'version' ) );
         WsLog::l( 'STARTING EXPORT: WP URL ' . get_bloginfo( 'url' ) );
@@ -361,7 +281,10 @@ SITE_IDS_QUERY;
         WsLog::l( 'STARTING EXPORT: WP ADDRESS ' . get_bloginfo( 'wpurl' ) );
         WsLog::l( 'STARTING EXPORT: PLUGIN VERSION ' . $this::VERSION );
         WsLog::l( 'STARTING EXPORT: VIA CLI? ' . $viaCLI );
-        WsLog::l( 'STARTING EXPORT: STATIC EXPORT URL ' . $exporter->baseUrl );
+        WsLog::l(
+            'STARTING EXPORT: STATIC EXPORT URL ' .
+            $exporter->settings['baseUrl']
+        );
 
         $exporter->generateModifiedFileList();
 
@@ -369,11 +292,6 @@ SITE_IDS_QUERY;
     }
 
 
-    /**
-     * Deploy
-     *
-     * @return void
-     */
     public function deploy() {
         require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/Deployer.php';
         $deployer = new Deployer();
@@ -381,11 +299,6 @@ SITE_IDS_QUERY;
     }
 
 
-    /**
-     * Export w/o GUI
-     *
-     * @return void
-     */
     public function doExportWithoutGUI() {
         if ( wpsho_fr()->is_plan( 'professional_edition' ) ) {
 
@@ -401,36 +314,26 @@ SITE_IDS_QUERY;
         }
     }
 
-
-    /**
-     * Reset to default settings
-     *
-     * @return void
-     */
     public function reset_default_settings() {
         if ( ! delete_option( 'wp-static-html-output-options' ) ) {
             error_log( "Couldn't reset plugin to default settings" );
         }
 
+        $this->options = new StaticHtmlOutput_Options( self::OPTIONS_KEY );
+        $this->setDefaultOptions();
+
         echo 'SUCCESS';
     }
 
-
-    /**
-     * Post-processing for archive directory
-     *
-     * @return void
-     */
     public function post_process_archive_dir() {
-        // TODO: bypass plugin instantiating to process
         require_once dirname( __FILE__ ) .
             '/StaticHtmlOutput/ArchiveProcessor.php';
-
         $processor = new ArchiveProcessor();
 
         $processor->create_symlink_to_latest_archive();
 
         $processor->renameWPDirectories();
+        $processor->create_zip();
     }
 
 }
