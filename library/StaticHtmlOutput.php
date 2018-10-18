@@ -1,9 +1,5 @@
 <?php
-/**
- * StaticHtmlOutput_Controller
- *
- * @package WP2Static
- */
+
 class StaticHtmlOutput_Controller {
     const VERSION = '5.9';
     const OPTIONS_KEY = 'wp-static-html-output-options';
@@ -246,10 +242,9 @@ class StaticHtmlOutput_Controller {
         }
 
         // convert to Windows-safe filepath
-        //$outputDir = realpath( $outputDir );
+        // $outputDir = realpath( $outputDir );
         // escape Win URLs for JS
-        //$outputDir = json_encode( $outputDir );
-
+        // $outputDir = json_encode( $outputDir );
         return $outputDir;
     }
 
