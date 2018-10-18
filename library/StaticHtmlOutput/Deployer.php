@@ -1,15 +1,8 @@
 <?php
-/**
- * Deployer
- *
- * @package WP2Static
- */
+
+
 class Deployer {
 
-
-    /**
-     * Constructor
-     */
     public function __construct() {
 
         switch ( $this->selected_deployment_option ) {
@@ -18,15 +11,9 @@ class Deployer {
                 break;
 
             case 'github':
-                $this->githubRepo = filter_input( INPUT_POST, 'githubRepo' );
-                $this->githubPersonalAccessToken = filter_input(
-                    INPUT_POST,
-                    'githubPersonalAccessToken'
-                );
-                $this->githubBranch = filter_input(
-                    INPUT_POST,
-                    'githubBranch'
-                );
+                $this->ghRepo = filter_input( INPUT_POST, 'ghRepo' );
+                $this->ghToken = filter_input( INPUT_POST, 'ghToken' );
+                $this->ghBranch = filter_input( INPUT_POST, 'ghBranch' );
                 $this->githubPath = filter_input( INPUT_POST, 'githubPath' );
 
                 $this->github_prepare_export();
@@ -38,28 +25,20 @@ class Deployer {
                 $this->ftpServer = filter_input( INPUT_POST, 'ftpServer' );
                 $this->ftpUsername = filter_input( INPUT_POST, 'ftpUsername' );
                 $this->ftpPassword = filter_input( INPUT_POST, 'ftpPassword' );
-                $this->ftpRemotePath = filter_input(
-                    INPUT_POST,
-                    'ftpRemotePath'
-                );
-                $this->useActiveFTP = filter_input(
-                    INPUT_POST,
-                    'useActiveFTP'
-                );
+                $this->ftpRemotePath =
+                    filter_input( INPUT_POST, 'ftpRemotePath' );
+                $this->useActiveFTP =
+                    filter_input( INPUT_POST, 'useActiveFTP' );
 
                 $this->ftp_prepare_export();
                 $this->ftp_transfer_files( true );
                 break;
 
             case 'netlify':
-                $this->netlifySiteID = filter_input(
-                    INPUT_POST,
-                    'netlifySiteID'
-                );
-                $this->netlifyPersonalAccessToken = filter_input(
-                    INPUT_POST,
-                    'netlifyPersonalAccessToken'
-                );
+                $this->netlifySiteID =
+                    filter_input( INPUT_POST, 'netlifySiteID' );
+                $this->netlifyPersonalAccessToken =
+                    filter_input( INPUT_POST, 'netlifyPersonalAccessToken' );
 
                 $this->create_zip();
                 $this->netlify_do_export();
@@ -74,14 +53,10 @@ class Deployer {
                 $this->s3Secret = filter_input( INPUT_POST, 's3Secret' );
                 $this->s3Region = filter_input( INPUT_POST, 's3Region' );
                 $this->s3Bucket = filter_input( INPUT_POST, 's3Bucket' );
-                $this->s3RemotePath = filter_input(
-                    INPUT_POST,
-                    's3RemotePath'
-                );
-                $this->cfDistributionId = filter_input(
-                    INPUT_POST,
-                    'cfDistributionId'
-                );
+                $this->s3RemotePath =
+                    filter_input( INPUT_POST, 's3RemotePath' );
+                $this->cfDistributionId =
+                    filter_input( INPUT_POST, 'cfDistributionId' );
 
                 $this->s3_prepare_export();
                 $this->s3_transfer_files( true );
@@ -89,60 +64,44 @@ class Deployer {
                 break;
 
             case 'bunnycdn':
-                $this->bunnycdnPullZoneName = filter_input(
-                    INPUT_POST,
-                    'bunnycdnPullZoneName'
-                );
-                $this->bunnycdnAPIKey = filter_input(
-                    INPUT_POST,
-                    'bunnycdnAPIKey'
-                );
-                $this->bunnycdnRemotePath = filter_input(
-                    INPUT_POST,
-                    'bunnycdnRemotePath'
-                );
+                $this->bunnycdnPullZoneName =
+                    filter_input( INPUT_POST, 'bunnycdnPullZoneName' );
+                $this->bunnycdnAPIKey =
+                    filter_input( INPUT_POST, 'bunnycdnAPIKey' );
+                $this->bunnycdnRemotePath =
+                    filter_input( INPUT_POST, 'bunnycdnRemotePath' );
 
                 $this->bunnycdn_prepare_export();
                 $this->bunnycdn_transfer_files( true );
                 break;
 
             case 'dropbox':
-                $this->dropboxAccessToken = filter_input(
-                    INPUT_POST,
-                    'dropboxAccessToken'
-                );
-                $this->dropboxFolder = filter_input(
-                    INPUT_POST,
-                    'dropboxFolder'
-                );
+                $this->dropboxAccessToken =
+                    filter_input( INPUT_POST, 'dropboxAccessToken' );
+                $this->dropboxFolder =
+                    filter_input( INPUT_POST, 'dropboxFolder' );
 
                 $this->dropbox_prepare_export();
                 $this->dropbox_do_export( true );
                 break;
-        }//end switch
+        }
 
+        // TODO: email upon successful cron deploy
+        // $this->emailDeployNotification();
         error_log( 'scheduled deploy complete' );
-        /**
-         * TODO: email upon successful cron deploy
-         *
+    }
+
+    public function emailDeployNotification() {
         $current_user = wp_get_current_user();
         $to = $current_user->user_email;
         $subject = 'Static site deployment: ' .
-            $site_title = get_bloginfo( 'name' );;
+            $site_title = get_bloginfo( 'name' );
         $body = 'Your WordPress site has been automatically deployed.';
-        $headers = array('Content-Type: text/html; charset=UTF-8');
+        $headers = array( 'Content-Type: text/html; charset=UTF-8' );
 
         wp_mail( $to, $subject, $body, $headers );
-         */
-
     }
 
-
-    /**
-     * Prepare S3 export
-     *
-     * @return void
-     */
     public function s3_prepare_export() {
         if ( wpsho_fr()->is__premium_only() ) {
 
@@ -159,13 +118,6 @@ class Deployer {
         }
     }
 
-
-    /**
-     * Transfer files to S3
-     *
-     * @param boolean $viaCLI CLI flag
-     * @return void
-     */
     public function s3_transfer_files( $viaCLI = false ) {
         if ( wpsho_fr()->is__premium_only() ) {
 
@@ -182,12 +134,6 @@ class Deployer {
         }
     }
 
-
-    /**
-     * Invalidate items at CloudFront
-     *
-     * @return void
-     */
     public function cloudfront_invalidate_all_items() {
         if ( wpsho_fr()->is__premium_only() ) {
             require_once __DIR__ . '/CloudFront/CloudFront.php';
@@ -203,26 +149,18 @@ class Deployer {
 
                 $cf->invalidate( '/*' );
 
-                if (
-                    200 === $cf->getResponseMessage() ||
-                    201 === $cf->getResponseMessage()
-                ) {
+                if ( $cf->getResponseMessage() === 200 ||
+                    $cf->getResponseMessage() === 201 ) {
                     echo 'SUCCESS';
                 } else {
                     WsLog::l( 'CF ERROR: ' . $cf->getResponseMessage() );
                 }
             } else {
                 echo 'SUCCESS';
-            }//end if
-        }//end if
+            }
+        }
     }
 
-
-    /**
-     * Prepare Dropbox export
-     *
-     * @return void
-     */
     public function dropbox_prepare_export() {
         $dropbox = new StaticHtmlOutput_Dropbox(
             $this->dropboxAccessToken,
@@ -233,13 +171,6 @@ class Deployer {
         $dropbox->prepare_export();
     }
 
-
-    /**
-     * Export to Dropbox
-     *
-     * @param boolean $viaCLI CLI flag
-     * @return void
-     */
     public function dropbox_do_export( $viaCLI = false ) {
         $dropbox = new StaticHtmlOutput_Dropbox(
             $this->dropboxAccessToken,
@@ -250,17 +181,13 @@ class Deployer {
         $dropbox->transfer_files( $viaCLI );
     }
 
-
-    /**
-     * Export to Netlify
-     *
-     * @return void
-     */
     public function netlify_do_export() {
         // will exclude the siteroot when copying
         $archiveDir = file_get_contents(
-            $this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE'
+            $this->getWorkingDirectory() .
+            '/WP-STATIC-CURRENT-ARCHIVE'
         );
+
         $archiveName = rtrim( $archiveDir, '/' ) . '.zip';
 
         $netlify = new StaticHtmlOutput_Netlify(
@@ -271,19 +198,13 @@ class Deployer {
         echo $netlify->deploy( $archiveName );
     }
 
-
-    /**
-     * Prepare file list
-     *
-     * @param string $export_target Export target
-     * @return void
-     */
     public function prepare_file_list( $export_target ) {
         $file_list_path = $this->getWorkingDirectory() .
             '/WP-STATIC-EXPORT-' . $export_target . '-FILES-TO-EXPORT';
 
-        // zero file
-        $f = @fopen( $file_list_path, 'r+' );
+        // zero write the file
+        // TODO: avoid suppression
+        $f = fopen( $file_list_path, 'r+' );
         if ( $f !== false ) {
             ftruncate( $f, 0 );
             fclose( $f );
@@ -292,6 +213,7 @@ class Deployer {
         $archiveDir = file_get_contents(
             $this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE'
         );
+
         $archiveName = rtrim( $archiveDir, '/' );
         $siteroot = $archiveName . '/';
 
@@ -304,12 +226,6 @@ class Deployer {
         );
     }
 
-
-    /**
-     * Prepare for FTP export
-     *
-     * @return void
-     */
     public function ftp_prepare_export() {
         $ftp = new StaticHtmlOutput_FTP(
             $this->ftpServer,
@@ -323,13 +239,6 @@ class Deployer {
         $ftp->prepare_deployment();
     }
 
-
-    /**
-     * Transfer files via FTP
-     *
-     * @param boolean $viaCLI CLI flag
-     * @return void
-     */
     public function ftp_transfer_files( $viaCLI = false ) {
         $ftp = new StaticHtmlOutput_FTP(
             $this->ftpServer,
@@ -343,12 +252,6 @@ class Deployer {
         $ftp->transfer_files( $viaCLI );
     }
 
-
-    /**
-     * Prepare for export to BunnyCDN
-     *
-     * @return void
-     */
     public function bunnycdn_prepare_export() {
         if ( wpsho_fr()->is__premium_only() ) {
             $bunnyCDN = new StaticHtmlOutput_BunnyCDN(
@@ -362,13 +265,6 @@ class Deployer {
         }
     }
 
-
-    /**
-     * Transfer files to BunnyCDN
-     *
-     * @param boolean $viaCLI CLI flag
-     * @return void
-     */
     public function bunnycdn_transfer_files( $viaCLI = false ) {
         if ( wpsho_fr()->is__premium_only() ) {
 
@@ -383,12 +279,6 @@ class Deployer {
         }
     }
 
-
-    /**
-     * Purge BunnyCDN cache
-     *
-     * @return void
-     */
     public function bunnycdn_purge_cache() {
         if ( wpsho_fr()->is__premium_only() ) {
 
@@ -403,18 +293,11 @@ class Deployer {
         }
     }
 
-
-    /**
-     * Upload blogs
-     *
-     * @param boolean $viaCLI CLI flag
-     * @return void
-     */
     public function github_upload_blobs( $viaCLI = false ) {
         $github = new StaticHtmlOutput_GitHub(
-            $this->githubRepo,
-            $this->githubPersonalAccessToken,
-            $this->githubBranch,
+            $this->ghRepo,
+            $this->ghToken,
+            $this->ghBranch,
             $this->githubPath,
             $this->getWorkingDirectory()
         );
@@ -422,17 +305,11 @@ class Deployer {
         $github->upload_blobs( $viaCLI );
     }
 
-
-    /**
-     * Prepare GitHub export
-     *
-     * @return void
-     */
     public function github_prepare_export() {
         $github = new StaticHtmlOutput_GitHub(
-            $this->githubRepo,
-            $this->githubPersonalAccessToken,
-            $this->githubBranch,
+            $this->ghRepo,
+            $this->ghToken,
+            $this->ghBranch,
             $this->githubPath,
             $this->getWorkingDirectory()
         );
@@ -440,22 +317,16 @@ class Deployer {
         $github->prepare_deployment();
     }
 
-
-    /**
-     * Finalize GitHub export
-     *
-     * @return void
-     */
     public function github_finalise_export() {
         $github = new StaticHtmlOutput_GitHub(
-            $this->githubRepo,
-            $this->githubPersonalAccessToken,
-            $this->githubBranch,
+            $this->ghRepo,
+            $this->ghToken,
+            $this->ghBranch,
             $this->githubPath,
             $this->getWorkingDirectory()
         );
 
         $github->commit_new_tree();
     }
-
 }
+

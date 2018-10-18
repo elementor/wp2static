@@ -1,122 +1,59 @@
 <?php
-/**
- * ArchiveProcessor
- *
- * @package WP2Static
- */
+
 class ArchiveProcessor {
 
-
-    /**
-     * Constructor
-     */
     public function __construct() {
-        /**
-         * TODO: prepare_export func to return archive name to client, then
-         * TODO: ... we use that directly here
-         */
-        require_once dirname( __FILE__ ) .
-            '/../StaticHtmlOutput/Archive.php';
-
+        require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/Archive.php';
         $this->archive = new Archive();
-
-        $this->working_directory = isset( $_POST['working_directory'] )
-            ? $_POST['working_directory']
-            : '';
-
-        $this->rewriteWPCONTENT = filter_input(
-            INPUT_POST,
-            'rewriteWPCONTENT'
-        );
-        $this->rewriteTHEMEROOT = filter_input(
-            INPUT_POST,
-            'rewriteTHEMEROOT'
-        );
-        $this->rewriteTHEMEDIR = filter_input(
-            INPUT_POST,
-            'rewriteTHEMEDIR'
-        );
-        $this->rewriteUPLOADS = filter_input(
-            INPUT_POST,
-            'rewriteUPLOADS'
-        );
-        $this->rewritePLUGINDIR = filter_input(
-            INPUT_POST,
-            'rewritePLUGINDIR'
-        );
-        $this->rewriteWPINC = filter_input(
-            INPUT_POST,
-            'rewriteWPINC'
+        $this->archive->setToCurrentArchive();
+        $target_settings = array(
+            'general',
+            'wpenv',
+            'crawling',
+            'advanced',
+            'processing',
+            'zip',
+            'folder',
         );
 
-        $this->allowOfflineUsage = filter_input(
-            INPUT_POST,
-            'allowOfflineUsage'
-        );
-        $this->targetFolder = filter_input( INPUT_POST, 'targetFolder' );
-
-        $key_selected = 'selected_deployment_option';
-        $this->selected_deployment_option = isset( $_POST[ $key_selected ] ) ?
-            $_POST['selected_deployment_option']
-            : '';
-
-        $this->diffBasedDeploys = isset( $_POST['diffBasedDeploys'] )
-            ? $_POST['diffBasedDeploys']
-            : false;
-
-        $this->wp_site_url = '';
-        $this->wp_site_subdir = '';
-        $this->wp_uploads_path = $_POST['wp_uploads_path'];
-        $this->working_directory = isset( $_POST['workingDirectory'] )
-            ? $_POST['workingDirectory']
-            : $this->wp_uploads_path;
+        if ( isset( $_POST['selected_deployment_option'] ) ) {
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/PostSettings.php';
+            $this->settings = WPSHO_PostSettings::get( $target_settings );
+        } else {
+            error_log( 'TODO: load settings from DB' );
+        }
     }
 
-
-    /**
-     * Create symlink from latest archive
-     *
-     * @return void
-     */
     public function create_symlink_to_latest_archive() {
         $this->archive->setToCurrentArchive();
 
         if ( is_dir( $this->archive->path ) ) {
             $this->remove_symlink_to_latest_archive();
-
             symlink(
-                $this->archive->path, $this->wp_uploads_path . '/latest-export'
+                $this->archive->path,
+                $this->settings['wp_uploads_path'] .
+                '/latest-export'
             );
         } else {
             error_log( 'failed to symlink latest export directory' );
         }
     }
 
-
-    /**
-     * Remove symlink from latest archive
-     *
-     * @return void
-     */
     public function remove_symlink_to_latest_archive() {
-        if ( is_link( $this->wp_uploads_path . '/latest-export' ) ) {
-            unlink( $this->wp_uploads_path . '/latest-export' );
+        if (
+            is_link( $this->settings['wp_uploads_path'] . '/latest-export' )
+            ) {
+            unlink( $this->settings['wp_uploads_path'] . '/latest-export' );
         }
     }
 
+    public function remove_files_idential_to_previous_export() {
+        $dir_to_diff_against = $this->settings['wp_uploads_path'] .
+            '/previous-export';
 
-    /**
-     * Remove files identical to previous export
-     *
-     * @return void
-     */
-    public function remove_files_identical_to_previous_export() {
-        $dir_to_diff_against = $this->wp_uploads_path . '/previous-export';
-
-        /**
-         * iterate each file in current export, check the size and contents in
-         * previous, delete if match
-         */
+        // iterate each file in current export, check the size and contents in
+        // previous, delete if match
         $objects = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator(
                 $this->archive->path,
@@ -133,100 +70,77 @@ class ArchiveProcessor {
                     $current_file
                 );
 
-                $previously_exported_file = $dir_to_diff_against . '/' .
-                    $filename;
+                $previously_exported_file =
+                    $dir_to_diff_against . '/' . $filename;
 
                 // if file doesn't exist at all in previous export:
                 if ( is_file( $previously_exported_file ) ) {
-                    if (
-                        $this->files_are_equal(
-                            $current_file,
-                            $previously_exported_file
-                        )
-                    ) {
+                    if ( $this->files_are_equal(
+                        $current_file,
+                        $previously_exported_file
+                    ) ) {
                         unlink( $current_file );
                     }
                 }
-            }//end if
-        }//end foreach
+            }
+        }
 
-        /**
-         * TODO: cleanup empty dirs in archiveDir to prevent them being
-         * TODO: ... attempted to export
-         */
-
+        // TODO: cleanup empty archiveDirs to prevent them exporting
+        // TODO: replace `exec` calls with native PHP
+        // phpcs:disable
         $files_in_previous_export = exec(
             "find $dir_to_diff_against -type f | wc -l"
         );
+
         $files_to_be_deployed = exec(
             "find $this->archive->path -type f | wc -l"
         );
 
-        /**
-         * copy the newly changed files back into the previous export dir,
-         * else will never capture changes
-         */
+        // phpcs:enable
+        // copy the newly changed files back into the previous export dir,
+        // else will never capture changes
+        // TODO: this works the first time, but will fail the diff on
+        // subsequent runs, alternating each time`
+    }
 
-        /**
-         * TODO: this works the first time, but will fail the diff on
-         * TODO: ... subsequent runs, alternating each time`
-         */
+    // default rename in PHP throws warnings if dir is populated
+    public function renameWPDirectory( $source, $target ) {
+        if ( isset( $this->settings['rewriteWPPaths'] ) ) {
+            $this->recursive_copy( $source, $target );
+
+            StaticHtmlOutput_FilesHelper::delete_dir_with_files( $source );
+        }
     }
 
 
-    /**
-     * Rename populated directory
-     *
-     * @param string $source Source
-     * @param string $target Target
-     * @return void
-     */
-    public function rename_populated_directory( $source, $target ) {
-        // default rename in PHP throws warnings if dir is populated
-        $this->recursive_copy( $source, $target );
-
-        StaticHtmlOutput_FilesHelper::delete_dir_with_files( $source );
-    }
-
-
-    /**
-     * Check whether files are equivalent
-     *
-     * @param string $a File "A" path
-     * @param string $b File "B" path
-     * @return boolean
-     */
     public function files_are_equal( $a, $b ) {
-
         // if image, use sha, if html, use something else
         $pathinfo = pathinfo( $a );
-        if (
-            isset( $pathinfo['extension'] ) &&
+        if ( isset( $pathinfo['extension'] ) &&
             in_array(
                 $pathinfo['extension'],
                 array( 'jpg', 'png', 'gif', 'jpeg' )
-            )
-        ) {
+            ) ) {
             return sha1_file( $a ) === sha1_file( $b );
         }
 
+        // TODO: replace with native calls
+        // phpcs:disable
         $diff = exec( "diff $a $b" );
+        // phpcs:enable
         $result = $diff === '';
 
         return $result;
     }
 
 
-    /**
-     * Recursively copy
-     *
-     * @param string $srcdir Source directory
-     * @param string $dstdir Destination directory
-     * @return void
-     */
     public function recursive_copy( $srcdir, $dstdir ) {
         $dir = opendir( $srcdir );
-        @mkdir( $dstdir );
+
+        if ( ! is_dir( $dstdir ) ) {
+            mkdir( $dstdir );
+        }
+
         while ( $file = readdir( $dir ) ) {
             if ( $file != '.' && $file != '..' ) {
                 $src = $srcdir . '/' . $file;
@@ -242,56 +156,49 @@ class ArchiveProcessor {
     }
 
 
-    /**
-     * Copy static site to public folder
-     *
-     * @return void
-     */
     public function copyStaticSiteToPublicFolder() {
-        if ( $this->selected_deployment_option === 'folder' ) {
-            $publicFolderToCopyTo = trim( $this->targetFolder );
+        if ( $this->settings['selected_deployment_option'] === 'folder' ) {
+            $publicFolderToCopyTo = trim( $this->settings['targetFolder'] );
 
             if ( ! empty( $publicFolderToCopyTo ) ) {
-                // if folder not empty & current deployment option is "folder"
+                // if dir isn't empty and current deployment option is "folder"
                 $publicFolderToCopyTo = ABSPATH . $publicFolderToCopyTo;
 
                 // mkdir for the new dir
                 if ( ! file_exists( $publicFolderToCopyTo ) ) {
                     if ( wp_mkdir_p( $publicFolderToCopyTo ) ) {
-                        // file permissions allow public viewing of files
+                        // file permissions for public viewing of files within
                         chmod( $publicFolderToCopyTo, 0755 );
 
-                        // copy contents of the current archive to targetFolder
+                        // copy contents of current archive to the targetFolder
                         $this->recursive_copy(
                             $this->archive->path,
                             $publicFolderToCopyTo
                         );
 
                     } else {
-                        error_log(
-                            'Couldn\'t create target folder to copy files to'
-                        );
+                        error_log( 'Target folder could not be made ERR#A5' );
                     }
                 } else {
-
                     $this->recursive_copy(
                         $this->archive->path,
                         $publicFolderToCopyTo
                     );
-                }//end if
-            }//end if
-        }//end if
+                }
+            }
+        }
     }
 
-
-    /**
-     * Create ZIP archive
-     *
-     * @return void|WP_Error On failure
-     */
     public function create_zip() {
-        $archiveName = rtrim( $this->archive->path, '/' );
-        $tempZip = $archiveName . '.tmp';
+        if ( ! $this->settings['selected_deployment_option'] === 'zip' ||
+            $this->settings['selected_deployment_option'] === 'netlify'
+            ) {
+            return;
+        }
+
+        $archivePath = rtrim( $this->archive->path, '/' );
+        $tempZip = $archivePath . '.tmp';
+
         $zipArchive = new ZipArchive();
 
         if ( $zipArchive->open( $tempZip, ZIPARCHIVE::CREATE ) !== true ) {
@@ -301,14 +208,14 @@ class ArchiveProcessor {
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator( $this->archive->path )
         );
+
         foreach ( $iterator as $fileName => $fileObject ) {
             $baseName = basename( $fileName );
             if ( $baseName != '.' && $baseName != '..' ) {
-                if (
-                    ! $zipArchive->addFile(
-                        realpath( $fileName ),
-                        str_replace( $this->archive->path, '', $fileName )
-                    )
+                if ( ! $zipArchive->addFile(
+                    realpath( $fileName ),
+                    str_replace( $this->archive->path, '', $fileName )
+                )
                 ) {
                     return new WP_Error( 'Could not add file: ' . $fileName );
                 }
@@ -316,61 +223,51 @@ class ArchiveProcessor {
         }
 
         $zipArchive->close();
-        $zipDownloadLink = $archiveName . '.zip';
-        rename( $tempZip, $zipDownloadLink );
 
-        /**
-         * TODO: need to make sure this is WP independent and saves to uploads
-         * TODO: ... vs working dir?
-         */
-        $publicDownloadableZip = str_replace(
-            ABSPATH,
-            trailingslashit( home_url() ), $archiveName . '.zip'
-        );
+        $zipPath = $this->settings['wp_uploads_path'] . '/' .
+            $this->archive->name . '.zip';
 
-        echo 'SUCCESS';
+        rename( $tempZip, $zipPath );
     }
 
-
-    /**
-     * Rename WordPress directories
-     *
-     * @return void
-     */
     public function renameWPDirectories() {
         // rename dirs (in reverse order than when doing in responsebody)
         // rewrite wp-content  dir
-        // TODO: check if this has been modified/use constant
-        $original_wp_content = $this->archive->path . '/wp-content';
+        $wp_content_dir = WP_CONTENT_DIR;
+        $wp_content_dir_name = str_replace( ABSPATH, '', $wp_content_dir );
+
+        $original_wp_content = $this->archive->path .
+            '/' . $wp_content_dir_name;
 
         // rename the theme theme root before the nested theme dir
         // rename the theme directory
-        $new_wp_content = $this->archive->path . '/' . $this->rewriteWPCONTENT;
-        $new_theme_root = $new_wp_content . '/' . $this->rewriteTHEMEROOT;
-        $new_theme_dir = $new_theme_root . '/' . $this->rewriteTHEMEDIR;
+        $new_wp_content = $this->archive->path . '/' .
+            $this->settings['rewriteWPCONTENT'];
+        $new_theme_root = $new_wp_content . '/' .
+            $this->settings['rewriteTHEMEROOT'];
+        $new_theme_dir = $new_theme_root . '/' .
+            $this->settings['rewriteTHEMEDIR'];
 
         // rewrite uploads dir
         $default_upload_dir = wp_upload_dir(); // need to store as var first
         $updated_uploads_dir = str_replace(
-            ABSPATH,
+            WP_CONTENT_DIR,
             '',
             $default_upload_dir['basedir']
         );
 
-        $updated_uploads_dir = str_replace(
-            'wp-content/',
-            '',
-            $updated_uploads_dir
-        );
         $updated_uploads_dir = $new_wp_content . '/' . $updated_uploads_dir;
-        $new_uploads_dir = $new_wp_content . '/' . $this->rewriteUPLOADS;
+        $new_uploads_dir = $new_wp_content . '/' .
+            $this->settings['rewriteUPLOADS'];
 
+        // TODO: get these WP vars out from here
         $updated_theme_root = str_replace( ABSPATH, '/', get_theme_root() );
         $updated_theme_root = $new_wp_content .
             str_replace( 'wp-content', '/', $updated_theme_root );
 
-        $updated_theme_dir = $new_theme_root . '/' .
-            basename( get_template_directory_uri() );
+        $updated_theme_dir = $new_theme_root .
+            '/' . basename( get_template_directory_uri() );
+
         $updated_theme_dir = str_replace( '\/\/', '', $updated_theme_dir );
 
         // rewrite plugins dir
@@ -380,55 +277,46 @@ class ArchiveProcessor {
             '',
             $updated_plugins_dir
         );
+
         $updated_plugins_dir = $new_wp_content . $updated_plugins_dir;
-        $new_plugins_dir = $new_wp_content . '/' . $this->rewritePLUGINDIR;
+        $new_plugins_dir = $new_wp_content . '/' .
+            $this->settings['rewritePLUGINDIR'];
 
         // rewrite wp-includes  dir
-        $original_wp_includes = $this->archive->path . '/' . WPINC;
-        $new_wp_includes = $this->archive->path . '/' . $this->rewriteWPINC;
+        $original_wp_includes = $this->archive->path . WPINC;
+        $new_wp_includes = $this->archive->path .
+            $this->settings['rewriteWPINC'];
 
         if ( file_exists( $original_wp_content ) ) {
-            $this->rename_populated_directory(
-                $original_wp_content,
-                $new_wp_content
-            );
+            $this->renameWPDirectory( $original_wp_content, $new_wp_content );
         }
 
         if ( file_exists( $updated_uploads_dir ) ) {
-            $this->rename_populated_directory(
-                $updated_uploads_dir,
-                $new_uploads_dir
-            );
+            $this->renameWPDirectory( $updated_uploads_dir, $new_uploads_dir );
         }
 
         if ( file_exists( $updated_theme_root ) ) {
-            $this->rename_populated_directory(
-                $updated_theme_root,
-                $new_theme_root
-            );
+            $this->renameWPDirectory( $updated_theme_root, $new_theme_root );
         }
 
         if ( file_exists( $updated_theme_dir ) ) {
-            $this->rename_populated_directory(
-                $updated_theme_dir,
-                $new_theme_dir
-            );
+            $this->renameWPDirectory( $updated_theme_dir, $new_theme_dir );
         }
 
         if ( file_exists( $updated_plugins_dir ) ) {
-            $this->rename_populated_directory(
-                $updated_plugins_dir,
-                $new_plugins_dir
-            );
+            $this->renameWPDirectory( $updated_plugins_dir, $new_plugins_dir );
+
         }
 
         if ( file_exists( $original_wp_includes ) ) {
-            $this->rename_populated_directory(
+            $this->renameWPDirectory(
                 $original_wp_includes,
                 $new_wp_includes
             );
+
         }
 
+        // TODO: add to options
         // rm other left over WP identifying files
         if ( file_exists( $this->archive->path . '/xmlrpc.php' ) ) {
             unlink( $this->archive->path . '/xmlrpc.php' );
@@ -442,14 +330,13 @@ class ArchiveProcessor {
             $this->archive->path . '/wp-json/'
         );
 
-        // TODO: remove all text files from theme dir
-        if ( $this->diffBasedDeploys ) {
-            $this->remove_files_identical_to_previous_export();
+        if ( isset( $this->settings['diffBasedDeploys'] ) ) {
+            $this->remove_files_idential_to_previous_export();
         }
 
         $this->copyStaticSiteToPublicFolder();
 
         echo 'SUCCESS';
     }
-
 }
+
