@@ -46,13 +46,10 @@ class JSProcessor {
 
         $this->discovered_urls = [];
 
-
-
-
         // funcs to apply to whole page
-        //$this->detectEscapedSiteURLs();
-        //// $this->setBaseHref();
-        //$this->writeDiscoveredURLs();
+        // $this->detectEscapedSiteURLs();
+        // $this->setBaseHref();
+        // $this->writeDiscoveredURLs();
     }
 }
 

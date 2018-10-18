@@ -46,3 +46,4 @@ class StaticHtmlOutput_Netlify {
         }
     }
 }
+

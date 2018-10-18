@@ -1,28 +1,28 @@
 <?xml version="1.0"?>
 <ruleset name="WP2Static">
-	<description>WP2Static Project Coding Standard</description>
-	<!--
-		Note: Applied WP standard override to allow tabs instead
-		      of spaces, however, PHP CBF is using 4 spaces - Gray
+  <description>WP2Static Project Coding Standard</description>
+  <!--
+    Note: Applied WP standard override to allow tabs instead
+          of spaces, however, PHP CBF is using 4 spaces - Gray
 
-		Reference: https://stackoverflow.com/a/45154669/3701444
-	-->
-	<arg name="colors" />
-	<arg name="tab-width" value="2" />
-	<!-- Custom line length validation -->
-	<rule ref="Generic.Files.LineLength">
-		<properties>
-			<property name="lineLimit" value="80" />
-			<property name="absoluteLineLimit" value="100" />
-		</properties>
-	</rule>
-	<rule ref="Generic.WhiteSpace.DisallowTabIndent" />
-	<rule ref="Generic.WhiteSpace.ScopeIndent">
-		<properties>
-			<property name="indent" value="2" />
-			<property name="tabIndent" value="false" />
-		</properties>
-	</rule>
+    Reference: https://stackoverflow.com/a/45154669/3701444
+  -->
+  <arg name="colors" />
+  <arg name="tab-width" value="2" />
+  <!-- Custom line length validation -->
+  <rule ref="Generic.Files.LineLength">
+    <properties>
+      <property name="lineLimit" value="80" />
+      <property name="absoluteLineLimit" value="100" />
+    </properties>
+  </rule>
+  <rule ref="Generic.WhiteSpace.DisallowTabIndent" />
+  <rule ref="Generic.WhiteSpace.ScopeIndent">
+    <properties>
+      <property name="indent" value="2" />
+      <property name="tabIndent" value="false" />
+    </properties>
+  </rule>
   <rule ref="Squiz.Commenting">
     <exclude name="Squiz.Commenting.ClassComment"/>
     <exclude name="Squiz.Commenting.FileComment"/>
@@ -30,78 +30,78 @@
     <exclude name="Squiz.Commenting.VariableComment"/>
     <exclude name="Squiz.Commenting.LongConditionClosingComment"/>
   </rule>
-	<rule ref="WordPress">
-		<exclude name="Generic.CodeAnalysis.ForLoopWithTestFunctionCall.NotAllowed" />
-		<exclude name="Generic.Commenting.DocComment.ShortNotCapital" />
-		<exclude name="Generic.Formatting.MultipleStatementAlignment.NotSameWarning" />
-		<exclude name="Generic.Functions.OpeningFunctionBraceKernighanRitchie.BraceOnNewLine" />
-		<exclude name="Generic.PHP.NoSilencedErrors.Discouraged" />
-		<exclude name="Generic.Strings.UnnecessaryStringConcat.Found" />
-		<exclude name="Generic.WhiteSpace.DisallowSpaceIndent" />
-		<exclude name="PSR2.Methods.MethodDeclaration.Underscore" />
-		<exclude name="Squiz.Commenting.ClassComment.Missing" />
-		<exclude name="Squiz.Commenting.FileComment.Missing" />
-		<exclude name="Squiz.Commenting.FunctionComment.ParamCommentFullStop" />
-		<exclude name="Squiz.Commenting.FunctionComment.ThrowsNoFullStop" />
-		<exclude name="Squiz.Commenting.InlineComment.InvalidEndChar" />
-		<exclude name="Squiz.Commenting.LongConditionClosingComment.SpacingBefore" />
-		<exclude name="Squiz.Commenting.PostStatementComment.Found" />
-		<exclude name="Squiz.Commenting.VariableComment.Missing" />
-		<exclude name="Squiz.PHP.CommentedOutCode.Found" />
-		<exclude name="Squiz.PHP.DisallowMultipleAssignments.Found" />
-		<exclude name="Squiz.PHP.EmbeddedPhp.ContentAfterOpen" />
-		<exclude name="Squiz.PHP.EmbeddedPhp.ContentAfterEnd" />
-		<exclude name="Squiz.PHP.EmbeddedPhp.ContentBeforeOpen" />
-		<exclude name="Squiz.PHP.EmbeddedPhp.ContentBeforeEnd" />
-		<exclude name="Squiz.PHP.NonExecutableCode.Unreachable" />
-		<exclude name="WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned" />
-		<exclude name="WordPress.CodeAnalysis.AssignmentInCondition.Found" />
-		<exclude name="WordPress.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition" />
-		<exclude name="WordPress.DB.DirectDatabaseQuery.DirectQuery" />
-		<exclude name="WordPress.DB.DirectDatabaseQuery.NoCaching" />
-		<exclude name="WordPress.DB.DirectDatabaseQuery.SchemaChange" />
-		<exclude name="WordPress.DB.PreparedSQL.NotPrepared" />
-		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
-		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
-		<exclude name="WordPress.NamingConventions.ValidFunctionName.FunctionNameInvalid" />
-		<exclude name="WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid" />
-		<exclude name="WordPress.NamingConventions.ValidVariableName.MemberNotSnakeCase" />
-		<exclude name="WordPress.NamingConventions.ValidVariableName.NotSnakeCase" />
-		<exclude name="WordPress.NamingConventions.ValidVariableName.NotSnakeCaseMemberVar" />
-		<exclude name="WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace" />
-		<exclude name="WordPress.PHP.DevelopmentFunctions.error_log_error_log" />
-		<exclude name="WordPress.PHP.DevelopmentFunctions.error_log_print_r" />
-		<exclude name="WordPress.PHP.DevelopmentFunctions.error_log_var_export" />
-		<exclude name="WordPress.PHP.DevelopmentFunctions.prevent_path_disclosure_error_reporting" />
-		<exclude name="WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration_apache_setenv" />
-		<exclude name="WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration_ini_set" />
-		<exclude name="WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration_error_reporting" />
-		<exclude name="WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize" />
-		<exclude name="WordPress.PHP.DiscouragedPHPFunctions.serialize_unserialize" />
-		<!-- TODO: refactor to eliminate use of `exec` for compatibility w/shared hosts -->
-		<exclude name="WordPress.PHP.DiscouragedPHPFunctions.system_calls_exec" />
-		<!-- TODO: refactor to eliminate use of `shell_exec` for compat w/shared hosts -->
-		<exclude name="WordPress.PHP.DiscouragedPHPFunctions.system_calls_shell_exec" />
-		<exclude name="WordPress.PHP.DontExtract.extract_extract" />
-		<exclude name="WordPress.PHP.StrictComparisons.LooseComparison" />
-		<exclude name="WordPress.PHP.StrictInArray.MissingTrueStrict" />
-		<exclude name="WordPress.PHP.YodaConditions.NotYoda" />
-		<exclude name="WordPress.Security.EscapeOutput.OutputNotEscaped" />
-		<exclude name="WordPress.Security.NonceVerification.NoNonceVerification" />
-		<exclude name="WordPress.Security.ValidatedSanitizedInput" />
-		<exclude name="WordPress.WhiteSpace.PrecisionAlignment" />
-		<exclude name="WordPress.WP.AlternativeFunctions.curl_curl_close" />
-		<exclude name="WordPress.WP.AlternativeFunctions.curl_curl_exec" />
-		<exclude name="WordPress.WP.AlternativeFunctions.curl_curl_getinfo" />
-		<exclude name="WordPress.WP.AlternativeFunctions.curl_curl_init" />
-		<exclude name="WordPress.WP.AlternativeFunctions.curl_curl_setopt" />
-		<exclude name="WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents" />
-		<exclude name="WordPress.WP.AlternativeFunctions.file_system_read_file_put_contents" />
-		<exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fclose" />
-		<exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fopen" />
-		<exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fread" />
-		<exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fwrite" />
-		<exclude name="WordPress.WP.AlternativeFunctions.json_encode_json_encode" />
-		<exclude name="WordPress.WP.AlternativeFunctions.parse_url_parse_url" />
-	</rule>
+  <rule ref="WordPress">
+    <exclude name="Generic.CodeAnalysis.ForLoopWithTestFunctionCall.NotAllowed" />
+    <exclude name="Generic.Commenting.DocComment.ShortNotCapital" />
+    <exclude name="Generic.Formatting.MultipleStatementAlignment.NotSameWarning" />
+    <exclude name="Generic.Functions.OpeningFunctionBraceKernighanRitchie.BraceOnNewLine" />
+    <exclude name="Generic.PHP.NoSilencedErrors.Discouraged" />
+    <exclude name="Generic.Strings.UnnecessaryStringConcat.Found" />
+    <exclude name="Generic.WhiteSpace.DisallowSpaceIndent" />
+    <exclude name="PSR2.Methods.MethodDeclaration.Underscore" />
+    <exclude name="Squiz.Commenting.ClassComment.Missing" />
+    <exclude name="Squiz.Commenting.FileComment.Missing" />
+    <exclude name="Squiz.Commenting.FunctionComment.ParamCommentFullStop" />
+    <exclude name="Squiz.Commenting.FunctionComment.ThrowsNoFullStop" />
+    <exclude name="Squiz.Commenting.InlineComment.InvalidEndChar" />
+    <exclude name="Squiz.Commenting.LongConditionClosingComment.SpacingBefore" />
+    <exclude name="Squiz.Commenting.PostStatementComment.Found" />
+    <exclude name="Squiz.Commenting.VariableComment.Missing" />
+    <exclude name="Squiz.PHP.CommentedOutCode.Found" />
+    <exclude name="Squiz.PHP.DisallowMultipleAssignments.Found" />
+    <exclude name="Squiz.PHP.EmbeddedPhp.ContentAfterOpen" />
+    <exclude name="Squiz.PHP.EmbeddedPhp.ContentAfterEnd" />
+    <exclude name="Squiz.PHP.EmbeddedPhp.ContentBeforeOpen" />
+    <exclude name="Squiz.PHP.EmbeddedPhp.ContentBeforeEnd" />
+    <exclude name="Squiz.PHP.NonExecutableCode.Unreachable" />
+    <exclude name="WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned" />
+    <exclude name="WordPress.CodeAnalysis.AssignmentInCondition.Found" />
+    <exclude name="WordPress.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition" />
+    <exclude name="WordPress.DB.DirectDatabaseQuery.DirectQuery" />
+    <exclude name="WordPress.DB.DirectDatabaseQuery.NoCaching" />
+    <exclude name="WordPress.DB.DirectDatabaseQuery.SchemaChange" />
+    <exclude name="WordPress.DB.PreparedSQL.NotPrepared" />
+    <exclude name="WordPress.Files.FileName.InvalidClassFileName" />
+    <exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
+    <exclude name="WordPress.NamingConventions.ValidFunctionName.FunctionNameInvalid" />
+    <exclude name="WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid" />
+    <exclude name="WordPress.NamingConventions.ValidVariableName.MemberNotSnakeCase" />
+    <exclude name="WordPress.NamingConventions.ValidVariableName.NotSnakeCase" />
+    <exclude name="WordPress.NamingConventions.ValidVariableName.NotSnakeCaseMemberVar" />
+    <exclude name="WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace" />
+    <exclude name="WordPress.PHP.DevelopmentFunctions.error_log_error_log" />
+    <exclude name="WordPress.PHP.DevelopmentFunctions.error_log_print_r" />
+    <exclude name="WordPress.PHP.DevelopmentFunctions.error_log_var_export" />
+    <exclude name="WordPress.PHP.DevelopmentFunctions.prevent_path_disclosure_error_reporting" />
+    <exclude name="WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration_apache_setenv" />
+    <exclude name="WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration_ini_set" />
+    <exclude name="WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration_error_reporting" />
+    <exclude name="WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize" />
+    <exclude name="WordPress.PHP.DiscouragedPHPFunctions.serialize_unserialize" />
+    <!-- TODO: refactor to eliminate use of `exec` for compatibility w/shared hosts -->
+    <exclude name="WordPress.PHP.DiscouragedPHPFunctions.system_calls_exec" />
+    <!-- TODO: refactor to eliminate use of `shell_exec` for compat w/shared hosts -->
+    <exclude name="WordPress.PHP.DiscouragedPHPFunctions.system_calls_shell_exec" />
+    <exclude name="WordPress.PHP.DontExtract.extract_extract" />
+    <exclude name="WordPress.PHP.StrictComparisons.LooseComparison" />
+    <exclude name="WordPress.PHP.StrictInArray.MissingTrueStrict" />
+    <exclude name="WordPress.PHP.YodaConditions.NotYoda" />
+    <exclude name="WordPress.Security.EscapeOutput.OutputNotEscaped" />
+    <exclude name="WordPress.Security.NonceVerification.NoNonceVerification" />
+    <exclude name="WordPress.Security.ValidatedSanitizedInput" />
+    <exclude name="WordPress.WhiteSpace.PrecisionAlignment" />
+    <exclude name="WordPress.WP.AlternativeFunctions.curl_curl_close" />
+    <exclude name="WordPress.WP.AlternativeFunctions.curl_curl_exec" />
+    <exclude name="WordPress.WP.AlternativeFunctions.curl_curl_getinfo" />
+    <exclude name="WordPress.WP.AlternativeFunctions.curl_curl_init" />
+    <exclude name="WordPress.WP.AlternativeFunctions.curl_curl_setopt" />
+    <exclude name="WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents" />
+    <exclude name="WordPress.WP.AlternativeFunctions.file_system_read_file_put_contents" />
+    <exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fclose" />
+    <exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fopen" />
+    <exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fread" />
+    <exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fwrite" />
+    <exclude name="WordPress.WP.AlternativeFunctions.json_encode_json_encode" />
+    <exclude name="WordPress.WP.AlternativeFunctions.parse_url_parse_url" />
+  </rule>
 </ruleset>

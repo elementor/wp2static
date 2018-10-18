@@ -111,3 +111,4 @@ class StaticHtmlOutput_Options {
         }
     }
 }
+

@@ -270,3 +270,4 @@ class StaticHtmlOutput_GitHub {
     }
 
 }
+

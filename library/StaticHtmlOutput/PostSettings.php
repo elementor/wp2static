@@ -164,3 +164,4 @@ class WPSHO_PostSettings {
         return array_filter( $settings );
     }
 }
+
