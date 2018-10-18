@@ -1,17 +1,8 @@
 <?php
-/**
- * CSSProcessor
- *
- * @package WP2Static
- */
+
+
 class CSSProcessor {
 
-    /**
-     * Constructor
-     *
-     * @param string $css_document CSS document
-     * @param string $wp_site_url  Site URL
-     */
     public function __construct( $css_document, $wp_site_url ) {
         $this->wp_site_url = $wp_site_url;
 
@@ -57,27 +48,12 @@ class CSSProcessor {
         $this->css_doc = $oCssParser->parse();
     }
 
-
-    /**
-     * Check whether link is internal
-     *
-     * @param string $link Link
-     * @return boolean
-     */
     public function isInternalLink( $link ) {
         // check link is same host as $this->url and not a subdomain
-        $url_host = parse_url( $link, PHP_URL_HOST );
-        $url_site = parse_url( $this->wp_site_url, PHP_URL_HOST );
-        return $url_host === $url_site;
+        return parse_url( $link, PHP_URL_HOST ) ===
+            parse_url( $this->wp_site_url, PHP_URL_HOST );
     }
 
-
-    /**
-     * Normalize URL
-     *
-     * @param string $url URL
-     * @return void
-     */
     public function normalizeURLs( $url ) {
         require_once dirname( __FILE__ ) . '/../URL2/URL2.php';
         $base = new Net_URL2( $url );
@@ -100,14 +76,6 @@ class CSSProcessor {
         }
     }
 
-
-    /**
-     * Cleanup
-     *
-     * @param string $wp_site_environment    Site environment
-     * @param array  $overwrite_slug_targets Target slugs
-     * @return void
-     */
     public function cleanup( $wp_site_environment, $overwrite_slug_targets ) {
         // PERF: ~ 30ms for HTML or CSS
         // TODO: skip binary file processing in func
@@ -126,18 +94,13 @@ class CSSProcessor {
                 $regex,
                 $this->response['body']
             );
+
             $this->setResponseBody( $rewritten_CSS );
         }
     }
 
-
-    /**
-     * Get CSS
-     *
-     * @return string
-     */
     public function getCSS() {
         return $this->css_doc->render();
     }
-
 }
+

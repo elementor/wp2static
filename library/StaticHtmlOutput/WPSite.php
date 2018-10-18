@@ -3,72 +3,180 @@
 // TODO: better named WPEnvironment
 class WPSite {
 
-  public function __construct() {
-    $wp_upload_path_and_url = wp_upload_dir();
-    $this->uploads_path = $wp_upload_path_and_url['basedir'];
-    $this->uploads_url = $wp_upload_path_and_url['baseurl'];
-    $this->site_path = ABSPATH;
-    $this->site_url = get_site_url() . '/';
-    $this->plugin_path = plugins_url('/', __FILE__);
-    $this->detect_base_url();
-  }
+    public function __construct() {
+        // WP URL paths
+        $wp_upload_path_and_url = wp_upload_dir();
+        $this->uploads_url = $wp_upload_path_and_url['baseurl'];
+        $this->site_url = get_site_url() . '/';
 
-  public function uploadsPathIsWritable() {
-    return $this->uploads_path && is_writable($this->uploads_path);
-  }
+        // WP dir paths
+        $this->site_path = ABSPATH;
+        $this->plugins_path = $this->getWPDirFullPath( 'plugins' );
+        $this->wp_uploads_path = $this->getWPDirFullPath( 'uploads' );
+        $this->wp_includes_path = $this->getWPDirFullPath( 'wp-includes' );
+        $this->wp_contents_path = $this->getWPDirFullPath( 'wp-contents' );
+        $this->theme_root_path = $this->getWPDirFullPath( 'theme-root' );
+        $this->parent_theme_path = $this->getWPDirFullPath( 'parent-theme' );
+        $this->child_theme_path = $this->getWPDirFullPath( 'child-theme' );
+        $this->child_theme_active =
+            $this->parent_theme_path !== $this->child_theme_path;
 
-  public function hasCurlSupport() {
-    return extension_loaded('curl');
-  }
+        $this->permalink_structure = get_option( 'permalink_structure' );
 
-  public function permalinksAreDefined() {
-    return strlen(get_option('permalink_structure'));
-  }
+        $this->wp_inc = '/' . WPINC;
+        $this->wp_content = '/' . WP_CONTENT_DIR;
+        $this->wp_uploads =
+                str_replace( ABSPATH, '/', $this->wp_uploads_path );
+        $this->wp_plugins = str_replace( ABSPATH, '/', WP_PLUGIN_DIR );
+        $this->wp_themes = str_replace( ABSPATH, '/', get_theme_root() );
+        $this->wp_active_theme =
+            str_replace( home_url(), '', get_template_directory_uri() );
 
-	public function detect_base_url() {
-		$site_url = get_option( 'siteurl' );
-		$home = get_option( 'home' );
-    $this->subdirectory = '';
+        // TODO: pre-generate as much as possible here to avoid
+        // extra overhead during the high cyclical functions
+        $this->detect_base_url();
 
-		// case for when WP is installed in a different place then being served
-		if ( $site_url !== $home ) {
-			$this->subdirectory = '/mysubdirectory';
-		}
+        $this->subdirectory = $this->isSiteInstalledInSubdomain();
+    }
 
-		$base_url = parse_url($site_url);
+    public function isSiteInstalledInSubdomain() {
+        $parsed_site_url = parse_url( rtrim( $this->site_url, '/' ) );
 
-		if ( array_key_exists('path', $base_url ) && $base_url['path'] != '/' ) {
-			$this->subdirectory = $base_url['path'];
-		}
-	}	
+        if ( isset( $parsed_site_url['path'] ) ) {
+            return $parsed_site_url['path'];
+        }
 
-  public function systemRequirementsAreMet() {
-    return $this->uploadsPathIsWritable() &&
-      $this->hasCurlSupport() &&
-      $this->permalinksAreDefined();
-  }
+        return false;
+    }
 
-  public function getOriginalPaths() {
-    $original_directory_names = array();
+    public function uploadsPathIsWritable() {
+        return $this->wp_uploads_path && is_writable( $this->wp_uploads_path );
+    }
 
-    $tokens = explode('/', get_template_directory_uri());
-    $original_directory_names['theme_dir'] = $tokens[sizeof($tokens)-1];
-    $original_directory_names['theme_root'] = $tokens[sizeof($tokens)-2];
-    // TODO: use this as a safer way to get wp-content in rewriting areas
-    // in case user has changed their wp-content path
-    $original_directory_names['wp_contents'] = $tokens[sizeof($tokens)-3];
+    public function hasCurlSupport() {
+        return extension_loaded( 'curl' );
+    }
 
-    $default_upload_dir = wp_upload_dir(); 
-    $tokens = explode('/', str_replace(ABSPATH, '/', $default_upload_dir['basedir']));
-    $original_directory_names['upload_dir'] = $tokens[sizeof($tokens)-1];
+    public function permalinksAreDefined() {
+        return strlen( get_option( 'permalink_structure' ) );
+    }
 
+    public function detect_base_url() {
+        $site_url = get_option( 'siteurl' );
+        $home = get_option( 'home' );
+    }
 
-    $tokens = explode('/', WP_PLUGIN_DIR);
-    $original_directory_names['plugin_dir'] = $tokens[sizeof($tokens)-1];
+    public function systemRequirementsAreMet() {
+        return $this->uploadsPathIsWritable() &&
+            $this->hasCurlSupport() &&
+            $this->permalinksAreDefined();
+    }
 
-    $tokens = explode('/', WPINC);
-    $original_directory_names['includes_dir'] = $tokens[sizeof($tokens)-1];
+    public function getOriginalPaths() {
+        $orig_dir_name = array();
 
-    return $original_directory_names;
-  }
+        $tokens = explode( '/', get_template_directory_uri() );
+        $orig_dir_name['theme_dir'] = $tokens[ count( $tokens ) - 1 ];
+        $orig_dir_name['theme_root'] = $tokens[ count( $tokens ) - 2 ];
+        // TODO: use this as a safer way to get wp-content in rewriting areas
+        // in case user has changed their wp-content path
+        $orig_dir_name['wp_contents'] = $tokens[ count( $tokens ) - 3 ];
+
+        $default_upload_dir = wp_upload_dir();
+        $tokens = explode(
+            '/',
+            str_replace( ABSPATH, '/', $default_upload_dir['basedir'] )
+        );
+        $orig_dir_name['upload_dir'] = $tokens[ count( $tokens ) - 1 ];
+
+        $tokens = explode( '/', WP_PLUGIN_DIR );
+        $orig_dir_name['plugin_dir'] = $tokens[ count( $tokens ) - 1 ];
+
+        $tokens = explode( '/', WPINC );
+        $orig_dir_name['includes_dir'] = $tokens[ count( $tokens ) - 1 ];
+
+        return $orig_dir_name;
+
+    }
+
+    /*
+        Function below assumes people may have changed the default
+        paths for WP directories
+
+        ie,
+            don't assume wp-contents is a subdir of ABSPATH
+            don't asssume uploads is a subdir of wp-contents or even 'uploads'
+    */
+    public function getWPDirFullPath( $wp_dir ) {
+        $full_path = '';
+
+        switch ( $wp_dir ) {
+            case 'wp-content':
+                $full_path = WP_CONTENT_DIR;
+
+                break;
+
+            case 'uploads':
+                $upload_dir_info = wp_upload_dir();
+                $full_path = $upload_dir_info['basedir'];
+
+                break;
+
+            case 'wp-includes':
+                // NOTE: currently cannot be changed outside WP core
+                $full_path = ABSPATH . WPINC;
+
+                break;
+
+            case 'plugins':
+                $full_path = WP_PLUGIN_DIR;
+
+                break;
+
+            case 'theme-root':
+                $full_path = get_theme_root();
+
+                break;
+
+            case 'parent-theme':
+                $full_path = get_template_directory();
+
+                break;
+
+            case 'child-theme':
+                $full_path = get_stylesheet_directory();
+
+                break;
+        }
+
+        return rtrim( $full_path, '/' );
+    }
+
+    public function getWPDirNameOnly( $wp_dir ) {
+        $wp_dir_name = '';
+
+        switch ( $wp_dir ) {
+            case 'child-theme':
+            case 'parent-theme':
+            case 'wp-content':
+            case 'wp-includes':
+            case 'uploads':
+            case 'theme-root':
+            case 'plugins':
+                $wp_dir_name = $this->getLastPathSegment(
+                    $this->getWPDirFullPath( $wp_dir )
+                );
+
+                break;
+
+        }
+
+        return rtrim( $wp_dir_name, '/' );
+    }
+
+    public function getLastPathSegment( $path ) {
+        $path_segments = explode( '/', $path );
+
+        return end( $path_segments );
+    }
 }
