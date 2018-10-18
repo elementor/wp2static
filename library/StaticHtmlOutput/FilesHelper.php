@@ -327,3 +327,4 @@ class StaticHtmlOutput_FilesHelper {
         return array_unique( $postURLs );
     }
 }
+

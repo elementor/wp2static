@@ -180,3 +180,4 @@ class WPSite {
         return end( $path_segments );
     }
 }
+

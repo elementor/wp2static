@@ -388,14 +388,14 @@ class SiteCrawler {
             $this->file_type = $this->file_extension;
         } else {
             // further detect type based on content type
-            $this->content_type =
+            $type = $this->content_type =
                 $this->response->getHeaderLine( 'content-type' );
 
-            if ( stripos( $this->content_type, 'text/html' ) !== false ) {
+            if ( stripos( $type, 'text/html' ) !== false ) {
                 $this->file_type = 'html';
-            } elseif ( stripos( $this->content_type, 'rss+xml' ) !== false ) {
+            } elseif ( stripos( $type, 'rss+xml' ) !== false ) {
                 $this->file_type = 'rss';
-            } elseif ( stripos( $this->content_type, 'application/json' ) !== false ) {
+            } elseif ( stripos( $type, 'application/json' ) !== false ) {
                 $this->file_type = 'json';
             } else {
                 error_log( 'no filetype inferred from content-type:' );
