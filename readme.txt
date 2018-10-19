@@ -140,6 +140,7 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
  * Enhancement: preview initial crawl list before starting your export
  * Enhancement: improved export speeds
  * New feature: send email upon completion
+ * New feature: exclude URLs from being crawled/exported
 
 = 5.8 =
 
@@ -462,6 +463,7 @@ Initial release to Wordpress community
  * Enhancement: preview initial crawl list before starting your export
  * Enhancement: improved export speeds
  * New feature: send email upon completion
+ * New feature: exclude URLs from being crawled/exported
 
 = 5.8 =
 
