@@ -186,7 +186,7 @@ class Exporter {
     }
 
     public function generateModifiedFileList() {
-        // copy the preview crawl list within uploads dir to "modified list"
+        // preserve the initial crawl list, to be used in debugging + more
         copy(
             $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-INITIAL-CRAWL-LIST',
@@ -194,26 +194,79 @@ class Exporter {
                 '/WP-STATIC-MODIFIED-CRAWL-LIST'
         );
 
-        // process  modified list and make available for previewing from UI
-        // $initial_file_list_count = StaticHtmlOutput_FilesHelper::buildFina..
-        // $viaCLI,
-        // $this->settings['additionalUrls'],
-        // $this->getWorkingDirectory(),
-        // $this->settings['uploadsURL'],
-        // $this->getWorkingDirectory(),
-        // self::HOOK
-        // );
-        // copy the modified list to the working dir "finalized crawl list"
-        copy(
+        // if no excludes or includes, just copy to new targey
+        if ( ! isset( $this->settings['excludeURLs'] ) &&
+            ! isset( $this->settings['additionalUrls'] ) ) {
+            copy(
+                $this->settings['wp_uploads_path'] .
+                    '/WP-STATIC-INITIAL-CRAWL-LIST',
+                $this->settings['wp_uploads_path'] .
+                    '/WP-STATIC-FINAL-CRAWL-LIST'
+            );
+
+            return;
+        }
+
+        // TODO: applying exlusions & inclusions against modified crawl list
+        $modified_crawl_list = array();
+
+        // load crawl list into array
+        $crawl_list = file(
             $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-MODIFIED-CRAWL-LIST',
-            $this->settings['working_directory'] .
-                '/WP-STATIC-FINAL-CRAWL-LIST'
+            '/WP-STATIC-MODIFIED-CRAWL-LIST'
         );
 
-        // use finalized crawl list from working dir to start the export
-        // if list has been (re)generated in the frontend, use it, else
-        // generate again at export time
+        // applying exclusions first
+        if ( isset( $this->settings['excludeURLs'] ) ) {
+            $exclusions = explode(
+                "\n",
+                str_replace( "\r", '', $this->settings['excludeURLs'] )
+            );
+
+            // iterate through crawl list and add any that aren't excluded
+            foreach ( $crawl_list as $url_to_crawl ) {
+                $url_to_crawl = trim( $url_to_crawl );
+                $match = false;
+
+                foreach ( $exclusions as $exclusion ) {
+                    $exclusion = trim( $exclusion );
+
+                    if ( $exclusion != '' ) {
+                        if ( strpos( $url_to_crawl, $exclusion ) !== false ) {
+                            $match = true;
+                        }
+                    }
+
+                    if ( ! $match ) {
+                        $modified_crawl_list[] = $url_to_crawl;
+                    }
+                }
+            }
+        }
+
+        // apply inclusions
+        if ( isset( $this->settings['additionalUrls'] ) ) {
+            $inclusions = explode(
+                "\n",
+                str_replace( "\r", '', $this->settings['additionalUrls'] )
+            );
+
+            foreach ( $inclusions as $inclusion ) {
+                $inclusion = trim( $inclusion );
+
+                $modified_crawl_list[] = $inclusion;
+            }
+        }
+
+        // remove duplicates
+        $modified_crawl_list = array_unique( $modified_crawl_list );
+
+        $str = implode( PHP_EOL, $modified_crawl_list );
+        file_put_contents(
+            $this->settings['working_directory'] .
+                '/WP-STATIC-FINAL-CRAWL-LIST',
+            $str
+        );
     }
 }
 
