@@ -15,6 +15,7 @@ class WPSHO_PostSettings {
 
         $key_sets['crawling'] = array(
             'additionalUrls',
+            'excludeURLs',
             'basicAuthPassword',
             'basicAuthUser',
             'discoverNewURLs',

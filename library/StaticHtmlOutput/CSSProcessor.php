@@ -3,8 +3,35 @@
 
 class CSSProcessor {
 
-    public function __construct( $css_document, $wp_site_url ) {
-        $this->wp_site_url = $wp_site_url;
+    public function processCSS( $css_document, $page_url ) {
+        if ( $css_document == '' ) {
+            return false;
+        }
+
+        $target_settings = array(
+            'general',
+            'crawling',
+            'wpenv',
+            'processing',
+            'advanced',
+        );
+
+        if ( isset( $_POST['selected_deployment_option'] ) ) {
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/PostSettings.php';
+
+            $this->settings = WPSHO_PostSettings::get( $target_settings );
+        } else {
+            error_log( 'TODO: load settings from DB' );
+        }
+
+        $this->discoverNewURLs = (
+            isset( $this->settings['discoverNewURLs'] ) &&
+             $this->settings['discoverNewURLs'] == 1 &&
+             $_POST['ajax_action'] === 'crawl_site'
+        );
+
+        $this->discovered_urls = [];
 
         // parse CSS into easily modifiable form
         $path = dirname( __FILE__ ) . '/../CSSParser/';
@@ -48,10 +75,18 @@ class CSSProcessor {
         $this->css_doc = $oCssParser->parse();
     }
 
-    public function isInternalLink( $link ) {
+    public function isInternalLink( $link, $domain = false ) {
+        if ( ! $domain ) {
+            $domain = $this->settings['wp_site_url'];
+        }
+
+        // TODO: apply only to links starting with .,..,/,
+        // or any with just a path, like banana.png
         // check link is same host as $this->url and not a subdomain
-        return parse_url( $link, PHP_URL_HOST ) ===
-            parse_url( $this->wp_site_url, PHP_URL_HOST );
+        return parse_url( $link, PHP_URL_HOST ) === parse_url(
+            $domain,
+            PHP_URL_HOST
+        );
     }
 
     public function normalizeURLs( $url ) {
