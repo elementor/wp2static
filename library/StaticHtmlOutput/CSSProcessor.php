@@ -73,6 +73,8 @@ class CSSProcessor {
 
         $oCssParser = new Sabberworm\CSS\Parser( $css_document );
         $this->css_doc = $oCssParser->parse();
+
+        return true;
     }
 
     public function isInternalLink( $link, $domain = false ) {
