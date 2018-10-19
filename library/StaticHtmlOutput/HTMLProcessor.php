@@ -217,6 +217,15 @@ class HTMLProcessor {
                 $element->parentNode->removeChild( $element );
             }
         }
+
+        $url = $element->getAttribute( 'content' );
+        $this->normalizeURL( $element, 'content' );
+        $this->removeQueryStringFromInternalLink( $element );
+        $this->addDiscoveredURL( $url );
+        $this->rewriteWPPaths( $element );
+        $this->rewriteBaseURL( $element );
+        $this->convertToRelativeURL( $element );
+        $this->convertToOfflineURL( $element );
     }
 
     public function writeDiscoveredURLs() {
@@ -265,7 +274,8 @@ class HTMLProcessor {
             $attribute_to_change = 'href';
         } elseif ( $element->hasAttribute( 'src' ) ) {
             $attribute_to_change = 'src';
-            // skip elements without href or src
+        } elseif ( $element->hasAttribute( 'content' ) ) {
+            $attribute_to_change = 'content';
         } else {
             return;
         }
@@ -345,7 +355,8 @@ class HTMLProcessor {
             $attribute_to_change = 'href';
         } elseif ( $element->hasAttribute( 'src' ) ) {
             $attribute_to_change = 'src';
-            // skip elements without href or src
+        } elseif ( $element->hasAttribute( 'content' ) ) {
+            $attribute_to_change = 'content';
         } else {
             return;
         }
@@ -393,6 +404,8 @@ class HTMLProcessor {
             $attribute_to_change = 'href';
         } elseif ( $element->hasAttribute( 'src' ) ) {
             $attribute_to_change = 'src';
+        } elseif ( $element->hasAttribute( 'content' ) ) {
+            $attribute_to_change = 'content';
         } else {
             return;
         }
@@ -437,6 +450,8 @@ class HTMLProcessor {
             $attribute_to_change = 'href';
         } elseif ( $element->hasAttribute( 'src' ) ) {
             $attribute_to_change = 'src';
+        } elseif ( $element->hasAttribute( 'content' ) ) {
+            $attribute_to_change = 'content';
         } else {
             return;
         }
@@ -479,6 +494,8 @@ class HTMLProcessor {
             $attribute_to_change = 'href';
         } elseif ( $element->hasAttribute( 'src' ) ) {
             $attribute_to_change = 'src';
+        } elseif ( $element->hasAttribute( 'content' ) ) {
+            $attribute_to_change = 'content';
         } else {
             return;
         }
