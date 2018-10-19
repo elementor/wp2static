@@ -97,7 +97,13 @@ class HTMLProcessor {
             $base_element->setAttribute( 'href', $this->settings['baseUrl'] );
             $head_element =
                 $this->xml_doc->getElementsByTagName( 'head' )->item( 0 );
-            $head_element->appendChild( $base_element );
+            if ( $head_element ) {
+                $head_element->appendChild( $base_element );
+            } else {
+                error_log( $this->page_url );
+                error_log( 'no valid head elemnent to attach base to');
+            }
+
         }
 
         // funcs to apply to whole page
