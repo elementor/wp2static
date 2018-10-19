@@ -47,17 +47,17 @@
           <label><?php echo __('Exclude certain URLs', 'static-html-output-plugin');?></label>
         </th>
         <td>
-        <p>Where the plugin has included too much and you want to exclude certain URLs, please specify these URLs here.</p> <br>
+        <p>Where the plugin has detected too many files and you want to exclude certain URLs from being crawled, please specify these URLs here.</p> <br>
 
-        <i><p>Supported formats are fully qualified URLs, relative URLs and regular expressions</p> <br>
+        <i><p>You can enter this as a partial string or full path</p> <br>
 
         <?php echo $this->wp_site_url; ?>/wp-content/themes/twentyseventeen/banana.jpg<br>
         /my_pricelist.pdf<br>
-        /products/<br>
+        .js<br>
         </i>
         <br>
 
-          <textarea class="widefat" name="additionalUrls" id="additionalUrls" rows="5" cols="10"><?php echo $this->options->additionalUrls ? $this->options->additionalUrls : ''  ?></textarea>
+          <textarea class="widefat" name="excludeURLs" id="excludeURLs" rows="5" cols="10"><?php echo $this->options->excludeURLs ? $this->options->excludeURLs : ''  ?></textarea>
         </td>
       </tr>
       <tr>

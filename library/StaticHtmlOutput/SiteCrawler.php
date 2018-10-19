@@ -168,6 +168,21 @@ class SiteCrawler {
         foreach ( $batch_of_links_to_crawl as $link_to_crawl ) {
             $this->url = $link_to_crawl;
 
+            // TODO: check for exclusions
+            $exclusions = explode( "\n", str_replace( "\r", "", $this->settings['excludeURLs'] ) );
+            // TODO: remove empty exclusions
+
+            // TODO: check if matches excludes patterns
+            foreach ( $exclusions as $exclusion ) {
+                $exclusion = trim( $exclusion );
+                if ( $exclusion != '' ) {
+                    if ( strpos ( $this->url, $exclusion ) ) {
+                        $this->checkIfMoreCrawlingNeeded();
+                        return;
+                    }
+                }
+            }
+
             $this->file_extension = $this->getExtensionFromURL();
 
             if ( $this->canFileBeCopiedWithoutProcessing() ) {
@@ -251,14 +266,16 @@ class SiteCrawler {
             case 'css':
                 require_once dirname( __FILE__ ) .
                     '/../StaticHtmlOutput/CSSProcessor.php';
-                $processor = new CSSProcessor(
+                $processor = new CSSProcessor();
+
+                $this->processed_file = $processor->processCSS(
                     $this->response->getBody(),
-                    $this->settings['wp_site_url']
+                    $this->url
                 );
 
-                $processor->normalizeURLs( $this->url );
-
-                $this->processed_file = $processor->getCSS();
+                if ( $this->processed_file ) {
+                    $this->processed_file = $processor->getCSS();
+                }
 
                 break;
 

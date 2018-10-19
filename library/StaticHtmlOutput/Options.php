@@ -46,6 +46,7 @@ class StaticHtmlOutput_Options {
     public function saveAllPostData() {
         $options_to_save = array(
             'additionalUrls',
+            'excludeURLs',
             'allowOfflineUsage',
             'baseUrl',
             'baseUrl-bunnycdn',

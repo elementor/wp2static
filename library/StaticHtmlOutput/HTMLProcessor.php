@@ -103,6 +103,7 @@ class HTMLProcessor {
                 error_log( $this->page_url );
                 error_log( 'no valid head elemnent to attach base to' );
             }
+
         }
 
         // funcs to apply to whole page
