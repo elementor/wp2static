@@ -170,14 +170,15 @@ class SiteCrawler {
 
             if ( isset( $this->settings['excludeURLs'] ) ) {
                 // TODO: check for exclusions
-                $exclusions = explode( "\n", str_replace( "\r", "", $this->settings['excludeURLs'] ) );
-                // TODO: remove empty exclusions
+                $exclusions = explode(
+                    "\n",
+                    str_replace( "\r", '', $this->settings['excludeURLs'] )
+                );
 
-                // TODO: check if matches excludes patterns
                 foreach ( $exclusions as $exclusion ) {
                     $exclusion = trim( $exclusion );
                     if ( $exclusion != '' ) {
-                        if ( strpos ( $this->url, $exclusion ) ) {
+                        if ( strpos( $this->url, $exclusion ) ) {
                             $this->checkIfMoreCrawlingNeeded();
                             return;
                         }
