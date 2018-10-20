@@ -141,6 +141,7 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
  * Enhancement: improved export speeds
  * New feature: send email upon completion
  * New feature: exclude URLs from being crawled/exported
+ * New feature: initial support for feeds/xml exporting
 
 = 5.8 =
 
@@ -464,6 +465,7 @@ Initial release to Wordpress community
  * Enhancement: improved export speeds
  * New feature: send email upon completion
  * New feature: exclude URLs from being crawled/exported
+ * New feature: initial support for feeds/xml exporting
 
 = 5.8 =
 
