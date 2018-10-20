@@ -310,8 +310,20 @@ class SiteCrawler {
 
                 break;
 
-            case 'rss':
-                error_log( 'no handler for rss without extension yet' );
+            case 'xml':
+                require_once dirname( __FILE__ ) .
+                    '/../StaticHtmlOutput/XMLProcessor.php';
+
+                $processor = new XMLProcessor();
+
+                $this->processed_file = $processor->processXML(
+                    $this->response->getBody(),
+                    $this->url
+                );
+
+                if ( $this->processed_file ) {
+                    $this->processed_file = $processor->getXML();
+                }
 
                 break;
 
@@ -393,6 +405,7 @@ class SiteCrawler {
             'js',
             'json',
             'xml',
+            'rss',
             'txt',
         );
 
@@ -414,7 +427,11 @@ class SiteCrawler {
             if ( stripos( $type, 'text/html' ) !== false ) {
                 $this->file_type = 'html';
             } elseif ( stripos( $type, 'rss+xml' ) !== false ) {
-                $this->file_type = 'rss';
+                $this->file_type = 'xml';
+            } elseif ( stripos( $type, 'text/xml' ) !== false ) {
+                $this->file_type = 'xml';
+            } elseif ( stripos( $type, 'application/xml' ) !== false ) {
+                $this->file_type = 'xml';
             } elseif ( stripos( $type, 'application/json' ) !== false ) {
                 $this->file_type = 'json';
             } else {
