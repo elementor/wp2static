@@ -1,12 +1,9 @@
 <?php
-// TODO: rewerite to be one loop of all elements,
-// applying multiple transformations at once per link, reducing iterations
-// TODO: deal with inline CSS blocks or style attributes on tags
-// TODO: don't rewrite mailto links unless specified, re #30
-class HTMLProcessor {
 
-    public function processHTML( $html_document, $page_url ) {
-        if ( $html_document == '' ) {
+class XMLProcessor {
+
+    public function processXML( $xml_document, $page_url ) {
+        if ( $xml_document == '' ) {
             return false;
         }
 
@@ -29,7 +26,7 @@ class HTMLProcessor {
 
         // instantiate the XML body here
         $this->xml_doc = new DOMDocument();
-        $this->raw_html = $html_document;
+        $this->raw_xml = $xml_document;
         $this->page_url = $page_url;
 
         // detect if a base tag exists while in the loop
@@ -50,58 +47,33 @@ class HTMLProcessor {
         // PERF: 70% of function time
         // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
         libxml_use_internal_errors( true );
-        $this->xml_doc->loadHTML( $html_document );
+        $this->xml_doc->loadXML( $xml_document );
         libxml_use_internal_errors( false );
 
         // start the full iterator here, along with copy of dom
-        $elements = iterator_to_array(
-            $this->xml_doc->getElementsByTagName( '*' )
-        );
+        $elements = $this->xml_doc->getElementsByTagName( '*' );
 
         foreach ( $elements as $element ) {
             switch ( $element->tagName ) {
-                case 'meta':
-                    $this->processMeta( $element );
+                case 'atom:link':
+                    $this->processAtomLink( $element );
                     break;
-                case 'a':
-                    $this->processAnchor( $element );
+                case 'wfw':
+                    $this->processElementWithTextNode( $element );
                     break;
-                case 'img':
-                    $this->processImage( $element );
+                case 'comments':
+                    $this->processElementWithTextNode( $element );
                     break;
-                case 'head':
-                    $this->processHead( $element );
+                case 'guid':
+                    $this->processElementWithTextNode( $element );
                     break;
                 case 'link':
                     // NOTE: not to confuse with anchor element
-                    $this->processLink( $element );
+                    $this->processElementWithTextNode( $element );
                     break;
-                case 'script':
-                    // can contain src=,
-                    // can also contain URLs within scripts
-                    // and escaped urls
-                    $this->processScript( $element );
+                case 'content:encoded':
+                    // TODO: parse inner HTML with DOMDocument
                     break;
-
-                    // TODO: how about other places that can contain URLs
-                    // data attr, reacty stuff, etc?
-            }
-        }
-
-        if ( $this->base_tag_exists ) {
-            $base_element =
-                $this->xml_doc->getElementsByTagName( 'base' )->item( 0 );
-            $base_element->setAttribute( 'href', $this->settings['baseUrl'] );
-        } else {
-            $base_element = $this->xml_doc->createElement( 'base' );
-            $base_element->setAttribute( 'href', $this->settings['baseUrl'] );
-            $head_element =
-                $this->xml_doc->getElementsByTagName( 'head' )->item( 0 );
-            if ( $head_element ) {
-                $head_element->appendChild( $base_element );
-            } else {
-                error_log( $this->page_url );
-                error_log( 'no valid head elemnent to attach base to' );
             }
         }
 
@@ -113,15 +85,52 @@ class HTMLProcessor {
         return true;
     }
 
-    public function processLink( $element ) {
-        $this->normalizeURL( $element, 'href' );
-        $this->removeQueryStringFromInternalLink( $element );
-        $this->addDiscoveredURL( $element->getAttribute( 'href' ) );
-        $this->rewriteWPPaths( $element );
-        $this->rewriteBaseURL( $element );
-        $this->convertToRelativeURL( $element );
-        $this->convertToOfflineURL( $element );
+    public function processAtomLink( $element ) {
+        if ( ! $element->hasAttribute( 'href' ) ) {
+            return;
+        }
 
+        $url_to_change = $element->getAttribute( 'href' );
+
+        // check it actually needs to be changed
+        if ( $this->isInternalLink( $url_to_change ) ) {
+            $rewritten_url = str_replace(
+                // TODO: test this won't touch subdomains, shouldn't
+                $this->settings['wp_site_url'],
+                $this->settings['baseUrl'],
+                $url_to_change
+            );
+
+            $element->setAttribute( 'href', $rewritten_url );
+        }
+    }
+
+    // NOTE: separate from WP rewrites in case people have disabled that
+    public function rewriteBaseURL( $element ) {
+        $url_to_change = $element->nodeValue;
+
+        if ( $this->isInternalLink( $url_to_change ) ) {
+            $rewritten_url = str_replace(
+                // TODO: test this won't touch subdomains, shouldn't
+                $this->settings['wp_site_url'],
+                $this->settings['baseUrl'],
+                $url_to_change
+            );
+
+            $element->nodeValue = $rewritten_url;
+        }
+    }
+
+    public function processElementWithTextNode( $element ) {
+
+        $this->addDiscoveredURL( $element->nodeValue );
+        $this->rewriteBaseURL( $element );
+
+        return;
+
+        // $this->rewriteWPPaths( $element );
+        // $this->convertToRelativeURL( $element );
+        // $this->convertToOfflineURL( $element );
         if ( isset( $this->settings['removeWPLinks'] ) ) {
             $relativeLinksToRemove = array(
                 'shortlink',
@@ -332,12 +341,12 @@ class HTMLProcessor {
         // show http:\\/\\/172.18.0.3
         $escaped_site_url = addcslashes( get_option( 'siteurl' ), '/' );
 
-        // if ( strpos( $this->raw_html, $escaped_site_url ) !== false ) {
+        // if ( strpos( $this->raw_xml, $escaped_site_url ) !== false ) {
         // TODO: renable this function being called. needs to be on
-        // raw HTML, so ideally after the Processor has done all other
+        // raw XML, so ideally after the Processor has done all other
         // XML things, so no need to parse again
-        // suggest adding a processRawHTML function, that
-        // includes this stuff.. and call it within the getHTML function
+        // suggest adding a processRawXML function, that
+        // includes this stuff.. and call it within the getXML function
         // or finalizeProcessing or such....
         // $this->rewriteEscapedURLs($wp_site_env,
         // $new_paths);
@@ -424,8 +433,8 @@ class HTMLProcessor {
         }
     }
 
-    public function getHTML() {
-        return $this->xml_doc->saveHtml();
+    public function getXML() {
+        return $this->xml_doc->saveXML();
     }
 
     public function convertToRelativeURL( $element ) {
@@ -521,32 +530,6 @@ class HTMLProcessor {
         }
     }
 
-    // NOTE: separate from WP rewrites in case people have disabled that
-    public function rewriteBaseURL( $element ) {
-        if ( $element->hasAttribute( 'href' ) ) {
-            $attribute_to_change = 'href';
-        } elseif ( $element->hasAttribute( 'src' ) ) {
-            $attribute_to_change = 'src';
-        } elseif ( $element->hasAttribute( 'content' ) ) {
-            $attribute_to_change = 'content';
-        } else {
-            return;
-        }
-
-        $url_to_change = $element->getAttribute( $attribute_to_change );
-
-        // check it actually needs to be changed
-        if ( $this->isInternalLink( $url_to_change ) ) {
-            $rewritten_url = str_replace(
-                // TODO: test this won't touch subdomains, shouldn't
-                $this->settings['wp_site_url'],
-                $this->settings['baseUrl'],
-                $url_to_change
-            );
-
-            $element->setAttribute( $attribute_to_change, $rewritten_url );
-        }
-    }
 
     /*
     TODO

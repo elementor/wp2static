@@ -96,7 +96,7 @@ class Exporter {
                     $this->settings['working_directory'] . '/' .
                         $file_to_clean
                 );
-            } 
+            }
         }
     }
 
