@@ -96,9 +96,7 @@ class Exporter {
                     $this->settings['working_directory'] . '/' .
                         $file_to_clean
                 );
-            } else {
-                error_log( 'unable to cleanup: ' . $file_to_clean );
-            }
+            } 
         }
     }
 
