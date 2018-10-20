@@ -147,8 +147,36 @@ class HTMLProcessor {
         }
     }
 
+    public function isValidURL( $url ) {
+        // NOTE: not using native URL filter as it won't accept 
+        // non-ASCII URLs, which we want to support
+        $url = trim ( $url );
+
+        if ( $url == '' ) {
+            return false;
+        }
+
+        if ( strpos( $url, '.php' ) !== false ) {
+            return false;
+        }
+       
+        if ( strpos( $url, ' ' ) !== false ) {
+            return false;
+        }
+
+        if ( $url[0] == '#' ) {
+            return false;
+        }
+ 
+        return true;
+    }
+
     public function addDiscoveredURL( $url ) {
         if ( isset( $this->settings['discoverNewURLs'] ) ) {
+            if ( ! $this->isValidURL ( $url ) ) {
+                return;
+            }
+
             if ( $this->isInternalLink( $url ) ) {
                 $this->discovered_urls[] = $url;
             }
