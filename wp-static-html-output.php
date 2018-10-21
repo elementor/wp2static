@@ -27,7 +27,6 @@ if ( $ajax_action === 'crawl_site' || $ajax_action === 'crawl_again' ) {
     wp_die();
     return null;
 } elseif ( $ajax_action == 'github_prepare_export' ) {
-    error_log('gh prep');
     require_once dirname( __FILE__ ) .
         '/library/StaticHtmlOutput/GitHub.php';
 
@@ -35,7 +34,6 @@ if ( $ajax_action === 'crawl_site' || $ajax_action === 'crawl_again' ) {
     wp_die();
     return null;
 } elseif ( $ajax_action == 'github_upload_blobs' ) {
-    error_log('gh upload');
     require_once dirname( __FILE__ ) .
         '/library/StaticHtmlOutput/GitHub.php';
 
@@ -43,7 +41,6 @@ if ( $ajax_action === 'crawl_site' || $ajax_action === 'crawl_again' ) {
     wp_die();
     return null;
 } elseif ( $ajax_action == 'github_finalise_export' ) {
-    error_log('gh final');
     require_once dirname( __FILE__ ) .
         '/library/StaticHtmlOutput/GitHub.php';
 

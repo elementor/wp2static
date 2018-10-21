@@ -20,8 +20,6 @@ class StaticHtmlOutput_GitHub {
                 '/../StaticHtmlOutput/PostSettings.php';
 
             $this->settings = WPSHO_PostSettings::get( $target_settings );
-            error_log('loaded settings OK');
-
         } else {
             error_log( 'TODO: load settings from DB' );
         }
@@ -50,15 +48,12 @@ class StaticHtmlOutput_GitHub {
 
         switch( $_POST['ajax_action'] ) {
             case 'github_prepare_export':
-                error_log('preparing deployment');
                 $this->prepare_deployment();
             break;
             case 'github_upload_blobs':
-                error_log('uploading blobs');
-                $this->upload_blobs();
+                    $this->upload_blobs();
             break;
             case 'github_finalise_export':
-                error_log('finalizing GH deploy');
                 $this->commit_new_tree();
             break;
         }
@@ -136,19 +131,32 @@ class StaticHtmlOutput_GitHub {
             echo 'SUCCESS';
     }
 
-    public function get_item_to_export() {
+    public function get_items_to_export( $batch_size = 1 ) {
+        $lines = array();
+
         $f = fopen( $this->exportFileList, 'r' );
-        $line = fgets( $f );
+
+        for ( $i = 0; $i < $batch_size; $i++ ) {
+            $lines[] = fgets( $f );
+        }
+
         fclose( $f );
 
+        // TODO: optimize this for just one read, one write within func
         $contents = file( $this->exportFileList, FILE_IGNORE_NEW_LINES );
-        array_shift( $contents );
+
+    
+        for ( $i = 0; $i < $batch_size; $i++ ) {
+            // rewrite file minus the lines we took
+            array_shift( $contents );
+        }
+
         file_put_contents(
             $this->exportFileList,
             implode( "\r\n", $contents )
         );
 
-        return $line;
+        return $lines;
     }
 
     public function get_remaining_items_count() {
@@ -161,17 +169,27 @@ class StaticHtmlOutput_GitHub {
 
 
     public function upload_blobs( $viaCLI = false ) {
-            require_once dirname( __FILE__ ) .
-                '/../GuzzleHttp/autoloader.php';
-            require_once __DIR__ . '/../Github/autoload.php';
+        require_once dirname( __FILE__ ) .
+            '/../GuzzleHttp/autoloader.php';
+        require_once __DIR__ . '/../Github/autoload.php';
 
         if ( $this->get_remaining_items_count() < 0 ) {
             echo 'ERROR';
             die();
         }
 
-            $line = $this->get_item_to_export();
+        $filesRemaining = $this->get_remaining_items_count();
 
+        $batch_size = $this->settings['ghBlobIncrement'];
+
+        if ( $batch_size > $filesRemaining ) {
+            $batch_size = $filesRemaining;
+        }
+
+        $lines = $this->get_items_to_export( $batch_size );
+        $globHashPathLines = array();
+
+        foreach( $lines as $line ) {
             list($fileToTransfer, $targetPath) = explode( ',', $line );
 
             // vendor specific from here
@@ -184,44 +202,48 @@ class StaticHtmlOutput_GitHub {
                 Github\Client::AUTH_HTTP_TOKEN
             );
 
-        try {
-            $globHash = $client->api( 'gitData' )->blobs()->create(
-                $this->user,
-                $this->repository,
-                array(
-                    'content' => $encodedFile,
-                    'encoding' => 'base64',
-                )
-            ); // utf-8 or base64
-        } catch ( Exception $e ) {
-            require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/WsLog.php';
-            WsLog::l( 'GITHUB: Error creating blob (API limits?):' . $e );
-            error_log( 'error creating blog in GitHub (API limits?)' );
-            // TODO:  rate limits: https://developer.github.com/v3/rate_limit/
-            $coreLimit = $client->api( 'rate_limit' )->getCoreLimit();
-            error_log( $coreLimit );
-        }
+            try {
+                $globHash = $client->api( 'gitData' )->blobs()->create(
+                    $this->user,
+                    $this->repository,
+                    array(
+                        'content' => $encodedFile,
+                        'encoding' => 'base64',
+                    )
+                ); // utf-8 or base64
+            } catch ( Exception $e ) {
+                require_once dirname( __FILE__ ) .
+                    '/../StaticHtmlOutput/WsLog.php';
+                WsLog::l( 'GITHUB: Error creating blob (API limits?):' . $e );
+                error_log( 'error creating blog in GitHub (API limits?)' );
+                // TODO:  rate limits: https://developer.github.com/v3/rate_limit/
+                $coreLimit = $client->api( 'rate_limit' )->getCoreLimit();
+                error_log( $coreLimit );
+            }
+
             $targetPath = rtrim( $targetPath );
 
-            $globHashPathLine = $globHash['sha'] . ',' .
-                rtrim( $targetPath ) . basename( $fileToTransfer ) . "\n";
+            $globHashPathLines[] = $globHash['sha'] . ',' .
+                rtrim( $targetPath ) . basename( $fileToTransfer );
+        }
 
-            file_put_contents(
-                $this->globHashAndPathList,
-                $globHashPathLine,
-                FILE_APPEND | LOCK_EX
-            );
 
-            $filesRemaining = $this->get_remaining_items_count();
+        // TODO: move this file write out of loop - write to array in loop
+        file_put_contents(
+            $this->globHashAndPathList,
+            implode( PHP_EOL, $globHashPathLines ),
+            FILE_APPEND | LOCK_EX
+        );
 
-        if ( $this->get_remaining_items_count() > 0 ) {
+        $filesRemaining = $this->get_remaining_items_count();
+
+        if ( $filesRemaining > 0 ) {
 
             if ( $viaCLI ) {
                 $this->upload_blobs( true );
             }
 
-            echo $this->get_remaining_items_count();
+            echo $filesRemaining;
         } else {
             echo 'SUCCESS';
         }
