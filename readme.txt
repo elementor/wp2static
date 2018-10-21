@@ -139,6 +139,7 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
  * Bugfix: Offline ZIP creation now functioning properly
  * Enhancement: preview initial crawl list before starting your export
  * Enhancement: improved export speeds
+ * Enhancement: test GitHub settings before starting export
  * New feature: send email upon completion
  * New feature: exclude URLs from being crawled/exported
  * New feature: initial support for feeds/xml exporting
@@ -463,6 +464,7 @@ Initial release to Wordpress community
  * Bugfix: Offline ZIP creation now functioning properly
  * Enhancement: preview initial crawl list before starting your export
  * Enhancement: improved export speeds
+ * Enhancement: test GitHub settings before starting export
  * New feature: send email upon completion
  * New feature: exclude URLs from being crawled/exported
  * New feature: initial support for feeds/xml exporting
