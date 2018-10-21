@@ -140,6 +140,7 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
  * Enhancement: preview initial crawl list before starting your export
  * Enhancement: improved export speeds
  * Enhancement: test GitHub settings before starting export
+ * Enhancement: support sleeping between GitHub API requests, avoid rate limits
  * New feature: send email upon completion
  * New feature: exclude URLs from being crawled/exported
  * New feature: initial support for feeds/xml exporting
@@ -465,6 +466,7 @@ Initial release to Wordpress community
  * Enhancement: preview initial crawl list before starting your export
  * Enhancement: improved export speeds
  * Enhancement: test GitHub settings before starting export
+ * Enhancement: support sleeping between GitHub API requests, avoid rate limits
  * New feature: send email upon completion
  * New feature: exclude URLs from being crawled/exported
  * New feature: initial support for feeds/xml exporting
