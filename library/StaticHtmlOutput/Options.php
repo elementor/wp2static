@@ -78,6 +78,8 @@ class StaticHtmlOutput_Options {
             'ghPath',
             'ghToken',
             'ghRepo',
+            'ghBlobIncrement',
+            'ghBlobDelay',
             'netlifyPersonalAccessToken',
             'netlifySiteID',
             'removeConditionalHeadComments',

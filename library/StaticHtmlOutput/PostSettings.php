@@ -75,6 +75,8 @@ class WPSHO_PostSettings {
             'ghPath',
             'ghToken',
             'ghRepo',
+            'ghBlobIncrement',
+            'ghBlobDelay',
         );
 
         $key_sets['ftp'] = array(
