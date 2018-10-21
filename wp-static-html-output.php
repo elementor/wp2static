@@ -26,6 +26,30 @@ if ( $ajax_action === 'crawl_site' || $ajax_action === 'crawl_again' ) {
 
     wp_die();
     return null;
+} elseif ( $ajax_action == 'github_prepare_export' ) {
+    error_log('gh prep');
+    require_once dirname( __FILE__ ) .
+        '/library/StaticHtmlOutput/GitHub.php';
+
+
+    wp_die();
+    return null;
+} elseif ( $ajax_action == 'github_upload_blobs' ) {
+    error_log('gh upload');
+    require_once dirname( __FILE__ ) .
+        '/library/StaticHtmlOutput/GitHub.php';
+
+
+    wp_die();
+    return null;
+} elseif ( $ajax_action == 'github_finalise_export' ) {
+    error_log('gh final');
+    require_once dirname( __FILE__ ) .
+        '/library/StaticHtmlOutput/GitHub.php';
+
+
+    wp_die();
+    return null;
 } else {
     // normal plugin instantiation/freemius check, etc
     if ( ! function_exists( 'wpsho_fr' ) ) {
@@ -87,7 +111,6 @@ if ( $ajax_action === 'crawl_site' || $ajax_action === 'crawl_again' ) {
         require_once 'library/StaticHtmlOutput.php';
         require_once 'library/StaticHtmlOutput/FTP.php';
         require_once 'library/StaticHtmlOutput/Netlify.php';
-        require_once 'library/StaticHtmlOutput/GitHub.php';
         require_once 'library/StaticHtmlOutput/Dropbox.php';
         require_once 'library/URL2/URL2.php';
 
