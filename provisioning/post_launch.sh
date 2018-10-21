@@ -24,6 +24,8 @@
 #  
 #  Set the `CURLOPT_VERBOSE` to `true`, with an example in the S3 library. 
 
+echo "export PS1='${PWD/*\//}$ '" >> /etc/bash.bashrc
+
 # run wp-cli cmds from wp install path
 if [ -z "${SUBDIR_TO_INSTALL}" ]; then 
 	echo "Installing into root"; 
