@@ -30,13 +30,11 @@ if ( $ajax_action === 'crawl_site' || $ajax_action === 'crawl_again' ) {
     require_once dirname( __FILE__ ) .
         '/library/StaticHtmlOutput/GitHub.php';
 
-
     wp_die();
     return null;
 } elseif ( $ajax_action == 'github_upload_blobs' ) {
     require_once dirname( __FILE__ ) .
         '/library/StaticHtmlOutput/GitHub.php';
-
 
     wp_die();
     return null;
@@ -44,6 +42,11 @@ if ( $ajax_action === 'crawl_site' || $ajax_action === 'crawl_again' ) {
     require_once dirname( __FILE__ ) .
         '/library/StaticHtmlOutput/GitHub.php';
 
+    wp_die();
+    return null;
+} elseif ( $ajax_action == 'test_blob_create' ) {
+    require_once dirname( __FILE__ ) .
+        '/library/StaticHtmlOutput/GitHub.php';
 
     wp_die();
     return null;

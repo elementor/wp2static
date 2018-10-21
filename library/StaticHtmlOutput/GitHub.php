@@ -51,10 +51,13 @@ class StaticHtmlOutput_GitHub {
                 $this->prepare_deployment();
             break;
             case 'github_upload_blobs':
-                    $this->upload_blobs();
+                $this->upload_blobs();
             break;
             case 'github_finalise_export':
                 $this->commit_new_tree();
+            break;
+            case 'test_blob_create':
+                $this->test_blob_create();
             break;
         }
     }
@@ -199,6 +202,7 @@ class StaticHtmlOutput_GitHub {
             list($fileToTransfer, $targetPath) = explode( ',', $line );
 
             // vendor specific from here
+            // TODO: why are we chunk_splitting with no delimiter?
             $encodedFile = chunk_split(
                 base64_encode( file_get_contents( $fileToTransfer ) )
             );
@@ -337,6 +341,43 @@ class StaticHtmlOutput_GitHub {
         }
     }
 
+    public function test_blob_create() {
+        require_once dirname( __FILE__ ) .
+            '/../GuzzleHttp/autoloader.php';
+        require_once __DIR__ . '/../Github/autoload.php';
+
+        $client = new \Github\Client();
+        $client->authenticate(
+            $this->settings['ghToken'],
+            Github\Client::AUTH_HTTP_TOKEN
+        );
+
+        $encodedFile = chunk_split(
+            base64_encode( 'test string' )
+        );
+
+        try {
+            $globHash = $client->api( 'gitData' )->blobs()->create(
+                $this->user,
+                $this->repository,
+                array(
+                    'content' => $encodedFile,
+                    'encoding' => 'base64',
+                )
+            ); // utf-8 or base64
+        } catch ( Exception $e ) {
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/WsLog.php';
+            WsLog::l( 'GITHUB: Error creating blob (API limits?):' . $e );
+            error_log( 'error creating blog in GitHub (API limits?)' );
+            // TODO:  rate limits: https://developer.github.com/v3/rate_limit/
+            $coreLimit = $client->api( 'rate_limit' )->getCoreLimit();
+            error_log( $coreLimit );
+            return;
+        }
+
+        echo 'SUCCESS';
+    }
 }
 
 $github = new StaticHtmlOutput_GitHub();
