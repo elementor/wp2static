@@ -4,14 +4,12 @@ use GuzzleHttp\Client;
 
 class StaticHtmlOutput_GitHub {
 
-    // TODO: args to come from post or settings
-    //public function __construct( $repo, $token, $branch, $r_path, $upl_path ) {
     public function __construct() {
         $target_settings = array(
             'general',
             'wpenv',
             'github',
-            //'processing',
+            // 'processing',
             'advanced',
         );
 
@@ -25,7 +23,7 @@ class StaticHtmlOutput_GitHub {
         }
 
         list($this->user, $this->repository) = explode(
-            '/', 
+            '/',
             $this->settings['ghRepo']
         );
 
@@ -46,19 +44,19 @@ class StaticHtmlOutput_GitHub {
         $this->archive = new Archive();
         $this->archive->setToCurrentArchive();
 
-        switch( $_POST['ajax_action'] ) {
+        switch ( $_POST['ajax_action'] ) {
             case 'github_prepare_export':
                 $this->prepare_deployment();
-            break;
+                break;
             case 'github_upload_blobs':
                 $this->upload_blobs();
-            break;
+                break;
             case 'github_finalise_export':
                 $this->commit_new_tree();
-            break;
+                break;
             case 'test_blob_create':
                 $this->test_blob_create();
-            break;
+                break;
         }
     }
 
@@ -126,7 +124,7 @@ class StaticHtmlOutput_GitHub {
     // TODO: move to a parent class as identical to bunny and probably others
     public function prepare_deployment() {
             $this->clear_file_list();
-            $this->create_github_deployment_list( 
+            $this->create_github_deployment_list(
                 $this->settings['working_directory'] . '/' .
                     $this->archive->name
             );
@@ -148,7 +146,6 @@ class StaticHtmlOutput_GitHub {
         // TODO: optimize this for just one read, one write within func
         $contents = file( $this->exportFileList, FILE_IGNORE_NEW_LINES );
 
-    
         for ( $i = 0; $i < $batch_size; $i++ ) {
             // rewrite file minus the lines we took
             array_shift( $contents );
@@ -198,7 +195,7 @@ class StaticHtmlOutput_GitHub {
             Github\Client::AUTH_HTTP_TOKEN
         );
 
-        foreach( $lines as $line ) {
+        foreach ( $lines as $line ) {
             list($fileToTransfer, $targetPath) = explode( ',', $line );
 
             // vendor specific from here
@@ -221,7 +218,7 @@ class StaticHtmlOutput_GitHub {
                     '/../StaticHtmlOutput/WsLog.php';
                 WsLog::l( 'GITHUB: Error creating blob (API limits?):' . $e );
                 error_log( 'error creating blog in GitHub (API limits?)' );
-                // TODO:  rate limits: https://developer.github.com/v3/rate_limit/
+                // TODO:  https://developer.github.com/v3/rate_limit/
                 $coreLimit = $client->api( 'rate_limit' )->getCoreLimit();
                 error_log( $coreLimit );
             }
@@ -231,7 +228,6 @@ class StaticHtmlOutput_GitHub {
             $globHashPathLines[] = $globHash['sha'] . ',' .
                 rtrim( $targetPath ) . basename( $fileToTransfer );
         }
-
 
         // TODO: move this file write out of loop - write to array in loop
         file_put_contents(
