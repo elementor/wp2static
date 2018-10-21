@@ -77,7 +77,7 @@
           <select name="ghBlobDelay" id="ghBlobDelay">
 <?php 
   // TODO: shift this into helper function for select
-  $increments = array(0, 1, 2, 3, 4, 5, 10, 20);
+  $increments = array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 2, 3, 4, 10);
 
   foreach($increments as $increment) : ?>
             <option value="<?php echo $increment; ?>"<?php echo $this->options->ghBlobDelay == $increment ? ' selected' : ''; ?>><?php echo $increment; ?></option>
