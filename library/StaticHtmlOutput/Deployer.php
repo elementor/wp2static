@@ -10,17 +10,6 @@ class Deployer {
                 $this->copyStaticSiteToPublicFolder();
                 break;
 
-            case 'github':
-                $this->ghRepo = filter_input( INPUT_POST, 'ghRepo' );
-                $this->ghToken = filter_input( INPUT_POST, 'ghToken' );
-                $this->ghBranch = filter_input( INPUT_POST, 'ghBranch' );
-                $this->githubPath = filter_input( INPUT_POST, 'githubPath' );
-
-                $this->github_prepare_export();
-                $this->github_upload_blobs( true );
-                $this->github_finalise_export();
-                break;
-
             case 'ftp':
                 $this->ftpServer = filter_input( INPUT_POST, 'ftpServer' );
                 $this->ftpUsername = filter_input( INPUT_POST, 'ftpUsername' );
@@ -292,41 +281,4 @@ class Deployer {
             $bunnyCDN->purge_all_cache();
         }
     }
-
-    public function github_upload_blobs( $viaCLI = false ) {
-        $github = new StaticHtmlOutput_GitHub(
-            $this->ghRepo,
-            $this->ghToken,
-            $this->ghBranch,
-            $this->githubPath,
-            $this->getWorkingDirectory()
-        );
-
-        $github->upload_blobs( $viaCLI );
-    }
-
-    public function github_prepare_export() {
-        $github = new StaticHtmlOutput_GitHub(
-            $this->ghRepo,
-            $this->ghToken,
-            $this->ghBranch,
-            $this->githubPath,
-            $this->getWorkingDirectory()
-        );
-
-        $github->prepare_deployment();
-    }
-
-    public function github_finalise_export() {
-        $github = new StaticHtmlOutput_GitHub(
-            $this->ghRepo,
-            $this->ghToken,
-            $this->ghBranch,
-            $this->githubPath,
-            $this->getWorkingDirectory()
-        );
-
-        $github->commit_new_tree();
-    }
 }
-
