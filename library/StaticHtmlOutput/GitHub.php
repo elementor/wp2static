@@ -173,12 +173,12 @@ class StaticHtmlOutput_GitHub {
             '/../GuzzleHttp/autoloader.php';
         require_once __DIR__ . '/../Github/autoload.php';
 
-        if ( $this->get_remaining_items_count() < 0 ) {
+        $filesRemaining = $this->get_remaining_items_count();
+
+        if ( $filesRemaining < 0 ) {
             echo 'ERROR';
             die();
         }
-
-        $filesRemaining = $this->get_remaining_items_count();
 
         $batch_size = $this->settings['ghBlobIncrement'];
 
@@ -189,17 +189,18 @@ class StaticHtmlOutput_GitHub {
         $lines = $this->get_items_to_export( $batch_size );
         $globHashPathLines = array();
 
+        $client = new \Github\Client();
+        $client->authenticate(
+            $this->settings['ghToken'],
+            Github\Client::AUTH_HTTP_TOKEN
+        );
+
         foreach( $lines as $line ) {
             list($fileToTransfer, $targetPath) = explode( ',', $line );
 
             // vendor specific from here
             $encodedFile = chunk_split(
                 base64_encode( file_get_contents( $fileToTransfer ) )
-            );
-            $client = new \Github\Client();
-            $client->authenticate(
-                $this->settings['ghToken'],
-                Github\Client::AUTH_HTTP_TOKEN
             );
 
             try {
