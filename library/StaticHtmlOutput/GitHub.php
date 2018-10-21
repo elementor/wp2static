@@ -198,6 +198,11 @@ class StaticHtmlOutput_GitHub {
         foreach ( $lines as $line ) {
             list($fileToTransfer, $targetPath) = explode( ',', $line );
 
+            if ( isset( $this->settings['ghBlobDelay'] ) &&
+                $this->settings['ghBlobDelay'] > 0 ) {
+                sleep( $this->settings['ghBlobDelay'] );
+            }
+
             // vendor specific from here
             // TODO: why are we chunk_splitting with no delimiter?
             $encodedFile = chunk_split(
