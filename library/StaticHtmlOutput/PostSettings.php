@@ -89,6 +89,16 @@ class WPSHO_PostSettings {
             'bbBlobDelay',
         );
 
+        $key_sets['gitlab'] = array(
+            'baseUrl-gitlab',
+            'glBranch',
+            'glPath',
+            'glToken',
+            'glRepo',
+            'glBlobIncrement',
+            'glBlobDelay',
+        );
+
         $key_sets['ftp'] = array(
             'baseUrl-ftp',
             'ftpPassword',
