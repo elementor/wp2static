@@ -420,7 +420,7 @@ jQuery(document).ready(function($){
       case 'gitlab':
         required_fields = {
           glToken: 'Please specify your GitLab personal access token in order to deploy to GitLab.',
-          glRepo: 'Please specify your GitLab repository name in order to deploy to GitLab.',
+          glProject: 'Please specify your GitLab project ID in order to deploy to GitLab.',
           glBranch: 'Please specify which branch in your GitLab repository you want to deploy to.',
         };	
 
@@ -429,14 +429,6 @@ jQuery(document).ready(function($){
             validation_errors += required_fields[key] + "\n";
           }
         });
-
-        repo = $('#glRepo').val();
-
-        if (repo != '') {
-          if (repo.split('/').length !== 2) {
-            validation_errors += "Please ensure your GitLab repo is specified as USER_OR_ORG_NAME/REPO_NAME\n";
-          }
-        }
       break; 
     }
 

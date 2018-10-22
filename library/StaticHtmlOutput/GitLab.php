@@ -21,11 +21,6 @@ class StaticHtmlOutput_GitLab {
             error_log( 'TODO: load settings from DB' );
         }
 
-        list($this->user, $this->repository) = explode(
-            '/',
-            $this->settings['glRepo']
-        );
-
         $this->exportFileList =
             $this->settings['working_directory'] .
                 '/WP-STATIC-EXPORT-BITBUCKET-FILES-TO-EXPORT';
@@ -50,7 +45,7 @@ class StaticHtmlOutput_GitLab {
                 $this->upload_files();
                 break;
             case 'test_gitlab':
-                $this->test_blob_create();
+                $this->test_file_create();
                 break;
         }
     }
@@ -111,11 +106,14 @@ class StaticHtmlOutput_GitLab {
 
     // TODO: move to a parent class as identical to bunny and probably others
     public function prepare_deployment() {
+            error_log('preparing deployment');
             $this->clear_file_list();
             $this->create_gitlab_deployment_list(
                 $this->settings['working_directory'] . '/' .
                     $this->archive->name
             );
+
+            $this->delete_all_files_in_branch();
 
             echo 'SUCCESS';
     }
@@ -155,6 +153,72 @@ class StaticHtmlOutput_GitLab {
         return count( $contents );
     }
 
+    public function delete_all_files_in_branch() {
+        require_once dirname( __FILE__ ) .
+            '/../GuzzleHttp/autoloader.php';
+
+        $client = new Client(
+            array(
+                'base_uri' => $this->api_base,
+            )
+        );
+
+        try {
+            $response = $client->request(
+                'GET',
+                'https://gitlab.com/api/v4/projects/' . $this->settings['glProject'] . '/repository/tree?recursive=true',
+                array(
+                    'headers'  => array(
+                        'PRIVATE-TOKEN' => $this->settings['glToken'],
+                    )
+                )
+            );
+
+            $repo_tree = json_decode((string) $response->getBody(), true);
+
+
+            $files_to_delete = array();
+
+            foreach($repo_tree as $potential_file) {
+                if ($potential_file['type'] === 'blob') {
+                //if (true) {
+                    error_log($potential_file['path']);
+                    $files_to_delete[] = array(
+                        'action' => 'delete',
+                        'file_path' => $potential_file['path'],
+                    );
+                }
+            }
+            
+            // EMPTY!!
+            error_log(print_r($files_to_delete, true));
+
+            $response = $client->request(
+                'POST',
+                'https://gitlab.com/api/v4/projects/' . $this->settings['glProject'] . '/repository/commits',
+                array(
+                    'headers'  => array(
+                        'PRIVATE-TOKEN' => $this->settings['glToken'],
+                        'content-type' => 'application/json',
+                    ),
+                    'json' => array(
+                        'branch' => 'master',
+                        'commit_message' => 'test deploy from plugin',
+                        'actions' => $files_to_delete,
+                    )
+                )
+            );
+
+        } catch ( Exception $e ) {
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/WsLog.php';
+            WsLog::l( 'GITLAB EXPORT: error encountered' );
+            WsLog::l( $e );
+            error_log( $e );
+            throw new Exception( $e );
+            return;
+        }
+    }
 
     public function upload_files( $viaCLI = false ) {
         require_once dirname( __FILE__ ) .
@@ -182,8 +246,10 @@ class StaticHtmlOutput_GitLab {
             list($fileToTransfer, $targetPath) = explode( ',', $line );
 
             $files_data[] = array(
-                'name'     => '/' . rtrim( $targetPath ),
-                'contents' => fopen( $fileToTransfer, 'rb' ),
+                'action' => 'create',
+                'file_path' => rtrim( $targetPath ),
+                base64_encode(file_get_contents( $fileToTransfer )),
+                'encoding' => 'base64',
             );
         }
 
@@ -199,15 +265,21 @@ class StaticHtmlOutput_GitLab {
         );
 
         try {
+
+
             $response = $client->request(
                 'POST',
-                'wp2static/wp2static.gitlab.io/src',
+                'https://gitlab.com/api/v4/projects/' . $this->settings['glProject'] . '/repository/commits',
                 array(
-                    'auth'  => array(
-                        $this->user,
-                        $this->settings['glToken'],
+                    'headers'  => array(
+                        'PRIVATE-TOKEN' => $this->settings['glToken'],
+                        'content-type' => 'application/json',
                     ),
-                    'multipart' => $files_data,
+                    'json' => array(
+                        'branch' => 'master',
+                        'commit_message' => 'static publish from WP',
+                        'actions' => $files_data,
+                    )
                 )
             );
 
@@ -235,24 +307,9 @@ class StaticHtmlOutput_GitLab {
         }
     }
 
-    public function test_blob_create() {
+    public function test_file_create() {
         require_once dirname( __FILE__ ) .
             '/../GuzzleHttp/autoloader.php';
-
-# docs: https://docs.gitlab.com/ee/api/repository_files.html
-# example implementation: https://github.com/pd24/dashboard/blob/652fa4e971d28d4f4478e0d4c9f25492beba36c6/app/ApplicationLogic/Infrastructure/Repository.php
-# awaiting abilitu to force when creating
-
-# this works in browser to get all files in tree:
-# https://gitlab.com/api/v4/projects/8980360/repository/tree?recursive=true
-/* returns
-
-[{"id":"b42b171512e9dabf565da7243c54da4214090b8e","name":".gitlab-ci.yml","type":"blob","path":".gitlab-ci.yml","mode":"100644"},{"id":"277398be8a0ad13771393284dda41272da9ae936","name":"README.md","type":"blob","path":"README.md","mode":"100644"},{"id":"8e5b2dca951b6241bcddc7077369c1d1f2933212","name":"index.html","type":"blob","path":"index.html","mode":"100644"},{"id":"0502f22ed4eaf47e9bbefb856c97cf7a0b4d3d63","name":"index2.html","type":"blob","path":"index2.html","mode":"100644"},{"id":"d38ec97e41b50561450d17e085148385420c759c","name":"index3.html","type":"blob","path":"index3.html","mode":"100644"},{"id":"8e5b2dca951b6241bcddc7077369c1d1f2933212","name":"test.html","type":"blob","path":"test.html","mode":"100644"}]
-
-*/
-
-        // TODO: need to get repo files to empty state in order to bulk create
-
 
         $client = new Client(
             array(
@@ -261,61 +318,9 @@ class StaticHtmlOutput_GitLab {
         );
 
         try {
-            // get clean filesystem path
-            // will either need to get list of all files and delete them
-            // else check all files for existing first via API, then mark those that exist as updates and others as creates...
-            
-            $response = $client->request(
-                'GET',
-                // TODO: need to get the project ID from user, may not need other details then, like user/repo...
-                'https://gitlab.com/api/v4/projects/8980360/repository/tree?recursive=true',
-                array(
-                    'headers'  => array(
-                        'PRIVATE-TOKEN' => $this->settings['glToken'],
-                    )
-                )
-            );
-
-            
-
-            $repo_tree = json_decode((string) $response->getBody(), true);
-
-            $files_to_delete = array();
-
-            foreach($repo_tree as $potential_file) {
-                if ($potential_file['type'] === 'blob') {
-                    error_log($potential_file['path']);
-                    $files_to_delete[] = array(
-                        'action' => 'delete',
-                        'file_path' => $potential_file['path'],
-                    );
-                }
-            }
-
             $response = $client->request(
                 'POST',
-                // TODO: need to get the project ID from user, may not need other details then, like user/repo...
-                'https://gitlab.com/api/v4/projects/8980360/repository/commits',
-                array(
-                    'headers'  => array(
-                        'PRIVATE-TOKEN' => $this->settings['glToken'],
-                        'content-type' => 'application/json',
-                    ),
-                    'json' => array(
-                        'branch' => 'master',
-                        'commit_message' => 'test deploy from plugin',
-                        'actions' => $files_to_delete,
-                    )
-                )
-            );
-
-            
-            // files now deleted, proceed to create all of our new ones
-
-            $response = $client->request(
-                'POST',
-                // TODO: need to get the project ID from user, may not need other details then, like user/repo...
-                'https://gitlab.com/api/v4/projects/8980360/repository/commits',
+                'https://gitlab.com/api/v4/projects/' . $this->settings['glProject'] . '/repository/commits',
                 array(
                     'headers'  => array(
                         'PRIVATE-TOKEN' => $this->settings['glToken'],
@@ -327,13 +332,13 @@ class StaticHtmlOutput_GitLab {
                         'actions' => array(
                             array(
                                 'action' => 'create',
-                                'file_path' => 'index3.html',
-                                'content' => 'from plugin',
+                                'file_path' => '.wpsho_' .  time(),
+                                'content' => 'test file',
                             ),
                             array(
                                 'action' => 'create',
-                                'file_path' => 'index2.html',
-                                'content' => 'from plugin2',
+                                'file_path' => '.wpsho2_' .  time(),
+                                'content' => 'test file 2',
                             ),
                         ),
                     )
@@ -343,7 +348,7 @@ class StaticHtmlOutput_GitLab {
         } catch ( Exception $e ) {
             require_once dirname( __FILE__ ) .
                 '/../StaticHtmlOutput/WsLog.php';
-            WsLog::l( 'BITBUCKET EXPORT: error encountered' );
+            WsLog::l( 'GITLAB EXPORT: error encountered' );
             WsLog::l( $e );
             error_log( $e );
             throw new Exception( $e );
