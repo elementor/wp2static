@@ -94,7 +94,7 @@ class WPSHO_PostSettings {
             'glBranch',
             'glPath',
             'glToken',
-            'glRepo',
+            'glProject',
             'glBlobIncrement',
             'glBlobDelay',
         );

@@ -91,7 +91,7 @@ class StaticHtmlOutput_Options {
             'glBranch',
             'glPath',
             'glToken',
-            'glRepo',
+            'glProject',
             'glBlobIncrement',
             'glBlobDelay',
             'netlifyPersonalAccessToken',
