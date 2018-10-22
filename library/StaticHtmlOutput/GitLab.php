@@ -5,6 +5,8 @@ use GuzzleHttp\Client;
 class StaticHtmlOutput_GitLab {
 
     public function __construct() {
+        error_log('constructing class!');
+
         $target_settings = array(
             'general',
             'wpenv',
@@ -107,7 +109,6 @@ class StaticHtmlOutput_GitLab {
 
     // TODO: move to a parent class as identical to bunny and probably others
     public function prepare_deployment() {
-            error_log('preparing deployment');
             $this->clear_file_list();
             $this->create_gitlab_deployment_list(
                 $this->settings['working_directory'] . '/' .
@@ -117,6 +118,12 @@ class StaticHtmlOutput_GitLab {
             $this->delete_all_files_in_branch();
 
             echo 'SUCCESS';
+    }
+
+    public function mergeItemsForDeletion( $items ) {
+        $old_items = $this->files_to_delete;
+
+        $this->files_to_delete = array_merge($this->files_to_delete, $items);
     }
 
     public function get_items_to_export( $batch_size = 1 ) {
@@ -160,7 +167,8 @@ class StaticHtmlOutput_GitLab {
         $formatted_elements = array();
 
         foreach($partial_tree_array as $object) {
-            if ($object['type'] === 'blob' || $object['type'] === 'tree') {
+            //if ($object['type'] === 'blob' || $object['type'] === 'tree') {
+            if ($object['type'] === 'blob') {
                 $formatted_elements[] = array(
                     'action' => 'delete',
                     'file_path' => $object['path'],
@@ -206,10 +214,7 @@ class StaticHtmlOutput_GitLab {
 
         // if we have results, append them to files to delete array 
         $json_items = $response->getBody();
-        $this->files_to_delete[] = $this->partialTreeToDeletionElements( $json_items );
-
-        error_log('count of files_to_delete');
-        error_log(count($this->files_to_delete));
+        $this->mergeItemsForDeletion($this->partialTreeToDeletionElements( $json_items ) );
 
         // if current page is less than total pages
         if ( $current_page < $total_pages ) {
@@ -222,11 +227,6 @@ class StaticHtmlOutput_GitLab {
 
     public function getListOfFilesInRepo() {
         $this->getRepositoryTree( 1 );
-
-        error_log('should be done');
-        error_log(print_r($this->files_to_delete, true));
-        error_log('done');
-        die();
     }
 
     public function delete_all_files_in_branch() {
@@ -266,9 +266,6 @@ class StaticHtmlOutput_GitLab {
             throw new Exception( $e );
             return;
         }
-
-        error_log('stopping after deletion');
-        die();
     }
 
     public function upload_files( $viaCLI = false ) {
