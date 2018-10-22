@@ -79,6 +79,16 @@ class WPSHO_PostSettings {
             'ghBlobDelay',
         );
 
+        $key_sets['bitbucket'] = array(
+            'baseUrl-bitbucket',
+            'bbBranch',
+            'bbPath',
+            'bbToken',
+            'bbRepo',
+            'bbBlobIncrement',
+            'bbBlobDelay',
+        );
+
         $key_sets['ftp'] = array(
             'baseUrl-ftp',
             'ftpPassword',

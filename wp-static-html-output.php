@@ -26,6 +26,12 @@ if ( $ajax_action === 'crawl_site' || $ajax_action === 'crawl_again' ) {
 
     wp_die();
     return null;
+} elseif ( $ajax_action == 'bitbucket_prepare_export' ) {
+    require_once dirname( __FILE__ ) .
+        '/library/StaticHtmlOutput/Bitbucket.php';
+
+    wp_die();
+    return null;
 } elseif ( $ajax_action == 'github_prepare_export' ) {
     require_once dirname( __FILE__ ) .
         '/library/StaticHtmlOutput/GitHub.php';
@@ -47,6 +53,12 @@ if ( $ajax_action === 'crawl_site' || $ajax_action === 'crawl_again' ) {
 } elseif ( $ajax_action == 'test_blob_create' ) {
     require_once dirname( __FILE__ ) .
         '/library/StaticHtmlOutput/GitHub.php';
+
+    wp_die();
+    return null;
+} elseif ( $ajax_action == 'test_bitbucket' ) {
+    require_once dirname( __FILE__ ) .
+        '/library/StaticHtmlOutput/Bitbucket.php';
 
     wp_die();
     return null;
