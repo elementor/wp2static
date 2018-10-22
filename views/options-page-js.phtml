@@ -90,6 +90,9 @@ jQuery(document).ready(function($){
 
     if( export_targets.length > 0) {
       switch(target = export_targets.shift()) {
+        case 'BITBUCKET':
+          doAJAXExport('bitbucket_prepare_export', 'bitbucket_upload_blobs', 'bitbucket_finalise_export');
+          break;
         case 'GITHUB':
           doAJAXExport('github_prepare_export', 'github_upload_blobs', 'github_finalise_export');
           break;
@@ -210,6 +213,10 @@ jQuery(document).ready(function($){
 
       case 'github':
         export_targets.push('GITHUB');
+      break;	
+
+      case 'bitbucket':
+        export_targets.push('BITBUCKET');
       break;	
 
       case 'bunnycdn':
@@ -380,6 +387,28 @@ jQuery(document).ready(function($){
           }
         }
       break; 
+
+      case 'bitbucket':
+        required_fields = {
+          bbToken: 'Please specify your Bitbucket personal access token in order to deploy to Bitbucket.',
+          bbRepo: 'Please specify your Bitbucket repository name in order to deploy to Bitbucket.',
+          bbBranch: 'Please specify which branch in your Bitbucket repository you want to deploy to.',
+        };	
+
+        Object.keys(required_fields).forEach(function(key,index) {
+          if ($('#' + key).val() == '') {
+            validation_errors += required_fields[key] + "\n";
+          }
+        });
+
+        repo = $('#bbRepo').val();
+
+        if (repo != '') {
+          if (repo.split('/').length !== 2) {
+            validation_errors += "Please ensure your Bitbucket repo is specified as USER_OR_ORG_NAME/REPO_NAME\n";
+          }
+        }
+      break; 
     }
 
     return validation_errors;
@@ -547,7 +576,8 @@ jQuery(document).ready(function($){
       'dropbox',
       'bunnycdn',
       'netlify',
-      'github'
+      'github',
+      'bitbucket'
     ];
 
     // hide those not selected
@@ -629,7 +659,7 @@ jQuery(document).ready(function($){
 
 	// update base url previews in realtime
 	$(document).on('input', 
-		'#baseUrl-s3, #baseUrl-ftp, #baseUrl-folder, #baseUrl-dropbox, #baseUrl-github, #baseUrl-netlify, #baseUrl-bunnycdn, #baseUrl-zip, #targetFolder', 
+		'#baseUrl-s3, #baseUrl-ftp, #baseUrl-folder, #baseUrl-dropbox, #baseUrl-github, #baseUrl-bitbucket, #baseUrl-netlify, #baseUrl-bunnycdn, #baseUrl-zip, #targetFolder', 
 		function() {
 			updateBaseURLReferences();
 		}
@@ -740,10 +770,39 @@ jQuery(document).ready(function($){
       saveOptions();
   });
 
+  $('.wrap').on('click', '#bitbucket-test-button', function(event) {
+      event.preventDefault();
+      $('.hiddenActionField').val('wp_static_html_output_ajax');
+      $('#hiddenAJAXAction').val('test_bitbucket');
+
+      data = $(".options-form :input")
+          .filter(function(index, element) {
+              return $(element).val() != '';
+          })
+          .serialize();
+
+      $.ajax({
+          url: ajaxurl,
+          data: data,
+          dataType: 'html',
+          method: 'POST',
+          success: function(serverResponse) {
+            if (serverResponse === 'SUCCESS') {
+                alert('Bitbucket Connection/Upload Test Successful');
+            } else {
+                alert('FAIL: Unable to complete test upload to Bitbucket');
+            }
+          },
+          error: function(serverResponse) {
+            alert('FAIL: Unable to complete test upload to Bitbucket');
+          }
+      });
+  });
+
   $('.wrap').on('click', '#github-test-button', function(event) {
       event.preventDefault();
       $('.hiddenActionField').val('wp_static_html_output_ajax');
-      $('#hiddenAJAXAction').val('test_blob_create');
+      $('#hiddenAJAXAction').val('test_bitbucket');
 
       data = $(".options-form :input")
           .filter(function(index, element) {
@@ -759,6 +818,8 @@ jQuery(document).ready(function($){
           success: function(serverResponse) {
             if (serverResponse === 'SUCCESS') {
                 alert('GitHub Connection/Upload Test Successful');
+            } else {
+                alert('FAIL: Unable to complete test upload to GitHub');
             }
           },
           error: function(serverResponse) {
