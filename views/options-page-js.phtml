@@ -90,6 +90,9 @@ jQuery(document).ready(function($){
 
     if( export_targets.length > 0) {
       switch(target = export_targets.shift()) {
+        case 'GITLAB':
+          doAJAXExport('gitlab_prepare_export', 'gitlab_upload_files');
+          break;
         case 'BITBUCKET':
           doAJAXExport('bitbucket_prepare_export', 'bitbucket_upload_files');
           break;
@@ -217,6 +220,10 @@ jQuery(document).ready(function($){
 
       case 'bitbucket':
         export_targets.push('BITBUCKET');
+      break;	
+
+      case 'gitlab':
+        export_targets.push('GITLAB');
       break;	
 
       case 'bunnycdn':
@@ -409,6 +416,28 @@ jQuery(document).ready(function($){
           }
         }
       break; 
+
+      case 'gitlab':
+        required_fields = {
+          glToken: 'Please specify your GitLab personal access token in order to deploy to GitLab.',
+          glRepo: 'Please specify your GitLab repository name in order to deploy to GitLab.',
+          glBranch: 'Please specify which branch in your GitLab repository you want to deploy to.',
+        };	
+
+        Object.keys(required_fields).forEach(function(key,index) {
+          if ($('#' + key).val() == '') {
+            validation_errors += required_fields[key] + "\n";
+          }
+        });
+
+        repo = $('#glRepo').val();
+
+        if (repo != '') {
+          if (repo.split('/').length !== 2) {
+            validation_errors += "Please ensure your GitLab repo is specified as USER_OR_ORG_NAME/REPO_NAME\n";
+          }
+        }
+      break; 
     }
 
     return validation_errors;
@@ -511,6 +540,7 @@ jQuery(document).ready(function($){
     var base_url_previews = $('.base_url_preview' );
 
     if ($('#baseUrl-' + current_deployment_method)) {
+    console.log('exists:' + current_deployment_method);
       base_url = $('#baseUrl-' + current_deployment_method).val(); 
 
       // set hidden baseURL field to current option
@@ -577,6 +607,7 @@ jQuery(document).ready(function($){
       'bunnycdn',
       'netlify',
       'github',
+      'gitlab',
       'bitbucket'
     ];
 
@@ -659,7 +690,7 @@ jQuery(document).ready(function($){
 
 	// update base url previews in realtime
 	$(document).on('input', 
-		'#baseUrl-s3, #baseUrl-ftp, #baseUrl-folder, #baseUrl-dropbox, #baseUrl-github, #baseUrl-bitbucket, #baseUrl-netlify, #baseUrl-bunnycdn, #baseUrl-zip, #targetFolder', 
+		'#baseUrl-s3, #baseUrl-ftp, #baseUrl-folder, #baseUrl-dropbox, #baseUrl-github, #baseUrl-bitbucket, #baseUrl-gitlab, #baseUrl-netlify, #baseUrl-bunnycdn, #baseUrl-zip, #targetFolder', 
 		function() {
 			updateBaseURLReferences();
 		}
@@ -795,6 +826,35 @@ jQuery(document).ready(function($){
           },
           error: function(serverResponse) {
             alert('FAIL: Unable to complete test upload to Bitbucket');
+          }
+      });
+  });
+
+  $('.wrap').on('click', '#gitlab-test-button', function(event) {
+      event.preventDefault();
+      $('.hiddenActionField').val('wp_static_html_output_ajax');
+      $('#hiddenAJAXAction').val('test_gitlab');
+
+      data = $(".options-form :input")
+          .filter(function(index, element) {
+              return $(element).val() != '';
+          })
+          .serialize();
+
+      $.ajax({
+          url: ajaxurl,
+          data: data,
+          dataType: 'html',
+          method: 'POST',
+          success: function(serverResponse) {
+            if (serverResponse === 'SUCCESS') {
+                alert('GitLab Connection/Upload Test Successful');
+            } else {
+                alert('FAIL: Unable to complete test upload to GitLab');
+            }
+          },
+          error: function(serverResponse) {
+            alert('FAIL: Unable to complete test upload to GitLab');
           }
       });
   });

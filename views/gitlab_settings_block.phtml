@@ -1,0 +1,104 @@
+<div class="gitlab_settings_block" style="display:none;">
+  <table class="form-table">
+    <tbody>
+      <tr>
+        <th scope="row">
+          <label for="baseUrl-gitlab"><?php echo __('Base URL', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <?php $tpl->displayTextfield($this, 'baseUrl-gitlab', 'http://mystaticsite.com', '', ''); ?><br>
+
+          <p><i><?php echo __("Set this to the URL you intend to host your static exported site on, ie http://mystaticsite.com. Do not set this to the same URL as the WordPress site you're currently using (the address in your browser above). This plugin will rewrite all URLs in the exported static html from your current WordPress URL to what you set here. Supports http, https and protocol relative URLs.", 'static-html-output-plugin');?></i></p> 
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          <label for="glToken"><?php echo __('Personl Access Token', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <?php $tpl->displayTextfield($this, 'glToken', 'GitLab Personal Access Token', '<a href="https://gitlab.com/settings/tokens/new" target="_blank">How do I get this?</a>', 'password'); ?>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          <label for="glRepo"><?php echo __('Account & Repository Name', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <?php $tpl->displayTextfield($this, 'glRepo', 'Account / Repository Name', 'ie, leonstafford/wordpress-static-html-plugin'); ?><br>
+
+          <p><i>Repository cannot be empty, just create any file via the GitLab UI if needed</i></p>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          <label for="glBranch"><?php echo __('Branch', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <?php $tpl->displayTextfield($this, 'glBranch', 'Branch', 'usually \'master\' or \'gl-pages\''); ?>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          <label for="glPath"><?php echo __('Subdirectory', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <?php $tpl->displayTextfield($this, 'glPath', 'Path within repository', 'Usually the repository root (leave this blank) or the \'doc\' folder'); ?>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          <label for="glBlobIncrement"><?php echo __('File Upload Batch Size', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <select name="glBlobIncrement" id="glBlobIncrement">
+<?php 
+  // TODO: shift this into helper function for select
+  $increments = array(1, 5, 10, 25, 50, 100, 500, 1000, 999999);
+
+  foreach($increments as $increment) :
+       if ($increment == 999999): ?>
+            <option value="999999"<?php echo $this->options->glBlobIncrement == $increment ? ' selected' : ''; ?>>Maximum</option>
+<?php else: ?>
+            <option value="<?php echo $increment; ?>"<?php echo $this->options->glBlobIncrement == $increment ? ' selected' : ''; ?>><?php echo $increment; ?></option>
+
+<?php endif; 
+         endforeach; ?>
+          </select><br>
+
+          <p>This is set to 1, by default, in order to avoid execution limit timeouts on restricted environments, such as shared hosting servers. Each increment is the amount of files the server will try to upload to GitLab on each request. Incrementing this will speed up your exports, by processing more are a time. If your export is failing, due to execution limits r GitLab API rate limits being reached, try setting this to a lower number.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          <label for="glBlobDelay"><?php echo __('API Request Delay', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <select name="glBlobDelay" id="glBlobDelay">
+<?php 
+  // TODO: shift this into helper function for select
+  $increments = array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 2, 3, 4, 10);
+
+  foreach($increments as $increment) : ?>
+            <option value="<?php echo $increment; ?>"<?php echo $this->options->glBlobDelay == $increment ? ' selected' : ''; ?>><?php echo $increment; ?></option>
+ <?php endforeach; ?>
+          </select><br>
+
+          <p>This is set to 0, by default, but if your deploy is hitting GitLab's API too rapidly, you can increase this to add a delay between each API request.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          <label for="gl_test"><?php echo __('Test GitLab Settings', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <button id="gitlab-test-button" type="button" class="btn-primary button">Test GitLab Settings</button>
+
+          <p>This is set to 0, by default, but if your deploy is hitting GitLab's API too rapidly, you can increase this to add a delay between each API request.</p>
+
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
