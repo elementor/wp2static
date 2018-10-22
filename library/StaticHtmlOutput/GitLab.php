@@ -34,6 +34,7 @@ class StaticHtmlOutput_GitLab {
             '/../StaticHtmlOutput/Archive.php';
         $this->archive = new Archive();
         $this->archive->setToCurrentArchive();
+        $this->files_to_delete = array();
 
         $this->api_base = '';
 
@@ -164,9 +165,13 @@ class StaticHtmlOutput_GitLab {
         );
 
         try {
+
+            //TODO: will need to get page header from response to determine if to hit again: https://stackoverflow.com/a/47417312/1668057
+            // check header: 
+
             $response = $client->request(
                 'GET',
-                'https://gitlab.com/api/v4/projects/' . $this->settings['glProject'] . '/repository/tree?recursive=true',
+                'https://gitlab.com/api/v4/projects/' . $this->settings['glProject'] . '/repository/tree?recursive=true&per_page=10',
                 array(
                     'headers'  => array(
                         'PRIVATE-TOKEN' => $this->settings['glToken'],
@@ -174,24 +179,69 @@ class StaticHtmlOutput_GitLab {
                 )
             );
 
+            $total_pages = $response->getHeader('X-Total-Pages');
+            $total_pages = $total_pages[0];
+            error_log($total_pages . ' total pages discovered');
+
             $repo_tree = json_decode((string) $response->getBody(), true);
-
-
-            $files_to_delete = array();
+        
+            //error_log('first tree:');
+            //error_log(print_r($repo_tree, true));
 
             foreach($repo_tree as $potential_file) {
-                if ($potential_file['type'] === 'blob') {
+                if ($potential_file['type'] === 'blob' || 
+                        $potential_file['type'] === 'tree'
+                    ) {
                 //if (true) {
-                    error_log($potential_file['path']);
-                    $files_to_delete[] = array(
+                    $this->files_to_delete[] = array(
                         'action' => 'delete',
                         'file_path' => $potential_file['path'],
                     );
                 }
             }
+                    error_log('initial del files:');
+                    error_log(print_r($this->files_to_delete, true));
+
+            // keep iterating to get all files to delete
+            if ($total_pages > 1) {
+                for ( $i = 2; $i <= $total_pages; $i++ ) {
+                    $response = $client->request(
+                        'GET',
+                        'https://gitlab.com/api/v4/projects/' . $this->settings['glProject'] . '/repository/tree?recursive=true&per_page=10&page=' . $i,
+                        array(
+                            'headers'  => array(
+                                'PRIVATE-TOKEN' => $this->settings['glToken'],
+                            )
+                        )
+                    );
+
+                    $repo_tree = json_decode((string) $response->getBody(), true);
+                    //error_log('another tree:');
+                    //error_log(print_r($repo_tree, true));
+
+                    foreach($repo_tree as $potential_file) {
+                        if ($potential_file['type'] === 'blob' || 
+                                $potential_file['type'] === 'tree'
+                            ) {
+                        //if (true) {
+                            $this->files_to_delete[] = array(
+                                'action' => 'delete',
+                                'file_path' => $potential_file['path'],
+                            );
+                        }
+                    }
+
+                    error_log('running del files:');
+                    error_log(print_r($this->files_to_delete, true));
+
+                }
+            }
+
+            error_log(count($this->files_to_delete) . 'files will be deleted');
             
             // EMPTY!!
-            error_log(print_r($files_to_delete, true));
+            error_log(var_dump($this->files_to_delete));die();
+
 
             $response = $client->request(
                 'POST',
@@ -204,7 +254,7 @@ class StaticHtmlOutput_GitLab {
                     'json' => array(
                         'branch' => 'master',
                         'commit_message' => 'test deploy from plugin',
-                        'actions' => $files_to_delete,
+                        'actions' => $this->files_to_delete,
                     )
                 )
             );
@@ -218,6 +268,9 @@ class StaticHtmlOutput_GitLab {
             throw new Exception( $e );
             return;
         }
+
+
+        die();
     }
 
     public function upload_files( $viaCLI = false ) {
