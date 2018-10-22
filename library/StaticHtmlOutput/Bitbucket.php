@@ -201,7 +201,7 @@ class StaticHtmlOutput_BitBucket {
         try {
             $response = $client->request(
                 'POST',
-                'wp2static/wp2static.bitbucket.io/src',
+                $this->settings['bbRepo'] . '/src',
                 array(
                     'auth'  => array(
                         $this->user,
@@ -247,7 +247,7 @@ class StaticHtmlOutput_BitBucket {
         try {
             $response = $client->request(
                 'POST',
-                'wp2static/wp2static.bitbucket.io/src',
+                 $this->settings['bbRepo'] . '/src',
                 array(
                     'auth'  => array(
                         $this->user,
