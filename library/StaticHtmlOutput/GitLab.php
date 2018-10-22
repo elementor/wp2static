@@ -5,8 +5,6 @@ use GuzzleHttp\Client;
 class StaticHtmlOutput_GitLab {
 
     public function __construct() {
-        error_log('constructing class!');
-
         $target_settings = array(
             'general',
             'wpenv',
@@ -180,7 +178,6 @@ class StaticHtmlOutput_GitLab {
     }
 
     public function getRepositoryTree( $page ) {
-        error_log('getting repo tree for: ' . $page);
         // make request and get results, including total pages
         require_once dirname( __FILE__ ) .
             '/../GuzzleHttp/autoloader.php';
@@ -193,7 +190,7 @@ class StaticHtmlOutput_GitLab {
 
         $response = $client->request(
             'GET',
-            'https://gitlab.com/api/v4/projects/' . $this->settings['glProject'] . '/repository/tree?recursive=true&per_page=10&page=' . $page,
+            'https://gitlab.com/api/v4/projects/' . $this->settings['glProject'] . '/repository/tree?recursive=true&per_page=100&page=' . $page,
             array(
                 'headers'  => array(
                     'PRIVATE-TOKEN' => $this->settings['glToken'],
@@ -207,10 +204,6 @@ class StaticHtmlOutput_GitLab {
         $total_pages = $total_pages[0];
         $next_page = $next_page[0];
         $current_page = $current_page[0];
-
-        error_log('total: ' . $total_pages);
-        error_log('next: ' . $next_page);
-        error_log('current: ' . $current_page);
 
         // if we have results, append them to files to delete array 
         $json_items = $response->getBody();
@@ -313,8 +306,6 @@ class StaticHtmlOutput_GitLab {
         );
 
         try {
-
-
             $response = $client->request(
                 'POST',
                 'https://gitlab.com/api/v4/projects/' . $this->settings['glProject'] . '/repository/commits',
