@@ -105,6 +105,32 @@ class StaticHtmlOutput_GitLab {
         }
     }
 
+    public function createGitLabPagesConfig() {
+        // GL doesn't seem to build the pages unless this file is detected
+        $config_file = <<<EOD
+pages:
+  stage: deploy
+  script:
+  - mkdir .public
+  - cp -r * .public
+  - mv .public public
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+
+EOD;
+
+        $target_path = $this->archive->path . '.gitlab-ci.yml';
+        file_put_contents( $target_path, $config_file );
+
+        // force include the gitlab config file
+        $gitlab_config_file = $this->archive->path . '.gitlab-ci.yml';
+        $export_line = $gitlab_config_file . ',' . '.gitlab-ci.yml';
+        file_put_contents( $this->exportFileList, $export_line . PHP_EOL, FILE_APPEND | LOCK_EX );
+    }
+
     // TODO: move to a parent class as identical to bunny and probably others
     public function prepare_deployment() {
             $this->clear_file_list();
@@ -114,6 +140,8 @@ class StaticHtmlOutput_GitLab {
             );
 
             $this->delete_all_files_in_branch();
+
+            $this->createGitLabPagesConfig();
 
             echo 'SUCCESS';
     }
@@ -289,7 +317,7 @@ class StaticHtmlOutput_GitLab {
             $files_data[] = array(
                 'action' => 'create',
                 'file_path' => rtrim( $targetPath ),
-                base64_encode(file_get_contents( $fileToTransfer )),
+                'content' => base64_encode(file_get_contents( $fileToTransfer )),
                 'encoding' => 'base64',
             );
         }

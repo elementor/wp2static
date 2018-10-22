@@ -145,6 +145,7 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
  * New feature: exclude URLs from being crawled/exported
  * New feature: initial support for feeds/xml exporting
  * New feature: deploy to Bitbucket
+ * New feature: deploy to GitLab
 
 = 5.8 =
 
@@ -472,6 +473,7 @@ Initial release to Wordpress community
  * New feature: exclude URLs from being crawled/exported
  * New feature: initial support for feeds/xml exporting
  * New feature: deploy to Bitbucket
+ * New feature: deploy to GitLab
 
 = 5.8 =
 
