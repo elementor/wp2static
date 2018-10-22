@@ -154,7 +154,84 @@ class StaticHtmlOutput_GitLab {
         return count( $contents );
     }
 
+    public function partialTreeToDeletionElements( $json_response ) {
+        $partial_tree_array = json_decode( (string) $json_response, true );
+
+        $formatted_elements = array();
+
+        foreach($partial_tree_array as $object) {
+            if ($object['type'] === 'blob' || $object['type'] === 'tree') {
+                $formatted_elements[] = array(
+                    'action' => 'delete',
+                    'file_path' => $object['path'],
+                );
+            }
+        }
+
+        return $formatted_elements;
+    }
+
+    public function getRepositoryTree( $page ) {
+        error_log('getting repo tree for: ' . $page);
+        // make request and get results, including total pages
+        require_once dirname( __FILE__ ) .
+            '/../GuzzleHttp/autoloader.php';
+
+        $client = new Client(
+            array(
+                'base_uri' => $this->api_base,
+            )
+        );
+
+        $response = $client->request(
+            'GET',
+            'https://gitlab.com/api/v4/projects/' . $this->settings['glProject'] . '/repository/tree?recursive=true&per_page=10&page=' . $page,
+            array(
+                'headers'  => array(
+                    'PRIVATE-TOKEN' => $this->settings['glToken'],
+                )
+            )
+        );
+
+        $total_pages = $response->getHeader('X-Total-Pages');
+        $next_page = $response->getHeader('X-Next-Page');
+        $current_page = $response->getHeader('X-Page');
+        $total_pages = $total_pages[0];
+        $next_page = $next_page[0];
+        $current_page = $current_page[0];
+
+        error_log('total: ' . $total_pages);
+        error_log('next: ' . $next_page);
+        error_log('current: ' . $current_page);
+
+        // if we have results, append them to files to delete array 
+        $json_items = $response->getBody();
+        $this->files_to_delete[] = $this->partialTreeToDeletionElements( $json_items );
+
+        error_log('count of files_to_delete');
+        error_log(count($this->files_to_delete));
+
+        // if current page is less than total pages
+        if ( $current_page < $total_pages ) {
+            // call this again with an increment
+            $this->getRepositoryTree( $next_page );
+        }
+
+        return;
+    }
+
+    public function getListOfFilesInRepo() {
+        $this->getRepositoryTree( 1 );
+
+        error_log('should be done');
+        error_log(print_r($this->files_to_delete, true));
+        error_log('done');
+        die();
+    }
+
     public function delete_all_files_in_branch() {
+        $this->getListOfFilesInRepo();
+
         require_once dirname( __FILE__ ) .
             '/../GuzzleHttp/autoloader.php';
 
@@ -165,108 +242,6 @@ class StaticHtmlOutput_GitLab {
         );
 
         try {
-
-            //TODO: will need to get page header from response to determine if to hit again: https://stackoverflow.com/a/47417312/1668057
-            // check header: 
-
-            $response = $client->request(
-                'GET',
-                'https://gitlab.com/api/v4/projects/' . $this->settings['glProject'] . '/repository/tree?recursive=true&per_page=10',
-                array(
-                    'headers'  => array(
-                        'PRIVATE-TOKEN' => $this->settings['glToken'],
-                    )
-                )
-            );
-
-            $total_pages = $response->getHeader('X-Total-Pages');
-            $total_pages = $total_pages[0];
-            error_log($total_pages . ' total pages discovered');
-
-            $repo_tree = json_decode((string) $response->getBody(), true);
-        
-            //error_log('first tree:');
-            //error_log(print_r($repo_tree, true));
-
-            foreach($repo_tree as $potential_file) {
-                if ($potential_file['type'] === 'blob' || 
-                        $potential_file['type'] === 'tree'
-                    ) {
-                //if (true) {
-                    $this->files_to_delete[] = array(
-                        'action' => 'delete',
-                        'file_path' => $potential_file['path'],
-                    );
-                }
-            }
-                    error_log('initial del files:');
-                    error_log(print_r($this->files_to_delete, true));
-
-            // keep iterating to get all files to delete
-            if ($total_pages > 1) {
-
-                $client_inner = new Client(
-                    array(
-                        'base_uri' => $this->api_base,
-                    )
-                );
-
-                for ( $i = 2; $i <= $total_pages; $i++ ) {
-                    error_log('iteration: ' . $i);
-                
-                    $response_inner = $client_inner->request(
-                        'GET',
-                        'https://gitlab.com/api/v4/projects/' . $this->settings['glProject'] . '/repository/tree?recursive=true&per_page=10&page=' . $i,
-                        array(
-                            'headers'  => array(
-                                'PRIVATE-TOKEN' => $this->settings['glToken'],
-                            )
-                        )
-                    );
-
-                    $repo_tree_inner = json_decode((string) $response_inner->getBody(), true);
-                    //error_log('another tree:');
-                    //error_log(print_r($repo_tree, true));
-
-                    // DEBUG: at some nth iteration (7th?)
-                    // files_to_delete is becoming empty
-                    error_log('before disappearance:');
-                    error_log(print_r($this->files_to_delete, true));
-
-                    $inner_counter = 0;
-
-                    foreach($repo_tree_inner as $potential_file_inner) {
-                        $inner_counter++;
-                        error_log($inner_counter);
-                        if ($potential_file_inner['type'] === 'blob' || 
-                                $potential_file_inner['type'] === 'tree'
-                            ) {
-                        // 8th iteraion kills the array
-
-                        // files still exist as expected
-                        error_log($potential_file_inner['path']);
-
-                        $this->files_to_delete[] = array(
-                            'action' => 'delete',
-                            'file_path' => $potential_file_inner['path'],
-                        );
-
-
-                        }
-                    }
-
-                    error_log('running del files:');
-                    error_log(print_r($this->files_to_delete, true));
-
-                }
-            }
-
-            error_log(count($this->files_to_delete) . 'files will be deleted');
-            
-            // EMPTY!!
-            //error_log(var_dump($this->files_to_delete));die();
-
-
             $response = $client->request(
                 'POST',
                 'https://gitlab.com/api/v4/projects/' . $this->settings['glProject'] . '/repository/commits',
@@ -282,7 +257,6 @@ class StaticHtmlOutput_GitLab {
                     )
                 )
             );
-
         } catch ( Exception $e ) {
             require_once dirname( __FILE__ ) .
                 '/../StaticHtmlOutput/WsLog.php';
@@ -293,7 +267,7 @@ class StaticHtmlOutput_GitLab {
             return;
         }
 
-
+        error_log('stopping after deletion');
         die();
     }
 
