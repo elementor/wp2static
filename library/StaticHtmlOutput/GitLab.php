@@ -280,16 +280,37 @@ class StaticHtmlOutput_GitLab {
 
             $repo_tree = json_decode((string) $response->getBody(), true);
 
+            $files_to_delete = array();
+
             foreach($repo_tree as $potential_file) {
                 if ($potential_file['type'] === 'blob') {
                     error_log($potential_file['path']);
+                    $files_to_delete[] = array(
+                        'action' => 'delete',
+                        'file_path' => $potential_file['path'],
+                    );
                 }
             }
 
-            error_log(print_r($repo_tree, true)); 
+            $response = $client->request(
+                'POST',
+                // TODO: need to get the project ID from user, may not need other details then, like user/repo...
+                'https://gitlab.com/api/v4/projects/8980360/repository/commits',
+                array(
+                    'headers'  => array(
+                        'PRIVATE-TOKEN' => $this->settings['glToken'],
+                        'content-type' => 'application/json',
+                    ),
+                    'json' => array(
+                        'branch' => 'master',
+                        'commit_message' => 'test deploy from plugin',
+                        'actions' => $files_to_delete,
+                    )
+                )
+            );
 
-            die();
-
+            
+            // files now deleted, proceed to create all of our new ones
 
             $response = $client->request(
                 'POST',
