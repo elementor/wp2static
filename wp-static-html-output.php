@@ -32,6 +32,12 @@ if ( $ajax_action === 'crawl_site' || $ajax_action === 'crawl_again' ) {
 
     wp_die();
     return null;
+} elseif ( $ajax_action == 'bitbucket_upload_files' ) {
+    require_once dirname( __FILE__ ) .
+        '/library/StaticHtmlOutput/Bitbucket.php';
+
+    wp_die();
+    return null;
 } elseif ( $ajax_action == 'github_prepare_export' ) {
     require_once dirname( __FILE__ ) .
         '/library/StaticHtmlOutput/GitHub.php';

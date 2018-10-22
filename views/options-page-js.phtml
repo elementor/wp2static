@@ -91,7 +91,7 @@ jQuery(document).ready(function($){
     if( export_targets.length > 0) {
       switch(target = export_targets.shift()) {
         case 'BITBUCKET':
-          doAJAXExport('bitbucket_prepare_export', 'bitbucket_upload_blobs', 'bitbucket_finalise_export');
+          doAJAXExport('bitbucket_prepare_export', 'bitbucket_upload_files');
           break;
         case 'GITHUB':
           doAJAXExport('github_prepare_export', 'github_upload_blobs', 'github_finalise_export');
