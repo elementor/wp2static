@@ -204,8 +204,17 @@ class StaticHtmlOutput_GitLab {
 
             // keep iterating to get all files to delete
             if ($total_pages > 1) {
+
+                $client_inner = new Client(
+                    array(
+                        'base_uri' => $this->api_base,
+                    )
+                );
+
                 for ( $i = 2; $i <= $total_pages; $i++ ) {
-                    $response = $client->request(
+                    error_log('iteration: ' . $i);
+                
+                    $response_inner = $client_inner->request(
                         'GET',
                         'https://gitlab.com/api/v4/projects/' . $this->settings['glProject'] . '/repository/tree?recursive=true&per_page=10&page=' . $i,
                         array(
@@ -215,19 +224,34 @@ class StaticHtmlOutput_GitLab {
                         )
                     );
 
-                    $repo_tree = json_decode((string) $response->getBody(), true);
+                    $repo_tree_inner = json_decode((string) $response_inner->getBody(), true);
                     //error_log('another tree:');
                     //error_log(print_r($repo_tree, true));
 
-                    foreach($repo_tree as $potential_file) {
-                        if ($potential_file['type'] === 'blob' || 
-                                $potential_file['type'] === 'tree'
+                    // DEBUG: at some nth iteration (7th?)
+                    // files_to_delete is becoming empty
+                    error_log('before disappearance:');
+                    error_log(print_r($this->files_to_delete, true));
+
+                    $inner_counter = 0;
+
+                    foreach($repo_tree_inner as $potential_file_inner) {
+                        $inner_counter++;
+                        error_log($inner_counter);
+                        if ($potential_file_inner['type'] === 'blob' || 
+                                $potential_file_inner['type'] === 'tree'
                             ) {
-                        //if (true) {
-                            $this->files_to_delete[] = array(
-                                'action' => 'delete',
-                                'file_path' => $potential_file['path'],
-                            );
+                        // 8th iteraion kills the array
+
+                        // files still exist as expected
+                        error_log($potential_file_inner['path']);
+
+                        $this->files_to_delete[] = array(
+                            'action' => 'delete',
+                            'file_path' => $potential_file_inner['path'],
+                        );
+
+
                         }
                     }
 
@@ -240,7 +264,7 @@ class StaticHtmlOutput_GitLab {
             error_log(count($this->files_to_delete) . 'files will be deleted');
             
             // EMPTY!!
-            error_log(var_dump($this->files_to_delete));die();
+            //error_log(var_dump($this->files_to_delete));die();
 
 
             $response = $client->request(
