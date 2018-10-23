@@ -24,7 +24,16 @@
           <label for="netlifySiteID"><?php echo __('Site ID', 'static-html-output-plugin');?></label>
         </th>
         <td>
-          <?php $tpl->displayTextfield($this, 'netlifySiteID', 'Netlify Site ID', 'ie, mystaticsite'); ?>
+          <?php $tpl->displayTextfield($this, 'netlifySiteID', 'Netlify Site ID', 'supports: mystaticsite, mystaticsite.netlify.com, mydomain.com, 3970e0fe-8564-4903-9a55-c5f8de49fb8b'); ?>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          <label for="netlify_test"><?php echo __('Test Netlify Settings', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <button id="netlify-test-button" type="button" class="btn-primary button">Test Netlify Settings</button>
+        <span id="netlify_test_results"></span>
         </td>
       </tr>
     </tbody>
