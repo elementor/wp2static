@@ -107,19 +107,31 @@ class StaticHtmlOutput_S3 {
             echo 'SUCCESS';
     }
 
-    public function get_item_to_export() {
+    public function get_items_to_export( $batch_size = 1 ) {
+        $lines = array();
+
         $f = fopen( $this->exportFileList, 'r' );
-        $line = fgets( $f );
+
+        for ( $i = 0; $i < $batch_size; $i++ ) {
+            $lines[] = fgets( $f );
+        }
+
         fclose( $f );
 
+        // TODO: optimize this for just one read, one write within func
         $contents = file( $this->exportFileList, FILE_IGNORE_NEW_LINES );
-        array_shift( $contents );
+
+        for ( $i = 0; $i < $batch_size; $i++ ) {
+            // rewrite file minus the lines we took
+            array_shift( $contents );
+        }
+
         file_put_contents(
             $this->exportFileList,
             implode( "\r\n", $contents )
         );
 
-        return $line;
+        return $lines;
     }
 
     public function get_remaining_items_count() {
@@ -173,26 +185,41 @@ class StaticHtmlOutput_S3 {
 
 
     public function transfer_files() {
-        if ( $this->get_remaining_items_count() < 0 ) {
+        $filesRemaining = $this->get_remaining_items_count();
+
+        if ( $filesRemaining < 0 ) {
             echo 'ERROR';
             die();
         }
 
-        $line = $this->get_item_to_export();
+        $batch_size = $this->settings['s3BlobIncrement'];
 
-        list($fileToTransfer, $targetPath) = explode( ',', $line );
+        if ( $batch_size > $filesRemaining ) {
+            $batch_size = $filesRemaining;
+        }
 
-        $targetPath = rtrim( $targetPath );
+        $lines = $this->get_items_to_export( $batch_size );
 
         // vendor specific from here
         require_once __DIR__ . '/MimeTypes.php';
 
-        $this->s3_put_object(
-            $targetPath . basename( $fileToTransfer ),
-            file_get_contents( $fileToTransfer ),
-            GuessMimeType( $fileToTransfer ),
-            $this
-        );
+        foreach ( $lines as $line ) {
+            list($fileToTransfer, $targetPath) = explode( ',', $line );
+
+            $targetPath = rtrim( $targetPath );
+
+            $this->s3_put_object(
+                $targetPath . basename( $fileToTransfer ),
+                file_get_contents( $fileToTransfer ),
+                GuessMimeType( $fileToTransfer ),
+                $this
+            );
+        }
+
+        if ( isset( $this->settings['s3BlobDelay'] ) &&
+            $this->settings['s3BlobDelay'] > 0 ) {
+            sleep( $this->settings['s3BlobDelay'] );
+        }
 
         // end vendor specific
         $filesRemaining = $this->get_remaining_items_count();
