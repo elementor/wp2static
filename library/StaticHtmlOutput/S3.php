@@ -4,33 +4,40 @@ use Aws\S3\S3Client;
 
 class StaticHtmlOutput_S3 {
 
-    protected $_key;
-    protected $_secret;
-    protected $_region;
-    protected $_bucket;
-    protected $_remotePath;
-    protected $_uploadsPath;
-    protected $_exportFileList;
-    protected $_archiveName;
+    public function __construct() {
+        $target_settings = array(
+            'general',
+            'wpenv',
+            's3',
+            'advanced',
+        );
 
-    public function __construct(
-        $key,
-        $secret,
-        $region,
-        $bucket,
-        $rem_path,
-        $uploadsPath ) {
+        if ( isset( $_POST['selected_deployment_option'] ) ) {
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/PostSettings.php';
 
-        $this->_key = $key;
-        $this->_secret = $secret;
-        $this->_region = $region;
-        $this->_bucket = $bucket;
-        $this->_remotePath = $rem_path;
+            $this->settings = WPSHO_PostSettings::get( $target_settings );
+        } else {
+            error_log( 'TODO: load settings from DB' );
+        }
+
         $this->_exportFileList =
-            $uploadsPath . '/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT';
-        $archiveDir =
-            file_get_contents( $uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE' );
-        $this->_archiveName = rtrim( $archiveDir, '/' );
+            $this->settings['working_directory'] . '/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT';
+
+        switch ( $_POST['ajax_action'] ) {
+            case 'test_s3':
+                $this->test_s3();
+                break;
+            case 's3_prepare_export':
+                $this->prepare_deployment();
+                break;
+            case 's3_transfer_files':
+                $this->transfer_files();
+                break;
+            case 'cloudfront_invalidate_all_items':
+                $this->cloudfront_invalidate_all_items();
+                break;
+        }
     }
 
     public function clear_file_list() {
@@ -203,5 +210,71 @@ class StaticHtmlOutput_S3 {
             }
         }
     }
+
+    public function test_s3() {
+        require_once dirname( __FILE__ ) . '/../aws/aws-autoloader.php';
+        require_once dirname( __FILE__ ) . '/../GuzzleHttp/autoloader.php';
+
+        $S3 = Aws\S3\S3Client::factory(
+            array(
+                'version' => '2006-03-01',
+                'region' => $this->settings['s3Region'],
+                'credentials' => array(
+                    'key' => $this->settings['s3Key'],
+                    'secret'  => $this->settings['s3Secret'],
+                ),
+            )
+        );
+
+        try {
+            $S3->PutObject(
+                array(
+                    'Bucket'      => $this->settings['s3Bucket'],
+                    'Key'         => '.tmp_wpsho' . time(),
+                    'Body'        => 'test plugin connectivity',
+                    'ACL'         => 'public-read',
+                    'ContentType' => 'text/plain',
+                )
+            );
+
+        } catch ( Aws\S3\Exception\S3Exception $e ) {
+            error_log( $e );
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/WsLog.php';
+
+            WsLog::l( 'S3 ERROR RETURNED: ' . $e );
+            echo "There was an error testing S3.\n";
+        }
+
+        echo 'SUCCESS';
+    }
+
+    public function cloudfront_invalidate_all_items() {
+        if ( wpsho_fr()->is__premium_only() ) {
+            require_once __DIR__ . '/CloudFront/CloudFront.php';
+            $cloudfront_id = $this->cfDistributionId;
+
+            if ( ! empty( $cloudfront_id ) ) {
+
+                $cf = new CloudFront(
+                    $this->s3Key,
+                    $this->s3Secret,
+                    $cloudfront_id
+                );
+
+                $cf->invalidate( '/*' );
+
+                if ( $cf->getResponseMessage() === 200 ||
+                    $cf->getResponseMessage() === 201 ) {
+                    echo 'SUCCESS';
+                } else {
+                    WsLog::l( 'CF ERROR: ' . $cf->getResponseMessage() );
+                }
+            } else {
+                echo 'SUCCESS';
+            }
+        }
+    }
 }
 
+$s3 = new StaticHtmlOutput_S3();

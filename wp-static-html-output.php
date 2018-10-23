@@ -75,14 +75,7 @@ if ( ! function_exists( 'wpsho_fr' ) ) {
     require_once 'library/StaticHtmlOutput/UrlHelper.php';
     require_once 'library/StaticHtmlOutput/FilesHelper.php';
     require_once 'library/StaticHtmlOutput.php';
-    require_once 'library/StaticHtmlOutput/FTP.php';
-    require_once 'library/StaticHtmlOutput/Dropbox.php';
     require_once 'library/URL2/URL2.php';
-
-    if ( wpsho_fr()->is__premium_only() ) {
-        require_once 'library/StaticHtmlOutput/BunnyCDN.php';
-        require_once 'library/StaticHtmlOutput/S3.php';
-    }
 
     StaticHtmlOutput_Controller::init( __FILE__ );
 
