@@ -128,7 +128,11 @@ EOD;
         // force include the gitlab config file
         $gitlab_config_file = $this->archive->path . '.gitlab-ci.yml';
         $export_line = $gitlab_config_file . ',' . '.gitlab-ci.yml';
-        file_put_contents( $this->exportFileList, $export_line . PHP_EOL, FILE_APPEND | LOCK_EX );
+        file_put_contents(
+            $this->exportFileList,
+            $export_line . PHP_EOL,
+            FILE_APPEND | LOCK_EX
+        );
     }
 
     // TODO: move to a parent class as identical to bunny and probably others
@@ -149,7 +153,7 @@ EOD;
     public function mergeItemsForDeletion( $items ) {
         $old_items = $this->files_to_delete;
 
-        $this->files_to_delete = array_merge($this->files_to_delete, $items);
+        $this->files_to_delete = array_merge( $this->files_to_delete, $items );
     }
 
     public function get_items_to_export( $batch_size = 1 ) {
@@ -192,9 +196,9 @@ EOD;
 
         $formatted_elements = array();
 
-        foreach($partial_tree_array as $object) {
-            //if ($object['type'] === 'blob' || $object['type'] === 'tree') {
-            if ($object['type'] === 'blob') {
+        foreach ( $partial_tree_array as $object ) {
+            // if ($object['type'] === 'blob' || $object['type'] === 'tree') {
+            if ( $object['type'] === 'blob' ) {
                 $formatted_elements[] = array(
                     'action' => 'delete',
                     'file_path' => $object['path'],
@@ -215,35 +219,38 @@ EOD;
                 'base_uri' => $this->api_base,
             )
         );
+        $tree_endpoint = 'https://gitlab.com/api/v4/projects/' .
+            $this->settings['glProject'] .
+            '/repository/tree?recursive=true&per_page=100&page=' . $page;
 
         $response = $client->request(
             'GET',
-            'https://gitlab.com/api/v4/projects/' . $this->settings['glProject'] . '/repository/tree?recursive=true&per_page=100&page=' . $page,
+            $tree_endpoint,
             array(
                 'headers'  => array(
                     'PRIVATE-TOKEN' => $this->settings['glToken'],
-                )
+                ),
             )
         );
 
-        $total_pages = $response->getHeader('X-Total-Pages');
-        $next_page = $response->getHeader('X-Next-Page');
-        $current_page = $response->getHeader('X-Page');
+        $total_pages = $response->getHeader( 'X-Total-Pages' );
+        $next_page = $response->getHeader( 'X-Next-Page' );
+        $current_page = $response->getHeader( 'X-Page' );
         $total_pages = $total_pages[0];
         $next_page = $next_page[0];
         $current_page = $current_page[0];
 
-        // if we have results, append them to files to delete array 
+        // if we have results, append them to files to delete array
         $json_items = $response->getBody();
-        $this->mergeItemsForDeletion($this->partialTreeToDeletionElements( $json_items ) );
+        $this->mergeItemsForDeletion(
+            $this->partialTreeToDeletionElements( $json_items )
+        );
 
         // if current page is less than total pages
         if ( $current_page < $total_pages ) {
             // call this again with an increment
             $this->getRepositoryTree( $next_page );
         }
-
-        return;
     }
 
     public function getListOfFilesInRepo() {
@@ -262,10 +269,12 @@ EOD;
             )
         );
 
+        $commits_endpoint = 'https://gitlab.com/api/v4/projects/' .
+            $this->settings['glProject'] . '/repository/commits';
         try {
             $response = $client->request(
                 'POST',
-                'https://gitlab.com/api/v4/projects/' . $this->settings['glProject'] . '/repository/commits',
+                $commits_endpoint,
                 array(
                     'headers'  => array(
                         'PRIVATE-TOKEN' => $this->settings['glToken'],
@@ -275,7 +284,7 @@ EOD;
                         'branch' => 'master',
                         'commit_message' => 'test deploy from plugin',
                         'actions' => $this->files_to_delete,
-                    )
+                    ),
                 )
             );
         } catch ( Exception $e ) {
@@ -317,7 +326,9 @@ EOD;
             $files_data[] = array(
                 'action' => 'create',
                 'file_path' => rtrim( $targetPath ),
-                'content' => base64_encode(file_get_contents( $fileToTransfer )),
+                'content' => base64_encode(
+                    file_get_contents( $fileToTransfer )
+                ),
                 'encoding' => 'base64',
             );
         }
@@ -333,10 +344,13 @@ EOD;
             )
         );
 
+        $commits_endpoint = 'https://gitlab.com/api/v4/projects/' .
+            $this->settings['glProject'] . '/repository/commits';
+
         try {
             $response = $client->request(
                 'POST',
-                'https://gitlab.com/api/v4/projects/' . $this->settings['glProject'] . '/repository/commits',
+                $commits_endpoint,
                 array(
                     'headers'  => array(
                         'PRIVATE-TOKEN' => $this->settings['glToken'],
@@ -346,7 +360,7 @@ EOD;
                         'branch' => 'master',
                         'commit_message' => 'static publish from WP',
                         'actions' => $files_data,
-                    )
+                    ),
                 )
             );
 
@@ -384,10 +398,13 @@ EOD;
             )
         );
 
+        $commits_endpoint = 'https://gitlab.com/api/v4/projects/' .
+            $this->settings['glProject'] . '/repository/commits';
+
         try {
             $response = $client->request(
                 'POST',
-                'https://gitlab.com/api/v4/projects/' . $this->settings['glProject'] . '/repository/commits',
+                $commits_endpoint,
                 array(
                     'headers'  => array(
                         'PRIVATE-TOKEN' => $this->settings['glToken'],
@@ -399,16 +416,16 @@ EOD;
                         'actions' => array(
                             array(
                                 'action' => 'create',
-                                'file_path' => '.wpsho_' .  time(),
+                                'file_path' => '.wpsho_' . time(),
                                 'content' => 'test file',
                             ),
                             array(
                                 'action' => 'create',
-                                'file_path' => '.wpsho2_' .  time(),
+                                'file_path' => '.wpsho2_' . time(),
                                 'content' => 'test file 2',
                             ),
                         ),
-                    )
+                    ),
                 )
             );
 

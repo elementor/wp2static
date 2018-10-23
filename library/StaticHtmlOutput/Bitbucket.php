@@ -247,7 +247,7 @@ class StaticHtmlOutput_BitBucket {
         try {
             $response = $client->request(
                 'POST',
-                 $this->settings['bbRepo'] . '/src',
+                $this->settings['bbRepo'] . '/src',
                 array(
                     'auth'  => array(
                         $this->user,
