@@ -142,48 +142,6 @@ class StaticHtmlOutput_S3 {
         return count( $contents );
     }
 
-    public function s3_put_object(
-        $targetPath,
-        $fileContents,
-        $contentType = 'text/plain',
-        $pluginInstance
-        ) {
-            require_once dirname( __FILE__ ) . '/../aws/aws-autoloader.php';
-            require_once dirname( __FILE__ ) . '/../GuzzleHttp/autoloader.php';
-
-            $S3 = Aws\S3\S3Client::factory(
-                array(
-                    'version' => '2006-03-01',
-                    'region' => $this->settings['s3Region'],
-                    'credentials' => array(
-                        'key' => $this->settings['s3Key'],
-                        'secret'  => $this->settings['s3Secret'],
-                    ),
-                )
-            );
-
-            try {
-                $S3->PutObject(
-                    array(
-                        'Bucket'      => $this->settings['s3Bucket'],
-                        'Key'         => $targetPath,
-                        'Body'        => $fileContents,
-                        'ACL'         => 'public-read',
-                        'ContentType' => $contentType,
-                    )
-                );
-
-            } catch ( Aws\S3\Exception\S3Exception $e ) {
-                error_log( $e );
-                require_once dirname( __FILE__ ) .
-                    '/../StaticHtmlOutput/WsLog.php';
-
-                WsLog::l( 'S3 ERROR RETURNED: ' . $e );
-                echo "There was an error uploading the file.\n";
-            }
-    }
-
-
     public function transfer_files() {
         $filesRemaining = $this->get_remaining_items_count();
 
@@ -202,18 +160,44 @@ class StaticHtmlOutput_S3 {
 
         // vendor specific from here
         require_once __DIR__ . '/MimeTypes.php';
+        require_once dirname( __FILE__ ) . '/../aws/aws-autoloader.php';
+        require_once dirname( __FILE__ ) . '/../GuzzleHttp/autoloader.php';
+
+        $S3 = Aws\S3\S3Client::factory(
+            array(
+                'version' => '2006-03-01',
+                'region' => $this->settings['s3Region'],
+                'credentials' => array(
+                    'key' => $this->settings['s3Key'],
+                    'secret'  => $this->settings['s3Secret'],
+                ),
+            )
+        );
 
         foreach ( $lines as $line ) {
             list($fileToTransfer, $targetPath) = explode( ',', $line );
 
             $targetPath = rtrim( $targetPath );
 
-            $this->s3_put_object(
-                $targetPath . basename( $fileToTransfer ),
-                file_get_contents( $fileToTransfer ),
-                GuessMimeType( $fileToTransfer ),
-                $this
-            );
+            try {
+                $S3->PutObject(
+                    array(
+                        'Bucket'      => $this->settings['s3Bucket'],
+                        'Key'         => $targetPath . basename( $fileToTransfer ),
+                        'Body'        => file_get_contents( $fileToTransfer ),
+                        'ACL'         => 'public-read',
+                        'ContentType' => GuessMimeType( $fileToTransfer ),
+                    )
+                );
+
+            } catch ( Aws\S3\Exception\S3Exception $e ) {
+                error_log( $e );
+                require_once dirname( __FILE__ ) .
+                    '/../StaticHtmlOutput/WsLog.php';
+
+                WsLog::l( 'S3 ERROR RETURNED: ' . $e );
+                echo "There was an error testing S3.\n";
+            }
         }
 
         if ( isset( $this->settings['s3BlobDelay'] ) &&
