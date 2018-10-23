@@ -24,22 +24,8 @@ class StaticHtmlOutput_Netlify {
         $this->settings['netlifySiteID'];
         $this->settings['netlifyPersonalAccessToken'];
         $this->baseURL = 'https://api.netlify.com';
-        $site_id = $this->settings['netlifySiteID'];
 
-        if ( strpos( $site_id, 'netlify.com' ) !== false ) {
-            // fuly qualified site detected
-            // ie, blah.netlify.com
-        } elseif ( strpos( $site_id, '.' ) !== false ) {
-            // assume fuly qualified site detected
-            // ie, mysite.com
-        } elseif ( strlen( $site_id ) === 37 ) {
-            // assume API ID for site/hash
-        } else {
-            // netlify site id only, let's prepend .netlify.com
-            $site_id .= '.netlify.com';
-        }
-
-        $this->siteID = $site_id;
+        $this->detectSiteID();
 
         switch ( $_POST['ajax_action'] ) {
             case 'test_netlify':
@@ -48,6 +34,20 @@ class StaticHtmlOutput_Netlify {
             case 'netlify_do_export':
                 $this->deploy();
                 break;
+        }
+    }
+
+    public function detectSiteID() {
+        $this->siteID = $this->settings['netlifySiteID'];
+
+        if ( strpos( $site_id, 'netlify.com' ) !== false ) {
+            return;
+        } elseif ( strpos( $site_id, '.' ) !== false ) {
+            return;
+        } elseif ( strlen( $site_id ) === 37 ) {
+            return;
+        } else {
+            $this->siteID .= '.netlify.com';
         }
     }
 
@@ -97,7 +97,6 @@ class StaticHtmlOutput_Netlify {
 
         $client = new Client( array( 'base_uri' => $this->baseURL ) );
 
-
         $site_info_endpoint =
             '/api/v1/sites/' .
             $this->siteID;
@@ -115,14 +114,14 @@ class StaticHtmlOutput_Netlify {
             );
 
             $response_elements =
-                json_decode((string) $response->getBody(), true);
+                json_decode( (string) $response->getBody(), true );
 
             if ( isset( $response_elements['updated_at'] ) ) {
-                echo 'Last updated at: '. $response_elements['updated_at'];
+                echo 'Last updated at: ' . $response_elements['updated_at'];
             } else {
-                echo 'Looks like this is your first time deploying this site on Netlify - good luck!';
+                echo 'Looks like this is your first time deploying this ' .
+                    'site on Netlify - good luck!';
             }
-
         } catch ( Exception $e ) {
             require_once dirname( __FILE__ ) .
                 '/../StaticHtmlOutput/WsLog.php';
