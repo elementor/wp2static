@@ -191,7 +191,7 @@ class ArchiveProcessor {
 
     public function create_zip() {
         if ( ! $this->settings['selected_deployment_option'] === 'zip' ||
-            $this->settings['selected_deployment_option'] === 'netlify'
+            ! $this->settings['selected_deployment_option'] === 'netlify'
             ) {
             return;
         }

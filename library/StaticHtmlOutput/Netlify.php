@@ -45,23 +45,26 @@ class StaticHtmlOutput_Netlify {
             case 'test_netlify':
                 $this->test_netlify();
                 break;
-           // case 'bitbucket_upload_files':
-           //     $this->upload_files();
-           //     break;
-           // case 'test_bitbucket':
-           //     $this->test_blob_create();
-           //     break;
+            case 'netlify_do_export':
+                $this->deploy();
+                break;
         }
     }
 
-    public function deploy( $zipArchivePath ) {
-        require_once dirname( __FILE__ ) . '/../GuzzleHttp/autoloader.php';
+    public function deploy() {
+        require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/Archive.php';
+        $archive = new Archive();
+        $archive->setToCurrentArchive();
+        $zipArchivePath = $this->settings['wp_uploads_path'] . '/' .
+            $archive->name . '.zip';
 
+        require_once dirname( __FILE__ ) . '/../GuzzleHttp/autoloader.php';
         $client = new Client( array( 'base_uri' => $this->baseURL ) );
 
         $zipDeployEndpoint =
             '/api/v1/sites/' .
-            $this->siteID;
+            $this->siteID .
+            '/deploys';
 
         try {
             $response = $client->request(
@@ -77,7 +80,7 @@ class StaticHtmlOutput_Netlify {
                 )
             );
 
-            return 'SUCCESS';
+            echo 'SUCCESS';
 
         } catch ( Exception $e ) {
             require_once dirname( __FILE__ ) .
