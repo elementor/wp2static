@@ -77,5 +77,11 @@ if ( $ajax_action === 'crawl_site' || $ajax_action === 'crawl_again' ) {
 
     wp_die();
     return null;
+} elseif ( $ajax_action == 'netlify_do_export' ) {
+    require_once dirname( __FILE__ ) .
+        '/Netlify.php';
+
+    wp_die();
+    return null;
 }
 
