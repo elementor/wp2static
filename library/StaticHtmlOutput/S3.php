@@ -17,11 +17,13 @@ class StaticHtmlOutput_S3 {
                 '/../StaticHtmlOutput/PostSettings.php';
 
             $this->settings = WPSHO_PostSettings::get( $target_settings );
+            $this->viaCLI = false;
         } else {
+            $this->viaCLI = true;
             error_log( 'TODO: load settings from DB' );
         }
 
-        $this->_exportFileList =
+        $this->exportFileList =
             $this->settings['working_directory'] . '/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT';
 
         switch ( $_POST['ajax_action'] ) {
@@ -41,17 +43,12 @@ class StaticHtmlOutput_S3 {
     }
 
     public function clear_file_list() {
-        // TODO: avoid suppression
-        $f = fopen( $this->_exportFileList, 'r+' );
-        if ( $f !== false ) {
-            ftruncate( $f, 0 );
-            fclose( $f );
-        }
-
-        $f = fopen( $this->_globHashAndPathList, 'r+' );
-        if ( $f !== false ) {
-            ftruncate( $f, 0 );
-            fclose( $f );
+        if ( is_file( $this->exportFileList ) ) {
+            $f = fopen( $this->exportFileList, 'r+' );
+            if ( $f !== false ) {
+                ftruncate( $f, 0 );
+                fclose( $f );
+            }
         }
     }
 
@@ -81,7 +78,7 @@ class StaticHtmlOutput_S3 {
                     $export_line =
                         $dir . '/' . $item . ',' . $targetPath . "\n";
                     file_put_contents(
-                        $this->_exportFileList,
+                        $this->exportFileList,
                         $export_line,
                         FILE_APPEND | LOCK_EX
                     );
@@ -92,29 +89,33 @@ class StaticHtmlOutput_S3 {
 
     // TODO: move to parent class as identical to bunny and probably others
     public function prepare_deployment() {
-        if ( wpsho_fr()->is__premium_only() ) {
-
             $this->clear_file_list();
 
+            require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/Archive.php';
+            $archive = new Archive();
+            $archive->setToCurrentArchive();
+
+            $remote_path = isset( $this->settings['s3RemotePath'] ) ?
+                $this->settings['s3RemotePath'] : '';
+
             $this->create_s3_deployment_list(
-                $this->_archiveName,
-                $this->_archiveName,
-                $this->_remotePath
+                $archive->path,
+                $archive->path,
+                $remote_path
             );
 
             echo 'SUCCESS';
-        }
     }
 
     public function get_item_to_export() {
-        $f = fopen( $this->_exportFileList, 'r' );
+        $f = fopen( $this->exportFileList, 'r' );
         $line = fgets( $f );
         fclose( $f );
 
-        $contents = file( $this->_exportFileList, FILE_IGNORE_NEW_LINES );
+        $contents = file( $this->exportFileList, FILE_IGNORE_NEW_LINES );
         array_shift( $contents );
         file_put_contents(
-            $this->_exportFileList,
+            $this->exportFileList,
             implode( "\r\n", $contents )
         );
 
@@ -122,7 +123,7 @@ class StaticHtmlOutput_S3 {
     }
 
     public function get_remaining_items_count() {
-        $contents = file( $this->_exportFileList, FILE_IGNORE_NEW_LINES );
+        $contents = file( $this->exportFileList, FILE_IGNORE_NEW_LINES );
 
         // return the amount left if another item is taken
         // return count($contents) - 1;
@@ -135,17 +136,16 @@ class StaticHtmlOutput_S3 {
         $contentType = 'text/plain',
         $pluginInstance
         ) {
-        if ( wpsho_fr()->is__premium_only() ) {
             require_once dirname( __FILE__ ) . '/../aws/aws-autoloader.php';
             require_once dirname( __FILE__ ) . '/../GuzzleHttp/autoloader.php';
 
             $S3 = Aws\S3\S3Client::factory(
                 array(
                     'version' => '2006-03-01',
-                    'region' => $this->_region,
+                    'region' => $this->settings['s3Region'],
                     'credentials' => array(
-                        'key' => $this->_key,
-                        'secret'  => $this->_secret,
+                        'key' => $this->settings['s3Key'],
+                        'secret'  => $this->settings['s3Secret'],
                     ),
                 )
             );
@@ -153,7 +153,7 @@ class StaticHtmlOutput_S3 {
             try {
                 $S3->PutObject(
                     array(
-                        'Bucket'      => $this->_bucket,
+                        'Bucket'      => $this->settings['s3Bucket'],
                         'Key'         => $targetPath,
                         'Body'        => $fileContents,
                         'ACL'         => 'public-read',
@@ -169,45 +169,40 @@ class StaticHtmlOutput_S3 {
                 WsLog::l( 'S3 ERROR RETURNED: ' . $e );
                 echo "There was an error uploading the file.\n";
             }
-        }
     }
 
 
-    public function transfer_files( $viaCLI ) {
-        if ( wpsho_fr()->is__premium_only() ) {
+    public function transfer_files() {
+        if ( $this->get_remaining_items_count() < 0 ) {
+            echo 'ERROR';
+            die();
+        }
 
-            if ( $this->get_remaining_items_count() < 0 ) {
-                echo 'ERROR';
-                die();
+        $line = $this->get_item_to_export();
+
+        list($fileToTransfer, $targetPath) = explode( ',', $line );
+
+        $targetPath = rtrim( $targetPath );
+
+        // vendor specific from here
+        require_once __DIR__ . '/MimeTypes.php';
+
+        $this->s3_put_object(
+            $targetPath . basename( $fileToTransfer ),
+            file_get_contents( $fileToTransfer ),
+            GuessMimeType( $fileToTransfer ),
+            $this
+        );
+
+        // end vendor specific
+        $filesRemaining = $this->get_remaining_items_count();
+        if ( $filesRemaining > 0 ) {
+            if ( $this->viaCLI ) {
+                $this->transfer_files();
             }
-
-            $line = $this->get_item_to_export();
-
-            list($fileToTransfer, $targetPath) = explode( ',', $line );
-
-            $targetPath = rtrim( $targetPath );
-
-            // vendor specific from here
-            require_once __DIR__ . '/MimeTypes.php';
-
-            $this->s3_put_object(
-                $targetPath . basename( $fileToTransfer ),
-                file_get_contents( $fileToTransfer ),
-                GuessMimeType( $fileToTransfer ),
-                $this
-            );
-
-            // end vendor specific
-            $filesRemaining = $this->get_remaining_items_count();
-            if ( $filesRemaining > 0 ) {
-                // if this is via CLI, then call this function again here
-                if ( $viaCLI ) {
-                    $this->transfer_files( true );
-                }
-                echo $filesRemaining;
-            } else {
-                echo 'SUCCESS';
-            }
+            echo $filesRemaining;
+        } else {
+            echo 'SUCCESS';
         }
     }
 
@@ -250,29 +245,35 @@ class StaticHtmlOutput_S3 {
     }
 
     public function cloudfront_invalidate_all_items() {
-        if ( wpsho_fr()->is__premium_only() ) {
-            require_once __DIR__ . '/CloudFront/CloudFront.php';
-            $cloudfront_id = $this->cfDistributionId;
+        if ( ! isset( $this->settings['cfDistributionId'] ) ) {
+            echo 'SUCCESS';
+            return;
+        }
 
-            if ( ! empty( $cloudfront_id ) ) {
+        require_once __DIR__ . '/../CloudFront/CloudFront.php';
+        $cloudfront_id = $this->settings['cfDistributionId'];
 
-                $cf = new CloudFront(
-                    $this->s3Key,
-                    $this->s3Secret,
-                    $cloudfront_id
-                );
+        if ( ! empty( $cloudfront_id ) ) {
 
-                $cf->invalidate( '/*' );
+            $cf = new CloudFront(
+                $this->settings['s3Key'],
+                $this->settings['s3Secret'],
+                $cloudfront_id
+            );
 
-                if ( $cf->getResponseMessage() === 200 ||
-                    $cf->getResponseMessage() === 201 ) {
-                    echo 'SUCCESS';
-                } else {
-                    WsLog::l( 'CF ERROR: ' . $cf->getResponseMessage() );
-                }
-            } else {
+            $cf->invalidate( '/*' );
+
+            if ( $cf->getResponseMessage() === '200' ||
+                $cf->getResponseMessage() === '201' ||
+                $cf->getResponseMessage() === '201: Request accepted' ) {
                 echo 'SUCCESS';
+            } else {
+                require_once dirname( __FILE__ ) .
+                    '/../StaticHtmlOutput/WsLog.php';
+                WsLog::l( 'CF ERROR: ' . $cf->getResponseMessage() );
             }
+        } else {
+            echo 'SUCCESS';
         }
     }
 }
