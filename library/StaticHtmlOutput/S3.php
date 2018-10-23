@@ -24,7 +24,8 @@ class StaticHtmlOutput_S3 {
         }
 
         $this->exportFileList =
-            $this->settings['working_directory'] . '/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT';
+            $this->settings['working_directory'] .
+                '/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT';
 
         switch ( $_POST['ajax_action'] ) {
             case 'test_s3':
@@ -91,7 +92,9 @@ class StaticHtmlOutput_S3 {
     public function prepare_deployment() {
             $this->clear_file_list();
 
-            require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/Archive.php';
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/Archive.php';
+
             $archive = new Archive();
             $archive->setToCurrentArchive();
 
@@ -183,7 +186,8 @@ class StaticHtmlOutput_S3 {
                 $S3->PutObject(
                     array(
                         'Bucket'      => $this->settings['s3Bucket'],
-                        'Key'         => $targetPath . basename( $fileToTransfer ),
+                        'Key'         => $targetPath .
+                            basename( $fileToTransfer ),
                         'Body'        => file_get_contents( $fileToTransfer ),
                         'ACL'         => 'public-read',
                         'ContentType' => GuessMimeType( $fileToTransfer ),
