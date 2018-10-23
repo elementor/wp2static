@@ -117,12 +117,14 @@ class WPSHO_PostSettings {
 
         $key_sets['s3'] = array(
             'baseUrl-s3',
+            'cfDistributionId',
             's3Bucket',
             's3Key',
             's3Region',
             's3RemotePath',
             's3Secret',
-            'cfDistributionId',
+            's3BlobIncrement',
+            's3BlobDelay',
         );
 
         $key_sets['dropbox'] = array(

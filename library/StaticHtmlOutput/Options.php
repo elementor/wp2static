@@ -111,6 +111,8 @@ class StaticHtmlOutput_Options {
             's3Region',
             's3RemotePath',
             's3Secret',
+            's3BlobIncrement',
+            's3BlobDelay',
             'selected_deployment_option',
             'targetFolder',
             'useActiveFTP',

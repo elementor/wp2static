@@ -1,22 +1,5 @@
 <div class="s3_settings_block" style="display:none;">
 
-  <?php if (  wpsho_fr()->is_not_paying() ) : ?>
-
-  <div class="notice notice-error inline">
-    <h2 class="title">Premium deployment option</h2>
-
-    <p>Get all the deployment options and advanced features with a 
-      <a href="<?php echo wpsho_fr()->get_upgrade_url(); ?>">premium subscription</a>.</p>
-
-    <p>Exporting to this method will not work without upgrading, but you can stil deploy to S3 using the ZIP option and manually uploading to S3.</p>
-
-  </div>
-
-  <br>
-
-  <?php endif; ?>
-
-
   <table class="form-table">
     <tbody>
       <tr>
@@ -111,6 +94,49 @@
           <?php $tpl->displayTextfield($this, 'cfDistributionId', 'CloudFront Distribution ID', 'ie, ABC123DEFX'); ?><br>
 
           <p><i>If using CloudFront in your S3 static website setup, enter the CloudFront Distribution ID here and it will create an invalidation request for all files at the end of the deployment process. The invalidation usually happens within a few minutes. You can check any pending invalidations in your <a href="https://console.aws.amazon.com/cloudfront/home" target="_blank">AWS Console's CloudFront page</a>. You AWS user will need to have the CloudFrontFullAccess permissions or a more controlled policy, that includes the ability to send CloudFront invalidation requests.</i></p>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          <label for="s3BlobIncrement"><?php echo __('Blob Creation Increment', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <select name="s3BlobIncrement" id="s3BlobIncrement">
+<?php 
+  // TODO: shift this into helper function for select
+  $increments = array(1, 5, 10, 25, 50, 100, 500, 1000, 999999);
+
+  foreach($increments as $increment) :
+       if ($increment == 999999): ?>
+            <option value="999999"<?php echo $this->options->s3BlobIncrement == $increment ? ' selected' : ''; ?>>Maximum</option>
+<?php else: ?>
+            <option value="<?php echo $increment; ?>"<?php echo $this->options->s3BlobIncrement == $increment ? ' selected' : ''; ?>><?php echo $increment; ?></option>
+
+<?php endif; 
+         endforeach; ?>
+          </select><br>
+
+          <p>This is set to 1, by default, in order to avoid execution limit timeouts on restricted environments, such as shared hosting servers. Each increment is the amount of files the server will try to upload to S3 on each request. Incrementing this will speed up your exports, by processing more are a time. If your export is failing, due to execution limits r S3 API rate limits being reached, try setting this to a lower number.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          <label for="s3BlobDelay"><?php echo __('Blob Creation Delay', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <select name="s3BlobDelay" id="s3BlobDelay">
+<?php 
+  // TODO: shift this into helper function for select
+  $increments = array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 2, 3, 4, 10);
+
+  foreach($increments as $increment) : ?>
+            <option value="<?php echo $increment; ?>"<?php echo $this->options->s3BlobDelay == $increment ? ' selected' : ''; ?>><?php echo $increment; ?></option>
+ <?php endforeach; ?>
+          </select><br>
+
+          <p>This is set to 0, by default, but if your deploy is hitting S3's API too rapidly, you can increase this to add a delay between each API request.</p>
+
         </td>
       </tr>
       <tr>
