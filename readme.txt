@@ -138,8 +138,8 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
  * Bugfix: Prevent rewriting URLs on external domains
  * Bugfix: Offline ZIP creation now functioning properly
  * Enhancement: preview initial crawl list before starting your export
- * Enhancement: improved export speeds
- * Enhancement: test GitHub settings before starting export
+ * Enhancement: much improved export speeds via batching requests
+ * Enhancement: test external deploy settings before starting export
  * Enhancement: support sleeping between GitHub API requests, avoid rate limits
  * Enhancement: support multiple site ID formats within Netlify deploy
  * New feature: send email upon completion
@@ -467,8 +467,8 @@ Initial release to Wordpress community
  * Bugfix: Prevent rewriting URLs on external domains
  * Bugfix: Offline ZIP creation now functioning properly
  * Enhancement: preview initial crawl list before starting your export
- * Enhancement: improved export speeds
- * Enhancement: test GitHub settings before starting export
+ * Enhancement: much improved export speeds via batching requests
+ * Enhancement: test external deploy settings before starting export
  * Enhancement: support sleeping between GitHub API requests, avoid rate limits
  * New feature: send email upon completion
  * New feature: exclude URLs from being crawled/exported
