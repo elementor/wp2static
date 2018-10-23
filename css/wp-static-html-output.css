@@ -112,3 +112,8 @@ div.postbox div.inside {
 p.submit{
   margin-top: 0px !important;
 }
+
+#netlify_test_results {
+  line-height: 28px;
+  margin-left: 10px;
+}
