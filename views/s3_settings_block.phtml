@@ -113,6 +113,14 @@
           <p><i>If using CloudFront in your S3 static website setup, enter the CloudFront Distribution ID here and it will create an invalidation request for all files at the end of the deployment process. The invalidation usually happens within a few minutes. You can check any pending invalidations in your <a href="https://console.aws.amazon.com/cloudfront/home" target="_blank">AWS Console's CloudFront page</a>. You AWS user will need to have the CloudFrontFullAccess permissions or a more controlled policy, that includes the ability to send CloudFront invalidation requests.</i></p>
         </td>
       </tr>
+      <tr>
+        <th scope="row">
+          <label for="s3_test"><?php echo __('Test S3 Settings', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <button id="s3-test-button" type="button" class="btn-primary button">Test S3 Settings</button>
+        </td>
+      </tr>
     </tbody>
   </table>
 

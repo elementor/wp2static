@@ -849,6 +849,34 @@ jQuery(document).ready(function($){
       });
   });
 
+  $('.wrap').on('click', '#s3-test-button', function(event) {
+      event.preventDefault();
+      $('.hiddenActionField').val('wp_static_html_output_ajax');
+      $('#hiddenAJAXAction').val('test_s3');
+      $('#s3_test_results').html('');
+
+      data = $(".options-form :input")
+          .filter(function(index, element) {
+              return $(element).val() != '';
+          })
+          .serialize();
+
+      $.ajax({
+          url: ajaxurl,
+          data: data,
+          dataType: 'html',
+          method: 'POST',
+          success: function(serverResponse) {
+            alert('S3 Connection/Upload Test Successful');
+
+            $('#s3_test_results').html(serverResponse);
+          },
+          error: function(serverResponse) {
+            alert('FAIL: Unable to complete test upload to S3');
+          }
+      });
+  });
+
   $('.wrap').on('click', '#gitlab-test-button', function(event) {
       event.preventDefault();
       $('.hiddenActionField').val('wp_static_html_output_ajax');
