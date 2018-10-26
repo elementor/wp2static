@@ -76,6 +76,8 @@ class StaticHtmlOutput_Options {
             'ftpRemotePath',
             'ftpServer',
             'ftpUsername',
+            'ftpBlobIncrement',
+            'ftpBlobDelay',
             'ghBranch',
             'ghPath',
             'ghToken',
