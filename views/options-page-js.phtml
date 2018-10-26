@@ -792,6 +792,43 @@ jQuery(document).ready(function($){
       saveOptions();
   });
 
+  $('.wrap').on('click', '#ftp-test-button', function(event) {
+      event.preventDefault();
+      $('.hiddenActionField').val('wp_static_html_output_ajax');
+      $('#hiddenAJAXAction').val('test_ftp');
+
+      button = event.currentTarget;
+      spinner = $('button').siblings('div.spinner')
+      spinner.show();
+
+      data = $(".options-form :input")
+          .filter(function(index, element) {
+              return $(element).val() != '';
+          })
+          .serialize();
+
+      $.ajax({
+          url: ajaxurl,
+          data: data,
+          dataType: 'html',
+          method: 'POST',
+          success: function(serverResponse) {
+            if (serverResponse === 'SUCCESS') {
+                alert('FTP Connection/Upload Test Successful');
+            } else {
+                alert('FAIL: Unable to complete test upload to FTP');
+            }
+
+            spinner.hide();
+          },
+          error: function(serverResponse) {
+            alert('FAIL: Unable to complete test upload to FTP');
+
+            spinner.hide();
+          }
+      });
+  });
+
   $('.wrap').on('click', '#bitbucket-test-button', function(event) {
       event.preventDefault();
       $('.hiddenActionField').val('wp_static_html_output_ajax');
@@ -947,11 +984,12 @@ jQuery(document).ready(function($){
   $('#wp_uploads').val(wp_site.wp_uploads);
   $('#wp_plugins').val(wp_site.wp_plugins);
   $('#wp_content').val(wp_site.wp_content);
+  $('.spinner').hide();
 
   // call change handler on page load, to set correct state
   offlineUsageChangeHandler($('#allowOfflineUsage'));
 
-	updateBaseURLReferences($('#baseUrl').val());
+  updateBaseURLReferences($('#baseUrl').val());
 
 // TODO: These may still be needed?
 
@@ -962,6 +1000,7 @@ jQuery(document).ready(function($){
   setDeploymentMethod(current_deployment_method);
 
   prepareInitialFileList();
+
 });
 </script>
 

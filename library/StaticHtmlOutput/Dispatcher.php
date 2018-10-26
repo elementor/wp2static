@@ -107,4 +107,10 @@ if ( $ajax_action === 'crawl_site' || $ajax_action === 'crawl_again' ) {
 
     wp_die();
     return null;
+} elseif ( $ajax_action == 'test_ftp' ) {
+    require_once dirname( __FILE__ ) .
+        '/FTP.php';
+
+    wp_die();
+    return null;
 }

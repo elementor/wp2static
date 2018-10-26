@@ -1,38 +1,46 @@
 <?php
 
 class StaticHtmlOutput_FTP {
+    public function __construct() {
+        $target_settings = array(
+            'general',
+            'wpenv',
+            'ftp',
+            'advanced',
+        );
 
-    protected $_host;
-    protected $_username;
-    protected $_password;
-    protected $_remotePath;
-    protected $_activeMode;
-    protected $_uploadsPath;
-    protected $_exportFileList;
-    protected $_archiveName;
+        if ( isset( $_POST['selected_deployment_option'] ) ) {
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/PostSettings.php';
 
-    public function __construct( $host,
-        $username,
-        $password,
-        $remotePath,
-        $activeMode,
-        $uploadsPath ) {
+            $this->settings = WPSHO_PostSettings::get( $target_settings );
+        } else {
+            error_log( 'TODO: load settings from DB' );
+        }
 
-        $this->_host = $host;
-        $this->_username = $username;
-        $this->_password = $password;
-        $this->_remotePath = $remotePath;
-        $this->_activeMode = $activeMode;
-        $this->_exportFileList =
-            $uploadsPath . '/WP-STATIC-EXPORT-FTP-FILES-TO-EXPORT';
-        $archiveDir =
-            file_get_contents( $uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE' );
-        $this->_archiveName = rtrim( $archiveDir, '/' );
+        $this->exportFileList = $this->settings['working_directory'] .
+                '/WP-STATIC-EXPORT-FTP-FILES-TO-EXPORT';
+
+        switch ( $_POST['ajax_action'] ) {
+            case 'test_ftp':
+                $this->test_ftp();
+                break;
+
+            case 'github_upload_blobs':
+                $this->upload_blobs();
+                break;
+            case 'github_finalise_export':
+                $this->commit_new_tree();
+                break;
+            case 'test_blob_create':
+                $this->test_blob_create();
+                break;
+        }
     }
 
     public function clear_file_list() {
         // TODO: avoid suppressing
-        $f = fopen( $this->_exportFileList, 'r+' );
+        $f = fopen( $this->exportFileList, 'r+' );
         if ( $f !== false ) {
             ftruncate( $f, 0 );
             fclose( $f );
@@ -47,16 +55,18 @@ class StaticHtmlOutput_FTP {
         $ftp = new \FtpClient\FtpClient();
 
         try {
-            $ftp->connect( $this->_host );
-            $ftp->login( $this->_username, $this->_password );
+            $ftp->connect( $this->settings['ftpServer'] );
+            $ftp->login( $this->settings['ftpUsername'], $this->settings['ftpPassword'] );
         } catch ( Exception $e ) {
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/WsLog.php';
             WsLog::l( 'FTP EXPORT: error encountered' );
             WsLog::l( $e );
             throw new Exception( $e );
         }
 
-        if ( ! $ftp->isdir( $this->_remotePath ) ) {
-            $ftp->mkdir( $this->_remotePath, true );
+        if ( ! $ftp->isdir( $this->settings['ftpRemotePath'] ) ) {
+            $ftp->mkdir( $this->settings['ftpRemotePath'], true );
         }
 
         unset( $ftp );
@@ -94,7 +104,7 @@ class StaticHtmlOutput_FTP {
                     $export_line =
                         $dir . '/' . $item . ',' . $targetPath . "\n";
                     file_put_contents(
-                        $this->_exportFileList,
+                        $this->exportFileList,
                         $export_line,
                         FILE_APPEND | LOCK_EX
                     );
@@ -113,21 +123,21 @@ class StaticHtmlOutput_FTP {
         $this->create_ftp_deployment_list(
             $this->_archiveName,
             $this->_archiveName,
-            $this->_remotePath
+            $this->settings['ftpRemotePath']
         );
 
         echo 'SUCCESS';
     }
 
     public function get_item_to_export() {
-        $f = fopen( $this->_exportFileList, 'r' );
+        $f = fopen( $this->exportFileList, 'r' );
         $line = fgets( $f );
         fclose( $f );
 
-        $contents = file( $this->_exportFileList, FILE_IGNORE_NEW_LINES );
+        $contents = file( $this->exportFileList, FILE_IGNORE_NEW_LINES );
         array_shift( $contents );
         file_put_contents(
-            $this->_exportFileList,
+            $this->exportFileList,
             implode( "\r\n", $contents )
         );
 
@@ -135,7 +145,7 @@ class StaticHtmlOutput_FTP {
     }
 
     public function get_remaining_items_count() {
-        $contents = file( $this->_exportFileList, FILE_IGNORE_NEW_LINES );
+        $contents = file( $this->exportFileList, FILE_IGNORE_NEW_LINES );
 
         // return the amount left if another item is taken
         // return count($contents) - 1;
@@ -159,18 +169,20 @@ class StaticHtmlOutput_FTP {
 
         // vendor specific from here
         $ftp = new \FtpClient\FtpClient();
-        $ftp->connect( $this->_host );
+        $ftp->connect( $this->settings['ftpServer'] );
 
         try {
 
-            $ftp->login( $this->_username, $this->_password );
+            $ftp->login( $this->settings['ftpUsername'], $this->settings['ftpPassword'] );
         } catch ( Exception $e ) {
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/WsLog.php';
             WsLog::l( 'FTP EXPORT: unable to login' );
             WsLog::l( $e );
             throw new Exception( $e );
         }
 
-        if ( $this->_activeMode ) {
+        if ( $this->settings['activeFTP'] ) {
             $ftp->pasv( false );
         } else {
             $ftp->pasv( true );
@@ -199,5 +211,30 @@ class StaticHtmlOutput_FTP {
         }
     }
 
+    public function test_ftp() {
+        require_once __DIR__ . '/../FTP/FtpClient.php';
+        require_once __DIR__ . '/../FTP/FtpException.php';
+        require_once __DIR__ . '/../FTP/FtpWrapper.php';
+
+        $ftp = new \FtpClient\FtpClient();
+        $ftp->connect( $this->settings['ftpServer'] );
+
+        try {
+
+            $ftp->login( $this->settings['ftpUsername'], $this->settings['ftpPassword'] );
+
+            echo 'SUCCESS';
+            unset( $ftp );
+            return;
+        } catch ( Exception $e ) {
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/WsLog.php';
+            WsLog::l( 'FTP EXPORT: unable to login' );
+            WsLog::l( $e );
+            throw new Exception( $e );
+            unset( $ftp );
+        }
+    }
 }
 
+$ftp_deployer = new StaticHtmlOutput_FTP();
