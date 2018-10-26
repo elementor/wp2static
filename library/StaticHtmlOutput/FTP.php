@@ -21,63 +21,45 @@ class StaticHtmlOutput_FTP {
         $this->exportFileList = $this->settings['working_directory'] .
                 '/WP-STATIC-EXPORT-FTP-FILES-TO-EXPORT';
 
+        require_once dirname( __FILE__ ) .
+            '/../StaticHtmlOutput/Archive.php';
+        $this->archive = new Archive();
+        $this->archive->setToCurrentArchive();
+
+        error_log('in construct');
+        error_log($this->archive->path);
+        error_log($this->archive->name);
+
         switch ( $_POST['ajax_action'] ) {
             case 'test_ftp':
                 $this->test_ftp();
                 break;
-
-            case 'github_upload_blobs':
-                $this->upload_blobs();
+            case 'ftp_prepare_export':
+                $this->prepare_deployment();
                 break;
-            case 'github_finalise_export':
-                $this->commit_new_tree();
-                break;
-            case 'test_blob_create':
-                $this->test_blob_create();
+            case 'ftp_transfer_files':
+                $this->transfer_files();
                 break;
         }
     }
 
     public function clear_file_list() {
-        // TODO: avoid suppressing
-        $f = fopen( $this->exportFileList, 'r+' );
-        if ( $f !== false ) {
-            ftruncate( $f, 0 );
-            fclose( $f );
+        if (is_file( $this->exportFileList ) ) {
+            $f = fopen( $this->exportFileList, 'r+' );
+            if ( $f !== false ) {
+                ftruncate( $f, 0 );
+                fclose( $f );
+            }
         }
     }
-
-    public function test_connection() {
-        require_once __DIR__ . '/../FTP/FtpClient.php';
-        require_once __DIR__ . '/../FTP/FtpException.php';
-        require_once __DIR__ . '/../FTP/FtpWrapper.php';
-
-        $ftp = new \FtpClient\FtpClient();
-
-        try {
-            $ftp->connect( $this->settings['ftpServer'] );
-            $ftp->login( $this->settings['ftpUsername'], $this->settings['ftpPassword'] );
-        } catch ( Exception $e ) {
-            require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/WsLog.php';
-            WsLog::l( 'FTP EXPORT: error encountered' );
-            WsLog::l( $e );
-            throw new Exception( $e );
-        }
-
-        if ( ! $ftp->isdir( $this->settings['ftpRemotePath'] ) ) {
-            $ftp->mkdir( $this->settings['ftpRemotePath'], true );
-        }
-
-        unset( $ftp );
-    }
-
 
     // TODO: move into a parent class as identical to bunny and probably others
-    public function create_ftp_deployment_list(
-        $dir,
-        $archiveName,
-        $remotePath ) {
+    public function create_ftp_deployment_list( $dir) {
+        $r_path = '';
+
+        if ( isset( $this->settings['ftpRemotePath'] ) ) {
+            $r_path = $this->settings['ftpRemotePath'];
+        }
 
         $files = scandir( $dir );
 
@@ -86,8 +68,8 @@ class StaticHtmlOutput_FTP {
                 if ( is_dir( $dir . '/' . $item ) ) {
                     $this->create_ftp_deployment_list(
                         $dir . '/' . $item,
-                        $archiveName,
-                        $remotePath
+                        $this->archive->name,
+                        $r_path
                     );
                 } elseif ( is_file( $dir . '/' . $item ) ) {
                     $subdir = str_replace(
@@ -97,9 +79,9 @@ class StaticHtmlOutput_FTP {
                     );
                     $subdir = ltrim( $subdir, '/' );
                     $clean_dir =
-                        str_replace( $archiveName . '/', '', $dir . '/' );
+                        str_replace( $this->archive->name . '/', '', $dir . '/' );
                     $clean_dir = str_replace( $subdir, '', $clean_dir );
-                    $targetPath = $remotePath . $clean_dir;
+                    $targetPath = $r_path . $clean_dir;
                     $targetPath = ltrim( $targetPath, '/' );
                     $export_line =
                         $dir . '/' . $item . ',' . $targetPath . "\n";
@@ -114,34 +96,41 @@ class StaticHtmlOutput_FTP {
     }
 
 
-    // TODO: move into a parent class as identical to bunny and probably others
     public function prepare_deployment() {
-        $this->test_connection();
+            $this->clear_file_list();
+            $this->create_ftp_deployment_list(
+                $this->settings['working_directory'] . '/' .
+                    $this->archive->name
+            );
 
-        $this->clear_file_list();
-
-        $this->create_ftp_deployment_list(
-            $this->_archiveName,
-            $this->_archiveName,
-            $this->settings['ftpRemotePath']
-        );
-
-        echo 'SUCCESS';
+            echo 'SUCCESS';
     }
 
-    public function get_item_to_export() {
+    public function get_items_to_export( $batch_size = 1 ) {
+        $lines = array();
+
         $f = fopen( $this->exportFileList, 'r' );
-        $line = fgets( $f );
+
+        for ( $i = 0; $i < $batch_size; $i++ ) {
+            $lines[] = fgets( $f );
+        }
+
         fclose( $f );
 
+        // TODO: optimize this for just one read, one write within func
         $contents = file( $this->exportFileList, FILE_IGNORE_NEW_LINES );
-        array_shift( $contents );
+
+        for ( $i = 0; $i < $batch_size; $i++ ) {
+            // rewrite file minus the lines we took
+            array_shift( $contents );
+        }
+
         file_put_contents(
             $this->exportFileList,
             implode( "\r\n", $contents )
         );
 
-        return $line;
+        return $lines;
     }
 
     public function get_remaining_items_count() {
@@ -158,16 +147,21 @@ class StaticHtmlOutput_FTP {
         require_once __DIR__ . '/../FTP/FtpException.php';
         require_once __DIR__ . '/../FTP/FtpWrapper.php';
 
-        if ( $this->get_remaining_items_count() < 0 ) {
+        $filesRemaining = $this->get_remaining_items_count();
+
+        if ( $filesRemaining < 0 ) {
             echo 'ERROR';
             die();
         }
 
-        $line = $this->get_item_to_export();
-        list($fileToTransfer, $targetPath) = explode( ',', $line );
-        $targetPath = rtrim( $targetPath );
+        $batch_size = $this->settings['ftpBlobIncrement'];
 
-        // vendor specific from here
+        if ( $batch_size > $filesRemaining ) {
+            $batch_size = $filesRemaining;
+        }
+
+        $lines = $this->get_items_to_export( $batch_size );
+
         $ftp = new \FtpClient\FtpClient();
         $ftp->connect( $this->settings['ftpServer'] );
 
@@ -182,21 +176,28 @@ class StaticHtmlOutput_FTP {
             throw new Exception( $e );
         }
 
-        if ( $this->settings['activeFTP'] ) {
-            $ftp->pasv( false );
-        } else {
-            $ftp->pasv( true );
-        }
 
-        if ( ! $ftp->isdir( $targetPath ) ) {
-            $mkdir_result = $ftp->mkdir( $targetPath, true );
-        }
+        foreach ( $lines as $line ) {
+            list($fileToTransfer, $targetPath) = explode( ',', $line );
+            $targetPath = rtrim( $targetPath );
 
-        $ftp->chdir( $targetPath );
-        $ftp->putFromPath( $fileToTransfer );
+
+            if ( isset( $this->settings['activeFTP'] ) ) {
+                $ftp->pasv( false );
+            } else {
+                $ftp->pasv( true );
+            }
+
+            if ( ! $ftp->isdir( $targetPath ) ) {
+                $mkdir_result = $ftp->mkdir( $targetPath, true );
+            }
+
+            $ftp->chdir( $targetPath );
+            $ftp->putFromPath( $fileToTransfer );
+        }
 
         unset( $ftp );
-        // end vendor specific
+
         $filesRemaining = $this->get_remaining_items_count();
 
         if ( $this->get_remaining_items_count() > 0 ) {

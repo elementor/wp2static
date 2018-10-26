@@ -106,6 +106,8 @@ class WPSHO_PostSettings {
             'ftpServer',
             'ftpUsername',
             'useActiveFTP',
+            'ftpBlobIncrement',
+            'ftpBlobDelay',
         );
 
         $key_sets['bunnycdn'] = array(
