@@ -26,10 +26,6 @@ class StaticHtmlOutput_FTP {
         $this->archive = new Archive();
         $this->archive->setToCurrentArchive();
 
-        error_log('in construct');
-        error_log($this->archive->path);
-        error_log($this->archive->name);
-
         switch ( $_POST['ajax_action'] ) {
             case 'test_ftp':
                 $this->test_ftp();
@@ -44,7 +40,7 @@ class StaticHtmlOutput_FTP {
     }
 
     public function clear_file_list() {
-        if (is_file( $this->exportFileList ) ) {
+        if ( is_file( $this->exportFileList ) ) {
             $f = fopen( $this->exportFileList, 'r+' );
             if ( $f !== false ) {
                 ftruncate( $f, 0 );
@@ -54,7 +50,7 @@ class StaticHtmlOutput_FTP {
     }
 
     // TODO: move into a parent class as identical to bunny and probably others
-    public function create_ftp_deployment_list( $dir) {
+    public function create_ftp_deployment_list( $dir ) {
         $r_path = '';
 
         if ( isset( $this->settings['ftpRemotePath'] ) ) {
@@ -79,7 +75,11 @@ class StaticHtmlOutput_FTP {
                     );
                     $subdir = ltrim( $subdir, '/' );
                     $clean_dir =
-                        str_replace( $this->archive->name . '/', '', $dir . '/' );
+                        str_replace(
+                            $this->archive->name . '/',
+                            '',
+                            $dir . '/'
+                        );
                     $clean_dir = str_replace( $subdir, '', $clean_dir );
                     $targetPath = $r_path . $clean_dir;
                     $targetPath = ltrim( $targetPath, '/' );
@@ -167,7 +167,10 @@ class StaticHtmlOutput_FTP {
 
         try {
 
-            $ftp->login( $this->settings['ftpUsername'], $this->settings['ftpPassword'] );
+            $ftp->login(
+                $this->settings['ftpUsername'],
+                $this->settings['ftpPassword']
+            );
         } catch ( Exception $e ) {
             require_once dirname( __FILE__ ) .
                 '/../StaticHtmlOutput/WsLog.php';
@@ -176,17 +179,15 @@ class StaticHtmlOutput_FTP {
             throw new Exception( $e );
         }
 
+        if ( isset( $this->settings['activeFTP'] ) ) {
+            $ftp->pasv( false );
+        } else {
+            $ftp->pasv( true );
+        }
 
         foreach ( $lines as $line ) {
             list($fileToTransfer, $targetPath) = explode( ',', $line );
             $targetPath = rtrim( $targetPath );
-
-
-            if ( isset( $this->settings['activeFTP'] ) ) {
-                $ftp->pasv( false );
-            } else {
-                $ftp->pasv( true );
-            }
 
             if ( ! $ftp->isdir( $targetPath ) ) {
                 $mkdir_result = $ftp->mkdir( $targetPath, true );
@@ -222,7 +223,10 @@ class StaticHtmlOutput_FTP {
 
         try {
 
-            $ftp->login( $this->settings['ftpUsername'], $this->settings['ftpPassword'] );
+            $ftp->login(
+                $this->settings['ftpUsername'],
+                $this->settings['ftpPassword']
+            );
 
             echo 'SUCCESS';
             unset( $ftp );
