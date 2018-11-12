@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/bin/ksh
 
-# run from projet root
+# run from project root
 
 # give argument for name of zip to be created, ie user-leon-test-new-function
 
