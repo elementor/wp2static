@@ -137,6 +137,7 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
  * Bugfix: Prevent rewriting mailto: links containing domain
  * Bugfix: Prevent rewriting URLs on external domains
  * Bugfix: Offline ZIP creation now functioning properly
+ * Bugfix: Ignore certificate errors when crawling
  * Enhancement: preview initial crawl list before starting your export
  * Enhancement: much improved export speeds via batching requests
  * Enhancement: test external deploy settings before starting export
@@ -466,6 +467,7 @@ Initial release to Wordpress community
  * Bugfix: Prevent rewriting mailto: links containing domain
  * Bugfix: Prevent rewriting URLs on external domains
  * Bugfix: Offline ZIP creation now functioning properly
+ * Bugfix: Ignore certificate errors when crawling
  * Enhancement: preview initial crawl list before starting your export
  * Enhancement: much improved export speeds via batching requests
  * Enhancement: test external deploy settings before starting export
