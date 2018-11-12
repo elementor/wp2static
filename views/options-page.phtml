@@ -65,11 +65,7 @@ $tpl = new TemplateHelper();
       );
 
       foreach ($options as $key => $value) {
-        if ($value[1] == 'premium' && wpsho_fr()->is_not_paying()) {
-          echo "<option value='$key'>$value[0]</option>";
-        } else {
-          echo "<option value='$key'>$value[0]</option>";
-        }
+        echo "<option value='$key'>$value[0]</option>";
       }
     }
 

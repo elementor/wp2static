@@ -210,6 +210,7 @@ class SiteCrawler {
 
         $request_options = array(
             'http_errors' => false,
+            'verify' => false,
         );
 
         if ( isset( $this->settings['useBasicAuth'] ) ) {
