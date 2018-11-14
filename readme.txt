@@ -1,5 +1,5 @@
 === WP Static Site Generator ===
-Contributors: leonstafford,cache1
+Contributors: leonstafford
 Donate link: https://www.paypal.me/leonjstafford
 Tags: static site generator,cache,wp super cache,wp fastest cache,w3 total cache,security,export,s3,dropbox,github,netlify,bunnycdn,html
 Requires at least: 3.2
