@@ -75,24 +75,48 @@ class StaticHtmlOutput_BunnyCDN {
         foreach ( $files as $item ) {
             if ( $item != '.' && $item != '..' && $item != '.git' ) {
                 if ( is_dir( $dir . '/' . $item ) ) {
-                    $this->create_bunny_deployment_list(
-                        $dir . '/' . $item,
-                        $archive,
-                        $rem_path
-                    );
+                    $this->create_bunny_deployment_list( $dir . '/' . $item );
                 } elseif ( is_file( $dir . '/' . $item ) ) {
-                    $subdir = str_replace(
+                    $wp_subdir = str_replace(
                         '/wp-admin/admin-ajax.php',
                         '',
                         $_SERVER['REQUEST_URI']
                     );
-                    $subdir = ltrim( $subdir, '/' );
-                    $clean_dir = str_replace( $archive . '/', '', $dir . '/' );
-                    $clean_dir = str_replace( $subdir, '', $clean_dir );
-                    $targetPath = $rem_path . $clean_dir;
-                    $targetPath = ltrim( $targetPath, '/' );
+
+                    $wp_subdir = ltrim( $subdir, '/' );
+                    $dirs_in_path = $dir;
+                    $filename = $item;
+                    $original_filepath = $dir . '/' . $item;
+
+                    $local_path_to_strip = $archive . '/' . $wp_subdir;
+                    $local_path_to_strip = rtrim($local_path_to_strip, '/');
+
+                    $deploy_path = str_replace(
+                        $local_path_to_strip,
+                        '',
+                        $dirs_in_path
+                    );
+
+                    $original_file_without_archive = str_replace(
+                        $local_path_to_strip,
+                        '',
+                        $original_filepath
+                    );
+
+                    $original_file_without_archive = ltrim(
+                        $original_file_without_archive,
+                        '/'
+                    );
+
+                    $deploy_path = $r_path . $deploy_path;
+                    $deploy_path = ltrim( $deploy_path, '/' );
+                    $deploy_path .= '/';
+
                     $export_line =
-                        $dir . '/' . $item . ',' . $targetPath . "\n";
+                        $original_file_without_archive . ',' .  # field 1
+                        $deploy_path .                          # field 2
+                        "\n";
+
                     file_put_contents(
                         $this->exportFileList,
                         $export_line,
@@ -104,14 +128,16 @@ class StaticHtmlOutput_BunnyCDN {
     }
 
     public function prepare_export() {
-            $this->clear_file_list();
+        $this->clear_file_list();
 
-            $this->create_bunny_deployment_list(
-                $this->settings['working_directory'] . '/' .
-                    $this->archive->name
-            );
+        $this->create_bunny_deployment_list(
+            $this->settings['working_directory'] . '/' .
+                $this->archive->name
+        );
 
-            echo 'SUCCESS';
+        error_log('check file here');die();
+
+        echo 'SUCCESS';
     }
 
     public function get_items_to_export( $batch_size = 1 ) {
