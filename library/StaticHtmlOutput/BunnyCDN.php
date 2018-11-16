@@ -89,7 +89,7 @@ class StaticHtmlOutput_BunnyCDN {
                     $original_filepath = $dir . '/' . $item;
 
                     $local_path_to_strip = $archive . '/' . $wp_subdir;
-                    $local_path_to_strip = rtrim($local_path_to_strip, '/');
+                    $local_path_to_strip = rtrim( $local_path_to_strip, '/' );
 
                     $deploy_path = str_replace(
                         $local_path_to_strip,
@@ -113,8 +113,8 @@ class StaticHtmlOutput_BunnyCDN {
                     $deploy_path .= '/';
 
                     $export_line =
-                        $original_file_without_archive . ',' .  # field 1
-                        $deploy_path .                          # field 2
+                        $original_file_without_archive . ',' . // field 1
+                        $deploy_path . // field 2
                         "\n";
 
                     file_put_contents(
@@ -135,8 +135,6 @@ class StaticHtmlOutput_BunnyCDN {
                 $this->archive->name
         );
 
-        error_log('check file here');die();
-
         echo 'SUCCESS';
     }
 
@@ -155,7 +153,6 @@ class StaticHtmlOutput_BunnyCDN {
         $contents = file( $this->exportFileList, FILE_IGNORE_NEW_LINES );
 
         for ( $i = 0; $i < $batch_size; $i++ ) {
-            error_log('removing item from array');
             // rewrite file minus the lines we took
             array_shift( $contents );
         }
@@ -173,7 +170,6 @@ class StaticHtmlOutput_BunnyCDN {
 
         // return the amount left if another item is taken
         // return count($contents) - 1;
-
         return count( $contents );
     }
 
@@ -199,9 +195,10 @@ class StaticHtmlOutput_BunnyCDN {
 
             list($fileToTransfer, $targetPath) = explode( ',', $line );
 
+            $fileToTransfer = $this->archive->path . $fileToTransfer;
+
             $targetPath = rtrim( $targetPath );
 
-            // do the bunny export
             $client = new Client(
                 array(
                     'base_uri' => 'https://storage.bunnycdn.com',
@@ -209,15 +206,16 @@ class StaticHtmlOutput_BunnyCDN {
             );
 
             try {
-                $target_path = '/' . $this->settings['bunnycdnPullZoneName'] . '/' .
-                    $targetPath . basename( $fileToTransfer );
+                $target_path = '/' . $this->settings['bunnycdnPullZoneName'] .
+                    '/' . $targetPath . basename( $fileToTransfer );
 
                 $response = $client->request(
                     'PUT',
                     $target_path,
                     array(
                         'headers'  => array(
-                            'AccessKey' => ' ' . $this->settings['bunnycdnAPIKey'],
+                            'AccessKey' => ' ' .
+                            $this->settings['bunnycdnAPIKey'],
                         ),
                         'body' => fopen( $fileToTransfer, 'rb' ),
                     )
@@ -290,14 +288,13 @@ class StaticHtmlOutput_BunnyCDN {
             array(
                 'base_uri' => 'https://storage.bunnycdn.com',
                 // TODO: these kind of cURL options would be nice in Advanced
-                //'force_ip_resolve' => 'v4'
+                // 'force_ip_resolve' => 'v4'
             )
         );
 
         try {
             $target_path = '/' . $this->settings['bunnycdnPullZoneName'] .
-                '/tmpFile'
-                ;
+                '/tmpFile';
 
             $response = $client->request(
                 'PUT',
