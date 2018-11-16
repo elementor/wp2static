@@ -23,7 +23,7 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher{
 
         $this->exportFileList =
             $this->settings['working_directory'] .
-                '/WP-STATIC-EXPORT-BITBUCKET-FILES-TO-EXPORT';
+                '/WP-STATIC-EXPORT-GITLAB-FILES-TO-EXPORT';
         $archiveDir = file_get_contents(
             $this->settings['working_directory'] .
                 '/WP-STATIC-CURRENT-ARCHIVE'
@@ -31,8 +31,8 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher{
 
         $this->r_path = '';
 
-        if ( isset( $this->settings['bunnycdnRemotePath'] ) ) {
-            $this->r_path = $this->settings['bunnycdnRemotePath'];
+        if ( isset( $this->settings['glPath'] ) ) {
+            $this->r_path = $this->settings['glPath'];
         }
 
         // TODO: move this where needed
@@ -78,8 +78,7 @@ EOD;
         file_put_contents( $target_path, $config_file );
 
         // force include the gitlab config file
-        $gitlab_config_file = $this->archive->path . '.gitlab-ci.yml';
-        $export_line = $gitlab_config_file . ',' . '.gitlab-ci.yml';
+        $export_line = '.gitlab-ci.yml,.gitlab-ci.yml';
         file_put_contents(
             $this->exportFileList,
             $export_line . PHP_EOL,
@@ -337,7 +336,7 @@ EOD;
         } catch ( Exception $e ) {
             require_once dirname( __FILE__ ) .
                 '/../StaticHtmlOutput/WsLog.php';
-            WsLog::l( 'BITBUCKET EXPORT: error encountered' );
+            WsLog::l( 'GITLAB EXPORT: error encountered' );
             WsLog::l( $e );
             error_log( $e );
             throw new Exception( $e );
