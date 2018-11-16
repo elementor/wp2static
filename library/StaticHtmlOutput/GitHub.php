@@ -33,10 +33,6 @@ class StaticHtmlOutput_GitHub {
         $this->globHashAndPathList =
             $this->settings['working_directory'] .
                 '/WP-STATIC-EXPORT-GITHUB-GLOBS-PATHS';
-        $archiveDir = file_get_contents(
-            $this->settings['working_directory'] .
-                '/WP-STATIC-CURRENT-ARCHIVE'
-        );
 
         // TODO: move this where needed
         require_once dirname( __FILE__ ) .

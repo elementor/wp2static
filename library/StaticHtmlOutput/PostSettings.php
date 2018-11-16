@@ -115,6 +115,8 @@ class WPSHO_PostSettings {
             'bunnycdnAPIKey',
             'bunnycdnPullZoneName',
             'bunnycdnRemotePath',
+            'bunnyBlobIncrement',
+            'bunnyBlobDelay',
         );
 
         $key_sets['s3'] = array(
