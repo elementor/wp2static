@@ -73,6 +73,7 @@ class StaticHtmlOutput_Controller {
             ->setOption( 'rewriteWPPaths', '1' )
             ->setOption( 'removeConditionalHeadComments', '1' )
             ->setOption( 'removeWPMeta', '1' )
+            ->setOption( 'discoverNewURLs', '1' )
             ->setOption( 'removeWPLinks', '1' )
             ->save();
         }
