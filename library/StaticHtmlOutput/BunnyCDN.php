@@ -4,37 +4,72 @@ use GuzzleHttp\Client;
 
 class StaticHtmlOutput_BunnyCDN {
 
-    protected $_zoneID;
-    protected $_APIKey;
-    protected $_remotePath;
-    protected $_baseURL;
-    protected $_uploadsPath;
-    protected $_exportFileList;
-    protected $_archiveName;
+    public function __construct() {
+        $target_settings = array(
+            'general',
+            'wpenv',
+            'bunnycdn',
+            'advanced',
+        );
 
-    public function __construct( $zoneID, $APIKey, $rem_path, $uploadsPath ) {
-        $this->_zoneID = $zoneID;
-        $this->_APIKey = $APIKey;
-        $this->_remotePath = $rem_path;
-        $this->_baseURL = 'https://storage.bunnycdn.com';
-        $this->_uploadsPath = $uploadsPath;
-        $this->_exportFileList =
-            $uploadsPath . '/WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT';
-        $archiveDir =
-            file_get_contents( $uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE' );
-        $this->_archiveName = rtrim( $archiveDir, '/' );
-    }
+        if ( isset( $_POST['selected_deployment_option'] ) ) {
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/PostSettings.php';
 
-    public function clear_file_list() {
-        // TODO; avoid suppressions
-        $f = fopen( $this->_exportFileList, 'r+' );
-        if ( $f !== false ) {
-            ftruncate( $f, 0 );
-            fclose( $f );
+            $this->settings = WPSHO_PostSettings::get( $target_settings );
+        } else {
+            error_log( 'TODO: load settings from DB' );
+        }
+
+        $this->exportFileList =
+            $this->settings['working_directory'] .
+                '/WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT';
+
+        $archiveDir = file_get_contents(
+            $this->settings['working_directory'] .
+                '/WP-STATIC-CURRENT-ARCHIVE'
+        );
+
+        // TODO: move this where needed
+        require_once dirname( __FILE__ ) .
+            '/../StaticHtmlOutput/Archive.php';
+        $this->archive = new Archive();
+        $this->archive->setToCurrentArchive();
+
+        switch ( $_POST['ajax_action'] ) {
+            case 'bunnycdn_prepare_export':
+                $this->prepare_export();
+                break;
+            case 'bunnycdn_transfer_files':
+                $this->transfer_files();
+                break;
+            case 'bunnycdn_purge_cache':
+                $this->purge_all_cache();
+                break;
+            case 'test_bunny':
+                $this->test_deploy();
+                break;
         }
     }
 
-    public function create_bunny_deployment_list( $dir, $archive, $rem_path ) {
+    public function clear_file_list() {
+        if ( is_file( $this->exportFileList ) ) {
+            $f = fopen( $this->exportFileList, 'r+' );
+            if ( $f !== false ) {
+                ftruncate( $f, 0 );
+                fclose( $f );
+            }
+        }
+    }
+
+    public function create_bunny_deployment_list( $dir ) {
+        $r_path = '';
+        $archive = $this->archive->path;
+
+        if ( isset( $this->settings['bunnycdnRemotePath'] ) ) {
+            $r_path = $this->settings['bunnycdnRemotePath'];
+        }
+
         $files = scandir( $dir );
 
         foreach ( $files as $item ) {
@@ -59,7 +94,7 @@ class StaticHtmlOutput_BunnyCDN {
                     $export_line =
                         $dir . '/' . $item . ',' . $targetPath . "\n";
                     file_put_contents(
-                        $this->_exportFileList,
+                        $this->exportFileList,
                         $export_line,
                         FILE_APPEND | LOCK_EX
                     );
@@ -69,53 +104,72 @@ class StaticHtmlOutput_BunnyCDN {
     }
 
     public function prepare_export() {
-        if ( wpsho_fr()->is__premium_only() ) {
-
             $this->clear_file_list();
 
             $this->create_bunny_deployment_list(
-                $this->_archiveName,
-                $this->_archiveName,
-                $this->_remotePath
+                $this->settings['working_directory'] . '/' .
+                    $this->archive->name
             );
 
             echo 'SUCCESS';
-        }
     }
 
-    public function get_item_to_export() {
-        $f = fopen( $this->_exportFileList, 'r' );
-        $line = fgets( $f );
+    public function get_items_to_export( $batch_size = 1 ) {
+        $lines = array();
+
+        $f = fopen( $this->exportFileList, 'r' );
+
+        for ( $i = 0; $i < $batch_size; $i++ ) {
+            $lines[] = fgets( $f );
+        }
+
         fclose( $f );
 
-        $contents = file( $this->_exportFileList, FILE_IGNORE_NEW_LINES );
-        array_shift( $contents );
+        // TODO: optimize this for just one read, one write within func
+        $contents = file( $this->exportFileList, FILE_IGNORE_NEW_LINES );
+
+        for ( $i = 0; $i < $batch_size; $i++ ) {
+            error_log('removing item from array');
+            // rewrite file minus the lines we took
+            array_shift( $contents );
+        }
+
         file_put_contents(
-            $this->_exportFileList,
+            $this->exportFileList,
             implode( "\r\n", $contents )
         );
 
-        return $line;
+        return $lines;
     }
 
     public function get_remaining_items_count() {
-        $contents = file( $this->_exportFileList, FILE_IGNORE_NEW_LINES );
+        $contents = file( $this->exportFileList, FILE_IGNORE_NEW_LINES );
 
         // return the amount left if another item is taken
         // return count($contents) - 1;
+
         return count( $contents );
     }
 
-    public function transfer_files( $viaCLI ) {
-        if ( wpsho_fr()->is__premium_only() ) {
-            require_once dirname( __FILE__ ) . '/../GuzzleHttp/autoloader.php';
+    public function transfer_files( $viaCLI = false ) {
+        require_once dirname( __FILE__ ) . '/../GuzzleHttp/autoloader.php';
 
-            if ( $this->get_remaining_items_count() < 0 ) {
-                echo 'ERROR';
-                die();
-            }
+        $filesRemaining = $this->get_remaining_items_count();
 
-            $line = $this->get_item_to_export();
+        if ( $filesRemaining < 0 ) {
+            echo 'ERROR';
+            die();
+        }
+
+        $batch_size = $this->settings['bunnyBlobIncrement'];
+
+        if ( $batch_size > $filesRemaining ) {
+            $batch_size = $filesRemaining;
+        }
+
+        $lines = $this->get_items_to_export( $batch_size );
+
+        foreach ( $lines as $line ) {
 
             list($fileToTransfer, $targetPath) = explode( ',', $line );
 
@@ -124,12 +178,12 @@ class StaticHtmlOutput_BunnyCDN {
             // do the bunny export
             $client = new Client(
                 array(
-                    'base_uri' => $this->_baseURL,
+                    'base_uri' => 'https://storage.bunnycdn.com',
                 )
             );
 
             try {
-                $target_path = '/' . $this->_zoneID . '/' .
+                $target_path = '/' . $this->settings['bunnycdnPullZoneName'] . '/' .
                     $targetPath . basename( $fileToTransfer );
 
                 $response = $client->request(
@@ -137,30 +191,37 @@ class StaticHtmlOutput_BunnyCDN {
                     $target_path,
                     array(
                         'headers'  => array(
-                            'AccessKey' => ' ' . $this->_APIKey,
+                            'AccessKey' => ' ' . $this->settings['bunnycdnAPIKey'],
                         ),
                         'body' => fopen( $fileToTransfer, 'rb' ),
                     )
                 );
             } catch ( Exception $e ) {
+                require_once dirname( __FILE__ ) .
+                    '/../StaticHtmlOutput/WsLog.php';
                 WsLog::l( 'BUNNYCDN EXPORT: error encountered' );
                 WsLog::l( $e );
                 error_log( $e );
                 throw new Exception( $e );
             }
+        }
 
-            $filesRemaining = $this->get_remaining_items_count();
+        if ( isset( $this->settings['bunnyBlobDelay'] ) &&
+            $this->settings['bunnyBlobDelay'] > 0 ) {
+            sleep( $this->settings['bunnyBlobDelay'] );
+        }
 
-            if ( $filesRemaining > 0 ) {
-                // if this is via CLI, then call this function again here
-                if ( $viaCLI ) {
-                    $this->transfer_files( true );
-                }
+        $filesRemaining = $this->get_remaining_items_count();
 
-                echo $filesRemaining;
-            } else {
-                echo 'SUCCESS';
+        if ( $filesRemaining > 0 ) {
+
+            if ( $viaCLI ) {
+                $this->transfer_files( true );
             }
+
+            echo $filesRemaining;
+        } else {
+            echo 'SUCCESS';
         }
     }
 
@@ -178,7 +239,7 @@ class StaticHtmlOutput_BunnyCDN {
                 $endpoint,
                 array(
                     'headers'  => array(
-                        'AccessKey' => ' ' . $this->_APIKey,
+                        'AccessKey' => ' ' . $this->settings['bunnycdnAPIKey'],
                     ),
                 )
             );
@@ -195,5 +256,44 @@ class StaticHtmlOutput_BunnyCDN {
             throw new Exception( $e );
         }
     }
+
+    public function test_deploy() {
+        require_once dirname( __FILE__ ) . '/../GuzzleHttp/autoloader.php';
+
+        $client = new Client(
+            array(
+                'base_uri' => 'https://storage.bunnycdn.com',
+                // TODO: these kind of cURL options would be nice in Advanced
+                //'force_ip_resolve' => 'v4'
+            )
+        );
+
+        try {
+            $target_path = '/' . $this->settings['bunnycdnPullZoneName'] .
+                '/tmpFile'
+                ;
+
+            $response = $client->request(
+                'PUT',
+                $target_path,
+                array(
+                    'headers'  => array(
+                        'AccessKey' => ' ' . $this->settings['bunnycdnAPIKey'],
+                    ),
+                    'body' => 'deploy',
+                )
+            );
+        } catch ( Exception $e ) {
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/WsLog.php';
+            WsLog::l( 'BUNNYCDN EXPORT: error encountered' );
+            WsLog::l( $e );
+            error_log( $e );
+            throw new Exception( $e );
+        }
+
+        echo 'SUCCESS';
+    }
 }
 
+$bunny = new StaticHtmlOutput_BunnyCDN();

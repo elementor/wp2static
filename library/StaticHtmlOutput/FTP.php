@@ -199,15 +199,20 @@ class StaticHtmlOutput_FTP {
 
         unset( $ftp );
 
+        if ( isset( $this->settings['ftpBlobDelay'] ) &&
+            $this->settings['ftpBlobDelay'] > 0 ) {
+            sleep( $this->settings['glBlobDelay'] );
+        }
+
         $filesRemaining = $this->get_remaining_items_count();
 
-        if ( $this->get_remaining_items_count() > 0 ) {
+        if ( $filesRemaining > 0 ) {
 
             if ( $viaCLI ) {
                 $this->transfer_files( true );
             }
 
-            echo $this->get_remaining_items_count();
+            echo $filesRemaining;
         } else {
             echo 'SUCCESS';
         }

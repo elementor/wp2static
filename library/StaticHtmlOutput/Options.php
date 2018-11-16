@@ -96,6 +96,8 @@ class StaticHtmlOutput_Options {
             'glProject',
             'glBlobIncrement',
             'glBlobDelay',
+            'bunnyBlobIncrement',
+            'bunnyBlobDelay',
             'netlifyPersonalAccessToken',
             'netlifySiteID',
             'removeConditionalHeadComments',

@@ -1,17 +1,4 @@
 <div class="bunnycdn_settings_block" style="display:none;">
-
-  <div class="notice notice-error inline">
-    <h2 class="title">Premium deployment option</h2>
-
-    <p>Get all the deployment options and advanced features with a 
-      <a href="https://wp2static.com" target="_blank">premium subscription</a>.</p>
-
-    <p>Exporting to this method will not work without upgrading, but you can stil deploy to BunnyCDN using the ZIP option and manually uploading to S3.</p>
-
-  </div>
-
-  <br>
-
   <table class="form-table">
     <tbody>
       <tr>
@@ -46,6 +33,62 @@
         </th>
         <td>
           <?php $tpl->displayTextfield($this, 'bunnycdnRemotePath', 'BunnyCDN Remote Path', 'will attempt to create folder recursively if non-existent'); ?>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          <label for="bunnyBlobIncrement"><?php echo __('File Upload Batch Size', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <select name="bunnyBlobIncrement" id="bunnyBlobIncrement">
+<?php 
+  // TODO: shift this into helper function for select
+  $increments = array(1, 5, 10, 25, 50, 100, 500, 1000, 999999);
+
+  foreach($increments as $increment) :
+       if ($increment == 999999): ?>
+            <option value="999999"<?php echo $this->options->bunnyBlobIncrement == $increment ? ' selected' : ''; ?>>Maximum</option>
+<?php else: ?>
+            <option value="<?php echo $increment; ?>"<?php echo $this->options->bunnyBlobIncrement == $increment ? ' selected' : ''; ?>><?php echo $increment; ?></option>
+
+<?php endif; 
+         endforeach; ?>
+          </select><br>
+
+          <p>This is set to 1, by default, in order to avoid execution limit timeouts on restricted environments, such as shared hosting servers. Each increment is the amount of files the server will try to upload to BunnyCDN on each request. Incrementing this will speed up your exports, by processing more are a time. If your export is failing, due to execution limits r BunnyCDN API rate limits being reached, try setting this to a lower number.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          <label for="bunnyBlobDelay"><?php echo __('API Request Delay', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <select name="bunnyBlobDelay" id="bunnyBlobDelay">
+<?php 
+  // TODO: shift this into helper function for select
+  $increments = array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 2, 3, 4, 10);
+
+  foreach($increments as $increment) : ?>
+            <option value="<?php echo $increment; ?>"<?php echo $this->options->bunnyBlobDelay == $increment ? ' selected' : ''; ?>><?php echo $increment; ?></option>
+ <?php endforeach; ?>
+          </select><br>
+
+          <p>This is set to 0, by default, but if your deploy is hitting BunnyCDN's API too rapidly, you can increase this to add a delay between each API request.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          <label for="bunny_test"><?php echo __('Test BunnyCDN Settings', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <button id="bunny-test-button" type="button" class="btn-primary button">Test BunnyCDN Settings</button>
+
+    <p>Note: In order to create files in bulk via BunnyCDN's API, the plugin will first make a commit which deletes all files in the repository. Being git, this is easily reversible, but bears a mention, in case you are suprised. BunnyCDN will soon support force creating files which already exist, at which point, we will be able to upload just the files you want, without removing any existing ones.</p>
+
+
+
         </td>
       </tr>
     </tbody>

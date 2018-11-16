@@ -125,4 +125,28 @@ if ( $ajax_action === 'crawl_site' || $ajax_action === 'crawl_again' ) {
 
     wp_die();
     return null;
+} elseif ( $ajax_action == 'test_bunny' ) {
+    require_once dirname( __FILE__ ) .
+        '/BunnyCDN.php';
+
+    wp_die();
+    return null;
+} elseif ( $ajax_action == 'bunnycdn_prepare_export' ) {
+    require_once dirname( __FILE__ ) .
+        '/BunnyCDN.php';
+
+    wp_die();
+    return null;
+} elseif ( $ajax_action == 'bunnycdn_transfer_files' ) {
+    require_once dirname( __FILE__ ) .
+        '/BunnyCDN.php';
+
+    wp_die();
+    return null;
+} elseif ( $ajax_action == 'bunnycdn_purge_cache' ) {
+    require_once dirname( __FILE__ ) .
+        '/BunnyCDN.php';
+
+    wp_die();
+    return null;
 }

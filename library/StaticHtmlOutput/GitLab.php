@@ -316,7 +316,6 @@ EOD;
         }
 
         $lines = $this->get_items_to_export( $batch_size );
-        $globHashPathLines = array();
 
         $files_data = array();
 
