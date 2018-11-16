@@ -1,11 +1,6 @@
 <?php
 
-use GuzzleHttp\Client;
-
 class StaticHtmlOutput_SitePublisher {
-
-    public function __construct() {
-    }
 
     public function clear_file_list() {
         if ( is_file( $this->exportFileList ) ) {
