@@ -30,32 +30,4 @@ class Deployer {
 
         wp_mail( $to, $subject, $body, $headers );
     }
-
-    public function prepare_file_list( $export_target ) {
-        $file_list_path = $this->getWorkingDirectory() .
-            '/WP-STATIC-EXPORT-' . $export_target . '-FILES-TO-EXPORT';
-
-        // zero write the file
-        // TODO: avoid suppression
-        $f = fopen( $file_list_path, 'r+' );
-        if ( $f !== false ) {
-            ftruncate( $f, 0 );
-            fclose( $f );
-        }
-
-        $archiveDir = file_get_contents(
-            $this->getWorkingDirectory() . '/WP-STATIC-CURRENT-ARCHIVE'
-        );
-
-        $archiveName = rtrim( $archiveDir, '/' );
-        $siteroot = $archiveName . '/';
-
-        error_log( 'preparing file list' );
-
-        StaticHtmlOutput_FilesHelper::recursively_scan_dir(
-            $siteroot,
-            $siteroot,
-            $file_list_path
-        );
-    }
 }
