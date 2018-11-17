@@ -61,6 +61,67 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher{
         }
     }
 
+    // NOTE: override parent to include file in path
+    public function create_deployment_list( $dir ) {
+        $archive = $this->archive->path;
+
+        $files = scandir( $dir );
+
+        foreach ( $files as $item ) {
+            if ( $item != '.' && $item != '..' && $item != '.git' ) {
+                if ( is_dir( $dir . '/' . $item ) ) {
+                    $this->create_deployment_list( $dir . '/' . $item );
+                } elseif ( is_file( $dir . '/' . $item ) ) {
+                    $wp_subdir = str_replace(
+                        '/wp-admin/admin-ajax.php',
+                        '',
+                        $_SERVER['REQUEST_URI']
+                    );
+
+                    $wp_subdir = ltrim( $subdir, '/' );
+                    $dirs_in_path = $dir;
+                    $filename = $item;
+                    $original_filepath = $dir . '/' . $item;
+
+                    $local_path_to_strip = $archive . '/' . $wp_subdir;
+                    $local_path_to_strip = rtrim( $local_path_to_strip, '/' );
+
+                    $deploy_path = str_replace(
+                        $local_path_to_strip,
+                        '',
+                        $dirs_in_path
+                    );
+
+                    $original_file_without_archive = str_replace(
+                        $local_path_to_strip,
+                        '',
+                        $original_filepath
+                    );
+
+                    $original_file_without_archive = ltrim(
+                        $original_file_without_archive,
+                        '/'
+                    );
+
+                    $deploy_path = $this->r_path . $deploy_path;
+                    $deploy_path = ltrim( $deploy_path, '/' );
+                    $deploy_path .= '/';
+
+                    $export_line =
+                        $original_file_without_archive . ',' . // field 1
+                        $original_file_without_archive . // field 2
+                        "\n";
+
+                    file_put_contents(
+                        $this->exportFileList,
+                        $export_line,
+                        FILE_APPEND | LOCK_EX
+                    );
+                }
+            }
+        }
+    }
+
     public function upload_files( $viaCLI = false ) {
         require_once dirname( __FILE__ ) .
             '/../GuzzleHttp/autoloader.php';
@@ -92,6 +153,7 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher{
                 'name'     => '/' . rtrim( $targetPath ),
                 'contents' => fopen( $fileToTransfer, 'rb' ),
             );
+
         }
 
         if ( isset( $this->settings['bbBlobDelay'] ) &&
