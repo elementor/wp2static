@@ -25,11 +25,15 @@ if ( $ajax_action === 'crawl_site' || $ajax_action === 'crawl_again' ) {
     return null;
 } elseif ( $ajax_action == 'github_prepare_export' ) {
     require_once dirname( __FILE__ ) .
+        '/SitePublisher.php';
+    require_once dirname( __FILE__ ) .
         '/GitHub.php';
 
     wp_die();
     return null;
 } elseif ( $ajax_action == 'github_upload_blobs' ) {
+    require_once dirname( __FILE__ ) .
+        '/SitePublisher.php';
     require_once dirname( __FILE__ ) .
         '/GitHub.php';
 
@@ -37,11 +41,15 @@ if ( $ajax_action === 'crawl_site' || $ajax_action === 'crawl_again' ) {
     return null;
 } elseif ( $ajax_action == 'github_finalise_export' ) {
     require_once dirname( __FILE__ ) .
+        '/SitePublisher.php';
+    require_once dirname( __FILE__ ) .
         '/GitHub.php';
 
     wp_die();
     return null;
 } elseif ( $ajax_action == 'test_blob_create' ) {
+    require_once dirname( __FILE__ ) .
+        '/SitePublisher.php';
     require_once dirname( __FILE__ ) .
         '/GitHub.php';
 
