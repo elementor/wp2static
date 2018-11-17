@@ -112,10 +112,6 @@ jQuery(document).ready(function($){
           doAJAXExport('s3_prepare_export', 's3_transfer_files', 'cloudfront_invalidate_all_items');
           break;
 
-        case 'DROPBOX':
-          doAJAXExport('dropbox_prepare_export', 'dropbox_do_export');
-          break;
-
         case 'NETLIFY':
           doAJAXExport('netlify_do_export');
           break;
@@ -208,10 +204,6 @@ jQuery(document).ready(function($){
     switch (current_deployment_method) {
       case 'zip':
         $('#createZip').attr('checked', 'checked');
-      break;	
-
-      case 'dropbox':
-        export_targets.push('DROPBOX');
       break;	
 
       case 'github':
@@ -334,18 +326,6 @@ jQuery(document).ready(function($){
           }
         });
       break;
-
-      case 'dropbox':
-        required_fields = {
-          dropboxAccessToken: 'Please specify your Dropbox access token in order to deploy to Dropbox.',
-        };	
-
-        Object.keys(required_fields).forEach(function(key,index) {
-          if ($('#' + key).val() == '') {
-            validation_errors += required_fields[key] + "\n";
-          }
-        });
-      break; 
 
       case 'bunnycdn':
         required_fields = {
@@ -594,7 +574,6 @@ jQuery(document).ready(function($){
       'ftp',
       'folder',
       's3',
-      'dropbox',
       'bunnycdn',
       'netlify',
       'github',
@@ -681,7 +660,7 @@ jQuery(document).ready(function($){
 
 	// update base url previews in realtime
 	$(document).on('input', 
-		'#baseUrl-s3, #baseUrl-ftp, #baseUrl-folder, #baseUrl-dropbox, #baseUrl-github, #baseUrl-bitbucket, #baseUrl-gitlab, #baseUrl-netlify, #baseUrl-bunnycdn, #baseUrl-zip, #targetFolder', 
+		'#baseUrl-s3, #baseUrl-ftp, #baseUrl-folder, #baseUrl-github, #baseUrl-bitbucket, #baseUrl-gitlab, #baseUrl-netlify, #baseUrl-bunnycdn, #baseUrl-zip, #targetFolder', 
 		function() {
 			updateBaseURLReferences();
 		}

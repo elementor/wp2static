@@ -1,7 +1,6 @@
 === WP Static Site Generator ===
 Contributors: leonstafford
-Donate link: https://www.paypal.me/leonjstafford
-Tags: static site generator,cache,wp super cache,wp fastest cache,w3 total cache,security,export,s3,dropbox,github,netlify,bunnycdn,html
+Tags: static site generator,cache,wp super cache,wp fastest cache,w3 total cache,security,export,s3,github,netlify,bunnycdn,html
 Requires at least: 3.2
 Tested up to: 4.9.8
 Requires PHP: 5.4
@@ -30,7 +29,7 @@ A pre-generated static site can outperform popular caching plugins like WP Super
 
  * publishes a standalone, static html copy of your whole WordPress website
  * removes tell-tale signs your site is running WordPress, making it unattractive to hackers
- * auto-deploy to a folder on your server, a ZIP file, FTP server, S3, Dropbox, GitHub, Netlify or BunnyCDN
+ * auto-deploy to a folder on your server, a ZIP file, FTP server, S3, GitHub, Netlify or BunnyCDN
  * schedule unattended exports via the WP Crontrol plugin or by hitting the custom hook
  * desktop notifications alert you to when exports are complete
 
@@ -115,7 +114,6 @@ Anywhere that allows HTML files to be uploaded, ie:
  * GitHub/GitLab/BitBucket Pages (GitHub API integration now included)
  * S3 / CloudFront
  * Netlify
- * Dropbox
  * BunnyCDN
  * Rackspace Cloud Files
 
@@ -148,6 +146,7 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
  * New feature: initial support for feeds/xml exporting
  * New feature: deploy to Bitbucket
  * New feature: deploy to GitLab
+ * Drop feature: deploy to Dropbox (they don't love static sites anymore)
 
 = 5.8 =
 
@@ -477,6 +476,7 @@ Initial release to Wordpress community
  * New feature: initial support for feeds/xml exporting
  * New feature: deploy to Bitbucket
  * New feature: deploy to GitLab
+ * Drop feature: deploy to Dropbox (they don't love static sites anymore)
 
 = 5.8 =
 

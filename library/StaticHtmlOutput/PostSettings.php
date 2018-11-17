@@ -131,12 +131,6 @@ class WPSHO_PostSettings {
             's3BlobDelay',
         );
 
-        $key_sets['dropbox'] = array(
-            'baseUrl-dropbox',
-            'dropboxAccessToken',
-            'dropboxFolder',
-        );
-
         $key_sets['netlify'] = array(
             'baseUrl-netlify',
             'netlifyPersonalAccessToken',
