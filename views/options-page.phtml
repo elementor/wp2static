@@ -52,15 +52,18 @@ $tpl = new TemplateHelper();
 
     function generateDeploymentMethodOptions() {
       $options = array(
-        "folder" => array('Test deploy - a sub-directory on this server', 'free'),
+        "folder" => array('1-click quick test | Preview before deploying', 'free'),
+        "blank1" => array("--- Manual Deployment ---", 'premium'),
         "zip" => array('Give me a ZIP file, so I can manually deploy it somewhere', 'free'),
+        "blank2" => array("--- Automated Deployment ---", 'premium'),
+        "s3" => array("Amazon S3", 'premium'),
+        "bitbucket" => array("Bitbucket", 'premium'),
+        "bunnycdn" => array("BunnyCDN", 'premium'),
+        "github" => array("GitHub Pages", 'premium'),
+        "gitlab" => array("GitLab", 'premium'),
+        "netlify" => array("Netlify", 'premium'),
+        "blank3" => array("--- Other Automated Deployments ---", 'premium'),
         "ftp" => array("I want to FTP it automatically, using this plugin", 'free'),
-        "github" => array("On, GitHub Pages, using this plugin's auto-deployment", 'premium'),
-        "netlify" => array("On, Netlify, using this plugin's auto-deployment", 'premium'),
-        "s3" => array("On, Amazon S3, using this plugin's auto-deployment", 'premium'),
-        "bitbucket" => array("On, Bitbucket, using this plugin's auto-deployment", 'premium'),
-        "bunnycdn" => array("On, BunnyCDN, using this plugin's auto-deployment", 'premium'),
-        "gitlab" => array("On, GitLab, using this plugin's auto-deployment", 'premium'),
       );
 
       foreach ($options as $key => $value) {
