@@ -13,13 +13,17 @@ if ( $ajax_action === 'crawl_site' || $ajax_action === 'crawl_again' ) {
     return null;
 } elseif ( $ajax_action == 'bitbucket_prepare_export' ) {
     require_once dirname( __FILE__ ) .
-        '/Netlify.php';
+        '/SitePublisher.php';
+    require_once dirname( __FILE__ ) .
+        '/Bitbucket.php';
 
     wp_die();
     return null;
 } elseif ( $ajax_action == 'bitbucket_upload_files' ) {
     require_once dirname( __FILE__ ) .
-        '/Netlify.php';
+        '/SitePublisher.php';
+    require_once dirname( __FILE__ ) .
+        '/Bitbucket.php';
 
     wp_die();
     return null;
@@ -81,7 +85,9 @@ if ( $ajax_action === 'crawl_site' || $ajax_action === 'crawl_again' ) {
     return null;
 } elseif ( $ajax_action == 'test_bitbucket' ) {
     require_once dirname( __FILE__ ) .
-        '/Netlify.php';
+        '/SitePublisher.php';
+    require_once dirname( __FILE__ ) .
+        '/Bitbucket.php';
 
     wp_die();
     return null;
