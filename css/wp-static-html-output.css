@@ -7,10 +7,6 @@
 
 }
 
-.github, .bunnycdn, .ftp, .dropbox, .netlify, .s3 {
-    display: none;
-}
-
 #downloadZIP {
     display: none;
 }

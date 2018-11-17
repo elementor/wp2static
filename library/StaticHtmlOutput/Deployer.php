@@ -13,16 +13,6 @@ class Deployer {
             case 'zip':
                 $this->create_zip();
                 break;
-
-            case 'dropbox':
-                $this->dropboxAccessToken =
-                    filter_input( INPUT_POST, 'dropboxAccessToken' );
-                $this->dropboxFolder =
-                    filter_input( INPUT_POST, 'dropboxFolder' );
-
-                $this->dropbox_prepare_export();
-                $this->dropbox_do_export( true );
-                break;
         }
 
         // TODO: email upon successful cron deploy
@@ -39,26 +29,6 @@ class Deployer {
         $headers = array( 'Content-Type: text/html; charset=UTF-8' );
 
         wp_mail( $to, $subject, $body, $headers );
-    }
-
-    public function dropbox_prepare_export() {
-        $dropbox = new StaticHtmlOutput_Dropbox(
-            $this->dropboxAccessToken,
-            $this->dropboxFolder,
-            $this->getWorkingDirectory()
-        );
-
-        $dropbox->prepare_export();
-    }
-
-    public function dropbox_do_export( $viaCLI = false ) {
-        $dropbox = new StaticHtmlOutput_Dropbox(
-            $this->dropboxAccessToken,
-            $this->dropboxFolder,
-            $this->getWorkingDirectory()
-        );
-
-        $dropbox->transfer_files( $viaCLI );
     }
 
     public function prepare_file_list( $export_target ) {
