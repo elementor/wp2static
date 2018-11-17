@@ -91,6 +91,9 @@ class StaticHtmlOutput_FTP extends StaticHtmlOutput_SitePublisher{
 
         foreach ( $lines as $line ) {
             list($fileToTransfer, $targetPath) = explode( ',', $line );
+
+            $fileToTransfer = $this->archive->path . $fileToTransfer;
+
             $targetPath = rtrim( $targetPath );
 
             if ( ! $ftp->isdir( $targetPath ) ) {

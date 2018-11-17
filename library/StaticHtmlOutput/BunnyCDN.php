@@ -31,6 +31,7 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher{
         );
 
         $this->r_path = '';
+
         if ( isset( $this->settings['bunnycdnRemotePath'] ) ) {
             $this->r_path = $this->settings['bunnycdnRemotePath'];
         }
