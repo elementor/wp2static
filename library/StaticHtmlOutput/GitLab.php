@@ -2,7 +2,7 @@
 
 use GuzzleHttp\Client;
 
-class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher{
+class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
 
     public function __construct() {
         $target_settings = array(

@@ -128,7 +128,7 @@ class StaticHtmlOutput_FilesHelper {
         isset( $path_info['extension'] ) &&
         ( ! in_array(
             $path_info['extension'],
-            array( 'php', 'phtml', 'tpl' )
+            array( 'php', 'phtml', 'tpl', 'less', 'scss' )
         ) )
         );
     }

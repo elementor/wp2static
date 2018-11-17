@@ -1,6 +1,6 @@
 <?php
 
-class StaticHtmlOutput_FTP extends StaticHtmlOutput_SitePublisher{
+class StaticHtmlOutput_FTP extends StaticHtmlOutput_SitePublisher {
 
     public function __construct() {
         $target_settings = array(
