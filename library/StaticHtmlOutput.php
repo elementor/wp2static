@@ -296,18 +296,15 @@ class StaticHtmlOutput_Controller {
 
 
     public function doExportWithoutGUI() {
-        if ( wpsho_fr()->is_plan( 'professional_edition' ) ) {
+        // $this->capture_last_deployment();
+        $this->cleanup_leftover_archives( true );
+        $this->start_export( true );
+        $this->crawl_site( true );
+        $this->post_process_archive_dir( true );
+        $this->deploy();
+        $this->post_export_teardown();
 
-            // $this->capture_last_deployment();
-            $this->cleanup_leftover_archives( true );
-            $this->start_export( true );
-            $this->crawl_site( true );
-            $this->post_process_archive_dir( true );
-            $this->deploy();
-            $this->post_export_teardown();
-
-            // $this->create_zip();
-        }
+        // $this->create_zip();
     }
 
     public function reset_default_settings() {
