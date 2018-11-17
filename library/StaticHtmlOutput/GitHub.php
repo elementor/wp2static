@@ -2,14 +2,13 @@
 
 use GuzzleHttp\Client;
 
-class StaticHtmlOutput_GitHub {
+class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher{
 
     public function __construct() {
         $target_settings = array(
             'general',
             'wpenv',
             'github',
-            // 'processing',
             'advanced',
         );
 
@@ -40,9 +39,15 @@ class StaticHtmlOutput_GitHub {
         $this->archive = new Archive();
         $this->archive->setToCurrentArchive();
 
+        $this->r_path = '';
+
+        if ( isset( $this->settings['ghPath'] ) ) {
+            $this->r_path = $this->settings['ghPath'];
+        }
+
         switch ( $_POST['ajax_action'] ) {
             case 'github_prepare_export':
-                $this->prepare_deployment();
+                $this->prepare_export();
                 break;
             case 'github_upload_blobs':
                 $this->upload_blobs();
@@ -55,114 +60,6 @@ class StaticHtmlOutput_GitHub {
                 break;
         }
     }
-
-    public function clear_file_list() {
-        if ( is_file( $this->exportFileList ) ) {
-            $f = fopen( $this->exportFileList, 'r+' );
-            if ( $f !== false ) {
-                ftruncate( $f, 0 );
-                fclose( $f );
-            }
-        }
-
-        if ( is_file( $this->globHashAndPathList ) ) {
-            $f = fopen( $this->globHashAndPathList, 'r+' );
-            if ( $f !== false ) {
-                ftruncate( $f, 0 );
-                fclose( $f );
-            }
-        }
-    }
-
-    // TODO: move into a parent class as identical to bunny and probably others
-    public function create_github_deployment_list( $dir ) {
-        $r_path = '';
-        $archive = $this->archive->path;
-
-        if ( isset( $this->settings['ghPath'] ) ) {
-            $r_path = $this->settings['ghPath'];
-        }
-
-        $files = scandir( $dir );
-
-        foreach ( $files as $item ) {
-            if ( $item != '.' && $item != '..' && $item != '.git' ) {
-                if ( is_dir( $dir . '/' . $item ) ) {
-                    $this->create_github_deployment_list(
-                        $dir . '/' . $item
-                    );
-                } elseif ( is_file( $dir . '/' . $item ) ) {
-                    $subdir = str_replace(
-                        '/wp-admin/admin-ajax.php',
-                        '',
-                        $_SERVER['REQUEST_URI']
-                    );
-                    $subdir = ltrim( $subdir, '/' );
-                    $clean_dir = str_replace( $archive . '/', '', $dir . '/' );
-                    $clean_dir = str_replace( $subdir, '', $clean_dir );
-                    $targetPath = $r_path . $clean_dir;
-                    $targetPath =
-                        str_replace( $this->archive->path, '', $targetPath );
-
-                    $export_line =
-                        $dir . '/' . $item . ',' . $targetPath . "\n";
-
-                    file_put_contents(
-                        $this->exportFileList,
-                        $export_line,
-                        FILE_APPEND | LOCK_EX
-                    );
-                }
-            }
-        }
-    }
-
-    // TODO: move to a parent class as identical to bunny and probably others
-    public function prepare_deployment() {
-            $this->clear_file_list();
-            $this->create_github_deployment_list(
-                $this->settings['working_directory'] . '/' .
-                    $this->archive->name
-            );
-
-            echo 'SUCCESS';
-    }
-
-    public function get_items_to_export( $batch_size = 1 ) {
-        $lines = array();
-
-        $f = fopen( $this->exportFileList, 'r' );
-
-        for ( $i = 0; $i < $batch_size; $i++ ) {
-            $lines[] = fgets( $f );
-        }
-
-        fclose( $f );
-
-        // TODO: optimize this for just one read, one write within func
-        $contents = file( $this->exportFileList, FILE_IGNORE_NEW_LINES );
-
-        for ( $i = 0; $i < $batch_size; $i++ ) {
-            // rewrite file minus the lines we took
-            array_shift( $contents );
-        }
-
-        file_put_contents(
-            $this->exportFileList,
-            implode( "\r\n", $contents )
-        );
-
-        return $lines;
-    }
-
-    public function get_remaining_items_count() {
-        $contents = file( $this->exportFileList, FILE_IGNORE_NEW_LINES );
-
-        // return the amount left if another item is taken
-        // return count($contents) - 1;
-        return count( $contents );
-    }
-
 
     public function upload_blobs( $viaCLI = false ) {
         require_once dirname( __FILE__ ) .
@@ -193,6 +90,8 @@ class StaticHtmlOutput_GitHub {
 
         foreach ( $lines as $line ) {
             list($fileToTransfer, $targetPath) = explode( ',', $line );
+
+            $fileToTransfer = $this->archive->path . $fileToTransfer;
 
             if ( isset( $this->settings['ghBlobDelay'] ) &&
                 $this->settings['ghBlobDelay'] > 0 ) {

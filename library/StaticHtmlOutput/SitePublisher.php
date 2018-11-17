@@ -10,6 +10,16 @@ class StaticHtmlOutput_SitePublisher {
                 fclose( $f );
             }
         }
+
+        if ( isset( $this->globHashAndPathList ) ) {
+            if ( is_file( $this->globHashAndPathList ) ) {
+                $f = fopen( $this->globHashAndPathList, 'r+' );
+                if ( $f !== false ) {
+                    ftruncate( $f, 0 );
+                    fclose( $f );
+                }
+            }
+        }
     }
 
     public function create_deployment_list( $dir ) {
