@@ -18,6 +18,7 @@ var export_targets = [];
 var export_commence_time = '';
 var export_duration = '';
 var batch_increment = 0;
+var status_text = '';
 var protocolAndDomainRE = /^(?:\w+:)?\/\/(\S+)$/;
 var localhostDomainRE = /^localhost[\:?\d]*(?:[^\:?\d]\S*)?$/
 var nonLocalhostDomainRE = /^[^\s\.]+\.\S{2,}$/;
@@ -26,6 +27,10 @@ jQuery(document).ready(function($){
   function prepareInitialFileList() {
     $('.hiddenActionField').val('wp_static_html_output_ajax');
     $('#hiddenAJAXAction').val('generate_filelist_preview');
+
+    status_text = 'Preparing initial file list...';
+    $('#current_action').html(status_text);    
+    $('#progress').show();    
 
     data = $(".options-form :input")
         .filter(function(index, element) {
@@ -42,6 +47,11 @@ jQuery(document).ready(function($){
             $('#initial_crawl_list_loader').hide();
             $('#initial_crawl_list_count').text(serverResponse + ' URLs were detected on your site that will be attempted to be crawled.');
             $('#preview_initial_crawl_list_button').show();
+
+            $('#startExportButton').prop('disabled', false);
+            $('.saveSettingsButton').prop('disabled', false);
+            $('.resetDefaultSettingsButton').prop('disabled', false);
+            $('#progress').hide();    
         },
         error: function(serverResponse) {
           $('#initial_crawl_list_loader').hide();
@@ -467,14 +477,18 @@ jQuery(document).ready(function($){
     for (var i = 0; i < arguments.length; ++i) args[i] = arguments[i];
 
     var export_action = args[0];
-    var status_text = export_action;
+    status_text = export_action;
     
     switch (export_action) {
         case 'crawl_site':
             status_text = 'Crawling initial file list';
+            status_text += ' Chunk: ' + batch_increment;
+            status_text += ' Tip: Increase your Crawl Increment as high as your server can support for faster crawling';
             break;
         case 'crawl_again':
             status_text = 'Crawling discovered URLs';
+            status_text += ' Chunk: ' + batch_increment;
+            status_text += ' Tip: Increase your Crawl Increment as high as your server can support for faster crawling';
             break;
         case 'post_process_archive_dir':
             status_text = 'Processing the crawled files';
@@ -535,7 +549,7 @@ jQuery(document).ready(function($){
             break;
     }
 
-    $('#current_action').text(status_text);    
+    $('#current_action').html(status_text);    
     $('.hiddenActionField').val('wp_static_html_output_ajax');
     $('#hiddenAJAXAction').val(export_action);
 
@@ -563,8 +577,6 @@ jQuery(document).ready(function($){
             doAJAXExport.apply(this, args);
 
             batch_increment += 1;
-            status_text += ' #' + batch_increment;
-            $('#current_action').text(status_text);    
           } else if (serverResponse === 'SUCCESS') {
             // not an incremental action, continue on with export targets
             processExportTargets();
