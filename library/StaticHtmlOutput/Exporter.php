@@ -102,7 +102,6 @@ class Exporter {
     }
 
     public function cleanup_working_files() {
-        error_log( 'cleanup_working_files()' );
         // skip first explort state
         if ( is_file(
             $this->settings['working_directory'] . '/WP-STATIC-CURRENT-ARCHIVE'
@@ -196,7 +195,7 @@ class Exporter {
                 '/WP-STATIC-MODIFIED-CRAWL-LIST'
         );
 
-        // if no excludes or includes, just copy to new targey
+        // if no excludes or includes, just copy to new target
         if ( ! isset( $this->settings['excludeURLs'] ) &&
             ! isset( $this->settings['additionalUrls'] ) ) {
             copy(
@@ -244,6 +243,9 @@ class Exporter {
                     }
                 }
             }
+        } else {
+            // TODO: clone vs link to array
+            $modified_crawl_list = $crawl_list;
         }
 
         // apply inclusions
@@ -255,6 +257,8 @@ class Exporter {
 
             foreach ( $inclusions as $inclusion ) {
                 $inclusion = trim( $inclusion );
+                $inclusion = ltrim($inclusion, '/');
+                $inclusion = $this->settings['wp_site_url'] . $inclusion;
 
                 $modified_crawl_list[] = $inclusion;
             }
@@ -265,7 +269,7 @@ class Exporter {
 
         $str = implode( PHP_EOL, $modified_crawl_list );
         file_put_contents(
-            $this->settings['working_directory'] .
+            $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-FINAL-CRAWL-LIST',
             $str
         );

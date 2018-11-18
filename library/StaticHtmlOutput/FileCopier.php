@@ -65,9 +65,9 @@ class FileCopier {
         }
 
         $fileExtension = $pathInfo['extension'];
-
-        $fileName =
-            $fileDir . '/' . $pathInfo['filename'] . '.' . $fileExtension;
+        $basename = $pathInfo['filename'] . '.' . $fileExtension;
+        $fileName = $fileDir . '/' . $basename;
+        $fileName = str_replace('//', '/', $fileName);
 
         if ( is_file( $local_file ) ) {
             copy( $local_file, $fileName );
