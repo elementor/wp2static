@@ -105,8 +105,6 @@ class HTMLProcessor {
             }
         }
 
-        // funcs to apply to whole page
-        $this->detectEscapedSiteURLs();
         // $this->setBaseHref();
         $this->writeDiscoveredURLs();
 
@@ -325,26 +323,24 @@ class HTMLProcessor {
         }
     }
 
-
-    public function detectEscapedSiteURLs() {
+    public function detectEscapedSiteURLs( $processedHTML ) {
         // NOTE: this does return the expected http:\/\/172.18.0.3
-        // but the PHP error log will escape again and
+        // but your error log may escape again and
         // show http:\\/\\/172.18.0.3
-        $escaped_site_url = addcslashes( get_option( 'siteurl' ), '/' );
+        $escaped_site_url = addcslashes( $this->settings['wp_site_url'], '/' );
 
-        // if ( strpos( $this->raw_html, $escaped_site_url ) !== false ) {
-        // TODO: renable this function being called. needs to be on
-        // raw HTML, so ideally after the Processor has done all other
-        // XML things, so no need to parse again
-        // suggest adding a processRawHTML function, that
-        // includes this stuff.. and call it within the getHTML function
-        // or finalizeProcessing or such....
-        // $this->rewriteEscapedURLs($wp_site_env,
-        // $new_paths);
-        // }
+        if ( strpos( $processedHTML, $escaped_site_url ) !== false ) {
+            return $this->rewriteEscapedURLs(
+                $processedHTML,
+                $wp_site_env,
+                $new_paths
+            );
+        }
+
+        return $processedHTML;
     }
 
-    public function rewriteEscapedURLs() {
+    public function rewriteEscapedURLs( $processedHTML ) {
         /*
         This function will be a bit more costly. To cover bases like:
 
@@ -361,6 +357,7 @@ class HTMLProcessor {
                 addcslashes( $this->settings['wp_plugins'], '/' ),
                 addcslashes( $this->settings['wp_content'], '/' ),
                 addcslashes( $this->settings['wp_inc'], '/' ),
+                addcslashes( $this->settings['wp_site_url'], '/' ),
             ),
             array(
                 addcslashes( $this->settings['new_active_theme_path'], '/' ),
@@ -369,11 +366,13 @@ class HTMLProcessor {
                 addcslashes( $this->settings['new_plugins_path'], '/' ),
                 addcslashes( $this->settings['new_wp_content_path'], '/' ),
                 addcslashes( $this->settings['new_wpinc_path'], '/' ),
+                addcslashes( $this->settings['baseUrl'], '/' ),
+                
             ),
-            $this->response['body']
+            $processedHTML
         );
 
-        $this->setResponseBody( $rewritten_source );
+        return $rewritten_source;
     }
 
     public function rewriteWPPaths( $element ) {
@@ -425,7 +424,13 @@ class HTMLProcessor {
     }
 
     public function getHTML() {
-        return $this->xml_doc->saveHtml();
+        $processedHTML = $this->xml_doc->saveHtml();
+
+        // process the resulting HTML as text
+        $processedHTML = $this->detectEscapedSiteURLs( $processedHTML );
+
+
+        return $processedHTML;
     }
 
     public function convertToRelativeURL( $element ) {
