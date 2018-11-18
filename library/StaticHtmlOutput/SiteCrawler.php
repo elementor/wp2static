@@ -354,7 +354,6 @@ class SiteCrawler {
         }
     }
 
-
     public function saveFile() {
         // response body processing is complete, now time to save the file
         // contents to the archive

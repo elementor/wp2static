@@ -367,7 +367,7 @@ class HTMLProcessor {
                 addcslashes( $this->settings['new_wp_content_path'], '/' ),
                 addcslashes( $this->settings['new_wpinc_path'], '/' ),
                 addcslashes( $this->settings['baseUrl'], '/' ),
-                
+
             ),
             $processedHTML
         );
@@ -428,7 +428,6 @@ class HTMLProcessor {
 
         // process the resulting HTML as text
         $processedHTML = $this->detectEscapedSiteURLs( $processedHTML );
-
 
         return $processedHTML;
     }
