@@ -257,7 +257,7 @@ class Exporter {
 
             foreach ( $inclusions as $inclusion ) {
                 $inclusion = trim( $inclusion );
-                $inclusion = ltrim($inclusion, '/');
+                $inclusion = ltrim( $inclusion, '/' );
                 $inclusion = $this->settings['wp_site_url'] . $inclusion;
 
                 $modified_crawl_list[] = $inclusion;
