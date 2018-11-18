@@ -1,8 +1,0 @@
-[vagrant]
-192.168.50.50
-
-[vagrant:vars]
-vhostTemplatePath=templates/vhost.conf
-mysqlTemplatePath=templates/mysql
-xdebugTemplatePath=templates/xdebug
-phpErrorTemplatePath=templates/php_error.ini
