@@ -58,6 +58,9 @@ jQuery(document).ready(function($){
     $('.hiddenActionField').val('wp_static_html_output_ajax');
     $('#hiddenAJAXAction').val('save_options');
 
+    $('#current_action').html('Saving options');
+    $('#progress').show();
+
     data = $(".options-form :input")
         .filter(function(index, element) {
             return $(element).val() != '';
@@ -465,46 +468,112 @@ jQuery(document).ready(function($){
 
     var export_action = args[0];
     var status_text = export_action;
+    
+    switch (export_action) {
+        case 'crawl_site':
+            status_text = 'Crawling initial file list';
+            break;
+        case 'crawl_again':
+            status_text = 'Crawling discovered URLs';
+            break;
+        case 'post_process_archive_dir':
+            status_text = 'Processing the crawled files';
+            break;
+        case 'post_export_teardown':
+            status_text = 'Cleaning up after processing';
+            break;
+        case 'netlify_do_export':
+            status_text = 'Deploying to Netlify';
+            break;
+        case 's3_prepare_export':
+            status_text = 'Preparing files for S3 deployment';
+            break;
+        case 's3_transfer_files':
+            status_text = 'Deploying files to S3';
+            break;
+        case 'cloudfront_invalidate_all_items':
+            status_text = 'Invalidating CloudFront cache';
+            break;
+        case 'bunnycdn_prepare_export':
+            status_text = 'Preparing files for BunnyCDN deployment';
+            break;
+        case 'bunnycdn_transfer_files':
+            status_text = 'Deploying files to BunnyCDN';
+            break;
+        case 'bunnycdn_purge_cache':
+            status_text = 'Purging BunnyCDN cache';
+            break;
+        case 'ftp_prepare_export':
+            status_text = 'Preparing files for FTP deployment';
+            break;
+        case 'ftp_transfer_files':
+            status_text = 'Deploying files via FTP';
+            break;
+        case 'github_prepare_export':
+            status_text = 'Preparing files for GitHub deployment';
+            break;
+        case 'github_upload_blobs':
+            status_text = 'Deploying files via GitHub';
+            break;
+        case 'github_finalise_export':
+            status_text = 'Finalising GitHub deployment';
+            break;
+        case 'bitbucket_prepare_export':
+            status_text = 'Preparing files for Bitbucket deployment';
+            break;
+        case 'bitbucket_upload_files':
+            status_text = 'Deploying files to Bitbucket';
+            break;
+        case 'gitlab_prepare_export':
+            status_text = 'Preparing files for GitLab deployment';
+            break;
+        case 'gitlab_upload_files':
+            status_text = 'Deploying files to GitLab';
+            break;
+        default:
+            status_text = export_option;
+            break;
+    }
 
     $('#current_action').text(status_text);    
-        $('.hiddenActionField').val('wp_static_html_output_ajax');
-        $('#hiddenAJAXAction').val(export_action);
+    $('.hiddenActionField').val('wp_static_html_output_ajax');
+    $('#hiddenAJAXAction').val(export_action);
 
-        data = $(".options-form :input")
-          .filter(function(index, element) {
-              return $(element).val() != '';
-          })
-          .serialize();
+    data = $(".options-form :input")
+      .filter(function(index, element) {
+          return $(element).val() != '';
+      })
+      .serialize();
 
-        $.ajax({
-            url: ajaxurl,
-            data: data,
-            dataType: 'html',
-            method: 'POST',
-            success: function(serverResponse) {
-              // if an action is successful, and there are other actions queued up
-              if (serverResponse === 'SUCCESS' && args.length > 1) {
-                batch_increment = 0;
-                // rm first action now that it's succeeded
-                args.shift();
-                // call function with all other actions
-                doAJAXExport.apply(this, args);
-              // if an action is in progress incremental, it will call itself again
-              } else if (serverResponse > 0) {
-                doAJAXExport.apply(this, args);
+    $.ajax({
+        url: ajaxurl,
+        data: data,
+        dataType: 'html',
+        method: 'POST',
+        success: function(serverResponse) {
+          // if an action is successful, and there are other actions queued up
+          if (serverResponse === 'SUCCESS' && args.length > 1) {
+            batch_increment = 0;
+            // rm first action now that it's succeeded
+            args.shift();
+            // call function with all other actions
+            doAJAXExport.apply(this, args);
+          // if an action is in progress incremental, it will call itself again
+          } else if (serverResponse > 0) {
+            doAJAXExport.apply(this, args);
 
-                batch_increment += 1;
-                status_text += ' #' + batch_increment;
-                $('#current_action').text(status_text);    
-              } else if (serverResponse === 'SUCCESS') {
-                // not an incremental action, continue on with export targets
-                processExportTargets();
-                batch_increment = 0;
-              } else {
-                ajaxErrorHandler();
-              }
-            },
-            error: ajaxErrorHandler
+            batch_increment += 1;
+            status_text += ' #' + batch_increment;
+            $('#current_action').text(status_text);    
+          } else if (serverResponse === 'SUCCESS') {
+            // not an incremental action, continue on with export targets
+            processExportTargets();
+            batch_increment = 0;
+          } else {
+            ajaxErrorHandler();
+          }
+        },
+        error: ajaxErrorHandler
       });
   }
 
@@ -767,7 +836,6 @@ jQuery(document).ready(function($){
 
   $('.wrap').on('click', '.saveSettingsButton', function(event) {
       event.preventDefault();
-      $('#progress').show();
       saveOptions();
   });
 
