@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: WP Static Site Generator
+ * Plugin Name: Security & Performance
  * Plugin URI:  https://wp2static.com
  * Description: The optimum solution to speed up and secure your WordPress site - export to static HTML and hide all traces of WordPress from your site!
  * Version:     5.9
@@ -80,18 +80,6 @@ require_once 'library/URL2/URL2.php';
 
 StaticHtmlOutput_Controller::init( __FILE__ );
 
-/**
- * Settings link for WP Static HTML Output plugin
- *
- * This creates the link(s) on the installed/active plugins screen
- *
- * @since 1.0.0
- *
- * @link https://codex.wordpress.org/Plugin_API/Filter_Reference/plugin_action_links_(plugin_file_name)
- *
- * @param array $links The links to show on the plugins overview page in an array.
- * @return array The links to show on the plugins overview page in an array.
- */
 function plugin_action_links( $links ) {
     $settings_link = '<a href="admin.php?page=wp-static-html-output">' . __( 'Settings', 'static-html-output-plugin' ) . '</a>';
     array_unshift( $links, $settings_link );
@@ -110,13 +98,6 @@ function wp_static_html_output_server_side_export() {
 add_action( 'wp_static_html_output_server_side_export_hook', 'wp_static_html_output_server_side_export', 10, 0 );
 
 
-/**
- * This hook is called once any activated plugins have been loaded. Is generally used for immediate filter setup, or plugin overrides.
- *
- * @since 1.0.0
- *
- * @return null
- */
 function plugins_have_been_loaded() {
       load_plugin_textdomain( 'static-html-output-plugin', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
       return null;
@@ -126,16 +107,6 @@ add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'plugin_action
 add_action( 'plugins_loaded', 'plugins_have_been_loaded' );
 add_action( 'wp_ajax_wp_static_html_output_ajax', 'wp_static_html_output_ajax' );
 
-/**
- * Routes AJAX requests from the client to plugin instance.
- *
- * Reduces code by not adding an add_action for each AJAX method. Instead, a parameter
- * in the payload determines which of the plugin's instance methods to run
- *
- * @since 2.5
- *
- * @return null
- */
 function wp_static_html_output_ajax() {
     check_ajax_referer( 'wpstatichtmloutput', 'nonce' );
     $instance_method = filter_input( INPUT_POST, 'ajax_action' );
@@ -157,11 +128,6 @@ function wp_static_html_output_ajax() {
 remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
 remove_action( 'wp_print_styles', 'print_emoji_styles' );
 
-/**
- * Add a widget to the dashboard.
- *
- * Enable users to statically publish theeir site from the WP Dashboard
- */
 function wp_static_html_output_add_dashboard_widgets() {
 
     wp_add_dashboard_widget(
