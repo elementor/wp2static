@@ -1,6 +1,6 @@
-=== WP Static Site Generator ===
+=== Security & Performance ===
 Contributors: leonstafford
-Tags: static site generator,cache,wp super cache,wp fastest cache,w3 total cache,security,export,s3,github,netlify,bunnycdn,html
+Tags: security, performance, static
 Requires at least: 3.2
 Tested up to: 4.9.8
 Requires PHP: 5.4
@@ -9,7 +9,7 @@ Stable tag: 5.9
 
 == Description ==
 
-WP Static Site Generator protects the admin area of your WP site, whilst allowing you to serve your content to users on free and fast hosting options. 
+Security & Performance protects the admin area of your WP site, whilst allowing you to serve your content to users on free and fast hosting options. 
 
 Keep using WordPress for what it's best at - managing content, but remove the security and performance headaches by publishing the site as static HTML.
 
@@ -83,7 +83,7 @@ Developed by [**Leon Stafford**](http://leonstafford.github.io). If you have any
 = via WP Admin panel =
 
 1. Go to Plugins > Add New
-2. Search for "WP Static Site Generator"
+2. Search for "Security & Performance"
 3. Click on the Install Now button
 4. Activate the plugin and find it under the Tools menu
 
@@ -149,6 +149,7 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
  * New feature: deploy to Bitbucket
  * New feature: deploy to GitLab
  * Drop feature: deploy to Dropbox (they don't love static sites anymore)
+ * Plugin name change to Security & Performance
 
 = 5.8 =
 
@@ -482,6 +483,7 @@ Initial release to Wordpress community
  * New feature: deploy to Bitbucket
  * New feature: deploy to GitLab
  * Drop feature: deploy to Dropbox (they don't love static sites anymore)
+ * Plugin name change to Security & Performance
 
 = 5.8 =
 
