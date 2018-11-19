@@ -340,6 +340,48 @@ class HTMLProcessor {
         return $processedHTML;
     }
 
+    public function detectUnchangedURLs( $processedHTML ) {
+        $siteURL = $this->settings['wp_site_url'];
+
+        if ( strpos( $processedHTML, $siteURL ) !== false ) {
+            return $this->rewriteUnchangedURLs(
+                $processedHTML,
+                $wp_site_env,
+                $new_paths
+            );
+        }
+
+        return $processedHTML;
+    }
+
+    public function rewriteUnchangedURLs( $processedHTML ) {
+        // TODO: Make this optional
+        $rewritten_source = str_replace(
+            array(
+                $this->settings['wp_active_theme'],
+                $this->settings['wp_themes'],
+                $this->settings['wp_uploads'],
+                $this->settings['wp_plugins'],
+                $this->settings['wp_content'],
+                $this->settings['wp_inc'],
+                $this->settings['wp_site_url'],
+            ),
+            array(
+                $this->settings['new_active_theme_path'],
+                $this->settings['new_themes_path'],
+                $this->settings['new_uploads_path'],
+                $this->settings['new_plugins_path'],
+                $this->settings['new_wp_content_path'],
+                $this->settings['new_wpinc_path'],
+                $this->settings['baseUrl'],
+
+            ),
+            $processedHTML
+        );
+
+        return $rewritten_source;
+    }
+
     public function rewriteEscapedURLs( $processedHTML ) {
         /*
         This function will be a bit more costly. To cover bases like:
@@ -428,6 +470,7 @@ class HTMLProcessor {
 
         // process the resulting HTML as text
         $processedHTML = $this->detectEscapedSiteURLs( $processedHTML );
+        $processedHTML = $this->detectUnchangedURLs( $processedHTML );
 
         return $processedHTML;
     }

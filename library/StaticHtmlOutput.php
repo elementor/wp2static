@@ -111,8 +111,8 @@ class StaticHtmlOutput_Controller {
     public function registerOptionsPage() {
         $pluginDirUrl = plugin_dir_url( dirname( __FILE__ ) );
         $page = add_menu_page(
-            __( 'WP Static Site Generator', 'static-html-output-plugin' ),
-            __( 'WP Static Site Generator', 'static-html-output-plugin' ),
+            __( 'Security & Performance', 'static-html-output-plugin' ),
+            __( 'Security & Performance', 'static-html-output-plugin' ),
             'manage_options',
             self::HOOK,
             array( self::$_instance, 'renderOptionsPage' ),
