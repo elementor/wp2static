@@ -9,21 +9,17 @@ Stable tag: 5.9
 
 == Description ==
 
-Security & Performance protects the admin area of your WP site, whilst allowing you to serve your content to users on free and fast hosting options. 
+Security & Performance via static website publishing. One plugin to solve WordPress's biggest problems.
 
 Keep using WordPress for what it's best at - managing content, but remove the security and performance headaches by publishing the site as static HTML.
 
-The optimum solution to speed up and secure your WordPress site - export to static HTML and hide all traces of WordPress from your site!
-
-Tired of your WordPress sites getting hacked? 
-
 A static site closes all the doors that an out of date WordPress, theme or plugin can leave open.
 
-Your visitors not sticking around due to your site loading too slow? 
-
-A pre-generated static site can outperform popular caching plugins like WP Super Cache, WP Fastest Cache and W3 Total Cache.
+A pre-generated static site will outperform caching plugins, allowing you to serve at local speeds to users around the world.
 
 [**https://wp2static.com**](https://wp2static.com/)
+
+Not compatible with WooCommerce or membership sites.
 
 = Features =
 
