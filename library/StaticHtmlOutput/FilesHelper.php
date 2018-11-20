@@ -30,7 +30,7 @@ class StaticHtmlOutput_FilesHelper {
         return self::getListOfLocalFilesByUrl( get_stylesheet_directory_uri() );
     }
 
-    public static function detectVendorFiles() {
+    public static function detectVendorFiles( $wp_site_url ) {
         $vendor_files = [];
 
         if ( class_exists( 'autoptimizeMain' ) ) {
@@ -44,11 +44,32 @@ class StaticHtmlOutput_FilesHelper {
         }
 
         if ( class_exists( 'Custom_Permalinks' ) ) {
-select meta_value from wp_postmeta where meta_key = 'custom_permalink';
+            global $wpdb;
 
-            $vendor_files = self::getListOfLocalFilesByUrl(
-                $autoptimize_cache_dir
+            $query = "
+                SELECT meta_value
+                FROM %s
+                WHERE meta_key = '%s'
+                ";
+
+            $custom_permalinks = [];
+
+            $posts = $wpdb->get_results(
+                sprintf(
+                    $query,
+                    $wpdb->postmeta,
+                    'custom_permalink'
+                )
             );
+
+            if ( $posts ) {
+                foreach( $posts as $post ) {
+                    $custom_permalinks[] = $wp_site_url . $post->meta_value;
+                }
+
+                $vendor_files = array_merge($vendor_files, $custom_permalinks);
+            } 
+
         }
 
         return $vendor_files;
@@ -148,7 +169,7 @@ select meta_value from wp_postmeta where meta_key = 'custom_permalink';
         $uploadsPath,
         $uploadsURL,
         $workingDirectory,
-        $pluginHook ) {
+        $wp_site_url ) {
 
         $baseUrl = untrailingslashit( home_url() );
 
@@ -156,7 +177,7 @@ select meta_value from wp_postmeta where meta_key = 'custom_permalink';
             array( trailingslashit( $baseUrl ) ),
             self::getParentThemeFiles(),
             self::getChildThemeFiles(),
-            self::detectVendorFiles(),
+            self::detectVendorFiles( $wp_site_url ),
             self::getAllWPPostURLs( $baseUrl )
         );
 
@@ -183,7 +204,7 @@ select meta_value from wp_postmeta where meta_key = 'custom_permalink';
         $uploadsPath,
         $uploadsURL,
         $workingDirectory,
-        $pluginHook ) {
+        $wp_site_url ) {
 
         file_put_contents(
             $workingDirectory . '/WP-STATIC-CURRENT-ARCHIVE',

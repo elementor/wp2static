@@ -155,14 +155,16 @@ class StaticHtmlOutput_Controller {
             '';
         $plugin_hook = 'wp-static-html-output';
 
-        // pre-generated the initial crawl list
+        // TODO: DRY up WPSite calls
+        require_once dirname( __FILE__ ) . '/StaticHtmlOutput/WPSite.php';
+        $this->wp_site = new WPSite();
         $initial_file_list_count =
             StaticHtmlOutput_FilesHelper::buildInitialFileList(
                 true,
                 $uploads_path,
                 $uploads_url,
                 $working_directory,
-                $plugin_hook
+                $this->wp_site->site_url
             );
 
         echo $initial_file_list_count;
@@ -224,7 +226,9 @@ class StaticHtmlOutput_Controller {
         // priorities: from UI; from settings; fallback to WP uploads path
         if ( isset( $this->workingDirectory ) ) {
             $outputDir = $this->workingDirectory;
-        } elseif ( $this->options->oworkingDirectory ) {
+        // TODO: fixed this typo, implications?
+        //} elseif ( $this->options->oworkingDirectory ) {
+        } elseif ( $this->options->workingDirectory ) {
             $outputDir = $this->options->workingDirectory;
         } else {
             $outputDir = $this->wp_site->wp_uploads_path;
