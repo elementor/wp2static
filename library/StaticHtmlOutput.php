@@ -226,8 +226,8 @@ class StaticHtmlOutput_Controller {
         // priorities: from UI; from settings; fallback to WP uploads path
         if ( isset( $this->workingDirectory ) ) {
             $outputDir = $this->workingDirectory;
-        // TODO: fixed this typo, implications?
-        //} elseif ( $this->options->oworkingDirectory ) {
+            // TODO: fixed this typo, implications?
+            // } elseif ( $this->options->oworkingDirectory ) {
         } elseif ( $this->options->workingDirectory ) {
             $outputDir = $this->options->workingDirectory;
         } else {

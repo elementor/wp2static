@@ -40,7 +40,7 @@ class StaticHtmlOutput_FilesHelper {
                 $autoptimize_cache_dir
             );
 
-            $vendor_files = array_merge($vendor_files, $autoptimize_URLs);
+            $vendor_files = array_merge( $vendor_files, $autoptimize_URLs );
         }
 
         if ( class_exists( 'Custom_Permalinks' ) ) {
@@ -63,13 +63,15 @@ class StaticHtmlOutput_FilesHelper {
             );
 
             if ( $posts ) {
-                foreach( $posts as $post ) {
+                foreach ( $posts as $post ) {
                     $custom_permalinks[] = $wp_site_url . $post->meta_value;
                 }
 
-                $vendor_files = array_merge($vendor_files, $custom_permalinks);
-            } 
-
+                $vendor_files = array_merge(
+                    $vendor_files,
+                    $custom_permalinks
+                );
+            }
         }
 
         return $vendor_files;

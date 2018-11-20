@@ -380,30 +380,40 @@ class HTMLProcessor {
     public function rewriteUnchangedURLs( $processedHTML ) {
         // TODO: theme is like /wp-content/themes/twentyseventeen
         // likely already changed... if so, let's skip those rewrites here...
+        if ( isset( $this->settings['rewriteWPPaths'] ) ) {
+            $rewritten_source = str_replace(
+                array(
+                    $this->settings['wp_active_theme'],
+                    $this->settings['wp_themes'],
+                    $this->settings['wp_uploads'],
+                    $this->settings['wp_plugins'],
+                    $this->settings['wp_content'],
+                    $this->settings['wp_inc'],
+                    $this->placeholder_URL,
+                ),
+                array(
+                    $this->settings['new_active_theme_path'],
+                    $this->settings['new_themes_path'],
+                    $this->settings['new_uploads_path'],
+                    $this->settings['new_plugins_path'],
+                    $this->settings['new_wp_content_path'],
+                    $this->settings['new_wpinc_path'],
+                    $this->settings['baseUrl'],
 
-        // TODO: Make this optional
-        $rewritten_source = str_replace(
-            array(
-                $this->settings['wp_active_theme'],
-                $this->settings['wp_themes'],
-                $this->settings['wp_uploads'],
-                $this->settings['wp_plugins'],
-                $this->settings['wp_content'],
-                $this->settings['wp_inc'],
-                $this->placeholder_URL,
-            ),
-            array(
-                $this->settings['new_active_theme_path'],
-                $this->settings['new_themes_path'],
-                $this->settings['new_uploads_path'],
-                $this->settings['new_plugins_path'],
-                $this->settings['new_wp_content_path'],
-                $this->settings['new_wpinc_path'],
-                $this->settings['baseUrl'],
-
-            ),
-            $processedHTML
-        );
+                ),
+                $processedHTML
+            );
+        } else {
+            $rewritten_source = str_replace(
+                array(
+                    $this->placeholder_URL,
+                ),
+                array(
+                    $this->settings['baseUrl'],
+                ),
+                $processedHTML
+            );
+        }
 
         return $rewritten_source;
     }
@@ -416,6 +426,43 @@ class HTMLProcessor {
         from the onepress(?) theme, for example
 
         */
+        if ( isset( $this->settings['rewriteWPPaths'] ) ) {
+            $rewritten_source = str_replace(
+                array(
+                    addcslashes( $this->settings['wp_active_theme'], '/' ),
+                    addcslashes( $this->settings['wp_themes'], '/' ),
+                    addcslashes( $this->settings['wp_uploads'], '/' ),
+                    addcslashes( $this->settings['wp_plugins'], '/' ),
+                    addcslashes( $this->settings['wp_content'], '/' ),
+                    addcslashes( $this->settings['wp_inc'], '/' ),
+                    addcslashes( $this->placeholder_URL, '/' ),
+                ),
+                array(
+                    addcslashes(
+                        $this->settings['new_active_theme_path'],
+                        '/'
+                    ),
+                    addcslashes( $this->settings['new_themes_path'], '/' ),
+                    addcslashes( $this->settings['new_uploads_path'], '/' ),
+                    addcslashes( $this->settings['new_plugins_path'], '/' ),
+                    addcslashes( $this->settings['new_wp_content_path'], '/' ),
+                    addcslashes( $this->settings['new_wpinc_path'], '/' ),
+                    addcslashes( $this->settings['baseUrl'], '/' ),
+
+                ),
+                $processedHTML
+            );
+        } else {
+            $rewritten_source = str_replace(
+                array(
+                    addcslashes( $this->placeholder_URL, '/' ),
+                ),
+                array(
+                    addcslashes( $this->settings['baseUrl'], '/' ),
+                ),
+                $processedHTML
+            );
+        }
 
         $rewritten_source = str_replace(
             array(
