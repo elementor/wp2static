@@ -16,53 +16,53 @@
 require_once dirname( __FILE__ ) .
     '/library/StaticHtmlOutput/Dispatcher.php';
 
-// ###### START FREEMIUS ######
-// NOTE: no more freemius in free version, just rm this block when
-// and freemius SDK dir when deploying free version
-function wpsho_fr() {
-      // TODO: this is called on regular page load
-      // error_log('calling freemius func');
-      global $wpsho_fr;
-
-    if ( ! isset( $wpsho_fr ) ) {
-        // Activate multisite network integration.
-        if ( ! defined( 'WP_FS__PRODUCT_2226_MULTISITE' ) ) {
-              define( 'WP_FS__PRODUCT_2226_MULTISITE', true );
-        }
-
-        // Include Freemius SDK.
-        require_once dirname( __FILE__ ) . '/freemius/start.php';
-
-        $wpsho_fr = fs_dynamic_init(
-            array(
-                'id'                  => '2226',
-                'slug'                => 'static-html-output-plugin',
-                'type'                => 'plugin',
-                'public_key'          => 'pk_8874b676a9189a1b13450673a921f',
-                'is_premium'          => true,
-                'has_addons'          => false,
-                'has_paid_plans'      => true,
-                'trial'               => array(
-                    'days'               => 7,
-                    'is_require_payment' => true,
-                ),
-                'menu'                => array(
-                    'slug'           => 'wp-static-html-output',
-                    'support'        => false,
-                    'network'        => false,
-                ),
-            )
-        );
-    }
-
-    return $wpsho_fr;
-}
-
-// Init Freemius.
-wpsho_fr();
-// Signal that SDK was initiated.
-do_action( 'wpsho_fr_loaded' );
-// ###### END FREEMIUS ######
+//// ###### START FREEMIUS ######
+//// NOTE: no more freemius in free version, just rm this block when
+//// and freemius SDK dir when deploying free version
+//function wpsho_fr() {
+//      // TODO: this is called on regular page load
+//      // error_log('calling freemius func');
+//      global $wpsho_fr;
+//
+//    if ( ! isset( $wpsho_fr ) ) {
+//        // Activate multisite network integration.
+//        if ( ! defined( 'WP_FS__PRODUCT_2226_MULTISITE' ) ) {
+//              define( 'WP_FS__PRODUCT_2226_MULTISITE', true );
+//        }
+//
+//        // Include Freemius SDK.
+//        require_once dirname( __FILE__ ) . '/freemius/start.php';
+//
+//        $wpsho_fr = fs_dynamic_init(
+//            array(
+//                'id'                  => '2226',
+//                'slug'                => 'static-html-output-plugin',
+//                'type'                => 'plugin',
+//                'public_key'          => 'pk_8874b676a9189a1b13450673a921f',
+//                'is_premium'          => true,
+//                'has_addons'          => false,
+//                'has_paid_plans'      => true,
+//                'trial'               => array(
+//                    'days'               => 7,
+//                    'is_require_payment' => true,
+//                ),
+//                'menu'                => array(
+//                    'slug'           => 'wp-static-html-output',
+//                    'support'        => false,
+//                    'network'        => false,
+//                ),
+//            )
+//        );
+//    }
+//
+//    return $wpsho_fr;
+//}
+//
+//// Init Freemius.
+//wpsho_fr();
+//// Signal that SDK was initiated.
+//do_action( 'wpsho_fr_loaded' );
+//// ###### END FREEMIUS ######
 
 
 
