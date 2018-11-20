@@ -186,7 +186,7 @@ class HTMLProcessor {
                     $url
                 );
 
-                $this->discovered_urls[] = $url;
+                $this->discovered_urls[] = $rewritten_url;
             }
         }
     }
