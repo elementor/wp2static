@@ -31,6 +31,10 @@ class HTMLProcessor {
         $this->xml_doc = new DOMDocument();
         $this->raw_html = $html_document;
         $this->page_url = $page_url;
+        $this->placeholder_URL = 'https://PLACEHOLDER.wpsho/';
+
+        // initial rewrite of all site URLs to placeholder URLs
+        $this->rewriteSiteURLsToPlaceholder();
 
         // detect if a base tag exists while in the loop
         // use in later base href creation to decide: append or create
@@ -50,7 +54,7 @@ class HTMLProcessor {
         // PERF: 70% of function time
         // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
         libxml_use_internal_errors( true );
-        $this->xml_doc->loadHTML( $html_document );
+        $this->xml_doc->loadHTML( $this->raw_html );
         libxml_use_internal_errors( false );
 
         // start the full iterator here, along with copy of dom
@@ -226,7 +230,18 @@ class HTMLProcessor {
     public function processAnchor( $element ) {
         $url = $element->getAttribute( 'href' );
 
+        // TODO: DRY this up/move to higher exec position
+        // early abort invalid links as early as possible
+        // to save overhead/potential errors
+        if ( $url[0] === '#' ) {
+            return;
+        }
+
         if ( substr( $url, 0, 7 ) == 'mailto:' ) {
+            return;
+        }
+
+        if ( ! $this->isInternalLink( $url ) ) {
             return;
         }
 
@@ -281,11 +296,12 @@ class HTMLProcessor {
             $abs = $this->page_url->resolve( $original_link );
             $element->setAttribute( $attribute, $abs );
         }
+
     }
 
     public function isInternalLink( $link, $domain = false ) {
         if ( ! $domain ) {
-            $domain = $this->settings['wp_site_url'];
+            $domain = $this->placeholder_URL;
         }
 
         // TODO: apply only to links starting with .,..,/,
@@ -327,7 +343,7 @@ class HTMLProcessor {
         // NOTE: this does return the expected http:\/\/172.18.0.3
         // but your error log may escape again and
         // show http:\\/\\/172.18.0.3
-        $escaped_site_url = addcslashes( $this->settings['wp_site_url'], '/' );
+        $escaped_site_url = addcslashes( $this->placeholder_URL, '/' );
 
         if ( strpos( $processedHTML, $escaped_site_url ) !== false ) {
             return $this->rewriteEscapedURLs(
@@ -341,7 +357,7 @@ class HTMLProcessor {
     }
 
     public function detectUnchangedURLs( $processedHTML ) {
-        $siteURL = $this->settings['wp_site_url'];
+        $siteURL = $this->placeholder_URL;
 
         if ( strpos( $processedHTML, $siteURL ) !== false ) {
             return $this->rewriteUnchangedURLs(
@@ -586,7 +602,7 @@ class HTMLProcessor {
         if ( $this->isInternalLink( $url_to_change ) ) {
             $rewritten_url = str_replace(
                 // TODO: test this won't touch subdomains, shouldn't
-                $this->settings['wp_site_url'],
+                $this->placeholder_URL,
                 $this->settings['baseUrl'],
                 $url_to_change
             );
@@ -595,57 +611,21 @@ class HTMLProcessor {
         }
     }
 
-    /*
-    TODO
-    public function setBaseHref() {
-        // TODO: don't set for offline usage?
-        if ( $this->useBaseHref ) {
-            // TODO: create DOM node properly here
-        } else {
+    public function rewriteSiteURLsToPlaceholder() {
+        $rewritten_source = str_replace(
+            array(
+                $this->settings['wp_site_url'],
+                addcslashes( $this->settings['wp_site_url'], '/' ),
+            ),
+            array(
+                $this->placeholder_URL,
+                addcslashes( $this->placeholder_URL, '/' ),
+            ),
+            $this->raw_html
+        );
 
-        }
+        $this->raw_html = $rewritten_source;
 
-        // TODO: re-implement as separate func as another processing layer
-        // error_log('SKIPPING absolute path rewriting');
-        // if ( $this->useBaseHref ) {
-        // $responseBody = str_replace(
-        // '<head>',
-        // "<head>\n<base href=\"" .
-        // esc_attr( $new_URL ) . "/\" />\n",
-        // $responseBody
-        // );
-        // } else {
-        // $responseBody = str_replace(
-        // '<head>',
-        // "<head>\n<base href=\"/\" />\n",
-        // $responseBody
-        // );
-        // }
-    }
-    */
-
-    public function rewriteForOfflineUsage( $element ) {
-
-        // elseif ( $allowOfflineUsage ) {
-        // detect urls starting with our domain and append index.html to
-        // the end if they end in /
-        // TODO: re-implement as separate function as
-        // another processing layer
-        // error_log('SKIPPING offline usage rewriting');
-        // foreach($xml->getElementsByTagName('a') as $link) {
-        // $original_link = $link->getAttribute("href");
-        //
-        // process links from our site only
-        // if (strpos($original_link, $oldDomain) !== false) {
-        //
-        // }
-        //
-        // $link->setAttribute('href', $original_link . 'index.html');
-        // }
-        //
-        // }
-        // TODO: should we check for incorrectly linked references?
-        // like an http link on a WP site served from https? - probably not
     }
 }
 
