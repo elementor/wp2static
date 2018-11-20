@@ -233,6 +233,7 @@ class HTMLProcessor {
         // TODO: DRY this up/move to higher exec position
         // early abort invalid links as early as possible
         // to save overhead/potential errors
+        // apply to other functions
         if ( $url[0] === '#' ) {
             return;
         }
@@ -371,6 +372,9 @@ class HTMLProcessor {
     }
 
     public function rewriteUnchangedURLs( $processedHTML ) {
+        // TODO: theme is like /wp-content/themes/twentyseventeen
+        // likely already changed... if so, let's skip those rewrites here...
+
         // TODO: Make this optional
         $rewritten_source = str_replace(
             array(
@@ -380,7 +384,7 @@ class HTMLProcessor {
                 $this->settings['wp_plugins'],
                 $this->settings['wp_content'],
                 $this->settings['wp_inc'],
-                $this->settings['wp_site_url'],
+                $this->placeholder_URL,
             ),
             array(
                 $this->settings['new_active_theme_path'],
