@@ -180,6 +180,12 @@ class HTMLProcessor {
             }
 
             if ( $this->isInternalLink( $url ) ) {
+                $rewritten_url = str_replace(
+                    $this->placeholder_URL,
+                    $this->settings['baseUrl'],
+                    $url
+                );
+
                 $this->discovered_urls[] = $url;
             }
         }
@@ -419,7 +425,7 @@ class HTMLProcessor {
                 addcslashes( $this->settings['wp_plugins'], '/' ),
                 addcslashes( $this->settings['wp_content'], '/' ),
                 addcslashes( $this->settings['wp_inc'], '/' ),
-                addcslashes( $this->settings['wp_site_url'], '/' ),
+                addcslashes( $this->placeholder_URL, '/' ),
             ),
             array(
                 addcslashes( $this->settings['new_active_theme_path'], '/' ),
