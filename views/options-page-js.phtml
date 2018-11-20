@@ -302,7 +302,10 @@ jQuery(document).ready(function($){
 
     // TODO: on new Debian package-managed environment, this was falsely erroring
     if (!isUrl($('#baseUrl').val()) && !$('#allowOfflineUsage').is(":checked")) {
-      validation_errors += "Please set the Base URL field to a valid URL, ie http://mystaticsite.com.\n";
+        // TODO: testing / URL as base
+        if ($('#baseUrl').val() !== '/') {
+          validation_errors += "Please set the Base URL field to a valid URL, ie http://mystaticsite.com.\n";
+        }
     }
 
     switch(current_deployment_method) {

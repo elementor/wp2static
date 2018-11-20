@@ -401,6 +401,7 @@ class SiteCrawler {
 
         $extensions_to_process = array(
             'html',
+            'shtml',
             'css',
             'js',
             'json',

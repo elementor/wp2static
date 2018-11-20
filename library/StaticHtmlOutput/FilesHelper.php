@@ -36,6 +36,16 @@ class StaticHtmlOutput_FilesHelper {
         if ( class_exists( 'autoptimizeMain' ) ) {
             $autoptimize_cache_dir = WP_CONTENT_DIR . '/cache/autoptimize';
 
+            $autoptimize_URLs = self::getListOfLocalFilesByUrl(
+                $autoptimize_cache_dir
+            );
+
+            $vendor_files = array_merge($vendor_files, $autoptimize_URLs);
+        }
+
+        if ( class_exists( 'Custom_Permalinks' ) ) {
+select meta_value from wp_postmeta where meta_key = 'custom_permalink';
+
             $vendor_files = self::getListOfLocalFilesByUrl(
                 $autoptimize_cache_dir
             );
