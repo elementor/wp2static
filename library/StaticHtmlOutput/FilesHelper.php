@@ -83,7 +83,7 @@ class StaticHtmlOutput_FilesHelper {
 
             $vendor_files = array_merge( $vendor_files, $molongui_URLs );
         }
- 
+
         return $vendor_files;
     }
 

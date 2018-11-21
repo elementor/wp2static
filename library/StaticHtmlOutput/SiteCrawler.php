@@ -440,7 +440,7 @@ class SiteCrawler {
                 WsLog::l(
                     'no filetype inferred from content-type: ' .
                     $this->response->getHeaderLine( 'content-type' ) .
-                    ' url: '. $this->url
+                    ' url: ' . $this->url
                 );
             }
         }

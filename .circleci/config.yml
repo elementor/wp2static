@@ -15,7 +15,7 @@ jobs:
       - run: 
           name: Run Code Sniffs
           command: |
-            /tmp/phpcs/bin/phpcs --ignore=*/provisioning/*,*/freemius/*,*/GuzzleHttp/*,*/Github/*,*/aws/*,*/CloudFront/*,*/Psr/*,*/CSSParser/*,*/FTP/*,*/S3/*,*/URL2/*,wp-static-html-output.php ./
+            /tmp/phpcs/bin/phpcs --ignore=*/provisioning/*,*/GuzzleHttp/*,*/Github/*,*/aws/*,*/CloudFront/*,*/Psr/*,*/CSSParser/*,*/FTP/*,*/S3/*,*/URL2/*,wp2static.php ./
       - run: 
           name: Run Unit Tests
           command: ./provisioning/run_unit_tests.sh
