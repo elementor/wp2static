@@ -42,6 +42,7 @@ class WPSHO_PostSettings {
             'new_plugins_path',
             'new_wp_content_path',
             'new_wpinc_path',
+            'processing_method',
             'removeWPMeta',
             'removeWPLinks',
             'useBaseHref',
