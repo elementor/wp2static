@@ -3,7 +3,10 @@
 class WsLog {
 
     public static function l( $text ) {
+        error_log( $text . PHP_EOL );
+
         $wp_uploads_path = $_POST['wp_uploads_path'];
+
         $working_directory =
             isset( $_POST['workingDirectory'] ) ?
             $_POST['workingDirectory'] :

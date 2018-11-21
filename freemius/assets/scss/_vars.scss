@@ -1,6 +1,0 @@
-$is_production: true;
-
-$img_common: if($is_production == true, '//img.freemius.com', 'http://img.freemius:8080');
-
-$layout_width: 960px;
-$admin_mobile_max_width: 782px;

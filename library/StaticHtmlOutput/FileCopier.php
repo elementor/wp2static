@@ -72,7 +72,14 @@ class FileCopier {
         if ( is_file( $local_file ) ) {
             copy( $local_file, $fileName );
         } else {
-            error_log( 'Fail trying to copy local file: ' . $local_file );
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/WsLog.php';
+            WsLog::l(
+                'ERROR: trying to copy local file: ' . $local_file .
+                ' to: ' . $fileName .
+                ' in archive dir: ' . $archive_dir .
+                ' (FILE NOT FOUND/UNREADABLE)'
+            );
         }
     }
 }

@@ -74,6 +74,16 @@ class StaticHtmlOutput_FilesHelper {
             }
         }
 
+        if ( class_exists( 'molongui_authorship' ) ) {
+            $molongui_path = WP_PLUGIN_DIR . '/molongui-authorship';
+
+            $molongui_URLs = self::getListOfLocalFilesByUrl(
+                $molongui_path
+            );
+
+            $vendor_files = array_merge( $vendor_files, $molongui_URLs );
+        }
+ 
         return $vendor_files;
     }
 
