@@ -1,13 +1,12 @@
 <?php
 /**
- * Plugin Name: Security & Performance
+ * Plugin Name: Security & Performance by WP2Static
  * Plugin URI:  https://wp2static.com
- * Description: The optimum solution to speed up and secure your WordPress site - export to static HTML and hide all traces of WordPress from your site!
+ * Description: Security & Performance via static website publishing. One plugin to solve WordPress's biggest problems.
  * Version:     5.9
  * Author:      Leon Stafford
  * Author URI:  https://leonstafford.github.io
  * Text Domain: static-html-output-plugin
- * Copyright (c) 2017 Leon Stafford
  *
  * @package     WP_Static_HTML_Output
  */
@@ -16,7 +15,6 @@
 require_once dirname( __FILE__ ) .
     '/library/StaticHtmlOutput/Dispatcher.php';
 
-// do regular instantiation
 // TODO: find way to enable these based on detected capabilities
 require_once 'library/StaticHtmlOutput/Options.php';
 require_once 'library/StaticHtmlOutput/TemplateHelper.php';
