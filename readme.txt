@@ -71,7 +71,6 @@ If you haven't read on why you may want to host statically, please have a read o
 http://docs.wp2static.com/blog/how-and-why-to-host-your-wordpress-site-for-free/
 
 
-
 Developed by [**Leon Stafford**](http://leonstafford.github.io). If you have any questions about this plugin's usage, installation or development, please email me at: [help@wp2static.com](mailto:help@wp2static.com)
 
 == Installation ==
