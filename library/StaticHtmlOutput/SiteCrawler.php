@@ -96,7 +96,6 @@ class SiteCrawler {
 
     public function crawl_site( $viaCLI = false ) {
         if ( ! is_file( $this->list_of_urls_to_crawl_path ) ) {
-            error_log( 'could not find list of files to crawl' );
             require_once dirname( __FILE__ ) .
                 '/../StaticHtmlOutput/WsLog.php';
             WsLog::l(
@@ -125,10 +124,6 @@ class SiteCrawler {
         $total_links = count( $this->urls_to_crawl );
 
         if ( $total_links < 1 ) {
-            error_log(
-                'list of URLs to crawl not found at ' .
-                $this->list_of_urls_to_crawl_path
-            );
             require_once dirname( __FILE__ ) .
                 '/../StaticHtmlOutput/WsLog.php';
             WsLog::l(
@@ -329,7 +324,11 @@ class SiteCrawler {
                 break;
 
             case 'json':
-                error_log( 'no handler for json without extension yet' );
+                require_once dirname( __FILE__ ) .
+                    '/../StaticHtmlOutput/WsLog.php';
+                WsLog::l(
+                    'no handler for json without extension yet'
+                );
 
                 break;
 
@@ -436,9 +435,13 @@ class SiteCrawler {
             } elseif ( stripos( $type, 'application/json' ) !== false ) {
                 $this->file_type = 'json';
             } else {
-                error_log( 'no filetype inferred from content-type:' );
-                error_log( $this->response->getHeaderLine( 'content-type' ) );
-                error_log( $this->url );
+                require_once dirname( __FILE__ ) .
+                    '/../StaticHtmlOutput/WsLog.php';
+                WsLog::l(
+                    'no filetype inferred from content-type: ' .
+                    $this->response->getHeaderLine( 'content-type' ) .
+                    ' url: '. $this->url
+                );
             }
         }
     }
