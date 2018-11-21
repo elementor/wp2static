@@ -1,4 +1,4 @@
-=== Security & Performance ===
+=== Security & Performance by WP2Static ===
 Contributors: leonstafford
 Tags: security, performance, static
 Requires at least: 3.2

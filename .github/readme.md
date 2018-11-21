@@ -1,13 +1,16 @@
-# WordPress Static HTML Output
+# Security & Performance by WP2Static
 
-Allows you to leverage WordPress as a great CMS, but benefit from the speed, security and portability that a static website provides.
+Security & Performance via static website publishing. One plugin to solve WordPress's biggest problems.
 
+Formerly, "WP Static Site Generator"
+
+[https://wp2static.com](https://wp2static.com)
 ---
     
 ## Features
 
  - generates a standalone, static html copy of your whole WordPress website
- - auto-deploy to local folder, FTP, Dropbox, S3, GitHub Pages, Netlify or BunnyCDN
+ - deploy to Netlify, FTP, S3, GitHub Pages, GitLab, Bitbucket, BunnyCDN, etc
  - scheduled exports via WP-Crontrol of by hitting the custom hook
  - one site to unlimited export targets
  - specify extra files to include in the output (ie, dynamically loaded assets)
