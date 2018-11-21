@@ -28,7 +28,7 @@ require_once 'library/URL2/URL2.php';
 StaticHtmlOutput_Controller::init( __FILE__ );
 
 function plugin_action_links( $links ) {
-    $settings_link = '<a href="admin.php?page=wp-static-html-output">' . __( 'Settings', 'static-html-output-plugin' ) . '</a>';
+    $settings_link = '<a href="admin.php?page=wp2static">' . __( 'Settings', 'static-html-output-plugin' ) . '</a>';
     array_unshift( $links, $settings_link );
 
     return $links;

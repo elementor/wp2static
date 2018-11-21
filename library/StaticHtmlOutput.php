@@ -57,7 +57,7 @@ class StaticHtmlOutput_Controller {
 
         $order = array(
             'index.php',
-            'wp-static-html-output',
+            'wp2static',
         );
 
         return $order;
@@ -133,7 +133,7 @@ class StaticHtmlOutput_Controller {
 
         wp_enqueue_style(
             self::HOOK . '-admin',
-            $pluginDirUrl . '/css/wp-static-html-output.css',
+            $pluginDirUrl . '/views/wp2static.css',
             null,
             $this::VERSION
         );
@@ -153,7 +153,7 @@ class StaticHtmlOutput_Controller {
             isset( $_POST['working_directory'] ) ?
             $_POST['working_directory'] :
             '';
-        $plugin_hook = 'wp-static-html-output';
+        $plugin_hook = 'wp2static';
 
         // TODO: DRY up WPSite calls
         require_once dirname( __FILE__ ) . '/StaticHtmlOutput/WPSite.php';
@@ -312,7 +312,7 @@ class StaticHtmlOutput_Controller {
     }
 
     public function reset_default_settings() {
-        if ( ! delete_option( 'wp-static-html-output-options' ) ) {
+        if ( ! delete_option( 'wp2static-options' ) ) {
             error_log( "Couldn't reset plugin to default settings" );
         }
 
