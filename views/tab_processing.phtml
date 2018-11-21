@@ -118,6 +118,21 @@ $original = $this->wp_site->getOriginalPaths();
 
       </td>
     </tr>
+    <tr>
+      <th scope="row">
+        <label for="processing_method"><?php echo __('Processing method', 'static-html-output-plugin');?></label>
+      </th>
+      <td>
+
+        <select name="processing_method" id="processing_method">
+          <option value="intelligent" <?php echo $this->options->processing_method == 'intelligent' ? 'selected' : ''; ?>>Intelligent</option>
+          <option value="brute_force" <?php echo $this->options->processing_method == 'brute_force' ? 'selected' : ''; ?>>Brute force</option>
+        </select><br>
+
+        <p>Intelligence is usually better than brute force. But when you have a website that's just not properly converting, try the "Brute force" method. This basically treats each file needing processing as a text file, vs trying to understand it as an HTML, CSS or other specific file format.  </p>
+
+      </td>
+    </tr>
   </tbody>
 </table>
 
