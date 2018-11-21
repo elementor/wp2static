@@ -4,19 +4,22 @@
 
 # give argument for name of zip to be created, ie user-leon-test-new-function
 
-rm -Rf /tmp/wordpress-static-html-plugin
-mkdir /tmp/wordpress-static-html-plugin
+TMP_DIR=$HOME/plugintmp
+mkdir -p $TMP_DIR
 
-cp -r ./{css,images,languages,library,readme.txt,views,wp2static.php} /tmp/wordpress-static-html-plugin/
+rm -Rf $TMP_DIR/wordpress-static-html-plugin
+mkdir $TMP_DIR/wordpress-static-html-plugin
+
+cp -r ./{css,languages,library,readme.txt,views,wp2static.php} $TMP_DIR/wordpress-static-html-plugin/
 
 # keep free version under 1MB
-rm -Rf /tmp/wordpress-static-html-plugin/library/{S3,GitHub,CloudFront,aws,FTP}
-rm -Rf /tmp/wordpress-static-html-plugin/library/StaticHtmlOutput/{Bitbucket,BunnyCDN,FTP,GitHub,GitLab,Netlify,S3}.php
+#rm -Rf $TMP_DIR/wordpress-static-html-plugin/library/{S3,GitHub,CloudFront,aws,FTP}
+#rm -Rf $TMP_DIR/wordpress-static-html-plugin/library/StaticHtmlOutput/{Bitbucket,BunnyCDN,FTP,GitHub,GitLab,Netlify,S3}.php
 
-cd /tmp
+cd $TMP_DIR
 
-zip -r ./$1.zip ./wordpress-static-html-plugin 
+zip -r -9 ./$1.zip ./wordpress-static-html-plugin 
 
-cd - 
+cd -
 
-cp /tmp/$1.zip ./
+cp $TMP_DIR/$1.zip ./
