@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Security & Performance by WP2Static
+ * Plugin Name: WP2Static
  * Plugin URI:  https://wp2static.com
  * Description: Security & Performance via static website publishing. One plugin to solve WordPress's biggest problems.
  * Version:     5.9
