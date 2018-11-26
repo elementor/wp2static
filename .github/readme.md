@@ -1,4 +1,4 @@
-# Security & Performance by WP2Static
+# WP2Static
 
 Security & Performance via static website publishing. One plugin to solve WordPress's biggest problems.
 

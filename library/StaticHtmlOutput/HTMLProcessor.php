@@ -180,12 +180,6 @@ class HTMLProcessor {
             }
 
             if ( $this->isInternalLink( $url ) ) {
-                $rewritten_url = str_replace(
-                    $this->placeholder_URL,
-                    $this->settings['baseUrl'],
-                    $url
-                );
-
                 $this->discovered_urls[] = $rewritten_url;
             }
         }

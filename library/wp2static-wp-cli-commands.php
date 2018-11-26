@@ -9,7 +9,7 @@ class WP2Static_CLI extends WP_CLI_Command {
      */
     public function diagnostics() {
         WP_CLI::line(
-            PHP_EOL . 'Security & Performance (by WP2Static.com) ' . PHP_EOL
+            PHP_EOL . 'WP2Static' . PHP_EOL
         );
 
         $environmental_info = array(

@@ -1,4 +1,4 @@
-=== Security & Performance by WP2Static ===
+=== WP2Static ===
 Contributors: leonstafford
 Tags: security, performance, static
 Requires at least: 3.2
@@ -78,7 +78,7 @@ Developed by [**Leon Stafford**](http://leonstafford.github.io). If you have any
 = via WP Admin panel =
 
 1. Go to Plugins > Add New
-2. Search for "Security & Performance"
+2. Search for "WP2Static"
 3. Click on the Install Now button
 4. Activate the plugin and find it under the Tools menu
 
@@ -144,7 +144,7 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
  * New feature: deploy to Bitbucket
  * New feature: deploy to GitLab
  * Drop feature: deploy to Dropbox (they don't love static sites anymore)
- * Plugin name change to Security & Performance
+ * Plugin name change to WP2Static
 
 = 5.8 =
 
