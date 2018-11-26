@@ -22,4 +22,4 @@ zip -r -9 ./$1.zip ./wordpress-static-html-plugin
 
 cd -
 
-cp $TMP_DIR/$1.zip ./
+cp $TMP_DIR/$1.zip ../
