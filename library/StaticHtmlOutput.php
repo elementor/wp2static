@@ -41,7 +41,6 @@ class StaticHtmlOutput_Controller {
             add_filter( 'custom_menu_order', '__return_true' );
             add_filter( 'menu_order', array( $instance, 'set_menu_order' ) );
         }
-
         return $instance;
     }
 
@@ -116,7 +115,7 @@ class StaticHtmlOutput_Controller {
             'manage_options',
             self::HOOK,
             array( self::$_instance, 'renderOptionsPage' ),
-            $pluginDirUrl . 'images/menu_icon_32x32.png'
+            $pluginDirUrl . 'views/menu_icon_32x32.png'
         );
 
         add_action(
@@ -140,6 +139,10 @@ class StaticHtmlOutput_Controller {
     }
 
     public function generate_filelist_preview() {
+        // DEBUG: takes a looong time to get here...
+
+        // DEBUG: then a looong time after detectvendor
+
         // TODO: get independent from WP calls
         $uploads_path =
             isset( $_POST['wp_uploads_path'] ) ?
@@ -158,6 +161,7 @@ class StaticHtmlOutput_Controller {
         // TODO: DRY up WPSite calls
         require_once dirname( __FILE__ ) . '/StaticHtmlOutput/WPSite.php';
         $this->wp_site = new WPSite();
+        
         $initial_file_list_count =
             StaticHtmlOutput_FilesHelper::buildInitialFileList(
                 true,

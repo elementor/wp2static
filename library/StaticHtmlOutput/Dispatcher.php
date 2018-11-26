@@ -1,5 +1,4 @@
 <?php
-
 // TODO: this file / methods are being called on public site page loads,
 // should only be triggered when in the dashboard!
 $ajax_action = isset( $_POST['ajax_action'] ) ? $_POST['ajax_action'] : '';
@@ -184,3 +183,4 @@ if ( $ajax_action === 'crawl_site' || $ajax_action === 'crawl_again' ) {
     wp_die();
     return null;
 }
+

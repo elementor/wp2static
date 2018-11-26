@@ -43,14 +43,14 @@ class SiteCrawler {
             }
 
             $second_crawl_file_path = $this->settings['working_directory'] .
-            '/WP-STATIC-2ND-CRAWL-LIST';
+            '/WP-STATIC-2ND-CRAWL-LIST.txt';
 
             // generate the 2nd crawl list on the first request
             if ( ! is_file( $second_crawl_file_path ) ) {
                 // TODO: read in WP-STATIC-FINAL-CRAWL-LIST clone vs INITIAL
                 $already_crawled = file(
                     $this->settings['working_directory'] .
-                        '/WP-STATIC-INITIAL-CRAWL-LIST',
+                        '/WP-STATIC-INITIAL-CRAWL-LIST.txt',
                     FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
                 );
 
@@ -76,17 +76,17 @@ class SiteCrawler {
                 copy(
                     $second_crawl_file_path,
                     $this->settings['working_directory'] .
-                        '/WP-STATIC-FINAL-2ND-CRAWL-LIST'
+                        '/WP-STATIC-FINAL-2ND-CRAWL-LIST.txt'
                 );
             }
 
             $this->list_of_urls_to_crawl_path =
                 $this->settings['working_directory'] .
-                '/WP-STATIC-FINAL-2ND-CRAWL-LIST';
+                '/WP-STATIC-FINAL-2ND-CRAWL-LIST.txt';
         } else {
             $this->list_of_urls_to_crawl_path =
                 $this->settings['working_directory'] .
-                '/WP-STATIC-FINAL-CRAWL-LIST';
+                '/WP-STATIC-FINAL-CRAWL-LIST.txt';
         }
 
         $this->viaCLI = false;

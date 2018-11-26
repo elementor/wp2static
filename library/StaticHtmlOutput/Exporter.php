@@ -83,9 +83,9 @@ class Exporter {
             '/WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT',
             '/WP-STATIC-CRAWLED-LINKS',
             '/WP-STATIC-DISCOVERED-URLS',
-            '/WP-STATIC-FINAL-CRAWL-LIST',
-            '/WP-STATIC-2ND-CRAWL-LIST',
-            '/WP-STATIC-FINAL-2ND-CRAWL-LIST',
+            '/WP-STATIC-FINAL-CRAWL-LIST.txt',
+            '/WP-STATIC-2ND-CRAWL-LIST.txt',
+            '/WP-STATIC-FINAL-2ND-CRAWL-LIST.txt',
             'WP-STATIC-EXPORT-LOG',
         );
 
@@ -137,9 +137,9 @@ class Exporter {
             '/WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT',
             '/WP-STATIC-CRAWLED-LINKS',
             '/WP-STATIC-DISCOVERED-URLS',
-            '/WP-STATIC-FINAL-CRAWL-LIST',
-            '/WP-STATIC-2ND-CRAWL-LIST',
-            '/WP-STATIC-FINAL-2ND-CRAWL-LIST',
+            '/WP-STATIC-FINAL-CRAWL-LIST.txt',
+            '/WP-STATIC-2ND-CRAWL-LIST.txt',
+            '/WP-STATIC-FINAL-2ND-CRAWL-LIST.txt',
         );
 
         foreach ( $files_to_clean as $file_to_clean ) {
@@ -190,9 +190,9 @@ class Exporter {
         // preserve the initial crawl list, to be used in debugging + more
         copy(
             $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-INITIAL-CRAWL-LIST',
+                '/WP-STATIC-INITIAL-CRAWL-LIST.txt',
             $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-MODIFIED-CRAWL-LIST'
+                '/WP-STATIC-MODIFIED-CRAWL-LIST.txt'
         );
 
         // if no excludes or includes, just copy to new target
@@ -200,9 +200,9 @@ class Exporter {
             ! isset( $this->settings['additionalUrls'] ) ) {
             copy(
                 $this->settings['wp_uploads_path'] .
-                    '/WP-STATIC-INITIAL-CRAWL-LIST',
+                    '/WP-STATIC-INITIAL-CRAWL-LIST.txt',
                 $this->settings['wp_uploads_path'] .
-                    '/WP-STATIC-FINAL-CRAWL-LIST'
+                    '/WP-STATIC-FINAL-CRAWL-LIST.txt'
             );
 
             return;
@@ -214,7 +214,7 @@ class Exporter {
         // load crawl list into array
         $crawl_list = file(
             $this->settings['wp_uploads_path'] .
-            '/WP-STATIC-MODIFIED-CRAWL-LIST'
+            '/WP-STATIC-MODIFIED-CRAWL-LIST.txt'
         );
 
         // applying exclusions first
@@ -270,7 +270,7 @@ class Exporter {
         $str = implode( PHP_EOL, $modified_crawl_list );
         file_put_contents(
             $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-FINAL-CRAWL-LIST',
+                '/WP-STATIC-FINAL-CRAWL-LIST.txt',
             $str
         );
     }
