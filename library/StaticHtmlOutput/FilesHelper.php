@@ -23,14 +23,17 @@ class StaticHtmlOutput_FilesHelper {
     }
 
     public static function getParentThemeFiles() {
+        error_log('getParentTheme');
         return self::getListOfLocalFilesByUrl( get_template_directory_uri() );
     }
 
     public static function getChildThemeFiles() {
+        error_log('getChildTheme');
         return self::getListOfLocalFilesByUrl( get_stylesheet_directory_uri() );
     }
 
     public static function detectVendorFiles( $wp_site_url ) {
+        error_log('detectvendor');
         $vendor_files = [];
 
         if ( class_exists( 'autoptimizeMain' ) ) {
@@ -88,6 +91,7 @@ class StaticHtmlOutput_FilesHelper {
     }
 
     public static function recursively_scan_dir( $dir, $siteroot, $list_path ) {
+        error_log('recursing: ' . $dir);
         // rm duplicate slashes in path (TODO: fix cause)
         $dir = str_replace( '//', '/', $dir );
         $files = scandir( $dir );
@@ -153,11 +157,26 @@ class StaticHtmlOutput_FilesHelper {
     }
 
     public static function fileNameLooksCrawlable( $file_name ) {
-        return (
-        ( ! strpos( $file_name, 'wp-static-html-output' ) !== false ) &&
-        ( ! strpos( $file_name, 'previous-export' ) !== false ) &&
-        is_file( $file_name )
+        if ( ! is_file( $file_name ) ) {
+            error_log('skipping not file: ' . $file_name);
+            return false;
+        }
+
+        $filenames_to_ignore = array(
+            'wp2static',
+            'wp-static-html-output',
+            'previous-export',
+            'pb_backupbuddy',
         );
+
+        foreach ( $filenames_to_ignore as $filename ) {
+            if ( strpos( $file_name, 'wp2static' ) !== false ) {
+                error_log('skipping: ' . $file_name);
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public static function filePathLooksCrawlable( $file_name ) {
@@ -167,13 +186,27 @@ class StaticHtmlOutput_FilesHelper {
             return false;
         }
 
-        return (
-        isset( $path_info['extension'] ) &&
-        ( ! in_array(
-            $path_info['extension'],
-            array( 'php', 'phtml', 'tpl', 'less', 'scss' )
-        ) )
-        );
+        if ( ! isset( $path_info['extension'] ) ) {
+            return false;
+        } 
+
+        $extensions_to_ignore = 
+            array(
+                'php',
+                'phtml',
+                'tpl',
+                'less',
+                'scss',
+                'po',
+                'mo',
+                'tar.gz',
+                'zip',
+                'txt',
+            );
+
+        if ( ! in_array( $path_info['extension'], $extensions_to_ignore) ) {
+            return false;
+        }
     }
 
     public static function buildInitialFileList(
@@ -182,6 +215,8 @@ class StaticHtmlOutput_FilesHelper {
         $uploadsURL,
         $workingDirectory,
         $wp_site_url ) {
+
+        error_log('build initial file list');
 
         $baseUrl = untrailingslashit( home_url() );
 
@@ -202,7 +237,7 @@ class StaticHtmlOutput_FilesHelper {
 
         $str = implode( "\n", $urlsQueue );
         file_put_contents(
-            $uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST',
+            $uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST.txt',
             $str
         );
 
@@ -247,7 +282,7 @@ class StaticHtmlOutput_FilesHelper {
 
         $str = implode( "\n", $urlsQueue );
         file_put_contents(
-            $uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST',
+            $uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST.txt',
             $str
         );
 
