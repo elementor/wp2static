@@ -63,6 +63,13 @@ class SiteCrawler {
                 );
 
                 $unique_discovered_links = array_unique( $discovered_links );
+                sort($unique_discovered_links);
+
+                file_put_contents(
+                    $this->settings['working_directory'] .
+                        '/WP-STATIC-DISCOVERED-URLS-LOG.txt',
+                    implode( PHP_EOL, $unique_discovered_links )
+                );
 
                 $discovered_links = array_diff(
                     $unique_discovered_links,

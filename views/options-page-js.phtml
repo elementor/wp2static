@@ -13,6 +13,7 @@ var working_directory = '<?php echo $this->working_directory; ?>';
 
 // TODO: get the log out of the archive, along with it's meta infos
 var log_file_url = wp_site.uploads_url + '/WP-STATIC-EXPORT-LOG.txt';
+var discovered_urls_file_url = wp_site.uploads_url + '/WP-STATIC-DISCOVERED-URLS-LOG.txt';
 
 var export_targets = [];
 var export_commence_time = '';
@@ -722,6 +723,7 @@ jQuery(document).ready(function($){
   }
 
   $('#viewErrorLogButton').attr('href', log_file_url);
+  $('#viewDiscoveredURLsLink').attr('href', discovered_urls_file_url);
 
 	$('input[type="checkbox"]').change(function() {
 		setExportSettingDetailsVisibility(this);
