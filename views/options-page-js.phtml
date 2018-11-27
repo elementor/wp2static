@@ -829,6 +829,7 @@ jQuery(document).ready(function($){
 		    $('.processing_settings').hide();
 		    $('.advanced_settings').show();
 		    $('.export_logs').hide();
+		    $('.give_love').hide();
       break;
 
       case 'Deploy static website':
@@ -838,6 +839,7 @@ jQuery(document).ready(function($){
 		    $('.processing_settings').hide();
 		    $('.crawl_settings').hide();
 		    $('.export_logs').hide();
+		    $('.give_love').hide();
       break;
 
       case 'Help / Troubleshooting':
@@ -847,6 +849,7 @@ jQuery(document).ready(function($){
 		    $('.processing_settings').hide();
 		    $('.crawl_settings').hide();
 		    $('.export_logs').hide();
+		    $('.give_love').hide();
       break;
 
       case 'Logs':
@@ -856,6 +859,7 @@ jQuery(document).ready(function($){
 		    $('.export_logs').show();
 		    $('.processing_settings').hide();
 		    $('.crawl_settings').hide();
+		    $('.give_love').hide();
       break;
 
       case 'Crawling options':
@@ -865,6 +869,7 @@ jQuery(document).ready(function($){
 		    $('.processing_settings').hide();
 		    $('.crawl_settings').show();
 		    $('.export_logs').hide();
+		    $('.give_love').hide();
       break;
 
       case 'Processing options':
@@ -874,8 +879,18 @@ jQuery(document).ready(function($){
 		    $('.processing_settings').show();
 		    $('.crawl_settings').hide();
 		    $('.export_logs').hide();
+		    $('.give_love').hide();
       break;
 
+      case '♥':
+		    $('.export_your_site').hide();
+		    $('.advanced_settings').hide();
+		    $('.help_troubleshooting').hide();
+		    $('.processing_settings').hide();
+		    $('.crawl_settings').hide();
+		    $('.export_logs').hide();
+		    $('.give_love').show();
+      break;
     }
 
     current_tab.blur();
