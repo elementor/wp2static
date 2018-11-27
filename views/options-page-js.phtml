@@ -14,6 +14,7 @@ var working_directory = '<?php echo $this->working_directory; ?>';
 // TODO: get the log out of the archive, along with it's meta infos
 var log_file_url = wp_site.uploads_url + '/WP-STATIC-EXPORT-LOG.txt';
 var discovered_urls_file_url = wp_site.uploads_url + '/WP-STATIC-DISCOVERED-URLS-LOG.txt';
+var detected_wordpress_urls_file_url = wp_site.uploads_url + '/WP-STATIC-INITIAL-CRAWL-LIST.txt';
 
 var export_targets = [];
 var export_commence_time = '';
@@ -712,6 +713,56 @@ jQuery(document).ready(function($){
     $('#new_wpinc_path').val('/' + $('#rewriteWPINC').val());
   }
 
+  function reloadLogFile() {
+    // get current log selection
+    current_log_target = $("#log_switcher").val();
+
+    // if not empty, call loadLogFile again
+    if ( current_log_target ) {
+        loadLogFile( current_log_target );
+    }
+  }
+
+
+  function loadLogFile( log_name ) {
+    // display loading icon
+    $('#log_load_progress').show();
+        
+    // set textarea to disabled
+    $("#export_log_textarea" ).attr('disabled', true);
+
+    // set textarea content to 'Loading log file...'
+    $("#export_log_textarea" ).html('Loading log file...');
+
+    var log_url = '';
+
+    switch ( log_name ) {
+        case 'export_log':
+            // TODO: rename ambiguous export log name
+            log_url = log_file_url;
+        break;
+
+        case 'discovered_urls':
+            log_url = discovered_urls_file_url;
+        break;
+
+        case 'detected_wordpress_urls':
+            log_url = detected_wordpress_urls_file_url;
+        break;
+    }
+
+    // load the log file
+    $.get( log_url, function( data ) {
+      // hide loading icon
+      $('#log_load_progress').hide();
+
+      // set textarea to enabled
+      $("#export_log_textarea" ).attr('disabled', false);
+
+      // set textarea content
+      $("#export_log_textarea" ).html( data );
+    });
+  }
 
   /*****************************/
   /* END FUNCTION DECLARATIONS */
@@ -742,6 +793,20 @@ jQuery(document).ready(function($){
     clearProgressAndResults();
     });
 
+	// handler when log selector is changed
+	$('#reload_log_button').click(function() {
+        reloadLogFile();
+    });
+
+	// handler when log selector is changed
+	$('#log_switcher').change(function() {
+      target_log = this.value;
+
+      if (target_log) {
+        loadLogFile( target_log );
+      }
+    });
+
 	// update base url previews in realtime
 	$(document).on('input', 
 		'#baseUrl-s3, #baseUrl-ftp, #baseUrl-folder, #baseUrl-github, #baseUrl-bitbucket, #baseUrl-gitlab, #baseUrl-netlify, #baseUrl-bunnycdn, #baseUrl-zip, #targetFolder', 
@@ -764,6 +829,7 @@ jQuery(document).ready(function($){
 		    $('.crawl_settings').hide();
 		    $('.processing_settings').hide();
 		    $('.advanced_settings').show();
+		    $('.export_logs').hide();
       break;
 
       case 'Deploy static website':
@@ -772,12 +838,23 @@ jQuery(document).ready(function($){
 		    $('.export_your_site').show();
 		    $('.processing_settings').hide();
 		    $('.crawl_settings').hide();
+		    $('.export_logs').hide();
       break;
 
       case 'Help / Troubleshooting':
 		    $('.export_your_site').hide();
 		    $('.advanced_settings').hide();
 		    $('.help_troubleshooting').show();
+		    $('.processing_settings').hide();
+		    $('.crawl_settings').hide();
+		    $('.export_logs').hide();
+      break;
+
+      case 'Logs':
+		    $('.export_your_site').hide();
+		    $('.advanced_settings').hide();
+		    $('.help_troubleshooting').hide();
+		    $('.export_logs').show();
 		    $('.processing_settings').hide();
 		    $('.crawl_settings').hide();
       break;
@@ -788,6 +865,7 @@ jQuery(document).ready(function($){
 		    $('.help_troubleshooting').hide();
 		    $('.processing_settings').hide();
 		    $('.crawl_settings').show();
+		    $('.export_logs').hide();
       break;
 
       case 'Processing options':
@@ -796,6 +874,7 @@ jQuery(document).ready(function($){
 		    $('.help_troubleshooting').hide();
 		    $('.processing_settings').show();
 		    $('.crawl_settings').hide();
+		    $('.export_logs').hide();
       break;
 
     }
