@@ -138,6 +138,8 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
  * Enhancement: support multiple site ID formats within Netlify deploy
  * Enhancement: remove Freemius SDK from free version
  * Enhancement: scheduled CRON deploys now in the free version
+ * Enhancement: detect Elementor, copy FontAwesome to archive
+ * Enhancement: easy access to export/deploy logs from Logs tab
  * New feature: send email upon completion
  * New feature: exclude URLs from being crawled/exported
  * New feature: initial support for feeds/xml exporting
@@ -472,13 +474,15 @@ Initial release to Wordpress community
  * Enhancement: support multiple site ID formats within Netlify deploy
  * Enhancement: remove Freemius SDK from free version
  * Enhancement: scheduled CRON deploys now in the free version
+ * Enhancement: detect Elementor, copy FontAwesome to archive
+ * Enhancement: easy access to export/deploy logs from Logs tab
  * New feature: send email upon completion
  * New feature: exclude URLs from being crawled/exported
  * New feature: initial support for feeds/xml exporting
  * New feature: deploy to Bitbucket
  * New feature: deploy to GitLab
  * Drop feature: deploy to Dropbox (they don't love static sites anymore)
- * Plugin name change to Security & Performance
+ * Plugin name change to WP2Static
 
 = 5.8 =
 
