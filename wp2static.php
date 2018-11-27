@@ -99,5 +99,5 @@ remove_action( 'wp_head', 'wlwmanifest_link' );
 
 // WP CLI support
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
-    require_once dirname( __FILE__ ) . '/wp2static-wp-cli-commands.php';
+    require_once dirname( __FILE__ ) . '/library/wp2static-wp-cli-commands.php';
 }
