@@ -10,8 +10,14 @@
 
         <?php $tpl->displayCheckbox($this, 'diffBasedDeploys', 'Only deploy changed files since last export'); ?>
 
+        <p><b>Experimental</b></p>
+
         <p>
         As this works off of your last export, if you have changed the deployment method or settings since your last deployment, you may end up with missing files. In this case, uncheck this option, do one complete deployment with your new settings, then re-enable this to get faster deployments of changes only going forward.
+        </p>
+
+        <p>
+        <i>This is still quite experimental and untested in this version. Use only if adventurous. </i>
         </p>
 
       </td>
