@@ -23,17 +23,15 @@ class StaticHtmlOutput_FilesHelper {
     }
 
     public static function getParentThemeFiles() {
-        error_log('getParentTheme');
-        return self::getListOfLocalFilesByUrl( get_template_directory_uri() );
+        $parentThemeFiles = self::getListOfLocalFilesByUrl( get_template_directory_uri() );
+        return $parentThemeFiles;
     }
 
     public static function getChildThemeFiles() {
-        error_log('getChildTheme');
         return self::getListOfLocalFilesByUrl( get_stylesheet_directory_uri() );
     }
 
     public static function detectVendorFiles( $wp_site_url ) {
-        error_log('detectvendor');
         $vendor_files = [];
 
         if ( class_exists( 'autoptimizeMain' ) ) {
@@ -91,7 +89,6 @@ class StaticHtmlOutput_FilesHelper {
     }
 
     public static function recursively_scan_dir( $dir, $siteroot, $list_path ) {
-        error_log('recursing: ' . $dir);
         // rm duplicate slashes in path (TODO: fix cause)
         $dir = str_replace( '//', '/', $dir );
         $files = scandir( $dir );
@@ -142,23 +139,25 @@ class StaticHtmlOutput_FilesHelper {
             );
 
             foreach ( $iterator as $fileName => $fileObject ) {
-                if ( self::fileNameLooksCrawlable( $fileName ) &&
-                  self::filePathLooksCrawlable( $fileName )
-                ) {
+                $path_crawlable = self::filePathLooksCrawlable( $fileName );
+
+
+                if ( $path_crawlable ) {
                     array_push(
                         $files,
                         home_url( str_replace( ABSPATH, '', $fileName ) )
                     );
-                }
+                } 
             }
         }
 
         return $files;
     }
 
-    public static function fileNameLooksCrawlable( $file_name ) {
+    public static function filePathLooksCrawlable( $file_name ) {
+        $path_info = pathinfo( $file_name );
+
         if ( ! is_file( $file_name ) ) {
-            error_log('skipping not file: ' . $file_name);
             return false;
         }
 
@@ -167,20 +166,17 @@ class StaticHtmlOutput_FilesHelper {
             'wp-static-html-output',
             'previous-export',
             'pb_backupbuddy',
+            'latest-export',
+            'current-export',
+            'WP-STATIC',
+            '.php',
         );
 
-        foreach ( $filenames_to_ignore as $filename ) {
-            if ( strpos( $file_name, 'wp2static' ) !== false ) {
-                error_log('skipping: ' . $file_name);
+        foreach ( $filenames_to_ignore as $ignorable ) {
+            if ( strpos( $file_name, $ignorable ) !== false ) {
                 return false;
-            }
+            } 
         }
-
-        return true;
-    }
-
-    public static function filePathLooksCrawlable( $file_name ) {
-        $path_info = pathinfo( $file_name );
 
         if ( $path_info['basename'][0] === '.' ) {
             return false;
@@ -205,8 +201,10 @@ class StaticHtmlOutput_FilesHelper {
             );
 
         if ( ! in_array( $path_info['extension'], $extensions_to_ignore) ) {
-            return false;
+            return true;
         }
+
+        return true;
     }
 
     public static function buildInitialFileList(
@@ -215,8 +213,6 @@ class StaticHtmlOutput_FilesHelper {
         $uploadsURL,
         $workingDirectory,
         $wp_site_url ) {
-
-        error_log('build initial file list');
 
         $baseUrl = untrailingslashit( home_url() );
 
@@ -236,6 +232,15 @@ class StaticHtmlOutput_FilesHelper {
         );
 
         $str = implode( "\n", $urlsQueue );
+
+        // TODO: modify each function vs doing here for perf 
+        $wp_site_url = get_site_url();
+        $str = str_replace(
+            $wp_site_url,
+            '',
+            $str
+        );       
+
         file_put_contents(
             $uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST.txt',
             $str
