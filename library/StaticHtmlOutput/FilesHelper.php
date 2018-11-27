@@ -34,6 +34,16 @@ class StaticHtmlOutput_FilesHelper {
     public static function detectVendorFiles( $wp_site_url ) {
         $vendor_files = [];
 
+        if ( class_exists( '\\Elementor\Api' ) ) {
+            $elementor_font_dir = WP_PLUGIN_DIR . '/elementor/assets/lib/font-awesome';
+
+            $elemementor_URLs = self::getListOfLocalFilesByUrl(
+                $elementor_font_dir
+            );
+
+            $vendor_files = array_merge( $vendor_files, $elemementor_URLs );
+        }
+
         if ( class_exists( 'autoptimizeMain' ) ) {
             $autoptimize_cache_dir = WP_CONTENT_DIR . '/cache/autoptimize';
 
@@ -170,6 +180,7 @@ class StaticHtmlOutput_FilesHelper {
             'current-export',
             'WP-STATIC',
             '.php',
+            '.git',
         );
 
         foreach ( $filenames_to_ignore as $ignorable ) {
@@ -198,11 +209,18 @@ class StaticHtmlOutput_FilesHelper {
                 'tar.gz',
                 'zip',
                 'txt',
+                'po',
+                'pot',
+                'dist',
+                'sh',
+                'sh',
+                'mo',
+                'md',
             );
 
-        if ( ! in_array( $path_info['extension'], $extensions_to_ignore) ) {
-            return true;
-        }
+        if ( in_array( $path_info['extension'], $extensions_to_ignore) ) {
+            return false;
+        } 
 
         return true;
     }
