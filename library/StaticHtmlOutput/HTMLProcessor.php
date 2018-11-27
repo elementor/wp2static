@@ -174,13 +174,27 @@ class HTMLProcessor {
     }
 
     public function addDiscoveredURL( $url ) {
+        // trim any query strings or anchors
+        $url = strtok( $url, '#' );
+        $url = strtok( $url, '?' );
+
+        if (trim($url) === '') {
+            return;
+        }
+
         if ( isset( $this->settings['discoverNewURLs'] ) ) {
             if ( ! $this->isValidURL( $url ) ) {
                 return;
             }
 
             if ( $this->isInternalLink( $url ) ) {
-                $this->discovered_urls[] = $rewritten_url;
+                $discovered_URL_without_site_URL = 
+                    str_replace(
+                        'https://PLACEHOLDER.wpsho',
+                        '',
+                        $url);
+
+                $this->discovered_urls[] = $discovered_URL_without_site_URL;
             }
         }
     }
@@ -282,7 +296,7 @@ class HTMLProcessor {
         }
 
         file_put_contents(
-            $this->settings['working_directory'] . '/WP-STATIC-DISCOVERED-URLS',
+            $this->settings['working_directory'] . '/WP-STATIC-DISCOVERED-URLS.txt',
             PHP_EOL .
                 implode( PHP_EOL, array_unique( $this->discovered_urls ) ),
             FILE_APPEND | LOCK_EX
@@ -308,10 +322,12 @@ class HTMLProcessor {
         // TODO: apply only to links starting with .,..,/,
         // or any with just a path, like banana.png
         // check link is same host as $this->url and not a subdomain
-        return parse_url( $link, PHP_URL_HOST ) === parse_url(
+        $is_internal_link = parse_url( $link, PHP_URL_HOST ) === parse_url(
             $domain,
             PHP_URL_HOST
         );
+
+        return $is_internal_link;
     }
 
     public function removeQueryStringFromInternalLink( $element ) {

@@ -12,7 +12,7 @@ class WsLog {
             $_POST['workingDirectory'] :
             $wp_uploads_path;
 
-        $log_file_path = $working_directory . '/WP-STATIC-EXPORT-LOG';
+        $log_file_path = $working_directory . '/WP-STATIC-EXPORT-LOG.txt';
 
         file_put_contents(
             $log_file_path,

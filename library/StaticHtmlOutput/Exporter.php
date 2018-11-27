@@ -82,11 +82,11 @@ class Exporter {
             '/WP-STATIC-EXPORT-DROPBOX-FILES-TO-EXPORT',
             '/WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT',
             '/WP-STATIC-CRAWLED-LINKS',
-            '/WP-STATIC-DISCOVERED-URLS',
+            '/WP-STATIC-DISCOVERED-URLS.txt',
             '/WP-STATIC-FINAL-CRAWL-LIST.txt',
             '/WP-STATIC-2ND-CRAWL-LIST.txt',
             '/WP-STATIC-FINAL-2ND-CRAWL-LIST.txt',
-            'WP-STATIC-EXPORT-LOG',
+            'WP-STATIC-EXPORT-LOG.txt',
         );
 
         foreach ( $files_to_clean as $file_to_clean ) {
@@ -136,7 +136,7 @@ class Exporter {
             '/WP-STATIC-EXPORT-DROPBOX-FILES-TO-EXPORT',
             '/WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT',
             '/WP-STATIC-CRAWLED-LINKS',
-            '/WP-STATIC-DISCOVERED-URLS',
+            '/WP-STATIC-DISCOVERED-URLS.txt',
             '/WP-STATIC-FINAL-CRAWL-LIST.txt',
             '/WP-STATIC-2ND-CRAWL-LIST.txt',
             '/WP-STATIC-FINAL-2ND-CRAWL-LIST.txt',

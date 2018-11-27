@@ -30,6 +30,7 @@ class SiteCrawler {
         $this->response = '';
         $this->content_type = '';
         $this->url = '';
+        $this->full_url = '';
         $this->extension = '';
         $this->archive_dir = '';
         $this->list_of_urls_to_crawl_path = '';
@@ -57,7 +58,7 @@ class SiteCrawler {
                 // read WP-STATIC-DISCOVERED-URLS into $discovered_links
                 $discovered_links = file(
                     $this->settings['working_directory'] .
-                        '/WP-STATIC-DISCOVERED-URLS',
+                        '/WP-STATIC-DISCOVERED-URLS.txt',
                     FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
                 );
 
@@ -162,6 +163,7 @@ class SiteCrawler {
 
         foreach ( $batch_of_links_to_crawl as $link_to_crawl ) {
             $this->url = $link_to_crawl;
+            $this->full_url = $this->settings['wp_site_url'] . $this->url;
 
             if ( isset( $this->settings['excludeURLs'] ) ) {
                 // TODO: check for exclusions
@@ -216,7 +218,12 @@ class SiteCrawler {
         }
 
         $this->response =
-            $client->request( 'GET', $this->url, $request_options );
+            $client->request(
+                'GET',
+                $this->full_url,
+                $request_options
+            );
+
         $this->crawled_links_file =
             $this->settings['working_directory'] . '/WP-STATIC-CRAWLED-LINKS';
 
@@ -239,7 +246,7 @@ class SiteCrawler {
         // TODO: remove/rename
         $baseUrl = $this->settings['baseUrl'];
 
-        $this->detectFileType( $this->url );
+        $this->detectFileType( $this->full_url );
 
         switch ( $this->file_type ) {
             case 'html':
@@ -252,7 +259,7 @@ class SiteCrawler {
                 // static functions for performance
                 $this->processed_file = $processor->processHTML(
                     $this->response->getBody(),
-                    $this->url
+                    $this->full_url
                 );
 
                 if ( $this->processed_file ) {
@@ -269,7 +276,7 @@ class SiteCrawler {
 
                 $this->processed_file = $processor->processCSS(
                     $this->response->getBody(),
-                    $this->url
+                    $this->full_url
                 );
 
                 if ( $this->processed_file ) {
@@ -285,7 +292,7 @@ class SiteCrawler {
 
                 $processor->processJS(
                     $this->response->getBody(),
-                    $this->url
+                    $this->full_url
                 );
 
                 $this->processed_file = $processor->getJS();
@@ -300,7 +307,7 @@ class SiteCrawler {
                     $this->settings['wp_site_url']
                 );
 
-                $processor->normalizeURLs( $this->url );
+                $processor->normalizeURLs( $this->full_url );
 
                 $this->processed_file = $processor->getTXT();
 
@@ -314,7 +321,7 @@ class SiteCrawler {
 
                 $this->processed_file = $processor->processXML(
                     $this->response->getBody(),
-                    $this->url
+                    $this->full_url
                 );
 
                 if ( $this->processed_file ) {
@@ -374,7 +381,7 @@ class SiteCrawler {
             '/../StaticHtmlOutput/FileCopier.php';
 
         $file_copier = new FileCopier(
-            $this->url,
+            $this->full_url,
             $this->settings['wp_site_url'],
             $this->settings['wp_site_path']
         );
