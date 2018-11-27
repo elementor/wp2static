@@ -83,6 +83,7 @@ class Exporter {
             '/WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT',
             '/WP-STATIC-CRAWLED-LINKS',
             '/WP-STATIC-DISCOVERED-URLS.txt',
+            '/WP-STATIC-DISCOVERED-URLS-LOG.txt',
             '/WP-STATIC-FINAL-CRAWL-LIST.txt',
             '/WP-STATIC-2ND-CRAWL-LIST.txt',
             '/WP-STATIC-FINAL-2ND-CRAWL-LIST.txt',
@@ -102,7 +103,9 @@ class Exporter {
     }
 
     public function cleanup_working_files() {
-        // skip first explort state
+        // keep log files here for debugging
+
+        // skip first export state
         if ( is_file(
             $this->settings['working_directory'] . '/WP-STATIC-CURRENT-ARCHIVE'
         ) ) {
