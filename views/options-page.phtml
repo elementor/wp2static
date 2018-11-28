@@ -67,7 +67,12 @@ $tpl = new TemplateHelper();
         "ftp" => array("FTP", 'powerpack'),
       );
 
-      $powerpack_detected = true;
+      $powerpack_detected = false;
+
+      if ( is_file( __DIR__ . '/../powerpack/GitLab.php' ) ) {
+         error_log('powerpack detected');
+          $powerpack_detected = true;
+      }
 
       foreach ($options as $key => $value) {
         if ( $value[1] === 'powerpack' && $powerpack_detected ) {
