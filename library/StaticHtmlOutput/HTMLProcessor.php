@@ -287,6 +287,16 @@ class HTMLProcessor {
 
             if ( strpos( $meta_name, 'generator' ) !== false ) {
                 $element->parentNode->removeChild( $element );
+
+                return;
+            }
+
+            if ( strpos( $meta_name, 'robots' ) !== false ) {
+                $content =  $element->getAttribute( 'content' );
+
+                if ( strpos( $content, 'noindex' ) !== false ) {  
+                    $element->parentNode->removeChild( $element );
+                }
             }
         }
 
