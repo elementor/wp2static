@@ -53,21 +53,30 @@ $tpl = new TemplateHelper();
     function generateDeploymentMethodOptions() {
       $options = array(
         "folder" => array('1-click quick test | Preview before deploying', 'free'),
-        "blank1" => array("--- Manual Deployment ---", 'premium'),
-        "zip" => array('Give me a ZIP file, so I can manually deploy it somewhere', 'free'),
-        "blank2" => array("--- Automated Deployment ---", 'premium'),
-        "s3" => array("Amazon S3", 'premium'),
-        "bitbucket" => array("Bitbucket", 'premium'),
-        "bunnycdn" => array("BunnyCDN", 'premium'),
-        "github" => array("GitHub Pages", 'premium'),
-        "gitlab" => array("GitLab", 'premium'),
-        "netlify" => array("Netlify", 'premium'),
-        "blank3" => array("--- Other Automated Deployments ---", 'premium'),
-        "ftp" => array("I want to FTP it automatically, using this plugin", 'free'),
+        "blank1" => array("--- Manual Deployment ---", 'free'),
+        "zip" => array('ZIP archive (.zip)', 'free'),
+        "targz" => array('TAR GZIP archive (.tar.gz)', 'free'),
+        "blank2" => array("--- Automated Deployment ---", 'free'),
+        "s3" => array("Amazon S3", 'powerpack'),
+        "bitbucket" => array("Bitbucket", 'powerpack'),
+        "bunnycdn" => array("BunnyCDN", 'powerpack'),
+        "github" => array("GitHub Pages", 'powerpack'),
+        "gitlab" => array("GitLab", 'powerpack'),
+        "netlify" => array("Netlify", 'powerpack'),
+        "blank3" => array("--- Other Automated Deployments ---", 'free'),
+        "ftp" => array("FTP", 'powerpack'),
       );
 
+      $powerpack_detected = true;
+
       foreach ($options as $key => $value) {
-        echo "<option value='$key'>$value[0]</option>";
+        if ( $value[1] === 'powerpack' && $powerpack_detected ) {
+            echo "<option value='$key'>$value[0]</option>";
+        } elseif ( $value[1] === 'powerpack' && ! $powerpack_detected ) {
+            echo "<option disabled value='$key'>$value[0] (PowerPack required)</option>";
+        } else {
+            echo "<option value='$key'>$value[0]</option>";
+        }
       }
     }
 
