@@ -2,27 +2,7 @@
 
 <table class="form-table">
   <tbody>
-    <tr>
-      <th scope="row">
-        <label for="diffBasedDeploys"><?php echo __('Diff-based deployment', 'static-html-output-plugin');?></label>
-      </th>
-      <td>
-
-        <?php $tpl->displayCheckbox($this, 'diffBasedDeploys', 'Only deploy changed files since last export'); ?>
-
-        <p><b>Experimental</b></p>
-
-        <p>
-        As this works off of your last export, if you have changed the deployment method or settings since your last deployment, you may end up with missing files. In this case, uncheck this option, do one complete deployment with your new settings, then re-enable this to get faster deployments of changes only going forward.
-        </p>
-
-        <p>
-        <i>This is still quite experimental and untested in this version. Use only if adventurous. </i>
-        </p>
-
-      </td>
-    </tr>
-    <tr>
+    <tr style="display:none;">
       <th scope="row">
         <label for="workingDirectory"><?php echo __('Working Directory', 'static-html-output-plugin');?></label>
       </th>
@@ -59,12 +39,14 @@
     </tr>
     <tr>
       <th scope="row">
-        <label for="wp_static_html_output_server_side_export_hook"><?php echo __('Scheduled deploys', 'static-html-output-plugin');?></label>
+        <label for="wp_cli"><?php echo __('WP-CLI', 'static-html-output-plugin');?></label>
       </th>
       <td>
-          <input type="text" style="width:340px;" value="wp_static_html_output_server_side_export_hook" /><br>
+          <p>Replacing the former, limited support for scheduled deploys via WP-Cron, WP2Static now integrates with the great <a href="https://wp-cli.org/" target="_blank">WP-CLI</a> for programmatic access to deploying your WordPress site statically. Control settings and trigger deployments to better suit your development workflow.</p>
 
-          <p>Using the <a href="https://wordpress.org/plugins/wp-crontrol/" target="_blank">WP Crontrol</a> plugin, you can add the following hook to a schedule to trigger an export. This will run your export using the settings you've saved via this screen. Using this method, you can schedule your exports to happen daily or if you're after an on-post publish kind of behaviour, you could set this to every few minutes.</p><br>
+
+    <p>Start with the <code>wp wp2static</code> command to see all available commands and options.</p>
+<br>
 
 
       </td>
@@ -75,6 +57,26 @@
       </th>
       <td>
           <p>If you're happy with how your site is looking after exporting to a subdirectory, you can choose to start serving this content to your visitors, instead of your current WordPress site. To do this, you will need to adjust your <code>.htaccess</code> file. This <a href="" target="_blank">community guide</a> may be able to help you.
+      </td>
+    </tr>
+    <tr style="display:none;">
+      <th scope="row">
+        <label for="diffBasedDeploys"><?php echo __('Diff-based deployment', 'static-html-output-plugin');?></label>
+      </th>
+      <td>
+
+        <?php $tpl->displayCheckbox($this, 'diffBasedDeploys', 'Only deploy changed files since last export'); ?>
+
+        <p><b>Experimental</b></p>
+
+        <p>
+        As this works off of your last export, if you have changed the deployment method or settings since your last deployment, you may end up with missing files. In this case, uncheck this option, do one complete deployment with your new settings, then re-enable this to get faster deployments of changes only going forward.
+        </p>
+
+        <p>
+        <i>This is still quite experimental and untested in this version. Use only if adventurous. </i>
+        </p>
+
       </td>
     </tr>
     <tr>
