@@ -30,6 +30,7 @@
       <tr>
         <th scope="row">
           <label for="netlifyRedirects"><?php echo __('Redirects File', 'static-html-output-plugin');?></label>
+          <p><a href="https://www.netlify.com/docs/redirects/" target="_blank">more info</a></p>
         </th>
         <td>
           <textarea class="widefat" name="netlifyRedirects" id="netlifyRedirects" rows="5" cols="10"><?php echo $this->options->netlifyRedirects ? $this->options->netlifyRedirects : ''  ?></textarea>
@@ -38,6 +39,7 @@
       <tr>
         <th scope="row">
           <label for="netlifyHeaders"><?php echo __('Headers File', 'static-html-output-plugin');?></label>
+          <p><a href="https://www.netlify.com/docs/headers-and-basic-auth/" target="_blank">more info</a></p>
         </th>
         <td>
           <textarea class="widefat" name="netlifyHeaders" id="netlifyHeaders" rows="5" cols="10"><?php echo $this->options->netlifyHeaders ? $this->options->netlifyHeaders : ''  ?></textarea>
