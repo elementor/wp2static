@@ -99,6 +99,7 @@ class StaticHtmlOutput_Options {
             'netlifySiteID',
             'processing_method',
             'removeConditionalHeadComments',
+            'removeHTMLComments',
             'removeWPLinks',
             'removeWPMeta',
             'rewritePLUGINDIR',
