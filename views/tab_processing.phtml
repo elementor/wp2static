@@ -112,10 +112,14 @@ $original = $this->wp_site->getOriginalPaths();
         <?php $tpl->displayCheckbox($this, 'removeWPMeta', 'Remove WP Meta tags'); ?>
 
         <p>The <code>&lt;meta&gt; name="generator" content="WordPress 4.9.8" /&gt;</code> type tags.</p><br>
+
         <?php $tpl->displayCheckbox($this, 'removeWPLinks', 'Remove WP &lt;link&gt; tags'); ?>
 
         <p>ie, <code>&lt;link& rel="EditURI"...</code> type tags that usually aren't needed.</p><br>
 
+        <?php $tpl->displayCheckbox($this, 'removeHTMLComments', 'Remove HTML comments'); ?>
+
+        <p>ie, <code>&lt;!-- / Yoast SEO plugin. --&gt;</code> type comments that are ridiculously wasting bytes</p><br>
       </td>
     </tr>
     <tr>

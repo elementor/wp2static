@@ -109,6 +109,9 @@ class HTMLProcessor {
             }
         }
 
+        // strip comments
+        $this->stripHTMLComments();
+
         // $this->setBaseHref();
         $this->writeDiscoveredURLs();
 
@@ -209,6 +212,16 @@ class HTMLProcessor {
         $this->convertToOfflineURL( $element );
     }
 
+    public function stripHTMLComments() {
+        if ( isset( $this->settings['removeHTMLComments'] ) ) {
+            $xpath = new DOMXPath($this->xml_doc);
+
+            foreach ($xpath->query('//comment()') as $comment) {
+                $comment->parentNode->removeChild($comment);
+            } 
+        }
+    }
+
     public function processHead( $element ) {
         // $this->setBaseHref( $element, 'src' );
         $head_elements = iterator_to_array(
@@ -227,8 +240,6 @@ class HTMLProcessor {
                 $this->base_tag_exists = true;
             }
         }
-
-        // TODO: optionally strip conditional comments from head
     }
 
     public function processScript( $element ) {
