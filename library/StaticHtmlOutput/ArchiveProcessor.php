@@ -12,6 +12,7 @@ class ArchiveProcessor {
             'crawling',
             'advanced',
             'processing',
+            'netlify',
             'zip',
             'folder',
         );
@@ -187,6 +188,21 @@ class ArchiveProcessor {
                 }
             }
         }
+    }
+
+    public function createNetlifySpecialFiles() {
+        if ( $this->settings['selected_deployment_option'] !== 'netlify' ) {
+            return false;
+        }
+
+        $redirect_content = $this->settings['netlifyRedirects'];
+        $header_content = $this->settings['netlifyHeaders'];
+
+        $redirect_path = $this->archive->path . '_redirects';
+        $header_path = $this->archive->path . '_headers';
+
+        file_put_contents( $redirect_path, $redirect_content );
+        file_put_contents( $header_path, $header_content );
     }
 
     public function create_zip() {
