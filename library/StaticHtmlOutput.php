@@ -333,9 +333,9 @@ class StaticHtmlOutput_Controller {
         $processor = new ArchiveProcessor();
 
         $processor->create_symlink_to_latest_archive();
-
+        $processor->createNetlifySpecialFiles();
+        // NOTE: renameWP Directories also doing same server publish
         $processor->renameWPDirectories();
         $processor->create_zip();
     }
-
 }

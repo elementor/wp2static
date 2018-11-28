@@ -141,6 +141,7 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
  * Enhancement: detect Elementor, copy FontAwesome to archive
  * Enhancement: easy access to export/deploy logs from Logs tab
  * Enhancement: strip WP's noindex,follow meta tag
+ * Enhancement: support Netlify _headers and _redirects files
  * New feature: send email upon completion
  * New feature: exclude URLs from being crawled/exported
  * New feature: initial support for feeds/xml exporting
@@ -478,6 +479,7 @@ Initial release to Wordpress community
  * Enhancement: detect Elementor, copy FontAwesome to archive
  * Enhancement: easy access to export/deploy logs from Logs tab
  * Enhancement: strip WP's noindex,follow meta tag
+ * Enhancement: support Netlify _headers and _redirects files
  * New feature: send email upon completion
  * New feature: exclude URLs from being crawled/exported
  * New feature: initial support for feeds/xml exporting
