@@ -135,7 +135,9 @@ class WPSHO_PostSettings {
 
         $key_sets['netlify'] = array(
             'baseUrl-netlify',
+            'netlifyHeaders',
             'netlifyPersonalAccessToken',
+            'netlifyRedirects',
             'netlifySiteID',
         );
 
