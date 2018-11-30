@@ -1,33 +1,21 @@
 # WP2Static
 
-Security & Performance via static website publishing. One plugin to solve WordPress's biggest problems.
+WordPress plugin to publish a static copy of your site to GitHub Pages, S3, Netlify or anywhere else you can pipe into your CI/CD workflow.
 
 Formerly, "WP Static Site Generator"
 
-[https://wp2static.com](https://wp2static.com)
----
+For all the reasons why to use it and the benefits of going static, visit [https://wp2static.com](https://wp2static.com). For documentation, there's a [site for that](https://docs.wp2static.com), too.
+
+Being a GitHub page, this is tailored for developers, sys admins or other technically inclined people wanting to poke around in the code and see how it's put together.  
     
-## Features
+## Opionated software
 
- - generates a standalone, static html copy of your whole WordPress website
- - deploy to Netlify, FTP, S3, GitHub Pages, GitLab, Bitbucket, BunnyCDN, etc
- - scheduled exports via WP-Crontrol of by hitting the custom hook
- - one site to unlimited export targets
- - specify extra files to include in the output (ie, dynamically loaded assets)
- - desktop notifications alert you to when exports are complete
-
-## Use cases
-
- - Securing a website from malicious attacks/malware
- - Fastest hosting options for static websites
- - Free hosting via GitHub, GitLab, BitBucket, etc.
- - Website archival
- - Cheap, fast and secure hosting for a digital agency
-
-## Getting started
-
-Please refer to the [documentation](https://docs.wp2static.com).
-
+ - speed over beautiful code
+ - human readable code over variable names that fit within 80chars
+ - own-code vs adding libraries 
+ - benchmarking over opinions (performance)
+ - less clicks == better UX
+ - user configurable options vs developer opinions
 
 ## Development
 
@@ -37,7 +25,7 @@ This repo contains the latest code, which you can clone/download to get the blee
 
 If you'd like to contribute, please follow the usual GitHub procedures (create an Issue, fork repo, submit PR). If you're unsure about any of that, contact me and I'll be happy to help. 
 
-In trying to make development/contributing easier, we'll keep requirements to a minimum. If you prefer Docker, Local by FlyWheel, Linux, BSD, Mac, they're all fine. This is a WordPress plugin, so anywhere you can run WordPress, you can do development on this :)
+In trying to make development/contributing easier, we'll keep requirements to a minimum. If you prefer Docker, Local by FlyWheel, Valet, Bedrock, Linux, BSD, Mac, they're all fine. This is a WordPress plugin, so anywhere you can run WordPress, you can do development on this :)
 
 
 ### Localisation / translations
