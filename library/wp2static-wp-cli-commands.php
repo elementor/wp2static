@@ -97,8 +97,6 @@ class WP2Static_CLI extends WP_CLI_Command {
      * Generate a static copy of your WordPress site.
      */
     public function generate() {
-        WP_CLI::line( 'Generating static copy of site' );
-
         $plugin = StaticHtmlOutput_Controller::getInstance();
 
         $plugin->prepare_for_export();
