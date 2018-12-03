@@ -22,7 +22,7 @@ class ArchiveProcessor {
                 '/../StaticHtmlOutput/PostSettings.php';
             $this->settings = WPSHO_PostSettings::get( $target_settings );
         } else {
-            error_log( 'TODO: load settings from DB' );
+            error_log( 'TODO: load settingWWWWWWWW DB' );
         }
     }
 
@@ -352,7 +352,9 @@ class ArchiveProcessor {
 
         $this->copyStaticSiteToPublicFolder();
 
-        echo 'SUCCESS';
+        if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+            echo 'SUCCESS';
+        }
     }
 }
 

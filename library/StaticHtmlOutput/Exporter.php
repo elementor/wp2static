@@ -20,7 +20,6 @@ class Exporter {
 //            error_log(print_r($this->settings, true));
 
         } else {
-            error_log( 'TODO: load settings from DB' );
             require_once dirname( __FILE__ ) .
                 '/../StaticHtmlOutput/DBSettings.php';
             
@@ -196,7 +195,9 @@ class Exporter {
             }
         }
 
-        echo 'SUCCESS';
+        if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+            echo 'SUCCESS';
+        }
     }
 
     public function generateModifiedFileList() {

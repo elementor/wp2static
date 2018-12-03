@@ -288,7 +288,9 @@ class StaticHtmlOutput_Controller {
 
         $exporter->generateModifiedFileList();
 
-        echo 'SUCCESS';
+        if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+            echo 'SUCCESS';
+        }
     }
 
 
