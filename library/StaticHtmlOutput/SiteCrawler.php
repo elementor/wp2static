@@ -15,14 +15,18 @@ class SiteCrawler {
             'advanced',
         );
 
+        // TODO: benchmark faster of checking for post being set or 
+        //       checking if WP_CLI is defined..
         if ( isset( $_POST['selected_deployment_option'] ) ) {
             require_once dirname( __FILE__ ) .
                 '/../StaticHtmlOutput/PostSettings.php';
 
             $this->settings = WPSHO_PostSettings::get( $target_settings );
-
         } else {
-            error_log( 'TODO: load settings from DB' );
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/DBSettings.php';
+            
+            $this->settings = WPSHO_DBSettings::get( $target_settings );
         }
 
         $this->processed_file = '';
@@ -38,71 +42,71 @@ class SiteCrawler {
 
         // crawl links discovered in first run
         if ( $_POST['ajax_action'] === 'crawl_again' ) {
-            if ( ! isset( $this->settings['discoverNewURLs'] ) ) {
-                echo 'SUCCESS';
-                die();
-            }
+            $this->crawl_discovered_links();
 
-            $second_crawl_file_path = $this->settings['working_directory'] .
-            '/WP-STATIC-2ND-CRAWL-LIST.txt';
-
-            // generate the 2nd crawl list on the first request
-            if ( ! is_file( $second_crawl_file_path ) ) {
-                // TODO: read in WP-STATIC-FINAL-CRAWL-LIST clone vs INITIAL
-                $already_crawled = file(
-                    $this->settings['working_directory'] .
-                        '/WP-STATIC-INITIAL-CRAWL-LIST.txt',
-                    FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
-                );
-
-                // read WP-STATIC-DISCOVERED-URLS into $discovered_links
-                $discovered_links = file(
-                    $this->settings['working_directory'] .
-                        '/WP-STATIC-DISCOVERED-URLS.txt',
-                    FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
-                );
-
-                $unique_discovered_links = array_unique( $discovered_links );
-                sort($unique_discovered_links);
-
-                file_put_contents(
-                    $this->settings['working_directory'] .
-                        '/WP-STATIC-DISCOVERED-URLS-LOG.txt',
-                    implode( PHP_EOL, $unique_discovered_links )
-                );
-
-                $discovered_links = array_diff(
-                    $unique_discovered_links,
-                    $already_crawled
-                );
-
-                file_put_contents(
-                    $second_crawl_file_path,
-                    implode( PHP_EOL, $discovered_links )
-                );
-
-                copy(
-                    $second_crawl_file_path,
-                    $this->settings['working_directory'] .
-                        '/WP-STATIC-FINAL-2ND-CRAWL-LIST.txt'
-                );
-            }
-
-            $this->list_of_urls_to_crawl_path =
-                $this->settings['working_directory'] .
-                '/WP-STATIC-FINAL-2ND-CRAWL-LIST.txt';
+            return;
         } else {
-            $this->list_of_urls_to_crawl_path =
-                $this->settings['working_directory'] .
-                '/WP-STATIC-FINAL-CRAWL-LIST.txt';
+            $this->crawl_site();
+            return;
         }
 
-        $this->viaCLI = false;
-
-        $this->crawl_site();
     }
 
-    public function crawl_site( $viaCLI = false ) {
+    public function generate_discovered_links_list() {
+        $already_crawled = file(
+            $this->settings['wp_uploads_path'] .
+                '/WP-STATIC-INITIAL-CRAWL-LIST.txt',
+            FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
+        );
+
+        $discovered_links = file(
+            $this->settings['wp_uploads_path'] .
+                '/WP-STATIC-DISCOVERED-URLS.txt',
+            FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
+        );
+
+        $unique_discovered_links = array_unique( $discovered_links );
+        sort($unique_discovered_links);
+
+        file_put_contents(
+            $this->settings['wp_uploads_path'] .
+                '/WP-STATIC-DISCOVERED-URLS-LOG.txt',
+            implode( PHP_EOL, $unique_discovered_links )
+        );
+
+        $discovered_links = array_diff(
+            $unique_discovered_links,
+            $already_crawled
+        );
+
+        file_put_contents(
+            $second_crawl_file_path,
+            implode( PHP_EOL, $discovered_links )
+        );
+
+        copy(
+            $second_crawl_file_path,
+            $this->settings['wp_uploads_path'] .
+                '/WP-STATIC-FINAL-2ND-CRAWL-LIST.txt'
+        );
+    }
+
+    public function crawl_discovered_links() {
+        error_log('crawl_discovered');
+
+        $second_crawl_file_path = $this->settings['wp_uploads_path'] .
+        '/WP-STATIC-2ND-CRAWL-LIST.txt';
+
+        // NOTE: the first iteration of the 2nd crawl phase,
+        //       the list of URLs for 2nd crawl is prepared
+        if ( ! is_file( $second_crawl_file_path ) ) {
+            $this->generate_discovered_links_list();
+        }
+
+        $this->list_of_urls_to_crawl_path =
+            $this->settings['wp_uploads_path'] .
+            '/WP-STATIC-FINAL-2ND-CRAWL-LIST.txt';
+
         if ( ! is_file( $this->list_of_urls_to_crawl_path ) ) {
             require_once dirname( __FILE__ ) .
                 '/../StaticHtmlOutput/WsLog.php';
@@ -113,7 +117,7 @@ class SiteCrawler {
             die();
         } else {
             if ( filesize( $this->list_of_urls_to_crawl_path ) ) {
-                $this->crawlABitMore( $this->viaCLI );
+                $this->crawlABitMore();
             } else {
                 // TODO: added to handle case where 2nd crawl list is empty
                 echo 'SUCCESS';
@@ -121,7 +125,33 @@ class SiteCrawler {
         }
     }
 
-    public function crawlABitMore( $viaCLI = false ) {
+    public function crawl_site() {
+        error_log('crawl_site');
+
+        $this->list_of_urls_to_crawl_path =
+            $this->settings['wp_uploads_path'] .
+            '/WP-STATIC-FINAL-CRAWL-LIST.txt';
+
+        if ( ! is_file( $this->list_of_urls_to_crawl_path ) ) {
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/WsLog.php';
+            WsLog::l(
+                'ERROR: LIST OF URLS TO CRAWL NOT FOUND AT: ' .
+                    $this->list_of_urls_to_crawl_path
+            );
+            die();
+        } else {
+            if ( filesize( $this->list_of_urls_to_crawl_path ) ) {
+                $this->crawlABitMore();
+            } else {
+                // TODO: added to handle case where 2nd crawl list is empty
+                echo 'SUCCESS';
+            }
+        }
+    }
+
+    public function crawlABitMore() {
+        error_log('crawl a bit more');
         $batch_of_links_to_crawl = array();
 
         $this->urls_to_crawl = file(
@@ -232,7 +262,7 @@ class SiteCrawler {
             );
 
         $this->crawled_links_file =
-            $this->settings['working_directory'] . '/WP-STATIC-CRAWLED-LINKS';
+            $this->settings['wp_uploads_path'] . '/WP-STATIC-CRAWLED-LINKS';
 
         $good_response_codes = array( '200', '201', '301', '302', '304' );
         $status_code = $this->response->getStatusCode();
@@ -356,14 +386,17 @@ class SiteCrawler {
 
     public function checkIfMoreCrawlingNeeded() {
         if ( $this->remaining_urls_to_crawl > 0 ) {
-            echo $this->remaining_urls_to_crawl;
+            if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+                echo $this->remaining_urls_to_crawl;
+            } else {
+               $this->crawl_site(); 
+            }
         } else {
-            echo 'SUCCESS';
-        }
-
-        // if being called via the CLI, just keep crawling (TODO: until when?)
-        if ( $this->viaCLI ) {
-            $this->crawl_site( $this->viaCLI );
+            if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+                echo 'SUCCESS';
+            } else {
+                die();
+            }
         }
     }
 

@@ -100,6 +100,13 @@ class WP2Static_CLI extends WP_CLI_Command {
         $plugin = StaticHtmlOutput_Controller::getInstance();
 
         $plugin->prepare_for_export();
+
+        require_once dirname( __FILE__ ) .
+            '/StaticHtmlOutput/SiteCrawler.php';
+
+        $site_crawler->crawl_site();
+        $site_crawler->crawl_discovered_links();
+
     }
 }
 
