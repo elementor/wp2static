@@ -9,6 +9,10 @@ class StaticHtmlOutput_Controller {
 
     protected function __construct() {}
 
+    public function doStuff() {
+        error_log('doing stuff');
+    }
+
     public static function getInstance() {
         if ( null === self::$_instance ) {
             self::$_instance = new self();
@@ -251,7 +255,7 @@ class StaticHtmlOutput_Controller {
         return $outputDir;
     }
 
-    public function prepare_for_export( $viaCLI = false ) {
+    public function prepare_for_export() {
         require_once dirname( __FILE__ ) . '/StaticHtmlOutput/Exporter.php';
 
         $exporter = new Exporter();
@@ -266,6 +270,8 @@ class StaticHtmlOutput_Controller {
         $archive = new Archive();
         $archive->create();
 
+        $viaCLI = defined( 'WP_CLI' ) && WP_CLI;
+
         // TODO: move to exporter; wp env vars to views
         $exec_time = ini_get( 'max_execution_time' );
         WsLog::l( 'STARTING EXPORT: ' . date( 'Y-m-d h:i:s' ) );
@@ -278,7 +284,7 @@ class StaticHtmlOutput_Controller {
         WsLog::l( 'STARTING EXPORT: WP HOME ' . get_option( 'home' ) );
         WsLog::l( 'STARTING EXPORT: WP ADDRESS ' . get_bloginfo( 'wpurl' ) );
         WsLog::l( 'STARTING EXPORT: PLUGIN VERSION ' . $this::VERSION );
-        WsLog::l( 'STARTING EXPORT: VIA CLI? ' . $viaCLI );
+        WsLog::l( 'STARTING EXPORT: VIA WP-CLI? ' . $viaCLI );
         WsLog::l(
             'STARTING EXPORT: STATIC EXPORT URL ' .
             $exporter->settings['baseUrl']
