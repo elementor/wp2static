@@ -16,8 +16,18 @@ class Exporter {
 
             $this->settings = WPSHO_PostSettings::get( $target_settings );
 
+//            error_log('returned filtered settings from POST:');
+//            error_log(print_r($this->settings, true));
+
         } else {
             error_log( 'TODO: load settings from DB' );
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/DBSettings.php';
+            
+            $this->settings = WPSHO_DBSettings::get( $target_settings );
+
+//            error_log('returned filtered settings:');
+//            error_log(print_r($this->settings, true));
         }
     }
 
