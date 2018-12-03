@@ -36,7 +36,11 @@ class WPSite {
         // extra overhead during the high cyclical functions
         $this->detect_base_url();
 
-        $this->subdirectory = $this->isSiteInstalledInSubdomain();
+	$this->subdirectory = $this->isSiteInstalledInSubdomain();
+
+	$this->uploads_writable = $this->uploadsPathIsWritable();
+	$this->permalinks_set = $this->permalinksAreDefined();
+	$this->curl_enabled = $this->hasCurlSupport();
     }
 
     public function isSiteInstalledInSubdomain() {
@@ -64,12 +68,6 @@ class WPSite {
     public function detect_base_url() {
         $site_url = get_option( 'siteurl' );
         $home = get_option( 'home' );
-    }
-
-    public function systemRequirementsAreMet() {
-        return $this->uploadsPathIsWritable() &&
-            $this->hasCurlSupport() &&
-            $this->permalinksAreDefined();
     }
 
     public function getOriginalPaths() {
