@@ -47,7 +47,7 @@ I'm committed (git-pun) to keeping this software open-source and free from selli
 
 There is no company behind this software, besides a sole proprietership in my name, in order to comply with taxation requirements for me as an individual. 
 
-In order for me to continue to develop this software, keep it free and open-source, I need support. 
+In order for me to continue to develop this software, maintain a free and open-source version, I need support. 
 
 If you're a company that benefits from the continued development of this or you're a big player that I recommend in our docs, like Netlify, GitHub, AWS, CloudFlare or even Mozilla. If you're a hosting company like DigitalOcean, Vultr or other developer-friendly, cost efficient provider, I still do recommend such hosts. 
 
