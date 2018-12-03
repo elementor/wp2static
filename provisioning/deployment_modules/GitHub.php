@@ -14,7 +14,7 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
 
         if ( isset( $_POST['selected_deployment_option'] ) ) {
             require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/PostSettings.php';
+                '/../library/StaticHtmlOutput/PostSettings.php';
 
             $this->settings = WPSHO_PostSettings::get( $target_settings );
         } else {
@@ -35,7 +35,7 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
 
         // TODO: move this where needed
         require_once dirname( __FILE__ ) .
-            '/../StaticHtmlOutput/Archive.php';
+            '/../library/StaticHtmlOutput/Archive.php';
         $this->archive = new Archive();
         $this->archive->setToCurrentArchive();
 
@@ -63,8 +63,8 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
 
     public function upload_blobs( $viaCLI = false ) {
         require_once dirname( __FILE__ ) .
-            '/../GuzzleHttp/autoloader.php';
-        require_once __DIR__ . '/../Github/autoload.php';
+            '/../library/GuzzleHttp/autoloader.php';
+        require_once __DIR__ . '/../library/Github/autoload.php';
 
         $filesRemaining = $this->get_remaining_items_count();
 
@@ -115,7 +115,7 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
                 ); // utf-8 or base64
             } catch ( Exception $e ) {
                 require_once dirname( __FILE__ ) .
-                    '/../StaticHtmlOutput/WsLog.php';
+                    '/../library/StaticHtmlOutput/WsLog.php';
                 WsLog::l( 'GITHUB: Error creating blob (API limits?):' . $e );
                 error_log( 'error creating blog in GitHub (API limits?)' );
                 // TODO:  https://developer.github.com/v3/rate_limit/
@@ -151,8 +151,8 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
     }
 
     public function commit_new_tree() {
-        require_once dirname( __FILE__ ) . '/../GuzzleHttp/autoloader.php';
-        require_once __DIR__ . '/../Github/autoload.php';
+        require_once dirname( __FILE__ ) . '/../library/GuzzleHttp/autoloader.php';
+        require_once __DIR__ . '/../library/Github/autoload.php';
 
         // vendor specific from here
         $client = new \Github\Client();
@@ -239,8 +239,8 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
 
     public function test_blob_create() {
         require_once dirname( __FILE__ ) .
-            '/../GuzzleHttp/autoloader.php';
-        require_once __DIR__ . '/../Github/autoload.php';
+            '/../library/GuzzleHttp/autoloader.php';
+        require_once __DIR__ . '/../library/Github/autoload.php';
 
         $client = new \Github\Client();
         $client->authenticate(
@@ -263,7 +263,7 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
             ); // utf-8 or base64
         } catch ( Exception $e ) {
             require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/WsLog.php';
+                '/../library/StaticHtmlOutput/WsLog.php';
             WsLog::l( 'GITHUB: Error creating blob (API limits?):' . $e );
             error_log( 'error creating blog in GitHub (API limits?)' );
             // TODO:  rate limits: https://developer.github.com/v3/rate_limit/

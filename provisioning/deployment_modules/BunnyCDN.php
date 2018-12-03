@@ -14,7 +14,7 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
 
         if ( isset( $_POST['selected_deployment_option'] ) ) {
             require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/PostSettings.php';
+                '/../library/StaticHtmlOutput/PostSettings.php';
 
             $this->settings = WPSHO_PostSettings::get( $target_settings );
         } else {
@@ -38,7 +38,7 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
 
         // TODO: move this where needed
         require_once dirname( __FILE__ ) .
-            '/../StaticHtmlOutput/Archive.php';
+            '/../library/StaticHtmlOutput/Archive.php';
         $this->archive = new Archive();
         $this->archive->setToCurrentArchive();
 
@@ -60,7 +60,7 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
 
 
     public function transfer_files( $viaCLI = false ) {
-        require_once dirname( __FILE__ ) . '/../GuzzleHttp/autoloader.php';
+        require_once dirname( __FILE__ ) . '/../library/GuzzleHttp/autoloader.php';
 
         $filesRemaining = $this->get_remaining_items_count();
 
@@ -107,7 +107,7 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
                 );
             } catch ( Exception $e ) {
                 require_once dirname( __FILE__ ) .
-                    '/../StaticHtmlOutput/WsLog.php';
+                    '/../library/StaticHtmlOutput/WsLog.php';
                 WsLog::l( 'BUNNYCDN EXPORT: error encountered' );
                 WsLog::l( $e );
                 error_log( $e );
@@ -135,7 +135,7 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
     }
 
     public function purge_all_cache() {
-        require_once dirname( __FILE__ ) . '/../GuzzleHttp/autoloader.php';
+        require_once dirname( __FILE__ ) . '/../library/GuzzleHttp/autoloader.php';
         // purege cache for each file
         $client = new Client();
 
@@ -167,7 +167,7 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
     }
 
     public function test_deploy() {
-        require_once dirname( __FILE__ ) . '/../GuzzleHttp/autoloader.php';
+        require_once dirname( __FILE__ ) . '/../library/GuzzleHttp/autoloader.php';
 
         $client = new Client(
             array(
@@ -193,7 +193,7 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
             );
         } catch ( Exception $e ) {
             require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/WsLog.php';
+                '/../library/StaticHtmlOutput/WsLog.php';
             WsLog::l( 'BUNNYCDN EXPORT: error encountered' );
             WsLog::l( $e );
             error_log( $e );

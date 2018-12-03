@@ -14,7 +14,7 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
 
         if ( isset( $_POST['selected_deployment_option'] ) ) {
             require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/PostSettings.php';
+                '/../library/StaticHtmlOutput/PostSettings.php';
 
             $this->settings = WPSHO_PostSettings::get( $target_settings );
         } else {
@@ -37,7 +37,7 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
 
         // TODO: move this where needed
         require_once dirname( __FILE__ ) .
-            '/../StaticHtmlOutput/Archive.php';
+            '/../library/StaticHtmlOutput/Archive.php';
         $this->archive = new Archive();
         $this->archive->setToCurrentArchive();
         $this->files_to_delete = array();
@@ -129,7 +129,7 @@ EOD;
     public function getRepositoryTree( $page ) {
         // make request and get results, including total pages
         require_once dirname( __FILE__ ) .
-            '/../GuzzleHttp/autoloader.php';
+            '/../library/GuzzleHttp/autoloader.php';
 
         $client = new Client(
             array(
@@ -178,7 +178,7 @@ EOD;
         $this->getListOfFilesInRepo();
 
         require_once dirname( __FILE__ ) .
-            '/../GuzzleHttp/autoloader.php';
+            '/../library/GuzzleHttp/autoloader.php';
 
         $client = new Client(
             array(
@@ -206,7 +206,7 @@ EOD;
             );
         } catch ( Exception $e ) {
             require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/WsLog.php';
+                '/../library/StaticHtmlOutput/WsLog.php';
             WsLog::l( 'GITLAB EXPORT: error encountered' );
             WsLog::l( $e );
             error_log( $e );
@@ -269,7 +269,7 @@ EOD;
 
     public function upload_files( $viaCLI = false ) {
         require_once dirname( __FILE__ ) .
-            '/../GuzzleHttp/autoloader.php';
+            '/../library/GuzzleHttp/autoloader.php';
 
         $filesRemaining = $this->get_remaining_items_count();
 
@@ -336,7 +336,7 @@ EOD;
 
         } catch ( Exception $e ) {
             require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/WsLog.php';
+                '/../library/StaticHtmlOutput/WsLog.php';
             WsLog::l( 'GITLAB EXPORT: error encountered' );
             WsLog::l( $e );
             error_log( $e );
@@ -360,7 +360,7 @@ EOD;
 
     public function test_file_create() {
         require_once dirname( __FILE__ ) .
-            '/../GuzzleHttp/autoloader.php';
+            '/../library/GuzzleHttp/autoloader.php';
 
         $client = new Client(
             array(
@@ -401,7 +401,7 @@ EOD;
 
         } catch ( Exception $e ) {
             require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/WsLog.php';
+                '/../library/StaticHtmlOutput/WsLog.php';
             WsLog::l( 'GITLAB EXPORT: error encountered' );
             WsLog::l( $e );
             error_log( $e );

@@ -12,7 +12,7 @@ class StaticHtmlOutput_FTP extends StaticHtmlOutput_SitePublisher {
 
         if ( isset( $_POST['selected_deployment_option'] ) ) {
             require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/PostSettings.php';
+                '/../library/StaticHtmlOutput/PostSettings.php';
 
             $this->settings = WPSHO_PostSettings::get( $target_settings );
         } else {
@@ -29,7 +29,7 @@ class StaticHtmlOutput_FTP extends StaticHtmlOutput_SitePublisher {
         }
 
         require_once dirname( __FILE__ ) .
-            '/../StaticHtmlOutput/Archive.php';
+            '/../library/StaticHtmlOutput/Archive.php';
         $this->archive = new Archive();
         $this->archive->setToCurrentArchive();
 
@@ -47,9 +47,9 @@ class StaticHtmlOutput_FTP extends StaticHtmlOutput_SitePublisher {
     }
 
     public function transfer_files( $viaCLI = false ) {
-        require_once __DIR__ . '/../FTP/FtpClient.php';
-        require_once __DIR__ . '/../FTP/FtpException.php';
-        require_once __DIR__ . '/../FTP/FtpWrapper.php';
+        require_once __DIR__ . '/../library/FTP/FtpClient.php';
+        require_once __DIR__ . '/../library/FTP/FtpException.php';
+        require_once __DIR__ . '/../library/FTP/FtpWrapper.php';
 
         $filesRemaining = $this->get_remaining_items_count();
 
@@ -77,7 +77,7 @@ class StaticHtmlOutput_FTP extends StaticHtmlOutput_SitePublisher {
             );
         } catch ( Exception $e ) {
             require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/WsLog.php';
+                '/../library/StaticHtmlOutput/WsLog.php';
             WsLog::l( 'FTP EXPORT: unable to login' );
             WsLog::l( $e );
             throw new Exception( $e );
@@ -126,9 +126,9 @@ class StaticHtmlOutput_FTP extends StaticHtmlOutput_SitePublisher {
     }
 
     public function test_ftp() {
-        require_once __DIR__ . '/../FTP/FtpClient.php';
-        require_once __DIR__ . '/../FTP/FtpException.php';
-        require_once __DIR__ . '/../FTP/FtpWrapper.php';
+        require_once __DIR__ . '/../library/FTP/FtpClient.php';
+        require_once __DIR__ . '/../library/FTP/FtpException.php';
+        require_once __DIR__ . '/../library/FTP/FtpWrapper.php';
 
         $ftp = new \FtpClient\FtpClient();
         $ftp->connect( $this->settings['ftpServer'] );
@@ -145,7 +145,7 @@ class StaticHtmlOutput_FTP extends StaticHtmlOutput_SitePublisher {
             return;
         } catch ( Exception $e ) {
             require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/WsLog.php';
+                '/../library/StaticHtmlOutput/WsLog.php';
             WsLog::l( 'FTP EXPORT: unable to login' );
             WsLog::l( $e );
             throw new Exception( $e );

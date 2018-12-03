@@ -14,7 +14,7 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
 
         if ( isset( $_POST['selected_deployment_option'] ) ) {
             require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/PostSettings.php';
+                '/../library/StaticHtmlOutput/PostSettings.php';
 
             $this->settings = WPSHO_PostSettings::get( $target_settings );
         } else {
@@ -42,7 +42,7 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
 
         // TODO: move this where needed
         require_once dirname( __FILE__ ) .
-            '/../StaticHtmlOutput/Archive.php';
+            '/../library/StaticHtmlOutput/Archive.php';
         $this->archive = new Archive();
         $this->archive->setToCurrentArchive();
 
@@ -124,7 +124,7 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
 
     public function upload_files( $viaCLI = false ) {
         require_once dirname( __FILE__ ) .
-            '/../GuzzleHttp/autoloader.php';
+            '/../library/GuzzleHttp/autoloader.php';
 
         $filesRemaining = $this->get_remaining_items_count();
 
@@ -182,7 +182,7 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
 
         } catch ( Exception $e ) {
             require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/WsLog.php';
+                '/../library/StaticHtmlOutput/WsLog.php';
             WsLog::l( 'BITBUCKET EXPORT: error encountered' );
             WsLog::l( $e );
             error_log( $e );
@@ -206,7 +206,7 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
 
     public function test_blob_create() {
         require_once dirname( __FILE__ ) .
-            '/../GuzzleHttp/autoloader.php';
+            '/../library/GuzzleHttp/autoloader.php';
         $client = new Client(
             array(
                 'base_uri' => $this->api_base,
@@ -238,7 +238,7 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
 
         } catch ( Exception $e ) {
             require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/WsLog.php';
+                '/../library/StaticHtmlOutput/WsLog.php';
             WsLog::l( 'BITBUCKET EXPORT: error encountered' );
             WsLog::l( $e );
             error_log( $e );
