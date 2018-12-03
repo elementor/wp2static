@@ -303,7 +303,6 @@ class StaticHtmlOutput_Controller {
 
     public function doExportWithoutGUI() {
         // $this->capture_last_deployment();
-        $this->cleanup_leftover_archives( true );
         $this->start_export( true );
         $this->crawl_site( true );
         $this->post_process_archive_dir( true );

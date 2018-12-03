@@ -30,7 +30,10 @@ class JSProcessor {
 
             $this->settings = WPSHO_PostSettings::get( $target_settings );
         } else {
-            error_log( 'TODO: load settings from DB' );
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/DBSettings.php';
+            
+            $this->settings = WPSHO_DBSettings::get( $target_settings );
         }
 
         $this->js_doc = $js_document;

@@ -24,7 +24,10 @@ class HTMLProcessor {
 
             $this->settings = WPSHO_PostSettings::get( $target_settings );
         } else {
-            error_log( 'TODO: load settings from DB' );
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/DBSettings.php';
+            
+            $this->settings = WPSHO_DBSettings::get( $target_settings );
         }
 
         // instantiate the XML body here
@@ -43,9 +46,7 @@ class HTMLProcessor {
         require_once dirname( __FILE__ ) . '/../URL2/URL2.php';
         $this->page_url = new Net_URL2( $page_url );
 
-        $this->discoverNewURLs = (
-            isset( $this->settings['discoverNewURLs'] ) &&
-             $this->settings['discoverNewURLs'] == 1 &&
+        $this->harvest_new_URLs = (
              $_POST['ajax_action'] === 'crawl_site'
         );
 
@@ -185,7 +186,7 @@ class HTMLProcessor {
             return;
         }
 
-        if ( isset( $this->settings['discoverNewURLs'] ) ) {
+        if ( isset( $this->harvest_new_URLs ) ) {
             if ( ! $this->isValidURL( $url ) ) {
                 return;
             }
@@ -311,13 +312,12 @@ class HTMLProcessor {
     }
 
     public function writeDiscoveredURLs() {
-        if ( ! isset( $this->settings['discoverNewURLs'] ) &&
-            $_POST['ajax_action'] === 'crawl_site' ) {
+        if ( $_POST['ajax_action'] === 'crawl_site' ) {
             return;
         }
 
         file_put_contents(
-            $this->settings['working_directory'] . '/WP-STATIC-DISCOVERED-URLS.txt',
+            $this->settings['wp_uploads_path'] . '/WP-STATIC-DISCOVERED-URLS.txt',
             PHP_EOL .
                 implode( PHP_EOL, array_unique( $this->discovered_urls ) ),
             FILE_APPEND | LOCK_EX
