@@ -101,9 +101,7 @@ class WP2Static_CLI extends WP_CLI_Command {
 
         $plugin = StaticHtmlOutput_Controller::getInstance();
 
-        $plugin->doStuff();
         $plugin->prepare_for_export();
-
     }
 }
 

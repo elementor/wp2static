@@ -7,7 +7,6 @@ class WsLog {
             'wpenv',
         );
 
-        error_log( $text . PHP_EOL );
 
         $wp_uploads_path = '';
         
@@ -20,6 +19,8 @@ class WsLog {
             $wp_uploads_path = $settings['wp_uploads_path'];
         } else {
             $wp_uploads_path = $_POST['wp_uploads_path'];
+
+            error_log( $text . PHP_EOL );
         }
 
         $log_file_path = $wp_uploads_path . '/WP-STATIC-EXPORT-LOG.txt';
