@@ -9,10 +9,6 @@ class StaticHtmlOutput_Controller {
 
     protected function __construct() {}
 
-    public function doStuff() {
-        error_log('doing stuff');
-    }
-
     public static function getInstance() {
         if ( null === self::$_instance ) {
             self::$_instance = new self();
@@ -166,7 +162,7 @@ class StaticHtmlOutput_Controller {
         // TODO: DRY up WPSite calls
         require_once dirname( __FILE__ ) . '/StaticHtmlOutput/WPSite.php';
         $this->wp_site = new WPSite();
-        
+
         $initial_file_list_count =
             StaticHtmlOutput_FilesHelper::buildInitialFileList(
                 true,
