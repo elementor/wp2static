@@ -409,6 +409,11 @@ class HTMLProcessor {
     }
 
     public function rewriteUnchangedURLs( $processedHTML ) {
+        error_log('REFACTORING HERE:....');
+        error_log('new_active_theme, etc need to be saved into settings');
+        error_log($this->settings['baseUrl']);
+        error_log($this->settings['wp_active_theme']);
+        error_log($this->settings['new_active_theme_path']);die();
         // TODO: theme is like /wp-content/themes/twentyseventeen
         // likely already changed... if so, let's skip those rewrites here...
         if ( isset( $this->settings['rewriteWPPaths'] ) ) {
