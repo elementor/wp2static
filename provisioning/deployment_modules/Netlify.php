@@ -14,7 +14,7 @@ class StaticHtmlOutput_Netlify {
 
         if ( isset( $_POST['selected_deployment_option'] ) ) {
             require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/PostSettings.php';
+                '/../library/StaticHtmlOutput/PostSettings.php';
 
             $this->settings = WPSHO_PostSettings::get( $target_settings );
         } else {
@@ -52,13 +52,13 @@ class StaticHtmlOutput_Netlify {
     }
 
     public function deploy() {
-        require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/Archive.php';
+        require_once dirname( __FILE__ ) . '/../library/StaticHtmlOutput/Archive.php';
         $archive = new Archive();
         $archive->setToCurrentArchive();
         $zipArchivePath = $this->settings['wp_uploads_path'] . '/' .
             $archive->name . '.zip';
 
-        require_once dirname( __FILE__ ) . '/../GuzzleHttp/autoloader.php';
+        require_once dirname( __FILE__ ) . '/../library/GuzzleHttp/autoloader.php';
         $client = new Client( array( 'base_uri' => $this->baseURL ) );
 
         $zipDeployEndpoint =
@@ -84,7 +84,7 @@ class StaticHtmlOutput_Netlify {
 
         } catch ( Exception $e ) {
             require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/WsLog.php';
+                '/../library/StaticHtmlOutput/WsLog.php';
             WsLog::l( 'NETLIFY EXPORT ERROR' );
             WsLog::l( $e );
             error_log( $e );
@@ -93,7 +93,7 @@ class StaticHtmlOutput_Netlify {
     }
 
     public function test_netlify() {
-        require_once dirname( __FILE__ ) . '/../GuzzleHttp/autoloader.php';
+        require_once dirname( __FILE__ ) . '/../library/GuzzleHttp/autoloader.php';
 
         $client = new Client( array( 'base_uri' => $this->baseURL ) );
 
@@ -124,7 +124,7 @@ class StaticHtmlOutput_Netlify {
             }
         } catch ( Exception $e ) {
             require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/WsLog.php';
+                '/../library/StaticHtmlOutput/WsLog.php';
             WsLog::l( 'NETLIFY TEST ERROR' );
             WsLog::l( $e );
             error_log( $e );
