@@ -10,16 +10,16 @@ mkdir -p $TMP_DIR
 rm -Rf $TMP_DIR/wordpress-static-html-plugin
 mkdir $TMP_DIR/wordpress-static-html-plugin
 
-cp -r ./{css,languages,library,readme.txt,views,wp2static.php} $TMP_DIR/wordpress-static-html-plugin/
-
-# keep free version under 1MB
-#rm -Rf $TMP_DIR/wordpress-static-html-plugin/library/{S3,GitHub,CloudFront,aws,FTP}
-#rm -Rf $TMP_DIR/wordpress-static-html-plugin/library/StaticHtmlOutput/{Bitbucket,BunnyCDN,FTP,GitHub,GitLab,Netlify,S3}.php
+cp -r ./{languages,library,readme.txt,views,wp2static.php} $TMP_DIR/wordpress-static-html-plugin/
 
 cd $TMP_DIR
+
+# tidy permissions
+find . -type d -exec chmod 755 {} \;
+find . -type f -exec chmod 644 {} \;
 
 zip -r -9 ./$1.zip ./wordpress-static-html-plugin 
 
 cd -
 
-cp $TMP_DIR/$1.zip ../
+cp $TMP_DIR/$1.zip $HOME/Downloads/
