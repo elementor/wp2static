@@ -53,4 +53,6 @@ If you're a company that benefits from the continued development of this or you'
 
 I need your sponsorship right now. 
 
-Leon [leon@wp2static.com](leon@wp2static.com)
+Leon 
+
+leon@wp2static.com
