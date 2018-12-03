@@ -43,7 +43,7 @@ class Exporter {
         // skip for first export state
         if ( is_file( $archive->path ) ) {
             $archiveDir = file_get_contents(
-                $this->settings['working_directory'] .
+                $this->settings['wp_uploads_path'] .
                     '/WP-STATIC-CURRENT-ARCHIVE'
             );
             $previous_export = $archiveDir;
@@ -52,7 +52,7 @@ class Exporter {
 
             if ( $this->settings['diffBasedDeploys'] ) {
                 $archiveDir = file_get_contents(
-                    $this->settings['working_directory'] .
+                    $this->settings['wp_uploads_path'] .
                         '/WP-STATIC-CURRENT-ARCHIVE'
                 );
 
@@ -102,10 +102,10 @@ class Exporter {
 
         foreach ( $files_to_clean as $file_to_clean ) {
             if ( file_exists(
-                $this->settings['working_directory'] . '/' . $file_to_clean
+                $this->settings['wp_uploads_path'] . '/' . $file_to_clean
             ) ) {
                 unlink(
-                    $this->settings['working_directory'] . '/' .
+                    $this->settings['wp_uploads_path'] . '/' .
                         $file_to_clean
                 );
             }
@@ -117,18 +117,18 @@ class Exporter {
 
         // skip first export state
         if ( is_file(
-            $this->settings['working_directory'] . '/WP-STATIC-CURRENT-ARCHIVE'
+            $this->settings['wp_uploads_path'] . '/WP-STATIC-CURRENT-ARCHIVE'
         ) ) {
 
             $handle = fopen(
-                $this->settings['working_directory'] .
+                $this->settings['wp_uploads_path'] .
                     '/WP-STATIC-CURRENT-ARCHIVE',
                 'r'
             );
             $this->settings['archive_dir'] = stream_get_line( $handle, 0 );
 
             $src_dir =
-                $this->settings['working_directory'] . '/previous-export';
+                $this->settings['wp_uploads_path'] . '/previous-export';
 
             if ( is_dir( $src_dir ) ) {
                 // TODO: rewrite to php native in case of shared hosting
@@ -157,10 +157,10 @@ class Exporter {
 
         foreach ( $files_to_clean as $file_to_clean ) {
             if ( file_exists(
-                $this->settings['working_directory'] . '/' . $file_to_clean
+                $this->settings['wp_uploads_path'] . '/' . $file_to_clean
             ) ) {
                 unlink(
-                    $this->settings['working_directory'] . '/' . $file_to_clean
+                    $this->settings['wp_uploads_path'] . '/' . $file_to_clean
                 );
             }
         }
@@ -168,7 +168,7 @@ class Exporter {
 
     public function initialize_cache_files() {
         $crawled_links_file =
-            $this->settings['working_directory'] . '/WP-STATIC-CRAWLED-LINKS';
+            $this->settings['wp_uploads_path'] . '/WP-STATIC-CRAWLED-LINKS';
 
         $resource = fopen( $crawled_links_file, 'w' );
         fwrite( $resource, '' );
@@ -179,12 +179,12 @@ class Exporter {
         $leftover_files =
             preg_grep(
                 '/^([^.])/',
-                scandir( $this->settings['working_directory'] )
+                scandir( $this->settings['wp_uploads_path'] )
             );
 
         foreach ( $leftover_files as $fileName ) {
             if ( strpos( $fileName, 'wp-static-html-output-' ) !== false ) {
-                $deletion_target = $this->settings['working_directory'] .
+                $deletion_target = $this->settings['wp_uploads_path'] .
                     '/' . $fileName;
                 if ( is_dir( $deletion_target ) ) {
                     StaticHtmlOutput_FilesHelper::delete_dir_with_files(

@@ -3,16 +3,26 @@
 class WsLog {
 
     public static function l( $text ) {
+        $target_settings = array(
+            'wpenv',
+        );
+
         error_log( $text . PHP_EOL );
 
-        $wp_uploads_path = $_POST['wp_uploads_path'];
+        $wp_uploads_path = '';
+        
+        if ( defined( 'WP_CLI' ) && WP_CLI ) {
+            require_once dirname( __FILE__ ) .
+                '/DBSettings.php';
+            
+            $settings = WPSHO_DBSettings::get( $target_settings );
 
-        $working_directory =
-            isset( $_POST['workingDirectory'] ) ?
-            $_POST['workingDirectory'] :
-            $wp_uploads_path;
+            $wp_uploads_path = $settings['wp_uploads_path'];
+        } else {
+            $wp_uploads_path = $_POST['wp_uploads_path'];
+        }
 
-        $log_file_path = $working_directory . '/WP-STATIC-EXPORT-LOG.txt';
+        $log_file_path = $wp_uploads_path . '/WP-STATIC-EXPORT-LOG.txt';
 
         file_put_contents(
             $log_file_path,
