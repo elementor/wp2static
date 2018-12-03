@@ -186,27 +186,20 @@ class StaticHtmlOutput_Controller {
         $this->wp_site = new WPSite();
         $this->current_archive = '';
 
-        if ( ! $this->wp_site->systemRequirementsAreMet() ) {
-            $this->view
-                ->setTemplate( 'system-requirements' )
-                ->assign( 'wp_site', $this->wp_site )
-                ->render();
-        } else {
-            $this->view
-                ->setTemplate( 'options-page-js' )
-                ->assign( 'working_directory', $this->getWorkingDirectory() )
-                ->assign( 'options', $this->options )
-                ->assign( 'wp_site', $this->wp_site )
-                ->assign( 'onceAction', self::HOOK . '-options' )
-                ->render();
+        $this->view
+            ->setTemplate( 'options-page-js' )
+            ->assign( 'working_directory', $this->getWorkingDirectory() )
+            ->assign( 'options', $this->options )
+            ->assign( 'wp_site', $this->wp_site )
+            ->assign( 'onceAction', self::HOOK . '-options' )
+            ->render();
 
-            $this->view
-                ->setTemplate( 'options-page' )
-                ->assign( 'wp_site', $this->wp_site )
-                ->assign( 'options', $this->options )
-                ->assign( 'onceAction', self::HOOK . '-options' )
-                ->render();
-        } //end if
+        $this->view
+            ->setTemplate( 'options-page' )
+            ->assign( 'wp_site', $this->wp_site )
+            ->assign( 'options', $this->options )
+            ->assign( 'onceAction', self::HOOK . '-options' )
+            ->render();
     }
 
     public function userIsAllowed() {

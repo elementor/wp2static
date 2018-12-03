@@ -29,6 +29,37 @@ $tpl = new TemplateHelper();
 
   <?php endif; ?>
 
+
+  <?php if ( ! $this->wp_site->uploads_writable ) : ?>
+
+   <div class="notice notice-error inline is-dismissible">
+      <h2 class="title">Your uploads directory is not writable</h2>
+      <p>Please ensure that <code><?php echo $this->wp_site->wp_uploads_path; ?></code>
+            is writable by your webserver. 
+    </p>
+    </div>
+
+  <?php endif; ?>
+
+  <?php if ( ! $this->wp_site->curl_enabled ) : ?>
+
+   <div class="notice notice-error inline is-dismissible">
+      <h2 class="title">You need the cURL extension enabled on your web server</h2>
+        <p> This is a library that allows the plugin to better export your static site out to services like GitHub, S3, Dropbox, BunnyCDN, etc. It's usually an easy fix to get this working. You can try Googling "How to enable cURL extension for PHP", along with the name of the environment you are using to run your WordPress site. This may be something like DigitalOcean, GoDaddy or LAMP, MAMP, WAMP for your webserver on your local computer. If you're still having trouble, the developer of this plugin is easger to help you get up and running. Please ask for help on our <a href="https://forum.wp2static.com">forum</a>.</p>
+    </div>
+
+  <?php endif; ?>
+
+  <?php if ( ! $this->wp_site->permalinks_set ) : ?>
+
+   <div class="notice notice-error inline is-dismissible">
+      <h2 class="title">You need to set your WordPress Pemalinks</h2>
+
+        <p>Due to the nature of how static sites work, you'll need to have some kind of permalinks structure defined in your <a href="<?php echo admin_url( 'options-permalink.php' ); ?>">Permalink Settings</a> within WordPress. To learn more on how to do this, please see WordPress's official guide to the <a href="https://codex.wordpress.org/Settings_Permalinks_Screen">Settings Permalinks Screen</a>.</p>
+    </div>
+
+  <?php endif; ?>
+
   <h2 class="nav-tab-wrapper">
     <a href="#" class="nav-tab nav-tab-active">Deploy static website</a>
     <a href="#" class="nav-tab">Crawling options</a>
