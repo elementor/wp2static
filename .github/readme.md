@@ -52,3 +52,5 @@ In order for me to continue to develop this software, maintain a free and open-s
 If you're a company that benefits from the continued development of this or you're a big player that I recommend in our docs, like Netlify, GitHub, AWS, CloudFlare or even Mozilla. If you're a hosting company like DigitalOcean, Vultr or other developer-friendly, cost efficient provider, I still do recommend such hosts. 
 
 I need your sponsorship right now. 
+
+Leon [mailto:leon@wp2static.com](leon@wp2static.com)
