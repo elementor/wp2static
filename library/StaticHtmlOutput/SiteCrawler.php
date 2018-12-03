@@ -40,19 +40,18 @@ class SiteCrawler {
         $this->list_of_urls_to_crawl_path = '';
         $this->urls_to_crawl = '';
 
-        // crawl links discovered in first run
+        // for UI-driven exports, detect crawl action
         if ( $_POST['ajax_action'] === 'crawl_again' ) {
             $this->crawl_discovered_links();
-
-            return;
-        } else {
+        } elseif ( $_POST['ajax_action'] === 'crawl_site' ) {
             $this->crawl_site();
-            return;
         }
-
     }
 
     public function generate_discovered_links_list() {
+        $second_crawl_file_path = $this->settings['wp_uploads_path'] .
+        '/WP-STATIC-2ND-CRAWL-LIST.txt';
+
         $already_crawled = file(
             $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-INITIAL-CRAWL-LIST.txt',
@@ -92,8 +91,6 @@ class SiteCrawler {
     }
 
     public function crawl_discovered_links() {
-        error_log('crawl_discovered');
-
         $second_crawl_file_path = $this->settings['wp_uploads_path'] .
         '/WP-STATIC-2ND-CRAWL-LIST.txt';
 
@@ -120,13 +117,24 @@ class SiteCrawler {
                 $this->crawlABitMore();
             } else {
                 // TODO: added to handle case where 2nd crawl list is empty
-                echo 'SUCCESS';
+                if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+                    echo 'SUCCESS';
+                }
             }
         }
     }
 
     public function crawl_site() {
-        error_log('crawl_site');
+        // crude detection for CLI export to use 2nd crawl phase
+        $this->list_of_urls_to_crawl_path =
+            $this->settings['wp_uploads_path'] .
+            '/WP-STATIC-FINAL-2ND-CRAWL-LIST.txt';
+
+        if ( is_file( $this->list_of_urls_to_crawl_path ) ) {
+            $this->crawl_discovered_links(); 
+
+            return;
+        } 
 
         $this->list_of_urls_to_crawl_path =
             $this->settings['wp_uploads_path'] .
@@ -145,13 +153,14 @@ class SiteCrawler {
                 $this->crawlABitMore();
             } else {
                 // TODO: added to handle case where 2nd crawl list is empty
-                echo 'SUCCESS';
+                if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+                    echo 'SUCCESS';
+                }
             }
         }
     }
 
     public function crawlABitMore() {
-        error_log('crawl a bit more');
         $batch_of_links_to_crawl = array();
 
         $this->urls_to_crawl = file(
@@ -394,9 +403,7 @@ class SiteCrawler {
         } else {
             if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
                 echo 'SUCCESS';
-            } else {
-                die();
-            }
+            } 
         }
     }
 

@@ -39,11 +39,7 @@ class XMLProcessor {
         require_once dirname( __FILE__ ) . '/../URL2/URL2.php';
         $this->page_url = new Net_URL2( $page_url );
 
-        $this->discoverNewURLs = (
-            isset( $this->settings['discoverNewURLs'] ) &&
-             $this->settings['discoverNewURLs'] == 1 &&
-             $_POST['ajax_action'] === 'crawl_site'
-        );
+        $this->discoverNewURLs = ( $_POST['ajax_action'] === 'crawl_site' );
 
         $this->discovered_urls = [];
 
@@ -280,7 +276,7 @@ class XMLProcessor {
         }
 
         file_put_contents(
-            $this->settings['working_directory'] . '/WP-STATIC-DISCOVERED-URLS',
+            $this->settings['wp_uploads_path'] . '/WP-STATIC-DISCOVERED-URLS',
             PHP_EOL .
                 implode( PHP_EOL, array_unique( $this->discovered_urls ) ),
             FILE_APPEND | LOCK_EX
