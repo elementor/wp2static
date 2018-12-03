@@ -162,7 +162,7 @@ class StaticHtmlOutput_S3 {
         $lines = $this->get_items_to_export( $batch_size );
 
         // vendor specific from here
-        require_once __DIR__ . '/MimeTypes.php';
+        require_once dirname( __FILE__ ) . '/../library/StaticHtmlOutput/MimeTypes.php';
         require_once dirname( __FILE__ ) . '/../library/aws/aws-autoloader.php';
         require_once dirname( __FILE__ ) . '/../library/GuzzleHttp/autoloader.php';
 
