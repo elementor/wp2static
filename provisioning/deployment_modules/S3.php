@@ -14,7 +14,7 @@ class StaticHtmlOutput_S3 {
 
         if ( isset( $_POST['selected_deployment_option'] ) ) {
             require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/PostSettings.php';
+                '/../library/StaticHtmlOutput/PostSettings.php';
 
             $this->settings = WPSHO_PostSettings::get( $target_settings );
             $this->viaCLI = false;
@@ -93,7 +93,7 @@ class StaticHtmlOutput_S3 {
             $this->clear_file_list();
 
             require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/Archive.php';
+                '/../library/StaticHtmlOutput/Archive.php';
 
             $archive = new Archive();
             $archive->setToCurrentArchive();
@@ -163,8 +163,8 @@ class StaticHtmlOutput_S3 {
 
         // vendor specific from here
         require_once __DIR__ . '/MimeTypes.php';
-        require_once dirname( __FILE__ ) . '/../aws/aws-autoloader.php';
-        require_once dirname( __FILE__ ) . '/../GuzzleHttp/autoloader.php';
+        require_once dirname( __FILE__ ) . '/../library/aws/aws-autoloader.php';
+        require_once dirname( __FILE__ ) . '/../library/GuzzleHttp/autoloader.php';
 
         $S3 = Aws\S3\S3Client::factory(
             array(
@@ -197,7 +197,7 @@ class StaticHtmlOutput_S3 {
             } catch ( Aws\S3\Exception\S3Exception $e ) {
                 error_log( $e );
                 require_once dirname( __FILE__ ) .
-                    '/../StaticHtmlOutput/WsLog.php';
+                    '/../library/StaticHtmlOutput/WsLog.php';
 
                 WsLog::l( 'S3 ERROR RETURNED: ' . $e );
                 echo "There was an error testing S3.\n";
@@ -222,8 +222,8 @@ class StaticHtmlOutput_S3 {
     }
 
     public function test_s3() {
-        require_once dirname( __FILE__ ) . '/../aws/aws-autoloader.php';
-        require_once dirname( __FILE__ ) . '/../GuzzleHttp/autoloader.php';
+        require_once dirname( __FILE__ ) . '/../library/aws/aws-autoloader.php';
+        require_once dirname( __FILE__ ) . '/../library/GuzzleHttp/autoloader.php';
 
         $S3 = Aws\S3\S3Client::factory(
             array(
@@ -250,7 +250,7 @@ class StaticHtmlOutput_S3 {
         } catch ( Aws\S3\Exception\S3Exception $e ) {
             error_log( $e );
             require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/WsLog.php';
+                '/../library/StaticHtmlOutput/WsLog.php';
 
             WsLog::l( 'S3 ERROR RETURNED: ' . $e );
             echo "There was an error testing S3.\n";
@@ -265,7 +265,7 @@ class StaticHtmlOutput_S3 {
             return;
         }
 
-        require_once __DIR__ . '/../CloudFront/CloudFront.php';
+        require_once __DIR__ . '/../library/CloudFront/CloudFront.php';
         $cloudfront_id = $this->settings['cfDistributionId'];
 
         if ( ! empty( $cloudfront_id ) ) {
@@ -284,7 +284,7 @@ class StaticHtmlOutput_S3 {
                 echo 'SUCCESS';
             } else {
                 require_once dirname( __FILE__ ) .
-                    '/../StaticHtmlOutput/WsLog.php';
+                    '/../library/StaticHtmlOutput/WsLog.php';
                 WsLog::l( 'CF ERROR: ' . $cf->getResponseMessage() );
             }
         } else {
