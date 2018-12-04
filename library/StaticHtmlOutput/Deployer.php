@@ -134,6 +134,19 @@ class Deployer {
                 $gitlab->prepare_deployment();
                 $gitlab->upload_files();
                 break;
+            case 'netlify':
+                error_log('Netlify deployment...');
+
+                require_once $powerpack_dir . '/Netlify.php';
+                
+                if ( $test ) {
+                    error_log('testing Netlify deploy');
+                    $netlify->test_netlify();
+                    return;
+                }
+
+                $netlify->deploy();
+                break;
         }
 
         // TODO: email upon successful cron deploy

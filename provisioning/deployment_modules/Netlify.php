@@ -18,7 +18,11 @@ class StaticHtmlOutput_Netlify {
 
             $this->settings = WPSHO_PostSettings::get( $target_settings );
         } else {
-            error_log( 'TODO: load settings from DB' );
+            require_once dirname( __FILE__ ) .
+                '/../library/StaticHtmlOutput/DBSettings.php';
+            
+            $this->settings = WPSHO_DBSettings::get( $target_settings );
+ 
         }
 
         $this->settings['netlifySiteID'];
@@ -80,7 +84,9 @@ class StaticHtmlOutput_Netlify {
                 )
             );
 
-            echo 'SUCCESS';
+            if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+                echo 'SUCCESS';
+            } 
 
         } catch ( Exception $e ) {
             require_once dirname( __FILE__ ) .
