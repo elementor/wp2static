@@ -152,6 +152,7 @@ class StaticHtmlOutput_S3 {
 
     public function transfer_files() {
         $filesRemaining = $this->get_remaining_items_count();
+        error_log($filesRemaining);
 
         if ( $filesRemaining < 0 ) {
             echo 'ERROR';
@@ -216,11 +217,15 @@ class StaticHtmlOutput_S3 {
 
         // end vendor specific
         $filesRemaining = $this->get_remaining_items_count();
+
+        error_log($filesRemaining);
+
         if ( $filesRemaining > 0 ) {
-            if ( $this->viaCLI ) {
+            if ( defined( 'WP_CLI' ) && WP_CLI ) {
                 $this->transfer_files();
+            } else {
+                echo $filesRemaining;
             }
-            echo $filesRemaining;
         } else {
             if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
                 echo 'SUCCESS';
