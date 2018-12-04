@@ -127,10 +127,12 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
 
 = 5.9 =
 
- * Bugfix: Prevent rewriting mailto: links containing domain
- * Bugfix: Prevent rewriting URLs on external domains
- * Bugfix: Offline ZIP creation now functioning properly
- * Bugfix: Ignore certificate errors when crawling
+ * New feature: WP CLI integration
+ * New feature: auto-deploy to Bitbucket
+ * New feature: auto-deploy to GitLab
+ * New feature: send email upon completion
+ * New feature: exclude URLs from being crawled/exported
+ * New feature: initial support for feeds/xml exporting
  * Enhancement: preview initial crawl list before starting your export
  * Enhancement: much improved export speeds via batching requests
  * Enhancement: test external deploy settings before starting export
@@ -142,11 +144,10 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
  * Enhancement: easy access to export/deploy logs from Logs tab
  * Enhancement: strip WP's noindex,follow meta tag
  * Enhancement: support Netlify _headers and _redirects files
- * New feature: send email upon completion
- * New feature: exclude URLs from being crawled/exported
- * New feature: initial support for feeds/xml exporting
- * New feature: deploy to Bitbucket
- * New feature: deploy to GitLab
+ * Bugfix: Prevent rewriting mailto: links containing domain
+ * Bugfix: Prevent rewriting URLs on external domains
+ * Bugfix: Offline ZIP creation now functioning properly
+ * Bugfix: Ignore certificate errors when crawling
  * Drop feature: deploy to Dropbox (they don't love static sites anymore)
  * Plugin name change to WP2Static
 
@@ -465,10 +466,12 @@ Initial release to Wordpress community
 
 = 5.9 =
 
- * Bugfix: Prevent rewriting mailto: links containing domain
- * Bugfix: Prevent rewriting URLs on external domains
- * Bugfix: Offline ZIP creation now functioning properly
- * Bugfix: Ignore certificate errors when crawling
+ * New feature: WP CLI integration
+ * New feature: auto-deploy to Bitbucket
+ * New feature: auto-deploy to GitLab
+ * New feature: send email upon completion
+ * New feature: exclude URLs from being crawled/exported
+ * New feature: initial support for feeds/xml exporting
  * Enhancement: preview initial crawl list before starting your export
  * Enhancement: much improved export speeds via batching requests
  * Enhancement: test external deploy settings before starting export
@@ -480,11 +483,10 @@ Initial release to Wordpress community
  * Enhancement: easy access to export/deploy logs from Logs tab
  * Enhancement: strip WP's noindex,follow meta tag
  * Enhancement: support Netlify _headers and _redirects files
- * New feature: send email upon completion
- * New feature: exclude URLs from being crawled/exported
- * New feature: initial support for feeds/xml exporting
- * New feature: deploy to Bitbucket
- * New feature: deploy to GitLab
+ * Bugfix: Prevent rewriting mailto: links containing domain
+ * Bugfix: Prevent rewriting URLs on external domains
+ * Bugfix: Offline ZIP creation now functioning properly
+ * Bugfix: Ignore certificate errors when crawling
  * Drop feature: deploy to Dropbox (they don't love static sites anymore)
  * Plugin name change to WP2Static
 
