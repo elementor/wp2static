@@ -128,8 +128,10 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
 
             $targetPath = rtrim( $targetPath );
 
+            $targetPath = ltrim($targetPath, '/');
+
             $globHashPathLines[] = $globHash['sha'] . ',' .
-                rtrim( $targetPath ) . basename( $fileToTransfer );
+                rtrim( $targetPath ) . basename( $fileToTransfer ) . "\n";
         }
 
         // TODO: move this file write out of loop - write to array in loop
