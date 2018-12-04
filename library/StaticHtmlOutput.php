@@ -116,7 +116,7 @@ class StaticHtmlOutput_Controller {
             'manage_options',
             self::HOOK,
             array( self::$_instance, 'renderOptionsPage' ),
-            $pluginDirUrl . 'views/menu_icon_32x32.png'
+            'dashicons-shield-alt'
         );
 
         add_action(
