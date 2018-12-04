@@ -117,6 +117,23 @@ class Deployer {
                 $github->upload_blobs();
                 $github->commit_new_tree();
                 break;
+            case 'gitlab':
+                error_log('GitLab deployment...');
+
+                require_once dirname( __FILE__ ) .
+                    '/../StaticHtmlOutput/SitePublisher.php';
+
+                require_once $powerpack_dir . '/GitLab.php';
+                
+                if ( $test ) {
+                    error_log('testing GitLab deploy');
+                    $gitlab->test_file_create();
+                    return;
+                }
+
+                $gitlab->prepare_deployment();
+                $gitlab->upload_files();
+                break;
         }
 
         // TODO: email upon successful cron deploy
