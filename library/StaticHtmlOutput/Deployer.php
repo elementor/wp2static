@@ -82,6 +82,23 @@ class Deployer {
                 $bunny->transfer_files();
                 $bunny->purge_all_cache();
                 break;
+            case 'ftp':
+                error_log('FTP deployment...');
+
+                require_once dirname( __FILE__ ) .
+                    '/../StaticHtmlOutput/SitePublisher.php';
+
+                require_once $powerpack_dir . '/FTP.php';
+                
+                if ( $test ) {
+                    error_log('testing FTP deploy');
+                    $ftp->test_ftp();
+                    return;
+                }
+
+                $ftp->prepare_export();
+                $ftp->transfer_files();
+                break;
         }
 
         // TODO: email upon successful cron deploy
