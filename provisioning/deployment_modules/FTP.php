@@ -16,10 +16,13 @@ class StaticHtmlOutput_FTP extends StaticHtmlOutput_SitePublisher {
 
             $this->settings = WPSHO_PostSettings::get( $target_settings );
         } else {
-            error_log( 'TODO: load settings from DB' );
+            require_once dirname( __FILE__ ) .
+                '/../library/StaticHtmlOutput/DBSettings.php';
+            
+            $this->settings = WPSHO_DBSettings::get( $target_settings );
         }
 
-        $this->exportFileList = $this->settings['working_directory'] .
+        $this->exportFileList = $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-EXPORT-FTP-FILES-TO-EXPORT';
 
         $this->r_path = '';
@@ -46,7 +49,7 @@ class StaticHtmlOutput_FTP extends StaticHtmlOutput_SitePublisher {
         }
     }
 
-    public function transfer_files( $viaCLI = false ) {
+    public function transfer_files() {
         require_once __DIR__ . '/../library/FTP/FtpClient.php';
         require_once __DIR__ . '/../library/FTP/FtpException.php';
         require_once __DIR__ . '/../library/FTP/FtpWrapper.php';
@@ -115,13 +118,15 @@ class StaticHtmlOutput_FTP extends StaticHtmlOutput_SitePublisher {
 
         if ( $filesRemaining > 0 ) {
 
-            if ( $viaCLI ) {
-                $this->transfer_files( true );
+            if ( defined( 'WP_CLI' ) && WP_CLI ) {
+                $this->transfer_files();
+            } else {
+                echo $filesRemaining;
             }
-
-            echo $filesRemaining;
         } else {
-            echo 'SUCCESS';
+            if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+                echo 'SUCCESS';
+            } 
         }
     }
 
@@ -140,7 +145,10 @@ class StaticHtmlOutput_FTP extends StaticHtmlOutput_SitePublisher {
                 $this->settings['ftpPassword']
             );
 
-            echo 'SUCCESS';
+            if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+                echo 'SUCCESS';
+            } 
+
             unset( $ftp );
             return;
         } catch ( Exception $e ) {
@@ -154,4 +162,4 @@ class StaticHtmlOutput_FTP extends StaticHtmlOutput_SitePublisher {
     }
 }
 
-$ftp_deployer = new StaticHtmlOutput_FTP();
+$ftp = new StaticHtmlOutput_FTP();
