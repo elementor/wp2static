@@ -18,14 +18,17 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
 
             $this->settings = WPSHO_PostSettings::get( $target_settings );
         } else {
-            error_log( 'TODO: load settings from DB' );
+            require_once dirname( __FILE__ ) .
+                '/../library/StaticHtmlOutput/DBSettings.php';
+            
+            $this->settings = WPSHO_DBSettings::get( $target_settings );
         }
 
         $this->exportFileList =
-            $this->settings['working_directory'] .
+            $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-EXPORT-GITLAB-FILES-TO-EXPORT';
         $archiveDir = file_get_contents(
-            $this->settings['working_directory'] .
+            $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-CURRENT-ARCHIVE'
         );
 
@@ -91,7 +94,7 @@ EOD;
     public function prepare_deployment() {
             $this->clear_file_list();
             $this->create_deployment_list(
-                $this->settings['working_directory'] . '/' .
+                $this->settings['wp_uploads_path'] . '/' .
                     $this->archive->name
             );
 
@@ -99,7 +102,9 @@ EOD;
 
             $this->createGitLabPagesConfig();
 
-            echo 'SUCCESS';
+            if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+                echo 'SUCCESS';
+            } 
     }
 
     public function mergeItemsForDeletion( $items ) {
@@ -267,7 +272,7 @@ EOD;
         }
     }
 
-    public function upload_files( $viaCLI = false ) {
+    public function upload_files() {
         require_once dirname( __FILE__ ) .
             '/../library/GuzzleHttp/autoloader.php';
 
@@ -348,13 +353,16 @@ EOD;
 
         if ( $filesRemaining > 0 ) {
 
-            if ( $viaCLI ) {
-                $this->upload_files( true );
+            if ( defined( 'WP_CLI' ) && WP_CLI ) {
+                $this->upload_files();
+            } else {
+                echo $filesRemaining;
             }
 
-            echo $filesRemaining;
         } else {
-            echo 'SUCCESS';
+            if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+                echo 'SUCCESS';
+            } 
         }
     }
 
@@ -409,7 +417,9 @@ EOD;
             return;
         }
 
-        echo 'SUCCESS';
+        if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+            echo 'SUCCESS';
+        } 
     }
 }
 
