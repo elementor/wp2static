@@ -293,25 +293,6 @@ class StaticHtmlOutput_Controller {
         }
     }
 
-
-    public function deploy() {
-        require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/Deployer.php';
-        $deployer = new Deployer();
-        $deployer->deploy();
-    }
-
-
-    public function doExportWithoutGUI() {
-        // $this->capture_last_deployment();
-        $this->start_export( true );
-        $this->crawl_site( true );
-        $this->post_process_archive_dir( true );
-        $this->deploy();
-        $this->post_export_teardown();
-
-        // $this->create_zip();
-    }
-
     public function reset_default_settings() {
         if ( ! delete_option( 'wp2static-options' ) ) {
             error_log( "Couldn't reset plugin to default settings" );

@@ -20,11 +20,14 @@ class StaticHtmlOutput_S3 {
             $this->viaCLI = false;
         } else {
             $this->viaCLI = true;
-            error_log( 'TODO: load settings from DB' );
+            require_once dirname( __FILE__ ) .
+                '/../library/StaticHtmlOutput/DBSettings.php';
+            
+            $this->settings = WPSHO_DBSettings::get( $target_settings );
         }
 
         $this->exportFileList =
-            $this->settings['working_directory'] .
+            $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT';
 
         switch ( $_POST['ajax_action'] ) {
@@ -107,7 +110,9 @@ class StaticHtmlOutput_S3 {
                 $remote_path
             );
 
-            echo 'SUCCESS';
+            if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+                echo 'SUCCESS';
+            } 
     }
 
     public function get_items_to_export( $batch_size = 1 ) {
@@ -217,7 +222,9 @@ class StaticHtmlOutput_S3 {
             }
             echo $filesRemaining;
         } else {
-            echo 'SUCCESS';
+            if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+                echo 'SUCCESS';
+            } 
         }
     }
 
@@ -256,12 +263,16 @@ class StaticHtmlOutput_S3 {
             echo "There was an error testing S3.\n";
         }
 
-        echo 'SUCCESS';
+            if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+                echo 'SUCCESS';
+            } 
     }
 
     public function cloudfront_invalidate_all_items() {
         if ( ! isset( $this->settings['cfDistributionId'] ) ) {
-            echo 'SUCCESS';
+            if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+                echo 'SUCCESS';
+            } 
             return;
         }
 
@@ -281,14 +292,19 @@ class StaticHtmlOutput_S3 {
             if ( $cf->getResponseMessage() === '200' ||
                 $cf->getResponseMessage() === '201' ||
                 $cf->getResponseMessage() === '201: Request accepted' ) {
-                echo 'SUCCESS';
+
+                if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+                    echo 'SUCCESS';
+                } 
             } else {
                 require_once dirname( __FILE__ ) .
                     '/../library/StaticHtmlOutput/WsLog.php';
                 WsLog::l( 'CF ERROR: ' . $cf->getResponseMessage() );
             }
         } else {
-            echo 'SUCCESS';
+            if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+                echo 'SUCCESS';
+            } 
         }
     }
 }

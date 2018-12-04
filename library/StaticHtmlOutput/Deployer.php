@@ -4,20 +4,50 @@
 class Deployer {
 
     public function __construct() {
+        $target_settings = array(
+            'general',
+        );
 
-        switch ( $this->selected_deployment_option ) {
+        if ( isset( $_POST['selected_deployment_option'] ) ) {
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/PostSettings.php';
+            $this->settings = WPSHO_PostSettings::get( $target_settings );
+        } else {
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/DBSettings.php';
+            
+            $this->settings = WPSHO_DBSettings::get( $target_settings );
+        }
+
+    }
+
+    public function deploy( $test = false ) {
+        $powerpack_dir = dirname( __FILE__ ) . '/../../powerpack';
+
+        switch ( $this->settings['selected_deployment_option'] ) {
             case 'folder':
-                $this->copyStaticSiteToPublicFolder();
+                error_log('folder deploy, already done');
                 break;
-
             case 'zip':
-                $this->create_zip();
+                error_log('zip deploy, already done');
                 break;
+            case 's3':
+                error_log('s3 deployment...');
+                require_once $powerpack_dir . '/S3.php';
+                
+                if ( $test ) {
+                    error_log('testing s3 deploy');
+                    $s3->test_s3();
+                    return;
+                }
+
+                $s3->prepare_deployment();
+                $s3->transfer_files();
+                $s3->cloudfront_invalidate_all_items();
         }
 
         // TODO: email upon successful cron deploy
-        // $this->emailDeployNotification();
-        error_log( 'scheduled deploy complete' );
+        $this->emailDeployNotification();
     }
 
     public function emailDeployNotification() {
