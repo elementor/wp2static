@@ -22,7 +22,10 @@ class ArchiveProcessor {
                 '/../StaticHtmlOutput/PostSettings.php';
             $this->settings = WPSHO_PostSettings::get( $target_settings );
         } else {
-            error_log( 'TODO: load settingWWWWWWWW DB' );
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/DBSettings.php';
+            
+            $this->settings = WPSHO_DBSettings::get( $target_settings );
         }
     }
 
@@ -206,9 +209,13 @@ class ArchiveProcessor {
     }
 
     public function create_zip() {
-        if ( ! $this->settings['selected_deployment_option'] === 'zip' ||
-            ! $this->settings['selected_deployment_option'] === 'netlify'
-            ) {
+        if ( in_array(
+                $this->settings['selected_deployment_option'],
+                array('zip', 'netlify')
+            )
+        ) {
+            error_log('will create zip');
+        } else {
             return;
         }
 
