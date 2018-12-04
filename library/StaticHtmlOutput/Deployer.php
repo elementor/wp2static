@@ -34,7 +34,7 @@ class Deployer {
                 error_log('zip deploy, already done');
                 break;
             case 's3':
-                error_log('s3 deployment...');
+                error_log('S3 deployment...');
                 require_once $powerpack_dir . '/S3.php';
                 
                 if ( $test ) {
@@ -48,7 +48,7 @@ class Deployer {
                 $s3->cloudfront_invalidate_all_items();
                 break;
             case 'bitbucket':
-                error_log('bitbucket deployment...');
+                error_log('Bitbucket deployment...');
 
                 require_once dirname( __FILE__ ) .
                     '/../StaticHtmlOutput/SitePublisher.php';
@@ -63,6 +63,24 @@ class Deployer {
 
                 $bitbucket->prepare_export();
                 $bitbucket->upload_files();
+                break;
+            case 'bunnycdn':
+                error_log('BunnyCDN deployment...');
+
+                require_once dirname( __FILE__ ) .
+                    '/../StaticHtmlOutput/SitePublisher.php';
+
+                require_once $powerpack_dir . '/BunnyCDN.php';
+                
+                if ( $test ) {
+                    error_log('testing BunnyCDN deploy');
+                    $bunny->test_deploy();
+                    return;
+                }
+
+                $bunny->prepare_export();
+                $bunny->transfer_files();
+                $bunny->purge_all_cache();
                 break;
         }
 
