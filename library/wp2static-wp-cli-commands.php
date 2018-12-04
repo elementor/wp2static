@@ -99,6 +99,9 @@ class WP2Static_CLI extends WP_CLI_Command {
     public function generate() {
         $plugin = StaticHtmlOutput_Controller::getInstance();
 
+        // TODO: reimplement diff-based deploys
+        // $plugin->capture_last_deployment();
+
         $plugin->prepare_for_export();
 
         require_once dirname( __FILE__ ) .
@@ -108,6 +111,32 @@ class WP2Static_CLI extends WP_CLI_Command {
         $site_crawler->crawl_discovered_links();
         $plugin->post_process_archive_dir();
 
+        $plugin->deploy();
+
+        //$plugin->post_export_teardown();
+    }
+
+    /**
+     * Deploy the generated static site.
+     * ## OPTIONS
+     *
+     * [--test]
+     * : Validate the connection settings without deploying
+     */
+    public function deploy( $args, $assoc_args ) {
+        $test = false;
+
+        if ( ! empty( $assoc_args['test'] ) ) {
+            $test = true;
+        }
+
+        require_once dirname( __FILE__ ) . '/StaticHtmlOutput/Deployer.php';
+
+        $deployer = new Deployer();
+
+        $deployer->deploy( $test );
+
+        //$plugin->post_export_teardown();
     }
 }
 
