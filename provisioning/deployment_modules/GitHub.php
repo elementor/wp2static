@@ -18,7 +18,10 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
 
             $this->settings = WPSHO_PostSettings::get( $target_settings );
         } else {
-            error_log( 'TODO: load settings from DB' );
+            require_once dirname( __FILE__ ) .
+                '/../library/StaticHtmlOutput/DBSettings.php';
+            
+            $this->settings = WPSHO_DBSettings::get( $target_settings );
         }
 
         list($this->user, $this->repository) = explode(
@@ -27,10 +30,10 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
         );
 
         $this->exportFileList =
-            $this->settings['working_directory'] .
+            $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT';
         $this->globHashAndPathList =
-            $this->settings['working_directory'] .
+            $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-EXPORT-GITHUB-GLOBS-PATHS';
 
         // TODO: move this where needed
@@ -61,7 +64,7 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
         }
     }
 
-    public function upload_blobs( $viaCLI = false ) {
+    public function upload_blobs() {
         require_once dirname( __FILE__ ) .
             '/../library/GuzzleHttp/autoloader.php';
         require_once __DIR__ . '/../library/Github/autoload.php';
@@ -140,13 +143,16 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
 
         if ( $filesRemaining > 0 ) {
 
-            if ( $viaCLI ) {
-                $this->upload_blobs( true );
+            if ( defined( 'WP_CLI' ) && WP_CLI ) {
+                $this->upload_blobs();
+            } else {
+                echo $filesRemaining;
             }
 
-            echo $filesRemaining;
         } else {
-            echo 'SUCCESS';
+            if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+                echo 'SUCCESS';
+            } 
         }
     }
 
@@ -233,7 +239,9 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
         if ( $this->get_remaining_items_count() > 0 ) {
             echo $this->get_remaining_items_count();
         } else {
-            echo 'SUCCESS';
+            if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+                echo 'SUCCESS';
+            } 
         }
     }
 
@@ -272,7 +280,9 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
             return;
         }
 
-        echo 'SUCCESS';
+        if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+            echo 'SUCCESS';
+        } 
     }
 }
 

@@ -99,6 +99,24 @@ class Deployer {
                 $ftp->prepare_export();
                 $ftp->transfer_files();
                 break;
+            case 'github':
+                error_log('GitHub deployment...');
+
+                require_once dirname( __FILE__ ) .
+                    '/../StaticHtmlOutput/SitePublisher.php';
+
+                require_once $powerpack_dir . '/GitHub.php';
+                
+                if ( $test ) {
+                    error_log('testing GitHub deploy');
+                    $github->test_blob_create();
+                    return;
+                }
+
+                $github->prepare_export();
+                $github->upload_blobs();
+                $github->commit_new_tree();
+                break;
         }
 
         // TODO: email upon successful cron deploy
