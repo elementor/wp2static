@@ -18,15 +18,18 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
 
             $this->settings = WPSHO_PostSettings::get( $target_settings );
         } else {
-            error_log( 'TODO: load settings from DB' );
+            require_once dirname( __FILE__ ) .
+                '/../library/StaticHtmlOutput/DBSettings.php';
+            
+            $this->settings = WPSHO_DBSettings::get( $target_settings );
         }
 
         $this->exportFileList =
-            $this->settings['working_directory'] .
+            $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT';
 
         $archiveDir = file_get_contents(
-            $this->settings['working_directory'] .
+            $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-CURRENT-ARCHIVE'
         );
 
@@ -59,7 +62,7 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
     }
 
 
-    public function transfer_files( $viaCLI = false ) {
+    public function transfer_files() {
         require_once dirname( __FILE__ ) . '/../library/GuzzleHttp/autoloader.php';
 
         $filesRemaining = $this->get_remaining_items_count();
@@ -124,13 +127,15 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
 
         if ( $filesRemaining > 0 ) {
 
-            if ( $viaCLI ) {
-                $this->transfer_files( true );
+            if ( defined( 'WP_CLI' ) && WP_CLI ) {
+                $this->transfer_files();
+            } else {
+                echo $filesRemaining;
             }
-
-            echo $filesRemaining;
         } else {
-            echo 'SUCCESS';
+            if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+                echo 'SUCCESS';
+            } 
         }
     }
 
@@ -154,7 +159,9 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
             );
 
             if ( $response->getStatusCode() === 200 ) {
-                echo 'SUCCESS';
+                if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+                    echo 'SUCCESS';
+                } 
             } else {
                 echo 'FAIL';
             }
@@ -200,7 +207,9 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
             throw new Exception( $e );
         }
 
-        echo 'SUCCESS';
+        if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+            echo 'SUCCESS';
+        } 
     }
 }
 
