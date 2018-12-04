@@ -24,6 +24,8 @@ class Deployer {
     public function deploy( $test = false ) {
         $powerpack_dir = dirname( __FILE__ ) . '/../../powerpack';
 
+        error_log($this->settings['selected_deployment_option']);
+
         switch ( $this->settings['selected_deployment_option'] ) {
             case 'folder':
                 error_log('folder deploy, already done');
@@ -44,6 +46,24 @@ class Deployer {
                 $s3->prepare_deployment();
                 $s3->transfer_files();
                 $s3->cloudfront_invalidate_all_items();
+                break;
+            case 'bitbucket':
+                error_log('bitbucket deployment...');
+
+                require_once dirname( __FILE__ ) .
+                    '/../StaticHtmlOutput/SitePublisher.php';
+
+                require_once $powerpack_dir . '/Bitbucket.php';
+                
+                if ( $test ) {
+                    error_log('testing bitbucket deploy');
+                    $bitbucket->test_blob_create();
+                    return;
+                }
+
+                $bitbucket->prepare_export();
+                $bitbucket->upload_files();
+                break;
         }
 
         // TODO: email upon successful cron deploy

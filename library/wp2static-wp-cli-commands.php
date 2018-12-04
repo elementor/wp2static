@@ -110,10 +110,6 @@ class WP2Static_CLI extends WP_CLI_Command {
         $site_crawler->crawl_site();
         $site_crawler->crawl_discovered_links();
         $plugin->post_process_archive_dir();
-
-        $plugin->deploy();
-
-        //$plugin->post_export_teardown();
     }
 
     /**
