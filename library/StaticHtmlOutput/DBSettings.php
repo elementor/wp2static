@@ -34,15 +34,10 @@ class WPSHO_DBSettings {
             'rewriteWPCONTENT',
             'rewriteWPINC',
             'rewriteWPPaths',
-            'new_wp_content_path',
-            'new_themes_path',
-            'new_wp_content_path',
             'new_active_theme_path',
-            'new_wp_inc_path',
+            'new_plugins_path',
             'new_themes_path',
             'new_uploads_path',
-            'new_wp_content_path',
-            'new_plugins_path',
             'new_wp_content_path',
             'new_wpinc_path',
             'processing_method',
@@ -215,6 +210,23 @@ class WPSHO_DBSettings {
         /*
             Settings requiring transformation
         */
+
+        $settings['new_wp_content_path'] = '/' .
+            $settings['rewriteWPCONTENT'];
+
+        $settings['new_themes_path'] = $settings['new_wp_content_path'] .
+            '/' . $settings['rewriteTHEMEROOT'];
+
+        $settings['new_active_theme_path'] = $settings['new_themes_path'] .
+            '/' . $settings['rewriteTHEMEDIR'];
+
+        $settings['new_uploads_path'] = $settings['new_wp_content_path'] .
+            '/' . $settings['rewriteUPLOADS'];
+
+        $settings['new_plugins_path'] = $settings['new_wp_content_path'] .
+            '/' . $settings['rewritePLUGINDIR'];
+
+        $settings['new_wpinc_path'] = '/' . $settings['rewriteWPINC'];
 
         // TODO: shift this logic to places it's actually used
         $settings['working_directory'] =
