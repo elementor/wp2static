@@ -86,11 +86,13 @@ class StaticHtmlOutput_SitePublisher {
         $this->clear_file_list();
 
         $this->create_deployment_list(
-            $this->settings['working_directory'] . '/' .
+            $this->settings['wp_uploads_path'] . '/' .
                 $this->archive->name
         );
 
-        echo 'SUCCESS';
+        if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+            echo 'SUCCESS';
+        } 
     }
 
     public function get_items_to_export( $batch_size = 1 ) {

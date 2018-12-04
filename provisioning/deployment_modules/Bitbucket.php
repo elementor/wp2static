@@ -18,7 +18,10 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
 
             $this->settings = WPSHO_PostSettings::get( $target_settings );
         } else {
-            error_log( 'TODO: load settings from DB' );
+            require_once dirname( __FILE__ ) .
+                '/../library/StaticHtmlOutput/DBSettings.php';
+            
+            $this->settings = WPSHO_DBSettings::get( $target_settings );
         }
 
         list($this->user, $this->repository) = explode(
@@ -27,10 +30,10 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
         );
 
         $this->exportFileList =
-            $this->settings['working_directory'] .
+            $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-EXPORT-BITBUCKET-FILES-TO-EXPORT';
         $archiveDir = file_get_contents(
-            $this->settings['working_directory'] .
+            $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-CURRENT-ARCHIVE'
         );
 
@@ -122,7 +125,7 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
         }
     }
 
-    public function upload_files( $viaCLI = false ) {
+    public function upload_files() {
         require_once dirname( __FILE__ ) .
             '/../library/GuzzleHttp/autoloader.php';
 
@@ -193,14 +196,15 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
         $filesRemaining = $this->get_remaining_items_count();
 
         if ( $filesRemaining > 0 ) {
-
-            if ( $viaCLI ) {
-                $this->upload_files( true );
-            }
-
-            echo $filesRemaining;
+            if ( defined( 'WP_CLI' ) && WP_CLI ) {
+                $this->upload_files();
+            } else {
+                echo $filesRemaining;
+            } 
         } else {
-            echo 'SUCCESS';
+            if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+                echo 'SUCCESS';
+            } 
         }
     }
 
@@ -246,7 +250,9 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
             return;
         }
 
-        echo 'SUCCESS';
+        if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+            echo 'SUCCESS';
+        } 
     }
 }
 

@@ -11,6 +11,7 @@
  * @package     WP_Static_HTML_Output
  */
 
+
 // intercept low latency dependent actions and avoid boostrapping whole plugin
 require_once dirname( __FILE__ ) .
     '/library/StaticHtmlOutput/Dispatcher.php';
