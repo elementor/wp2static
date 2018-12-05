@@ -182,6 +182,10 @@ class WP2Static_CLI {
      * Generate a static copy of your WordPress site.
      */
     public function generate() {
+        WP_CLI::line( 'Generating static copy of WordPress site' );
+
+        $start_time = microtime( true );
+
         $plugin = StaticHtmlOutput_Controller::getInstance();
 
         // TODO: reimplement diff-based deploys
@@ -195,6 +199,14 @@ class WP2Static_CLI {
         $site_crawler->crawl_site();
         $site_crawler->crawl_discovered_links();
         $plugin->post_process_archive_dir();
+
+        $end_time = microtime( true );
+    
+        $duration = $end_time - $start_time;
+
+        WP_CLI::success( 'Generated static site archive in ' .
+            date( "H:i:s", $duration )
+        );
     }
 
     /**
