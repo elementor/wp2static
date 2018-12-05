@@ -141,14 +141,14 @@ class Deployer {
         }
 
         $end_time = microtime( true );
-    
+
         $duration = $end_time - $start_time;
 
         WP_CLI::success( 'Deployed to: ' . $method . ' in ' .
             date( "H:i:s", $duration )
         );
 
-        WP_CLI::line( 'Sending conformation email...' );
+        WP_CLI::line( 'Sending confirmation email...' );
         $this->emailDeployNotification();
     }
 
