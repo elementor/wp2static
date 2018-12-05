@@ -22,7 +22,7 @@ class StaticHtmlOutput_S3 {
             $this->viaCLI = true;
             require_once dirname( __FILE__ ) .
                 '/../library/StaticHtmlOutput/DBSettings.php';
-            
+
             $this->settings = WPSHO_DBSettings::get( $target_settings );
         }
 
