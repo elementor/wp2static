@@ -209,16 +209,12 @@ class ArchiveProcessor {
     }
 
     public function create_zip() {
-        if ( in_array(
-                $this->settings['selected_deployment_option'],
-                array('zip', 'netlify')
-            )
-        ) {
-            error_log('will create zip');
-        } else {
+        $deployer = $this->settings['selected_deployment_option'];
+
+        if ( ! in_array( $deployer, array( 'zip', 'netlify' ) ) ) {
             return;
         }
-
+ 
         $archivePath = rtrim( $this->archive->path, '/' );
         $tempZip = $archivePath . '.tmp';
 
