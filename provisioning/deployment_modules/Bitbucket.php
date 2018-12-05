@@ -196,13 +196,13 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
         $filesRemaining = $this->get_remaining_items_count();
 
         if ( $filesRemaining > 0 ) {
-            if ( defined( 'WP_CLI' ) && WP_CLI ) {
+            if ( defined( 'WP_CLI' ) ) {
                 $this->upload_files();
             } else {
                 echo $filesRemaining;
             } 
         } else {
-            if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+            if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
             } 
         }
@@ -250,7 +250,7 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
             return;
         }
 
-        if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+        if ( ! defined( 'WP_CLI' ) ) {
             echo 'SUCCESS';
         } 
     }

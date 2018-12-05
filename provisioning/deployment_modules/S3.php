@@ -110,7 +110,7 @@ class StaticHtmlOutput_S3 {
                 $remote_path
             );
 
-            if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+            if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
             } 
     }
@@ -221,13 +221,13 @@ class StaticHtmlOutput_S3 {
         error_log($filesRemaining);
 
         if ( $filesRemaining > 0 ) {
-            if ( defined( 'WP_CLI' ) && WP_CLI ) {
+            if ( defined( 'WP_CLI' ) ) {
                 $this->transfer_files();
             } else {
                 echo $filesRemaining;
             }
         } else {
-            if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+            if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
             } 
         }
@@ -268,14 +268,14 @@ class StaticHtmlOutput_S3 {
             echo "There was an error testing S3.\n";
         }
 
-            if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+            if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
             } 
     }
 
     public function cloudfront_invalidate_all_items() {
         if ( ! isset( $this->settings['cfDistributionId'] ) ) {
-            if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+            if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
             } 
             return;
@@ -298,7 +298,7 @@ class StaticHtmlOutput_S3 {
                 $cf->getResponseMessage() === '201' ||
                 $cf->getResponseMessage() === '201: Request accepted' ) {
 
-                if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+                if ( ! defined( 'WP_CLI' ) ) {
                     echo 'SUCCESS';
                 } 
             } else {
@@ -307,7 +307,7 @@ class StaticHtmlOutput_S3 {
                 WsLog::l( 'CF ERROR: ' . $cf->getResponseMessage() );
             }
         } else {
-            if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+            if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
             } 
         }

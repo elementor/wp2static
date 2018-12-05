@@ -117,7 +117,7 @@ class SiteCrawler {
                 $this->crawlABitMore();
             } else {
                 // TODO: added to handle case where 2nd crawl list is empty
-                if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+                if ( ! defined( 'WP_CLI' ) ) {
                     echo 'SUCCESS';
                 }
             }
@@ -153,7 +153,7 @@ class SiteCrawler {
                 $this->crawlABitMore();
             } else {
                 // TODO: added to handle case where 2nd crawl list is empty
-                if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+                if ( ! defined( 'WP_CLI' ) ) {
                     echo 'SUCCESS';
                 }
             }
@@ -395,13 +395,13 @@ class SiteCrawler {
 
     public function checkIfMoreCrawlingNeeded() {
         if ( $this->remaining_urls_to_crawl > 0 ) {
-            if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+            if ( ! defined( 'WP_CLI' ) ) {
                 echo $this->remaining_urls_to_crawl;
             } else {
                $this->crawl_site(); 
             }
         } else {
-            if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+            if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
             } 
         }

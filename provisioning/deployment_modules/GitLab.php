@@ -102,7 +102,7 @@ EOD;
 
             $this->createGitLabPagesConfig();
 
-            if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+            if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
             } 
     }
@@ -353,14 +353,14 @@ EOD;
 
         if ( $filesRemaining > 0 ) {
 
-            if ( defined( 'WP_CLI' ) && WP_CLI ) {
+            if ( defined( 'WP_CLI' ) ) {
                 $this->upload_files();
             } else {
                 echo $filesRemaining;
             }
 
         } else {
-            if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+            if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
             } 
         }
@@ -417,7 +417,7 @@ EOD;
             return;
         }
 
-        if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+        if ( ! defined( 'WP_CLI' ) ) {
             echo 'SUCCESS';
         } 
     }
