@@ -22,13 +22,14 @@ class Deployer {
     }
 
     public function deploy( $test = false ) {
+        $method = $this->settings['selected_deployment_option'];
+
         WP_CLI::log( 'Deploying static site via: ' . $method );
 
         $start_time = microtime( true );
 
         $powerpack_dir = dirname( __FILE__ ) . '/../../powerpack';
 
-        $method = $this->settings['selected_deployment_option'];
 
 
         switch ( $this->settings['selected_deployment_option'] ) {
