@@ -76,54 +76,64 @@ class WP2Static_CLI {
 
 
     /**
-     * Get / set plugin settings.
+     * Read / write plugin options
+     *
      * ## OPTIONS
      *
-     * <get|set> [option-name]
-     * : Get all option names and values (get singular with --option-name)
+     * <list>
      *
-     * [--option-name]
-     * : Get stored value for singular option
+     * Get all option names and values
+     *
+     * <get|set> <option-name>
+     *
+     * Get or set a specific option via name
      *
      * [--mask-passwords]
-     * : Don't show passwords in plain text
+     *
+     * Don't show passwords in plain text
      *
      * ## EXAMPLES
      *
-     * Get all options
+     * List all options
      *
-     * wp wp2static options get --option-name="selected_deployment_option"
+     *     wp wp2static options list
+     *
+     * Get option
+     *
+     *     wp wp2static options get selected_deployment_option
+     *
+     * Set option
+     *
+     *     wp wp2static options set baseUrl
+     *
      */
     public function options( $args, $assoc_args ) {
-        error_log(print_r($args, true));
-        error_log(print_r($assoc_args, true));
+        $action = $args[0];
+        $option_name = $args[1];
 
-        $action = $arg[0];
-        $option_name = $arg[1];
+        if ( empty( $action ) ) {
+            WP_CLI::error( 'Missing required argument: <get|set>>' );
+        }
 
-        if ( ! empty( $assoc_args['get'] ) ) {
-            if ( ! empty( $assoc_args['option-name'] ) ) {
-                $option_name = $assoc_args['option-name'];
-
-
+        if ( $action === 'get' ) {
+            if ( ! empty( $option_name ) ) {
                 $plugin = StaticHtmlOutput_Controller::getInstance();
 
                 if ( ! $plugin->options->optionExists( $option_name ) ) {
                     WP_CLI::error( 'Invalid option name' );
                 } else {
-                    $option_value = $plugin->options->getOption($option_name);
+                    $option_value =
+                        $plugin->options->getOption( $option_name );
 
                     WP_CLI::line($option_value);
                 }
             } else {
-                WP_CLI::line( 'returning all option key:values' );
+                WP_CLI::error( 'Missing required argument: <option-name>' );
             }
-        } elseif ( ! empty( $assoc_args['set'] ) ) {
-            WP_CLI::line( 'setting wp2static options' );
-        } elseif ( ! empty( $assoc_args['reset'] ) ) {
-            WP_CLI::line( 'resetting to default options' );
-        } else {
-            WP_CLI::line( 'show help about cmd here' );
+        }
+
+        if ( $action === 'list' ) {
+            WP_CLI::line( 'Returning all option key:values' );
         }
     }
 
