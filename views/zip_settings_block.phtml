@@ -28,12 +28,12 @@
           <strong><?php echo __('Allow offline usage', 'static-html-output-plugin');?></strong>
         </th>
         <td>
-          <?php $tpl->displayCheckbox($this, 'allowOfflineUsage', "Check this if you're going to run your site locally, ie on a USB drive given to a client. All links will be made relative and no Base URL will be used."); ?>
+          <?php $tpl->displayCheckbox($this, 'allowOfflineUsage', "Check this if you're going to run your site locally, ie on a USB drive given to a client. All links will be made relative and no Destination URL will be used."); ?>
         </td>
       </tr>
       <tr>
         <th scope="row">
-					  <label for="baseUrl"><?php echo __('Base URL', 'static-html-output-plugin');?></label>
+					  <label for="baseUrl"><?php echo __('Destination URL', 'static-html-output-plugin');?></label>
         </th>
         <td>
           <?php $tpl->displayTextfield($this, 'baseUrl-zip', 'http://mystaticsite.com', '', ''); ?>
