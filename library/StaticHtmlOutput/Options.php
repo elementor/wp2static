@@ -3,7 +3,7 @@
 class StaticHtmlOutput_Options {
     protected $_options = array();
     protected $_optionKey = null;
-    protected $_options_to_save = array(
+    protected $_options_keys = array(
             'additionalUrls',
             'allowOfflineUsage',
             'baseUrl',
@@ -86,6 +86,81 @@ class StaticHtmlOutput_Options {
             'workingDirectory',
         );
 
+    protected $_whitelisted_keys = array(
+            'additionalUrls',
+            'allowOfflineUsage',
+            'baseUrl',
+            'baseUrl-bitbucket',
+            'baseUrl-bunnycdn',
+            'baseUrl-folder',
+            'baseUrl-ftp',
+            'baseUrl-github',
+            'baseUrl-gitlab',
+            'baseUrl-netlify',
+            'baseUrl-s3',
+            'baseUrl-zip',
+            'baseUrl-zip',
+            'basicAuthUser',
+            'bbBlobDelay',
+            'bbBlobIncrement',
+            'bbBranch',
+            'bbPath',
+            'bbRepo',
+            'bunnyBlobDelay',
+            'bunnyBlobIncrement',
+            'bunnycdnPullZoneName',
+            'bunnycdnRemotePath',
+            'cfDistributionId',
+            'completionEmail',
+            'crawl_increment',
+            'diffBasedDeploys',
+            'discoverNewURLs',
+            'excludeURLs',
+            'ftpBlobDelay',
+            'ftpBlobIncrement',
+            'ftpRemotePath',
+            'ftpServer',
+            'ftpUsername',
+            'ghBlobDelay',
+            'ghBlobIncrement',
+            'ghBranch',
+            'ghPath',
+            'ghRepo',
+            'glBlobDelay',
+            'glBlobIncrement',
+            'glBranch',
+            'glPath',
+            'glProject',
+            'netlifyHeaders',
+            'netlifyRedirects',
+            'netlifySiteID',
+            'processing_method',
+            'removeConditionalHeadComments',
+            'removeHTMLComments',
+            'removeWPLinks',
+            'removeWPMeta',
+            'rewritePLUGINDIR',
+            'rewriteTHEMEDIR',
+            'rewriteTHEMEROOT',
+            'rewriteUPLOADS',
+            'rewriteWPCONTENT',
+            'rewriteWPINC',
+            'rewriteWPPaths',
+            's3BlobDelay',
+            's3BlobIncrement',
+            's3Bucket',
+            's3Key',
+            's3Region',
+            's3RemotePath',
+            'selected_deployment_option',
+            'targetFolder',
+            'useActiveFTP',
+            'useBaseHref',
+            'useBasicAuth',
+            'useRelativeURLs',
+            'workingDirectory',
+        );
+
     public function __construct( $optionKey ) {
         $options = get_option( $optionKey );
 
@@ -100,7 +175,7 @@ class StaticHtmlOutput_Options {
     public function __set( $name, $value ) {
         $this->_options[ $name ] = $value;
 
-        return $this;
+        return;
     }
 
     public function setOption( $name, $value ) {
@@ -117,6 +192,28 @@ class StaticHtmlOutput_Options {
         return $this->__get( $name );
     }
 
+    public function getAllOptions( $reveal_sensitive_values = false ) {
+        $options_array = array();
+
+        foreach ( $this->_options_keys as $key ) {
+
+            $value = '*******************';
+
+            if ( in_array( $key, $this->_whitelisted_keys ) ) {
+                $value = $this->__get( $key );
+            } else if ( $reveal_sensitive_values ) {
+                $value = $this->__get( $key );
+            }
+ 
+            $options_array[] = array(
+                'Option name' => $key,
+                'Value' => $value,
+            );
+        }
+
+        return $options_array;
+    }
+
     public function optionExists( $name ) {
         return in_array( $name, $this->_options_to_save );
     }
@@ -130,7 +227,7 @@ class StaticHtmlOutput_Options {
     }
 
     public function saveAllPostData() {
-        foreach ( $this->_options_to_save as $option ) {
+        foreach ( $this->_options_keys as $option ) {
             // TODO: set which fields should get which sanitzation upon saving
             // TODO: validate before save & avoid making empty settings fields
             $this->setOption( $option, filter_input( INPUT_POST, $option ) );

@@ -80,17 +80,18 @@ class WP2Static_CLI {
      *
      * ## OPTIONS
      *
-     * <list>
+     * <list> [--reveal-sensitive-values]
      *
-     * Get all option names and values
+     * Get all option names and values (explicitly reveal sensitive values)
      *
-     * <get|set> <option-name>
+     * <get> <option-name>
      *
      * Get or set a specific option via name
      *
-     * [--mask-passwords]
+     * <set> <option-name> <value>
      *
-     * Don't show passwords in plain text
+     * Set a specific option via name
+     *
      *
      * ## EXAMPLES
      *
@@ -98,42 +99,82 @@ class WP2Static_CLI {
      *
      *     wp wp2static options list
      *
+     * List all options (revealing sensitive values)
+     *
+     *     wp wp2static options list --reveal_sensitive_values
+     *
      * Get option
      *
      *     wp wp2static options get selected_deployment_option
      *
      * Set option
      *
-     *     wp wp2static options set baseUrl
+     *     wp wp2static options set baseUrl 'https://mystaticsite.com'
      *
      */
     public function options( $args, $assoc_args ) {
         $action = $args[0];
         $option_name = $args[1];
+        $value = $args[2];
+        $reveal_sensitive_values = false;
 
         if ( empty( $action ) ) {
             WP_CLI::error( 'Missing required argument: <get|set>>' );
         }
 
+        $plugin = StaticHtmlOutput_Controller::getInstance();
+
         if ( $action === 'get' ) {
-            if ( ! empty( $option_name ) ) {
-                $plugin = StaticHtmlOutput_Controller::getInstance();
-
-                if ( ! $plugin->options->optionExists( $option_name ) ) {
-                    WP_CLI::error( 'Invalid option name' );
-                } else {
-                    $option_value =
-                        $plugin->options->getOption( $option_name );
-
-                    WP_CLI::line($option_value);
-                }
-            } else {
+            if ( empty( $option_name ) ) {
                 WP_CLI::error( 'Missing required argument: <option-name>' );
+            }
+
+            if ( ! $plugin->options->optionExists( $option_name ) ) {
+                WP_CLI::error( 'Invalid option name' );
+            } else {
+                $option_value =
+                    $plugin->options->getOption( $option_name );
+
+                WP_CLI::line($option_value);
+            }
+        }
+
+        if ( $action === 'set' ) {
+            if ( empty( $option_name ) ) {
+                WP_CLI::error( 'Missing required argument: <option-name>' );
+            }
+
+            if ( empty( $value ) ) {
+                WP_CLI::error( 'Missing required argument: <value>' );
+            }
+
+            if ( ! $plugin->options->optionExists( $option_name ) ) {
+                WP_CLI::error( 'Invalid option name' );
+            } else {
+                $plugin->options->setOption( $option_name, $value );
+                $plugin->options->save();
+
+                $result = $plugin->options->getOption( $option_name );
+
+                if ( ! $result === $value ) {
+                    WP_CLI::error( 'Option not able to be updated' );
+                }
             }
         }
 
         if ( $action === 'list' ) {
-            WP_CLI::line( 'Returning all option key:values' );
+            if ( isset( $assoc_args['reveal-sensitive-values'] ) ) {
+                $reveal_sensitive_values = true;
+            }
+
+            $options =
+                $plugin->options->getAllOptions( $reveal_sensitive_values );
+
+            WP_CLI\Utils\format_items(
+                'table',
+                $options,
+                array( 'Option name', 'Value' )
+            );
         }
     }
 
@@ -192,54 +233,6 @@ class WP2Static_CLI {
 WP_CLI::add_command( 'wp2static', 'wp2static_cli' );
 
 /*
-Note: Historically, WP-CLI provided a base WP_CLI_Command class to extend, however extending this class is not required and will not change how your command behaves.
-
-All commands can be registered to their own top-level namespace (e.g. wp foo), or as subcommands to an existing namespace (e.g. wp core foo). For the latter, simply include the existing namespace as a part of the command definition.
-
-class Foo_Command {
-    public function __invoke( $args ) {
-        WP_CLI::success( $args[0] );
-    }
-}
-
-WP_CLI::add_command( 'core foo', 'Foo_Command' );
-
-https://make.wordpress.org/cli/handbook/commands-cookbook/
-
-// 1. Command is a function
-function foo_command( $args ) {
-    WP_CLI::success( $args[0] );
-}
-WP_CLI::add_command( 'foo', 'foo_command' );
-
-// 2. Command is a closure
-$foo_command = function( $args ) {
-    WP_CLI::success( $args[0] );
-}
-WP_CLI::add_command( 'foo', $foo_command );
-
-// 3. Command is a method on a class
-class Foo_Command {
-    public function __invoke( $args ) {
-        WP_CLI::success( $args[0] );
-    }
-}
-WP_CLI::add_command( 'foo', 'Foo_Command' );
-
-// 4. Command is a method on a class with constructor arguments
-class Foo_Command {
-    protected $bar;
-    public function __construct( $bar ) {
-        $this->bar = $bar;
-    }
-    public function __invoke( $args ) {
-        WP_CLI::success( $this->bar . ':' . $args[0] );
-    }
-}
-$instance = new Foo_Command( 'Some text' );
-WP_CLI::add_command( 'foo', $instance );
-
-
 TODO:
 
 WP_CLI\Utils\launch_editor_for_input() – Launch system’s $EDITOR for the user to edit some text.
@@ -249,5 +242,3 @@ use that for inputting things like additional URLs, Netlify _redirects, etc
 TODO: use WP error for things like permalinks. Run on every command? no, just diagnostics
 
 */
-
-WP_CLI::add_command( 'wp2static', 'WP2Static_CLI' );
