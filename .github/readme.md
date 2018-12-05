@@ -76,9 +76,21 @@ Success: Generated static site archive in 00:00:04
  - `wp wp2static deploy --test`
  - `wp wp2static deploy`
 ```
-Deploying static site via:
-Success: Deployed to: zip in 00:00:00
+ - `wp wp2static generate`
+
+```
+Generating static copy of WordPress site
+Success: Generated static site archive in 00:00:04
+```
+
+ - `wp wp2static deploy --test`
+ - `wp wp2static deploy`
+```
+Deploying static site via: zip
+Success: Deployed to: zip in 00:00:01
 Sending conformation email...
+```
+
 ```
 
 
