@@ -12,10 +12,75 @@ Being a GitHub page, this is tailored for developers, sys admins or other techni
 
  - speed over beautiful code
  - human readable code over variable names that fit within 80chars
- - own-code vs adding libraries 
+ - own-code vs adding libraries
  - benchmarking over opinions (performance)
  - less clicks == better UX
  - user configurable options vs developer opinions
+
+## CLI usage
+
+ - `wp wp2static options --help`
+```
+NAME
+
+  wp wp2static options
+
+DESCRIPTION
+
+  Read / write plugin options
+
+SYNOPSIS
+
+  wp wp2static options
+
+OPTIONS
+
+  <list> [--reveal-sensitive-values]
+
+  Get all option names and values (explicitly reveal sensitive values)
+
+  <get> <option-name>
+
+  Get or set a specific option via name
+
+  <set> <option-name> <value>
+
+  Set a specific option via name
+
+
+EXAMPLES
+
+  List all options
+
+    wp wp2static options list
+
+  List all options (revealing sensitive values)
+
+    wp wp2static options list --reveal_sensitive_values
+
+  Get option
+
+    wp wp2static options get selected_deployment_option
+
+  Set option
+
+    wp wp2static options set baseUrl 'https://mystaticsite.com'
+```
+ - `wp wp2static generate`
+
+```
+Generating static copy of WordPress site
+Success: Generated static site archive in 00:00:04
+```
+
+ - `wp wp2static deploy --test`
+ - `wp wp2static deploy`
+```
+Deploying static site via:
+Success: Deployed to: zip in 00:00:00
+Sending conformation email...
+```
+
 
 ## Development
 
