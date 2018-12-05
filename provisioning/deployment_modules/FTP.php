@@ -118,13 +118,13 @@ class StaticHtmlOutput_FTP extends StaticHtmlOutput_SitePublisher {
 
         if ( $filesRemaining > 0 ) {
 
-            if ( defined( 'WP_CLI' ) && WP_CLI ) {
+            if ( defined( 'WP_CLI' ) ) {
                 $this->transfer_files();
             } else {
                 echo $filesRemaining;
             }
         } else {
-            if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+            if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
             } 
         }
@@ -145,7 +145,7 @@ class StaticHtmlOutput_FTP extends StaticHtmlOutput_SitePublisher {
                 $this->settings['ftpPassword']
             );
 
-            if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+            if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
             } 
 

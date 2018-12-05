@@ -10,7 +10,7 @@ class WsLog {
 
         $wp_uploads_path = '';
         
-        if ( defined( 'WP_CLI' ) && WP_CLI ) {
+        if ( defined( 'WP_CLI' ) ) {
             require_once dirname( __FILE__ ) .
                 '/DBSettings.php';
             

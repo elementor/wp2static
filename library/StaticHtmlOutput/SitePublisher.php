@@ -90,7 +90,7 @@ class StaticHtmlOutput_SitePublisher {
                 $this->archive->name
         );
 
-        if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+        if ( ! defined( 'WP_CLI' ) ) {
             echo 'SUCCESS';
         } 
     }

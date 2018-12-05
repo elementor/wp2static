@@ -127,13 +127,13 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
 
         if ( $filesRemaining > 0 ) {
 
-            if ( defined( 'WP_CLI' ) && WP_CLI ) {
+            if ( defined( 'WP_CLI' ) ) {
                 $this->transfer_files();
             } else {
                 echo $filesRemaining;
             }
         } else {
-            if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+            if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
             } 
         }
@@ -159,7 +159,7 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
             );
 
             if ( $response->getStatusCode() === 200 ) {
-                if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+                if ( ! defined( 'WP_CLI' ) ) {
                     echo 'SUCCESS';
                 } 
             } else {
@@ -207,7 +207,7 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
             throw new Exception( $e );
         }
 
-        if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+        if ( ! defined( 'WP_CLI' ) ) {
             echo 'SUCCESS';
         } 
     }

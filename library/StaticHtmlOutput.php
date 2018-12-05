@@ -266,7 +266,7 @@ class StaticHtmlOutput_Controller {
         $archive = new Archive();
         $archive->create();
 
-        $viaCLI = defined( 'WP_CLI' ) && WP_CLI;
+        $viaCLI = defined( 'WP_CLI' );
 
         // TODO: move to exporter; wp env vars to views
         $exec_time = ini_get( 'max_execution_time' );
@@ -288,7 +288,7 @@ class StaticHtmlOutput_Controller {
 
         $exporter->generateModifiedFileList();
 
-        if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+        if ( ! defined( 'WP_CLI' ) ) {
             echo 'SUCCESS';
         }
     }

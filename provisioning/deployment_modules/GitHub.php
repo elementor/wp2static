@@ -145,14 +145,14 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
 
         if ( $filesRemaining > 0 ) {
 
-            if ( defined( 'WP_CLI' ) && WP_CLI ) {
+            if ( defined( 'WP_CLI' ) ) {
                 $this->upload_blobs();
             } else {
                 echo $filesRemaining;
             }
 
         } else {
-            if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+            if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
             } 
         }
@@ -241,7 +241,7 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
         if ( $this->get_remaining_items_count() > 0 ) {
             echo $this->get_remaining_items_count();
         } else {
-            if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+            if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
             } 
         }
@@ -282,7 +282,7 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
             return;
         }
 
-        if ( ! defined( 'WP_CLI' ) && WP_CLI ) {
+        if ( ! defined( 'WP_CLI' ) ) {
             echo 'SUCCESS';
         } 
     }
