@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Just a few sample commands to learn how WP-CLI works
+ * Generate a static copy of your website & publish remotely
  */
-class WP2Static_CLI extends WP_CLI_Command {
+class WP2Static_CLI {
     /**
      * Display system information and health check
      */
@@ -74,16 +74,50 @@ class WP2Static_CLI extends WP_CLI_Command {
 
     }
 
+
     /**
      * Get / set plugin settings.
      * ## OPTIONS
      *
+     * <get|set> [option-name]
+     * : Get all option names and values (get singular with --option-name)
+     *
+     * [--option-name]
+     * : Get stored value for singular option
+     *
      * [--mask-passwords]
      * : Don't show passwords in plain text
+     *
+     * ## EXAMPLES
+     *
+     * Get all options
+     *
+     * wp wp2static options get --option-name="selected_deployment_option"
      */
     public function options( $args, $assoc_args ) {
+        error_log(print_r($args, true));
+        error_log(print_r($assoc_args, true));
+
+        $action = $arg[0];
+        $option_name = $arg[1];
+
         if ( ! empty( $assoc_args['get'] ) ) {
-            WP_CLI::line( 'getting wp2static options' );
+            if ( ! empty( $assoc_args['option-name'] ) ) {
+                $option_name = $assoc_args['option-name'];
+
+
+                $plugin = StaticHtmlOutput_Controller::getInstance();
+
+                if ( ! $plugin->options->optionExists( $option_name ) ) {
+                    WP_CLI::error( 'Invalid option name' );
+                } else {
+                    $option_value = $plugin->options->getOption($option_name);
+
+                    WP_CLI::line($option_value);
+                }
+            } else {
+                WP_CLI::line( 'returning all option key:values' );
+            }
         } elseif ( ! empty( $assoc_args['set'] ) ) {
             WP_CLI::line( 'setting wp2static options' );
         } elseif ( ! empty( $assoc_args['reset'] ) ) {
@@ -118,6 +152,9 @@ class WP2Static_CLI extends WP_CLI_Command {
      *
      * [--test]
      * : Validate the connection settings without deploying
+     *
+     * [--selected_deployment_option]
+     * : Override the deployment option
      */
     public function deploy( $args, $assoc_args ) {
         $test = false;
@@ -126,14 +163,81 @@ class WP2Static_CLI extends WP_CLI_Command {
             $test = true;
         }
 
+        if ( ! empty( $assoc_args['selected_deployment_option'] ) ) {
+            switch( $assoc_args['selected_deployment_option'] ) {
+                case 'zip':
+
+                    break;
+            }
+        }
+
         require_once dirname( __FILE__ ) . '/StaticHtmlOutput/Deployer.php';
 
         $deployer = new Deployer();
 
         $deployer->deploy( $test );
-
-        //$plugin->post_export_teardown();
     }
 }
 
 WP_CLI::add_command( 'wp2static', 'wp2static_cli' );
+
+/*
+Note: Historically, WP-CLI provided a base WP_CLI_Command class to extend, however extending this class is not required and will not change how your command behaves.
+
+All commands can be registered to their own top-level namespace (e.g. wp foo), or as subcommands to an existing namespace (e.g. wp core foo). For the latter, simply include the existing namespace as a part of the command definition.
+
+class Foo_Command {
+    public function __invoke( $args ) {
+        WP_CLI::success( $args[0] );
+    }
+}
+
+WP_CLI::add_command( 'core foo', 'Foo_Command' );
+
+https://make.wordpress.org/cli/handbook/commands-cookbook/
+
+// 1. Command is a function
+function foo_command( $args ) {
+    WP_CLI::success( $args[0] );
+}
+WP_CLI::add_command( 'foo', 'foo_command' );
+
+// 2. Command is a closure
+$foo_command = function( $args ) {
+    WP_CLI::success( $args[0] );
+}
+WP_CLI::add_command( 'foo', $foo_command );
+
+// 3. Command is a method on a class
+class Foo_Command {
+    public function __invoke( $args ) {
+        WP_CLI::success( $args[0] );
+    }
+}
+WP_CLI::add_command( 'foo', 'Foo_Command' );
+
+// 4. Command is a method on a class with constructor arguments
+class Foo_Command {
+    protected $bar;
+    public function __construct( $bar ) {
+        $this->bar = $bar;
+    }
+    public function __invoke( $args ) {
+        WP_CLI::success( $this->bar . ':' . $args[0] );
+    }
+}
+$instance = new Foo_Command( 'Some text' );
+WP_CLI::add_command( 'foo', $instance );
+
+
+TODO:
+
+WP_CLI\Utils\launch_editor_for_input() – Launch system’s $EDITOR for the user to edit some text.
+
+use that for inputting things like additional URLs, Netlify _redirects, etc
+
+TODO: use WP error for things like permalinks. Run on every command? no, just diagnostics
+
+*/
+
+WP_CLI::add_command( 'wp2static', 'WP2Static_CLI' );
