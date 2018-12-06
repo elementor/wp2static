@@ -31,7 +31,7 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
 
         $this->exportFileList =
             $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT';
+                '/WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT.txt';
         $this->globHashAndPathList =
             $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-EXPORT-GITHUB-GLOBS-PATHS';

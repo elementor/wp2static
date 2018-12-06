@@ -223,7 +223,8 @@ class SiteCrawler {
 
         // TODO: required in saving/copying, but not here? optimize...
         $handle = fopen(
-            $this->settings['wp_uploads_path'] . '/WP-STATIC-CURRENT-ARCHIVE',
+            $this->settings['wp_uploads_path'] .
+                '/WP-STATIC-CURRENT-ARCHIVE.txt',
             'r'
         );
 

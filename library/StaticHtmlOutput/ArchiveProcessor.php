@@ -109,6 +109,8 @@ class ArchiveProcessor {
 
     // default rename in PHP throws warnings if dir is populated
     public function renameWPDirectory( $source, $target ) {
+        error_log('renaming: ' . $source . ' to: ' . $target);
+
         if ( isset( $this->settings['rewriteWPPaths'] ) ) {
             $this->recursive_copy( $source, $target );
 
