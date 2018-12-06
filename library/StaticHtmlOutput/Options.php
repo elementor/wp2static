@@ -176,7 +176,7 @@ class StaticHtmlOutput_Options {
         $this->_options[ $name ] = $value;
 
         // NOTE: this is required, not certain why, investigate
-        //       and make more intuitive
+        // and make more intuitive
         return $this;
     }
 
