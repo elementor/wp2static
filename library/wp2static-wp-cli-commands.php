@@ -110,7 +110,6 @@ class WP2Static_CLI {
      * Set option
      *
      *     wp wp2static options set baseUrl 'https://mystaticsite.com'
-     *
      */
     public function options( $args, $assoc_args ) {
         $action = $args[0];
@@ -135,7 +134,7 @@ class WP2Static_CLI {
                 $option_value =
                     $plugin->options->getOption( $option_name );
 
-                WP_CLI::line($option_value);
+                WP_CLI::line( $option_value );
             }
         }
 
@@ -190,7 +189,6 @@ class WP2Static_CLI {
 
         // TODO: reimplement diff-based deploys
         // $plugin->capture_last_deployment();
-
         $plugin->generate_filelist_preview();
 
         $plugin->prepare_for_export();
@@ -203,11 +201,12 @@ class WP2Static_CLI {
         $plugin->post_process_archive_dir();
 
         $end_time = microtime( true );
-    
+
         $duration = $end_time - $start_time;
 
-        WP_CLI::success( 'Generated static site archive in ' .
-            date( "H:i:s", $duration )
+        WP_CLI::success(
+            'Generated static site archive in ' .
+            date( 'H:i:s', $duration )
         );
     }
 
@@ -229,9 +228,8 @@ class WP2Static_CLI {
         }
 
         if ( ! empty( $assoc_args['selected_deployment_option'] ) ) {
-            switch( $assoc_args['selected_deployment_option'] ) {
+            switch ( $assoc_args['selected_deployment_option'] ) {
                 case 'zip':
-
                     break;
             }
         }
@@ -249,10 +247,12 @@ WP_CLI::add_command( 'wp2static', 'wp2static_cli' );
 /*
 TODO:
 
-WP_CLI\Utils\launch_editor_for_input() – Launch system’s $EDITOR for the user to edit some text.
+WP_CLI\Utils\launch_editor_for_input() – Launch system’s $EDITOR f
+r the user to edit some text.
 
 use that for inputting things like additional URLs, Netlify _redirects, etc
 
-TODO: use WP error for things like permalinks. Run on every command? no, just diagnostics
+TODO: use WP error for things like permalinks. Run on every command?
+no, just diagnostics
 
 */
