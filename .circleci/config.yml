@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  build:
+  code-quality-and-unit-tests:
     docker: 
       - image: circleci/php:7.2.8-apache-node
     steps:
@@ -8,7 +8,7 @@ jobs:
           name: Install dependencies
           command: |
             git clone -b master https://github.com/squizlabs/PHP_CodeSniffer.git /tmp/phpcs
-            
+
             git clone -b master https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards.git /tmp/wpcs
             /tmp/phpcs/bin/phpcs --config-set installed_paths /tmp/wpcs
       - checkout
@@ -19,3 +19,9 @@ jobs:
       - run: 
           name: Run Unit Tests
           command: ./provisioning/run_unit_tests.sh
+
+workflows:
+  version: 2
+  workflow-code-quality-and-unit-tests:
+    jobs:
+      - code-quality-and-unit-tests
