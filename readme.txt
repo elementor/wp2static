@@ -147,6 +147,7 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
  * Bugfix: Prevent rewriting mailto: links containing domain
  * Bugfix: Prevent rewriting URLs on external domains
  * Bugfix: Offline ZIP creation now functioning properly
+ * Bugfix: Fix ZIP download button not always appearing
  * Bugfix: Ignore certificate errors when crawling
  * Drop feature: deploy to Dropbox (they don't love static sites anymore)
  * Plugin name change to WP2Static
@@ -486,6 +487,7 @@ Initial release to Wordpress community
  * Bugfix: Prevent rewriting mailto: links containing domain
  * Bugfix: Prevent rewriting URLs on external domains
  * Bugfix: Offline ZIP creation now functioning properly
+ * Bugfix: Fix ZIP download button not always appearing
  * Bugfix: Ignore certificate errors when crawling
  * Drop feature: deploy to Dropbox (they don't love static sites anymore)
  * Plugin name change to WP2Static
