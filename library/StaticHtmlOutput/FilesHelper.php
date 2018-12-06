@@ -23,7 +23,8 @@ class StaticHtmlOutput_FilesHelper {
     }
 
     public static function getParentThemeFiles() {
-        $parentThemeFiles = self::getListOfLocalFilesByUrl( get_template_directory_uri() );
+        $parentThemeFiles =
+            self::getListOfLocalFilesByUrl( get_template_directory_uri() );
         return $parentThemeFiles;
     }
 
@@ -35,7 +36,8 @@ class StaticHtmlOutput_FilesHelper {
         $vendor_files = [];
 
         if ( class_exists( '\\Elementor\Api' ) ) {
-            $elementor_font_dir = WP_PLUGIN_DIR . '/elementor/assets/lib/font-awesome';
+            $elementor_font_dir = WP_PLUGIN_DIR .
+                '/elementor/assets/lib/font-awesome';
 
             $elemementor_URLs = self::getListOfLocalFilesByUrl(
                 $elementor_font_dir
@@ -152,13 +154,12 @@ class StaticHtmlOutput_FilesHelper {
             foreach ( $iterator as $fileName => $fileObject ) {
                 $path_crawlable = self::filePathLooksCrawlable( $fileName );
 
-
                 if ( $path_crawlable ) {
                     array_push(
                         $files,
                         home_url( str_replace( ABSPATH, '', $fileName ) )
                     );
-                } 
+                }
             }
         }
 
@@ -187,7 +188,7 @@ class StaticHtmlOutput_FilesHelper {
         foreach ( $filenames_to_ignore as $ignorable ) {
             if ( strpos( $file_name, $ignorable ) !== false ) {
                 return false;
-            } 
+            }
         }
 
         if ( $path_info['basename'][0] === '.' ) {
@@ -196,9 +197,9 @@ class StaticHtmlOutput_FilesHelper {
 
         if ( ! isset( $path_info['extension'] ) ) {
             return false;
-        } 
+        }
 
-        $extensions_to_ignore = 
+        $extensions_to_ignore =
             array(
                 'php',
                 'phtml',
@@ -219,9 +220,9 @@ class StaticHtmlOutput_FilesHelper {
                 'md',
             );
 
-        if ( in_array( $path_info['extension'], $extensions_to_ignore) ) {
+        if ( in_array( $path_info['extension'], $extensions_to_ignore ) ) {
             return false;
-        } 
+        }
 
         return true;
     }
@@ -252,7 +253,7 @@ class StaticHtmlOutput_FilesHelper {
 
         $str = implode( "\n", $urlsQueue );
 
-        // TODO: modify each function vs doing here for perf 
+        // TODO: modify each function vs doing here for perf
         $wp_site_url = get_site_url();
         $str = str_replace(
             $wp_site_url,

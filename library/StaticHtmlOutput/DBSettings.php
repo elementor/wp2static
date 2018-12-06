@@ -5,8 +5,7 @@ class WPSHO_DBSettings {
     public static function get( $sets = array() ) {
         $plugin = StaticHtmlOutput_Controller::getInstance();
 
-//        error_log(print_r($plugin->options, true));die();
-
+        // error_log(print_r($plugin->options, true));die();
         $settings = array();
         $key_sets = array();
         $target_keys = array();
@@ -139,7 +138,6 @@ class WPSHO_DBSettings {
             'netlifySiteID',
         );
 
-
         $key_sets['wpenv'] = array(
             'wp_site_url',
             'wp_site_path',
@@ -171,41 +169,40 @@ class WPSHO_DBSettings {
         foreach ( $key_sets['wpenv'] as $key ) {
             $settings[ $key ] = $wp_site->{ $key };
         }
-        
-        // NOTE: override from missing setting in CLI chain 
+
+        // NOTE: override from missing setting in CLI chain
         $settings['wp_uploads_url'] = $wp_site->uploads_url;
         $settings['wp_site_url'] = $wp_site->site_url;
         $settings['wp_site_path'] = $wp_site->site_path;
 
-/*
-    // TODO: Much more coming back in wp_site, but with different names
-    // set from the view. Need to normalize these keys
-    // error_log(print_r($wp_site, true));die();
+        /*
+        // TODO: Much more coming back in wp_site, but with different names
+        // set from the view. Need to normalize these keys
+        // error_log(print_r($wp_site, true));die();
 
-    [uploads_url] => http://localhost/wp-content/uploads
-    [site_url] => http://localhost/
-    [site_path] => /var/www/htdocs/
-    [plugins_path] => /var/www/htdocs/wp-content/plugins
-    [wp_uploads_path] => /var/www/htdocs/wp-content/uploads
-    [wp_includes_path] => /var/www/htdocs/wp-includes
-    [wp_contents_path] =>
-    [theme_root_path] => /var/www/htdocs/wp-content/themes
-    [parent_theme_path] => /var/www/htdocs/wp-content/themes/twentyseventeen
-    [child_theme_path] => /var/www/htdocs/wp-content/themes/twentyseventeen
-    [child_theme_active] =>
-    [permalink_structure] => /pages/%postname%/
-    [wp_inc] => /wp-includes
-    [wp_content] => //var/www/htdocs/wp-content
-    [wp_uploads] => /wp-content/uploads
-    [wp_plugins] => /wp-content/plugins
-    [wp_themes] => /wp-content/themes
-    [wp_active_theme] => /wp-content/themes/twentyseventeen
-    [subdirectory] =>
-    [uploads_writable] => 1
-    [permalinks_set] => 18
-    [curl_enabled] => 1
-*/
-
+        [uploads_url] => http://localhost/wp-content/uploads
+        [site_url] => http://localhost/
+        [site_path] => /var/www/htdocs/
+        [plugins_path] => /var/www/htdocs/wp-content/plugins
+        [wp_uploads_path] => /var/www/htdocs/wp-content/uploads
+        [wp_includes_path] => /var/www/htdocs/wp-includes
+        [wp_contents_path] =>
+        [theme_root_path] => /var/www/htdocs/wp-content/themes
+        [parent_theme_path] => /var/www/htdocs/wp-content/themes/twentyseventeen
+        [child_theme_path] => /var/www/htdocs/wp-content/themes/twentyseventeen
+        [child_theme_active] =>
+        [permalink_structure] => /pages/%postname%/
+        [wp_inc] => /wp-includes
+        [wp_content] => //var/www/htdocs/wp-content
+        [wp_uploads] => /wp-content/uploads
+        [wp_plugins] => /wp-content/plugins
+        [wp_themes] => /wp-content/themes
+        [wp_active_theme] => /wp-content/themes/twentyseventeen
+        [subdirectory] =>
+        [uploads_writable] => 1
+        [permalinks_set] => 18
+        [curl_enabled] => 1
+        */
 
         /*
             Settings requiring transformation
@@ -234,7 +231,6 @@ class WPSHO_DBSettings {
             $plugin->options->working_directory :
             $plugin->options->wp_uploads_path;
 
-
         $settings['crawl_increment'] =
             isset( $plugin->options->crawl_increment ) ?
             (int) $plugin->options->crawl_increment :
@@ -242,8 +238,7 @@ class WPSHO_DBSettings {
 
         // any baseUrl required if creating an offline ZIP
         $settings['baseUrl'] = rtrim( $plugin->options->baseUrl, '/' ) . '/';
-        // TODO: detect if empty, set to 'http://example.com/'; 
-
+        // TODO: detect if empty, set to 'http://example.com/';
         return array_filter( $settings );
     }
 }

@@ -63,7 +63,8 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
 
 
     public function transfer_files() {
-        require_once dirname( __FILE__ ) . '/../library/GuzzleHttp/autoloader.php';
+        require_once dirname( __FILE__ ) .
+            '/../library/GuzzleHttp/autoloader.php';
 
         $filesRemaining = $this->get_remaining_items_count();
 
@@ -135,12 +136,13 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
         } else {
             if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
-            } 
+            }
         }
     }
 
     public function purge_all_cache() {
-        require_once dirname( __FILE__ ) . '/../library/GuzzleHttp/autoloader.php';
+        require_once dirname( __FILE__ ) .
+            '/../library/GuzzleHttp/autoloader.php';
         // purege cache for each file
         $client = new Client();
 
@@ -161,7 +163,7 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
             if ( $response->getStatusCode() === 200 ) {
                 if ( ! defined( 'WP_CLI' ) ) {
                     echo 'SUCCESS';
-                } 
+                }
             } else {
                 echo 'FAIL';
             }
@@ -174,7 +176,8 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
     }
 
     public function test_deploy() {
-        require_once dirname( __FILE__ ) . '/../library/GuzzleHttp/autoloader.php';
+        require_once dirname( __FILE__ ) .
+            '/../library/GuzzleHttp/autoloader.php';
 
         $client = new Client(
             array(
@@ -209,7 +212,7 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
 
         if ( ! defined( 'WP_CLI' ) ) {
             echo 'SUCCESS';
-        } 
+        }
     }
 }
 

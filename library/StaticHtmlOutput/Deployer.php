@@ -30,8 +30,6 @@ class Deployer {
 
         $powerpack_dir = dirname( __FILE__ ) . '/../../powerpack';
 
-
-
         switch ( $this->settings['selected_deployment_option'] ) {
             case 'folder':
                 break;
@@ -41,7 +39,7 @@ class Deployer {
                 require_once $powerpack_dir . '/S3.php';
 
                 if ( $test ) {
-                    error_log('testing s3 deploy');
+                    error_log( 'testing s3 deploy' );
                     $s3->test_s3();
                     return;
                 }
@@ -57,7 +55,7 @@ class Deployer {
                 require_once $powerpack_dir . '/Bitbucket.php';
 
                 if ( $test ) {
-                    error_log('testing bitbucket deploy');
+                    error_log( 'testing bitbucket deploy' );
                     $bitbucket->test_blob_create();
                     return;
                 }
@@ -72,7 +70,7 @@ class Deployer {
                 require_once $powerpack_dir . '/BunnyCDN.php';
 
                 if ( $test ) {
-                    error_log('testing BunnyCDN deploy');
+                    error_log( 'testing BunnyCDN deploy' );
                     $bunny->test_deploy();
                     return;
                 }
@@ -88,7 +86,7 @@ class Deployer {
                 require_once $powerpack_dir . '/FTP.php';
 
                 if ( $test ) {
-                    error_log('testing FTP deploy');
+                    error_log( 'testing FTP deploy' );
                     $ftp->test_ftp();
                     return;
                 }
@@ -103,7 +101,7 @@ class Deployer {
                 require_once $powerpack_dir . '/GitHub.php';
 
                 if ( $test ) {
-                    error_log('testing GitHub deploy');
+                    error_log( 'testing GitHub deploy' );
                     $github->test_blob_create();
                     return;
                 }
@@ -119,7 +117,7 @@ class Deployer {
                 require_once $powerpack_dir . '/GitLab.php';
 
                 if ( $test ) {
-                    error_log('testing GitLab deploy');
+                    error_log( 'testing GitLab deploy' );
                     $gitlab->test_file_create();
                     return;
                 }
@@ -131,7 +129,7 @@ class Deployer {
                 require_once $powerpack_dir . '/Netlify.php';
 
                 if ( $test ) {
-                    error_log('testing Netlify deploy');
+                    error_log( 'testing Netlify deploy' );
                     $netlify->test_netlify();
                     return;
                 }
@@ -144,8 +142,9 @@ class Deployer {
 
         $duration = $end_time - $start_time;
 
-        WP_CLI::success( 'Deployed to: ' . $method . ' in ' .
-            date( "H:i:s", $duration )
+        WP_CLI::success(
+            'Deployed to: ' . $method . ' in ' .
+            date( 'H:i:s', $duration )
         );
 
         WP_CLI::line( 'Sending confirmation email...' );

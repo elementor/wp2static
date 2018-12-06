@@ -36,11 +36,11 @@ class WPSite {
         // extra overhead during the high cyclical functions
         $this->detect_base_url();
 
-	$this->subdirectory = $this->isSiteInstalledInSubdomain();
+        $this->subdirectory = $this->isSiteInstalledInSubdomain();
 
-	$this->uploads_writable = $this->uploadsPathIsWritable();
-	$this->permalinks_set = $this->permalinksAreDefined();
-	$this->curl_enabled = $this->hasCurlSupport();
+        $this->uploads_writable = $this->uploadsPathIsWritable();
+        $this->permalinks_set = $this->permalinksAreDefined();
+        $this->curl_enabled = $this->hasCurlSupport();
     }
 
     public function isSiteInstalledInSubdomain() {
