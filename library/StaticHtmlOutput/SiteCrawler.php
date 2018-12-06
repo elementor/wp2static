@@ -286,14 +286,12 @@ class SiteCrawler {
             );
         }
 
-
-        //$this->response =
-        //    $client->request(
-        //        'GET',
-        //        $this->full_url,
-        //        $request_options
-        //    );
-
+        // $this->response =
+        // $client->request(
+        // 'GET',
+        // $this->full_url,
+        // $request_options
+        // );
         // TODO: test this different syntax for basic auth
         $this->response =
             $client->get(
@@ -302,7 +300,6 @@ class SiteCrawler {
             );
 
         // TODO: add options for http digest, not just basic
-
         $this->crawled_links_file =
             $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-CRAWLED-LINKS.txt';
