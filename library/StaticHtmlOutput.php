@@ -140,39 +140,25 @@ class StaticHtmlOutput_Controller {
     }
 
     public function generate_filelist_preview() {
-        // DEBUG: takes a looong time to get here...
-
-        // DEBUG: then a looong time after detectvendor
-
-        // TODO: get independent from WP calls
-        $uploads_path =
-            isset( $_POST['wp_uploads_path'] ) ?
-            $_POST['wp_uploads_path'] :
-            '';
-        $uploads_url =
-            isset( $_POST['wp_uploads_url'] ) ?
-            $_POST['wp_uploads_url'] :
-             '';
-        $working_directory =
-            isset( $_POST['working_directory'] ) ?
-            $_POST['working_directory'] :
-            '';
-        $plugin_hook = 'wp2static';
-
         // TODO: DRY up WPSite calls
         require_once dirname( __FILE__ ) . '/StaticHtmlOutput/WPSite.php';
         $this->wp_site = new WPSite();
 
+        // TODO: move to WPSite
+        $plugin_hook = 'wp2static';
+
         $initial_file_list_count =
             StaticHtmlOutput_FilesHelper::buildInitialFileList(
                 true,
-                $uploads_path,
-                $uploads_url,
-                $working_directory,
+                $this->wp_site->wp_uploads_path,
+                $this->wp_site->uploads_url,
+                $this->wp_site->wp_uploads_path,
                 $this->wp_site->site_url
             );
 
-        echo $initial_file_list_count;
+        if ( ! defined( 'WP_CLI' ) ) {
+            echo $initial_file_list_count;
+        }
     }
 
     // TODO: send these to initial page load and pass as new settings set

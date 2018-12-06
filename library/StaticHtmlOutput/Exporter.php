@@ -165,6 +165,12 @@ class Exporter {
             $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-CRAWLED-LINKS.txt';
 
+        chmod(
+            $this->settings['wp_uploads_path'] .
+                '/WP-STATIC-CRAWLED-LINKS.txt';,
+            0664
+        );
+
         $resource = fopen( $crawled_links_file, 'w' );
         fwrite( $resource, '' );
         fclose( $resource );
