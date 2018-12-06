@@ -13,12 +13,26 @@ final class HTMLProcessorIsInternalLinkTest extends TestCase {
      * @dataProvider internalLinkProvider
      */
     public function testDetectsInternalLink( $link, $domain, $expectation ): void {
+        /*
+            $link should match $domain
+
+            $domain defaults to placeholder_URL
+
+            we've rewritten all URLs before here to use the
+            placeholder one, so internal link usually(always?)
+            means it matches our placeholder domain
+
+            TODO: rename function to reflect what it's now doing
+
+        */
 
         $processor = new HTMLProcessor();
 
         $processor->settings = array(
             'wp_site_url' => 'http://mywpsite.com'
         );
+
+        $processor->placeholder_URL = 'https://PLACEHOLDER.wpsho/';
 
         $result = $processor->isInternalLink( $link, $domain );
 
@@ -31,12 +45,12 @@ final class HTMLProcessorIsInternalLinkTest extends TestCase {
     public function internalLinkProvider() {
         return [
            'site root' =>  [
-                'http://mywpsite.com',
+                'https://PLACEHOLDER.wpsho/',
                 null,
                 true
             ],
            'internal FQU with file in nested subdirs' =>  [
-                'http://mywpsite.com/category/travel/photos/001.jpg',
+                'https://PLACEHOLDER.wpsho//category/travel/photos/001.jpg',
                 null,
                 true
             ],
@@ -51,12 +65,12 @@ final class HTMLProcessorIsInternalLinkTest extends TestCase {
                 false
             ],
            'not internal FQU with different domain as 2nd arg' =>  [
-                'http://mywpsite.com/category/travel/photos/001.jpg',
+                'https://PLACEHOLDER.wpsho//category/travel/photos/001.jpg',
                 'http://someotherdomain.com',
                 false
             ],
            'not subdomain' =>  [
-                'http://sub.mywpsite.com',
+                'https://sub.PLACEHOLDER.wpsho/',
                 null,
                 false
             ],
