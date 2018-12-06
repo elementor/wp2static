@@ -17,7 +17,7 @@ class Archive {
         } else {
             require_once dirname( __FILE__ ) .
                 '/../StaticHtmlOutput/DBSettings.php';
-            
+
             $this->settings = WPSHO_DBSettings::get( $target_settings );
         }
 
@@ -55,7 +55,7 @@ class Archive {
         if ( wp_mkdir_p( $this->path ) ) {
             $result = file_put_contents(
                 $this->settings['wp_uploads_path'] .
-                    '/WP-STATIC-CURRENT-ARCHIVE',
+                    '/WP-STATIC-CURRENT-ARCHIVE.txt',
                 $this->path
             );
 
@@ -64,6 +64,12 @@ class Archive {
                     '/../StaticHtmlOutput/WsLog.php';
                 WsLog::l( 'USER WORKING DIRECTORY NOT WRITABLE' );
             }
+
+            chmod(
+                $this->settings['wp_uploads_path'] .
+                    '/WP-STATIC-CURRENT-ARCHIVE.txt',
+                0664
+            );
         } else {
             error_log( "Couldn't create archive directory at " . $this->path );
         }

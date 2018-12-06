@@ -206,6 +206,9 @@ class ArchiveProcessor {
 
         file_put_contents( $redirect_path, $redirect_content );
         file_put_contents( $header_path, $header_content );
+
+        chmod( $redirect_path, 0664 );
+        chmod( $header_path, 0664 );
     }
 
     public function create_zip() {

@@ -81,11 +81,14 @@ class StaticHtmlOutput_S3 {
                     $targetPath = ltrim( $targetPath, '/' );
                     $export_line =
                         $dir . '/' . $item . ',' . $targetPath . "\n";
+
                     file_put_contents(
                         $this->exportFileList,
                         $export_line,
                         FILE_APPEND | LOCK_EX
                     );
+
+                    chmod( $this->exportFileList, 0664 );
                 }
             }
         }
@@ -138,6 +141,8 @@ class StaticHtmlOutput_S3 {
             $this->exportFileList,
             implode( "\r\n", $contents )
         );
+
+        chmod( $this->exportFileList, 0664 );
 
         return $lines;
     }

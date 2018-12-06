@@ -20,7 +20,7 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
         } else {
             require_once dirname( __FILE__ ) .
                 '/../library/StaticHtmlOutput/DBSettings.php';
-            
+
             $this->settings = WPSHO_DBSettings::get( $target_settings );
         }
 
@@ -78,15 +78,21 @@ pages:
 EOD;
 
         $target_path = $this->archive->path . '.gitlab-ci.yml';
+
         file_put_contents( $target_path, $config_file );
+
+        chmod( $target_path, 0664 );
 
         // force include the gitlab config file
         $export_line = '.gitlab-ci.yml,.gitlab-ci.yml';
+
         file_put_contents(
             $this->exportFileList,
             $export_line . PHP_EOL,
             FILE_APPEND | LOCK_EX
         );
+
+        chmod( $this->exportFileList, 0664 );
     }
 
     // NOTE: Overrides parent class, as we need to delete prev files
@@ -267,6 +273,8 @@ EOD;
                         $export_line,
                         FILE_APPEND | LOCK_EX
                     );
+
+                    chmod( $this->exportFileList, 0664 );
                 }
             }
         }
