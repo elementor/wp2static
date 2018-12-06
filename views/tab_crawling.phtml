@@ -78,14 +78,6 @@
             <textarea class="widefat" name="additionalUrls" id="additionalUrls" rows="5" cols="10"><?php echo $this->options->additionalUrls ? $this->options->additionalUrls : ''  ?></textarea>
         </td>
       </tr>
-      <tr>
-        <th scope="row">
-          <label><?php echo __('Discover new URLs while crawling', 'static-html-output-plugin');?></label>
-        </th>
-        <td>
-          <?php $tpl->displayCheckbox($this, 'discoverNewURLs', "As each link in the list is crawled, extract any new links within your website that aren't already included, saving them as part of the export."); ?>
-        </td>
-      </tr>
     </tbody>
   </table>
 </div><!-- end crawl_setings -->
