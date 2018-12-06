@@ -60,8 +60,8 @@ class Archive {
             );
 
             if ( ! $result ) {
-
-                require_once './WsLog.php';
+                require_once dirname( __FILE__ ) .
+                    '/../StaticHtmlOutput/WsLog.php';
                 WsLog::l( 'USER WORKING DIRECTORY NOT WRITABLE' );
             }
         } else {
