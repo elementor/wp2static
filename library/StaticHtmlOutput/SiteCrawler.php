@@ -73,6 +73,12 @@ class SiteCrawler {
             implode( PHP_EOL, $unique_discovered_links )
         );
 
+        chmod(
+            $this->settings['wp_uploads_path'] .
+                '/WP-STATIC-DISCOVERED-URLS-LOG.txt',
+            0664
+        );
+
         $discovered_links = array_diff(
             $unique_discovered_links,
             $already_crawled
@@ -83,10 +89,18 @@ class SiteCrawler {
             implode( PHP_EOL, $discovered_links )
         );
 
+        chmod( $second_crawl_file_path, 0664 );
+
         copy(
             $second_crawl_file_path,
             $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-FINAL-2ND-CRAWL-LIST.txt'
+        );
+
+        chmod(
+            $this->settings['wp_uploads_path'] .
+                '/WP-STATIC-FINAL-2ND-CRAWL-LIST.txt',
+            0664
         );
     }
 
@@ -205,6 +219,8 @@ class SiteCrawler {
             implode( "\r\n", $this->urls_to_crawl )
         );
 
+        chmod( $this->list_of_urls_to_crawl_path, 0664 );
+
         // TODO: required in saving/copying, but not here? optimize...
         $handle = fopen(
             $this->settings['wp_uploads_path'] . '/WP-STATIC-CURRENT-ARCHIVE',
@@ -294,12 +310,20 @@ class SiteCrawler {
                 $status_code . ':' . $this->url . PHP_EOL,
                 FILE_APPEND | LOCK_EX
             );
+
+            chmod(
+                $this->settings['wp_uploads_path'] .
+                    '/WP-STATIC-404-LOG.txt',
+                0664
+            );
         } else {
             file_put_contents(
                 $this->crawled_links_file,
                 $this->url . PHP_EOL,
                 FILE_APPEND | LOCK_EX
             );
+
+            chmod( $this->crawled_links_file, 0664 );
         }
 
         // TODO: remove/rename

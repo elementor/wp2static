@@ -2,7 +2,6 @@
 // TODO: rewerite to be one loop of all elements,
 // applying multiple transformations at once per link, reducing iterations
 // TODO: deal with inline CSS blocks or style attributes on tags
-// TODO: don't rewrite mailto links unless specified, re #30
 class HTMLProcessor {
 
     public function processHTML( $html_document, $page_url ) {
@@ -26,7 +25,6 @@ class HTMLProcessor {
         } else {
             require_once dirname( __FILE__ ) .
                 '/../StaticHtmlOutput/DBSettings.php';
-            
             $this->settings = WPSHO_DBSettings::get( $target_settings );
         }
 
@@ -318,8 +316,8 @@ class HTMLProcessor {
 
         if ( defined( 'WP_CLI' ) ) {
             if ( defined( 'CRAWLING_DISCOVERED' ) ) {
-               return; 
-            }    
+               return;
+            }
         }
 
         file_put_contents(
@@ -328,6 +326,12 @@ class HTMLProcessor {
             PHP_EOL .
                 implode( PHP_EOL, array_unique( $this->discovered_urls ) ),
             FILE_APPEND | LOCK_EX
+        );
+
+        chmod(
+            $this->settings['wp_uploads_path'] .
+                '/WP-STATIC-DISCOVERED-URLS.txt',
+            0664
         );
     }
 

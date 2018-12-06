@@ -15,18 +15,11 @@ class Exporter {
                 '/../StaticHtmlOutput/PostSettings.php';
 
             $this->settings = WPSHO_PostSettings::get( $target_settings );
-
-//            error_log('returned filtered settings from POST:');
-//            error_log(print_r($this->settings, true));
-
         } else {
             require_once dirname( __FILE__ ) .
                 '/../StaticHtmlOutput/DBSettings.php';
-            
-            $this->settings = WPSHO_DBSettings::get( $target_settings );
 
-//            error_log('returned filtered settings:');
-//            error_log(print_r($this->settings, true));
+            $this->settings = WPSHO_DBSettings::get( $target_settings );
         }
     }
 
@@ -84,20 +77,20 @@ class Exporter {
 
     public function pre_export_cleanup() {
         $files_to_clean = array(
-            'WP-STATIC-EXPORT-S3-FILES-TO-EXPORT',
-            'WP-STATIC-EXPORT-FTP-FILES-TO-EXPORT',
-            'WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT',
-            'WP-STATIC-EXPORT-BITBUCKET-FILES-TO-EXPORT',
-            'WP-STATIC-EXPORT-DROPBOX-FILES-TO-EXPORT',
-            'WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT',
-            'WP-STATIC-CRAWLED-LINKS',
-            'WP-STATIC-DISCOVERED-URLS.txt',
-            'WP-STATIC-DISCOVERED-URLS-LOG.txt',
-            'WP-STATIC-404-LOG.txt',
-            'WP-STATIC-FINAL-CRAWL-LIST.txt',
             'WP-STATIC-2ND-CRAWL-LIST.txt',
-            'WP-STATIC-FINAL-2ND-CRAWL-LIST.txt',
+            'WP-STATIC-404-LOG.txt',
+            'WP-STATIC-CRAWLED-LINKS.txt',
+            'WP-STATIC-DISCOVERED-URLS-LOG.txt',
+            'WP-STATIC-DISCOVERED-URLS.txt',
+            'WP-STATIC-EXPORT-BITBUCKET-FILES-TO-EXPORT.txt',
+            'WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT.txt',
+            'WP-STATIC-EXPORT-DROPBOX-FILES-TO-EXPORT.txt',
+            'WP-STATIC-EXPORT-FTP-FILES-TO-EXPORT.txt',
+            'WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT.txt',
             'WP-STATIC-EXPORT-LOG.txt',
+            'WP-STATIC-EXPORT-S3-FILES-TO-EXPORT.txt',
+            'WP-STATIC-FINAL-2ND-CRAWL-LIST.txt',
+            'WP-STATIC-FINAL-CRAWL-LIST.txt',
         );
 
         foreach ( $files_to_clean as $file_to_clean ) {
@@ -142,17 +135,17 @@ class Exporter {
         }
 
         $files_to_clean = array(
-            '/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT',
-            '/WP-STATIC-EXPORT-FTP-FILES-TO-EXPORT',
-            '/WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT',
-            '/WP-STATIC-EXPORT-BITBUCKET-FILES-TO-EXPORT',
-            '/WP-STATIC-EXPORT-DROPBOX-FILES-TO-EXPORT',
-            '/WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT',
-            '/WP-STATIC-CRAWLED-LINKS',
-            '/WP-STATIC-DISCOVERED-URLS.txt',
-            '/WP-STATIC-FINAL-CRAWL-LIST.txt',
             '/WP-STATIC-2ND-CRAWL-LIST.txt',
+            '/WP-STATIC-CRAWLED-LINKS.txt',
+            '/WP-STATIC-DISCOVERED-URLS.txt',
+            '/WP-STATIC-EXPORT-BITBUCKET-FILES-TO-EXPORT.txt',
+            '/WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT.txt',
+            '/WP-STATIC-EXPORT-DROPBOX-FILES-TO-EXPORT.txt',
+            '/WP-STATIC-EXPORT-FTP-FILES-TO-EXPORT.txt',
+            '/WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT.txt',
+            '/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT.txt',
             '/WP-STATIC-FINAL-2ND-CRAWL-LIST.txt',
+            '/WP-STATIC-FINAL-CRAWL-LIST.txt',
         );
 
         foreach ( $files_to_clean as $file_to_clean ) {
@@ -169,7 +162,8 @@ class Exporter {
     public function initialize_cache_files() {
         // TODO: is this still necessary?
         $crawled_links_file =
-            $this->settings['wp_uploads_path'] . '/WP-STATIC-CRAWLED-LINKS';
+            $this->settings['wp_uploads_path'] .
+                '/WP-STATIC-CRAWLED-LINKS.txt';
 
         $resource = fopen( $crawled_links_file, 'w' );
         fwrite( $resource, '' );
@@ -284,10 +278,17 @@ class Exporter {
         $modified_crawl_list = array_unique( $modified_crawl_list );
 
         $str = implode( PHP_EOL, $modified_crawl_list );
+
         file_put_contents(
             $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-FINAL-CRAWL-LIST.txt',
             $str
+        );
+
+        chmod(
+            $this->settings['wp_uploads_path'] .
+                '/WP-STATIC-FINAL-CRAWL-LIST.txt',
+            0664
         );
     }
 }

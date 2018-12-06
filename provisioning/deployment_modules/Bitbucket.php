@@ -20,7 +20,7 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
         } else {
             require_once dirname( __FILE__ ) .
                 '/../library/StaticHtmlOutput/DBSettings.php';
-            
+
             $this->settings = WPSHO_DBSettings::get( $target_settings );
         }
 
@@ -120,6 +120,8 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
                         $export_line,
                         FILE_APPEND | LOCK_EX
                     );
+
+                    chmod( $this->exportFileList, 0664 );
                 }
             }
         }

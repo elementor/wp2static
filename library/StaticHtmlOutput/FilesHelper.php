@@ -123,13 +123,14 @@ class StaticHtmlOutput_FilesHelper {
                     $clean_dir = str_replace( $subdir, '', $clean_dir );
                     $filename = $dir . '/' . $item . "\n";
                     $filename = str_replace( '//', '/', $filename );
-                    // $this->wsLog('FILE TO ADD:');
-                    // $this->wsLog($filename);
+
                     file_put_contents(
                         $list_path,
                         $filename,
                         FILE_APPEND | LOCK_EX
                     );
+
+                    chmod( $list_path, 0664 );
                 }
             }
         }
@@ -257,17 +258,18 @@ class StaticHtmlOutput_FilesHelper {
             $wp_site_url,
             '',
             $str
-        );       
+        );
 
         file_put_contents(
             $uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST.txt',
             $str
         );
 
+        chmod( $uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST.txt', 0664 );
+
         return count( $urlsQueue );
     }
 
-    // TODO: connect from Exporter
     public static function buildFinalFileList(
         $viaCLI = false,
         $additionalUrls,
@@ -277,8 +279,13 @@ class StaticHtmlOutput_FilesHelper {
         $wp_site_url ) {
 
         file_put_contents(
-            $workingDirectory . '/WP-STATIC-CURRENT-ARCHIVE',
+            $workingDirectory . '/WP-STATIC-CURRENT-ARCHIVE.txt',
             $archiveDir
+        );
+
+        chmod(
+            $workingDirectory . '/WP-STATIC-CURRENT-ARCHIVE.txt',
+            0664
         );
 
         if ( ! file_exists( $archiveDir ) ) {
@@ -304,15 +311,20 @@ class StaticHtmlOutput_FilesHelper {
         );
 
         $str = implode( "\n", $urlsQueue );
+
         file_put_contents(
             $uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST.txt',
             $str
         );
 
+        chmod( $uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST.txt', 0664 );
+
         file_put_contents(
-            $workingDirectory . '/WP-STATIC-CRAWLED-LINKS',
+            $workingDirectory . '/WP-STATIC-CRAWLED-LINKS.txt',
             ''
         );
+
+        chmod( $uploadsPath . '/WP-STATIC-CRAWLED-LINKS.txt', 0664 );
 
         return count( $urlsQueue );
     }

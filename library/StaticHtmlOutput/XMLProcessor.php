@@ -23,7 +23,7 @@ class XMLProcessor {
         } else {
             require_once dirname( __FILE__ ) .
                 '/../StaticHtmlOutput/DBSettings.php';
-            
+
             $this->settings = WPSHO_DBSettings::get( $target_settings );
         }
 
@@ -276,10 +276,16 @@ class XMLProcessor {
         }
 
         file_put_contents(
-            $this->settings['wp_uploads_path'] . '/WP-STATIC-DISCOVERED-URLS',
+            $this->settings['wp_uploads_path'] . '/WP-STATIC-DISCOVERED-URLS.txt',
             PHP_EOL .
                 implode( PHP_EOL, array_unique( $this->discovered_urls ) ),
             FILE_APPEND | LOCK_EX
+        );
+
+        chmod(
+            $this->settings['wp_uploads_path'] .
+                '/WP-STATIC-DISCOVERED-URLS.txt',
+            0664
         );
     }
 

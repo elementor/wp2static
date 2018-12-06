@@ -8,11 +8,11 @@ class WsLog {
         );
 
         $wp_uploads_path = '';
-        
+
         if ( defined( 'WP_CLI' ) ) {
             require_once dirname( __FILE__ ) .
                 '/DBSettings.php';
-            
+
             $settings = WPSHO_DBSettings::get( $target_settings );
 
             $wp_uploads_path = $settings['wp_uploads_path'];
@@ -27,6 +27,8 @@ class WsLog {
             $text . PHP_EOL,
             FILE_APPEND | LOCK_EX
         );
+
+        chmod( $log_file_path, 0664 );
     }
 }
 

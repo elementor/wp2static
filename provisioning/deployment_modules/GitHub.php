@@ -20,7 +20,7 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
         } else {
             require_once dirname( __FILE__ ) .
                 '/../library/StaticHtmlOutput/DBSettings.php';
-            
+
             $this->settings = WPSHO_DBSettings::get( $target_settings );
         }
 
@@ -140,6 +140,8 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
             implode( PHP_EOL, $globHashPathLines ),
             FILE_APPEND | LOCK_EX
         );
+
+        chmod( $this->globHashAndPathList, 0664 );
 
         $filesRemaining = $this->get_remaining_items_count();
 

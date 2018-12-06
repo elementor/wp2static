@@ -90,6 +90,8 @@ class FileWriter {
 
         if ( $fileContents ) {
             file_put_contents( $fileName, $fileContents );
+
+            chmod( $fileName, 0664 );
         } else {
             require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/WsLog.php';
             WsLog::l( 'SAVING URL: FILE IS EMPTY ' . $this->url );
