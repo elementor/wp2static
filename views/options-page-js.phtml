@@ -145,14 +145,14 @@ jQuery(document).ready(function($){
     } else {
       // if zip was selected, call to get zip name and enable the button with the link to download
       if (current_deployment_method === 'zip') {
-        
+        $('#downloadZIP').show();
+
         $.get( wp_site.uploads_url + '/WP-STATIC-CURRENT-ARCHIVE.txt',
             function( archive_path ) {
                 path_segments = archive_path.split('/');
                 current_archive.name = path_segments[path_segments.length - 2];
                 zipURL = wp_site.uploads_url + '/' + current_archive.name + '.zip';
                 $('#downloadZIP').attr('href', zipURL);
-                $('#downloadZIP').show();
             },
             'text'
         );
@@ -274,7 +274,7 @@ jQuery(document).ready(function($){
   }
 
   function clearProgressAndResults() {
-    $('#downloadZIP button').hide();
+    $('#downloadZIP').hide();
     $('#goToMyStaticSite').hide();
     $('#exportDuration').hide();
     $('.error-help-text').hide();
