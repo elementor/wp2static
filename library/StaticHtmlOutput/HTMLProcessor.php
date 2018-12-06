@@ -103,8 +103,12 @@ class HTMLProcessor {
             if ( $head_element ) {
                 $head_element->appendChild( $base_element );
             } else {
-                error_log( $this->page_url );
-                error_log( 'no valid head elemnent to attach base to' );
+                require_once dirname( __FILE__ ) .
+                    '/../StaticHtmlOutput/WsLog.php';
+                WsLog::l(
+                    'WARNING: no valid head elemnent to attach base to: ' .
+                        $this->page_url
+                );
             }
         }
 
