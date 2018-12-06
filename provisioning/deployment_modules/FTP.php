@@ -23,7 +23,7 @@ class StaticHtmlOutput_FTP extends StaticHtmlOutput_SitePublisher {
         }
 
         $this->exportFileList = $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-EXPORT-FTP-FILES-TO-EXPORT';
+                '/WP-STATIC-EXPORT-FTP-FILES-TO-EXPORT.txt';
 
         $this->r_path = '';
 

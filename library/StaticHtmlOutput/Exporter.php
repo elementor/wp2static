@@ -36,7 +36,7 @@ class Exporter {
         if ( is_file( $archive->path ) ) {
             $archiveDir = file_get_contents(
                 $this->settings['wp_uploads_path'] .
-                    '/WP-STATIC-CURRENT-ARCHIVE'
+                    '/WP-STATIC-CURRENT-ARCHIVE.txt'
             );
             $previous_export = $archiveDir;
             $dir_to_diff_against = $this->settings['wp_uploads_path'] .
@@ -45,7 +45,7 @@ class Exporter {
             if ( $this->settings['diffBasedDeploys'] ) {
                 $archiveDir = file_get_contents(
                     $this->settings['wp_uploads_path'] .
-                        '/WP-STATIC-CURRENT-ARCHIVE'
+                        '/WP-STATIC-CURRENT-ARCHIVE.txt'
                 );
 
                 $previous_export = $archiveDir;
@@ -110,12 +110,13 @@ class Exporter {
 
         // skip first export state
         if ( is_file(
-            $this->settings['wp_uploads_path'] . '/WP-STATIC-CURRENT-ARCHIVE'
+            $this->settings['wp_uploads_path'] .
+                '/WP-STATIC-CURRENT-ARCHIVE.txt'
         ) ) {
 
             $handle = fopen(
                 $this->settings['wp_uploads_path'] .
-                    '/WP-STATIC-CURRENT-ARCHIVE',
+                    '/WP-STATIC-CURRENT-ARCHIVE.txt',
                 'r'
             );
             $this->settings['archive_dir'] = stream_get_line( $handle, 0 );
@@ -165,12 +166,6 @@ class Exporter {
             $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-CRAWLED-LINKS.txt';
 
-        chmod(
-            $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-CRAWLED-LINKS.txt';,
-            0664
-        );
-
         $resource = fopen( $crawled_links_file, 'w' );
         fwrite( $resource, '' );
         fclose( $resource );
@@ -209,6 +204,12 @@ class Exporter {
                 '/WP-STATIC-INITIAL-CRAWL-LIST.txt',
             $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-MODIFIED-CRAWL-LIST.txt'
+        );
+
+        chmod(
+            $this->settings['wp_uploads_path'] .
+                '/WP-STATIC-MODIFIED-CRAWL-LIST.txt',
+            0664
         );
 
         // if no excludes or includes, just copy to new target

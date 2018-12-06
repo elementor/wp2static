@@ -28,7 +28,7 @@ class StaticHtmlOutput_S3 {
 
         $this->exportFileList =
             $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT';
+                '/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT.txt';
 
         switch ( $_POST['ajax_action'] ) {
             case 'test_s3':

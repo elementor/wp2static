@@ -26,10 +26,10 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
 
         $this->exportFileList =
             $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-EXPORT-GITLAB-FILES-TO-EXPORT';
+                '/WP-STATIC-EXPORT-GITLAB-FILES-TO-EXPORT.txt';
         $archiveDir = file_get_contents(
             $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-CURRENT-ARCHIVE'
+                '/WP-STATIC-CURRENT-ARCHIVE.txt'
         );
 
         $this->r_path = '';

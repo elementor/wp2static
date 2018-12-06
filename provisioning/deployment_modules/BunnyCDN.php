@@ -20,17 +20,17 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
         } else {
             require_once dirname( __FILE__ ) .
                 '/../library/StaticHtmlOutput/DBSettings.php';
-            
+
             $this->settings = WPSHO_DBSettings::get( $target_settings );
         }
 
         $this->exportFileList =
             $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT';
+                '/WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT.txt';
 
         $archiveDir = file_get_contents(
             $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-CURRENT-ARCHIVE'
+                '/WP-STATIC-CURRENT-ARCHIVE.txt'
         );
 
         $this->r_path = '';

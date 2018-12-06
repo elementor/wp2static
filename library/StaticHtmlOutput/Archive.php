@@ -30,7 +30,8 @@ class Archive {
     public function setToCurrentArchive() {
         // makes this archive's instance link to the current export's
         $handle = fopen(
-            $this->settings['wp_uploads_path'] . '/WP-STATIC-CURRENT-ARCHIVE',
+            $this->settings['wp_uploads_path'] .
+                '/WP-STATIC-CURRENT-ARCHIVE.txt',
             'r'
         );
 
@@ -41,7 +42,7 @@ class Archive {
     public function currentArchiveExists() {
         return is_file(
             $this->settings['wp_uploads_path'] .
-            '/WP-STATIC-CURRENT-ARCHIVE'
+            '/WP-STATIC-CURRENT-ARCHIVE.txt'
         );
     }
 
