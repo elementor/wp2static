@@ -191,6 +191,8 @@ class WP2Static_CLI {
         // TODO: reimplement diff-based deploys
         // $plugin->capture_last_deployment();
 
+        $plugin->generate_filelist_preview();
+
         $plugin->prepare_for_export();
 
         require_once dirname( __FILE__ ) .
