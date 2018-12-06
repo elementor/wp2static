@@ -174,6 +174,10 @@ class StaticHtmlOutput_Options {
 
     public function __set( $name, $value ) {
         $this->_options[ $name ] = $value;
+
+        // NOTE: this is required, not certain why, investigate
+        //       and make more intuitive
+        return $this;
     }
 
     public function setOption( $name, $value ) {

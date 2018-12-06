@@ -286,7 +286,7 @@ class SiteCrawler {
             );
         }
 
-        
+
         //$this->response =
         //    $client->request(
         //        'GET',
