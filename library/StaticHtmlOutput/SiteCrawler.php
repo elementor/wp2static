@@ -294,7 +294,8 @@ class SiteCrawler {
             );
 
         $this->crawled_links_file =
-            $this->settings['wp_uploads_path'] . '/WP-STATIC-CRAWLED-LINKS';
+            $this->settings['wp_uploads_path'] .
+                '/WP-STATIC-CRAWLED-LINKS.txt';
 
         $good_response_codes = array( '200', '201', '301', '302', '304' );
         $status_code = $this->response->getStatusCode();

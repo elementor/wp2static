@@ -24,7 +24,7 @@ class ArchiveProcessor {
         } else {
             require_once dirname( __FILE__ ) .
                 '/../StaticHtmlOutput/DBSettings.php';
-            
+
             $this->settings = WPSHO_DBSettings::get( $target_settings );
         }
     }
@@ -109,7 +109,8 @@ class ArchiveProcessor {
 
     // default rename in PHP throws warnings if dir is populated
     public function renameWPDirectory( $source, $target ) {
-        error_log('renaming: ' . $source . ' to: ' . $target);
+        // TODO: put safeguard here to avoid rm'ing core dirs
+        //       in the case that other variables are empty
 
         if ( isset( $this->settings['rewriteWPPaths'] ) ) {
             $this->recursive_copy( $source, $target );
