@@ -113,9 +113,9 @@ class StaticHtmlOutput_S3 {
                 $remote_path
             );
 
-            if ( ! defined( 'WP_CLI' ) ) {
-                echo 'SUCCESS';
-            } 
+        if ( ! defined( 'WP_CLI' ) ) {
+            echo 'SUCCESS';
+        }
     }
 
     public function get_items_to_export( $batch_size = 1 ) {
@@ -157,7 +157,7 @@ class StaticHtmlOutput_S3 {
 
     public function transfer_files() {
         $filesRemaining = $this->get_remaining_items_count();
-        error_log($filesRemaining);
+        error_log( $filesRemaining );
 
         if ( $filesRemaining < 0 ) {
             echo 'ERROR';
@@ -173,9 +173,12 @@ class StaticHtmlOutput_S3 {
         $lines = $this->get_items_to_export( $batch_size );
 
         // vendor specific from here
-        require_once dirname( __FILE__ ) . '/../library/StaticHtmlOutput/MimeTypes.php';
-        require_once dirname( __FILE__ ) . '/../library/aws/aws-autoloader.php';
-        require_once dirname( __FILE__ ) . '/../library/GuzzleHttp/autoloader.php';
+        require_once dirname( __FILE__ ) .
+            '/../library/StaticHtmlOutput/MimeTypes.php';
+        require_once dirname( __FILE__ ) .
+            '/../library/aws/aws-autoloader.php';
+        require_once dirname( __FILE__ ) .
+            '/../library/GuzzleHttp/autoloader.php';
 
         $S3 = Aws\S3\S3Client::factory(
             array(
@@ -223,7 +226,7 @@ class StaticHtmlOutput_S3 {
         // end vendor specific
         $filesRemaining = $this->get_remaining_items_count();
 
-        error_log($filesRemaining);
+        error_log( $filesRemaining );
 
         if ( $filesRemaining > 0 ) {
             if ( defined( 'WP_CLI' ) ) {
@@ -234,13 +237,14 @@ class StaticHtmlOutput_S3 {
         } else {
             if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
-            } 
+            }
         }
     }
 
     public function test_s3() {
         require_once dirname( __FILE__ ) . '/../library/aws/aws-autoloader.php';
-        require_once dirname( __FILE__ ) . '/../library/GuzzleHttp/autoloader.php';
+        require_once dirname( __FILE__ ) .
+            '/../library/GuzzleHttp/autoloader.php';
 
         $S3 = Aws\S3\S3Client::factory(
             array(
@@ -273,16 +277,16 @@ class StaticHtmlOutput_S3 {
             echo "There was an error testing S3.\n";
         }
 
-            if ( ! defined( 'WP_CLI' ) ) {
-                echo 'SUCCESS';
-            } 
+        if ( ! defined( 'WP_CLI' ) ) {
+            echo 'SUCCESS';
+        }
     }
 
     public function cloudfront_invalidate_all_items() {
         if ( ! isset( $this->settings['cfDistributionId'] ) ) {
             if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
-            } 
+            }
             return;
         }
 
@@ -305,7 +309,7 @@ class StaticHtmlOutput_S3 {
 
                 if ( ! defined( 'WP_CLI' ) ) {
                     echo 'SUCCESS';
-                } 
+                }
             } else {
                 require_once dirname( __FILE__ ) .
                     '/../library/StaticHtmlOutput/WsLog.php';
@@ -314,7 +318,7 @@ class StaticHtmlOutput_S3 {
         } else {
             if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
-            } 
+            }
         }
     }
 }

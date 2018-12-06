@@ -184,7 +184,7 @@ class HTMLProcessor {
         $url = strtok( $url, '#' );
         $url = strtok( $url, '?' );
 
-        if (trim($url) === '') {
+        if ( trim( $url ) === '' ) {
             return;
         }
 
@@ -194,11 +194,12 @@ class HTMLProcessor {
             }
 
             if ( $this->isInternalLink( $url ) ) {
-                $discovered_URL_without_site_URL = 
+                $discovered_URL_without_site_URL =
                     str_replace(
                         'https://PLACEHOLDER.wpsho',
                         '',
-                        $url);
+                        $url
+                    );
 
                 $this->discovered_urls[] = $discovered_URL_without_site_URL;
             }
@@ -217,11 +218,11 @@ class HTMLProcessor {
 
     public function stripHTMLComments() {
         if ( isset( $this->settings['removeHTMLComments'] ) ) {
-            $xpath = new DOMXPath($this->xml_doc);
+            $xpath = new DOMXPath( $this->xml_doc );
 
-            foreach ($xpath->query('//comment()') as $comment) {
-                $comment->parentNode->removeChild($comment);
-            } 
+            foreach ( $xpath->query( '//comment()' ) as $comment ) {
+                $comment->parentNode->removeChild( $comment );
+            }
         }
     }
 
@@ -295,9 +296,9 @@ class HTMLProcessor {
             }
 
             if ( strpos( $meta_name, 'robots' ) !== false ) {
-                $content =  $element->getAttribute( 'content' );
+                $content = $element->getAttribute( 'content' );
 
-                if ( strpos( $content, 'noindex' ) !== false ) {  
+                if ( strpos( $content, 'noindex' ) !== false ) {
                     $element->parentNode->removeChild( $element );
                 }
             }
@@ -320,7 +321,7 @@ class HTMLProcessor {
 
         if ( defined( 'WP_CLI' ) ) {
             if ( defined( 'CRAWLING_DISCOVERED' ) ) {
-               return;
+                return;
             }
         }
 

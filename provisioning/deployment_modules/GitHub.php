@@ -128,7 +128,7 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
 
             $targetPath = rtrim( $targetPath );
 
-            $targetPath = ltrim($targetPath, '/');
+            $targetPath = ltrim( $targetPath, '/' );
 
             $globHashPathLines[] = $globHash['sha'] . ',' .
                 rtrim( $targetPath ) . basename( $fileToTransfer ) . "\n";
@@ -152,16 +152,16 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
             } else {
                 echo $filesRemaining;
             }
-
         } else {
             if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
-            } 
+            }
         }
     }
 
     public function commit_new_tree() {
-        require_once dirname( __FILE__ ) . '/../library/GuzzleHttp/autoloader.php';
+        require_once dirname( __FILE__ ) .
+            '/../library/GuzzleHttp/autoloader.php';
         require_once __DIR__ . '/../library/Github/autoload.php';
 
         // vendor specific from here
@@ -245,7 +245,7 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
         } else {
             if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
-            } 
+            }
         }
     }
 
@@ -286,7 +286,7 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
 
         if ( ! defined( 'WP_CLI' ) ) {
             echo 'SUCCESS';
-        } 
+        }
     }
 }
 

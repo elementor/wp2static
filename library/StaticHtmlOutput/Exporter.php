@@ -107,7 +107,6 @@ class Exporter {
 
     public function cleanup_working_files() {
         // keep log files here for debugging
-
         // skip first export state
         if ( is_file(
             $this->settings['wp_uploads_path'] .

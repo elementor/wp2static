@@ -15,8 +15,8 @@ class SiteCrawler {
             'advanced',
         );
 
-        // TODO: benchmark faster of checking for post being set or 
-        //       checking if WP_CLI is defined..
+        // TODO: benchmark faster of checking for post being set or
+        // checking if WP_CLI is defined..
         if ( isset( $_POST['selected_deployment_option'] ) ) {
             require_once dirname( __FILE__ ) .
                 '/../StaticHtmlOutput/PostSettings.php';
@@ -65,7 +65,7 @@ class SiteCrawler {
         );
 
         $unique_discovered_links = array_unique( $discovered_links );
-        sort($unique_discovered_links);
+        sort( $unique_discovered_links );
 
         file_put_contents(
             $this->settings['wp_uploads_path'] .
@@ -114,7 +114,7 @@ class SiteCrawler {
         '/WP-STATIC-2ND-CRAWL-LIST.txt';
 
         // NOTE: the first iteration of the 2nd crawl phase,
-        //       the list of URLs for 2nd crawl is prepared
+        // the list of URLs for 2nd crawl is prepared
         if ( ! is_file( $second_crawl_file_path ) ) {
             $this->generate_discovered_links_list();
         }
@@ -150,10 +150,10 @@ class SiteCrawler {
             '/WP-STATIC-FINAL-2ND-CRAWL-LIST.txt';
 
         if ( is_file( $this->list_of_urls_to_crawl_path ) ) {
-            $this->crawl_discovered_links(); 
+            $this->crawl_discovered_links();
 
             return;
-        } 
+        }
 
         $this->list_of_urls_to_crawl_path =
             $this->settings['wp_uploads_path'] .
@@ -437,12 +437,12 @@ class SiteCrawler {
             if ( ! defined( 'WP_CLI' ) ) {
                 echo $this->remaining_urls_to_crawl;
             } else {
-               $this->crawl_site(); 
+                $this->crawl_site();
             }
         } else {
             if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
-            } 
+            }
         }
     }
 

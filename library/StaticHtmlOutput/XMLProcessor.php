@@ -276,7 +276,8 @@ class XMLProcessor {
         }
 
         file_put_contents(
-            $this->settings['wp_uploads_path'] . '/WP-STATIC-DISCOVERED-URLS.txt',
+            $this->settings['wp_uploads_path'] .
+                '/WP-STATIC-DISCOVERED-URLS.txt',
             PHP_EOL .
                 implode( PHP_EOL, array_unique( $this->discovered_urls ) ),
             FILE_APPEND | LOCK_EX

@@ -18,7 +18,7 @@ class StaticHtmlOutput_FTP extends StaticHtmlOutput_SitePublisher {
         } else {
             require_once dirname( __FILE__ ) .
                 '/../library/StaticHtmlOutput/DBSettings.php';
-            
+
             $this->settings = WPSHO_DBSettings::get( $target_settings );
         }
 
@@ -126,7 +126,7 @@ class StaticHtmlOutput_FTP extends StaticHtmlOutput_SitePublisher {
         } else {
             if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
-            } 
+            }
         }
     }
 
@@ -147,7 +147,7 @@ class StaticHtmlOutput_FTP extends StaticHtmlOutput_SitePublisher {
 
             if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
-            } 
+            }
 
             unset( $ftp );
             return;

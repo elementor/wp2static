@@ -202,11 +202,11 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
                 $this->upload_files();
             } else {
                 echo $filesRemaining;
-            } 
+            }
         } else {
             if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
-            } 
+            }
         }
     }
 
@@ -254,7 +254,7 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
 
         if ( ! defined( 'WP_CLI' ) ) {
             echo 'SUCCESS';
-        } 
+        }
     }
 }
 

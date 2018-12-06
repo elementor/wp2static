@@ -94,7 +94,7 @@ class StaticHtmlOutput_SitePublisher {
 
         if ( ! defined( 'WP_CLI' ) ) {
             echo 'SUCCESS';
-        } 
+        }
     }
 
     public function get_items_to_export( $batch_size = 1 ) {

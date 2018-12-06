@@ -96,7 +96,7 @@ EOD;
     }
 
     // NOTE: Overrides parent class, as we need to delete prev files
-    //       and create GitLab Pages config file
+    // and create GitLab Pages config file
     public function prepare_deployment() {
             $this->clear_file_list();
             $this->create_deployment_list(
@@ -108,9 +108,9 @@ EOD;
 
             $this->createGitLabPagesConfig();
 
-            if ( ! defined( 'WP_CLI' ) ) {
-                echo 'SUCCESS';
-            } 
+        if ( ! defined( 'WP_CLI' ) ) {
+            echo 'SUCCESS';
+        }
     }
 
     public function mergeItemsForDeletion( $items ) {
@@ -366,11 +366,10 @@ EOD;
             } else {
                 echo $filesRemaining;
             }
-
         } else {
             if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
-            } 
+            }
         }
     }
 
@@ -427,7 +426,7 @@ EOD;
 
         if ( ! defined( 'WP_CLI' ) ) {
             echo 'SUCCESS';
-        } 
+        }
     }
 }
 

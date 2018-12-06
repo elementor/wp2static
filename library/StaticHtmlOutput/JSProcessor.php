@@ -32,7 +32,7 @@ class JSProcessor {
         } else {
             require_once dirname( __FILE__ ) .
                 '/../StaticHtmlOutput/DBSettings.php';
-            
+
             $this->settings = WPSHO_DBSettings::get( $target_settings );
         }
 

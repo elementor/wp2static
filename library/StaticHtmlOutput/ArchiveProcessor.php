@@ -110,8 +110,7 @@ class ArchiveProcessor {
     // default rename in PHP throws warnings if dir is populated
     public function renameWPDirectory( $source, $target ) {
         // TODO: put safeguard here to avoid rm'ing core dirs
-        //       in the case that other variables are empty
-
+        // in the case that other variables are empty
         if ( isset( $this->settings['rewriteWPPaths'] ) ) {
             $this->recursive_copy( $source, $target );
 
@@ -220,7 +219,7 @@ class ArchiveProcessor {
         if ( ! in_array( $deployer, array( 'zip', 'netlify' ) ) ) {
             return;
         }
- 
+
         $archivePath = rtrim( $this->archive->path, '/' );
         $tempZip = $archivePath . '.tmp';
 
