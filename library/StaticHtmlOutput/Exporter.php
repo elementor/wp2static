@@ -84,18 +84,19 @@ class Exporter {
 
     public function pre_export_cleanup() {
         $files_to_clean = array(
-            '/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT',
-            '/WP-STATIC-EXPORT-FTP-FILES-TO-EXPORT',
-            '/WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT',
-            '/WP-STATIC-EXPORT-BITBUCKET-FILES-TO-EXPORT',
-            '/WP-STATIC-EXPORT-DROPBOX-FILES-TO-EXPORT',
-            '/WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT',
-            '/WP-STATIC-CRAWLED-LINKS',
-            '/WP-STATIC-DISCOVERED-URLS.txt',
-            '/WP-STATIC-DISCOVERED-URLS-LOG.txt',
-            '/WP-STATIC-FINAL-CRAWL-LIST.txt',
-            '/WP-STATIC-2ND-CRAWL-LIST.txt',
-            '/WP-STATIC-FINAL-2ND-CRAWL-LIST.txt',
+            'WP-STATIC-EXPORT-S3-FILES-TO-EXPORT',
+            'WP-STATIC-EXPORT-FTP-FILES-TO-EXPORT',
+            'WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT',
+            'WP-STATIC-EXPORT-BITBUCKET-FILES-TO-EXPORT',
+            'WP-STATIC-EXPORT-DROPBOX-FILES-TO-EXPORT',
+            'WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT',
+            'WP-STATIC-CRAWLED-LINKS',
+            'WP-STATIC-DISCOVERED-URLS.txt',
+            'WP-STATIC-DISCOVERED-URLS-LOG.txt',
+            'WP-STATIC-404-LOG.txt',
+            'WP-STATIC-FINAL-CRAWL-LIST.txt',
+            'WP-STATIC-2ND-CRAWL-LIST.txt',
+            'WP-STATIC-FINAL-2ND-CRAWL-LIST.txt',
             'WP-STATIC-EXPORT-LOG.txt',
         );
 
@@ -166,6 +167,7 @@ class Exporter {
     }
 
     public function initialize_cache_files() {
+        // TODO: is this still necessary?
         $crawled_links_file =
             $this->settings['wp_uploads_path'] . '/WP-STATIC-CRAWLED-LINKS';
 

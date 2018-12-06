@@ -25,7 +25,7 @@ class SiteCrawler {
         } else {
             require_once dirname( __FILE__ ) .
                 '/../StaticHtmlOutput/DBSettings.php';
-            
+
             $this->settings = WPSHO_DBSettings::get( $target_settings );
         }
 
@@ -91,6 +91,11 @@ class SiteCrawler {
     }
 
     public function crawl_discovered_links() {
+        // set flag to determine if first or 2nd phase
+        if ( defined( 'WP_CLI' ) ) {
+            define( 'CRAWLING_DISCOVERED', true );
+        }
+
         $second_crawl_file_path = $this->settings['wp_uploads_path'] .
         '/WP-STATIC-2ND-CRAWL-LIST.txt';
 
@@ -205,6 +210,7 @@ class SiteCrawler {
             $this->settings['wp_uploads_path'] . '/WP-STATIC-CURRENT-ARCHIVE',
             'r'
         );
+
         $this->archive_dir = stream_get_line( $handle, 0 );
 
         foreach ( $batch_of_links_to_crawl as $link_to_crawl ) {
@@ -280,6 +286,13 @@ class SiteCrawler {
             require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/WsLog.php';
             WsLog::l(
                 'BAD RESPONSE STATUS (' . $status_code . '): ' . $this->url
+            );
+
+            file_put_contents(
+                $this->settings['wp_uploads_path'] .
+                    '/WP-STATIC-404-LOG.txt',
+                $status_code . ':' . $this->url . PHP_EOL,
+                FILE_APPEND | LOCK_EX
             );
         } else {
             file_put_contents(
