@@ -14,7 +14,9 @@ var working_directory = '<?php echo $this->working_directory; ?>';
 // TODO: get the log out of the archive, along with it's meta infos
 var log_file_url = wp_site.uploads_url + '/WP-STATIC-EXPORT-LOG.txt';
 var discovered_urls_file_url = wp_site.uploads_url + '/WP-STATIC-DISCOVERED-URLS-LOG.txt';
+var modified_crawl_list_file_url = wp_site.uploads_url + '/WP-STATIC-MODIFIED-CRAWL-LIST.txt';
 var detected_wordpress_urls_file_url = wp_site.uploads_url + '/WP-STATIC-INITIAL-CRAWL-LIST.txt';
+var encountered_404s_list_file_url = wp_site.uploads_url + '/WP-STATIC-404-LOG.txt';
 
 var export_targets = [];
 var export_commence_time = '';
@@ -177,9 +179,7 @@ jQuery(document).ready(function($){
 
   function ajaxErrorHandler () {
       $('#progress').hide();
-      $('#viewErrorLogButton').show();
       $('.error-help-text').show();
-      $("#viewErrorLogButton").focus();
       $('#startExportButton').prop('disabled', false);
       $('.saveSettingsButton').prop('disabled', false);
       $('.resetDefaultSettingsButton').prop('disabled', false);
@@ -749,6 +749,14 @@ jQuery(document).ready(function($){
         case 'detected_wordpress_urls':
             log_url = detected_wordpress_urls_file_url;
         break;
+
+        case 'modified_crawl_list':
+            log_url = modified_crawl_list_file_url;
+        break;
+
+        case 'encountered_404s':
+            log_url = encountered_404s_list_file_url;
+        break;
     }
 
     // load the log file
@@ -772,8 +780,6 @@ jQuery(document).ready(function($){
   if (Notification.permission !== "granted") {
       Notification.requestPermission();
   }
-
-  $('#viewErrorLogButton').attr('href', log_file_url);
 
 	$('input[type="checkbox"]').change(function() {
 		setExportSettingDetailsVisibility(this);
