@@ -83,10 +83,9 @@ $tpl = new TemplateHelper();
 
     function generateDeploymentMethodOptions() {
       $options = array(
-        "folder" => array('1-click quick test | Preview before deploying', 'free'),
+        "folder" => array('Subdirectory on current server', 'free'),
         "blank1" => array("--- Manual Deployment ---", 'free'),
         "zip" => array('ZIP archive (.zip)', 'free'),
-        "targz" => array('TAR GZIP archive (.tar.gz)', 'free'),
         "blank2" => array("--- Automated Deployment ---", 'free'),
         "s3" => array("Amazon S3", 'powerpack'),
         "bitbucket" => array("Bitbucket", 'powerpack'),
