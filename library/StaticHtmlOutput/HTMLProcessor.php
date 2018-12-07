@@ -83,22 +83,28 @@ class HTMLProcessor {
         if ( $this->base_tag_exists ) {
             $base_element =
                 $this->xml_doc->getElementsByTagName( 'base' )->item( 0 );
-
-            $base_element->setAttribute( 'href', $this->settings['baseHREF'] );
-        } else {
-            $base_element = $this->xml_doc->createElement( 'base' );
-            $base_element->setAttribute( 'href', $this->settings['baseUrl'] );
-            $head_element =
-                $this->xml_doc->getElementsByTagName( 'head' )->item( 0 );
-            if ( $head_element ) {
-                $head_element->appendChild( $base_element );
+            
+            if ( empty( $this->settings['baseHREF'] ) ) {
+                $base_element->parentNode->removeChild( $base_element );
             } else {
-                require_once dirname( __FILE__ ) .
-                    '/../StaticHtmlOutput/WsLog.php';
-                WsLog::l(
-                    'WARNING: no valid head elemnent to attach base to: ' .
-                        $this->page_url
-                );
+                $base_element->setAttribute( 'href', $this->settings['baseHREF'] );
+            }
+        } else {
+            if ( ! empty( $this->settings['baseHREF'] ) ) {
+                $base_element = $this->xml_doc->createElement( 'base' );
+                $base_element->setAttribute( 'href', $this->settings['baseHREF'] );
+                $head_element =
+                    $this->xml_doc->getElementsByTagName( 'head' )->item( 0 );
+                if ( $head_element ) {
+                    $head_element->appendChild( $base_element );
+                } else {
+                    require_once dirname( __FILE__ ) .
+                        '/../StaticHtmlOutput/WsLog.php';
+                    WsLog::l(
+                        'WARNING: no valid head elemnent to attach base to: ' .
+                            $this->page_url
+                    );
+                }
             }
         }
 

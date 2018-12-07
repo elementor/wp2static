@@ -6,6 +6,7 @@ class StaticHtmlOutput_Options {
     protected $_options_keys = array(
         'additionalUrls',
         'allowOfflineUsage',
+        'baseHREF',
         'baseUrl',
         'baseUrl-bitbucket',
         'baseUrl-bunnycdn',
@@ -89,6 +90,7 @@ class StaticHtmlOutput_Options {
     protected $_whitelisted_keys = array(
         'additionalUrls',
         'allowOfflineUsage',
+        'baseHREF',
         'baseUrl',
         'baseUrl-bitbucket',
         'baseUrl-bunnycdn',

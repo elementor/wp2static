@@ -24,6 +24,7 @@ class WPSHO_PostSettings {
         $key_sets['processing'] = array(
             'removeConditionalHeadComments',
             'allowOfflineUsage',
+            'baseHREF',
             'rewritePLUGINDIR',
             'rewriteTHEMEDIR',
             'rewriteTHEMEROOT',
