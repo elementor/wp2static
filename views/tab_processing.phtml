@@ -11,13 +11,21 @@
         <?php $tpl->displayCheckbox($this, 'useRelativeURLs', 'Use relative URLs'); ?>
 
         <p> URLs in the exported site will be rewritten as <a href="https://www.w3schools.com/tags/tag_base.asp" target="_blank">relative URLs</a>. ie, http://mydomain.com/some_dir/some_file.jpg will become /some_dir/some_file.jpg. A base href will be set to http://mydomain.com/, from which all the relative URLs resolve to. This is another way to shave extra download size from your webpages.</p><br>
-
         <?php $tpl->displayCheckbox($this, 'useBaseHref', 'Write Base Href for relative URLs'); ?>
 
-        <p> A base href will be set to your new Base URL, from which all the relative URLs resolve to.  </p><br>
-
+        <p style="color:red;"> A base href will be set to your new Base URL, from which all the relative URLs resolve to.REMOVE THIS OPTION</p>
       </td>
     </tr>
+      <tr>
+        <th scope="row">
+          <label for="baseHREF"><?php echo __('Base HREF', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <?php $tpl->displayTextfield($this, 'baseHREF', 'Base HREF', '', ''); ?>
+
+          <p>Setting this will tell the browser to resolve all URLs using this as a base. ie, with a Base HREF of <code>https://mydomain.com</code> and the relative URL setting enabled above, a link on your page of <code>/posts/my_blog_post/</code> will resolve to <code>https://mydomain.com/posts/my_blog_post/</code>. For a more portable exported site, that can be deployed to multiple servers without rewriting each time, set your Base HREF to <code>/</code>.</p>
+        </td>
+      </tr>
     <tr>
       <th scope="row">
         <label><?php echo __('Path rewriting', 'static-html-output-plugin');?></label>
