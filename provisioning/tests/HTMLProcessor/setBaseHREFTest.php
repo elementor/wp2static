@@ -23,7 +23,6 @@ final class HTMLProcessorBaseHREFTest extends TestCase {
         $mockProcessor = $this->getMockBuilder( 'HTMLProcessor' )
             ->setMethods(
                 [
-                    'isInternalLink',
                     'loadSettings',
                     'rewriteSiteURLsToPlaceholder',
                     'detectIfURLsShouldBeHarvested',
@@ -38,18 +37,18 @@ final class HTMLProcessorBaseHREFTest extends TestCase {
 
 
 
-        $mockProcessor->method( 'isInternalLink' )->willReturn( true );
         $mockProcessor->method( 'loadSettings' )->willReturn( null );
         $mockProcessor->method( 'rewriteSiteURLsToPlaceholder' )->willReturn( null );
         $mockProcessor->method( 'detectIfURLsShouldBeHarvested' )->willReturn( null );
         $mockProcessor->method( 'writeDiscoveredURLs' )->willReturn( null );
 
-        $mockProcessor->expects( $this->once() )->method( 'isInternalLink' );
+//        $mockProcessor->expects( $this->once() )->method( 'isInternalLink' );
 //        $mockProcessor->expects( $this->once() )->method( 'processHead' );
 //        $mockProcessor->expects( $this->once() )->method( 'processAnchor' );
 
         $mockProcessor->settings = array(
             'baseUrl' => 'http://baseurldomainfromsettings.com/',
+            'baseHREF' => $baseHREF,
         );
 
         // we expect the $this->base_tag_exists to be set when existing is detected
@@ -76,7 +75,8 @@ final class HTMLProcessorBaseHREFTest extends TestCase {
                 'https://mynewdomain.com',
                 true,
                 '<!DOCTYPE html>
-<html lang="en-US"><head><base href="https://mynewdomain.com"></head><body></body></html>',
+<html lang="en-US"><head><base href="https://mynewdomain.com"></head><body></body></html>
+',
             ],
 //           'base HREF with none existing in source' =>  [
 //                '<head><base href="https://mydomain.com"></head><a href="https://mydomain.com/posts/my_blog_post/">Link text</a>',
