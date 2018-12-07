@@ -9,7 +9,7 @@ class HTMLProcessor {
             return false;
         }
 
-        $target_settings = array(
+        $this->target_settings = array(
             'general',
             'crawling',
             'wpenv',
@@ -17,16 +17,7 @@ class HTMLProcessor {
             'advanced',
         );
 
-        if ( isset( $_POST['selected_deployment_option'] ) ) {
-            require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/PostSettings.php';
-
-            $this->settings = WPSHO_PostSettings::get( $target_settings );
-        } else {
-            require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/DBSettings.php';
-            $this->settings = WPSHO_DBSettings::get( $target_settings );
-        }
+        $this->loadSettings();
 
         // instantiate the XML body here
         $this->xml_doc = new DOMDocument();
@@ -119,6 +110,20 @@ class HTMLProcessor {
         $this->writeDiscoveredURLs();
 
         return true;
+    }
+
+    public function loadSettings() {
+        // TODO: move these into function, to allow stubbing in test
+        if ( isset( $_POST['selected_deployment_option'] ) ) {
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/PostSettings.php';
+
+            $this->settings = WPSHO_PostSettings::get( $this->target_settings );
+        } else {
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/DBSettings.php';
+            $this->settings = WPSHO_DBSettings::get( $this->target_settings );
+        }
     }
 
     public function processLink( $element ) {
