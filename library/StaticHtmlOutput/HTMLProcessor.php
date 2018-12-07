@@ -35,9 +35,7 @@ class HTMLProcessor {
         require_once dirname( __FILE__ ) . '/../URL2/URL2.php';
         $this->page_url = new Net_URL2( $page_url );
 
-        $this->harvest_new_URLs = (
-             $_POST['ajax_action'] === 'crawl_site'
-        );
+        $this->detectIfURLsShouldBeHarvested();
 
         $this->discovered_urls = [];
 
@@ -83,8 +81,13 @@ class HTMLProcessor {
         }
 
         if ( $this->base_tag_exists ) {
+            error_log($this->xml_doc->saveHTML());
+
             $base_element =
                 $this->xml_doc->getElementsByTagName( 'base' )->item( 0 );
+
+            error_log(print_r($base_element, true));
+
             $base_element->setAttribute( 'href', $this->settings['baseUrl'] );
         } else {
             $base_element = $this->xml_doc->createElement( 'base' );
@@ -110,6 +113,13 @@ class HTMLProcessor {
         $this->writeDiscoveredURLs();
 
         return true;
+    }
+
+    public function detectIfURLsShouldBeHarvested() {
+        // TODO: handle both UI and WP-CLI
+        $this->harvest_new_URLs = (
+             $_POST['ajax_action'] === 'crawl_site'
+        );
     }
 
     public function loadSettings() {
