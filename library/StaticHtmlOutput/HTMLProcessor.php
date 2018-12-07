@@ -629,7 +629,7 @@ class HTMLProcessor {
 
         $url_to_change = $element->getAttribute( $attribute_to_change );
 
-        $site_root = '/';
+        $site_root = '';
 
         // for same server test deploys, we'll need the subdir after root
         if ( isset( $_POST['targetFolder'] ) &&
