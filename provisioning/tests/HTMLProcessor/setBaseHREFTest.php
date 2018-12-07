@@ -13,14 +13,11 @@ final class HTMLProcessorBaseHREFTest extends TestCase {
      * @dataProvider baseHREFProvider
      */
     public function testSetBaseHREF(
-        $head_html,
+        $test_HTML_content,
         $baseHREF,
         $exp_detect_existing,
         $exp_result
         ) {
-        $html_header = '<!DOCTYPE html><html lang="en-US" class="no-js no-svg">';
-        $html_footer = '<body></body></html>';
-        $test_HTML_content = $html_header . $head_html . $html_footer;
 
         // mock out only the unrelated methods
         $mockProcessor = $this->getMockBuilder( 'HTMLProcessor' )
@@ -57,21 +54,29 @@ final class HTMLProcessorBaseHREFTest extends TestCase {
 
         // we expect the $this->base_tag_exists to be set when existing is detected
 
+
         $mockProcessor->processHTML($test_HTML_content, $page_URL);
 
         $this->assertEquals(
-            $exp_result,
-            $mockProcessor->ownerDocument->processHTML( $element )
+            $exp_detect_existing,
+            $mockProcessor->base_tag_exists
         );
+
+        $this->assertEquals(
+            $exp_result,
+            $mockProcessor->xml_doc->saveHTML()
+        );
+
     }
 
     public function baseHREFProvider() {
         return [
            'base HREF to change existing in source' =>  [
-                '<head><base href="https://mydomain.com"></head>',
+                '<!DOCTYPE html><html lang="en-US"><head><base href="https://mydomain.com"></head><body></body></html>',
                 'https://mynewdomain.com',
                 true,
-                '<head><base href="https://mynewdomain.com"></head>',
+                '<!DOCTYPE html>
+<html lang="en-US"><head><base href="https://mynewdomain.com"></head><body></body></html>',
             ],
 //           'base HREF with none existing in source' =>  [
 //                '<head><base href="https://mydomain.com"></head><a href="https://mydomain.com/posts/my_blog_post/">Link text</a>',

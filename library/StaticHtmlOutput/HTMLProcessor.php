@@ -81,14 +81,10 @@ class HTMLProcessor {
         }
 
         if ( $this->base_tag_exists ) {
-            error_log($this->xml_doc->saveHTML());
-
             $base_element =
                 $this->xml_doc->getElementsByTagName( 'base' )->item( 0 );
 
-            error_log(print_r($base_element, true));
-
-            $base_element->setAttribute( 'href', $this->settings['baseUrl'] );
+            $base_element->setAttribute( 'href', $this->settings['baseHREF'] );
         } else {
             $base_element = $this->xml_doc->createElement( 'base' );
             $base_element->setAttribute( 'href', $this->settings['baseUrl'] );
