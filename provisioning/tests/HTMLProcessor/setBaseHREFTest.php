@@ -19,7 +19,6 @@ final class HTMLProcessorBaseHREFTest extends TestCase {
         $exp_result
         ) {
 
-        // mock out only the unrelated methods
         $mockProcessor = $this->getMockBuilder( 'HTMLProcessor' )
             ->setMethods(
                 [
@@ -35,8 +34,6 @@ final class HTMLProcessorBaseHREFTest extends TestCase {
             'http://mywpsite.com/category/photos/my-gallery/'
         );
 
-
-
         $mockProcessor->method( 'loadSettings' )->willReturn( null );
         $mockProcessor->method( 'rewriteSiteURLsToPlaceholder' )->willReturn( null );
         $mockProcessor->method( 'detectIfURLsShouldBeHarvested' )->willReturn( null );
@@ -50,9 +47,6 @@ final class HTMLProcessorBaseHREFTest extends TestCase {
             'baseUrl' => 'http://baseurldomainfromsettings.com/',
             'baseHREF' => $baseHREF,
         );
-
-        // we expect the $this->base_tag_exists to be set when existing is detected
-
 
         $mockProcessor->processHTML($test_HTML_content, $page_URL);
 
@@ -78,24 +72,30 @@ final class HTMLProcessorBaseHREFTest extends TestCase {
 <html lang="en-US"><head><base href="https://mynewdomain.com"></head><body></body></html>
 ',
             ],
-//           'base HREF with none existing in source' =>  [
-//                '<head><base href="https://mydomain.com"></head><a href="https://mydomain.com/posts/my_blog_post/">Link text</a>',
-//                'a',
-//                'href',
-//                '<a href="http://mywpsite.com/first_lvl_dir/a_file.jpg">Link to some file</a>'
-//            ],
-//           'no base HREF to remove existing in source' =>  [
-//                '<head><base href="https://mydomain.com"></head><a href="https://mydomain.com/posts/my_blog_post/">Link text</a>',
-//                'a',
-//                'href',
-//                '<a href="http://mywpsite.com/first_lvl_dir/a_file.jpg">Link to some file</a>'
-//            ],
-//           'no base HREF and none existing in source' =>  [
-//                '<head><base href="https://mydomain.com"></head><a href="https://mydomain.com/posts/my_blog_post/">Link text</a>',
-//                'a',
-//                'href',
-//                '<a href="http://mywpsite.com/first_lvl_dir/a_file.jpg">Link to some file</a>'
-//            ],
+           'base HREF with none existing in source' =>  [
+                '<!DOCTYPE html><html lang="en-US"><head></head><body></body></html>',
+                'https://mynewdomain.com',
+                false,
+                '<!DOCTYPE html>
+<html lang="en-US"><head><base href="https://mynewdomain.com"></head><body></body></html>
+',
+            ],
+           'empty base HREF removes existing in source' =>  [
+                '<!DOCTYPE html><html lang="en-US"><head><base href="https://mydomain.com"></head><body></body></html>',
+                '',
+                true,
+                '<!DOCTYPE html>
+<html lang="en-US"><head></head><body></body></html>
+',
+            ],
+           'no base HREF and none existing in source' =>  [
+                '<!DOCTYPE html><html lang="en-US"><head></head><body></body></html>',
+                '',
+                false,
+                '<!DOCTYPE html>
+<html lang="en-US"><head></head><body></body></html>
+',
+            ],
         ];
     }
 }
