@@ -26,6 +26,7 @@ class WPSHO_DBSettings {
         $key_sets['processing'] = array(
             'removeConditionalHeadComments',
             'allowOfflineUsage',
+            'baseHREF',
             'rewritePLUGINDIR',
             'rewriteTHEMEDIR',
             'rewriteTHEMEROOT',
