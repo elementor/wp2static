@@ -80,6 +80,14 @@ final class HTMLProcessorBaseHREFTest extends TestCase {
 <html lang="en-US"><head><base href="https://mynewdomain.com"></head><body></body></html>
 ',
             ],
+           'base HREF of "/" with none existing in source' =>  [
+                '<!DOCTYPE html><html lang="en-US"><head></head><body></body></html>',
+                '/',
+                false,
+                '<!DOCTYPE html>
+<html lang="en-US"><head><base href="/"></head><body></body></html>
+',
+            ],
            'empty base HREF removes existing in source' =>  [
                 '<!DOCTYPE html><html lang="en-US"><head><base href="https://mydomain.com"></head><body></body></html>',
                 '',
