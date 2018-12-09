@@ -1,5 +1,6 @@
 #!/bin/ksh
 
 echo "compressing: $1"
-php -w $1 > $1
+php -w $1 > $1BAK
+mv $1BAK $1
 

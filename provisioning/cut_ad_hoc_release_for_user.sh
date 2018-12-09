@@ -20,6 +20,7 @@ find . -type d -exec chmod 755 {} \;
 find . -type f -exec chmod 644 {} \;
 
 # strip comments and whitespace from each PHP file
+# takes size from 990K to 733K
 find .  -name \*.php -exec $EXEC_DIR/provisioning/compress_php_file {} \;
 
 zip -r -9 ./$1.zip ./wordpress-static-html-plugin
