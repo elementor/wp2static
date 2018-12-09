@@ -10,7 +10,7 @@
 
         <?php $tpl->displayCheckbox($this, 'useRelativeURLs', 'Use relative URLs'); ?>
 
-        <p> URLs in the exported site will be rewritten as <a href="https://www.w3schools.com/tags/tag_base.asp" target="_blank">relative URLs</a>. ie, http://mydomain.com/some_dir/some_file.jpg will become /some_dir/some_file.jpg. A base href will be set to http://mydomain.com/, from which all the relative URLs resolve to. This is another way to shave extra download size from your webpages.</p>
+        <p> URLs in the exported site will be rewritten as <a href="https://www.w3schools.com/tags/tag_base.asp" target="_blank">relative URLs</a>. ie, <code>http://mydomain.com/some_dir/some_file.jpg</code> will become <code>some_dir/some_file.jpg</code></p>
       </td>
     </tr>
       <tr>
@@ -20,7 +20,7 @@
         <td>
           <?php $tpl->displayTextfield($this, 'baseHREF', 'Base HREF', '', ''); ?>
 
-          <p>Setting this will tell the browser to resolve all URLs using this as a base. ie, with a Base HREF of <code>https://mydomain.com</code> and the relative URL setting enabled above, a link on your page of <code>/posts/my_blog_post/</code> will resolve to <code>https://mydomain.com/posts/my_blog_post/</code>. For a more portable exported site, that can be deployed to multiple servers without rewriting each time, set your Base HREF to <code>/</code>.</p>
+          <p>Setting this will tell the browser to resolve all URLs using this as a base. ie, with a Base HREF of <code>/</code> and the relative URL setting enabled above, a relative link of <code>some_dir/some_file.jpg</code> will resolve to <code>/some_dir/some_file.jpg</code></p>
         </td>
       </tr>
     <tr>
