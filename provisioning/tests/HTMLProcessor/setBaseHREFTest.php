@@ -104,6 +104,14 @@ final class HTMLProcessorBaseHREFTest extends TestCase {
 <html lang="en-US"><head></head><body></body></html>
 ',
             ],
+           'new base HREF becomes first child of <head>' =>  [
+                '<!DOCTYPE html><html lang="en-US"><head><link rel="stylesheet" href="#"></head><body></body></html>',
+                '/',
+                false,
+                '<!DOCTYPE html>
+<html lang="en-US"><head><base href="/"><link rel="stylesheet" href="#"></head><body></body></html>
+',
+            ],
         ];
     }
 }

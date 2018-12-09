@@ -96,7 +96,8 @@ class HTMLProcessor {
                 $head_element =
                     $this->xml_doc->getElementsByTagName( 'head' )->item( 0 );
                 if ( $head_element ) {
-                    $head_element->appendChild( $base_element );
+                    $first_head_child = $head_element->firstChild;
+                    $head_element->insertBefore( $base_element, $first_head_child );
                 } else {
                     require_once dirname( __FILE__ ) .
                         '/../StaticHtmlOutput/WsLog.php';
