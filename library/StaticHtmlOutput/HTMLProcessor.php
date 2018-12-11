@@ -83,21 +83,30 @@ class HTMLProcessor {
         if ( $this->base_tag_exists ) {
             $base_element =
                 $this->xml_doc->getElementsByTagName( 'base' )->item( 0 );
-            
+
             if ( empty( $this->settings['baseHREF'] ) ) {
                 $base_element->parentNode->removeChild( $base_element );
             } else {
-                $base_element->setAttribute( 'href', $this->settings['baseHREF'] );
+                $base_element->setAttribute(
+                    'href',
+                    $this->settings['baseHREF']
+                );
             }
         } else {
             if ( ! empty( $this->settings['baseHREF'] ) ) {
                 $base_element = $this->xml_doc->createElement( 'base' );
-                $base_element->setAttribute( 'href', $this->settings['baseHREF'] );
+                $base_element->setAttribute(
+                    'href',
+                    $this->settings['baseHREF']
+                );
                 $head_element =
                     $this->xml_doc->getElementsByTagName( 'head' )->item( 0 );
                 if ( $head_element ) {
                     $first_head_child = $head_element->firstChild;
-                    $head_element->insertBefore( $base_element, $first_head_child );
+                    $head_element->insertBefore(
+                        $base_element,
+                        $first_head_child
+                    );
                 } else {
                     require_once dirname( __FILE__ ) .
                         '/../StaticHtmlOutput/WsLog.php';
