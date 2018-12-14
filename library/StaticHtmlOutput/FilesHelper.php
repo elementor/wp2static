@@ -397,10 +397,12 @@ class StaticHtmlOutput_FilesHelper {
             array_shift( $path_segments );
             array_pop( $path_segments );
 
-            // if subdomain, rm first segment from URL to avoid duplicates
-            if ( isset( $_POST['subdirectory'] ) ) {
-                array_shift( $path_segments );
-            }
+            // if subdirectory, rm first segment from URL to avoid duplicates
+            // TODO: handle WP-CLI case and test if really needed
+            // was removing too much on a Bedrock subdir
+            // if ( isset( $_POST['subdirectory'] ) ) {
+            //     array_shift( $path_segments );
+            // }
 
             $number_of_segments = count( $path_segments );
 
@@ -437,7 +439,6 @@ class StaticHtmlOutput_FilesHelper {
             }
         }
 
-        // de-duplicate the array
         return array_unique( $postURLs );
     }
 }
