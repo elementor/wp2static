@@ -7,7 +7,7 @@ class WPSite {
         // WP URL paths
         $wp_upload_path_and_url = wp_upload_dir();
         $this->uploads_url = $wp_upload_path_and_url['baseurl'];
-        $this->site_url = get_site_url() . '/';
+        $this->site_url = get_home_url() . '/';
 
         // WP dir paths
         $this->site_path = ABSPATH;

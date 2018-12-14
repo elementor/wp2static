@@ -254,7 +254,7 @@ class StaticHtmlOutput_FilesHelper {
         $str = implode( "\n", $urlsQueue );
 
         // TODO: modify each function vs doing here for perf
-        $wp_site_url = get_site_url();
+        $wp_site_url = get_home_url();
         $str = str_replace(
             $wp_site_url,
             '',
