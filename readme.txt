@@ -99,7 +99,7 @@ Developed by [**Leon Stafford**](http://leonstafford.github.io). If you have any
 
 = How do I configure all the options? =
 
-There's some useful information on the page once you select a deployment method. There are also some good tutorials linked at https://wp2static.html
+There's some useful information on the page once you select a deployment method. There are also some good tutorials linked at https://wp2static.com/
 
 = Where can I publish my static site to? =
 
