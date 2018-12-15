@@ -32,12 +32,15 @@
 
         <p>Replace, for example, default WordPress paths within the source code</p> <br>
 
-        <i><p>enter the original path followed by a comma, then the new path</p> <br>
+        <p>use the full path, such as:</p>
 
-        <?php echo $this->wp_site_url; ?>/wp-content/themes/twentyseventeen/banana.jpg<br>
-        /my_pricelist.pdf<br>
-        .js<br>
-        </i>
+        <pre>
+            wp-content/themes/twentyseventeen/,contents/ui/theme/
+            wp-includes/,inc/
+        </pre>
+    
+        <i>URLs will be first checked to ensure they are part of this site, not an external WordPress site, which would mess up URLs of linked images, etc</i>
+
         <br>
 
 <?php
@@ -45,6 +48,35 @@
 ?>
 
           <textarea class="widefat" name="rewrite_rules" id="rewrite_rules" rows="5" cols="10"><?php echo $this->options->rewrite_rules ? $this->options->rewrite_rules : $default_rewrite_rules;  ?></textarea>
+        </td>
+    </tr>
+    <tr>
+        <th scope="row">
+          <label><?php echo __('Rename Exported Directories', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+        <p>Likely required if doing any URL rewriting above.</p><br>
+
+        <p>Set the source directory, then a comma and the target directory. </p
+
+        <p>
+In order to move wp-content/themes/twentyseventeen to contents/ui/mytheme, we'd need:
+</p>
+
+<pre>
+wp-content,contents
+contents/themes,contents/ui
+contents/ui/twentyseventeen,contents/ui/mytheme
+</pre>
+
+
+
+         <br>
+<?php
+    $default_rename_rules = 'PUT SOMETHING ELSE IN HERE';
+?>
+
+          <textarea class="widefat" name="rename_rules" id="rename_rules" rows="5" cols="10"><?php echo $this->options->rename_rules ? $this->options->rename_rules : $default_rename_rules;  ?></textarea>
         </td>
     </tr>
     <tr>
