@@ -24,6 +24,7 @@ class WPSite {
         $this->permalink_structure = get_option( 'permalink_structure' );
 
         $this->wp_inc = '/' . WPINC;
+
         $this->wp_content = '/' . WP_CONTENT_DIR;
         $this->wp_uploads =
                 str_replace( ABSPATH, '/', $this->wp_uploads_path );
