@@ -9,8 +9,6 @@ var current_archive = {};
 
 var current_deployment_method = '<?php echo $this->options->selected_deployment_option ? $this->options->selected_deployment_option : 'folder'; ?>';
 
-var working_directory = '<?php echo $this->working_directory; ?>';
-
 // TODO: get the log out of the archive, along with it's meta infos
 var log_file_url = wp_site.uploads_url + '/WP-STATIC-EXPORT-LOG.txt';
 var discovered_urls_file_url = wp_site.uploads_url + '/WP-STATIC-DISCOVERED-URLS-LOG.txt';
@@ -210,8 +208,6 @@ jQuery(document).ready(function($){
 
     // reset export targets to avoid having left-overs from a failed run
     export_targets = [];
-
-    setWPPathRewrites();
 
     $('.hiddenActionField').val('wp_static_html_output_ajax');
     $('#hiddenAJAXAction').val('prepare_for_export');
@@ -696,24 +692,6 @@ jQuery(document).ready(function($){
     }
   }
 
-  function setWPPathRewrites() {
-    $('#new_wp_content_path').val( '/' + $('#rewriteWPCONTENT').val());
-  
-    $('#new_themes_path').val(
-      $('#new_wp_content_path').val() + '/' + $('#rewriteTHEMEROOT').val());
-  
-    $('#new_active_theme_path').val(
-      $('#new_themes_path').val() + '/' + $('#rewriteTHEMEDIR').val());
-  
-    $('#new_uploads_path').val(
-      $('#new_wp_content_path').val() + '/' + $('#rewriteUPLOADS').val());
-  
-    $('#new_plugins_path').val(
-      $('#new_wp_content_path').val() + '/' + $('#rewritePLUGINDIR').val());
-  
-    $('#new_wpinc_path').val('/' + $('#rewriteWPINC').val());
-  }
-
   function reloadLogFile() {
     // get current log selection
     current_log_target = $("#log_switcher").val();
@@ -1168,17 +1146,13 @@ jQuery(document).ready(function($){
   });
 
   // populate some hidden fields
-  $('#working_directory').val(working_directory);
   $('#wp_site_url').val(wp_site.site_url);
   $('#wp_uploads_path').val(wp_site.wp_uploads_path);
   $('#wp_uploads_url').val(wp_site.uploads_url);
   $('#wp_site_path').val(wp_site.site_path);
   $('#wp_inc').val(wp_site.wp_inc);
   $('#wp_active_theme').val(wp_site.wp_active_theme);
-  $('#wp_themes').val(wp_site.wp_themes);
   $('#wp_uploads').val(wp_site.wp_uploads);
-  $('#wp_plugins').val(wp_site.wp_plugins);
-  $('#wp_content').val(wp_site.wp_content);
   $('.spinner').hide();
 
   // call change handler on page load, to set correct state
