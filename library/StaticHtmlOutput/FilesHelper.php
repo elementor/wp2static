@@ -318,6 +318,9 @@ class StaticHtmlOutput_FilesHelper {
 
         $urlsQueue = array_merge(
             array( trailingslashit( $baseUrl ) ),
+            array( '/robots.txt' ),
+            array( '/favicon.ico' ),
+            array( '/sitemap.xml' ),
             self::getThemeFiles(
                 $wp_site->parent_theme_path,
                 $wp_site->getWPContentSubDirectory()
