@@ -23,9 +23,44 @@ class StaticHtmlOutput_FilesHelper {
     }
 
     public static function getParentThemeFiles() {
-        $parentThemeFiles =
-            self::getListOfLocalFilesByUrl( get_template_directory_uri() );
-        return $parentThemeFiles;
+        require_once dirname( __FILE__ ) . '/WPSite.php';
+        $wp_site = new WPSite();
+
+        $files = array();
+        $directory = $wp_site->parent_theme_path;
+
+        if ( is_dir( $directory ) ) {
+            $iterator = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator(
+                    $directory,
+                    RecursiveDirectoryIterator::SKIP_DOTS
+                )
+            );
+
+            foreach ( $iterator as $fileName => $fileObject ) {
+                $path_crawlable = self::filePathLooksCrawlable( $fileName );
+
+                $detectedFileName =
+                    home_url( str_replace( ABSPATH, '', $fileName ) );
+
+                if ( $wp_site->getWPContentSubDirectory() ) {
+                    $detectedFileName =
+                        home_url(
+                            $wp_site->getWPContentSubDirectory() . '/' .
+                            str_replace( ABSPATH, '', $fileName )
+                        );
+                }
+
+                if ( $path_crawlable ) {
+                    array_push(
+                        $files,
+                        $detectedFileName   
+                    );
+                }
+            }
+        }
+
+        return $files;
     }
 
     public static function getChildThemeFiles() {
