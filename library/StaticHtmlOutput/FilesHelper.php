@@ -22,12 +22,9 @@ class StaticHtmlOutput_FilesHelper {
         }
     }
 
-    public static function getParentThemeFiles() {
-        require_once dirname( __FILE__ ) . '/WPSite.php';
-        $wp_site = new WPSite();
-
+    public static function getThemeFiles( $path, $wp_content_subdir ) {
         $files = array();
-        $directory = $wp_site->parent_theme_path;
+        $directory = $path;
 
         if ( is_dir( $directory ) ) {
             $iterator = new RecursiveIteratorIterator(
@@ -43,10 +40,10 @@ class StaticHtmlOutput_FilesHelper {
                 $detectedFileName =
                     home_url( str_replace( ABSPATH, '', $fileName ) );
 
-                if ( $wp_site->getWPContentSubDirectory() ) {
+                if ( $wp_content_subdir ) {
                     $detectedFileName =
                         home_url(
-                            $wp_site->getWPContentSubDirectory() . '/' .
+                            $wp_content_subdir . '/' .
                             str_replace( ABSPATH, '', $fileName )
                         );
                 }
@@ -61,10 +58,6 @@ class StaticHtmlOutput_FilesHelper {
         }
 
         return $files;
-    }
-
-    public static function getChildThemeFiles() {
-        return self::getListOfLocalFilesByUrl( get_stylesheet_directory_uri() );
     }
 
     public static function detectVendorFiles( $wp_site_url ) {
@@ -266,16 +259,24 @@ class StaticHtmlOutput_FilesHelper {
         $viaCLI = false,
         $uploadsPath,
         $uploadsURL,
-        $workingDirectory,
-        $wp_site_url ) {
+        $workingDirectory
+        ) {
+        require_once dirname( __FILE__ ) . '/WPSite.php';
+        $wp_site = new WPSite();
 
         $baseUrl = untrailingslashit( home_url() );
 
         $urlsQueue = array_merge(
             array( trailingslashit( $baseUrl ) ),
-            self::getParentThemeFiles(),
-            self::getChildThemeFiles(),
-            self::detectVendorFiles( $wp_site_url ),
+            self::getThemeFiles(
+                $wp_site->parent_theme_path,
+                $wp_site->getWPContentSubDirectory()
+            ),
+            self::getThemeFiles(
+                $wp_site->child_theme_path,
+                $wp_site->getWPContentSubDirectory()
+            ),
+            self::detectVendorFiles( $wp_site->wp_site_url ),
             self::getAllWPPostURLs( $baseUrl )
         );
 
@@ -311,8 +312,10 @@ class StaticHtmlOutput_FilesHelper {
         $additionalUrls,
         $uploadsPath,
         $uploadsURL,
-        $workingDirectory,
-        $wp_site_url ) {
+        $workingDirectory
+        ) {
+        require_once dirname( __FILE__ ) . '/WPSite.php';
+        $wp_site = new WPSite();
 
         file_put_contents(
             $workingDirectory . '/WP-STATIC-CURRENT-ARCHIVE.txt',
@@ -332,8 +335,14 @@ class StaticHtmlOutput_FilesHelper {
 
         $urlsQueue = array_merge(
             array( trailingslashit( $baseUrl ) ),
-            self::getParentThemeFiles(),
-            self::getChildThemeFiles(),
+            self::getThemeFiles(
+                $wp_site->parent_theme_path,
+                $wp_site->getWPContentSubDirectory()
+            ),
+            self::getThemeFiles(
+                $wp_site->child_theme_path,
+                $wp_site->getWPContentSubDirectory()
+            ),
             self::getAllWPPostURLs( $baseUrl ),
             explode( "\n", $additionalUrls )
         );
