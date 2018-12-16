@@ -429,9 +429,8 @@ class SiteCrawler {
                 break;
 
             default:
-                require_once dirname( __FILE__ ) .
-                    '/../StaticHtmlOutput/WsLog.php';
-                WsLog::l( 'WARNING: NO PROCESSOR FOR FILE: ' . $this->url );
+                $this->processed_file = $this->response->getBody();
+
                 break;
         }
     }
@@ -475,29 +474,6 @@ class SiteCrawler {
         }
 
         return $extension;
-    }
-
-    public function canFileBeCopiedWithoutProcessing() {
-        if ( ! $this->file_extension ) {
-            return false;
-        }
-
-        $extensions_to_process = array(
-            'html',
-            'shtml',
-            'css',
-            'js',
-            'json',
-            'xml',
-            'rss',
-            'txt',
-        );
-
-        if ( ! in_array( $this->file_extension, $extensions_to_process ) ) {
-            return true;
-        }
-
-        return false;
     }
 
     public function detectFileType() {
