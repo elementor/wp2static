@@ -164,22 +164,29 @@ class ArchiveProcessor {
 
     public function copyStaticSiteToPublicFolder() {
         if ( $this->settings['selected_deployment_option'] === 'folder' ) {
-            $publicFolderToCopyTo = trim( $this->settings['targetFolder'] );
+            $target_folder = trim( $this->settings['targetFolder'] );
 
-            if ( ! empty( $publicFolderToCopyTo ) ) {
+            // safeguards
+
+            // allow creating the dir if it doesn't exist
+                // put a file "wp2static_safety" in it
+
+            // disallow dir exists and doesn't contain "wp2static_safety"
+
+            if ( ! empty( $target_folder ) ) {
                 // if dir isn't empty and current deployment option is "folder"
-                $publicFolderToCopyTo = ABSPATH . $publicFolderToCopyTo;
+                $target_folder = ABSPATH . $target_folder;
 
                 // mkdir for the new dir
-                if ( ! file_exists( $publicFolderToCopyTo ) ) {
-                    if ( wp_mkdir_p( $publicFolderToCopyTo ) ) {
+                if ( ! file_exists( $target_folder ) ) {
+                    if ( wp_mkdir_p( $target_folder ) ) {
                         // file permissions for public viewing of files within
-                        chmod( $publicFolderToCopyTo, 0755 );
+                        chmod( $target_folder, 0755 );
 
                         // copy contents of current archive to the targetFolder
                         $this->recursive_copy(
                             $this->archive->path,
-                            $publicFolderToCopyTo
+                            $target_folder
                         );
 
                     } else {
@@ -188,7 +195,7 @@ class ArchiveProcessor {
                 } else {
                     $this->recursive_copy(
                         $this->archive->path,
-                        $publicFolderToCopyTo
+                        $target_folder
                     );
                 }
             }

@@ -285,12 +285,8 @@ jQuery(document).ready(function($){
     validation_errors = '';
     // check for when targetFolder is showing (plugin reset state)
     if ($('#targetFolder').is(':visible') &&
-      (
-        $('#targetFolder').val() == '' ||
-        ! $('#targetFolder').val().match(/^[0-9a-zA-Z]+$/)
-      )
-    ) {
-      validation_errors += 'Target folder may not be empty and only supports a-z, A-Z, 0-9, - and _. Please adjust your settings.';
+      ( $('#targetFolder').val() == '' ) ) {
+      validation_errors += 'Target folder may not be empty. Please adjust your settings.';
     }
 
     if (( $('#baseUrl').val() === undefined ||
