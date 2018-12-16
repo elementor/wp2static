@@ -161,42 +161,117 @@ class ArchiveProcessor {
         closedir( $dir );
     }
 
+    public function dir_is_empty( $dirname ) {
+        if ( ! is_dir( $dirname ) ) return false;
+
+        $dotfiles = ( '.', '..', '.wp2static_safety' );
+
+        foreach ( scandir( $dirname ) as $file ) {
+            if ( ! in_array( $file, $dotfiles ) ) {
+                 return false;
+            }
+        }
+
+        return true;
+    }
+
+    public function dir_has_safety_file( $dirname ) {
+        if ( ! is_dir( $dirname ) ) return false;
+
+        foreach ( scandir( $dirname ) as $file ) {
+            if ( $file == '.wp2static_safety' ) ) {
+                 return false;
+            }
+        }
+
+        return false;
+    }
+
+    public function put_safety_file( $dirname ) {
+        if ( ! is_dir( $dirname ) ) return false;
+        $safety_file = $dirname . '.wp2static_safety';
+        $result = file_put_contents( $safety_file, 'wp2static' );
+
+        chmod( $safety_file, 0664 );
+
+        return $result;
+    }
 
     public function copyStaticSiteToPublicFolder() {
-        if ( $this->settings['selected_deployment_option'] === 'folder' ) {
+        if ( ! $this->settings['selected_deployment_option'] === 'folder' ) {
+            return;
+        }
+
+        if ( ! $target_folder ) {
+            return;
+        }
+
             $target_folder = trim( $this->settings['targetFolder'] );
 
-            // safeguards
+            // instantiate with safe defaults
+            $directory_exists = true;
+            $directory_empty = false;
+            $directory_has_safety_file = false;
+            $directory_writable = false;
 
-            // allow creating the dir if it doesn't exist
-                // put a file "wp2static_safety" in it
+            if ( $target_folder ) {
 
-            // disallow dir exists and doesn't contain "wp2static_safety"
+                // CHECK #1: directory exists or can be created
+                $directory_exists = is_dir( $target_folder );
 
-            if ( ! empty( $target_folder ) ) {
-                // if dir isn't empty and current deployment option is "folder"
-                $target_folder = ABSPATH . $target_folder;
+                if ( $directory_exists ) {
+                    $directory_empty = $this->dir_is_empty( $target_folder ); 
+                } else {
+                    if ( ! wp_mkdir_p( $target_folder ) ) {
+                        require_once dirname( __FILE__ ) .
+                            '/../StaticHtmlOutput/WsLog.php';
+                        WsLog::l(
+                            'Couldn\'t create Target Directory: ' .
+                            $target_folder 
+                        );
 
-                // mkdir for the new dir
-                if ( ! file_exists( $target_folder ) ) {
-                    if ( wp_mkdir_p( $target_folder ) ) {
-                        // file permissions for public viewing of files within
-                        chmod( $target_folder, 0755 );
+                        die();
+                    }
+                }
 
-                        // copy contents of current archive to the targetFolder
+                // CHECK #2: directory is empty or has saftey file
+                if ( $directory_empty ) {
+                    $directory_has_safety_file =
+                        $this->dir_has_safety_file( $target_folder );
+                } 
+
+                if ( $dir_has_safety_file ) {
+                    $directory_writable = is_writable( $target_folder ); 
+                }     
+
+                if ( $directory_empty || $directory_has_safety_file ) {
+                    // add safety file to allow further exports
+                    if ( $this->put_safety_file() ) {
                         $this->recursive_copy(
                             $this->archive->path,
                             $target_folder
                         );
-
                     } else {
-                        error_log( 'Target folder could not be made ERR#A5' );
+                        require_once dirname( __FILE__ ) .
+                            '/../StaticHtmlOutput/WsLog.php';
+                        WsLog::l(
+                            'Couldn\'t put safety file in ' .
+                            'Target Directory' .
+                            $target_folder 
+                        );
+
+                        die();
                     }
                 } else {
-                    $this->recursive_copy(
-                        $this->archive->path,
-                        $target_folder
+                    require_once dirname( __FILE__ ) .
+                        '/../StaticHtmlOutput/WsLog.php';
+                    WsLog::l(
+                        'Target Directory wasn\t empty ' .
+                        'or didn\'t contain safety file ' .
+                        $target_folder 
                     );
+
+                    die();
                 }
             }
         }
