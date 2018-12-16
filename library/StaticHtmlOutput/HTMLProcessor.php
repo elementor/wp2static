@@ -444,51 +444,36 @@ class HTMLProcessor {
     }
 
     public function rewriteUnchangedURLs( $processedHTML ) {
-        // TODO: reimplement
-        return;
-        // TODO: theme is like /wp-content/themes/twentyseventeen
-        // likely already changed... if so, let's skip those rewrites here...
-        if ( isset( $this->settings['rewriteWPPaths'] ) ) {
-            $rewritten_source = str_replace(
-                array(
-                    $this->settings['wp_active_theme'],
-                    $this->settings['wp_themes'],
-                    $this->settings['wp_uploads'],
-                    $this->settings['wp_plugins'],
-                    $this->settings['wp_content'],
-                    $this->settings['wp_inc'],
-                    $this->placeholder_URL,
-                ),
-                array(
-                    $this->settings['new_active_theme_path'],
-                    $this->settings['new_themes_path'],
-                    $this->settings['new_uploads_path'],
-                    $this->settings['new_plugins_path'],
-                    $this->settings['new_wp_content_path'],
-                    $this->settings['new_wpinc_path'],
-                    $this->settings['baseUrl'],
-
-                ),
-                $processedHTML
-            );
-        } else {
-            $rewritten_source = str_replace(
-                array(
-                    $this->placeholder_URL,
-                ),
-                array(
-                    $this->settings['baseUrl'],
-                ),
-                $processedHTML
-            );
+        // TODO: is this still needed with new rewriting method?
+        if ( ! isset( $this->settings['rename_rules'] ) ) {
+            return;
         }
+
+        $rewrite_from = array();
+        $rewrite_to = array();
+
+        $rewrite_rules = explode(
+            "\n",
+            str_replace( "\r", '', $this->settings['rewrite_rules'] )
+        );
+
+        foreach( $rewrite_rules as $rewrite_rule_line ) {
+            list($from, $to) = explode(',', $rewrite_rule_line);
+
+            $rewrite_from[] = $from;
+            $rewrite_to[] = $to;
+        }
+
+        $rewritten_source = str_replace(
+            $rewrite_from,
+            $rewrite_to,
+            $processedHTML
+        );
 
         return $rewritten_source;
     }
 
     public function rewriteEscapedURLs( $processedHTML ) {
-        //TODO: reimplement
-        return;
         /*
         This function will be a bit more costly. To cover bases like:
 
@@ -496,64 +481,28 @@ class HTMLProcessor {
         from the onepress(?) theme, for example
 
         */
-        if ( isset( $this->settings['rewriteWPPaths'] ) ) {
-            $rewritten_source = str_replace(
-                array(
-                    addcslashes( $this->settings['wp_active_theme'], '/' ),
-                    addcslashes( $this->settings['wp_themes'], '/' ),
-                    addcslashes( $this->settings['wp_uploads'], '/' ),
-                    addcslashes( $this->settings['wp_plugins'], '/' ),
-                    addcslashes( $this->settings['wp_content'], '/' ),
-                    addcslashes( $this->settings['wp_inc'], '/' ),
-                    addcslashes( $this->placeholder_URL, '/' ),
-                ),
-                array(
-                    addcslashes(
-                        $this->settings['new_active_theme_path'],
-                        '/'
-                    ),
-                    addcslashes( $this->settings['new_themes_path'], '/' ),
-                    addcslashes( $this->settings['new_uploads_path'], '/' ),
-                    addcslashes( $this->settings['new_plugins_path'], '/' ),
-                    addcslashes( $this->settings['new_wp_content_path'], '/' ),
-                    addcslashes( $this->settings['new_wpinc_path'], '/' ),
-                    addcslashes( $this->settings['baseUrl'], '/' ),
+        if ( ! isset( $this->settings['rename_rules'] ) ) {
+            return;
+        }
 
-                ),
-                $processedHTML
-            );
-        } else {
-            $rewritten_source = str_replace(
-                array(
-                    addcslashes( $this->placeholder_URL, '/' ),
-                ),
-                array(
-                    addcslashes( $this->settings['baseUrl'], '/' ),
-                ),
-                $processedHTML
-            );
+        $rewrite_from = array();
+        $rewrite_to = array();
+
+        $rewrite_rules = explode(
+            "\n",
+            str_replace( "\r", '', $this->settings['rewrite_rules'] )
+        );
+
+        foreach( $rewrite_rules as $rewrite_rule_line ) {
+            list($from, $to) = explode(',', $rewrite_rule_line);
+
+            $rewrite_from[] = addcslashes( $from, '/' );
+            $rewrite_to[] = addcslashes( $to, '/' );
         }
 
         $rewritten_source = str_replace(
-            array(
-                addcslashes( $this->settings['wp_active_theme'], '/' ),
-                addcslashes( $this->settings['wp_themes'], '/' ),
-                addcslashes( $this->settings['wp_uploads'], '/' ),
-                addcslashes( $this->settings['wp_plugins'], '/' ),
-                addcslashes( $this->settings['wp_content'], '/' ),
-                addcslashes( $this->settings['wp_inc'], '/' ),
-                addcslashes( $this->placeholder_URL, '/' ),
-            ),
-            array(
-                addcslashes( $this->settings['new_active_theme_path'], '/' ),
-                addcslashes( $this->settings['new_themes_path'], '/' ),
-                addcslashes( $this->settings['new_uploads_path'], '/' ),
-                addcslashes( $this->settings['new_plugins_path'], '/' ),
-                addcslashes( $this->settings['new_wp_content_path'], '/' ),
-                addcslashes( $this->settings['new_wpinc_path'], '/' ),
-                addcslashes( $this->settings['baseUrl'], '/' ),
-
-            ),
+            $rewrite_from,
+            $rewrite_to,
             $processedHTML
         );
 
@@ -584,8 +533,6 @@ class HTMLProcessor {
 
         // for each of these, addd the rewrite_from and rewrite_to to their 
         // respective arrays
-
-
         $attribute_to_change = '';
         $url_to_change = '';
 
