@@ -160,11 +160,6 @@ class StaticHtmlOutput_Controller {
         }
     }
 
-    // TODO: send these to initial page load and pass as new settings set
-    public function setOldNewPaths() {
-
-    }
-
     public function renderOptionsPage() {
         require_once dirname( __FILE__ ) . '/StaticHtmlOutput/WPSite.php';
 
