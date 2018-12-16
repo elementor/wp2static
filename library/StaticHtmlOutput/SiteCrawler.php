@@ -389,6 +389,7 @@ class SiteCrawler {
                 break;
 
             case 'txt':
+            case 'json':
                 require_once dirname( __FILE__ ) .
                     '/../StaticHtmlOutput/TXTProcessor.php';
                 $processor = new TXTProcessor(
@@ -416,15 +417,6 @@ class SiteCrawler {
                 if ( $this->processed_file ) {
                     $this->processed_file = $processor->getXML();
                 }
-
-                break;
-
-            case 'json':
-                require_once dirname( __FILE__ ) .
-                    '/../StaticHtmlOutput/WsLog.php';
-                WsLog::l(
-                    'no handler for json without extension yet'
-                );
 
                 break;
 

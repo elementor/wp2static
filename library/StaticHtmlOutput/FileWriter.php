@@ -95,7 +95,6 @@ class FileWriter {
         } else {
             require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/WsLog.php';
             WsLog::l( 'SAVING URL: FILE IS EMPTY ' . $this->url );
-            error_log( 'SAVING URL: FILE IS EMPTY ' . $this->url );
         }
     }
 }
