@@ -152,8 +152,7 @@ class StaticHtmlOutput_Controller {
                 true,
                 $this->wp_site->wp_uploads_path,
                 $this->wp_site->uploads_url,
-                $this->wp_site->wp_uploads_path,
-                $this->wp_site->site_url
+                $this->wp_site->wp_uploads_path
             );
 
         if ( ! defined( 'WP_CLI' ) ) {
