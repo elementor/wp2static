@@ -38,15 +38,10 @@ class StaticHtmlOutput_FilesHelper {
                 $path_crawlable = self::filePathLooksCrawlable( $fileName );
 
                 $detectedFileName =
-                    home_url( str_replace( ABSPATH, '', $fileName ) );
-
-                if ( $wp_content_subdir ) {
-                    $detectedFileName =
-                        home_url(
-                            $wp_content_subdir . '/' .
-                            str_replace( ABSPATH, '', $fileName )
-                        );
-                }
+                    home_url(
+                        $wp_content_subdir .
+                        str_replace( ABSPATH, '', $fileName )
+                    );
 
                 if ( $path_crawlable ) {
                     array_push(
@@ -61,6 +56,9 @@ class StaticHtmlOutput_FilesHelper {
     }
 
     public static function detectVendorFiles( $wp_site_url ) {
+        require_once dirname( __FILE__ ) . '/WPSite.php';
+        $wp_site = new WPSite();
+
         $vendor_files = [];
 
         if ( class_exists( '\\Elementor\Api' ) ) {
@@ -75,10 +73,19 @@ class StaticHtmlOutput_FilesHelper {
         }
 
         if ( class_exists( 'autoptimizeMain' ) ) {
-            $autoptimize_cache_dir = WP_CONTENT_DIR . '/cache/autoptimize';
+            $autoptimize_cache_dir = $wp_site->wp_content_path . '/cache/autoptimize';
 
-            $autoptimize_URLs = self::getListOfLocalFilesByUrl(
-                $autoptimize_cache_dir
+            // get difference between home and wp-contents URL
+            $prefix = str_replace(
+                $wp_site->site_url,
+                '/',
+                $wp_site->wp_content_URL
+            );
+
+            $autoptimize_URLs = self::getAutoptimizeCacheFiles(
+                $autoptimize_cache_dir,
+                $wp_site->wp_content_path,
+                $prefix
             );
 
             $vendor_files = array_merge( $vendor_files, $autoptimize_URLs );
@@ -164,6 +171,48 @@ class StaticHtmlOutput_FilesHelper {
                 }
             }
         }
+    }
+
+    /*
+        Autoptimize puts it's cache dir one level above the uploads URL
+        ie, domain.com/cache/ or domain.com/subdir/cache/
+
+        so, we grab all the files from the its actual cache dir
+
+        then strip the site path and any subdir path (no extra logic needed?)
+    */
+    public static function getAutoptimizeCacheFiles(
+        $cache_dir,
+        $path_to_trim,
+        $prefix
+        ) {
+
+        $files = array();
+
+        $directory = $cache_dir;
+
+        if ( is_dir( $directory ) ) {
+            $iterator = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator(
+                    $directory,
+                    RecursiveDirectoryIterator::SKIP_DOTS
+                )
+            );
+
+            foreach ( $iterator as $fileName => $fileObject ) {
+                $path_crawlable = self::filePathLooksCrawlable( $fileName );
+
+                if ( $path_crawlable ) {
+                    array_push(
+                        $files,
+                        $prefix .
+                        home_url( str_replace( $path_to_trim, '', $fileName ) )
+                    );
+                }
+            }
+        }
+
+        return $files;
     }
 
     public static function getListOfLocalFilesByUrl( $url ) {
@@ -276,7 +325,7 @@ class StaticHtmlOutput_FilesHelper {
                 $wp_site->child_theme_path,
                 $wp_site->getWPContentSubDirectory()
             ),
-            self::detectVendorFiles( $wp_site->wp_site_url ),
+            self::detectVendorFiles( $wp_site->site_url ),
             self::getAllWPPostURLs( $baseUrl )
         );
 
