@@ -561,11 +561,30 @@ class HTMLProcessor {
     }
 
     public function rewriteWPPaths( $element ) {
-        //TODO: reimplement
-        return;
-        if ( ! isset( $this->settings['rewriteWPPaths'] ) ) {
+        if ( ! isset( $this->settings['rename_rules'] ) ) {
             return;
         }
+
+        $rewrite_from = array();
+        $rewrite_to = array();
+
+        $rewrite_rules = explode(
+            "\n",
+            str_replace( "\r", '', $this->settings['rewrite_rules'] )
+        );
+
+        foreach( $rewrite_rules as $rewrite_rule_line ) {
+            list($from, $to) = explode(',', $rewrite_rule_line);
+
+            $rewrite_from[] = $from;
+            $rewrite_to[] = $to;
+        }
+
+        // array of: wp-content/themes/twentyseventeen/,contents/ui/theme/
+
+        // for each of these, addd the rewrite_from and rewrite_to to their 
+        // respective arrays
+
 
         $attribute_to_change = '';
         $url_to_change = '';
@@ -587,22 +606,8 @@ class HTMLProcessor {
             // TODO: is the internal link check needed here or these
             // arr values are already normalized?
             $rewritten_url = str_replace(
-                array(
-                    $this->settings['wp_active_theme'],
-                    $this->settings['wp_themes'],
-                    $this->settings['wp_uploads'],
-                    $this->settings['wp_plugins'],
-                    $this->settings['wp_content'],
-                    $this->settings['wp_inc'],
-                ),
-                array(
-                    $this->settings['new_active_theme_path'],
-                    $this->settings['new_themes_path'],
-                    $this->settings['new_uploads_path'],
-                    $this->settings['new_plugins_path'],
-                    $this->settings['new_wp_content_path'],
-                    $this->settings['new_wpinc_path'],
-                ),
+                $rewrite_from,
+                $rewrite_to,
                 $url_to_change
             );
 
@@ -638,12 +643,6 @@ class HTMLProcessor {
         $url_to_change = $element->getAttribute( $attribute_to_change );
 
         $site_root = '';
-
-        // for same server test deploys, we'll need the subdir after root
-        if ( isset( $_POST['targetFolder'] ) &&
-            $_POST['selected_deployment_option'] === 'folder' ) {
-            $site_root .= $_POST['targetFolder'] . '/';
-        }
 
         // check it actually needs to be changed
         if ( $this->isInternalLink(

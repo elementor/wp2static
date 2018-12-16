@@ -190,7 +190,7 @@ class ArchiveProcessor {
             return false;
         }
 
-        $dotfiles = array( '.', '..', '.wp2static_safety' );
+        $dotfiles = array( '.', '..', '/.wp2static_safety' );
 
         foreach ( scandir( $dirname ) as $file ) {
             if ( ! in_array( $file, $dotfiles ) ) {
@@ -206,7 +206,7 @@ class ArchiveProcessor {
 
         foreach ( scandir( $dirname ) as $file ) {
             if ( $file == '.wp2static_safety' ) {
-                 return false;
+                 return true;
             }
         }
 
@@ -218,7 +218,7 @@ class ArchiveProcessor {
             return false;
         }
 
-        $safety_file = $dirname . '.wp2static_safety';
+        $safety_file = $dirname . '/.wp2static_safety';
         $result = file_put_contents( $safety_file, 'wp2static' );
 
         chmod( $safety_file, 0664 );
@@ -242,7 +242,6 @@ class ArchiveProcessor {
         $directory_exists = true;
         $directory_empty = false;
         $dir_has_safety_file = false;
-        $directory_writable = false;
 
         // CHECK #1: directory exists or can be created
         $directory_exists = is_dir( $target_folder );
@@ -250,7 +249,19 @@ class ArchiveProcessor {
         if ( $directory_exists ) {
             $directory_empty = $this->dir_is_empty( $target_folder ); 
         } else {
-            if ( ! wp_mkdir_p( $target_folder ) ) {
+            if ( wp_mkdir_p( $target_folder ) ) {
+                if ( ! $this->put_safety_file( $target_folder ) ) {
+                    require_once dirname( __FILE__ ) .
+                        '/../StaticHtmlOutput/WsLog.php';
+                    WsLog::l(
+                        'Couldn\'t put safety file in ' .
+                        'Target Directory' .
+                        $target_folder 
+                    );
+
+                    die();
+                }
+            } else {
                 require_once dirname( __FILE__ ) .
                     '/../StaticHtmlOutput/WsLog.php';
                 WsLog::l(
@@ -262,24 +273,31 @@ class ArchiveProcessor {
             }
         }
 
-        // CHECK #2: directory is empty or has saftey file
+        // CHECK #2: check directory empty and add safety file
         if ( $directory_empty ) {
-            $dir_has_safety_file =
-                $this->dir_has_safety_file( $target_folder );
-        } 
+            if ( ! $this->put_safety_file( $target_folder ) ) {
+                require_once dirname( __FILE__ ) .
+                    '/../StaticHtmlOutput/WsLog.php';
+                WsLog::l(
+                    'Couldn\'t put safety file in ' .
+                    'Target Directory' .
+                    $target_folder 
+                );
 
-        if ( $dir_has_safety_file ) {
-            $directory_writable = is_writable( $target_folder ); 
-        }     
+                die();
+            }
+        }
+
+        $dir_has_safety_file =
+            $this->dir_has_safety_file( $target_folder );
 
         if ( $directory_empty || $dir_has_safety_file ) {
-            // add safety file to allow further exports
-            if ( $this->put_safety_file( $target_folder ) ) {
-                $this->recursive_copy(
-                    $this->archive->path,
-                    $this->target_folder
-                );
-            } else {
+            $this->recursive_copy(
+                $this->archive->path,
+                $this->target_folder
+            );
+
+            if ( ! $this->put_safety_file( $target_folder ) ) {
                 require_once dirname( __FILE__ ) .
                     '/../StaticHtmlOutput/WsLog.php';
                 WsLog::l(

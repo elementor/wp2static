@@ -593,18 +593,13 @@ jQuery(document).ready(function($){
     if ($('#baseUrl-' + current_deployment_method)) {
       base_url = $('#baseUrl-' + current_deployment_method).val(); 
 
-      // set hidden baseURL field to current option
-      if (current_deployment_method === 'folder') {
-        $('#baseUrl').val(wp_site.site_url + $('#targetFolder').val() + '/'); 
-      } else {
-        $('#baseUrl').val($('#baseUrl-' + current_deployment_method).val()); 
-      }
+      $('#baseUrl').val($('#baseUrl-' + current_deployment_method).val()); 
 
       base_url_previews.text(base_url.replace(/\/$/, "") + '/');
 
       // update the clickable preview url in folder options
-      $('#folderPreviewURL').text(wp_site.site_url + $('#targetFolder').val() + '/');
-      $('#folderPreviewURL').attr('href', (wp_site.site_url + $('#targetFolder').val() + '/'));
+      $('#folderPreviewURL').text(wp_site.site_url + '/');
+      $('#folderPreviewURL').attr('href', (wp_site.site_url + '/'));
     }
   }
 
@@ -795,7 +790,7 @@ jQuery(document).ready(function($){
 
 	// update base url previews in realtime
 	$(document).on('input', 
-		'#baseUrl-s3, #baseUrl-ftp, #baseUrl-folder, #baseUrl-github, #baseUrl-bitbucket, #baseUrl-gitlab, #baseUrl-netlify, #baseUrl-bunnycdn, #baseUrl-zip, #targetFolder', 
+		'#baseUrl-s3, #baseUrl-ftp, #baseUrl-folder, #baseUrl-github, #baseUrl-bitbucket, #baseUrl-gitlab, #baseUrl-netlify, #baseUrl-bunnycdn, #baseUrl-zip', 
 		function() {
 			updateBaseURLReferences();
 		}
