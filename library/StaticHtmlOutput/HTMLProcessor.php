@@ -427,11 +427,7 @@ class HTMLProcessor {
         $escaped_site_url = addcslashes( $this->placeholder_URL, '/' );
 
         if ( strpos( $processedHTML, $escaped_site_url ) !== false ) {
-            return $this->rewriteEscapedURLs(
-                $processedHTML,
-                $wp_site_env,
-                $new_paths
-            );
+            return $this->rewriteEscapedURLs( $processedHTML );
         }
 
         return $processedHTML;
@@ -441,17 +437,15 @@ class HTMLProcessor {
         $siteURL = $this->placeholder_URL;
 
         if ( strpos( $processedHTML, $siteURL ) !== false ) {
-            return $this->rewriteUnchangedURLs(
-                $processedHTML,
-                $wp_site_env,
-                $new_paths
-            );
+            return $this->rewriteUnchangedURLs( $processedHTML );
         }
 
         return $processedHTML;
     }
 
     public function rewriteUnchangedURLs( $processedHTML ) {
+        // TODO: reimplement
+        return;
         // TODO: theme is like /wp-content/themes/twentyseventeen
         // likely already changed... if so, let's skip those rewrites here...
         if ( isset( $this->settings['rewriteWPPaths'] ) ) {
@@ -493,6 +487,8 @@ class HTMLProcessor {
     }
 
     public function rewriteEscapedURLs( $processedHTML ) {
+        //TODO: reimplement
+        return;
         /*
         This function will be a bit more costly. To cover bases like:
 
@@ -565,6 +561,8 @@ class HTMLProcessor {
     }
 
     public function rewriteWPPaths( $element ) {
+        //TODO: reimplement
+        return;
         if ( ! isset( $this->settings['rewriteWPPaths'] ) ) {
             return;
         }

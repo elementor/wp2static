@@ -109,12 +109,36 @@ class ArchiveProcessor {
 
     // default rename in PHP throws warnings if dir is populated
     public function renameWPDirectory( $source, $target ) {
-        // TODO: put safeguard here to avoid rm'ing core dirs
-        // in the case that other variables are empty
-        if ( isset( $this->settings['rewriteWPPaths'] ) ) {
-            $this->recursive_copy( $source, $target );
+        if ( empty( $source ) || empty ( $target ) ) {
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/WsLog.php';
+            WsLog::l(
+                'Failed trying to rename: ' .
+                'Source: ' . $source .
+                ' to: ' . $target 
+            );
+            die();
+        }
 
-            StaticHtmlOutput_FilesHelper::delete_dir_with_files( $source );
+        $original_dir = $this->archive->path . $source;
+        $new_dir = $this->archive->path . $target;
+
+        if ( is_dir( $original_dir ) ) {
+            $this->recursive_copy( $original_dir, $new_dir );
+
+            StaticHtmlOutput_FilesHelper::delete_dir_with_files(
+                $original_dir
+            );
+        } else {
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/WsLog.php';
+            WsLog::l(
+                'Trying to rename non-existent directory: ' .
+                $original_dir 
+            );
+        }
+
+        if ( isset( $this->settings['rewriteWPPaths'] ) ) {
         }
     }
 
@@ -162,9 +186,11 @@ class ArchiveProcessor {
     }
 
     public function dir_is_empty( $dirname ) {
-        if ( ! is_dir( $dirname ) ) return false;
+        if ( ! is_dir( $dirname ) ) {
+            return false;
+        }
 
-        $dotfiles = ( '.', '..', '.wp2static_safety' );
+        $dotfiles = array( '.', '..', '.wp2static_safety' );
 
         foreach ( scandir( $dirname ) as $file ) {
             if ( ! in_array( $file, $dotfiles ) ) {
@@ -179,7 +205,7 @@ class ArchiveProcessor {
         if ( ! is_dir( $dirname ) ) return false;
 
         foreach ( scandir( $dirname ) as $file ) {
-            if ( $file == '.wp2static_safety' ) ) {
+            if ( $file == '.wp2static_safety' ) {
                  return false;
             }
         }
@@ -188,7 +214,10 @@ class ArchiveProcessor {
     }
 
     public function put_safety_file( $dirname ) {
-        if ( ! is_dir( $dirname ) ) return false;
+        if ( ! is_dir( $dirname ) ) {
+            return false;
+        }
+
         $safety_file = $dirname . '.wp2static_safety';
         $result = file_put_contents( $safety_file, 'wp2static' );
 
@@ -202,78 +231,75 @@ class ArchiveProcessor {
             return;
         }
 
+        $target_folder = trim( $this->settings['targetFolder'] );
+        $this->target_folder = $target_folder;
+
         if ( ! $target_folder ) {
             return;
         }
 
-            $target_folder = trim( $this->settings['targetFolder'] );
+        // instantiate with safe defaults
+        $directory_exists = true;
+        $directory_empty = false;
+        $dir_has_safety_file = false;
+        $directory_writable = false;
 
-            // instantiate with safe defaults
-            $directory_exists = true;
-            $directory_empty = false;
-            $directory_has_safety_file = false;
-            $directory_writable = false;
+        // CHECK #1: directory exists or can be created
+        $directory_exists = is_dir( $target_folder );
 
-            if ( $target_folder ) {
+        if ( $directory_exists ) {
+            $directory_empty = $this->dir_is_empty( $target_folder ); 
+        } else {
+            if ( ! wp_mkdir_p( $target_folder ) ) {
+                require_once dirname( __FILE__ ) .
+                    '/../StaticHtmlOutput/WsLog.php';
+                WsLog::l(
+                    'Couldn\'t create Target Directory: ' .
+                    $target_folder 
+                );
 
-                // CHECK #1: directory exists or can be created
-                $directory_exists = is_dir( $target_folder );
-
-                if ( $directory_exists ) {
-                    $directory_empty = $this->dir_is_empty( $target_folder ); 
-                } else {
-                    if ( ! wp_mkdir_p( $target_folder ) ) {
-                        require_once dirname( __FILE__ ) .
-                            '/../StaticHtmlOutput/WsLog.php';
-                        WsLog::l(
-                            'Couldn\'t create Target Directory: ' .
-                            $target_folder 
-                        );
-
-                        die();
-                    }
-                }
-
-                // CHECK #2: directory is empty or has saftey file
-                if ( $directory_empty ) {
-                    $directory_has_safety_file =
-                        $this->dir_has_safety_file( $target_folder );
-                } 
-
-                if ( $dir_has_safety_file ) {
-                    $directory_writable = is_writable( $target_folder ); 
-                }     
-
-                if ( $directory_empty || $directory_has_safety_file ) {
-                    // add safety file to allow further exports
-                    if ( $this->put_safety_file() ) {
-                        $this->recursive_copy(
-                            $this->archive->path,
-                            $target_folder
-                        );
-                    } else {
-                        require_once dirname( __FILE__ ) .
-                            '/../StaticHtmlOutput/WsLog.php';
-                        WsLog::l(
-                            'Couldn\'t put safety file in ' .
-                            'Target Directory' .
-                            $target_folder 
-                        );
-
-                        die();
-                    }
-                } else {
-                    require_once dirname( __FILE__ ) .
-                        '/../StaticHtmlOutput/WsLog.php';
-                    WsLog::l(
-                        'Target Directory wasn\t empty ' .
-                        'or didn\'t contain safety file ' .
-                        $target_folder 
-                    );
-
-                    die();
-                }
+                die();
             }
+        }
+
+        // CHECK #2: directory is empty or has saftey file
+        if ( $directory_empty ) {
+            $dir_has_safety_file =
+                $this->dir_has_safety_file( $target_folder );
+        } 
+
+        if ( $dir_has_safety_file ) {
+            $directory_writable = is_writable( $target_folder ); 
+        }     
+
+        if ( $directory_empty || $dir_has_safety_file ) {
+            // add safety file to allow further exports
+            if ( $this->put_safety_file( $target_folder ) ) {
+                $this->recursive_copy(
+                    $this->archive->path,
+                    $this->target_folder
+                );
+            } else {
+                require_once dirname( __FILE__ ) .
+                    '/../StaticHtmlOutput/WsLog.php';
+                WsLog::l(
+                    'Couldn\'t put safety file in ' .
+                    'Target Directory' .
+                    $target_folder 
+                );
+
+                die();
+            }
+        } else {
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/WsLog.php';
+            WsLog::l(
+                'Target Directory wasn\t empty ' .
+                'or didn\'t contain safety file ' .
+                $target_folder 
+            );
+
+            die();
         }
     }
 
@@ -336,91 +362,23 @@ class ArchiveProcessor {
         rename( $tempZip, $zipPath );
     }
 
-    public function renameWPDirectories() {
-        // rename dirs (in reverse order than when doing in responsebody)
-        // rewrite wp-content  dir
-        $wp_content_dir = WP_CONTENT_DIR;
-        $wp_content_dir_name = str_replace( ABSPATH, '', $wp_content_dir );
+    public function renameArchiveDirectories() {
 
-        $original_wp_content = $this->archive->path .
-            '/' . $wp_content_dir_name;
+        if ( ! isset( $this->settings['rename_rules'] ) ) {
+            return;
+        }
 
-        // rename the theme theme root before the nested theme dir
-        // rename the theme directory
-        $new_wp_content = $this->archive->path . '/' .
-            $this->settings['rewriteWPCONTENT'];
-        $new_theme_root = $new_wp_content . '/' .
-            $this->settings['rewriteTHEMEROOT'];
-        $new_theme_dir = $new_theme_root . '/' .
-            $this->settings['rewriteTHEMEDIR'];
-
-        // rewrite uploads dir
-        $default_upload_dir = wp_upload_dir(); // need to store as var first
-        $updated_uploads_dir = str_replace(
-            WP_CONTENT_DIR,
-            '',
-            $default_upload_dir['basedir']
+        $rename_rules = explode(
+            "\n",
+            str_replace( "\r", '', $this->settings['rename_rules'] )
         );
 
-        $updated_uploads_dir = $new_wp_content . '/' . $updated_uploads_dir;
-        $new_uploads_dir = $new_wp_content . '/' .
-            $this->settings['rewriteUPLOADS'];
+        foreach( $rename_rules as $rename_rule_line ) {
+            list($original_dir, $target_dir) = explode(',', $rename_rule_line);
 
-        // TODO: get these WP vars out from here
-        $updated_theme_root = str_replace( ABSPATH, '/', get_theme_root() );
-        $updated_theme_root = $new_wp_content .
-            str_replace( 'wp-content', '/', $updated_theme_root );
-
-        $updated_theme_dir = $new_theme_root .
-            '/' . basename( get_template_directory_uri() );
-
-        $updated_theme_dir = str_replace( '\/\/', '', $updated_theme_dir );
-
-        // rewrite plugins dir
-        $updated_plugins_dir = str_replace( ABSPATH, '/', WP_PLUGIN_DIR );
-        $updated_plugins_dir = str_replace(
-            'wp-content/',
-            '',
-            $updated_plugins_dir
-        );
-
-        $updated_plugins_dir = $new_wp_content . $updated_plugins_dir;
-        $new_plugins_dir = $new_wp_content . '/' .
-            $this->settings['rewritePLUGINDIR'];
-
-        // rewrite wp-includes  dir
-        $original_wp_includes = $this->archive->path . WPINC;
-        $new_wp_includes = $this->archive->path .
-            $this->settings['rewriteWPINC'];
-
-        if ( file_exists( $original_wp_content ) ) {
-            $this->renameWPDirectory( $original_wp_content, $new_wp_content );
+            $this->renameWPDirectory( $original_dir, $target_dir );
         }
 
-        if ( file_exists( $updated_uploads_dir ) ) {
-            $this->renameWPDirectory( $updated_uploads_dir, $new_uploads_dir );
-        }
-
-        if ( file_exists( $updated_theme_root ) ) {
-            $this->renameWPDirectory( $updated_theme_root, $new_theme_root );
-        }
-
-        if ( file_exists( $updated_theme_dir ) ) {
-            $this->renameWPDirectory( $updated_theme_dir, $new_theme_dir );
-        }
-
-        if ( file_exists( $updated_plugins_dir ) ) {
-            $this->renameWPDirectory( $updated_plugins_dir, $new_plugins_dir );
-
-        }
-
-        if ( file_exists( $original_wp_includes ) ) {
-            $this->renameWPDirectory(
-                $original_wp_includes,
-                $new_wp_includes
-            );
-
-        }
 
         // TODO: add to options
         // rm other left over WP identifying files
