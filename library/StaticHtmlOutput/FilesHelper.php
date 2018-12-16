@@ -255,6 +255,7 @@ class StaticHtmlOutput_FilesHelper {
             'wp-static-html-output',
             'previous-export',
             'pb_backupbuddy',
+            'backwpup',
             'latest-export',
             'current-export',
             'WP-STATIC',

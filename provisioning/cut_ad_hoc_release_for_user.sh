@@ -1,4 +1,4 @@
-#!/bin/ksh
+#!/bin/bash
 
 # run from project root
 
@@ -11,7 +11,12 @@ mkdir -p $TMP_DIR
 rm -Rf $TMP_DIR/wordpress-static-html-plugin
 mkdir $TMP_DIR/wordpress-static-html-plugin
 
-cp -r ./{languages,library,readme.txt,views,wp2static.php} $TMP_DIR/wordpress-static-html-plugin/
+
+cp -r $EXEC_DIR/languages $TMP_DIR/wordpress-static-html-plugin/
+cp -r $EXEC_DIR/library $TMP_DIR/wordpress-static-html-plugin/
+cp -r $EXEC_DIR/readme.txt $TMP_DIR/wordpress-static-html-plugin/
+cp -r $EXEC_DIR/views $TMP_DIR/wordpress-static-html-plugin/
+cp -r $EXEC_DIR/wp2static.php $TMP_DIR/wordpress-static-html-plugin/
 
 cd $TMP_DIR
 
@@ -21,7 +26,7 @@ find . -type f -exec chmod 644 {} \;
 
 # strip comments and whitespace from each PHP file
 # takes size from 990K to 733K
-find .  -name \*.php -exec $EXEC_DIR/provisioning/compress_php_file {} \;
+#find .  -name \*.php -exec $EXEC_DIR/provisioning/compress_php_file {} \;
 
 zip -r -9 ./$1.zip ./wordpress-static-html-plugin
 
