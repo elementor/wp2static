@@ -252,7 +252,7 @@ class StaticHtmlOutput_FilesHelper {
 
         $filenames_to_ignore = array(
             'wp2static',
-            'wp-static-html-output',
+            'wp-static-html-output', // exclude earlier version exports
             'previous-export',
             'pb_backupbuddy',
             'backwpup',
