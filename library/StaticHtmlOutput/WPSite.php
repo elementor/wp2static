@@ -9,13 +9,14 @@ class WPSite {
         $this->uploads_url = $wp_upload_path_and_url['baseurl'];
         $this->site_url = get_home_url() . '/';
         $this->parent_theme_URL = get_template_directory_uri();
+        $this->wp_content_URL = content_url();
 
         // WP dir paths
         $this->site_path = ABSPATH;
         $this->plugins_path = $this->getWPDirFullPath( 'plugins' );
         $this->wp_uploads_path = $this->getWPDirFullPath( 'uploads' );
         $this->wp_includes_path = $this->getWPDirFullPath( 'wp-includes' );
-        $this->wp_contents_path = $this->getWPDirFullPath( 'wp-contents' );
+        $this->wp_content_path = $this->getWPDirFullPath( 'wp-content' );
         $this->theme_root_path = $this->getWPDirFullPath( 'theme-root' );
         $this->parent_theme_path = $this->getWPDirFullPath( 'parent-theme' );
         $this->child_theme_path = $this->getWPDirFullPath( 'child-theme' );
@@ -26,7 +27,7 @@ class WPSite {
 
         $this->wp_inc = '/' . WPINC;
 
-        $this->wp_content = '/' . WP_CONTENT_DIR;
+        $this->wp_content = WP_CONTENT_DIR;
         $this->wp_uploads =
                 str_replace( ABSPATH, '/', $this->wp_uploads_path );
         $this->wp_plugins = str_replace( ABSPATH, '/', WP_PLUGIN_DIR );
@@ -200,9 +201,9 @@ class WPSite {
         */
 
         if ( count( $path_segments )  === 5 ) {
-            return $path_segments[1];
+            return $path_segments[1] . '/';
         } else {
-            return false;
+            return '';
         }
     }
 }

@@ -166,35 +166,6 @@ class WPSHO_DBSettings {
         $settings['wp_site_path'] = $wp_site->site_path;
 
         /*
-        // TODO: Much more coming back in wp_site, but with different names
-        // set from the view. Need to normalize these keys
-        // error_log(print_r($wp_site, true));die();
-
-        [uploads_url] => http://localhost/wp-content/uploads
-        [site_url] => http://localhost/
-        [site_path] => /var/www/htdocs/
-        [plugins_path] => /var/www/htdocs/wp-content/plugins
-        [wp_uploads_path] => /var/www/htdocs/wp-content/uploads
-        [wp_includes_path] => /var/www/htdocs/wp-includes
-        [wp_contents_path] =>
-        [theme_root_path] => /var/www/htdocs/wp-content/themes
-        [parent_theme_path] => /var/www/htdocs/wp-content/themes/twentyseventeen
-        [child_theme_path] => /var/www/htdocs/wp-content/themes/twentyseventeen
-        [child_theme_active] =>
-        [permalink_structure] => /pages/%postname%/
-        [wp_inc] => /wp-includes
-        [wp_content] => //var/www/htdocs/wp-content
-        [wp_uploads] => /wp-content/uploads
-        [wp_plugins] => /wp-content/plugins
-        [wp_themes] => /wp-content/themes
-        [wp_active_theme] => /wp-content/themes/twentyseventeen
-        [subdirectory] =>
-        [uploads_writable] => 1
-        [permalinks_set] => 18
-        [curl_enabled] => 1
-        */
-
-        /*
             Settings requiring transformation
         */
 
