@@ -5,6 +5,17 @@
   <tbody>
     <tr>
       <th scope="row">
+          <label for="baseUrl-folder"><?php echo __('Destination URL', 'static-html-output-plugin');?></label>
+      </th>
+      <td>
+          <?php $tpl->displayTextfield($this, 'baseUrl-folder', 'http://mystaticsite.com', '', ''); ?><br>
+
+          <p><i>Set this to the URL your visitors will use to access your site.</i></p>
+
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
           <label for="targetFolder"><?php echo __('Target Directory', 'static-html-output-plugin');?></label>
       </th>
       <td>
@@ -29,9 +40,5 @@
       </tr>
   </tbody>
 </table>
-
-
-<input style="display:none;" type="url" id="baseUrl-folder" name="baseUrl-folder" />
-
 
 </div>

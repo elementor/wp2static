@@ -57,15 +57,6 @@ class FileWriter {
             $fileExtension = 'html';
         }
 
-        // else {
-        // TODO: is this being called or too late?
-        // require_once dirname( __FILE__ ) .
-        // '/../StaticHtmlOutput/UrlHelper.php';
-        // $fileExtension =
-        // StaticHtmlOutput_UrlHelper::getExtensionFromContentType(
-        // $this->content_type
-        // );
-        // }
         $fileName = '';
 
         // set path for homepage to index.html, else build filename
