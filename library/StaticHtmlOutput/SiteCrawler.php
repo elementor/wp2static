@@ -232,7 +232,8 @@ class SiteCrawler {
 
         foreach ( $batch_of_links_to_crawl as $link_to_crawl ) {
             $this->url = $link_to_crawl;
-            $this->full_url = $this->settings['wp_site_url'] . $this->url;
+            $this->full_url = $this->settings['wp_site_url'] .
+                ltrim($this->url, '/');
 
             if ( isset( $this->settings['excludeURLs'] ) ) {
                 // TODO: check for exclusions
@@ -254,12 +255,8 @@ class SiteCrawler {
 
             $this->file_extension = $this->getExtensionFromURL();
 
-            if ( $this->canFileBeCopiedWithoutProcessing() ) {
-                $this->copyFile();
-            } else {
-                $this->loadFileForProcessing();
-                $this->saveFile();
-            }
+            $this->loadFileForProcessing();
+            $this->saveFile();
         }
 
         $this->checkIfMoreCrawlingNeeded();
@@ -467,19 +464,6 @@ class SiteCrawler {
         );
 
         $file_writer->saveFile( $this->archive_dir );
-    }
-
-    public function copyFile() {
-        require_once dirname( __FILE__ ) .
-            '/../StaticHtmlOutput/FileCopier.php';
-
-        $file_copier = new FileCopier(
-            $this->full_url,
-            $this->settings['wp_site_url'],
-            $this->settings['wp_site_path']
-        );
-
-        $file_copier->copyFile( $this->archive_dir );
     }
 
     public function getExtensionFromURL() {

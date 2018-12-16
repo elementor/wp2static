@@ -10,8 +10,7 @@ class FileCopier {
         $this->wp_site_path = $wp_site_path;
     }
 
-    public function getLocalFileForURL() {
-        /*
+    /*
         Take the public URL and return the location on the filesystem
 
         ie http://domain.com/wp-content/somefile.jpg
@@ -26,10 +25,28 @@ class FileCopier {
 
         ie /var/www/domain.com/html/wp-content/somefile.jpg
 
-        */
-        return(
-            str_replace( $this->wp_site_url, $this->wp_site_path, $this->url )
+        TODO: Detect for custom wp-content/uploads/plugin/dirs
+
+    */
+    public function getLocalFileForURL() {
+        $local_file = str_replace(
+            $this->wp_site_url,
+            $this->wp_site_path,
+            $this->url
         );
+
+        if ( is_file( $local_file ) ) {
+            return $local_file;
+        } else {
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/WsLog.php';
+            WsLog::l(
+                'ERROR: trying to copy local file: ' . $local_file .
+                ' for URL: ' . $this->url .
+                ' (FILE NOT FOUND/UNREADABLE)'
+            );
+        }
+
     }
 
     public function copyFile( $archive_dir ) {
