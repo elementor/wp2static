@@ -133,9 +133,10 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
  * New feature: send email upon completion
  * New feature: exclude URLs from being crawled/exported
  * New feature: initial support for feeds/xml exporting
- * Enhancement: preview initial crawl list before starting your export
  * Enhancement: much improved export speeds via batching requests
  * Enhancement: test external deploy settings before starting export
+ * Enhancement: flexible URL rewriting and directory renaming
+ * Enhancement: preview initial crawl list before starting your export
  * Enhancement: support sleeping between GitHub API requests, avoid rate limits
  * Enhancement: support multiple site ID formats within Netlify deploy
  * Enhancement: remove Freemius SDK from free version
@@ -144,6 +145,7 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
  * Enhancement: easy access to export/deploy logs from Logs tab
  * Enhancement: strip WP's noindex,follow meta tag
  * Enhancement: support Netlify _headers and _redirects files
+ * Bugfix: Support for Bedrock, Debian & non-standard WP paths
  * Bugfix: Prevent rewriting mailto: links containing domain
  * Bugfix: Prevent rewriting URLs on external domains
  * Bugfix: Offline ZIP creation now functioning properly
@@ -473,9 +475,10 @@ Initial release to Wordpress community
  * New feature: send email upon completion
  * New feature: exclude URLs from being crawled/exported
  * New feature: initial support for feeds/xml exporting
- * Enhancement: preview initial crawl list before starting your export
  * Enhancement: much improved export speeds via batching requests
  * Enhancement: test external deploy settings before starting export
+ * Enhancement: flexible URL rewriting and directory renaming
+ * Enhancement: preview initial crawl list before starting your export
  * Enhancement: support sleeping between GitHub API requests, avoid rate limits
  * Enhancement: support multiple site ID formats within Netlify deploy
  * Enhancement: remove Freemius SDK from free version
@@ -484,6 +487,7 @@ Initial release to Wordpress community
  * Enhancement: easy access to export/deploy logs from Logs tab
  * Enhancement: strip WP's noindex,follow meta tag
  * Enhancement: support Netlify _headers and _redirects files
+ * Bugfix: Support for Bedrock, Debian & non-standard WP paths
  * Bugfix: Prevent rewriting mailto: links containing domain
  * Bugfix: Prevent rewriting URLs on external domains
  * Bugfix: Offline ZIP creation now functioning properly
