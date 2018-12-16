@@ -8,6 +8,7 @@ class WPSite {
         $wp_upload_path_and_url = wp_upload_dir();
         $this->uploads_url = $wp_upload_path_and_url['baseurl'];
         $this->site_url = get_home_url() . '/';
+        $this->parent_theme_URL = get_template_directory_uri();
 
         // WP dir paths
         $this->site_path = ABSPATH;
@@ -37,14 +38,14 @@ class WPSite {
         // extra overhead during the high cyclical functions
         $this->detect_base_url();
 
-        $this->subdirectory = $this->isSiteInstalledInSubdomain();
+        $this->subdirectory = $this->isSiteInstalledInSubDirectory();
 
         $this->uploads_writable = $this->uploadsPathIsWritable();
         $this->permalinks_set = $this->permalinksAreDefined();
         $this->curl_enabled = $this->hasCurlSupport();
     }
 
-    public function isSiteInstalledInSubdomain() {
+    public function isSiteInstalledInSubDirectory() {
         $parsed_site_url = parse_url( rtrim( $this->site_url, '/' ) );
 
         if ( isset( $parsed_site_url['path'] ) ) {
@@ -177,6 +178,32 @@ class WPSite {
         $path_segments = explode( '/', $path );
 
         return end( $path_segments );
+    }
+
+    /*
+        For when we have a site like domain.com
+        and wp-content themes and plugins are under /wp/
+    */
+    public function getWPContentSubDirectory() {
+        $parsed_URL = parse_url( $this->parent_theme_URL );
+        $path_segments = explode( '/', $parsed_URL['path'] );
+
+        /*
+            returns:
+
+            [0] =>
+            [1] => wp
+            [2] => wp-content
+            [3] => themes
+            [4] => twentyseventeen
+
+        */
+
+        if ( count( $path_segments )  === 5 ) {
+            return $path_segments[1];
+        } else {
+            return false;
+        }
     }
 }
 
