@@ -445,8 +445,8 @@ class HTMLProcessor {
 
     public function rewriteUnchangedURLs( $processedHTML ) {
         // TODO: is this still needed with new rewriting method?
-        if ( ! isset( $this->settings['rename_rules'] ) ) {
-            return;
+        if ( ! isset( $this->settings['rewrite_rules'] ) ) {
+            return $processedHTML;
         }
 
         $rewrite_from = array();
@@ -481,8 +481,8 @@ class HTMLProcessor {
         from the onepress(?) theme, for example
 
         */
-        if ( ! isset( $this->settings['rename_rules'] ) ) {
-            return;
+        if ( ! isset( $this->settings['rewrite_rules'] ) ) {
+            return $processedHTML;
         }
 
         $rewrite_from = array();
@@ -510,7 +510,7 @@ class HTMLProcessor {
     }
 
     public function rewriteWPPaths( $element ) {
-        if ( ! isset( $this->settings['rename_rules'] ) ) {
+        if ( ! isset( $this->settings['rewrite_rules'] ) ) {
             return;
         }
 
