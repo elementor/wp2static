@@ -133,7 +133,7 @@ class StaticHtmlOutput_Controller {
 
         wp_enqueue_style(
             self::HOOK . '-admin',
-            $pluginDirUrl . '/views/wp2static.css',
+            $pluginDirUrl . 'views/wp2static.css',
             null,
             $this::VERSION
         );
