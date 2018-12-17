@@ -381,8 +381,10 @@ class ArchiveProcessor {
     }
 
     public function renameArchiveDirectories() {
-
         if ( ! isset( $this->settings['rename_rules'] ) ) {
+            if ( ! defined( 'WP_CLI' ) ) {
+                echo 'SUCCESS';
+            }
             return;
         }
 
@@ -396,7 +398,6 @@ class ArchiveProcessor {
 
             $this->renameWPDirectory( $original_dir, $target_dir );
         }
-
 
         // TODO: add to options
         // rm other left over WP identifying files
@@ -417,6 +418,8 @@ class ArchiveProcessor {
         }
 
         $this->copyStaticSiteToPublicFolder();
+
+        
 
         if ( ! defined( 'WP_CLI' ) ) {
             echo 'SUCCESS';
