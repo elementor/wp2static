@@ -16,6 +16,7 @@ cp -r $EXEC_DIR/library $TMP_DIR/wordpress-static-html-plugin/
 cp -r $EXEC_DIR/readme.txt $TMP_DIR/wordpress-static-html-plugin/
 cp -r $EXEC_DIR/views $TMP_DIR/wordpress-static-html-plugin/
 cp -r $EXEC_DIR/wp2static.php $TMP_DIR/wordpress-static-html-plugin/
+cp -r $EXEC_DIR/wp2static.css $TMP_DIR/wordpress-static-html-plugin/
 
 mkdir -p $TMP_DIR/wordpress-static-html-plugin/powerpack
 cp -r $EXEC_DIR/provisioning/deployment_modules/* $TMP_DIR/wordpress-static-html-plugin/powerpack/
