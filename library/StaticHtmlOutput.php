@@ -293,6 +293,12 @@ class StaticHtmlOutput_Controller {
         $processor->createNetlifySpecialFiles();
         // NOTE: renameWP Directories also doing same server publish
         $processor->renameArchiveDirectories();
+        $processor->removeWPCruft();
+        $processor->copyStaticSiteToPublicFolder();
         $processor->create_zip();
+
+        if ( ! defined( 'WP_CLI' ) ) {
+            echo 'SUCCESS';
+        }
     }
 }

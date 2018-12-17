@@ -380,25 +380,7 @@ class ArchiveProcessor {
         rename( $tempZip, $zipPath );
     }
 
-    public function renameArchiveDirectories() {
-        if ( ! isset( $this->settings['rename_rules'] ) ) {
-            if ( ! defined( 'WP_CLI' ) ) {
-                echo 'SUCCESS';
-            }
-            return;
-        }
-
-        $rename_rules = explode(
-            "\n",
-            str_replace( "\r", '', $this->settings['rename_rules'] )
-        );
-
-        foreach( $rename_rules as $rename_rule_line ) {
-            list($original_dir, $target_dir) = explode(',', $rename_rule_line);
-
-            $this->renameWPDirectory( $original_dir, $target_dir );
-        }
-
+    public function removeWPCruft() {
         // TODO: add to options
         // rm other left over WP identifying files
         if ( file_exists( $this->archive->path . '/xmlrpc.php' ) ) {
@@ -416,14 +398,24 @@ class ArchiveProcessor {
         if ( isset( $this->settings['diffBasedDeploys'] ) ) {
             $this->remove_files_idential_to_previous_export();
         }
+    }
 
-        $this->copyStaticSiteToPublicFolder();
-
-        
-
-        if ( ! defined( 'WP_CLI' ) ) {
-            echo 'SUCCESS';
+    public function renameArchiveDirectories() {
+        if ( ! isset( $this->settings['rename_rules'] ) ) {
+            return;
         }
+
+        $rename_rules = explode(
+            "\n",
+            str_replace( "\r", '', $this->settings['rename_rules'] )
+        );
+
+        foreach( $rename_rules as $rename_rule_line ) {
+            list($original_dir, $target_dir) = explode(',', $rename_rule_line);
+
+            $this->renameWPDirectory( $original_dir, $target_dir );
+        }
+
     }
 }
 
