@@ -168,7 +168,7 @@ class StaticHtmlOutput_Controller {
 
         $this->view
             ->setTemplate( 'options-page-js' )
-            ->assign( 'working_directory', $this->getWorkingDirectory() )
+            ->assign( 'working_directory', $this->wp_site->wp_uploads_path )
             ->assign( 'options', $this->options )
             ->assign( 'wp_site', $this->wp_site )
             ->assign( 'onceAction', self::HOOK . '-options' )
@@ -197,42 +197,9 @@ class StaticHtmlOutput_Controller {
         $this->options->saveAllPostData();
     }
 
-
-    public function getWorkingDirectory() {
-        $outputDir = '';
-
-        // priorities: from UI; from settings; fallback to WP uploads path
-        if ( isset( $this->workingDirectory ) ) {
-            $outputDir = $this->workingDirectory;
-            // TODO: fixed this typo, implications?
-            // } elseif ( $this->options->oworkingDirectory ) {
-        } elseif ( $this->options->workingDirectory ) {
-            $outputDir = $this->options->workingDirectory;
-        } else {
-            $outputDir = $this->wp_site->wp_uploads_path;
-        }
-
-        if ( ! is_dir( $outputDir ) && ! wp_mkdir_p( $outputDir ) ) {
-            $outputDir = $this->wp_site->wp_uploads_path;
-            WsLog::l( 'USER WORKING DIRECTORY UNABLE TO BE SET' );
-            error_log( 'USER WORKING DIRECTORY UNABLE TO BE SET' );
-        }
-
-        if ( empty( $outputDir ) || ! is_writable( $outputDir ) ) {
-            $outputDir = $this->wp_site->wp_uploads_path;
-            WsLog::l( 'USER WORKING DIRECTORY NOT WRITABLE' );
-            error_log( 'USER WORKING DIRECTORY NOT WRITABLE' );
-        }
-
-        // convert to Windows-safe filepath
-        // $outputDir = realpath( $outputDir );
-        // escape Win URLs for JS
-        // $outputDir = json_encode( $outputDir );
-        return $outputDir;
-    }
-
     public function prepare_for_export() {
-        require_once dirname( __FILE__ ) . '/StaticHtmlOutput/Exporter.php';
+        require_once dirname( __FILE__ ) .
+            '/StaticHtmlOutput/Exporter.php';
 
         $exporter = new Exporter();
 
