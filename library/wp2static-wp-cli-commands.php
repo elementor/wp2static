@@ -186,11 +186,7 @@ class WP2Static_CLI {
         $start_time = microtime( true );
 
         $plugin = StaticHtmlOutput_Controller::getInstance();
-
-        // TODO: reimplement diff-based deploys
-        // $plugin->capture_last_deployment();
         $plugin->generate_filelist_preview();
-
         $plugin->prepare_for_export();
 
         require_once dirname( __FILE__ ) .

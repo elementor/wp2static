@@ -44,7 +44,6 @@ class WPSHO_DBSettings {
         $key_sets['advanced'] = array(
             'workingDirectory',
             'crawl_increment',
-            'diffBasedDeploys',
             'completionEmail',
         );
 
