@@ -309,7 +309,7 @@ class StaticHtmlOutput_FilesHelper {
         $viaCLI = false,
         $uploadsPath,
         $uploadsURL,
-        $uploadsPath
+        $workingDirectory
         ) {
         require_once dirname( __FILE__ ) . '/WPSite.php';
         $wp_site = new WPSite();
@@ -365,18 +365,18 @@ class StaticHtmlOutput_FilesHelper {
         $additionalUrls,
         $uploadsPath,
         $uploadsURL,
-        $uploadsPath
+        $workingDirectory
         ) {
         require_once dirname( __FILE__ ) . '/WPSite.php';
         $wp_site = new WPSite();
 
         file_put_contents(
-            $uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE.txt',
+            $workingDirectory . '/WP-STATIC-CURRENT-ARCHIVE.txt',
             $archiveDir
         );
 
         chmod(
-            $uploadsPath . '/WP-STATIC-CURRENT-ARCHIVE.txt',
+            $workingDirectory . '/WP-STATIC-CURRENT-ARCHIVE.txt',
             0664
         );
 
@@ -418,7 +418,7 @@ class StaticHtmlOutput_FilesHelper {
         chmod( $uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST.txt', 0664 );
 
         file_put_contents(
-            $uploadsPath . '/WP-STATIC-CRAWLED-LINKS.txt',
+            $workingDirectory . '/WP-STATIC-CRAWLED-LINKS.txt',
             ''
         );
 
