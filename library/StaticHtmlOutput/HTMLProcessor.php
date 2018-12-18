@@ -457,8 +457,8 @@ class HTMLProcessor {
             str_replace( "\r", '', $this->settings['rewrite_rules'] )
         );
 
-        foreach( $rewrite_rules as $rewrite_rule_line ) {
-            list($from, $to) = explode(',', $rewrite_rule_line);
+        foreach ( $rewrite_rules as $rewrite_rule_line ) {
+            list($from, $to) = explode( ',', $rewrite_rule_line );
 
             $rewrite_from[] = $from;
             $rewrite_to[] = $to;
@@ -493,8 +493,8 @@ class HTMLProcessor {
             str_replace( "\r", '', $this->settings['rewrite_rules'] )
         );
 
-        foreach( $rewrite_rules as $rewrite_rule_line ) {
-            list($from, $to) = explode(',', $rewrite_rule_line);
+        foreach ( $rewrite_rules as $rewrite_rule_line ) {
+            list($from, $to) = explode( ',', $rewrite_rule_line );
 
             $rewrite_from[] = addcslashes( $from, '/' );
             $rewrite_to[] = addcslashes( $to, '/' );
@@ -522,16 +522,15 @@ class HTMLProcessor {
             str_replace( "\r", '', $this->settings['rewrite_rules'] )
         );
 
-        foreach( $rewrite_rules as $rewrite_rule_line ) {
-            list($from, $to) = explode(',', $rewrite_rule_line);
+        foreach ( $rewrite_rules as $rewrite_rule_line ) {
+            list($from, $to) = explode( ',', $rewrite_rule_line );
 
             $rewrite_from[] = $from;
             $rewrite_to[] = $to;
         }
 
         // array of: wp-content/themes/twentyseventeen/,contents/ui/theme/
-
-        // for each of these, addd the rewrite_from and rewrite_to to their 
+        // for each of these, addd the rewrite_from and rewrite_to to their
         // respective arrays
         $attribute_to_change = '';
         $url_to_change = '';

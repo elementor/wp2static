@@ -190,7 +190,7 @@ class WPSite {
         $path_segments = explode( '/', $parsed_URL['path'] );
 
         /*
-            returns:
+            Returns:
 
             [0] =>
             [1] => wp
@@ -200,7 +200,7 @@ class WPSite {
 
         */
 
-        if ( count( $path_segments )  === 5 ) {
+        if ( count( $path_segments ) === 5 ) {
             return $path_segments[1] . '/';
         } else {
             return '';

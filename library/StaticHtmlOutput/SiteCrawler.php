@@ -233,7 +233,7 @@ class SiteCrawler {
         foreach ( $batch_of_links_to_crawl as $link_to_crawl ) {
             $this->url = $link_to_crawl;
             $this->full_url = $this->settings['wp_site_url'] .
-                ltrim($this->url, '/');
+                ltrim( $this->url, '/' );
 
             if ( isset( $this->settings['excludeURLs'] ) ) {
                 // TODO: check for exclusions

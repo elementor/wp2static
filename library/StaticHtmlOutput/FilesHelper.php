@@ -46,7 +46,7 @@ class StaticHtmlOutput_FilesHelper {
                 if ( $path_crawlable ) {
                     array_push(
                         $files,
-                        $detectedFileName   
+                        $detectedFileName
                     );
                 }
             }
@@ -73,7 +73,8 @@ class StaticHtmlOutput_FilesHelper {
         }
 
         if ( class_exists( 'autoptimizeMain' ) ) {
-            $autoptimize_cache_dir = $wp_site->wp_content_path . '/cache/autoptimize';
+            $autoptimize_cache_dir =
+                $wp_site->wp_content_path . '/cache/autoptimize';
 
             // get difference between home and wp-contents URL
             $prefix = str_replace(
@@ -498,9 +499,8 @@ class StaticHtmlOutput_FilesHelper {
             // TODO: handle WP-CLI case and test if really needed
             // was removing too much on a Bedrock subdir
             // if ( isset( $_POST['subdirectory'] ) ) {
-            //     array_shift( $path_segments );
+            // array_shift( $path_segments );
             // }
-
             $number_of_segments = count( $path_segments );
 
             // build each URL
