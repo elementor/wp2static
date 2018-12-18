@@ -78,7 +78,6 @@ class StaticHtmlOutput_Options {
         'useBaseHref',
         'useBasicAuth',
         'useRelativeURLs',
-        'workingDirectory',
     );
 
     protected $_whitelisted_keys = array(
@@ -148,7 +147,6 @@ class StaticHtmlOutput_Options {
         'useBaseHref',
         'useBasicAuth',
         'useRelativeURLs',
-        'workingDirectory',
     );
 
     public function __construct( $optionKey ) {
