@@ -137,7 +137,6 @@ class StaticHtmlOutput_FilesHelper {
     }
 
     public static function recursively_scan_dir( $dir, $siteroot, $list_path ) {
-        // rm duplicate slashes in path (TODO: fix cause)
         $dir = str_replace( '//', '/', $dir );
         $files = scandir( $dir );
 
