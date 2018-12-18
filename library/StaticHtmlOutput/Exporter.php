@@ -23,58 +23,6 @@ class Exporter {
         }
     }
 
-    public function capture_last_deployment() {
-        require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/Archive.php';
-        $archive = new Archive();
-
-        if ( ! $archive->currentArchiveExists() ) {
-            return;
-        }
-
-        // TODO: big cleanup required here, very iffy code
-        // skip for first export state
-        if ( is_file( $archive->path ) ) {
-            $archiveDir = file_get_contents(
-                $this->settings['wp_uploads_path'] .
-                    '/WP-STATIC-CURRENT-ARCHIVE.txt'
-            );
-            $previous_export = $archiveDir;
-            $dir_to_diff_against = $this->settings['wp_uploads_path'] .
-                '/previous-export';
-
-            if ( $this->settings['diffBasedDeploys'] ) {
-                $archiveDir = file_get_contents(
-                    $this->settings['wp_uploads_path'] .
-                        '/WP-STATIC-CURRENT-ARCHIVE.txt'
-                );
-
-                $previous_export = $archiveDir;
-                $dir_to_diff_against =
-                    $this->settings['wp_uploads_path'] . '/previous-export';
-
-                if ( is_dir( $previous_export ) ) {
-                    // TODO: replace shell calles with native
-                    // phpcs:disable
-                    shell_exec(
-                        "rm -Rf $dir_to_diff_against && mkdir -p " .
-                        "$dir_to_diff_against && cp -r $previous_export/* " .
-                        "$dir_to_diff_against"
-                    );
-                    // phpcs:enable
-                }
-            } else {
-                if ( is_dir( $dir_to_diff_against ) ) {
-                    StaticHtmlOutput_FilesHelper::delete_dir_with_files(
-                        $dir_to_diff_against
-                    );
-                    StaticHtmlOutput_FilesHelper::delete_dir_with_files(
-                        $archiveDir
-                    );
-                }
-            }
-        }
-    }
-
     public function pre_export_cleanup() {
         $files_to_clean = array(
             'WP-STATIC-2ND-CRAWL-LIST.txt',

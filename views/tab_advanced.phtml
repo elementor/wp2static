@@ -47,26 +47,6 @@
           <p>If you're happy with how your site is looking after exporting to a subdirectory, you can choose to start serving this content to your visitors, instead of your current WordPress site. To do this, you will need to adjust your <code>.htaccess</code> file. This <a href="" target="_blank">community guide</a> may be able to help you.
       </td>
     </tr>
-    <tr style="display:none;">
-      <th scope="row">
-        <label for="diffBasedDeploys"><?php echo __('Diff-based deployment', 'static-html-output-plugin');?></label>
-      </th>
-      <td>
-
-        <?php $tpl->displayCheckbox($this, 'diffBasedDeploys', 'Only deploy changed files since last export'); ?>
-
-        <p><b>Experimental</b></p>
-
-        <p>
-        As this works off of your last export, if you have changed the deployment method or settings since your last deployment, you may end up with missing files. In this case, uncheck this option, do one complete deployment with your new settings, then re-enable this to get faster deployments of changes only going forward.
-        </p>
-
-        <p>
-        <i>This is still quite experimental and untested in this version. Use only if adventurous. </i>
-        </p>
-
-      </td>
-    </tr>
     <tr>
       <th scope="row">
         <label for="completionEmail"><?php echo __('Email upon completion', 'static-html-output-plugin');?></label>

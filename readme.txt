@@ -151,6 +151,7 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
  * Bugfix: Offline ZIP creation now functioning properly
  * Bugfix: Fix ZIP download button not always appearing
  * Bugfix: Ignore certificate errors when crawling
+ * Drop feature: diff-based deploys (now possible via WP-CLI)
  * Drop feature: deploy to Dropbox (they don't love static sites anymore)
  * Plugin name change to WP2Static
 
@@ -493,6 +494,7 @@ Initial release to Wordpress community
  * Bugfix: Offline ZIP creation now functioning properly
  * Bugfix: Fix ZIP download button not always appearing
  * Bugfix: Ignore certificate errors when crawling
+ * Drop feature: diff-based deploys (now possible via WP-CLI)
  * Drop feature: deploy to Dropbox (they don't love static sites anymore)
  * Plugin name change to WP2Static
 

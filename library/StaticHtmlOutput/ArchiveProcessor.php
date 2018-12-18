@@ -52,61 +52,6 @@ class ArchiveProcessor {
         }
     }
 
-    public function remove_files_idential_to_previous_export() {
-        $dir_to_diff_against = $this->settings['wp_uploads_path'] .
-            '/previous-export';
-
-        // iterate each file in current export, check the size and contents in
-        // previous, delete if match
-        $objects = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator(
-                $this->archive->path,
-                RecursiveDirectoryIterator::SKIP_DOTS
-            )
-        );
-
-        foreach ( $objects as $current_file => $object ) {
-            if ( is_file( $current_file ) ) {
-                // get relative filename
-                $filename = str_replace(
-                    $this->archive->path,
-                    '',
-                    $current_file
-                );
-
-                $previously_exported_file =
-                    $dir_to_diff_against . '/' . $filename;
-
-                // if file doesn't exist at all in previous export:
-                if ( is_file( $previously_exported_file ) ) {
-                    if ( $this->files_are_equal(
-                        $current_file,
-                        $previously_exported_file
-                    ) ) {
-                        unlink( $current_file );
-                    }
-                }
-            }
-        }
-
-        // TODO: cleanup empty archiveDirs to prevent them exporting
-        // TODO: replace `exec` calls with native PHP
-        // phpcs:disable
-        $files_in_previous_export = exec(
-            "find $dir_to_diff_against -type f | wc -l"
-        );
-
-        $files_to_be_deployed = exec(
-            "find $this->archive->path -type f | wc -l"
-        );
-
-        // phpcs:enable
-        // copy the newly changed files back into the previous export dir,
-        // else will never capture changes
-        // TODO: this works the first time, but will fail the diff on
-        // subsequent runs, alternating each time`
-    }
-
     // default rename in PHP throws warnings if dir is populated
     public function renameWPDirectory( $source, $target ) {
         if ( empty( $source ) || empty ( $target ) ) {
@@ -394,10 +339,6 @@ class ArchiveProcessor {
         StaticHtmlOutput_FilesHelper::delete_dir_with_files(
             $this->archive->path . '/wp-json/'
         );
-
-        if ( isset( $this->settings['diffBasedDeploys'] ) ) {
-            $this->remove_files_idential_to_previous_export();
-        }
     }
 
     public function renameArchiveDirectories() {

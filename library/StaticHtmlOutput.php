@@ -236,7 +236,6 @@ class StaticHtmlOutput_Controller {
 
         $exporter = new Exporter();
 
-        $exporter->capture_last_deployment();
         $exporter->pre_export_cleanup();
         $exporter->cleanup_leftover_archives();
         $exporter->initialize_cache_files();
