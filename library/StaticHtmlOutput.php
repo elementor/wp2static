@@ -248,10 +248,8 @@ class StaticHtmlOutput_Controller {
         $viaCLI = defined( 'WP_CLI' );
 
         // TODO: move to exporter; wp env vars to views
-        $exec_time = ini_get( 'max_execution_time' );
         WsLog::l( 'STARTING EXPORT: ' . date( 'Y-m-d h:i:s' ) );
         WsLog::l( 'STARTING EXPORT: PHP VERSION ' . phpversion() );
-        WsLog::l( 'STARTING EXPORT: PHP MAX EXECUTION TIME ' . $exec_time );
         WsLog::l( 'STARTING EXPORT: OS VERSION ' . php_uname() );
         WsLog::l( 'STARTING EXPORT: WP VERSION ' . get_bloginfo( 'version' ) );
         WsLog::l( 'STARTING EXPORT: WP URL ' . get_bloginfo( 'url' ) );

@@ -21,6 +21,10 @@ wp theme install https://github.com/leonstafford/diagnostic-theme-for-wp2static/
 # generate an archive
 wp wp2static generate
 
+# pipe generate time into a TXT file and have this loaded by the theme via JS...
+
+# this allows for some general benchmarking/comparison across hosts
+
 # test deploy
 wp wp2static deploy --test
 

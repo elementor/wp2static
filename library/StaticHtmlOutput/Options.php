@@ -207,7 +207,7 @@ class StaticHtmlOutput_Options {
     }
 
     public function optionExists( $name ) {
-        return in_array( $name, $this->_options_to_save );
+        return in_array( $name, $this->_options_keys );
     }
 
     public function save() {
