@@ -42,7 +42,6 @@ class WPSHO_DBSettings {
         );
 
         $key_sets['advanced'] = array(
-            'workingDirectory',
             'crawl_increment',
             'completionEmail',
         );
@@ -184,12 +183,6 @@ class WPSHO_DBSettings {
             '/' . $settings['rewritePLUGINDIR'];
 
         $settings['new_wpinc_path'] = '/' . $settings['rewriteWPINC'];
-
-        // TODO: shift this logic to places it's actually used
-        $settings['working_directory'] =
-            isset( $plugin->options->working_directory ) ?
-            $plugin->options->working_directory :
-            $plugin->options->wp_uploads_path;
 
         $settings['crawl_increment'] =
             isset( $plugin->options->crawl_increment ) ?

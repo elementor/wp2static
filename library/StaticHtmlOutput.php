@@ -168,7 +168,6 @@ class StaticHtmlOutput_Controller {
 
         $this->view
             ->setTemplate( 'options-page-js' )
-            ->assign( 'working_directory', $this->wp_site->wp_uploads_path )
             ->assign( 'options', $this->options )
             ->assign( 'wp_site', $this->wp_site )
             ->assign( 'onceAction', self::HOOK . '-options' )

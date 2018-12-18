@@ -40,7 +40,6 @@ class WPSHO_PostSettings {
         );
 
         $key_sets['advanced'] = array(
-            'workingDirectory',
             'crawl_increment',
             'completionEmail',
         );
@@ -154,12 +153,6 @@ class WPSHO_PostSettings {
         /*
             Settings requiring transformation
         */
-
-        // TODO: shift this logic to places it's actually used
-        $settings['working_directory'] =
-            isset( $_POST['workingDirectory'] ) ?
-            $_POST['workingDirectory'] :
-            $settings['wp_uploads_path'];
 
         $settings['crawl_increment'] =
             isset( $_POST['crawl_increment'] ) ?
