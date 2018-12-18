@@ -54,13 +54,13 @@ class ArchiveProcessor {
 
     // default rename in PHP throws warnings if dir is populated
     public function renameWPDirectory( $source, $target ) {
-        if ( empty( $source ) || empty ( $target ) ) {
+        if ( empty( $source ) || empty( $target ) ) {
             require_once dirname( __FILE__ ) .
                 '/../StaticHtmlOutput/WsLog.php';
             WsLog::l(
                 'Failed trying to rename: ' .
                 'Source: ' . $source .
-                ' to: ' . $target 
+                ' to: ' . $target
             );
             die();
         }
@@ -79,35 +79,10 @@ class ArchiveProcessor {
                 '/../StaticHtmlOutput/WsLog.php';
             WsLog::l(
                 'Trying to rename non-existent directory: ' .
-                $original_dir 
+                $original_dir
             );
         }
-
-        if ( isset( $this->settings['rewriteWPPaths'] ) ) {
-        }
     }
-
-
-    public function files_are_equal( $a, $b ) {
-        // if image, use sha, if html, use something else
-        $pathinfo = pathinfo( $a );
-        if ( isset( $pathinfo['extension'] ) &&
-            in_array(
-                $pathinfo['extension'],
-                array( 'jpg', 'png', 'gif', 'jpeg' )
-            ) ) {
-            return sha1_file( $a ) === sha1_file( $b );
-        }
-
-        // TODO: replace with native calls
-        // phpcs:disable
-        $diff = exec( "diff $a $b" );
-        // phpcs:enable
-        $result = $diff === '';
-
-        return $result;
-    }
-
 
     public function recursive_copy( $srcdir, $dstdir ) {
         $dir = opendir( $srcdir );
@@ -147,7 +122,9 @@ class ArchiveProcessor {
     }
 
     public function dir_has_safety_file( $dirname ) {
-        if ( ! is_dir( $dirname ) ) return false;
+        if ( ! is_dir( $dirname ) ) {
+            return false;
+        }
 
         foreach ( scandir( $dirname ) as $file ) {
             if ( $file == '.wp2static_safety' ) {
@@ -192,7 +169,7 @@ class ArchiveProcessor {
         $directory_exists = is_dir( $target_folder );
 
         if ( $directory_exists ) {
-            $directory_empty = $this->dir_is_empty( $target_folder ); 
+            $directory_empty = $this->dir_is_empty( $target_folder );
         } else {
             if ( wp_mkdir_p( $target_folder ) ) {
                 if ( ! $this->put_safety_file( $target_folder ) ) {
@@ -201,7 +178,7 @@ class ArchiveProcessor {
                     WsLog::l(
                         'Couldn\'t put safety file in ' .
                         'Target Directory' .
-                        $target_folder 
+                        $target_folder
                     );
 
                     die();
@@ -211,7 +188,7 @@ class ArchiveProcessor {
                     '/../StaticHtmlOutput/WsLog.php';
                 WsLog::l(
                     'Couldn\'t create Target Directory: ' .
-                    $target_folder 
+                    $target_folder
                 );
 
                 die();
@@ -226,7 +203,7 @@ class ArchiveProcessor {
                 WsLog::l(
                     'Couldn\'t put safety file in ' .
                     'Target Directory' .
-                    $target_folder 
+                    $target_folder
                 );
 
                 die();
@@ -248,7 +225,7 @@ class ArchiveProcessor {
                 WsLog::l(
                     'Couldn\'t put safety file in ' .
                     'Target Directory' .
-                    $target_folder 
+                    $target_folder
                 );
 
                 die();
@@ -259,7 +236,7 @@ class ArchiveProcessor {
             WsLog::l(
                 'Target Directory wasn\t empty ' .
                 'or didn\'t contain safety file ' .
-                $target_folder 
+                $target_folder
             );
 
             die();
@@ -351,8 +328,9 @@ class ArchiveProcessor {
             str_replace( "\r", '', $this->settings['rename_rules'] )
         );
 
-        foreach( $rename_rules as $rename_rule_line ) {
-            list($original_dir, $target_dir) = explode(',', $rename_rule_line);
+        foreach ( $rename_rules as $rename_rule_line ) {
+            list($original_dir, $target_dir) =
+                explode( ',', $rename_rule_line );
 
             $this->renameWPDirectory( $original_dir, $target_dir );
         }
