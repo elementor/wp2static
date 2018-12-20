@@ -456,7 +456,6 @@ class SiteCrawler {
         if ( $this->file_extension ) {
             $this->file_type = $this->file_extension;
         } else {
-            // further detect type based on content type
             $type = $this->content_type =
                 $this->response->getHeaderLine( 'content-type' );
 
