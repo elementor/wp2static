@@ -5,7 +5,6 @@ class WPSHO_DBSettings {
     public static function get( $sets = array() ) {
         $plugin = StaticHtmlOutput_Controller::getInstance();
 
-        // error_log(print_r($plugin->options, true));die();
         $settings = array();
         $key_sets = array();
         $target_keys = array();
