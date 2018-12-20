@@ -202,7 +202,7 @@ class WP2Static_CLI {
 
         WP_CLI::success(
             'Generated static site archive in ' .
-            date( 'H:i:s', $duration )
+            date( 'H:i:s:v:u', $duration )
         );
     }
 

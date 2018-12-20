@@ -128,10 +128,16 @@ class HTMLProcessor {
     }
 
     public function detectIfURLsShouldBeHarvested() {
-        // TODO: handle both UI and WP-CLI
-        $this->harvest_new_URLs = (
-             $_POST['ajax_action'] === 'crawl_site'
-        );
+        if ( ! defined( 'WP_CLI' ) ) {
+            $this->harvest_new_URLs = (
+                 $_POST['ajax_action'] === 'crawl_site'
+            );
+        } else {
+            // we shouldn't harvest any while we're in the second crawl
+            if ( defined( 'CRAWLING_DISCOVERED' ) ) {
+                return;
+            }
+        }
     }
 
     public function loadSettings() {
@@ -342,7 +348,8 @@ class HTMLProcessor {
     }
 
     public function writeDiscoveredURLs() {
-        if ( $_POST['ajax_action'] === 'crawl_again' ) {
+        if ( isset( $_POST['ajax_action'] ) &&
+            $_POST['ajax_action']  === 'crawl_again' ) {
             return;
         }
 

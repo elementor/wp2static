@@ -132,7 +132,6 @@ class WPSHO_DBSettings {
             'wp_site_subdir',
             'wp_uploads_path',
             'wp_uploads_url',
-            'baseUrl',
             'wp_active_theme',
             'wp_themes',
             'wp_uploads',
@@ -157,32 +156,6 @@ class WPSHO_DBSettings {
         foreach ( $key_sets['wpenv'] as $key ) {
             $settings[ $key ] = $wp_site->{ $key };
         }
-
-        // NOTE: override from missing setting in CLI chain
-        $settings['wp_uploads_url'] = $wp_site->uploads_url;
-        $settings['wp_site_url'] = $wp_site->site_url;
-        $settings['wp_site_path'] = $wp_site->site_path;
-
-        /*
-            Settings requiring transformation
-        */
-
-        $settings['new_wp_content_path'] = '/' .
-            $settings['rewriteWPCONTENT'];
-
-        $settings['new_themes_path'] = $settings['new_wp_content_path'] .
-            '/' . $settings['rewriteTHEMEROOT'];
-
-        $settings['new_active_theme_path'] = $settings['new_themes_path'] .
-            '/' . $settings['rewriteTHEMEDIR'];
-
-        $settings['new_uploads_path'] = $settings['new_wp_content_path'] .
-            '/' . $settings['rewriteUPLOADS'];
-
-        $settings['new_plugins_path'] = $settings['new_wp_content_path'] .
-            '/' . $settings['rewritePLUGINDIR'];
-
-        $settings['new_wpinc_path'] = '/' . $settings['rewriteWPINC'];
 
         $settings['crawl_increment'] =
             isset( $plugin->options->crawl_increment ) ?
