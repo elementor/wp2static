@@ -4,14 +4,11 @@
 class WPSite {
 
     public function __construct() {
-        // WP URL paths
         $wp_upload_path_and_url = wp_upload_dir();
         $this->uploads_url = $wp_upload_path_and_url['baseurl'];
         $this->site_url = get_home_url() . '/';
         $this->parent_theme_URL = get_template_directory_uri();
         $this->wp_content_URL = content_url();
-
-        // WP dir paths
         $this->site_path = ABSPATH;
         $this->plugins_path = $this->getWPDirFullPath( 'plugins' );
         $this->wp_uploads_path = $this->getWPDirFullPath( 'uploads' );
@@ -35,8 +32,6 @@ class WPSite {
         $this->wp_active_theme =
             str_replace( home_url(), '', get_template_directory_uri() );
 
-        // TODO: pre-generate as much as possible here to avoid
-        // extra overhead during the high cyclical functions
         $this->detect_base_url();
 
         $this->subdirectory = $this->isSiteInstalledInSubDirectory();
