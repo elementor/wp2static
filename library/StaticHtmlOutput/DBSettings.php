@@ -148,8 +148,6 @@ class WPSHO_DBSettings {
             $settings[ $key ] = $plugin->options->{ $key };
         }
 
-        // NOTE: CLI method doesn't have WPSite object sent via post,
-        // so let's grab it here
         require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/WPSite.php';
         $wp_site = new WPSite();
 
