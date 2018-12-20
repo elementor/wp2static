@@ -428,8 +428,6 @@ class SiteCrawler {
     }
 
     public function saveFile() {
-        // response body processing is complete, now time to save the file
-        // contents to the archive
         require_once dirname( __FILE__ ) .
             '/../StaticHtmlOutput/FileWriter.php';
 
