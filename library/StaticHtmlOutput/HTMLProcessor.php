@@ -136,6 +136,8 @@ class HTMLProcessor {
             // we shouldn't harvest any while we're in the second crawl
             if ( defined( 'CRAWLING_DISCOVERED' ) ) {
                 return;
+            } else {
+                $this->harvest_new_URLs = true;
             }
         }
     }
@@ -488,7 +490,6 @@ class HTMLProcessor {
         from the onepress(?) theme, for example
 
         */
-
 
         if ( ! isset( $this->settings['rewrite_rules'] ) ) {
             return $processedHTML;
