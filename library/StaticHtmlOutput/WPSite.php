@@ -74,33 +74,6 @@ class WPSite {
         $home = get_option( 'home' );
     }
 
-    public function getOriginalPaths() {
-        $orig_dir_name = array();
-
-        $tokens = explode( '/', get_template_directory_uri() );
-        $orig_dir_name['theme_dir'] = $tokens[ count( $tokens ) - 1 ];
-        $orig_dir_name['theme_root'] = $tokens[ count( $tokens ) - 2 ];
-        // TODO: use this as a safer way to get wp-content in rewriting areas
-        // in case user has changed their wp-content path
-        $orig_dir_name['wp_contents'] = $tokens[ count( $tokens ) - 3 ];
-
-        $default_upload_dir = wp_upload_dir();
-        $tokens = explode(
-            '/',
-            str_replace( ABSPATH, '/', $default_upload_dir['basedir'] )
-        );
-        $orig_dir_name['upload_dir'] = $tokens[ count( $tokens ) - 1 ];
-
-        $tokens = explode( '/', WP_PLUGIN_DIR );
-        $orig_dir_name['plugin_dir'] = $tokens[ count( $tokens ) - 1 ];
-
-        $tokens = explode( '/', WPINC );
-        $orig_dir_name['includes_dir'] = $tokens[ count( $tokens ) - 1 ];
-
-        return $orig_dir_name;
-
-    }
-
     /*
         Function below assumes people may have changed the default
         paths for WP directories
