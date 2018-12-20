@@ -195,8 +195,6 @@ class WP2Static_CLI {
      * Generate a static copy of your WordPress site.
      */
     public function generate() {
-        WP_CLI::line( 'Generating static copy of WordPress site' );
-
         $start_time = microtime();
 
         $plugin = StaticHtmlOutput_Controller::getInstance();
