@@ -6,7 +6,6 @@ class SiteCrawler {
 
 
     public function __construct() {
-        // TODO: security check that this is being called from same server
         $target_settings = array(
             'general',
             'wpenv',
@@ -15,8 +14,6 @@ class SiteCrawler {
             'advanced',
         );
 
-        // TODO: benchmark faster of checking for post being set or
-        // checking if WP_CLI is defined..
         if ( isset( $_POST['selected_deployment_option'] ) ) {
             require_once dirname( __FILE__ ) .
                 '/../StaticHtmlOutput/PostSettings.php';
@@ -40,7 +37,6 @@ class SiteCrawler {
         $this->list_of_urls_to_crawl_path = '';
         $this->urls_to_crawl = '';
 
-        // for UI-driven exports, detect crawl action
         if ( ! defined( 'WP_CLI' ) ) {
             if ( $_POST['ajax_action'] === 'crawl_again' ) {
                 $this->crawl_discovered_links();
@@ -107,7 +103,6 @@ class SiteCrawler {
     }
 
     public function crawl_discovered_links() {
-        // set flag to determine if first or 2nd phase
         if ( defined( 'WP_CLI' ) && ! defined( 'CRAWLING_DISCOVERED' ) ) {
             define( 'CRAWLING_DISCOVERED', true );
         }
@@ -137,7 +132,6 @@ class SiteCrawler {
             if ( filesize( $this->list_of_urls_to_crawl_path ) ) {
                 $this->crawlABitMore();
             } else {
-                // TODO: added to handle case where 2nd crawl list is empty
                 if ( ! defined( 'WP_CLI' ) ) {
                     echo 'SUCCESS';
                 }
@@ -173,7 +167,6 @@ class SiteCrawler {
             if ( filesize( $this->list_of_urls_to_crawl_path ) ) {
                 $this->crawlABitMore();
             } else {
-                // TODO: added to handle case where 2nd crawl list is empty
                 if ( ! defined( 'WP_CLI' ) ) {
                     echo 'SUCCESS';
                 }
@@ -334,7 +327,6 @@ class SiteCrawler {
             chmod( $this->crawled_links_file, 0664 );
         }
 
-        // TODO: remove/rename
         $baseUrl = $this->settings['baseUrl'];
 
         $this->detectFileType( $this->full_url );
@@ -346,8 +338,6 @@ class SiteCrawler {
 
                 $processor = new HTMLProcessor();
 
-                // TODO: if not reusing the instance, switch to
-                // static functions for performance
                 $this->processed_file = $processor->processHTML(
                     $this->response->getBody(),
                     $this->full_url
@@ -359,7 +349,6 @@ class SiteCrawler {
 
                 break;
 
-            // TODO: apply other replacement functions to all processors
             case 'css':
                 require_once dirname( __FILE__ ) .
                     '/../StaticHtmlOutput/CSSProcessor.php';
