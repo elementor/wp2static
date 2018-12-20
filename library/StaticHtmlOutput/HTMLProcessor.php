@@ -488,6 +488,8 @@ class HTMLProcessor {
         from the onepress(?) theme, for example
 
         */
+
+
         if ( ! isset( $this->settings['rewrite_rules'] ) ) {
             return $processedHTML;
         }
