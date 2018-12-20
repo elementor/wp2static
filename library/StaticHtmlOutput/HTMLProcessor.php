@@ -121,7 +121,6 @@ class HTMLProcessor {
         // strip comments
         $this->stripHTMLComments();
 
-        // $this->setBaseHref();
         $this->writeDiscoveredURLs();
 
         return true;
@@ -262,7 +261,6 @@ class HTMLProcessor {
     }
 
     public function processHead( $element ) {
-        // $this->setBaseHref( $element, 'src' );
         $head_elements = iterator_to_array(
             $element->childNodes
         );
