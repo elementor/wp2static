@@ -41,10 +41,12 @@ class SiteCrawler {
         $this->urls_to_crawl = '';
 
         // for UI-driven exports, detect crawl action
-        if ( $_POST['ajax_action'] === 'crawl_again' ) {
-            $this->crawl_discovered_links();
-        } elseif ( $_POST['ajax_action'] === 'crawl_site' ) {
-            $this->crawl_site();
+        if ( ! defined( 'WP_CLI' ) ) {
+            if ( $_POST['ajax_action'] === 'crawl_again' ) {
+                $this->crawl_discovered_links();
+            } elseif ( $_POST['ajax_action'] === 'crawl_site' ) {
+                $this->crawl_site();
+            }
         }
     }
 
@@ -106,7 +108,7 @@ class SiteCrawler {
 
     public function crawl_discovered_links() {
         // set flag to determine if first or 2nd phase
-        if ( defined( 'WP_CLI' ) ) {
+        if ( defined( 'WP_CLI' ) && ! defined( 'CRAWLING_DISCOVERED' ) ) {
             define( 'CRAWLING_DISCOVERED', true );
         }
 
@@ -390,6 +392,7 @@ class SiteCrawler {
 
             case 'txt':
             case 'json':
+            case 'xml':
                 require_once dirname( __FILE__ ) .
                     '/../StaticHtmlOutput/TXTProcessor.php';
                 $processor = new TXTProcessor(
@@ -400,23 +403,6 @@ class SiteCrawler {
                 $processor->normalizeURLs( $this->full_url );
 
                 $this->processed_file = $processor->getTXT();
-
-                break;
-
-            case 'xml':
-                require_once dirname( __FILE__ ) .
-                    '/../StaticHtmlOutput/XMLProcessor.php';
-
-                $processor = new XMLProcessor();
-
-                $this->processed_file = $processor->processXML(
-                    $this->response->getBody(),
-                    $this->full_url
-                );
-
-                if ( $this->processed_file ) {
-                    $this->processed_file = $processor->getXML();
-                }
 
                 break;
 

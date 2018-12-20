@@ -41,6 +41,12 @@ class WPSite {
 
         $this->subdirectory = $this->isSiteInstalledInSubDirectory();
 
+        // TODO: rm these once refactored to use consistent naming
+        $this->wp_site_subdir = $this->subdirectory;
+        $this->wp_site_url = $this->site_url;
+        $this->wp_site_path = $this->site_path;
+        $this->wp_uploads_url = $this->uploads_url;
+
         $this->uploads_writable = $this->uploadsPathIsWritable();
         $this->permalinks_set = $this->permalinksAreDefined();
         $this->curl_enabled = $this->hasCurlSupport();
