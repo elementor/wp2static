@@ -98,7 +98,6 @@ class WPSite {
                 break;
 
             case 'wp-includes':
-                // NOTE: currently cannot be changed outside WP core
                 $full_path = ABSPATH . WPINC;
 
                 break;
