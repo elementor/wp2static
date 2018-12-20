@@ -177,13 +177,27 @@ class WP2Static_CLI {
         }
     }
 
+    public function microtime_diff( $start, $end = null ) {
+        if ( ! $end ) {
+            $end = microtime();
+        }
+
+        list( $start_usec, $start_sec ) = explode( " ", $start );
+        list( $end_usec, $end_sec ) = explode( " ", $end );
+
+        $diff_sec = intval( $end_sec ) - intval( $start_sec );
+        $diff_usec = floatval( $end_usec ) - floatval( $start_usec );
+
+        return floatval( $diff_sec ) + $diff_usec;
+    }
+
     /**
      * Generate a static copy of your WordPress site.
      */
     public function generate() {
         WP_CLI::line( 'Generating static copy of WordPress site' );
 
-        $start_time = microtime( true );
+        $start_time = microtime();
 
         $plugin = StaticHtmlOutput_Controller::getInstance();
         $plugin->generate_filelist_preview();
@@ -196,13 +210,12 @@ class WP2Static_CLI {
         $site_crawler->crawl_discovered_links();
         $plugin->post_process_archive_dir();
 
-        $end_time = microtime( true );
+        $end_time = microtime();
 
-        $duration = $end_time - $start_time;
+        $duration = $this->microtime_diff( $start_time, $end_time) ;
 
         WP_CLI::success(
-            'Generated static site archive in ' .
-            date( 'H:i:s:v:u', $duration )
+            "Generated static site archive in $duration seconds"
         );
     }
 
