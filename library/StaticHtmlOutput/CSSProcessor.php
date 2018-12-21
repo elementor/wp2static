@@ -66,7 +66,6 @@ class CSSProcessor {
         // initial rewrite of all site URLs to placeholder URLs
         $this->rewriteSiteURLsToPlaceholder();
 
-
         $oCssParser = new Sabberworm\CSS\Parser( $this->raw_css );
         $this->css_doc = $oCssParser->parse();
 
@@ -91,11 +90,9 @@ class CSSProcessor {
 
                     // TODO: check/reimplement normalization
                     // $absolute_url = new Sabberworm\CSS\Value\CSSString(
-                    //     $base->resolve( $original_link )
+                    // $base->resolve( $original_link )
                     // );
-
                     // $mValue->setURL( $absolute_url );
-
                     // rewrite base URL
                     $rewritten_url = str_replace(
                         $this->placeholder_URL,
@@ -211,7 +208,7 @@ class CSSProcessor {
 
     public function writeDiscoveredURLs() {
         if ( isset( $_POST['ajax_action'] ) &&
-            $_POST['ajax_action']  === 'crawl_again' ) {
+            $_POST['ajax_action'] === 'crawl_again' ) {
             return;
         }
 
