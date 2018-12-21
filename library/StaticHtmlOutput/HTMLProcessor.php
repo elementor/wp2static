@@ -451,10 +451,16 @@ class HTMLProcessor {
     }
 
     public function rewriteUnchangedURLs( $processedHTML ) {
-        // TODO: is this still needed with new rewriting method?
         if ( ! isset( $this->settings['rewrite_rules'] ) ) {
-            return $processedHTML;
+            $this->settings['rewrite_rules'] = '';
         }
+
+        // add base URL to rewrite_rules
+        $this->settings['rewrite_rules'] .=
+            PHP_EOL .
+                $this->placeholder_URL . ',' .
+                $this->settings['baseUrl']
+        ;
 
         $rewrite_from = array();
         $rewrite_to = array();
@@ -488,10 +494,19 @@ class HTMLProcessor {
         from the onepress(?) theme, for example
 
         */
+        $escaped_site_url = addcslashes( $this->placeholder_URL, '/' );
+        $escaped_destination_url = addcslashes( $this->settings['baseUrl'], '/' );
 
         if ( ! isset( $this->settings['rewrite_rules'] ) ) {
-            return $processedHTML;
+            $this->settings['rewrite_rules'] = '';
         }
+
+        // add base URL to rewrite_rules
+        $this->settings['rewrite_rules'] .=
+            PHP_EOL .
+                $escaped_site_url . ',' .
+                $escaped_destination_url
+        ;
 
         $rewrite_from = array();
         $rewrite_to = array();
