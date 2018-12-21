@@ -149,29 +149,73 @@ class ArchiveProcessor {
     }
 
     public function copyStaticSiteToPublicFolder() {
-        if ( ! $this->settings['selected_deployment_option'] === 'folder' ) {
-            return;
-        }
+        if ( $this->settings['selected_deployment_option'] === 'folder' ) {
+            $target_folder = trim( $this->settings['targetFolder'] );
+            $this->target_folder = $target_folder;
 
-        $target_folder = trim( $this->settings['targetFolder'] );
-        $this->target_folder = $target_folder;
+            if ( ! $target_folder ) {
+                return;
+            }
 
-        if ( ! $target_folder ) {
-            return;
-        }
+            // instantiate with safe defaults
+            $directory_exists = true;
+            $directory_empty = false;
+            $dir_has_safety_file = false;
 
-        // instantiate with safe defaults
-        $directory_exists = true;
-        $directory_empty = false;
-        $dir_has_safety_file = false;
+            // CHECK #1: directory exists or can be created
+            $directory_exists = is_dir( $target_folder );
 
-        // CHECK #1: directory exists or can be created
-        $directory_exists = is_dir( $target_folder );
+            if ( $directory_exists ) {
+                $directory_empty = $this->dir_is_empty( $target_folder );
+            } else {
+                if ( wp_mkdir_p( $target_folder ) ) {
+                    if ( ! $this->put_safety_file( $target_folder ) ) {
+                        require_once dirname( __FILE__ ) .
+                            '/../StaticHtmlOutput/WsLog.php';
+                        WsLog::l(
+                            'Couldn\'t put safety file in ' .
+                            'Target Directory' .
+                            $target_folder
+                        );
 
-        if ( $directory_exists ) {
-            $directory_empty = $this->dir_is_empty( $target_folder );
-        } else {
-            if ( wp_mkdir_p( $target_folder ) ) {
+                        die();
+                    }
+                } else {
+                    require_once dirname( __FILE__ ) .
+                        '/../StaticHtmlOutput/WsLog.php';
+                    WsLog::l(
+                        'Couldn\'t create Target Directory: ' .
+                        $target_folder
+                    );
+
+                    die();
+                }
+            }
+
+            // CHECK #2: check directory empty and add safety file
+            if ( $directory_empty ) {
+                if ( ! $this->put_safety_file( $target_folder ) ) {
+                    require_once dirname( __FILE__ ) .
+                        '/../StaticHtmlOutput/WsLog.php';
+                    WsLog::l(
+                        'Couldn\'t put safety file in ' .
+                        'Target Directory' .
+                        $target_folder
+                    );
+
+                    die();
+                }
+            }
+
+            $dir_has_safety_file =
+                $this->dir_has_safety_file( $target_folder );
+
+            if ( $directory_empty || $dir_has_safety_file ) {
+                $this->recursive_copy(
+                    $this->archive->path,
+                    $this->target_folder
+                );
+
                 if ( ! $this->put_safety_file( $target_folder ) ) {
                     require_once dirname( __FILE__ ) .
                         '/../StaticHtmlOutput/WsLog.php';
@@ -187,59 +231,13 @@ class ArchiveProcessor {
                 require_once dirname( __FILE__ ) .
                     '/../StaticHtmlOutput/WsLog.php';
                 WsLog::l(
-                    'Couldn\'t create Target Directory: ' .
+                    'Target Directory wasn\'t empty ' .
+                    'or didn\'t contain safety file ' .
                     $target_folder
                 );
 
                 die();
             }
-        }
-
-        // CHECK #2: check directory empty and add safety file
-        if ( $directory_empty ) {
-            if ( ! $this->put_safety_file( $target_folder ) ) {
-                require_once dirname( __FILE__ ) .
-                    '/../StaticHtmlOutput/WsLog.php';
-                WsLog::l(
-                    'Couldn\'t put safety file in ' .
-                    'Target Directory' .
-                    $target_folder
-                );
-
-                die();
-            }
-        }
-
-        $dir_has_safety_file =
-            $this->dir_has_safety_file( $target_folder );
-
-        if ( $directory_empty || $dir_has_safety_file ) {
-            $this->recursive_copy(
-                $this->archive->path,
-                $this->target_folder
-            );
-
-            if ( ! $this->put_safety_file( $target_folder ) ) {
-                require_once dirname( __FILE__ ) .
-                    '/../StaticHtmlOutput/WsLog.php';
-                WsLog::l(
-                    'Couldn\'t put safety file in ' .
-                    'Target Directory' .
-                    $target_folder
-                );
-
-                die();
-            }
-        } else {
-            require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/WsLog.php';
-            WsLog::l(
-                'Target Directory wasn\t empty ' .
-                'or didn\'t contain safety file ' .
-                $target_folder
-            );
-
-            die();
         }
     }
 
