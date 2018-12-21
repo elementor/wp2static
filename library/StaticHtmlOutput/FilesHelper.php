@@ -44,8 +44,8 @@ class StaticHtmlOutput_FilesHelper {
                         get_template_directory_uri(),
                         $fileName
                     );
-                   
-                $detectedFileName =  
+
+                $detectedFileName =
                     str_replace(
                         get_home_url(),
                         '',
@@ -81,7 +81,7 @@ class StaticHtmlOutput_FilesHelper {
             $vendor_files = array_merge( $vendor_files, $elemementor_URLs );
         }
 
-        if ( is_dir( WP_PLUGIN_DIR . '/soliloquy/'  ) ) {
+        if ( is_dir( WP_PLUGIN_DIR . '/soliloquy/' ) ) {
             $soliloquy_assets = WP_PLUGIN_DIR .
                 '/soliloquy/assets/css/images/';
 
@@ -271,7 +271,7 @@ class StaticHtmlOutput_FilesHelper {
         }
 
         $filenames_to_ignore = array(
-            //'wp2static',
+            // 'wp2static',
             'wp-static-html-output', // exclude earlier version exports
             'previous-export',
             'pb_backupbuddy',

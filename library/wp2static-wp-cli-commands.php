@@ -182,8 +182,8 @@ class WP2Static_CLI {
             $end = microtime();
         }
 
-        list( $start_usec, $start_sec ) = explode( " ", $start );
-        list( $end_usec, $end_sec ) = explode( " ", $end );
+        list( $start_usec, $start_sec ) = explode( ' ', $start );
+        list( $end_usec, $end_sec ) = explode( ' ', $end );
 
         $diff_sec = intval( $end_sec ) - intval( $start_sec );
         $diff_usec = floatval( $end_usec ) - floatval( $start_usec );
@@ -210,7 +210,7 @@ class WP2Static_CLI {
 
         $end_time = microtime();
 
-        $duration = $this->microtime_diff( $start_time, $end_time) ;
+        $duration = $this->microtime_diff( $start_time, $end_time );
 
         WP_CLI::success(
             "Generated static site archive in $duration seconds"

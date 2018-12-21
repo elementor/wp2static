@@ -20,7 +20,6 @@ class HTMLProcessor {
         // instantiate the XML body here
         $this->xml_doc = new DOMDocument();
         $this->raw_html = $html_document;
-        $this->page_url = $page_url;
         $this->placeholder_URL = 'https://PLACEHOLDER.wpsho/';
 
         // initial rewrite of all site URLs to placeholder URLs
@@ -140,7 +139,6 @@ class HTMLProcessor {
     }
 
     public function loadSettings() {
-        // TODO: move these into function, to allow stubbing in test
         if ( isset( $_POST['selected_deployment_option'] ) ) {
             require_once dirname( __FILE__ ) .
                 '/../StaticHtmlOutput/PostSettings.php';
@@ -347,7 +345,7 @@ class HTMLProcessor {
 
     public function writeDiscoveredURLs() {
         if ( isset( $_POST['ajax_action'] ) &&
-            $_POST['ajax_action']  === 'crawl_again' ) {
+            $_POST['ajax_action'] === 'crawl_again' ) {
             return;
         }
 
@@ -457,8 +455,7 @@ class HTMLProcessor {
         $this->settings['rewrite_rules'] .=
             PHP_EOL .
                 $this->placeholder_URL . ',' .
-                $this->settings['baseUrl']
-        ;
+                $this->settings['baseUrl'];
 
         $rewrite_from = array();
         $rewrite_to = array();
@@ -512,8 +509,7 @@ class HTMLProcessor {
         $this->settings['rewrite_rules'] .=
             PHP_EOL .
                 $site_url . ',' .
-                $destination_url
-        ;
+                $destination_url;
 
         $rewrite_from = array();
         $rewrite_to = array();
@@ -524,7 +520,7 @@ class HTMLProcessor {
         );
 
         foreach ( $rewrite_rules as $rewrite_rule_line ) {
-            if ( $rewrite_rule_line) {
+            if ( $rewrite_rule_line ) {
                 list($from, $to) = explode( ',', $rewrite_rule_line );
 
                 $rewrite_from[] = addcslashes( $from, '/' );
