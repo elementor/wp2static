@@ -44,11 +44,11 @@ class StaticHtmlOutput_Netlify {
     public function detectSiteID() {
         $this->siteID = $this->settings['netlifySiteID'];
 
-        if ( strpos( $site_id, 'netlify.com' ) !== false ) {
+        if ( strpos( $this->siteID, 'netlify.com' ) !== false ) {
             return;
-        } elseif ( strpos( $site_id, '.' ) !== false ) {
+        } elseif ( strpos( $this->siteID, '.' ) !== false ) {
             return;
-        } elseif ( strlen( $site_id ) === 37 ) {
+        } elseif ( strlen( $this->siteID ) === 37 ) {
             return;
         } else {
             $this->siteID .= '.netlify.com';

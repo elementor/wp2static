@@ -471,10 +471,12 @@ class HTMLProcessor {
         );
 
         foreach ( $rewrite_rules as $rewrite_rule_line ) {
-            list($from, $to) = explode( ',', $rewrite_rule_line );
+            if ( $rewrite_rule_line ) {
+                list($from, $to) = explode( ',', $rewrite_rule_line );
 
-            $rewrite_from[] = $from;
-            $rewrite_to[] = $to;
+                $rewrite_from[] = $from;
+                $rewrite_to[] = $to;
+            }
         }
 
         $rewritten_source = str_replace(
@@ -524,10 +526,12 @@ class HTMLProcessor {
         );
 
         foreach ( $rewrite_rules as $rewrite_rule_line ) {
-            list($from, $to) = explode( ',', $rewrite_rule_line );
+            if ( $rewrite_rule_line) {
+                list($from, $to) = explode( ',', $rewrite_rule_line );
 
-            $rewrite_from[] = addcslashes( $from, '/' );
-            $rewrite_to[] = addcslashes( $to, '/' );
+                $rewrite_from[] = addcslashes( $from, '/' );
+                $rewrite_to[] = addcslashes( $to, '/' );
+            }
         }
 
         $rewritten_source = str_replace(

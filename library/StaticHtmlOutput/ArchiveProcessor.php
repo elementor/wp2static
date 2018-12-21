@@ -248,17 +248,19 @@ class ArchiveProcessor {
             return false;
         }
 
-        $redirect_content = $this->settings['netlifyRedirects'];
-        $header_content = $this->settings['netlifyHeaders'];
+        if ( isset( $this->settings['netlifyRedirects'] ) ) {
+            $redirect_content = $this->settings['netlifyRedirects'];
+            $redirect_path = $this->archive->path . '_redirects';
+            file_put_contents( $redirect_path, $redirect_content );
+            chmod( $redirect_path, 0664 );
+        }
 
-        $redirect_path = $this->archive->path . '_redirects';
-        $header_path = $this->archive->path . '_headers';
-
-        file_put_contents( $redirect_path, $redirect_content );
-        file_put_contents( $header_path, $header_content );
-
-        chmod( $redirect_path, 0664 );
-        chmod( $header_path, 0664 );
+        if ( isset( $this->settings['netlifyHeaders'] ) ) {
+            $header_content = $this->settings['netlifyHeaders'];
+            $header_path = $this->archive->path . '_headers';
+            file_put_contents( $header_path, $header_content );
+            chmod( $header_path, 0664 );
+        }
     }
 
     public function create_zip() {
