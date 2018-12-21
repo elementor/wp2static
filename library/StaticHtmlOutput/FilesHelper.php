@@ -72,6 +72,17 @@ class StaticHtmlOutput_FilesHelper {
             $vendor_files = array_merge( $vendor_files, $elemementor_URLs );
         }
 
+        if ( is_dir( WP_PLUGIN_DIR . '/soliloquy/'  ) ) {
+            $soliloquy_assets = WP_PLUGIN_DIR .
+                '/soliloquy/assets/css/images/';
+
+            $soliloquy_URLs = self::getListOfLocalFilesByUrl(
+                $soliloquy_assets
+            );
+
+            $vendor_files = array_merge( $vendor_files, $soliloquy_URLs );
+        }
+
         if ( class_exists( 'autoptimizeMain' ) ) {
             $autoptimize_cache_dir =
                 $wp_site->wp_content_path . '/cache/autoptimize';
