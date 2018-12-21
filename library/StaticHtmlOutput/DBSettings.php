@@ -29,7 +29,6 @@ class WPSHO_DBSettings {
             'baseHREF',
             'rewrite_rules',
             'rename_rules',
-            'processing_method',
             'removeWPMeta',
             'removeWPLinks',
             'useBaseHref',

@@ -28,7 +28,6 @@ class WPSHO_PostSettings {
             'baseHREF',
             'rewrite_rules',
             'rename_rules',
-            'processing_method',
             'removeWPMeta',
             'removeWPLinks',
             'useBaseHref',
