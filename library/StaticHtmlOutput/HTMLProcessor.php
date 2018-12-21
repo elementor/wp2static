@@ -487,6 +487,13 @@ class HTMLProcessor {
     }
 
     public function rewriteEscapedURLs( $processedHTML ) {
+        // NOTE: fix input HTML, which can have \ slashes modified to %5C
+        $processedHTML = str_replace(
+            '%5C/',
+            '\\/',
+            $processedHTML
+        );
+
         /*
         This function will be a bit more costly. To cover bases like:
 
@@ -494,8 +501,8 @@ class HTMLProcessor {
         from the onepress(?) theme, for example
 
         */
-        $escaped_site_url = addcslashes( $this->placeholder_URL, '/' );
-        $escaped_destination_url = addcslashes( $this->settings['baseUrl'], '/' );
+        $site_url = addcslashes( $this->placeholder_URL, '/' );
+        $destination_url = addcslashes( $this->settings['baseUrl'], '/' );
 
         if ( ! isset( $this->settings['rewrite_rules'] ) ) {
             $this->settings['rewrite_rules'] = '';
@@ -504,8 +511,8 @@ class HTMLProcessor {
         // add base URL to rewrite_rules
         $this->settings['rewrite_rules'] .=
             PHP_EOL .
-                $escaped_site_url . ',' .
-                $escaped_destination_url
+                $site_url . ',' .
+                $destination_url
         ;
 
         $rewrite_from = array();
@@ -530,6 +537,7 @@ class HTMLProcessor {
         );
 
         return $rewritten_source;
+
     }
 
     public function rewriteWPPaths( $element ) {
