@@ -38,9 +38,18 @@ class StaticHtmlOutput_FilesHelper {
                 $path_crawlable = self::filePathLooksCrawlable( $fileName );
 
                 $detectedFileName =
-                    home_url(
-                        $wp_content_subdir .
-                        str_replace( ABSPATH, '', $fileName )
+                    $wp_content_subdir .
+                    str_replace(
+                        $path,
+                        get_template_directory_uri(),
+                        $fileName
+                    );
+                   
+                $detectedFileName =  
+                    str_replace(
+                        get_home_url(),
+                        '',
+                        $detectedFileName
                     );
 
                 if ( $path_crawlable ) {
@@ -262,7 +271,7 @@ class StaticHtmlOutput_FilesHelper {
         }
 
         $filenames_to_ignore = array(
-            'wp2static',
+            //'wp2static',
             'wp-static-html-output', // exclude earlier version exports
             'previous-export',
             'pb_backupbuddy',
