@@ -23,8 +23,6 @@ class CSSProcessor {
              $_POST['ajax_action'] === 'crawl_site'
         );
 
-        $this->discovered_urls = [];
-
         // parse CSS into easily modifiable form
         $path = dirname( __FILE__ ) . '/../CSSParser/';
         require_once $path . 'Parser.php';
@@ -63,7 +61,6 @@ class CSSProcessor {
         require_once $path . 'CSSList/Document.php';
         require_once $path . 'CSSList/KeyFrame.php';
 
-        $this->page_url = $page_url;
         $this->placeholder_URL = 'https://PLACEHOLDER.wpsho/';
         $this->raw_css = $css_document;
         // initial rewrite of all site URLs to placeholder URLs
@@ -72,6 +69,46 @@ class CSSProcessor {
 
         $oCssParser = new Sabberworm\CSS\Parser( $this->raw_css );
         $this->css_doc = $oCssParser->parse();
+
+        require_once dirname( __FILE__ ) . '/../URL2/URL2.php';
+        $this->page_url = new Net_URL2( $page_url );
+
+        $this->detectIfURLsShouldBeHarvested();
+
+        $this->discovered_urls = [];
+
+        foreach ( $this->css_doc->getAllValues() as $mValue ) {
+            if ( $mValue instanceof Sabberworm\CSS\Value\URL ) {
+                $original_link = $mValue->getURL();
+
+                // TODO: benchmark trim vs str_replace
+                // returned value contains surrounding quotes
+                $original_link = trim( trim( $original_link, "'" ), '"' );
+
+                if ( $this->isInternalLink( $original_link ) ) {
+
+                    // TODO: check/reimplement normalization
+                    // $absolute_url = new Sabberworm\CSS\Value\CSSString(
+                    //     $base->resolve( $original_link )
+                    // );
+
+                    // $mValue->setURL( $absolute_url );
+
+                    // rewrite base URL
+                    $rewritten_url = str_replace(
+                        $this->placeholder_URL,
+                        $this->settings['baseUrl'],
+                        $original_link
+                    );
+
+                    $rewritten_url = new Sabberworm\CSS\Value\CSSString(
+                        $rewritten_url
+                    );
+
+                    $mValue->setURL( $rewritten_url );
+                }
+            }
+        }
 
         return true;
     }
@@ -105,51 +142,6 @@ class CSSProcessor {
         return $is_internal_link;
     }
 
-    public function normalizeURLs( $url ) {
-        require_once dirname( __FILE__ ) . '/../URL2/URL2.php';
-        $base = new Net_URL2( $url );
-
-        foreach ( $this->css_doc->getAllValues() as $mValue ) {
-            if ( $mValue instanceof Sabberworm\CSS\Value\URL ) {
-                $original_link = $mValue->getURL();
-
-                // TODO: benchmark trim vs str_replace
-                // returned value contains surrounding quotes
-                $original_link = trim( trim( $original_link, "'" ), '"' );
-
-                if ( $this->isInternalLink( $original_link ) ) {
-                    $absolute_url = new Sabberworm\CSS\Value\CSSString(
-                        $base->resolve( $original_link )
-                    );
-                    $mValue->setURL( $absolute_url );
-                }
-            }
-        }
-    }
-
-    public function cleanup( $wp_site_environment, $overwrite_slug_targets ) {
-        // PERF: ~ 30ms for HTML or CSS
-        // TODO: skip binary file processing in func
-        // TODO: move to CSSProcessor
-        if ( $this->isCSS() ) {
-            $regex = array(
-                "`^([\t\s]+)`ism" => '',
-                '`^\/\*(.+?)\*\/`ism' => '',
-                "`([\n\A;]+)\/\*(.+?)\*\/`ism" => '$1',
-                "`([\n\A;\s]+)//(.+?)[\n\r]`ism" => "$1\n",
-                "`(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+`ism" => "\n",
-            );
-
-            $rewritten_CSS = preg_replace(
-                array_keys( $regex ),
-                $regex,
-                $this->response['body']
-            );
-
-            $this->setResponseBody( $rewritten_CSS );
-        }
-    }
-
     public function getCSS() {
         return $this->css_doc->render();
     }
@@ -169,6 +161,21 @@ class CSSProcessor {
 
         $this->raw_css = $rewritten_source;
 
+    }
+
+    public function detectIfURLsShouldBeHarvested() {
+        if ( ! defined( 'WP_CLI' ) ) {
+            $this->harvest_new_URLs = (
+                 $_POST['ajax_action'] === 'crawl_site'
+            );
+        } else {
+            // we shouldn't harvest any while we're in the second crawl
+            if ( defined( 'CRAWLING_DISCOVERED' ) ) {
+                return;
+            } else {
+                $this->harvest_new_URLs = true;
+            }
+        }
     }
 }
 
