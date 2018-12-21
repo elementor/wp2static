@@ -193,7 +193,6 @@ class CSSProcessor {
 
         if ( isset( $this->harvest_new_URLs ) ) {
             if ( ! $this->isValidURL( $url ) ) {
-                error_log('invalid URL');
                 return;
             }
 
@@ -213,13 +212,11 @@ class CSSProcessor {
     public function writeDiscoveredURLs() {
         if ( isset( $_POST['ajax_action'] ) &&
             $_POST['ajax_action']  === 'crawl_again' ) {
-            error_log('skip 1');
             return;
         }
 
         if ( defined( 'WP_CLI' ) ) {
             if ( defined( 'CRAWLING_DISCOVERED' ) ) {
-                error_log('skip 2');
                 return;
             }
         }
