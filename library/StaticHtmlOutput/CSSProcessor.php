@@ -85,6 +85,8 @@ class CSSProcessor {
                 // returned value contains surrounding quotes
                 $original_link = trim( trim( $original_link, "'" ), '"' );
 
+                $this->addDiscoveredURL( $original_link );
+
                 if ( $this->isInternalLink( $original_link ) ) {
 
                     // TODO: check/reimplement normalization
@@ -109,6 +111,8 @@ class CSSProcessor {
                 }
             }
         }
+
+        $this->writeDiscoveredURLs();
 
         return true;
     }
@@ -176,6 +180,87 @@ class CSSProcessor {
                 $this->harvest_new_URLs = true;
             }
         }
+    }
+
+    public function addDiscoveredURL( $url ) {
+        // trim any query strings or anchors
+        $url = strtok( $url, '#' );
+        $url = strtok( $url, '?' );
+
+        if ( trim( $url ) === '' ) {
+            return;
+        }
+
+        if ( isset( $this->harvest_new_URLs ) ) {
+            if ( ! $this->isValidURL( $url ) ) {
+                error_log('invalid URL');
+                return;
+            }
+
+            if ( $this->isInternalLink( $url ) ) {
+                $discovered_URL_without_site_URL =
+                    str_replace(
+                        'https://PLACEHOLDER.wpsho',
+                        '',
+                        $url
+                    );
+
+                $this->discovered_urls[] = $discovered_URL_without_site_URL;
+            }
+        }
+    }
+
+    public function writeDiscoveredURLs() {
+        if ( isset( $_POST['ajax_action'] ) &&
+            $_POST['ajax_action']  === 'crawl_again' ) {
+            error_log('skip 1');
+            return;
+        }
+
+        if ( defined( 'WP_CLI' ) ) {
+            if ( defined( 'CRAWLING_DISCOVERED' ) ) {
+                error_log('skip 2');
+                return;
+            }
+        }
+
+        file_put_contents(
+            $this->settings['wp_uploads_path'] .
+                '/WP-STATIC-DISCOVERED-URLS.txt',
+            PHP_EOL .
+                implode( PHP_EOL, array_unique( $this->discovered_urls ) ),
+            FILE_APPEND | LOCK_EX
+        );
+
+        chmod(
+            $this->settings['wp_uploads_path'] .
+                '/WP-STATIC-DISCOVERED-URLS.txt',
+            0664
+        );
+    }
+
+    public function isValidURL( $url ) {
+        // NOTE: not using native URL filter as it won't accept
+        // non-ASCII URLs, which we want to support
+        $url = trim( $url );
+
+        if ( $url == '' ) {
+            return false;
+        }
+
+        if ( strpos( $url, '.php' ) !== false ) {
+            return false;
+        }
+
+        if ( strpos( $url, ' ' ) !== false ) {
+            return false;
+        }
+
+        if ( $url[0] == '#' ) {
+            return false;
+        }
+
+        return true;
     }
 }
 
