@@ -1,6 +1,5 @@
 <?php
 
-
 class CSSProcessor {
 
     public function processCSS( $css_document, $page_url ) {
@@ -8,7 +7,7 @@ class CSSProcessor {
             return false;
         }
 
-        $target_settings = array(
+        $this->target_settings = array(
             'general',
             'crawling',
             'wpenv',
@@ -16,17 +15,7 @@ class CSSProcessor {
             'advanced',
         );
 
-        if ( isset( $_POST['selected_deployment_option'] ) ) {
-            require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/PostSettings.php';
-
-            $this->settings = WPSHO_PostSettings::get( $target_settings );
-        } else {
-            require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/DBSettings.php';
-
-            $this->settings = WPSHO_DBSettings::get( $target_settings );
-        }
+        $this->loadSettings();
 
         $this->discoverNewURLs = (
             isset( $this->settings['discoverNewURLs'] ) &&
@@ -74,24 +63,46 @@ class CSSProcessor {
         require_once $path . 'CSSList/Document.php';
         require_once $path . 'CSSList/KeyFrame.php';
 
-        $oCssParser = new Sabberworm\CSS\Parser( $css_document );
+        $this->page_url = $page_url;
+        $this->placeholder_URL = 'https://PLACEHOLDER.wpsho/';
+        $this->raw_css = $css_document;
+        // initial rewrite of all site URLs to placeholder URLs
+        $this->rewriteSiteURLsToPlaceholder();
+
+
+        $oCssParser = new Sabberworm\CSS\Parser( $this->raw_css );
         $this->css_doc = $oCssParser->parse();
 
         return true;
     }
 
+    public function loadSettings() {
+        if ( isset( $_POST['selected_deployment_option'] ) ) {
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/PostSettings.php';
+
+            $this->settings = WPSHO_PostSettings::get( $this->target_settings );
+        } else {
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/DBSettings.php';
+            $this->settings = WPSHO_DBSettings::get( $this->target_settings );
+        }
+    }
+
     public function isInternalLink( $link, $domain = false ) {
         if ( ! $domain ) {
-            $domain = $this->settings['wp_site_url'];
+            $domain = $this->placeholder_URL;
         }
 
         // TODO: apply only to links starting with .,..,/,
         // or any with just a path, like banana.png
         // check link is same host as $this->url and not a subdomain
-        return parse_url( $link, PHP_URL_HOST ) === parse_url(
+        $is_internal_link = parse_url( $link, PHP_URL_HOST ) === parse_url(
             $domain,
             PHP_URL_HOST
         );
+
+        return $is_internal_link;
     }
 
     public function normalizeURLs( $url ) {
@@ -141,6 +152,23 @@ class CSSProcessor {
 
     public function getCSS() {
         return $this->css_doc->render();
+    }
+
+    public function rewriteSiteURLsToPlaceholder() {
+        $rewritten_source = str_replace(
+            array(
+                $this->settings['wp_site_url'],
+                addcslashes( $this->settings['wp_site_url'], '/' ),
+            ),
+            array(
+                $this->placeholder_URL,
+                addcslashes( $this->placeholder_URL, '/' ),
+            ),
+            $this->raw_css
+        );
+
+        $this->raw_css = $rewritten_source;
+
     }
 }
 
