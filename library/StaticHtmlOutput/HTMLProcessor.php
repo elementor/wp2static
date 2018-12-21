@@ -1,7 +1,5 @@
 <?php
-// TODO: rewerite to be one loop of all elements,
-// applying multiple transformations at once per link, reducing iterations
-// TODO: deal with inline CSS blocks or style attributes on tags
+
 class HTMLProcessor {
 
     public function processHTML( $html_document, $page_url ) {
