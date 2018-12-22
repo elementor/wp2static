@@ -230,20 +230,25 @@ class SiteCrawler {
             $this->full_url = $this->settings['wp_site_url'] .
                 ltrim( $this->url, '/' );
 
-            if ( isset( $this->settings['excludeURLs'] ) ) {
-                // TODO: check for exclusions
-                $exclusions = explode(
-                    "\n",
-                    str_replace( "\r", '', $this->settings['excludeURLs'] )
-                );
+            if ( ! isset( $this->settings['excludeURLs'] ) ) {
+                $this->settings['excludeURLs'] = '';
+            }
 
-                foreach ( $exclusions as $exclusion ) {
-                    $exclusion = trim( $exclusion );
-                    if ( $exclusion != '' ) {
-                        if ( strpos( $this->url, $exclusion ) ) {
-                            $this->checkIfMoreCrawlingNeeded();
-                            return;
-                        }
+            // add default exclusions
+            $this->settings['excludeURLs'] .=
+                PHP_EOL . 'wp-json';
+
+            $exclusions = explode(
+                "\n",
+                str_replace( "\r", '', $this->settings['excludeURLs'] )
+            );
+
+            foreach ( $exclusions as $exclusion ) {
+                $exclusion = trim( $exclusion );
+                if ( $exclusion != '' ) {
+                    if ( strpos( $this->url, $exclusion ) ) {
+                        $this->checkIfMoreCrawlingNeeded();
+                        return;
                     }
                 }
             }
