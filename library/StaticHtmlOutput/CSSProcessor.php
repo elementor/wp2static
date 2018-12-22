@@ -102,12 +102,17 @@ class CSSProcessor {
 
                     $rewrite_rules = explode(
                         "\n",
-                        str_replace( "\r", '', $this->settings['rewrite_rules'] )
+                        str_replace(
+                            "\r",
+                            '',
+                            $this->settings['rewrite_rules']
+                        )
                     );
 
                     foreach ( $rewrite_rules as $rewrite_rule_line ) {
                         if ( $rewrite_rule_line ) {
-                            list($from, $to) = explode( ',', $rewrite_rule_line );
+                            list($from, $to) =
+                                explode( ',', $rewrite_rule_line );
 
                             $rewrite_from[] = $from;
                             $rewrite_to[] = $to;
