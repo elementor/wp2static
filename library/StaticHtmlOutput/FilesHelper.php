@@ -297,16 +297,32 @@ class StaticHtmlOutput_FilesHelper {
         }
 
         $filenames_to_ignore = array(
-            // 'wp2static',
-            'wp-static-html-output', // exclude earlier version exports
-            'previous-export',
-            'pb_backupbuddy',
-            'backwpup',
-            'latest-export',
-            'current-export',
-            'WP-STATIC',
-            '.php',
+            '.DS_Store',
+            '.PHP',
+            '.SQL',
             '.git',
+            '.idea',
+            '.ini',
+            '.map',
+            '.php',
+            '.sql',
+            '.yarn',
+            'WP-STATIC',
+            '__MACOSX',
+            'backwpup',
+            'bower.json',
+            'bower_components',
+            'composer.json',
+            'current-export',
+            'gulpfile.js',
+            'latest-export',
+            'node_modules',
+            'package.json',
+            'pb_backupbuddy',
+            'previous-export',
+            'thumbs.db',
+            'vendor',
+            'wp-static-html-output', // exclude earlier version exports
         );
 
         foreach ( $filenames_to_ignore as $ignorable ) {
