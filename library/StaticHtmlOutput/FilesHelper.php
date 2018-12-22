@@ -22,9 +22,20 @@ class StaticHtmlOutput_FilesHelper {
         }
     }
 
-    public static function getThemeFiles( $path, $wp_content_subdir ) {
+    public static function getThemeFiles( $theme_type, $wp_content_subdir ) {
         $files = array();
-        $directory = $path;
+        $template_path = '';
+        $template_url = '';
+
+        if ( $theme_type === 'parent' ) {
+            $template_path = $wp_site->parent_theme_path;
+            $template_url = get_template_directory_uri();
+        } else {
+            $template_path = $wp_site->child_theme_path;
+            $template_url = get_stylesheet_directory_uri();
+        }
+
+        $directory = $template_path;
 
         if ( is_dir( $directory ) ) {
             $iterator = new RecursiveIteratorIterator(
@@ -40,8 +51,8 @@ class StaticHtmlOutput_FilesHelper {
                 $detectedFileName =
                     $wp_content_subdir .
                     str_replace(
-                        $path,
-                        get_template_directory_uri(),
+                        $template_path,
+                        $template_url,
                         $fileName
                     );
 
@@ -342,7 +353,7 @@ class StaticHtmlOutput_FilesHelper {
             array( '/favicon.ico' ),
             array( '/sitemap.xml' ),
             self::getThemeFiles(
-                $wp_site->parent_theme_path,
+                'parent',
                 $wp_site->getWPContentSubDirectory()
             ),
             self::getThemeFiles(
