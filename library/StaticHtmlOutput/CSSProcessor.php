@@ -87,16 +87,36 @@ class CSSProcessor {
                 $this->addDiscoveredURL( $original_link );
 
                 if ( $this->isInternalLink( $original_link ) ) {
+                    if ( ! isset( $this->settings['rewrite_rules'] ) ) {
+                        $this->settings['rewrite_rules'] = '';
+                    }
 
-                    // TODO: check/reimplement normalization
-                    // $absolute_url = new Sabberworm\CSS\Value\CSSString(
-                    // $base->resolve( $original_link )
-                    // );
-                    // $mValue->setURL( $absolute_url );
-                    // rewrite base URL
+                    // add base URL to rewrite_rules
+                    $this->settings['rewrite_rules'] .=
+                        PHP_EOL .
+                            $this->placeholder_URL . ',' .
+                            $this->settings['baseUrl'];
+
+                    $rewrite_from = array();
+                    $rewrite_to = array();
+
+                    $rewrite_rules = explode(
+                        "\n",
+                        str_replace( "\r", '', $this->settings['rewrite_rules'] )
+                    );
+
+                    foreach ( $rewrite_rules as $rewrite_rule_line ) {
+                        if ( $rewrite_rule_line ) {
+                            list($from, $to) = explode( ',', $rewrite_rule_line );
+
+                            $rewrite_from[] = $from;
+                            $rewrite_to[] = $to;
+                        }
+                    }
+
                     $rewritten_url = str_replace(
-                        $this->placeholder_URL,
-                        $this->settings['baseUrl'],
+                        $rewrite_from,
+                        $rewrite_to,
                         $original_link
                     );
 

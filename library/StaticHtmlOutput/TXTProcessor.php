@@ -160,7 +160,6 @@ class TXTProcessor {
         );
 
         return $rewritten_source;
-
     }
 
     public function rewriteSiteURLsToPlaceholder() {
