@@ -247,8 +247,8 @@ class SiteCrawler {
                 $exclusion = trim( $exclusion );
                 if ( $exclusion != '' ) {
                     if ( strpos( $this->url, $exclusion ) ) {
-                        $this->checkIfMoreCrawlingNeeded();
-                        return;
+                        // skip the outer foreach loop
+                        continue 2;
                     }
                 }
             }
@@ -283,13 +283,6 @@ class SiteCrawler {
             );
         }
 
-        // $this->response =
-        // $client->request(
-        // 'GET',
-        // $this->full_url,
-        // $request_options
-        // );
-        // TODO: test this different syntax for basic auth
         $this->response =
             $client->get(
                 $this->full_url,
