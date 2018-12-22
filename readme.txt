@@ -2,9 +2,9 @@
 Contributors: leonstafford
 Tags: security, performance, static
 Requires at least: 3.2
-Tested up to: 4.9.8
-Requires PHP: 5.4
-Stable tag: 5.9
+Tested up to: 5.0.2
+Requires PHP: 5.6
+Stable tag: 6.0
 
 
 == Description ==
@@ -120,12 +120,17 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
 
 == Screenshots ==
 
-1. The main interface
-2. The main interface (Japanese)
+1. Deployment screen
+2. Crawling options
+3. Processing options
+4. Advanced options
+5. Help & Documentation
+6. Detailed log files
+7. Ways to support the plugin
 
 == Changelog ==
 
-= 5.9 =
+= 6.0 =
 
  * New feature: WP CLI integration
  * New feature: auto-deploy to Bitbucket
@@ -145,6 +150,7 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
  * Enhancement: easy access to export/deploy logs from Logs tab
  * Enhancement: strip WP's noindex,follow meta tag
  * Enhancement: support Netlify _headers and _redirects files
+ * Enhancement: support Yoast SEO sitemaps
  * Bugfix: Support for Bedrock, Debian & non-standard WP paths
  * Bugfix: Prevent rewriting mailto: links containing domain
  * Bugfix: Prevent rewriting URLs on external domains
@@ -468,7 +474,7 @@ Initial release to Wordpress community
 
 == Upgrade Notice ==
 
-= 5.9 =
+= 6.0 =
 
  * New feature: WP CLI integration
  * New feature: auto-deploy to Bitbucket
@@ -488,6 +494,7 @@ Initial release to Wordpress community
  * Enhancement: easy access to export/deploy logs from Logs tab
  * Enhancement: strip WP's noindex,follow meta tag
  * Enhancement: support Netlify _headers and _redirects files
+ * Enhancement: support Yoast SEO sitemaps
  * Bugfix: Support for Bedrock, Debian & non-standard WP paths
  * Bugfix: Prevent rewriting mailto: links containing domain
  * Bugfix: Prevent rewriting URLs on external domains
