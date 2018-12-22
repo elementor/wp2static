@@ -23,6 +23,9 @@ class StaticHtmlOutput_FilesHelper {
     }
 
     public static function getThemeFiles( $theme_type, $wp_content_subdir ) {
+        require_once dirname( __FILE__ ) . '/WPSite.php';
+        $wp_site = new WPSite();
+
         $files = array();
         $template_path = '';
         $template_url = '';
