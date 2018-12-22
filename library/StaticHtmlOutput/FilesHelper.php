@@ -95,6 +95,18 @@ class StaticHtmlOutput_FilesHelper {
             $vendor_files = array_merge( $vendor_files, $elemementor_URLs );
         }
 
+        if ( defined( 'WPSEO_VERSION' ) ) {
+            $yoast_sitemaps = array(
+                '/sitemap_index.xml',
+                '/post-sitemap.xml',
+                '/page-sitemap.xml',
+                '/category-sitemap.xml',
+                '/author-sitemap.xml',
+            );
+
+            $vendor_files = array_merge( $vendor_files, $yoast_sitemaps );
+        }
+
         if ( is_dir( WP_PLUGIN_DIR . '/soliloquy/' ) ) {
             $soliloquy_assets = WP_PLUGIN_DIR .
                 '/soliloquy/assets/css/images/';
