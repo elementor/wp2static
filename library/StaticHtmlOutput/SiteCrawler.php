@@ -382,12 +382,12 @@ class SiteCrawler {
             case 'xml':
                 require_once dirname( __FILE__ ) .
                     '/../StaticHtmlOutput/TXTProcessor.php';
-                $processor = new TXTProcessor(
-                    $this->response->getBody(),
-                    $this->settings['wp_site_url']
-                );
+                $processor = new TXTProcessor();
 
-                $processor->normalizeURLs( $this->full_url );
+                $processor->processTXT(
+                    $this->response->getBody(),
+                    $this->full_url
+                );
 
                 $this->processed_file = $processor->getTXT();
 
