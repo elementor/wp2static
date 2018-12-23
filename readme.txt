@@ -6,6 +6,7 @@ Tested up to: 5.0.2
 Requires PHP: 5.6
 Stable tag: 6.0
 
+Security & Performance via static website publishing. One plugin to solve WordPress's biggest problems.
 
 == Description ==
 
@@ -19,13 +20,13 @@ A pre-generated static site will outperform caching plugins, allowing you to ser
 
 [**https://wp2static.com**](https://wp2static.com/)
 
-Not compatible with WooCommerce or membership sites.
+Not compatible with WooCommerce or membership sites, but solutions like [Snipcart](https://snipcart.com) allow for eCommerce on static websites.
 
 = Features =
 
  * publishes a standalone, static html copy of your whole WordPress website
  * removes tell-tale signs your site is running WordPress, making it unattractive to hackers
- * auto-deploy to a folder on your server, a ZIP file, FTP server, S3, GitHub, Netlify or BunnyCDN
+ * auto-deploy to a folder on your server, a ZIP file, FTP server, S3, GitHub, Netlif, BunnyCDN, BitBucket or GitLab
  * schedule unattended exports via the WP Crontrol plugin or by hitting the custom hook
  * desktop notifications alert you to when exports are complete
 
@@ -38,6 +39,9 @@ Not compatible with WooCommerce or membership sites.
  * allows you to deploy to crazy fast hosting options, like S3, behind CloudFront
  * have a nice development -> staging -> production workflow and integrate with your CI tools
 
+= A word from the author =
+
+[youtube http://www.youtube.com/watch?v=HPc4JjBvkrU]
 
 = Who loves this? =
 
