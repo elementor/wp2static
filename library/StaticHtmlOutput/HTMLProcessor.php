@@ -1,5 +1,7 @@
 <?php
 
+use Masterminds\HTML5;
+
 class HTMLProcessor {
 
     public function processHTML( $html_document, $page_url ) {
@@ -17,9 +19,25 @@ class HTMLProcessor {
 
         $this->loadSettings();
 
-        // instantiate the XML body here
-        $this->xml_doc = new DOMDocument();
+        require_once(dirname(__FILE__) . '/../HTML5/Serializer/Traverser.php');
+        require_once(dirname(__FILE__) . '/../HTML5/Serializer/RulesInterface.php');
+        require_once(dirname(__FILE__) . '/../HTML5/Serializer/OutputRules.php');
+        require_once(dirname(__FILE__) . '/../HTML5/Elements.php');
+        require_once(dirname(__FILE__) . '/../HTML5/Entities.php');
+        require_once(dirname(__FILE__) . '/../HTML5/Parser/CharacterReference.php');
+        require_once(dirname(__FILE__) . '/../HTML5/Parser/Tokenizer.php');
+        require_once(dirname(__FILE__) . '/../HTML5/Parser/UTF8Utils.php');
+        require_once(dirname(__FILE__) . '/../HTML5/Parser/Scanner.php');
+        require_once(dirname(__FILE__) . '/../HTML5.php');
+        require_once(dirname(__FILE__) . '/../HTML5/Parser/EventHandler.php');
+        require_once(dirname(__FILE__) . '/../HTML5/Parser/TreeBuildingRules.php');
+        require_once(dirname(__FILE__) . '/../HTML5/Parser/DOMTreeBuilder.php');
+
+
+        $this->xml_doc = new HTML5();
         $this->raw_html = $html_document;
+        $this->xml_doc->loadHTML( $this->raw_html );
+
         $this->placeholder_URL = 'https://PLACEHOLDER.wpsho/';
 
         // initial rewrite of all site URLs to placeholder URLs
@@ -36,11 +54,15 @@ class HTMLProcessor {
 
         $this->discovered_urls = [];
 
-        // PERF: 70% of function time
-        // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
-        libxml_use_internal_errors( true );
-        $this->xml_doc->loadHTML( $this->raw_html );
-        libxml_use_internal_errors( false );
+//        // instantiate the XML body here
+//        $this->xml_doc = new DOMDocument();
+//        $this->raw_html = $html_document;
+//        // PERF: 70% of function time
+//        // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
+//        libxml_use_internal_errors( true );
+//        $this->xml_doc->loadHTML( $this->raw_html );
+//        libxml_use_internal_errors( false );
+
 
         // start the full iterator here, along with copy of dom
         $elements = iterator_to_array(
