@@ -373,7 +373,9 @@ class SiteCrawler {
                     $this->full_url
                 );
 
-                $this->processed_file = $processor->getJS();
+                if ( $this->processed_file ) {
+                    $this->processed_file = $processor->getJS();
+                }
 
                 break;
 
@@ -389,7 +391,9 @@ class SiteCrawler {
                     $this->full_url
                 );
 
-                $this->processed_file = $processor->getTXT();
+                if ( $this->processed_file ) {
+                    $this->processed_file = $processor->getTXT();
+                }
 
                 break;
 
