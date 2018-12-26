@@ -23,11 +23,11 @@ ie:
 
 
 
-languages/static-html-output-plugin.pot
-library/StaticHtmlOutput.php
+languages
+library
 readme.txt
-views/options-page.phtml
-wp-static-html-output.php
+views
+wp2static.php
 
 
 # rm any swap files
