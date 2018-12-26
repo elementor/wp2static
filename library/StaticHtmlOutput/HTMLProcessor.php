@@ -19,30 +19,14 @@ class HTMLProcessor {
 
         $this->loadSettings();
 
-        require_once(dirname(__FILE__) . '/../HTML5/Serializer/Traverser.php');
-        require_once(dirname(__FILE__) . '/../HTML5/Serializer/RulesInterface.php');
-        require_once(dirname(__FILE__) . '/../HTML5/Serializer/OutputRules.php');
-        require_once(dirname(__FILE__) . '/../HTML5/Elements.php');
-        require_once(dirname(__FILE__) . '/../HTML5/Entities.php');
-        require_once(dirname(__FILE__) . '/../HTML5/Parser/CharacterReference.php');
-        require_once(dirname(__FILE__) . '/../HTML5/Parser/Tokenizer.php');
-        require_once(dirname(__FILE__) . '/../HTML5/Parser/UTF8Utils.php');
-        require_once(dirname(__FILE__) . '/../HTML5/Parser/Scanner.php');
-        require_once(dirname(__FILE__) . '/../HTML5.php');
-        require_once(dirname(__FILE__) . '/../HTML5/Parser/EventHandler.php');
-        require_once(dirname(__FILE__) . '/../HTML5/Parser/TreeBuildingRules.php');
-        require_once(dirname(__FILE__) . '/../HTML5/Parser/DOMTreeBuilder.php');
-
-
-        $this->html5 = new HTML5();
+        // instantiate the XML body here
+        $this->xml_doc = new DOMDocument();
         $this->raw_html = $html_document;
-
         $this->placeholder_URL = 'https://PLACEHOLDER.wpsho/';
 
         // initial rewrite of all site URLs to placeholder URLs
         $this->rewriteSiteURLsToPlaceholder();
 
-        $this->xml_doc = $this->html5->loadHTML( $this->raw_html );
         // detect if a base tag exists while in the loop
         // use in later base href creation to decide: append or create
         $this->base_tag_exists = false;
@@ -54,15 +38,11 @@ class HTMLProcessor {
 
         $this->discovered_urls = [];
 
-//        // instantiate the XML body here
-//        $this->xml_doc = new DOMDocument();
-//        $this->raw_html = $html_document;
-//        // PERF: 70% of function time
-//        // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
-//        libxml_use_internal_errors( true );
-//        $this->xml_doc->loadHTML( $this->raw_html );
-//        libxml_use_internal_errors( false );
-
+        // PERF: 70% of function time
+        // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
+        libxml_use_internal_errors( true );
+        $this->xml_doc->loadHTML( $this->raw_html );
+        libxml_use_internal_errors( false );
 
         // start the full iterator here, along with copy of dom
         $elements = iterator_to_array(
@@ -616,7 +596,7 @@ class HTMLProcessor {
     }
 
     public function getHTML() {
-        $processedHTML = $this->html5->saveHtml( $this->xml_doc );
+        $processedHTML = $this->xml_doc->saveHtml();
 
         // process the resulting HTML as text
         $processedHTML = $this->detectEscapedSiteURLs( $processedHTML );
