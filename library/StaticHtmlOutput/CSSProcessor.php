@@ -84,6 +84,14 @@ class CSSProcessor {
                 // returned value contains surrounding quotes
                 $original_link = trim( trim( $original_link, "'" ), '"' );
 
+                // skip inline SVGs
+                $inline_img =
+                    strpos( $original_link, 'data:image' );
+
+                if ( $inline_img !== false ) {
+                    continue;
+                }
+
                 $this->addDiscoveredURL( $original_link );
 
                 if ( $this->isInternalLink( $original_link ) ) {
@@ -186,7 +194,6 @@ class CSSProcessor {
         );
 
         $this->raw_css = $rewritten_source;
-
     }
 
     public function detectIfURLsShouldBeHarvested() {
