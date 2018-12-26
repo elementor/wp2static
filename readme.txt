@@ -4,7 +4,7 @@ Tags: security, performance, static
 Requires at least: 3.2
 Tested up to: 5.0.2
 Requires PHP: 5.6
-Stable tag: 6.0
+Stable tag: 6.1
 
 Security & Performance via static website publishing. One plugin to solve WordPress's biggest problems.
 
@@ -133,6 +133,10 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
 7. Ways to support the plugin
 
 == Changelog ==
+
+= 6.1 =
+
+ * Bugfix: Site URLs without trailing slash weren't rewritten
 
 = 6.0 =
 
@@ -477,6 +481,10 @@ Altered main codebase to fix recursion bug and endless loop. Essential upgrade.
 Initial release to Wordpress community
 
 == Upgrade Notice ==
+
+= 6.1 =
+
+ * Bugfix: Site URLs without trailing slash weren't rewritten
 
 = 6.0 =
 
