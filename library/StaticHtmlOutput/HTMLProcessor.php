@@ -34,15 +34,15 @@ class HTMLProcessor {
         require_once(dirname(__FILE__) . '/../HTML5/Parser/DOMTreeBuilder.php');
 
 
-        $this->xml_doc = new HTML5();
+        $this->html5 = new HTML5();
         $this->raw_html = $html_document;
-        $this->xml_doc->loadHTML( $this->raw_html );
 
         $this->placeholder_URL = 'https://PLACEHOLDER.wpsho/';
 
         // initial rewrite of all site URLs to placeholder URLs
         $this->rewriteSiteURLsToPlaceholder();
 
+        $this->xml_doc = $this->html5->loadHTML( $this->raw_html );
         // detect if a base tag exists while in the loop
         // use in later base href creation to decide: append or create
         $this->base_tag_exists = false;
@@ -290,9 +290,12 @@ class HTMLProcessor {
                 ) {
                     $node->parentNode->removeChild( $node );
                 }
-            } elseif ( $node->tagName === 'base' ) {
-                // as smaller iteration to run conditional against here
-                $this->base_tag_exists = true;
+            } elseif ( isset( $node->tagName ) ) {
+                if ( $node->tagName === 'base' ) {
+                    // as smaller iteration to run conditional
+                    // against here
+                    $this->base_tag_exists = true;
+                }
             }
         }
     }
@@ -613,7 +616,7 @@ class HTMLProcessor {
     }
 
     public function getHTML() {
-        $processedHTML = $this->xml_doc->saveHtml();
+        $processedHTML = $this->html5->saveHtml( $this->xml_doc );
 
         // process the resulting HTML as text
         $processedHTML = $this->detectEscapedSiteURLs( $processedHTML );
@@ -740,10 +743,14 @@ class HTMLProcessor {
         $rewritten_source = str_replace(
             array(
                 $this->settings['wp_site_url'],
+                rtrim( $this->settings['wp_site_url'], '/' ),
+                $this->placeholder_URL . '//',
                 addcslashes( $this->settings['wp_site_url'], '/' ),
             ),
             array(
                 $this->placeholder_URL,
+                $this->placeholder_URL,
+                $this->placeholder_URL . '/',
                 addcslashes( $this->placeholder_URL, '/' ),
             ),
             $this->raw_html
