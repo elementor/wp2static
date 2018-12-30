@@ -81,7 +81,7 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
                         $_SERVER['REQUEST_URI']
                     );
 
-                    $wp_subdir = ltrim( $subdir, '/' );
+                    $wp_subdir = ltrim( $wp_subdir, '/' );
                     $dirs_in_path = $dir;
                     $filename = $item;
                     $original_filepath = $dir . '/' . $item;
