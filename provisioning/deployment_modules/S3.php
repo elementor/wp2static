@@ -69,14 +69,14 @@ class StaticHtmlOutput_S3 {
                         $rem_path
                     );
                 } elseif ( is_file( $dir . '/' . $item ) ) {
-                    $subdir = str_replace(
+                    $wp_subdir = str_replace(
                         '/wp-admin/admin-ajax.php',
                         '',
                         $_SERVER['REQUEST_URI']
                     );
-                    $subdir = ltrim( $subdir, '/' );
+                    $wp_subdir = ltrim( $wp_subdir, '/' );
                     $clean_dir = str_replace( $archive . '/', '', $dir . '/' );
-                    $clean_dir = str_replace( $subdir, '', $clean_dir );
+                    $clean_dir = str_replace( $wp_subdir, '', $clean_dir );
                     $targetPath = $rem_path . $clean_dir;
                     $targetPath = ltrim( $targetPath, '/' );
                     $export_line =
