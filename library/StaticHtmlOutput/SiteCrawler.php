@@ -368,7 +368,7 @@ class SiteCrawler {
                     '/../StaticHtmlOutput/JSProcessor.php';
                 $processor = new JSProcessor();
 
-                $processor->processJS(
+                $this->processed_file = $processor->processJS(
                     $this->response->getBody(),
                     $this->full_url
                 );
