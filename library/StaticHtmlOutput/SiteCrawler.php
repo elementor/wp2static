@@ -363,23 +363,24 @@ class SiteCrawler {
 
                 break;
 
-            case 'js':
-                require_once dirname( __FILE__ ) .
-                    '/../StaticHtmlOutput/JSProcessor.php';
-                $processor = new JSProcessor();
+            //case 'js':
+            //    require_once dirname( __FILE__ ) .
+            //        '/../StaticHtmlOutput/JSProcessor.php';
+            //    $processor = new JSProcessor();
 
-                $this->processed_file = $processor->processJS(
-                    $this->response->getBody(),
-                    $this->full_url
-                );
+            //    $this->processed_file = $processor->processJS(
+            //        $this->response->getBody(),
+            //        $this->full_url
+            //    );
 
-                if ( $this->processed_file ) {
-                    $this->processed_file = $processor->getJS();
-                }
+            //    if ( $this->processed_file ) {
+            //        $this->processed_file = $processor->getJS();
+            //    }
 
-                break;
+            //    break;
 
             case 'txt':
+            case 'js':
             case 'json':
             case 'xml':
                 require_once dirname( __FILE__ ) .
