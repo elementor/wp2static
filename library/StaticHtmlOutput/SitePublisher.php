@@ -56,9 +56,6 @@ class StaticHtmlOutput_SitePublisher {
                         '/',
                         $local_path_to_strip);
 
-                    error_log('local to strip');
-                    error_log($local_path_to_strip);
-
                     $deploy_path = str_replace(
                         $local_path_to_strip,
                         '',
@@ -76,15 +73,14 @@ class StaticHtmlOutput_SitePublisher {
                         '/'
                     );
 
-                    error_log('origin without archive');
-                    error_log($original_file_without_archive);
-
                     $deploy_path = $this->r_path . $deploy_path;
                     $deploy_path = ltrim( $deploy_path, '/' );
                     $deploy_path .= '/';
 
                     // TODO: better described as "only allow file objects"?
+                    // append basename to deply path
                     if ( $basename_in_target ) {
+                        error_log('appending basename');
                         $deploy_path .= basename(
                             $original_file_without_archive
                         );
