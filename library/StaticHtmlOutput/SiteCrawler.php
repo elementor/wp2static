@@ -366,8 +366,6 @@ class SiteCrawler {
             case 'js':
             case 'json':
             case 'xml':
-                error_log('using TXT processor');
-
                 require_once dirname( __FILE__ ) .
                     '/../StaticHtmlOutput/TXTProcessor.php';
                 $processor = new TXTProcessor();
