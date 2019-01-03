@@ -34,17 +34,6 @@ class FtpClient implements Countable
     {
         return $this->ftp->__call($method, $arguments);
     }
-    public function setPhpLimit($memory = null, $time_limit = 0, $ignore_user_abort = true)
-    {
-        if (null !== $memory) {
-            ini_set('memory_limit', $memory);
-        }
-
-        ignore_user_abort(true);
-        set_time_limit($time_limit);
-
-        return $this;
-    }
     public function help()
     {
         return $this->ftp->raw('help');
