@@ -84,10 +84,16 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
         $lines = $this->get_items_to_export( $batch_size );
         $globHashPathLines = array();
 
+        $headers = [
+            //'Content-Type' => 'application/json',
+            'Authorization' => 'token ' . $this->settings['ghToken'],
+        ];
+
 
         $client = new Client(
             array(
                 'base_uri' => $this->api_base,
+                'headers' => $headers
             )
         );
 
@@ -109,15 +115,11 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
                     'PUT',
                     $resource_path,
                     array(
-                        'auth'  => array(
-                            $this->user,
-                            $this->settings['ghToken'],
-                        ),
-                        'multipart' => array(
+                        'json' => array (
                            'message' => 'The commit message', 
                            'content' => $b64_file_contents, 
                            'branch' => $this->settings['ghBranch'], 
-                        ),
+                        )
                     )
                 );
 

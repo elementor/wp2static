@@ -80,11 +80,12 @@ class StaticHtmlOutput_SitePublisher {
                     // TODO: better described as "only allow file objects"?
                     // append basename to deply path
                     if ( $basename_in_target ) {
-                        error_log('appending basename');
                         $deploy_path .= basename(
                             $original_file_without_archive
                         );
                     }
+
+                    $deploy_path = ltrim( $deploy_path, '/' );
 
                     $export_line =
                         $original_file_without_archive . ',' . // field 1
