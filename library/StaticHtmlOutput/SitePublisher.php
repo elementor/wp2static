@@ -22,7 +22,7 @@ class StaticHtmlOutput_SitePublisher {
         }
     }
 
-    public function create_deployment_list( $dir ) {
+    public function create_deployment_list( $dir, $basename_in_target ) {
         $archive = $this->archive->path;
 
         $files = scandir( $dir );
@@ -30,7 +30,10 @@ class StaticHtmlOutput_SitePublisher {
         foreach ( $files as $item ) {
             if ( $item != '.' && $item != '..' && $item != '.git' ) {
                 if ( is_dir( $dir . '/' . $item ) ) {
-                    $this->create_deployment_list( $dir . '/' . $item );
+                    $this->create_deployment_list(
+                        $dir . '/' . $item,
+                        $basename_in_target
+                    );
                 } elseif ( is_file( $dir . '/' . $item ) ) {
                     $wp_subdir = str_replace(
                         '/wp-admin/admin-ajax.php',
@@ -38,13 +41,23 @@ class StaticHtmlOutput_SitePublisher {
                         $_SERVER['REQUEST_URI']
                     );
 
-                    $wp_subdir = ltrim( $subdir, '/' );
+                    $wp_subdir = ltrim( $wp_subdir, '/' );
                     $dirs_in_path = $dir;
                     $filename = $item;
                     $original_filepath = $dir . '/' . $item;
 
-                    $local_path_to_strip = $archive . '/' . $wp_subdir;
+                    // $local_path_to_strip = $archive . '/' . $wp_subdir;
+                    $local_path_to_strip = $archive;
                     $local_path_to_strip = rtrim( $local_path_to_strip, '/' );
+
+                    // TODO: better detection of subdir/nonstandard paths
+                    $local_path_to_strip = str_replace(
+                        '//',
+                        '/',
+                        $local_path_to_strip);
+
+                    error_log('local to strip');
+                    error_log($local_path_to_strip);
 
                     $deploy_path = str_replace(
                         $local_path_to_strip,
@@ -63,9 +76,19 @@ class StaticHtmlOutput_SitePublisher {
                         '/'
                     );
 
+                    error_log('origin without archive');
+                    error_log($original_file_without_archive);
+
                     $deploy_path = $this->r_path . $deploy_path;
                     $deploy_path = ltrim( $deploy_path, '/' );
                     $deploy_path .= '/';
+
+                    // TODO: better described as "only allow file objects"?
+                    if ( $basename_in_target ) {
+                        $deploy_path .= basename(
+                            $original_file_without_archive
+                        );
+                    }
 
                     $export_line =
                         $original_file_without_archive . ',' . // field 1
@@ -84,12 +107,13 @@ class StaticHtmlOutput_SitePublisher {
         }
     }
 
-    public function prepare_export() {
+    public function prepare_export( $basename_in_target = false ) {
         $this->clear_file_list();
 
         $this->create_deployment_list(
             $this->settings['wp_uploads_path'] . '/' .
-                $this->archive->name
+                $this->archive->name,
+            $basename_in_target
         );
 
         if ( ! defined( 'WP_CLI' ) ) {

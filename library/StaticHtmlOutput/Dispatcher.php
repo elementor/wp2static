@@ -33,21 +33,14 @@ if ( $ajax_action === 'crawl_site' || $ajax_action === 'crawl_again' ) {
 
     wp_die();
     return null;
-} elseif ( $ajax_action == 'github_upload_blobs' ) {
+} elseif ( $ajax_action == 'github_upload_files' ) {
     require_once dirname( __FILE__ ) .
         '/SitePublisher.php';
     require_once $powerpack_dir . '/GitHub.php';
 
     wp_die();
     return null;
-} elseif ( $ajax_action == 'github_finalise_export' ) {
-    require_once dirname( __FILE__ ) .
-        '/SitePublisher.php';
-    require_once $powerpack_dir . '/GitHub.php';
-
-    wp_die();
-    return null;
-} elseif ( $ajax_action == 'test_blob_create' ) {
+} elseif ( $ajax_action == 'test_github' ) {
     require_once dirname( __FILE__ ) .
         '/SitePublisher.php';
     require_once $powerpack_dir . '/GitHub.php';
