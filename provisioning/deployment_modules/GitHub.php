@@ -178,32 +178,34 @@ email   string  Required. The email of the author or committer of the commit. Yo
     public function test_upload() {
         require_once dirname( __FILE__ ) .
             '/../library/GuzzleHttp/autoloader.php';
+
+        $headers = [
+            'Authorization' => 'token ' . $this->settings['ghToken'],
+        ];
+
         $client = new Client(
             array(
                 'base_uri' => $this->api_base,
+                'headers' => $headers
             )
         );
 
+        $b64_file_contents = base64_encode( 'WP2Static test upload' );
+
+        $resource_path = 
+                $this->settings['ghRepo'] . '/contents/' .
+                    '.WP2Static/' . uniqid();
+
         try {
             $response = $client->request(
-                'POST',
-                $this->settings['ghRepo'] . '/src',
+                'PUT',
+                $resource_path,
                 array(
-                    'auth'  => array(
-                        $this->user,
-                        $this->settings['ghToken'],
-                    ),
-                    // TODO: grab n of these as an array and iterate
-                    'multipart' => array(
-                        array(
-                            'name'     => 'file1.html',
-                            'contents' => 'first file',
-                        ),
-                        array(
-                            'name'     => 'file2.html',
-                            'contents' => '2nd file',
-                        ),
-                    ),
+                    'json' => array (
+                       'message' => 'WP2Static test upload', 
+                       'content' => $b64_file_contents, 
+                       'branch' => $this->settings['ghBranch'], 
+                    )
                 )
             );
 
@@ -212,10 +214,10 @@ email   string  Required. The email of the author or committer of the commit. Yo
                 '/../library/StaticHtmlOutput/WsLog.php';
             WsLog::l( 'GITHUB EXPORT: error encountered' );
             WsLog::l( $e );
-            error_log( $e );
             throw new Exception( $e );
             return;
         }
+
 
         if ( ! defined( 'WP_CLI' ) ) {
             echo 'SUCCESS';
