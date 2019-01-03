@@ -113,7 +113,7 @@ jQuery(document).ready(function($){
           doAJAXExport('bitbucket_prepare_export', 'bitbucket_upload_files');
           break;
         case 'GITHUB':
-          doAJAXExport('github_prepare_export', 'github_upload_blobs', 'github_finalise_export');
+          doAJAXExport('github_prepare_export', 'github_upload_files');
           break;
 
         case 'FTP':
@@ -524,11 +524,8 @@ jQuery(document).ready(function($){
         case 'github_prepare_export':
             status_text = 'Preparing files for GitHub deployment';
             break;
-        case 'github_upload_blobs':
+        case 'github_upload_files':
             status_text = 'Deploying files via GitHub';
-            break;
-        case 'github_finalise_export':
-            status_text = 'Finalising GitHub deployment';
             break;
         case 'bitbucket_prepare_export':
             status_text = 'Preparing files for Bitbucket deployment';
@@ -1112,7 +1109,7 @@ jQuery(document).ready(function($){
   $('.wrap').on('click', '#github-test-button', function(event) {
       event.preventDefault();
       $('.hiddenActionField').val('wp_static_html_output_ajax');
-      $('#hiddenAJAXAction').val('test_blob_create');
+      $('#hiddenAJAXAction').val('test_upload');
 
       data = $(".options-form :input")
           .filter(function(index, element) {
