@@ -102,13 +102,12 @@ class Deployer {
 
                 if ( $test ) {
                     error_log( 'testing GitHub deploy' );
-                    $github->test_blob_create();
+                    $github->test_upload();
                     return;
                 }
 
-                $github->prepare_export();
-                $github->upload_blobs();
-                $github->commit_new_tree();
+                $github->prepare_export( true );
+                $github->upload_files();
                 break;
             case 'gitlab':
                 require_once dirname( __FILE__ ) .
