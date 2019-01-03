@@ -29,29 +29,6 @@ class ArchiveProcessor {
         }
     }
 
-    public function create_symlink_to_latest_archive() {
-        $this->archive->setToCurrentArchive();
-
-        if ( is_dir( $this->archive->path ) ) {
-            $this->remove_symlink_to_latest_archive();
-            symlink(
-                $this->archive->path,
-                $this->settings['wp_uploads_path'] .
-                '/latest-export'
-            );
-        } else {
-            error_log( 'failed to symlink latest export directory' );
-        }
-    }
-
-    public function remove_symlink_to_latest_archive() {
-        if (
-            is_link( $this->settings['wp_uploads_path'] . '/latest-export' )
-            ) {
-            unlink( $this->settings['wp_uploads_path'] . '/latest-export' );
-        }
-    }
-
     // default rename in PHP throws warnings if dir is populated
     public function renameWPDirectory( $source, $target ) {
         if ( empty( $source ) || empty( $target ) ) {
