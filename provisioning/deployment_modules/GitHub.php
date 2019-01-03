@@ -53,7 +53,7 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
 
         switch ( $_POST['ajax_action'] ) {
             case 'github_prepare_export':
-                $this->prepare_export();
+                $this->prepare_export( true );
                 break;
             case 'github_upload_files':
                 $this->upload_files();
