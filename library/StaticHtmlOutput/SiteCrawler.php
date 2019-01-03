@@ -4,7 +4,6 @@ use GuzzleHttp\Client;
 
 class SiteCrawler {
 
-
     public function __construct() {
         $target_settings = array(
             'general',
@@ -363,26 +362,12 @@ class SiteCrawler {
 
                 break;
 
-            //case 'js':
-            //    require_once dirname( __FILE__ ) .
-            //        '/../StaticHtmlOutput/JSProcessor.php';
-            //    $processor = new JSProcessor();
-
-            //    $this->processed_file = $processor->processJS(
-            //        $this->response->getBody(),
-            //        $this->full_url
-            //    );
-
-            //    if ( $this->processed_file ) {
-            //        $this->processed_file = $processor->getJS();
-            //    }
-
-            //    break;
-
             case 'txt':
             case 'js':
             case 'json':
             case 'xml':
+                error_log('using TXT processor');
+
                 require_once dirname( __FILE__ ) .
                     '/../StaticHtmlOutput/TXTProcessor.php';
                 $processor = new TXTProcessor();
