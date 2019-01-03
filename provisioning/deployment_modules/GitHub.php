@@ -113,6 +113,7 @@ query{
     object(expression: "{$this->settings['ghBranch']}:{$targetPath}") {
       ... on Blob {
         oid
+        byteSize
       }
     }
   }
@@ -138,54 +139,49 @@ JSON;
 
             $gh_file_info = json_decode( $response->getBody()->getContents(), true );
 
-            error_log( print_r( $gh_file_info, true ));
-
             $existing_file_object = $gh_file_info['data']['repository']['object'];
 
-            error_log( print_r( $existing_file_object, true ));
-            error_log( $existing_file_object);
+            $skip_same_bytesize = true;
 
             if ( ! empty ( $existing_file_object ) ) {
-                error_log('File exists: ' . $targetPath);
-
                 $existing_sha = $existing_file_object['oid']; 
-
-                error_log('Same request format, just with SHA added');
+                $existing_bytesize = $existing_file_object['byteSize']; 
 
                 $file_contents = file_get_contents( $fileToTransfer );
                 $b64_file_contents = base64_encode( $file_contents );
                 $local_sha = sha1( $b64_file_contents );
+                $local_length = strlen ( $b64_file_contents );
+                $local_length_unencoded = strlen ( $file_contents );
 
-                error_log('TODO: compare both SHAs: ' . $existing_sha);
-                error_log('TODO: to this one: ' . $local_sha);
+                $bytesize_match = $existing_bytesize == $local_length_unencoded;
 
-                try {
-                    $response = $client->request(
-                        'PUT',
-                        $resource_path,
-                        array(
-                            'json' => array (
-                               'message' => 'The commit message', 
-                               'content' => $b64_file_contents, 
-                               'branch' => $this->settings['ghBranch'], 
-                               'sha' => $existing_sha, 
+                if ( $bytesize_match && $skip_same_bytesize ) {
+                    // error_log('skipping file: ' . $targetPath);
+                } else {
+                    try {
+                        $response = $client->request(
+                            'PUT',
+                            $resource_path,
+                            array(
+                                'json' => array (
+                                   'message' => 'The commit message', 
+                                   'content' => $b64_file_contents, 
+                                   'branch' => $this->settings['ghBranch'], 
+                                   'sha' => $existing_sha, 
+                                )
                             )
-                        )
-                    );
+                        );
 
-                } catch ( Exception $e ) {
-                    require_once dirname( __FILE__ ) .
-                        '/../library/StaticHtmlOutput/WsLog.php';
-                    WsLog::l( 'GITHUB EXPORT: error encountered' );
-                    WsLog::l( $e );
-                    error_log( $e );
-                    throw new Exception( $e );
-                    return;
+                    } catch ( Exception $e ) {
+                        require_once dirname( __FILE__ ) .
+                            '/../library/StaticHtmlOutput/WsLog.php';
+                        WsLog::l( 'GITHUB EXPORT: error encountered' );
+                        WsLog::l( $e );
+                        throw new Exception( $e );
+                        return;
+                    }
                 }
-
-
             } else {
-                error_log('File does not exist in GH: ' . $targetPath);
 
                 $file_contents = file_get_contents( $fileToTransfer );
                 $b64_file_contents = base64_encode( $file_contents );
@@ -208,7 +204,6 @@ JSON;
                         '/../library/StaticHtmlOutput/WsLog.php';
                     WsLog::l( 'GITHUB EXPORT: error encountered' );
                     WsLog::l( $e );
-                    error_log( $e );
                     throw new Exception( $e );
                     return;
                 }
