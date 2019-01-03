@@ -101,64 +101,124 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
             list($fileToTransfer, $targetPath) = explode( ',', $line );
 
             $fileToTransfer = $this->archive->path . $fileToTransfer;
+            $targetPath = rtrim( $targetPath );
 
-            // :owner/:repo/contents/:path
             $resource_path = 
-                    $this->settings['ghRepo'] . '/contents/' .
-                        rtrim( $targetPath );
+                    $this->settings['ghRepo'] . '/contents/' . $targetPath;
 
-            $file_contents = file_get_contents( $fileToTransfer );
-            $b64_file_contents = base64_encode( $file_contents );
+            // GraphQL query to get sha of existing file
+$query = <<<JSON
+query{
+  repository(owner: "{$this->user}", name: "{$this->repository}") {
+    object(expression: "{$this->settings['ghBranch']}:{$targetPath}") {
+      ... on Blob {
+        oid
+      }
+    }
+  }
+}
+JSON;
 
-            try {
-                $response = $client->request(
-                    'PUT',
-                    $resource_path,
-                    array(
-                        'json' => array (
-                           'message' => 'The commit message', 
-                           'content' => $b64_file_contents, 
-                           'branch' => $this->settings['ghBranch'], 
+            $variables = '';
+
+            $json = array(
+                'query' => $query,
+                'variables' => $variables
+            );
+
+            $response = $client->request(
+                'POST',
+                // override base_uri with a full URL
+                'https://api.github.com/graphql',
+                array(
+                    'json' => $json,
+                    'curl' => array( CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2 )
+                )
+            );
+
+            $gh_file_info = json_decode( $response->getBody()->getContents(), true );
+
+            error_log( print_r( $gh_file_info, true ));
+
+            $existing_file_object = $gh_file_info['data']['repository']['object'];
+
+            error_log( print_r( $existing_file_object, true ));
+            error_log( $existing_file_object);
+
+            if ( ! empty ( $existing_file_object ) ) {
+                error_log('File exists: ' . $targetPath);
+
+                $existing_sha = $existing_file_object['oid']; 
+
+                error_log('Same request format, just with SHA added');
+
+                $file_contents = file_get_contents( $fileToTransfer );
+                $b64_file_contents = base64_encode( $file_contents );
+                $local_sha = sha1( $b64_file_contents );
+
+                error_log('TODO: compare both SHAs: ' . $existing_sha);
+                error_log('TODO: to this one: ' . $local_sha);
+
+                try {
+                    $response = $client->request(
+                        'PUT',
+                        $resource_path,
+                        array(
+                            'json' => array (
+                               'message' => 'The commit message', 
+                               'content' => $b64_file_contents, 
+                               'branch' => $this->settings['ghBranch'], 
+                               'sha' => $existing_sha, 
+                            )
                         )
-                    )
-                );
+                    );
 
-            } catch ( Exception $e ) {
-                require_once dirname( __FILE__ ) .
-                    '/../library/StaticHtmlOutput/WsLog.php';
-                WsLog::l( 'GITHUB EXPORT: error encountered' );
-                WsLog::l( $e );
-                error_log( $e );
-                throw new Exception( $e );
-                return;
+                } catch ( Exception $e ) {
+                    require_once dirname( __FILE__ ) .
+                        '/../library/StaticHtmlOutput/WsLog.php';
+                    WsLog::l( 'GITHUB EXPORT: error encountered' );
+                    WsLog::l( $e );
+                    error_log( $e );
+                    throw new Exception( $e );
+                    return;
+                }
+
+
+            } else {
+                error_log('File does not exist in GH: ' . $targetPath);
+
+                $file_contents = file_get_contents( $fileToTransfer );
+                $b64_file_contents = base64_encode( $file_contents );
+
+                try {
+                    $response = $client->request(
+                        'PUT',
+                        $resource_path,
+                        array(
+                            'json' => array (
+                               'message' => 'The commit message', 
+                               'content' => $b64_file_contents, 
+                               'branch' => $this->settings['ghBranch'], 
+                            )
+                        )
+                    );
+
+                } catch ( Exception $e ) {
+                    require_once dirname( __FILE__ ) .
+                        '/../library/StaticHtmlOutput/WsLog.php';
+                    WsLog::l( 'GITHUB EXPORT: error encountered' );
+                    WsLog::l( $e );
+                    error_log( $e );
+                    throw new Exception( $e );
+                    return;
+                }
             }
-    
-
-
         }
 
         if ( isset( $this->settings['ghBlobDelay'] ) &&
             $this->settings['ghBlobDelay'] > 0 ) {
             sleep( $this->settings['ghBlobDelay'] );
         }
-
-
-
-
-        /*
-
-message     string  Required. The commit message.
-content     string  Required. The new file content, using Base64 encoding.
-branch  string  The branch name. Default: the repository’s default branch (usually master)
-committer   object  The person that committed the file. Default: the authenticated user.
-author  object  The author of the file. Default: The committer or the authenticated user if you omit committer.
-
-Both the author and committer parameters have the same keys:
-Name    Type    Description
-name    string  Required. The name of the author or committer of the commit. You'll receive a 422 status code if name is omitted.
-email   string  Required. The email of the author or committer of the commit. You'll receive a 422 status code if name is omitted.
-        */
-
 
         $filesRemaining = $this->get_remaining_items_count();
 
