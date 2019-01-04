@@ -47,7 +47,16 @@
       </tr>
       <tr>
         <th scope="row">
-          <label for="ghBlobIncrement"><?php echo __('Blob Creation Increment', 'static-html-output-plugin');?></label>
+          <label for="ghCommitMessage"><?php echo __('Commit message', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <?php $tpl->displayTextfield($this, 'ghCommitMessage', 'WP2Static %ACTION% %FILENAME%', 'Anything you like, with special vars %ACTION% and %FILENAME% available'); ?>
+
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          <label for="ghBlobIncrement"><?php echo __('File Upload Increment', 'static-html-output-plugin');?></label>
         </th>
         <td>
           <select name="ghBlobIncrement" id="ghBlobIncrement">
@@ -65,13 +74,13 @@
          endforeach; ?>
           </select><br>
 
-          <p>This is set to 1, by default, in order to avoid execution limit timeouts on restricted environments, such as shared hosting servers. Each increment is the amount of files the server will try to upload to GitHub on each request. Incrementing this will speed up your exports, by processing more are a time. If your export is failing, due to execution limits r GitHub API rate limits being reached, try setting this to a lower number.</p>
+          <p>This is set to 1, by default, in order to avoid execution limit timeouts on restricted environments, such as shared hosting servers. Each increment is the amount of files the server will try to upload to GitHub on each request. Incrementing this will speed up your exports, by processing more are a time. If your export is failing, due to execution limits or GitHub API rate limits being reached, try setting this to a lower number.</p>
 
         </td>
       </tr>
       <tr>
         <th scope="row">
-          <label for="ghBlobDelay"><?php echo __('Blob Creation Delay', 'static-html-output-plugin');?></label>
+          <label for="ghBlobDelay"><?php echo __('Delay between uploads', 'static-html-output-plugin');?></label>
         </th>
         <td>
           <select name="ghBlobDelay" id="ghBlobDelay">
@@ -88,6 +97,20 @@
 
         </td>
       </tr>
+    <tr>
+      <th scope="row">
+        <label for="ghSkipSameBytes"><?php echo __('Skip files with unchanged size', 'static-html-output-plugin');?></label>
+      </th>
+      <td>
+        <?php
+         $tpl->displayCheckbox($this, 'ghSkipSameBytes', 'Upload only files changed between deploys'); ?>
+
+        <p>
+            This should greatly speed up deploys after the first full deploy.
+        </p>
+
+      </td>
+    </tr>
       <tr>
         <th scope="row">
           <label for="gh_test"><?php echo __('Test GitHub Settings', 'static-html-output-plugin');?></label>
