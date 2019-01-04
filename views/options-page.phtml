@@ -13,7 +13,7 @@ $tpl = new TemplateHelper();
 
 ?>
 
-<div class="wrap">
+<div class="wrap wp2static">
   <?php if ( PHP_VERSION < 5.4 ) : ?>
 
    <div class="notice notice-error inline">
@@ -144,28 +144,6 @@ $tpl = new TemplateHelper();
     </span>
   </form>
 
-  <div class="inside">
-    <p class="submit">
-      <?php wp_nonce_field($this->onceAction) ?>
-      <button id="startExportButton" class="button-primary button-hero" disabled>Start static site export</button>
-      <button class="saveSettingsButton button-secondary" disabled>Save current options</button>
-      <button class="button resetDefaultSettingsButton" disabled>Reset to default settings</button>
-      <button style="display:none;" class="button cancelExportButton">Cancel export</button>
-    </p>
-
-    <div>
-      <div id="progress">
-        <div class="pulsate-css"></div>
-        <div id="current_action">Starting export</div>
-      </div>
-
-      <br />
-
-      <p id="exportDuration" style="display:block;"></p>
-
-      <a href="" id="downloadZIP"><button class="button button-secondary" target="_blank">Download ZIP</button></a>
-
-      <a href="#" class="button button-secondary button-call-to-action" target="_blank" id="goToMyStaticSite" style="display:none;">Go to my deployed site</a>
 
      <div class="notice notice-error inline error-help-text">
         <h2>An error has occurred, but let's fix it!</h2>
@@ -182,4 +160,45 @@ $tpl = new TemplateHelper();
 
     </div>
   </div>
+
+    <div id="wp2static-footer">
+
+          <div class="inside">
+
+            <div class="submit">
+              <?php wp_nonce_field($this->onceAction) ?>
+              <button id="startExportButton" class="button-primary button-hero" disabled>Start static site export</button>
+              <button class="saveSettingsButton button-secondary" disabled>Save current options</button>
+              <button class="button resetDefaultSettingsButton" disabled>Reset to default settings</button>
+              <button style="display:none;" class="button cancelExportButton">Cancel export</button>
+
+              <a href="" id="downloadZIP"><button class="button button-secondary button-call-to-action" target="_blank">Download ZIP</button></a>
+
+              <a href="#" class="button button-secondary button-call-to-action" target="_blank" id="goToMyStaticSite" style="display:none;">Go to my deployed site</a>
+
+            </div>
+
+        </div><!-- end inside -->
+
+            <div id="pbar-container">
+                <div id="pbar-fill">
+
+                    <div id="progress-container">
+                      <div id="progress">
+                        <div class="pulsate-css"></div>
+                        <div id="current_action">Starting export</div>
+                      </div>
+
+                </div>
+            </div>
+
+
+
+              <br />
+
+              <p id="exportDuration" style="display:block;"></p>
+            </div>
+
+    </div><!-- end wp2static-footer -->
+
 </div>

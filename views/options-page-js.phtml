@@ -32,7 +32,7 @@ jQuery(document).ready(function($){
     $('#hiddenAJAXAction').val('generate_filelist_preview');
 
     status_text = 'Analyzing site... this may take a few minutes (but it\'s worth it!)';
-    $('#current_action').html(status_text);    
+    $('#current_action').html( status_text );    
     $('#progress').show();    
 
     data = $(".options-form :input")
@@ -898,7 +898,7 @@ jQuery(document).ready(function($){
     }
   });
 
-  $('.wrap').on('click', '.resetDefaultSettingsButton', function(event) {
+  $('#wp2static-footer').on('click', '.resetDefaultSettingsButton', function(event) {
       event.preventDefault();
 
       $('.hiddenActionField').val('wp_static_html_output_ajax');
@@ -925,7 +925,7 @@ jQuery(document).ready(function($){
       });
   });
 
-  $('.wrap').on('click', '.saveSettingsButton', function(event) {
+  $('#wp2static-footer').on('click', '.saveSettingsButton', function(event) {
       event.preventDefault();
       saveOptions();
   });
