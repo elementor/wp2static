@@ -19,6 +19,7 @@ class WPSHO_PostSettings {
             'useBasicAuth',
             'basicAuthPassword',
             'basicAuthUser',
+            'detection_level',
             'discoverNewURLs',
         );
 
