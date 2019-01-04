@@ -141,9 +141,13 @@ JSON;
 
             $existing_file_object = $gh_file_info['data']['repository']['object'];
 
-            $skip_same_bytesize = true;
+            $skip_same_bytesize = isset( $this->settings['ghSkipSameBytes'] );
+
+            $action = '';
+            $commit_message = '';
 
             if ( ! empty ( $existing_file_object ) ) {
+                $action = 'UPDATE';
                 $existing_sha = $existing_file_object['oid']; 
                 $existing_bytesize = $existing_file_object['byteSize']; 
 
@@ -155,16 +159,34 @@ JSON;
 
                 $bytesize_match = $existing_bytesize == $local_length_unencoded;
 
-                if ( $bytesize_match && $skip_same_bytesize ) {
-                    // error_log('skipping file: ' . $targetPath);
-                } else {
+                if ( ! ( $bytesize_match && $skip_same_bytesize ) ) {
+                    if ( isset( $this->settings['ghCommitMessage'] ) ) {
+                        $commit_message = str_replace(
+                            array(
+                                '%ACTION%',
+                                '%FILENAME%',
+                            ),
+                            array(
+                                $action,
+                                $targetPath,
+                            ),
+                            $this->settings['ghCommitMessage']
+                        );
+                    } else {
+                        $commit_message = 'WP2Static ' .
+                            $action . ' ' .
+                            $targetPath;
+                    }
+
+                
+
                     try {
                         $response = $client->request(
                             'PUT',
                             $resource_path,
                             array(
                                 'json' => array (
-                                   'message' => 'The commit message', 
+                                   'message' => $commit_message, 
                                    'content' => $b64_file_contents, 
                                    'branch' => $this->settings['ghBranch'], 
                                    'sha' => $existing_sha, 
@@ -182,9 +204,28 @@ JSON;
                     }
                 }
             } else {
+                $action = 'CREATE';
 
                 $file_contents = file_get_contents( $fileToTransfer );
                 $b64_file_contents = base64_encode( $file_contents );
+
+                if ( isset( $this->settings['ghCommitMessage'] ) ) {
+                    $commit_message = str_replace(
+                        array(
+                            '%ACTION%',
+                            '%FILENAME%',
+                        ),
+                        array(
+                            $action,
+                            $targetPath,
+                        ),
+                        $this->settings['ghCommitMessage']
+                    );
+                } else {
+                    $commit_message = 'WP2Static ' .
+                        $action . ' ' .
+                        $targetPath;
+                }
 
                 try {
                     $response = $client->request(
@@ -192,7 +233,7 @@ JSON;
                         $resource_path,
                         array(
                             'json' => array (
-                               'message' => 'The commit message', 
+                               'message' => $commit_message, 
                                'content' => $b64_file_contents, 
                                'branch' => $this->settings['ghBranch'], 
                             )
