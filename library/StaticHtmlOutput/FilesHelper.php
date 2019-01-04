@@ -51,17 +51,12 @@ class StaticHtmlOutput_FilesHelper {
             foreach ( $iterator as $fileName => $fileObject ) {
                 $path_crawlable = self::filePathLooksCrawlable( $fileName );
 
-                error_log($wp_content_subdir);    
-
                 $detectedFileName =
                     str_replace(
                         $template_path,
                         $template_url,
                         $fileName
                     );
-
-                error_log(get_home_url());
-                error_log($detectedFileName);
 
                 $detectedFileName =
                     str_replace(
@@ -375,29 +370,46 @@ class StaticHtmlOutput_FilesHelper {
         $viaCLI = false,
         $uploadsPath,
         $uploadsURL,
-        $workingDirectory
+        $workingDirectory,
+        $settings
         ) {
         require_once dirname( __FILE__ ) . '/WPSite.php';
         $wp_site = new WPSite();
 
         $baseUrl = untrailingslashit( home_url() );
 
+        // TODO: detect robots.txt, etc before adding
         $urlsQueue = array_merge(
             array( trailingslashit( $baseUrl ) ),
             array( '/robots.txt' ),
             array( '/favicon.ico' ),
-            array( '/sitemap.xml' ),
-            self::getThemeFiles( 'parent' ),
-            self::getThemeFiles( 'child' ),
-            self::detectVendorFiles( $wp_site->site_url ),
-            self::getAllWPPostURLs( $baseUrl )
+            array( '/sitemap.xml' )
         );
 
-        // uploads directory
-        $urlsQueue = array_merge(
-            $urlsQueue,
-            self::getListOfLocalFilesByUrl( $uploadsURL )
-        );
+
+        switch ( $settings['detection_level'] ) {
+            case 'homepage':
+                break;
+            case 'posts_and_pages':
+                $urlsQueue = array_merge(
+                    $urlsQueue,
+                    self::getAllWPPostURLs( $baseUrl )
+                );
+
+                break;
+
+            case 'everything':
+            default:
+                $urlsQueue = array_merge(
+                    $urlsQueue,
+                    self::getThemeFiles( 'parent' ),
+                    self::getThemeFiles( 'child' ),
+                    self::detectVendorFiles( $wp_site->site_url ),
+                    self::getListOfLocalFilesByUrl( $uploadsURL )
+                );
+        }
+
+
 
         // uniquify all URLs
         $urlsQueue = array_unique( $urlsQueue );

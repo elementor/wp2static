@@ -144,6 +144,23 @@ class StaticHtmlOutput_Controller {
         require_once dirname( __FILE__ ) . '/StaticHtmlOutput/WPSite.php';
         $this->wp_site = new WPSite();
 
+        $target_settings = array(
+            'general',
+            'crawling',
+        );
+
+        if ( isset( $_POST['selected_deployment_option'] ) ) {
+            require_once dirname( __FILE__ ) .
+                '/StaticHtmlOutput/PostSettings.php';
+
+            $this->settings = WPSHO_PostSettings::get( $target_settings );
+        } else {
+            require_once dirname( __FILE__ ) .
+                '/StaticHtmlOutput/DBSettings.php';
+
+            $this->settings = WPSHO_DBSettings::get( $target_settings );
+        }
+
         // TODO: move to WPSite
         $plugin_hook = 'wp2static';
 
@@ -152,7 +169,8 @@ class StaticHtmlOutput_Controller {
                 true,
                 $this->wp_site->wp_uploads_path,
                 $this->wp_site->uploads_url,
-                $this->wp_site->wp_uploads_path
+                $this->wp_site->wp_uploads_path,
+                $this->settings
             );
 
         if ( ! defined( 'WP_CLI' ) ) {
