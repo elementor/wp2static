@@ -486,11 +486,9 @@ jQuery(document).ready(function($){
     switch (export_action) {
         case 'crawl_site':
             status_text = 'Crawling initial file list';
-            status_text += ' Chunk: ' + batch_increment;
             break;
         case 'crawl_again':
             status_text = 'Crawling discovered URLs';
-            status_text += ' Chunk: ' + batch_increment;
             break;
         case 'post_process_archive_dir':
             status_text = 'Processing the crawled files';

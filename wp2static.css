@@ -133,7 +133,7 @@ p.submit{
 }
 
 .wrap.wp2static {
-  padding-bottom: 50px;
+  padding-bottom: 100px;
 }
 
 #wpfooter {
@@ -145,6 +145,7 @@ p.submit{
   width: 100%;
   display: block;
   min-height: 30px;
+  margin-bottom: 20px;
 }
 
 #pbar-fill {
