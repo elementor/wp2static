@@ -55,11 +55,12 @@ div.postbox div.inside {
     display: none;
 }
 
-
-
+#progress-container {
+  min-height: 40px;
+}
 
 .error-help-text {
-    display: none;
+  display: none;
   padding-bottom: 25px;
 }
 
@@ -116,4 +117,38 @@ p.submit{
 
 .spinner {
   float:none;width:auto;height:auto;padding:10px 0 10px 50px;
+}
+
+/* 86% when full sidebar, needs to grow otherwise */
+#wp2static-footer {
+  background: rgba(255, 255, 255, 0.9);
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  border-top: 1px solid black;
+  min-height: 110px;
+  margin-left: -20px;
+  padding-left: 20px;
+  
+}
+
+.wrap.wp2static {
+  padding-bottom: 50px;
+}
+
+#wpfooter {
+  display: none;
+}
+
+#pbar-container {
+  background-color: #F7F7F7;
+  width: 100%;
+  display: block;
+  min-height: 30px;
+}
+
+#pbar-fill {
+  background-color: #EFEFEF;
+  width: 70%;
+  min-height: 30px;
 }
