@@ -25,6 +25,7 @@ var status_text = '';
 var protocolAndDomainRE = /^(?:\w+:)?\/\/(\S+)$/;
 var localhostDomainRE = /^localhost[\:?\d]*(?:[^\:?\d]\S*)?$/
 var nonLocalhostDomainRE = /^[^\s\.]+\.\S{2,}$/;
+var pollingIntervalID = '';
 
 jQuery(document).ready(function($){
   function prepareInitialFileList() {
@@ -192,6 +193,8 @@ jQuery(document).ready(function($){
   function startExport() {
     // start timer
     export_commence_time = + new Date();
+
+    startPolling();
 
     validation_errors = getValidationErrors();
 
@@ -584,6 +587,25 @@ jQuery(document).ready(function($){
         },
         error: ajaxErrorHandler
       });
+  }
+
+  function startPolling() {
+    pollingIntervalID = window.setInterval(checkProgress, 1000);
+  }
+
+  function checkProgress() {
+    console.log('checking progress');
+    // get WP2STATIC-PROGRESS.txt
+
+    // update width of progress bar
+
+    // append progress to current task if we're in certain task
+  }
+
+  function setProgressBarPercent( percent ) {
+    $('#pbar-fill').css('width', '30%');
+
+
   }
 
   function updateBaseURLReferences() {
