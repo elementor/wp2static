@@ -22,7 +22,7 @@ class StaticHtmlOutput_FilesHelper {
         }
     }
 
-    public static function getThemeFiles( $theme_type, $wp_content_subdir ) {
+    public static function getThemeFiles( $theme_type ) {
         require_once dirname( __FILE__ ) . '/WPSite.php';
         $wp_site = new WPSite();
 
@@ -51,13 +51,17 @@ class StaticHtmlOutput_FilesHelper {
             foreach ( $iterator as $fileName => $fileObject ) {
                 $path_crawlable = self::filePathLooksCrawlable( $fileName );
 
+                error_log($wp_content_subdir);    
+
                 $detectedFileName =
-                    $wp_content_subdir .
                     str_replace(
                         $template_path,
                         $template_url,
                         $fileName
                     );
+
+                error_log(get_home_url());
+                error_log($detectedFileName);
 
                 $detectedFileName =
                     str_replace(
@@ -383,14 +387,8 @@ class StaticHtmlOutput_FilesHelper {
             array( '/robots.txt' ),
             array( '/favicon.ico' ),
             array( '/sitemap.xml' ),
-            self::getThemeFiles(
-                'parent',
-                $wp_site->getWPContentSubDirectory()
-            ),
-            self::getThemeFiles(
-                $wp_site->child_theme_path,
-                $wp_site->getWPContentSubDirectory()
-            ),
+            self::getThemeFiles( 'parent' ),
+            self::getThemeFiles( 'child' ),
             self::detectVendorFiles( $wp_site->site_url ),
             self::getAllWPPostURLs( $baseUrl )
         );
@@ -450,14 +448,8 @@ class StaticHtmlOutput_FilesHelper {
 
         $urlsQueue = array_merge(
             array( trailingslashit( $baseUrl ) ),
-            self::getThemeFiles(
-                $wp_site->parent_theme_path,
-                $wp_site->getWPContentSubDirectory()
-            ),
-            self::getThemeFiles(
-                $wp_site->child_theme_path,
-                $wp_site->getWPContentSubDirectory()
-            ),
+            self::getThemeFiles( 'parent' ),
+            self::getThemeFiles( 'child' ),
             self::getAllWPPostURLs( $baseUrl ),
             explode( "\n", $additionalUrls )
         );
