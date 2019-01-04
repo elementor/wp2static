@@ -57,6 +57,11 @@ div.postbox div.inside {
 
 #progress-container {
   min-height: 40px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 99999;
+  width: 100%;
 }
 
 .error-help-text {
@@ -146,10 +151,14 @@ p.submit{
   display: block;
   min-height: 30px;
   margin-bottom: 20px;
+  position: relative;
 }
 
 #pbar-fill {
   background-color: #EFEFEF;
-  width: 70%;
+  width: 0%;
   min-height: 30px;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
