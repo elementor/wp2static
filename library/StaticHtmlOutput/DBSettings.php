@@ -20,6 +20,7 @@ class WPSHO_DBSettings {
             'useBasicAuth',
             'basicAuthPassword',
             'basicAuthUser',
+            'detection_level',
             'discoverNewURLs',
         );
 

@@ -393,12 +393,14 @@ class StaticHtmlOutput_FilesHelper {
             self::getAllWPPostURLs( $baseUrl )
         );
 
-        $urlsQueue = array_unique(
-            array_merge(
-                $urlsQueue,
-                self::getListOfLocalFilesByUrl( $uploadsURL )
-            )
+        // uploads directory
+        $urlsQueue = array_merge(
+            $urlsQueue,
+            self::getListOfLocalFilesByUrl( $uploadsURL )
         );
+
+        // uniquify all URLs
+        $urlsQueue = array_unique( $urlsQueue );
 
         $str = implode( "\n", $urlsQueue );
 
