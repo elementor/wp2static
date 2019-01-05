@@ -155,7 +155,7 @@ p.submit{
 }
 
 #pbar-fill {
-  background-color: #EFEFEF;
+  background-color: #C1C1C1;
   width: 0%;
   min-height: 30px;
   position: absolute;
