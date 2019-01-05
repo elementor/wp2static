@@ -414,6 +414,8 @@ class StaticHtmlOutput_FilesHelper {
         // uniquify all URLs
         $urlsQueue = array_unique( $urlsQueue );
 
+        $initialCrawlListTotal = count( $urlsQueue );
+
         $str = implode( "\n", $urlsQueue );
 
         // TODO: modify each function vs doing here for perf
@@ -430,6 +432,13 @@ class StaticHtmlOutput_FilesHelper {
         );
 
         chmod( $uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST.txt', 0664 );
+
+        file_put_contents(
+            $uploadsPath . '/WP-STATIC-INITIAL-CRAWL-TOTAL.txt',
+            $initialCrawlListTotal
+        );
+
+        chmod( $uploadsPath . '/WP-STATIC-INITIAL-CRAWL-TOTAL.txt', 0664 );
 
         return count( $urlsQueue );
     }
