@@ -8,18 +8,18 @@ EXEC_DIR=$(pwd)
 TMP_DIR=$HOME/plugintmp
 mkdir -p $TMP_DIR
 
-rm -Rf $TMP_DIR/wordpress-static-html-plugin
-mkdir $TMP_DIR/wordpress-static-html-plugin
+rm -Rf $TMP_DIR/static-html-output-plugin
+mkdir $TMP_DIR/static-html-output-plugin
 
-cp -r $EXEC_DIR/languages $TMP_DIR/wordpress-static-html-plugin/
-cp -r $EXEC_DIR/library $TMP_DIR/wordpress-static-html-plugin/
-cp -r $EXEC_DIR/readme.txt $TMP_DIR/wordpress-static-html-plugin/
-cp -r $EXEC_DIR/views $TMP_DIR/wordpress-static-html-plugin/
-cp -r $EXEC_DIR/wp2static.php $TMP_DIR/wordpress-static-html-plugin/
-cp -r $EXEC_DIR/wp2static.css $TMP_DIR/wordpress-static-html-plugin/
+cp -r $EXEC_DIR/languages $TMP_DIR/static-html-output-plugin/
+cp -r $EXEC_DIR/library $TMP_DIR/static-html-output-plugin/
+cp -r $EXEC_DIR/readme.txt $TMP_DIR/static-html-output-plugin/
+cp -r $EXEC_DIR/views $TMP_DIR/static-html-output-plugin/
+cp -r $EXEC_DIR/wp2static.php $TMP_DIR/static-html-output-plugin/
+cp -r $EXEC_DIR/wp2static.css $TMP_DIR/static-html-output-plugin/
 
-mkdir -p $TMP_DIR/wordpress-static-html-plugin/powerpack
-cp -r $EXEC_DIR/provisioning/deployment_modules/* $TMP_DIR/wordpress-static-html-plugin/powerpack/
+mkdir -p $TMP_DIR/static-html-output-plugin/powerpack
+cp -r $EXEC_DIR/provisioning/deployment_modules/* $TMP_DIR/static-html-output-plugin/powerpack/
 
 # TODO: keep size smaller, strip comments any other dev bloat
 
@@ -29,7 +29,7 @@ cd $TMP_DIR
 find . -type d -exec chmod 755 {} \;
 find . -type f -exec chmod 644 {} \;
 
-zip -r -9 ./$1_with_powerpack.zip ./wordpress-static-html-plugin
+zip -r -9 ./$1_with_powerpack.zip ./static-html-output-plugin
 
 cd -
 
