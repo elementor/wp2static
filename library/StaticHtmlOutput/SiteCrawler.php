@@ -414,7 +414,7 @@ class SiteCrawler {
                     '/../StaticHtmlOutput/TXTProcessor.php';
                 $processor = new TXTProcessor();
 
-                $processor->processTXT(
+                $this->processed_file = $processor->processTXT(
                     $this->response->getBody(),
                     $this->full_url
                 );
