@@ -1,6 +1,5 @@
 <?php
 
-
 class TXTProcessor {
 
     public function processTXT( $txt_document, $page_url ) {

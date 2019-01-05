@@ -97,6 +97,12 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
             )
         );
 
+        $deploy_count_path = $this->settings['wp_uploads_path'] .
+                '/WP-STATIC-TOTAL-FILES-TO-DEPLOY.txt';
+        $total_URLs_to_crawl = file_get_contents( $deploy_count_path );
+
+        $batch_index = 0;
+
         foreach ( $lines as $line ) {
             list($fileToTransfer, $targetPath) = explode( ',', $line );
 
@@ -249,6 +255,17 @@ JSON;
                     return;
                 }
             }
+
+            $batch_index++;
+
+            $completed_URLs =
+                $total_URLs_to_crawl -
+                $filesRemaining +
+                $batch_index;
+          
+            require_once dirname( __FILE__ ) .
+                '/../library/StaticHtmlOutput/ProgressLog.php';
+            ProgressLog::l( $completed_URLs, $total_URLs_to_crawl );
         }
 
         if ( isset( $this->settings['ghBlobDelay'] ) &&

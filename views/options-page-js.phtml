@@ -171,10 +171,10 @@ jQuery(document).ready(function($){
       export_duration = exportCompleteTime - export_commence_time;
 
       stopPolling();
-      $('#exportDuration').text('Process completed in ' +  millisToMinutesAndSeconds(export_duration) + ' (mins:ss)');
-      $('#exportDuration').show();
-      $('#progress').hide();
+      setProgressBarPercent( 0 );
+      $('#current_action').text('Process completed in ' +  millisToMinutesAndSeconds(export_duration) + ' (mins:ss)');
       $("#goToMyStaticSite").focus();
+      $(".pulsate-css").hide();
       $('#startExportButton').prop('disabled', false);
       $('.saveSettingsButton').prop('disabled', false);
       $('.resetDefaultSettingsButton').prop('disabled', false);
@@ -185,8 +185,8 @@ jQuery(document).ready(function($){
 
   function ajaxErrorHandler () {
       stopPolling();
-      $('#progress').hide();
-      $('.error-help-text').show();
+      $('#current_action').html('An error has occurred, please consult the Help tab for where to get assistance.')
+      $(".pulsate-css").hide();
       $('#startExportButton').prop('disabled', false);
       $('.saveSettingsButton').prop('disabled', false);
       $('.resetDefaultSettingsButton').prop('disabled', false);
@@ -285,12 +285,12 @@ jQuery(document).ready(function($){
     $('#downloadZIP').hide();
     $('#goToMyStaticSite').hide();
     $('#exportDuration').hide();
-    $('.error-help-text').hide();
   }
 
   function showProgress() {
     clearProgressAndResults();
     $('#progress').show();
+    $(".pulsate-css").show();
   }
 
   function getValidationErrors() {
@@ -606,7 +606,7 @@ jQuery(document).ready(function($){
     console.log('checking progress');
 
     // get WP2STATIC-PROGRESS.txt
-    $.get( progress_file, function( data ) {
+    $.get( progress_file + '?cacheBuster=' + Date.now(), function( data ) {
       progress_amount = parseInt( data );
 
       setProgressBarPercent( progress_amount );
