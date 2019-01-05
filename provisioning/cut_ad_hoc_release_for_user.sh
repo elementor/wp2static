@@ -8,16 +8,16 @@ EXEC_DIR=$(pwd)
 TMP_DIR=$HOME/plugintmp
 mkdir -p $TMP_DIR
 
-rm -Rf $TMP_DIR/wordpress-static-html-plugin
-mkdir $TMP_DIR/wordpress-static-html-plugin
+rm -Rf $TMP_DIR/static-html-output-plugin
+mkdir $TMP_DIR/static-html-output-plugin
 
 
-cp -r $EXEC_DIR/languages $TMP_DIR/wordpress-static-html-plugin/
-cp -r $EXEC_DIR/library $TMP_DIR/wordpress-static-html-plugin/
-cp -r $EXEC_DIR/readme.txt $TMP_DIR/wordpress-static-html-plugin/
-cp -r $EXEC_DIR/views $TMP_DIR/wordpress-static-html-plugin/
-cp -r $EXEC_DIR/wp2static.php $TMP_DIR/wordpress-static-html-plugin/
-cp -r $EXEC_DIR/wp2static.css $TMP_DIR/wordpress-static-html-plugin/
+cp -r $EXEC_DIR/languages $TMP_DIR/static-html-output-plugin/
+cp -r $EXEC_DIR/library $TMP_DIR/static-html-output-plugin/
+cp -r $EXEC_DIR/readme.txt $TMP_DIR/static-html-output-plugin/
+cp -r $EXEC_DIR/views $TMP_DIR/static-html-output-plugin/
+cp -r $EXEC_DIR/wp2static.php $TMP_DIR/static-html-output-plugin/
+cp -r $EXEC_DIR/wp2static.css $TMP_DIR/static-html-output-plugin/
 
 cd $TMP_DIR
 
@@ -29,7 +29,7 @@ find . -type f -exec chmod 644 {} \;
 # takes size from 990K to 733K
 #find .  -name \*.php -exec $EXEC_DIR/provisioning/compress_php_file {} \;
 
-zip -r -9 ./$1.zip ./wordpress-static-html-plugin
+zip -r -9 ./$1.zip ./static-html-output-plugin
 
 cd -
 
