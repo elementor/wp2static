@@ -593,7 +593,7 @@ jQuery(document).ready(function($){
   }
 
   function startPolling() {
-    pollingIntervalID = window.setInterval(checkProgress, 1000);
+    pollingIntervalID = window.setInterval(checkProgress, 500);
   }
 
   function stopPolling() {
@@ -616,10 +616,6 @@ jQuery(document).ready(function($){
   }
 
   function setProgressBarPercent( percent ) {
-    if ( percent === 100 ) {
-        $('#pbar-fill').css('background-color', 'green');
-    } 
-
     $('#pbar-fill').css('width', percent.toString() + '%');
   }
 

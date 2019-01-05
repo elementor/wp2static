@@ -76,6 +76,19 @@ class SiteCrawler {
             0664
         );
 
+        file_put_contents(
+            $this->settings['wp_uploads_path'] .
+                '/WP-STATIC-DISCOVERED-URLS-TOTAL.txt',
+                count( $unique_discovered_links )
+        );
+
+        chmod(
+            $this->settings['wp_uploads_path'] .
+                '/WP-STATIC-DISCOVERED-URLS-TOTAL.txt',
+            0664
+        );
+
+
         $discovered_links = array_diff(
             $unique_discovered_links,
             $already_crawled
@@ -224,6 +237,24 @@ class SiteCrawler {
 
         $this->archive_dir = stream_get_line( $handle, 0 );
 
+        $total_URLs_path = $this->settings['wp_uploads_path'] .
+            '/WP-STATIC-INITIAL-CRAWL-TOTAL.txt';
+
+        // TODO: avoid mutation 
+        if (
+            defined( 'CRAWLING_DISCOVERED' ) ||
+            ( isset( $_POST['ajax_action'] ) &&
+                $_POST['ajax_action'] == 'crawl_again'
+            )
+        ) {
+            $total_URLs_path = $this->settings['wp_uploads_path'] .
+            '/WP-STATIC-DISCOVERED-URLS-TOTAL.txt';
+        }
+
+        $total_URLs_to_crawl = file_get_contents( $total_URLs_path );
+
+        $batch_index = 0;
+
         foreach ( $batch_of_links_to_crawl as $link_to_crawl ) {
             $this->url = $link_to_crawl;
 
@@ -257,6 +288,18 @@ class SiteCrawler {
 
             $this->loadFileForProcessing();
             $this->saveFile();
+
+            $batch_index++;
+
+            $completed_URLs =
+                $total_URLs_to_crawl -
+                $this->remaining_urls_to_crawl -
+                count( $batch_of_links_to_crawl ) +
+                $batch_index;
+          
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/ProgressLog.php';
+            ProgressLog::l( $completed_URLs, $total_URLs_to_crawl );
         }
 
         $this->checkIfMoreCrawlingNeeded();
