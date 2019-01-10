@@ -50,11 +50,7 @@ class HTMLProcessor {
         );
 
         foreach ( $elements as $element ) {
-            if ( ! isset( $element->tag_name ) ) {
-                continue;
-            }
-
-            switch ( $element->tag_name ) {
+            switch ( $element->tagName ) {
                 case 'meta':
                     $this->processMeta( $element );
                     break;
@@ -279,8 +275,8 @@ class HTMLProcessor {
                 ) {
                     $node->parentNode->removeChild( $node );
                 }
-            } elseif ( isset( $node->tag_name ) ) {
-                if ( $node->tag_name === 'base' ) {
+            } elseif ( isset( $node->tagName ) ) {
+                if ( $node->tagName === 'base' ) {
                     // as smaller iteration to run conditional
                     // against here
                     $this->base_tag_exists = true;
