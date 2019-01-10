@@ -30,6 +30,7 @@ class StaticHtmlOutput_S3 {
             $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT.txt';
 
+        // TODO: should be skipping this check when WP-CLI
         switch ( $_POST['ajax_action'] ) {
             case 'test_s3':
                 $this->test_s3();
@@ -104,6 +105,7 @@ class StaticHtmlOutput_S3 {
             $archive = new Archive();
             $archive->setToCurrentArchive();
 
+            // TODO: normalize remote subdirectory for all methods
             $remote_path = isset( $this->settings['s3RemotePath'] ) ?
                 $this->settings['s3RemotePath'] : '';
 
@@ -175,21 +177,6 @@ class StaticHtmlOutput_S3 {
         // vendor specific from here
         require_once dirname( __FILE__ ) .
             '/../library/StaticHtmlOutput/MimeTypes.php';
-        require_once dirname( __FILE__ ) .
-            '/../library/aws/aws-autoloader.php';
-        require_once dirname( __FILE__ ) .
-            '/../library/GuzzleHttp/autoloader.php';
-
-        $S3 = Aws\S3\S3Client::factory(
-            array(
-                'version' => '2006-03-01',
-                'region' => $this->settings['s3Region'],
-                'credentials' => array(
-                    'key' => $this->settings['s3Key'],
-                    'secret'  => $this->settings['s3Secret'],
-                ),
-            )
-        );
 
         foreach ( $lines as $line ) {
             list($fileToTransfer, $targetPath) = explode( ',', $line );
@@ -197,18 +184,14 @@ class StaticHtmlOutput_S3 {
             $targetPath = rtrim( $targetPath );
 
             try {
-                $S3->PutObject(
-                    array(
-                        'Bucket'      => $this->settings['s3Bucket'],
-                        'Key'         => $targetPath .
+                $this->put_s3_object(
+                    $targetPath .
                             basename( $fileToTransfer ),
-                        'Body'        => file_get_contents( $fileToTransfer ),
-                        'ACL'         => 'public-read',
-                        'ContentType' => GuessMimeType( $fileToTransfer ),
-                    )
+                    file_get_contents( $fileToTransfer ),
+                    GuessMimeType( $fileToTransfer )
                 );
 
-            } catch ( Aws\S3\Exception\S3Exception $e ) {
+            } catch ( Exception $e ) {
                 error_log( $e );
                 require_once dirname( __FILE__ ) .
                     '/../library/StaticHtmlOutput/WsLog.php';
@@ -242,34 +225,13 @@ class StaticHtmlOutput_S3 {
     }
 
     public function test_s3() {
-        require_once dirname( __FILE__ ) . '/../library/aws/aws-autoloader.php';
-        require_once dirname( __FILE__ ) .
-            '/../library/GuzzleHttp/autoloader.php';
-
-        $S3 = Aws\S3\S3Client::factory(
-            array(
-                'version' => '2006-03-01',
-                'region' => $this->settings['s3Region'],
-                'credentials' => array(
-                    'key' => $this->settings['s3Key'],
-                    'secret'  => $this->settings['s3Secret'],
-                ),
-            )
-        );
-
         try {
-            $S3->PutObject(
-                array(
-                    'Bucket'      => $this->settings['s3Bucket'],
-                    'Key'         => '.tmp_wpsho' . time(),
-                    'Body'        => 'test plugin connectivity',
-                    'ACL'         => 'public-read',
-                    'ContentType' => 'text/plain',
-                )
+            $this->put_s3_object(
+                '.tmp_wp2static.txt',
+                'Test WP2Static connectivity',
+                'text/plain'
             );
-
-        } catch ( Aws\S3\Exception\S3Exception $e ) {
-            error_log( $e );
+        } catch ( Exception $e ) {
             require_once dirname( __FILE__ ) .
                 '/../library/StaticHtmlOutput/WsLog.php';
 
@@ -280,6 +242,114 @@ class StaticHtmlOutput_S3 {
         if ( ! defined( 'WP_CLI' ) ) {
             echo 'SUCCESS';
         }
+    }
+
+    public function put_s3_object( $s3_path, $content, $content_type ) {
+        // AWS file permissions
+        $content_acl = 'public-read';
+
+        // MIME type of file. Very important to set if you later plan to load the file from a S3 url in the browser (images, for example)
+        // Name of content on S3
+        $content_title = $s3_path;
+
+        $host_name = $this->settings['s3Bucket'] . '.s3.amazonaws.com';
+
+        // Service name for S3
+        $aws_service_name = 's3';
+
+        // UTC timestamp and date
+        $timestamp = gmdate('Ymd\THis\Z');
+        $date = gmdate('Ymd');
+
+        // HTTP request headers as key & value
+        $request_headers = array();
+        $request_headers['Content-Type'] = $content_type;
+        $request_headers['Date'] = $timestamp;
+        $request_headers['Host'] = $host_name;
+        $request_headers['x-amz-acl'] = $content_acl;
+        $request_headers['x-amz-content-sha256'] = hash('sha256', $content);
+        // Sort it in ascending order
+        ksort($request_headers);
+
+        // Canonical headers
+        $canonical_headers = [];
+        foreach($request_headers as $key => $value) {
+            $canonical_headers[] = strtolower($key) . ":" . $value;
+        }
+        $canonical_headers = implode("\n", $canonical_headers);
+
+        // Signed headers
+        $signed_headers = [];
+        foreach($request_headers as $key => $value) {
+            $signed_headers[] = strtolower($key);
+        }
+        $signed_headers = implode(";", $signed_headers);
+
+        // Cannonical request 
+        $canonical_request = [];
+        $canonical_request[] = "PUT";
+        $canonical_request[] = "/" . $content_title;
+        $canonical_request[] = "";
+        $canonical_request[] = $canonical_headers;
+        $canonical_request[] = "";
+        $canonical_request[] = $signed_headers;
+        $canonical_request[] = hash('sha256', $content);
+        $canonical_request = implode("\n", $canonical_request);
+        $hashed_canonical_request = hash('sha256', $canonical_request);
+
+        // AWS Scope
+        $scope = [];
+        $scope[] = $date;
+        $scope[] = $this->settings['s3Region'];
+        $scope[] = $aws_service_name;
+        $scope[] = "aws4_request";
+
+        // String to sign
+        $string_to_sign = [];
+        $string_to_sign[] = "AWS4-HMAC-SHA256"; 
+        $string_to_sign[] = $timestamp; 
+        $string_to_sign[] = implode('/', $scope);
+        $string_to_sign[] = $hashed_canonical_request;
+        $string_to_sign = implode("\n", $string_to_sign);
+
+        // Signing key
+        $kSecret = 'AWS4' . $this->settings['s3Secret'];
+        $kDate = hash_hmac('sha256', $date, $kSecret, true);
+        $kRegion = hash_hmac('sha256', $this->settings['s3Region'], $kDate, true);
+        $kService = hash_hmac('sha256', $aws_service_name, $kRegion, true);
+        $kSigning = hash_hmac('sha256', 'aws4_request', $kService, true);
+
+        // Signature
+        $signature = hash_hmac('sha256', $string_to_sign, $kSigning);
+
+        // Authorization
+        $authorization = [
+            'Credential=' . $this->settings['s3Key'] . '/' . implode('/', $scope),
+            'SignedHeaders=' . $signed_headers,
+            'Signature=' . $signature
+        ];
+        $authorization = 'AWS4-HMAC-SHA256' . ' ' . implode( ',', $authorization);
+
+        // Curl headers
+        $curl_headers = [ 'Authorization: ' . $authorization ];
+        foreach($request_headers as $key => $value) {
+            $curl_headers[] = $key . ": " . $value;
+        }
+
+        $url = 'https://' . $host_name . '/' . $content_title;
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $curl_headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $content);
+        $output = curl_exec($ch); 
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if($http_code != 200) 
+            exit('Error : Failed to upload');
+        curl_close($ch);
     }
 
     public function cloudfront_invalidate_all_items() {
