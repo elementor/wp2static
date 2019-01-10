@@ -39,10 +39,6 @@ final class HTMLProcessorBaseHREFTest extends TestCase {
         $mockProcessor->method( 'detectIfURLsShouldBeHarvested' )->willReturn( null );
         $mockProcessor->method( 'writeDiscoveredURLs' )->willReturn( null );
 
-//        $mockProcessor->expects( $this->once() )->method( 'isInternalLink' );
-//        $mockProcessor->expects( $this->once() )->method( 'processHead' );
-//        $mockProcessor->expects( $this->once() )->method( 'processAnchor' );
-
         $mockProcessor->settings = array(
             'baseUrl' => 'http://baseurldomainfromsettings.com/',
             'baseHREF' => $baseHREF,
