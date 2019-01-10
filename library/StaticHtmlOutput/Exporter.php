@@ -174,7 +174,6 @@ class Exporter {
             return;
         }
 
-        // TODO: applying exlusions & inclusions against modified crawl list
         $modified_crawl_list = array();
 
         // load crawl list into array
@@ -183,7 +182,7 @@ class Exporter {
             '/WP-STATIC-MODIFIED-CRAWL-LIST.txt'
         );
 
-        // applying exclusions first
+        // applying exclusions before inclusions
         if ( isset( $this->settings['excludeURLs'] ) ) {
             $exclusions = explode(
                 "\n",
@@ -210,11 +209,9 @@ class Exporter {
                 }
             }
         } else {
-            // TODO: clone vs link to array
             $modified_crawl_list = $crawl_list;
         }
 
-        // apply inclusions
         if ( isset( $this->settings['additionalUrls'] ) ) {
             $inclusions = explode(
                 "\n",
@@ -223,14 +220,12 @@ class Exporter {
 
             foreach ( $inclusions as $inclusion ) {
                 $inclusion = trim( $inclusion );
-                $inclusion = ltrim( $inclusion, '/' );
-                $inclusion = $this->settings['wp_site_url'] . $inclusion;
+                $inclusion = $inclusion;
 
                 $modified_crawl_list[] = $inclusion;
             }
         }
 
-        // remove duplicates
         $modified_crawl_list = array_unique( $modified_crawl_list );
 
         $str = implode( PHP_EOL, $modified_crawl_list );
