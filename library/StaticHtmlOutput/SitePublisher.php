@@ -54,7 +54,8 @@ class StaticHtmlOutput_SitePublisher {
                     $local_path_to_strip = str_replace(
                         '//',
                         '/',
-                        $local_path_to_strip);
+                        $local_path_to_strip
+                    );
 
                     $deploy_path = str_replace(
                         $local_path_to_strip,
@@ -114,18 +115,17 @@ class StaticHtmlOutput_SitePublisher {
                 $this->archive->name,
             $basename_in_target
         );
-        
+
         // TODO: detect and use `cat | wc -l` if available
-
         $linecount = 0;
-        $handle = fopen( $this->exportFileList, "r" );
+        $handle = fopen( $this->exportFileList, 'r' );
 
-        while( !feof( $handle ) ) {
-          $line = fgets( $handle );
-          $linecount++;
+        while ( ! feof( $handle ) ) {
+            $line = fgets( $handle );
+            $linecount++;
         }
 
-        fclose($handle);
+        fclose( $handle );
 
         $deploy_count_path = $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-TOTAL-FILES-TO-DEPLOY.txt';
@@ -137,7 +137,6 @@ class StaticHtmlOutput_SitePublisher {
         );
 
         chmod( $deploy_count_path, 0664 );
-
 
         if ( ! defined( 'WP_CLI' ) ) {
             echo 'SUCCESS';

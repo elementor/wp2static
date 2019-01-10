@@ -386,7 +386,6 @@ class StaticHtmlOutput_FilesHelper {
             array( '/sitemap.xml' )
         );
 
-
         switch ( $settings['detection_level'] ) {
             case 'homepage':
                 break;

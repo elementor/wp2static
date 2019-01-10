@@ -79,7 +79,7 @@ class SiteCrawler {
         file_put_contents(
             $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-DISCOVERED-URLS-TOTAL.txt',
-                count( $unique_discovered_links )
+            count( $unique_discovered_links )
         );
 
         chmod(
@@ -87,7 +87,6 @@ class SiteCrawler {
                 '/WP-STATIC-DISCOVERED-URLS-TOTAL.txt',
             0664
         );
-
 
         $discovered_links = array_diff(
             $unique_discovered_links,
@@ -240,7 +239,7 @@ class SiteCrawler {
         $total_URLs_path = $this->settings['wp_uploads_path'] .
             '/WP-STATIC-INITIAL-CRAWL-TOTAL.txt';
 
-        // TODO: avoid mutation 
+        // TODO: avoid mutation
         if (
             defined( 'CRAWLING_DISCOVERED' ) ||
             ( isset( $_POST['ajax_action'] ) &&
@@ -296,7 +295,7 @@ class SiteCrawler {
                 $this->remaining_urls_to_crawl -
                 count( $batch_of_links_to_crawl ) +
                 $batch_index;
-          
+
             require_once dirname( __FILE__ ) .
                 '/../StaticHtmlOutput/ProgressLog.php';
             ProgressLog::l( $completed_URLs, $total_URLs_to_crawl );
