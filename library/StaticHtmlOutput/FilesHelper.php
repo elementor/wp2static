@@ -2,12 +2,6 @@
 
 class StaticHtmlOutput_FilesHelper {
 
-    protected $_directory;
-
-    public function __construct() {
-        $this->_directory = '';
-    }
-
     public static function delete_dir_with_files( $dir ) {
         if ( is_dir( $dir ) ) {
             $files = array_diff( scandir( $dir ), array( '.', '..' ) );
@@ -48,27 +42,27 @@ class StaticHtmlOutput_FilesHelper {
                 )
             );
 
-            foreach ( $iterator as $fileName => $fileObject ) {
-                $path_crawlable = self::filePathLooksCrawlable( $fileName );
+            foreach ( $iterator as $filename => $file_object ) {
+                $path_crawlable = self::filePathLooksCrawlable( $filename );
 
-                $detectedFileName =
+                $detected_filename =
                     str_replace(
                         $template_path,
                         $template_url,
-                        $fileName
+                        $filename
                     );
 
-                $detectedFileName =
+                $detected_filename =
                     str_replace(
                         get_home_url(),
                         '',
-                        $detectedFileName
+                        $detected_filename
                     );
 
                 if ( $path_crawlable ) {
                     array_push(
                         $files,
-                        $detectedFileName
+                        $detected_filename
                     );
                 }
             }
@@ -87,11 +81,11 @@ class StaticHtmlOutput_FilesHelper {
             $elementor_font_dir = WP_PLUGIN_DIR .
                 '/elementor/assets/lib/font-awesome';
 
-            $elemementor_URLs = self::getListOfLocalFilesByUrl(
+            $elementor_urls = self::getListOfLocalFilesByUrl(
                 $elementor_font_dir
             );
 
-            $vendor_files = array_merge( $vendor_files, $elemementor_URLs );
+            $vendor_files = array_merge( $vendor_files, $elementor_urls );
         }
 
         if ( defined( 'WPSEO_VERSION' ) ) {
@@ -110,11 +104,11 @@ class StaticHtmlOutput_FilesHelper {
             $soliloquy_assets = WP_PLUGIN_DIR .
                 '/soliloquy/assets/css/images/';
 
-            $soliloquy_URLs = self::getListOfLocalFilesByUrl(
+            $soliloquy_urls = self::getListOfLocalFilesByUrl(
                 $soliloquy_assets
             );
 
-            $vendor_files = array_merge( $vendor_files, $soliloquy_URLs );
+            $vendor_files = array_merge( $vendor_files, $soliloquy_urls );
         }
 
         if ( class_exists( 'autoptimizeMain' ) ) {
@@ -125,16 +119,16 @@ class StaticHtmlOutput_FilesHelper {
             $prefix = str_replace(
                 $wp_site->site_url,
                 '/',
-                $wp_site->wp_content_URL
+                $wp_site->wp_content_url
             );
 
-            $autoptimize_URLs = self::getAutoptimizeCacheFiles(
+            $autoptimize_urls = self::getAutoptimizeCacheFiles(
                 $autoptimize_cache_dir,
                 $wp_site->wp_content_path,
                 $prefix
             );
 
-            $vendor_files = array_merge( $vendor_files, $autoptimize_URLs );
+            $vendor_files = array_merge( $vendor_files, $autoptimize_urls );
         }
 
         if ( class_exists( 'Custom_Permalinks' ) ) {
@@ -171,11 +165,11 @@ class StaticHtmlOutput_FilesHelper {
         if ( class_exists( 'molongui_authorship' ) ) {
             $molongui_path = WP_PLUGIN_DIR . '/molongui-authorship';
 
-            $molongui_URLs = self::getListOfLocalFilesByUrl(
+            $molongui_urls = self::getListOfLocalFilesByUrl(
                 $molongui_path
             );
 
-            $vendor_files = array_merge( $vendor_files, $molongui_URLs );
+            $vendor_files = array_merge( $vendor_files, $molongui_urls );
         }
 
         return $vendor_files;
@@ -194,6 +188,7 @@ class StaticHtmlOutput_FilesHelper {
                         $list_path
                     );
                 } elseif ( is_file( $dir . '/' . $item ) ) {
+                    // TODO: tidy up _SERVER
                     $subdir = str_replace(
                         '/wp-admin/admin-ajax.php',
                         '',
@@ -244,14 +239,14 @@ class StaticHtmlOutput_FilesHelper {
                 )
             );
 
-            foreach ( $iterator as $fileName => $fileObject ) {
-                $path_crawlable = self::filePathLooksCrawlable( $fileName );
+            foreach ( $iterator as $filename => $file_object ) {
+                $path_crawlable = self::filePathLooksCrawlable( $filename );
 
                 if ( $path_crawlable ) {
                     array_push(
                         $files,
                         $prefix .
-                        home_url( str_replace( $path_to_trim, '', $fileName ) )
+                        home_url( str_replace( $path_to_trim, '', $filename ) )
                     );
                 }
             }
@@ -273,13 +268,13 @@ class StaticHtmlOutput_FilesHelper {
                 )
             );
 
-            foreach ( $iterator as $fileName => $fileObject ) {
-                $path_crawlable = self::filePathLooksCrawlable( $fileName );
+            foreach ( $iterator as $filename => $file_object ) {
+                $path_crawlable = self::filePathLooksCrawlable( $filename );
 
                 if ( $path_crawlable ) {
                     array_push(
                         $files,
-                        home_url( str_replace( ABSPATH, '', $fileName ) )
+                        home_url( str_replace( ABSPATH, '', $filename ) )
                     );
                 }
             }
@@ -367,20 +362,19 @@ class StaticHtmlOutput_FilesHelper {
     }
 
     public static function buildInitialFileList(
-        $viaCLI = false,
-        $uploadsPath,
-        $uploadsURL,
-        $workingDirectory,
+        $via_cli = false,
+        $uploads_path,
+        $uploads_url,
         $settings
         ) {
         require_once dirname( __FILE__ ) . '/WPSite.php';
         $wp_site = new WPSite();
 
-        $baseUrl = untrailingslashit( home_url() );
+        $base_url = untrailingslashit( home_url() );
 
         // TODO: detect robots.txt, etc before adding
-        $urlsQueue = array_merge(
-            array( trailingslashit( $baseUrl ) ),
+        $url_queue = array_merge(
+            array( trailingslashit( $base_url ) ),
             array( '/robots.txt' ),
             array( '/favicon.ico' ),
             array( '/sitemap.xml' )
@@ -390,31 +384,31 @@ class StaticHtmlOutput_FilesHelper {
             case 'homepage':
                 break;
             case 'posts_and_pages':
-                $urlsQueue = array_merge(
-                    $urlsQueue,
-                    self::getAllWPPostURLs( $baseUrl )
+                $url_queue = array_merge(
+                    $url_queue,
+                    self::getAllWPPostURLs( $base_url )
                 );
 
                 break;
 
             case 'everything':
             default:
-                $urlsQueue = array_merge(
-                    $urlsQueue,
+                $url_queue = array_merge(
+                    $url_queue,
                     self::getThemeFiles( 'parent' ),
                     self::getThemeFiles( 'child' ),
                     self::detectVendorFiles( $wp_site->site_url ),
-                    self::getListOfLocalFilesByUrl( $uploadsURL ),
-                    self::getAllWPPostURLs( $baseUrl )
+                    self::getListOfLocalFilesByUrl( $uploads_url ),
+                    self::getAllWPPostURLs( $base_url )
                 );
         }
 
         // uniquify all URLs
-        $urlsQueue = array_unique( $urlsQueue );
+        $url_queue = array_unique( $url_queue );
 
-        $initialCrawlListTotal = count( $urlsQueue );
+        $initial_crawl_list_total = count( $url_queue );
 
-        $str = implode( "\n", $urlsQueue );
+        $str = implode( "\n", $url_queue );
 
         // TODO: modify each function vs doing here for perf
         $wp_site_url = get_home_url();
@@ -425,81 +419,20 @@ class StaticHtmlOutput_FilesHelper {
         );
 
         file_put_contents(
-            $uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST.txt',
+            $uploads_path . '/WP-STATIC-INITIAL-CRAWL-LIST.txt',
             $str
         );
 
-        chmod( $uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST.txt', 0664 );
+        chmod( $uploads_path . '/WP-STATIC-INITIAL-CRAWL-LIST.txt', 0664 );
 
         file_put_contents(
-            $uploadsPath . '/WP-STATIC-INITIAL-CRAWL-TOTAL.txt',
-            $initialCrawlListTotal
+            $uploads_path . '/WP-STATIC-INITIAL-CRAWL-TOTAL.txt',
+            $initial_crawl_list_total
         );
 
-        chmod( $uploadsPath . '/WP-STATIC-INITIAL-CRAWL-TOTAL.txt', 0664 );
+        chmod( $uploads_path . '/WP-STATIC-INITIAL-CRAWL-TOTAL.txt', 0664 );
 
-        return count( $urlsQueue );
-    }
-
-    public static function buildFinalFileList(
-        $viaCLI = false,
-        $additionalUrls,
-        $uploadsPath,
-        $uploadsURL,
-        $workingDirectory
-        ) {
-        require_once dirname( __FILE__ ) . '/WPSite.php';
-        $wp_site = new WPSite();
-
-        file_put_contents(
-            $workingDirectory . '/WP-STATIC-CURRENT-ARCHIVE.txt',
-            $archiveDir
-        );
-
-        chmod(
-            $workingDirectory . '/WP-STATIC-CURRENT-ARCHIVE.txt',
-            0664
-        );
-
-        if ( ! file_exists( $archiveDir ) ) {
-            wp_mkdir_p( $archiveDir );
-        }
-
-        $baseUrl = untrailingslashit( home_url() );
-
-        $urlsQueue = array_merge(
-            array( trailingslashit( $baseUrl ) ),
-            self::getThemeFiles( 'parent' ),
-            self::getThemeFiles( 'child' ),
-            self::getAllWPPostURLs( $baseUrl ),
-            explode( "\n", $additionalUrls )
-        );
-
-        // TODO: shift this as an option to exclusions area
-        $urlsQueue = array_unique(
-            array_merge(
-                $urlsQueue,
-                self::getListOfLocalFilesByUrl( $uploadsURL )
-            )
-        );
-
-        $str = implode( "\n", $urlsQueue );
-
-        file_put_contents(
-            $uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST.txt',
-            $str
-        );
-
-        chmod( $uploadsPath . '/WP-STATIC-INITIAL-CRAWL-LIST.txt', 0664 );
-
-        file_put_contents(
-            $workingDirectory . '/WP-STATIC-CRAWLED-LINKS.txt',
-            ''
-        );
-
-        chmod( $uploadsPath . '/WP-STATIC-CRAWLED-LINKS.txt', 0664 );
-
-        return count( $urlsQueue );
+        return count( $url_queue );
     }
 
     public static function getAllWPPostURLs( $wp_site_url ) {
@@ -526,7 +459,7 @@ class StaticHtmlOutput_FilesHelper {
             )
         );
 
-        $postURLs = array();
+        $post_urls = array();
 
         foreach ( $posts as $post ) {
             switch ( $post->post_type ) {
@@ -584,7 +517,7 @@ class StaticHtmlOutput_FilesHelper {
                 for ( $x = 0; $x <= $i; $x++ ) {
                     $full_url .= $path_segments[ $x ] . '/';
                 }
-                $postURLs[] = $full_url;
+                $post_urls[] = $full_url;
             }
         }
 
@@ -606,11 +539,11 @@ class StaticHtmlOutput_FilesHelper {
             foreach ( $terms as $term ) {
                 $permalink = get_term_link( $term );
 
-                $postURLs[] = trim( $permalink );
+                $post_urls[] = trim( $permalink );
             }
         }
 
-        return array_unique( $postURLs );
+        return array_unique( $post_urls );
     }
 }
 

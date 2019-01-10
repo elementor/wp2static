@@ -50,50 +50,64 @@ class FileCopier {
     }
 
     public function copyFile( $archive_dir ) {
-        $urlInfo = parse_url( $this->url );
-        $pathInfo = array();
+        $url_info = parse_url( $this->url );
+        $path_info = array();
 
         $local_file = $this->getLocalFileForURL();
 
         // TODO: here we can allow certain external host files to be crawled
-        if ( ! isset( $urlInfo['path'] ) ) {
+        if ( ! isset( $url_info['path'] ) ) {
             return false;
         }
 
-        $pathInfo = pathinfo( $urlInfo['path'] );
+        $path_info = pathinfo( $url_info['path'] );
+
+        if ( defined( 'WP_CLI' ) ) {
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/DBSettings.php';
+
+            $this->settings =
+                WPSHO_DBSettings::get( $target_settings );
+        } else {
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/PostSettings.php';
+
+            $this->settings =
+                WPSHO_PostSettings::get( $target_settings );
+        }
 
         $directory_in_archive =
-            isset( $pathInfo['dirname'] ) ?
-            $pathInfo['dirname'] :
+            isset( $path_info['dirname'] ) ?
+            $path_info['dirname'] :
             '';
 
-        if ( isset( $_POST['subdirectory'] ) ) {
+        if ( ! empty( $this->settings['wp_site_subdir'] ) ) {
             $directory_in_archive = str_replace(
-                $_POST['subdirectory'],
+                $this->settings['wp_site_subdir'],
                 '',
                 $directory_in_archive
             );
         }
 
-        $fileDir = $archive_dir . ltrim( $directory_in_archive, '/' );
+        $file_dir = $archive_dir . ltrim( $directory_in_archive, '/' );
 
-        if ( ! file_exists( $fileDir ) ) {
-            wp_mkdir_p( $fileDir );
+        if ( ! file_exists( $file_dir ) ) {
+            wp_mkdir_p( $file_dir );
         }
 
-        $fileExtension = $pathInfo['extension'];
-        $basename = $pathInfo['filename'] . '.' . $fileExtension;
-        $fileName = $fileDir . '/' . $basename;
-        $fileName = str_replace( '//', '/', $fileName );
+        $file_extension = $path_info['extension'];
+        $basename = $path_info['filename'] . '.' . $file_extension;
+        $filename = $file_dir . '/' . $basename;
+        $filename = str_replace( '//', '/', $filename );
 
         if ( is_file( $local_file ) ) {
-            copy( $local_file, $fileName );
+            copy( $local_file, $filename );
         } else {
             require_once dirname( __FILE__ ) .
                 '/../StaticHtmlOutput/WsLog.php';
             WsLog::l(
                 'ERROR: trying to copy local file: ' . $local_file .
-                ' to: ' . $fileName .
+                ' to: ' . $filename .
                 ' in archive dir: ' . $archive_dir .
                 ' (FILE NOT FOUND/UNREADABLE)'
             );

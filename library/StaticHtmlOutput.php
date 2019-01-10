@@ -109,7 +109,7 @@ class StaticHtmlOutput_Controller {
     }
 
     public function registerOptionsPage() {
-        $pluginDirUrl = plugin_dir_url( dirname( __FILE__ ) );
+        $plugins_url = plugin_dir_url( dirname( __FILE__ ) );
         $page = add_menu_page(
             __( 'WP2Static', 'static-html-output-plugin' ),
             __( 'WP2Static', 'static-html-output-plugin' ),
@@ -129,11 +129,11 @@ class StaticHtmlOutput_Controller {
     }
 
     public function enqueueAdminStyles() {
-        $pluginDirUrl = plugin_dir_url( dirname( __FILE__ ) );
+        $plugins_url = plugin_dir_url( dirname( __FILE__ ) );
 
         wp_enqueue_style(
             self::HOOK . '-admin',
-            $pluginDirUrl . 'wp2static.css?sdf=sdfd',
+            $plugins_url . 'wp2static.css?sdf=sdfd',
             null,
             $this::VERSION
         );
@@ -149,16 +149,18 @@ class StaticHtmlOutput_Controller {
             'crawling',
         );
 
-        if ( isset( $_POST['selected_deployment_option'] ) ) {
-            require_once dirname( __FILE__ ) .
-                '/StaticHtmlOutput/PostSettings.php';
-
-            $this->settings = WPSHO_PostSettings::get( $target_settings );
-        } else {
+        if ( defined( 'WP_CLI' ) ) {
             require_once dirname( __FILE__ ) .
                 '/StaticHtmlOutput/DBSettings.php';
 
-            $this->settings = WPSHO_DBSettings::get( $target_settings );
+            $this->settings =
+                WPSHO_DBSettings::get( $target_settings );
+        } else {
+            require_once dirname( __FILE__ ) .
+                '/StaticHtmlOutput/PostSettings.php';
+
+            $this->settings =
+                WPSHO_PostSettings::get( $target_settings );
         }
 
         // TODO: move to WPSite
@@ -169,7 +171,6 @@ class StaticHtmlOutput_Controller {
                 true,
                 $this->wp_site->wp_uploads_path,
                 $this->wp_site->uploads_url,
-                $this->wp_site->wp_uploads_path,
                 $this->settings
             );
 

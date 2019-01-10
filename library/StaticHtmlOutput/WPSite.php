@@ -7,8 +7,8 @@ class WPSite {
         $wp_upload_path_and_url = wp_upload_dir();
         $this->uploads_url = $wp_upload_path_and_url['baseurl'];
         $this->site_url = get_home_url() . '/';
-        $this->parent_theme_URL = get_template_directory_uri();
-        $this->wp_content_URL = content_url();
+        $this->parent_theme_url = get_template_directory_uri();
+        $this->wp_content_url = content_url();
         $this->site_path = ABSPATH;
         $this->plugins_path = $this->getWPDirFullPath( 'plugins' );
         $this->wp_uploads_path = $this->getWPDirFullPath( 'uploads' );
@@ -159,8 +159,8 @@ class WPSite {
         and wp-content themes and plugins are under /wp/
     */
     public function getWPContentSubDirectory() {
-        $parsed_URL = parse_url( $this->parent_theme_URL );
-        $path_segments = explode( '/', $parsed_URL['path'] );
+        $parsed_url = parse_url( $this->parent_theme_url );
+        $path_segments = explode( '/', $parsed_url['path'] );
 
         /*
             Returns:

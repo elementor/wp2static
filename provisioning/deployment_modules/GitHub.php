@@ -29,7 +29,7 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
             $this->settings['ghRepo']
         );
 
-        $this->exportFileList =
+        $this->export_file_list =
             $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT.txt';
         $archiveDir = file_get_contents(

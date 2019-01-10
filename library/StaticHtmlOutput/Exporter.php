@@ -10,16 +10,18 @@ class Exporter {
             'advanced',
         );
 
-        if ( isset( $_POST['selected_deployment_option'] ) ) {
-            require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/PostSettings.php';
-
-            $this->settings = WPSHO_PostSettings::get( $target_settings );
-        } else {
+        if ( defined( 'WP_CLI' ) ) {
             require_once dirname( __FILE__ ) .
                 '/../StaticHtmlOutput/DBSettings.php';
 
-            $this->settings = WPSHO_DBSettings::get( $target_settings );
+            $this->settings =
+                WPSHO_DBSettings::get( $target_settings );
+        } else {
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/PostSettings.php';
+
+            $this->settings =
+                WPSHO_PostSettings::get( $target_settings );
         }
     }
 
@@ -125,10 +127,10 @@ class Exporter {
                 scandir( $this->settings['wp_uploads_path'] )
             );
 
-        foreach ( $leftover_files as $fileName ) {
-            if ( strpos( $fileName, 'wp-static-html-output-' ) !== false ) {
+        foreach ( $leftover_files as $filename ) {
+            if ( strpos( $filename, 'wp-static-html-output-' ) !== false ) {
                 $deletion_target = $this->settings['wp_uploads_path'] .
-                    '/' . $fileName;
+                    '/' . $filename;
                 if ( is_dir( $deletion_target ) ) {
                     StaticHtmlOutput_FilesHelper::delete_dir_with_files(
                         $deletion_target

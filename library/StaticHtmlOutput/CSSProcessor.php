@@ -17,12 +17,6 @@ class CSSProcessor {
 
         $this->loadSettings();
 
-        $this->discoverNewURLs = (
-            isset( $this->settings['discoverNewURLs'] ) &&
-             $this->settings['discoverNewURLs'] == 1 &&
-             $_POST['ajax_action'] === 'crawl_site'
-        );
-
         // parse CSS into easily modifiable form
         $path = dirname( __FILE__ ) . '/../CSSParser/';
         require_once $path . 'Parser.php';
@@ -61,13 +55,13 @@ class CSSProcessor {
         require_once $path . 'CSSList/Document.php';
         require_once $path . 'CSSList/KeyFrame.php';
 
-        $this->placeholder_URL = 'https://PLACEHOLDER.wpsho/';
+        $this->placeholder_url = 'https://PLACEHOLDER.wpsho/';
         $this->raw_css = $css_document;
         // initial rewrite of all site URLs to placeholder URLs
         $this->rewriteSiteURLsToPlaceholder();
 
-        $oCssParser = new Sabberworm\CSS\Parser( $this->raw_css );
-        $this->css_doc = $oCssParser->parse();
+        $css_parser = new Sabberworm\CSS\Parser( $this->raw_css );
+        $this->css_doc = $css_parser->parse();
 
         require_once dirname( __FILE__ ) . '/../URL2/URL2.php';
         $this->page_url = new Net_URL2( $page_url );
@@ -76,9 +70,9 @@ class CSSProcessor {
 
         $this->discovered_urls = [];
 
-        foreach ( $this->css_doc->getAllValues() as $mValue ) {
-            if ( $mValue instanceof Sabberworm\CSS\Value\URL ) {
-                $original_link = $mValue->getURL();
+        foreach ( $this->css_doc->getAllValues() as $node_value ) {
+            if ( $node_value instanceof Sabberworm\CSS\Value\URL ) {
+                $original_link = $node_value->getURL();
 
                 // TODO: benchmark trim vs str_replace
                 // returned value contains surrounding quotes
@@ -102,7 +96,7 @@ class CSSProcessor {
                     // add base URL to rewrite_rules
                     $this->settings['rewrite_rules'] .=
                         PHP_EOL .
-                            $this->placeholder_URL . ',' .
+                            $this->placeholder_url . ',' .
                             $this->settings['baseUrl'];
 
                     $rewrite_from = array();
@@ -137,7 +131,7 @@ class CSSProcessor {
                         $rewritten_url
                     );
 
-                    $mValue->setURL( $rewritten_url );
+                    $node_value->setURL( $rewritten_url );
                 }
             }
         }
@@ -148,21 +142,24 @@ class CSSProcessor {
     }
 
     public function loadSettings() {
-        if ( isset( $_POST['selected_deployment_option'] ) ) {
+        if ( defined( 'WP_CLI' ) ) {
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/DBSettings.php';
+
+            $this->settings =
+                WPSHO_DBSettings::get( $target_settings );
+        } else {
             require_once dirname( __FILE__ ) .
                 '/../StaticHtmlOutput/PostSettings.php';
 
-            $this->settings = WPSHO_PostSettings::get( $this->target_settings );
-        } else {
-            require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/DBSettings.php';
-            $this->settings = WPSHO_DBSettings::get( $this->target_settings );
+            $this->settings =
+                WPSHO_PostSettings::get( $target_settings );
         }
     }
 
     public function isInternalLink( $link, $domain = false ) {
         if ( ! $domain ) {
-            $domain = $this->placeholder_URL;
+            $domain = $this->placeholder_url;
         }
 
         // TODO: apply only to links starting with .,..,/,
@@ -187,8 +184,8 @@ class CSSProcessor {
                 addcslashes( $this->settings['wp_site_url'], '/' ),
             ),
             array(
-                $this->placeholder_URL,
-                addcslashes( $this->placeholder_URL, '/' ),
+                $this->placeholder_url,
+                addcslashes( $this->placeholder_url, '/' ),
             ),
             $this->raw_css
         );
@@ -197,17 +194,18 @@ class CSSProcessor {
     }
 
     public function detectIfURLsShouldBeHarvested() {
-        if ( ! defined( 'WP_CLI' ) ) {
-            $this->harvest_new_URLs = (
-                 $_POST['ajax_action'] === 'crawl_site'
-            );
-        } else {
-            // we shouldn't harvest any while we're in the second crawl
+        if ( defined( 'WP_CLI' ) ) {
             if ( defined( 'CRAWLING_DISCOVERED' ) ) {
                 return;
             } else {
-                $this->harvest_new_URLs = true;
+                $this->harvest_new_urls = true;
             }
+        } else {
+            // @codingStandardsIgnoreStart
+            $this->harvest_new_urls = (
+                 $_POST['ajax_action'] === 'crawl_site'
+            );
+            // @codingStandardsIgnoreEnd
         }
     }
 
@@ -220,29 +218,31 @@ class CSSProcessor {
             return;
         }
 
-        if ( isset( $this->harvest_new_URLs ) ) {
+        if ( isset( $this->harvest_new_urls ) ) {
             if ( ! $this->isValidURL( $url ) ) {
                 return;
             }
 
             if ( $this->isInternalLink( $url ) ) {
-                $discovered_URL_without_site_URL =
+                $discovered_url_without_site_url =
                     str_replace(
                         'https://PLACEHOLDER.wpsho',
                         '',
                         $url
                     );
 
-                $this->discovered_urls[] = $discovered_URL_without_site_URL;
+                $this->discovered_urls[] = $discovered_url_without_site_url;
             }
         }
     }
 
     public function writeDiscoveredURLs() {
+        // @codingStandardsIgnoreStart
         if ( isset( $_POST['ajax_action'] ) &&
             $_POST['ajax_action'] === 'crawl_again' ) {
             return;
         }
+        // @codingStandardsIgnoreEnd
 
         if ( defined( 'WP_CLI' ) ) {
             if ( defined( 'CRAWLING_DISCOVERED' ) ) {

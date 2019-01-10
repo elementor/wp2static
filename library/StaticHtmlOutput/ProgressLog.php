@@ -21,7 +21,9 @@ class ProgressLog {
 
             $wp_uploads_path = $settings['wp_uploads_path'];
         } else {
+            // @codingStandardsIgnoreStart
             $wp_uploads_path = $_POST['wp_uploads_path'];
+            // @codingStandardsIgnoreEnd
         }
 
         $log_file_path = $wp_uploads_path . '/WP-STATIC-PROGRESS.txt';

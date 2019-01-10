@@ -24,7 +24,7 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
             $this->settings = WPSHO_DBSettings::get( $target_settings );
         }
 
-        $this->exportFileList =
+        $this->export_file_list =
             $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT.txt';
 

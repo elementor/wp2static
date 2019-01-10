@@ -30,6 +30,15 @@
     <exclude name="Squiz.Commenting.VariableComment"/>
     <exclude name="Squiz.Commenting.LongConditionClosingComment"/>
   </rule>
+  <rule ref="WordPress.NamingConventions.ValidVariableName">
+    <properties>
+      <property name="customPropertiesWhitelist" type="array">
+        <element value="parentNode"/>
+        <element value="firstChild"/>
+        <element value="childNodes"/>
+      </property>
+    </properties>
+  </rule>
   <rule ref="WordPress">
     <exclude name="Generic.CodeAnalysis.ForLoopWithTestFunctionCall.NotAllowed" />
     <exclude name="Generic.Commenting.DocComment.ShortNotCapital" />

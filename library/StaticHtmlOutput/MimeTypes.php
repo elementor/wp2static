@@ -1,6 +1,6 @@
 <?php
 
-function GuessMimeType( $File ) {
+function GuessMimeType( $file ) {
     static $mime_types = array(
         '123' => 'application/vnd.lotus-1-2-3',
         '3dml' => 'text/vnd.in3d.3dml',
@@ -997,9 +997,9 @@ function GuessMimeType( $File ) {
         'zmm' => 'application/vnd.handheld-entertainment+xml',
     );
 
-    $Info = strtolower( pathinfo( $File, PATHINFO_EXTENSION ) );
-    if ( array_key_exists( $Info, $mime_types ) ) {
-        return $mime_types[ $Info ];
+    $info = strtolower( pathinfo( $file, PATHINFO_EXTENSION ) );
+    if ( array_key_exists( $info, $mime_types ) ) {
+        return $mime_types[ $info ];
     }
     return 'application/octet-stream';
 }

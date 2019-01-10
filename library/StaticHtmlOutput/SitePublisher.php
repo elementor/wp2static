@@ -3,17 +3,17 @@
 class StaticHtmlOutput_SitePublisher {
 
     public function clear_file_list() {
-        if ( is_file( $this->exportFileList ) ) {
-            $f = fopen( $this->exportFileList, 'r+' );
+        if ( is_file( $this->export_file_list ) ) {
+            $f = fopen( $this->export_file_list, 'r+' );
             if ( $f !== false ) {
                 ftruncate( $f, 0 );
                 fclose( $f );
             }
         }
 
-        if ( isset( $this->globHashAndPathList ) ) {
-            if ( is_file( $this->globHashAndPathList ) ) {
-                $f = fopen( $this->globHashAndPathList, 'r+' );
+        if ( isset( $this->glob_hash_path_list ) ) {
+            if ( is_file( $this->glob_hash_path_list ) ) {
+                $f = fopen( $this->glob_hash_path_list, 'r+' );
                 if ( $f !== false ) {
                     ftruncate( $f, 0 );
                     fclose( $f );
@@ -35,6 +35,7 @@ class StaticHtmlOutput_SitePublisher {
                         $basename_in_target
                     );
                 } elseif ( is_file( $dir . '/' . $item ) ) {
+                    // TODO: deal with this _SERVER call
                     $wp_subdir = str_replace(
                         '/wp-admin/admin-ajax.php',
                         '',
@@ -94,12 +95,12 @@ class StaticHtmlOutput_SitePublisher {
                         "\n";
 
                     file_put_contents(
-                        $this->exportFileList,
+                        $this->export_file_list,
                         $export_line,
                         FILE_APPEND | LOCK_EX
                     );
 
-                    chmod( $this->exportFileList, 0664 );
+                    chmod( $this->export_file_list, 0664 );
 
                 }
             }
@@ -118,7 +119,7 @@ class StaticHtmlOutput_SitePublisher {
 
         // TODO: detect and use `cat | wc -l` if available
         $linecount = 0;
-        $handle = fopen( $this->exportFileList, 'r' );
+        $handle = fopen( $this->export_file_list, 'r' );
 
         while ( ! feof( $handle ) ) {
             $line = fgets( $handle );
@@ -146,7 +147,7 @@ class StaticHtmlOutput_SitePublisher {
     public function get_items_to_export( $batch_size = 1 ) {
         $lines = array();
 
-        $f = fopen( $this->exportFileList, 'r' );
+        $f = fopen( $this->export_file_list, 'r' );
 
         for ( $i = 0; $i < $batch_size; $i++ ) {
             $lines[] = fgets( $f );
@@ -155,7 +156,7 @@ class StaticHtmlOutput_SitePublisher {
         fclose( $f );
 
         // TODO: optimize this for just one read, one write within func
-        $contents = file( $this->exportFileList, FILE_IGNORE_NEW_LINES );
+        $contents = file( $this->export_file_list, FILE_IGNORE_NEW_LINES );
 
         for ( $i = 0; $i < $batch_size; $i++ ) {
             // rewrite file minus the lines we took
@@ -163,17 +164,17 @@ class StaticHtmlOutput_SitePublisher {
         }
 
         file_put_contents(
-            $this->exportFileList,
+            $this->export_file_list,
             implode( "\r\n", $contents )
         );
 
-        chmod( $this->exportFileList, 0664 );
+        chmod( $this->export_file_list, 0664 );
 
         return $lines;
     }
 
     public function get_remaining_items_count() {
-        $contents = file( $this->exportFileList, FILE_IGNORE_NEW_LINES );
+        $contents = file( $this->export_file_list, FILE_IGNORE_NEW_LINES );
 
         // return the amount left if another item is taken
         // return count($contents) - 1;

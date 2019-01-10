@@ -22,7 +22,7 @@ class HTMLProcessor {
         // instantiate the XML body here
         $this->xml_doc = new DOMDocument();
         $this->raw_html = $html_document;
-        $this->placeholder_URL = 'https://PLACEHOLDER.wpsho/';
+        $this->placeholder_url = 'https://PLACEHOLDER.wpsho/';
 
         // initial rewrite of all site URLs to placeholder URLs
         $this->rewriteSiteURLsToPlaceholder();
@@ -32,7 +32,7 @@ class HTMLProcessor {
         $this->base_tag_exists = false;
 
         require_once dirname( __FILE__ ) . '/../URL2/URL2.php';
-        $this->page_url = new Net_URL2( $page_url );
+        $this->page_url = new Net_url2( $page_url );
 
         $this->detectIfURLsShouldBeHarvested();
 
@@ -50,7 +50,7 @@ class HTMLProcessor {
         );
 
         foreach ( $elements as $element ) {
-            switch ( $element->tagName ) {
+            switch ( $element->tag_name ) {
                 case 'meta':
                     $this->processMeta( $element );
                     break;
@@ -127,29 +127,34 @@ class HTMLProcessor {
 
     public function detectIfURLsShouldBeHarvested() {
         if ( ! defined( 'WP_CLI' ) ) {
-            $this->harvest_new_URLs = (
+            // @codingStandardsIgnoreStart
+            $this->harvest_new_urls = (
                  $_POST['ajax_action'] === 'crawl_site'
             );
+            // @codingStandardsIgnoreEnd
         } else {
             // we shouldn't harvest any while we're in the second crawl
             if ( defined( 'CRAWLING_DISCOVERED' ) ) {
                 return;
             } else {
-                $this->harvest_new_URLs = true;
+                $this->harvest_new_urls = true;
             }
         }
     }
 
     public function loadSettings() {
-        if ( isset( $_POST['selected_deployment_option'] ) ) {
+        if ( defined( 'WP_CLI' ) ) {
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/DBSettings.php';
+
+            $this->settings =
+                WPSHO_DBSettings::get( $target_settings );
+        } else {
             require_once dirname( __FILE__ ) .
                 '/../StaticHtmlOutput/PostSettings.php';
 
-            $this->settings = WPSHO_PostSettings::get( $this->target_settings );
-        } else {
-            require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/DBSettings.php';
-            $this->settings = WPSHO_DBSettings::get( $this->target_settings );
+            $this->settings =
+                WPSHO_PostSettings::get( $target_settings );
         }
     }
 
@@ -163,7 +168,7 @@ class HTMLProcessor {
         $this->convertToOfflineURL( $element );
 
         if ( isset( $this->settings['removeWPLinks'] ) ) {
-            $relativeLinksToRemove = array(
+            $relative_links_to_rm = array(
                 'shortlink',
                 'canonical',
                 'pingback',
@@ -179,7 +184,7 @@ class HTMLProcessor {
 
             $link_rel = $element->getAttribute( 'rel' );
 
-            if ( in_array( $link_rel, $relativeLinksToRemove ) ) {
+            if ( in_array( $link_rel, $relative_links_to_rm ) ) {
                 $element->parentNode->removeChild( $element );
             } elseif ( strpos( $link_rel, '.w.org' ) !== false ) {
                 $element->parentNode->removeChild( $element );
@@ -220,20 +225,20 @@ class HTMLProcessor {
             return;
         }
 
-        if ( isset( $this->harvest_new_URLs ) ) {
+        if ( isset( $this->harvest_new_urls ) ) {
             if ( ! $this->isValidURL( $url ) ) {
                 return;
             }
 
             if ( $this->isInternalLink( $url ) ) {
-                $discovered_URL_without_site_URL =
+                $discovered_url_without_site_url =
                     str_replace(
                         'https://PLACEHOLDER.wpsho',
                         '',
                         $url
                     );
 
-                $this->discovered_urls[] = $discovered_URL_without_site_URL;
+                $this->discovered_urls[] = $discovered_url_without_site_url;
             }
         }
     }
@@ -270,8 +275,8 @@ class HTMLProcessor {
                 ) {
                     $node->parentNode->removeChild( $node );
                 }
-            } elseif ( isset( $node->tagName ) ) {
-                if ( $node->tagName === 'base' ) {
+            } elseif ( isset( $node->tag_name ) ) {
+                if ( $node->tag_name === 'base' ) {
                     // as smaller iteration to run conditional
                     // against here
                     $this->base_tag_exists = true;
@@ -349,10 +354,12 @@ class HTMLProcessor {
     }
 
     public function writeDiscoveredURLs() {
+        // @codingStandardsIgnoreStart
         if ( isset( $_POST['ajax_action'] ) &&
             $_POST['ajax_action'] === 'crawl_again' ) {
             return;
         }
+        // @codingStandardsIgnoreEnd
 
         if ( defined( 'WP_CLI' ) ) {
             if ( defined( 'CRAWLING_DISCOVERED' ) ) {
@@ -388,15 +395,15 @@ class HTMLProcessor {
 
     public function isInternalLink( $link, $domain = false ) {
         if ( ! $domain ) {
-            $domain = $this->placeholder_URL;
+            $domain = $this->placeholder_url;
         }
 
         // TODO: apply only to links starting with .,..,/,
         // or any with just a path, like banana.png
         // check link is same host as $this->url and not a subdomain
-        $is_internal_link = parse_url( $link, PHP_URL_HOST ) === parse_url(
+        $is_internal_link = parse_url( $link, PHP_url_HOST ) === parse_url(
             $domain,
-            PHP_URL_HOST
+            PHP_url_HOST
         );
 
         return $is_internal_link;
@@ -428,30 +435,30 @@ class HTMLProcessor {
         }
     }
 
-    public function detectEscapedSiteURLs( $processedHTML ) {
+    public function detectEscapedSiteURLs( $processed_html ) {
         // NOTE: this does return the expected http:\/\/172.18.0.3
         // but your error log may escape again and
         // show http:\\/\\/172.18.0.3
-        $escaped_site_url = addcslashes( $this->placeholder_URL, '/' );
+        $escaped_site_url = addcslashes( $this->placeholder_url, '/' );
 
-        if ( strpos( $processedHTML, $escaped_site_url ) !== false ) {
-            return $this->rewriteEscapedURLs( $processedHTML );
+        if ( strpos( $processed_html, $escaped_site_url ) !== false ) {
+            return $this->rewriteEscapedURLs( $processed_html );
         }
 
-        return $processedHTML;
+        return $processed_html;
     }
 
-    public function detectUnchangedURLs( $processedHTML ) {
-        $siteURL = $this->placeholder_URL;
+    public function detectUnchangedURLs( $processed_html ) {
+        $site_url = $this->placeholder_url;
 
-        if ( strpos( $processedHTML, $siteURL ) !== false ) {
-            return $this->rewriteUnchangedURLs( $processedHTML );
+        if ( strpos( $processed_html, $site_url ) !== false ) {
+            return $this->rewriteUnchangedURLs( $processed_html );
         }
 
-        return $processedHTML;
+        return $processed_html;
     }
 
-    public function rewriteUnchangedURLs( $processedHTML ) {
+    public function rewriteUnchangedURLs( $processed_html ) {
         if ( ! isset( $this->settings['rewrite_rules'] ) ) {
             $this->settings['rewrite_rules'] = '';
         }
@@ -459,7 +466,7 @@ class HTMLProcessor {
         // add base URL to rewrite_rules
         $this->settings['rewrite_rules'] .=
             PHP_EOL .
-                $this->placeholder_URL . ',' .
+                $this->placeholder_url . ',' .
                 $this->settings['baseUrl'];
 
         $rewrite_from = array();
@@ -482,18 +489,18 @@ class HTMLProcessor {
         $rewritten_source = str_replace(
             $rewrite_from,
             $rewrite_to,
-            $processedHTML
+            $processed_html
         );
 
         return $rewritten_source;
     }
 
-    public function rewriteEscapedURLs( $processedHTML ) {
+    public function rewriteEscapedURLs( $processed_html ) {
         // NOTE: fix input HTML, which can have \ slashes modified to %5C
-        $processedHTML = str_replace(
+        $processed_html = str_replace(
             '%5C/',
             '\\/',
-            $processedHTML
+            $processed_html
         );
 
         /*
@@ -503,7 +510,7 @@ class HTMLProcessor {
         from the onepress(?) theme, for example
 
         */
-        $site_url = addcslashes( $this->placeholder_URL, '/' );
+        $site_url = addcslashes( $this->placeholder_url, '/' );
         $destination_url = addcslashes( $this->settings['baseUrl'], '/' );
 
         if ( ! isset( $this->settings['rewrite_rules'] ) ) {
@@ -536,7 +543,7 @@ class HTMLProcessor {
         $rewritten_source = str_replace(
             $rewrite_from,
             $rewrite_to,
-            $processedHTML
+            $processed_html
         );
 
         return $rewritten_source;
@@ -596,13 +603,13 @@ class HTMLProcessor {
     }
 
     public function getHTML() {
-        $processedHTML = $this->xml_doc->saveHtml();
+        $processed_html = $this->xml_doc->saveHtml();
 
         // process the resulting HTML as text
-        $processedHTML = $this->detectEscapedSiteURLs( $processedHTML );
-        $processedHTML = $this->detectUnchangedURLs( $processedHTML );
+        $processed_html = $this->detectEscapedSiteURLs( $processed_html );
+        $processed_html = $this->detectUnchangedURLs( $processed_html );
 
-        return $processedHTML;
+        return $processed_html;
     }
 
     public function convertToRelativeURL( $element ) {
@@ -662,7 +669,7 @@ class HTMLProcessor {
 
         $url_to_change = $element->getAttribute( $attribute_to_change );
         $current_page_path_to_root = '';
-        $current_page_path = parse_url( $this->page_url, PHP_URL_PATH );
+        $current_page_path = parse_url( $this->page_url, PHP_url_PATH );
         $number_of_segments_in_path = explode( '/', $current_page_path );
         $num_dots_to_root = count( $number_of_segments_in_path ) - 2;
 
@@ -710,7 +717,7 @@ class HTMLProcessor {
         if ( $this->isInternalLink( $url_to_change ) ) {
             $rewritten_url = str_replace(
                 // TODO: test this won't touch subdomains, shouldn't
-                $this->placeholder_URL,
+                $this->placeholder_url,
                 $this->settings['baseUrl'],
                 $url_to_change
             );
@@ -724,14 +731,14 @@ class HTMLProcessor {
             array(
                 $this->settings['wp_site_url'],
                 rtrim( $this->settings['wp_site_url'], '/' ),
-                $this->placeholder_URL . '//',
+                $this->placeholder_url . '//',
                 addcslashes( $this->settings['wp_site_url'], '/' ),
             ),
             array(
-                $this->placeholder_URL,
-                $this->placeholder_URL,
-                $this->placeholder_URL . '/',
-                addcslashes( $this->placeholder_URL, '/' ),
+                $this->placeholder_url,
+                $this->placeholder_url,
+                $this->placeholder_url . '/',
+                addcslashes( $this->placeholder_url, '/' ),
             ),
             $this->raw_html
         );

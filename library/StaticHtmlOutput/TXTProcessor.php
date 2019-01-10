@@ -18,7 +18,7 @@ class TXTProcessor {
         $this->loadSettings();
 
         $this->txt_doc = $txt_document;
-        $this->placeholder_URL = 'https://PLACEHOLDER.wpsho/';
+        $this->placeholder_url = 'https://PLACEHOLDER.wpsho/';
 
         $this->rewriteSiteURLsToPlaceholder();
 
@@ -26,51 +26,54 @@ class TXTProcessor {
     }
 
     public function getTXT() {
-        $processedTXT = $this->txt_doc;
+        $processed_txt = $this->txt_doc;
 
-        $processedTXT = $this->detectEscapedSiteURLs( $processedTXT );
-        $processedTXT = $this->detectUnchangedURLs( $processedTXT );
+        $processed_txt = $this->detectEscapedSiteURLs( $processed_txt );
+        $processed_txt = $this->detectUnchangedURLs( $processed_txt );
 
-        return $processedTXT;
+        return $processed_txt;
     }
 
     public function loadSettings() {
-        if ( isset( $_POST['selected_deployment_option'] ) ) {
+        if ( defined( 'WP_CLI' ) ) {
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/DBSettings.php';
+
+            $this->settings =
+                WPSHO_DBSettings::get( $target_settings );
+        } else {
             require_once dirname( __FILE__ ) .
                 '/../StaticHtmlOutput/PostSettings.php';
 
-            $this->settings = WPSHO_PostSettings::get( $this->target_settings );
-        } else {
-            require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/DBSettings.php';
-            $this->settings = WPSHO_DBSettings::get( $this->target_settings );
+            $this->settings =
+                WPSHO_PostSettings::get( $target_settings );
         }
     }
 
-    public function detectEscapedSiteURLs( $processedTXT ) {
+    public function detectEscapedSiteURLs( $processed_txt ) {
         // NOTE: this does return the expected http:\/\/172.18.0.3
         // but your error log may escape again and
         // show http:\\/\\/172.18.0.3
-        $escaped_site_url = addcslashes( $this->placeholder_URL, '/' );
+        $escaped_site_url = addcslashes( $this->placeholder_url, '/' );
 
-        if ( strpos( $processedTXT, $escaped_site_url ) !== false ) {
-            return $this->rewriteEscapedURLs( $processedTXT );
+        if ( strpos( $processed_txt, $escaped_site_url ) !== false ) {
+            return $this->rewriteEscapedURLs( $processed_txt );
         }
 
-        return $processedTXT;
+        return $processed_txt;
     }
 
-    public function detectUnchangedURLs( $processedTXT ) {
-        $siteURL = $this->placeholder_URL;
+    public function detectUnchangedURLs( $processed_txt ) {
+        $site_url = $this->placeholder_url;
 
-        if ( strpos( $processedTXT, $siteURL ) !== false ) {
-            return $this->rewriteUnchangedURLs( $processedTXT );
+        if ( strpos( $processed_txt, $site_url ) !== false ) {
+            return $this->rewriteUnchangedURLs( $processed_txt );
         }
 
-        return $processedTXT;
+        return $processed_txt;
     }
 
-    public function rewriteUnchangedURLs( $processedTXT ) {
+    public function rewriteUnchangedURLs( $processed_txt ) {
         if ( ! isset( $this->settings['rewrite_rules'] ) ) {
             $this->settings['rewrite_rules'] = '';
         }
@@ -78,7 +81,7 @@ class TXTProcessor {
         // add base URL to rewrite_rules
         $this->settings['rewrite_rules'] .=
             PHP_EOL .
-                $this->placeholder_URL . ',' .
+                $this->placeholder_url . ',' .
                 $this->settings['baseUrl'];
 
         $rewrite_from = array();
@@ -101,18 +104,18 @@ class TXTProcessor {
         $rewritten_source = str_replace(
             $rewrite_from,
             $rewrite_to,
-            $processedTXT
+            $processed_txt
         );
 
         return $rewritten_source;
     }
 
-    public function rewriteEscapedURLs( $processedTXT ) {
+    public function rewriteEscapedURLs( $processed_txt ) {
         // NOTE: fix input TXT, which can have \ slashes modified to %5C
-        $processedTXT = str_replace(
+        $processed_txt = str_replace(
             '%5C/',
             '\\/',
-            $processedTXT
+            $processed_txt
         );
 
         /*
@@ -122,7 +125,7 @@ class TXTProcessor {
         from the onepress(?) theme, for example
 
         */
-        $site_url = addcslashes( $this->placeholder_URL, '/' );
+        $site_url = addcslashes( $this->placeholder_url, '/' );
         $destination_url = addcslashes( $this->settings['baseUrl'], '/' );
 
         if ( ! isset( $this->settings['rewrite_rules'] ) ) {
@@ -155,7 +158,7 @@ class TXTProcessor {
         $rewritten_source = str_replace(
             $rewrite_from,
             $rewrite_to,
-            $processedTXT
+            $processed_txt
         );
 
         return $rewritten_source;
@@ -168,8 +171,8 @@ class TXTProcessor {
                 addcslashes( $this->settings['wp_site_url'], '/' ),
             ),
             array(
-                $this->placeholder_URL,
-                addcslashes( $this->placeholder_URL, '/' ),
+                $this->placeholder_url,
+                addcslashes( $this->placeholder_url, '/' ),
             ),
             $this->txt_doc
         );
