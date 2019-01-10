@@ -31,8 +31,6 @@ class ProgressLog {
         $progress_percent =
             floor( $portion / $total * 100 );
 
-        error_log( $progress_percent . '(' . $portion . ' / ' . $total . ')' );
-
         file_put_contents(
             $log_file_path,
             $progress_percent . PHP_EOL,

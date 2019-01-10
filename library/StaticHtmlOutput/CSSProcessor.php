@@ -147,13 +147,13 @@ class CSSProcessor {
                 '/../StaticHtmlOutput/DBSettings.php';
 
             $this->settings =
-                WPSHO_DBSettings::get( $target_settings );
+                WPSHO_DBSettings::get( $this->target_settings );
         } else {
             require_once dirname( __FILE__ ) .
                 '/../StaticHtmlOutput/PostSettings.php';
 
             $this->settings =
-                WPSHO_PostSettings::get( $target_settings );
+                WPSHO_PostSettings::get( $this->target_settings );
         }
     }
 

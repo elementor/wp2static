@@ -50,6 +50,10 @@ class HTMLProcessor {
         );
 
         foreach ( $elements as $element ) {
+            if ( ! isset( $element->tag_name ) ) {
+                continue;
+            }
+
             switch ( $element->tag_name ) {
                 case 'meta':
                     $this->processMeta( $element );
@@ -148,13 +152,13 @@ class HTMLProcessor {
                 '/../StaticHtmlOutput/DBSettings.php';
 
             $this->settings =
-                WPSHO_DBSettings::get( $target_settings );
+                WPSHO_DBSettings::get( $this->target_settings );
         } else {
             require_once dirname( __FILE__ ) .
                 '/../StaticHtmlOutput/PostSettings.php';
 
             $this->settings =
-                WPSHO_PostSettings::get( $target_settings );
+                WPSHO_PostSettings::get( $this->target_settings );
         }
     }
 
@@ -669,7 +673,7 @@ class HTMLProcessor {
 
         $url_to_change = $element->getAttribute( $attribute_to_change );
         $current_page_path_to_root = '';
-        $current_page_path = parse_url( $this->page_url, PHP_url_PATH );
+        $current_page_path = parse_url( $this->page_url, PHP_URL_PATH );
         $number_of_segments_in_path = explode( '/', $current_page_path );
         $num_dots_to_root = count( $number_of_segments_in_path ) - 2;
 

@@ -25,7 +25,7 @@ class FileWriter {
 
         $target_settings = array(
             'general',
-            'wp_env',
+            'wpenv',
         );
 
         if ( defined( 'WP_CLI' ) ) {
