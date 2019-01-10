@@ -5,28 +5,28 @@ class StaticHtmlOutput_Controller {
     const OPTIONS_KEY = 'wp2static-options';
     const HOOK = 'wp2static';
 
-    protected static $_instance = null;
+    protected static $instance = null;
 
     protected function __construct() {}
 
     public static function getInstance() {
-        if ( null === self::$_instance ) {
-            self::$_instance = new self();
-            self::$_instance->options = new StaticHtmlOutput_Options(
+        if ( null === self::$instance ) {
+            self::$instance = new self();
+            self::$instance->options = new StaticHtmlOutput_Options(
                 self::OPTIONS_KEY
             );
-            self::$_instance->view = new StaticHtmlOutput_View();
+            self::$instance->view = new StaticHtmlOutput_View();
         }
 
-        return self::$_instance;
+        return self::$instance;
     }
 
 
-    public static function init( $bootstrapFile ) {
+    public static function init( $bootstrap_file ) {
         $instance = self::getInstance();
 
         register_activation_hook(
-            $bootstrapFile,
+            $bootstrap_file,
             array( $instance, 'activate' )
         );
 
@@ -115,7 +115,7 @@ class StaticHtmlOutput_Controller {
             __( 'WP2Static', 'static-html-output-plugin' ),
             'manage_options',
             self::HOOK,
-            array( self::$_instance, 'renderOptionsPage' ),
+            array( self::$instance, 'renderOptionsPage' ),
             'dashicons-shield-alt'
         );
 
@@ -229,7 +229,7 @@ class StaticHtmlOutput_Controller {
         $archive = new Archive();
         $archive->create();
 
-        $viaCLI = defined( 'WP_CLI' );
+        $via_cli = defined( 'WP_CLI' );
 
         // TODO: move to exporter; wp env vars to views
         WsLog::l( 'STARTING EXPORT: ' . date( 'Y-m-d h:i:s' ) );
@@ -241,7 +241,7 @@ class StaticHtmlOutput_Controller {
         WsLog::l( 'STARTING EXPORT: WP HOME ' . get_option( 'home' ) );
         WsLog::l( 'STARTING EXPORT: WP ADDRESS ' . get_bloginfo( 'wpurl' ) );
         WsLog::l( 'STARTING EXPORT: PLUGIN VERSION ' . $this::VERSION );
-        WsLog::l( 'STARTING EXPORT: VIA WP-CLI? ' . $viaCLI );
+        WsLog::l( 'STARTING EXPORT: VIA WP-CLI? ' . $via_cli );
         WsLog::l(
             'STARTING EXPORT: STATIC EXPORT URL ' .
             $exporter->settings['baseUrl']
