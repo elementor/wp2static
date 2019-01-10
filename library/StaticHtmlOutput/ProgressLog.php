@@ -25,11 +25,11 @@ class ProgressLog {
         }
 
         $log_file_path = $wp_uploads_path . '/WP-STATIC-PROGRESS.txt';
-        
+
         $progress_percent =
             floor( $portion / $total * 100 );
 
-        error_log($progress_percent . '(' . $portion . ' / ' . $total . ')');
+        error_log( $progress_percent . '(' . $portion . ' / ' . $total . ')' );
 
         file_put_contents(
             $log_file_path,
