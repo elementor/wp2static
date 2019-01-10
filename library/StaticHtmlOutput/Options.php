@@ -1,9 +1,9 @@
 <?php
 
 class StaticHtmlOutput_Options {
-    protected $_options = array();
-    protected $_optionKey = null;
-    protected $_options_keys = array(
+    protected $wp2static_options = array();
+    protected $wp2static_option_key = null;
+    protected $wp2static_options_keys = array(
         'additionalUrls',
         'allowOfflineUsage',
         'baseHREF',
@@ -82,7 +82,7 @@ class StaticHtmlOutput_Options {
         'useRelativeURLs',
     );
 
-    protected $_whitelisted_keys = array(
+    protected $whitelisted_keys = array(
         'additionalUrls',
         'allowOfflineUsage',
         'baseHREF',
@@ -152,19 +152,19 @@ class StaticHtmlOutput_Options {
         'useRelativeURLs',
     );
 
-    public function __construct( $optionKey ) {
-        $options = get_option( $optionKey );
+    public function __construct( $option_key ) {
+        $options = get_option( $option_key );
 
         if ( false === $options ) {
             $options = array();
         }
 
-        $this->_options = $options;
-        $this->_optionKey = $optionKey;
+        $this->wp2static_options = $options;
+        $this->wp2static_option_key = $option_key;
     }
 
     public function __set( $name, $value ) {
-        $this->_options[ $name ] = $value;
+        $this->wp2static_options[ $name ] = $value;
 
         // NOTE: this is required, not certain why, investigate
         // and make more intuitive
@@ -176,8 +176,8 @@ class StaticHtmlOutput_Options {
     }
 
     public function __get( $name ) {
-        $value = array_key_exists( $name, $this->_options ) ?
-            $this->_options[ $name ] : null;
+        $value = array_key_exists( $name, $this->wp2static_options ) ?
+            $this->wp2static_options[ $name ] : null;
         return $value;
     }
 
@@ -188,7 +188,7 @@ class StaticHtmlOutput_Options {
     public function getAllOptions( $reveal_sensitive_values = false ) {
         $options_array = array();
 
-        foreach ( $this->_options_keys as $key ) {
+        foreach ( $this->wp2static_options_keys as $key ) {
 
             $value = '*******************';
 
@@ -208,19 +208,22 @@ class StaticHtmlOutput_Options {
     }
 
     public function optionExists( $name ) {
-        return in_array( $name, $this->_options_keys );
+        return in_array( $name, $this->wp2static_options_keys );
     }
 
     public function save() {
-        return update_option( $this->_optionKey, $this->_options );
+        return update_option(
+            $this->wp2static_option_key,
+            $this->wp2static_options
+        );
     }
 
     public function delete() {
-        return delete_option( $this->_optionKey );
+        return delete_option( $this->wp2static_option_key );
     }
 
     public function saveAllPostData() {
-        foreach ( $this->_options_keys as $option ) {
+        foreach ( $this->wp2static_options_keys as $option ) {
             // TODO: set which fields should get which sanitzation upon saving
             // TODO: validate before save & avoid making empty settings fields
             $this->setOption( $option, filter_input( INPUT_POST, $option ) );

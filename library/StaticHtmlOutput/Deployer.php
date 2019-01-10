@@ -8,17 +8,19 @@ class Deployer {
             'general',
         );
 
-        if ( isset( $_POST['selected_deployment_option'] ) ) {
-            require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/PostSettings.php';
-            $this->settings = WPSHO_PostSettings::get( $target_settings );
-        } else {
+        if ( defined( 'WP_CLI' ) ) {
             require_once dirname( __FILE__ ) .
                 '/../StaticHtmlOutput/DBSettings.php';
 
-            $this->settings = WPSHO_DBSettings::get( $target_settings );
-        }
+            $this->settings =
+                WPSHO_DBSettings::get( $target_settings );
+        } else {
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/PostSettings.php';
 
+            $this->settings =
+                WPSHO_PostSettings::get( $target_settings );
+        }
     }
 
     public function deploy( $test = false ) {

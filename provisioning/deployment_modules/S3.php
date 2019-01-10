@@ -26,7 +26,7 @@ class StaticHtmlOutput_S3 {
             $this->settings = WPSHO_DBSettings::get( $target_settings );
         }
 
-        $this->exportFileList =
+        $this->export_file_list =
             $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT.txt';
 
@@ -47,8 +47,8 @@ class StaticHtmlOutput_S3 {
     }
 
     public function clear_file_list() {
-        if ( is_file( $this->exportFileList ) ) {
-            $f = fopen( $this->exportFileList, 'r+' );
+        if ( is_file( $this->export_file_list ) ) {
+            $f = fopen( $this->export_file_list, 'r+' );
             if ( $f !== false ) {
                 ftruncate( $f, 0 );
                 fclose( $f );
@@ -83,12 +83,12 @@ class StaticHtmlOutput_S3 {
                         $dir . '/' . $item . ',' . $targetPath . "\n";
 
                     file_put_contents(
-                        $this->exportFileList,
+                        $this->export_file_list,
                         $export_line,
                         FILE_APPEND | LOCK_EX
                     );
 
-                    chmod( $this->exportFileList, 0664 );
+                    chmod( $this->export_file_list, 0664 );
                 }
             }
         }
@@ -121,7 +121,7 @@ class StaticHtmlOutput_S3 {
     public function get_items_to_export( $batch_size = 1 ) {
         $lines = array();
 
-        $f = fopen( $this->exportFileList, 'r' );
+        $f = fopen( $this->export_file_list, 'r' );
 
         for ( $i = 0; $i < $batch_size; $i++ ) {
             $lines[] = fgets( $f );
@@ -130,7 +130,7 @@ class StaticHtmlOutput_S3 {
         fclose( $f );
 
         // TODO: optimize this for just one read, one write within func
-        $contents = file( $this->exportFileList, FILE_IGNORE_NEW_LINES );
+        $contents = file( $this->export_file_list, FILE_IGNORE_NEW_LINES );
 
         for ( $i = 0; $i < $batch_size; $i++ ) {
             // rewrite file minus the lines we took
@@ -138,17 +138,17 @@ class StaticHtmlOutput_S3 {
         }
 
         file_put_contents(
-            $this->exportFileList,
+            $this->export_file_list,
             implode( "\r\n", $contents )
         );
 
-        chmod( $this->exportFileList, 0664 );
+        chmod( $this->export_file_list, 0664 );
 
         return $lines;
     }
 
     public function get_remaining_items_count() {
-        $contents = file( $this->exportFileList, FILE_IGNORE_NEW_LINES );
+        $contents = file( $this->export_file_list, FILE_IGNORE_NEW_LINES );
 
         // return the amount left if another item is taken
         // return count($contents) - 1;

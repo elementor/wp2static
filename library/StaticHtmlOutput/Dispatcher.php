@@ -1,7 +1,9 @@
 <?php
 // TODO: this file / methods are being called on public site page loads,
 // should only be triggered when in the dashboard!
+// @codingStandardsIgnoreStart
 $ajax_action = isset( $_POST['ajax_action'] ) ? $_POST['ajax_action'] : '';
+// @codingStandardsIgnoreEnd
 
 $powerpack_dir = dirname( __FILE__ ) . '/../../powerpack';
 

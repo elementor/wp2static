@@ -1,30 +1,30 @@
 <?php
 class StaticHtmlOutput_View {
 
-    protected $_variables = array();
-    protected $_path = null;
-    protected $_directory = 'views';
-    protected $_extension = '.phtml';
-    protected $_template = null;
+    protected $variables = array();
+    protected $path = null;
+    protected $directory = 'views';
+    protected $extension = '.phtml';
+    protected $template = null;
 
     public function __construct() {
         // Looking for a basic directory where plugin resides
-        list($pluginDir) = explode( '/', plugin_basename( __FILE__ ) );
+        list($plugin_dir) = explode( '/', plugin_basename( __FILE__ ) );
 
         // making up an absolute path to views directory
-        $pathArray = array( WP_PLUGIN_DIR, $pluginDir, $this->_directory );
+        $path_array = array( WP_PLUGIN_DIR, $plugin_dir, $this->directory );
 
-        $this->_path = implode( '/', $pathArray );
+        $this->path = implode( '/', $path_array );
     }
 
-    public function setTemplate( $template ) {
-        $this->_template = $template;
-        $this->_variables = array();
+    public function setTemplate( $tpl ) {
+        $this->template = $tpl;
+        $this->variables = array();
         return $this;
     }
 
     public function __set( $name, $value ) {
-        $this->_variables[ $name ] = $value;
+        $this->variables[ $name ] = $value;
         return $this;
     }
 
@@ -33,15 +33,15 @@ class StaticHtmlOutput_View {
     }
 
     public function __get( $name ) {
-        $value = array_key_exists( $name, $this->_variables ) ?
-        $this->_variables[ $name ] :
+        $value = array_key_exists( $name, $this->variables ) ?
+        $this->variables[ $name ] :
         null;
 
         return $value;
     }
 
     public function render() {
-        $file = $this->_path . '/' . $this->_template . $this->_extension;
+        $file = $this->path . '/' . $this->template . $this->extension;
 
         if ( ! is_readable( $file ) ) {
             error_log( 'Can\'t find view template: ' . $file );

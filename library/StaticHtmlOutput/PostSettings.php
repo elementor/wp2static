@@ -145,17 +145,20 @@ class WPSHO_PostSettings {
             $target_keys = array_merge( $target_keys, $key_sets[ $set ] );
         }
 
+        // @codingStandardsIgnoreStart
         foreach ( $target_keys as $key ) {
             $settings[ $key ] =
                 isset( $_POST[ $key ] ) ?
                 $_POST[ $key ] :
                 null;
         }
+        // @codingStandardsIgnoreEnd
 
         /*
             Settings requiring transformation
         */
 
+        // @codingStandardsIgnoreStart
         $settings['crawl_increment'] =
             isset( $_POST['crawl_increment'] ) ?
             (int) $_POST['crawl_increment'] :
@@ -166,6 +169,7 @@ class WPSHO_PostSettings {
             isset( $_POST['baseUrl'] ) ?
             rtrim( $_POST['baseUrl'], '/' ) . '/' :
             'http://example.com/';
+        // @codingStandardsIgnoreEnd
 
         return array_filter( $settings );
     }

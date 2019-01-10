@@ -24,7 +24,7 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
             $this->settings = WPSHO_DBSettings::get( $target_settings );
         }
 
-        $this->exportFileList =
+        $this->export_file_list =
             $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-EXPORT-GITLAB-FILES-TO-EXPORT.txt';
         $archiveDir = file_get_contents(
@@ -87,12 +87,12 @@ EOD;
         $export_line = '.gitlab-ci.yml,.gitlab-ci.yml';
 
         file_put_contents(
-            $this->exportFileList,
+            $this->export_file_list,
             $export_line . PHP_EOL,
             FILE_APPEND | LOCK_EX
         );
 
-        chmod( $this->exportFileList, 0664 );
+        chmod( $this->export_file_list, 0664 );
     }
 
     // NOTE: Overrides parent class, as we need to delete prev files
@@ -269,12 +269,12 @@ EOD;
                         "\n";
 
                     file_put_contents(
-                        $this->exportFileList,
+                        $this->export_file_list,
                         $export_line,
                         FILE_APPEND | LOCK_EX
                     );
 
-                    chmod( $this->exportFileList, 0664 );
+                    chmod( $this->export_file_list, 0664 );
                 }
             }
         }

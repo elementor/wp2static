@@ -12,17 +12,18 @@ class SiteCrawler {
             'processing',
             'advanced',
         );
-
-        if ( isset( $_POST['selected_deployment_option'] ) ) {
-            require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/PostSettings.php';
-
-            $this->settings = WPSHO_PostSettings::get( $target_settings );
-        } else {
+        if ( defined( 'WP_CLI' ) ) {
             require_once dirname( __FILE__ ) .
                 '/../StaticHtmlOutput/DBSettings.php';
 
-            $this->settings = WPSHO_DBSettings::get( $target_settings );
+            $this->settings =
+                WPSHO_DBSettings::get( $target_settings );
+        } else {
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/PostSettings.php';
+
+            $this->settings =
+                WPSHO_PostSettings::get( $target_settings );
         }
 
         $this->processed_file = '';
@@ -37,11 +38,13 @@ class SiteCrawler {
         $this->urls_to_crawl = '';
 
         if ( ! defined( 'WP_CLI' ) ) {
+            // @codingStandardsIgnoreStart
             if ( $_POST['ajax_action'] === 'crawl_again' ) {
                 $this->crawl_discovered_links();
             } elseif ( $_POST['ajax_action'] === 'crawl_site' ) {
                 $this->crawl_site();
             }
+            // @codingStandardsIgnoreEnd
         }
     }
 
@@ -236,21 +239,23 @@ class SiteCrawler {
 
         $this->archive_dir = stream_get_line( $handle, 0 );
 
-        $total_URLs_path = $this->settings['wp_uploads_path'] .
+        $total_urls_path = $this->settings['wp_uploads_path'] .
             '/WP-STATIC-INITIAL-CRAWL-TOTAL.txt';
 
         // TODO: avoid mutation
+        // @codingStandardsIgnoreStart
         if (
             defined( 'CRAWLING_DISCOVERED' ) ||
             ( isset( $_POST['ajax_action'] ) &&
                 $_POST['ajax_action'] == 'crawl_again'
             )
         ) {
-            $total_URLs_path = $this->settings['wp_uploads_path'] .
+            $total_urls_path = $this->settings['wp_uploads_path'] .
             '/WP-STATIC-DISCOVERED-URLS-TOTAL.txt';
         }
+        // @codingStandardsIgnoreEnd
 
-        $total_URLs_to_crawl = file_get_contents( $total_URLs_path );
+        $total_urls_to_crawl = file_get_contents( $total_urls_path );
 
         $batch_index = 0;
 
@@ -290,22 +295,22 @@ class SiteCrawler {
 
             $batch_index++;
 
-            $completed_URLs =
-                $total_URLs_to_crawl -
+            $completed_urls =
+                $total_urls_to_crawl -
                 $this->remaining_urls_to_crawl -
                 count( $batch_of_links_to_crawl ) +
                 $batch_index;
 
             require_once dirname( __FILE__ ) .
                 '/../StaticHtmlOutput/ProgressLog.php';
-            ProgressLog::l( $completed_URLs, $total_URLs_to_crawl );
+            ProgressLog::l( $completed_urls, $total_urls_to_crawl );
         }
 
         $this->checkIfMoreCrawlingNeeded();
 
         // reclaim memory after each crawl
-        $urlResponse = null;
-        unset( $urlResponse );
+        $url_reponse = null;
+        unset( $url_reponse );
     }
 
     public function loadFileForProcessing() {
@@ -367,7 +372,7 @@ class SiteCrawler {
             chmod( $this->crawled_links_file, 0664 );
         }
 
-        $baseUrl = $this->settings['baseUrl'];
+        $base_url = $this->settings['baseUrl'];
 
         $this->detectFileType( $this->full_url );
 
@@ -460,7 +465,7 @@ class SiteCrawler {
     }
 
     public function getExtensionFromURL() {
-        $url_path = parse_url( $this->url, PHP_URL_PATH );
+        $url_path = parse_url( $this->url, PHP_url_PATH );
         $extension = pathinfo( $url_path, PATHINFO_EXTENSION );
 
         if ( ! $extension ) {

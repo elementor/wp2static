@@ -17,15 +17,18 @@ class ArchiveProcessor {
             'folder',
         );
 
-        if ( isset( $_POST['selected_deployment_option'] ) ) {
-            require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/PostSettings.php';
-            $this->settings = WPSHO_PostSettings::get( $target_settings );
-        } else {
+        if ( defined( 'WP_CLI' ) ) {
             require_once dirname( __FILE__ ) .
                 '/../StaticHtmlOutput/DBSettings.php';
 
-            $this->settings = WPSHO_DBSettings::get( $target_settings );
+            $this->settings =
+                WPSHO_DBSettings::get( $target_settings );
+        } else {
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/PostSettings.php';
+
+            $this->settings =
+                WPSHO_PostSettings::get( $target_settings );
         }
     }
 
@@ -245,12 +248,12 @@ class ArchiveProcessor {
             return;
         }
 
-        $archivePath = rtrim( $this->archive->path, '/' );
-        $tempZip = $archivePath . '.tmp';
+        $archive_path = rtrim( $this->archive->path, '/' );
+        $temp_zip = $archive_path . '.tmp';
 
-        $zipArchive = new ZipArchive();
+        $zip_archive = new ZipArchive();
 
-        if ( $zipArchive->open( $tempZip, ZIPARCHIVE::CREATE ) !== true ) {
+        if ( $zip_archive->open( $temp_zip, ZIPARCHIVE::CREATE ) !== true ) {
             return new WP_Error( 'Could not create archive' );
         }
 
@@ -258,25 +261,25 @@ class ArchiveProcessor {
             new RecursiveDirectoryIterator( $this->archive->path )
         );
 
-        foreach ( $iterator as $fileName => $fileObject ) {
-            $baseName = basename( $fileName );
-            if ( $baseName != '.' && $baseName != '..' ) {
-                if ( ! $zipArchive->addFile(
-                    realpath( $fileName ),
-                    str_replace( $this->archive->path, '', $fileName )
+        foreach ( $iterator as $filename => $file_object ) {
+            $base_name = basename( $filename );
+            if ( $base_name != '.' && $base_name != '..' ) {
+                if ( ! $zip_archive->addFile(
+                    realpath( $filename ),
+                    str_replace( $this->archive->path, '', $filename )
                 )
                 ) {
-                    return new WP_Error( 'Could not add file: ' . $fileName );
+                    return new WP_Error( 'Could not add file: ' . $filename );
                 }
             }
         }
 
-        $zipArchive->close();
+        $zip_archive->close();
 
-        $zipPath = $this->settings['wp_uploads_path'] . '/' .
+        $zip_path = $this->settings['wp_uploads_path'] . '/' .
             $this->archive->name . '.zip';
 
-        rename( $tempZip, $zipPath );
+        rename( $temp_zip, $zip_path );
     }
 
     public function removeWPCruft() {

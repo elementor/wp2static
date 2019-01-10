@@ -29,7 +29,7 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
             $this->settings['bbRepo']
         );
 
-        $this->exportFileList =
+        $this->export_file_list =
             $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-EXPORT-BITBUCKET-FILES-TO-EXPORT.txt';
         $archiveDir = file_get_contents(
@@ -116,12 +116,12 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
                         "\n";
 
                     file_put_contents(
-                        $this->exportFileList,
+                        $this->export_file_list,
                         $export_line,
                         FILE_APPEND | LOCK_EX
                     );
 
-                    chmod( $this->exportFileList, 0664 );
+                    chmod( $this->export_file_list, 0664 );
                 }
             }
         }

@@ -9,80 +9,100 @@ class FileWriter {
     }
 
     public function saveFile( $archive_dir ) {
-        $urlInfo = parse_url( $this->url );
-        $pathInfo = array();
+        $url_info = parse_url( $this->url );
+        $path_info = array();
 
-        if ( ! isset( $urlInfo['path'] ) ) {
+        if ( ! isset( $url_info['path'] ) ) {
             return false;
         }
 
         // set what the new path will be based on the given url
-        if ( $urlInfo['path'] != '/' ) {
-            $pathInfo = pathinfo( $urlInfo['path'] );
+        if ( $url_info['path'] != '/' ) {
+            $path_info = pathinfo( $url_info['path'] );
         } else {
-            $pathInfo = pathinfo( 'index.html' );
+            $path_info = pathinfo( 'index.html' );
+        }
+
+        $target_settings = array(
+            'general',
+            'wp_env',
+        );
+
+        if ( defined( 'WP_CLI' ) ) {
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/DBSettings.php';
+
+            $this->settings =
+                WPSHO_DBSettings::get( $target_settings );
+        } else {
+            require_once dirname( __FILE__ ) .
+                '/../StaticHtmlOutput/PostSettings.php';
+
+            $this->settings =
+                WPSHO_PostSettings::get( $target_settings );
         }
 
         $directory_in_archive =
-            isset( $pathInfo['dirname'] ) ? $pathInfo['dirname'] : '';
+            isset( $path_info['dirname'] ) ? $path_info['dirname'] : '';
 
-        if ( isset( $_POST['subdirectory'] ) ) {
+        if ( ! empty( $this->settings['wp_site_subdir'] ) ) {
             $directory_in_archive = str_replace(
-                $_POST['subdirectory'],
+                $this->settings['wp_site_subdir'],
                 '',
                 $directory_in_archive
             );
         }
 
-        $fileDir = $archive_dir . ltrim( $directory_in_archive, '/' );
+        $file_dir = $archive_dir . ltrim( $directory_in_archive, '/' );
 
         // set filename to index if no extension && base and filename are  same
-        if ( empty( $pathInfo['extension'] ) &&
-            $pathInfo['basename'] === $pathInfo['filename'] ) {
-            $fileDir .= '/' . $pathInfo['basename'];
-            $pathInfo['filename'] = 'index';
+        if ( empty( $path_info['extension'] ) &&
+            $path_info['basename'] === $path_info['filename'] ) {
+            $file_dir .= '/' . $path_info['basename'];
+            $path_info['filename'] = 'index';
         }
 
-        if ( ! file_exists( $fileDir ) ) {
-            wp_mkdir_p( $fileDir );
+        if ( ! file_exists( $file_dir ) ) {
+            wp_mkdir_p( $file_dir );
         }
 
-        $fileExtension = '';
+        $file_extension = '';
 
-        if ( isset( $pathInfo['extension'] ) ) {
-            $fileExtension = $pathInfo['extension'];
+        if ( isset( $path_info['extension'] ) ) {
+            $file_extension = $path_info['extension'];
         } elseif ( $this->file_type == 'html' ) {
-            $fileExtension = 'html';
+            $file_extension = 'html';
         } elseif ( $this->file_type == 'xml' ) {
-            $fileExtension = 'html';
+            $file_extension = 'html';
         }
 
-        $fileName = '';
+        $filename = '';
 
         // set path for homepage to index.html, else build filename
-        if ( $urlInfo['path'] == '/' ) {
+        if ( $url_info['path'] == '/' ) {
             // TODO: isolate and fix the cause requiring this trim:
-            $fileName = rtrim( $fileDir, '.' ) . 'index.html';
+            $filename = rtrim( $file_dir, '.' ) . 'index.html';
         } else {
             // TODO: deal with this hard to read, but functioning code
-            if ( isset( $_POST['subdirectory'] ) ) {
-                $fileDir = str_replace(
-                    '/' . $_POST['subdirectory'],
+            if ( ! empty( $this->settings['wp_site_subdir'] ) ) {
+                $file_dir = str_replace(
+                    '/' . $this->settings['wp_site_subdir'],
                     '/',
-                    $fileDir
+                    $file_dir
                 );
             }
 
-            $fileName =
-                $fileDir . '/' . $pathInfo['filename'] . '.' . $fileExtension;
+            $filename =
+                $file_dir . '/' . $path_info['filename'] .
+                '.' . $file_extension;
         }
 
-        $fileContents = $this->content;
+        $file_contents = $this->content;
 
-        if ( $fileContents ) {
-            file_put_contents( $fileName, $fileContents );
+        if ( $file_contents ) {
+            file_put_contents( $filename, $file_contents );
 
-            chmod( $fileName, 0664 );
+            chmod( $filename, 0664 );
         } else {
             require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/WsLog.php';
             WsLog::l( 'SAVING URL: FILE IS EMPTY ' . $this->url );
