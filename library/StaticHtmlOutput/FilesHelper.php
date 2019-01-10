@@ -405,11 +405,10 @@ class StaticHtmlOutput_FilesHelper {
                     self::getThemeFiles( 'parent' ),
                     self::getThemeFiles( 'child' ),
                     self::detectVendorFiles( $wp_site->site_url ),
-                    self::getListOfLocalFilesByUrl( $uploadsURL )
+                    self::getListOfLocalFilesByUrl( $uploadsURL ),
+                    self::getAllWPPostURLs( $baseUrl )
                 );
         }
-
-
 
         // uniquify all URLs
         $urlsQueue = array_unique( $urlsQueue );
