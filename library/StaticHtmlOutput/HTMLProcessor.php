@@ -401,9 +401,9 @@ class HTMLProcessor {
         // TODO: apply only to links starting with .,..,/,
         // or any with just a path, like banana.png
         // check link is same host as $this->url and not a subdomain
-        $is_internal_link = parse_url( $link, PHP_url_HOST ) === parse_url(
+        $is_internal_link = parse_url( $link, PHP_URL_HOST ) === parse_url(
             $domain,
-            PHP_url_HOST
+            PHP_URL_HOST
         );
 
         return $is_internal_link;
