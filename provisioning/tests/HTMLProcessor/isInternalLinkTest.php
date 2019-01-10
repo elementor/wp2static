@@ -16,7 +16,7 @@ final class HTMLProcessorIsInternalLinkTest extends TestCase {
         /*
             $link should match $domain
 
-            $domain defaults to placeholder_URL
+            $domain defaults to placeholder_url
 
             we've rewritten all URLs before here to use the
             placeholder one, so internal link usually(always?)
@@ -32,7 +32,7 @@ final class HTMLProcessorIsInternalLinkTest extends TestCase {
             'wp_site_url' => 'http://mywpsite.com'
         );
 
-        $processor->placeholder_URL = 'https://PLACEHOLDER.wpsho/';
+        $processor->placeholder_url = 'https://PLACEHOLDER.wpsho/';
 
         $result = $processor->isInternalLink( $link, $domain );
 

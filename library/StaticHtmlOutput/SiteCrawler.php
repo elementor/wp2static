@@ -465,7 +465,7 @@ class SiteCrawler {
     }
 
     public function getExtensionFromURL() {
-        $url_path = parse_url( $this->url, PHP_url_PATH );
+        $url_path = parse_url( $this->url, PHP_URL_PATH );
         $extension = pathinfo( $url_path, PATHINFO_EXTENSION );
 
         if ( ! $extension ) {

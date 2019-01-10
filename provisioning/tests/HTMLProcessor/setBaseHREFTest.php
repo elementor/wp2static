@@ -48,7 +48,7 @@ final class HTMLProcessorBaseHREFTest extends TestCase {
             'baseHREF' => $baseHREF,
         );
 
-        $mockProcessor->processHTML($test_HTML_content, $page_URL);
+        $mockProcessor->processHTML( $test_HTML_content, $page_URL );
 
         $this->assertEquals(
             $exp_detect_existing,
