@@ -136,6 +136,7 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
 
 = 6.2.1 =
 
+ * Bugfix: support Unicode chars in source HTML (thanks @dimobelov!)
  * Bugfix: fix Additional URLs not being crawled
  * Bugfix: choosing 'Everything' in WP URL detection really gets everything
 
@@ -514,6 +515,7 @@ Initial release to Wordpress community
 
 = 6.2.1 =
 
+ * Bugfix: support Unicode chars in source HTML (thanks @dimobelov!)
  * Bugfix: fix Additional URLs not being crawled
  * Bugfix: choosing 'Everything' in WP URL detection really gets everything
 
