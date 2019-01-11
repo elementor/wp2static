@@ -615,6 +615,13 @@ class HTMLProcessor {
             'UTF-8'
         );
 
+        // Note: double-decoding to be safe
+        $processed_html = html_entity_decode(
+            $processed_html,
+            ENT_QUOTES,
+            'UTF-8'
+        );
+
         return $processed_html;
     }
 
