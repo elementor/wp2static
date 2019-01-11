@@ -53,9 +53,9 @@ final class HTMLProcessorUnicodeSupportTest extends TestCase {
     public function unicodeProvider() {
         return [
            'unicode characters in source' =>  [
-                '<!DOCTYPE html><html lang="en-US"><head></head><title>wpnotes | Поредният WordPress сайт</title><body></body></html>',
+                '<!DOCTYPE html><html lang="en-US"><head></head><meta charset="utf-8"/><title>wpnotes | Поредният WordPress сайт</title><body></body></html>',
                 '<!DOCTYPE html>
-<html lang="en-US"><head></head><title>wpnotes | Поредният WordPress сайт</title><body></body></html>
+<html lang="en-US"><head></head><meta charset="utf-8"><title>wpnotes | Поредният WordPress сайт</title><body></body></html>
 ',
             ],
         ];
