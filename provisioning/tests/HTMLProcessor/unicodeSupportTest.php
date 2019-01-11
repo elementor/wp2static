@@ -45,7 +45,7 @@ final class HTMLProcessorUnicodeSupportTest extends TestCase {
 
         $this->assertEquals(
             $exp_result,
-            $mockProcessor->xml_doc->saveHTML()
+            $mockProcessor->getHTML()
         );
 
     }

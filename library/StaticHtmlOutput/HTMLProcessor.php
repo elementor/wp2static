@@ -609,6 +609,12 @@ class HTMLProcessor {
         $processed_html = $this->detectEscapedSiteURLs( $processed_html );
         $processed_html = $this->detectUnchangedURLs( $processed_html );
 
+        $processed_html = html_entity_decode(
+            $processed_html,
+            ENT_QUOTES,
+            'UTF-8'
+        );
+
         return $processed_html;
     }
 
