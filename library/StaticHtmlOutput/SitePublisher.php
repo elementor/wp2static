@@ -117,11 +117,11 @@ class StaticHtmlOutput_SitePublisher {
                         $file_in_archive,
                         $archive_path_to_replace,
                         $basename_in_target
-                );
+                    );
 
                 file_put_contents(
                     $this->export_file_list,
-                    $local_file_path . ',' .  $remote_deployment_path .  "\n",
+                    $local_file_path . ',' . $remote_deployment_path . "\n",
                     FILE_APPEND | LOCK_EX
                 );
 
