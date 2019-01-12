@@ -35,19 +35,18 @@ class StaticHtmlOutput_SitePublisher {
                         $basename_in_target
                     );
                 } elseif ( is_file( $dir . '/' . $item ) ) {
-                    // TODO: deal with this _SERVER call
-                    $wp_subdir = str_replace(
-                        '/wp-admin/admin-ajax.php',
-                        '',
-                        $_SERVER['REQUEST_URI']
-                    );
-
-                    $wp_subdir = ltrim( $wp_subdir, '/' );
                     $dirs_in_path = $dir;
                     $filename = $item;
                     $original_filepath = $dir . '/' . $item;
 
-                    // $local_path_to_strip = $archive . '/' . $wp_subdir;
+                    // NOTE: untested fix for Windows filepaths
+                    // https://github.com/leonstafford/wp2static/issues/221
+                    $original_filepath = str_replace(
+                        '\\',
+                        '\\\\',
+                        $original_filepath
+                    );
+
                     $local_path_to_strip = $archive;
                     $local_path_to_strip = rtrim( $local_path_to_strip, '/' );
 
