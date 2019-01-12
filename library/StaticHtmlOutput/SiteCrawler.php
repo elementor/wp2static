@@ -314,17 +314,16 @@ class SiteCrawler {
     public function loadFileForProcessing() {
         $ch = curl_init(); 
 
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $curl_headers);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $content);
+        curl_setopt( $ch, CURLOPT_URL, $this->full_url );
 
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        // curl_setopt($ch, CURLOPT_HTTPHEADER, $curl_headers);
+        // curl_setopt($ch, CURLOPT_POSTFIELDS, $content);
 
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
+        curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
+        curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
+        curl_setopt( $ch, CURLOPT_HEADER, 0);
+        curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
 
         if ( isset( $this->settings['useBasicAuth'] ) ) {
             curl_setopt(
@@ -335,18 +334,16 @@ class SiteCrawler {
             );
         }
 
-        $output = curl_exec($ch);
+        $output = curl_exec( $ch );
 
-        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
 
-        if( $http_code != 200 ) {
-            exit( 'Error : Failed to upload' );
-        }
+        $this->curl_content_type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
 
         curl_close($ch);
 
         // Replace this:
-        $this->response = $client->get( $this->full_url, $request_options );
+        $this->response = $output;
 
         // TODO: add options for http digest, not just basic
         $this->crawled_links_file =
@@ -354,7 +351,6 @@ class SiteCrawler {
                 '/WP-STATIC-CRAWLED-LINKS.txt';
 
         $good_response_codes = array( '200', '201', '301', '302', '304' );
-        $status_code = $this->response->getStatusCode();
 
         if ( ! in_array( $status_code, $good_response_codes ) ) {
             require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/WsLog.php';
@@ -396,7 +392,7 @@ class SiteCrawler {
                 $processor = new HTMLProcessor();
 
                 $this->processed_file = $processor->processHTML(
-                    $this->response->getBody(),
+                    $this->response,
                     $this->full_url
                 );
 
@@ -412,7 +408,7 @@ class SiteCrawler {
                 $processor = new CSSProcessor();
 
                 $this->processed_file = $processor->processCSS(
-                    $this->response->getBody(),
+                    $this->response,
                     $this->full_url
                 );
 
@@ -431,7 +427,7 @@ class SiteCrawler {
                 $processor = new TXTProcessor();
 
                 $this->processed_file = $processor->processTXT(
-                    $this->response->getBody(),
+                    $this->response,
                     $this->full_url
                 );
 
@@ -442,7 +438,7 @@ class SiteCrawler {
                 break;
 
             default:
-                $this->processed_file = $this->response->getBody();
+                $this->processed_file = $this->response;
 
                 break;
         }
@@ -492,7 +488,7 @@ class SiteCrawler {
             $this->file_type = $this->file_extension;
         } else {
             $type = $this->content_type =
-                $this->response->getHeaderLine( 'content-type' );
+                $this->curl_content_type;
 
             if ( stripos( $type, 'text/html' ) !== false ) {
                 $this->file_type = 'html';
@@ -509,7 +505,7 @@ class SiteCrawler {
                     '/../StaticHtmlOutput/WsLog.php';
                 WsLog::l(
                     'no filetype inferred from content-type: ' .
-                    $this->response->getHeaderLine( 'content-type' ) .
+                    $this->curl_content_type .
                     ' url: ' . $this->url
                 );
             }
