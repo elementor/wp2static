@@ -86,11 +86,12 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
 
             $fileToTransfer = $this->archive->path . $fileToTransfer;
 
-            $files_data[] = array(
-                'name'     => '/' . rtrim( $targetPath ),
-                'contents' => fopen( $fileToTransfer, 'rb' ),
-            );
+            $files_data[ 'message' ] = 'WP2Static deployment';
 
+            if ( is_file( $fileToTransfer ) ) {
+                $files_data[ '/' . rtrim( $targetPath ) ] =
+                    new CURLFile ( $fileToTransfer );
+            }
         }
 
         if ( isset( $this->settings['bbBlobDelay'] ) &&
@@ -98,31 +99,56 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
             sleep( $this->settings['bbBlobDelay'] );
         }
 
-        $client = new Client(
-            array(
-                'base_uri' => $this->api_base,
-            )
-        );
-
         try {
-            $response = $client->request(
-                'POST',
-                $this->settings['bbRepo'] . '/src',
-                array(
-                    'auth'  => array(
-                        $this->user,
-                        $this->settings['bbToken'],
-                    ),
-                    'multipart' => $files_data,
-                )
+            $remote_path = $this->api_base . $this->settings['bbRepo'] . '/src';
+
+            $ch = curl_init();
+
+            curl_setopt( $ch, CURLOPT_URL, $remote_path );
+            curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
+            curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
+            curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
+            curl_setopt( $ch, CURLOPT_HEADER, 0);
+            curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
+            curl_setopt( $ch, CURLOPT_POST, 1);
+
+            $post_options = $files_data;
+
+            // note: straight array over http_build_query for Bitbucket
+            curl_setopt(
+                $ch,
+                CURLOPT_POSTFIELDS, 
+                $post_options
             );
 
+            curl_setopt(
+                $ch,
+                CURLOPT_USERPWD,
+                $this->user . ":" .
+                    $this->settings['bbToken']
+            );
+
+            $output = curl_exec( $ch );
+            $status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
+
+            curl_close( $ch );
+            
+            $good_response_codes = array( '200', '201', '301', '302', '304' );
+
+            if ( ! in_array( $status_code, $good_response_codes ) ) {
+                require_once dirname( __FILE__ ) . '/../library/StaticHtmlOutput/WsLog.php';
+                WsLog::l(
+                    'BAD RESPONSE STATUS (' . $status_code . '): ' .
+                     $output
+                );
+
+                throw new Exception( 'Bitbucket API bad response status' );
+            }
         } catch ( Exception $e ) {
             require_once dirname( __FILE__ ) .
                 '/../library/StaticHtmlOutput/WsLog.php';
             WsLog::l( 'BITBUCKET EXPORT: error encountered' );
             WsLog::l( $e );
-            error_log( $e );
             throw new Exception( $e );
             return;
         }
@@ -149,10 +175,6 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
             $ch = curl_init();
 
             curl_setopt( $ch, CURLOPT_URL, $remote_path );
-
-            // curl_setopt($ch, CURLOPT_HTTPHEADER, $curl_headers);
-            // curl_setopt($ch, CURLOPT_POSTFIELDS, $content);
-
             curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
             curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
             curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
@@ -161,15 +183,15 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
             curl_setopt( $ch, CURLOPT_POST, 1);
 
             $post_options = array(
-                'file1.html' => 'some file contents',
-                'file2.html' => 'some file contents',
-                'message' => 'WP2Static deployment'
+                '.tmp_wp2static.txt' => 'Test WP2Static connectivity',
+                '.tmp_wp2static.txt' => 'Test WP2Static connectivity #2',
+                'message' => 'WP2Static deployment test'
             );
 
             curl_setopt(
                 $ch,
                 CURLOPT_POSTFIELDS, 
-                http_build_query( $post_options )
+                $post_options
             );
 
             curl_setopt(
@@ -187,9 +209,9 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
             $good_response_codes = array( '200', '201', '301', '302', '304' );
 
             if ( ! in_array( $status_code, $good_response_codes ) ) {
-                require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/WsLog.php';
+                require_once dirname( __FILE__ ) . '/../library/StaticHtmlOutput/WsLog.php';
                 WsLog::l(
-                    'BAD RESPONSE STATUS (' . $status_code . '): ' . $this->url
+                    'BAD RESPONSE STATUS (' . $status_code . '): '
                 );
 
                 throw new Exception( 'Bitbucket API bad response status' );
@@ -199,7 +221,6 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
                 '/../library/StaticHtmlOutput/WsLog.php';
             WsLog::l( 'BITBUCKET EXPORT: error encountered' );
             WsLog::l( $e );
-            error_log( $e );
             throw new Exception( $e );
             return;
         }
