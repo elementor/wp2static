@@ -1,7 +1,5 @@
 <?php
 
-use GuzzleHttp\Client;
-
 class SiteCrawler {
 
     public function __construct() {
@@ -314,27 +312,41 @@ class SiteCrawler {
     }
 
     public function loadFileForProcessing() {
-        require_once dirname( __FILE__ ) . '/../GuzzleHttp/autoloader.php';
+        $ch = curl_init(); 
 
-        $client = new \GuzzleHttp\Client();
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $curl_headers);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $content);
 
-        $request_options = array(
-            'http_errors' => false,
-            'verify' => false,
-        );
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 
         if ( isset( $this->settings['useBasicAuth'] ) ) {
-            $request_options['auth'] = array(
-                $this->settings['basicAuthUser'],
-                $this->settings['basicAuthPassword'],
+            curl_setopt(
+                ch,
+                CURLOPT_USERPWD,
+                $this->settings['basicAuthUser'] . ":" .
+                    $this->settings['basicAuthPassword']
             );
         }
 
-        $this->response =
-            $client->get(
-                $this->full_url,
-                $request_options
-            );
+        $output = curl_exec($ch);
+
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        if( $http_code != 200 ) {
+            exit( 'Error : Failed to upload' );
+        }
+
+        curl_close($ch);
+
+        // Replace this:
+        $this->response = $client->get( $this->full_url, $request_options );
 
         // TODO: add options for http digest, not just basic
         $this->crawled_links_file =
