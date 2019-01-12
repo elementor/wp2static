@@ -22,89 +22,112 @@ class StaticHtmlOutput_SitePublisher {
         }
     }
 
-    public function create_deployment_list( $dir, $basename_in_target ) {
-        $archive = $this->archive->path;
+    public function isSkippableFile( $file ) {
+        if ( $file == '.' || $file == '..' || $file == '.git' ) {
+            return true;
+        }
+    }
 
-        $files = scandir( $dir );
+    public function getLocalFileToDeploy( $file_in_archive, $replace_path ) {
+        // NOTE: untested fix for Windows filepaths
+        // https://github.com/leonstafford/wp2static/issues/221
+        $original_filepath = str_replace(
+            '\\',
+            '\\\\',
+            $file_in_archive
+        );
 
-        foreach ( $files as $item ) {
-            if ( $item != '.' && $item != '..' && $item != '.git' ) {
-                if ( is_dir( $dir . '/' . $item ) ) {
-                    $this->create_deployment_list(
-                        $dir . '/' . $item,
-                        $basename_in_target
-                    );
-                } elseif ( is_file( $dir . '/' . $item ) ) {
-                    $dirs_in_path = $dir;
-                    $filename = $item;
-                    $original_filepath = $dir . '/' . $item;
+        $original_file_without_archive = str_replace(
+            $replace_path,
+            '',
+            $original_filepath
+        );
 
-                    // NOTE: untested fix for Windows filepaths
-                    // https://github.com/leonstafford/wp2static/issues/221
-                    $original_filepath = str_replace(
-                        '\\',
-                        '\\\\',
-                        $original_filepath
-                    );
+        $original_file_without_archive = ltrim(
+            $original_file_without_archive,
+            '/'
+        );
 
-                    $local_path_to_strip = $archive;
-                    $local_path_to_strip = rtrim( $local_path_to_strip, '/' );
+        return $original_file_without_archive;
+    }
 
-                    // TODO: better detection of subdir/nonstandard paths
-                    $local_path_to_strip = str_replace(
-                        '//',
-                        '/',
-                        $local_path_to_strip
-                    );
+    public function getArchivePathForReplacement( $archive_path ) {
+        $local_path_to_strip = $archive_path;
+        $local_path_to_strip = rtrim( $local_path_to_strip, '/' );
 
-                    $deploy_path = str_replace(
-                        $local_path_to_strip,
-                        '',
-                        $dirs_in_path
-                    );
+        $local_path_to_strip = str_replace(
+            '//',
+            '/',
+            $local_path_to_strip
+        );
 
-                    $original_file_without_archive = str_replace(
-                        $local_path_to_strip,
-                        '',
-                        $original_filepath
-                    );
+        return $local_path_to_strip;
+    }
 
-                    $original_file_without_archive = ltrim(
-                        $original_file_without_archive,
-                        '/'
-                    );
+    public function getRemoteDeploymentPath(
+        $dir, $file_in_archive, $archive_path_to_replace, $basename_in_target
+        ) {
+        $deploy_path = str_replace(
+            $archive_path_to_replace,
+            '',
+            $dir
+        );
 
-                    $deploy_path = $this->r_path . $deploy_path;
-                    $deploy_path = ltrim( $deploy_path, '/' );
-                    $deploy_path .= '/';
+        $deploy_path = $this->r_path . $deploy_path;
+        $deploy_path = ltrim( $deploy_path, '/' );
+        $deploy_path .= '/';
 
-                    // TODO: better described as "only allow file objects"?
-                    // append basename to deply path
-                    if ( $basename_in_target ) {
-                        $deploy_path .= basename(
-                            $original_file_without_archive
-                        );
-                    }
-
-                    $deploy_path = ltrim( $deploy_path, '/' );
-
-                    $export_line =
-                        $original_file_without_archive . ',' . // field 1
-                        $deploy_path . // field 2
-                        "\n";
-
-                    file_put_contents(
-                        $this->export_file_list,
-                        $export_line,
-                        FILE_APPEND | LOCK_EX
-                    );
-
-                    chmod( $this->export_file_list, 0664 );
-
-                }
-            }
+        if ( $basename_in_target ) {
+            $deploy_path .= basename(
+                $file_in_archive
+            );
         }
 
+        $deploy_path = ltrim( $deploy_path, '/' );
+
+        return $deploy_path;
+    }
+
+    public function create_deployment_list( $dir, $basename_in_target ) {
+        $archive_path_to_replace =
+            $this->getArchivePathForReplacement( $this->archive->path );
+
+        foreach ( scandir( $dir ) as $item ) {
+            if ( $this->isSkippableFile( $item ) ) {
+                continue;
+            }
+
+            $file_in_archive = $dir . '/' . $item;
+
+            if ( is_dir( $file_in_archive ) ) {
+                $this->create_deployment_list(
+                    $file_in_archive,
+                    $basename_in_target
+                );
+            } elseif ( is_file( $file_in_archive ) ) {
+                $local_file_path =
+                    $this->getLocalFileToDeploy(
+                        $file_in_archive,
+                        $archive_path_to_replace
+                    );
+
+                $remote_deployment_path =
+                    $this->getRemoteDeploymentPath(
+                        $dir,
+                        $file_in_archive,
+                        $archive_path_to_replace,
+                        $basename_in_target
+                );
+
+                file_put_contents(
+                    $this->export_file_list,
+                    $local_file_path . ',' .  $remote_deployment_path .  "\n",
+                    FILE_APPEND | LOCK_EX
+                );
+
+                chmod( $this->export_file_list, 0664 );
+            }
+        }
     }
 
     public function prepare_export( $basename_in_target = false ) {
