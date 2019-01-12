@@ -318,14 +318,14 @@ class SiteCrawler {
         curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
         curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
         curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
-        curl_setopt( $ch, CURLOPT_HEADER, 0);
+        curl_setopt( $ch, CURLOPT_HEADER, 0 );
         curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
 
         if ( isset( $this->settings['useBasicAuth'] ) ) {
             curl_setopt(
                 ch,
                 CURLOPT_USERPWD,
-                $this->settings['basicAuthUser'] . ":" .
+                $this->settings['basicAuthUser'] . ':' .
                     $this->settings['basicAuthPassword']
             );
         }
@@ -334,9 +334,9 @@ class SiteCrawler {
 
         $status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
 
-        $this->curl_content_type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+        $this->curl_content_type = curl_getinfo( $ch, CURLINFO_CONTENT_TYPE );
 
-        curl_close($ch);
+        curl_close( $ch );
 
         // Replace this:
         $this->response = $output;
