@@ -1,7 +1,5 @@
 <?php
 
-use GuzzleHttp\Client;
-
 class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
 
     public function __construct() {
@@ -65,9 +63,6 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
     }
 
     public function upload_files() {
-        require_once dirname( __FILE__ ) .
-            '/../library/GuzzleHttp/autoloader.php';
-
         $filesRemaining = $this->get_remaining_items_count();
 
         if ( $filesRemaining < 0 ) {
@@ -148,37 +143,57 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
     }
 
     public function test_blob_create() {
-        require_once dirname( __FILE__ ) .
-            '/../library/GuzzleHttp/autoloader.php';
-        $client = new Client(
-            array(
-                'base_uri' => $this->api_base,
-            )
-        );
-
         try {
-            $response = $client->request(
-                'POST',
-                $this->settings['bbRepo'] . '/src',
-                array(
-                    'auth'  => array(
-                        $this->user,
-                        $this->settings['bbToken'],
-                    ),
-                    // TODO: grab n of these as an array and iterate
-                    'multipart' => array(
-                        array(
-                            'name'     => 'file1.html',
-                            'contents' => 'first file',
-                        ),
-                        array(
-                            'name'     => 'file2.html',
-                            'contents' => '2nd file',
-                        ),
-                    ),
-                )
+            $remote_path = $this->api_base . $this->settings['bbRepo'] . '/src';
+
+            $ch = curl_init();
+
+            curl_setopt( $ch, CURLOPT_URL, $remote_path );
+
+            // curl_setopt($ch, CURLOPT_HTTPHEADER, $curl_headers);
+            // curl_setopt($ch, CURLOPT_POSTFIELDS, $content);
+
+            curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
+            curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
+            curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
+            curl_setopt( $ch, CURLOPT_HEADER, 0);
+            curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
+            curl_setopt( $ch, CURLOPT_POST, 1);
+
+            $post_options = array(
+                'file1.html' => 'some file contents',
+                'file2.html' => 'some file contents',
+                'message' => 'WP2Static deployment'
             );
 
+            curl_setopt(
+                $ch,
+                CURLOPT_POSTFIELDS, 
+                http_build_query( $post_options )
+            );
+
+            curl_setopt(
+                $ch,
+                CURLOPT_USERPWD,
+                $this->user . ":" .
+                    $this->settings['bbToken']
+            );
+
+            $output = curl_exec( $ch );
+            $status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
+
+            curl_close( $ch );
+            
+            $good_response_codes = array( '200', '201', '301', '302', '304' );
+
+            if ( ! in_array( $status_code, $good_response_codes ) ) {
+                require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/WsLog.php';
+                WsLog::l(
+                    'BAD RESPONSE STATUS (' . $status_code . '): ' . $this->url
+                );
+
+                throw new Exception( 'Bitbucket API bad response status' );
+            }
         } catch ( Exception $e ) {
             require_once dirname( __FILE__ ) .
                 '/../library/StaticHtmlOutput/WsLog.php';
