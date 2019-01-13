@@ -47,7 +47,7 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
 
         switch ( $_POST['ajax_action'] ) {
             case 'gitlab_prepare_export':
-                $this->prepare_deployment();
+                $this->prepare_deployment( true );
                 break;
             case 'gitlab_upload_files':
                 $this->upload_files();
@@ -93,48 +93,18 @@ EOD;
         chmod( $this->export_file_list, 0664 );
     }
 
-    // NOTE: Overrides parent class, as we need to delete prev files
-    // and create GitLab Pages config file
-    public function prepare_deployment() {
-            $this->clear_file_list();
-            $this->create_deployment_list(
-                $this->settings['wp_uploads_path'] . '/' .
-                    $this->archive->name,
-                false
-            );
-
-            $this->getListOfFilesInRepo();
-
-
-            error_log(print_r($this->files_in_tree, true));
-
-            die();
-
-            //$this->delete_all_files_in_branch();
-
-            $this->createGitLabPagesConfig();
-
-        if ( ! defined( 'WP_CLI' ) ) {
-            echo 'SUCCESS';
-        }
-    }
-
-    public function mergeItemsForDeletion( $items ) {
+    public function mergePartialTrees( $items ) {
         $this->files_in_tree = array_merge( $this->files_in_tree, $items );
     }
 
-    public function partialTreeToDeletionElements( $json_response ) {
+    public function getFilePathsFromTree( $json_response ) {
         $partial_tree_array = json_decode( (string) $json_response, true );
 
         $formatted_elements = array();
 
         foreach ( $partial_tree_array as $object ) {
-            // if ($object['type'] === 'blob' || $object['type'] === 'tree') {
             if ( $object['type'] === 'blob' ) {
-                $formatted_elements[] = array(
-                    'action' => 'delete',
-                    'file_path' => $object['path'],
-                );
+                $formatted_elements[] = $object['path'];
             }
         }
 
@@ -172,9 +142,20 @@ EOD;
 
         $body = substr( $output, $header_size);
         $header = substr( $output, 0, $header_size);
-        $headers = explode( "\n", $header );
 
-        error_log(print_r($headers, true));die();
+        $raw_headers = explode(
+            "\n",
+            trim( mb_substr( $output, 0, $header_size ) )
+        );
+
+        unset($raw_headers[0]);
+
+        $headers = array();
+
+        foreach( $raw_headers as $line ) {
+          list( $key, $val ) = explode( ':', $line, 2 );
+            $headers[strtolower($key)] = trim( $val );
+        }
 
         curl_close( $ch );
 
@@ -190,18 +171,15 @@ EOD;
             throw new Exception( 'GitLab API bad response status' );
         }
 
-        $total_pages = $response->getHeader( 'X-Total-Pages' );
-        $next_page = $response->getHeader( 'X-Next-Page' );
-        $current_page = $response->getHeader( 'X-Page' );
-        $total_pages = $total_pages[0];
-        $next_page = $next_page[0];
-        $current_page = $current_page[0];
+        $total_pages = $headers['x-total-pages'];
+        $next_page = $headers['x-next-page'];
+        $current_page = $headers['x-page'];
 
         // if we have results, append them to files to delete array
-        $json_items = $output;
+        $json_items = $body;
 
-        $this->mergeItemsForDeletion(
-            $this->partialTreeToDeletionElements( $json_items )
+        $this->mergePartialTrees(
+            $this->getFilePathsFromTree( $json_items )
         );
 
         // if current page is less than total pages
@@ -215,50 +193,8 @@ EOD;
         $this->getRepositoryTree( 1 );
     }
 
-    public function delete_all_files_in_branch() {
-
-
-        error_log('dont do this anymore');
-        die();
-
-        $client = new Client(
-            array(
-                'base_uri' => $this->api_base,
-            )
-        );
-
-        $commits_endpoint = 'https://gitlab.com/api/v4/projects/' .
-            $this->settings['glProject'] . '/repository/commits';
-        try {
-            $response = $client->request(
-                'POST',
-                $commits_endpoint,
-                array(
-                    'headers'  => array(
-                        'PRIVATE-TOKEN' => $this->settings['glToken'],
-                        'content-type' => 'application/json',
-                    ),
-                    'json' => array(
-                        'branch' => 'master',
-                        'commit_message' => 'test deploy from plugin',
-                        'actions' => $this->files_in_tree,
-                    ),
-                )
-            );
-        } catch ( Exception $e ) {
-            require_once dirname( __FILE__ ) .
-                '/../library/StaticHtmlOutput/WsLog.php';
-            WsLog::l( 'GITLAB EXPORT: error encountered' );
-            WsLog::l( $e );
-            error_log( $e );
-            throw new Exception( $e );
-            return;
-        }
-    }
-
     public function upload_files() {
-        require_once dirname( __FILE__ ) .
-            '/../library/GuzzleHttp/autoloader.php';
+        $this->getListOfFilesInRepo();
 
         $filesRemaining = $this->get_remaining_items_count();
 
@@ -278,18 +214,32 @@ EOD;
         $files_data = array();
 
         foreach ( $lines as $line ) {
+            error_log($line);
             list($fileToTransfer, $targetPath) = explode( ',', $line );
 
             $fileToTransfer = $this->archive->path . $fileToTransfer;
 
-            $files_data[] = array(
-                'action' => 'create',
-                'file_path' => rtrim( $targetPath ),
-                'content' => base64_encode(
-                    file_get_contents( $fileToTransfer )
-                ),
-                'encoding' => 'base64',
-            );
+            if ( in_array( $fileToTransfer, $this->files_in_tree ) ) {
+                error_log(' DO UPDATE FOR ' . $targetPath );
+                $files_data[] = array(
+                    'action' => 'update',
+                    'file_path' => rtrim( $targetPath ),
+                    'content' => base64_encode(
+                        file_get_contents( $fileToTransfer )
+                    ),
+                    'encoding' => 'base64',
+                );
+            } else {
+                error_log(' DO CREATE FOR ' . $targetPath );
+                $files_data[] = array(
+                    'action' => 'create',
+                    'file_path' => rtrim( $targetPath ),
+                    'content' => base64_encode(
+                        file_get_contents( $fileToTransfer )
+                    ),
+                    'encoding' => 'base64',
+                );
+            }
         }
 
         if ( isset( $this->settings['glBlobDelay'] ) &&
@@ -297,32 +247,59 @@ EOD;
             sleep( $this->settings['glBlobDelay'] );
         }
 
-        $client = new Client(
-            array(
-                'base_uri' => $this->api_base,
-            )
-        );
-
         $commits_endpoint = 'https://gitlab.com/api/v4/projects/' .
             $this->settings['glProject'] . '/repository/commits';
 
         try {
-            $response = $client->request(
-                'POST',
-                $commits_endpoint,
+            $ch = curl_init();
+
+            curl_setopt( $ch, CURLOPT_URL, $commits_endpoint );
+            curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
+            curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
+            curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
+            curl_setopt( $ch, CURLOPT_HEADER, 0 );
+            curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
+            curl_setopt( $ch, CURLOPT_POST, 1 );
+            curl_setopt( $ch, CURLOPT_USERAGENT, 'WP2Static.com' );
+            curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'POST' );
+
+            $post_options = array(
+                'branch' => 'master',
+                'commit_message' => 'test deploy from plugin',
+                'actions' => $files_data,
+            );
+
+            curl_setopt(
+                $ch,
+                CURLOPT_POSTFIELDS,
+                json_encode( $post_options )
+            );
+
+            curl_setopt(
+                $ch,
+                CURLOPT_HTTPHEADER,
                 array(
-                    'headers'  => array(
-                        'PRIVATE-TOKEN' => $this->settings['glToken'],
-                        'content-type' => 'application/json',
-                    ),
-                    'json' => array(
-                        'branch' => 'master',
-                        'commit_message' => 'static publish from WP',
-                        'actions' => $files_data,
-                    ),
+                    'PRIVATE-TOKEN: ' .  $this->settings['glToken'],
+                    'Content-Type: application/json',
                 )
             );
 
+            $output = curl_exec( $ch );
+            $status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
+
+            curl_close( $ch );
+
+            $good_response_codes = array( '200', '201', '301', '302', '304' );
+
+            if ( ! in_array( $status_code, $good_response_codes ) ) {
+                require_once dirname( __FILE__ ) .
+                    '/../library/StaticHtmlOutput/WsLog.php';
+                WsLog::l(
+                    'BAD RESPONSE STATUS (' . $status_code . '): '
+                );
+
+                throw new Exception( 'GitLab API bad response status' );
+            }
         } catch ( Exception $e ) {
             require_once dirname( __FILE__ ) .
                 '/../library/StaticHtmlOutput/WsLog.php';
@@ -343,6 +320,8 @@ EOD;
                 echo $filesRemaining;
             }
         } else {
+            $this->createGitLabPagesConfig();
+
             if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
             }
