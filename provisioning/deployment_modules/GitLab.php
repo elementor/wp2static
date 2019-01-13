@@ -1,7 +1,5 @@
 <?php
 
-use GuzzleHttp\Client;
-
 class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
 
     public function __construct() {
@@ -226,60 +224,6 @@ EOD;
         }
     }
 
-    // NOTE: overiding parent class
-    public function create_deployment_list( $dir ) {
-        $archive = $this->archive->path;
-
-        $files = scandir( $dir );
-
-        foreach ( $files as $item ) {
-            if ( $item != '.' && $item != '..' && $item != '.git' ) {
-                if ( is_dir( $dir . '/' . $item ) ) {
-                    $this->create_deployment_list( $dir . '/' . $item );
-                } elseif ( is_file( $dir . '/' . $item ) ) {
-                    $wp_subdir = str_replace(
-                        '/wp-admin/admin-ajax.php',
-                        '',
-                        $_SERVER['REQUEST_URI']
-                    );
-
-                    $wp_subdir = ltrim( $wp_subdir, '/' );
-                    $dirs_in_path = $dir;
-                    $filename = $item;
-                    $original_filepath = $dir . '/' . $item;
-
-                    $local_path_to_strip = $archive . '/' . $wp_subdir;
-                    $local_path_to_strip = rtrim( $local_path_to_strip, '/' );
-
-                    $original_file_without_archive = str_replace(
-                        $local_path_to_strip,
-                        '',
-                        $original_filepath
-                    );
-
-                    $original_file_without_archive = ltrim(
-                        $original_file_without_archive,
-                        '/'
-                    );
-
-                    // NOTE: GitLab requires full deploy path
-                    $export_line =
-                        $original_file_without_archive . ',' . // field 1
-                        $original_file_without_archive . // field 2
-                        "\n";
-
-                    file_put_contents(
-                        $this->export_file_list,
-                        $export_line,
-                        FILE_APPEND | LOCK_EX
-                    );
-
-                    chmod( $this->export_file_list, 0664 );
-                }
-            }
-        }
-    }
-
     public function upload_files() {
         require_once dirname( __FILE__ ) .
             '/../library/GuzzleHttp/autoloader.php';
@@ -374,46 +318,70 @@ EOD;
     }
 
     public function test_file_create() {
-        require_once dirname( __FILE__ ) .
-            '/../library/GuzzleHttp/autoloader.php';
-
-        $client = new Client(
-            array(
-                'base_uri' => $this->api_base,
-            )
-        );
-
-        $commits_endpoint = 'https://gitlab.com/api/v4/projects/' .
+        $remote_path = 'https://gitlab.com/api/v4/projects/' .
             $this->settings['glProject'] . '/repository/commits';
 
         try {
-            $response = $client->request(
-                'POST',
-                $commits_endpoint,
+            $ch = curl_init();
+
+            curl_setopt( $ch, CURLOPT_URL, $remote_path );
+            curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
+            curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
+            curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
+            curl_setopt( $ch, CURLOPT_HEADER, 0 );
+            curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
+            curl_setopt( $ch, CURLOPT_POST, 1 );
+            curl_setopt( $ch, CURLOPT_USERAGENT, 'WP2Static.com' );
+            curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'POST' );
+
+            $post_options = array(
+                'branch' => 'master',
+                'commit_message' => 'test deploy from plugin',
+                'actions' => array(
+                    array(
+                        'action' => 'create',
+                        'file_path' => '.wpsho_' . time(),
+                        'content' => 'test file',
+                    ),
+                    array(
+                        'action' => 'create',
+                        'file_path' => '.wpsho2_' . time(),
+                        'content' => 'test file 2',
+                    ),
+                ),
+            );
+
+            curl_setopt(
+                $ch,
+                CURLOPT_POSTFIELDS,
+                json_encode( $post_options )
+            );
+
+            curl_setopt(
+                $ch,
+                CURLOPT_HTTPHEADER,
                 array(
-                    'headers'  => array(
-                        'PRIVATE-TOKEN' => $this->settings['glToken'],
-                        'content-type' => 'application/json',
-                    ),
-                    'json' => array(
-                        'branch' => 'master',
-                        'commit_message' => 'test deploy from plugin',
-                        'actions' => array(
-                            array(
-                                'action' => 'create',
-                                'file_path' => '.wpsho_' . time(),
-                                'content' => 'test file',
-                            ),
-                            array(
-                                'action' => 'create',
-                                'file_path' => '.wpsho2_' . time(),
-                                'content' => 'test file 2',
-                            ),
-                        ),
-                    ),
+                    'PRIVATE-TOKEN: ' .  $this->settings['glToken'],
+                    'Content-Type: application/json',
                 )
             );
 
+            $output = curl_exec( $ch );
+            $status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
+
+            curl_close( $ch );
+
+            $good_response_codes = array( '200', '201', '301', '302', '304' );
+
+            if ( ! in_array( $status_code, $good_response_codes ) ) {
+                require_once dirname( __FILE__ ) .
+                    '/../library/StaticHtmlOutput/WsLog.php';
+                WsLog::l(
+                    'BAD RESPONSE STATUS (' . $status_code . '): '
+                );
+
+                throw new Exception( 'GitLab API bad response status' );
+            }
         } catch ( Exception $e ) {
             require_once dirname( __FILE__ ) .
                 '/../library/StaticHtmlOutput/WsLog.php';
