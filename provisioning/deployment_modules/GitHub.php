@@ -85,15 +85,14 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
         $globHashPathLines = array();
 
         $headers = [
-            //'Content-Type' => 'application/json',
+            // 'Content-Type' => 'application/json',
             'Authorization' => 'token ' . $this->settings['ghToken'],
         ];
-
 
         $client = new Client(
             array(
                 'base_uri' => $this->api_base,
-                'headers' => $headers
+                'headers' => $headers,
             )
         );
 
@@ -109,11 +108,11 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
             $fileToTransfer = $this->archive->path . $fileToTransfer;
             $targetPath = rtrim( $targetPath );
 
-            $resource_path = 
+            $resource_path =
                     $this->settings['ghRepo'] . '/contents/' . $targetPath;
 
             // GraphQL query to get sha of existing file
-$query = <<<JSON
+            $query = <<<JSON
 query{
   repository(owner: "{$this->user}", name: "{$this->repository}") {
     object(expression: "{$this->settings['ghBranch']}:{$targetPath}") {
@@ -130,7 +129,7 @@ JSON;
 
             $json = array(
                 'query' => $query,
-                'variables' => $variables
+                'variables' => $variables,
             );
 
             $response = $client->request(
@@ -139,7 +138,7 @@ JSON;
                 'https://api.github.com/graphql',
                 array(
                     'json' => $json,
-                    'curl' => array( CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2 )
+                    'curl' => array( CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2 ),
                 )
             );
 
@@ -152,16 +151,16 @@ JSON;
             $action = '';
             $commit_message = '';
 
-            if ( ! empty ( $existing_file_object ) ) {
+            if ( ! empty( $existing_file_object ) ) {
                 $action = 'UPDATE';
-                $existing_sha = $existing_file_object['oid']; 
-                $existing_bytesize = $existing_file_object['byteSize']; 
+                $existing_sha = $existing_file_object['oid'];
+                $existing_bytesize = $existing_file_object['byteSize'];
 
                 $file_contents = file_get_contents( $fileToTransfer );
                 $b64_file_contents = base64_encode( $file_contents );
                 $local_sha = sha1( $b64_file_contents );
-                $local_length = strlen ( $b64_file_contents );
-                $local_length_unencoded = strlen ( $file_contents );
+                $local_length = strlen( $b64_file_contents );
+                $local_length_unencoded = strlen( $file_contents );
 
                 $bytesize_match = $existing_bytesize == $local_length_unencoded;
 
@@ -184,19 +183,17 @@ JSON;
                             $targetPath;
                     }
 
-                
-
                     try {
                         $response = $client->request(
                             'PUT',
                             $resource_path,
                             array(
-                                'json' => array (
-                                   'message' => $commit_message, 
-                                   'content' => $b64_file_contents, 
-                                   'branch' => $this->settings['ghBranch'], 
-                                   'sha' => $existing_sha, 
-                                )
+                                'json' => array(
+                                    'message' => $commit_message,
+                                    'content' => $b64_file_contents,
+                                    'branch' => $this->settings['ghBranch'],
+                                    'sha' => $existing_sha,
+                                ),
                             )
                         );
 
@@ -238,11 +235,11 @@ JSON;
                         'PUT',
                         $resource_path,
                         array(
-                            'json' => array (
-                               'message' => $commit_message, 
-                               'content' => $b64_file_contents, 
-                               'branch' => $this->settings['ghBranch'], 
-                            )
+                            'json' => array(
+                                'message' => $commit_message,
+                                'content' => $b64_file_contents,
+                                'branch' => $this->settings['ghBranch'],
+                            ),
                         )
                     );
 
@@ -262,7 +259,7 @@ JSON;
                 $total_URLs_to_crawl -
                 $filesRemaining +
                 $batch_index;
-          
+
             require_once dirname( __FILE__ ) .
                 '/../library/StaticHtmlOutput/ProgressLog.php';
             ProgressLog::l( $completed_URLs, $total_URLs_to_crawl );
@@ -299,13 +296,13 @@ JSON;
         $client = new Client(
             array(
                 'base_uri' => $this->api_base,
-                'headers' => $headers
+                'headers' => $headers,
             )
         );
 
         $b64_file_contents = base64_encode( 'WP2Static test upload' );
 
-        $resource_path = 
+        $resource_path =
                 $this->settings['ghRepo'] . '/contents/' .
                     '.WP2Static/' . uniqid();
 
@@ -314,11 +311,11 @@ JSON;
                 'PUT',
                 $resource_path,
                 array(
-                    'json' => array (
-                       'message' => 'WP2Static test upload', 
-                       'content' => $b64_file_contents, 
-                       'branch' => $this->settings['ghBranch'], 
-                    )
+                    'json' => array(
+                        'message' => 'WP2Static test upload',
+                        'content' => $b64_file_contents,
+                        'branch' => $this->settings['ghBranch'],
+                    ),
                 )
             );
 
@@ -330,7 +327,6 @@ JSON;
             throw new Exception( $e );
             return;
         }
-
 
         if ( ! defined( 'WP_CLI' ) ) {
             echo 'SUCCESS';
