@@ -97,7 +97,7 @@
     <exclude name="WordPress.PHP.StrictInArray.MissingTrueStrict" />
     <exclude name="WordPress.PHP.YodaConditions.NotYoda" />
     <exclude name="WordPress.Security.EscapeOutput.OutputNotEscaped" />
-    <exclude name="WordPress.Security.NonceVerification.NoNonceVerification" />
+    <exclude name="WordPress.Security.NonceVerification" />
     <exclude name="WordPress.Security.ValidatedSanitizedInput" />
     <exclude name="WordPress.WhiteSpace.PrecisionAlignment" />
     <exclude name="WordPress.WP.AlternativeFunctions.curl_curl_close" />
