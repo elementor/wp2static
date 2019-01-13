@@ -1,7 +1,5 @@
 <?php
 
-use GuzzleHttp\Client;
-
 class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
 
     public function __construct() {
@@ -32,7 +30,7 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
         $this->export_file_list =
             $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT.txt';
-        $archiveDir = file_get_contents(
+        $archive_dir = file_get_contents(
             $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-CURRENT-ARCHIVE.txt'
         );
@@ -65,57 +63,41 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
     }
 
     public function upload_files() {
-        require_once dirname( __FILE__ ) .
-            '/../library/GuzzleHttp/autoloader.php';
+        $files_remaining = $this->get_remaining_items_count();
 
-        $filesRemaining = $this->get_remaining_items_count();
-
-        if ( $filesRemaining < 0 ) {
+        if ( $files_remaining < 0 ) {
             echo 'ERROR';
             die();
         }
 
         $batch_size = $this->settings['ghBlobIncrement'];
 
-        if ( $batch_size > $filesRemaining ) {
-            $batch_size = $filesRemaining;
+        if ( $batch_size > $files_remaining ) {
+            $batch_size = $files_remaining;
         }
 
         $lines = $this->get_items_to_export( $batch_size );
-        $globHashPathLines = array();
-
-        $headers = [
-            // 'Content-Type' => 'application/json',
-            'Authorization' => 'token ' . $this->settings['ghToken'],
-        ];
-
-        $client = new Client(
-            array(
-                'base_uri' => $this->api_base,
-                'headers' => $headers,
-            )
-        );
 
         $deploy_count_path = $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-TOTAL-FILES-TO-DEPLOY.txt';
-        $total_URLs_to_crawl = file_get_contents( $deploy_count_path );
+        $total_urls_to_crawl = file_get_contents( $deploy_count_path );
 
         $batch_index = 0;
 
         foreach ( $lines as $line ) {
-            list($fileToTransfer, $targetPath) = explode( ',', $line );
+            list($local_file, $target_path) = explode( ',', $line );
 
-            $fileToTransfer = $this->archive->path . $fileToTransfer;
-            $targetPath = rtrim( $targetPath );
+            $local_file = $this->archive->path . $local_file;
+            $target_path = rtrim( $target_path );
 
-            $resource_path =
-                    $this->settings['ghRepo'] . '/contents/' . $targetPath;
+            $remote_path = $this->api_base . $this->settings['ghRepo'] .
+                '/contents/' . $target_path;
 
             // GraphQL query to get sha of existing file
             $query = <<<JSON
 query{
   repository(owner: "{$this->user}", name: "{$this->repository}") {
-    object(expression: "{$this->settings['ghBranch']}:{$targetPath}") {
+    object(expression: "{$this->settings['ghBranch']}:{$target_path}") {
       ... on Blob {
         oid
         byteSize
@@ -132,19 +114,57 @@ JSON;
                 'variables' => $variables,
             );
 
-            $response = $client->request(
-                'POST',
-                // override base_uri with a full URL
-                'https://api.github.com/graphql',
+            $ch = curl_init();
+
+            curl_setopt( $ch, CURLOPT_URL, 'https://api.github.com/graphql' );
+            curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
+            curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
+            curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
+            curl_setopt( $ch, CURLOPT_HEADER, 0 );
+            curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
+            curl_setopt( $ch, CURLOPT_POST, 1 );
+            curl_setopt( $ch, CURLOPT_USERAGENT, 'WP2Static.com' );
+            curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'POST' );
+            curl_setopt( $ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2 );
+
+            $post_options = $json;
+
+            curl_setopt(
+                $ch,
+                CURLOPT_POSTFIELDS,
+                json_encode( $json )
+            );
+
+            curl_setopt(
+                $ch,
+                CURLOPT_HTTPHEADER,
                 array(
-                    'json' => $json,
-                    'curl' => array( CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2 ),
+                    'Authorization: ' .
+                        'token ' . $this->settings['ghToken'],
                 )
             );
 
-            $gh_file_info = json_decode( $response->getBody()->getContents(), true );
+            $output = curl_exec( $ch );
+            $status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
 
-            $existing_file_object = $gh_file_info['data']['repository']['object'];
+            curl_close( $ch );
+
+            $good_response_codes = array( '200', '201', '301', '302', '304' );
+
+            if ( ! in_array( $status_code, $good_response_codes ) ) {
+                require_once dirname( __FILE__ ) .
+                    '/../library/StaticHtmlOutput/WsLog.php';
+                WsLog::l(
+                    'BAD RESPONSE STATUS (' . $status_code . '): '
+                );
+
+                throw new Exception( 'GitHub API bad response status' );
+            }
+
+            $gh_file_info = json_decode( $output, true );
+
+            $existing_file_object =
+                $gh_file_info['data']['repository']['object'];
 
             $skip_same_bytesize = isset( $this->settings['ghSkipSameBytes'] );
 
@@ -156,7 +176,7 @@ JSON;
                 $existing_sha = $existing_file_object['oid'];
                 $existing_bytesize = $existing_file_object['byteSize'];
 
-                $file_contents = file_get_contents( $fileToTransfer );
+                $file_contents = file_get_contents( $local_file );
                 $b64_file_contents = base64_encode( $file_contents );
                 $local_sha = sha1( $b64_file_contents );
                 $local_length = strlen( $b64_file_contents );
@@ -173,30 +193,72 @@ JSON;
                             ),
                             array(
                                 $action,
-                                $targetPath,
+                                $target_path,
                             ),
                             $this->settings['ghCommitMessage']
                         );
                     } else {
                         $commit_message = 'WP2Static ' .
                             $action . ' ' .
-                            $targetPath;
+                            $target_path;
                     }
 
                     try {
-                        $response = $client->request(
-                            'PUT',
-                            $resource_path,
+                        $ch = curl_init();
+
+                        curl_setopt( $ch, CURLOPT_URL, $remote_path );
+                        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
+                        curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
+                        curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
+                        curl_setopt( $ch, CURLOPT_HEADER, 0 );
+                        curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
+                        curl_setopt( $ch, CURLOPT_POST, 1 );
+                        curl_setopt( $ch, CURLOPT_USERAGENT, 'WP2Static.com' );
+                        curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'PUT' );
+
+                        $post_options = array(
+                            'message' => $commit_message,
+                            'content' => $b64_file_contents,
+                            'branch' => $this->settings['ghBranch'],
+                            'sha' => $existing_sha,
+                        );
+
+                        curl_setopt(
+                            $ch,
+                            CURLOPT_POSTFIELDS,
+                            json_encode( $post_options )
+                        );
+
+                        curl_setopt(
+                            $ch,
+                            CURLOPT_HTTPHEADER,
                             array(
-                                'json' => array(
-                                    'message' => $commit_message,
-                                    'content' => $b64_file_contents,
-                                    'branch' => $this->settings['ghBranch'],
-                                    'sha' => $existing_sha,
-                                ),
+                                'Authorization: ' .
+                                    'token ' . $this->settings['ghToken'],
                             )
                         );
 
+                        $output = curl_exec( $ch );
+                        $status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
+
+                        curl_close( $ch );
+
+                        $good_response_codes =
+                            array( '200', '201', '301', '302', '304' );
+
+                        if (
+                            ! in_array( $status_code, $good_response_codes )
+                            ) {
+                            require_once dirname( __FILE__ ) .
+                                '/../library/StaticHtmlOutput/WsLog.php';
+                            WsLog::l(
+                                'BAD RESPONSE STATUS (' . $status_code . '): '
+                            );
+
+                            throw new Exception(
+                                'GitHub API bad response status'
+                            );
+                        }
                     } catch ( Exception $e ) {
                         require_once dirname( __FILE__ ) .
                             '/../library/StaticHtmlOutput/WsLog.php';
@@ -209,7 +271,7 @@ JSON;
             } else {
                 $action = 'CREATE';
 
-                $file_contents = file_get_contents( $fileToTransfer );
+                $file_contents = file_get_contents( $local_file );
                 $b64_file_contents = base64_encode( $file_contents );
 
                 if ( isset( $this->settings['ghCommitMessage'] ) ) {
@@ -220,29 +282,67 @@ JSON;
                         ),
                         array(
                             $action,
-                            $targetPath,
+                            $target_path,
                         ),
                         $this->settings['ghCommitMessage']
                     );
                 } else {
                     $commit_message = 'WP2Static ' .
                         $action . ' ' .
-                        $targetPath;
+                        $target_path;
                 }
 
                 try {
-                    $response = $client->request(
-                        'PUT',
-                        $resource_path,
+                    $ch = curl_init();
+
+                    curl_setopt( $ch, CURLOPT_URL, $remote_path );
+                    curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
+                    curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
+                    curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
+                    curl_setopt( $ch, CURLOPT_HEADER, 0 );
+                    curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
+                    curl_setopt( $ch, CURLOPT_POST, 1 );
+                    curl_setopt( $ch, CURLOPT_USERAGENT, 'WP2Static.com' );
+                    curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'PUT' );
+
+                    $post_options = array(
+                        'message' => $commit_message,
+                        'content' => $b64_file_contents,
+                        'branch' => $this->settings['ghBranch'],
+                    );
+
+                    curl_setopt(
+                        $ch,
+                        CURLOPT_POSTFIELDS,
+                        json_encode( $post_options )
+                    );
+
+                    curl_setopt(
+                        $ch,
+                        CURLOPT_HTTPHEADER,
                         array(
-                            'json' => array(
-                                'message' => $commit_message,
-                                'content' => $b64_file_contents,
-                                'branch' => $this->settings['ghBranch'],
-                            ),
+                            'Authorization: ' .
+                                'token ' . $this->settings['ghToken'],
                         )
                     );
 
+                    $output = curl_exec( $ch );
+                    $status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
+
+                    curl_close( $ch );
+
+                    $good_response_codes =
+                        array( '200', '201', '301', '302', '304' );
+
+                    if ( ! in_array( $status_code, $good_response_codes ) ) {
+                        require_once dirname( __FILE__ ) .
+                            '/../library/StaticHtmlOutput/WsLog.php';
+                        WsLog::l(
+                            'BAD RESPONSE STATUS (' . $status_code . '): '
+                        );
+
+                        throw new Exception( 'GitHub API bad response status' );
+                    }
                 } catch ( Exception $e ) {
                     require_once dirname( __FILE__ ) .
                         '/../library/StaticHtmlOutput/WsLog.php';
@@ -255,14 +355,14 @@ JSON;
 
             $batch_index++;
 
-            $completed_URLs =
-                $total_URLs_to_crawl -
-                $filesRemaining +
+            $completed_urls =
+                $total_urls_to_crawl -
+                $files_remaining +
                 $batch_index;
 
             require_once dirname( __FILE__ ) .
                 '/../library/StaticHtmlOutput/ProgressLog.php';
-            ProgressLog::l( $completed_URLs, $total_URLs_to_crawl );
+            ProgressLog::l( $completed_urls, $total_urls_to_crawl );
         }
 
         if ( isset( $this->settings['ghBlobDelay'] ) &&
@@ -270,13 +370,13 @@ JSON;
             sleep( $this->settings['ghBlobDelay'] );
         }
 
-        $filesRemaining = $this->get_remaining_items_count();
+        $files_remaining = $this->get_remaining_items_count();
 
-        if ( $filesRemaining > 0 ) {
+        if ( $files_remaining > 0 ) {
             if ( defined( 'WP_CLI' ) ) {
                 $this->upload_files();
             } else {
-                echo $filesRemaining;
+                echo $files_remaining;
             }
         } else {
             if ( ! defined( 'WP_CLI' ) ) {
@@ -286,39 +386,61 @@ JSON;
     }
 
     public function test_upload() {
-        require_once dirname( __FILE__ ) .
-            '/../library/GuzzleHttp/autoloader.php';
-
-        $headers = [
-            'Authorization' => 'token ' . $this->settings['ghToken'],
-        ];
-
-        $client = new Client(
-            array(
-                'base_uri' => $this->api_base,
-                'headers' => $headers,
-            )
-        );
-
-        $b64_file_contents = base64_encode( 'WP2Static test upload' );
-
-        $resource_path =
-                $this->settings['ghRepo'] . '/contents/' .
-                    '.WP2Static/' . uniqid();
-
         try {
-            $response = $client->request(
-                'PUT',
-                $resource_path,
+            $remote_path = $this->api_base . $this->settings['ghRepo'] .
+                '/contents/' . '.WP2Static/' . uniqid();
+
+            $b64_file_contents = base64_encode( 'WP2Static test upload' );
+
+            $ch = curl_init();
+
+            curl_setopt( $ch, CURLOPT_URL, $remote_path );
+            curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
+            curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
+            curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
+            curl_setopt( $ch, CURLOPT_HEADER, 0 );
+            curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
+            curl_setopt( $ch, CURLOPT_POST, 1 );
+            curl_setopt( $ch, CURLOPT_USERAGENT, 'WP2Static.com' );
+            curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'PUT' );
+
+            $post_options = array(
+                'message' => 'Test WP2Static connectivity',
+                'content' => $b64_file_contents,
+                'branch' => $this->settings['ghBranch'],
+            );
+
+            curl_setopt(
+                $ch,
+                CURLOPT_POSTFIELDS,
+                json_encode( $post_options )
+            );
+
+            curl_setopt(
+                $ch,
+                CURLOPT_HTTPHEADER,
                 array(
-                    'json' => array(
-                        'message' => 'WP2Static test upload',
-                        'content' => $b64_file_contents,
-                        'branch' => $this->settings['ghBranch'],
-                    ),
+                    'Authorization: ' .
+                        'token ' . $this->settings['ghToken'],
                 )
             );
 
+            $output = curl_exec( $ch );
+            $status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
+
+            curl_close( $ch );
+
+            $good_response_codes = array( '200', '201', '301', '302', '304' );
+
+            if ( ! in_array( $status_code, $good_response_codes ) ) {
+                require_once dirname( __FILE__ ) .
+                    '/../library/StaticHtmlOutput/WsLog.php';
+                WsLog::l(
+                    'BAD RESPONSE STATUS (' . $status_code . '): '
+                );
+
+                throw new Exception( 'GitHub API bad response status' );
+            }
         } catch ( Exception $e ) {
             require_once dirname( __FILE__ ) .
                 '/../library/StaticHtmlOutput/WsLog.php';
