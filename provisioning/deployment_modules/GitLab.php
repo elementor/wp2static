@@ -47,7 +47,7 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
 
         switch ( $_POST['ajax_action'] ) {
             case 'gitlab_prepare_export':
-                $this->prepare_deployment( true );
+                $this->prepare_export( true );
                 break;
             case 'gitlab_upload_files':
                 $this->upload_files();
@@ -194,6 +194,7 @@ EOD;
     }
 
     public function upload_files() {
+        // TODO: move repo file list to flat txt file, once-only generation
         $this->getListOfFilesInRepo();
 
         $filesRemaining = $this->get_remaining_items_count();
@@ -214,26 +215,30 @@ EOD;
         $files_data = array();
 
         foreach ( $lines as $line ) {
-            error_log($line);
-            list($fileToTransfer, $targetPath) = explode( ',', $line );
+            list($fileToTransfer, $targetPath) = explode( ',', rtrim( $line ) );
 
             $fileToTransfer = $this->archive->path . $fileToTransfer;
 
-            if ( in_array( $fileToTransfer, $this->files_in_tree ) ) {
-                error_log(' DO UPDATE FOR ' . $targetPath );
+            if ( ! is_file( $fileToTransfer ) ) {
+                continue;
+            }
+
+            if ( in_array( $targetPath, $this->files_in_tree ) ) {
+
+                // TODO: quick filesize comparision via
+                // https://docs.gitlab.com/ee/api/repository_files.html
                 $files_data[] = array(
                     'action' => 'update',
-                    'file_path' => rtrim( $targetPath ),
+                    'file_path' => $targetPath,
                     'content' => base64_encode(
                         file_get_contents( $fileToTransfer )
                     ),
                     'encoding' => 'base64',
                 );
             } else {
-                error_log(' DO CREATE FOR ' . $targetPath );
                 $files_data[] = array(
                     'action' => 'create',
-                    'file_path' => rtrim( $targetPath ),
+                    'file_path' => $targetPath,
                     'content' => base64_encode(
                         file_get_contents( $fileToTransfer )
                     ),
@@ -265,7 +270,7 @@ EOD;
 
             $post_options = array(
                 'branch' => 'master',
-                'commit_message' => 'test deploy from plugin',
+                'commit_message' => 'WP2Static Deployment',
                 'actions' => $files_data,
             );
 
@@ -305,7 +310,6 @@ EOD;
                 '/../library/StaticHtmlOutput/WsLog.php';
             WsLog::l( 'GITLAB EXPORT: error encountered' );
             WsLog::l( $e );
-            error_log( $e );
             throw new Exception( $e );
             return;
         }
@@ -398,7 +402,6 @@ EOD;
                 '/../library/StaticHtmlOutput/WsLog.php';
             WsLog::l( 'GITLAB EXPORT: error encountered' );
             WsLog::l( $e );
-            error_log( $e );
             throw new Exception( $e );
             return;
         }
