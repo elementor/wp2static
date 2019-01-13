@@ -13,18 +13,34 @@
       </tr>
       <tr>
         <th scope="row">
-          <label for="bunnycdnPullZoneName"><?php echo __('Pull Zone', 'static-html-output-plugin');?></label>
+          <label for="bunnycdnStorageZoneName"><?php echo __('Storage Zone', 'static-html-output-plugin');?></label>
         </th>
         <td>
-          <?php $tpl->displayTextfield($this, 'bunnycdnPullZoneName', 'Pull Zone', 'ie, mybunnypullzone, etc . This will do a cache purge once all files are transferred '); ?>
+          <?php $tpl->displayTextfield($this, 'bunnycdnStorageZoneName', 'Storage Zone Name', 'ie, mybunnystoragezone. This is where the files will be uploaded to. '); ?>
         </td>
       </tr>
       <tr>
         <th scope="row">
-          <label for="bunnycdnAPIKey"><?php echo __('API Key', 'static-html-output-plugin');?></label>
+          <label for="bunnycdnStorageZoneAccessKey"><?php echo __('Storage Zone Access Key', 'static-html-output-plugin');?></label>
         </th>
         <td>
-          <?php $tpl->displayTextfield($this, 'bunnycdnAPIKey', 'API Key', '', 'password'); ?>
+          <?php $tpl->displayTextfield($this, 'bunnycdnStorageZoneAccessKey', 'Storage Zone Access Key', 'Find in your Storage Zone settings', 'password'); ?>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          <label for="bunnycdnPullZoneID"><?php echo __('Pull Zone ID', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <?php $tpl->displayTextfield($this, 'bunnycdnPullZoneID', 'Pull Zone ID', 'Numeric. ie, 1234. This will do a cache purge once all files are transferred', 'number'); ?>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          <label for="bunnycdnPullZoneAccessKey"><?php echo __('Pull Zone Access Key', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <?php $tpl->displayTextfield($this, 'bunnycdnPullZoneAccessKey', 'Pull Zone Access Key', 'Find in your Account settings', 'password'); ?>
         </td>
       </tr>
       <tr>
