@@ -1,7 +1,5 @@
 <?php
 
-use GuzzleHttp\Client;
-
 class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
 
     public function __construct() {
@@ -34,6 +32,8 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
         );
 
         $this->r_path = '';
+
+        $this->api_base = 'https://storage.bunnycdn.com';
 
         if ( isset( $this->settings['bunnycdnRemotePath'] ) ) {
             $this->r_path = $this->settings['bunnycdnRemotePath'];
@@ -176,37 +176,64 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
     }
 
     public function test_deploy() {
-        require_once dirname( __FILE__ ) .
-            '/../library/GuzzleHttp/autoloader.php';
-
-        $client = new Client(
-            array(
-                'base_uri' => 'https://storage.bunnycdn.com',
-                // TODO: these kind of cURL options would be nice in Advanced
-                // 'force_ip_resolve' => 'v4'
-            )
-        );
 
         try {
-            $target_path = '/' . $this->settings['bunnycdnPullZoneName'] .
+            $remote_path = $this->api_base . '/' .
+                $this->settings['bunnycdnPullZoneName'] .
                 '/tmpFile';
 
-            $response = $client->request(
-                'PUT',
-                $target_path,
-                array(
-                    'headers'  => array(
-                        'AccessKey' => ' ' . $this->settings['bunnycdnAPIKey'],
-                    ),
-                    'body' => 'deploy',
-                )
+            $ch = curl_init();
+
+            curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+            curl_setopt( $ch, CURLOPT_URL, $remote_path );
+            curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
+            curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
+            curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
+            curl_setopt( $ch, CURLOPT_HEADER, 0);
+            curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
+            curl_setopt( $ch, CURLOPT_POST, 1);
+
+            curl_setopt( $ch, CURLOPT_HTTPHEADER, array(
+                'AccessKey: ' . $this->settings['bunnycdnAPIKey'],
+            ));
+
+            $post_options = array(
+                'body' => 'Test WP2Static connectivity',
             );
+
+            curl_setopt(
+                $ch,
+                CURLOPT_POSTFIELDS, 
+                $post_options
+            );
+
+            curl_setopt(
+                $ch,
+                CURLOPT_USERPWD,
+                $this->user . ":" .
+                    $this->settings['bbToken']
+            );
+
+            $output = curl_exec( $ch );
+            $status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
+
+            curl_close( $ch );
+            
+            $good_response_codes = array( '200', '201', '301', '302', '304' );
+
+            if ( ! in_array( $status_code, $good_response_codes ) ) {
+                require_once dirname( __FILE__ ) . '/../library/StaticHtmlOutput/WsLog.php';
+                WsLog::l(
+                    'BAD RESPONSE STATUS (' . $status_code . '): '
+                );
+
+                throw new Exception( 'BunnyCDN API bad response status' );
+            }
         } catch ( Exception $e ) {
             require_once dirname( __FILE__ ) .
                 '/../library/StaticHtmlOutput/WsLog.php';
             WsLog::l( 'BUNNYCDN EXPORT: error encountered' );
             WsLog::l( $e );
-            error_log( $e );
             throw new Exception( $e );
         }
 
