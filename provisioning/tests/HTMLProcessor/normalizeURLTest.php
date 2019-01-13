@@ -10,6 +10,7 @@ use PHPUnit\Framework\TestCase;
 final class HTMLProcessorNormalizeURLTest extends TestCase {
 
     /**
+     * Test data provider
      * @dataProvider anchorTagProvider
      */
     public function testNormalizePartialURLInAnchor(

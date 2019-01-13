@@ -92,29 +92,33 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
 
                 $ch = curl_init();
 
-                $fileStream = fopen( $fileToTransfer, "r" );
+                $fileStream = fopen( $fileToTransfer, 'r' );
                 $dataLength = filesize( $fileToTransfer );
 
-                curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+                curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'PUT' );
                 curl_setopt( $ch, CURLOPT_URL, $remote_path );
                 curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
                 curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
                 curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
-                curl_setopt( $ch, CURLOPT_HEADER, 0);
-                curl_setopt( $ch, CURLOPT_UPLOAD, 1);
+                curl_setopt( $ch, CURLOPT_HEADER, 0 );
+                curl_setopt( $ch, CURLOPT_UPLOAD, 1 );
                 curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
                 curl_setopt( $ch, CURLOPT_INFILE, $fileStream );
                 curl_setopt( $ch, CURLOPT_INFILESIZE, $dataLength );
 
-                curl_setopt( $ch, CURLOPT_HTTPHEADER, array(
-                    'AccessKey: ' . $this->settings['bunnycdnStorageZoneAccessKey'],
-                ));
+                curl_setopt(
+                    $ch,
+                    CURLOPT_HTTPHEADER,
+                    array(
+                        'AccessKey: ' . $this->settings['bunnycdnStorageZoneAccessKey'],
+                    )
+                );
 
                 $output = curl_exec( $ch );
                 $status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
 
                 curl_close( $ch );
-                
+
                 $good_response_codes = array( '200', '201', '301', '302', '304' );
 
                 if ( ! in_array( $status_code, $good_response_codes ) ) {
@@ -164,25 +168,29 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
 
             $ch = curl_init();
 
-            curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'POST');
+            curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'POST' );
             curl_setopt( $ch, CURLOPT_URL, $endpoint );
             curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
             curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
             curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
             curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 0 );
-            curl_setopt( $ch, CURLOPT_POST, 1);
+            curl_setopt( $ch, CURLOPT_POST, 1 );
 
-            curl_setopt( $ch, CURLOPT_HTTPHEADER, array(
-                'Content-Type: application/json',
-                'Content-Length: 0',
-                'AccessKey: ' . $this->settings['bunnycdnPullZoneAccessKey'],
-            ));
+            curl_setopt(
+                $ch,
+                CURLOPT_HTTPHEADER,
+                array(
+                    'Content-Type: application/json',
+                    'Content-Length: 0',
+                    'AccessKey: ' . $this->settings['bunnycdnPullZoneAccessKey'],
+                )
+            );
 
             $output = curl_exec( $ch );
             $status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
 
             curl_close( $ch );
-            
+
             $good_response_codes = array( '200', '201' );
 
             if ( ! in_array( $status_code, $good_response_codes ) ) {
@@ -199,7 +207,6 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
             if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
             }
-
         } catch ( Exception $e ) {
             WsLog::l( 'BUNNYCDN EXPORT: error encountered' );
             WsLog::l( $e );
@@ -216,18 +223,22 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
 
             $ch = curl_init();
 
-            curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+            curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'PUT' );
             curl_setopt( $ch, CURLOPT_URL, $remote_path );
             curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
             curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
             curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
-            curl_setopt( $ch, CURLOPT_HEADER, 0);
+            curl_setopt( $ch, CURLOPT_HEADER, 0 );
             curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
-            curl_setopt( $ch, CURLOPT_POST, 1);
+            curl_setopt( $ch, CURLOPT_POST, 1 );
 
-            curl_setopt( $ch, CURLOPT_HTTPHEADER, array(
-                'AccessKey: ' . $this->settings['bunnycdnStorageZoneAccessKey'],
-            ));
+            curl_setopt(
+                $ch,
+                CURLOPT_HTTPHEADER,
+                array(
+                    'AccessKey: ' . $this->settings['bunnycdnStorageZoneAccessKey'],
+                )
+            );
 
             $post_options = array(
                 'body' => 'Test WP2Static connectivity',
@@ -235,7 +246,7 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
 
             curl_setopt(
                 $ch,
-                CURLOPT_POSTFIELDS, 
+                CURLOPT_POSTFIELDS,
                 $post_options
             );
 
@@ -243,7 +254,7 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
             $status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
 
             curl_close( $ch );
-            
+
             $good_response_codes = array( '200', '201', '301', '302', '304' );
 
             if ( ! in_array( $status_code, $good_response_codes ) ) {

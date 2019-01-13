@@ -86,11 +86,11 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
 
             $fileToTransfer = $this->archive->path . $fileToTransfer;
 
-            $files_data[ 'message' ] = 'WP2Static deployment';
+            $files_data['message'] = 'WP2Static deployment';
 
             if ( is_file( $fileToTransfer ) ) {
                 $files_data[ '/' . rtrim( $targetPath ) ] =
-                    new CURLFile ( $fileToTransfer );
+                    new CURLFile( $fileToTransfer );
             }
         }
 
@@ -108,23 +108,23 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
             curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
             curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
             curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
-            curl_setopt( $ch, CURLOPT_HEADER, 0);
+            curl_setopt( $ch, CURLOPT_HEADER, 0 );
             curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
-            curl_setopt( $ch, CURLOPT_POST, 1);
+            curl_setopt( $ch, CURLOPT_POST, 1 );
 
             $post_options = $files_data;
 
             // note: straight array over http_build_query for Bitbucket
             curl_setopt(
                 $ch,
-                CURLOPT_POSTFIELDS, 
+                CURLOPT_POSTFIELDS,
                 $post_options
             );
 
             curl_setopt(
                 $ch,
                 CURLOPT_USERPWD,
-                $this->user . ":" .
+                $this->user . ':' .
                     $this->settings['bbToken']
             );
 
@@ -132,7 +132,7 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
             $status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
 
             curl_close( $ch );
-            
+
             $good_response_codes = array( '200', '201', '301', '302', '304' );
 
             if ( ! in_array( $status_code, $good_response_codes ) ) {
@@ -178,26 +178,26 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
             curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
             curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
             curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
-            curl_setopt( $ch, CURLOPT_HEADER, 0);
+            curl_setopt( $ch, CURLOPT_HEADER, 0 );
             curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
-            curl_setopt( $ch, CURLOPT_POST, 1);
+            curl_setopt( $ch, CURLOPT_POST, 1 );
 
             $post_options = array(
                 '.tmp_wp2static.txt' => 'Test WP2Static connectivity',
                 '.tmp_wp2static.txt' => 'Test WP2Static connectivity #2',
-                'message' => 'WP2Static deployment test'
+                'message' => 'WP2Static deployment test',
             );
 
             curl_setopt(
                 $ch,
-                CURLOPT_POSTFIELDS, 
+                CURLOPT_POSTFIELDS,
                 $post_options
             );
 
             curl_setopt(
                 $ch,
                 CURLOPT_USERPWD,
-                $this->user . ":" .
+                $this->user . ':' .
                     $this->settings['bbToken']
             );
 
@@ -205,7 +205,7 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
             $status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
 
             curl_close( $ch );
-            
+
             $good_response_codes = array( '200', '201', '301', '302', '304' );
 
             if ( ! in_array( $status_code, $good_response_codes ) ) {
