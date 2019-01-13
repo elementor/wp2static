@@ -26,7 +26,7 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
             $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT.txt';
 
-        $archiveDir = file_get_contents(
+        $archive_dir = file_get_contents(
             $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-CURRENT-ARCHIVE.txt'
         );
@@ -63,37 +63,37 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
 
 
     public function transfer_files() {
-        $filesRemaining = $this->get_remaining_items_count();
+        $files_remaining = $this->get_remaining_items_count();
 
-        if ( $filesRemaining < 0 ) {
+        if ( $files_remaining < 0 ) {
             echo 'ERROR';
             die();
         }
 
         $batch_size = $this->settings['bunnyBlobIncrement'];
 
-        if ( $batch_size > $filesRemaining ) {
-            $batch_size = $filesRemaining;
+        if ( $batch_size > $files_remaining ) {
+            $batch_size = $files_remaining;
         }
 
         $lines = $this->get_items_to_export( $batch_size );
 
         foreach ( $lines as $line ) {
-            list($fileToTransfer, $targetPath) = explode( ',', $line );
+            list($local_file, $target_path) = explode( ',', $line );
 
-            $fileToTransfer = $this->archive->path . $fileToTransfer;
+            $local_file = $this->archive->path . $local_file;
 
-            $targetPath = rtrim( $targetPath );
+            $target_path = rtrim( $target_path );
 
             try {
                 $remote_path = $this->api_base . '/' .
                     $this->settings['bunnycdnStorageZoneName'] .
-                    '/' . $targetPath;
+                    '/' . $target_path;
 
                 $ch = curl_init();
 
-                $fileStream = fopen( $fileToTransfer, 'r' );
-                $dataLength = filesize( $fileToTransfer );
+                $file_stream = fopen( $local_file, 'r' );
+                $data_length = filesize( $local_file );
 
                 curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'PUT' );
                 curl_setopt( $ch, CURLOPT_URL, $remote_path );
@@ -103,14 +103,15 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
                 curl_setopt( $ch, CURLOPT_HEADER, 0 );
                 curl_setopt( $ch, CURLOPT_UPLOAD, 1 );
                 curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
-                curl_setopt( $ch, CURLOPT_INFILE, $fileStream );
-                curl_setopt( $ch, CURLOPT_INFILESIZE, $dataLength );
+                curl_setopt( $ch, CURLOPT_INFILE, $file_stream );
+                curl_setopt( $ch, CURLOPT_INFILESIZE, $data_length );
 
                 curl_setopt(
                     $ch,
                     CURLOPT_HTTPHEADER,
                     array(
-                        'AccessKey: ' . $this->settings['bunnycdnStorageZoneAccessKey'],
+                        'AccessKey: ' .
+                            $this->settings['bunnycdnStorageZoneAccessKey'],
                     )
                 );
 
@@ -119,10 +120,12 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
 
                 curl_close( $ch );
 
-                $good_response_codes = array( '200', '201', '301', '302', '304' );
+                $good_response_codes =
+                    array( '200', '201', '301', '302', '304' );
 
                 if ( ! in_array( $status_code, $good_response_codes ) ) {
-                    require_once dirname( __FILE__ ) . '/../library/StaticHtmlOutput/WsLog.php';
+                    require_once dirname( __FILE__ ) .
+                        '/../library/StaticHtmlOutput/WsLog.php';
 
                     WsLog::l(
                         'BAD RESPONSE STATUS (' . $status_code . '): '
@@ -145,14 +148,14 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
             sleep( $this->settings['bunnyBlobDelay'] );
         }
 
-        $filesRemaining = $this->get_remaining_items_count();
+        $files_remaining = $this->get_remaining_items_count();
 
-        if ( $filesRemaining > 0 ) {
+        if ( $files_remaining > 0 ) {
 
             if ( defined( 'WP_CLI' ) ) {
                 $this->transfer_files();
             } else {
-                echo $filesRemaining;
+                echo $files_remaining;
             }
         } else {
             if ( ! defined( 'WP_CLI' ) ) {
@@ -182,7 +185,8 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
                 array(
                     'Content-Type: application/json',
                     'Content-Length: 0',
-                    'AccessKey: ' . $this->settings['bunnycdnPullZoneAccessKey'],
+                    'AccessKey: ' .
+                        $this->settings['bunnycdnPullZoneAccessKey'],
                 )
             );
 
@@ -194,7 +198,8 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
             $good_response_codes = array( '200', '201' );
 
             if ( ! in_array( $status_code, $good_response_codes ) ) {
-                require_once dirname( __FILE__ ) . '/../library/StaticHtmlOutput/WsLog.php';
+                require_once dirname( __FILE__ ) .
+                    '/../library/StaticHtmlOutput/WsLog.php';
                 WsLog::l(
                     'BAD RESPONSE STATUS (' . $status_code . '): '
                 );
@@ -236,7 +241,8 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
                 $ch,
                 CURLOPT_HTTPHEADER,
                 array(
-                    'AccessKey: ' . $this->settings['bunnycdnStorageZoneAccessKey'],
+                    'AccessKey: ' .
+                        $this->settings['bunnycdnStorageZoneAccessKey'],
                 )
             );
 
@@ -258,7 +264,8 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
             $good_response_codes = array( '200', '201', '301', '302', '304' );
 
             if ( ! in_array( $status_code, $good_response_codes ) ) {
-                require_once dirname( __FILE__ ) . '/../library/StaticHtmlOutput/WsLog.php';
+                require_once dirname( __FILE__ ) .
+                    '/../library/StaticHtmlOutput/WsLog.php';
                 WsLog::l(
                     'BAD RESPONSE STATUS (' . $status_code . '): '
                 );
