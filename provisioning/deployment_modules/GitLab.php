@@ -25,7 +25,7 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
         $this->export_file_list =
             $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-EXPORT-GITLAB-FILES-TO-EXPORT.txt';
-        $archiveDir = file_get_contents(
+        $archive_dir = file_get_contents(
             $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-CURRENT-ARCHIVE.txt'
         );
@@ -131,7 +131,7 @@ EOD;
             $ch,
             CURLOPT_HTTPHEADER,
             array(
-                'PRIVATE-TOKEN: ' .  $this->settings['glToken'],
+                'PRIVATE-TOKEN: ' . $this->settings['glToken'],
                 'Content-Type: application/json',
             )
         );
@@ -140,21 +140,21 @@ EOD;
         $status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
         $header_size = curl_getinfo( $ch, CURLINFO_HEADER_SIZE );
 
-        $body = substr( $output, $header_size);
-        $header = substr( $output, 0, $header_size);
+        $body = substr( $output, $header_size );
+        $header = substr( $output, 0, $header_size );
 
         $raw_headers = explode(
             "\n",
             trim( mb_substr( $output, 0, $header_size ) )
         );
 
-        unset($raw_headers[0]);
+        unset( $raw_headers[0] );
 
         $headers = array();
 
-        foreach( $raw_headers as $line ) {
-          list( $key, $val ) = explode( ':', $line, 2 );
-            $headers[strtolower($key)] = trim( $val );
+        foreach ( $raw_headers as $line ) {
+            list( $key, $val ) = explode( ':', $line, 2 );
+            $headers[ strtolower( $key ) ] = trim( $val );
         }
 
         curl_close( $ch );
@@ -197,17 +197,17 @@ EOD;
         // TODO: move repo file list to flat txt file, once-only generation
         $this->getListOfFilesInRepo();
 
-        $filesRemaining = $this->get_remaining_items_count();
+        $files_remaining = $this->get_remaining_items_count();
 
-        if ( $filesRemaining < 0 ) {
+        if ( $files_remaining < 0 ) {
             echo 'ERROR';
             die();
         }
 
         $batch_size = $this->settings['glBlobIncrement'];
 
-        if ( $batch_size > $filesRemaining ) {
-            $batch_size = $filesRemaining;
+        if ( $batch_size > $files_remaining ) {
+            $batch_size = $files_remaining;
         }
 
         $lines = $this->get_items_to_export( $batch_size );
@@ -215,32 +215,32 @@ EOD;
         $files_data = array();
 
         foreach ( $lines as $line ) {
-            list($fileToTransfer, $targetPath) = explode( ',', rtrim( $line ) );
+            list($local_file, $target_path) = explode( ',', rtrim( $line ) );
 
-            $fileToTransfer = $this->archive->path . $fileToTransfer;
+            $local_file = $this->archive->path . $local_file;
 
-            if ( ! is_file( $fileToTransfer ) ) {
+            if ( ! is_file( $local_file ) ) {
                 continue;
             }
 
-            if ( in_array( $targetPath, $this->files_in_tree ) ) {
+            if ( in_array( $target_path, $this->files_in_tree ) ) {
 
                 // TODO: quick filesize comparision via
                 // https://docs.gitlab.com/ee/api/repository_files.html
                 $files_data[] = array(
                     'action' => 'update',
-                    'file_path' => $targetPath,
+                    'file_path' => $target_path,
                     'content' => base64_encode(
-                        file_get_contents( $fileToTransfer )
+                        file_get_contents( $local_file )
                     ),
                     'encoding' => 'base64',
                 );
             } else {
                 $files_data[] = array(
                     'action' => 'create',
-                    'file_path' => $targetPath,
+                    'file_path' => $target_path,
                     'content' => base64_encode(
-                        file_get_contents( $fileToTransfer )
+                        file_get_contents( $local_file )
                     ),
                     'encoding' => 'base64',
                 );
@@ -284,7 +284,7 @@ EOD;
                 $ch,
                 CURLOPT_HTTPHEADER,
                 array(
-                    'PRIVATE-TOKEN: ' .  $this->settings['glToken'],
+                    'PRIVATE-TOKEN: ' . $this->settings['glToken'],
                     'Content-Type: application/json',
                 )
             );
@@ -314,14 +314,14 @@ EOD;
             return;
         }
 
-        $filesRemaining = $this->get_remaining_items_count();
+        $files_remaining = $this->get_remaining_items_count();
 
-        if ( $filesRemaining > 0 ) {
+        if ( $files_remaining > 0 ) {
 
             if ( defined( 'WP_CLI' ) ) {
                 $this->upload_files();
             } else {
-                echo $filesRemaining;
+                echo $files_remaining;
             }
         } else {
             $this->createGitLabPagesConfig();
@@ -376,7 +376,7 @@ EOD;
                 $ch,
                 CURLOPT_HTTPHEADER,
                 array(
-                    'PRIVATE-TOKEN: ' .  $this->settings['glToken'],
+                    'PRIVATE-TOKEN: ' . $this->settings['glToken'],
                     'Content-Type: application/json',
                 )
             );
