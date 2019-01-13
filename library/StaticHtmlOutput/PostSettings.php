@@ -99,8 +99,10 @@ class WPSHO_PostSettings {
 
         $key_sets['bunnycdn'] = array(
             'baseUrl-bunnycdn',
-            'bunnycdnAPIKey',
-            'bunnycdnPullZoneName',
+            'bunnycdnStorageZoneAccessKey',
+            'bunnycdnPullZoneAccessKey',
+            'bunnycdnPullZoneID',
+            'bunnycdnStorageZoneName',
             'bunnycdnRemotePath',
             'bunnyBlobIncrement',
             'bunnyBlobDelay',

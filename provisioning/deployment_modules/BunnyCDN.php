@@ -47,7 +47,7 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
 
         switch ( $_POST['ajax_action'] ) {
             case 'bunnycdn_prepare_export':
-                $this->prepare_export();
+                $this->prepare_export( true );
                 break;
             case 'bunnycdn_transfer_files':
                 $this->transfer_files();
@@ -63,9 +63,6 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
 
 
     public function transfer_files() {
-        require_once dirname( __FILE__ ) .
-            '/../library/GuzzleHttp/autoloader.php';
-
         $filesRemaining = $this->get_remaining_items_count();
 
         if ( $filesRemaining < 0 ) {
@@ -81,12 +78,6 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
 
         $lines = $this->get_items_to_export( $batch_size );
 
-        $client = new Client(
-            array(
-                'base_uri' => 'https://storage.bunnycdn.com',
-            )
-        );
-
         foreach ( $lines as $line ) {
             list($fileToTransfer, $targetPath) = explode( ',', $line );
 
@@ -95,20 +86,46 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
             $targetPath = rtrim( $targetPath );
 
             try {
-                $target_path = '/' . $this->settings['bunnycdnPullZoneName'] .
-                    '/' . $targetPath . basename( $fileToTransfer );
+                $remote_path = $this->api_base . '/' .
+                    $this->settings['bunnycdnStorageZoneName'] .
+                    '/' . $targetPath;
 
-                $response = $client->request(
-                    'PUT',
-                    $target_path,
-                    array(
-                        'headers'  => array(
-                            'AccessKey' => ' ' .
-                            $this->settings['bunnycdnAPIKey'],
-                        ),
-                        'body' => fopen( $fileToTransfer, 'rb' ),
-                    )
-                );
+                $ch = curl_init();
+
+                $fileStream = fopen( $fileToTransfer, "r" );
+                $dataLength = filesize( $fileToTransfer );
+
+                curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+                curl_setopt( $ch, CURLOPT_URL, $remote_path );
+                curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
+                curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
+                curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
+                curl_setopt( $ch, CURLOPT_HEADER, 0);
+                curl_setopt( $ch, CURLOPT_UPLOAD, 1);
+                curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
+                curl_setopt( $ch, CURLOPT_INFILE, $fileStream );
+                curl_setopt( $ch, CURLOPT_INFILESIZE, $dataLength );
+
+                curl_setopt( $ch, CURLOPT_HTTPHEADER, array(
+                    'AccessKey: ' . $this->settings['bunnycdnStorageZoneAccessKey'],
+                ));
+
+                $output = curl_exec( $ch );
+                $status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
+
+                curl_close( $ch );
+                
+                $good_response_codes = array( '200', '201', '301', '302', '304' );
+
+                if ( ! in_array( $status_code, $good_response_codes ) ) {
+                    require_once dirname( __FILE__ ) . '/../library/StaticHtmlOutput/WsLog.php';
+
+                    WsLog::l(
+                        'BAD RESPONSE STATUS (' . $status_code . '): '
+                    );
+
+                    throw new Exception( 'BunnyCDN API bad response status' );
+                }
             } catch ( Exception $e ) {
                 require_once dirname( __FILE__ ) .
                     '/../library/StaticHtmlOutput/WsLog.php';
@@ -141,36 +158,51 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
     }
 
     public function purge_all_cache() {
-        require_once dirname( __FILE__ ) .
-            '/../library/GuzzleHttp/autoloader.php';
-        // purege cache for each file
-        $client = new Client();
-
         try {
             $endpoint = 'https://bunnycdn.com/api/pullzone/' .
-                $this->_zoneID . '/purgeCache';
+                $this->settings['bunnycdnPullZoneID'] . '/purgeCache';
 
-            $response = $client->request(
-                'POST',
-                $endpoint,
-                array(
-                    'headers'  => array(
-                        'AccessKey' => ' ' . $this->settings['bunnycdnAPIKey'],
-                    ),
-                )
-            );
+            $ch = curl_init();
 
-            if ( $response->getStatusCode() === 200 ) {
-                if ( ! defined( 'WP_CLI' ) ) {
-                    echo 'SUCCESS';
-                }
-            } else {
+            curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'POST');
+            curl_setopt( $ch, CURLOPT_URL, $endpoint );
+            curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
+            curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
+            curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
+            curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 0 );
+            curl_setopt( $ch, CURLOPT_POST, 1);
+
+            curl_setopt( $ch, CURLOPT_HTTPHEADER, array(
+                'Content-Type: application/json',
+                'Content-Length: 0',
+                'AccessKey: ' . $this->settings['bunnycdnPullZoneAccessKey'],
+            ));
+
+            $output = curl_exec( $ch );
+            $status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
+
+            curl_close( $ch );
+            
+            $good_response_codes = array( '200', '201' );
+
+            if ( ! in_array( $status_code, $good_response_codes ) ) {
+                require_once dirname( __FILE__ ) . '/../library/StaticHtmlOutput/WsLog.php';
+                WsLog::l(
+                    'BAD RESPONSE STATUS (' . $status_code . '): '
+                );
+
                 echo 'FAIL';
+
+                throw new Exception( 'BunnyCDN API bad response status' );
             }
+
+            if ( ! defined( 'WP_CLI' ) ) {
+                echo 'SUCCESS';
+            }
+
         } catch ( Exception $e ) {
             WsLog::l( 'BUNNYCDN EXPORT: error encountered' );
             WsLog::l( $e );
-            error_log( $e );
             throw new Exception( $e );
         }
     }
@@ -179,7 +211,7 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
 
         try {
             $remote_path = $this->api_base . '/' .
-                $this->settings['bunnycdnPullZoneName'] .
+                $this->settings['bunnycdnStorageZoneName'] .
                 '/tmpFile';
 
             $ch = curl_init();
@@ -194,7 +226,7 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
             curl_setopt( $ch, CURLOPT_POST, 1);
 
             curl_setopt( $ch, CURLOPT_HTTPHEADER, array(
-                'AccessKey: ' . $this->settings['bunnycdnAPIKey'],
+                'AccessKey: ' . $this->settings['bunnycdnStorageZoneAccessKey'],
             ));
 
             $post_options = array(
@@ -205,13 +237,6 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
                 $ch,
                 CURLOPT_POSTFIELDS, 
                 $post_options
-            );
-
-            curl_setopt(
-                $ch,
-                CURLOPT_USERPWD,
-                $this->user . ":" .
-                    $this->settings['bbToken']
             );
 
             $output = curl_exec( $ch );
