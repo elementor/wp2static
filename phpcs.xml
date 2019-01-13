@@ -83,15 +83,10 @@
     <exclude name="WordPress.PHP.DevelopmentFunctions.error_log_print_r" />
     <exclude name="WordPress.PHP.DevelopmentFunctions.error_log_var_export" />
     <exclude name="WordPress.PHP.DevelopmentFunctions.prevent_path_disclosure_error_reporting" />
-    <exclude name="WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration_apache_setenv" />
-    <exclude name="WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration_ini_set" />
-    <exclude name="WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration_error_reporting" />
-    <exclude name="WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize" />
-    <exclude name="WordPress.PHP.DiscouragedPHPFunctions.serialize_unserialize" />
+    <exclude name="WordPress.PHP.DiscouragedPHPFunctions" />
     <!-- TODO: refactor to eliminate use of `exec` for compatibility w/shared hosts -->
     <exclude name="WordPress.PHP.DiscouragedPHPFunctions.system_calls_exec" />
     <!-- TODO: refactor to eliminate use of `shell_exec` for compat w/shared hosts -->
-    <exclude name="WordPress.PHP.DiscouragedPHPFunctions.system_calls_shell_exec" />
     <exclude name="WordPress.PHP.DontExtract.extract_extract" />
     <exclude name="WordPress.PHP.StrictComparisons.LooseComparison" />
     <exclude name="WordPress.PHP.StrictInArray.MissingTrueStrict" />
