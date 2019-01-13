@@ -30,7 +30,7 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
         $this->export_file_list =
             $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-EXPORT-BITBUCKET-FILES-TO-EXPORT.txt';
-        $archiveDir = file_get_contents(
+        $archive_dir = file_get_contents(
             $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-CURRENT-ARCHIVE.txt'
         );
@@ -63,34 +63,33 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
     }
 
     public function upload_files() {
-        $filesRemaining = $this->get_remaining_items_count();
+        $files_remaining = $this->get_remaining_items_count();
 
-        if ( $filesRemaining < 0 ) {
+        if ( $files_remaining < 0 ) {
             echo 'ERROR';
             die();
         }
 
         $batch_size = $this->settings['bbBlobIncrement'];
 
-        if ( $batch_size > $filesRemaining ) {
-            $batch_size = $filesRemaining;
+        if ( $batch_size > $files_remaining ) {
+            $batch_size = $files_remaining;
         }
 
         $lines = $this->get_items_to_export( $batch_size );
-        $globHashPathLines = array();
 
         $files_data = array();
 
         foreach ( $lines as $line ) {
-            list($fileToTransfer, $targetPath) = explode( ',', $line );
+            list($local_file, $target_path) = explode( ',', $line );
 
-            $fileToTransfer = $this->archive->path . $fileToTransfer;
+            $local_file = $this->archive->path . $local_file;
 
             $files_data['message'] = 'WP2Static deployment';
 
-            if ( is_file( $fileToTransfer ) ) {
-                $files_data[ '/' . rtrim( $targetPath ) ] =
-                    new CURLFile( $fileToTransfer );
+            if ( is_file( $local_file ) ) {
+                $files_data[ '/' . rtrim( $target_path ) ] =
+                    new CURLFile( $local_file );
             }
         }
 
@@ -136,7 +135,8 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
             $good_response_codes = array( '200', '201', '301', '302', '304' );
 
             if ( ! in_array( $status_code, $good_response_codes ) ) {
-                require_once dirname( __FILE__ ) . '/../library/StaticHtmlOutput/WsLog.php';
+                require_once dirname( __FILE__ ) .
+                    '/../library/StaticHtmlOutput/WsLog.php';
                 WsLog::l(
                     'BAD RESPONSE STATUS (' . $status_code . '): ' .
                      $output
@@ -153,13 +153,13 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
             return;
         }
 
-        $filesRemaining = $this->get_remaining_items_count();
+        $files_remaining = $this->get_remaining_items_count();
 
-        if ( $filesRemaining > 0 ) {
+        if ( $files_remaining > 0 ) {
             if ( defined( 'WP_CLI' ) ) {
                 $this->upload_files();
             } else {
-                echo $filesRemaining;
+                echo $files_remaining;
             }
         } else {
             if ( ! defined( 'WP_CLI' ) ) {
@@ -209,7 +209,8 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
             $good_response_codes = array( '200', '201', '301', '302', '304' );
 
             if ( ! in_array( $status_code, $good_response_codes ) ) {
-                require_once dirname( __FILE__ ) . '/../library/StaticHtmlOutput/WsLog.php';
+                require_once dirname( __FILE__ ) .
+                    '/../library/StaticHtmlOutput/WsLog.php';
                 WsLog::l(
                     'BAD RESPONSE STATUS (' . $status_code . '): '
                 );
