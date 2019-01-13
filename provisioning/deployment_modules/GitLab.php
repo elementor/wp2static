@@ -41,7 +41,7 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
             '/../library/StaticHtmlOutput/Archive.php';
         $this->archive = new Archive();
         $this->archive->setToCurrentArchive();
-        $this->files_to_delete = array();
+        $this->files_in_tree = array();
 
         $this->api_base = '';
 
@@ -99,10 +99,18 @@ EOD;
             $this->clear_file_list();
             $this->create_deployment_list(
                 $this->settings['wp_uploads_path'] . '/' .
-                    $this->archive->name
+                    $this->archive->name,
+                false
             );
 
-            $this->delete_all_files_in_branch();
+            $this->getListOfFilesInRepo();
+
+
+            error_log(print_r($this->files_in_tree, true));
+
+            die();
+
+            //$this->delete_all_files_in_branch();
 
             $this->createGitLabPagesConfig();
 
@@ -112,9 +120,7 @@ EOD;
     }
 
     public function mergeItemsForDeletion( $items ) {
-        $old_items = $this->files_to_delete;
-
-        $this->files_to_delete = array_merge( $this->files_to_delete, $items );
+        $this->files_in_tree = array_merge( $this->files_in_tree, $items );
     }
 
     public function partialTreeToDeletionElements( $json_response ) {
@@ -136,28 +142,53 @@ EOD;
     }
 
     public function getRepositoryTree( $page ) {
-        // make request and get results, including total pages
-        require_once dirname( __FILE__ ) .
-            '/../library/GuzzleHttp/autoloader.php';
-
-        $client = new Client(
-            array(
-                'base_uri' => $this->api_base,
-            )
-        );
         $tree_endpoint = 'https://gitlab.com/api/v4/projects/' .
             $this->settings['glProject'] .
             '/repository/tree?recursive=true&per_page=100&page=' . $page;
 
-        $response = $client->request(
-            'GET',
-            $tree_endpoint,
+        $ch = curl_init();
+
+        curl_setopt( $ch, CURLOPT_URL, $tree_endpoint );
+        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
+        curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
+        curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
+        curl_setopt( $ch, CURLOPT_HEADER, 1 );
+        curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
+        curl_setopt( $ch, CURLOPT_USERAGENT, 'WP2Static.com' );
+        curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'GET' );
+
+        curl_setopt(
+            $ch,
+            CURLOPT_HTTPHEADER,
             array(
-                'headers'  => array(
-                    'PRIVATE-TOKEN' => $this->settings['glToken'],
-                ),
+                'PRIVATE-TOKEN: ' .  $this->settings['glToken'],
+                'Content-Type: application/json',
             )
         );
+
+        $output = curl_exec( $ch );
+        $status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
+        $header_size = curl_getinfo( $ch, CURLINFO_HEADER_SIZE );
+
+        $body = substr( $output, $header_size);
+        $header = substr( $output, 0, $header_size);
+        $headers = explode( "\n", $header );
+
+        error_log(print_r($headers, true));die();
+
+        curl_close( $ch );
+
+        $good_response_codes = array( '200', '201', '301', '302', '304' );
+
+        if ( ! in_array( $status_code, $good_response_codes ) ) {
+            require_once dirname( __FILE__ ) .
+                '/../library/StaticHtmlOutput/WsLog.php';
+            WsLog::l(
+                'BAD RESPONSE STATUS (' . $status_code . '): '
+            );
+
+            throw new Exception( 'GitLab API bad response status' );
+        }
 
         $total_pages = $response->getHeader( 'X-Total-Pages' );
         $next_page = $response->getHeader( 'X-Next-Page' );
@@ -167,7 +198,8 @@ EOD;
         $current_page = $current_page[0];
 
         // if we have results, append them to files to delete array
-        $json_items = $response->getBody();
+        $json_items = $output;
+
         $this->mergeItemsForDeletion(
             $this->partialTreeToDeletionElements( $json_items )
         );
@@ -184,10 +216,10 @@ EOD;
     }
 
     public function delete_all_files_in_branch() {
-        $this->getListOfFilesInRepo();
 
-        require_once dirname( __FILE__ ) .
-            '/../library/GuzzleHttp/autoloader.php';
+
+        error_log('dont do this anymore');
+        die();
 
         $client = new Client(
             array(
@@ -209,7 +241,7 @@ EOD;
                     'json' => array(
                         'branch' => 'master',
                         'commit_message' => 'test deploy from plugin',
-                        'actions' => $this->files_to_delete,
+                        'actions' => $this->files_in_tree,
                     ),
                 )
             );
