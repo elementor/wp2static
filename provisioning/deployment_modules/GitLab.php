@@ -5,17 +5,13 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
     public function __construct() {
         $this->loadSettings( 'gitlab' );
 
-        // TODO: implement deploy prefix dir for GitLab
-        // shift it to the file upload function
-        $this->r_path = '';
-
-        if ( isset( $this->settings['glPath'] ) ) {
-            $this->r_path = $this->settings['glPath'];
-        }
-
         $this->files_in_repo_list_path =
             $this->settings['wp_uploads_path'] .
                 '/WP2STATIC-GITLAB-FILES-IN-REPO.txt';
+
+        if ( defined( 'WP_CLI' ) ) {
+            return;
+        }
 
         switch ( $_POST['ajax_action'] ) {
             case 'gitlab_prepare_export':
@@ -56,14 +52,13 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
 
         $files_in_tree = file(
             $this->files_in_repo_list_path,
-            FILE_IGNORE_NEW_LINES
+            FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
         );
 
         $files_data = array();
 
         foreach ( $lines as $line ) {
-            // TODO: is rtrim need when using FILE_IGNORE_NEW_LINES
-            list($local_file, $target_path) = explode( ',', rtrim( $line ) );
+            list($local_file, $target_path) = explode( ',', $line );
 
             $local_file = $this->archive->path . $local_file;
 
@@ -71,10 +66,11 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
                 continue;
             }
 
-            if ( in_array( $target_path, $files_in_tree ) ) {
+            if ( isset( $this->settings['glPath'] ) ) {
+                $target_path = $this->settings['glPath'] . '/' . $target_path;
+            }
 
-                // TODO: quick filesize comparision via
-                // https://docs.gitlab.com/ee/api/repository_files.html
+            if ( in_array( $target_path, $files_in_tree ) ) {
                 $files_data[] = array(
                     'action' => 'update',
                     'file_path' => $target_path,
@@ -145,7 +141,7 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
     public function addToListOfFilesInRepos( $items ) {
         file_put_contents(
             $this->files_in_repo_list_path,
-            implode( PHP_EOL, $items ),
+            implode( PHP_EOL, $items ) . PHP_EOL,
             FILE_APPEND | LOCK_EX
         );
     }
