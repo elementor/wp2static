@@ -20,7 +20,6 @@ class WPSHO_PostSettings {
             'basicAuthPassword',
             'basicAuthUser',
             'detection_level',
-            'discoverNewURLs',
         );
 
         $key_sets['processing'] = array(
@@ -42,6 +41,7 @@ class WPSHO_PostSettings {
         $key_sets['advanced'] = array(
             'crawl_increment',
             'completionEmail',
+            'delayBetweenAPICalls',
         );
 
         $key_sets['folder'] = array(
@@ -61,7 +61,6 @@ class WPSHO_PostSettings {
             'ghToken',
             'ghRepo',
             'ghBlobIncrement',
-            'ghBlobDelay',
             'ghCommitMessage',
             'ghSkipSameBytes',
         );
@@ -73,7 +72,6 @@ class WPSHO_PostSettings {
             'bbToken',
             'bbRepo',
             'bbBlobIncrement',
-            'bbBlobDelay',
         );
 
         $key_sets['gitlab'] = array(
@@ -83,7 +81,6 @@ class WPSHO_PostSettings {
             'glToken',
             'glProject',
             'glBlobIncrement',
-            'glBlobDelay',
         );
 
         $key_sets['ftp'] = array(
@@ -94,7 +91,6 @@ class WPSHO_PostSettings {
             'ftpUsername',
             'useActiveFTP',
             'ftpBlobIncrement',
-            'ftpBlobDelay',
         );
 
         $key_sets['bunnycdn'] = array(
@@ -105,7 +101,6 @@ class WPSHO_PostSettings {
             'bunnycdnStorageZoneName',
             'bunnycdnRemotePath',
             'bunnyBlobIncrement',
-            'bunnyBlobDelay',
         );
 
         $key_sets['s3'] = array(
@@ -117,7 +112,6 @@ class WPSHO_PostSettings {
             's3RemotePath',
             's3Secret',
             's3BlobIncrement',
-            's3BlobDelay',
         );
 
         $key_sets['netlify'] = array(

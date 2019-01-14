@@ -23,7 +23,7 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
                 $this->loadArchive();
                 $this->getListOfFilesInRepo();
 
-                $this->prepare_export( true );
+                $this->prepareDeploy( true );
                 break;
             case 'gitlab_upload_files':
                 $this->bootstrap();
@@ -37,7 +37,7 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
     }
 
     public function createGitLabPagesConfig() {
-        // GL doesn't seem to build the pages unless this file is detected
+        // NOTE: required for GitLab Pages to build static site
         $config_file = <<<EOD
 pages:
   stage: deploy
@@ -176,20 +176,22 @@ EOD;
     }
 
     public function upload_files() {
-        $files_remaining = $this->get_remaining_items_count();
+        $this->files_remaining = $this->getRemainingItemsCount();
 
-        if ( $files_remaining < 0 ) {
+        if ( $this->files_remaining < 0 ) {
             echo 'ERROR';
             die();
         }
 
+        $this->initiateProgressIndicator();
+
         $batch_size = $this->settings['glBlobIncrement'];
 
-        if ( $batch_size > $files_remaining ) {
-            $batch_size = $files_remaining;
+        if ( $batch_size > $this->files_remaining ) {
+            $batch_size = $this->files_remaining;
         }
 
-        $lines = $this->get_items_to_export( $batch_size );
+        $lines = $this->getItemsToDeploy( $batch_size );
 
         $files_in_tree = file(
             $this->files_in_repo_list_path,
@@ -197,12 +199,6 @@ EOD;
         );
 
         $files_data = array();
-
-        $deploy_count_path = $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-TOTAL-FILES-TO-DEPLOY.txt';
-        $total_urls_to_crawl = file_get_contents( $deploy_count_path );
-
-        $batch_index = 0;
 
         foreach ( $lines as $line ) {
             // TODO: is rtrim need when using FILE_IGNORE_NEW_LINES
@@ -237,25 +233,13 @@ EOD;
                 );
             }
 
-            $batch_index++;
-
-            $completed_urls =
-                $total_urls_to_crawl -
-                $files_remaining +
-                $batch_index;
-
-            require_once dirname( __FILE__ ) .
-                '/../library/StaticHtmlOutput/ProgressLog.php';
-            ProgressLog::l( $completed_urls, $total_urls_to_crawl );
+            // NOTE: delay and progress askew in GitLab as we may
+            // upload all in one  request. Progress indicates building
+            // of list of files that will be deployed/checking if different
+            $this->updateProgress();
         }
 
-        // NOTE: delay and progress askew in GitLab as we may
-        // upload all in one  request. Progress indicates building
-        // of list of files that will be deployed/checking if different
-        if ( isset( $this->settings['glBlobDelay'] ) &&
-            $this->settings['glBlobDelay'] > 0 ) {
-            sleep( $this->settings['glBlobDelay'] );
-        }
+        $this->pauseBetweenAPICalls();
 
         $commits_endpoint = 'https://gitlab.com/api/v4/projects/' .
             $this->settings['glProject'] . '/repository/commits';
@@ -299,41 +283,18 @@ EOD;
 
             curl_close( $ch );
 
-            $good_response_codes = array( '200', '201', '301', '302', '304' );
-
-            if ( ! in_array( $status_code, $good_response_codes ) ) {
-                require_once dirname( __FILE__ ) .
-                    '/../library/StaticHtmlOutput/WsLog.php';
-                WsLog::l(
-                    'BAD RESPONSE STATUS (' . $status_code . '): '
-                );
-
-                throw new Exception( 'GitLab API bad response status' );
-            }
+            $this->checkForValidResponses(
+                $status_code,
+                array( '200', '201', '301', '302', '304' )
+             );
         } catch ( Exception $e ) {
-            require_once dirname( __FILE__ ) .
-                '/../library/StaticHtmlOutput/WsLog.php';
-            WsLog::l( 'GITLAB EXPORT: error encountered' );
-            WsLog::l( $e );
-            throw new Exception( $e );
-            return;
+            $this->handleException( $e );
         }
 
-        $files_remaining = $this->get_remaining_items_count();
-
-        if ( $files_remaining > 0 ) {
-
-            if ( defined( 'WP_CLI' ) ) {
-                $this->upload_files();
-            } else {
-                echo $files_remaining;
-            }
-        } else {
+        if ( $this->uploadsCompleted() ) {
             $this->createGitLabPagesConfig();
 
-            if ( ! defined( 'WP_CLI' ) ) {
-                echo 'SUCCESS';
-            }
+            $this->finalizeDeployment();
         }
     }
 
@@ -391,29 +352,15 @@ EOD;
 
             curl_close( $ch );
 
-            $good_response_codes = array( '200', '201', '301', '302', '304' );
-
-            if ( ! in_array( $status_code, $good_response_codes ) ) {
-                require_once dirname( __FILE__ ) .
-                    '/../library/StaticHtmlOutput/WsLog.php';
-                WsLog::l(
-                    'BAD RESPONSE STATUS (' . $status_code . '): '
-                );
-
-                throw new Exception( 'GitLab API bad response status' );
-            }
+            $this->checkForValidResponses(
+                $status_code,
+                array( '200', '201', '301', '302', '304' )
+             );
         } catch ( Exception $e ) {
-            require_once dirname( __FILE__ ) .
-                '/../library/StaticHtmlOutput/WsLog.php';
-            WsLog::l( 'GITLAB EXPORT: error encountered' );
-            WsLog::l( $e );
-            throw new Exception( $e );
-            return;
+            $this->handleException( $e );
         }
 
-        if ( ! defined( 'WP_CLI' ) ) {
-            echo 'SUCCESS';
-        }
+        $this->finalizeDeployment();
     }
 }
 

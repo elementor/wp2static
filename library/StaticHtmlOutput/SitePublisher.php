@@ -40,7 +40,38 @@ class StaticHtmlOutput_SitePublisher {
         );
     }
 
-    public function clear_file_list() {
+    public function pauseBetweenAPICalls() {
+        if ( isset( $this->settings['delayBetweenAPICalls'] ) &&
+            $this->settings['delayBetweenAPICalls'] > 0 ) {
+            sleep( $this->settings['delayBetweenAPICalls'] );
+        }
+    }
+    
+
+    public function updateProgress () {
+        $this->batch_index++;
+
+        $completed_urls =
+            $this->total_urls_to_crawl -
+            $this->files_remaining +
+            $this->batch_index;
+
+        require_once dirname( __FILE__ ) .
+            '/ProgressLog.php';
+        ProgressLog::l( $completed_urls, $this->total_urls_to_crawl );
+    }
+
+    public function initiateProgressIndicator() {
+        $this->deploy_count_path = $this->settings['wp_uploads_path'] .
+                '/WP-STATIC-TOTAL-FILES-TO-DEPLOY.txt';
+        $this->total_urls_to_crawl =
+            file_get_contents( $this->deploy_count_path );
+
+        $this->batch_index = 0;
+    }
+
+
+    public function clearFileList() {
         if ( is_file( $this->export_file_list ) ) {
             $f = fopen( $this->export_file_list, 'r+' );
             if ( $f !== false ) {
@@ -126,7 +157,7 @@ class StaticHtmlOutput_SitePublisher {
         return $deploy_path;
     }
 
-    public function create_deployment_list( $dir, $basename_in_target ) {
+    public function createDeploymentList( $dir, $basename_in_target ) {
         $archive_path_to_replace =
             $this->getArchivePathForReplacement( $this->archive->path );
 
@@ -138,7 +169,7 @@ class StaticHtmlOutput_SitePublisher {
             $file_in_archive = $dir . '/' . $item;
 
             if ( is_dir( $file_in_archive ) ) {
-                $this->create_deployment_list(
+                $this->createDeploymentList(
                     $file_in_archive,
                     $basename_in_target
                 );
@@ -168,10 +199,10 @@ class StaticHtmlOutput_SitePublisher {
         }
     }
 
-    public function prepare_export( $basename_in_target = false ) {
-        $this->clear_file_list();
+    public function prepareDeploy( $basename_in_target = false ) {
+        $this->clearFileList();
 
-        $this->create_deployment_list(
+        $this->createDeploymentList(
             $this->settings['wp_uploads_path'] . '/' .
                 $this->archive->name,
             $basename_in_target
@@ -204,7 +235,7 @@ class StaticHtmlOutput_SitePublisher {
         }
     }
 
-    public function get_items_to_export( $batch_size = 1 ) {
+    public function getItemsToDeploy( $batch_size = 1 ) {
         $lines = array();
 
         $f = fopen( $this->export_file_list, 'r' );
@@ -233,12 +264,52 @@ class StaticHtmlOutput_SitePublisher {
         return $lines;
     }
 
-    public function get_remaining_items_count() {
+    public function getRemainingItemsCount() {
         $contents = file( $this->export_file_list, FILE_IGNORE_NEW_LINES );
 
         // return the amount left if another item is taken
         // return count($contents) - 1;
         return count( $contents );
+    }
+
+    public function finalizeDeployment() {
+        if ( ! defined( 'WP_CLI' ) ) {
+            echo 'SUCCESS';
+        }
+    }
+
+    public function uploadsCompleted() {
+        $this->files_remaining = $this->getRemainingItemsCount();
+
+        if ( $this->files_remaining <= 0 ) {
+            return true;
+        } else {
+            if ( defined( 'WP_CLI' ) ) {
+                $this->upload_files();
+            } else {
+                echo $this->files_remaining;
+            }
+        }
+    }
+
+    public function handleException( $e ) {
+        require_once dirname( __FILE__ ) .
+            '/WsLog.php';
+        WsLog::l( 'Deployment: error encountered' );
+        WsLog::l( $e );
+        throw new Exception( $e );
+    }
+
+    public function checkForValidResponses( $code, $good_codes ) {
+        if ( ! in_array( $code, $good_codes ) ) {
+            require_once dirname( __FILE__ ) .
+                '/WsLog.php';
+            WsLog::l(
+                'BAD RESPONSE STATUS FROM API (' . $code . '): '
+            );
+
+            throw new Exception( 'API bad response status' );
+        }
     }
 }
 
