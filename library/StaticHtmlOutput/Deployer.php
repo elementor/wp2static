@@ -123,7 +123,11 @@ class Deployer {
                     return;
                 }
 
-                $gitlab->prepare_deployment();
+                $gitlab->bootstrap();
+                $gitlab->loadArchive();
+                $gitlab->getListOfFilesInRepo();
+
+                $gitlab->prepareDeploy( true );
                 $gitlab->upload_files();
                 break;
             case 'netlify':

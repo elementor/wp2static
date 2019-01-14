@@ -141,7 +141,6 @@ class StaticHtmlOutput_SitePublisher {
             $dir
         );
 
-        $deploy_path = $this->r_path . $deploy_path;
         $deploy_path = ltrim( $deploy_path, '/' );
         $deploy_path .= '/';
 
@@ -304,10 +303,12 @@ class StaticHtmlOutput_SitePublisher {
             require_once dirname( __FILE__ ) .
                 '/WsLog.php';
             WsLog::l(
-                'BAD RESPONSE STATUS FROM API (' . $code . '): '
+                'BAD RESPONSE STATUS FROM API (' . $code . ')'
             );
 
-            throw new Exception( 'API bad response status' );
+            throw new Exception(
+                'BAD RESPONSE STATUS FROM API (' . $code . ')'
+            );
         }
     }
 }
