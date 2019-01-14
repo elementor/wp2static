@@ -9,9 +9,7 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
             $this->settings['wp_uploads_path'] .
                 '/WP2STATIC-GITLAB-FILES-IN-REPO.txt';
 
-        if ( defined( 'WP_CLI' ) ) {
-            return;
-        }
+        if ( defined( 'WP_CLI' ) ) { return; }
 
         switch ( $_POST['ajax_action'] ) {
             case 'gitlab_prepare_export':
@@ -35,10 +33,7 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
     public function upload_files() {
         $this->files_remaining = $this->getRemainingItemsCount();
 
-        if ( $this->files_remaining < 0 ) {
-            echo 'ERROR';
-            die();
-        }
+        if ( $this->files_remaining < 0 ) { echo 'ERROR'; die(); }
 
         $this->initiateProgressIndicator();
 
@@ -65,9 +60,7 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
 
             $local_file = $this->archive->path . $local_file;
 
-            if ( ! is_file( $local_file ) ) {
-                continue;
-            }
+            if ( ! is_file( $local_file ) ) { continue; }
 
             if ( isset( $this->settings['glPath'] ) ) {
                 $target_path = $this->settings['glPath'] . '/' . $target_path;
@@ -92,6 +85,9 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
                     'encoding' => 'base64',
                 );
             }
+
+            // TODO: store local file path & hash into array
+            //      write out only upon successful transfer
 
             // NOTE: delay and progress askew in GitLab as we may
             // upload all in one  request. Progress indicates building
@@ -136,7 +132,6 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
 
         if ( $this->uploadsCompleted() ) {
             $this->createGitLabPagesConfig();
-
             $this->finalizeDeployment();
         }
     }
@@ -187,9 +182,7 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
         if ( ! in_array( $client->status_code, $good_response_codes ) ) {
             require_once dirname( __FILE__ ) .
                 '/../library/StaticHtmlOutput/WsLog.php';
-            WsLog::l(
-                'BAD RESPONSE STATUS (' . $client->status_code . '): '
-            );
+            WsLog::l( 'BAD RESPONSE STATUS (' . $client->status_code . '): ' );
 
             throw new Exception( 'GitLab API bad response status' );
         }
@@ -198,16 +191,13 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
         $next_page = $client->headers['x-next-page'];
         $current_page = $client->headers['x-page'];
 
-        // if we have results, append them to files to delete array
         $json_items = $client->body;
 
         $this->addToListOfFilesInRepos(
             $this->getFilePathsFromTree( $json_items )
         );
 
-        // if current page is less than total pages
         if ( $current_page < $total_pages ) {
-            // call this again with an increment
             $this->getRepositoryTree( $next_page );
         }
     }
