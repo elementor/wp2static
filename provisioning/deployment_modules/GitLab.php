@@ -130,7 +130,7 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
             $this->checkForValidResponses(
                 $client->status_code,
                 array( '200', '201', '301', '302', '304' )
-             );
+            );
         } catch ( Exception $e ) {
             $this->handleException( $e );
         }
@@ -222,17 +222,9 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
             $this->settings['glProject'] . '/repository/commits';
 
         try {
-            $ch = curl_init();
-
-            curl_setopt( $ch, CURLOPT_URL, $remote_path );
-            curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
-            curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
-            curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
-            curl_setopt( $ch, CURLOPT_HEADER, 0 );
-            curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
-            curl_setopt( $ch, CURLOPT_POST, 1 );
-            curl_setopt( $ch, CURLOPT_USERAGENT, 'WP2Static.com' );
-            curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'POST' );
+            require_once dirname( __FILE__ ) .
+                '/../library/StaticHtmlOutput/Request.php';
+            $client = new WP2Static_Request();
 
             $post_options = array(
                 'branch' => 'master',
@@ -251,30 +243,21 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
                 ),
             );
 
-            curl_setopt(
-                $ch,
-                CURLOPT_POSTFIELDS,
-                json_encode( $post_options )
+            $headers = array(
+                'PRIVATE-TOKEN: ' . $this->settings['glToken'],
+                'Content-Type: application/json',
             );
 
-            curl_setopt(
-                $ch,
-                CURLOPT_HTTPHEADER,
-                array(
-                    'PRIVATE-TOKEN: ' . $this->settings['glToken'],
-                    'Content-Type: application/json',
-                )
+            $client->postWithJSONPayloadCustomHeaders(
+                $remote_path,
+                $post_options,
+                $headers
             );
-
-            $output = curl_exec( $ch );
-            $status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
-
-            curl_close( $ch );
 
             $this->checkForValidResponses(
-                $status_code,
+                $client->status_code,
                 array( '200', '201', '301', '302', '304' )
-             );
+            );
         } catch ( Exception $e ) {
             $this->handleException( $e );
         }
@@ -312,7 +295,6 @@ EOD;
 
         chmod( $this->export_file_list, 0664 );
     }
-
 }
 
 $gitlab = new StaticHtmlOutput_GitLab();

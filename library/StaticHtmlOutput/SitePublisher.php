@@ -46,8 +46,8 @@ class StaticHtmlOutput_SitePublisher {
             sleep( $this->settings['delayBetweenAPICalls'] );
         }
     }
-    
-    public function updateProgress () {
+
+    public function updateProgress() {
         $this->batch_index++;
 
         $completed_urls =
