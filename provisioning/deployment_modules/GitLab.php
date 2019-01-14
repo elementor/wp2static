@@ -79,19 +79,27 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
                     $prev = $this->file_paths_and_hashes[$target_path];
                     $current = crc32( $local_file_contents );
 
-                    if ( $prev == $current ) {
-                        error_log('SKIPPING FILE WITH SAME HASH:' . $target_path);
+                    if ( $prev != $current ) {
+                        $files_data[] = array(
+                            'action' => 'update',
+                            'file_path' => $target_path,
+                            'content' => base64_encode(
+                                $local_file_contents
+                            ),
+                            'encoding' => 'base64',
+                        );
                     }
+                } else {
+                    $files_data[] = array(
+                        'action' => 'update',
+                        'file_path' => $target_path,
+                        'content' => base64_encode(
+                            $local_file_contents
+                        ),
+                        'encoding' => 'base64',
+                    );
                 }
 
-                $files_data[] = array(
-                    'action' => 'update',
-                    'file_path' => $target_path,
-                    'content' => base64_encode(
-                        $local_file_contents
-                    ),
-                    'encoding' => 'base64',
-                );
             } else {
                 $files_data[] = array(
                     'action' => 'create',
