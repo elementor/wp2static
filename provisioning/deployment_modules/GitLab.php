@@ -9,6 +9,10 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
             $this->settings['wp_uploads_path'] .
                 '/WP2STATIC-GITLAB-FILES-IN-REPO.txt';
 
+        $this->previous_hashes_path =
+            $this->settings['wp_uploads_path'] .
+                '/WP2STATIC-GITLAB-PREVIOUS-HASHES.txt';
+
         if ( defined( 'WP_CLI' ) ) { return; }
 
         switch ( $_POST['ajax_action'] ) {
@@ -55,6 +59,8 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
 
         $files_data = array();
 
+        $this->openPreviousHashesFile();
+
         foreach ( $lines as $line ) {
             list($local_file, $target_path) = explode( ',', $line );
 
@@ -66,12 +72,23 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
                 $target_path = $this->settings['glPath'] . '/' . $target_path;
             }
 
+            $local_file_contents = file_get_contents( $local_file );
+
             if ( in_array( $target_path, $files_in_tree ) ) {
+                if ( isset( $this->file_paths_and_hashes[$target_path] ) ) {
+                    $prev = $this->file_paths_and_hashes[$target_path];
+                    $current = crc32( $local_file_contents );
+
+                    if ( $prev == $current ) {
+                        error_log('SKIPPING FILE WITH SAME HASH:' . $target_path);
+                    }
+                }
+
                 $files_data[] = array(
                     'action' => 'update',
                     'file_path' => $target_path,
                     'content' => base64_encode(
-                        file_get_contents( $local_file )
+                        $local_file_contents
                     ),
                     'encoding' => 'base64',
                 );
@@ -80,14 +97,17 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
                     'action' => 'create',
                     'file_path' => $target_path,
                     'content' => base64_encode(
-                        file_get_contents( $local_file )
+                        $local_file_contents
                     ),
                     'encoding' => 'base64',
                 );
             }
 
-            // TODO: store local file path & hash into array
-            //      write out only upon successful transfer
+
+            $this->recordFilePathAndHashInMemory(
+                $target_path,
+                $local_file_contents
+            );
 
             // NOTE: delay and progress askew in GitLab as we may
             // upload all in one  request. Progress indicates building
@@ -126,6 +146,8 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
                 $client->status_code,
                 array( '200', '201', '301', '302', '304' )
             );
+
+            $this->writeFilePathAndHashesToFile();
         } catch ( Exception $e ) {
             $this->handleException( $e );
         }
