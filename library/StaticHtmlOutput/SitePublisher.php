@@ -188,7 +188,7 @@ class StaticHtmlOutput_SitePublisher {
 
                 file_put_contents(
                     $this->export_file_list,
-                    $local_file_path . ',' . $remote_deployment_path . "\n",
+                    $local_file_path . ',' . $remote_deployment_path . PHP_EOL,
                     FILE_APPEND | LOCK_EX
                 );
 
@@ -310,6 +310,40 @@ class StaticHtmlOutput_SitePublisher {
                 'BAD RESPONSE STATUS FROM API (' . $code . ')'
             );
         }
+    }
+
+    public function openPreviousHashesFile() {
+        $this->file_paths_and_hashes = array();
+
+        if ( is_file( $this->previous_hashes_path ) ) {
+            $file = fopen( $this->previous_hashes_path, 'r' );
+
+            while ( ( $line = fgetcsv( $file ) ) !== FALSE ) {
+                if ( isset( $line[0] ) && isset( $line[1] ) ) {
+                    $this->file_paths_and_hashes[$line[0]] = $line[1];
+                }
+            }
+
+            fclose($file);
+        } 
+    }
+
+    public function recordFilePathAndHashInMemory(
+        $target_path,
+        $local_file_contents
+        ) {
+        $this->file_paths_and_hashes[$target_path] =
+            crc32( $local_file_contents );
+    }
+
+    public function writeFilePathAndHashesToFile() {
+        $fp = fopen($this->previous_hashes_path, 'w');
+
+        foreach( $this->file_paths_and_hashes as $key => $value ) {
+            fwrite( $fp, $key . ',' . $value . PHP_EOL ); 
+        }
+
+        fclose($fp);
     }
 }
 
