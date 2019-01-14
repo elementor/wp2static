@@ -47,7 +47,6 @@ class StaticHtmlOutput_SitePublisher {
         }
     }
     
-
     public function updateProgress () {
         $this->batch_index++;
 
