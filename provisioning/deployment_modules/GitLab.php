@@ -5,6 +5,7 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
     public function __construct() {
         $this->loadSettings( 'gitlab' );
 
+        // TODO: implement deploy prefix dir for GitLab
         $this->r_path = '';
 
         if ( isset( $this->settings['glPath'] ) ) {
@@ -14,8 +15,6 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
         $this->files_in_repo_list_path =
             $this->settings['wp_uploads_path'] .
                 '/WP2STATIC-GITLAB-FILES-IN-REPO.txt';
-
-        $this->api_base = '';
 
         switch ( $_POST['ajax_action'] ) {
             case 'gitlab_prepare_export':
@@ -34,41 +33,6 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
                 $this->test_file_create();
                 break;
         }
-    }
-
-    public function createGitLabPagesConfig() {
-        // NOTE: required for GitLab Pages to build static site
-        $config_file = <<<EOD
-pages:
-  stage: deploy
-  script:
-  - mkdir .public
-  - cp -r * .public
-  - mv .public public
-  artifacts:
-    paths:
-    - public
-  only:
-  - master
-
-EOD;
-
-        $target_path = $this->archive->path . '.gitlab-ci.yml';
-
-        file_put_contents( $target_path, $config_file );
-
-        chmod( $target_path, 0664 );
-
-        // force include the gitlab config file
-        $export_line = '.gitlab-ci.yml,.gitlab-ci.yml';
-
-        file_put_contents(
-            $this->export_file_list,
-            $export_line . PHP_EOL,
-            FILE_APPEND | LOCK_EX
-        );
-
-        chmod( $this->export_file_list, 0664 );
     }
 
     public function addToListOfFilesInRepos( $items ) {
@@ -362,6 +326,38 @@ EOD;
 
         $this->finalizeDeployment();
     }
+
+    public function createGitLabPagesConfig() {
+        // NOTE: required for GitLab Pages to build static site
+        $config_file = <<<EOD
+pages:
+  stage: deploy
+  script:
+  - mkdir .public
+  - cp -r * .public
+  - mv .public public
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+
+EOD;
+
+        $target_path = $this->archive->path . '.gitlab-ci.yml';
+        file_put_contents( $target_path, $config_file );
+        chmod( $target_path, 0664 );
+        $export_line = '.gitlab-ci.yml,.gitlab-ci.yml';
+
+        file_put_contents(
+            $this->export_file_list,
+            $export_line . PHP_EOL,
+            FILE_APPEND | LOCK_EX
+        );
+
+        chmod( $this->export_file_list, 0664 );
+    }
+
 }
 
 $gitlab = new StaticHtmlOutput_GitLab();
