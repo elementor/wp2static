@@ -239,7 +239,7 @@ class StaticHtmlOutput_SitePublisher {
         $f = fopen( $this->export_file_list, 'r' );
 
         for ( $i = 0; $i < $batch_size; $i++ ) {
-            $lines[] = fgets( $f );
+            $lines[] = rtrim( fgets( $f ) );
         }
 
         fclose( $f );
@@ -254,7 +254,7 @@ class StaticHtmlOutput_SitePublisher {
 
         file_put_contents(
             $this->export_file_list,
-            implode( "\r\n", $contents )
+            implode( PHP_EOL, $contents )
         );
 
         chmod( $this->export_file_list, 0664 );
