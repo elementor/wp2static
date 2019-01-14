@@ -151,7 +151,7 @@ jQuery(document).ready(function($){
       if (current_deployment_method === 'zip') {
         $('#downloadZIP').show();
 
-        $.get( wp_site.uploads_url + '/WP-STATIC-CURRENT-ARCHIVE.txt?cacheBuster=' + Date.now(),
+        $.get( wp_site.uploads_url + '/WP2STATIC-CURRENT-ARCHIVE.txt?cacheBuster=' + Date.now(),
             function( archive_path ) {
                 path_segments = archive_path.split('/');
                 current_archive.name = path_segments[path_segments.length - 2];

@@ -32,7 +32,7 @@ class Archive {
         // makes this archive's instance link to the current export's
         $handle = fopen(
             $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-CURRENT-ARCHIVE.txt',
+                '/WP2STATIC-CURRENT-ARCHIVE.txt',
             'r'
         );
 
@@ -43,7 +43,7 @@ class Archive {
     public function currentArchiveExists() {
         return is_file(
             $this->settings['wp_uploads_path'] .
-            '/WP-STATIC-CURRENT-ARCHIVE.txt'
+            '/WP2STATIC-CURRENT-ARCHIVE.txt'
         );
     }
 
@@ -57,7 +57,7 @@ class Archive {
         if ( wp_mkdir_p( $this->path ) ) {
             $result = file_put_contents(
                 $this->settings['wp_uploads_path'] .
-                    '/WP-STATIC-CURRENT-ARCHIVE.txt',
+                    '/WP2STATIC-CURRENT-ARCHIVE.txt',
                 $this->path
             );
 
@@ -69,7 +69,7 @@ class Archive {
 
             chmod(
                 $this->settings['wp_uploads_path'] .
-                    '/WP-STATIC-CURRENT-ARCHIVE.txt',
+                    '/WP2STATIC-CURRENT-ARCHIVE.txt',
                 0664
             );
         } else {
