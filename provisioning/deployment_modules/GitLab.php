@@ -35,110 +35,6 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
         }
     }
 
-    public function addToListOfFilesInRepos( $items ) {
-        file_put_contents(
-            $this->files_in_repo_list_path,
-            implode( PHP_EOL, $items ),
-            FILE_APPEND | LOCK_EX
-        );
-    }
-
-    public function getFilePathsFromTree( $json_response ) {
-        $partial_tree_array = json_decode( (string) $json_response, true );
-
-        $formatted_elements = array();
-
-        foreach ( $partial_tree_array as $object ) {
-            if ( $object['type'] === 'blob' ) {
-                $formatted_elements[] = $object['path'];
-            }
-        }
-
-        return $formatted_elements;
-    }
-
-    public function getRepositoryTree( $page ) {
-        $tree_endpoint = 'https://gitlab.com/api/v4/projects/' .
-            $this->settings['glProject'] .
-            '/repository/tree?recursive=true&per_page=100&page=' . $page;
-
-        $ch = curl_init();
-
-        curl_setopt( $ch, CURLOPT_URL, $tree_endpoint );
-        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
-        curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
-        curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
-        curl_setopt( $ch, CURLOPT_HEADER, 1 );
-        curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
-        curl_setopt( $ch, CURLOPT_USERAGENT, 'WP2Static.com' );
-        curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'GET' );
-
-        curl_setopt(
-            $ch,
-            CURLOPT_HTTPHEADER,
-            array(
-                'PRIVATE-TOKEN: ' . $this->settings['glToken'],
-                'Content-Type: application/json',
-            )
-        );
-
-        $output = curl_exec( $ch );
-        $status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
-        $header_size = curl_getinfo( $ch, CURLINFO_HEADER_SIZE );
-
-        $body = substr( $output, $header_size );
-        $header = substr( $output, 0, $header_size );
-
-        $raw_headers = explode(
-            "\n",
-            trim( mb_substr( $output, 0, $header_size ) )
-        );
-
-        unset( $raw_headers[0] );
-
-        $headers = array();
-
-        foreach ( $raw_headers as $line ) {
-            list( $key, $val ) = explode( ':', $line, 2 );
-            $headers[ strtolower( $key ) ] = trim( $val );
-        }
-
-        curl_close( $ch );
-
-        $good_response_codes = array( '200', '201', '301', '302', '304' );
-
-        if ( ! in_array( $status_code, $good_response_codes ) ) {
-            require_once dirname( __FILE__ ) .
-                '/../library/StaticHtmlOutput/WsLog.php';
-            WsLog::l(
-                'BAD RESPONSE STATUS (' . $status_code . '): '
-            );
-
-            throw new Exception( 'GitLab API bad response status' );
-        }
-
-        $total_pages = $headers['x-total-pages'];
-        $next_page = $headers['x-next-page'];
-        $current_page = $headers['x-page'];
-
-        // if we have results, append them to files to delete array
-        $json_items = $body;
-
-        $this->addToListOfFilesInRepos(
-            $this->getFilePathsFromTree( $json_items )
-        );
-
-        // if current page is less than total pages
-        if ( $current_page < $total_pages ) {
-            // call this again with an increment
-            $this->getRepositoryTree( $next_page );
-        }
-    }
-
-    public function getListOfFilesInRepo() {
-        $this->getRepositoryTree( 1 );
-    }
-
     public function upload_files() {
         $this->files_remaining = $this->getRemainingItemsCount();
 
@@ -260,6 +156,110 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
 
             $this->finalizeDeployment();
         }
+    }
+
+    public function addToListOfFilesInRepos( $items ) {
+        file_put_contents(
+            $this->files_in_repo_list_path,
+            implode( PHP_EOL, $items ),
+            FILE_APPEND | LOCK_EX
+        );
+    }
+
+    public function getFilePathsFromTree( $json_response ) {
+        $partial_tree_array = json_decode( (string) $json_response, true );
+
+        $formatted_elements = array();
+
+        foreach ( $partial_tree_array as $object ) {
+            if ( $object['type'] === 'blob' ) {
+                $formatted_elements[] = $object['path'];
+            }
+        }
+
+        return $formatted_elements;
+    }
+
+    public function getRepositoryTree( $page ) {
+        $tree_endpoint = 'https://gitlab.com/api/v4/projects/' .
+            $this->settings['glProject'] .
+            '/repository/tree?recursive=true&per_page=100&page=' . $page;
+
+        $ch = curl_init();
+
+        curl_setopt( $ch, CURLOPT_URL, $tree_endpoint );
+        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
+        curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
+        curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
+        curl_setopt( $ch, CURLOPT_HEADER, 1 );
+        curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
+        curl_setopt( $ch, CURLOPT_USERAGENT, 'WP2Static.com' );
+        curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'GET' );
+
+        curl_setopt(
+            $ch,
+            CURLOPT_HTTPHEADER,
+            array(
+                'PRIVATE-TOKEN: ' . $this->settings['glToken'],
+                'Content-Type: application/json',
+            )
+        );
+
+        $output = curl_exec( $ch );
+        $status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
+        $header_size = curl_getinfo( $ch, CURLINFO_HEADER_SIZE );
+
+        $body = substr( $output, $header_size );
+        $header = substr( $output, 0, $header_size );
+
+        $raw_headers = explode(
+            "\n",
+            trim( mb_substr( $output, 0, $header_size ) )
+        );
+
+        unset( $raw_headers[0] );
+
+        $headers = array();
+
+        foreach ( $raw_headers as $line ) {
+            list( $key, $val ) = explode( ':', $line, 2 );
+            $headers[ strtolower( $key ) ] = trim( $val );
+        }
+
+        curl_close( $ch );
+
+        $good_response_codes = array( '200', '201', '301', '302', '304' );
+
+        if ( ! in_array( $status_code, $good_response_codes ) ) {
+            require_once dirname( __FILE__ ) .
+                '/../library/StaticHtmlOutput/WsLog.php';
+            WsLog::l(
+                'BAD RESPONSE STATUS (' . $status_code . '): '
+            );
+
+            throw new Exception( 'GitLab API bad response status' );
+        }
+
+        $total_pages = $headers['x-total-pages'];
+        $next_page = $headers['x-next-page'];
+        $current_page = $headers['x-page'];
+
+        // if we have results, append them to files to delete array
+        $json_items = $body;
+
+        $this->addToListOfFilesInRepos(
+            $this->getFilePathsFromTree( $json_items )
+        );
+
+        // if current page is less than total pages
+        if ( $current_page < $total_pages ) {
+            // call this again with an increment
+            $this->getRepositoryTree( $next_page );
+        }
+    }
+
+    public function getListOfFilesInRepo() {
+        $this->getRepositoryTree( 1 );
     }
 
     public function test_file_create() {
