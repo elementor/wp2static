@@ -55,6 +55,9 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
             FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
         );
 
+        $files_in_tree = array_filter( $files_in_tree );
+        $files_in_tree = array_unique( $files_in_tree );
+
         $files_data = array();
 
         foreach ( $lines as $line ) {

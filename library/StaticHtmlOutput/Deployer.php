@@ -6,6 +6,7 @@ class Deployer {
     public function __construct() {
         $target_settings = array(
             'general',
+            'advanced',
         );
 
         if ( defined( 'WP_CLI' ) ) {
@@ -152,11 +153,15 @@ class Deployer {
             date( 'H:i:s', $duration )
         );
 
-        WP_CLI::line( 'Sending confirmation email...' );
         $this->emailDeployNotification();
     }
 
     public function emailDeployNotification() {
+        if ( ! isset( $this->settings['completionEmail'] ) ) {
+            return;
+        }
+
+        WP_CLI::line( 'Sending confirmation email...' );
         $current_user = wp_get_current_user();
         $to = $current_user->user_email;
         $subject = 'Static site deployment: ' .
