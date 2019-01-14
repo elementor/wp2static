@@ -3,32 +3,7 @@
 class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
 
     public function __construct() {
-        $target_settings = array(
-            'general',
-            'wpenv',
-            'gitlab',
-            'advanced',
-        );
-
-        if ( isset( $_POST['selected_deployment_option'] ) ) {
-            require_once dirname( __FILE__ ) .
-                '/../library/StaticHtmlOutput/PostSettings.php';
-
-            $this->settings = WPSHO_PostSettings::get( $target_settings );
-        } else {
-            require_once dirname( __FILE__ ) .
-                '/../library/StaticHtmlOutput/DBSettings.php';
-
-            $this->settings = WPSHO_DBSettings::get( $target_settings );
-        }
-
-        $this->export_file_list =
-            $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-EXPORT-GITLAB-FILES-TO-EXPORT.txt';
-        $archive_dir = file_get_contents(
-            $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-CURRENT-ARCHIVE.txt'
-        );
+        $this->loadSettings( 'gitlab' );
 
         $this->r_path = '';
 
@@ -36,20 +11,23 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
             $this->r_path = $this->settings['glPath'];
         }
 
-        // TODO: move this where needed
-        require_once dirname( __FILE__ ) .
-            '/../library/StaticHtmlOutput/Archive.php';
-        $this->archive = new Archive();
-        $this->archive->setToCurrentArchive();
-        $this->files_in_tree = array();
+        $this->files_in_repo_list_path =
+            $this->settings['wp_uploads_path'] .
+                '/WP2STATIC-GITLAB-FILES-IN-REPO.txt';
 
         $this->api_base = '';
 
         switch ( $_POST['ajax_action'] ) {
             case 'gitlab_prepare_export':
+                $this->bootstrap();
+                $this->loadArchive();
+                $this->getListOfFilesInRepo();
+
                 $this->prepare_export( true );
                 break;
             case 'gitlab_upload_files':
+                $this->bootstrap();
+                $this->loadArchive();
                 $this->upload_files();
                 break;
             case 'test_gitlab':
@@ -93,8 +71,12 @@ EOD;
         chmod( $this->export_file_list, 0664 );
     }
 
-    public function mergePartialTrees( $items ) {
-        $this->files_in_tree = array_merge( $this->files_in_tree, $items );
+    public function addToListOfFilesInRepos( $items ) {
+        file_put_contents(
+            $this->files_in_repo_list_path,
+            implode( PHP_EOL, $items ),
+            FILE_APPEND | LOCK_EX
+        );
     }
 
     public function getFilePathsFromTree( $json_response ) {
@@ -178,7 +160,7 @@ EOD;
         // if we have results, append them to files to delete array
         $json_items = $body;
 
-        $this->mergePartialTrees(
+        $this->addToListOfFilesInRepos(
             $this->getFilePathsFromTree( $json_items )
         );
 
@@ -194,9 +176,6 @@ EOD;
     }
 
     public function upload_files() {
-        // TODO: move repo file list to flat txt file, once-only generation
-        $this->getListOfFilesInRepo();
-
         $files_remaining = $this->get_remaining_items_count();
 
         if ( $files_remaining < 0 ) {
@@ -212,9 +191,21 @@ EOD;
 
         $lines = $this->get_items_to_export( $batch_size );
 
+        $files_in_tree = file(
+            $this->files_in_repo_list_path,
+            FILE_IGNORE_NEW_LINES
+        );
+
         $files_data = array();
 
+        $deploy_count_path = $this->settings['wp_uploads_path'] .
+                '/WP-STATIC-TOTAL-FILES-TO-DEPLOY.txt';
+        $total_urls_to_crawl = file_get_contents( $deploy_count_path );
+
+        $batch_index = 0;
+
         foreach ( $lines as $line ) {
+            // TODO: is rtrim need when using FILE_IGNORE_NEW_LINES
             list($local_file, $target_path) = explode( ',', rtrim( $line ) );
 
             $local_file = $this->archive->path . $local_file;
@@ -223,7 +214,7 @@ EOD;
                 continue;
             }
 
-            if ( in_array( $target_path, $this->files_in_tree ) ) {
+            if ( in_array( $target_path, $files_in_tree ) ) {
 
                 // TODO: quick filesize comparision via
                 // https://docs.gitlab.com/ee/api/repository_files.html
@@ -245,8 +236,22 @@ EOD;
                     'encoding' => 'base64',
                 );
             }
+
+            $batch_index++;
+
+            $completed_urls =
+                $total_urls_to_crawl -
+                $files_remaining +
+                $batch_index;
+
+            require_once dirname( __FILE__ ) .
+                '/../library/StaticHtmlOutput/ProgressLog.php';
+            ProgressLog::l( $completed_urls, $total_urls_to_crawl );
         }
 
+        // NOTE: delay and progress askew in GitLab as we may
+        // upload all in one  request. Progress indicates building
+        // of list of files that will be deployed/checking if different
         if ( isset( $this->settings['glBlobDelay'] ) &&
             $this->settings['glBlobDelay'] > 0 ) {
             sleep( $this->settings['glBlobDelay'] );

@@ -1,6 +1,44 @@
 <?php
 
 class StaticHtmlOutput_SitePublisher {
+    public function loadSettings( $deploy_method ) {
+        $target_settings = array(
+            'general',
+            'wpenv',
+            'advanced',
+        );
+
+        $target_settings[] = $deploy_method;
+
+        if ( isset( $_POST['selected_deployment_option'] ) ) {
+            require_once dirname( __FILE__ ) .
+                '/PostSettings.php';
+
+            $this->settings = WPSHO_PostSettings::get( $target_settings );
+        } else {
+            require_once dirname( __FILE__ ) .
+                '/DBSettings.php';
+
+            $this->settings = WPSHO_DBSettings::get( $target_settings );
+        }
+    }
+
+    public function loadArchive() {
+        require_once dirname( __FILE__ ) .
+            '/Archive.php';
+        $this->archive = new Archive();
+        $this->archive->setToCurrentArchive();
+    }
+
+    public function bootstrap() {
+        $this->export_file_list =
+            $this->settings['wp_uploads_path'] .
+                '/WP2STATIC-FILES-TO-DEPLOY.txt';
+        $this->archive_dir = file_get_contents(
+            $this->settings['wp_uploads_path'] .
+                '/WP2STATIC-CURRENT-ARCHIVE.txt'
+        );
+    }
 
     public function clear_file_list() {
         if ( is_file( $this->export_file_list ) ) {

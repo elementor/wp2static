@@ -32,15 +32,11 @@ class Exporter {
             'WP-STATIC-CRAWLED-LINKS.txt',
             'WP-STATIC-DISCOVERED-URLS-LOG.txt',
             'WP-STATIC-DISCOVERED-URLS.txt',
-            'WP-STATIC-EXPORT-BITBUCKET-FILES-TO-EXPORT.txt',
-            'WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT.txt',
-            'WP-STATIC-EXPORT-DROPBOX-FILES-TO-EXPORT.txt',
-            'WP-STATIC-EXPORT-FTP-FILES-TO-EXPORT.txt',
-            'WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT.txt',
+            'WP2STATIC-FILES-TO-DEPLOY.txt',
             'WP-STATIC-EXPORT-LOG.txt',
-            'WP-STATIC-EXPORT-S3-FILES-TO-EXPORT.txt',
             'WP-STATIC-FINAL-2ND-CRAWL-LIST.txt',
             'WP-STATIC-FINAL-CRAWL-LIST.txt',
+            'WP2STATIC-GITLAB-FILES-IN-REPO.txt',
         );
 
         foreach ( $files_to_clean as $file_to_clean ) {
@@ -60,42 +56,25 @@ class Exporter {
         // skip first export state
         if ( is_file(
             $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-CURRENT-ARCHIVE.txt'
+                '/WP2STATIC-CURRENT-ARCHIVE.txt'
         ) ) {
 
             $handle = fopen(
                 $this->settings['wp_uploads_path'] .
-                    '/WP-STATIC-CURRENT-ARCHIVE.txt',
+                    '/WP2STATIC-CURRENT-ARCHIVE.txt',
                 'r'
             );
             $this->settings['archive_dir'] = stream_get_line( $handle, 0 );
-
-            $src_dir =
-                $this->settings['wp_uploads_path'] . '/previous-export';
-
-            if ( is_dir( $src_dir ) ) {
-                // TODO: rewrite to php native in case of shared hosting
-                // delete archivedir and then recursively copy
-                // phpcs:disable
-                shell_exec(
-                    "cp -r $src_dir/* $this->settings['archiveDir']/"
-                );
-                // phpcs:enable
-            }
         }
 
         $files_to_clean = array(
             '/WP-STATIC-2ND-CRAWL-LIST.txt',
             '/WP-STATIC-CRAWLED-LINKS.txt',
             '/WP-STATIC-DISCOVERED-URLS.txt',
-            '/WP-STATIC-EXPORT-BITBUCKET-FILES-TO-EXPORT.txt',
-            '/WP-STATIC-EXPORT-BUNNYCDN-FILES-TO-EXPORT.txt',
-            '/WP-STATIC-EXPORT-DROPBOX-FILES-TO-EXPORT.txt',
-            '/WP-STATIC-EXPORT-FTP-FILES-TO-EXPORT.txt',
-            '/WP-STATIC-EXPORT-GITHUB-FILES-TO-EXPORT.txt',
-            '/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT.txt',
+            '/WP2STATIC-FILES-TO-DEPLOY.txt',
             '/WP-STATIC-FINAL-2ND-CRAWL-LIST.txt',
             '/WP-STATIC-FINAL-CRAWL-LIST.txt',
+            '/WP2STATIC-GITLAB-FILES-IN-REPO.txt',
         );
 
         foreach ( $files_to_clean as $file_to_clean ) {
