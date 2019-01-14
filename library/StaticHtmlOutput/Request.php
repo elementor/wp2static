@@ -27,8 +27,50 @@ class WP2Static_Request {
             $headers
         );
 
-        $this->output = curl_exec( $ch );
+        $this->body = curl_exec( $ch );
         $this->status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
+
+        curl_close( $ch );
+    }
+
+    public function getWithCustomHeaders( $url, $headers ) {
+        $ch = curl_init();
+
+        curl_setopt( $ch, CURLOPT_URL, $url );
+        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
+        curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
+        curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
+        curl_setopt( $ch, CURLOPT_HEADER, 1 );
+        curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
+        curl_setopt( $ch, CURLOPT_USERAGENT, 'WP2Static.com' );
+        curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'GET' );
+
+        curl_setopt(
+            $ch,
+            CURLOPT_HTTPHEADER,
+            $headers
+        );
+
+        $output = curl_exec( $ch );
+        $this->status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
+        $header_size = curl_getinfo( $ch, CURLINFO_HEADER_SIZE );
+
+        $this->body = substr( $output, $header_size );
+        $header = substr( $output, 0, $header_size );
+
+        $raw_headers = explode(
+            "\n",
+            trim( mb_substr( $output, 0, $header_size ) )
+        );
+
+        unset( $raw_headers[0] );
+
+        $this->headers = array();
+
+        foreach ( $raw_headers as $line ) {
+            list( $key, $val ) = explode( ':', $line, 2 );
+            $this->headers[ strtolower( $key ) ] = trim( $val );
+        }
 
         curl_close( $ch );
     }

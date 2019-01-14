@@ -6,6 +6,7 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
         $this->loadSettings( 'gitlab' );
 
         // TODO: implement deploy prefix dir for GitLab
+        // shift it to the file upload function
         $this->r_path = '';
 
         if ( isset( $this->settings['glPath'] ) ) {
@@ -168,67 +169,38 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
             $this->settings['glProject'] .
             '/repository/tree?recursive=true&per_page=100&page=' . $page;
 
-        $ch = curl_init();
+        require_once dirname( __FILE__ ) .
+            '/../library/StaticHtmlOutput/Request.php';
+        $client = new WP2Static_Request();
 
-        curl_setopt( $ch, CURLOPT_URL, $tree_endpoint );
-        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
-        curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
-        curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
-        curl_setopt( $ch, CURLOPT_HEADER, 1 );
-        curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
-        curl_setopt( $ch, CURLOPT_USERAGENT, 'WP2Static.com' );
-        curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'GET' );
-
-        curl_setopt(
-            $ch,
-            CURLOPT_HTTPHEADER,
-            array(
-                'PRIVATE-TOKEN: ' . $this->settings['glToken'],
-                'Content-Type: application/json',
-            )
+        $headers = array(
+            'PRIVATE-TOKEN: ' . $this->settings['glToken'],
+            'Content-Type: application/json',
         );
 
-        $output = curl_exec( $ch );
-        $status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
-        $header_size = curl_getinfo( $ch, CURLINFO_HEADER_SIZE );
-
-        $body = substr( $output, $header_size );
-        $header = substr( $output, 0, $header_size );
-
-        $raw_headers = explode(
-            "\n",
-            trim( mb_substr( $output, 0, $header_size ) )
+        $client->getWithCustomHeaders(
+            $tree_endpoint,
+            $headers
         );
-
-        unset( $raw_headers[0] );
-
-        $headers = array();
-
-        foreach ( $raw_headers as $line ) {
-            list( $key, $val ) = explode( ':', $line, 2 );
-            $headers[ strtolower( $key ) ] = trim( $val );
-        }
-
-        curl_close( $ch );
 
         $good_response_codes = array( '200', '201', '301', '302', '304' );
 
-        if ( ! in_array( $status_code, $good_response_codes ) ) {
+        if ( ! in_array( $client->status_code, $good_response_codes ) ) {
             require_once dirname( __FILE__ ) .
                 '/../library/StaticHtmlOutput/WsLog.php';
             WsLog::l(
-                'BAD RESPONSE STATUS (' . $status_code . '): '
+                'BAD RESPONSE STATUS (' . $client->status_code . '): '
             );
 
             throw new Exception( 'GitLab API bad response status' );
         }
 
-        $total_pages = $headers['x-total-pages'];
-        $next_page = $headers['x-next-page'];
-        $current_page = $headers['x-page'];
+        $total_pages = $client->headers['x-total-pages'];
+        $next_page = $client->headers['x-next-page'];
+        $current_page = $client->headers['x-page'];
 
         // if we have results, append them to files to delete array
-        $json_items = $body;
+        $json_items = $client->body;
 
         $this->addToListOfFilesInRepos(
             $this->getFilePathsFromTree( $json_items )
