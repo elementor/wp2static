@@ -185,7 +185,7 @@ EOD;
 
         $this->initiateProgressIndicator();
 
-        $batch_size = $this->settings['glBlobIncrement'];
+        $batch_size = $this->settings['deployBatchSize'];
 
         if ( $batch_size > $this->files_remaining ) {
             $batch_size = $this->files_remaining;
