@@ -318,32 +318,32 @@ class StaticHtmlOutput_SitePublisher {
         if ( is_file( $this->previous_hashes_path ) ) {
             $file = fopen( $this->previous_hashes_path, 'r' );
 
-            while ( ( $line = fgetcsv( $file ) ) !== FALSE ) {
+            while ( ( $line = fgetcsv( $file ) ) !== false ) {
                 if ( isset( $line[0] ) && isset( $line[1] ) ) {
-                    $this->file_paths_and_hashes[$line[0]] = $line[1];
+                    $this->file_paths_and_hashes[ $line[0] ] = $line[1];
                 }
             }
 
-            fclose($file);
-        } 
+            fclose( $file );
+        }
     }
 
     public function recordFilePathAndHashInMemory(
         $target_path,
         $local_file_contents
         ) {
-        $this->file_paths_and_hashes[$target_path] =
+        $this->file_paths_and_hashes[ $target_path ] =
             crc32( $local_file_contents );
     }
 
     public function writeFilePathAndHashesToFile() {
-        $fp = fopen($this->previous_hashes_path, 'w');
+        $fp = fopen( $this->previous_hashes_path, 'w' );
 
-        foreach( $this->file_paths_and_hashes as $key => $value ) {
-            fwrite( $fp, $key . ',' . $value . PHP_EOL ); 
+        foreach ( $this->file_paths_and_hashes as $key => $value ) {
+            fwrite( $fp, $key . ',' . $value . PHP_EOL );
         }
 
-        fclose($fp);
+        fclose( $fp );
     }
 }
 

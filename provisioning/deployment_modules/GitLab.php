@@ -13,7 +13,8 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
             $this->settings['wp_uploads_path'] .
                 '/WP2STATIC-GITLAB-PREVIOUS-HASHES.txt';
 
-        if ( defined( 'WP_CLI' ) ) { return; }
+        if ( defined( 'WP_CLI' ) ) {
+            return; }
 
         switch ( $_POST['ajax_action'] ) {
             case 'gitlab_prepare_export':
@@ -37,7 +38,9 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
     public function upload_files() {
         $this->files_remaining = $this->getRemainingItemsCount();
 
-        if ( $this->files_remaining < 0 ) { echo 'ERROR'; die(); }
+        if ( $this->files_remaining < 0 ) {
+            echo 'ERROR';
+            die(); }
 
         $this->initiateProgressIndicator();
 
@@ -66,7 +69,8 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
 
             $local_file = $this->archive->path . $local_file;
 
-            if ( ! is_file( $local_file ) ) { continue; }
+            if ( ! is_file( $local_file ) ) {
+                continue; }
 
             if ( isset( $this->settings['glPath'] ) ) {
                 $target_path = $this->settings['glPath'] . '/' . $target_path;
@@ -75,8 +79,8 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
             $local_file_contents = file_get_contents( $local_file );
 
             if ( in_array( $target_path, $files_in_tree ) ) {
-                if ( isset( $this->file_paths_and_hashes[$target_path] ) ) {
-                    $prev = $this->file_paths_and_hashes[$target_path];
+                if ( isset( $this->file_paths_and_hashes[ $target_path ] ) ) {
+                    $prev = $this->file_paths_and_hashes[ $target_path ];
                     $current = crc32( $local_file_contents );
 
                     if ( $prev != $current ) {
@@ -99,7 +103,6 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
                         'encoding' => 'base64',
                     );
                 }
-
             } else {
                 $files_data[] = array(
                     'action' => 'create',
@@ -110,7 +113,6 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
                     'encoding' => 'base64',
                 );
             }
-
 
             $this->recordFilePathAndHashInMemory(
                 $target_path,
