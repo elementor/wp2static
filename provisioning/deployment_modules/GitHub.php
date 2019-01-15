@@ -225,7 +225,6 @@ JSON;
                         array( '200', '201', '301', '302', '304' )
                     );
 
-                    $this->writeFilePathAndHashesToFile();
                 } catch ( Exception $e ) {
                     $this->handleException( $e );
                 }
@@ -241,6 +240,8 @@ JSON;
             // of list of files that will be deployed/checking if different
             $this->updateProgress();
         }
+
+        $this->writeFilePathAndHashesToFile();
 
         $this->pauseBetweenAPICalls();
 
