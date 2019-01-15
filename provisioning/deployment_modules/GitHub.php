@@ -69,6 +69,16 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
 
             $local_file_contents = file_get_contents( $local_file );
 
+// TODO: here
+
+//            if ( isset( $this->file_paths_and_hashes[ $target_path ] ) ) {
+//                $prev = $this->file_paths_and_hashes[ $target_path ];
+//                $current = crc32( $local_file_contents );
+//
+//                if ( $prev != $current ) {
+
+//TODO: break these into methods else unwieldly
+
             $remote_path = $this->api_base . $this->settings['ghRepo'] .
                 '/contents/' . $target_path;
 
