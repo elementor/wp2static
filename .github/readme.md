@@ -17,6 +17,44 @@ Being a GitHub page, this is tailored for developers, sys admins or other techni
  - less clicks == better UX
  - user configurable options vs developer opinions
 
+## WordPress as a Static Site Generator
+
+[![WordPress as a Static Site Generator](http://img.youtube.com/vi/HPc4JjBvkrU/0.jpg)](http://www.youtube.com/watch?v=HPc4JjBvkrU)
+
+## Hooks
+
+### Modify the initial list of URLs to crawl
+
+ - `wp2static_modify_initial_crawl_list`
+ - Filter hook
+
+*signature*
+```php
+apply_filters(
+    'wp2static_modify_initial_crawl_list',
+    $url_queue
+);
+```
+
+*example usage*
+```php
+function add_additional_urls( $url_queue ) {
+    $additional_urls = array(
+        'http://mydomain.com/custom_link_1/',
+        'http://mydomain.com/custom_link_2/',
+    );
+
+    $url_queue = array_merge(
+        $url_queue,
+        $additional_urls
+    );
+
+    return $url_queue;
+}
+
+add_filter( 'wp2static_modify_initial_crawl_list', 'add_additional_urls' );
+```
+
 ## CLI usage
 
  - `wp wp2static options --help`
