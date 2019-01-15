@@ -30,7 +30,7 @@ Watch Leon Stafford's talk from WordCamp Brisbane 2018
 * [Notes](#notes)
 * [Sponsorship](#sponsorship-supporting-open-source)
 
-## Opionated software
+## Opinionated software
 
  - speed over beautiful code
  - human readable code over short variable names
@@ -40,7 +40,7 @@ Watch Leon Stafford's talk from WordCamp Brisbane 2018
  - user configurable options vs developer opinions
 
 
-## CLI usage
+## WP-CLI commands
 
  - `wp wp2static options --help`
 ```
