@@ -403,7 +403,11 @@ class StaticHtmlOutput_FilesHelper {
                 );
         }
 
-        // uniquify all URLs
+        $url_queue = apply_filters(
+            'wp2static_modify_initial_crawl_list',
+            $url_queue
+        );
+
         $url_queue = array_unique( $url_queue );
 
         $initial_crawl_list_total = count( $url_queue );
@@ -412,6 +416,7 @@ class StaticHtmlOutput_FilesHelper {
 
         // TODO: modify each function vs doing here for perf
         $wp_site_url = get_home_url();
+
         $str = str_replace(
             $wp_site_url,
             '',
