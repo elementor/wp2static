@@ -181,13 +181,13 @@ When cloning the repo for direct use, clone it into a dir named after the offici
 
 I'm committed (git-pun) to keeping this software open-source and free from selling out user data to a 3rd party. As of version 6, we'll no longer be using Freemius for this reason. We'll accept payments with Snipcart + Stripe, but they will have no knowledge of your WordPress website or any info not required for a payment. The only thing that tracks you on our marketing website is a YouTube embed, which I'll soon switch to an image to avoid that. I rock OpenBSD on my workstation and increasingly on servers because they are an open source project done very well.
 
-There is no company behind this software, besides a sole proprietership in my name, in order to comply with taxation requirements for me as an individual.
+There is no big company behind this software, besides a sole proprietership in my name, in order to comply with taxation requirements for me as an Australian resident.
 
-In order for me to continue to develop this software, maintain a free and open-source version, I need support.
+Help keep me doing what I love: building and supporting this software. 
 
-If you're a company that benefits from the continued development of this or you're a big player that I recommend in our docs, like Netlify, GitHub, AWS, CloudFlare or even Mozilla. If you're a hosting company like DigitalOcean, Vultr or other developer-friendly, cost efficient provider, I still do recommend such hosts.
-
-I need your sponsorship right now.
+ - [Buy the PowerPack](https://wp2static.com)
+ - [Back me on Patreon](https://www.patreon.com/leonstafford)
+ - [Fund my PayPal](https://www.paypal.me/leonjstafford)
 
 Leon
 
