@@ -21,15 +21,14 @@ Watch Leon Stafford's [talk from WordCamp Brisbane 2018](http://www.youtube.com/
 ## Table of contents
 
 * [Opinionated software](#opinionated-software)
-* [WP-CLI commands](#wpcli-commands)
+* [WP-CLI commands](#wp-cli-commands)
 * [Hooks](#hooks)
   * [Modify the initial list of URLs to crawl](#modify-the-initial-list-of-urls-to-crawl)
-
 * [Development](#development)
-* [Localisation / translations](#localisation-translations)
+* [Localisation / translations](#localisation--translations)
 * [Support](#support)
 * [Notes](#notes)
-* [Sponsorship](#sponsorship-supporting-open-source)
+* [Sponsorship / supporting open-source](#sponsorship--supporting-open-source)
 
 ## Opinionated software
 
