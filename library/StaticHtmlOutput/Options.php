@@ -44,7 +44,6 @@ class StaticHtmlOutput_Options {
         'ghCommitMessage',
         'ghPath',
         'ghRepo',
-        'ghSkipSameBytes',
         'ghToken',
         'glBranch',
         'glPath',
