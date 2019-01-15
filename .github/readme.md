@@ -2,58 +2,43 @@
 
 WordPress plugin to publish a static copy of your site to GitHub Pages, S3, Netlify or anywhere else you can pipe into your CI/CD workflow.
 
-Formerly, "WP Static Site Generator"
+## WordPress as a Static Site Generator
 
-For all the reasons why to use it and the benefits of going static, visit [https://wp2static.com](https://wp2static.com). For documentation, there's a [site for that](https://docs.wp2static.com), too.
+Watch Leon Stafford's talk from WordCamp Brisbane 2018
 
-Being a GitHub page, this is tailored for developers, sys admins or other technically inclined people wanting to poke around in the code and see how it's put together.
+[![WordPress as a Static Site Generator](http://img.youtube.com/vi/HPc4JjBvkrU/0.jpg)](http://www.youtube.com/watch?v=HPc4JjBvkrU)
+
+## External resources
+
+ - [WordPress.org plugin page](https://wordpress.org/plugins/static-html-output-plugin)
+ - [Marketing site](https://wp2static.com)
+ - [Documentation](https://docs.wp2static.com)
+ - [Forum](https://forum.wp2static.com)
+ - [Slack](https://join.slack.com/t/wp2static/shared_invite/enQtNDQ4MDM4MjkwNjEwLTVmN2I2MmU4ODI2MWRkNzM4ZGU3YWU4ZGVhMzgwZTc1MDE2OGNmYTFhOGMwM2U0ZTVlYTljYmM2Yjk2ODJlOTk)  
+ - [Twitter](https://twitter.com/wp2static)  
+
+## Table of contents
+
+* [Opinionated software](#opinionated-software)
+* [WP-CLI commands](#wpcli-commands)
+* [Hooks](#hooks)
+  * [Modify the initial list of URLs to crawl](#modify-the-initial-list-of-urls-to-crawl)
+
+* [Development](#development)
+* [Localisation / translations](#localisation-translations)
+* [Support](#support)
+* [Notes](#notes)
+* [Sponsorship](#sponsorship-supporting-open-source)
 
 ## Opionated software
 
  - speed over beautiful code
- - human readable code over variable names that fit within 80chars
+ - human readable code over short variable names
  - own-code vs adding libraries
  - benchmarking over opinions (performance)
  - less clicks == better UX
  - user configurable options vs developer opinions
 
-## WordPress as a Static Site Generator
-
-[![WordPress as a Static Site Generator](http://img.youtube.com/vi/HPc4JjBvkrU/0.jpg)](http://www.youtube.com/watch?v=HPc4JjBvkrU)
-
-## Hooks
-
-### Modify the initial list of URLs to crawl
-
- - `wp2static_modify_initial_crawl_list`
- - Filter hook
-
-*signature*
-```php
-apply_filters(
-    'wp2static_modify_initial_crawl_list',
-    $url_queue
-);
-```
-
-*example usage*
-```php
-function add_additional_urls( $url_queue ) {
-    $additional_urls = array(
-        'http://mydomain.com/custom_link_1/',
-        'http://mydomain.com/custom_link_2/',
-    );
-
-    $url_queue = array_merge(
-        $url_queue,
-        $additional_urls
-    );
-
-    return $url_queue;
-}
-
-add_filter( 'wp2static_modify_initial_crawl_list', 'add_additional_urls' );
-```
 
 ## CLI usage
 
@@ -129,6 +114,39 @@ Success: Deployed to: zip in 00:00:01
 Sending confirmation email...
 ```
 
+## Hooks
+
+### Modify the initial list of URLs to crawl
+
+ - `wp2static_modify_initial_crawl_list`
+ - Filter hook
+
+*signature*
+```php
+apply_filters(
+    'wp2static_modify_initial_crawl_list',
+    $url_queue
+);
+```
+
+*example usage*
+```php
+function add_additional_urls( $url_queue ) {
+    $additional_urls = array(
+        'http://mydomain.com/custom_link_1/',
+        'http://mydomain.com/custom_link_2/',
+    );
+
+    $url_queue = array_merge(
+        $url_queue,
+        $additional_urls
+    );
+
+    return $url_queue;
+}
+
+add_filter( 'wp2static_modify_initial_crawl_list', 'add_additional_urls' );
+```
 
 
 ## Development
