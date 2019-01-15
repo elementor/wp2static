@@ -13,8 +13,7 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
             $this->settings['wp_uploads_path'] .
                 '/WP2STATIC-GITLAB-PREVIOUS-HASHES.txt';
 
-        if ( defined( 'WP_CLI' ) ) {
-            return; }
+        if ( defined( 'WP_CLI' ) ) { return; }
 
         switch ( $_POST['ajax_action'] ) {
             case 'gitlab_prepare_export':
@@ -38,9 +37,7 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
     public function upload_files() {
         $this->files_remaining = $this->getRemainingItemsCount();
 
-        if ( $this->files_remaining < 0 ) {
-            echo 'ERROR';
-            die(); }
+        if ( $this->files_remaining < 0 ) { echo 'ERROR'; die(); }
 
         $this->initiateProgressIndicator();
 
@@ -69,8 +66,7 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
 
             $local_file = $this->archive->path . $local_file;
 
-            if ( ! is_file( $local_file ) ) {
-                continue; }
+            if ( ! is_file( $local_file ) ) { continue; }
 
             if ( isset( $this->settings['glPath'] ) ) {
                 $target_path = $this->settings['glPath'] . '/' . $target_path;

@@ -62,7 +62,6 @@ class WPSHO_PostSettings {
             'ghToken',
             'ghRepo',
             'ghCommitMessage',
-            'ghSkipSameBytes',
         );
 
         $key_sets['bitbucket'] = array(
