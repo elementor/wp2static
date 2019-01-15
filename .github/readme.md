@@ -8,18 +8,10 @@ Watch Leon Stafford's [talk from WordCamp Brisbane 2018](http://www.youtube.com/
 
 [![WordPress as a Static Site Generator](http://img.youtube.com/vi/HPc4JjBvkrU/0.jpg)](http://www.youtube.com/watch?v=HPc4JjBvkrU)
 
-## External resources
-
- - [WordPress.org plugin page](https://wordpress.org/plugins/static-html-output-plugin)
- - [Marketing site](https://wp2static.com)
- - [Documentation](https://docs.wp2static.com)
- - [Forum](https://forum.wp2static.com)
- - [Slack](https://join.slack.com/t/wp2static/shared_invite/enQtNDQ4MDM4MjkwNjEwLTVmN2I2MmU4ODI2MWRkNzM4ZGU3YWU4ZGVhMzgwZTc1MDE2OGNmYTFhOGMwM2U0ZTVlYTljYmM2Yjk2ODJlOTk)  
- - [Twitter](https://twitter.com/wp2static)  
- - [CircleCI](https://circleci.com/gh/leonstafford/wp2static) *master* [![CircleCI](https://circleci.com/gh/leonstafford/wp2static/tree/master.svg?style=svg)](https://circleci.com/gh/leonstafford/wp2static/tree/master) *develop* [![CircleCI](https://circleci.com/gh/leonstafford/wp2static/tree/develop.svg?style=svg)](https://circleci.com/gh/leonstafford/wp2static/tree/develop)
 
 ## Table of contents
 
+* [External resources](#external-resources)
 * [Opinionated software](#opinionated-software)
 * [WP-CLI commands](#wp-cli-commands)
 * [Hooks](#hooks)
@@ -29,6 +21,16 @@ Watch Leon Stafford's [talk from WordCamp Brisbane 2018](http://www.youtube.com/
 * [Support](#support)
 * [Notes](#notes)
 * [Sponsorship / supporting open-source](#sponsorship--supporting-open-source)
+
+## External resources
+
+ - [WordPress.org plugin page](https://wordpress.org/plugins/static-html-output-plugin)
+ - [Marketing site](https://wp2static.com)
+ - [Documentation](https://docs.wp2static.com)
+ - [Forum](https://forum.wp2static.com)
+ - [Slack](https://join.slack.com/t/wp2static/shared_invite/enQtNDQ4MDM4MjkwNjEwLTVmN2I2MmU4ODI2MWRkNzM4ZGU3YWU4ZGVhMzgwZTc1MDE2OGNmYTFhOGMwM2U0ZTVlYTljYmM2Yjk2ODJlOTk)  
+ - [Twitter](https://twitter.com/wp2static)  
+ - [CircleCI](https://circleci.com/gh/leonstafford/wp2static) *master* [![CircleCI](https://circleci.com/gh/leonstafford/wp2static/tree/master.svg?style=svg)](https://circleci.com/gh/leonstafford/wp2static/tree/master) *develop* [![CircleCI](https://circleci.com/gh/leonstafford/wp2static/tree/develop.svg?style=svg)](https://circleci.com/gh/leonstafford/wp2static/tree/develop)
 
 ## Opinionated software
 
