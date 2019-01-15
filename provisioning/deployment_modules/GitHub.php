@@ -16,7 +16,8 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
             $this->settings['wp_uploads_path'] .
                 '/WP2STATIC-GITLAB-PREVIOUS-HASHES.txt';
 
-        if ( defined( 'WP_CLI' ) ) { return; }
+        if ( defined( 'WP_CLI' ) ) {
+            return; }
 
         switch ( $_POST['ajax_action'] ) {
             case 'github_prepare_export':
@@ -38,7 +39,9 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
     public function upload_files() {
         $this->files_remaining = $this->getRemainingItemsCount();
 
-        if ( $this->files_remaining < 0 ) { echo 'ERROR'; die(); }
+        if ( $this->files_remaining < 0 ) {
+            echo 'ERROR';
+            die(); }
 
         $this->initiateProgressIndicator();
 
@@ -57,7 +60,8 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
 
             $local_file = $this->archive->path . $local_file;
 
-            if ( ! is_file( $local_file ) ) { continue; }
+            if ( ! is_file( $local_file ) ) {
+                continue; }
 
             if ( isset( $this->settings['ghPath'] ) ) {
                 $target_path = $this->settings['ghPath'] . '/' . $target_path;
@@ -82,7 +86,6 @@ query{
 }
 JSON;
 
-
             require_once dirname( __FILE__ ) .
                 '/../library/StaticHtmlOutput/Request.php';
             $client = new WP2Static_Request();
@@ -94,7 +97,7 @@ JSON;
 
             $headers = array(
                 'Authorization: ' .
-                        'token ' . $this->settings['ghToken']
+                        'token ' . $this->settings['ghToken'],
             );
 
             $client->postWithJSONPayloadCustomHeaders(
@@ -154,7 +157,7 @@ JSON;
 
                     $headers = array(
                         'Authorization: ' .
-                                'token ' . $this->settings['ghToken']
+                                'token ' . $this->settings['ghToken'],
                     );
 
                     $client->putWithJSONPayloadCustomHeaders(
@@ -205,7 +208,7 @@ JSON;
 
                     $headers = array(
                         'Authorization: ' .
-                                'token ' . $this->settings['ghToken']
+                                'token ' . $this->settings['ghToken'],
                     );
 
                     $client->putWithJSONPayloadCustomHeaders(

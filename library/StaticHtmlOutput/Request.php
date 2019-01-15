@@ -21,7 +21,7 @@ class WP2Static_Request {
         curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'POST' );
 
         if ( ! empty( $curl_options ) ) {
-            foreach( $curl_options as $option => $value ) {
+            foreach ( $curl_options as $option => $value ) {
                 curl_setopt(
                     $ch,
                     $option,
