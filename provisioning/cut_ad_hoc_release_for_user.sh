@@ -13,6 +13,7 @@ mkdir $TMP_DIR/static-html-output-plugin
 
 
 cp -r $EXEC_DIR/languages $TMP_DIR/static-html-output-plugin/
+cp -r $EXEC_DIR/powerpack $TMP_DIR/static-html-output-plugin/
 cp -r $EXEC_DIR/library $TMP_DIR/static-html-output-plugin/
 cp -r $EXEC_DIR/readme.txt $TMP_DIR/static-html-output-plugin/
 cp -r $EXEC_DIR/views $TMP_DIR/static-html-output-plugin/
