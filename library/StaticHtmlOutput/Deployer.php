@@ -1,6 +1,5 @@
 <?php
 
-
 class Deployer {
 
     public function __construct() {
@@ -109,7 +108,9 @@ class Deployer {
                     return;
                 }
 
-                $github->prepare_export( true );
+                $github->bootstrap();
+                $github->loadArchive();
+                $github->prepareDeploy( true );
                 $github->upload_files();
                 break;
             case 'gitlab':
@@ -153,7 +154,12 @@ class Deployer {
             date( 'H:i:s', $duration )
         );
 
+        $this->finalizeDeployment();
+    }
+
+    public function finalizeDeployment() {
         $this->emailDeployNotification();
+        $this->triggerPostDeployHooks();
     }
 
     public function emailDeployNotification() {
@@ -170,5 +176,14 @@ class Deployer {
         $headers = array( 'Content-Type: text/html; charset=UTF-8' );
 
         wp_mail( $to, $subject, $body, $headers );
+    }
+
+    public function triggerPostDeployHooks() {
+        require_once dirname( __FILE__ ) .
+            '/Archive.php';
+        $this->archive = new Archive();
+        $this->archive->setToCurrentArchive();
+
+        do_action( 'wp2static_post_deploy_trigger', $this->archive );
     }
 }
