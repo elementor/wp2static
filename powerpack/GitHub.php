@@ -56,7 +56,7 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
         $this->openPreviousHashesFile();
 
         foreach ( $lines as $line ) {
-            list($local_file, $target_path) = explode( ',', $line );
+            list($local_file, $this->target_path) = explode( ',', $line );
 
             $local_file = $this->archive->path . $local_file;
 
@@ -64,190 +64,40 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
                 continue; }
 
             if ( isset( $this->settings['ghPath'] ) ) {
-                $target_path = $this->settings['ghPath'] . '/' . $target_path;
+                $this->target_path = $this->settings['ghPath'] . '/' . $this->target_path;
             }
 
-            $local_file_contents = file_get_contents( $local_file );
+            $this->local_file_contents = file_get_contents( $local_file );
 
-// TODO: here
+            if ( isset( $this->file_paths_and_hashes[ $this->target_path ] ) ) {
+                $prev = $this->file_paths_and_hashes[ $this->target_path ];
+                $current = crc32( $this->local_file_contents );
 
-//            if ( isset( $this->file_paths_and_hashes[ $target_path ] ) ) {
-//                $prev = $this->file_paths_and_hashes[ $target_path ];
-//                $current = crc32( $local_file_contents );
-//
-//                if ( $prev != $current ) {
+                if ( $prev != $current ) {
+                    if ( $this->fileExistsInGitHub() ) {
+                        $this->updateFileInGitHub();
+                    } else {
+                        $this->createFileInGitHub();
+                    }
 
-//TODO: break these into methods else unwieldly
-
-            $remote_path = $this->api_base . $this->settings['ghRepo'] .
-                '/contents/' . $target_path;
-
-            // GraphQL query to get sha of existing file
-            $query = <<<JSON
-query{
-  repository(owner: "{$this->user}", name: "{$this->repository}") {
-    object(expression: "{$this->settings['ghBranch']}:{$target_path}") {
-      ... on Blob {
-        oid
-        byteSize
-      }
-    }
-  }
-}
-JSON;
-
-            require_once dirname( __FILE__ ) .
-                '/../library/StaticHtmlOutput/Request.php';
-            $client = new WP2Static_Request();
-
-            $post_options = array(
-                'query' => $query,
-                'variables' => '',
-            );
-
-            $headers = array(
-                'Authorization: ' .
-                        'token ' . $this->settings['ghToken'],
-            );
-
-            $client->postWithJSONPayloadCustomHeaders(
-                'https://api.github.com/graphql',
-                $post_options,
-                $headers,
-                $curl_options = array(
-                    CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2,
-                )
-            );
-
-            $this->checkForValidResponses(
-                $client->status_code,
-                array( '200', '201', '301', '302', '304' )
-            );
-
-            $gh_file_info = json_decode( $client->body, true );
-
-            $existing_file_object =
-                $gh_file_info['data']['repository']['object'];
-
-            $action = '';
-            $commit_message = '';
-
-            if ( ! empty( $existing_file_object ) ) {
-                $action = 'UPDATE';
-                $existing_sha = $existing_file_object['oid'];
-                $existing_bytesize = $existing_file_object['byteSize'];
-
-                $b64_file_contents = base64_encode( $local_file_contents );
-
-                if ( isset( $this->settings['ghCommitMessage'] ) ) {
-                    $commit_message = str_replace(
-                        array(
-                            '%ACTION%',
-                            '%FILENAME%',
-                        ),
-                        array(
-                            $action,
-                            $target_path,
-                        ),
-                        $this->settings['ghCommitMessage']
+                    $this->recordFilePathAndHashInMemory(
+                        $this->target_path,
+                        $this->local_file_contents
                     );
-                } else {
-                    $commit_message = 'WP2Static ' .
-                        $action . ' ' .
-                        $target_path;
-                }
-
-                try {
-                    $post_options = array(
-                        'message' => $commit_message,
-                        'content' => $b64_file_contents,
-                        'branch' => $this->settings['ghBranch'],
-                        'sha' => $existing_sha,
-                    );
-
-                    $headers = array(
-                        'Authorization: ' .
-                                'token ' . $this->settings['ghToken'],
-                    );
-
-                    $client->putWithJSONPayloadCustomHeaders(
-                        $remote_path,
-                        $post_options,
-                        $headers,
-                        $curl_options = array(
-                            CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2,
-                        )
-                    );
-
-                    $this->checkForValidResponses(
-                        $client->status_code,
-                        array( '200', '201', '301', '302', '304' )
-                    );
-                } catch ( Exception $e ) {
-                    $this->handleException( $e );
                 }
             } else {
-                $action = 'CREATE';
-
-                $b64_file_contents = base64_encode( $local_file_contents );
-
-                if ( isset( $this->settings['ghCommitMessage'] ) ) {
-                    $commit_message = str_replace(
-                        array(
-                            '%ACTION%',
-                            '%FILENAME%',
-                        ),
-                        array(
-                            $action,
-                            $target_path,
-                        ),
-                        $this->settings['ghCommitMessage']
-                    );
+                if ( $this->fileExistsInGitHub() ) {
+                    $this->updateFileInGitHub();
                 } else {
-                    $commit_message = 'WP2Static ' .
-                        $action . ' ' .
-                        $target_path;
+                    $this->createFileInGitHub();
                 }
 
-                try {
-                    $post_options = array(
-                        'message' => $commit_message,
-                        'content' => $b64_file_contents,
-                        'branch' => $this->settings['ghBranch'],
-                    );
-
-                    $headers = array(
-                        'Authorization: ' .
-                                'token ' . $this->settings['ghToken'],
-                    );
-
-                    $client->putWithJSONPayloadCustomHeaders(
-                        $remote_path,
-                        $post_options,
-                        $headers,
-                        $curl_options = array(
-                            CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2,
-                        )
-                    );
-
-                    $this->checkForValidResponses(
-                        $client->status_code,
-                        array( '200', '201', '301', '302', '304' )
-                    );
-
-                } catch ( Exception $e ) {
-                    $this->handleException( $e );
-                }
+                $this->recordFilePathAndHashInMemory(
+                    $this->target_path,
+                    $this->local_file_contents
+                );
             }
 
-            $this->recordFilePathAndHashInMemory(
-                $target_path,
-                $local_file_contents
-            );
-
-            // NOTE: delay and progress askew in GitLab as we may
-            // upload all in one  request. Progress indicates building
-            // of list of files that will be deployed/checking if different
             $this->updateProgress();
         }
 
@@ -262,14 +112,14 @@ JSON;
 
     public function test_upload() {
         try {
-            $remote_path = $this->api_base . $this->settings['ghRepo'] .
+            $this->remote_path = $this->api_base . $this->settings['ghRepo'] .
                 '/contents/' . '.WP2Static/' . uniqid();
 
             $b64_file_contents = base64_encode( 'WP2Static test upload' );
 
             $ch = curl_init();
 
-            curl_setopt( $ch, CURLOPT_URL, $remote_path );
+            curl_setopt( $ch, CURLOPT_URL, $this->remote_path );
             curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
             curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
             curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
@@ -327,6 +177,173 @@ JSON;
 
         if ( ! defined( 'WP_CLI' ) ) {
             echo 'SUCCESS';
+        }
+    }
+
+    public function fileExistsInGitHub() {
+        $this->remote_path = $this->api_base . $this->settings['ghRepo'] .
+            '/contents/' . $this->target_path;
+        // GraphQL query to get sha of existing file
+        $this->query = <<<JSON
+query{
+  repository(owner: "{$this->user}", name: "{$this->repository}") {
+    object(expression: "{$this->settings['ghBranch']}:{$this->target_path}") {
+      ... on Blob {
+        oid
+        byteSize
+      }
+    }
+  }
+}
+JSON;
+        require_once dirname( __FILE__ ) .
+            '/../library/StaticHtmlOutput/Request.php';
+        $this->client = new WP2Static_Request();
+
+        $post_options = array(
+            'query' => $this->query,
+            'variables' => '',
+        );
+
+        $headers = array(
+            'Authorization: ' .
+                    'token ' . $this->settings['ghToken'],
+        );
+
+        $this->client->postWithJSONPayloadCustomHeaders(
+            'https://api.github.com/graphql',
+            $post_options,
+            $headers,
+            $curl_options = array(
+                CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2,
+            )
+        );
+
+        $this->checkForValidResponses(
+            $this->client->status_code,
+            array( '200', '201', '301', '302', '304' )
+        );
+
+        $gh_file_info = json_decode( $this->client->body, true );
+
+        $this->existing_file_object =
+            $gh_file_info['data']['repository']['object'];
+
+        $action = '';
+        $commit_message = '';
+
+        if ( ! empty( $this->existing_file_object ) ) {
+            return true;
+        }
+    }
+
+    public function updateFileInGitHub() {
+        $action = 'UPDATE';
+        $existing_sha = $this->existing_file_object['oid'];
+        $existing_bytesize = $this->existing_file_object['byteSize'];
+
+        $b64_file_contents = base64_encode( $this->local_file_contents );
+
+        if ( isset( $this->settings['ghCommitMessage'] ) ) {
+            $commit_message = str_replace(
+                array(
+                    '%ACTION%',
+                    '%FILENAME%',
+                ),
+                array(
+                    $action,
+                    $this->target_path,
+                ),
+                $this->settings['ghCommitMessage']
+            );
+        } else {
+            $commit_message = 'WP2Static ' .
+                $action . ' ' .
+                $this->target_path;
+        }
+
+        try {
+            $post_options = array(
+                'message' => $commit_message,
+                'content' => $b64_file_contents,
+                'branch' => $this->settings['ghBranch'],
+                'sha' => $existing_sha,
+            );
+
+            $headers = array(
+                'Authorization: ' .
+                        'token ' . $this->settings['ghToken'],
+            );
+
+            $this->client->putWithJSONPayloadCustomHeaders(
+                $this->remote_path,
+                $post_options,
+                $headers,
+                $curl_options = array(
+                    CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2,
+                )
+            );
+
+            $this->checkForValidResponses(
+                $this->client->status_code,
+                array( '200', '201', '301', '302', '304' )
+            );
+        } catch ( Exception $e ) {
+            $this->handleException( $e );
+        }
+    }
+
+    public function createFileInGitHub() {
+        $action = 'CREATE';
+
+        $b64_file_contents = base64_encode( $this->local_file_contents );
+
+        if ( isset( $this->settings['ghCommitMessage'] ) ) {
+            $commit_message = str_replace(
+                array(
+                    '%ACTION%',
+                    '%FILENAME%',
+                ),
+                array(
+                    $action,
+                    $this->target_path,
+                ),
+                $this->settings['ghCommitMessage']
+            );
+        } else {
+            $commit_message = 'WP2Static ' .
+                $action . ' ' .
+                $this->target_path;
+        }
+
+        try {
+            $post_options = array(
+                'message' => $commit_message,
+                'content' => $b64_file_contents,
+                'branch' => $this->settings['ghBranch'],
+            );
+
+            $headers = array(
+                'Authorization: ' .
+                        'token ' . $this->settings['ghToken'],
+            );
+
+            $this->client->putWithJSONPayloadCustomHeaders(
+                $this->remote_path,
+                $post_options,
+                $headers,
+                $curl_options = array(
+                    CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2,
+                )
+            );
+
+            $this->checkForValidResponses(
+                $this->client->status_code,
+                array( '200', '201', '301', '302', '304' )
+            );
+
+        } catch ( Exception $e ) {
+            $this->handleException( $e );
         }
     }
 }
