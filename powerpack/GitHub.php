@@ -64,7 +64,8 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
                 continue; }
 
             if ( isset( $this->settings['ghPath'] ) ) {
-                $this->target_path = $this->settings['ghPath'] . '/' . $this->target_path;
+                $this->target_path =
+                    $this->settings['ghPath'] . '/' . $this->target_path;
             }
 
             $this->local_file_contents = file_get_contents( $local_file );
