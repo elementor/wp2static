@@ -16,6 +16,7 @@ Watch Leon Stafford's [talk from WordCamp Brisbane 2018](http://www.youtube.com/
 * [WP-CLI commands](#wp-cli-commands)
 * [Hooks](#hooks)
   * [Modify the initial list of URLs to crawl](#modify-the-initial-list-of-urls-to-crawl)
+  * [Post-deployment hook](#post-deployment-hook)
 * [Development](#development)
 * [Localisation / translations](#localisation--translations)
 * [Support](#support)
@@ -149,7 +150,56 @@ function add_additional_urls( $url_queue ) {
 
 add_filter( 'wp2static_modify_initial_crawl_list', 'add_additional_urls' );
 ```
+### Post-deployment hook
 
+ - `wp2static_post_deploy_trigger`
+ - Action hook
+
+*signature*
+```php
+do_action(
+  'wp2static_post_deploy_trigger',
+  $archive
+);
+```
+
+*example usage*
+```php
+function printArchiveInfo( $archive ) {
+    error_log( print_r( $archive, true ) );
+}
+
+add_filter( 'wp2static_post_deploy_trigger', 'printArchiveInfo' );
+```
+
+*example response*
+```
+Archive Object
+(
+    [settings] => Array
+        (
+            [selected_deployment_option] => github
+            [baseUrl] => https://leonstafford.github.io/demo-site-wordpress-static-html-output-plugin/
+            [wp_site_url] => http://example.test/
+            [wp_site_path] => /srv/www/example.com/current/web/wp/
+            [wp_uploads_path] => /srv/www/example.com/current/web/app/uploads
+            [wp_uploads_url] => http://example.test/app/uploads
+            [wp_active_theme] => /wp/wp-content/themes/twentyseventeen
+            [wp_themes] => /srv/www/example.com/current/web/app/themes
+            [wp_uploads] => /srv/www/example.com/current/web/app/uploads
+            [wp_plugins] => /srv/www/example.com/current/web/app/plugins
+            [wp_content] => /srv/www/example.com/current/web/app
+            [wp_inc] => /wp-includes
+            [crawl_increment] => 1
+        )
+
+    [path] => /srv/www/example.com/current/web/app/uploads/wp-static-html-output-1547668758/
+    [name] => wp-static-html-output-1547668758
+    [crawl_list] => 
+    [export_log] => 
+)
+
+```
 
 ## Development 
 

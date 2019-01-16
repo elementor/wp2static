@@ -119,7 +119,7 @@ jQuery(document).ready(function($){
           doAJAXExport('bitbucket_prepare_export', 'bitbucket_upload_files');
           break;
         case 'GITHUB':
-          doAJAXExport('github_prepare_export', 'github_upload_files');
+          doAJAXExport('github_prepare_export', 'github_upload_files', 'finalize_deployment');
           break;
 
         case 'FTP':
@@ -546,6 +546,9 @@ jQuery(document).ready(function($){
             break;
         case 'gitlab_upload_files':
             status_text = 'Deploying files to GitLab';
+            break;
+        case 'finalize_deployment':
+            status_text = 'Performing post-deployment actions';
             break;
         default:
             status_text = export_option;

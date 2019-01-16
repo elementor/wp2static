@@ -138,6 +138,15 @@ class StaticHtmlOutput_Controller {
         );
     }
 
+    public function finalize_deployment() {
+        require_once dirname( __FILE__ ) . '/StaticHtmlOutput/Deployer.php';
+
+        $deployer = new Deployer();
+        $deployer->finalizeDeployment();
+
+        echo 'SUCCESS';
+    }
+
     public function generate_filelist_preview() {
         // TODO: DRY up WPSite calls
         require_once dirname( __FILE__ ) . '/StaticHtmlOutput/WPSite.php';
