@@ -20,10 +20,10 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
                 $this->loadArchive();
                 $this->prepareDeploy( true );
                 break;
-            case 'bunnycdn_transfer_files':
+            case 'bunnycdn_upload_files':
                 $this->bootstrap();
                 $this->loadArchive();
-                $this->transfer_files();
+                $this->upload_files();
                 break;
             case 'bunnycdn_purge_cache':
                 $this->purge_all_cache();
@@ -34,7 +34,7 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
         }
     }
 
-    public function transfer_files() {
+    public function upload_files() {
         $this->files_remaining = $this->getRemainingItemsCount();
 
         if ( $this->files_remaining < 0 ) { echo 'ERROR'; die(); }

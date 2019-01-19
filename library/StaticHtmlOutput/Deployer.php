@@ -77,8 +77,10 @@ class Deployer {
                     return;
                 }
 
-                $bunny->prepare_export();
-                $bunny->transfer_files();
+                $bunny->bootstrap();
+                $bunny->loadArchive();
+                $bunny->prepareDeploy( true );
+                $bunny->upload_files();
                 $bunny->purge_all_cache();
                 break;
             case 'ftp':
