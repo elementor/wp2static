@@ -113,33 +113,58 @@ jQuery(document).ready(function($){
     if( export_targets.length > 0) {
       switch(target = export_targets.shift()) {
         case 'GITLAB':
-          doAJAXExport('gitlab_prepare_export', 'gitlab_upload_files');
+          doAJAXExport(
+            'gitlab_prepare_export',
+            'gitlab_upload_files',
+            'finalize_deployment'
+            );
           break;
         case 'BITBUCKET':
-          doAJAXExport('bitbucket_prepare_export', 'bitbucket_upload_files');
+          doAJAXExport(
+            'bitbucket_prepare_export',
+            'bitbucket_upload_files',
+            'finalize_deployment'
+          );
           break;
         case 'GITHUB':
-          doAJAXExport('github_prepare_export', 'github_upload_files', 'finalize_deployment');
+          doAJAXExport(
+            'github_prepare_export',
+            'github_upload_files',
+            'finalize_deployment'
+          );
           break;
 
         case 'FTP':
-          doAJAXExport('ftp_prepare_export', 'ftp_transfer_files');
+          doAJAXExport(
+            'ftp_prepare_export',
+            'ftp_transfer_files',
+            'finalize_deployment'
+          );
           break;
 
         case 'BUNNYCDN':
-          doAJAXExport('bunnycdn_prepare_export', 'bunnycdn_transfer_files', 'bunnycdn_purge_cache');
+          doAJAXExport(
+            'bunnycdn_prepare_export',
+            'bunnycdn_transfer_files',
+            'bunnycdn_purge_cache',
+            'finalize_deployment'
+          );
           break;
 
         case 'S3':
-          doAJAXExport('s3_prepare_export', 's3_transfer_files', 'cloudfront_invalidate_all_items');
+          doAJAXExport(
+            's3_prepare_export',
+            's3_transfer_files',
+            'cloudfront_invalidate_all_items',
+            'finalize_deployment'
+          );
           break;
 
         case 'NETLIFY':
-          doAJAXExport('netlify_do_export');
-          break;
-
-        case 'TEARDOWN':
-          doAJAXExport('post_export_teardown');
+          doAJAXExport(
+            'netlify_do_export',
+            'finalize_deployment'
+          );
           break;
 
         default:
