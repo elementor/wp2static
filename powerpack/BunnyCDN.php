@@ -49,6 +49,8 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
 
         $lines = $this->getItemsToDeploy( $batch_size );
 
+        $this->openPreviousHashesFile();
+
         foreach ( $lines as $line ) {
             list($this->local_file, $this->target_path) = explode( ',', $line );
 
