@@ -2,6 +2,24 @@
 
 class WP2Static_Request {
 
+    public function __construct() {
+        $this->defaultOptions = array(
+            CURLOPT_USERAGENT => 'WP2Static.com',
+            CURLOPT_CONNECTTIMEOUT => 0,
+            CURLOPT_TIMEOUT => 600,
+        );
+    } 
+
+    public function applyDefaultOptions( $curl_handle ) {
+        foreach ( $this->defaultOptions as $option => $value ) {
+            curl_setopt(
+                $curl_handle,
+                $option,
+                $value
+            );
+        }
+    }
+
     public function postWithJSONPayloadCustomHeaders(
         $url,
         $data,
@@ -17,8 +35,9 @@ class WP2Static_Request {
         curl_setopt( $ch, CURLOPT_HEADER, 0 );
         curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
         curl_setopt( $ch, CURLOPT_POST, 1 );
-        curl_setopt( $ch, CURLOPT_USERAGENT, 'WP2Static.com' );
         curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'POST' );
+
+        $this->applyDefaultOptions( $ch );
 
         if ( ! empty( $curl_options ) ) {
             foreach ( $curl_options as $option => $value ) {
@@ -57,7 +76,6 @@ class WP2Static_Request {
         curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
         curl_setopt( $ch, CURLOPT_HEADER, 1 );
         curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
-        curl_setopt( $ch, CURLOPT_USERAGENT, 'WP2Static.com' );
         curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'GET' );
 
         curl_setopt(
@@ -65,6 +83,8 @@ class WP2Static_Request {
             CURLOPT_HTTPHEADER,
             $headers
         );
+
+        $this->applyDefaultOptions( $ch );
 
         $output = curl_exec( $ch );
         $this->status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
@@ -104,7 +124,6 @@ class WP2Static_Request {
         curl_setopt( $ch, CURLOPT_HEADER, 0 );
         curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
         curl_setopt( $ch, CURLOPT_POST, 1 );
-        curl_setopt( $ch, CURLOPT_USERAGENT, 'WP2Static.com' );
         curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'PUT' );
 
         curl_setopt(
@@ -118,6 +137,8 @@ class WP2Static_Request {
             CURLOPT_HTTPHEADER,
             $headers
         );
+
+        curl_setopt( $ch, CURLOPT_USERAGENT, 'WP2Static.com' );
 
         $this->body = curl_exec( $ch );
         $this->status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
@@ -146,12 +167,13 @@ class WP2Static_Request {
         curl_setopt( $ch, CURLOPT_INFILE, $file_stream );
         curl_setopt( $ch, CURLOPT_INFILESIZE, $data_length );
 
-
         curl_setopt(
             $ch,
             CURLOPT_HTTPHEADER,
             $headers
         );
+
+        $this->applyDefaultOptions( $ch );
 
         $this->body = curl_exec( $ch );
         $this->status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
