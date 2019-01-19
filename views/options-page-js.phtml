@@ -133,7 +133,16 @@ jQuery(document).ready(function($){
             'finalize_deployment'
           );
           break;
-
+        case 'ZIP':
+          doAJAXExport(
+            'finalize_deployment'
+          );
+          break;
+        case 'FOLDER':
+          doAJAXExport(
+            'finalize_deployment'
+          );
+          break;
         case 'FTP':
           doAJAXExport(
             'ftp_prepare_export',
@@ -253,6 +262,10 @@ jQuery(document).ready(function($){
     switch (current_deployment_method) {
       case 'zip':
         $('#createZip').attr('checked', 'checked');
+        export_targets.push('ZIP');
+      break;	
+      case 'folder':
+        export_targets.push('FOLDER');
       break;	
 
       case 'github':
