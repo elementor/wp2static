@@ -86,6 +86,8 @@ class WPSHO_DBSettings {
             'ftpPassword',
             'ftpRemotePath',
             'ftpServer',
+            'ftpPort',
+            'ftpTLS',
             'ftpUsername',
             'useActiveFTP',
         );

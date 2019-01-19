@@ -1011,15 +1011,15 @@ jQuery(document).ready(function($){
           method: 'POST',
           success: function(serverResponse) {
             if (serverResponse === 'SUCCESS') {
-                alert('FTP Connection/Upload Test Successful');
+                alert('FTP Connection Test Successful');
             } else {
-                alert('FAIL: Unable to complete test upload to FTP');
+                alert('FAIL: Unable to login to FTP server');
             }
 
             spinner.hide();
           },
           error: function(serverResponse) {
-            alert('FAIL: Unable to complete test upload to FTP');
+            alert('FAIL: Unable to login to FTP server');
 
             spinner.hide();
           }
