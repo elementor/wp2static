@@ -58,11 +58,13 @@ class Deployer {
 
                 if ( $test ) {
                     error_log( 'testing bitbucket deploy' );
-                    $bitbucket->test_blob_create();
+                    $bitbucket->test_upload();
                     return;
                 }
 
-                $bitbucket->prepare_export();
+                $bitbucket->bootstrap();
+                $bitbucket->loadArchive();
+                $bitbucket->prepareDeploy( true );
                 $bitbucket->upload_files();
                 break;
             case 'bunnycdn':

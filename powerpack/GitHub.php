@@ -16,8 +16,7 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
             $this->settings['wp_uploads_path'] .
                 '/WP2STATIC-GITHUB-PREVIOUS-HASHES.txt';
 
-        if ( defined( 'WP_CLI' ) ) {
-            return; }
+        if ( defined( 'WP_CLI' ) ) { return; }
 
         switch ( $_POST['ajax_action'] ) {
             case 'github_prepare_export':
