@@ -39,9 +39,7 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
     public function upload_files() {
         $this->files_remaining = $this->getRemainingItemsCount();
 
-        if ( $this->files_remaining < 0 ) {
-            echo 'ERROR';
-            die(); }
+        if ( $this->files_remaining < 0 ) { echo 'ERROR'; die(); }
 
         $this->initiateProgressIndicator();
 
@@ -60,8 +58,7 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
 
             $local_file = $this->archive->path . $local_file;
 
-            if ( ! is_file( $local_file ) ) {
-                continue; }
+            if ( ! is_file( $local_file ) ) { continue; }
 
             if ( isset( $this->settings['ghPath'] ) ) {
                 $this->target_path =
