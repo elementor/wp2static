@@ -97,8 +97,10 @@ class Deployer {
                     return;
                 }
 
-                $ftp->prepare_export();
-                $ftp->transfer_files();
+                $ftp->bootstrap();
+                $ftp->loadArchive();
+                $ftp->prepareDeploy();
+                $ftp->upload_files();
                 break;
             case 'github':
                 require_once dirname( __FILE__ ) .

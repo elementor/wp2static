@@ -85,6 +85,8 @@ class WPSHO_PostSettings {
             'ftpPassword',
             'ftpRemotePath',
             'ftpServer',
+            'ftpPort',
+            'ftpTLS',
             'ftpUsername',
             'useActiveFTP',
         );
