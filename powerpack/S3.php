@@ -9,7 +9,8 @@ class StaticHtmlOutput_S3 extends StaticHtmlOutput_SitePublisher {
             $this->settings['wp_uploads_path'] .
                 '/WP2STATIC-S3-PREVIOUS-HASHES.txt';
 
-        if ( defined( 'WP_CLI' ) ) { return; }
+        if ( defined( 'WP_CLI' ) ) {
+            return; }
 
         switch ( $_POST['ajax_action'] ) {
             case 'test_s3':
@@ -34,7 +35,9 @@ class StaticHtmlOutput_S3 extends StaticHtmlOutput_SitePublisher {
     public function upload_files() {
         $this->files_remaining = $this->getRemainingItemsCount();
 
-        if ( $this->files_remaining < 0 ) { echo 'ERROR'; die(); }
+        if ( $this->files_remaining < 0 ) {
+            echo 'ERROR';
+            die(); }
 
         $this->initiateProgressIndicator();
 
@@ -56,7 +59,8 @@ class StaticHtmlOutput_S3 extends StaticHtmlOutput_SitePublisher {
 
             $local_file = $this->archive->path . $local_file;
 
-            if ( ! is_file( $local_file ) ) { continue; }
+            if ( ! is_file( $local_file ) ) {
+                continue; }
 
             if ( isset( $this->settings['s3RemotePath'] ) ) {
                 $this->target_path =
@@ -137,7 +141,6 @@ class StaticHtmlOutput_S3 extends StaticHtmlOutput_SitePublisher {
         // AWS file permissions
         $content_acl = 'public-read';
 
-        // MIME type of file. Very important to set if you later plan to load the file from a S3 url in the browser (images, for example)
         // Name of content on S3
         $content_title = $s3_path;
 
@@ -202,22 +205,26 @@ class StaticHtmlOutput_S3 extends StaticHtmlOutput_SitePublisher {
         $string_to_sign = implode( "\n", $string_to_sign );
 
         // Signing key
-        $kSecret = 'AWS4' . $this->settings['s3Secret'];
-        $kDate = hash_hmac( 'sha256', $date, $kSecret, true );
-        $kRegion = hash_hmac( 'sha256', $this->settings['s3Region'], $kDate, true );
-        $kService = hash_hmac( 'sha256', $aws_service_name, $kRegion, true );
-        $kSigning = hash_hmac( 'sha256', 'aws4_request', $kService, true );
+        $k_secret = 'AWS4' . $this->settings['s3Secret'];
+        $k_date = hash_hmac( 'sha256', $date, $k_secret, true );
+        $k_region =
+            hash_hmac( 'sha256', $this->settings['s3Region'], $k_date, true );
+        $k_service = hash_hmac( 'sha256', $aws_service_name, $k_region, true );
+        $k_signing = hash_hmac( 'sha256', 'aws4_request', $k_service, true );
 
         // Signature
-        $signature = hash_hmac( 'sha256', $string_to_sign, $kSigning );
+        $signature = hash_hmac( 'sha256', $string_to_sign, $k_signing );
 
         // Authorization
         $authorization = [
-            'Credential=' . $this->settings['s3Key'] . '/' . implode( '/', $scope ),
+            'Credential=' . $this->settings['s3Key'] . '/' .
+                implode( '/', $scope ),
             'SignedHeaders=' . $signed_headers,
             'Signature=' . $signature,
         ];
-        $authorization = 'AWS4-HMAC-SHA256' . ' ' . implode( ',', $authorization );
+
+        $authorization =
+            'AWS4-HMAC-SHA256' . ' ' . implode( ',', $authorization );
 
         // Curl headers
         $curl_headers = [ 'Authorization: ' . $authorization ];
@@ -247,8 +254,9 @@ class StaticHtmlOutput_S3 extends StaticHtmlOutput_SitePublisher {
 
     public function cloudfront_invalidate_all_items() {
         if ( ! isset( $this->settings['cfDistributionId'] ) ) {
-            error_log('no CF ID found');
-            if ( ! defined( 'WP_CLI' ) ) { echo 'SUCCESS'; }
+            error_log( 'no CF ID found' );
+            if ( ! defined( 'WP_CLI' ) ) {
+                echo 'SUCCESS'; }
 
             return;
         }
@@ -257,9 +265,9 @@ class StaticHtmlOutput_S3 extends StaticHtmlOutput_SitePublisher {
         $access_key = $this->settings['s3Key'];
         $secret_key = $this->settings['s3Secret'];
 
-        $epoch = date('U');
+        $epoch = date( 'U' );
 
-$xml = <<<EOD
+        $xml = <<<EOD
 <InvalidationBatch>
     <Path>/*</Path>
     <CallerReference>{$distribution}{$epoch}</CallerReference>
@@ -271,7 +279,8 @@ EOD;
         $sig = base64_encode(
             hash_hmac( 'sha1', $date, $secret_key, true )
         );
-        $msg = "POST /2010-11-01/distribution/{$distribution}/invalidation HTTP/1.0\r\n";
+        $msg = 'POST /2010-11-01/distribution/';
+        $msg .= "{$distribution}/invalidation HTTP/1.0\r\n";
         $msg .= "Host: cloudfront.amazonaws.com\r\n";
         $msg .= "Date: {$date}\r\n";
         $msg .= "Content-Type: text/xml; charset=UTF-8\r\n";
@@ -280,7 +289,7 @@ EOD;
         $msg .= $xml;
         $fp = fsockopen(
             'ssl://cloudfront.amazonaws.com',
-            443, 
+            443,
             $errno,
             $errstr,
             30
@@ -296,13 +305,14 @@ EOD;
         fwrite( $fp, $msg );
         $resp = '';
 
-        while( ! feof( $fp ) ) {
+        while ( ! feof( $fp ) ) {
             $resp .= fgets( $fp, 1024 );
         }
 
         fclose( $fp );
 
-        if ( ! defined( 'WP_CLI' ) ) { echo 'SUCCESS'; }
+        if ( ! defined( 'WP_CLI' ) ) {
+            echo 'SUCCESS'; }
     }
 }
 

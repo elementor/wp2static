@@ -3,15 +3,15 @@
 class WP2Static_Request {
 
     public function __construct() {
-        $this->defaultOptions = array(
+        $this->default_options = array(
             CURLOPT_USERAGENT => 'WP2Static.com',
             CURLOPT_CONNECTTIMEOUT => 0,
             CURLOPT_TIMEOUT => 600,
         );
-    } 
+    }
 
     public function applyDefaultOptions( $curl_handle ) {
-        foreach ( $this->defaultOptions as $option => $value ) {
+        foreach ( $this->default_options as $option => $value ) {
             curl_setopt(
                 $curl_handle,
                 $option,
