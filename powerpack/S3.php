@@ -69,8 +69,10 @@ class StaticHtmlOutput_S3 extends StaticHtmlOutput_SitePublisher {
 
             $this->local_file_contents = file_get_contents( $local_file );
 
-            if ( isset( $this->file_paths_and_hashes[ $this->target_path ] ) ) {
-                $prev = $this->file_paths_and_hashes[ $this->target_path ];
+            $this->hash_key = $this->target_path . basename( $local_file );
+
+            if ( isset( $this->file_paths_and_hashes[ $this->hash_key ] ) ) {
+                $prev = $this->file_paths_and_hashes[ $this->hash_key ];
                 $current = crc32( $this->local_file_contents );
 
                 if ( $prev != $current ) {
@@ -101,7 +103,7 @@ class StaticHtmlOutput_S3 extends StaticHtmlOutput_SitePublisher {
             }
 
             $this->recordFilePathAndHashInMemory(
-                $this->target_path,
+                $this->hash_key,
                 $this->local_file_contents
             );
 
