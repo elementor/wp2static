@@ -9,7 +9,8 @@ class StaticHtmlOutput_FTP extends StaticHtmlOutput_SitePublisher {
             $this->settings['wp_uploads_path'] .
                 '/WP2STATIC-FTP-PREVIOUS-HASHES.txt';
 
-        if ( defined( 'WP_CLI' ) ) { return; }
+        if ( defined( 'WP_CLI' ) ) {
+            return; }
 
         switch ( $_POST['ajax_action'] ) {
             case 'ftp_prepare_export':
@@ -31,7 +32,9 @@ class StaticHtmlOutput_FTP extends StaticHtmlOutput_SitePublisher {
     public function upload_files() {
         $this->files_remaining = $this->getRemainingItemsCount();
 
-        if ( $this->files_remaining < 0 ) { echo 'ERROR'; die(); }
+        if ( $this->files_remaining < 0 ) {
+            echo 'ERROR';
+            die(); }
 
         $this->initiateProgressIndicator();
 
@@ -59,7 +62,7 @@ class StaticHtmlOutput_FTP extends StaticHtmlOutput_SitePublisher {
         $this->ftp->connect(
             $this->settings['ftpServer'],
             $use_ftps,
-            $port   
+            $port
         );
 
         $this->ftp->login(
@@ -78,7 +81,8 @@ class StaticHtmlOutput_FTP extends StaticHtmlOutput_SitePublisher {
 
             $this->local_file = $this->archive->path . $this->local_file;
 
-            if ( ! is_file( $this->local_file ) ) { continue; }
+            if ( ! is_file( $this->local_file ) ) {
+                continue; }
 
             if ( isset( $this->settings['ftpRemotePath'] ) ) {
                 $this->target_path =
@@ -132,7 +136,7 @@ class StaticHtmlOutput_FTP extends StaticHtmlOutput_SitePublisher {
         $this->ftp->connect(
             $this->settings['ftpServer'],
             $use_ftps,
-            $port   
+            $port
         );
 
         try {
@@ -141,7 +145,8 @@ class StaticHtmlOutput_FTP extends StaticHtmlOutput_SitePublisher {
                 $this->settings['ftpPassword']
             );
 
-            if ( ! defined( 'WP_CLI' ) ) { echo 'SUCCESS'; }
+            if ( ! defined( 'WP_CLI' ) ) {
+                echo 'SUCCESS'; }
 
             unset( $this->ftp );
             return;

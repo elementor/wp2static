@@ -37,7 +37,9 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
     public function upload_files() {
         $this->files_remaining = $this->getRemainingItemsCount();
 
-        if ( $this->files_remaining < 0 ) { echo 'ERROR'; die(); }
+        if ( $this->files_remaining < 0 ) {
+            echo 'ERROR';
+            die(); }
 
         $this->initiateProgressIndicator();
 
@@ -56,11 +58,13 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
 
             $this->local_file = $this->archive->path . $this->local_file;
 
-            if ( ! is_file( $this->local_file ) ) { continue; }
+            if ( ! is_file( $this->local_file ) ) {
+                continue; }
 
             if ( isset( $this->settings['bunnycdnRemotePath'] ) ) {
                 $this->target_path =
-                    $this->settings['bunnycdnRemotePath'] . '/' . $this->target_path;
+                    $this->settings['bunnycdnRemotePath'] . '/' .
+                        $this->target_path;
             }
 
             $this->local_file_contents = file_get_contents( $this->local_file );

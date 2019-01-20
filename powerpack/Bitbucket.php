@@ -16,7 +16,8 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
             $this->settings['wp_uploads_path'] .
                 '/WP2STATIC-BITBUCKET-PREVIOUS-HASHES.txt';
 
-        if ( defined( 'WP_CLI' ) ) { return; }
+        if ( defined( 'WP_CLI' ) ) {
+            return; }
 
         switch ( $_POST['ajax_action'] ) {
             case 'bitbucket_prepare_export':
@@ -38,7 +39,9 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
     public function upload_files() {
         $this->files_remaining = $this->getRemainingItemsCount();
 
-        if ( $this->files_remaining < 0 ) { echo 'ERROR'; die(); }
+        if ( $this->files_remaining < 0 ) {
+            echo 'ERROR';
+            die(); }
 
         $this->initiateProgressIndicator();
 
@@ -113,7 +116,8 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
 
         $this->files_data['message'] = 'WP2Static deployment';
 
-        if ( ! is_file( $local_file ) ) { return; }
+        if ( ! is_file( $local_file ) ) {
+            return; }
 
         if ( isset( $this->settings['bbPath'] ) ) {
             $this->target_path =

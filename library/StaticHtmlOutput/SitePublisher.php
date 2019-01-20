@@ -271,9 +271,10 @@ class StaticHtmlOutput_SitePublisher {
     }
 
     // TODO: rename to signalSuccessfulAction or such
-    //       as is used in deployment tests/not just finalizing deploys
+    // as is used in deployment tests/not just finalizing deploys
     public function finalizeDeployment() {
-        if ( ! defined( 'WP_CLI' ) ) { echo 'SUCCESS'; }
+        if ( ! defined( 'WP_CLI' ) ) {
+            echo 'SUCCESS'; }
     }
 
     public function uploadsCompleted() {
