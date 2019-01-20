@@ -38,6 +38,9 @@ class Deployer {
             case 'zip':
                 break;
             case 's3':
+                require_once dirname( __FILE__ ) .
+                    '/../StaticHtmlOutput/SitePublisher.php';
+
                 require_once $powerpack_dir . '/S3.php';
 
                 if ( $test ) {
@@ -46,8 +49,10 @@ class Deployer {
                     return;
                 }
 
-                $s3->prepare_deployment();
-                $s3->transfer_files();
+                $s3->bootstrap();
+                $s3->loadArchive();
+                $s3->prepareDeploy();
+                $s3->upload_files();
                 $s3->cloudfront_invalidate_all_items();
                 break;
             case 'bitbucket':

@@ -3,41 +3,27 @@
 class StaticHtmlOutput_S3 extends StaticHtmlOutput_SitePublisher {
 
     public function __construct() {
-        $target_settings = array(
-            'general',
-            'wpenv',
-            's3',
-            'advanced',
-        );
+        $this->loadSettings( 's3' );
 
-        if ( isset( $_POST['selected_deployment_option'] ) ) {
-            require_once dirname( __FILE__ ) .
-                '/../library/StaticHtmlOutput/PostSettings.php';
-
-            $this->settings = WPSHO_PostSettings::get( $target_settings );
-            $this->viaCLI = false;
-        } else {
-            $this->viaCLI = true;
-            require_once dirname( __FILE__ ) .
-                '/../library/StaticHtmlOutput/DBSettings.php';
-
-            $this->settings = WPSHO_DBSettings::get( $target_settings );
-        }
-
-        $this->export_file_list =
+        $this->previous_hashes_path =
             $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-EXPORT-S3-FILES-TO-EXPORT.txt';
+                '/WP2STATIC-S3-PREVIOUS-HASHES.txt';
 
-        // TODO: should be skipping this check when WP-CLI
+        if ( defined( 'WP_CLI' ) ) { return; }
+
         switch ( $_POST['ajax_action'] ) {
             case 'test_s3':
                 $this->test_s3();
                 break;
             case 's3_prepare_export':
-                $this->prepare_export( false );
+                $this->bootstrap();
+                $this->loadArchive();
+                $this->prepareDeploy();
                 break;
             case 's3_transfer_files':
-                $this->transfer_files();
+                $this->bootstrap();
+                $this->loadArchive();
+                $this->upload_files();
                 break;
             case 'cloudfront_invalidate_all_items':
                 $this->cloudfront_invalidate_all_items();
@@ -45,70 +31,85 @@ class StaticHtmlOutput_S3 extends StaticHtmlOutput_SitePublisher {
         }
     }
 
-    public function transfer_files() {
-        $filesRemaining = $this->get_remaining_items_count();
-        error_log( $filesRemaining );
+    public function upload_files() {
+        $this->files_remaining = $this->getRemainingItemsCount();
 
-        if ( $filesRemaining < 0 ) {
-            echo 'ERROR';
-            die();
+        if ( $this->files_remaining < 0 ) { echo 'ERROR'; die(); }
+
+        $this->initiateProgressIndicator();
+
+        $batch_size = $this->settings['deployBatchSize'];
+
+        if ( $batch_size > $this->files_remaining ) {
+            $batch_size = $this->files_remaining;
         }
 
-        $batch_size = $this->settings['s3BlobIncrement'];
+        $lines = $this->getItemsToDeploy( $batch_size );
 
-        if ( $batch_size > $filesRemaining ) {
-            $batch_size = $filesRemaining;
-        }
+        $this->openPreviousHashesFile();
 
-        $lines = $this->get_items_to_export( $batch_size );
-
-        // vendor specific from here
         require_once dirname( __FILE__ ) .
             '/../library/StaticHtmlOutput/MimeTypes.php';
 
         foreach ( $lines as $line ) {
-            list($fileToTransfer, $targetPath) = explode( ',', $line );
+            list($local_file, $this->target_path) = explode( ',', $line );
 
-            $targetPath = rtrim( $targetPath );
+            $local_file = $this->archive->path . $local_file;
 
-            try {
-                $this->put_s3_object(
-                    $targetPath .
-                            basename( $fileToTransfer ),
-                    file_get_contents( $fileToTransfer ),
-                    GuessMimeType( $fileToTransfer )
-                );
+            if ( ! is_file( $local_file ) ) { continue; }
 
-            } catch ( Exception $e ) {
-                error_log( $e );
-                require_once dirname( __FILE__ ) .
-                    '/../library/StaticHtmlOutput/WsLog.php';
-
-                WsLog::l( 'S3 ERROR RETURNED: ' . $e );
-                echo "There was an error testing S3.\n";
+            if ( isset( $this->settings['s3RemotePath'] ) ) {
+                $this->target_path =
+                    $this->settings['s3RemotePath'] . '/' . $this->target_path;
             }
-        }
 
-        if ( isset( $this->settings['s3BlobDelay'] ) &&
-            $this->settings['s3BlobDelay'] > 0 ) {
-            sleep( $this->settings['s3BlobDelay'] );
-        }
+            $this->local_file_contents = file_get_contents( $local_file );
 
-        // end vendor specific
-        $filesRemaining = $this->get_remaining_items_count();
+            if ( isset( $this->file_paths_and_hashes[ $this->target_path ] ) ) {
+                $prev = $this->file_paths_and_hashes[ $this->target_path ];
+                $current = crc32( $this->local_file_contents );
 
-        error_log( $filesRemaining );
+                if ( $prev != $current ) {
+                    try {
+                        $this->put_s3_object(
+                            $this->target_path .
+                                    basename( $local_file ),
+                            $this->local_file_contents,
+                            GuessMimeType( $local_file )
+                        );
 
-        if ( $filesRemaining > 0 ) {
-            if ( defined( 'WP_CLI' ) ) {
-                $this->transfer_files();
+                    } catch ( Exception $e ) {
+                        $this->handleException( $e );
+                    }
+                }
             } else {
-                echo $filesRemaining;
+                try {
+                    $this->put_s3_object(
+                        $this->target_path .
+                                basename( $local_file ),
+                        $this->local_file_contents,
+                        GuessMimeType( $local_file )
+                    );
+
+                } catch ( Exception $e ) {
+                    $this->handleException( $e );
+                }
             }
-        } else {
-            if ( ! defined( 'WP_CLI' ) ) {
-                echo 'SUCCESS';
-            }
+
+            $this->recordFilePathAndHashInMemory(
+                $this->target_path,
+                $this->local_file_contents
+            );
+
+            $this->updateProgress();
+        }
+
+        $this->writeFilePathAndHashesToFile();
+
+        $this->pauseBetweenAPICalls();
+
+        if ( $this->uploadsCompleted() ) {
+            $this->finalizeDeployment();
         }
     }
 
@@ -232,6 +233,9 @@ class StaticHtmlOutput_S3 extends StaticHtmlOutput_SitePublisher {
         curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
         curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true );
         curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'PUT' );
+        curl_setopt( $ch, CURLOPT_USERAGENT, 'WP2Static.com' );
+        curl_setopt( $ch, CURLOPT_CONNECTTIMEOUT, 0 );
+        curl_setopt( $ch, CURLOPT_TIMEOUT, 600 );
         curl_setopt( $ch, CURLOPT_POSTFIELDS, $content );
         $output = curl_exec( $ch );
         $http_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
@@ -243,9 +247,8 @@ class StaticHtmlOutput_S3 extends StaticHtmlOutput_SitePublisher {
 
     public function cloudfront_invalidate_all_items() {
         if ( ! isset( $this->settings['cfDistributionId'] ) ) {
-            if ( ! defined( 'WP_CLI' ) ) {
-                echo 'SUCCESS';
-            }
+            if ( ! defined( 'WP_CLI' ) ) { echo 'SUCCESS'; }
+
             return;
         }
 
@@ -266,18 +269,14 @@ class StaticHtmlOutput_S3 extends StaticHtmlOutput_SitePublisher {
                 $cf->getResponseMessage() === '201' ||
                 $cf->getResponseMessage() === '201: Request accepted' ) {
 
-                if ( ! defined( 'WP_CLI' ) ) {
-                    echo 'SUCCESS';
-                }
+                if ( ! defined( 'WP_CLI' ) ) { echo 'SUCCESS'; }
             } else {
                 require_once dirname( __FILE__ ) .
                     '/../library/StaticHtmlOutput/WsLog.php';
                 WsLog::l( 'CF ERROR: ' . $cf->getResponseMessage() );
             }
         } else {
-            if ( ! defined( 'WP_CLI' ) ) {
-                echo 'SUCCESS';
-            }
+            if ( ! defined( 'WP_CLI' ) ) { echo 'SUCCESS'; }
         }
     }
 }
