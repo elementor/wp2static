@@ -247,37 +247,62 @@ class StaticHtmlOutput_S3 extends StaticHtmlOutput_SitePublisher {
 
     public function cloudfront_invalidate_all_items() {
         if ( ! isset( $this->settings['cfDistributionId'] ) ) {
+            error_log('no CF ID found');
             if ( ! defined( 'WP_CLI' ) ) { echo 'SUCCESS'; }
 
             return;
         }
 
-        require_once __DIR__ . '/../library/CloudFront/CloudFront.php';
-        $cloudfront_id = $this->settings['cfDistributionId'];
+        $distribution = $this->settings['cfDistributionId'];
+        $access_key = $this->settings['s3Key'];
+        $secret_key = $this->settings['s3Secret'];
 
-        if ( ! empty( $cloudfront_id ) ) {
+        $epoch = date('U');
 
-            $cf = new CloudFront(
-                $this->settings['s3Key'],
-                $this->settings['s3Secret'],
-                $cloudfront_id
-            );
+$xml = <<<EOD
+<InvalidationBatch>
+    <Path>/*</Path>
+    <CallerReference>{$distribution}{$epoch}</CallerReference>
+</InvalidationBatch>
+EOD;
 
-            $cf->invalidate( '/*' );
+        $len = strlen( $xml );
+        $date = gmdate( 'D, d M Y G:i:s T' );
+        $sig = base64_encode(
+            hash_hmac( 'sha1', $date, $secret_key, true )
+        );
+        $msg = "POST /2010-11-01/distribution/{$distribution}/invalidation HTTP/1.0\r\n";
+        $msg .= "Host: cloudfront.amazonaws.com\r\n";
+        $msg .= "Date: {$date}\r\n";
+        $msg .= "Content-Type: text/xml; charset=UTF-8\r\n";
+        $msg .= "Authorization: AWS {$access_key}:{$sig}\r\n";
+        $msg .= "Content-Length: {$len}\r\n\r\n";
+        $msg .= $xml;
+        $fp = fsockopen(
+            'ssl://cloudfront.amazonaws.com',
+            443, 
+            $errno,
+            $errstr,
+            30
+        );
 
-            if ( $cf->getResponseMessage() === '200' ||
-                $cf->getResponseMessage() === '201' ||
-                $cf->getResponseMessage() === '201: Request accepted' ) {
-
-                if ( ! defined( 'WP_CLI' ) ) { echo 'SUCCESS'; }
-            } else {
-                require_once dirname( __FILE__ ) .
-                    '/../library/StaticHtmlOutput/WsLog.php';
-                WsLog::l( 'CF ERROR: ' . $cf->getResponseMessage() );
-            }
-        } else {
-            if ( ! defined( 'WP_CLI' ) ) { echo 'SUCCESS'; }
+        if ( ! $fp ) {
+            require_once dirname( __FILE__ ) .
+                '/../library/StaticHtmlOutput/WsLog.php';
+            WsLog::l( "CLOUDFRONT CONNECTION ERROR: {$errno} {$errstr}" );
+            die( "Connection failed: {$errno} {$errstr}\n" );
         }
+
+        fwrite( $fp, $msg );
+        $resp = '';
+
+        while( ! feof( $fp ) ) {
+            $resp .= fgets( $fp, 1024 );
+        }
+
+        fclose( $fp );
+
+        if ( ! defined( 'WP_CLI' ) ) { echo 'SUCCESS'; }
     }
 }
 
