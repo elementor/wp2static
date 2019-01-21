@@ -144,14 +144,20 @@ class Deployer {
                 $gitlab->upload_files();
                 break;
             case 'netlify':
+                require_once dirname( __FILE__ ) .
+                    '/../StaticHtmlOutput/SitePublisher.php';
+
                 require_once $powerpack_dir . '/Netlify.php';
 
                 if ( $test ) {
                     error_log( 'testing Netlify deploy' );
+                    $gitlab->loadArchive();
                     $netlify->test_netlify();
                     return;
                 }
 
+                $netlify->bootstrap();
+                $netlify->loadArchive();
                 $netlify->deploy();
                 break;
         }
