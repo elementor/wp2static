@@ -1087,8 +1087,6 @@ jQuery(document).ready(function($){
           method: 'POST',
           success: function(serverResponse) {
             alert('Netlify Connection/Upload Test Successful');
-
-            $('#netlify_test_results').html(serverResponse);
           },
           error: function(serverResponse) {
             alert('FAIL: Unable to complete test upload to Netlify');

@@ -9,8 +9,7 @@ class StaticHtmlOutput_S3 extends StaticHtmlOutput_SitePublisher {
             $this->settings['wp_uploads_path'] .
                 '/WP2STATIC-S3-PREVIOUS-HASHES.txt';
 
-        if ( defined( 'WP_CLI' ) ) {
-            return; }
+        if ( defined( 'WP_CLI' ) ) { return; }
 
         switch ( $_POST['ajax_action'] ) {
             case 'test_s3':
