@@ -290,4 +290,44 @@ class StaticHtmlOutput_Controller {
             echo 'SUCCESS';
         }
     }
+
+    public function delete_deploy_cache() {
+        $target_settings = array(
+            'wpenv',
+        );
+
+        if ( defined( 'WP_CLI' ) ) {
+            require_once dirname( __FILE__ ) .
+                '/StaticHtmlOutput/DBSettings.php';
+
+            $this->settings =
+                WPSHO_DBSettings::get( $target_settings );
+        } else {
+            require_once dirname( __FILE__ ) .
+                '/StaticHtmlOutput/PostSettings.php';
+
+            $this->settings =
+                WPSHO_PostSettings::get( $target_settings );
+        }
+        $uploads_dir = $this->settings['wp_uploads_path'];
+
+        $cache_files = array(
+            '/WP2STATIC-GITLAB-PREVIOUS-HASHES.txt',
+            '/WP2STATIC-GITHUB-PREVIOUS-HASHES.txt',
+            '/WP2STATIC-S3-PREVIOUS-HASHES.txt',
+            '/WP2STATIC-BUNNYCDN-PREVIOUS-HASHES.txt',
+            '/WP2STATIC-BITBUCKET-PREVIOUS-HASHES.txt',
+            '/WP2STATIC-FTP-PREVIOUS-HASHES.txt',
+        );
+
+        foreach( $cache_files as $cache_file ) {
+            if ( is_file( $uploads_dir . $cache_file ) ) {
+                unlink( $uploads_dir . $cache_file );
+            }
+        }
+
+        if ( ! defined( 'WP_CLI' ) ) {
+            echo 'SUCCESS';
+        }
+    }
 }
