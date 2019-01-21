@@ -1002,6 +1002,43 @@ jQuery(document).ready(function($){
       saveOptions();
   });
 
+  $('.wrap').on('click', '#delete_deploy_cache_button', function(event) {
+      event.preventDefault();
+      $('.hiddenActionField').val('wp_static_html_output_ajax');
+      $('#hiddenAJAXAction').val('delete_deploy_cache');
+
+      button = event.currentTarget;
+      spinner = $('button').siblings('div.spinner')
+      spinner.show();
+
+      data = $(".options-form :input")
+          .filter(function(index, element) {
+              return $(element).val() != '';
+          })
+          .serialize();
+
+      $.ajax({
+          url: ajaxurl,
+          data: data,
+          dataType: 'html',
+          method: 'POST',
+          success: function(serverResponse) {
+            if (serverResponse === 'SUCCESS') {
+                alert('Deploy cache cleared');
+            } else {
+                alert('FAIL: Unable to delete deploy cache');
+            }
+
+            spinner.hide();
+          },
+          error: function(serverResponse) {
+            alert('FAIL: Unable to delete deploy cache');
+
+            spinner.hide();
+          }
+      });
+  });
+
   $('.wrap').on('click', '#ftp-test-button', function(event) {
       event.preventDefault();
       $('.hiddenActionField').val('wp_static_html_output_ajax');
