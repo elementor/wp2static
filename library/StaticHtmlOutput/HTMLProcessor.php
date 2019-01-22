@@ -24,7 +24,7 @@ class HTMLProcessor {
         $this->raw_html = $html_document;
 
         // NOTE: set placeholder_url to same protocol as target
-        //       making it easier to rewrite URLs without considering protocol
+        // making it easier to rewrite URLs without considering protocol
         $protocol = $this->getTargetSiteProtocol( $this->settings['baseUrl'] );
 
         $this->placeholder_url = $protocol . 'PLACEHOLDER.wpsho/';
@@ -629,7 +629,7 @@ class HTMLProcessor {
     }
 
     public function convertToRelativeURL( $element ) {
-        if ( ! isset( $this->settings['useRelativeURLs'] ) ) {
+        if ( ! $this->shouldUseRelativeURLs() ) {
             return;
         }
 
@@ -807,6 +807,17 @@ class HTMLProcessor {
 
         $this->raw_html = $rewritten_source;
 
+    }
+
+    public function shouldUseRelativeURLs() {
+        if ( ! isset( $this->settings['useRelativeURLs'] ) ) {
+            return;
+        }
+
+        // NOTE: relative URLs should not be used when creating an offline ZIP
+        if ( isset( $this->settings['allowOfflineUsage'] ) ) {
+            return false;
+        }
     }
 
     public function shouldCreateBaseHREF() {
