@@ -13,6 +13,7 @@ class ProgressLog {
 
         $wp_uploads_path = '';
 
+        // NOTE: avoiding loading whole PostSettings for speed
         if ( defined( 'WP_CLI' ) ) {
             require_once dirname( __FILE__ ) .
                 '/DBSettings.php';

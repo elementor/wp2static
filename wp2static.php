@@ -21,7 +21,6 @@ require_once 'library/StaticHtmlOutput/Options.php';
 require_once 'library/StaticHtmlOutput/TemplateHelper.php';
 require_once 'library/StaticHtmlOutput/View.php';
 require_once 'library/StaticHtmlOutput/WsLog.php';
-require_once 'library/StaticHtmlOutput/UrlHelper.php';
 require_once 'library/StaticHtmlOutput/FilesHelper.php';
 require_once 'library/StaticHtmlOutput.php';
 require_once 'library/URL2/URL2.php';
