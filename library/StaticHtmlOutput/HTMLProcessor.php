@@ -22,7 +22,12 @@ class HTMLProcessor {
         // instantiate the XML body here
         $this->xml_doc = new DOMDocument();
         $this->raw_html = $html_document;
-        $this->placeholder_url = 'https://PLACEHOLDER.wpsho/';
+
+        // NOTE: set placeholder_url to same protocol as target
+        //       making it easier to rewrite URLs without considering protocol
+        $protocol = $this->getTargetSiteProtocol( $this->settings['baseUrl'] );
+
+        $this->placeholder_url = $protocol . 'PLACEHOLDER.wpsho/';
 
         // initial rewrite of all site URLs to placeholder URLs
         $this->rewriteSiteURLsToPlaceholder();
@@ -233,7 +238,7 @@ class HTMLProcessor {
             if ( $this->isInternalLink( $url ) ) {
                 $discovered_url_without_site_url =
                     str_replace(
-                        'https://PLACEHOLDER.wpsho',
+                        rtrim( $this->placeholder_url, '/' ),
                         '',
                         $url
                     );
@@ -712,7 +717,23 @@ class HTMLProcessor {
         }
     }
 
-    // NOTE: separate from WP rewrites in case people have disabled that
+    // TODO: move some of these URLs into settings to avoid extra calls
+    public function getProtocolRelativeURL( $url ) {
+        $protocol_relative_url = str_replace(
+            array(
+                'https:',
+                'http:',
+            ),
+            array(
+                '',
+                '',
+            ),
+            $url
+        );
+
+        return $protocol_relative_url;
+    }
+
     public function rewriteBaseURL( $element ) {
         if ( $element->hasAttribute( 'href' ) ) {
             $attribute_to_change = 'href';
@@ -730,8 +751,8 @@ class HTMLProcessor {
         if ( $this->isInternalLink( $url_to_change ) ) {
             $rewritten_url = str_replace(
                 // TODO: test this won't touch subdomains, shouldn't
-                $this->placeholder_url,
-                $this->settings['baseUrl'],
+                $this->getProtocolRelativeURL( $this->placeholder_url ),
+                $this->getProtocolRelativeURL( $this->settings['baseUrl'] ),
                 $url_to_change
             );
 
@@ -739,19 +760,49 @@ class HTMLProcessor {
         }
     }
 
+    public function getTargetSiteProtocol( $url ) {
+        $protocol = '//';
+
+        if ( strpos( $url, 'https://' ) !== false ) {
+            $protocol = 'https://';
+        } elseif ( strpos( $url, 'http://' ) !== false ) {
+            $protocol = 'http://';
+        } else {
+            $protocol = '//';
+        }
+
+        return $protocol;
+    }
+
     public function rewriteSiteURLsToPlaceholder() {
         $rewritten_source = str_replace(
             array(
-                $this->settings['wp_site_url'],
-                rtrim( $this->settings['wp_site_url'], '/' ),
-                $this->placeholder_url . '//',
-                addcslashes( $this->settings['wp_site_url'], '/' ),
+                $this->getProtocolRelativeURL(
+                    $this->settings['wp_site_url']
+                ),
+                $this->getProtocolRelativeURL(
+                    rtrim( $this->settings['wp_site_url'], '/' )
+                ),
+                $this->getProtocolRelativeURL(
+                    $this->placeholder_url . '//'
+                ),
+                $this->getProtocolRelativeURL(
+                    addcslashes( $this->settings['wp_site_url'], '/' )
+                ),
             ),
             array(
-                $this->placeholder_url,
-                $this->placeholder_url,
-                $this->placeholder_url . '/',
-                addcslashes( $this->placeholder_url, '/' ),
+                $this->getProtocolRelativeURL(
+                    $this->placeholder_url
+                ),
+                $this->getProtocolRelativeURL(
+                    $this->placeholder_url
+                ),
+                $this->getProtocolRelativeURL(
+                    $this->placeholder_url . '/'
+                ),
+                $this->getProtocolRelativeURL(
+                    addcslashes( $this->placeholder_url, '/' )
+                ),
             ),
             $this->raw_html
         );
