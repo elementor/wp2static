@@ -16,7 +16,7 @@
 require_once dirname( __FILE__ ) .
     '/library/StaticHtmlOutput/Dispatcher.php';
 
-// TODO: find way to enable these based on detected capabilities
+require_once 'library/StaticHtmlOutput/WP2Static.php';
 require_once 'library/StaticHtmlOutput/Options.php';
 require_once 'library/StaticHtmlOutput/TemplateHelper.php';
 require_once 'library/StaticHtmlOutput/View.php';
@@ -59,10 +59,6 @@ function wp_static_html_output_ajax() {
     check_ajax_referer( 'wpstatichtmloutput', 'nonce' );
     $instance_method = filter_input( INPUT_POST, 'ajax_action' );
 
-    // TODO: avoid loading ALL the WP stuff on each AJAX request
-    // require_once dirname(__FILE__) . '/standalone_script.php';
-    // ie, if crawl_site is the method, avoid instantiating main class, call small script directly
-    // else, do the usual
     if ( '' !== $instance_method && is_string( $instance_method ) ) {
         $plugin_instance = StaticHtmlOutput_Controller::getInstance();
         call_user_func( array( $plugin_instance, $instance_method ) );
@@ -72,7 +68,6 @@ function wp_static_html_output_ajax() {
     return null;
 }
 
-// rm wp emoji
 remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
 remove_action( 'wp_print_styles', 'print_emoji_styles' );
 

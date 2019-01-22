@@ -1,23 +1,22 @@
 <?php
 
-use Masterminds\HTML5;
+class HTMLProcessor extends WP2Static {
 
-class HTMLProcessor {
+    public function __construct() {
+        $this->loadSettings(
+            array(
+                'github',
+                'wpenv',
+                'processing',
+                'advanced',
+            )
+        );
+    }
 
     public function processHTML( $html_document, $page_url ) {
         if ( $html_document == '' ) {
             return false;
         }
-
-        $this->target_settings = array(
-            'general',
-            'crawling',
-            'wpenv',
-            'processing',
-            'advanced',
-        );
-
-        $this->loadSettings();
 
         // instantiate the XML body here
         $this->xml_doc = new DOMDocument();
@@ -142,22 +141,6 @@ class HTMLProcessor {
             } else {
                 $this->harvest_new_urls = true;
             }
-        }
-    }
-
-    public function loadSettings() {
-        if ( defined( 'WP_CLI' ) ) {
-            require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/DBSettings.php';
-
-            $this->settings =
-                WPSHO_DBSettings::get( $this->target_settings );
-        } else {
-            require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/PostSettings.php';
-
-            $this->settings =
-                WPSHO_PostSettings::get( $this->target_settings );
         }
     }
 

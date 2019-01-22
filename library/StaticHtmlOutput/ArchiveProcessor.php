@@ -1,38 +1,25 @@
 <?php
 
-class ArchiveProcessor {
+class ArchiveProcessor extends WP2Static {
 
     public function __construct() {
         require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/Archive.php';
         $this->archive = new Archive();
         $this->archive->setToCurrentArchive();
-        $target_settings = array(
-            'general',
-            'wpenv',
-            'crawling',
-            'advanced',
-            'processing',
-            'netlify',
-            'zip',
-            'folder',
+
+        $this->loadSettings(
+            array(
+                'wpenv',
+                'crawling',
+                'advanced',
+                'processing',
+                'netlify',
+                'zip',
+                'folder',
+            )
         );
-
-        if ( defined( 'WP_CLI' ) ) {
-            require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/DBSettings.php';
-
-            $this->settings =
-                WPSHO_DBSettings::get( $target_settings );
-        } else {
-            require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/PostSettings.php';
-
-            $this->settings =
-                WPSHO_PostSettings::get( $target_settings );
-        }
     }
 
-    // default rename in PHP throws warnings if dir is populated
     public function renameWPDirectory( $source, $target ) {
         if ( empty( $source ) || empty( $target ) ) {
             require_once dirname( __FILE__ ) .
@@ -283,8 +270,6 @@ class ArchiveProcessor {
     }
 
     public function removeWPCruft() {
-        // TODO: add to options
-        // rm other left over WP identifying files
         if ( file_exists( $this->archive->path . '/xmlrpc.php' ) ) {
             unlink( $this->archive->path . '/xmlrpc.php' );
         }

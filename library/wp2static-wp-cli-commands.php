@@ -202,6 +202,8 @@ class WP2Static_CLI {
         $plugin->prepare_for_export();
 
         require_once dirname( __FILE__ ) .
+            '/StaticHtmlOutput/WP2Static.php';
+        require_once dirname( __FILE__ ) .
             '/StaticHtmlOutput/SiteCrawler.php';
 
         $site_crawler->crawl_site();

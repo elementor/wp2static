@@ -1,28 +1,15 @@
 <?php
 
-class Exporter {
+class Exporter extends WP2Static {
 
     public function __construct() {
-        $target_settings = array(
-            'general',
-            'wpenv',
-            'crawling',
-            'advanced',
+        $this->loadSettings(
+            array(
+                'wpenv',
+                'crawling',
+                'advanced',
+            )
         );
-
-        if ( defined( 'WP_CLI' ) ) {
-            require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/DBSettings.php';
-
-            $this->settings =
-                WPSHO_DBSettings::get( $target_settings );
-        } else {
-            require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/PostSettings.php';
-
-            $this->settings =
-                WPSHO_PostSettings::get( $target_settings );
-        }
     }
 
     public function pre_export_cleanup() {

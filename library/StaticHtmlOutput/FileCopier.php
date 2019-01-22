@@ -10,24 +10,6 @@ class FileCopier {
         $this->wp_site_path = $wp_site_path;
     }
 
-    /*
-        Take the public URL and return the location on the filesystem
-
-        ie http://domain.com/wp-content/somefile.jpg
-
-        replace the WP site url with the WP site path
-
-        ie
-
-        replace http://domain.com/ with /var/www/domain.com/html/
-
-        resulting in
-
-        ie /var/www/domain.com/html/wp-content/somefile.jpg
-
-        TODO: Detect for custom wp-content/uploads/plugin/dirs
-
-    */
     public function getLocalFileForURL() {
         $local_file = str_replace(
             $this->wp_site_url,
@@ -62,25 +44,13 @@ class FileCopier {
 
         $path_info = pathinfo( $url_info['path'] );
 
-        if ( defined( 'WP_CLI' ) ) {
-            require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/DBSettings.php';
-
-            $this->settings =
-                WPSHO_DBSettings::get( $target_settings );
-        } else {
-            require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/PostSettings.php';
-
-            $this->settings =
-                WPSHO_PostSettings::get( $target_settings );
-        }
-
         $directory_in_archive =
             isset( $path_info['dirname'] ) ?
             $path_info['dirname'] :
             '';
 
+        // TODO: This was never being called
+        //       as settings weren't loaded. Investigate necessity 
         if ( ! empty( $this->settings['wp_site_subdir'] ) ) {
             $directory_in_archive = str_replace(
                 $this->settings['wp_site_subdir'],

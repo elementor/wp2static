@@ -1,14 +1,15 @@
 <?php
-// TODO: this file / methods are being called on public site page loads,
-// should only be triggered when in the dashboard!
+
 // @codingStandardsIgnoreStart
 $ajax_action = isset( $_POST['ajax_action'] ) ? $_POST['ajax_action'] : '';
 // @codingStandardsIgnoreEnd
 
 $powerpack_dir = dirname( __FILE__ ) . '/../../powerpack';
 
-// bypass instantiating plugin for specific AJAX requests
+// NOTE: bypass instantiating plugin for specific AJAX requests
 if ( $ajax_action === 'crawl_site' || $ajax_action === 'crawl_again' ) {
+    require_once dirname( __FILE__ ) .
+        '/WP2Static.php';
     require_once dirname( __FILE__ ) .
         '/SiteCrawler.php';
 

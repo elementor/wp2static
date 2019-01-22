@@ -1,26 +1,11 @@
 <?php
 
-class Archive {
+class Archive extends WP2Static {
 
     public function __construct() {
-        $target_settings = array(
-            'general',
-            'wpenv',
+        $this->loadSettings(
+            array( 'wpenv' )
         );
-
-        if ( defined( 'WP_CLI' ) ) {
-            require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/DBSettings.php';
-
-            $this->settings =
-                WPSHO_DBSettings::get( $target_settings );
-        } else {
-            require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/PostSettings.php';
-
-            $this->settings =
-                WPSHO_PostSettings::get( $target_settings );
-        }
 
         $this->path = '';
         $this->name = '';
@@ -29,7 +14,6 @@ class Archive {
     }
 
     public function setToCurrentArchive() {
-        // makes this archive's instance link to the current export's
         $handle = fopen(
             $this->settings['wp_uploads_path'] .
                 '/WP2STATIC-CURRENT-ARCHIVE.txt',
