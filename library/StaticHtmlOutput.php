@@ -320,7 +320,7 @@ class StaticHtmlOutput_Controller {
             '/WP2STATIC-FTP-PREVIOUS-HASHES.txt',
         );
 
-        foreach( $cache_files as $cache_file ) {
+        foreach ( $cache_files as $cache_file ) {
             if ( is_file( $uploads_dir . $cache_file ) ) {
                 unlink( $uploads_dir . $cache_file );
             }
