@@ -8,7 +8,7 @@ class CSSProcessor extends WP2Static {
                 'crawling',
                 'wpenv',
                 'processing',
-                'advanced'
+                'advanced',
             )
         );
     }
@@ -17,7 +17,6 @@ class CSSProcessor extends WP2Static {
         if ( $css_document == '' ) {
             return false;
         }
-
 
         // parse CSS into easily modifiable form
         $path = dirname( __FILE__ ) . '/../CSSParser/';

@@ -50,7 +50,7 @@ class FileCopier {
             '';
 
         // TODO: This was never being called
-        //       as settings weren't loaded. Investigate necessity 
+        // as settings weren't loaded. Investigate necessity
         if ( ! empty( $this->settings['wp_site_subdir'] ) ) {
             $directory_in_archive = str_replace(
                 $this->settings['wp_site_subdir'],
