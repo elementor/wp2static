@@ -136,12 +136,22 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
 
 = 6.2.1 =
 
+ * New feature: incremental deploys for all but Netlify (cache unchanged files to speed up deploys)
+ * New feature: Post-deploy hook, allowing users to trigger their own scripts after deploy
+ * New feature: Additional URLs filter, allowing users to hook into plugin from their own code to manipulate the intial crawl list
+ * Enhancement: PowerPack / all deploy methods now available in the free version.
+ * Enhancement: progress bars now show during all compatible deploy methods
  * Enhancement: reduced plugin size/overhead by using custom code over 3rd party libraries
+ * Enhancement: simplified CloudFront invalidation process (behind the scenes)
+ * Enhancement: cURL requests replace Guzzle library for less bloat (behind the scenes)
  * Bugfix: BunnyCDN cache purging working properly (Storage & Pull Zone keys required)
  * Bugfix: email notification on deploy now working for browser based deploys (previously only WP-CLI deploys would trigger it if selected)
  * Bugfix: support Unicode chars in source HTML (thanks @dimobelov!)
  * Bugfix: fix Additional URLs not being crawled
  * Bugfix: choosing 'Everything' in WP URL detection really gets everything
+ * Bugfix: protocol relative URLs being properly replace in HTML files
+ * Bugfix: ignore Base HREF and relative URL settings when creating offline ZIP
+
 
 = 6.2 =
 
@@ -518,12 +528,21 @@ Initial release to Wordpress community
 
 = 6.2.1 =
 
+ * New feature: incremental deploys for all but Netlify (cache unchanged files to speed up deploys)
+ * New feature: Post-deploy hook, allowing users to trigger their own scripts after deploy
+ * New feature: Additional URLs filter, allowing users to hook into plugin from their own code to manipulate the intial crawl list
+ * Enhancement: PowerPack / all deploy methods now available in the free version.
+ * Enhancement: progress bars now show during all compatible deploy methods
  * Enhancement: reduced plugin size/overhead by using custom code over 3rd party libraries
+ * Enhancement: simplified CloudFront invalidation process (behind the scenes)
+ * Enhancement: cURL requests replace Guzzle library for less bloat (behind the scenes)
  * Bugfix: BunnyCDN cache purging working properly (Storage & Pull Zone keys required)
  * Bugfix: email notification on deploy now working for browser based deploys (previously only WP-CLI deploys would trigger it if selected)
  * Bugfix: support Unicode chars in source HTML (thanks @dimobelov!)
  * Bugfix: fix Additional URLs not being crawled
  * Bugfix: choosing 'Everything' in WP URL detection really gets everything
+ * Bugfix: protocol relative URLs being properly replace in HTML files
+ * Bugfix: ignore Base HREF and relative URL settings when creating offline ZIP
 
 = 6.2 =
 
