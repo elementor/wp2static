@@ -55,7 +55,10 @@ class CSSProcessor {
         require_once $path . 'CSSList/Document.php';
         require_once $path . 'CSSList/KeyFrame.php';
 
-        $this->placeholder_url = 'https://PLACEHOLDER.wpsho/';
+        $protocol = $this->getTargetSiteProtocol( $this->settings['baseUrl'] );
+
+        $this->placeholder_url = $protocol . 'PLACEHOLDER.wpsho/';
+
         $this->raw_css = $css_document;
         // initial rewrite of all site URLs to placeholder URLs
         $this->rewriteSiteURLsToPlaceholder();
@@ -226,7 +229,7 @@ class CSSProcessor {
             if ( $this->isInternalLink( $url ) ) {
                 $discovered_url_without_site_url =
                     str_replace(
-                        'https://PLACEHOLDER.wpsho',
+                        rtrim( $this->placeholder_url, '/' ),
                         '',
                         $url
                     );
@@ -287,6 +290,20 @@ class CSSProcessor {
         }
 
         return true;
+    }
+
+    public function getTargetSiteProtocol( $url ) {
+        $protocol = '//';
+
+        if ( strpos( $url, 'https://' ) !== false ) {
+            $protocol = 'https://';
+        } elseif ( strpos( $url, 'http://' ) !== false ) {
+            $protocol = 'http://';
+        } else {
+            $protocol = '//';
+        }
+
+        return $protocol;
     }
 }
 

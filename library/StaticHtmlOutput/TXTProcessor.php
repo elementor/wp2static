@@ -18,7 +18,10 @@ class TXTProcessor {
         $this->loadSettings();
 
         $this->txt_doc = $txt_document;
-        $this->placeholder_url = 'https://PLACEHOLDER.wpsho/';
+
+        $protocol = $this->getTargetSiteProtocol( $this->settings['baseUrl'] );
+
+        $this->placeholder_url = $protocol . 'PLACEHOLDER.wpsho/';
 
         $this->rewriteSiteURLsToPlaceholder();
 
@@ -178,6 +181,20 @@ class TXTProcessor {
         );
 
         $this->txt_doc = $rewritten_source;
+    }
+
+    public function getTargetSiteProtocol( $url ) {
+        $protocol = '//';
+
+        if ( strpos( $url, 'https://' ) !== false ) {
+            $protocol = 'https://';
+        } elseif ( strpos( $url, 'http://' ) !== false ) {
+            $protocol = 'http://';
+        } else {
+            $protocol = '//';
+        }
+
+        return $protocol;
     }
 }
 
