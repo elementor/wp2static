@@ -487,7 +487,6 @@ class StaticHtmlOutput_FilesHelper {
                     http://domain.com/2018/
             */
 
-
             $parsed_link = parse_url( $permalink );
             // rely on WP's site URL vs reconstructing from parsed
             // subdomain, ie http://domain.com/mywpinstall/
