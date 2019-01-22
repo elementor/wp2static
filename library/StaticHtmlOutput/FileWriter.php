@@ -1,11 +1,17 @@
 <?php
 
-class FileWriter {
+class FileWriter extends WP2Static {
     public function __construct( $url, $content, $file_type, $content_type ) {
         $this->url = $url;
         $this->content = $content;
         $this->file_type = $file_type;
         $this->content_type = $content_type;
+
+        $this->loadSettings(
+            array(
+                'wpenv',
+            )
+        );
     }
 
     public function saveFile( $archive_dir ) {
@@ -21,25 +27,6 @@ class FileWriter {
             $path_info = pathinfo( $url_info['path'] );
         } else {
             $path_info = pathinfo( 'index.html' );
-        }
-
-        $target_settings = array(
-            'general',
-            'wpenv',
-        );
-
-        if ( defined( 'WP_CLI' ) ) {
-            require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/DBSettings.php';
-
-            $this->settings =
-                WPSHO_DBSettings::get( $target_settings );
-        } else {
-            require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/PostSettings.php';
-
-            $this->settings =
-                WPSHO_PostSettings::get( $target_settings );
         }
 
         $directory_in_archive =

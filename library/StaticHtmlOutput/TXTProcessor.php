@@ -1,21 +1,23 @@
 <?php
 
-class TXTProcessor {
+class TXTProcessor extends WP2Static {
+
+    public function __construct() {
+        $this->loadSettings(
+            array(
+                'crawling',
+                'wpenv',
+                'processing',
+                'advanced',
+            )
+        );
+
+    }
 
     public function processTXT( $txt_document, $page_url ) {
         if ( $txt_document == '' ) {
             return false;
         }
-
-        $this->target_settings = array(
-            'general',
-            'crawling',
-            'wpenv',
-            'processing',
-            'advanced',
-        );
-
-        $this->loadSettings();
 
         $this->txt_doc = $txt_document;
 
@@ -35,22 +37,6 @@ class TXTProcessor {
         $processed_txt = $this->detectUnchangedURLs( $processed_txt );
 
         return $processed_txt;
-    }
-
-    public function loadSettings() {
-        if ( defined( 'WP_CLI' ) ) {
-            require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/DBSettings.php';
-
-            $this->settings =
-                WPSHO_DBSettings::get( $this->target_settings );
-        } else {
-            require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/PostSettings.php';
-
-            $this->settings =
-                WPSHO_PostSettings::get( $this->target_settings );
-        }
     }
 
     public function detectEscapedSiteURLs( $processed_txt ) {

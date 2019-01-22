@@ -21,7 +21,6 @@ class StaticHtmlOutput_Controller {
         return self::$instance;
     }
 
-
     public static function init( $bootstrap_file ) {
         $instance = self::getInstance();
 
@@ -148,7 +147,6 @@ class StaticHtmlOutput_Controller {
     }
 
     public function generate_filelist_preview() {
-        // TODO: DRY up WPSite calls
         require_once dirname( __FILE__ ) . '/StaticHtmlOutput/WPSite.php';
         $this->wp_site = new WPSite();
 
@@ -171,7 +169,6 @@ class StaticHtmlOutput_Controller {
                 WPSHO_PostSettings::get( $target_settings );
         }
 
-        // TODO: move to WPSite
         $plugin_hook = 'wp2static';
 
         $initial_file_list_count =
@@ -240,19 +237,18 @@ class StaticHtmlOutput_Controller {
 
         $via_cli = defined( 'WP_CLI' );
 
-        // TODO: move to exporter; wp env vars to views
-        WsLog::l( 'STARTING EXPORT: ' . date( 'Y-m-d h:i:s' ) );
-        WsLog::l( 'STARTING EXPORT: PHP VERSION ' . phpversion() );
-        WsLog::l( 'STARTING EXPORT: OS VERSION ' . php_uname() );
-        WsLog::l( 'STARTING EXPORT: WP VERSION ' . get_bloginfo( 'version' ) );
-        WsLog::l( 'STARTING EXPORT: WP URL ' . get_bloginfo( 'url' ) );
-        WsLog::l( 'STARTING EXPORT: WP SITEURL ' . get_option( 'siteurl' ) );
-        WsLog::l( 'STARTING EXPORT: WP HOME ' . get_option( 'home' ) );
-        WsLog::l( 'STARTING EXPORT: WP ADDRESS ' . get_bloginfo( 'wpurl' ) );
-        WsLog::l( 'STARTING EXPORT: PLUGIN VERSION ' . $this::VERSION );
-        WsLog::l( 'STARTING EXPORT: VIA WP-CLI? ' . $via_cli );
+        WsLog::l( '' . date( 'Y-m-d h:i:s' ) );
+        WsLog::l( 'PHP VERSION ' . phpversion() );
+        WsLog::l( 'OS VERSION ' . php_uname() );
+        WsLog::l( 'WP VERSION ' . get_bloginfo( 'version' ) );
+        WsLog::l( 'WP URL ' . get_bloginfo( 'url' ) );
+        WsLog::l( 'WP SITEURL ' . get_option( 'siteurl' ) );
+        WsLog::l( 'WP HOME ' . get_option( 'home' ) );
+        WsLog::l( 'WP ADDRESS ' . get_bloginfo( 'wpurl' ) );
+        WsLog::l( 'PLUGIN VERSION ' . $this::VERSION );
+        WsLog::l( 'VIA WP-CLI? ' . $via_cli );
         WsLog::l(
-            'STARTING EXPORT: STATIC EXPORT URL ' .
+            'STATIC EXPORT URL ' .
             $exporter->settings['baseUrl']
         );
 

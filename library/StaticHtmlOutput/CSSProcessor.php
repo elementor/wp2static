@@ -1,21 +1,23 @@
 <?php
 
-class CSSProcessor {
+class CSSProcessor extends WP2Static {
+
+    public function __construct() {
+        $this->loadSettings(
+            array(
+                'crawling',
+                'wpenv',
+                'processing',
+                'advanced'
+            )
+        );
+    }
 
     public function processCSS( $css_document, $page_url ) {
         if ( $css_document == '' ) {
             return false;
         }
 
-        $this->target_settings = array(
-            'general',
-            'crawling',
-            'wpenv',
-            'processing',
-            'advanced',
-        );
-
-        $this->loadSettings();
 
         // parse CSS into easily modifiable form
         $path = dirname( __FILE__ ) . '/../CSSParser/';
@@ -77,11 +79,8 @@ class CSSProcessor {
             if ( $node_value instanceof Sabberworm\CSS\Value\URL ) {
                 $original_link = $node_value->getURL();
 
-                // TODO: benchmark trim vs str_replace
-                // returned value contains surrounding quotes
                 $original_link = trim( trim( $original_link, "'" ), '"' );
 
-                // skip inline SVGs
                 $inline_img =
                     strpos( $original_link, 'data:image' );
 
@@ -144,30 +143,11 @@ class CSSProcessor {
         return true;
     }
 
-    public function loadSettings() {
-        if ( defined( 'WP_CLI' ) ) {
-            require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/DBSettings.php';
-
-            $this->settings =
-                WPSHO_DBSettings::get( $this->target_settings );
-        } else {
-            require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/PostSettings.php';
-
-            $this->settings =
-                WPSHO_PostSettings::get( $this->target_settings );
-        }
-    }
-
     public function isInternalLink( $link, $domain = false ) {
         if ( ! $domain ) {
             $domain = $this->placeholder_url;
         }
 
-        // TODO: apply only to links starting with .,..,/,
-        // or any with just a path, like banana.png
-        // check link is same host as $this->url and not a subdomain
         $is_internal_link = parse_url( $link, PHP_URL_HOST ) === parse_url(
             $domain,
             PHP_URL_HOST

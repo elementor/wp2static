@@ -1,28 +1,16 @@
 <?php
 
-class SiteCrawler {
+class SiteCrawler extends WP2Static {
 
     public function __construct() {
-        $target_settings = array(
-            'general',
-            'wpenv',
-            'crawling',
-            'processing',
-            'advanced',
+        $this->loadSettings(
+            array(
+                'wpenv',
+                'crawling',
+                'processing',
+                'advanced',
+            )
         );
-        if ( defined( 'WP_CLI' ) ) {
-            require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/DBSettings.php';
-
-            $this->settings =
-                WPSHO_DBSettings::get( $target_settings );
-        } else {
-            require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/PostSettings.php';
-
-            $this->settings =
-                WPSHO_PostSettings::get( $target_settings );
-        }
 
         $this->processed_file = '';
         $this->file_type = '';
@@ -383,6 +371,8 @@ class SiteCrawler {
         switch ( $this->file_type ) {
             case 'html':
                 require_once dirname( __FILE__ ) .
+                    '/../StaticHtmlOutput/WP2Static.php';
+                require_once dirname( __FILE__ ) .
                     '/../StaticHtmlOutput/HTMLProcessor.php';
 
                 $processor = new HTMLProcessor();
@@ -400,7 +390,10 @@ class SiteCrawler {
 
             case 'css':
                 require_once dirname( __FILE__ ) .
+                    '/../StaticHtmlOutput/WP2Static.php';
+                require_once dirname( __FILE__ ) .
                     '/../StaticHtmlOutput/CSSProcessor.php';
+
                 $processor = new CSSProcessor();
 
                 $this->processed_file = $processor->processCSS(
@@ -419,7 +412,10 @@ class SiteCrawler {
             case 'json':
             case 'xml':
                 require_once dirname( __FILE__ ) .
+                    '/../StaticHtmlOutput/WP2Static.php';
+                require_once dirname( __FILE__ ) .
                     '/../StaticHtmlOutput/TXTProcessor.php';
+
                 $processor = new TXTProcessor();
 
                 $this->processed_file = $processor->processTXT(

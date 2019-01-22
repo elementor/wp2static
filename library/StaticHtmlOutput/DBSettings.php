@@ -153,9 +153,9 @@ class WPSHO_DBSettings {
             (int) $plugin->options->crawl_increment :
             1;
 
-        // any baseUrl required if creating an offline ZIP
+        // NOTE: any baseUrl required if creating an offline ZIP
         $settings['baseUrl'] = rtrim( $plugin->options->baseUrl, '/' ) . '/';
-        // TODO: detect if empty, set to 'http://example.com/';
+
         return array_filter( $settings );
     }
 }

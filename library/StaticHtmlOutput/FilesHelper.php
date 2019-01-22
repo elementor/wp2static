@@ -414,7 +414,6 @@ class StaticHtmlOutput_FilesHelper {
 
         $str = implode( "\n", $url_queue );
 
-        // TODO: modify each function vs doing here for perf
         $wp_site_url = get_home_url();
 
         $str = str_replace(
@@ -443,11 +442,6 @@ class StaticHtmlOutput_FilesHelper {
     public static function getAllWPPostURLs( $wp_site_url ) {
         global $wpdb;
 
-        // NOTE: re using $wpdb->ret_results vs WP_Query
-        // https://wordpress.stackexchange.com/a/151843/20982
-        // get_results may be faster, but more error prone
-        // TODO: benchmark the diff and use WP_Query if not noticably slower
-        // NOTE: inheret post_status allows unlinked attchmnt page creation
         $query = "
             SELECT ID,post_type
             FROM %s
@@ -493,26 +487,20 @@ class StaticHtmlOutput_FilesHelper {
                     http://domain.com/2018/
             */
 
-            // TODO: failing on subdir installs here
+
             $parsed_link = parse_url( $permalink );
             // rely on WP's site URL vs reconstructing from parsed
             // subdomain, ie http://domain.com/mywpinstall/
             $link_host = $wp_site_url . '/';
             $link_path = $parsed_link['path'];
 
-            // TODO: Windows filepath support?
+            // NOTE: Windows filepath support
             $path_segments = explode( '/', $link_path );
 
             // remove first and last empty elements
             array_shift( $path_segments );
             array_pop( $path_segments );
 
-            // if subdirectory, rm first segment from URL to avoid duplicates
-            // TODO: handle WP-CLI case and test if really needed
-            // was removing too much on a Bedrock subdir
-            // if ( isset( $_POST['subdirectory'] ) ) {
-            // array_shift( $path_segments );
-            // }
             $number_of_segments = count( $path_segments );
 
             // build each URL
