@@ -11,7 +11,8 @@ class StaticHtmlOutput_Netlify extends StaticHtmlOutput_SitePublisher {
 
         $this->detectSiteID();
 
-        if ( defined( 'WP_CLI' ) ) { return; }
+        if ( defined( 'WP_CLI' ) ) {
+            return; }
 
         switch ( $_POST['ajax_action'] ) {
             case 'test_netlify':
