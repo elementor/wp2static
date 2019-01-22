@@ -88,37 +88,35 @@ class HTMLProcessor {
             $base_element =
                 $this->xml_doc->getElementsByTagName( 'base' )->item( 0 );
 
-            if ( empty( $this->settings['baseHREF'] ) ) {
-                $base_element->parentNode->removeChild( $base_element );
+            if ( $this->shouldCreateBaseHREF() ) {
+                $base_element->setAttribute(
+                    'href',
+                    $this->settings['baseHREF']
+                );
             } else {
-                $base_element->setAttribute(
-                    'href',
-                    $this->settings['baseHREF']
-                );
+                $base_element->parentNode->removeChild( $base_element );
             }
-        } else {
-            if ( ! empty( $this->settings['baseHREF'] ) ) {
-                $base_element = $this->xml_doc->createElement( 'base' );
-                $base_element->setAttribute(
-                    'href',
-                    $this->settings['baseHREF']
+        } elseif ( $this->shouldCreateBaseHREF() ) {
+            $base_element = $this->xml_doc->createElement( 'base' );
+            $base_element->setAttribute(
+                'href',
+                $this->settings['baseHREF']
+            );
+            $head_element =
+                $this->xml_doc->getElementsByTagName( 'head' )->item( 0 );
+            if ( $head_element ) {
+                $first_head_child = $head_element->firstChild;
+                $head_element->insertBefore(
+                    $base_element,
+                    $first_head_child
                 );
-                $head_element =
-                    $this->xml_doc->getElementsByTagName( 'head' )->item( 0 );
-                if ( $head_element ) {
-                    $first_head_child = $head_element->firstChild;
-                    $head_element->insertBefore(
-                        $base_element,
-                        $first_head_child
-                    );
-                } else {
-                    require_once dirname( __FILE__ ) .
-                        '/../StaticHtmlOutput/WsLog.php';
-                    WsLog::l(
-                        'WARNING: no valid head elemnent to attach base to: ' .
-                            $this->page_url
-                    );
-                }
+            } else {
+                require_once dirname( __FILE__ ) .
+                    '/../StaticHtmlOutput/WsLog.php';
+                WsLog::l(
+                    'WARNING: no valid head elemnent to attach base to: ' .
+                        $this->page_url
+                );
             }
         }
 
@@ -809,6 +807,19 @@ class HTMLProcessor {
 
         $this->raw_html = $rewritten_source;
 
+    }
+
+    public function shouldCreateBaseHREF() {
+        if ( empty( $this->settings['baseHREF'] ) ) {
+            return false;
+        }
+
+        // NOTE: base HREF should not be set when creating an offline ZIP
+        if ( isset( $this->settings['allowOfflineUsage'] ) ) {
+            return false;
+        }
+
+        return true;
     }
 }
 
