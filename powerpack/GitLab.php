@@ -131,8 +131,6 @@ class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
             $this->settings['glProject'] . '/repository/commits';
 
         try {
-            error_log( count( $files_data ) );
-
             require_once dirname( __FILE__ ) .
                 '/../library/StaticHtmlOutput/Request.php';
             $client = new WP2Static_Request();
