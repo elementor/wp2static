@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+require_once 'library/StaticHtmlOutput/WP2Static.php';
 require_once 'library/StaticHtmlOutput/HTMLProcessor.php';
 require_once 'library/URL2/URL2.php';
 
