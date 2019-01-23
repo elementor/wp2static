@@ -311,7 +311,7 @@ class SiteCrawler extends WP2Static {
 
         if ( isset( $this->settings['useBasicAuth'] ) ) {
             curl_setopt(
-                ch,
+                $ch,
                 CURLOPT_USERPWD,
                 $this->settings['basicAuthUser'] . ':' .
                     $this->settings['basicAuthPassword']
