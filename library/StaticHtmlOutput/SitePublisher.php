@@ -25,6 +25,8 @@ class StaticHtmlOutput_SitePublisher {
 
     public function loadArchive() {
         require_once dirname( __FILE__ ) .
+            '/WP2Static.php';
+        require_once dirname( __FILE__ ) .
             '/Archive.php';
         $this->archive = new Archive();
         $this->archive->setToCurrentArchive();
