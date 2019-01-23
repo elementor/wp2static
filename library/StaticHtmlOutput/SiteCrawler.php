@@ -300,6 +300,8 @@ class SiteCrawler extends WP2Static {
     }
 
     public function loadFileForProcessing() {
+        $this->debugFileBeingCrawled();
+
         $ch = curl_init();
 
         curl_setopt( $ch, CURLOPT_URL, $this->full_url );
@@ -502,6 +504,17 @@ class SiteCrawler extends WP2Static {
                 );
             }
         }
+    }
+
+    public function debugFileBeingCrawled() {
+        if ( ! isset( $this->settings['debug_mode'] ) ) return;
+
+        require_once dirname( __FILE__ ) .
+            '/../StaticHtmlOutput/WsLog.php';
+        WsLog::l(
+            '# About to crawl file' .
+            "URL: $this->url FULLURL: $this->full_url"
+        );
     }
 }
 

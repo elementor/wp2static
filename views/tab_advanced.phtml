@@ -116,6 +116,19 @@
           <p>When deploying, WP2Static will check each file to see if it's changed since the last deployment. It will skip unchanged files based on this information. If you want to force an uncached deployment, click this button and any caches will be emptied, requiring a full deploy on the next run.</p>
         </td>
       </tr>
+    <tr>
+      <th scope="row">
+        <label for="debug_mode"><?php echo __('Enable Debug Mode', 'static-html-output-plugin');?></label>
+      </th>
+      <td>
+        <?php $tpl->displayCheckbox($this, 'debug_mode', ''); ?>
+
+        <p>
+            Will slow down operations, but give verbose output to the Export Log in the Logs tab. Use this when you have a failed export to help pinpoint the cause.
+        </p>
+
+      </td>
+    </tr>
   </tbody>
 </table>
 
