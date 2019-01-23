@@ -507,7 +507,9 @@ class SiteCrawler extends WP2Static {
     }
 
     public function debugFileBeingCrawled() {
-        if ( ! isset( $this->settings['debug_mode'] ) ) return;
+        if ( ! isset( $this->settings['debug_mode'] ) ) {
+            return;
+        }
 
         require_once dirname( __FILE__ ) .
             '/../StaticHtmlOutput/WsLog.php';

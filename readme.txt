@@ -4,7 +4,7 @@ Tags: security, performance, static
 Requires at least: 3.2
 Tested up to: 5.0.2
 Requires PHP: 5.6
-Stable tag: 6.3
+Stable tag: 6.4
 
 Security & Performance via static website publishing. One plugin to solve WordPress's biggest problems.
 
@@ -134,6 +134,10 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
 
 == Changelog ==
 
+= 6.4 =
+
+ * New feature: Debug Mode - helps diagnose any errors causing the plugin to fail
+
 = 6.3 =
 
  * New feature: incremental deploys for all but Netlify (cache unchanged files to speed up deploys)
@@ -152,8 +156,7 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
  * Bugfix: protocol relative URLs being properly replace in HTML files
  * Bugfix: ignore Base HREF and relative URL settings when creating offline ZIP
 
-
-= 6.3 =
+= 6.2 =
 
  * New feature: choose your WordPress URL detection level (Crawl settings)
  * New feature: diff-based deploys for GitHub (PowerPack only)
@@ -526,7 +529,11 @@ Initial release to Wordpress community
 
 == Upgrade Notice ==
 
-= 6.2.1 =
+= 6.4 =
+
+ * New feature: Debug Mode - helps diagnose any errors causing the plugin to fail
+
+= 6.3 =
 
  * New feature: incremental deploys for all but Netlify (cache unchanged files to speed up deploys)
  * New feature: Post-deploy hook, allowing users to trigger their own scripts after deploy
