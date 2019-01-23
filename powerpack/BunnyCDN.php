@@ -20,7 +20,7 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
                 $this->loadArchive();
                 $this->prepareDeploy( true );
                 break;
-            case 'bunnycdn_upload_files':
+            case 'bunnycdn_transfer_files':
                 $this->bootstrap();
                 $this->loadArchive();
                 $this->upload_files();
