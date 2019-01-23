@@ -285,6 +285,8 @@ JSON;
                 )
             );
 
+            $this->debugResponseBody();
+
             $this->checkForValidResponses(
                 $this->client->status_code,
                 array( '200', '201', '301', '302', '304' )
@@ -338,7 +340,7 @@ JSON;
                 )
             );
 
-            $this->debugResponseBodyAndHeaders();
+            $this->debugResponseBody();
 
             $this->checkForValidResponses(
                 $this->client->status_code,
@@ -358,7 +360,7 @@ JSON;
         require_once dirname( __FILE__ ) .
             '/../library/StaticHtmlOutput/WsLog.php';
         WsLog::l(
-            '# API response body' . $this->body
+            '# API response body' . $this->client->body
         );
     }
 }
