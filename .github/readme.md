@@ -11,7 +11,8 @@ Watch Leon Stafford's [talk from WordCamp Brisbane 2018](http://www.youtube.com/
 
 ## Table of contents
 
-[![日本語](docs/images/flags/japan.png)](docs/index.jp.md)
+[English ![English](docs/images/flags/greatbritain.png)](docs/readme.md) |
+[日本語 ![日本語](docs/images/flags/japan.png)](docs/readme.jp.md) |
 
 * [External resources](#external-resources)
 * [Opinionated software](#opinionated-software)
