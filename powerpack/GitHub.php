@@ -338,6 +338,8 @@ JSON;
                 )
             );
 
+            $this->debugResponseBodyAndHeaders();
+
             $this->checkForValidResponses(
                 $this->client->status_code,
                 array( '200', '201', '301', '302', '304' )
@@ -346,6 +348,18 @@ JSON;
         } catch ( Exception $e ) {
             $this->handleException( $e );
         }
+    }
+
+    public function debugResponseBody() {
+        if ( ! isset( $this->settings['debug_mode'] ) ) {
+            return;
+        }
+
+        require_once dirname( __FILE__ ) .
+            '/../library/StaticHtmlOutput/WsLog.php';
+        WsLog::l(
+            '# API response body' . $this->body
+        );
     }
 }
 
