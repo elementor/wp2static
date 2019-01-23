@@ -1,32 +1,38 @@
 # WP2Static
 
-WordPress plugin to generate a static copy of your site and deploy to GitHub Pages, S3, Netlify, etc.  Increase security, pageload speed and hosting options. Connect WordPress into your CI/CD workflow.
+WordPressで静的HTMLを生成して、色んな可能性を開きます。
 
-[English ![English](docs/images/flags/greatbritain.png)](readme.md) |
+バックエンドを公共から守って。
+
+リソースよりも幸福をスケールしよう！
+
+クラスの一番データ配信を使えるになる。
+
+[英語 ![英語](docs/images/flags/greatbritain.png)](readme.md) |
 [日本語 ![日本語](docs/images/flags/japan.png)](readme.jp.md) |
-[Français ![Français](docs/images/flags/france.png)](readme.fr.md)
+[フランス語 ![フランス語](docs/images/flags/france.png)](readme.fr.md)
 
-## WordPress as a Static Site Generator
+## ワードプレスを静的サイトジェネレータとして使用します
 
-Watch Leon Stafford's [talk from WordCamp Brisbane 2018](http://www.youtube.com/watch?v=HPc4JjBvkrU)
+開発者スタフォード・レオン様の [WordCamp Brisbane 2018でのプレゼンテーション](http://www.youtube.com/watch?v=HPc4JjBvkrU) を見ます。
 
-[![WordPress as a Static Site Generator](http://img.youtube.com/vi/HPc4JjBvkrU/0.jpg)](http://www.youtube.com/watch?v=HPc4JjBvkrU)
+[![ワードプレスを静的サイトジェネレータとして使用します](http://img.youtube.com/vi/HPc4JjBvkrU/0.jpg)](http://www.youtube.com/watch?v=HPc4JjBvkrU)
 
 
-## Table of contents
+## 目次
 
-* [External resources](#external-resources)
-* [Opinionated software](#opinionated-software)
-* [Installation](#installation)
-* [WP-CLI commands](#wp-cli-commands)
-* [Hooks](#hooks)
+* [外部リソース](#external-resources)
+* [意見のあるソフトウェア](#opinionated-software)
+* [インストール仕方](#installation)
+* [WP-CLIのコマンド](#wp-cli-commands)
+* [フック](#hooks)
   * [Modify the initial list of URLs to crawl](#modify-the-initial-list-of-urls-to-crawl)
   * [Post-deployment hook](#post-deployment-hook)
-* [Development](#development)
-* [Localisation / translations](#localisation--translations)
-* [Support](#support)
-* [Notes](#notes)
-* [Sponsorship / supporting open-source](#sponsorship--supporting-open-source)
+* [開発の協力すりには](#development)
+* [ローカライゼーション・翻訳](#localisation--translations)
+* [サポート](#support)
+* [お知らせ](#notes)
+* [オープンソースを応援しましょう〜](#sponsorship--supporting-open-source)
 
 ## External resources
 
