@@ -40,18 +40,18 @@ WordPressで静的HTMLを生成して、色んな可能性を開きます。
  - [Marketing site](https://wp2static.com)
  - [Documentation](https://docs.wp2static.com)
  - [Forum](https://forum.wp2static.com)
- - [Slack](https://join.slack.com/t/wp2static/shared_invite/enQtNDQ4MDM4MjkwNjEwLTVmN2I2MmU4ODI2MWRkNzM4ZGU3YWU4ZGVhMzgwZTc1MDE2OGNmYTFhOGMwM2U0ZTVlYTljYmM2Yjk2ODJlOTk)  
- - [Twitter](https://twitter.com/wp2static)  
+ - [Slack](https://join.slack.com/t/wp2static/shared_invite/enQtNDQ4MDM4MjkwNjEwLTVmN2I2MmU4ODI2MWRkNzM4ZGU3YWU4ZGVhMzgwZTc1MDE2OGNmYTFhOGMwM2U0ZTVlYTljYmM2Yjk2ODJlOTk)
+ - [Twitter](https://twitter.com/wp2static)
  - [CircleCI](https://circleci.com/gh/leonstafford/wp2static) *master* [![CircleCI](https://circleci.com/gh/leonstafford/wp2static/tree/master.svg?style=svg)](https://circleci.com/gh/leonstafford/wp2static/tree/master) *develop* [![CircleCI](https://circleci.com/gh/leonstafford/wp2static/tree/develop.svg?style=svg)](https://circleci.com/gh/leonstafford/wp2static/tree/develop)
 
 ## Opinionated software
 
- - speed over beautiful code
- - human readable code over short variable names
- - own-code vs adding libraries
- - benchmarking over opinions (performance)
- - less clicks == better UX
- - user configurable options vs developer opinions
+ - 完璧のコードよりパーフォーマンス
+ - 短い変数名より人間が読めるコード
+ - 外部ライブラリより自分達の書いたコード
+ - 意見よりもデータ（ベンチマーク、など）
+ - クリック数が低い方が良いUX
+ - 開発者のお好みよりユーザが決める設定
 
 
 ## WP-CLI commands
@@ -206,17 +206,25 @@ Archive Object
 
     [path] => /srv/www/example.com/current/web/app/uploads/wp-static-html-output-1547668758/
     [name] => wp-static-html-output-1547668758
-    [crawl_list] => 
-    [export_log] => 
+    [crawl_list] =>
+    [export_log] =>
 )
 
 ```
 
-## Development 
+## Development
 
-This repo contains the latest code, which you can clone/download to get the bleeding edge, else install via the [official WordPress Plugin page](https://wordpress.org/plugins/static-html-output-plugin/)
+このレポの「`develop`」ブランチには最新コードがあります。安定したコードは[リリース](https://github.com/leonstafford/wp2static/releases)または[wordpress.org](https://wordpress.org/plugins/static-html-output-plugin/)の方からダウンロードして下さい。
 
-If you'd like to contribute, please follow the usual GitHub procedures (create an Issue, fork repo, submit PR). If you're unsure about any of that, contact me and I'll be happy to help.
+プラグインに協力したいの方には普通のGitHubの方法で：
+
+ - [Issue](https://github.com/leonstafford/wp2static/issues)を作って
+ - レポをフォークして
+ - PRを送信する
+
+何かの不明所がありましたら、是非開発者に連絡して下さい：
+
+[スタフォード・レオン](mailto:leon@wp2static.com)　（英語・日本語）
 
 In trying to make development/contributing easier, we'll keep requirements to a minimum. If you prefer Docker, Local by FlyWheel, Valet, Bedrock, Linux, BSD, Mac, they're all fine. This is a WordPress plugin, so anywhere you can run WordPress, you can do development on this :)
 
