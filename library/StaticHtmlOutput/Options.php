@@ -32,6 +32,7 @@ class StaticHtmlOutput_Options {
         'cfDistributionId',
         'completionEmail',
         'crawl_increment',
+        'debug_mode',
         'detection_level',
         'delayBetweenAPICalls',
         'deployBatchSize',
@@ -99,6 +100,7 @@ class StaticHtmlOutput_Options {
         'cfDistributionId',
         'completionEmail',
         'crawl_increment',
+        'debug_mode',
         'detection_level',
         'delayBetweenAPICalls',
         'deployBatchSize',
@@ -176,7 +178,7 @@ class StaticHtmlOutput_Options {
 
             $value = '*******************';
 
-            if ( in_array( $key, $this->_whitelisted_keys ) ) {
+            if ( in_array( $key, $this->whitelisted_keys ) ) {
                 $value = $this->__get( $key );
             } elseif ( $reveal_sensitive_values ) {
                 $value = $this->__get( $key );
