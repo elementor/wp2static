@@ -211,6 +211,7 @@ class HTMLProcessor extends WP2Static {
             return;
         }
 
+
         if ( isset( $this->harvest_new_urls ) ) {
             if ( ! $this->isValidURL( $url ) ) {
                 return;
@@ -645,14 +646,8 @@ class HTMLProcessor extends WP2Static {
         }
     }
 
-    public function getDotsBackToRoot( $url ) {
-        $dots_path = '';
-
-        return $dots_path;
-    }
-
     public function convertToOfflineURL( $element ) {
-        if ( ! isset( $this->settings['allowOfflineUsage'] ) ) {
+        if ( ! $this->shouldCreateOfflineURLs() ) {
             return;
         }
 
@@ -756,8 +751,8 @@ class HTMLProcessor extends WP2Static {
     }
 
     public function rewriteSiteURLsToPlaceholder() {
-        $rewritten_source = str_replace(
-            array(
+        $patterns = array(
+                $this->settings['wp_site_url'],
                 $this->getProtocolRelativeURL(
                     $this->settings['wp_site_url']
                 ),
@@ -765,26 +760,32 @@ class HTMLProcessor extends WP2Static {
                     rtrim( $this->settings['wp_site_url'], '/' )
                 ),
                 $this->getProtocolRelativeURL(
-                    $this->placeholder_url . '//'
+                    $this->settings['wp_site_url'] . '//'
                 ),
                 $this->getProtocolRelativeURL(
                     addcslashes( $this->settings['wp_site_url'], '/' )
                 ),
+        );
+
+        $replacements = array(
+            $this->placeholder_url,
+            $this->getProtocolRelativeURL(
+                $this->placeholder_url
             ),
-            array(
-                $this->getProtocolRelativeURL(
-                    $this->placeholder_url
-                ),
-                $this->getProtocolRelativeURL(
-                    $this->placeholder_url
-                ),
-                $this->getProtocolRelativeURL(
-                    $this->placeholder_url . '/'
-                ),
-                $this->getProtocolRelativeURL(
-                    addcslashes( $this->placeholder_url, '/' )
-                ),
+            $this->getProtocolRelativeURL(
+                $this->placeholder_url
             ),
+            $this->getProtocolRelativeURL(
+                $this->placeholder_url . '/'
+            ),
+            $this->getProtocolRelativeURL(
+                addcslashes( $this->placeholder_url, '/' )
+            ),
+        );
+
+        $rewritten_source = str_replace(
+            $patterns,
+            $replacements,
             $this->raw_html
         );
 
@@ -810,6 +811,18 @@ class HTMLProcessor extends WP2Static {
 
         // NOTE: base HREF should not be set when creating an offline ZIP
         if ( isset( $this->settings['allowOfflineUsage'] ) ) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function shouldCreateOfflineURLs() {
+        if ( ! isset( $this->settings['allowOfflineUsage'] ) ) {
+            return false;
+        }
+
+        if ( $this->settings['selected_deployment_option'] != 'zip' ) {
             return false;
         }
 
