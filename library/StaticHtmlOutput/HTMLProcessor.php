@@ -794,7 +794,7 @@ class HTMLProcessor extends WP2Static {
 
     public function shouldUseRelativeURLs() {
         if ( ! isset( $this->settings['useRelativeURLs'] ) ) {
-            return;
+            return false;
         }
 
         // NOTE: relative URLs should not be used when creating an offline ZIP
