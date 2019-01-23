@@ -725,10 +725,41 @@ class HTMLProcessor extends WP2Static {
 
         // check it actually needs to be changed
         if ( $this->isInternalLink( $url_to_change ) ) {
+            $patterns = array(
+                $this->placeholder_url,
+                $this->getProtocolRelativeURL(
+                    $this->placeholder_url
+                ),
+                $this->getProtocolRelativeURL(
+                    $this->placeholder_url
+                ),
+                $this->getProtocolRelativeURL(
+                    $this->placeholder_url . '/'
+                ),
+                $this->getProtocolRelativeURL(
+                    addcslashes( $this->placeholder_url, '/' )
+                ),
+            );
+
+            $replacements = array(
+                    $this->settings['baseUrl'],
+                    $this->getProtocolRelativeURL(
+                        $this->settings['baseUrl']
+                    ),
+                    $this->getProtocolRelativeURL(
+                        rtrim( $this->settings['baseUrl'], '/' )
+                    ),
+                    $this->getProtocolRelativeURL(
+                        $this->settings['baseUrl'] . '//'
+                    ),
+                    $this->getProtocolRelativeURL(
+                        addcslashes( $this->settings['baseUrl'], '/' )
+                    ),
+            );
+
             $rewritten_url = str_replace(
-                // TODO: test this won't touch subdomains, shouldn't
-                $this->getProtocolRelativeURL( $this->placeholder_url ),
-                $this->getProtocolRelativeURL( $this->settings['baseUrl'] ),
+                $patterns,
+                $replacements,
                 $url_to_change
             );
 
