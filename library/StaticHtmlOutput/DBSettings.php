@@ -10,8 +10,9 @@ class WPSHO_DBSettings {
         $target_keys = array();
 
         $key_sets['general'] = array(
-            'selected_deployment_option',
             'baseUrl',
+            'debug_mode',
+            'selected_deployment_option',
         );
 
         $key_sets['crawling'] = array(

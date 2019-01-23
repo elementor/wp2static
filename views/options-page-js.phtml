@@ -818,6 +818,14 @@ jQuery(document).ready(function($){
 
       // set textarea content
       $("#export_log_textarea" ).html( data );
+    }).fail(function() {
+      $('#log_load_progress').hide();
+
+      // set textarea to enabled
+      $("#export_log_textarea" ).attr('disabled', false);
+
+      // set textarea content
+      $("#export_log_textarea" ).html( 'Requested log file not found' );
     });
   }
 
