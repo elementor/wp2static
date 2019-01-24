@@ -67,6 +67,10 @@ class StaticHtmlOutput_S3 extends StaticHtmlOutput_SitePublisher {
                     $this->settings['s3RemotePath'] . '/' . $this->target_path;
             }
 
+            $this->logAction(
+                "Uploading {$local_file} to {$this->target_path} in S3"
+            );
+
             $this->local_file_contents = file_get_contents( $local_file );
 
             $this->hash_key = $this->target_path . basename( $local_file );
@@ -87,6 +91,11 @@ class StaticHtmlOutput_S3 extends StaticHtmlOutput_SitePublisher {
                     } catch ( Exception $e ) {
                         $this->handleException( $e );
                     }
+                } else {
+                    $this->logAction(
+                        "Skipping {$this->hash_key} as identical " .
+                            'to deploy cache'
+                    );
                 }
             } else {
                 try {
@@ -140,18 +149,12 @@ class StaticHtmlOutput_S3 extends StaticHtmlOutput_SitePublisher {
     }
 
     public function put_s3_object( $s3_path, $content, $content_type ) {
-        // AWS file permissions
-        $content_acl = 'public-read';
-
-        // Name of content on S3
-        $content_title = $s3_path;
+        $this->logAction( "PUT'ing file to {$s3_path} in S3" );
 
         $host_name = $this->settings['s3Bucket'] . '.s3.amazonaws.com';
-
-        // Service name for S3
+        $content_acl = 'public-read';
+        $content_title = $s3_path;
         $aws_service_name = 's3';
-
-        // UTC timestamp and date
         $timestamp = gmdate( 'Ymd\THis\Z' );
         $date = gmdate( 'Ymd' );
 
@@ -162,24 +165,26 @@ class StaticHtmlOutput_S3 extends StaticHtmlOutput_SitePublisher {
         $request_headers['Host'] = $host_name;
         $request_headers['x-amz-acl'] = $content_acl;
         $request_headers['x-amz-content-sha256'] = hash( 'sha256', $content );
+
         // Sort it in ascending order
         ksort( $request_headers );
 
-        // Canonical headers
         $canonical_headers = [];
+
         foreach ( $request_headers as $key => $value ) {
             $canonical_headers[] = strtolower( $key ) . ':' . $value;
         }
+
         $canonical_headers = implode( "\n", $canonical_headers );
 
-        // Signed headers
         $signed_headers = [];
+
         foreach ( $request_headers as $key => $value ) {
             $signed_headers[] = strtolower( $key );
         }
+
         $signed_headers = implode( ';', $signed_headers );
 
-        // Cannonical request
         $canonical_request = [];
         $canonical_request[] = 'PUT';
         $canonical_request[] = '/' . $content_title;
@@ -191,14 +196,12 @@ class StaticHtmlOutput_S3 extends StaticHtmlOutput_SitePublisher {
         $canonical_request = implode( "\n", $canonical_request );
         $hashed_canonical_request = hash( 'sha256', $canonical_request );
 
-        // AWS Scope
         $scope = [];
         $scope[] = $date;
         $scope[] = $this->settings['s3Region'];
         $scope[] = $aws_service_name;
         $scope[] = 'aws4_request';
 
-        // String to sign
         $string_to_sign = [];
         $string_to_sign[] = 'AWS4-HMAC-SHA256';
         $string_to_sign[] = $timestamp;
@@ -214,10 +217,8 @@ class StaticHtmlOutput_S3 extends StaticHtmlOutput_SitePublisher {
         $k_service = hash_hmac( 'sha256', $aws_service_name, $k_region, true );
         $k_signing = hash_hmac( 'sha256', 'aws4_request', $k_service, true );
 
-        // Signature
         $signature = hash_hmac( 'sha256', $string_to_sign, $k_signing );
 
-        // Authorization
         $authorization = [
             'Credential=' . $this->settings['s3Key'] . '/' .
                 implode( '/', $scope ),
@@ -228,17 +229,18 @@ class StaticHtmlOutput_S3 extends StaticHtmlOutput_SitePublisher {
         $authorization =
             'AWS4-HMAC-SHA256' . ' ' . implode( ',', $authorization );
 
-        // Curl headers
         $curl_headers = [ 'Authorization: ' . $authorization ];
+
         foreach ( $request_headers as $key => $value ) {
             $curl_headers[] = $key . ': ' . $value;
         }
 
         $url = 'https://' . $host_name . '/' . $content_title;
         $ch = curl_init( $url );
+
         curl_setopt( $ch, CURLOPT_HEADER, false );
         curl_setopt( $ch, CURLOPT_HTTPHEADER, $curl_headers );
-        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, false );
+        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
         curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
         curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true );
         curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'PUT' );
@@ -246,17 +248,27 @@ class StaticHtmlOutput_S3 extends StaticHtmlOutput_SitePublisher {
         curl_setopt( $ch, CURLOPT_CONNECTTIMEOUT, 0 );
         curl_setopt( $ch, CURLOPT_TIMEOUT, 600 );
         curl_setopt( $ch, CURLOPT_POSTFIELDS, $content );
+
         $output = curl_exec( $ch );
         $http_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
-        if ( $http_code != 200 ) {
-            exit( 'Error : Failed to upload' );
-        }
+
+        $this->logAction( "API response code: {$http_code}" );
+        $this->logAction( "API response body: {$output}" );
+
+        $this->checkForValidResponses(
+            $http_code,
+            array( '200' )
+        );
+
         curl_close( $ch );
     }
 
     public function cloudfront_invalidate_all_items() {
+        $this->logAction( "Invalidating all CloudFront items" );
+
         if ( ! isset( $this->settings['cfDistributionId'] ) ) {
             error_log( 'no CF ID found' );
+
             if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS'; }
 
@@ -310,6 +322,8 @@ EOD;
         while ( ! feof( $fp ) ) {
             $resp .= fgets( $fp, 1024 );
         }
+
+        $this->logAction( "CloudFront response body: {$resp}" );
 
         fclose( $fp );
 
