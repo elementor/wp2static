@@ -348,5 +348,15 @@ class StaticHtmlOutput_SitePublisher {
 
         fclose( $fp );
     }
+
+    public function logAction( $action ) {
+        if ( ! isset( $this->settings['debug_mode'] ) ) {
+            return;
+        }
+
+        require_once dirname( __FILE__ ) .
+            '/WsLog.php';
+        WsLog::l( $action );
+    }
 }
 

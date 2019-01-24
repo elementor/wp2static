@@ -230,7 +230,8 @@ JSON;
             )
         );
 
-        $this->debugResponseBody();
+        $this->logAction( "API response code {$this->client->status_code}" );
+        $this->logAction( "API response body {$this->client->body}" );
 
         $this->checkForValidResponses(
             $this->client->status_code,
@@ -301,7 +302,10 @@ JSON;
                 )
             );
 
-            $this->debugResponseBody();
+            $this->logAction(
+                "API response code {$this->client->status_code}"
+            );
+            $this->logAction( "API response body {$this->client->body}" );
 
             $this->checkForValidResponses(
                 $this->client->status_code,
@@ -357,8 +361,11 @@ JSON;
                     CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2,
                 )
             );
-
-            $this->debugResponseBody();
+ 
+            $this->logAction(
+                "API response code {$this->client->status_code}"
+            );
+            $this->logAction( "API response body {$this->client->body}" );
 
             $this->checkForValidResponses(
                 $this->client->status_code,
@@ -368,28 +375,6 @@ JSON;
         } catch ( Exception $e ) {
             $this->handleException( $e );
         }
-    }
-
-    public function logAction( $action ) {
-        if ( ! isset( $this->settings['debug_mode'] ) ) {
-            return;
-        }
-
-        require_once dirname( __FILE__ ) .
-            '/../library/StaticHtmlOutput/WsLog.php';
-        WsLog::l( '# ' . $action );
-    }
-
-    public function debugResponseBody() {
-        if ( ! isset( $this->settings['debug_mode'] ) ) {
-            return;
-        }
-
-        require_once dirname( __FILE__ ) .
-            '/../library/StaticHtmlOutput/WsLog.php';
-        WsLog::l(
-            '# API response body' . $this->client->body
-        );
     }
 }
 

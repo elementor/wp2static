@@ -224,35 +224,20 @@ class StaticHtmlOutput_Controller {
         require_once dirname( __FILE__ ) .
             '/StaticHtmlOutput/Exporter.php';
 
-        $exporter = new Exporter();
+        $this->exporter = new Exporter();
 
-        $exporter->pre_export_cleanup();
-        $exporter->cleanup_leftover_archives();
-        $exporter->initialize_cache_files();
+        $this->exporter->pre_export_cleanup();
+        $this->exporter->cleanup_leftover_archives();
+        $this->exporter->initialize_cache_files();
 
         require_once dirname( __FILE__ ) . '/StaticHtmlOutput/Archive.php';
 
         $archive = new Archive();
         $archive->create();
 
-        $via_cli = defined( 'WP_CLI' );
+        $this->logEnvironmentalInfo();
 
-        WsLog::l( '' . date( 'Y-m-d h:i:s' ) );
-        WsLog::l( 'PHP VERSION ' . phpversion() );
-        WsLog::l( 'OS VERSION ' . php_uname() );
-        WsLog::l( 'WP VERSION ' . get_bloginfo( 'version' ) );
-        WsLog::l( 'WP URL ' . get_bloginfo( 'url' ) );
-        WsLog::l( 'WP SITEURL ' . get_option( 'siteurl' ) );
-        WsLog::l( 'WP HOME ' . get_option( 'home' ) );
-        WsLog::l( 'WP ADDRESS ' . get_bloginfo( 'wpurl' ) );
-        WsLog::l( 'PLUGIN VERSION ' . $this::VERSION );
-        WsLog::l( 'VIA WP-CLI? ' . $via_cli );
-        WsLog::l(
-            'STATIC EXPORT URL ' .
-            $exporter->settings['baseUrl']
-        );
-
-        $exporter->generateModifiedFileList();
+        $this->exporter->generateModifiedFileList();
 
         if ( ! defined( 'WP_CLI' ) ) {
             echo 'SUCCESS';
@@ -324,6 +309,40 @@ class StaticHtmlOutput_Controller {
 
         if ( ! defined( 'WP_CLI' ) ) {
             echo 'SUCCESS';
+        }
+    }
+
+    public function logEnvironmentalInfo() {
+        $info = array(
+            '' . date( 'Y-m-d h:i:s' ) ,
+            'PHP VERSION ' . phpversion(),
+            'OS VERSION ' . php_uname(),
+            'WP VERSION ' . get_bloginfo( 'version' ),
+            'WP URL ' . get_bloginfo( 'url' ),
+            'WP SITEURL ' . get_option( 'siteurl' ),
+            'WP HOME ' . get_option( 'home' ),
+            'WP ADDRESS ' . get_bloginfo( 'wpurl' ),
+            'PLUGIN VERSION ' . $this::VERSION,
+            'VIA WP-CLI? ' . defined( 'WP_CLI' ),
+            'STATIC EXPORT URL ' .  $this->exporter->settings['baseUrl'],
+        );
+
+        WsLog::l( implode(PHP_EOL, $info) );
+
+        WsLog::l( 'Active plugins:' );
+
+        $active_plugins = get_option( 'active_plugins' );
+
+        foreach ( $active_plugins as $active_plugin ) {
+            WsLog::l( $active_plugin );
+        }
+
+        WsLog::l( 'Plugin options:' );
+
+        $options = $this->options->getAllOptions( false );
+
+        foreach ( $options as $key => $value ) {
+            WsLog::l( "{$value['Option name']}: {$value['Value']}" );
         }
     }
 }

@@ -74,8 +74,6 @@ class WP2Static_CLI {
 
     }
 
-
-
     public function microtime_diff( $start, $end = null ) {
         if ( ! $end ) {
             $end = microtime();
