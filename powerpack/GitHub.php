@@ -41,7 +41,8 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
 
         if ( $this->files_remaining < 0 ) {
             echo 'ERROR';
-            die(); }
+            die();
+        }
 
         $this->initiateProgressIndicator();
 
@@ -68,6 +69,10 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
                     $this->settings['ghPath'] . '/' . $this->target_path;
             }
 
+            $this->logAction(
+                "Uploading {$local_file} to {$this->target_path} in GitHub"
+            );
+
             $this->local_file_contents = file_get_contents( $local_file );
 
             if ( isset( $this->file_paths_and_hashes[ $this->target_path ] ) ) {
@@ -84,6 +89,11 @@ class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
                     $this->recordFilePathAndHashInMemory(
                         $this->target_path,
                         $this->local_file_contents
+                    );
+                } else {
+                    $this->logAction(
+                        "Skipping {$this->target_path} as identical " .
+                            'to deploy cache'
                     );
                 }
             } else {
@@ -220,6 +230,8 @@ JSON;
             )
         );
 
+        $this->debugResponseBody();
+
         $this->checkForValidResponses(
             $this->client->status_code,
             array( '200', '201', '301', '302', '304' )
@@ -234,11 +246,15 @@ JSON;
         $commit_message = '';
 
         if ( ! empty( $this->existing_file_object ) ) {
+            $this->logAction( "{$this->target_path} path exists in GitHub" );
+
             return true;
         }
     }
 
     public function updateFileInGitHub() {
+        $this->logAction( "Updating {$this->target_path} in GitHub" );
+
         $action = 'UPDATE';
         $existing_sha = $this->existing_file_object['oid'];
         $existing_bytesize = $this->existing_file_object['byteSize'];
@@ -297,6 +313,8 @@ JSON;
     }
 
     public function createFileInGitHub() {
+        $this->logAction( "Creating {$this->target_path} in GitHub" );
+
         $action = 'CREATE';
 
         $b64_file_contents = base64_encode( $this->local_file_contents );
@@ -350,6 +368,16 @@ JSON;
         } catch ( Exception $e ) {
             $this->handleException( $e );
         }
+    }
+
+    public function logAction( $action ) {
+        if ( ! isset( $this->settings['debug_mode'] ) ) {
+            return;
+        }
+
+        require_once dirname( __FILE__ ) .
+            '/../library/StaticHtmlOutput/WsLog.php';
+        WsLog::l( '# ' . $action );
     }
 
     public function debugResponseBody() {
