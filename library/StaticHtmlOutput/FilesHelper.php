@@ -347,7 +347,6 @@ class StaticHtmlOutput_FilesHelper {
                 'txt',
                 'po',
                 'pot',
-                'dist',
                 'sh',
                 'sh',
                 'mo',
