@@ -344,5 +344,13 @@ class StaticHtmlOutput_Controller {
         foreach ( $options as $key => $value ) {
             WsLog::l( "{$value['Option name']}: {$value['Value']}" );
         }
+
+        WsLog::l( 'Installed extensions:' );
+
+        $extensions = get_loaded_extensions();
+
+        foreach ( $extensions as $extension ) {
+            WsLog::l( $extension );
+        }
     }
 }
