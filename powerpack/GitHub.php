@@ -361,7 +361,7 @@ JSON;
                     CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2,
                 )
             );
- 
+
             $this->logAction(
                 "API response code {$this->client->status_code}"
             );

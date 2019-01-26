@@ -24,7 +24,7 @@ class WsLog {
         }
 
         // NOTE: should be checked before sending to speed up requests
-        //       extra check here until old WsLog calls updated
+        // extra check here until old WsLog calls updated
         if ( ! isset( $settings['debug_mode'] ) ) {
             return;
         }
