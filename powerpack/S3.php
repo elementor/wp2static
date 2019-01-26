@@ -151,7 +151,9 @@ class StaticHtmlOutput_S3 extends StaticHtmlOutput_SitePublisher {
     public function put_s3_object( $s3_path, $content, $content_type ) {
         $this->logAction( "PUT'ing file to {$s3_path} in S3" );
 
-        $host_name = $this->settings['s3Bucket'] . '.s3.amazonaws.com';
+        $host_name = $this->settings['s3Bucket'] . '.s3-' .
+            $this->settings['s3Region'] . '.amazonaws.com';
+
         $content_acl = 'public-read';
         $content_title = $s3_path;
         $aws_service_name = 's3';
@@ -236,18 +238,23 @@ class StaticHtmlOutput_S3 extends StaticHtmlOutput_SitePublisher {
         }
 
         $url = 'https://' . $host_name . '/' . $content_title;
+
+        $this->logAction( "S3 URL: {$url}" );
+
         $ch = curl_init( $url );
 
         curl_setopt( $ch, CURLOPT_HEADER, false );
         curl_setopt( $ch, CURLOPT_HTTPHEADER, $curl_headers );
         curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
         curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
+        curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
         curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true );
         curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'PUT' );
         curl_setopt( $ch, CURLOPT_USERAGENT, 'WP2Static.com' );
         curl_setopt( $ch, CURLOPT_CONNECTTIMEOUT, 0 );
         curl_setopt( $ch, CURLOPT_TIMEOUT, 600 );
         curl_setopt( $ch, CURLOPT_POSTFIELDS, $content );
+
 
         $output = curl_exec( $ch );
         $http_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
