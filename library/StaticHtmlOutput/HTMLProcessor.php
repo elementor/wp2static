@@ -771,7 +771,7 @@ class HTMLProcessor extends WP2Static {
 
             $this->logAction(
                 'Find/replace rules for placeholder -> Destination URL:' . PHP_EOL .
-                implode( PHP_EOL, $patterns ) .
+                implode( PHP_EOL, $patterns ) . PHP_EOL .
                 implode( PHP_EOL, $replacements )
             );
 
@@ -845,7 +845,7 @@ class HTMLProcessor extends WP2Static {
 
         $this->logAction(
             'Find/replace rules for setting placeholder URLs:' . PHP_EOL .
-            implode( PHP_EOL, $patterns ) .
+            implode( PHP_EOL, $patterns ) . PHP_EOL .
             implode( PHP_EOL, $replacements )
         );
 
