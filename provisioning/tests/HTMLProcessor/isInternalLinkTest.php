@@ -27,11 +27,17 @@ final class HTMLProcessorIsInternalLinkTest extends TestCase {
 
         */
 
-        $processor = new HTMLProcessor();
+        $processor = $this->getMockBuilder( 'HTMLProcessor' )
+            ->setMethods(
+                array(
+                    'loadSettings',
+                )
+            )
+            ->getMock();
 
-        $processor->settings = array(
-            'wp_site_url' => 'http://mywpsite.com'
-        );
+        $processor->method( 'loadSettings' )->willReturn( null );
+
+        $processor->settings = array();
 
         $processor->placeholder_url = 'https://PLACEHOLDER.wpsho/';
 
