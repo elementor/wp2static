@@ -171,7 +171,10 @@ class Deployer extends WP2Static {
             return;
         }
 
-        WP_CLI::line( 'Sending confirmation email...' );
+        if ( defined( 'WP_CLI' ) ) {
+            WP_CLI::line( 'Sending confirmation email...' );
+        }
+
         $current_user = wp_get_current_user();
         $to = $current_user->user_email;
         $subject = 'Static site deployment: ' .
