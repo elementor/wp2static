@@ -28,21 +28,26 @@ final class HTMLProcessorNormalizeURLTest extends TestCase {
         $element = $links[0];
 
         // mock out only the unrelated methods
-        $mockProcessor = $this->getMockBuilder( 'HTMLProcessor' )
+        $processor = $this->getMockBuilder( 'HTMLProcessor' )
             ->setMethods(
                 [
                     'isInternalLink',
+                    'loadSettings',
                 ]
             )
             ->getMock();
 
-        $mockProcessor->page_url = new Net_URL2(
+        $processor->method( 'loadSettings' )->willReturn( null );
+
+        $processor->settings = array();
+
+        $processor->page_url = new Net_URL2(
             'http://mywpsite.com/category/photos/my-gallery/'
         );
 
-        $mockProcessor->method( 'isInternalLink' )->willReturn( true );
-        $mockProcessor->expects( $this->once() )->method( 'isInternalLink' );
-        $mockProcessor->normalizeURL( $element, $attr );
+        $processor->method( 'isInternalLink' )->willReturn( true );
+        $processor->expects( $this->once() )->method( 'isInternalLink' );
+        $processor->normalizeURL( $element, $attr );
 
         $this->assertEquals(
             $exp_result,
