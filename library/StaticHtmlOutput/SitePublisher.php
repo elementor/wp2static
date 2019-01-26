@@ -309,6 +309,8 @@ class StaticHtmlOutput_SitePublisher {
                 'BAD RESPONSE STATUS FROM API (' . $code . ')'
             );
 
+            http_response_code( $code );
+
             throw new Exception(
                 'BAD RESPONSE STATUS FROM API (' . $code . ')'
             );
