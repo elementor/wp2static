@@ -308,6 +308,9 @@ class SiteCrawler extends WP2Static {
         curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
         curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
         curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
+        curl_setopt( $ch, CURLOPT_USERAGENT, 'WP2Static.com' );
+        curl_setopt( $ch, CURLOPT_CONNECTTIMEOUT, 0 );
+        curl_setopt( $ch, CURLOPT_TIMEOUT, 600 );
         curl_setopt( $ch, CURLOPT_HEADER, 0 );
         curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
 
@@ -513,7 +516,7 @@ class SiteCrawler extends WP2Static {
 
         require_once dirname( __FILE__ ) .
             '/../StaticHtmlOutput/WsLog.php';
-        WsLog::l( '# ' . $action );
+        WsLog::l( $action );
     }
 }
 
