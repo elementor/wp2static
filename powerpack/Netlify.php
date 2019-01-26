@@ -99,10 +99,24 @@ class StaticHtmlOutput_Netlify extends StaticHtmlOutput_SitePublisher {
                 $headers
             );
 
-            $this->checkForValidResponses(
-                $this->client->status_code,
-                array( '200', '201', '301', '302', '304' )
-            );
+            // NOTE: check for certain header, as response is always 200
+            if ( isset( $this->client->headers['x-ratelimit-limit'] ) ) {
+                if ( ! defined( 'WP_CLI' ) ) {
+                    echo 'SUCCESS';
+                }
+            } else {
+                $code = 404;
+
+                require_once dirname( __FILE__ ) .
+                    '/../library/StaticHtmlOutput/WsLog.php';
+                WsLog::l(
+                    'BAD RESPONSE STATUS FROM API (' . $code . ')'
+                );
+
+                http_response_code( $code );
+
+                echo 'Netlify test error';
+            }
         } catch ( Exception $e ) {
             $this->handleException( $e );
         }

@@ -144,7 +144,6 @@ class StaticHtmlOutput_S3 extends StaticHtmlOutput_SitePublisher {
                 '/../library/StaticHtmlOutput/WsLog.php';
 
             WsLog::l( 'S3 ERROR RETURNED: ' . $e );
-            http_response_code(404);
             echo "There was an error testing S3.\n";
         }
     }
@@ -329,7 +328,8 @@ EOD;
         fclose( $fp );
 
         if ( ! defined( 'WP_CLI' ) ) {
-            echo 'SUCCESS'; }
+            echo 'SUCCESS';
+        }
     }
 }
 
