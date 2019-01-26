@@ -24,9 +24,9 @@ class HTMLProcessor extends WP2Static {
 
         // NOTE: set placeholder_url to same protocol as target
         // making it easier to rewrite URLs without considering protocol
-        $protocol = $this->getTargetSiteProtocol( $this->settings['baseUrl'] );
+        $this->destination_protocol = $this->getTargetSiteProtocol( $this->settings['baseUrl'] );
 
-        $this->placeholder_url = $protocol . 'PLACEHOLDER.wpsho/';
+        $this->placeholder_url = $this->destination_protocol . 'PLACEHOLDER.wpsho/';
 
         // initial rewrite of all site URLs to placeholder URLs
         $this->rewriteSiteURLsToPlaceholder();
@@ -393,6 +393,10 @@ class HTMLProcessor extends WP2Static {
             PHP_URL_HOST
         );
 
+        $this->logAction(
+            "Is internal link? {$link} {$is_internal_link}"
+        );
+
         return $is_internal_link;
     }
 
@@ -695,7 +699,7 @@ class HTMLProcessor extends WP2Static {
 
     // TODO: move some of these URLs into settings to avoid extra calls
     public function getProtocolRelativeURL( $url ) {
-        $protocol_relative_url = str_replace(
+        $this->destination_protocol_relative_url = str_replace(
             array(
                 'https:',
                 'http:',
@@ -707,7 +711,7 @@ class HTMLProcessor extends WP2Static {
             $url
         );
 
-        return $protocol_relative_url;
+        return $this->destination_protocol_relative_url;
     }
 
     public function rewriteBaseURL( $element ) {
@@ -727,6 +731,7 @@ class HTMLProcessor extends WP2Static {
         if ( $this->isInternalLink( $url_to_change ) ) {
             $patterns = array(
                 $this->placeholder_url,
+                addcslashes( $this->placeholder_url, '/' ),
                 $this->getProtocolRelativeURL(
                     $this->placeholder_url
                 ),
@@ -743,6 +748,7 @@ class HTMLProcessor extends WP2Static {
 
             $replacements = array(
                     $this->settings['baseUrl'],
+                    addcslashes( $this->settings['baseUrl'], '/' ),
                     $this->getProtocolRelativeURL(
                         $this->settings['baseUrl']
                     ),
@@ -768,17 +774,17 @@ class HTMLProcessor extends WP2Static {
     }
 
     public function getTargetSiteProtocol( $url ) {
-        $protocol = '//';
+        $this->destination_protocol = '//';
 
         if ( strpos( $url, 'https://' ) !== false ) {
-            $protocol = 'https://';
+            $this->destination_protocol = 'https://';
         } elseif ( strpos( $url, 'http://' ) !== false ) {
-            $protocol = 'http://';
+            $this->destination_protocol = 'http://';
         } else {
-            $protocol = '//';
+            $this->destination_protocol = '//';
         }
 
-        return $protocol;
+        return $this->destination_protocol;
     }
 
     public function rewriteSiteURLsToPlaceholder() {
@@ -813,6 +819,17 @@ class HTMLProcessor extends WP2Static {
                 addcslashes( $this->placeholder_url, '/' )
             ),
         );
+
+        // catch any http links on an https WP site
+        if ( $this->destination_protocol === 'https' ) {
+            $patterns[] = str_replace(
+                'http:',
+                'https:',
+                $this->settings['wp_site_url']
+            );
+
+            $replacements[] = $this->placeholder_url;
+        }
 
         $rewritten_source = str_replace(
             $patterns,
@@ -858,6 +875,16 @@ class HTMLProcessor extends WP2Static {
         }
 
         return true;
+    }
+
+    public function logAction( $action ) {
+        if ( ! isset( $this->settings['debug_mode'] ) ) {
+            return;
+        }
+
+        require_once dirname( __FILE__ ) .
+            '/../StaticHtmlOutput/WsLog.php';
+        WsLog::l( $action );
     }
 }
 
