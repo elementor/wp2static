@@ -314,7 +314,7 @@ class StaticHtmlOutput_Controller {
 
     public function logEnvironmentalInfo() {
         $info = array(
-            '' . date( 'Y-m-d h:i:s' ) ,
+            '' . date( 'Y-m-d h:i:s' ),
             'PHP VERSION ' . phpversion(),
             'OS VERSION ' . php_uname(),
             'WP VERSION ' . get_bloginfo( 'version' ),
@@ -324,10 +324,10 @@ class StaticHtmlOutput_Controller {
             'WP ADDRESS ' . get_bloginfo( 'wpurl' ),
             'PLUGIN VERSION ' . $this::VERSION,
             'VIA WP-CLI? ' . defined( 'WP_CLI' ),
-            'STATIC EXPORT URL ' .  $this->exporter->settings['baseUrl'],
+            'STATIC EXPORT URL ' . $this->exporter->settings['baseUrl'],
         );
 
-        WsLog::l( implode(PHP_EOL, $info) );
+        WsLog::l( implode( PHP_EOL, $info ) );
 
         WsLog::l( 'Active plugins:' );
 

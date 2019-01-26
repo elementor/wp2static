@@ -9,11 +9,15 @@
   -->
   <arg name="colors" />
   <arg name="tab-width" value="2" />
+
+  <exclude-pattern>/vendor/*</exclude-pattern>
+  <exclude-pattern>/tests/*</exclude-pattern>
+
   <!-- Custom line length validation -->
   <rule ref="Generic.Files.LineLength">
     <properties>
-      <property name="lineLimit" value="80" />
-      <property name="absoluteLineLimit" value="100" />
+      <property name="lineLimit" value="100" />
+      <property name="absoluteLineLimit" value="120" />
     </properties>
   </rule>
   <rule ref="Generic.WhiteSpace.DisallowTabIndent" />
@@ -96,5 +100,7 @@
     <exclude name="WordPress.Security.ValidatedSanitizedInput" />
     <exclude name="WordPress.WhiteSpace.PrecisionAlignment" />
     <exclude name="WordPress.WP.AlternativeFunctions" />
+
+    <exclude name="WordPress.NamingConventions.ValidVariableName" />
   </rule>
 </ruleset>

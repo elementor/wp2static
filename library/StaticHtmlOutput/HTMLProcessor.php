@@ -211,7 +211,6 @@ class HTMLProcessor extends WP2Static {
             return;
         }
 
-
         if ( isset( $this->harvest_new_urls ) ) {
             if ( ! $this->isValidURL( $url ) ) {
                 return;
@@ -742,19 +741,19 @@ class HTMLProcessor extends WP2Static {
             );
 
             $replacements = array(
-                    $this->settings['baseUrl'],
-                    $this->getProtocolRelativeURL(
-                        $this->settings['baseUrl']
-                    ),
-                    $this->getProtocolRelativeURL(
-                        rtrim( $this->settings['baseUrl'], '/' )
-                    ),
-                    $this->getProtocolRelativeURL(
-                        $this->settings['baseUrl'] . '//'
-                    ),
-                    $this->getProtocolRelativeURL(
-                        addcslashes( $this->settings['baseUrl'], '/' )
-                    ),
+                $this->settings['baseUrl'],
+                $this->getProtocolRelativeURL(
+                    $this->settings['baseUrl']
+                ),
+                $this->getProtocolRelativeURL(
+                    rtrim( $this->settings['baseUrl'], '/' )
+                ),
+                $this->getProtocolRelativeURL(
+                    $this->settings['baseUrl'] . '//'
+                ),
+                $this->getProtocolRelativeURL(
+                    addcslashes( $this->settings['baseUrl'], '/' )
+                ),
             );
 
             $rewritten_url = str_replace(
@@ -783,19 +782,19 @@ class HTMLProcessor extends WP2Static {
 
     public function rewriteSiteURLsToPlaceholder() {
         $patterns = array(
-                $this->settings['wp_site_url'],
-                $this->getProtocolRelativeURL(
-                    $this->settings['wp_site_url']
-                ),
-                $this->getProtocolRelativeURL(
-                    rtrim( $this->settings['wp_site_url'], '/' )
-                ),
-                $this->getProtocolRelativeURL(
-                    $this->settings['wp_site_url'] . '//'
-                ),
-                $this->getProtocolRelativeURL(
-                    addcslashes( $this->settings['wp_site_url'], '/' )
-                ),
+            $this->settings['wp_site_url'],
+            $this->getProtocolRelativeURL(
+                $this->settings['wp_site_url']
+            ),
+            $this->getProtocolRelativeURL(
+                rtrim( $this->settings['wp_site_url'], '/' )
+            ),
+            $this->getProtocolRelativeURL(
+                $this->settings['wp_site_url'] . '//'
+            ),
+            $this->getProtocolRelativeURL(
+                addcslashes( $this->settings['wp_site_url'], '/' )
+            ),
         );
 
         $replacements = array(

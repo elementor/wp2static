@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WP2Static
  * Plugin URI:  https://wp2static.com
- * Description: Security & Performance via static website publishing. One plugin to solve WordPress's biggest problems.
+ * Description: Security & Performance via static website publishing.
  * Version:     6.4-dev
  * Author:      Leon Stafford
  * Author URI:  https://leonstafford.github.io
@@ -12,9 +12,8 @@
  */
 
 
-// intercept low latency dependent actions and avoid boostrapping whole plugin
-require_once dirname( __FILE__ ) .
-    '/library/StaticHtmlOutput/Dispatcher.php';
+// Intercept low latency dependent actions and avoid boostrapping whole plugin
+require_once dirname( __FILE__ ) . '/library/StaticHtmlOutput/Dispatcher.php';
 
 require_once 'library/StaticHtmlOutput/WP2Static.php';
 require_once 'library/StaticHtmlOutput/Options.php';
@@ -28,7 +27,8 @@ require_once 'library/URL2/URL2.php';
 StaticHtmlOutput_Controller::init( __FILE__ );
 
 function plugin_action_links( $links ) {
-    $settings_link = '<a href="admin.php?page=wp2static">' . __( 'Settings', 'static-html-output-plugin' ) . '</a>';
+    $settings_link = '<a href="admin.php?page=wp2static">'
+        . __( 'Settings', 'static-html-output-plugin' ) . '</a>';
     array_unshift( $links, $settings_link );
 
     return $links;
@@ -39,15 +39,21 @@ function wp_static_html_output_server_side_export() {
     $plugin = StaticHtmlOutput_Controller::getInstance();
     $plugin->doExportWithoutGUI();
     wp_die();
-    return null;
 }
 
-add_action( 'wp_static_html_output_server_side_export_hook', 'wp_static_html_output_server_side_export', 10, 0 );
-
+add_action(
+    'wp_static_html_output_server_side_export_hook',
+    'wp_static_html_output_server_side_export',
+    10,
+    0
+);
 
 function plugins_have_been_loaded() {
-      load_plugin_textdomain( 'static-html-output-plugin', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
-      return null;
+    load_plugin_textdomain(
+        'static-html-output-plugin',
+        false,
+        dirname( plugin_basename( __FILE__ ) ) . '/languages/'
+    );
 }
 
 add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'plugin_action_links' );
@@ -64,12 +70,12 @@ function wp_static_html_output_ajax() {
     }
 
     wp_die();
-    return null;
 }
 
 remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
 remove_action( 'wp_print_styles', 'print_emoji_styles' );
 
+/*
 function wp_static_html_output_add_dashboard_widgets() {
 
     wp_add_dashboard_widget(
@@ -78,11 +84,13 @@ function wp_static_html_output_add_dashboard_widgets() {
         'wp_static_html_output_dashboard_widget_function'
     );
 }
-// add_action( 'wp_dashboard_setup', 'wp_static_html_output_add_dashboard_widgets' );
+add_action( 'wp_dashboard_setup', 'wp_static_html_output_add_dashboard_widgets' );
+*/
+
 function wp_static_html_output_dashboard_widget_function() {
 
     echo '<p>Publish whole site as static HTML</p>';
-    echo "<button class='button button-primary'>Publish whole site</button>";
+    echo '<button class="button button-primary">Publish whole site</button>';
 }
 
 function wp_static_html_output_deregister_scripts() {
@@ -92,7 +100,7 @@ function wp_static_html_output_deregister_scripts() {
 add_action( 'wp_footer', 'wp_static_html_output_deregister_scripts' );
 remove_action( 'wp_head', 'wlwmanifest_link' );
 
-// WP CLI support
+// WP-CLI support
 if ( defined( 'WP_CLI' ) ) {
     require_once dirname( __FILE__ ) . '/library/wp2static-wp-cli-commands.php';
 }
