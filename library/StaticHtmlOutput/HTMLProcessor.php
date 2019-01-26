@@ -24,9 +24,11 @@ class HTMLProcessor extends WP2Static {
 
         // NOTE: set placeholder_url to same protocol as target
         // making it easier to rewrite URLs without considering protocol
-        $this->destination_protocol = $this->getTargetSiteProtocol( $this->settings['baseUrl'] );
+        $this->destination_protocol =
+            $this->getTargetSiteProtocol( $this->settings['baseUrl'] );
 
-        $this->placeholder_url = $this->destination_protocol . 'PLACEHOLDER.wpsho/';
+        $this->placeholder_url =
+            $this->destination_protocol . 'PLACEHOLDER.wpsho/';
 
         // initial rewrite of all site URLs to placeholder URLs
         $this->rewriteSiteURLsToPlaceholder();
@@ -210,7 +212,6 @@ class HTMLProcessor extends WP2Static {
         if ( trim( $url ) === '' ) {
             return;
         }
-
 
         if ( isset( $this->harvest_new_urls ) ) {
             if ( ! $this->isValidURL( $url ) ) {
@@ -747,20 +748,20 @@ class HTMLProcessor extends WP2Static {
             );
 
             $replacements = array(
-                    $this->settings['baseUrl'],
-                    addcslashes( $this->settings['baseUrl'], '/' ),
-                    $this->getProtocolRelativeURL(
-                        $this->settings['baseUrl']
-                    ),
-                    $this->getProtocolRelativeURL(
-                        rtrim( $this->settings['baseUrl'], '/' )
-                    ),
-                    $this->getProtocolRelativeURL(
-                        $this->settings['baseUrl'] . '//'
-                    ),
-                    $this->getProtocolRelativeURL(
-                        addcslashes( $this->settings['baseUrl'], '/' )
-                    ),
+                $this->settings['baseUrl'],
+                addcslashes( $this->settings['baseUrl'], '/' ),
+                $this->getProtocolRelativeURL(
+                    $this->settings['baseUrl']
+                ),
+                $this->getProtocolRelativeURL(
+                    rtrim( $this->settings['baseUrl'], '/' )
+                ),
+                $this->getProtocolRelativeURL(
+                    $this->settings['baseUrl'] . '//'
+                ),
+                $this->getProtocolRelativeURL(
+                    addcslashes( $this->settings['baseUrl'], '/' )
+                ),
             );
 
             $rewritten_url = str_replace(
@@ -770,7 +771,8 @@ class HTMLProcessor extends WP2Static {
             );
 
             $this->logAction(
-                'Find/replace rules for placeholder -> Destination URL:' . PHP_EOL .
+                'Find/replace rules for placeholder -> Destination URL:' .
+                PHP_EOL .
                 implode( PHP_EOL, $patterns ) . PHP_EOL .
                 implode( PHP_EOL, $replacements )
             );
@@ -795,19 +797,19 @@ class HTMLProcessor extends WP2Static {
 
     public function rewriteSiteURLsToPlaceholder() {
         $patterns = array(
-                $this->settings['wp_site_url'],
-                $this->getProtocolRelativeURL(
-                    $this->settings['wp_site_url']
-                ),
-                $this->getProtocolRelativeURL(
-                    rtrim( $this->settings['wp_site_url'], '/' )
-                ),
-                $this->getProtocolRelativeURL(
-                    $this->settings['wp_site_url'] . '//'
-                ),
-                $this->getProtocolRelativeURL(
-                    addcslashes( $this->settings['wp_site_url'], '/' )
-                ),
+            $this->settings['wp_site_url'],
+            $this->getProtocolRelativeURL(
+                $this->settings['wp_site_url']
+            ),
+            $this->getProtocolRelativeURL(
+                rtrim( $this->settings['wp_site_url'], '/' )
+            ),
+            $this->getProtocolRelativeURL(
+                $this->settings['wp_site_url'] . '//'
+            ),
+            $this->getProtocolRelativeURL(
+                addcslashes( $this->settings['wp_site_url'], '/' )
+            ),
         );
 
         $replacements = array(

@@ -255,7 +255,6 @@ class StaticHtmlOutput_S3 extends StaticHtmlOutput_SitePublisher {
         curl_setopt( $ch, CURLOPT_TIMEOUT, 600 );
         curl_setopt( $ch, CURLOPT_POSTFIELDS, $content );
 
-
         $output = curl_exec( $ch );
         $http_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
 
@@ -271,7 +270,7 @@ class StaticHtmlOutput_S3 extends StaticHtmlOutput_SitePublisher {
     }
 
     public function cloudfront_invalidate_all_items() {
-        $this->logAction( "Invalidating all CloudFront items" );
+        $this->logAction( 'Invalidating all CloudFront items' );
 
         if ( ! isset( $this->settings['cfDistributionId'] ) ) {
             error_log( 'no CF ID found' );
