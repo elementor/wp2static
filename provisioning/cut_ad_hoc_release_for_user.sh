@@ -22,13 +22,15 @@ cp -r $EXEC_DIR/wp2static.css $TMP_DIR/static-html-output-plugin/
 
 cd $TMP_DIR
 
+rm static-html-output-plugin/library/.htaccess
+
 # tidy permissions
 find . -type d -exec chmod 755 {} \;
 find . -type f -exec chmod 644 {} \;
 
 # strip comments and whitespace from each PHP file
 # takes size from 990K to 733K
-#find .  -name \*.php -exec $EXEC_DIR/provisioning/compress_php_file {} \;
+find .  ! -name 'wp2static.php' -name \*.php -exec $EXEC_DIR/provisioning/compress_php_file {} \;
 
 zip -r -9 ./$1.zip ./static-html-output-plugin
 
