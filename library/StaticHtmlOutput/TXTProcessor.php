@@ -21,9 +21,9 @@ class TXTProcessor extends WP2Static {
 
         $this->txt_doc = $txt_document;
 
-        $protocol = $this->getTargetSiteProtocol( $this->settings['baseUrl'] );
+        $this->destination_protocol = $this->getTargetSiteProtocol( $this->settings['baseUrl'] );
 
-        $this->placeholder_url = $protocol . 'PLACEHOLDER.wpsho/';
+        $this->placeholder_url = $this->destination_protocol . 'PLACEHOLDER.wpsho/';
 
         $this->rewriteSiteURLsToPlaceholder();
 
@@ -72,6 +72,12 @@ class TXTProcessor extends WP2Static {
             PHP_EOL .
                 $this->placeholder_url . ',' .
                 $this->settings['baseUrl'];
+
+        // add protocol relative URL to rewrite_rules
+        $this->settings['rewrite_rules'] .=
+            PHP_EOL .
+                $this->getProtocolRelativeURL( $this->placeholder_url ) . ',' .
+                $this->getProtocolRelativeURL( $this->settings['baseUrl'] );
 
         $rewrite_from = array();
         $rewrite_to = array();
@@ -154,15 +160,52 @@ class TXTProcessor extends WP2Static {
     }
 
     public function rewriteSiteURLsToPlaceholder() {
-        $rewritten_source = str_replace(
-            array(
+        $patterns = array(
                 $this->settings['wp_site_url'],
-                addcslashes( $this->settings['wp_site_url'], '/' ),
+                $this->getProtocolRelativeURL(
+                    $this->settings['wp_site_url']
+                ),
+                $this->getProtocolRelativeURL(
+                    rtrim( $this->settings['wp_site_url'], '/' )
+                ),
+                $this->getProtocolRelativeURL(
+                    $this->settings['wp_site_url'] . '//'
+                ),
+                $this->getProtocolRelativeURL(
+                    addcslashes( $this->settings['wp_site_url'], '/' )
+                ),
+        );
+
+        $replacements = array(
+            $this->placeholder_url,
+            $this->getProtocolRelativeURL(
+                $this->placeholder_url
             ),
-            array(
-                $this->placeholder_url,
-                addcslashes( $this->placeholder_url, '/' ),
+            $this->getProtocolRelativeURL(
+                $this->placeholder_url
             ),
+            $this->getProtocolRelativeURL(
+                $this->placeholder_url . '/'
+            ),
+            $this->getProtocolRelativeURL(
+                addcslashes( $this->placeholder_url, '/' )
+            ),
+        );
+
+        // catch any http links on an https WP site
+        if ( $this->destination_protocol === 'https' ) {
+            $patterns[] = str_replace(
+                'http:',
+                'https:',
+                $this->settings['wp_site_url']
+            );
+
+            $replacements[] = $this->placeholder_url;
+        }
+
+        $rewritten_source = str_replace(
+            $patterns,
+            $replacements,
             $this->txt_doc
         );
 
@@ -181,6 +224,22 @@ class TXTProcessor extends WP2Static {
         }
 
         return $protocol;
+    }
+
+    public function getProtocolRelativeURL( $url ) {
+        $this->destination_protocol_relative_url = str_replace(
+            array(
+                'https:',
+                'http:',
+            ),
+            array(
+                '',
+                '',
+            ),
+            $url
+        );
+
+        return $this->destination_protocol_relative_url;
     }
 }
 
