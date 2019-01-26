@@ -13,6 +13,11 @@
   <exclude-pattern>/vendor/*</exclude-pattern>
   <exclude-pattern>/tests/*</exclude-pattern>
 
+  <!-- FIXME Waiting for Composer packages -->
+  <exclude-pattern>/library/CSSParser/*</exclude-pattern>
+  <exclude-pattern>/library/library/FTP/*</exclude-pattern>
+  <exclude-pattern>/library/library/URL2/*</exclude-pattern>
+
   <!-- Custom line length validation -->
   <rule ref="Generic.Files.LineLength">
     <properties>
