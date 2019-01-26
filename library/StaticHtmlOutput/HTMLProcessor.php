@@ -769,6 +769,12 @@ class HTMLProcessor extends WP2Static {
                 $url_to_change
             );
 
+            $this->logAction(
+                'Find/replace rules for placeholder -> Destination URL:' . PHP_EOL .
+                implode( PHP_EOL, $patterns ) .
+                implode( PHP_EOL, $replacements )
+            );
+
             $element->setAttribute( $attribute_to_change, $rewritten_url );
         }
     }
@@ -835,6 +841,12 @@ class HTMLProcessor extends WP2Static {
             $patterns,
             $replacements,
             $this->raw_html
+        );
+
+        $this->logAction(
+            'Find/replace rules for setting placeholder URLs:' . PHP_EOL .
+            implode( PHP_EOL, $patterns ) .
+            implode( PHP_EOL, $replacements )
         );
 
         $this->raw_html = $rewritten_source;

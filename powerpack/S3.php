@@ -135,16 +135,17 @@ class StaticHtmlOutput_S3 extends StaticHtmlOutput_SitePublisher {
                 'Test WP2Static connectivity',
                 'text/plain'
             );
+
+            if ( ! defined( 'WP_CLI' ) ) {
+                echo 'SUCCESS';
+            }
         } catch ( Exception $e ) {
             require_once dirname( __FILE__ ) .
                 '/../library/StaticHtmlOutput/WsLog.php';
 
             WsLog::l( 'S3 ERROR RETURNED: ' . $e );
+            http_response_code(404);
             echo "There was an error testing S3.\n";
-        }
-
-        if ( ! defined( 'WP_CLI' ) ) {
-            echo 'SUCCESS';
         }
     }
 
