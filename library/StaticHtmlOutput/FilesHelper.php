@@ -460,7 +460,6 @@ class StaticHtmlOutput_FilesHelper {
             )
         );
 
-
         foreach ( $posts as $post ) {
             // capture all post types
             if ( $post->post_type !== 'wpcf7_contact_form' ) {
@@ -542,13 +541,13 @@ class StaticHtmlOutput_FilesHelper {
                 $permalink = trim( get_term_link( $term ) );
                 $total_posts = $term->count;
 
-                $term_url =  str_replace(
+                $term_url = str_replace(
                     $wp_site_url,
                     '',
                     $permalink
                 );
 
-                $category_links[$term_url] = $total_posts;
+                $category_links[ $term_url ] = $total_posts;
 
                 $post_urls[] = $permalink;
             }
@@ -562,7 +561,7 @@ class StaticHtmlOutput_FilesHelper {
         $post_pagination_urls =
             self::getPaginationURLsForPosts(
                 array_unique( $unique_post_types )
-        );
+            );
 
         // get all comment links
         $comment_pagination_urls =
@@ -586,7 +585,7 @@ class StaticHtmlOutput_FilesHelper {
 
         $urls_to_include = array();
 
-        foreach( $post_types as $post_type) {
+        foreach ( $post_types as $post_type ) {
             $query = "
                 SELECT ID,post_type
                 FROM %s
@@ -609,11 +608,10 @@ class StaticHtmlOutput_FilesHelper {
 
             $total_pages = ceil( $count / $default_posts_per_page );
 
-            for( $page = 1; $page <= $total_pages; $page++ ) {
+            for ( $page = 1; $page <= $total_pages; $page++ ) {
                 $urls_to_include[] =
                     "/{$plural_form}/{$pagination_base}/{$page}";
             }
-
         }
 
         return $urls_to_include;
@@ -629,7 +627,7 @@ class StaticHtmlOutput_FilesHelper {
         foreach ( $categories as $term => $total_posts ) {
             $total_pages = ceil( $total_posts / $default_posts_per_page );
 
-            for( $page = 1; $page <= $total_pages; $page++ ) {
+            for ( $page = 1; $page <= $total_pages; $page++ ) {
                 $urls_to_include[] =
                     "{$term}/{$pagination_base}/{$page}";
             }
@@ -644,11 +642,11 @@ class StaticHtmlOutput_FilesHelper {
         $urls_to_include = array();
         $comments_pagination_base = $wp_rewrite->comments_pagination_base;
 
-        foreach( get_comments() as $comment ) {
+        foreach ( get_comments() as $comment ) {
             $comment_url = get_comment_link( $comment->comment_ID );
             $comment_url = strtok( $comment_url, '#' );
 
-            $urls_to_include[] =  str_replace(
+            $urls_to_include[] = str_replace(
                 $wp_site_url,
                 '',
                 $comment_url
