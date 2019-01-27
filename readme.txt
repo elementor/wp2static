@@ -137,6 +137,12 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
 = 6.4 =
 
  * New feature: Debug Mode - helps diagnose any errors causing the plugin to fail
+ * Enhancement: Improvements to URL rewriting engine
+ * Enhancement: Set unique user-agent while crawling site
+ * Bugfix: Allow uploads to S3 buckets with dots in bucket name
+ * Bugfix: Detect Webpack-built themes' dist directory
+ * Bugfix: Fix false-positives in deploy tests
+ * Bugfix: Fix error with WP-CLI options commands
 
 = 6.3 =
 
@@ -532,6 +538,12 @@ Initial release to Wordpress community
 = 6.4 =
 
  * New feature: Debug Mode - helps diagnose any errors causing the plugin to fail
+ * Enhancement: Improvements to URL rewriting engine
+ * Enhancement: Set unique user-agent while crawling site
+ * Bugfix: Allow uploads to S3 buckets with dots in bucket name
+ * Bugfix: Detect Webpack-built themes' dist directory
+ * Bugfix: Fix false-positives in deploy tests
+ * Bugfix: Fix error with WP-CLI options commands
 
 = 6.3 =
 
