@@ -4,7 +4,7 @@ Tags: security, performance, static
 Requires at least: 3.2
 Tested up to: 5.0.2
 Requires PHP: 5.6
-Stable tag: 6.4
+Stable tag: 6.5
 
 Security & Performance via static website publishing. One plugin to solve WordPress's biggest problems.
 
@@ -53,7 +53,7 @@ Not compatible with WooCommerce or membership sites, but solutions like [Snipcar
  - Government agencies who have strict security requirements, but have users who prefer to use WordPress
  * Thos who want to use it to archive an old WordPress website, keeping the content online, but not worrying about keeping WP up to date
 
-This plugin produces a static HTML version of your wordpress install, incredibly useful for anyone who would like the publishing power of wordpress but whose webhost doesn't allow dynamic PHP driven sites - such as GitHub Pages. You can run your development site on a different domain or offline, and the plugin will change all relevant URLs when you publish your site. It's a simple but powerful plugin, and after hitting the publish button, the plugin will output a ZIP file of your entire site, ready to upload straight to it's new home. 
+This plugin produces a static HTML version of your wordpress install, incredibly useful for anyone who would like the publishing power of wordpress but whose webhost doesn't allow dynamic PHP driven sites - such as GitHub Pages. You can run your development site on a different domain or offline, and the plugin will change all relevant URLs when you publish your site. It's a simple but powerful plugin, and after hitting the publish button, the plugin will output a ZIP file of your entire site, ready to upload straight to it's new home.
 
 
 = Getting started =
@@ -118,7 +118,7 @@ Anywhere that allows HTML files to be uploaded, ie:
 
 = My export failed - how do I proceed? =
 
-Everyone's WordPress hosting environment and configuration is unique, with different plugins, themes, PHP versions, to name a few. Whilst the plugin does its best to support all environments, sometimes you'll encounter a new issue. Sometimes we can adjust the settings in the plugin to overcome an issue, other times, it will require a bugfix and a new release of the plugin (usually a quick process). 
+Everyone's WordPress hosting environment and configuration is unique, with different plugins, themes, PHP versions, to name a few. Whilst the plugin does its best to support all environments, sometimes you'll encounter a new issue. Sometimes we can adjust the settings in the plugin to overcome an issue, other times, it will require a bugfix and a new release of the plugin (usually a quick process).
 
 When you have an issue, send the contents of your "Export Log" on the plugin screen to the developer, at [help@wp2static.com](mailto:help@wp2static.com). He'll usually respond within 12 hrs, often sooner.
 
@@ -133,6 +133,12 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
 7. Ways to support the plugin
 
 == Changelog ==
+
+= 6.5 =
+
+ * Enhancement: pagination URLs for all post types now included in initial crawl
+ * Enhancement: pagination URLs for taxonomies, comments now included in initial crawl
+ * Bugfix: posts and page URLs weren't all being detected
 
 = 6.4 =
 
@@ -229,7 +235,7 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
 = 5.7 =
 
  * Bugfix: Allow for WPMU/network site activation
- * Bugfix: Include gallery files for NextGEN Gallery 
+ * Bugfix: Include gallery files for NextGEN Gallery
 
 = 5.6 =
 
@@ -256,7 +262,7 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
 
  * Improvement: more deployment options included (Netlify, GitHub Pages)
  * Bugfix: certain cases where inline style images are written with incorrect filenames
- * Bugfix: fix for cron-scheduled exports failing 
+ * Bugfix: fix for cron-scheduled exports failing
  * Bugfix: offline copy not rewriting home URLs
 
 = 5.3 =
@@ -309,7 +315,7 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
 = 3.1 =
 
  * Bugfix: fix certain CloudFront exceptions not being caught/logged
- * Bugfix: previous exports being included in deployments in some cases 
+ * Bugfix: previous exports being included in deployments in some cases
  * Bugfix: issue preventing Dropbox deployments from working
  * Bugfix: enable S3 deploys to all regions
  * Bugfix: allow crawling local/self-cert SSL sites
@@ -378,12 +384,12 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
 
 = 2.4 =
 
- * Feature: Export to BunnyCDN - a very cheap and quick static site hosting option 
+ * Feature: Export to BunnyCDN - a very cheap and quick static site hosting option
  * Bugfix: Extracts relative URLs like fonts, background images, etc linked from your theme's CSS files
 
 = 2.3 =
 
- * Feature: Scheduled exports via WP Crontrol 
+ * Feature: Scheduled exports via WP Crontrol
  * Bugfix: FTP export now works on shared/limited hosting
  * Bugfix: Extracts all URLs when crawling your website's HTML files
  * Bugfix: Subsequent exports correctly show realtime progress in log
@@ -409,7 +415,7 @@ Critical bug fixes and a shiny new feature!
  * Bugfix: Amazon S3 publishing fixed after bug introduced in 1.9
  * Feature: 1-click publishing to a GitHub Pages static site
 
-Thanks to a user donation for funding the development work to get GitHub Pages exporting added as a new feature. I was also able to merge some recently contributed code from @patrickdk77, fixing the recent issues with AWS S3 and CloudFront. Finally, I couldn't make a new release without fixing the Dropbox export functionality - unbeknowst to me, they had killed version 1 of their API in September, breaking the functionality in this plugin, along with many other apps. 
+Thanks to a user donation for funding the development work to get GitHub Pages exporting added as a new feature. I was also able to merge some recently contributed code from @patrickdk77, fixing the recent issues with AWS S3 and CloudFront. Finally, I couldn't make a new release without fixing the Dropbox export functionality - unbeknowst to me, they had killed version 1 of their API in September, breaking the functionality in this plugin, along with many other apps.
 
 = 1.9 =
 
@@ -421,7 +427,7 @@ Though this is no longer an officially supported PHP version, many of this plugi
 
  * Bugfix: improved URL rewriting
 
-Plugin now ensures that formatted versions of your site's URL, ie //mydomain.com or http:\/\/mydomain.com\/ or the https/http equivalent are detected and rewritten to your target Base URL. The rewriting should now also work within CSS and JavaScript files. 
+Plugin now ensures that formatted versions of your site's URL, ie //mydomain.com or http:\/\/mydomain.com\/ or the https/http equivalent are detected and rewritten to your target Base URL. The rewriting should now also work within CSS and JavaScript files.
 
 = 1.7 =
 
@@ -472,30 +478,30 @@ Plugin now ensures that formatted versions of your site's URL, ie //mydomain.com
 = 1.1.1 =
 
 Added Features
- 
+
 * Updated author URL
 
 Removed Features
- 
+
 * Premium options for One-Click publishing to provided hosting and domain
 
 = 1.1.0 =
 
 Added Features
- 
+
 * Premium options for One-Click publishing to provided hosting and domain
 
 = 1.0.9 =
 
 Added Features
- 
-* Japanese localization added (ja_UTF) 
+
+* Japanese localization added (ja_UTF)
 
 = 1.0.8 =
 
 Added Features
- 
-* long-awaited FTP transfer option integrated with basic functionality 
+
+* long-awaited FTP transfer option integrated with basic functionality
 * option to save generated static HTML files on server
 
 = 1.0.7 =
@@ -503,23 +509,23 @@ Added Features
 Fixed bug introduced with previous version. Applied following modifications contributed by Brian Coca (https://github.com/bcoca):
 
 Added Features
- 
+
 * zip is now written atomically (write tmp file first, then rename to zip) which now allows polling scripts to only deal with completed zip file.
 * username and blog id are now part of the file name. For auditing and handling 
 multi site exports.
 
 Bug fixes
- 
+
 * . and .. special directory entries are now ignored
-* dirname is checked before access avoiding uninitialized warning 
+* dirname is checked before access avoiding uninitialized warning
 
 = 1.0.6 =
 
-Added shortcut to Settings page with Plugin Action Links   
+Added shortcut to Settings page with Plugin Action Links
 
 = 1.0.5 =
 
-Added link to relevant Settings page when permalinks structure is not set.  
+Added link to relevant Settings page when permalinks structure is not set.
 
 = 1.0.4 =
 
@@ -530,10 +536,16 @@ Added a timeout value to URL request which was breaking for slow sites
 Altered main codebase to fix recursion bug and endless loop. Essential upgrade. 
 
 = 1.0.2 =
- 
+
 Initial release to Wordpress community
 
 == Upgrade Notice ==
+
+= 6.5 =
+
+ * Enhancement: pagination URLs for all post types now included in initial crawl
+ * Enhancement: pagination URLs for taxonomies, comments now included in initial crawl
+ * Bugfix: posts and page URLs weren't all being detected
 
 = 6.4 =
 
