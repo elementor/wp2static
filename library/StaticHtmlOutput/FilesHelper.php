@@ -441,6 +441,9 @@ class StaticHtmlOutput_FilesHelper {
     public static function getAllWPPostURLs( $wp_site_url ) {
         global $wpdb;
 
+        $post_urls = array();
+        $unique_post_types = array();
+
         $query = "
             SELECT ID,post_type
             FROM %s
@@ -457,9 +460,12 @@ class StaticHtmlOutput_FilesHelper {
             )
         );
 
-        $post_urls = array();
-
         foreach ( $posts as $post ) {
+            // capture all post types
+            if ( $post->post_type !== 'wpcf7_contact_form' ) {
+                $unique_post_types[] = $post->post_type;
+            }
+
             switch ( $post->post_type ) {
                 case 'page':
                     $permalink = get_page_link( $post->ID );
@@ -474,6 +480,8 @@ class StaticHtmlOutput_FilesHelper {
                     $permalink = get_post_permalink( $post->ID );
                     break;
             }
+
+            $post_urls[] = $permalink;
 
             /*
                 Get the post's URL and each sub-chunk of the path as a URL
@@ -519,6 +527,8 @@ class StaticHtmlOutput_FilesHelper {
 
         $taxonomies = get_taxonomies( $args, 'objects' );
 
+        $category_links = array();
+
         foreach ( $taxonomies as $taxonomy ) {
             $terms = get_terms(
                 $taxonomy->name,
@@ -528,13 +538,122 @@ class StaticHtmlOutput_FilesHelper {
             );
 
             foreach ( $terms as $term ) {
-                $permalink = get_term_link( $term );
+                $permalink = trim( get_term_link( $term ) );
+                $total_posts = $term->count;
 
-                $post_urls[] = trim( $permalink );
+                $term_url = str_replace(
+                    $wp_site_url,
+                    '',
+                    $permalink
+                );
+
+                $category_links[ $term_url ] = $total_posts;
+
+                $post_urls[] = $permalink;
             }
         }
 
+        // get all pagination links for each category
+        $category_pagination_urls =
+            self::getPaginationURLsForCategories( $category_links );
+
+        // get all pagination links for each post_type
+        $post_pagination_urls =
+            self::getPaginationURLsForPosts(
+                array_unique( $unique_post_types )
+            );
+
+        // get all comment links
+        $comment_pagination_urls =
+            self::getPaginationURLsForComments( $wp_site_url );
+
+        $post_urls = array_merge(
+            $post_urls,
+            $post_pagination_urls,
+            $category_pagination_urls,
+            $comment_pagination_urls
+        );
+
         return array_unique( $post_urls );
+    }
+
+    public static function getPaginationURLsForPosts( $post_types ) {
+        global $wpdb, $wp_rewrite;
+
+        $pagination_base = $wp_rewrite->pagination_base;
+        $default_posts_per_page = get_option( 'posts_per_page' );
+
+        $urls_to_include = array();
+
+        foreach ( $post_types as $post_type ) {
+            $query = "
+                SELECT ID,post_type
+                FROM %s
+                WHERE post_status = '%s'
+                AND post_type = '%s'";
+
+            $count = $wpdb->get_results(
+                sprintf(
+                    $query,
+                    $wpdb->posts,
+                    'publish',
+                    $post_type
+                )
+            );
+
+            $post_type_obj = get_post_type_object( $post_type );
+            $plural_form = strtolower( $post_type_obj->labels->name );
+
+            $count = $wpdb->num_rows;
+
+            $total_pages = ceil( $count / $default_posts_per_page );
+
+            for ( $page = 1; $page <= $total_pages; $page++ ) {
+                $urls_to_include[] =
+                    "/{$plural_form}/{$pagination_base}/{$page}";
+            }
+        }
+
+        return $urls_to_include;
+    }
+
+    public static function getPaginationURLsForCategories( $categories ) {
+        global $wp_rewrite;
+
+        $urls_to_include = array();
+        $pagination_base = $wp_rewrite->pagination_base;
+        $default_posts_per_page = get_option( 'posts_per_page' );
+
+        foreach ( $categories as $term => $total_posts ) {
+            $total_pages = ceil( $total_posts / $default_posts_per_page );
+
+            for ( $page = 1; $page <= $total_pages; $page++ ) {
+                $urls_to_include[] =
+                    "{$term}/{$pagination_base}/{$page}";
+            }
+        }
+
+        return $urls_to_include;
+    }
+
+    public static function getPaginationURLsForComments( $wp_site_url ) {
+        global $wp_rewrite;
+
+        $urls_to_include = array();
+        $comments_pagination_base = $wp_rewrite->comments_pagination_base;
+
+        foreach ( get_comments() as $comment ) {
+            $comment_url = get_comment_link( $comment->comment_ID );
+            $comment_url = strtok( $comment_url, '#' );
+
+            $urls_to_include[] = str_replace(
+                $wp_site_url,
+                '',
+                $comment_url
+            );
+        }
+
+        return array_unique( $urls_to_include );
     }
 }
 

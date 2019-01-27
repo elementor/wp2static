@@ -240,7 +240,7 @@ There is no big company behind this software, besides a sole proprietership in m
 
 Help keep me doing what I love: building and supporting this software. 
 
- - [Buy the PowerPack](https://wp2static.com)
+ - [Buy a commercial license](https://wp2static.com)
  - [Back me on Patreon](https://www.patreon.com/leonstafford)
  - [Fund my PayPal](https://www.paypal.me/leonjstafford)
 
