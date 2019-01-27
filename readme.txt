@@ -136,7 +136,8 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
 
 = 6.5 =
 
- * Bugfix: 
+ * Enhancement: pagination URLs for all post types now included in initial crawl
+ * Bugfix: posts and page URLs weren't all being detected
 
 = 6.4 =
 
@@ -538,6 +539,11 @@ Altered main codebase to fix recursion bug and endless loop. Essential upgrade.
 Initial release to Wordpress community
 
 == Upgrade Notice ==
+
+= 6.5 =
+
+ * Enhancement: pagination URLs for all post types now included in initial crawl
+ * Bugfix: posts and page URLs weren't all being detected
 
 = 6.4 =
 
