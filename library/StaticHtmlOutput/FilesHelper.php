@@ -556,9 +556,14 @@ class StaticHtmlOutput_FilesHelper {
 
         // get all pagination links for each taxonomy
         $post_pagination_urls =
-            self::getPaginationURLsForPosts( array_unique( $unique_taxonomies ) );
+            self::getPaginationURLsForPosts(
+                array_unique( $unique_taxonomies )
+        );
 
-        // TODO: merge arrays
+        $post_urls = array_merge(
+            $post_urls,
+            $post_pagination_urls
+        );
 
         return array_unique( $post_urls );
     }
@@ -569,14 +574,9 @@ class StaticHtmlOutput_FilesHelper {
         $pagination_base = $wp_rewrite->pagination_base;
         $default_posts_per_page = get_option( 'posts_per_page' );
 
-        error_log($pagination_base);
-        error_log($default_posts_per_page);
-
-
         $urls_to_include = array();
 
         foreach( $taxonomies as $taxonomy) {
-            // TODO: run query to get total, divide by 
             $query = "
                 SELECT ID,post_type
                 FROM %s
@@ -594,10 +594,16 @@ class StaticHtmlOutput_FilesHelper {
 
             $count = $wpdb->num_rows;
 
-            error_log($count . ': ' . $taxonomy);
+            $total_pages = ceil( $count / $default_posts_per_page );
+
+            for( $page = 1; $page <= $total_pages; $page++ ) {
+                $urls_to_include[] =
+                    "/{$taxonomy}/{$pagination_base}/{$page}";
+            }
+
         }
 
-        error_log(print_r( $taxonomies, true));die();
+        return $urls_to_include;
     }
 }
 
