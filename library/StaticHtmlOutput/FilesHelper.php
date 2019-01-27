@@ -442,7 +442,7 @@ class StaticHtmlOutput_FilesHelper {
         global $wpdb;
 
         $post_urls = array();
-        $unique_taxonomies = array();
+        $unique_post_types = array();
 
         $query = "
             SELECT ID,post_type
@@ -464,7 +464,7 @@ class StaticHtmlOutput_FilesHelper {
         foreach ( $posts as $post ) {
             // capture all post types
             if ( $post->post_type !== 'wpcf7_contact_form' ) {
-                $unique_taxonomies[] = $post->post_type;
+                $unique_post_types[] = $post->post_type;
             }
 
             switch ( $post->post_type ) {
@@ -557,7 +557,7 @@ class StaticHtmlOutput_FilesHelper {
         // get all pagination links for each taxonomy
         $post_pagination_urls =
             self::getPaginationURLsForPosts(
-                array_unique( $unique_taxonomies )
+                array_unique( $unique_post_types )
         );
 
         $post_urls = array_merge(
@@ -568,7 +568,7 @@ class StaticHtmlOutput_FilesHelper {
         return array_unique( $post_urls );
     }
 
-    public static function getPaginationURLsForPosts( $taxonomies ) {
+    public static function getPaginationURLsForPosts( $post_types ) {
         global $wpdb, $wp_rewrite;
 
         $pagination_base = $wp_rewrite->pagination_base;
@@ -576,7 +576,7 @@ class StaticHtmlOutput_FilesHelper {
 
         $urls_to_include = array();
 
-        foreach( $taxonomies as $taxonomy) {
+        foreach( $post_types as $post_type) {
             $query = "
                 SELECT ID,post_type
                 FROM %s
@@ -588,12 +588,12 @@ class StaticHtmlOutput_FilesHelper {
                     $query,
                     $wpdb->posts,
                     'publish',
-                    $taxonomy
+                    $post_type
                 )
             );
 
-            $post_type = get_post_type_object( $taxonomy );
-            $plural_form = strtolower( $post_type->labels->name );
+            $post_type_obj = get_post_type_object( $post_type );
+            $plural_form = strtolower( $post_type_obj->labels->name );
 
             $count = $wpdb->num_rows;
 
