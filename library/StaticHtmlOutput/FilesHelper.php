@@ -592,13 +592,16 @@ class StaticHtmlOutput_FilesHelper {
                 )
             );
 
+            $post_type = get_post_type_object( $taxonomy );
+            $plural_form = strtolower( $post_type->labels->name );
+
             $count = $wpdb->num_rows;
 
             $total_pages = ceil( $count / $default_posts_per_page );
 
             for( $page = 1; $page <= $total_pages; $page++ ) {
                 $urls_to_include[] =
-                    "/{$taxonomy}/{$pagination_base}/{$page}";
+                    "/{$plural_form}/{$pagination_base}/{$page}";
             }
 
         }
