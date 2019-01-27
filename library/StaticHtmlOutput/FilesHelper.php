@@ -540,21 +540,25 @@ class StaticHtmlOutput_FilesHelper {
 
             foreach ( $terms as $term ) {
                 $permalink = trim( get_term_link( $term ) );
+                $total_posts = $term->count;
 
-                $category_links[] = str_replace(
+                $term_url =  str_replace(
                     $wp_site_url,
                     '',
                     $permalink
                 );
 
+                $category_links[$term_url] = $total_posts;
+
                 $post_urls[] = $permalink;
             }
         }
 
-        // TODO: do get the pagination for these, too:
-        // $category_links;
+        // get all pagination links for each category
+        $category_pagination_urls =
+            self::getPaginationURLsForCategories( $category_links );
 
-        // get all pagination links for each taxonomy
+        // get all pagination links for each post_type
         $post_pagination_urls =
             self::getPaginationURLsForPosts(
                 array_unique( $unique_post_types )
@@ -562,7 +566,8 @@ class StaticHtmlOutput_FilesHelper {
 
         $post_urls = array_merge(
             $post_urls,
-            $post_pagination_urls
+            $post_pagination_urls,
+            $category_pagination_urls
         );
 
         return array_unique( $post_urls );
@@ -604,6 +609,25 @@ class StaticHtmlOutput_FilesHelper {
                     "/{$plural_form}/{$pagination_base}/{$page}";
             }
 
+        }
+
+        return $urls_to_include;
+    }
+
+    public static function getPaginationURLsForCategories( $categories ) {
+        global $wp_rewrite;
+
+        $urls_to_include = array();
+        $pagination_base = $wp_rewrite->pagination_base;
+        $default_posts_per_page = get_option( 'posts_per_page' );
+
+        foreach ( $categories as $term => $total_posts ) {
+            $total_pages = ceil( $total_posts / $default_posts_per_page );
+
+            for( $page = 1; $page <= $total_pages; $page++ ) {
+                $urls_to_include[] =
+                    "{$term}/{$pagination_base}/{$page}";
+            }
         }
 
         return $urls_to_include;
