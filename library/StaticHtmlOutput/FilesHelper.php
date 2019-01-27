@@ -441,6 +441,9 @@ class StaticHtmlOutput_FilesHelper {
     public static function getAllWPPostURLs( $wp_site_url ) {
         global $wpdb;
 
+        $post_urls = array();
+        $unique_taxonomies = array();
+
         $query = "
             SELECT ID,post_type
             FROM %s
@@ -457,9 +460,13 @@ class StaticHtmlOutput_FilesHelper {
             )
         );
 
-        $post_urls = array();
 
         foreach ( $posts as $post ) {
+            // capture all post types
+            if ( $post->post_type !== 'wpcf7_contact_form' ) {
+                $unique_taxonomies[] = $post->post_type;
+            }
+
             switch ( $post->post_type ) {
                 case 'page':
                     $permalink = get_page_link( $post->ID );
@@ -474,6 +481,8 @@ class StaticHtmlOutput_FilesHelper {
                     $permalink = get_post_permalink( $post->ID );
                     break;
             }
+
+            $post_urls[] = $permalink;
 
             /*
                 Get the post's URL and each sub-chunk of the path as a URL
@@ -519,6 +528,8 @@ class StaticHtmlOutput_FilesHelper {
 
         $taxonomies = get_taxonomies( $args, 'objects' );
 
+        $category_links = array();
+
         foreach ( $taxonomies as $taxonomy ) {
             $terms = get_terms(
                 $taxonomy->name,
@@ -528,13 +539,65 @@ class StaticHtmlOutput_FilesHelper {
             );
 
             foreach ( $terms as $term ) {
-                $permalink = get_term_link( $term );
+                $permalink = trim( get_term_link( $term ) );
 
-                $post_urls[] = trim( $permalink );
+                $category_links[] = str_replace(
+                    $wp_site_url,
+                    '',
+                    $permalink
+                );
+
+                $post_urls[] = $permalink;
             }
         }
 
+        // TODO: do get the pagination for these, too:
+        // $category_links;
+
+        // get all pagination links for each taxonomy
+        $post_pagination_urls =
+            self::getPaginationURLsForPosts( array_unique( $unique_taxonomies ) );
+
+        // TODO: merge arrays
+
         return array_unique( $post_urls );
+    }
+
+    public static function getPaginationURLsForPosts( $taxonomies ) {
+        global $wpdb, $wp_rewrite;
+
+        $pagination_base = $wp_rewrite->pagination_base;
+        $default_posts_per_page = get_option( 'posts_per_page' );
+
+        error_log($pagination_base);
+        error_log($default_posts_per_page);
+
+
+        $urls_to_include = array();
+
+        foreach( $taxonomies as $taxonomy) {
+            // TODO: run query to get total, divide by 
+            $query = "
+                SELECT ID,post_type
+                FROM %s
+                WHERE post_status = '%s'
+                AND post_type = '%s'";
+
+            $count = $wpdb->get_results(
+                sprintf(
+                    $query,
+                    $wpdb->posts,
+                    'publish',
+                    $taxonomy
+                )
+            );
+
+            $count = $wpdb->num_rows;
+
+            error_log($count . ': ' . $taxonomy);
+        }
+
+        error_log(print_r( $taxonomies, true));die();
     }
 }
 
