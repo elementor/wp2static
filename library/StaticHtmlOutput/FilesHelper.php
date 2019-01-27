@@ -564,10 +564,15 @@ class StaticHtmlOutput_FilesHelper {
                 array_unique( $unique_post_types )
         );
 
+        // get all comment links
+        $comment_pagination_urls =
+            self::getPaginationURLsForComments( $wp_site_url );
+
         $post_urls = array_merge(
             $post_urls,
             $post_pagination_urls,
-            $category_pagination_urls
+            $category_pagination_urls,
+            $comment_pagination_urls
         );
 
         return array_unique( $post_urls );
@@ -631,6 +636,26 @@ class StaticHtmlOutput_FilesHelper {
         }
 
         return $urls_to_include;
+    }
+
+    public static function getPaginationURLsForComments( $wp_site_url ) {
+        global $wp_rewrite;
+
+        $urls_to_include = array();
+        $comments_pagination_base = $wp_rewrite->comments_pagination_base;
+
+        foreach( get_comments() as $comment ) {
+            $comment_url = get_comment_link( $comment->comment_ID );
+            $comment_url = strtok( $comment_url, '#' );
+
+            $urls_to_include[] =  str_replace(
+                $wp_site_url,
+                '',
+                $comment_url
+            );
+        }
+
+        return array_unique( $urls_to_include );
     }
 }
 
