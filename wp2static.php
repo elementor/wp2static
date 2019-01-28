@@ -16,7 +16,7 @@
 require_once dirname( __FILE__ ) .
     '/plugin/WP2Static/Dispatcher.php';
 
-require_once 'plugin/WP2Static.php';
+require_once 'plugin/WP2Static/WP2Static.php';
 require_once 'plugin/WP2Static/Options.php';
 require_once 'plugin/WP2Static/TemplateHelper.php';
 require_once 'plugin/WP2Static/View.php';
