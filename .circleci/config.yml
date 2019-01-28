@@ -18,7 +18,7 @@ jobs:
             /tmp/phpcs/bin/phpcs --ignore=*/provisioning/*,*/GuzzleHttp/*,*/Github/*,*/aws/*,*/CloudFront/*,*/Psr/*,*/CSSParser/*,*/FTP/*,*/S3/*,*/URL2/*,wp2static.php ./
       - run:
           name: Run Unit Tests
-          command: ./provisioning/run_unit_tests.sh
+          command: ./tests/unit_tests.sh
 
 workflows:
   version: 2
