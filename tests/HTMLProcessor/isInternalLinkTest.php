@@ -2,9 +2,13 @@
 
 declare(strict_types=1);
 
-require_once 'WP2Static/WP2Static.php';
-require_once 'WP2Static/HTMLProcessor.php';
-require_once 'library/URL2/URL2.php';
+chdir( dirname(__FILE__) . '/../../plugin' );
+
+$plugin_dir = getcwd();
+
+require_once $plugin_dir . '/WP2Static/WP2Static.php';
+require_once $plugin_dir . '/WP2Static/HTMLProcessor.php';
+require_once $plugin_dir . '/URL2/URL2.php';
 
 use PHPUnit\Framework\TestCase;
 
