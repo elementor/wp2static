@@ -17,7 +17,7 @@ class Deployer extends WP2Static {
 
         $start_time = microtime( true );
 
-        $powerpack_dir = dirname( __FILE__ ) . '/../../powerpack';
+        $deployers_dir = dirname( __FILE__ ) . '/../deployers';
 
         switch ( $this->settings['selected_deployment_option'] ) {
             case 'folder':
@@ -28,7 +28,7 @@ class Deployer extends WP2Static {
                 require_once dirname( __FILE__ ) .
                     '/../WP2Static/SitePublisher.php';
 
-                require_once $powerpack_dir . '/S3.php';
+                require_once $deployers_dir . '/S3.php';
 
                 if ( $test ) {
                     error_log( 'testing s3 deploy' );
@@ -46,7 +46,7 @@ class Deployer extends WP2Static {
                 require_once dirname( __FILE__ ) .
                     '/../WP2Static/SitePublisher.php';
 
-                require_once $powerpack_dir . '/Bitbucket.php';
+                require_once $deployers_dir . '/Bitbucket.php';
 
                 if ( $test ) {
                     error_log( 'testing bitbucket deploy' );
@@ -63,7 +63,7 @@ class Deployer extends WP2Static {
                 require_once dirname( __FILE__ ) .
                     '/../WP2Static/SitePublisher.php';
 
-                require_once $powerpack_dir . '/BunnyCDN.php';
+                require_once $deployers_dir . '/BunnyCDN.php';
 
                 if ( $test ) {
                     error_log( 'testing BunnyCDN deploy' );
@@ -81,7 +81,7 @@ class Deployer extends WP2Static {
                 require_once dirname( __FILE__ ) .
                     '/../WP2Static/SitePublisher.php';
 
-                require_once $powerpack_dir . '/FTP.php';
+                require_once $deployers_dir . '/FTP.php';
 
                 if ( $test ) {
                     error_log( 'testing FTP deploy' );
@@ -98,7 +98,7 @@ class Deployer extends WP2Static {
                 require_once dirname( __FILE__ ) .
                     '/../WP2Static/SitePublisher.php';
 
-                require_once $powerpack_dir . '/GitHub.php';
+                require_once $deployers_dir . '/GitHub.php';
 
                 if ( $test ) {
                     error_log( 'testing GitHub deploy' );
@@ -115,7 +115,7 @@ class Deployer extends WP2Static {
                 require_once dirname( __FILE__ ) .
                     '/../WP2Static/SitePublisher.php';
 
-                require_once $powerpack_dir . '/GitLab.php';
+                require_once $deployers_dir . '/GitLab.php';
 
                 if ( $test ) {
                     error_log( 'testing GitLab deploy' );
@@ -134,7 +134,7 @@ class Deployer extends WP2Static {
                 require_once dirname( __FILE__ ) .
                     '/../WP2Static/SitePublisher.php';
 
-                require_once $powerpack_dir . '/Netlify.php';
+                require_once $deployers_dir . '/Netlify.php';
 
                 if ( $test ) {
                     error_log( 'testing Netlify deploy' );
