@@ -5,6 +5,11 @@ jobs:
       - image: circleci/php:7.2.8-apache-node
     steps:
       - run:
+          name: install pre dependencies
+          command: |
+            apt update -yqq
+            apt install phpunit
+      - run:
           name: Install dependencies
           command: |
             git clone --depth 1 -b master https://github.com/squizlabs/PHP_CodeSniffer.git /tmp/phpcs
