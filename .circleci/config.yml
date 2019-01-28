@@ -5,11 +5,6 @@ jobs:
       - image: circleci/php:7.3-apache-node-browsers-legacy
     steps:
       - run:
-          name: install pre dependencies
-          command: |
-            wget -O phpunit https://phar.phpunit.de/phpunit-7.phar
-            chmod +x phpunit
-      - run:
           name: Install dependencies
           command: |
             git clone --depth 1 -b master https://github.com/squizlabs/PHP_CodeSniffer.git /tmp/phpcs
@@ -23,7 +18,11 @@ jobs:
             /tmp/phpcs/bin/phpcs --standard=./tools/phpcs.xml --ignore=,*/tests/*,*/CSSParser/*,*/FTP/*,*/URL2/*,wp2static.php ./
       - run:
           name: Run Unit Tests
-          command: ./tests/unit_tests.sh
+          command: |
+            wget -O phpunit https://phar.phpunit.de/phpunit-7.phar
+            chmod +x phpunit
+            mv phpunit /usr/local/bin/
+            ./tests/unit_tests.sh
 
 workflows:
   version: 2
