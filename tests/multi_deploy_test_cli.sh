@@ -7,6 +7,7 @@ do
   echo "$deployer" ;
   wp option update blogname "$deployer test"
   wp wp2static options set selected_deployment_option "$deployer"
+  wp wp2static options set baseUrl $(wp wp2static options get "baseUrl-$deployer")
   wp wp2static deploy
 done
 

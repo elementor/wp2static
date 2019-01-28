@@ -48,9 +48,9 @@ class WP2Static_FTP extends WP2Static_SitePublisher {
 
         $this->openPreviousHashesFile();
 
-        require_once __DIR__ . '/../library/FTP/FtpClient.php';
-        require_once __DIR__ . '/../library/FTP/FtpException.php';
-        require_once __DIR__ . '/../library/FTP/FtpWrapper.php';
+        require_once __DIR__ . '/../FTP/FtpClient.php';
+        require_once __DIR__ . '/../FTP/FtpException.php';
+        require_once __DIR__ . '/../FTP/FtpWrapper.php';
 
         $this->ftp = new \FtpClient\FtpClient();
 
@@ -125,9 +125,9 @@ class WP2Static_FTP extends WP2Static_SitePublisher {
     }
 
     public function test_ftp() {
-        require_once __DIR__ . '/../library/FTP/FtpClient.php';
-        require_once __DIR__ . '/../library/FTP/FtpException.php';
-        require_once __DIR__ . '/../library/FTP/FtpWrapper.php';
+        require_once __DIR__ . '/../FTP/FtpClient.php';
+        require_once __DIR__ . '/../FTP/FtpException.php';
+        require_once __DIR__ . '/../FTP/FtpWrapper.php';
 
         $this->ftp = new \FtpClient\FtpClient();
 
