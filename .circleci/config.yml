@@ -2,13 +2,13 @@ version: 2
 jobs:
   code-quality-and-unit-tests:
     docker:
-      - image: circleci/php:7.2.8-apache-node
+      - image: circleci/php:7.3-apache-node-browsers-legacy
     steps:
       - run:
           name: install pre dependencies
           command: |
-            sudo apt update -yqq
-            sudo apt install phpunit -yqq
+            wget -O phpunit https://phar.phpunit.de/phpunit-7.phar
+            chmod +x phpunit
       - run:
           name: Install dependencies
           command: |
