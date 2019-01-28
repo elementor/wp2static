@@ -407,7 +407,16 @@ class StaticHtmlOutput_FilesHelper {
             $url_queue
         );
 
-        $url_queue = array_unique( $url_queue );
+        $unique_urls = array_unique( $url_queue );
+
+        $search_text = ' ';
+
+        $url_queue = array_filter(
+            $unique_urls,
+            function( $url ) use ( $search_text ) {
+                return ( strpos( $url, $search_text ) === false );
+            }
+        );
 
         $initial_crawl_list_total = count( $url_queue );
 
@@ -578,16 +587,7 @@ class StaticHtmlOutput_FilesHelper {
 
         $unique_urls = array_unique( $post_urls );
 
-        $search_text = ' ';
-
-        $all_urls = array_filter(
-            $unique_urls,
-            function( $a ) use ( $search_text ) {
-                return ( strpos( $unique_urls, $search_text ) === false );
-            }
-        );
-
-        return $all_urls;
+        return $unique_urls;
     }
 
     public static function getPaginationURLsForPosts( $post_types ) {
