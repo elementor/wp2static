@@ -1,6 +1,6 @@
 <?php
 
-class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
+class WP2Static_BitBucket extends WP2Static_SitePublisher {
 
     public function __construct() {
         $this->loadSettings( 'bitbucket' );
@@ -181,4 +181,4 @@ class StaticHtmlOutput_BitBucket extends StaticHtmlOutput_SitePublisher {
     }
 }
 
-$bitbucket = new StaticHtmlOutput_BitBucket();
+$bitbucket = new WP2Static_BitBucket();

@@ -1,6 +1,6 @@
 <?php
 
-class StaticHtmlOutput_Controller {
+class WP2Static_Controller {
     const VERSION = '6.5.1';
     const OPTIONS_KEY = 'wp2static-options';
     const HOOK = 'wp2static';
@@ -15,7 +15,7 @@ class StaticHtmlOutput_Controller {
             self::$instance->options = new WP2Static_Options(
                 self::OPTIONS_KEY
             );
-            self::$instance->view = new StaticHtmlOutput_View();
+            self::$instance->view = new WP2Static_View();
         }
 
         return self::$instance;
@@ -172,7 +172,7 @@ class StaticHtmlOutput_Controller {
         $plugin_hook = 'wp2static';
 
         $initial_file_list_count =
-            StaticHtmlOutput_FilesHelper::buildInitialFileList(
+            WP2Static_FilesHelper::buildInitialFileList(
                 true,
                 $this->wp_site->wp_uploads_path,
                 $this->wp_site->uploads_url,

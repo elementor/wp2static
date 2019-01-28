@@ -98,7 +98,7 @@ class Exporter extends WP2Static {
                 $deletion_target = $this->settings['wp_uploads_path'] .
                     '/' . $filename;
                 if ( is_dir( $deletion_target ) ) {
-                    StaticHtmlOutput_FilesHelper::delete_dir_with_files(
+                    WP2Static_FilesHelper::delete_dir_with_files(
                         $deletion_target
                     );
                 } else {

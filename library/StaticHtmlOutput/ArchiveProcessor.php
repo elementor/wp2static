@@ -38,7 +38,7 @@ class ArchiveProcessor extends WP2Static {
         if ( is_dir( $original_dir ) ) {
             $this->recursive_copy( $original_dir, $new_dir );
 
-            StaticHtmlOutput_FilesHelper::delete_dir_with_files(
+            WP2Static_FilesHelper::delete_dir_with_files(
                 $original_dir
             );
         } else {
@@ -278,7 +278,7 @@ class ArchiveProcessor extends WP2Static {
             unlink( $this->archive->path . '/wp-login.php' );
         }
 
-        StaticHtmlOutput_FilesHelper::delete_dir_with_files(
+        WP2Static_FilesHelper::delete_dir_with_files(
             $this->archive->path . '/wp-json/'
         );
     }

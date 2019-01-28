@@ -1,6 +1,6 @@
 <?php
 
-class StaticHtmlOutput_GitLab extends StaticHtmlOutput_SitePublisher {
+class WP2Static_GitLab extends WP2Static_SitePublisher {
 
     public function __construct() {
         $this->loadSettings( 'gitlab' );
@@ -318,4 +318,4 @@ EOD;
     }
 }
 
-$gitlab = new StaticHtmlOutput_GitLab();
+$gitlab = new WP2Static_GitLab();

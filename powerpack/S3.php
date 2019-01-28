@@ -1,6 +1,6 @@
 <?php
 
-class StaticHtmlOutput_S3 extends StaticHtmlOutput_SitePublisher {
+class WP2Static_S3 extends WP2Static_SitePublisher {
 
     public function __construct() {
         $this->loadSettings( 's3' );
@@ -339,4 +339,4 @@ EOD;
     }
 }
 
-$s3 = new StaticHtmlOutput_S3();
+$s3 = new WP2Static_S3();

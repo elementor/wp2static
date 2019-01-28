@@ -1,6 +1,6 @@
 <?php
 
-class StaticHtmlOutput_SitePublisher {
+class WP2Static_SitePublisher {
     public function loadSettings( $deploy_method ) {
         $target_settings = array(
             'general',

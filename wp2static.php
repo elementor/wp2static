@@ -25,7 +25,7 @@ require_once 'library/StaticHtmlOutput/FilesHelper.php';
 require_once 'library/StaticHtmlOutput.php';
 require_once 'library/URL2/URL2.php';
 
-StaticHtmlOutput_Controller::init( __FILE__ );
+WP2Static_Controller::init( __FILE__ );
 
 function plugin_action_links( $links ) {
     $settings_link = '<a href="admin.php?page=wp2static">' . __( 'Settings', 'static-html-output-plugin' ) . '</a>';
@@ -36,7 +36,7 @@ function plugin_action_links( $links ) {
 
 
 function wp_static_html_output_server_side_export() {
-    $plugin = StaticHtmlOutput_Controller::getInstance();
+    $plugin = WP2Static_Controller::getInstance();
     $plugin->doExportWithoutGUI();
     wp_die();
     return null;
@@ -59,7 +59,7 @@ function wp_static_html_output_ajax() {
     $instance_method = filter_input( INPUT_POST, 'ajax_action' );
 
     if ( '' !== $instance_method && is_string( $instance_method ) ) {
-        $plugin_instance = StaticHtmlOutput_Controller::getInstance();
+        $plugin_instance = WP2Static_Controller::getInstance();
         call_user_func( array( $plugin_instance, $instance_method ) );
     }
 

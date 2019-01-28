@@ -15,7 +15,7 @@ class WP2Static_CLI {
         $environmental_info = array(
             array(
                 'key' => 'PLUGIN VERSION',
-                'value' => StaticHtmlOutput_Controller::VERSION,
+                'value' => WP2Static_Controller::VERSION,
             ),
             array(
                 'key' => 'PHP_VERSION',
@@ -94,7 +94,7 @@ class WP2Static_CLI {
     public function generate() {
         $start_time = microtime();
 
-        $plugin = StaticHtmlOutput_Controller::getInstance();
+        $plugin = WP2Static_Controller::getInstance();
         $plugin->generate_filelist_preview();
         $plugin->prepare_for_export();
 
@@ -194,7 +194,7 @@ function wp2static_options( $args, $assoc_args ) {
         WP_CLI::error( 'Missing required argument: <get|set|list>' );
     }
 
-    $plugin = StaticHtmlOutput_Controller::getInstance();
+    $plugin = WP2Static_Controller::getInstance();
 
     if ( $action === 'get' ) {
         if ( empty( $option_name ) ) {

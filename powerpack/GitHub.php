@@ -1,6 +1,6 @@
 <?php
 
-class StaticHtmlOutput_GitHub extends StaticHtmlOutput_SitePublisher {
+class WP2Static_GitHub extends WP2Static_SitePublisher {
 
     public function __construct() {
         $this->loadSettings( 'github' );
@@ -378,4 +378,4 @@ JSON;
     }
 }
 
-$github = new StaticHtmlOutput_GitHub();
+$github = new WP2Static_GitHub();

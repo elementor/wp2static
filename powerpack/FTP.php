@@ -1,6 +1,6 @@
 <?php
 
-class StaticHtmlOutput_FTP extends StaticHtmlOutput_SitePublisher {
+class WP2Static_FTP extends WP2Static_SitePublisher {
 
     public function __construct() {
         $this->loadSettings( 'ftp' );
@@ -170,4 +170,4 @@ class StaticHtmlOutput_FTP extends StaticHtmlOutput_SitePublisher {
     }
 }
 
-$ftp = new StaticHtmlOutput_FTP();
+$ftp = new WP2Static_FTP();

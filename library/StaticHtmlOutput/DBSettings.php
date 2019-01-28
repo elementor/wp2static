@@ -3,7 +3,7 @@
 class WPSHO_DBSettings {
 
     public static function get( $sets = array() ) {
-        $plugin = StaticHtmlOutput_Controller::getInstance();
+        $plugin = WP2Static_Controller::getInstance();
 
         $settings = array();
         $key_sets = array();

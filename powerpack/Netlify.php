@@ -1,6 +1,6 @@
 <?php
 
-class StaticHtmlOutput_Netlify extends StaticHtmlOutput_SitePublisher {
+class WP2Static_Netlify extends WP2Static_SitePublisher {
 
     public function __construct() {
         $this->loadSettings( 'netlify' );
@@ -123,4 +123,4 @@ class StaticHtmlOutput_Netlify extends StaticHtmlOutput_SitePublisher {
     }
 }
 
-$netlify = new StaticHtmlOutput_Netlify();
+$netlify = new WP2Static_Netlify();

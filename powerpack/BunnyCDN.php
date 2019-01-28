@@ -1,6 +1,6 @@
 <?php
 
-class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
+class WP2Static_BunnyCDN extends WP2Static_SitePublisher {
 
     public function __construct() {
         $this->loadSettings( 'bunnycdn' );
@@ -266,4 +266,4 @@ class StaticHtmlOutput_BunnyCDN extends StaticHtmlOutput_SitePublisher {
     }
 }
 
-$bunny = new StaticHtmlOutput_BunnyCDN();
+$bunny = new WP2Static_BunnyCDN();

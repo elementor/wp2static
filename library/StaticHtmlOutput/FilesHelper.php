@@ -1,6 +1,6 @@
 <?php
 
-class StaticHtmlOutput_FilesHelper {
+class WP2Static_FilesHelper {
 
     public static function delete_dir_with_files( $dir ) {
         if ( is_dir( $dir ) ) {
