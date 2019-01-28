@@ -21,7 +21,7 @@ jobs:
           command: |
             wget -O phpunit https://phar.phpunit.de/phpunit-7.phar
             chmod +x phpunit
-            mv phpunit /usr/local/bin/
+            sudo mv phpunit /usr/local/bin/
             ./tests/unit_tests.sh
 
 workflows:
