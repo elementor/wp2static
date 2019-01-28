@@ -4,7 +4,7 @@ Tags: security, performance, static
 Requires at least: 3.2
 Tested up to: 5.0.2
 Requires PHP: 5.6
-Stable tag: 6.5.3
+Stable tag: 6.6
 
 Security & Performance via static website publishing. One plugin to solve WordPress's biggest problems.
 
