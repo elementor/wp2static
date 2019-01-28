@@ -3,7 +3,7 @@
  * Plugin Name: WP2Static
  * Plugin URI:  https://wp2static.com
  * Description: Security & Performance via static website publishing. One plugin to solve WordPress's biggest problems.
- * Version:     6.5.3
+ * Version:     6.6-dev
  * Author:      Leon Stafford
  * Author URI:  https://leonstafford.github.io
  * Text Domain: static-html-output-plugin
@@ -14,16 +14,16 @@
 
 // intercept low latency dependent actions and avoid boostrapping whole plugin
 require_once dirname( __FILE__ ) .
-    '/library/StaticHtmlOutput/Dispatcher.php';
+    '/plugin/WP2Static/Dispatcher.php';
 
-require_once 'library/StaticHtmlOutput/WP2Static.php';
-require_once 'library/StaticHtmlOutput/Options.php';
-require_once 'library/StaticHtmlOutput/TemplateHelper.php';
-require_once 'library/StaticHtmlOutput/View.php';
-require_once 'library/StaticHtmlOutput/WsLog.php';
-require_once 'library/StaticHtmlOutput/FilesHelper.php';
-require_once 'library/StaticHtmlOutput.php';
-require_once 'library/URL2/URL2.php';
+require_once 'plugin/WP2Static.php';
+require_once 'plugin/WP2Static/Options.php';
+require_once 'plugin/WP2Static/TemplateHelper.php';
+require_once 'plugin/WP2Static/View.php';
+require_once 'plugin/WP2Static/WsLog.php';
+require_once 'plugin/WP2Static/FilesHelper.php';
+require_once 'plugin/WP2Static.php';
+require_once 'plugin/URL2/URL2.php';
 
 WP2Static_Controller::init( __FILE__ );
 
