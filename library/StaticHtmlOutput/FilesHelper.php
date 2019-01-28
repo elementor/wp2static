@@ -587,7 +587,6 @@ class StaticHtmlOutput_FilesHelper {
             }
         );
 
-
         return $all_urls;
     }
 
