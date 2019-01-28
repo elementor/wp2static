@@ -246,7 +246,7 @@ Il n'y a pas de grand groupe derrière ce logiciel, si ce n'est une personne pro
 
 Aidez-moi à continuer à faire ce que j'aime : développer et maintenir ce logiciel.
 
- - [Acheter le PowerPack](https://wp2static.com)
+ - [Acheter le Plugin](https://wp2static.com)
  - [Me soutenir sur Patreon](https://www.patreon.com/leonstafford)
  - [Donner via PayPal](https://www.paypal.me/leonjstafford)
 
