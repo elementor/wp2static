@@ -576,7 +576,19 @@ class StaticHtmlOutput_FilesHelper {
             $comment_pagination_urls
         );
 
-        return array_unique( $post_urls );
+        $unique_urls = array_unique( $post_urls );
+
+        $search_text = ' ';
+
+        $all_urls = array_filter(
+            $unique_urls,
+            function( $a ) use ( $search_text ) {
+                return ( strpos( $unique_urls, $search_text ) === false );
+            }
+        );
+
+
+        return $all_urls;
     }
 
     public static function getPaginationURLsForPosts( $post_types ) {
