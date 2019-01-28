@@ -462,9 +462,7 @@ class StaticHtmlOutput_FilesHelper {
 
         foreach ( $posts as $post ) {
             // capture all post types
-            if ( $post->post_type !== 'wpcf7_contact_form' ) {
-                $unique_post_types[] = $post->post_type;
-            }
+            $unique_post_types[] = $post->post_type;
 
             switch ( $post->post_type ) {
                 case 'page':
@@ -479,6 +477,10 @@ class StaticHtmlOutput_FilesHelper {
                 default:
                     $permalink = get_post_permalink( $post->ID );
                     break;
+            }
+
+            if ( strpos( $permalink, '?post_type' ) !== false ) {
+                continue;
             }
 
             $post_urls[] = $permalink;
