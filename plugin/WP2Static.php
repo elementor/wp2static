@@ -138,7 +138,7 @@ class StaticHtmlOutput_Controller {
     }
 
     public function finalize_deployment() {
-        require_once dirname( __FILE__ ) . '/StaticHtmlOutput/Deployer.php';
+        require_once dirname( __FILE__ ) . '/WP2Static/Deployer.php';
 
         $deployer = new Deployer();
         $deployer->finalizeDeployment();
@@ -147,7 +147,7 @@ class StaticHtmlOutput_Controller {
     }
 
     public function generate_filelist_preview() {
-        require_once dirname( __FILE__ ) . '/StaticHtmlOutput/WPSite.php';
+        require_once dirname( __FILE__ ) . '/WP2Static/WPSite.php';
         $this->wp_site = new WPSite();
 
         $target_settings = array(
@@ -157,13 +157,13 @@ class StaticHtmlOutput_Controller {
 
         if ( defined( 'WP_CLI' ) ) {
             require_once dirname( __FILE__ ) .
-                '/StaticHtmlOutput/DBSettings.php';
+                '/WP2Static/DBSettings.php';
 
             $this->settings =
                 WPSHO_DBSettings::get( $target_settings );
         } else {
             require_once dirname( __FILE__ ) .
-                '/StaticHtmlOutput/PostSettings.php';
+                '/WP2Static/PostSettings.php';
 
             $this->settings =
                 WPSHO_PostSettings::get( $target_settings );
@@ -185,7 +185,7 @@ class StaticHtmlOutput_Controller {
     }
 
     public function renderOptionsPage() {
-        require_once dirname( __FILE__ ) . '/StaticHtmlOutput/WPSite.php';
+        require_once dirname( __FILE__ ) . '/WP2Static/WPSite.php';
 
         $this->wp_site = new WPSite();
         $this->current_archive = '';
@@ -222,7 +222,7 @@ class StaticHtmlOutput_Controller {
 
     public function prepare_for_export() {
         require_once dirname( __FILE__ ) .
-            '/StaticHtmlOutput/Exporter.php';
+            '/WP2Static/Exporter.php';
 
         $this->exporter = new Exporter();
 
@@ -230,7 +230,7 @@ class StaticHtmlOutput_Controller {
         $this->exporter->cleanup_leftover_archives();
         $this->exporter->initialize_cache_files();
 
-        require_once dirname( __FILE__ ) . '/StaticHtmlOutput/Archive.php';
+        require_once dirname( __FILE__ ) . '/WP2Static/Archive.php';
 
         $archive = new Archive();
         $archive->create();
@@ -257,7 +257,7 @@ class StaticHtmlOutput_Controller {
 
     public function post_process_archive_dir() {
         require_once dirname( __FILE__ ) .
-            '/StaticHtmlOutput/ArchiveProcessor.php';
+            '/WP2Static/ArchiveProcessor.php';
         $processor = new ArchiveProcessor();
 
         $processor->createNetlifySpecialFiles();
@@ -279,13 +279,13 @@ class StaticHtmlOutput_Controller {
 
         if ( defined( 'WP_CLI' ) ) {
             require_once dirname( __FILE__ ) .
-                '/StaticHtmlOutput/DBSettings.php';
+                '/WP2Static/DBSettings.php';
 
             $this->settings =
                 WPSHO_DBSettings::get( $target_settings );
         } else {
             require_once dirname( __FILE__ ) .
-                '/StaticHtmlOutput/PostSettings.php';
+                '/WP2Static/PostSettings.php';
 
             $this->settings =
                 WPSHO_PostSettings::get( $target_settings );

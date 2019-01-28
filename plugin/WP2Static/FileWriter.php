@@ -91,7 +91,7 @@ class FileWriter extends WP2Static {
 
             chmod( $filename, 0664 );
         } else {
-            require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/WsLog.php';
+            require_once dirname( __FILE__ ) . '/../WP2Static/WsLog.php';
             WsLog::l( 'SAVING URL: FILE IS EMPTY ' . $this->url );
         }
     }

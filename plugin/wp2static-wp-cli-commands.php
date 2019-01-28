@@ -99,9 +99,9 @@ class WP2Static_CLI {
         $plugin->prepare_for_export();
 
         require_once dirname( __FILE__ ) .
-            '/StaticHtmlOutput/WP2Static.php';
+            '/WP2Static/WP2Static.php';
         require_once dirname( __FILE__ ) .
-            '/StaticHtmlOutput/SiteCrawler.php';
+            '/WP2Static/SiteCrawler.php';
 
         $site_crawler->crawl_site();
         $site_crawler->crawl_discovered_links();
@@ -140,7 +140,7 @@ class WP2Static_CLI {
             }
         }
 
-        require_once dirname( __FILE__ ) . '/StaticHtmlOutput/Deployer.php';
+        require_once dirname( __FILE__ ) . '/WP2Static/Deployer.php';
 
         $deployer = new Deployer();
 

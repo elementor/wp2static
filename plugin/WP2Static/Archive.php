@@ -47,7 +47,7 @@ class Archive extends WP2Static {
 
             if ( ! $result ) {
                 require_once dirname( __FILE__ ) .
-                    '/../StaticHtmlOutput/WsLog.php';
+                    '/../WP2Static/WsLog.php';
                 WsLog::l( 'USER WORKING DIRECTORY NOT WRITABLE' );
             }
 

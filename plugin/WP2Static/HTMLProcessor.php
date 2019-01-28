@@ -113,7 +113,7 @@ class HTMLProcessor extends WP2Static {
                 );
             } else {
                 require_once dirname( __FILE__ ) .
-                    '/../StaticHtmlOutput/WsLog.php';
+                    '/../WP2Static/WsLog.php';
                 WsLog::l(
                     'WARNING: no valid head elemnent to attach base to: ' .
                         $this->page_url
@@ -897,7 +897,7 @@ class HTMLProcessor extends WP2Static {
         }
 
         require_once dirname( __FILE__ ) .
-            '/../StaticHtmlOutput/WsLog.php';
+            '/../WP2Static/WsLog.php';
         WsLog::l( $action );
     }
 }

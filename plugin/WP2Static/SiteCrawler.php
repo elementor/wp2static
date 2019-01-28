@@ -122,7 +122,7 @@ class SiteCrawler extends WP2Static {
 
         if ( ! is_file( $this->list_of_urls_to_crawl_path ) ) {
             require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/WsLog.php';
+                '/../WP2Static/WsLog.php';
             WsLog::l(
                 'ERROR: LIST OF URLS TO CRAWL NOT FOUND AT: ' .
                     $this->list_of_urls_to_crawl_path
@@ -157,7 +157,7 @@ class SiteCrawler extends WP2Static {
 
         if ( ! is_file( $this->list_of_urls_to_crawl_path ) ) {
             require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/WsLog.php';
+                '/../WP2Static/WsLog.php';
             WsLog::l(
                 'ERROR: LIST OF URLS TO CRAWL NOT FOUND AT: ' .
                     $this->list_of_urls_to_crawl_path
@@ -186,7 +186,7 @@ class SiteCrawler extends WP2Static {
 
         if ( $total_links < 1 ) {
             require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/WsLog.php';
+                '/../WP2Static/WsLog.php';
             WsLog::l(
                 'ERROR: LIST OF URLS TO CRAWL NOT FOUND AT: ' .
                 $this->list_of_urls_to_crawl_path
@@ -288,7 +288,7 @@ class SiteCrawler extends WP2Static {
                 $batch_index;
 
             require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/ProgressLog.php';
+                '/../WP2Static/ProgressLog.php';
             ProgressLog::l( $completed_urls, $total_urls_to_crawl );
         }
 
@@ -342,7 +342,7 @@ class SiteCrawler extends WP2Static {
         $good_response_codes = array( '200', '201', '301', '302', '304' );
 
         if ( ! in_array( $status_code, $good_response_codes ) ) {
-            require_once dirname( __FILE__ ) . '/../StaticHtmlOutput/WsLog.php';
+            require_once dirname( __FILE__ ) . '/../WP2Static/WsLog.php';
             WsLog::l(
                 'BAD RESPONSE STATUS (' . $status_code . '): ' . $this->url
             );
@@ -376,9 +376,9 @@ class SiteCrawler extends WP2Static {
         switch ( $this->file_type ) {
             case 'html':
                 require_once dirname( __FILE__ ) .
-                    '/../StaticHtmlOutput/WP2Static.php';
+                    '/../WP2Static/WP2Static.php';
                 require_once dirname( __FILE__ ) .
-                    '/../StaticHtmlOutput/HTMLProcessor.php';
+                    '/../WP2Static/HTMLProcessor.php';
 
                 $processor = new HTMLProcessor();
 
@@ -395,9 +395,9 @@ class SiteCrawler extends WP2Static {
 
             case 'css':
                 require_once dirname( __FILE__ ) .
-                    '/../StaticHtmlOutput/WP2Static.php';
+                    '/../WP2Static/WP2Static.php';
                 require_once dirname( __FILE__ ) .
-                    '/../StaticHtmlOutput/CSSProcessor.php';
+                    '/../WP2Static/CSSProcessor.php';
 
                 $processor = new CSSProcessor();
 
@@ -417,9 +417,9 @@ class SiteCrawler extends WP2Static {
             case 'json':
             case 'xml':
                 require_once dirname( __FILE__ ) .
-                    '/../StaticHtmlOutput/WP2Static.php';
+                    '/../WP2Static/WP2Static.php';
                 require_once dirname( __FILE__ ) .
-                    '/../StaticHtmlOutput/TXTProcessor.php';
+                    '/../WP2Static/TXTProcessor.php';
 
                 $processor = new TXTProcessor();
 
@@ -457,7 +457,7 @@ class SiteCrawler extends WP2Static {
 
     public function saveFile() {
         require_once dirname( __FILE__ ) .
-            '/../StaticHtmlOutput/FileWriter.php';
+            '/../WP2Static/FileWriter.php';
 
         $file_writer = new FileWriter(
             $this->url,
@@ -499,7 +499,7 @@ class SiteCrawler extends WP2Static {
                 $this->file_type = 'json';
             } else {
                 require_once dirname( __FILE__ ) .
-                    '/../StaticHtmlOutput/WsLog.php';
+                    '/../WP2Static/WsLog.php';
                 WsLog::l(
                     'no filetype inferred from content-type: ' .
                     $this->curl_content_type .
@@ -515,7 +515,7 @@ class SiteCrawler extends WP2Static {
         }
 
         require_once dirname( __FILE__ ) .
-            '/../StaticHtmlOutput/WsLog.php';
+            '/../WP2Static/WsLog.php';
         WsLog::l( $action );
     }
 }

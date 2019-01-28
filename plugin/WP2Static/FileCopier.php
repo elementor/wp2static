@@ -21,7 +21,7 @@ class FileCopier {
             return $local_file;
         } else {
             require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/WsLog.php';
+                '/../WP2Static/WsLog.php';
             WsLog::l(
                 'ERROR: trying to copy local file: ' . $local_file .
                 ' for URL: ' . $this->url .
@@ -74,7 +74,7 @@ class FileCopier {
             copy( $local_file, $filename );
         } else {
             require_once dirname( __FILE__ ) .
-                '/../StaticHtmlOutput/WsLog.php';
+                '/../WP2Static/WsLog.php';
             WsLog::l(
                 'ERROR: trying to copy local file: ' . $local_file .
                 ' to: ' . $filename .

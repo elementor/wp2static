@@ -26,7 +26,7 @@ class Deployer extends WP2Static {
                 break;
             case 's3':
                 require_once dirname( __FILE__ ) .
-                    '/../StaticHtmlOutput/SitePublisher.php';
+                    '/../WP2Static/SitePublisher.php';
 
                 require_once $powerpack_dir . '/S3.php';
 
@@ -44,7 +44,7 @@ class Deployer extends WP2Static {
                 break;
             case 'bitbucket':
                 require_once dirname( __FILE__ ) .
-                    '/../StaticHtmlOutput/SitePublisher.php';
+                    '/../WP2Static/SitePublisher.php';
 
                 require_once $powerpack_dir . '/Bitbucket.php';
 
@@ -61,7 +61,7 @@ class Deployer extends WP2Static {
                 break;
             case 'bunnycdn':
                 require_once dirname( __FILE__ ) .
-                    '/../StaticHtmlOutput/SitePublisher.php';
+                    '/../WP2Static/SitePublisher.php';
 
                 require_once $powerpack_dir . '/BunnyCDN.php';
 
@@ -79,7 +79,7 @@ class Deployer extends WP2Static {
                 break;
             case 'ftp':
                 require_once dirname( __FILE__ ) .
-                    '/../StaticHtmlOutput/SitePublisher.php';
+                    '/../WP2Static/SitePublisher.php';
 
                 require_once $powerpack_dir . '/FTP.php';
 
@@ -96,7 +96,7 @@ class Deployer extends WP2Static {
                 break;
             case 'github':
                 require_once dirname( __FILE__ ) .
-                    '/../StaticHtmlOutput/SitePublisher.php';
+                    '/../WP2Static/SitePublisher.php';
 
                 require_once $powerpack_dir . '/GitHub.php';
 
@@ -113,7 +113,7 @@ class Deployer extends WP2Static {
                 break;
             case 'gitlab':
                 require_once dirname( __FILE__ ) .
-                    '/../StaticHtmlOutput/SitePublisher.php';
+                    '/../WP2Static/SitePublisher.php';
 
                 require_once $powerpack_dir . '/GitLab.php';
 
@@ -132,7 +132,7 @@ class Deployer extends WP2Static {
                 break;
             case 'netlify':
                 require_once dirname( __FILE__ ) .
-                    '/../StaticHtmlOutput/SitePublisher.php';
+                    '/../WP2Static/SitePublisher.php';
 
                 require_once $powerpack_dir . '/Netlify.php';
 
