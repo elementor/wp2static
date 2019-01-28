@@ -132,7 +132,7 @@ class WP2Static_GitLab extends WP2Static_SitePublisher {
 
         try {
             require_once dirname( __FILE__ ) .
-                '/../library/StaticHtmlOutput/Request.php';
+                '/../WP2Static/Request.php';
             $client = new WP2Static_Request();
 
             $post_options = array(
@@ -196,7 +196,7 @@ class WP2Static_GitLab extends WP2Static_SitePublisher {
             '/repository/tree?recursive=true&per_page=100&page=' . $page;
 
         require_once dirname( __FILE__ ) .
-            '/../library/StaticHtmlOutput/Request.php';
+            '/../WP2Static/Request.php';
         $client = new WP2Static_Request();
 
         $headers = array(
@@ -213,7 +213,7 @@ class WP2Static_GitLab extends WP2Static_SitePublisher {
 
         if ( ! in_array( $client->status_code, $good_response_codes ) ) {
             require_once dirname( __FILE__ ) .
-                '/../library/StaticHtmlOutput/WsLog.php';
+                '/../WP2Static/WsLog.php';
             WsLog::l( 'BAD RESPONSE STATUS (' . $client->status_code . '): ' );
 
             throw new Exception( 'GitLab API bad response status' );
@@ -244,7 +244,7 @@ class WP2Static_GitLab extends WP2Static_SitePublisher {
 
         try {
             require_once dirname( __FILE__ ) .
-                '/../library/StaticHtmlOutput/Request.php';
+                '/../WP2Static/Request.php';
             $client = new WP2Static_Request();
 
             $post_options = array(

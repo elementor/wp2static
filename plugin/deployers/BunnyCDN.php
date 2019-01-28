@@ -145,7 +145,7 @@ class WP2Static_BunnyCDN extends WP2Static_SitePublisher {
 
             if ( ! in_array( $status_code, $good_response_codes ) ) {
                 require_once dirname( __FILE__ ) .
-                    '/../library/StaticHtmlOutput/WsLog.php';
+                    '/../WP2Static/WsLog.php';
                 WsLog::l(
                     'BAD RESPONSE STATUS (' . $status_code . '): '
                 );
@@ -211,7 +211,7 @@ class WP2Static_BunnyCDN extends WP2Static_SitePublisher {
 
             if ( ! in_array( $status_code, $good_response_codes ) ) {
                 require_once dirname( __FILE__ ) .
-                    '/../library/StaticHtmlOutput/WsLog.php';
+                    '/../WP2Static/WsLog.php';
                 WsLog::l(
                     'BAD RESPONSE STATUS (' . $status_code . '): '
                 );
@@ -220,7 +220,7 @@ class WP2Static_BunnyCDN extends WP2Static_SitePublisher {
             }
         } catch ( Exception $e ) {
             require_once dirname( __FILE__ ) .
-                '/../library/StaticHtmlOutput/WsLog.php';
+                '/../WP2Static/WsLog.php';
             WsLog::l( 'BUNNYCDN EXPORT: error encountered' );
             WsLog::l( $e );
             throw new Exception( $e );
@@ -233,7 +233,7 @@ class WP2Static_BunnyCDN extends WP2Static_SitePublisher {
 
     public function fileExistsInBunnyCDN() {
         require_once dirname( __FILE__ ) .
-            '/../library/StaticHtmlOutput/Request.php';
+            '/../WP2Static/Request.php';
         $this->client = new WP2Static_Request();
 
         return false;

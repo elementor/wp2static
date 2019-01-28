@@ -77,7 +77,7 @@ class WP2Static_BitBucket extends WP2Static_SitePublisher {
 
     public function test_upload() {
         require_once dirname( __FILE__ ) .
-            '/../library/StaticHtmlOutput/Request.php';
+            '/../WP2Static/Request.php';
         $this->client = new WP2Static_Request();
 
         try {
@@ -153,7 +153,7 @@ class WP2Static_BitBucket extends WP2Static_SitePublisher {
 
     public function sendBatchToBitbucket() {
         require_once dirname( __FILE__ ) .
-            '/../library/StaticHtmlOutput/Request.php';
+            '/../WP2Static/Request.php';
         $this->client = new WP2Static_Request();
 
         $remote_path = $this->api_base . $this->settings['bbRepo'] . '/src';

@@ -52,7 +52,7 @@ class WP2Static_S3 extends WP2Static_SitePublisher {
         $this->openPreviousHashesFile();
 
         require_once dirname( __FILE__ ) .
-            '/../library/StaticHtmlOutput/MimeTypes.php';
+            '/../WP2Static/MimeTypes.php';
 
         foreach ( $lines as $line ) {
             list($local_file, $this->target_path) = explode( ',', $line );
@@ -141,7 +141,7 @@ class WP2Static_S3 extends WP2Static_SitePublisher {
             }
         } catch ( Exception $e ) {
             require_once dirname( __FILE__ ) .
-                '/../library/StaticHtmlOutput/WsLog.php';
+                '/../WP2Static/WsLog.php';
 
             WsLog::l( 'S3 ERROR RETURNED: ' . $e );
             echo "There was an error testing S3.\n";
@@ -317,7 +317,7 @@ EOD;
 
         if ( ! $fp ) {
             require_once dirname( __FILE__ ) .
-                '/../library/StaticHtmlOutput/WsLog.php';
+                '/../WP2Static/WsLog.php';
             WsLog::l( "CLOUDFRONT CONNECTION ERROR: {$errno} {$errstr}" );
             die( "Connection failed: {$errno} {$errstr}\n" );
         }
