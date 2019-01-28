@@ -8,7 +8,7 @@ jobs:
           name: install pre dependencies
           command: |
             apt update -yqq
-            apt install phpunit
+            apt install phpunit -yqq
       - run:
           name: Install dependencies
           command: |
