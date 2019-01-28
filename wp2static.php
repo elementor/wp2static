@@ -3,7 +3,7 @@
  * Plugin Name: WP2Static
  * Plugin URI:  https://wp2static.com
  * Description: Security & Performance via static website publishing. One plugin to solve WordPress's biggest problems.
- * Version:     6.5.3
+ * Version:     6.6-dev
  * Author:      Leon Stafford
  * Author URI:  https://leonstafford.github.io
  * Text Domain: static-html-output-plugin
@@ -14,18 +14,18 @@
 
 // intercept low latency dependent actions and avoid boostrapping whole plugin
 require_once dirname( __FILE__ ) .
-    '/library/StaticHtmlOutput/Dispatcher.php';
+    '/plugin/WP2Static/Dispatcher.php';
 
-require_once 'library/StaticHtmlOutput/WP2Static.php';
-require_once 'library/StaticHtmlOutput/Options.php';
-require_once 'library/StaticHtmlOutput/TemplateHelper.php';
-require_once 'library/StaticHtmlOutput/View.php';
-require_once 'library/StaticHtmlOutput/WsLog.php';
-require_once 'library/StaticHtmlOutput/FilesHelper.php';
-require_once 'library/StaticHtmlOutput.php';
-require_once 'library/URL2/URL2.php';
+require_once 'plugin/WP2Static/WP2Static.php';
+require_once 'plugin/WP2Static/Options.php';
+require_once 'plugin/WP2Static/TemplateHelper.php';
+require_once 'plugin/WP2Static/View.php';
+require_once 'plugin/WP2Static/WsLog.php';
+require_once 'plugin/WP2Static/FilesHelper.php';
+require_once 'plugin/WP2Static.php';
+require_once 'plugin/URL2/URL2.php';
 
-StaticHtmlOutput_Controller::init( __FILE__ );
+WP2Static_Controller::init( __FILE__ );
 
 function plugin_action_links( $links ) {
     $settings_link = '<a href="admin.php?page=wp2static">' . __( 'Settings', 'static-html-output-plugin' ) . '</a>';
@@ -36,7 +36,7 @@ function plugin_action_links( $links ) {
 
 
 function wp_static_html_output_server_side_export() {
-    $plugin = StaticHtmlOutput_Controller::getInstance();
+    $plugin = WP2Static_Controller::getInstance();
     $plugin->doExportWithoutGUI();
     wp_die();
     return null;
@@ -59,7 +59,7 @@ function wp_static_html_output_ajax() {
     $instance_method = filter_input( INPUT_POST, 'ajax_action' );
 
     if ( '' !== $instance_method && is_string( $instance_method ) ) {
-        $plugin_instance = StaticHtmlOutput_Controller::getInstance();
+        $plugin_instance = WP2Static_Controller::getInstance();
         call_user_func( array( $plugin_instance, $instance_method ) );
     }
 
@@ -94,5 +94,5 @@ remove_action( 'wp_head', 'wlwmanifest_link' );
 
 // WP CLI support
 if ( defined( 'WP_CLI' ) ) {
-    require_once dirname( __FILE__ ) . '/library/wp2static-wp-cli-commands.php';
+    require_once dirname( __FILE__ ) . '/plugin/wp2static-wp-cli-commands.php';
 }

@@ -2,7 +2,7 @@ version: 2
 jobs:
   code-quality-and-unit-tests:
     docker:
-      - image: circleci/php:7.2.8-apache-node
+      - image: circleci/php:7.3-apache-node-browsers-legacy
     steps:
       - run:
           name: Install dependencies
@@ -15,10 +15,14 @@ jobs:
       - run:
           name: Run Code Sniffs
           command: |
-            /tmp/phpcs/bin/phpcs --ignore=*/provisioning/*,*/GuzzleHttp/*,*/Github/*,*/aws/*,*/CloudFront/*,*/Psr/*,*/CSSParser/*,*/FTP/*,*/S3/*,*/URL2/*,wp2static.php ./
+            /tmp/phpcs/bin/phpcs --standard=./tools/phpcs.xml --ignore=,*/tests/*,*/CSSParser/*,*/FTP/*,*/URL2/*,wp2static.php ./
       - run:
           name: Run Unit Tests
-          command: ./provisioning/run_unit_tests.sh
+          command: |
+            wget -O phpunit https://phar.phpunit.de/phpunit-7.phar
+            chmod +x phpunit
+            sudo mv phpunit /usr/local/bin/
+            ./tests/unit_tests.sh
 
 workflows:
   version: 2

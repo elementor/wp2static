@@ -47,49 +47,6 @@
       </tr>
       <tr>
         <th scope="row">
-          <label for="bbBlobIncrement"><?php echo __('File Upload Batch Size', 'static-html-output-plugin');?></label>
-        </th>
-        <td>
-          <select name="bbBlobIncrement" id="bbBlobIncrement">
-<?php 
-  // TODO: shift this into helper function for select
-  $increments = array(1, 5, 10, 25, 50, 100, 500, 1000, 999999);
-
-  foreach($increments as $increment) :
-       if ($increment == 999999): ?>
-            <option value="999999"<?php echo $this->options->bbBlobIncrement == $increment ? ' selected' : ''; ?>>Maximum</option>
-<?php else: ?>
-            <option value="<?php echo $increment; ?>"<?php echo $this->options->bbBlobIncrement == $increment ? ' selected' : ''; ?>><?php echo $increment; ?></option>
-
-<?php endif; 
-         endforeach; ?>
-          </select><br>
-
-          <p>This is set to 1, by default, in order to avoid execution limit timeouts on restricted environments, such as shared hosting servers. Each increment is the amount of files the server will try to upload to Bitbucket on each request. Incrementing this will speed up your exports, by processing more are a time. If your export is failing, due to execution limits or Bitbucket API rate limits being reached, try setting this to a lower number.</p>
-
-        </td>
-      </tr>
-      <tr>
-        <th scope="row">
-          <label for="bbBlobDelay"><?php echo __('API Request Delay', 'static-html-output-plugin');?></label>
-        </th>
-        <td>
-          <select name="bbBlobDelay" id="bbBlobDelay">
-<?php 
-  // TODO: shift this into helper function for select
-  $increments = array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 2, 3, 4, 10);
-
-  foreach($increments as $increment) : ?>
-            <option value="<?php echo $increment; ?>"<?php echo $this->options->bbBlobDelay == $increment ? ' selected' : ''; ?>><?php echo $increment; ?></option>
- <?php endforeach; ?>
-          </select><br>
-
-          <p>This is set to 0, by default, but if your deploy is hitting Bitbucket's API too rapidly, you can increase this to add a delay between each API request.</p>
-
-        </td>
-      </tr>
-      <tr>
-        <th scope="row">
           <label for="bb_test"><?php echo __('Test Bitbucket Settings', 'static-html-output-plugin');?></label>
         </th>
         <td>

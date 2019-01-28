@@ -7,7 +7,7 @@
 
 $ajax_nonce = wp_create_nonce( 'wpstatichtmloutput' );
 
-require_once(__DIR__ . '/../library/StaticHtmlOutput/TemplateHelper.php');
+require_once(__DIR__ . '/../plugin/WP2Static/TemplateHelper.php');
 
 $tpl = new TemplateHelper();
 
@@ -85,32 +85,20 @@ $tpl = new TemplateHelper();
       $options = array(
         "folder" => array('Subdirectory on current server', 'free'),
         "blank1" => array("--- Manual Deployment ---", 'free'),
-        "zip" => array('ZIP archive (.zip)', 'free'),
-        "blank2" => array("--- Automated Deployment ---", 'free'),
-        "s3" => array("Amazon S3", 'powerpack'),
-        "bitbucket" => array("Bitbucket", 'powerpack'),
-        "bunnycdn" => array("BunnyCDN", 'powerpack'),
-        "github" => array("GitHub Pages", 'powerpack'),
-        "gitlab" => array("GitLab", 'powerpack'),
-        "netlify" => array("Netlify", 'powerpack'),
-        "blank3" => array("--- Other Automated Deployments ---", 'free'),
-        "ftp" => array("FTP", 'powerpack'),
+        "zip" => array('ZIP archive (.zip)'),
+        "blank2" => array("--- Automated Deployment ---"),
+        "s3" => array("Amazon S3"),
+        "bitbucket" => array("Bitbucket"),
+        "bunnycdn" => array("BunnyCDN"),
+        "github" => array("GitHub Pages"),
+        "gitlab" => array("GitLab"),
+        "netlify" => array("Netlify"),
+        "blank3" => array("--- Other Automated Deployments ---"),
+        "ftp" => array("FTP"),
       );
 
-      $powerpack_detected = false;
-
-      if ( is_file( __DIR__ . '/../powerpack/GitLab.php' ) ) {
-          $powerpack_detected = true;
-      }
-
       foreach ($options as $key => $value) {
-        if ( $value[1] === 'powerpack' && $powerpack_detected ) {
             echo "<option value='$key'>$value[0]</option>";
-        } elseif ( $value[1] === 'powerpack' && ! $powerpack_detected ) {
-            echo "<option disabled value='$key'>$value[0] (PowerPack required)</option>";
-        } else {
-            echo "<option value='$key'>$value[0]</option>";
-        }
       }
     }
 

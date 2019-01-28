@@ -20,7 +20,7 @@ msgstr ""
 msgid "Settings"
 msgstr "設定"
 
-#: ../library/StaticHtmlOutput.php:135
+#: ../WP2Static.php:135
 msgid "WP Static HTML Output"
 msgstr "WordPress静的HTML出力"
 
