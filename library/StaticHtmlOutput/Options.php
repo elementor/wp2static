@@ -1,6 +1,6 @@
 <?php
 
-class StaticHtmlOutput_Options {
+class WP2Static_Options {
     protected $wp2static_options = array();
     protected $wp2static_option_key = null;
     protected $wp2static_options_keys = array(

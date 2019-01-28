@@ -12,7 +12,7 @@ class StaticHtmlOutput_Controller {
     public static function getInstance() {
         if ( null === self::$instance ) {
             self::$instance = new self();
-            self::$instance->options = new StaticHtmlOutput_Options(
+            self::$instance->options = new WP2Static_Options(
                 self::OPTIONS_KEY
             );
             self::$instance->view = new StaticHtmlOutput_View();
@@ -249,7 +249,7 @@ class StaticHtmlOutput_Controller {
             error_log( "Couldn't reset plugin to default settings" );
         }
 
-        $this->options = new StaticHtmlOutput_Options( self::OPTIONS_KEY );
+        $this->options = new WP2Static_Options( self::OPTIONS_KEY );
         $this->setDefaultOptions();
 
         echo 'SUCCESS';
