@@ -21,6 +21,7 @@ class WPSHO_PostSettings {
             'basicAuthPassword',
             'basicAuthUser',
             'detection_level',
+            'crawl_delay',
         );
 
         $key_sets['processing'] = array(

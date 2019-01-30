@@ -134,6 +134,10 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
 
 == Changelog ==
 
+= 6.6 =
+
+ * Enhancement: Crawl Delay added to overcome "Too many files" issue on certain hosting environments
+
 = 6.5.3 =
 
  * Bugfix: filter URLs with spaces from initial crawl list

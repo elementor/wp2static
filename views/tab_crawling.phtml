@@ -105,6 +105,26 @@
             <textarea class="widefat" name="additionalUrls" id="additionalUrls" rows="5" cols="10"><?php echo $this->options->additionalUrls ? $this->options->additionalUrls : ''  ?></textarea>
         </td>
       </tr>
+    <tr>
+      <th scope="row">
+        <label for="crawl_delay"><?php echo __('Crawl Delay', 'static-html-output-plugin');?></label>
+      </th>
+      <td>
+        <select name="crawl_delay" id="crawl_delay">
+<?php 
+  // TODO: shift this into helper function for select
+  $delays = array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 2, 3, 4, 10);
+
+  foreach($delays as $delay) : ?>
+          <option value="<?php echo $delay; ?>"<?php echo $this->options->crawl_delay == $delay ? ' selected' : ''; ?>><?php echo $delay; ?></option>
+
+       <?php endforeach; ?>
+        </select><br>
+
+        <p>This is set to 0, by default, for better performance, but if exports are failing and no error appears with Debug Log enabled or you see "Too many files open" or such errors in the server logs, try increasing this value until you get a successful export.</p>
+
+      </td>
+    </tr>
     </tbody>
   </table>
 </div><!-- end crawl_setings -->

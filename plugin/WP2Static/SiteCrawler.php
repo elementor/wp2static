@@ -12,6 +12,10 @@ class SiteCrawler extends WP2Static {
             )
         );
 
+        if ( isset( $this->settings['crawl_delay'] ) ) {
+            sleep( $this->settings['crawl_delay'] );
+        }
+
         $this->processed_file = '';
         $this->file_type = '';
         $this->response = '';
