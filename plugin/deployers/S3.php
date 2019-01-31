@@ -149,6 +149,9 @@ class WP2Static_S3 extends WP2Static_SitePublisher {
     }
 
     public function put_s3_object( $s3_path, $content, $content_type ) {
+        // NOTE: quick fix for #287
+        $s3_path = str_replace( '@', '%40', $s3_path );
+
         $this->logAction( "PUT'ing file to {$s3_path} in S3" );
 
         $host_name = $this->settings['s3Bucket'] . '.s3-' .
