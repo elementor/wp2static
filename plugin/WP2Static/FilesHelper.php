@@ -588,7 +588,10 @@ class WP2Static_FilesHelper {
         $unique_urls = array_unique( $post_urls );
 
         $urls = str_replace(
-            '//', '/', $unique_urls);
+            '//',
+            '/',
+            $unique_urls
+        );
 
         return $urls;
     }
