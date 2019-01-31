@@ -587,7 +587,10 @@ class WP2Static_FilesHelper {
 
         $unique_urls = array_unique( $post_urls );
 
-        return $unique_urls;
+        $urls = str_replace(
+            '//', '/', $unique_urls);
+
+        return $urls;
     }
 
     public static function getPaginationURLsForPosts( $post_types ) {
