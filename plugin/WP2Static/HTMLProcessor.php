@@ -830,6 +830,22 @@ class HTMLProcessor extends WP2Static {
 
         // catch any http links on an https WP site
         if ( $this->destination_protocol === 'https' ) {
+            // get http version of https Site URL
+            $http_site_url = str_replace(
+                'https:',
+                'http:',
+                $this->settings['wp_site_url']
+            );
+
+            $patterns[] = str_replace(
+                'https:',
+                'http:',
+                $http_site_url
+            );
+
+            $replacements[] = $this->placeholder_url;
+
+            // force https placeholder for http Site URL
             $patterns[] = str_replace(
                 'http:',
                 'https:',

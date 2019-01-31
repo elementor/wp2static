@@ -137,6 +137,10 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
 = 6.6 =
 
  * Enhancement: Crawl Delay added to overcome "Too many files" issue on certain hosting environments
+ * Bugfix: S3 files with @ in pathname (quick fix, in lieu of a comprehensive fix for extended/foreign characters)
+ * Bugfix: forcing of https rewriting when site contains http links when serving over https
+ * Bugfix: Detected URLs returning some paths with double //'s within
+ * Change: plugin directory structure cleaned up
 
 = 6.5.3 =
 
@@ -552,6 +556,14 @@ Altered main codebase to fix recursion bug and endless loop. Essential upgrade.
 Initial release to Wordpress community
 
 == Upgrade Notice ==
+
+= 6.6 =
+
+ * Enhancement: Crawl Delay added to overcome "Too many files" issue on certain hosting environments
+ * Bugfix: S3 files with @ in pathname (quick fix, in lieu of a comprehensive fix for extended/foreign characters)
+ * Bugfix: forcing of https rewriting when site contains http links when serving over https
+ * Bugfix: Detected URLs returning some paths with double //'s within
+ * Change: plugin directory structure cleaned up
 
 = 6.5.3 =
 
