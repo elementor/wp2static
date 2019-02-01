@@ -136,7 +136,7 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
 
 = 6.6.1 =
 
- * Bugfix: fix for 
+ * Bugfix: fix for Excluded URLs; log exclusion rules for Debug Mode
  * Bugfix: fix for malformed URLs returned in Detected URLs
 
 = 6.6 =
@@ -561,6 +561,11 @@ Altered main codebase to fix recursion bug and endless loop. Essential upgrade.
 Initial release to Wordpress community
 
 == Upgrade Notice ==
+
+= 6.6.1 =
+
+ * Bugfix: fix for Excluded URLs; log exclusion rules for Debug Mode
+ * Bugfix: fix for malformed URLs returned in Detected URLs
 
 = 6.6 =
 
