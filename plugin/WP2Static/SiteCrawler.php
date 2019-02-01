@@ -271,7 +271,7 @@ class SiteCrawler extends WP2Static {
             foreach ( $exclusions as $exclusion ) {
                 $exclusion = trim( $exclusion );
                 if ( $exclusion != '' ) {
-                    if ( strpos( $this->url, $exclusion ) ) {
+                    if ( false !== strpos( $this->url, $exclusion ) ) {
                         // skip the outer foreach loop
                         continue 2;
                     }
@@ -525,4 +525,3 @@ class SiteCrawler extends WP2Static {
 }
 
 $site_crawler = new SiteCrawler();
-
