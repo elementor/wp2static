@@ -587,13 +587,7 @@ class WP2Static_FilesHelper {
 
         $unique_urls = array_unique( $post_urls );
 
-        $urls = str_replace(
-            '//',
-            '/',
-            $unique_urls
-        );
-
-        return $urls;
+        return $unique_urls;
     }
 
     public static function getPaginationURLsForPosts( $post_types ) {
@@ -644,11 +638,12 @@ class WP2Static_FilesHelper {
         $default_posts_per_page = get_option( 'posts_per_page' );
 
         foreach ( $categories as $term => $total_posts ) {
+            $term_url = rtrim( $term, '/' );
             $total_pages = ceil( $total_posts / $default_posts_per_page );
 
             for ( $page = 1; $page <= $total_pages; $page++ ) {
                 $urls_to_include[] =
-                    "{$term}/{$pagination_base}/{$page}";
+                    "{$term_url}/{$pagination_base}/{$page}";
             }
         }
 
