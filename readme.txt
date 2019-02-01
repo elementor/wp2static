@@ -136,7 +136,7 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
 
 = 6.6.1 =
 
- * Bugfix: fix for Excluded URLs; log exclusion rules for Debug Mode
+ * Bugfix: fix for Excluded URLs; log exclusion rules for Debug Mode (thanks @yadex205!)
  * Bugfix: fix for malformed URLs returned in Detected URLs
 
 = 6.6 =
@@ -564,7 +564,7 @@ Initial release to Wordpress community
 
 = 6.6.1 =
 
- * Bugfix: fix for Excluded URLs; log exclusion rules for Debug Mode
+ * Bugfix: fix for Excluded URLs; log exclusion rules for Debug Mode (thanks @yadex205!)
  * Bugfix: fix for malformed URLs returned in Detected URLs
 
 = 6.6 =
