@@ -571,11 +571,10 @@ class WP2Static_FilesHelper {
             $comment_pagination_urls
         );
 
-
         return $post_urls;
     }
 
-    public static function cleanDetectedURLs ( $urls ) {
+    public static function cleanDetectedURLs( $urls ) {
         $unique_urls = array_unique( $urls );
 
         $wp_site_url = get_home_url();
