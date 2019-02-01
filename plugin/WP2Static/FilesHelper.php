@@ -402,33 +402,19 @@ class WP2Static_FilesHelper {
                 );
         }
 
+        $url_queue = self::cleanDetectedURLs( $url_queue );
+
         $url_queue = apply_filters(
             'wp2static_modify_initial_crawl_list',
             $url_queue
         );
 
         $unique_urls = array_unique( $url_queue );
+        sort( $unique_urls );
 
-        $search_text = ' ';
+        $initial_crawl_list_total = count( $unique_urls );
 
-        $url_queue = array_filter(
-            $unique_urls,
-            function( $url ) use ( $search_text ) {
-                return ( strpos( $url, $search_text ) === false );
-            }
-        );
-
-        $initial_crawl_list_total = count( $url_queue );
-
-        $str = implode( "\n", $url_queue );
-
-        $wp_site_url = get_home_url();
-
-        $str = str_replace(
-            $wp_site_url,
-            '',
-            $str
-        );
+        $str = implode( "\n", $unique_urls );
 
         file_put_contents(
             $uploads_path . '/WP-STATIC-INITIAL-CRAWL-LIST.txt',
@@ -585,15 +571,37 @@ class WP2Static_FilesHelper {
             $comment_pagination_urls
         );
 
-        $unique_urls = array_unique( $post_urls );
 
-        $urls = str_replace(
-            '//',
-            '/',
-            $unique_urls
+        return $post_urls;
+    }
+
+    public static function cleanDetectedURLs ( $urls ) {
+        $unique_urls = array_unique( $urls );
+
+        $wp_site_url = get_home_url();
+
+        $search_text = ' ';
+
+        $url_queue = array_filter(
+            $unique_urls,
+            function( $url ) use ( $search_text ) {
+                return ( strpos( $url, $search_text ) === false );
+            }
         );
 
-        return $urls;
+        $stripped_urls = str_replace(
+            $wp_site_url,
+            '/',
+            $url_queue
+        );
+
+        $cleaned_urls = str_replace(
+            '//',
+            '/',
+            $stripped_urls
+        );
+
+        return $cleaned_urls;
     }
 
     public static function getPaginationURLsForPosts( $post_types ) {
