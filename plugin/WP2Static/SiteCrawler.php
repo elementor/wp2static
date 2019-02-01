@@ -249,29 +249,39 @@ class SiteCrawler extends WP2Static {
 
         $batch_index = 0;
 
+        $exclusions = array( 'wp-json' );
+
+        if ( isset( $this->settings['excludeURLs'] ) ) {
+            $user_exclusions = explode(
+                "\n",
+                str_replace( "\r", '', $this->settings['excludeURLs'] )
+            );
+
+            $exclusions = array_merge(
+                $exclusions,
+                $user_exclusions
+            );
+        }
+
+        $this->logAction(
+            'Exclusion rules ' . implode( PHP_EOL, $exclusions )
+        );
+
         foreach ( $batch_of_links_to_crawl as $link_to_crawl ) {
             $this->url = $link_to_crawl;
 
             $this->full_url = $this->settings['wp_site_url'] .
                 ltrim( $this->url, '/' );
 
-            if ( ! isset( $this->settings['excludeURLs'] ) ) {
-                $this->settings['excludeURLs'] = '';
-            }
-
-            // add default exclusions
-            $this->settings['excludeURLs'] .=
-                PHP_EOL . 'wp-json';
-
-            $exclusions = explode(
-                "\n",
-                str_replace( "\r", '', $this->settings['excludeURLs'] )
-            );
-
             foreach ( $exclusions as $exclusion ) {
                 $exclusion = trim( $exclusion );
                 if ( $exclusion != '' ) {
                     if ( false !== strpos( $this->url, $exclusion ) ) {
+                        $this->logAction(
+                            'Excluding ' . $this->url .
+                            ' because of rule ' . $exclusion
+                        );
+
                         // skip the outer foreach loop
                         continue 2;
                     }

@@ -165,6 +165,11 @@ class Exporter extends WP2Static {
 
                     if ( $exclusion != '' ) {
                         if ( strpos( $url_to_crawl, $exclusion ) !== false ) {
+                            $this->logAction(
+                                'Excluding ' . $url_to_crawl .
+                                ' because of rule ' . $exclusion
+                            );
+
                             $match = true;
                         }
                     }
@@ -207,6 +212,16 @@ class Exporter extends WP2Static {
                 '/WP-STATIC-FINAL-CRAWL-LIST.txt',
             0664
         );
+    }
+
+    public function logAction( $action ) {
+        if ( ! isset( $this->settings['debug_mode'] ) ) {
+            return;
+        }
+
+        require_once dirname( __FILE__ ) .
+            '/../WP2Static/WsLog.php';
+        WsLog::l( $action );
     }
 }
 
