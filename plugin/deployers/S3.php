@@ -154,8 +154,10 @@ class WP2Static_S3 extends WP2Static_SitePublisher {
 
         $this->logAction( "PUT'ing file to {$s3_path} in S3" );
 
-        $host_name = $this->settings['s3Bucket'] . '.s3-' .
+        $host_name = $this->settings['s3Bucket'] . '.s3.' .
             $this->settings['s3Region'] . '.amazonaws.com';
+
+        $this->logAction( "Using S3 Endpoint {$host_name}" );
 
         $content_acl = 'public-read';
         $content_title = $s3_path;
@@ -240,7 +242,7 @@ class WP2Static_S3 extends WP2Static_SitePublisher {
             $curl_headers[] = $key . ': ' . $value;
         }
 
-        $url = 'https://' . $host_name . '/' . $content_title;
+        $url = 'http://' . $host_name . '/' . $content_title;
 
         $this->logAction( "S3 URL: {$url}" );
 
