@@ -48,14 +48,22 @@ class SiteCrawler extends WP2Static {
             FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
         );
 
-        $discovered_links = file(
-            $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-DISCOVERED-URLS.txt',
-            FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
-        );
+        $unique_discovered_links = array();
 
-        $unique_discovered_links = array_unique( $discovered_links );
-        sort( $unique_discovered_links );
+        $discovered_links_file = $this->settings['wp_uploads_path'] .
+            '/WP-STATIC-DISCOVERED-URLS.txt';
+
+        if ( is_file( $discovered_links_file ) ) {
+            $discovered_links = file(
+                $discovered_links_file,
+                FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
+            );
+
+            $unique_discovered_links = array_unique( $discovered_links );
+            sort( $unique_discovered_links );
+        }
+
+
 
         file_put_contents(
             $this->settings['wp_uploads_path'] .
