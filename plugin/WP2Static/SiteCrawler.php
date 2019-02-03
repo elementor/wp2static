@@ -347,6 +347,8 @@ class SiteCrawler extends WP2Static {
 
         $output = curl_exec( $ch );
 
+        $this->checkForCurlErrors( $output, $ch );
+
         $status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
 
         $this->curl_content_type = curl_getinfo( $ch, CURLINFO_CONTENT_TYPE );
@@ -539,6 +541,16 @@ class SiteCrawler extends WP2Static {
         require_once dirname( __FILE__ ) .
             '/../WP2Static/WsLog.php';
         WsLog::l( $action );
+    }
+
+    public checkForCurlErrors( $response, $curl_handle ) {
+        if ( $response === false ) {
+            $response = curl_error( $curl_handle );
+            $this->logAction(
+                'cURL error:' .
+                stripslashes( $response )
+            );
+        }
     }
 }
 
