@@ -63,8 +63,6 @@ class SiteCrawler extends WP2Static {
             sort( $unique_discovered_links );
         }
 
-
-
         file_put_contents(
             $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-DISCOVERED-URLS-LOG.txt',
@@ -543,7 +541,7 @@ class SiteCrawler extends WP2Static {
         WsLog::l( $action );
     }
 
-    public checkForCurlErrors( $response, $curl_handle ) {
+    public function checkForCurlErrors( $response, $curl_handle ) {
         if ( $response === false ) {
             $response = curl_error( $curl_handle );
             $this->logAction(
