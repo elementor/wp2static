@@ -639,8 +639,8 @@ class WP2Static_FilesHelper {
                     "/{$plural_form}/{$pagination_base}/{$page}";
 
                 $urls_to_include[] = str_replace(
-                    '/posts',
-                    '',
+                    '/posts/',
+                    '/',
                     $pagination_url
                 );
             }
