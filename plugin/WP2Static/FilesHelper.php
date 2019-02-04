@@ -635,8 +635,14 @@ class WP2Static_FilesHelper {
             $total_pages = ceil( $count / $default_posts_per_page );
 
             for ( $page = 1; $page <= $total_pages; $page++ ) {
-                $urls_to_include[] =
+                $pagination_url =
                     "/{$plural_form}/{$pagination_base}/{$page}";
+
+                $urls_to_include[] = str_replace(
+                    '/posts',
+                    '',
+                    $pagination_url
+                );
             }
         }
 
