@@ -28,6 +28,14 @@
       </tr>
       <tr>
         <th scope="row">
+          <label for="crawlPort"><?php echo __('Custom crawling port', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <?php $tpl->displayTextfield($this, 'crawlPort', 'Custom crawling port', ''); ?>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
           <label><?php echo __('Initial crawl list', 'static-html-output-plugin');?></label>
         </th>
         <td>

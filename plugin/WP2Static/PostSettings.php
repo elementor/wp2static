@@ -22,6 +22,7 @@ class WPSHO_PostSettings {
             'basicAuthUser',
             'detection_level',
             'crawl_delay',
+            'crawlPort',
         );
 
         $key_sets['processing'] = array(

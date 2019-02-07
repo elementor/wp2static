@@ -324,6 +324,14 @@ class SiteCrawler extends WP2Static {
 
         $ch = curl_init();
 
+        if ( isset( $this->settings['crawlPort'] ) ) {
+            curl_setopt(
+                $ch,
+                CURLOPT_PORT,
+                $this->settings['crawlPort']
+            );
+        }
+
         curl_setopt( $ch, CURLOPT_URL, $this->full_url );
         curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
         curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );

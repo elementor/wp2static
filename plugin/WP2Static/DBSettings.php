@@ -23,6 +23,7 @@ class WPSHO_DBSettings {
             'basicAuthUser',
             'detection_level',
             'crawl_delay',
+            'crawlPort',
         );
 
         $key_sets['processing'] = array(

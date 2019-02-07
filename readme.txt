@@ -134,6 +134,12 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
 
 == Changelog ==
 
+= 7 =
+
+ * Bugfix: fixes incorrect links in pagination URLs detection
+ * Enhancement: allow custom port to be used during crawling
+ * Change: external deploy modules now premium add-ons
+
 = 6.6.2 =
 
  * Bugfix: fix errors in S3 deployments. Ensure you delete your Deploy Cache (Advanced tab), then re-run your deploy with version 6.6.2.
