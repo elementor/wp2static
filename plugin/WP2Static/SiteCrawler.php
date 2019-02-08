@@ -296,8 +296,9 @@ class SiteCrawler extends WP2Static {
 
             $this->file_extension = $this->getExtensionFromURL();
 
-            $this->loadFileForProcessing();
-            $this->saveFile();
+            if ( $this->loadFileForProcessing() ) {
+                $this->saveFile();
+            }
 
             $batch_index++;
 
@@ -377,10 +378,11 @@ class SiteCrawler extends WP2Static {
         $good_response_codes = array( '200', '201', '301', '302', '304' );
 
         if ( ! in_array( $status_code, $good_response_codes ) ) {
-            require_once dirname( __FILE__ ) . '/../WP2Static/WsLog.php';
-            WsLog::l(
+            $this->logAction(
                 'BAD RESPONSE STATUS (' . $status_code . '): ' . $this->url
             );
+
+            return false;
 
             file_put_contents(
                 $this->settings['wp_uploads_path'] .
