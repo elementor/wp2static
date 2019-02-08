@@ -313,7 +313,7 @@ class SiteCrawler extends WP2Static {
 
             $this->logAction(
                 'Memory allocated by crawl script: ' .
-                round(memory_get_usage(true) / 1024)
+                round( memory_get_usage( true ) / 1024 )
             );
         }
 

@@ -12,7 +12,7 @@ class HTMLProcessor extends WP2Static {
             )
         );
 
-        $this->processedURLs = array();
+        $this->processed_urls = array();
     }
 
     public function processHTML( $html_document, $page_url ) {
@@ -211,7 +211,7 @@ class HTMLProcessor extends WP2Static {
         $url = strtok( $url, '#' );
         $url = strtok( $url, '?' );
 
-        if ( in_array( $url, $this->processedURLs ) ) {
+        if ( in_array( $url, $this->processed_urls ) ) {
             return;
         }
 
@@ -219,7 +219,7 @@ class HTMLProcessor extends WP2Static {
             return;
         }
 
-        $this->processedURLs[] = $url;
+        $this->processed_urls[] = $url;
 
         if ( isset( $this->harvest_new_urls ) ) {
             if ( ! $this->isValidURL( $url ) ) {
@@ -745,17 +745,6 @@ class HTMLProcessor extends WP2Static {
                 $url_to_change
             );
 
-            // TODO: move higher up
-            // $this->logAction(
-            //     'Find/replace rules for placeholder -> Destination URL:' .
-            //     PHP_EOL .
-            //     implode(
-            //         PHP_EOL,
-            //         $this->getBaseURLRewritePatterns()
-            //     ) . PHP_EOL .
-            //     implode( PHP_EOL, $this->getBaseURLRewritePatterns() )
-            // );
-
             $element->setAttribute( $attribute_to_change, $rewritten_url );
         }
     }
@@ -840,14 +829,7 @@ class HTMLProcessor extends WP2Static {
             $this->raw_html
         );
 
-        // $this->logAction(
-        //     'Find/replace rules for setting placeholder URLs:' . PHP_EOL .
-        //     implode( PHP_EOL, $patterns ) . PHP_EOL .
-        //     implode( PHP_EOL, $replacements )
-        // );
-
         $this->raw_html = $rewritten_source;
-
     }
 
     public function shouldUseRelativeURLs() {
