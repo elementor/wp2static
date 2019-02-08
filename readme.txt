@@ -2,8 +2,8 @@
 Contributors: leonstafford
 Tags: security, performance, static
 Requires at least: 3.2
-Tested up to: 5.0.2
-Requires PHP: 5.6
+Tested up to: 5.0.3
+Requires PHP: 7.2
 Stable tag: 6.6.2
 
 Security & Performance via static website publishing. One plugin to solve WordPress's biggest problems.
@@ -139,6 +139,7 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
  * Bugfix: fixes incorrect links in pagination URLs detection
  * Enhancement: allow custom port to be used during crawling
  * Change: external deploy modules now premium add-ons
+ * Change: bump PHP requirements to 7.2 (oldest actively supported version)
 
 = 6.6.2 =
 

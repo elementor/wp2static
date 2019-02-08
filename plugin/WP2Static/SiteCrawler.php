@@ -476,6 +476,8 @@ class SiteCrawler extends WP2Static {
 
                 break;
         }
+
+        return true;
     }
 
     public function checkIfMoreCrawlingNeeded() {
