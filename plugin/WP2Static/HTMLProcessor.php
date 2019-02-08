@@ -11,6 +11,8 @@ class HTMLProcessor extends WP2Static {
                 'advanced',
             )
         );
+
+        $this->processedURLs = array();
     }
 
     public function processHTML( $html_document, $page_url ) {
@@ -209,9 +211,15 @@ class HTMLProcessor extends WP2Static {
         $url = strtok( $url, '#' );
         $url = strtok( $url, '?' );
 
+        if ( in_array( $url, $this->processedURLs ) ) {
+            return;
+        }
+
         if ( trim( $url ) === '' ) {
             return;
         }
+
+        $this->processedURLs[] = $url;
 
         if ( isset( $this->harvest_new_urls ) ) {
             if ( ! $this->isValidURL( $url ) ) {
@@ -225,6 +233,11 @@ class HTMLProcessor extends WP2Static {
                         '',
                         $url
                     );
+
+                $this->logAction(
+                    'Adding discovered URL: ' .
+                    $discovered_url_without_site_url
+                );
 
                 $this->discovered_urls[] = $discovered_url_without_site_url;
             }
@@ -392,10 +405,6 @@ class HTMLProcessor extends WP2Static {
         $is_internal_link = parse_url( $link, PHP_URL_HOST ) === parse_url(
             $domain,
             PHP_URL_HOST
-        );
-
-        $this->logAction(
-            "Is internal link? {$link} {$is_internal_link}"
         );
 
         return $is_internal_link;
@@ -730,52 +739,22 @@ class HTMLProcessor extends WP2Static {
 
         // check it actually needs to be changed
         if ( $this->isInternalLink( $url_to_change ) ) {
-            $patterns = array(
-                $this->placeholder_url,
-                addcslashes( $this->placeholder_url, '/' ),
-                $this->getProtocolRelativeURL(
-                    $this->placeholder_url
-                ),
-                $this->getProtocolRelativeURL(
-                    $this->placeholder_url
-                ),
-                $this->getProtocolRelativeURL(
-                    $this->placeholder_url . '/'
-                ),
-                $this->getProtocolRelativeURL(
-                    addcslashes( $this->placeholder_url, '/' )
-                ),
-            );
-
-            $replacements = array(
-                $this->settings['baseUrl'],
-                addcslashes( $this->settings['baseUrl'], '/' ),
-                $this->getProtocolRelativeURL(
-                    $this->settings['baseUrl']
-                ),
-                $this->getProtocolRelativeURL(
-                    rtrim( $this->settings['baseUrl'], '/' )
-                ),
-                $this->getProtocolRelativeURL(
-                    $this->settings['baseUrl'] . '//'
-                ),
-                $this->getProtocolRelativeURL(
-                    addcslashes( $this->settings['baseUrl'], '/' )
-                ),
-            );
-
             $rewritten_url = str_replace(
-                $patterns,
-                $replacements,
+                $this->getBaseURLRewritePatterns(),
+                $this->getBaseURLRewritePatterns(),
                 $url_to_change
             );
 
-            $this->logAction(
-                'Find/replace rules for placeholder -> Destination URL:' .
-                PHP_EOL .
-                implode( PHP_EOL, $patterns ) . PHP_EOL .
-                implode( PHP_EOL, $replacements )
-            );
+            // TODO: move higher up
+            // $this->logAction(
+            //     'Find/replace rules for placeholder -> Destination URL:' .
+            //     PHP_EOL .
+            //     implode(
+            //         PHP_EOL,
+            //         $this->getBaseURLRewritePatterns()
+            //     ) . PHP_EOL .
+            //     implode( PHP_EOL, $this->getBaseURLRewritePatterns() )
+            // );
 
             $element->setAttribute( $attribute_to_change, $rewritten_url );
         }
@@ -861,11 +840,11 @@ class HTMLProcessor extends WP2Static {
             $this->raw_html
         );
 
-        $this->logAction(
-            'Find/replace rules for setting placeholder URLs:' . PHP_EOL .
-            implode( PHP_EOL, $patterns ) . PHP_EOL .
-            implode( PHP_EOL, $replacements )
-        );
+        // $this->logAction(
+        //     'Find/replace rules for setting placeholder URLs:' . PHP_EOL .
+        //     implode( PHP_EOL, $patterns ) . PHP_EOL .
+        //     implode( PHP_EOL, $replacements )
+        // );
 
         $this->raw_html = $rewritten_source;
 
@@ -905,6 +884,49 @@ class HTMLProcessor extends WP2Static {
         }
 
         return true;
+    }
+
+    // TODO: move this up to WPSite level or higher, log only once
+    public function getBaseURLRewritePatterns() {
+        $patterns = array(
+            $this->placeholder_url,
+            addcslashes( $this->placeholder_url, '/' ),
+            $this->getProtocolRelativeURL(
+                $this->placeholder_url
+            ),
+            $this->getProtocolRelativeURL(
+                $this->placeholder_url
+            ),
+            $this->getProtocolRelativeURL(
+                $this->placeholder_url . '/'
+            ),
+            $this->getProtocolRelativeURL(
+                addcslashes( $this->placeholder_url, '/' )
+            ),
+        );
+
+        return $patterns;
+    }
+
+    public function getBaseURLRewriteReplacements() {
+        $replacements = array(
+            $this->settings['baseUrl'],
+            addcslashes( $this->settings['baseUrl'], '/' ),
+            $this->getProtocolRelativeURL(
+                $this->settings['baseUrl']
+            ),
+            $this->getProtocolRelativeURL(
+                rtrim( $this->settings['baseUrl'], '/' )
+            ),
+            $this->getProtocolRelativeURL(
+                $this->settings['baseUrl'] . '//'
+            ),
+            $this->getProtocolRelativeURL(
+                addcslashes( $this->settings['baseUrl'], '/' )
+            ),
+        );
+
+        return $replacements;
     }
 
     public function logAction( $action ) {

@@ -310,6 +310,11 @@ class SiteCrawler extends WP2Static {
             require_once dirname( __FILE__ ) .
                 '/../WP2Static/ProgressLog.php';
             ProgressLog::l( $completed_urls, $total_urls_to_crawl );
+
+            $this->logAction(
+                'Memory allocated by crawl script: ' .
+                round(memory_get_usage(true) / 1024)
+            );
         }
 
         $this->checkIfMoreCrawlingNeeded();

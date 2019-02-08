@@ -325,7 +325,12 @@ class WP2Static_Controller {
             'PLUGIN VERSION ' . $this::VERSION,
             'VIA WP-CLI? ' . defined( 'WP_CLI' ),
             'STATIC EXPORT URL ' . $this->exporter->settings['baseUrl'],
+            'PERMALINK STRUCTURE ' . get_option( 'permalink_structure' ),
         );
+
+        if ( isset( $_SERVER['SERVER_SOFTWARE'] ) ) {
+            $info[] = 'SERVER SOFTWARE ' . $_SERVER['SERVER_SOFTWARE'];
+        }
 
         WsLog::l( implode( PHP_EOL, $info ) );
 

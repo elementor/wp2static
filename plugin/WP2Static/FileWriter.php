@@ -87,13 +87,22 @@ class FileWriter extends WP2Static {
         $file_contents = $this->content;
 
         if ( $file_contents ) {
+            $this->logAction( 'SAVING ' . $this->url . ' to ' . $filename );
             file_put_contents( $filename, $file_contents );
-
             chmod( $filename, 0664 );
         } else {
-            require_once dirname( __FILE__ ) . '/../WP2Static/WsLog.php';
-            WsLog::l( 'SAVING URL: FILE IS EMPTY ' . $this->url );
+            $this->logAction( 'NOT SAVING EMTPY FILE ' . $this->url );
         }
+    }
+
+    public function logAction( $action ) {
+        if ( ! isset( $this->settings['debug_mode'] ) ) {
+            return;
+        }
+
+        require_once dirname( __FILE__ ) .
+            '/WsLog.php';
+        WsLog::l( $action );
     }
 }
 
