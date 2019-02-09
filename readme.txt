@@ -4,7 +4,7 @@ Tags: security, performance, static
 Requires at least: 3.2
 Tested up to: 5.0.3
 Requires PHP: 5.6
-Stable tag: 6.6.2
+Stable tag: 6.6.3
 
 Security & Performance via static website publishing. One plugin to solve WordPress's biggest problems.
 
@@ -134,11 +134,11 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
 
 == Changelog ==
 
-= 7 =
+= 6.6.3 =
 
  * Bugfix: fixes incorrect links in pagination URLs detection
+ * Bugfix: fixes homepage showing 404 page in some environments
  * Enhancement: allow custom port to be used during crawling
- * Change: external deploy modules now premium add-ons
 
 = 6.6.2 =
 
@@ -571,6 +571,12 @@ Altered main codebase to fix recursion bug and endless loop. Essential upgrade.
 Initial release to Wordpress community
 
 == Upgrade Notice ==
+
+= 6.6.3 =
+
+ * Bugfix: fixes incorrect links in pagination URLs detection
+ * Bugfix: fixes homepage showing 404 page in some environments
+ * Enhancement: allow custom port to be used during crawling
 
 = 6.6.2 =
 
