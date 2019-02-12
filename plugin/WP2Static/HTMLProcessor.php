@@ -770,35 +770,32 @@ class HTMLProcessor extends WP2Static {
     }
 
     public function rewriteSiteURLsToPlaceholder() {
+        $site_url = rtrim( $this->settings['wp_site_url'], '/' );
+        $placeholder_url = rtrim( $this->placeholder_url, '/' );
+
         $patterns = array(
-            $this->settings['wp_site_url'],
+            $site_url,
             $this->getProtocolRelativeURL(
-                $this->settings['wp_site_url']
+                $site_url
             ),
             $this->getProtocolRelativeURL(
-                rtrim( $this->settings['wp_site_url'], '/' )
+                $site_url . '//'
             ),
             $this->getProtocolRelativeURL(
-                $this->settings['wp_site_url'] . '//'
-            ),
-            $this->getProtocolRelativeURL(
-                addcslashes( $this->settings['wp_site_url'], '/' )
+                addcslashes( $site_url, '/' )
             ),
         );
 
         $replacements = array(
-            $this->placeholder_url,
+            $placeholder_url,
             $this->getProtocolRelativeURL(
-                $this->placeholder_url
+                $placeholder_url
             ),
             $this->getProtocolRelativeURL(
-                $this->placeholder_url
+                $placeholder_url . '/'
             ),
             $this->getProtocolRelativeURL(
-                $this->placeholder_url . '/'
-            ),
-            $this->getProtocolRelativeURL(
-                addcslashes( $this->placeholder_url, '/' )
+                addcslashes( $placeholder_url, '/' )
             ),
         );
 
