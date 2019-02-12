@@ -464,11 +464,17 @@ class HTMLProcessor extends WP2Static {
             $this->settings['rewrite_rules'] = '';
         }
 
+        $placeholder_url = rtrim( $this->placeholder_url, '/' );
+        $destination_url = rtrim(
+            $this->settings['baseUrl'],
+            '/'
+        );
+
         // add base URL to rewrite_rules
         $this->settings['rewrite_rules'] .=
             PHP_EOL .
-                $this->placeholder_url . ',' .
-                $this->settings['baseUrl'];
+                $placeholder_url . ',' .
+                $destination_url;
 
         $rewrite_from = array();
         $rewrite_to = array();
