@@ -65,11 +65,53 @@ final class HTMLProcessorRewriteSiteURLsToPlaceholderTest extends TestCase {
 
     public function rewritePlaceholdersProvider() {
         return [
-           'http site url with trailing slash' =>  [
+           'http site url without trailing slash, https destination' =>  [
                 'http://mywpdevsite.com',
                 'https://',
                 '<a href="http://mywpdevsite.com/banana.jpg">Link to some file</a>',
                 '<a href="https://PLACEHOLDER.wpsho/banana.jpg">Link to some file</a>',
+            ],
+           'http site url with trailing slash, https destination' =>  [
+                'http://mywpdevsite.com/',
+                'https://',
+                '<a href="http://mywpdevsite.com/banana.jpg">Link to some file</a>',
+                '<a href="https://PLACEHOLDER.wpsho/banana.jpg">Link to some file</a>',
+            ],
+           'https site url without trailing slash, https destination' =>  [
+                'https://mywpdevsite.com',
+                'https://',
+                '<a href="https://mywpdevsite.com/banana.jpg">Link to some file</a>',
+                '<a href="https://PLACEHOLDER.wpsho/banana.jpg">Link to some file</a>',
+            ],
+           'https site url with trailing slash, https destination' =>  [
+                'https://mywpdevsite.com/',
+                'https://',
+                '<a href="https://mywpdevsite.com/banana.jpg">Link to some file</a>',
+                '<a href="https://PLACEHOLDER.wpsho/banana.jpg">Link to some file</a>',
+            ],
+           'https site url without trailing slash, http destination' =>  [
+                'https://mywpdevsite.com',
+                'http://',
+                '<a href="https://mywpdevsite.com/banana.jpg">Link to some file</a>',
+                '<a href="http://PLACEHOLDER.wpsho/banana.jpg">Link to some file</a>',
+            ],
+           'https site url with trailing slash, http destination' =>  [
+                'https://mywpdevsite.com/',
+                'http://',
+                '<a href="https://mywpdevsite.com/banana.jpg">Link to some file</a>',
+                '<a href="http://PLACEHOLDER.wpsho/banana.jpg">Link to some file</a>',
+            ],
+           'https site url with trailing slash, http destination, escaped link' =>  [
+                'https://mywpdevsite.com/',
+                'http://',
+                '<a href="https:\/\/mywpdevsite.com\/banana.jpg">Link to some file</a>',
+                '<a href="http:\/\/PLACEHOLDER.wpsho\/banana.jpg">Link to some file</a>',
+            ],
+           'http site url without trailing slash, https destination, escaped link' =>  [
+                'http://mywpdevsite.com',
+                'https://',
+                '<a href="http:\/\/mywpdevsite.com\/banana.jpg">Link to some file</a>',
+                '<a href="https:\/\/PLACEHOLDER.wpsho\/banana.jpg">Link to some file</a>',
             ],
         ];
     }
