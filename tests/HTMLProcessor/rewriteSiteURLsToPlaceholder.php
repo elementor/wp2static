@@ -113,11 +113,11 @@ final class HTMLProcessorRewriteSiteURLsToPlaceholderTest extends TestCase {
                 '<a href="http:\/\/mywpdevsite.com\/banana.jpg">Link to some file</a>',
                 '<a href="https:\/\/PLACEHOLDER.wpsho\/banana.jpg">Link to some file</a>',
             ],
-           'https site url with http leftovers in original source, https destination' =>  [
+           'https site url with http leftovers in original source, https destination DOESNT rewrite leftovers (use companion plugin)' =>  [
                 'https://mywpdevsite.com',
                 'https://',
                 '<a href="http://mywpdevsite.com/banana.jpg">Link to some file</a>',
-                '<a href="https://PLACEHOLDER.wpsho/banana.jpg">Link to some file</a>',
+                '<a href="http://PLACEHOLDER.wpsho/banana.jpg">Link to some file</a>',
             ],
         ];
     }
