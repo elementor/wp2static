@@ -128,7 +128,7 @@ class FtpClient implements Countable
         }
         $flatten = function (array $arr) use (&$flatten) {
 
-            $flat = [];
+            $flat = array();
 
             foreach ($arr as $k => $v) {
                 if (is_array($v)) {

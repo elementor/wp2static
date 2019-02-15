@@ -176,7 +176,7 @@ class WP2Static_S3 extends WP2Static_SitePublisher {
         // Sort it in ascending order
         ksort( $request_headers );
 
-        $canonical_headers = [];
+        $canonical_headers = array();
 
         foreach ( $request_headers as $key => $value ) {
             $canonical_headers[] = strtolower( $key ) . ':' . $value;
@@ -184,7 +184,7 @@ class WP2Static_S3 extends WP2Static_SitePublisher {
 
         $canonical_headers = implode( "\n", $canonical_headers );
 
-        $signed_headers = [];
+        $signed_headers = array();
 
         foreach ( $request_headers as $key => $value ) {
             $signed_headers[] = strtolower( $key );
@@ -192,7 +192,7 @@ class WP2Static_S3 extends WP2Static_SitePublisher {
 
         $signed_headers = implode( ';', $signed_headers );
 
-        $canonical_request = [];
+        $canonical_request = array();
         $canonical_request[] = 'PUT';
         $canonical_request[] = '/' . $content_title;
         $canonical_request[] = '';
@@ -203,13 +203,13 @@ class WP2Static_S3 extends WP2Static_SitePublisher {
         $canonical_request = implode( "\n", $canonical_request );
         $hashed_canonical_request = hash( 'sha256', $canonical_request );
 
-        $scope = [];
+        $scope = array();
         $scope[] = $date;
         $scope[] = $this->settings['s3Region'];
         $scope[] = $aws_service_name;
         $scope[] = 'aws4_request';
 
-        $string_to_sign = [];
+        $string_to_sign = array();
         $string_to_sign[] = 'AWS4-HMAC-SHA256';
         $string_to_sign[] = $timestamp;
         $string_to_sign[] = implode( '/', $scope );

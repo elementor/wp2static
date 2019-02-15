@@ -72,7 +72,7 @@ class CSSProcessor extends WP2Static {
 
         $this->detectIfURLsShouldBeHarvested();
 
-        $this->discovered_urls = [];
+        $this->discovered_urls = array();
 
         foreach ( $this->css_doc->getAllValues() as $node_value ) {
             if ( $node_value instanceof Sabberworm\CSS\Value\URL ) {

@@ -140,7 +140,7 @@ class WP2Static_FilesHelper {
                 WHERE meta_key = '%s'
                 ";
 
-            $custom_permalinks = [];
+            $custom_permalinks = array();
 
             $posts = $wpdb->get_results(
                 sprintf(

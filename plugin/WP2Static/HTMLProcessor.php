@@ -44,7 +44,7 @@ class HTMLProcessor extends WP2Static {
 
         $this->detectIfURLsShouldBeHarvested();
 
-        $this->discovered_urls = [];
+        $this->discovered_urls = array();
 
         // PERF: 70% of function time
         // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
