@@ -75,7 +75,7 @@ class WP2Static_FilesHelper {
         require_once dirname( __FILE__ ) . '/WPSite.php';
         $wp_site = new WPSite();
 
-        $vendor_files = [];
+        $vendor_files = array();
 
         if ( class_exists( '\\Elementor\Api' ) ) {
             $elementor_font_dir = WP_PLUGIN_DIR .
