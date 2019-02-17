@@ -691,26 +691,27 @@ class HTMLProcessor extends WP2Static {
             $current_page_path_to_root .= '../';
         }
 
-        if ( $this->isInternalLink(
-            $url_to_change,
-            $this->settings['baseUrl']
+        if ( ! $this->isInternalLink(
+            $url_to_change
         ) ) {
-            $rewritten_url = str_replace(
-                $this->settings['baseUrl'],
-                '',
-                $url_to_change
-            );
-
-            $offline_url = $current_page_path_to_root . $rewritten_url;
-
-            // add index.html if no extension
-            if ( substr( $offline_url, -1 ) === '/' ) {
-                // TODO: check XML/RSS case
-                $offline_url .= 'index.html';
-            }
-
-            $element->setAttribute( $attribute_to_change, $offline_url );
+            return false;
         }
+
+        $rewritten_url = str_replace(
+            $this->placeholder_url,
+            '',
+            $url_to_change
+        );
+
+        $offline_url = $current_page_path_to_root . $rewritten_url;
+
+        // add index.html if no extension
+        if ( substr( $offline_url, -1 ) === '/' ) {
+            // TODO: check XML/RSS case
+            $offline_url .= 'index.html';
+        }
+
+        $element->setAttribute( $attribute_to_change, $offline_url );
     }
 
     // TODO: move some of these URLs into settings to avoid extra calls
