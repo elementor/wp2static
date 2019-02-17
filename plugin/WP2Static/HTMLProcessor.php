@@ -257,7 +257,7 @@ class HTMLProcessor extends WP2Static {
 
         $src_set_lines = explode( ',', $src_set );
 
-        foreach( $src_set_lines as $src_set_line ) {
+        foreach ( $src_set_lines as $src_set_line ) {
             $all_pieces = explode( ' ', $src_set_line );
 
             // rm empty elements
@@ -622,13 +622,6 @@ class HTMLProcessor extends WP2Static {
             $rewrite_to[] = $to;
         }
 
-        // array of: wp-content/themes/twentyseventeen/,contents/ui/theme/
-        // for each of these, addd the rewrite_from and rewrite_to to their
-        // respective arrays
-
-        // rewrite URLs, starting with longest paths down to shortest
-        // TODO: is the internal link check needed here or these
-        // arr values are already normalized?
         $rewritten_url = str_replace(
             $rewrite_from,
             $rewrite_to,
