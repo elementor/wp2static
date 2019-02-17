@@ -1,7 +1,7 @@
 <?php
 
 function GuessMimeType( $file ) {
-    static $mime_types = array(
+    $mime_types = array(
         '123' => 'application/vnd.lotus-1-2-3',
         '3dml' => 'text/vnd.in3d.3dml',
         '3ds' => 'image/x-3ds',
