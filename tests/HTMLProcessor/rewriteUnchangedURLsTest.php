@@ -51,7 +51,7 @@ final class HTMLProcessorRewriteUnchangedURLsTest extends TestCase {
 
         $this->assertEquals(
             $exp_result,
-            $processor->rewriteUnchangedURLs( $processed_html )
+            $processor->rewriteUnchangedPlaceholderURLs( $processed_html )
         );
     }
 

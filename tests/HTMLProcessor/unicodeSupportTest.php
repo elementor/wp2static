@@ -36,7 +36,11 @@ final class HTMLProcessorUnicodeSupportTest extends TestCase {
         );
 
         $mockProcessor->method( 'loadSettings' )->willReturn( null );
-        $mockProcessor->method( 'rewriteSiteURLsToPlaceholder' )->willReturn( null );
+
+        $mockProcessor->method( 'rewriteSiteURLsToPlaceholder' )->willReturn(
+            $test_HTML_content
+        );
+
         $mockProcessor->method( 'detectIfURLsShouldBeHarvested' )->willReturn( null );
         $mockProcessor->method( 'writeDiscoveredURLs' )->willReturn( null );
 
