@@ -1,5 +1,9 @@
 <?php
 
+function filter_arr_empty_vals( $url ) {
+    return ( strpos( $url, ' ' ) === false );
+}
+
 class WP2Static_FilesHelper {
 
     public static function delete_dir_with_files( $dir ) {
@@ -583,9 +587,7 @@ class WP2Static_FilesHelper {
 
         $url_queue = array_filter(
             $unique_urls,
-            function( $url ) use ( $search_text ) {
-                return ( strpos( $url, $search_text ) === false );
-            }
+            'filter_arr_empty_vals'
         );
 
         $stripped_urls = str_replace(
