@@ -134,6 +134,11 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
 
 == Changelog ==
 
+= 6.6.5 =
+
+ * Bugfix: fix offline ZIP generation (links not being properly rewritten)
+ * Bugfix: fix for srcset URLs not being crawled or rewritten
+
 = 6.6.4 =
 
  * Bugfix: fix cases of WordPress Site URL -> placeholder rewriting
@@ -576,6 +581,11 @@ Altered main codebase to fix recursion bug and endless loop. Essential upgrade.
 Initial release to Wordpress community
 
 == Upgrade Notice ==
+
+= 6.6.5 =
+
+ * Bugfix: fix offline ZIP generation (links not being properly rewritten)
+ * Bugfix: fix for srcset URLs not being crawled or rewritten
 
 = 6.6.4 =
 
