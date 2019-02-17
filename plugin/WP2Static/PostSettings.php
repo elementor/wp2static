@@ -163,7 +163,7 @@ class WPSHO_PostSettings {
         $settings['baseUrl'] =
             isset( $_POST['baseUrl'] ) ?
             rtrim( $_POST['baseUrl'], '/' ) . '/' :
-            'http://example.com/';
+            'http://OFFLINEZIP.wpsho';
         // @codingStandardsIgnoreEnd
 
         return array_filter( $settings );

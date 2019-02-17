@@ -22,7 +22,6 @@ class HTMLProcessor extends WP2Static {
 
         // instantiate the XML body here
         $this->xml_doc = new DOMDocument();
-        $this->raw_html = $html_document;
 
         // NOTE: set placeholder_url to same protocol as target
         // making it easier to rewrite URLs without considering protocol
@@ -33,7 +32,9 @@ class HTMLProcessor extends WP2Static {
             $this->destination_protocol . 'PLACEHOLDER.wpsho/';
 
         // initial rewrite of all site URLs to placeholder URLs
-        $this->rewriteSiteURLsToPlaceholder();
+        $this->raw_html = $this->rewriteSiteURLsToPlaceholder(
+            $html_document
+        );
 
         // detect if a base tag exists while in the loop
         // use in later base href creation to decide: append or create
@@ -67,6 +68,7 @@ class HTMLProcessor extends WP2Static {
                     break;
                 case 'img':
                     $this->processImage( $element );
+                    $this->processImageSrcSet( $element );
                     break;
                 case 'head':
                     $this->processHead( $element );
@@ -242,6 +244,55 @@ class HTMLProcessor extends WP2Static {
                 $this->discovered_urls[] = $discovered_url_without_site_url;
             }
         }
+    }
+
+    public function processImageSrcSet( $element ) {
+        if ( ! $element->hasAttribute( 'srcset' ) ) {
+            return;
+        }
+
+        $new_src_set = array();
+
+        $src_set = $element->getAttribute( 'srcset' );
+
+        $src_set_lines = explode( ',', $src_set );
+
+        foreach( $src_set_lines as $src_set_line ) {
+            $all_pieces = explode( ' ', $src_set_line );
+
+            // rm empty elements
+            $pieces = array_filter( $all_pieces );
+            // reindex array
+            $pieces = array_values( $pieces );
+
+            $url = $pieces[0];
+            $dimension = $pieces[1];
+
+            // normalize urls
+            if ( $this->isInternalLink( $url ) ) {
+                $url = $this->page_url->resolve( $url );
+
+                // rm query string
+                $url = strtok( $url, '?' );
+
+                // add discovered URL
+                $this->addDiscoveredURL( $url );
+
+                // rewrite WP paths
+
+                // rewrite base url
+
+                // convert to relative url
+
+                // convert to offline url
+            }
+
+            $new_src_set[] = "{$url} {$dimension}";
+
+
+        }
+
+        $element->setAttribute( 'srcset', implode( ',', $new_src_set ) );
     }
 
     public function processImage( $element ) {
@@ -449,17 +500,19 @@ class HTMLProcessor extends WP2Static {
         return $processed_html;
     }
 
-    public function detectUnchangedURLs( $processed_html ) {
-        $site_url = $this->placeholder_url;
+    public function detectUnchangedPlaceholderURLs( $processed_html ) {
+        $placeholder_url = $this->placeholder_url;
 
-        if ( strpos( $processed_html, $site_url ) !== false ) {
-            return $this->rewriteUnchangedURLs( $processed_html );
+        if ( strpos( $processed_html, $placeholder_url ) !== false ) {
+            return $this->rewriteUnchangedPlaceholderURLs(
+                $processed_html
+            );
         }
 
         return $processed_html;
     }
 
-    public function rewriteUnchangedURLs( $processed_html ) {
+    public function rewriteUnchangedPlaceholderURLs( $processed_html ) {
         if ( ! isset( $this->settings['rewrite_rules'] ) ) {
             $this->settings['rewrite_rules'] = '';
         }
@@ -614,7 +667,9 @@ class HTMLProcessor extends WP2Static {
 
         // process the resulting HTML as text
         $processed_html = $this->detectEscapedSiteURLs( $processed_html );
-        $processed_html = $this->detectUnchangedURLs( $processed_html );
+        $processed_html = $this->detectUnchangedPlaceholderURLs(
+            $processed_html
+        );
 
         $processed_html = html_entity_decode(
             $processed_html,
@@ -770,7 +825,7 @@ class HTMLProcessor extends WP2Static {
         return $this->destination_protocol;
     }
 
-    public function rewriteSiteURLsToPlaceholder() {
+    public function rewriteSiteURLsToPlaceholder( $raw_html ) {
         $site_url = rtrim( $this->settings['wp_site_url'], '/' );
         $placeholder_url = rtrim( $this->placeholder_url, '/' );
 
@@ -805,10 +860,10 @@ class HTMLProcessor extends WP2Static {
         $rewritten_source = str_replace(
             $patterns,
             $replacements,
-            $this->raw_html
+            $raw_html
         );
 
-        $this->raw_html = $rewritten_source;
+        return $rewritten_source;
     }
 
     public function shouldUseRelativeURLs() {
