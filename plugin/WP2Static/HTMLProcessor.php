@@ -274,22 +274,14 @@ class HTMLProcessor extends WP2Static {
 
                 // rm query string
                 $url = strtok( $url, '?' );
-
-                // add discovered URL
                 $this->addDiscoveredURL( $url );
-
-                // rewrite WP paths
-
-                // rewrite base url
-
-                // convert to relative url
-
-                // convert to offline url
+                $url = $this->rewriteWPPathsSrcSetURL( $url );
+                $url = $this->rewriteBaseURLSrcSetURL( $url );
+                $url = $this->convertToRelativeURLSrcSetURL( $url );
+                $url = $this->convertToOfflineURLSrcSetURL( $url );
             }
 
             $new_src_set[] = "{$url} {$dimension}";
-
-
         }
 
         $element->setAttribute( 'srcset', implode( ',', $new_src_set ) );
@@ -610,6 +602,42 @@ class HTMLProcessor extends WP2Static {
 
     }
 
+    public function rewriteWPPathsSrcSetURL( $url_to_change ) {
+        if ( ! isset( $this->settings['rewrite_rules'] ) ) {
+            return $url_to_change;
+        }
+
+        $rewrite_from = array();
+        $rewrite_to = array();
+
+        $rewrite_rules = explode(
+            "\n",
+            str_replace( "\r", '', $this->settings['rewrite_rules'] )
+        );
+
+        foreach ( $rewrite_rules as $rewrite_rule_line ) {
+            list($from, $to) = explode( ',', $rewrite_rule_line );
+
+            $rewrite_from[] = $from;
+            $rewrite_to[] = $to;
+        }
+
+        // array of: wp-content/themes/twentyseventeen/,contents/ui/theme/
+        // for each of these, addd the rewrite_from and rewrite_to to their
+        // respective arrays
+
+        // rewrite URLs, starting with longest paths down to shortest
+        // TODO: is the internal link check needed here or these
+        // arr values are already normalized?
+        $rewritten_url = str_replace(
+            $rewrite_from,
+            $rewrite_to,
+            $url_to_change
+        );
+
+        return $rewritten_url;
+    }
+
     public function rewriteWPPaths( $element ) {
         if ( ! isset( $this->settings['rewrite_rules'] ) ) {
             return;
@@ -687,6 +715,22 @@ class HTMLProcessor extends WP2Static {
         return $processed_html;
     }
 
+    public function convertToRelativeURLSrcSetURL( $url_to_change ) {
+        if ( ! $this->shouldUseRelativeURLs() ) {
+            return $url_to_change;
+        }
+
+        $site_root = '';
+
+        $relative_url = str_replace(
+            $this->settings['baseUrl'],
+            $site_root,
+            $url_to_change
+        );
+
+        return $relative_url;
+    }
+
     public function convertToRelativeURL( $element ) {
         if ( ! $this->shouldUseRelativeURLs() ) {
             return;
@@ -719,6 +763,43 @@ class HTMLProcessor extends WP2Static {
 
             $element->setAttribute( $attribute_to_change, $rewritten_url );
         }
+    }
+
+    public function convertToOfflineURLSrcSetURL( $url_to_change ) {
+        if ( ! $this->shouldCreateOfflineURLs() ) {
+            return $url_to_change;
+        }
+
+        $current_page_path_to_root = '';
+        $current_page_path = parse_url( $this->page_url, PHP_URL_PATH );
+        $number_of_segments_in_path = explode( '/', $current_page_path );
+        $num_dots_to_root = count( $number_of_segments_in_path ) - 2;
+
+        for ( $i = 0; $i < $num_dots_to_root; $i++ ) {
+            $current_page_path_to_root .= '../';
+        }
+
+        if ( ! $this->isInternalLink(
+            $url_to_change
+        ) ) {
+            return false;
+        }
+
+        $rewritten_url = str_replace(
+            $this->placeholder_url,
+            '',
+            $url_to_change
+        );
+
+        $offline_url = $current_page_path_to_root . $rewritten_url;
+
+        // add index.html if no extension
+        if ( substr( $offline_url, -1 ) === '/' ) {
+            // TODO: check XML/RSS case
+            $offline_url .= 'index.html';
+        }
+
+        return $offline_url;
     }
 
     public function convertToOfflineURL( $element ) {
@@ -784,6 +865,16 @@ class HTMLProcessor extends WP2Static {
         );
 
         return $this->destination_protocol_relative_url;
+    }
+
+    public function rewriteBaseURLSrcSetURL( $url_to_change ) {
+        $rewritten_url = str_replace(
+            $this->getBaseURLRewritePatterns(),
+            $this->getBaseURLRewritePatterns(),
+            $url_to_change
+        );
+
+        return $rewritten_url;
     }
 
     public function rewriteBaseURL( $element ) {
