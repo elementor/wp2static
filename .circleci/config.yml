@@ -10,7 +10,8 @@ jobs:
             git clone --depth 1 -b master https://github.com/squizlabs/PHP_CodeSniffer.git /tmp/phpcs
 
             git clone --depth 1 -b master https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards.git /tmp/wpcs
-            /tmp/phpcs/bin/phpcs --config-set installed_paths /tmp/wpcs
+            git clone --depth 1 -b master https://github.com/PHPCompatibility/PHPCompatibility.git /tmp/phpcompat
+            /tmp/phpcs/bin/phpcs --config-set installed_paths /tmp/wpcs,/tmp/phpcompat
       - checkout
       - run:
           name: Run Code Sniffs

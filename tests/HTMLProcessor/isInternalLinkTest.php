@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 chdir( dirname(__FILE__) . '/../../plugin' );
 
 $plugin_dir = getcwd();
@@ -17,7 +15,7 @@ final class HTMLProcessorIsInternalLinkTest extends TestCase {
     /**
      * @dataProvider internalLinkProvider
      */
-    public function testDetectsInternalLink( $link, $domain, $expectation ): void {
+    public function testDetectsInternalLink( $link, $domain, $expectation ) {
         /*
             $link should match $domain
 

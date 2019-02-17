@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 chdir( dirname(__FILE__) . '/../../plugin' );
 
 $plugin_dir = getcwd();
