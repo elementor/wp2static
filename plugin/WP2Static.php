@@ -1,7 +1,7 @@
 <?php
 
 class WP2Static_Controller {
-    const VERSION = '6.6.4';
+    const VERSION = '6.6.5';
     const OPTIONS_KEY = 'wp2static-options';
     const HOOK = 'wp2static';
 
