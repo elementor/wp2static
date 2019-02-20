@@ -451,8 +451,22 @@ class SiteCrawler extends WP2Static {
         // execute all queries simultaneously, and
         // continue when all are complete
         do {
-            curl_multi_exec( $this->curl_multi_handle, $running );
-        } while ( $running );
+            $ret = curl_multi_exec(
+                $this->curl_multi_handle,
+                $running
+            );
+        } while ( $ret == CURLM_CALL_MULTI_PERFORM );
+
+        while ( $running && $ret == CURLM_OK ) {
+            if ( curl_multi_select( $this->curl_multi_handle ) != -1 ) {
+                do {
+                    $mrc = curl_multi_exec(
+                        $this->curl_multi_handle,
+                        $running
+                    );
+                } while ( $mrc == CURLM_CALL_MULTI_PERFORM );
+            }
+        }
 
         // remove all the individual curl handles
         foreach ( $crawl_queue as $curl_handle ) {
