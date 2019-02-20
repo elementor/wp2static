@@ -272,8 +272,6 @@ class SiteCrawler extends WP2Static {
             'Exclusion rules ' . implode( PHP_EOL, $exclusions )
         );
 
-        // create curl_multi_here
-        $this->curl_multi_handle = curl_multi_init();
         $crawl_queue = array();
 
         foreach ( $batch_of_links_to_crawl as $link_to_crawl ) {
@@ -298,7 +296,7 @@ class SiteCrawler extends WP2Static {
             }
 
             // add url to list to crawl
-            $crawl_queue[] = $this->addURLToCrawlQueue( $this->full_url );
+            $crawl_queue[] = $this->full_url;
             // this progress now not as relevant
             $batch_index++;
 
@@ -445,173 +443,207 @@ class SiteCrawler extends WP2Static {
         }
     }
 
-    public function crawlMultipleURLs( $crawl_queue ) {
+    public function crawlMultipleURLs( $urls ) {
         $running = null;
 
-        // execute all queries simultaneously, and
-        // continue when all are complete
+        $rolling_window = 5;
+        $rolling_window = (sizeof($urls) < $rolling_window) ? sizeof($urls) : $rolling_window;
+        $master = curl_multi_init();
+        // $curl_arr = array();
+        // add additional curl options here
+        $options = array(
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_SSL_VERIFYPEER => 0,
+            CURLOPT_USERAGENT => 'WP2Static.com',
+            CURLOPT_CONNECTTIMEOUT => 0,
+            CURLOPT_TIMEOUT => 600,
+            CURLOPT_HEADER => 0,
+            CURLOPT_FOLLOWLOCATION => 1,
+        );
+
+        if ( isset( $this->settings['crawlPort'] ) ) {
+            $options[CURLOPT_PORT] = $this->settings['crawlPort'];
+        }
+
+        if ( isset( $this->settings['useBasicAuth'] ) ) {
+            $options[CURLOPT_USERPWD] =
+                $this->settings['basicAuthUser'] . ':' .
+                $this->settings['basicAuthPassword'];
+        }
+
+        // start the first batch of requests
+        for ($i = 0; $i < $rolling_window; $i++) {
+            $ch = curl_init();
+            $options[CURLOPT_URL] = array_pop($urls);
+            curl_setopt_array($ch, $options);
+            curl_multi_add_handle($master, $ch);
+        }
         do {
-            $ret = curl_multi_exec(
-                $this->curl_multi_handle,
-                $running
-            );
-        } while ( $ret == CURLM_CALL_MULTI_PERFORM );
-
-        while ( $running && $ret == CURLM_OK ) {
-            if ( curl_multi_select( $this->curl_multi_handle ) != -1 ) {
-                do {
-                    $mrc = curl_multi_exec(
-                        $this->curl_multi_handle,
-                        $running
-                    );
-                } while ( $mrc == CURLM_CALL_MULTI_PERFORM );
+            while (($execrun = curl_multi_exec($master, $running)) == CURLM_CALL_MULTI_PERFORM) {
+                ;
             }
-        }
+            if ($execrun != CURLM_OK) {
+                break;
+            }
+            // a request was just completed -- find out which one
+            while ($done = curl_multi_info_read($master)) {
+                $info = curl_getinfo($done['handle']);
 
-        // remove all the individual curl handles
-        foreach ( $crawl_queue as $curl_handle ) {
-            curl_multi_remove_handle( $this->curl_multi_handle, $curl_handle );
-        }
+                // error_log($info['url']);
+                // error_log(microtime(true));
 
-        // close the curl multi handle
-        curl_multi_close( $this->curl_multi_handle );
+                $this->processCrawledURL( $done['handle'] );
 
-        $this->processCrawledURLs( $crawl_queue );
+                $results[$info['url']] = $info;
+                $new_url = array_pop($urls);
+                if(isset($new_url)){
+                    $ch = curl_init();
+                    $options[CURLOPT_URL] = $new_url;
+                    curl_setopt_array($ch, $options);
+                    curl_multi_add_handle($master, $ch);
+                }
+                // remove the curl handle that just completed
+                curl_multi_remove_handle($master, $done['handle']);
+            }
+        } while ($running);
+        curl_multi_close($master);
+
     }
 
 
-    public function processCrawledURLs( $crawl_queue ) {
-        foreach ( $crawl_queue as $curl_handle ) {
-            $output = curl_multi_getcontent( $curl_handle );
+    public function processCrawledURL( $curl_handle ) {
+        // $info = curl_getinfo($curl_handle);
+        // error_log('processing: ' . $info['url']);
+        $output = curl_multi_getcontent( $curl_handle );
 
-            $this->checkForCurlErrors( $output, $curl_handle );
+        $this->checkForCurlErrors( $output, $curl_handle );
 
-            $curl_info = curl_getinfo( $curl_handle );
+        $curl_info = curl_getinfo( $curl_handle );
 
-            $status_code = $curl_info['http_code'];
+        $status_code = $curl_info['http_code'];
 
-            $curl_content_type = isset( $curl_info['content_type'] ) ?
-                $curl_info['content_type'] : '';
+        $curl_content_type = isset( $curl_info['content_type'] ) ?
+            $curl_info['content_type'] : '';
 
-            $full_url = $curl_info['url'];
+        $full_url = $curl_info['url'];
 
-            $url = $this->getRelativeURLFromFullURL( $full_url );
+        $url = $this->getRelativeURLFromFullURL( $full_url );
 
-            $this->crawled_links_file =
+        $this->crawled_links_file =
+            $this->settings['wp_uploads_path'] .
+                '/WP-STATIC-CRAWLED-LINKS.txt';
+
+        $good_response_codes = array( '200', '201', '301', '302', '304' );
+
+        if ( ! in_array( $status_code, $good_response_codes ) ) {
+            $this->logAction(
+                'BAD RESPONSE STATUS (' . $status_code . '): ' . $this->url
+            );
+
+            file_put_contents(
                 $this->settings['wp_uploads_path'] .
-                    '/WP-STATIC-CRAWLED-LINKS.txt';
-
-            $good_response_codes = array( '200', '201', '301', '302', '304' );
-
-            if ( ! in_array( $status_code, $good_response_codes ) ) {
-                $this->logAction(
-                    'BAD RESPONSE STATUS (' . $status_code . '): ' . $this->url
-                );
-
-                file_put_contents(
-                    $this->settings['wp_uploads_path'] .
-                        '/WP-STATIC-404-LOG.txt',
-                    $status_code . ':' . $url . PHP_EOL,
-                    FILE_APPEND | LOCK_EX
-                );
-
-                chmod(
-                    $this->settings['wp_uploads_path'] .
-                        '/WP-STATIC-404-LOG.txt',
-                    0664
-                );
-            } else {
-                file_put_contents(
-                    $this->crawled_links_file,
-                    $url . PHP_EOL,
-                    FILE_APPEND | LOCK_EX
-                );
-
-                chmod( $this->crawled_links_file, 0664 );
-            }
-
-            $base_url = $this->settings['baseUrl'];
-
-            $file_type = $this->detectFileType(
-                $full_url,
-                $curl_content_type
+                    '/WP-STATIC-404-LOG.txt',
+                $status_code . ':' . $url . PHP_EOL,
+                FILE_APPEND | LOCK_EX
             );
 
-            switch ( $file_type ) {
-                case 'html':
-                    require_once dirname( __FILE__ ) .
-                        '/../WP2Static/WP2Static.php';
-                    require_once dirname( __FILE__ ) .
-                        '/../WP2Static/HTMLProcessor.php';
-
-                    $processor = new HTMLProcessor();
-
-                    $this->processed_file = $processor->processHTML(
-                        $output,
-                        $full_url
-                    );
-
-                    if ( $this->processed_file ) {
-                        $this->processed_file = $processor->getHTML();
-                    }
-
-                    break;
-
-                case 'css':
-                    require_once dirname( __FILE__ ) .
-                        '/../WP2Static/WP2Static.php';
-                    require_once dirname( __FILE__ ) .
-                        '/../WP2Static/CSSProcessor.php';
-
-                    $processor = new CSSProcessor();
-
-                    $this->processed_file = $processor->processCSS(
-                        $output,
-                        $full_url
-                    );
-
-                    if ( $this->processed_file ) {
-                        $this->processed_file = $processor->getCSS();
-                    }
-
-                    break;
-
-                case 'txt':
-                case 'js':
-                case 'json':
-                case 'xml':
-                    require_once dirname( __FILE__ ) .
-                        '/../WP2Static/WP2Static.php';
-                    require_once dirname( __FILE__ ) .
-                        '/../WP2Static/TXTProcessor.php';
-
-                    $processor = new TXTProcessor();
-
-                    $this->processed_file = $processor->processTXT(
-                        $output,
-                        $full_url
-                    );
-
-                    if ( $this->processed_file ) {
-                        $this->processed_file = $processor->getTXT();
-                    }
-
-                    break;
-
-                default:
-                    $this->processed_file = $output;
-
-                    break;
-            }
-
-            // need to make sure we've aborted before here if we shouldn't save
-            $this->saveCrawledURL(
-                $url,
-                $this->processed_file,
-                $file_type,
-                $curl_content_type
+            chmod(
+                $this->settings['wp_uploads_path'] .
+                    '/WP-STATIC-404-LOG.txt',
+                0664
             );
+        } else {
+            file_put_contents(
+                $this->crawled_links_file,
+                $url . PHP_EOL,
+                FILE_APPEND | LOCK_EX
+            );
+
+            chmod( $this->crawled_links_file, 0664 );
         }
+
+        $base_url = $this->settings['baseUrl'];
+
+        $file_type = $this->detectFileType(
+            $full_url,
+            $curl_content_type
+        );
+
+        switch ( $file_type ) {
+            case 'html':
+                require_once dirname( __FILE__ ) .
+                    '/../WP2Static/WP2Static.php';
+                require_once dirname( __FILE__ ) .
+                    '/../WP2Static/HTMLProcessor.php';
+
+                $processor = new HTMLProcessor();
+
+                $this->processed_file = $processor->processHTML(
+                    $output,
+                    $full_url
+                );
+
+                if ( $this->processed_file ) {
+                    $this->processed_file = $processor->getHTML();
+                }
+
+                break;
+
+            case 'css':
+                require_once dirname( __FILE__ ) .
+                    '/../WP2Static/WP2Static.php';
+                require_once dirname( __FILE__ ) .
+                    '/../WP2Static/CSSProcessor.php';
+
+                $processor = new CSSProcessor();
+
+                $this->processed_file = $processor->processCSS(
+                    $output,
+                    $full_url
+                );
+
+                if ( $this->processed_file ) {
+                    $this->processed_file = $processor->getCSS();
+                }
+
+                break;
+
+            case 'txt':
+            case 'js':
+            case 'json':
+            case 'xml':
+                require_once dirname( __FILE__ ) .
+                    '/../WP2Static/WP2Static.php';
+                require_once dirname( __FILE__ ) .
+                    '/../WP2Static/TXTProcessor.php';
+
+                $processor = new TXTProcessor();
+
+                $this->processed_file = $processor->processTXT(
+                    $output,
+                    $full_url
+                );
+
+                if ( $this->processed_file ) {
+                    $this->processed_file = $processor->getTXT();
+                }
+
+                break;
+
+            default:
+                $this->processed_file = $output;
+
+                break;
+        }
+
+        // need to make sure we've aborted before here if we shouldn't save
+        $this->saveCrawledURL(
+            $url,
+            $this->processed_file,
+            $file_type,
+            $curl_content_type
+        );
     }
 
     public function saveCrawledURL( $url, $body, $file_type, $content_type ) {
