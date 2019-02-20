@@ -299,7 +299,7 @@ class SiteCrawler extends WP2Static {
             }
 
             // add url to list to crawl
-            $crawl_queue[] = $this->addURLToCrawlQueue( $this->url );
+            $crawl_queue[] = $this->addURLToCrawlQueue( $this->full_url );
             // this progress now not as relevant
             $batch_index++;
 
@@ -329,7 +329,7 @@ class SiteCrawler extends WP2Static {
     }
 
     public function addURLToCrawlQueue( $url ) {
-        $this->logAction( "adding to crawl queue: {$this->url}" );
+        $this->logAction( "adding to crawl queue: {$url}" );
 
         $ch = curl_init();
 
@@ -341,7 +341,7 @@ class SiteCrawler extends WP2Static {
             );
         }
 
-        curl_setopt( $ch, CURLOPT_URL, $this->full_url );
+        curl_setopt( $ch, CURLOPT_URL, $url );
         curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
         curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
         curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
@@ -388,33 +388,40 @@ class SiteCrawler extends WP2Static {
         return $extension;
     }
 
-    public function detectFileType() {
-        if ( $this->file_extension ) {
-            $this->file_type = $this->file_extension;
+    public function detectFileType( $url, $content_type ) {
+        // TODO: this needs to go after the crawling...
+        $file_extension = $this->getExtensionFromURL( $url );
+
+        $file_type = '';
+
+        if ( $file_extension ) {
+            $file_type = $file_extension;
         } else {
             $type = $this->content_type =
-                $this->curl_content_type;
+                $content_type;
 
             if ( stripos( $type, 'text/html' ) !== false ) {
-                $this->file_type = 'html';
+                $file_type = 'html';
             } elseif ( stripos( $type, 'rss+xml' ) !== false ) {
-                $this->file_type = 'xml';
+                $file_type = 'xml';
             } elseif ( stripos( $type, 'text/xml' ) !== false ) {
-                $this->file_type = 'xml';
+                $file_type = 'xml';
             } elseif ( stripos( $type, 'application/xml' ) !== false ) {
-                $this->file_type = 'xml';
+                $file_type = 'xml';
             } elseif ( stripos( $type, 'application/json' ) !== false ) {
-                $this->file_type = 'json';
+                $file_type = 'json';
             } else {
                 require_once dirname( __FILE__ ) .
                     '/../WP2Static/WsLog.php';
                 WsLog::l(
                     'no filetype inferred from content-type: ' .
-                    $this->curl_content_type .
-                    ' url: ' . $this->url
+                    $content_type .
+                    ' url: ' . $url
                 );
             }
         }
+
+        return $file_type;
     }
 
     public function logAction( $action ) {
@@ -470,16 +477,17 @@ class SiteCrawler extends WP2Static {
             $curl_info = curl_getinfo( $curl_handle );
 
             $status_code = $curl_info['http_code'];
-            $this->curl_content_type = $curl_info['content_type'];
-            $this->full_url = $curl_info['url'];
+            $curl_content_type = $curl_info['content_type'];
+            $full_url = $curl_info['url'];
 
             error_log(print_r($curl_info, true));
 
-            $this->url = $this->getRelativeURLFromFullURL( $this->full_url );
+            $url = $this->getRelativeURLFromFullURL( $full_url );
 
             error_log($status_code .
-                ' ' . $this->curl_content_type . 
-                ' ' . $this->full_url
+                ' ' . $curl_content_type . 
+                ' ' . $full_url .
+                ' ' . $url
             ); 
 
             // Replace this:
@@ -502,7 +510,7 @@ class SiteCrawler extends WP2Static {
                 file_put_contents(
                     $this->settings['wp_uploads_path'] .
                         '/WP-STATIC-404-LOG.txt',
-                    $status_code . ':' . $this->url . PHP_EOL,
+                    $status_code . ':' . $url . PHP_EOL,
                     FILE_APPEND | LOCK_EX
                 );
 
@@ -514,7 +522,7 @@ class SiteCrawler extends WP2Static {
             } else {
                 file_put_contents(
                     $this->crawled_links_file,
-                    $this->url . PHP_EOL,
+                    $url . PHP_EOL,
                     FILE_APPEND | LOCK_EX
                 );
 
@@ -523,9 +531,12 @@ class SiteCrawler extends WP2Static {
 
             $base_url = $this->settings['baseUrl'];
 
-            $this->detectFileType( $this->full_url );
+            $file_type = $this->detectFileType(
+                $full_url,
+                $curl_content_type
+            );
 
-            switch ( $this->file_type ) {
+            switch ( $file_type ) {
                 case 'html':
                     require_once dirname( __FILE__ ) .
                         '/../WP2Static/WP2Static.php';
@@ -535,8 +546,8 @@ class SiteCrawler extends WP2Static {
                     $processor = new HTMLProcessor();
 
                     $this->processed_file = $processor->processHTML(
-                        $this->response,
-                        $this->full_url
+                        $output,
+                        $full_url
                     );
 
                     if ( $this->processed_file ) {
@@ -554,8 +565,8 @@ class SiteCrawler extends WP2Static {
                     $processor = new CSSProcessor();
 
                     $this->processed_file = $processor->processCSS(
-                        $this->response,
-                        $this->full_url
+                        $output,
+                        $full_url
                     );
 
                     if ( $this->processed_file ) {
@@ -576,8 +587,8 @@ class SiteCrawler extends WP2Static {
                     $processor = new TXTProcessor();
 
                     $this->processed_file = $processor->processTXT(
-                        $this->response,
-                        $this->full_url
+                        $output,
+                        $full_url
                     );
 
                     if ( $this->processed_file ) {
@@ -593,14 +604,11 @@ class SiteCrawler extends WP2Static {
             }
 
             // need to make sure we've aborted before here if we shouldn't save
-            $this->saveCrawledURL( $url, $body );
+            $this->saveCrawledURL( $this->url, $this->processed_file );
         }
     }
 
     public function saveCrawledURL( $url, $body ) {
-        // TODO: this needs to go after the crawling...
-        $this->file_extension = $this->getExtensionFromURL( $this->url );
-
         require_once dirname( __FILE__ ) .
             '/../WP2Static/FileWriter.php';
 
