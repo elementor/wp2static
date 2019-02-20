@@ -18,7 +18,6 @@ class SiteCrawler extends WP2Static {
 
         $this->processed_file = '';
         $this->file_type = '';
-        $this->response = '';
         $this->content_type = '';
         $this->url = '';
         $this->full_url = '';
@@ -360,6 +359,8 @@ class SiteCrawler extends WP2Static {
             );
         }
 
+        curl_multi_add_handle( $this->curl_multi_handle, $ch );
+
         return $ch;
     }
 
@@ -445,31 +446,28 @@ class SiteCrawler extends WP2Static {
     }
 
     public function crawlMultipleURLs( $crawl_queue ) {
-        error_log('crawlMultipleURLs');
         $running = null;
 
         // execute all queries simultaneously, and
         // continue when all are complete
         do {
-          curl_multi_exec($this->curl_multi_handle, $running);
-        } while ($running);
+            curl_multi_exec( $this->curl_multi_handle, $running );
+        } while ( $running );
 
         // remove all the individual curl handles
-        foreach( $crawl_queue as $curl_handle) {
-            curl_multi_remove_handle($this->curl_multi_handle, $curl_handle);
+        foreach ( $crawl_queue as $curl_handle ) {
+            curl_multi_remove_handle( $this->curl_multi_handle, $curl_handle );
         }
 
         // close the curl multi handle
-        curl_multi_close($this->curl_multi_handle);
+        curl_multi_close( $this->curl_multi_handle );
 
         $this->processCrawledURLs( $crawl_queue );
     }
 
 
     public function processCrawledURLs( $crawl_queue ) {
-        error_log('processCrawledURLs');
-        // iterate through all curl results, checking and saving 
-        foreach( $crawl_queue as $curl_handle) {
+        foreach ( $crawl_queue as $curl_handle ) {
             $output = curl_multi_getcontent( $curl_handle );
 
             $this->checkForCurlErrors( $output, $curl_handle );
@@ -477,21 +475,13 @@ class SiteCrawler extends WP2Static {
             $curl_info = curl_getinfo( $curl_handle );
 
             $status_code = $curl_info['http_code'];
-            $curl_content_type = $curl_info['content_type'];
+
+            $curl_content_type = isset( $curl_info['content_type'] ) ?
+                $curl_info['content_type'] : '';
+
             $full_url = $curl_info['url'];
 
-            error_log(print_r($curl_info, true));
-
             $url = $this->getRelativeURLFromFullURL( $full_url );
-
-            error_log($status_code .
-                ' ' . $curl_content_type . 
-                ' ' . $full_url .
-                ' ' . $url
-            ); 
-
-            // Replace this:
-            $this->response = $output;
 
             $this->crawled_links_file =
                 $this->settings['wp_uploads_path'] .
@@ -503,9 +493,6 @@ class SiteCrawler extends WP2Static {
                 $this->logAction(
                     'BAD RESPONSE STATUS (' . $status_code . '): ' . $this->url
                 );
-
-                // TODO: make sure we don't process this one...
-                // return false;
 
                 file_put_contents(
                     $this->settings['wp_uploads_path'] .
@@ -598,25 +585,30 @@ class SiteCrawler extends WP2Static {
                     break;
 
                 default:
-                    $this->processed_file = $this->response;
+                    $this->processed_file = $output;
 
                     break;
             }
 
             // need to make sure we've aborted before here if we shouldn't save
-            $this->saveCrawledURL( $this->url, $this->processed_file );
+            $this->saveCrawledURL(
+                $url,
+                $this->processed_file,
+                $file_type,
+                $curl_content_type
+            );
         }
     }
 
-    public function saveCrawledURL( $url, $body ) {
+    public function saveCrawledURL( $url, $body, $file_type, $content_type ) {
         require_once dirname( __FILE__ ) .
             '/../WP2Static/FileWriter.php';
 
         $file_writer = new FileWriter(
-            $this->url,
-            $this->processed_file,
-            $this->file_type,
-            $this->content_type
+            $url,
+            $body,
+            $file_type,
+            $content_type
         );
 
         $file_writer->saveFile( $this->archive_dir );
