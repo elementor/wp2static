@@ -493,7 +493,7 @@ class SiteCrawler extends WP2Static {
                 // error_log($info['url']);
                 // error_log(microtime(true));
 
-                $this->processCrawledURL( $done['handle'] );
+                $this->processCrawledURL( $done['handle'], $info );
 
                 $results[$info['url']] = $info;
                 $new_url = array_pop($urls);
@@ -512,14 +512,12 @@ class SiteCrawler extends WP2Static {
     }
 
 
-    public function processCrawledURL( $curl_handle ) {
+    public function processCrawledURL( $curl_handle, $curl_info ) {
         // $info = curl_getinfo($curl_handle);
         // error_log('processing: ' . $info['url']);
         $output = curl_multi_getcontent( $curl_handle );
 
         $this->checkForCurlErrors( $output, $curl_handle );
-
-        $curl_info = curl_getinfo( $curl_handle );
 
         $status_code = $curl_info['http_code'];
 
