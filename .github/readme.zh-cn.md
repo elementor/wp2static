@@ -16,18 +16,18 @@ WP2Static是一个用来将您的网站静态化，并存储到Github Pages、 �
 
 ## 目录
 
-* [外部资源](#external-resources)
-* [软件态度](#opinionated-software)
-* [安装指南](#installation)
-* [WP-CLI 命令](#wp-cli-commands)
+* [扩展资源](#扩展资源)
+* [软件态度](#软件态度)
+* [安装指南](#安装指南)
+* [WP-CLI 命令](#WP-CLI命令行)
 * [钩子](#hooks)
-  * [修改需要抓取的初始化URL列表](#modify-the-initial-list-of-urls-to-crawl)
+  * [修改需要抓取的初始化URL列表](#修改需要抓取的初始化URL列表)
   * [部署后钩子](#post-deployment-hook)
 * [开发](#development)
-* [本地化 / 翻译](#localisation--translations)
-* [支持](#support)
-* [说明](#notes)
-* [赞助 / 支持开源](#sponsorship--supporting-open-source)
+* [本地化/翻译](#本地化--翻译)
+* [支持](#支持)
+* [说明](#说明)
+* [赞助/支持开源软件](#赞助--支持开源软件)
 
 ## 扩展资源
 
@@ -49,7 +49,7 @@ WP2Static是一个用来将您的网站静态化，并存储到Github Pages、 �
  - 用户可设置 vs 开发者观点
 
 
-## WP-CLI 命令行
+## WP-CLI命令行
 
  - `wp wp2static options --help`
 ```
@@ -233,7 +233,7 @@ Archive Object
 
 当从仓库直接克隆下来作为使用用途时，将该文件夹命名为WordPress插件的官方slug:`static-html-output-plugin`，这样后续会更简单简单一些。
 
-## 赞助 / 支持开源软件
+## 赞助/支持开源软件
 
 I'm committed (git-pun) to keeping this software open-source and free from selling out user data to a 3rd party. As of version 6, we'll no longer be using Freemius for this reason. We'll accept payments with Snipcart + Stripe, but they will have no knowledge of your WordPress website or any info not required for a payment. The only thing that tracks you on our marketing website is a YouTube embed, which I'll soon switch to an image to avoid that. I rock OpenBSD on my workstation and increasingly on servers because they are an open source project done very well.
 
