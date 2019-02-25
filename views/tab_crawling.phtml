@@ -36,6 +36,34 @@
       </tr>
       <tr>
         <th scope="row">
+          <label for="simultaneousCurlRequests"><?php echo __('Simultaneous cURL requests', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+            <select name="simultaneousCurlRequests" id="simultaneousCurlRequests">
+    <?php 
+      // TODO: shift this into helper function for select
+      $simultaneous_curl_requests = array(
+            '1' => '1',
+            '2' => '2',
+            '3' => '3',
+            '4' => '4',
+            '5' => '5',
+            '6' => '6',
+            '7' => '7',
+            '8' => '8',
+            '9' => '9',
+            '10' => '10',
+      );
+
+      foreach($simultaneous_curl_requests as $key => $number) : ?>
+              <option value="<?php echo $key; ?>"<?php echo $this->options->simultaneousCurlRequests == $key ? ' selected' : ''; ?>><?php echo $number; ?></option>
+
+           <?php endforeach; ?>
+            </select>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
           <label><?php echo __('Initial crawl list', 'static-html-output-plugin');?></label>
         </th>
         <td>

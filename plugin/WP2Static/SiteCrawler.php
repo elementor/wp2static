@@ -447,7 +447,14 @@ class SiteCrawler extends WP2Static {
         $running = null;
 
         $rolling_window = 5;
+
+        if ( isset( $this->settings['simultaneousCurlRequests'] ) ) {
+            $rolling_window = (int)$this->settings['simultaneousCurlRequests'];
+        }
+
+        error_log($rolling_window);
         $rolling_window = (sizeof($urls) < $rolling_window) ? sizeof($urls) : $rolling_window;
+
         $master = curl_multi_init();
         // $curl_arr = array();
         // add additional curl options here
