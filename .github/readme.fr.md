@@ -5,6 +5,7 @@ Plugin WordPress pour générer une copie statique de votre site et la déployer
 [English ![English](docs/images/flags/greatbritain.png)](readme.md) |
 [日本語 ![日本語](docs/images/flags/japan.png)](readme.jp.md) |
 [Français ![Français](docs/images/flags/france.png)](readme.fr.md)
+[简体中文 ![Simplified Chinese](docs/images/flags/prchina.png)](readme.zh-cn.md)
 
 ## WordPress comme générateur de site statique
 
