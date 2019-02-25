@@ -5,7 +5,7 @@ WP2Static是一个用来将您的网站静态化，并存储到Github Pages、 �
 [English ![English](docs/images/flags/greatbritain.png)](readme.md) |
 [日本語 ![日本語](docs/images/flags/japan.png)](readme.jp.md) |
 [Français ![Français](docs/images/flags/france.png)](readme.fr.md)
-[简体中文] ![Simplified Chinese](docs/images/flags/prchina.png)](readme.zh-cn.md) |
+[简体中文 ![Simplified Chinese](docs/images/flags/prchina.png)](readme.zh-cn.md)
 
 # 使用WordPress作为静态网站生成器(Static Site Generator)
 
