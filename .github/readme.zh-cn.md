@@ -15,56 +15,56 @@ WP2Static是一个用来将您的网站静态化，并存储到Github Pages、 �
 
 ## 目录
 
-* [External resources](#external-resources)
+* [外部资源](#external-resources)
 * [Opinionated software](#opinionated-software)
-* [Installation](#installation)
-* [WP-CLI commands](#wp-cli-commands)
-* [Hooks](#hooks)
+* [安装指南](#installation)
+* [WP-CLI 命令](#wp-cli-commands)
+* [钩子](#hooks)
   * [Modify the initial list of URLs to crawl](#modify-the-initial-list-of-urls-to-crawl)
   * [Post-deployment hook](#post-deployment-hook)
 * [Development](#development)
-* [Localisation / translations](#localisation--translations)
-* [Support](#support)
-* [Notes](#notes)
-* [Sponsorship / supporting open-source](#sponsorship--supporting-open-source)
+* [本地化 / 翻译](#localisation--translations)
+* [支持](#support)
+* [说明](#notes)
+* [赞助 / 支持开源](#sponsorship--supporting-open-source)
 
-## External resources
+## 扩展资源
 
- - [WordPress.org plugin page](https://wordpress.org/plugins/static-html-output-plugin)
- - [Marketing site](https://wp2static.com)
- - [Documentation](https://docs.wp2static.com)
- - [Forum](https://forum.wp2static.com)
+ - [WordPress.org插件主页](https://wordpress.org/plugins/static-html-output-plugin)
+ - [推广网站](https://wp2static.com)
+ - [在线文档](https://docs.wp2static.com)
+ - [论坛](https://forum.wp2static.com)
  - [Slack](https://join.slack.com/t/wp2static/shared_invite/enQtNDQ4MDM4MjkwNjEwLTVmN2I2MmU4ODI2MWRkNzM4ZGU3YWU4ZGVhMzgwZTc1MDE2OGNmYTFhOGMwM2U0ZTVlYTljYmM2Yjk2ODJlOTk)  
  - [Twitter](https://twitter.com/wp2static)  
  - [CircleCI](https://circleci.com/gh/leonstafford/wp2static) *master* [![CircleCI](https://circleci.com/gh/leonstafford/wp2static/tree/master.svg?style=svg)](https://circleci.com/gh/leonstafford/wp2static/tree/master) *develop* [![CircleCI](https://circleci.com/gh/leonstafford/wp2static/tree/develop.svg?style=svg)](https://circleci.com/gh/leonstafford/wp2static/tree/develop)
 
-## Opinionated software
+## 软件态度
 
- - speed over beautiful code
- - human readable code over short variable names
- - own-code vs adding libraries
- - benchmarking over opinions (performance)
- - less clicks == better UX
- - user configurable options vs developer opinions
+ - 在美观的基础上提升速度
+ - 在简短变量名的基础上提供代码可读性
+ - 自有代码 vs 外部类库
+ - 为软件态度建立性能衡量标准
+ - 更少的点击 == 更好的用户体验
+ - 用户可设置 vs 开发者观点
 
 
-## WP-CLI commands
+## WP-CLI 命令行
 
  - `wp wp2static options --help`
 ```
-NAME
+名称
 
   wp wp2static options
 
-DESCRIPTION
+描述
 
   Read / write plugin options
 
-SYNOPSIS
+概要
 
   wp wp2static options
 
-OPTIONS
+选项
 
   <list> [--reveal-sensitive-values]
 
@@ -79,21 +79,21 @@ OPTIONS
   Set a specific option via name
 
 
-EXAMPLES
+示例
 
-  List all options
+  显示所有选项
 
     wp wp2static options list
 
-  List all options (revealing sensitive values)
+  显示所有选项(展示敏感值)
 
     wp wp2static options list --reveal_sensitive_values
 
-  Get option
+  获得某个选项值
 
     wp wp2static options get selected_deployment_option
 
-  Set option
+  设置选项内容
 
     wp wp2static options set baseUrl 'https://mystaticsite.com'
 ```
