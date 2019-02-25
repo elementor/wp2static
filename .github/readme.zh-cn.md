@@ -5,6 +5,7 @@ WP2Static是一个用来将您的网站静态化，并存储到Github Pages、 �
 [English ![English](docs/images/flags/greatbritain.png)](readme.md) |
 [日本語 ![日本語](docs/images/flags/japan.png)](readme.jp.md) |
 [Français ![Français](docs/images/flags/france.png)](readme.fr.md)
+[简体中文] ![Simplified Chinese](docs/images/flags/prchina.png)](readme.zh-cn.md) |
 
 # 使用WordPress作为静态网站生成器(Static Site Generator)
 
@@ -16,13 +17,13 @@ WP2Static是一个用来将您的网站静态化，并存储到Github Pages、 �
 ## 目录
 
 * [外部资源](#external-resources)
-* [Opinionated software](#opinionated-software)
+* [软件态度](#opinionated-software)
 * [安装指南](#installation)
 * [WP-CLI 命令](#wp-cli-commands)
 * [钩子](#hooks)
-  * [Modify the initial list of URLs to crawl](#modify-the-initial-list-of-urls-to-crawl)
-  * [Post-deployment hook](#post-deployment-hook)
-* [Development](#development)
+  * [修改需要抓取的初始化URL列表](#modify-the-initial-list-of-urls-to-crawl)
+  * [部署后钩子](#post-deployment-hook)
+* [开发](#development)
 * [本地化 / 翻译](#localisation--translations)
 * [支持](#support)
 * [说明](#notes)
@@ -124,7 +125,7 @@ Sending confirmation email...
 
 ## Hooks
 
-### Modify the initial list of URLs to crawl
+### 修改需要抓取的初始化URL列表
 
  - `wp2static_modify_initial_crawl_list`
  - Filter hook
@@ -155,7 +156,7 @@ function add_additional_urls( $url_queue ) {
 
 add_filter( 'wp2static_modify_initial_crawl_list', 'add_additional_urls' );
 ```
-### Post-deployment hook
+### 部署后钩子
 
  - `wp2static_post_deploy_trigger`
  - Action hook
@@ -206,43 +207,44 @@ Archive Object
 
 ```
 
-## Development 
+## 开发 
 
-This repo contains the latest code, which you can clone/download to get the bleeding edge, else install via the [official WordPress Plugin page](https://wordpress.org/plugins/static-html-output-plugin/)
+本仓库保存了最新的代码，你可以克隆或下载获得最新的跟新，同时也可以通过[官方Wordpress插件页](https://wordpress.org/plugins/static-html-output-plugin/)进行安装。
 
-If you'd like to contribute, please follow the usual GitHub procedures (create an Issue, fork repo, submit PR). If you're unsure about any of that, contact me and I'll be happy to help.
+如果你希望参与贡献，请遵循通常的GitHub步骤(create an Issue, fork repo, submit PR)。如果你对任何事情有疑问，请联系我，我很乐意提供帮助。
 
-In trying to make development/contributing easier, we'll keep requirements to a minimum. If you prefer Docker, Local by FlyWheel, Valet, Bedrock, Linux, BSD, Mac, they're all fine. This is a WordPress plugin, so anywhere you can run WordPress, you can do development on this :)
-
-
-### Localisation / translations
-
-Localisation has fallen behind on this project. I welcome anyone who can contribute some expertise in this area / help me get the project easier to translate.
-
-Our official [translation page](https://translate.wordpress.org/projects/wp-plugins/static-html-output-plugin) on wordpress.org.
+为了让开发和共享更容易，我们会让参与的需要变得最简单。如果你比较喜欢使用Docker, Local by FlyWheel, Valet, Bedrock, Linux, BSD, Mac,这些已经足够了。这是一个WordPress插件，任何能跑Wordpress的地方都可以在上面开始开发。 :)
 
 
-## Support
+### 本地化 / 翻译
 
-Please [raise an issue](https://github.com/leonstafford/wp2static/issues/new) here on GitHub or on the plugin's [support forum](https://forum.wp2static.com).
+这个项目的本地化工作相对落后。我欢迎任何可以在这方面共享经验的人参与进来，帮助我让这个项目的翻译更容易。
 
-There is also a [Slack group](https://join.slack.com/t/wp2static/shared_invite/enQtNDQ4MDM4MjkwNjEwLTVmN2I2MmU4ODI2MWRkNzM4ZGU3YWU4ZGVhMzgwZTc1MDE2OGNmYTFhOGMwM2U0ZTVlYTljYmM2Yjk2ODJlOTk), for quick discussions among the user community.
+我们在Wordpress.org上的[官方翻译页](https://translate.wordpress.org/projects/wp-plugins/static-html-output-plugin)。
 
-## Notes
 
-When cloning the repo for direct use, clone it into a dir named after the official WP plugin's slug, `static-html-output-plugin`, this will make life easier.
+## 支持
 
-## Sponsorship / supporting open-source
+请移步到GitHub[提交Issue](https://github.com/leonstafford/wp2static/issues/new) 或者访问本插件的[支持论坛](https://forum.wp2static.com).
+
+这里还有一个[Slack群组](https://join.slack.com/t/wp2static/shared_invite/enQtNDQ4MDM4MjkwNjEwLTVmN2I2MmU4ODI2MWRkNzM4ZGU3YWU4ZGVhMzgwZTc1MDE2OGNmYTFhOGMwM2U0ZTVlYTljYmM2Yjk2ODJlOTk), 可以在社区里快速参与讨论.
+
+## 说明
+
+当从仓库直接克隆下来作为使用用途时，将该文件夹命名为WordPress插件的官方slug:`static-html-output-plugin`，这样后续会更简单简单一些。
+
+## 赞助 / 支持开源软件
 
 I'm committed (git-pun) to keeping this software open-source and free from selling out user data to a 3rd party. As of version 6, we'll no longer be using Freemius for this reason. We'll accept payments with Snipcart + Stripe, but they will have no knowledge of your WordPress website or any info not required for a payment. The only thing that tracks you on our marketing website is a YouTube embed, which I'll soon switch to an image to avoid that. I rock OpenBSD on my workstation and increasingly on servers because they are an open source project done very well.
 
 There is no big company behind this software, besides a sole proprietership in my name, in order to comply with taxation requirements for me as an Australian resident.
 
 Help keep me doing what I love: building and supporting this software. 
+协助让我坚持做我所热爱的————开发和支持这个软件
 
- - [Buy a commercial license](https://wp2static.com)
- - [Back me on Patreon](https://www.patreon.com/leonstafford)
- - [Fund my PayPal](https://www.paypal.me/leonjstafford)
+ - [购买商业许可](https://wp2static.com)
+ - [在Patreon上资助我](https://www.patreon.com/leonstafford)
+ - [在PayPal上资助我](https://www.paypal.me/leonjstafford)
 
 Leon
 
