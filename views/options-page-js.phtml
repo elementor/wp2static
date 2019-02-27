@@ -643,6 +643,16 @@ jQuery(document).ready(function($){
     }
   }
 
+  function hideOtherVendorMessages() {
+    notices = $('.update-nag, .updated, .error, .is-dismissible');
+
+    $.each(notices, function(index, element) {
+        if ( ! $(element).hasClass('wp2static-notice') ) {
+            $(element).hide();
+        }
+    });
+  }
+
   /* 
     TODO: quick win to get the select menu options to behave like the sendViaFTP, etc checkboxes
   */
@@ -1248,6 +1258,9 @@ jQuery(document).ready(function($){
 //
 //		// set the select to the current deployment type
   setDeploymentMethod(current_deployment_method);
+
+  // hide all but WP2Static messages
+  hideOtherVendorMessages();
 
   prepareInitialFileList();
 
