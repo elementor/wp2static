@@ -134,6 +134,13 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
 
 == Changelog ==
 
+= 6.6.6 =
+
+ * Enhancement: prevent vendor notices distorting WP2Static UI
+ * Enhancement: warn when DOMDocument not available
+ * Enhancement: warn when ZIP extension not available for Netlify deploy
+ * Enhancement: set outdated PHP detection version to < 5.6
+
 = 6.6.5 =
 
  * Bugfix: fix offline ZIP generation (links not being properly rewritten)
@@ -582,6 +589,13 @@ Altered main codebase to fix recursion bug and endless loop. Essential upgrade.
 Initial release to Wordpress community
 
 == Upgrade Notice ==
+
+= 6.6.6 =
+
+ * Enhancement: prevent vendor notices distorting WP2Static UI
+ * Enhancement: warn when DOMDocument not available
+ * Enhancement: warn when ZIP extension not available for Netlify deploy
+ * Enhancement: set outdated PHP detection version to < 5.6
 
 = 6.6.5 =
 
