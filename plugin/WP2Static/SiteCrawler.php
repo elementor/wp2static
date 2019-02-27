@@ -444,16 +444,19 @@ class SiteCrawler extends WP2Static {
     }
 
     public function crawlMultipleURLs( $urls ) {
+        $total_urls = count( $urls );
         $running = null;
 
         $rolling_window = 5;
 
         if ( isset( $this->settings['simultaneousCurlRequests'] ) ) {
-            $rolling_window = (int)$this->settings['simultaneousCurlRequests'];
+            $rolling_window =
+                (int) $this->settings['simultaneousCurlRequests'];
         }
 
-        error_log($rolling_window);
-        $rolling_window = (sizeof($urls) < $rolling_window) ? sizeof($urls) : $rolling_window;
+        if ( $total_urls < $rolling_window ) {
+            $rolling_window = $total_urls;
+        }
 
         $master = curl_multi_init();
         // $curl_arr = array();
@@ -470,26 +473,31 @@ class SiteCrawler extends WP2Static {
         );
 
         if ( isset( $this->settings['crawlPort'] ) ) {
-            $options[CURLOPT_PORT] = $this->settings['crawlPort'];
+            $options[ CURLOPT_PORT ] = $this->settings['crawlPort'];
         }
 
         if ( isset( $this->settings['useBasicAuth'] ) ) {
-            $options[CURLOPT_USERPWD] =
+            $options[ CURLOPT_USERPWD ] =
                 $this->settings['basicAuthUser'] . ':' .
                 $this->settings['basicAuthPassword'];
         }
 
         // start the first batch of requests
-        for ($i = 0; $i < $rolling_window; $i++) {
+        for ( $i = 0; $i < $rolling_window; $i++ ) {
             $ch = curl_init();
-            $options[CURLOPT_URL] = array_pop($urls);
-            curl_setopt_array($ch, $options);
-            curl_multi_add_handle($master, $ch);
+            $options[ CURLOPT_URL ] = array_pop( $urls );
+            curl_setopt_array( $ch, $options );
+            curl_multi_add_handle( $master, $ch );
         }
         do {
-            while (($execrun = curl_multi_exec($master, $running)) == CURLM_CALL_MULTI_PERFORM) {
-                ;
-            }
+            //while (
+            //    ( $execrun = curl_multi_exec($master, $running)) ==
+            //    CURLM_CALL_MULTI_PERFORM
+            //) {
+            //    // doing nothing
+            //}
+            $execrun = curl_multi_exec($master, $running);
+
             if ($execrun != CURLM_OK) {
                 break;
             }
