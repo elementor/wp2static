@@ -23,6 +23,7 @@ class WPSHO_DBSettings {
             'crawl_delay',
             'detection_level',
             'excludeURLs',
+            'parse_css',
             'simultaneousCurlRequests',
             'useBasicAuth',
         );

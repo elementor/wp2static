@@ -73,6 +73,7 @@ class WP2Static_Controller {
             ->setOption( 'removeWPMeta', '1' )
             ->setOption( 'removeWPLinks', '1' )
             ->setOption( 'removeHTMLComments', '1' )
+            ->setOption( 'parse_css', '1' )
             ->save();
         }
     }

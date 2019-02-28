@@ -21,6 +21,7 @@ class WPSHO_PostSettings {
             'crawlPort',
             'crawl_delay',
             'detection_level',
+            'parse_css',
             'excludeURLs',
             'simultaneousCurlRequests',
             'useBasicAuth',

@@ -597,20 +597,36 @@ class SiteCrawler extends WP2Static {
             case 'css':
                 require_once dirname( __FILE__ ) .
                     '/../WP2Static/WP2Static.php';
-                require_once dirname( __FILE__ ) .
-                    '/../WP2Static/CSSProcessor.php';
 
-                $processor = new CSSProcessor();
+                if ( isset( $this->settings['parse_css'] ) ) {
+                    require_once dirname( __FILE__ ) .
+                        '/../WP2Static/CSSProcessor.php';
 
-                $this->processed_file = $processor->processCSS(
-                    $output,
-                    $full_url
-                );
+                    $processor = new CSSProcessor();
 
-                if ( $this->processed_file ) {
-                    $this->processed_file = $processor->getCSS();
+                    $this->processed_file = $processor->processCSS(
+                        $output,
+                        $full_url
+                    );
+
+                    if ( $this->processed_file ) {
+                        $this->processed_file = $processor->getCSS();
+                    }
+                } else {
+                    require_once dirname( __FILE__ ) .
+                        '/../WP2Static/TXTProcessor.php';
+
+                    $processor = new TXTProcessor();
+
+                    $this->processed_file = $processor->processTXT(
+                        $output,
+                        $full_url
+                    );
+
+                    if ( $this->processed_file ) {
+                        $this->processed_file = $processor->getTXT();
+                    }
                 }
-
                 break;
 
             case 'txt':

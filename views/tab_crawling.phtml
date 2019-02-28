@@ -141,6 +141,18 @@
             <textarea class="widefat" name="additionalUrls" id="additionalUrls" rows="5" cols="10"><?php echo $this->options->additionalUrls ? $this->options->additionalUrls : ''  ?></textarea>
         </td>
       </tr>
+      <tr>
+        <th scope="row">
+          <label for="parse_css"><?php echo __('Parse CSS files', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <?php $tpl->displayCheckbox($this, 'parse_css', 'Parse CSS files'); ?>
+
+        <p>
+            This will result in better exports, but will consume more memory on the server. Try disabling this if you're unable to complete your export and suspect it's running out of memory.
+        </p>
+        </td>
+      </tr>
     <tr>
       <th scope="row">
         <label for="crawl_delay"><?php echo __('Crawl Delay', 'static-html-output-plugin');?></label>
