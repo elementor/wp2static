@@ -490,40 +490,31 @@ class SiteCrawler extends WP2Static {
             curl_multi_add_handle( $master, $ch );
         }
         do {
-            //while (
-            //    ( $execrun = curl_multi_exec($master, $running)) ==
-            //    CURLM_CALL_MULTI_PERFORM
-            //) {
-            //    // doing nothing
-            //}
-            $execrun = curl_multi_exec($master, $running);
+            $execrun = curl_multi_exec( $master, $running );
 
-            if ($execrun != CURLM_OK) {
+            if ( $execrun != CURLM_OK ) {
                 break;
             }
             // a request was just completed -- find out which one
-            while ($done = curl_multi_info_read($master)) {
-                $info = curl_getinfo($done['handle']);
-
-                // error_log($info['url']);
-                // error_log(microtime(true));
-
+            while ( $done = curl_multi_info_read( $master ) ) {
+                $info = curl_getinfo( $done['handle'] );
                 $this->processCrawledURL( $done['handle'], $info );
+                $results[ $info['url'] ] = $info;
+                $new_url = array_pop( $urls );
 
-                $results[$info['url']] = $info;
-                $new_url = array_pop($urls);
-                if(isset($new_url)){
+                if ( isset( $new_url ) ) {
                     $ch = curl_init();
-                    $options[CURLOPT_URL] = $new_url;
-                    curl_setopt_array($ch, $options);
-                    curl_multi_add_handle($master, $ch);
+                    $options[ CURLOPT_URL ] = $new_url;
+                    curl_setopt_array( $ch, $options );
+                    curl_multi_add_handle( $master, $ch );
                 }
-                // remove the curl handle that just completed
-                curl_multi_remove_handle($master, $done['handle']);
-            }
-        } while ($running);
-        curl_multi_close($master);
 
+                // remove the curl handle that just completed
+                curl_multi_remove_handle( $master, $done['handle'] );
+            }
+        } while ( $running );
+
+        curl_multi_close( $master );
     }
 
 
