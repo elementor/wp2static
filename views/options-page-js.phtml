@@ -60,6 +60,7 @@ jQuery(document).ready(function($){
     status_text = 'Analyzing site... this may take a few minutes (but it\'s worth it!)';
     $('#current_action').html( status_text );    
     $('#progress').show();    
+    $('.pulsate-css').show();
 
     data = $(".options-form :input")
         .filter(function(index, element) {
@@ -73,14 +74,18 @@ jQuery(document).ready(function($){
         dataType: 'html',
         method: 'POST',
         success: function(serverResponse) {
-            $('#initial_crawl_list_loader').hide();
-            $('#initial_crawl_list_count').text(serverResponse + ' URLs were detected on your site that will be used to initiate the crawl. Other URLs will be discovered while crawling.');
-            $('#preview_initial_crawl_list_button').show();
+            if ( ! serverResponse ) {
+              $('#current_action').html( 'Failed to generate initial file list. Please <a href="https://docs.wp2static.com" target="_blank">contact support</a>' );
+            } else {
+                $('#initial_crawl_list_loader').hide();
+                $('#initial_crawl_list_count').text(serverResponse + ' URLs were detected on your site that will be used to initiate the crawl. Other URLs will be discovered while crawling.');
+                $('#preview_initial_crawl_list_button').show();
 
-            $('#startExportButton').prop('disabled', false);
-            $('.saveSettingsButton').prop('disabled', false);
-            $('.resetDefaultSettingsButton').prop('disabled', false);
-            $('#progress').hide();    
+                $('#startExportButton').prop('disabled', false);
+                $('.saveSettingsButton').prop('disabled', false);
+                $('.resetDefaultSettingsButton').prop('disabled', false);
+                $('#progress').hide();
+            }
         },
         error: function(serverResponse) {
           $('#initial_crawl_list_loader').hide();
@@ -99,6 +104,7 @@ jQuery(document).ready(function($){
 
     $('#current_action').html('Saving options');
     $('#progress').show();
+    $('.pulsate-css').show();
 
     data = $(".options-form :input")
         .filter(function(index, element) {
@@ -241,12 +247,22 @@ jQuery(document).ready(function($){
     }
   }
 
+  function isDebugModeEnabled() {
+    return false;
+  }
+
   function ajaxErrorHandler () {
       stopPolling();
-      $('#current_action').html(
-        // if not debug mode
-        'Failed during "' + status_text  + '", please consult the Help tab for where to get assistance.')
-        // if debug mode 
+
+      failed_deploy_message = 'Failed during "' + status_text;
+
+      if ( ! isDebugModeEnabled() ) {
+        failed_deploy_message += '", re-run with Debug Mode enabled? <button id="exportWithDebugEnabledButton">Yes</button>';
+      } else {
+        failed_deploy_message += '", <button id="downloadExportLogButton">Download export log</button> <button id="emailExportLogToDeveloper">Email export log to developer</button>';
+      }
+
+      $('#current_action').html( failed_deploy_message );
       $(".pulsate-css").hide();
       $('#startExportButton').prop('disabled', false);
       $('.saveSettingsButton').prop('disabled', false);

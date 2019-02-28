@@ -420,19 +420,29 @@ class WP2Static_FilesHelper {
 
         $str = implode( "\n", $unique_urls );
 
+        $initial_crawl_file = $uploads_path .
+            '/WP-STATIC-INITIAL-CRAWL-LIST.txt';
+
+        $initial_crawl_total = $uploads_path .
+            '/WP-STATIC-INITIAL-CRAWL-TOTAL.txt';
+
         file_put_contents(
-            $uploads_path . '/WP-STATIC-INITIAL-CRAWL-LIST.txt',
+            $initial_crawl_file,
             $str
         );
 
-        chmod( $uploads_path . '/WP-STATIC-INITIAL-CRAWL-LIST.txt', 0664 );
+        chmod( $initial_crawl_file, 0664 );
 
         file_put_contents(
-            $uploads_path . '/WP-STATIC-INITIAL-CRAWL-TOTAL.txt',
+            $initial_crawl_total,
             $initial_crawl_list_total
         );
 
-        chmod( $uploads_path . '/WP-STATIC-INITIAL-CRAWL-TOTAL.txt', 0664 );
+        if ( ! is_file( $initial_crawl_total ) ) {
+           return false; 
+        }
+        
+        chmod( $initial_crawl_total, 0664 );
 
         return count( $url_queue );
     }

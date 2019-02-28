@@ -179,6 +179,10 @@ class WP2Static_Controller {
                 $this->settings
             );
 
+        if ( $initial_file_list_count < 1 ) {
+           return false;
+        }
+
         if ( ! defined( 'WP_CLI' ) ) {
             echo $initial_file_list_count;
         }
