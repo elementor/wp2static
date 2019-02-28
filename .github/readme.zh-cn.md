@@ -4,7 +4,7 @@ WP2Static是一个用来将您的网站静态化，并存储到Github Pages、 �
 
 [English ![English](docs/images/flags/greatbritain.png)](readme.md) |
 [日本語 ![日本語](docs/images/flags/japan.png)](readme.jp.md) |
-[Français ![Français](docs/images/flags/france.png)](readme.fr.md)
+[Français ![Français](docs/images/flags/france.png)](readme.fr.md) |
 [简体中文 ![Simplified Chinese](docs/images/flags/prchina.png)](readme.zh-cn.md)
 
 # 使用WordPress作为静态网站生成器(Static Site Generator)
@@ -41,13 +41,12 @@ WP2Static是一个用来将您的网站静态化，并存储到Github Pages、 �
 
 ## 软件态度
 
- - 在美观的基础上提升速度
- - 在简短变量名的基础上提供代码可读性
+ - 重视速度胜过代码的美观
+ - 代码可读性胜过简短的变量名
  - 自有代码 vs 外部类库
- - 为软件态度建立性能衡量标准
+ - 建立衡量标准胜过经验观点(评估方面)
  - 更少的点击 == 更好的用户体验
  - 用户可设置 vs 开发者观点
-
 
 ## WP-CLI命令行
 

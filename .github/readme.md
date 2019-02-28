@@ -4,7 +4,7 @@ WordPress plugin to generate a static copy of your site and deploy to GitHub Pag
 
 [English ![English](docs/images/flags/greatbritain.png)](readme.md) |
 [日本語 ![日本語](docs/images/flags/japan.png)](readme.jp.md) |
-[Français ![Français](docs/images/flags/france.png)](readme.fr.md)
+[Français ![Français](docs/images/flags/france.png)](readme.fr.md) |
 [简体中文 ![Simplified Chinese](docs/images/flags/prchina.png)](readme.zh-cn.md)
 
 ## WordPress as a Static Site Generator
