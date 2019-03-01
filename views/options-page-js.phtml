@@ -257,10 +257,57 @@ jQuery(document).ready(function($){
     $('#debug_mode').attr('checked', true);
   }
 
+  function downloadExportLog() {
+    $('.hiddenActionField').val('wp_static_html_output_ajax');
+    $('#hiddenAJAXAction').val('download_export_log');
+
+    status_text = 'Downloading Export Log...';
+    $('#current_action').html( status_text );
+    $('#progress').show();
+    $('.pulsate-css').show();
+
+    data = $(".options-form :input")
+        .filter(function(index, element) {
+            return $(element).val() != '';
+        })
+        .serialize();
+
+    $.ajax({
+        url: ajaxurl,
+        data: data,
+        dataType: 'html',
+        method: 'POST',
+        success: function(serverResponse) {
+            if ( ! serverResponse ) {
+              $('#current_action').html( 'Failed to download Export Log <a href="#">try again</a>' );
+              $('.pulsate-css').hide();
+            } else {
+                $('#startExportButton').prop('disabled', false);
+                $('.saveSettingsButton').prop('disabled', false);
+                $('.resetDefaultSettingsButton').prop('disabled', false);
+                $('#current_action').text(serverResponse + ' download again | send to developer');
+                $('.pulsate-css').hide();
+            }
+        },
+        error: function(serverResponse) {
+          $('#initial_crawl_list_loader').hide();
+          console.log('error in downloading Export Log');
+        }
+    });
+
+    // on result, hide progress and show error or update with number of files found
+    
+  }
+
   $(document).on('click', '#exportWithDebugEnabledButton', function(evt) {
         evt.preventDefault();
         enableDebugMode();
         startExport();
+  });
+
+  $(document).on('click', '#downloadExportLogButton', function(evt) {
+        evt.preventDefault();
+        downloadExportLog();
   });
 
   function ajaxErrorHandler () {
