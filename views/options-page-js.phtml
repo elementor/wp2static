@@ -76,6 +76,7 @@ jQuery(document).ready(function($){
         success: function(serverResponse) {
             if ( ! serverResponse ) {
               $('#current_action').html( 'Failed to generate initial file list. Please <a href="https://docs.wp2static.com" target="_blank">contact support</a>' );
+              $('.pulsate-css').hide();
             } else {
                 $('#initial_crawl_list_loader').hide();
                 $('#initial_crawl_list_count').text(serverResponse + ' URLs were detected on your site that will be used to initiate the crawl. Other URLs will be discovered while crawling.');
