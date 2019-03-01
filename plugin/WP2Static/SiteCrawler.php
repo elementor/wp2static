@@ -3,6 +3,7 @@
 class SiteCrawler extends WP2Static {
 
     public function __construct() {
+        throw new Exception( 'halt!');
         $this->loadSettings(
             array(
                 'wpenv',

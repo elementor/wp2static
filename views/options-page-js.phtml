@@ -250,8 +250,18 @@ jQuery(document).ready(function($){
   }
 
   function isDebugModeEnabled() {
-    return false;
+    return $('#debug_mode').is(":checked");
   }
+
+  function enableDebugMode() {
+    $('#debug_mode').attr('checked', true);
+  }
+
+  $(document).on('click', '#exportWithDebugEnabledButton', function(evt) {
+        evt.preventDefault();
+        enableDebugMode();
+        startExport();
+  });
 
   function ajaxErrorHandler () {
       stopPolling();
