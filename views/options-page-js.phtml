@@ -85,7 +85,8 @@ jQuery(document).ready(function($){
                 $('#startExportButton').prop('disabled', false);
                 $('.saveSettingsButton').prop('disabled', false);
                 $('.resetDefaultSettingsButton').prop('disabled', false);
-                $('#progress').hide();
+                $('#current_action').html(serverResponse + ' URLs were detected for initial crawl list. <a href="">Add/Remove URLs via the Crawl tab.</a>');
+                $('.pulsate-css').hide();
             }
         },
         error: function(serverResponse) {
