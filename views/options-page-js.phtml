@@ -290,6 +290,7 @@ jQuery(document).ready(function($){
             }
         },
         error: function(serverResponse) {
+            $('.pulsate-css').hide();
             $('#current_action').html( 'Failed to download Export Log <a id="downloadExportLogButton" href="#">try again</a>' );
         }
     });
@@ -317,7 +318,7 @@ jQuery(document).ready(function($){
       if ( ! isDebugModeEnabled() ) {
         failed_deploy_message += '", re-run with Debug Mode enabled? <button id="exportWithDebugEnabledButton">Yes</button>';
       } else {
-        failed_deploy_message += '", <button id="downloadExportLogButton">Download export log</button> <button id="emailExportLogToDeveloper">Email export log to developer</button>';
+        failed_deploy_message += '", <button id="downloadExportLogButton">Download export log</button>';
       }
 
       $('#current_action').html( failed_deploy_message );
