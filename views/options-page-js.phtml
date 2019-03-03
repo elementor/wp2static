@@ -282,10 +282,7 @@ jQuery(document).ready(function($){
               $('#current_action').html( 'Failed to download Export Log <a id="downloadExportLogButton" href="#">try again</a>' );
               $('.pulsate-css').hide();
             } else {
-                $('#startExportButton').prop('disabled', false);
-                $('.saveSettingsButton').prop('disabled', false);
-                $('.resetDefaultSettingsButton').prop('disabled', false);
-                $('#current_action').text(serverResponse + ' download again | send to developer');
+                $('#current_action').html('Download <a href="' + serverResponse + '"> ' + serverResponse + '</a>');
                 $('.pulsate-css').hide();
             }
         },

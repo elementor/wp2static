@@ -136,6 +136,7 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
 
 = 6.6.6 =
 
+ * Enhancement: improved UX when an error occurs
  * Enhancement: prevent vendor notices distorting WP2Static UI
  * Enhancement: warn when DOMDocument not available
  * Enhancement: warn when ZIP extension not available for Netlify deploy
@@ -592,6 +593,7 @@ Initial release to Wordpress community
 
 = 6.6.6 =
 
+ * Enhancement: improved UX when an error occurs
  * Enhancement: prevent vendor notices distorting WP2Static UI
  * Enhancement: warn when DOMDocument not available
  * Enhancement: warn when ZIP extension not available for Netlify deploy

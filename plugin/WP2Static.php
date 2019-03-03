@@ -176,17 +176,20 @@ class WP2Static_Controller {
 
         if ( is_file( $export_log ) ) {
             // create zip of export log in tmp file
-            $temp_zip = tempnam( sys_get_temp_dir(), 'wp2static_zip_' );
+            $export_log_zip = $this->wp_site->wp_uploads_path . 
+                '/WP2STATIC-EXPORT-LOG.zip';
 
             $zip_archive = new ZipArchive();
+            $zip_opened =
+                $zip_archive->open( $export_log_zip, ZIPARCHIVE::CREATE );
 
-            if ( $zip_archive->open( $temp_zip, ZIPARCHIVE::CREATE ) !== true ) {
+            if ( $zip_opened !== true ) {
                 return new WP_Error( 'Could not create archive' );
             }
 
             if ( ! $zip_archive->addFile(
                 realpath( $export_log ),
-                'WP-STATIC-EXPORT-LOG.txt'
+                'WP2STATIC-EXPORT-LOG.txt'
             )
             ) {
                 return new WP_Error( 'Could not add Export Log to zip' );
@@ -194,13 +197,7 @@ class WP2Static_Controller {
 
             $zip_archive->close();
 
-            // serve zip file to client
-            header( 'Content-type: application/zip' );
-            header(
-                'Content-disposition: filename="WP2Static-Export-Log.zip"'
-            );
-
-            readfile( $temp_zip );
+            echo $this->wp_site->wp_uploads_url . '/WP2STATIC-EXPORT-LOG.zip';
         } else {
             // serve 500 response to client
             throw new Exception( 'Unable to find Export Log to create ZIP' );
