@@ -147,6 +147,42 @@ class WP2Static_Controller {
         echo 'SUCCESS';
     }
 
+    public function download_export_log() {
+        require_once dirname( __FILE__ ) . '/WP2Static/WPSite.php';
+        $this->wp_site = new WPSite();
+
+        $target_settings = array(
+            'general',
+            'crawling',
+        );
+
+        if ( defined( 'WP_CLI' ) ) {
+            require_once dirname( __FILE__ ) .
+                '/WP2Static/DBSettings.php';
+
+            $this->settings =
+                WPSHO_DBSettings::get( $target_settings );
+        } else {
+            require_once dirname( __FILE__ ) .
+                '/WP2Static/PostSettings.php';
+
+            $this->settings =
+                WPSHO_PostSettings::get( $target_settings );
+        }
+       
+        // get export log path
+        $export_log = $this->wp_site->wp_uploads_path .
+            'WP-STATIC-EXPORT-LOG.txt';
+
+        if ( is_file( $export_log ) ) {
+            // create zip of export log in tmp file
+
+            // serve zip file to client
+        } else {
+            // serve 500 response to client
+        }
+    }
+
     public function generate_filelist_preview() {
         require_once dirname( __FILE__ ) . '/WP2Static/WPSite.php';
         $this->wp_site = new WPSite();

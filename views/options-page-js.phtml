@@ -279,7 +279,7 @@ jQuery(document).ready(function($){
         method: 'POST',
         success: function(serverResponse) {
             if ( ! serverResponse ) {
-              $('#current_action').html( 'Failed to download Export Log <a href="#">try again</a>' );
+              $('#current_action').html( 'Failed to download Export Log <a id="downloadExportLogButton" href="#">try again</a>' );
               $('.pulsate-css').hide();
             } else {
                 $('#startExportButton').prop('disabled', false);
@@ -290,8 +290,7 @@ jQuery(document).ready(function($){
             }
         },
         error: function(serverResponse) {
-          $('#initial_crawl_list_loader').hide();
-          console.log('error in downloading Export Log');
+            $('#current_action').html( 'Failed to download Export Log <a id="downloadExportLogButton" href="#">try again</a>' );
         }
     });
 
