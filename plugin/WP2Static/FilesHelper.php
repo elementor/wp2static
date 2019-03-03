@@ -439,9 +439,9 @@ class WP2Static_FilesHelper {
         );
 
         if ( ! is_file( $initial_crawl_total ) ) {
-           return false; 
+            return false;
         }
-        
+
         chmod( $initial_crawl_total, 0664 );
 
         return count( $url_queue );
