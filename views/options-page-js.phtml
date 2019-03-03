@@ -60,6 +60,7 @@ jQuery(document).ready(function($){
     status_text = 'Analyzing site... this may take a few minutes (but it\'s worth it!)';
     $('#current_action').html( status_text );    
     $('#progress').show();    
+    $('.pulsate-css').show();
 
     data = $(".options-form :input")
         .filter(function(index, element) {
@@ -73,14 +74,20 @@ jQuery(document).ready(function($){
         dataType: 'html',
         method: 'POST',
         success: function(serverResponse) {
-            $('#initial_crawl_list_loader').hide();
-            $('#initial_crawl_list_count').text(serverResponse + ' URLs were detected on your site that will be used to initiate the crawl. Other URLs will be discovered while crawling.');
-            $('#preview_initial_crawl_list_button').show();
+            if ( ! serverResponse ) {
+              $('#current_action').html( 'Failed to generate initial file list. Please <a href="https://docs.wp2static.com" target="_blank">contact support</a>' );
+              $('.pulsate-css').hide();
+            } else {
+                $('#initial_crawl_list_loader').hide();
+                $('#initial_crawl_list_count').text(serverResponse + ' URLs were detected on your site that will be used to initiate the crawl. Other URLs will be discovered while crawling.');
+                $('#preview_initial_crawl_list_button').show();
 
-            $('#startExportButton').prop('disabled', false);
-            $('.saveSettingsButton').prop('disabled', false);
-            $('.resetDefaultSettingsButton').prop('disabled', false);
-            $('#progress').hide();    
+                $('#startExportButton').prop('disabled', false);
+                $('.saveSettingsButton').prop('disabled', false);
+                $('.resetDefaultSettingsButton').prop('disabled', false);
+                $('#current_action').html(serverResponse + ' URLs were detected for initial crawl list. <a href="">Add/Remove URLs via the Crawl tab.</a>');
+                $('.pulsate-css').hide();
+            }
         },
         error: function(serverResponse) {
           $('#initial_crawl_list_loader').hide();
@@ -99,6 +106,7 @@ jQuery(document).ready(function($){
 
     $('#current_action').html('Saving options');
     $('#progress').show();
+    $('.pulsate-css').show();
 
     data = $(".options-form :input")
         .filter(function(index, element) {
@@ -241,12 +249,76 @@ jQuery(document).ready(function($){
     }
   }
 
+  function isDebugModeEnabled() {
+    return $('#debug_mode').is(":checked");
+  }
+
+  function enableDebugMode() {
+    $('#debug_mode').attr('checked', true);
+  }
+
+  function downloadExportLog() {
+    $('.hiddenActionField').val('wp_static_html_output_ajax');
+    $('#hiddenAJAXAction').val('download_export_log');
+
+    status_text = 'Downloading Export Log...';
+    $('#current_action').html( status_text );
+    $('#progress').show();
+    $('.pulsate-css').show();
+
+    data = $(".options-form :input")
+        .filter(function(index, element) {
+            return $(element).val() != '';
+        })
+        .serialize();
+
+    $.ajax({
+        url: ajaxurl,
+        data: data,
+        dataType: 'html',
+        method: 'POST',
+        success: function(serverResponse) {
+            if ( ! serverResponse ) {
+              $('#current_action').html( 'Failed to download Export Log <a id="downloadExportLogButton" href="#">try again</a>' );
+              $('.pulsate-css').hide();
+            } else {
+                $('#current_action').html('Download <a href="' + serverResponse + '"> ' + serverResponse + '</a>');
+                $('.pulsate-css').hide();
+            }
+        },
+        error: function(serverResponse) {
+            $('.pulsate-css').hide();
+            $('#current_action').html( 'Failed to download Export Log <a id="downloadExportLogButton" href="#">try again</a>' );
+        }
+    });
+
+    // on result, hide progress and show error or update with number of files found
+    
+  }
+
+  $(document).on('click', '#exportWithDebugEnabledButton', function(evt) {
+        evt.preventDefault();
+        enableDebugMode();
+        startExport();
+  });
+
+  $(document).on('click', '#downloadExportLogButton', function(evt) {
+        evt.preventDefault();
+        downloadExportLog();
+  });
+
   function ajaxErrorHandler () {
       stopPolling();
-      $('#current_action').html(
-        // if not debug mode
-        'Failed during "' + status_text  + '", please consult the Help tab for where to get assistance.')
-        // if debug mode 
+
+      failed_deploy_message = 'Failed during "' + status_text;
+
+      if ( ! isDebugModeEnabled() ) {
+        failed_deploy_message += '", re-run with Debug Mode enabled? <button id="exportWithDebugEnabledButton">Yes</button>';
+      } else {
+        failed_deploy_message += '", <button id="downloadExportLogButton">Download export log</button>';
+      }
+
+      $('#current_action').html( failed_deploy_message );
       $(".pulsate-css").hide();
       $('#startExportButton').prop('disabled', false);
       $('.saveSettingsButton').prop('disabled', false);

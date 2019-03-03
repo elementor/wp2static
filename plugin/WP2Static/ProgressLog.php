@@ -3,7 +3,7 @@
 class ProgressLog {
 
     public static function l( $portion, $total ) {
-        if ( $total === 0 ) {
+        if ( $total == 0 ) {
             return;
         }
 

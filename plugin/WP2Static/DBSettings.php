@@ -17,13 +17,15 @@ class WPSHO_DBSettings {
 
         $key_sets['crawling'] = array(
             'additionalUrls',
-            'excludeURLs',
-            'useBasicAuth',
             'basicAuthPassword',
             'basicAuthUser',
-            'detection_level',
-            'crawl_delay',
             'crawlPort',
+            'crawl_delay',
+            'detection_level',
+            'excludeURLs',
+            'parse_css',
+            'simultaneousCurlRequests',
+            'useBasicAuth',
         );
 
         $key_sets['processing'] = array(

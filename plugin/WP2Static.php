@@ -1,7 +1,7 @@
 <?php
 
 class WP2Static_Controller {
-    const VERSION = '6.6.5';
+    const VERSION = '6.6.6-dev-curlmulti';
     const OPTIONS_KEY = 'wp2static-options';
     const HOOK = 'wp2static';
 
@@ -73,6 +73,7 @@ class WP2Static_Controller {
             ->setOption( 'removeWPMeta', '1' )
             ->setOption( 'removeWPLinks', '1' )
             ->setOption( 'removeHTMLComments', '1' )
+            ->setOption( 'parse_css', '1' )
             ->save();
         }
     }
@@ -146,6 +147,63 @@ class WP2Static_Controller {
         echo 'SUCCESS';
     }
 
+    public function download_export_log() {
+        require_once dirname( __FILE__ ) . '/WP2Static/WPSite.php';
+        $this->wp_site = new WPSite();
+
+        $target_settings = array(
+            'general',
+            'crawling',
+        );
+
+        if ( defined( 'WP_CLI' ) ) {
+            require_once dirname( __FILE__ ) .
+                '/WP2Static/DBSettings.php';
+
+            $this->settings =
+                WPSHO_DBSettings::get( $target_settings );
+        } else {
+            require_once dirname( __FILE__ ) .
+                '/WP2Static/PostSettings.php';
+
+            $this->settings =
+                WPSHO_PostSettings::get( $target_settings );
+        }
+       
+        // get export log path
+        $export_log = $this->wp_site->wp_uploads_path .
+            '/WP-STATIC-EXPORT-LOG.txt';
+
+        if ( is_file( $export_log ) ) {
+            // create zip of export log in tmp file
+            $export_log_zip = $this->wp_site->wp_uploads_path . 
+                '/WP2STATIC-EXPORT-LOG.zip';
+
+            $zip_archive = new ZipArchive();
+            $zip_opened =
+                $zip_archive->open( $export_log_zip, ZIPARCHIVE::CREATE );
+
+            if ( $zip_opened !== true ) {
+                return new WP_Error( 'Could not create archive' );
+            }
+
+            if ( ! $zip_archive->addFile(
+                realpath( $export_log ),
+                'WP2STATIC-EXPORT-LOG.txt'
+            )
+            ) {
+                return new WP_Error( 'Could not add Export Log to zip' );
+            }
+
+            $zip_archive->close();
+
+            echo $this->wp_site->wp_uploads_url . '/WP2STATIC-EXPORT-LOG.zip';
+        } else {
+            // serve 500 response to client
+            throw new Exception( 'Unable to find Export Log to create ZIP' );
+        }
+    }
+
     public function generate_filelist_preview() {
         require_once dirname( __FILE__ ) . '/WP2Static/WPSite.php';
         $this->wp_site = new WPSite();
@@ -178,6 +236,10 @@ class WP2Static_Controller {
                 $this->wp_site->uploads_url,
                 $this->settings
             );
+
+        if ( $initial_file_list_count < 1 ) {
+           return false;
+        }
 
         if ( ! defined( 'WP_CLI' ) ) {
             echo $initial_file_list_count;
