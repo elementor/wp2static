@@ -229,8 +229,34 @@ function add_deployment_option_to_ui( $deploy_options ) {
                                                                             
 add_filter(                                                             
     'wp2static_add_deployment_method_option_to_ui',                     
-    'add_deployment_option_to_ui']                              
+    'add_deployment_option_to_ui'
 );                                                                      
+```
+### Load deployment option template
+
+ - `wp2static_load_deploy_option_template`
+ - Filter hook
+
+*signature*
+```php
+apply_filters(
+    'wp2static_load_deploy_option_template',
+    $options
+);
+```
+
+*example usage*
+```php
+function load_deployment_option_template( $templates ) {                                                                                 
+    $templates[] =  '/path/to/deployment_settings_block.phtml';                                                                           
+                                                                                                                                                
+    return $templates;                                                                                                                          
+}     
+                                                                            
+add_filter(                                                             
+    'wp2static_load_deploy_option_template',
+    'load_deployment_option_template'
+);
 ```
 ## Development 
 

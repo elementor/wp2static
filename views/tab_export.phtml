@@ -25,20 +25,26 @@
 <?php
 
   // load up each deployment settings block
-  $deployment_options = array(
-    'zip',
-    'ftp',
-    'folder',
-    's3',
-    'bunnycdn',
-    'netlify',
-    'github',
-    'gitlab',
-    'bitbucket',
+  $deployment_option_templates = array(
+    __DIR__ . '/folder_settings_block.phtml',
+    __DIR__ . '/zip_settings_block.phtml',
+    __DIR__ . '/ftp_settings_block.phtml',
+    __DIR__ . '/s3_settings_block.phtml',
+    __DIR__ . '/s3_settings_block.phtml',
+    __DIR__ . '/bunnycdn_settings_block.phtml',
+    __DIR__ . '/netlify_settings_block.phtml',
+    __DIR__ . '/github_settings_block.phtml',
+    __DIR__ . '/gitlab_settings_block.phtml',
+    __DIR__ . '/bitbucket_settings_block.phtml',
   );
 
-  foreach($deployment_options as $deployment_option) {
-    require_once(__DIR__ . '/' . $deployment_option . '_settings_block.phtml');
+  $deployment_option_templates = apply_filters(
+      'wp2static_load_deploy_option_template',
+      $deployment_option_templates
+  );
+
+  foreach( $deployment_option_templates as $deployment_option_template ) {
+    require_once( $deployment_option_template );
   }
 
 ?>
