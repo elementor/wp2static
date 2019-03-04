@@ -953,6 +953,7 @@ jQuery(document).ready(function($){
       if (tabsContentMapping.hasOwnProperty(key)) {
         if ( tabsContentMapping[key] === target_tab ) {
           $('.' + key).show();
+          $('html, body').scrollTop(0);
         } else {
           $('.' + key).hide();
         }
