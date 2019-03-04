@@ -207,7 +207,32 @@ Archive Object
 )
 
 ```
+### Add deployment option to UI
 
+ - `wp2static_add_deployment_method_option_to_ui`
+ - Filter hook
+
+*signature*
+```php
+apply_filters(
+    'wp2static_modify_initial_crawl_list',
+    $options
+);
+```
+
+*example usage*
+```php
+function add_deployment_option_to_ui( $deploy_options ) {            
+    $deploy_options['azure'] = array('Microsoft Azure');                    
+                                                                            
+    return $deploy_options;                                                 
+}                                                                           
+                                                                            
+add_filter(                                                             
+    'wp2static_add_deployment_method_option_to_ui',                     
+    'add_deployment_option_to_ui']                              
+);                                                                      
+```
 ## Development 
 
 This repo contains the latest code, which you can clone/download to get the bleeding edge, else install via the [official WordPress Plugin page](https://wordpress.org/plugins/static-html-output-plugin/)
