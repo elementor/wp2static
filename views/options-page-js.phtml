@@ -85,7 +85,7 @@ jQuery(document).ready(function($){
                 $('#startExportButton').prop('disabled', false);
                 $('.saveSettingsButton').prop('disabled', false);
                 $('.resetDefaultSettingsButton').prop('disabled', false);
-                $('#current_action').html(serverResponse + ' URLs were detected for initial crawl list. <a href="">Add/Remove URLs via the Crawl tab.</a>');
+                $('#current_action').html(serverResponse + ' URLs were detected for initial crawl list. <a href="#" id="GoToCrawlTabButton">Add/Remove URLs via the Crawl tab.</a>');
                 $('.pulsate-css').hide();
             }
         },
@@ -926,86 +926,51 @@ jQuery(document).ready(function($){
 		}
 	);
 
-  $(document).on('click', '.nav-tab' , function(evt) {
+  function changeTab( target_tab ) {
+    var tabsContentMapping = {
+      advanced_settings: 'Advanced options',
+      export_your_site: 'Deploy static website',
+      help_troubleshooting: 'Help',
+      export_logs: 'Logs',
+      crawl_settings: 'Crawling',
+      processing_settings: 'Processing',
+      add_ons: 'Add-ons'
+    };
+
+    // switch the active tab
+    $.each($('.nav-tab'), function(index, element) {
+      if ( $(element).text() === target_tab ) {
+          $(element).addClass('nav-tab-active');
+          $(element).blur();
+      } else {
+        $(element).removeClass('nav-tab-active');
+      }
+    });
+
+
+    // hide/show the tab content
+    for (var key in tabsContentMapping) {
+      if (tabsContentMapping.hasOwnProperty(key)) {
+        if ( tabsContentMapping[key] === target_tab ) {
+          $('.' + key).show();
+          $('html, body').scrollTop(0);
+        } else {
+          $('.' + key).hide();
+        }
+      }
+    }
+  }
+
+  $(document).on('click', '#GoToCrawlTabButton', function(evt) {
+    evt.preventDefault();
+    changeTab( 'Crawling' );
+  });
+
+  $(document).on('click', '.nav-tab', function(evt) {
     evt.preventDefault();
     current_tab = $(this);
-    $('.nav-tab').removeClass('nav-tab-active');
-    current_tab.addClass('nav-tab-active');
     current_tab_text = current_tab.text();
-
-    switch(current_tab_text) {
-      case 'Advanced options':
-		    $('.export_your_site').hide();
-		    $('.help_troubleshooting').hide();
-		    $('.crawl_settings').hide();
-		    $('.processing_settings').hide();
-		    $('.advanced_settings').show();
-		    $('.export_logs').hide();
-		    $('.give_love').hide();
-      break;
-
-      case 'Deploy static website':
-		    $('.advanced_settings').hide();
-		    $('.help_troubleshooting').hide();
-		    $('.export_your_site').show();
-		    $('.processing_settings').hide();
-		    $('.crawl_settings').hide();
-		    $('.export_logs').hide();
-		    $('.give_love').hide();
-      break;
-
-      case 'Help':
-		    $('.export_your_site').hide();
-		    $('.advanced_settings').hide();
-		    $('.help_troubleshooting').show();
-		    $('.processing_settings').hide();
-		    $('.crawl_settings').hide();
-		    $('.export_logs').hide();
-		    $('.give_love').hide();
-      break;
-
-      case 'Logs':
-		    $('.export_your_site').hide();
-		    $('.advanced_settings').hide();
-		    $('.help_troubleshooting').hide();
-		    $('.export_logs').show();
-		    $('.processing_settings').hide();
-		    $('.crawl_settings').hide();
-		    $('.give_love').hide();
-      break;
-
-      case 'Crawling':
-		    $('.export_your_site').hide();
-		    $('.advanced_settings').hide();
-		    $('.help_troubleshooting').hide();
-		    $('.processing_settings').hide();
-		    $('.crawl_settings').show();
-		    $('.export_logs').hide();
-		    $('.give_love').hide();
-      break;
-
-      case 'Processing':
-		    $('.export_your_site').hide();
-		    $('.advanced_settings').hide();
-		    $('.help_troubleshooting').hide();
-		    $('.processing_settings').show();
-		    $('.crawl_settings').hide();
-		    $('.export_logs').hide();
-		    $('.give_love').hide();
-      break;
-
-      case '':
-		    $('.export_your_site').hide();
-		    $('.advanced_settings').hide();
-		    $('.help_troubleshooting').hide();
-		    $('.processing_settings').hide();
-		    $('.crawl_settings').hide();
-		    $('.export_logs').hide();
-		    $('.give_love').show();
-      break;
-    }
-
-    current_tab.blur();
+    changeTab( current_tab_text );
   });
 
 	$(document).on('submit', '#general-options' , function(evt) {
