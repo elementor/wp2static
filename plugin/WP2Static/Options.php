@@ -78,7 +78,7 @@ class WP2Static_Options {
         'useBasicAuth',
         'useRelativeURLs',
     );
-    
+
     public $whitelisted_keys = array(
         'additionalUrls',
         'allowOfflineUsage',
