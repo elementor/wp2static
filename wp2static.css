@@ -162,3 +162,15 @@ p.submit{
   top: 0;
   left: 0;
 }
+
+#export_timer {
+  display: inline;
+}
+
+.cancelExportButton {
+  color: white !important;
+}
+
+.cancelExportButton:hover {
+  color: red !important;
+}

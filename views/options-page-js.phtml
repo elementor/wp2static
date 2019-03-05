@@ -136,6 +136,7 @@ var protocolAndDomainRE = /^(?:\w+:)?\/\/(\S+)$/;
 var localhostDomainRE = /^localhost[\:?\d]*(?:[^\:?\d]\S*)?$/
 var nonLocalhostDomainRE = /^[^\s\.]+\.\S{2,}$/;
 var pollingIntervalID = '';
+var timerIntervalID = '';
 var status_descriptions = {
     'crawl_site' : 'Crawling initial file list',
     'crawl_again' : 'Crawling discovered URLs',
@@ -270,7 +271,11 @@ jQuery(document).ready(function($){
         exportCompleteTime = + new Date();
         export_duration = exportCompleteTime - export_commence_time;
 
+        // clear export commence time for next run
+        export_commence_time = '';
+
         stopPolling();
+        stopTimer();
         setProgressBarPercent( 0 );
         $('#current_action').text('Process completed in ' +  millisToMinutesAndSeconds(export_duration) + ' (mins:ss)');
         $("#goToMyStaticSite").focus();
@@ -330,6 +335,7 @@ jQuery(document).ready(function($){
 
   function ajaxErrorHandler () {
       // stopPolling();
+      stopTimer();
 
       failed_deploy_message = 'Failed during "' + status_text;
 
@@ -351,9 +357,26 @@ jQuery(document).ready(function($){
       doAJAXExport('crawl_site', 'crawl_again', 'post_process_archive_dir');
   }
 
+  function startTimer() {
+    timerIntervalID = window.setInterval(updateTimer, 1000);
+  }
+
+  function stopTimer() {
+    window.clearInterval( timerIntervalID );
+  }
+
+  function updateTimer() {
+    exportCompleteTime = + new Date();
+    runningTime = exportCompleteTime - export_commence_time;
+
+    $('#export_timer').html(
+        '<b>Export duration: </b>' + millisToMinutesAndSeconds(runningTime));
+  }
+
   function startExport() {
     // start timer
     export_commence_time = + new Date();
+    startTimer();
 
     // startPolling();
 
