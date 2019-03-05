@@ -138,6 +138,11 @@ class WPSHO_PostSettings {
             'wp_inc',
         );
 
+        $key_sets = apply_filters(
+            'wp2static_add_post_and_db_keys',
+            $key_sets
+        );
+
         foreach ( $sets as $set ) {
             $target_keys = array_merge( $target_keys, $key_sets[ $set ] );
         }

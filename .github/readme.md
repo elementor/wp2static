@@ -258,6 +258,104 @@ add_filter(
     'load_deployment_option_template'
 );
 ```
+### Register new plugin option key
+
+ - `wp2static_add_option_keys`
+ - Filter hook
+
+*signature*
+```php
+apply_filters(
+    'wp2static_add_option_keys',
+    $options
+);
+```
+
+*example usage*
+```php
+function addWP2StaticOption( $options ) {
+    $new_options = array(
+      'baseUrl-azure',
+    );
+
+    $options = array_merge(
+        $options,
+        $new_options
+    );
+
+    return $options;
+}     
+                                                                            
+add_filter(                                                             
+    'wp2static_load_deploy_option_template',
+    'addWP2StaticOption'
+);
+```
+### Whitelist plugin option keys
+
+ - `wp2static_whitelist_option_keys`
+ - Filter hook
+
+*signature*
+```php
+apply_filters(
+    'wp2static_whitelist_option_keys',
+    $options
+);
+```
+
+*example usage*
+```php
+function whitelistWP2StaticOption( $options ) {
+    $whitelist_options = array(
+      'baseUrl-azure',
+    );
+
+    $options = array_merge(
+        $options,
+        $whitelist_options
+    );
+
+    return $options;
+}     
+                                                                            
+add_filter(                                                             
+    'wp2static_load_deploy_option_template',
+    'addWP2StaticOption'
+);
+```
+### Register plugin options for Post/DB exports
+
+ - `wp2static_add_post_and_db_keys`
+ - Filter hook
+
+*signature*
+```php
+apply_filters(
+    'wp2static_add_post_and_db_keys',
+    $options
+);
+```
+
+*example usage*
+```php
+    public function add_post_and_db_keys( $keys ) {
+        $keys['azure'] = array(
+          'baseUrl-azure',
+          'azStorageAccountName',
+          'azContainerName',
+          'azAccessKey',
+          'azPath',
+        );
+
+        return $keys;
+    }
+
+add_filter(
+    'wp2static_add_post_and_db_keys',
+    'add_post_and_db_keys'
+);
+```
 ## Development 
 
 This repo contains the latest code, which you can clone/download to get the bleeding edge, else install via the [official WordPress Plugin page](https://wordpress.org/plugins/static-html-output-plugin/)
