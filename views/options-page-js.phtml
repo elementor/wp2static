@@ -675,23 +675,9 @@ jQuery(document).ready(function($){
     render the information and settings blocks based on the deployment method selected
   */
   function renderSettingsBlock(selected_deployment_method) {
-    deployment_options = [
-      'zip',
-      'ftp',
-      'folder',
-      's3',
-      'bunnycdn',
-      'netlify',
-      'github',
-      'gitlab',
-      'bitbucket'
-    ];
-
+    // hide non-active deployment methods
+    $('[class$="_settings_block"]').hide();
     // hide those not selected
-    $.each(deployment_options, function(index, deployment_option) {
-      $('.' + deployment_option  + '_settings_block').hide();
-    });
-
     $('.' + selected_deployment_method  + '_settings_block').show();
   }
 
