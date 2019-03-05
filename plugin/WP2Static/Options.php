@@ -1,9 +1,9 @@
 <?php
 
 class WP2Static_Options {
-    protected $wp2static_options = array();
-    protected $wp2static_option_key = null;
-    protected $wp2static_options_keys = array(
+    public $wp2static_options = array();
+    public $wp2static_option_key = null;
+    public $wp2static_options_keys = array(
         'additionalUrls',
         'allowOfflineUsage',
         'baseHREF',
@@ -78,8 +78,8 @@ class WP2Static_Options {
         'useBasicAuth',
         'useRelativeURLs',
     );
-
-    protected $whitelisted_keys = array(
+    
+    public $whitelisted_keys = array(
         'additionalUrls',
         'allowOfflineUsage',
         'baseHREF',
@@ -147,6 +147,16 @@ class WP2Static_Options {
     );
 
     public function __construct( $option_key ) {
+        $this->wp2static_options_keys = apply_filters(
+            'wp2static_add_option_keys',
+            $this->wp2static_options_keys
+        );
+
+        $this->whitelisted_keys = apply_filters(
+            'wp2static_whitelist_option_keys',
+            $this->whitelisted_keys
+        );
+
         $options = get_option( $option_key );
 
         if ( false === $options ) {
@@ -217,6 +227,11 @@ class WP2Static_Options {
     }
 
     public function saveAllPostData() {
+        $this->wp2static_options_keys = apply_filters(
+            'wp2static_add_option_keys',
+            $this->wp2static_options_keys
+        );
+
         foreach ( $this->wp2static_options_keys as $option ) {
             // TODO: set which fields should get which sanitzation upon saving
             // TODO: validate before save & avoid making empty settings fields
