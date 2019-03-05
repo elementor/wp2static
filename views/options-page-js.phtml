@@ -52,9 +52,6 @@ var deploy_options = {
             'finalize_deployment'
         ],
         required_fields: {
-          glToken: 'Please specify your GitLab personal access token in order to deploy to GitLab.',
-          glProject: 'Please specify your GitLab project ID in order to deploy to GitLab.',
-          glBranch: 'Please specify which branch in your GitLab repository you want to deploy to.'
         }
     },
     folder: {
@@ -62,9 +59,6 @@ var deploy_options = {
             'finalize_deployment'
         ],
         required_fields: {
-          glToken: 'Please specify your GitLab personal access token in order to deploy to GitLab.',
-          glProject: 'Please specify your GitLab project ID in order to deploy to GitLab.',
-          glBranch: 'Please specify which branch in your GitLab repository you want to deploy to.'
         }
     },
     ftp: {
@@ -185,14 +179,9 @@ jQuery(document).ready(function($){
   
   function generateFileListFailCallback( serverResponse ) {
     $('#initial_crawl_list_loader').hide();
-    // TODO: surface via ajaxerrorhandler
-    console.log('error in generating the initial crawl list');
   }
 
   function prepareInitialFileList() {
-    $('.hiddenActionField').val('wp_static_html_output_ajax');
-    $('#hiddenAJAXAction').val('generate_filelist_preview');
-
     status_text = 'Analyzing site... this may take a few minutes (but it\'s worth it!)';
     $('#current_action').html( status_text );    
 
@@ -256,41 +245,41 @@ jQuery(document).ready(function($){
     if( export_targets.length > 0) {
       target = export_targets.shift();
 
-      doAJAXExport(deploy_options[target][exportSteps]);
+      doAJAXExport(deploy_options[target]['exportSteps']);
     } else {
-      // if zip was selected, call to get zip name and enable the button with the link to download
-      if (current_deployment_method === 'zip') {
-        $('#downloadZIP').show();
+        // if zip was selected, call to get zip name and enable the button with the link to download
+        if (current_deployment_method === 'zip') {
+          $('#downloadZIP').show();
 
-        $.get( wp_site.uploads_url + '/WP2STATIC-CURRENT-ARCHIVE.txt?cacheBuster=' + Date.now(),
-            function( archive_path ) {
-                path_segments = archive_path.split('/');
-                current_archive.name = path_segments[path_segments.length - 2];
-                zipURL = wp_site.uploads_url + '/' + current_archive.name + '.zip';
-                $('#downloadZIP').attr('href', zipURL);
-            },
-            'text'
-        );
-      } else {
-        // for other methods, show the Go to my static site link
-        $('#goToMyStaticSite').attr('href', $('#baseUrl').val());
-        $('#goToMyStaticSite').show();
-      }
+          $.get( wp_site.uploads_url + '/WP2STATIC-CURRENT-ARCHIVE.txt?cacheBuster=' + Date.now(),
+              function( archive_path ) {
+                  path_segments = archive_path.split('/');
+                  current_archive.name = path_segments[path_segments.length - 2];
+                  zipURL = wp_site.uploads_url + '/' + current_archive.name + '.zip';
+                  $('#downloadZIP').attr('href', zipURL);
+              },
+              'text'
+          );
+        } else {
+            // for other methods, show the Go to my static site link
+            $('#goToMyStaticSite').attr('href', $('#baseUrl').val());
+            $('#goToMyStaticSite').show();
+        }
 
-      // all complete
-      exportCompleteTime = + new Date();
-      export_duration = exportCompleteTime - export_commence_time;
+        // all complete
+        exportCompleteTime = + new Date();
+        export_duration = exportCompleteTime - export_commence_time;
 
-      stopPolling();
-      setProgressBarPercent( 0 );
-      $('#current_action').text('Process completed in ' +  millisToMinutesAndSeconds(export_duration) + ' (mins:ss)');
-      $("#goToMyStaticSite").focus();
-      $(".pulsate-css").hide();
-      $('#startExportButton').prop('disabled', false);
-      $('.saveSettingsButton').prop('disabled', false);
-      $('.resetDefaultSettingsButton').prop('disabled', false);
-      $('.cancelExportButton').hide();
-      notifyMe();
+        stopPolling();
+        setProgressBarPercent( 0 );
+        $('#current_action').text('Process completed in ' +  millisToMinutesAndSeconds(export_duration) + ' (mins:ss)');
+        $("#goToMyStaticSite").focus();
+        $(".pulsate-css").hide();
+        $('#startExportButton').prop('disabled', false);
+        $('.saveSettingsButton').prop('disabled', false);
+        $('.resetDefaultSettingsButton').prop('disabled', false);
+        $('.cancelExportButton').hide();
+        notifyMe();
     }
   }
 
@@ -340,7 +329,7 @@ jQuery(document).ready(function($){
   });
 
   function ajaxErrorHandler () {
-      stopPolling();
+      // stopPolling();
 
       failed_deploy_message = 'Failed during "' + status_text;
 
@@ -366,7 +355,7 @@ jQuery(document).ready(function($){
     // start timer
     export_commence_time = + new Date();
 
-    startPolling();
+    // startPolling();
 
     validation_errors = getValidationErrors();
 
@@ -385,7 +374,7 @@ jQuery(document).ready(function($){
 
     $('#current_action').html('Starting export...');
 
-    showProgress();
+    // showProgress();
 
     // reset export targets to avoid having left-overs from a failed run
     export_targets = [];
@@ -397,7 +386,7 @@ jQuery(document).ready(function($){
 
     sendWP2StaticAJAX(
         'prepare_for_export',
-        downloadExportLogSuccessCallback,
+        startExportSuccessCallback,
         ajaxErrorHandler
     ); 
   }
@@ -435,10 +424,18 @@ jQuery(document).ready(function($){
         }
     }
 
-    required_fields = deploy_options[target][exportSteps];
-    validateEmptyFields( required_fields );
-    repo_field = deploy_options[target][repo_field];
-    validateRepoField( repo_field );
+    required_fields =
+      deploy_options[current_deployment_method]['required_fields'];
+
+    if ( required_fields ) {
+        validateEmptyFields( required_fields );
+    }
+
+    repo_field = deploy_options[current_deployment_method]['repo_field'];
+
+    if ( repo_field ) {
+        validateRepoField( repo_field );
+    }
 
     return validation_errors;
   }
@@ -559,18 +556,16 @@ jQuery(document).ready(function($){
   }
 
   function startPolling() {
-    pollingIntervalID = window.setInterval(checkProgress, 500);
+    // pollingIntervalID = window.setInterval(checkProgress, 5000);
   }
 
   function stopPolling() {
-    window.clearInterval( pollingIntervalID );
+    // window.clearInterval( pollingIntervalID );
 
-    setProgressBarPercent( 0 );
+    // setProgressBarPercent( 0 );
   }
 
   function checkProgress() {
-    console.log('checking progress');
-
     // get WP2STATIC-PROGRESS.txt
     $.get( progress_file + '?cacheBuster=' + Date.now(), function( data ) {
       progress_amount = parseInt( data );
@@ -975,12 +970,10 @@ jQuery(document).ready(function($){
 
   updateBaseURLReferences($('#baseUrl').val());
 
-// TODO: These may still be needed?
-
-//    set and show the previous selected deployment method
+  // set and show the previous selected deployment method
   renderSettingsBlock(current_deployment_method);
-//
-//		// set the select to the current deployment type
+
+  // set the select to the current deployment type
   setDeploymentMethod(current_deployment_method);
 
   // hide all but WP2Static messages
