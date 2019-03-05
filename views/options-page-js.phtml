@@ -165,7 +165,6 @@ var status_descriptions = {
     'finalize_deployment' : 'Performing post-deployment actions'
 };
 
-
 jQuery(document).ready(function($){
   function prepareInitialFileList() {
     $('.hiddenActionField').val('wp_static_html_output_ajax');
@@ -214,11 +213,9 @@ jQuery(document).ready(function($){
     
   }
 
-  function saveOptions( reload ) {
+  function sendWP2StaticAJAX( ajax_action, success_callback, fail_callback ) {
     $('.hiddenActionField').val('wp_static_html_output_ajax');
-    $('#hiddenAJAXAction').val('save_options');
-
-    $('#current_action').html('Saving options');
+    $('#hiddenAJAXAction').val(ajax_action);
     $('#progress').show();
     $('.pulsate-css').show();
 
@@ -233,18 +230,30 @@ jQuery(document).ready(function($){
         data: data,
         dataType: 'html',
         method: 'POST',
-        success: function(serverResponse) {
-            $('#progress').hide();
-            if ( reload ) {
-                location.reload();
-            } else {
-                alert('Options have been saved');
-            }
-        },
-        error: function(serverResponse) {
-            $('#progress').hide();
-        }
+        success: success_callback,
+        error: fail_callback
     });
+  }
+
+  function saveOptionsSuccessCallback( serverResponse ) {
+    $('#progress').hide();
+
+    location.reload();
+  }
+
+  function saveOptionsFailCallback( serverResponse ) {
+    $('#progress').hide();
+
+    location.reload();
+  }
+
+  function saveOptions() {
+    $('#current_action').html('Saving options');
+    sendWP2StaticAJAX(
+        'save_options',
+        saveOptionsSuccessCallback,
+        saveOptionsFailCallback
+    );
   }
 
   function millisToMinutesAndSeconds(millis) {
@@ -303,43 +312,30 @@ jQuery(document).ready(function($){
     $('#debug_mode').attr('checked', true);
   }
 
+
+  function downloadExportLogSuccessCallback( serverResponse) {
+    if ( ! serverResponse ) {
+      $('#current_action').html( 'Failed to download Export Log <a id="downloadExportLogButton" href="#">try again</a>' );
+      $('.pulsate-css').hide();
+    } else {
+        $('#current_action').html('Download <a href="' + serverResponse + '"> ' + serverResponse + '</a>');
+        $('.pulsate-css').hide();
+    }
+  }
+
+  function downloadExportLogFailCallback( serverResponse) {
+    $('.pulsate-css').hide();
+    $('#current_action').html( 'Failed to download Export Log <a id="downloadExportLogButton" href="#">try again</a>' );
+  }
+
   function downloadExportLog() {
-    $('.hiddenActionField').val('wp_static_html_output_ajax');
-    $('#hiddenAJAXAction').val('download_export_log');
+    $('#current_action').html( 'Downloading Export Log...' );
 
-    status_text = 'Downloading Export Log...';
-    $('#current_action').html( status_text );
-    $('#progress').show();
-    $('.pulsate-css').show();
-
-    data = $(".options-form :input")
-        .filter(function(index, element) {
-            return $(element).val() != '';
-        })
-        .serialize();
-
-    $.ajax({
-        url: ajaxurl,
-        data: data,
-        dataType: 'html',
-        method: 'POST',
-        success: function(serverResponse) {
-            if ( ! serverResponse ) {
-              $('#current_action').html( 'Failed to download Export Log <a id="downloadExportLogButton" href="#">try again</a>' );
-              $('.pulsate-css').hide();
-            } else {
-                $('#current_action').html('Download <a href="' + serverResponse + '"> ' + serverResponse + '</a>');
-                $('.pulsate-css').hide();
-            }
-        },
-        error: function(serverResponse) {
-            $('.pulsate-css').hide();
-            $('#current_action').html( 'Failed to download Export Log <a id="downloadExportLogButton" href="#">try again</a>' );
-        }
-    });
-
-    // on result, hide progress and show error or update with number of files found
-    
+    sendWP2StaticAJAX(
+        'download_export_log',
+        downloadExportLogSuccessCallback,
+        downloadExportLogFailCallback
+    ); 
   }
 
   $(document).on('click', '#exportWithDebugEnabledButton', function(evt) {
@@ -372,6 +368,10 @@ jQuery(document).ready(function($){
       $('.cancelExportButton').hide();
   }
 
+  function startExportSuccessCallback( serverResponse ) {
+      doAJAXExport('crawl_site', 'crawl_again', 'post_process_archive_dir');
+  }
+
   function startExport() {
     // start timer
     export_commence_time = + new Date();
@@ -400,30 +400,16 @@ jQuery(document).ready(function($){
     // reset export targets to avoid having left-overs from a failed run
     export_targets = [];
 
-    $('.hiddenActionField').val('wp_static_html_output_ajax');
-    $('#hiddenAJAXAction').val('prepare_for_export');
-
     if ( current_deployment_method === 'zip') {
       $('#createZip').attr('checked', 'checked');
     }
     export_targets.push(current_deployment_method);
 
-    data = $(".options-form :input")
-        .filter(function(index, element) {
-            return $(element).val() != '';
-        })
-        .serialize();
-
-    $.ajax({
-        url: ajaxurl,
-        data: data,
-        dataType: 'html',
-        method: 'POST',
-        success: function(serverResponse) {
-          doAJAXExport('crawl_site', 'crawl_again', 'post_process_archive_dir');
-        },
-        error: ajaxErrorHandler
-    });
+    sendWP2StaticAJAX(
+        'prepare_for_export',
+        downloadExportLogSuccessCallback,
+        ajaxErrorHandler
+    ); 
   }
 
   function clearProgressAndResults() {
@@ -888,32 +874,28 @@ jQuery(document).ready(function($){
     }
   });
 
-  $('#wp2static-footer').on('click', '.resetDefaultSettingsButton', function(event) {
+  function resetDefaultSettingsSuccessCallback( serverReponse ) {
+    alert("Settings have been reset to default, the page will now be reloaded.");
+    window.location.reload(true); 
+  }
+
+  function resetDefaultSettingsFailCallback( serverReponse ) {
+      alert("Error encountered in trying to reset settings. Please try refreshing the page.");
+  }
+
+  $('#wp2static-footer').on(
+    'click',
+    '.resetDefaultSettingsButton',
+    function(event) {
       event.preventDefault();
 
-      $('.hiddenActionField').val('wp_static_html_output_ajax');
-      $('#hiddenAJAXAction').val('reset_default_settings');
-
-      data = $(".options-form :input")
-        .filter(function(index, element) {
-            return $(element).val() != '';
-        })
-        .serialize();
-
-      $.ajax({
-          url: ajaxurl,
-          data: data,
-          dataType: 'html',
-          method: 'POST',
-          success: function(serverResponse) {
-      alert("Settings have been reset to default, the page will now be reloaded.");
-      window.location.reload(true); 
-          },
-          error: function(serverResponse) {
-      alert("Error encountered in trying to reset settings. Please try refreshing the page.");
-          }
-      });
-  });
+      sendWP2StaticAJAX(
+          'reset_default_settings',
+          resetDefaultSettingsSuccessCallback,
+          resetDefaultSettingsFailCallback
+      ); 
+    }
+  );
 
   $('#wp2static-footer').on('click', '.saveSettingsButton', function(event) {
       event.preventDefault();
@@ -995,7 +977,7 @@ jQuery(document).ready(function($){
 
   $('.wrap').on('click', '#save-and-reload', function(event) {
       event.preventDefault();
-      saveOptions( 'reload' );
+      saveOptions();
   });
 
 
