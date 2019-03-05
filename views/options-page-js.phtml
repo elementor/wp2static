@@ -1,6 +1,7 @@
 <script>
 //TODO: in help screen and error dialog, give button to display all client settings (excluding pwds) for easier troubleshooting
 
+var validation_errors = '';
 var deploy_options = {
     gitlab: {
         exportSteps: [
@@ -24,7 +25,7 @@ var deploy_options = {
           bbToken: 'Please specify your Bitbucket personal access token in order to deploy to Bitbucket.',
           bbRepo: 'Please specify your Bitbucket repository name in order to deploy to Bitbucket.',
           bbBranch: 'Please specify which branch in your Bitbucket repository you want to deploy to.'
-        }
+        },
         repo_field: {
           field: 'bbRepo',
           message: "Please ensure your Bitbucket repo is specified as USER_OR_ORG_NAME/REPO_NAME\n"
@@ -37,9 +38,13 @@ var deploy_options = {
             'finalize_deployment'
         ],
         required_fields: {
-          glToken: 'Please specify your GitLab personal access token in order to deploy to GitLab.',
-          glProject: 'Please specify your GitLab project ID in order to deploy to GitLab.',
-          glBranch: 'Please specify which branch in your GitLab repository you want to deploy to.'
+          ghToken: 'Please specify your GitHub personal access token in order to deploy to GitHub.',
+          ghRepo: 'Please specify your GitHub repository name in order to deploy to GitHub.',
+          ghBranch: 'Please specify which branch in your GitHub repository you want to deploy to.',
+        },
+        repo_field: {
+          field: 'ghRepo',
+          message: "Please ensure your GitHub repo is specified as USER_OR_ORG_NAME/REPO_NAME\n"
         }
     },
     zip: {
@@ -69,9 +74,9 @@ var deploy_options = {
             'finalize_deployment'
         ],
         required_fields: {
-          glToken: 'Please specify your GitLab personal access token in order to deploy to GitLab.',
-          glProject: 'Please specify your GitLab project ID in order to deploy to GitLab.',
-          glBranch: 'Please specify which branch in your GitLab repository you want to deploy to.'
+          ftpServer: 'Please specify the FTP server address needed to transfer your files via FTP',
+          ftpUsername: 'Please input an FTP username in order to authenticate when using the FTP deployment method.',
+          ftpPassword: 'Please input an FTP password in order to authenticate when using the FTP deployment method.',
         }
     },
     bunnycdn: {
@@ -82,9 +87,8 @@ var deploy_options = {
             'finalize_deployment'
         ],
         required_fields: {
-          glToken: 'Please specify your GitLab personal access token in order to deploy to GitLab.',
-          glProject: 'Please specify your GitLab project ID in order to deploy to GitLab.',
-          glBranch: 'Please specify which branch in your GitLab repository you want to deploy to.'
+          bunnycdnPullZoneName: 'Please specify your BunnyCDN pull zone name in order to deploy to BunnyCDN.',
+          bunnycdnAPIKey: 'Please specify your BunnyCDN API/FTP password in order to deploy to BunnyCDN.',
         }
     },
     s3: {
@@ -95,9 +99,9 @@ var deploy_options = {
             'finalize_deployment'
         ],
         required_fields: {
-          glToken: 'Please specify your GitLab personal access token in order to deploy to GitLab.',
-          glProject: 'Please specify your GitLab project ID in order to deploy to GitLab.',
-          glBranch: 'Please specify which branch in your GitLab repository you want to deploy to.'
+          s3Key: 'Please input an S3 Key in order to authenticate when using the S3 deployment method.',
+          s3Secret: 'Please input an S3 Secret in order to authenticate when using the S3 deployment method.',
+          s3Bucket: 'Please input the name of the S3 bucket you are trying to deploy to.',
         }
     },
     netlify: {
@@ -106,9 +110,8 @@ var deploy_options = {
             'finalize_deployment'
         ],
         required_fields: {
-          glToken: 'Please specify your GitLab personal access token in order to deploy to GitLab.',
-          glProject: 'Please specify your GitLab project ID in order to deploy to GitLab.',
-          glBranch: 'Please specify which branch in your GitLab repository you want to deploy to.'
+          netlifyPersonalAccessToken: 'Please specify your Netlify personal access token in order to deploy to Netlify.',
+          netlifySiteID: 'Please specify the id of your Netlify site you want to deploy to.',
         }
     },
 };
@@ -436,7 +439,6 @@ jQuery(document).ready(function($){
   }
 
   function getValidationErrors() {
-    validation_errors = '';
     // check for when targetFolder is showing (plugin reset state)
     if ($('#targetFolder').is(':visible') &&
       ( $('#targetFolder').val() == '' ) ) {
@@ -457,89 +459,10 @@ jQuery(document).ready(function($){
         }
     }
 
-      case 'ftp':
-        required_fields = {
-          ftpServer: 'Please specify the FTP server address needed to transfer your files via FTP',
-          ftpUsername: 'Please input an FTP username in order to authenticate when using the FTP deployment method.',
-          ftpPassword: 'Please input an FTP password in order to authenticate when using the FTP deployment method.',
-        };	
-
-        Object.keys(required_fields).forEach(function(key,index) {
-          if ($('#' + key).val() == '') {
-            validation_errors += required_fields[key] + "\n";
-          }
-        });
-      break; 
-
-      case 'folder':
-      break;
-
-      case 's3':
-        required_fields = {
-          s3Key: 'Please input an S3 Key in order to authenticate when using the S3 deployment method.',
-          s3Secret: 'Please input an S3 Secret in order to authenticate when using the S3 deployment method.',
-          s3Bucket: 'Please input the name of the S3 bucket you are trying to deploy to.',
-        };	
-
-        Object.keys(required_fields).forEach(function(key,index) {
-          if ($('#' + key).val() == '') {
-            validation_errors += required_fields[key] + "\n";
-          }
-        });
-      break;
-
-      case 'bunnycdn':
-        required_fields = {
-          bunnycdnPullZoneName: 'Please specify your BunnyCDN pull zone name in order to deploy to BunnyCDN.',
-          bunnycdnAPIKey: 'Please specify your BunnyCDN API/FTP password in order to deploy to BunnyCDN.',
-        };	
-
-        Object.keys(required_fields).forEach(function(key,index) {
-          if ($('#' + key).val() == '') {
-            validation_errors += required_fields[key] + "\n";
-          }
-        });
-      break; 
-
-      case 'netlify':
-        required_fields = {
-          netlifyPersonalAccessToken: 'Please specify your Netlify personal access token in order to deploy to Netlify.',
-          netlifySiteID: 'Please specify the id of your Netlify site you want to deploy to.',
-        };	
-
-        Object.keys(required_fields).forEach(function(key,index) {
-          if ($('#' + key).val() == '') {
-            validation_errors += required_fields[key] + "\n";
-          }
-        });
-      break; 
-
-      case 'github':
-        required_fields = {
-          ghToken: 'Please specify your GitHub personal access token in order to deploy to GitHub.',
-          ghRepo: 'Please specify your GitHub repository name in order to deploy to GitHub.',
-          ghBranch: 'Please specify which branch in your GitHub repository you want to deploy to.',
-        };	
-
-        Object.keys(required_fields).forEach(function(key,index) {
-          if ($('#' + key).val() == '') {
-            validation_errors += required_fields[key] + "\n";
-          }
-        });
-
-        repo = $('#ghRepo').val();
-
-        if (repo != '') {
-          if (repo.split('/').length !== 2) {
-            validation_errors += "Please ensure your GitHub repo is specified as USER_OR_ORG_NAME/REPO_NAME\n";
-          }
-        }
-      break; 
-
-      required_fields = deploy_options[target][exportSteps];
-      validateEmptyFields( required_fields );
-      repo_field = deploy_options[target][repo_field];
-      validateRepoField( repo_field );
+    required_fields = deploy_options[target][exportSteps];
+    validateEmptyFields( required_fields );
+    repo_field = deploy_options[target][repo_field];
+    validateRepoField( repo_field );
 
     return validation_errors;
   }
