@@ -71,7 +71,6 @@ remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
 remove_action( 'wp_print_styles', 'print_emoji_styles' );
 
 function wp_static_html_output_add_dashboard_widgets() {
-
     wp_add_dashboard_widget(
         'wp_static_html_output_dashboard_widget',
         'Static HTML Output',
@@ -89,8 +88,15 @@ function wp_static_html_output_deregister_scripts() {
     wp_deregister_script( 'wp-embed' );
     wp_deregister_script( 'comment-reply' );
 }
+
 add_action( 'wp_footer', 'wp_static_html_output_deregister_scripts' );
 remove_action( 'wp_head', 'wlwmanifest_link' );
+
+function wp2static_stop_heartbeat() {
+    wp_deregister_script('heartbeat');
+}
+
+add_action( 'init', 'wp2static_stop_heartbeat', 1 );
 
 // WP CLI support
 if ( defined( 'WP_CLI' ) ) {
