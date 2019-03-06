@@ -887,12 +887,12 @@ jQuery(document).ready(function($){
     }
   });
 
-  function resetDefaultSettingsSuccessCallback( serverReponse ) {
+  function resetDefaultSettingsSuccessCallback( serverResponse ) {
     alert("Settings have been reset to default, the page will now be reloaded.");
     window.location.reload(true); 
   }
 
-  function resetDefaultSettingsFailCallback( serverReponse ) {
+  function resetDefaultSettingsFailCallback( serverResponse ) {
       alert("Error encountered in trying to reset settings. Please try refreshing the page.");
   }
 
@@ -947,7 +947,7 @@ jQuery(document).ready(function($){
     }
   );
 
-  function testDeploymentSuccessCallback() {
+  function testDeploymentSuccessCallback( serverResponse ) {
     if (serverResponse === 'SUCCESS') {
         alert('Connection/Upload Test Successful');
     } else {
@@ -955,16 +955,18 @@ jQuery(document).ready(function($){
     }
 
     spinner.hide();
+    $('.pulsate-css').hide();
   }
 
-  function testDeploymentFailCallback() {
-    alert('FAIL: Unable to complete test upload to GitLab');
+  function testDeploymentFailCallback( serverResponse ) {
+    alert('FAIL: Unable to complete test upload to ' + current_deployment_method);
     spinner.hide();
+    $('.pulsate-css').hide();
   }
 
   $('.wrap').on(
     'click',
-    '[class$="-test-button"]',
+    '[id$="-test-button"]',
     function(event) {
       event.preventDefault();
       spinner = $('button').siblings('div.spinner')
@@ -972,8 +974,8 @@ jQuery(document).ready(function($){
 
       sendWP2StaticAJAX(
           'test_' + current_deployment_method,
-          deleteDeployCacheSuccessCallback,
-          deleteDeployCacheFailCallback
+          testDeploymentSuccessCallback,
+          testDeploymentFailCallback
       );
     }
   );
