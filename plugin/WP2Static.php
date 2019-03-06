@@ -352,22 +352,10 @@ class WP2Static_Controller {
             $this->settings =
                 WPSHO_PostSettings::get( $target_settings );
         }
+
         $uploads_dir = $this->settings['wp_uploads_path'];
-
-        $cache_files = array(
-            '/WP2STATIC-GITLAB-PREVIOUS-HASHES.txt',
-            '/WP2STATIC-GITHUB-PREVIOUS-HASHES.txt',
-            '/WP2STATIC-S3-PREVIOUS-HASHES.txt',
-            '/WP2STATIC-BUNNYCDN-PREVIOUS-HASHES.txt',
-            '/WP2STATIC-BITBUCKET-PREVIOUS-HASHES.txt',
-            '/WP2STATIC-FTP-PREVIOUS-HASHES.txt',
-        );
-
-        foreach ( $cache_files as $cache_file ) {
-            if ( is_file( $uploads_dir . $cache_file ) ) {
-                unlink( $uploads_dir . $cache_file );
-            }
-        }
+        $hash_files = glob("{$uploads_dir}/*PREVIOUS-HASHES*.txt");
+        array_map('unlink', $hash_files);
 
         if ( ! defined( 'WP_CLI' ) ) {
             echo 'SUCCESS';

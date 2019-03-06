@@ -293,11 +293,6 @@ class SiteCrawler extends WP2Static {
 
             // add url to list to crawl
             $crawl_queue[] = $this->full_url;
-
-            $this->logAction(
-                'Memory allocated by crawl script: ' .
-                round( memory_get_usage( true ) / 1024 )
-            );
         }
 
         $this->crawlMultipleURLs( $crawl_queue );
