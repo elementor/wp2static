@@ -246,7 +246,9 @@ jQuery(document).ready(function($){
     if( export_targets.length > 0) {
       target = export_targets.shift();
 
-      doAJAXExport(deploy_options[target]['exportSteps']);
+      export_steps = deploy_options[target]['exportSteps'];
+
+      doAJAXExport(export_steps);
     } else {
         // if zip was selected, call to get zip name and enable the button with the link to download
         if (current_deployment_method === 'zip') {
@@ -354,7 +356,13 @@ jQuery(document).ready(function($){
   }
 
   function startExportSuccessCallback( serverResponse ) {
-      doAJAXExport('crawl_site', 'crawl_again', 'post_process_archive_dir');
+      var initial_steps = [
+        'crawl_site',
+        'crawl_again',
+        'post_process_archive_dir'
+      ];
+
+      doAJAXExport(initial_steps);
   }
 
   function startTimer() {
@@ -525,18 +533,15 @@ jQuery(document).ready(function($){
 
       if an action fails, ajaxErrorHandler() is called
   */
-  function doAJAXExport() {
+  function doAJAXExport(args) {
     // arguments is not a real array, avoid nastiness by capturing as such
-    var args = [];
-    for (var i = 0; i < arguments.length; ++i) args[i] = arguments[i];
-
     export_action = args[0];
     status_text = export_action;
 
     if ( status_descriptions[export_action] != undefined ) {
         status_text = status_descriptions[export_action];
     } else {
-        status_text = export_option;
+        status_text = export_action;
     }
 
     $('#current_action').html(status_text);
@@ -561,10 +566,10 @@ jQuery(document).ready(function($){
             // rm first action now that it's succeeded
             args.shift();
             // call function with all other actions
-            doAJAXExport.apply(this, args);
+            doAJAXExport(args);
           // if an action is in progress incremental, it will call itself again
           } else if (serverResponse > 0) {
-            doAJAXExport.apply(this, args);
+            doAJAXExport(args);
 
             batch_increment += 1;
           } else if (serverResponse === 'SUCCESS') {
