@@ -293,9 +293,24 @@ class ArchiveProcessor extends WP2Static {
             str_replace( "\r", '', $this->settings['rename_rules'] )
         );
 
+
+        // Sort the rename rules into longest path order
+
+        $tmp_rules = array();
+
         foreach ( $rename_rules as $rename_rule_line ) {
-            list($original_dir, $target_dir) =
-                explode( ',', $rename_rule_line );
+            if ( $rename_rule_line ) {
+                list($original_dir, $target_dir) = explode( ',', $rename_rule_line );
+
+                $tmp_rules[ $original_dir ] = $target_dir;
+            }
+        }
+
+        // Comment this line out to force unit tests to fail
+        uksort( $tmp_rules, array( $this, 'ruleSort' ) );
+
+        // build the rewrite rules array
+        foreach ( $tmp_rules as $original_dir => $target_dir ) {
 
             $this->renameWPDirectory( $original_dir, $target_dir );
         }

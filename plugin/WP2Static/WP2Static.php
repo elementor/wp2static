@@ -24,5 +24,15 @@ class WP2Static {
             $this->settings = WPSHO_DBSettings::get( $target_settings );
         }
     }
+
+    // We need this is several of the Processors
+    public function ruleSort( $str1, $str2 )
+    {
+        // we'll just invert the result of strcmp for now
+
+        return 0 - strcmp( $str1, $str2 );
+    }
+
+
 }
 

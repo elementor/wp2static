@@ -23,6 +23,9 @@ final class HTMLProcessorRewriteSiteURLsToPlaceholderTest extends TestCase {
         $exp_result
         ) {
 
+        // echo "site url: ".$site_url.PHP_EOL;
+        // echo "raw html:  ".$raw_html.PHP_EOL;
+
         // mock out only the unrelated methods
         $processor = $this->getMockBuilder( 'HTMLProcessor' )
             ->setMethods(
@@ -53,11 +56,11 @@ final class HTMLProcessorRewriteSiteURLsToPlaceholderTest extends TestCase {
             'http://mywpsite.com/category/photos/my-gallery/'
         );
 
-        $processor->rewriteSiteURLsToPlaceholder();
+        $processed_html = $processor->rewriteSiteURLsToPlaceholder( $raw_html );
 
         $this->assertEquals(
             $exp_result,
-            $processor->raw_html
+            $processed_html
         );
     }
 

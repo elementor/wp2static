@@ -529,13 +529,25 @@ class HTMLProcessor extends WP2Static {
             str_replace( "\r", '', $this->settings['rewrite_rules'] )
         );
 
+        // Sort the rewrite rules into longest path order
+
+        $tmp_rules = array();
+
         foreach ( $rewrite_rules as $rewrite_rule_line ) {
             if ( $rewrite_rule_line ) {
                 list($from, $to) = explode( ',', $rewrite_rule_line );
 
-                $rewrite_from[] = $from;
-                $rewrite_to[] = $to;
+                $tmp_rules[ $from ] = $to;
             }
+        }
+
+        // Comment this line out to force unit tests to fail
+        uksort( $tmp_rules, array( $this, 'ruleSort' ) );
+
+        // build the rewrite rules array
+        foreach ( $tmp_rules as $from => $to ) {
+            $rewrite_from[] = $from;
+            $rewrite_to[] = $to;
         }
 
         $rewritten_source = str_replace(
@@ -583,13 +595,25 @@ class HTMLProcessor extends WP2Static {
             str_replace( "\r", '', $this->settings['rewrite_rules'] )
         );
 
+        // Sort the rewrite rules into longest path order
+
+        $tmp_rules = array();
+
         foreach ( $rewrite_rules as $rewrite_rule_line ) {
             if ( $rewrite_rule_line ) {
                 list($from, $to) = explode( ',', $rewrite_rule_line );
 
-                $rewrite_from[] = addcslashes( $from, '/' );
-                $rewrite_to[] = addcslashes( $to, '/' );
+                $tmp_rules[ $from ] = $to;
             }
+        }
+
+        // Comment this line out to force unit tests to fail
+        uksort( $tmp_rules, array( $this, 'ruleSort' ) );
+
+        // build the rewrite rules array
+        foreach ( $tmp_rules as $from => $to ) {
+            $rewrite_from[] = $from;
+            $rewrite_to[] = $to;
         }
 
         $rewritten_source = str_replace(
@@ -615,9 +639,23 @@ class HTMLProcessor extends WP2Static {
             str_replace( "\r", '', $this->settings['rewrite_rules'] )
         );
 
-        foreach ( $rewrite_rules as $rewrite_rule_line ) {
-            list($from, $to) = explode( ',', $rewrite_rule_line );
+        // Sort the rewrite rules into longest path order
 
+        $tmp_rules = array();
+
+        foreach ( $rewrite_rules as $rewrite_rule_line ) {
+            if ( $rewrite_rule_line ) {
+                list($from, $to) = explode( ',', $rewrite_rule_line );
+
+                $tmp_rules[ $from ] = $to;
+            }
+        }
+
+        // Comment this line out to force unit tests to fail
+        uksort( $tmp_rules, array( $this, 'ruleSort' ) );
+
+        // build the rewrite rules array
+        foreach ( $tmp_rules as $from => $to ) {
             $rewrite_from[] = $from;
             $rewrite_to[] = $to;
         }
@@ -644,9 +682,23 @@ class HTMLProcessor extends WP2Static {
             str_replace( "\r", '', $this->settings['rewrite_rules'] )
         );
 
-        foreach ( $rewrite_rules as $rewrite_rule_line ) {
-            list($from, $to) = explode( ',', $rewrite_rule_line );
+        // Sort the rewrite rules into longest path order
 
+        $tmp_rules = array();
+
+        foreach ( $rewrite_rules as $rewrite_rule_line ) {
+            if ( $rewrite_rule_line ) {
+                list($from, $to) = explode( ',', $rewrite_rule_line );
+
+                $tmp_rules[ $from ] = $to;
+            }
+        }
+
+        // Comment this line out to force unit tests to fail
+        uksort( $tmp_rules, array( $this, 'ruleSort' ) );
+
+        // build the rewrite rules array
+        foreach ( $tmp_rules as $from => $to ) {
             $rewrite_from[] = $from;
             $rewrite_to[] = $to;
         }
@@ -927,6 +979,7 @@ class HTMLProcessor extends WP2Static {
             ),
         );
 
+
         $replacements = array(
             $placeholder_url,
             addcslashes( $placeholder_url, '/' ),
@@ -947,7 +1000,7 @@ class HTMLProcessor extends WP2Static {
             $raw_html
         );
 
-        return $rewritten_source;
+        return $rewritten_source ;
     }
 
     public function shouldUseRelativeURLs() {
