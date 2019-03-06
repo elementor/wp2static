@@ -2,7 +2,7 @@
 
 class WPSHO_PostSettings {
 
-    public static function get( $sets = array() ) {
+    public static function get( $sets = array(), $specify_keys = array() ) {
 
         $settings = array();
         $key_sets = array();
@@ -138,10 +138,16 @@ class WPSHO_PostSettings {
             'wp_inc',
         );
 
-        $key_sets = apply_filters(
-            'wp2static_add_post_and_db_keys',
-            $key_sets
-        );
+        if ( ! empty( $specify_keys ) ) {
+            // manually add extra keys when deploying
+            $key_sets[$specify_keys[0]] = $specify_keys[1];
+        } else {
+            // apply filters when full WP execution
+            $key_sets = apply_filters(
+                'wp2static_add_post_and_db_keys',
+                $key_sets
+            );
+        }
 
         foreach ( $sets as $set ) {
             $target_keys = array_merge( $target_keys, $key_sets[ $set ] );
