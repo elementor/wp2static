@@ -1,7 +1,7 @@
 <?php
 
 class WP2Static_SitePublisher {
-    public function loadSettings( $deploy_method ) {
+    public function loadSettings( $deploy_method, $specify_keys = array() ) {
         $target_settings = array(
             'general',
             'wpenv',
@@ -14,12 +14,12 @@ class WP2Static_SitePublisher {
             require_once dirname( __FILE__ ) .
                 '/PostSettings.php';
 
-            $this->settings = WPSHO_PostSettings::get( $target_settings );
+            $this->settings = WPSHO_PostSettings::get( $target_settings, $specify_keys );
         } else {
             require_once dirname( __FILE__ ) .
                 '/DBSettings.php';
 
-            $this->settings = WPSHO_DBSettings::get( $target_settings );
+            $this->settings = WPSHO_DBSettings::get( $target_settings, $specify_keys );
         }
     }
 
@@ -48,29 +48,6 @@ class WP2Static_SitePublisher {
             sleep( $this->settings['delayBetweenAPICalls'] );
         }
     }
-
-    public function updateProgress() {
-        $this->batch_index++;
-
-        $completed_urls =
-            $this->total_urls_to_crawl -
-            $this->files_remaining +
-            $this->batch_index;
-
-        require_once dirname( __FILE__ ) .
-            '/ProgressLog.php';
-        ProgressLog::l( $completed_urls, $this->total_urls_to_crawl );
-    }
-
-    public function initiateProgressIndicator() {
-        $this->deploy_count_path = $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-TOTAL-FILES-TO-DEPLOY.txt';
-        $this->total_urls_to_crawl =
-            file_get_contents( $this->deploy_count_path );
-
-        $this->batch_index = 0;
-    }
-
 
     public function clearFileList() {
         if ( is_file( $this->export_file_list ) ) {

@@ -923,12 +923,14 @@ jQuery(document).ready(function($){
     }
 
     spinner.hide();
+    $('.pulsate-css').hide();
   }
 
   function  deleteDeployCacheFailCallback( serverResponse ) {
     alert('FAIL: Unable to delete deploy cache');
 
     spinner.hide();
+    $('.pulsate-css').hide();
   }
 
   $('.wrap').on(

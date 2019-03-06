@@ -250,10 +250,6 @@ class SiteCrawler extends WP2Static {
         }
         // @codingStandardsIgnoreEnd
 
-        $total_urls_to_crawl = file_get_contents( $total_urls_path );
-
-        $batch_index = 0;
-
         $exclusions = array( 'wp-json' );
 
         if ( isset( $this->settings['excludeURLs'] ) ) {
@@ -297,18 +293,6 @@ class SiteCrawler extends WP2Static {
 
             // add url to list to crawl
             $crawl_queue[] = $this->full_url;
-            // this progress now not as relevant
-            $batch_index++;
-
-            $completed_urls =
-                $total_urls_to_crawl -
-                $this->remaining_urls_to_crawl -
-                count( $batch_of_links_to_crawl ) +
-                $batch_index;
-
-            require_once dirname( __FILE__ ) .
-                '/../WP2Static/ProgressLog.php';
-            ProgressLog::l( $completed_urls, $total_urls_to_crawl );
 
             $this->logAction(
                 'Memory allocated by crawl script: ' .
