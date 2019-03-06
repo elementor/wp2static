@@ -427,6 +427,7 @@ jQuery(document).ready(function($){
   }
 
   function getValidationErrors() {
+    validation_errors = '';
     // check for when targetFolder is showing (plugin reset state)
     if ($('#targetFolder').is(':visible') &&
       ( $('#targetFolder').val() == '' ) ) {
