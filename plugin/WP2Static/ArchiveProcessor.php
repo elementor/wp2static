@@ -52,6 +52,12 @@ class ArchiveProcessor extends WP2Static {
     }
 
     public function recursive_copy( $srcdir, $dstdir ) {
+
+        require_once dirname( __FILE__ ) .
+            '/../WP2Static/WsLog.php';
+        WsLog::l(
+            'RC ' . $srcdir . ' to ' . $dstdir 
+        );        
         $dir = opendir( $srcdir );
 
         if ( ! is_dir( $dstdir ) ) {

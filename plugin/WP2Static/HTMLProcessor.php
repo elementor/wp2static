@@ -612,8 +612,8 @@ class HTMLProcessor extends WP2Static {
 
         // build the rewrite rules array
         foreach ( $tmp_rules as $from => $to ) {
-            $rewrite_from[] = $from;
-            $rewrite_to[] = $to;
+            $rewrite_from[] = addcslashes( $from, '/' );
+            $rewrite_to[] = addcslashes( $to, '/' );
         }
 
         $rewritten_source = str_replace(
