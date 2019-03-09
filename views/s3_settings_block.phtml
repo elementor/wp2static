@@ -99,6 +99,16 @@
       </tr>
       <tr>
         <th scope="row">
+          <label for="s3CacheControl"><?php echo __('Cache-Control', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <?php $tpl->displayTextfield($this, 's3CacheControl', 'Cache-Control', 'ie, 86400'); ?><br>
+
+          <p><i>Sets the cache-control max-age value applied to S3 objects.  If you are using CloudFront it will use this value to determine how often to refresh the CDN for a particular URL.  Reduces CDN Transfer costs.  You will need to redeploy the entire site if this value is changed.</a>.</i></p>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
           <label for="s3_test"><?php echo __('Test S3 Settings', 'static-html-output-plugin');?></label>
         </th>
         <td>

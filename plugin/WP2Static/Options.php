@@ -77,6 +77,7 @@ class WP2Static_Options {
         'useBaseHref',
         'useBasicAuth',
         'useRelativeURLs',
+        's3CacheControl',
     );
 
     protected $whitelisted_keys = array(
@@ -144,6 +145,7 @@ class WP2Static_Options {
         'useBaseHref',
         'useBasicAuth',
         'useRelativeURLs',
+        's3CacheControl',
     );
 
     public function __construct( $option_key ) {

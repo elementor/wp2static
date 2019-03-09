@@ -173,6 +173,13 @@ class WP2Static_S3 extends WP2Static_SitePublisher {
         $request_headers['x-amz-acl'] = $content_acl;
         $request_headers['x-amz-content-sha256'] = hash( 'sha256', $content );
 
+        if ( !empty( $this->settings[ 's3CacheControl' ] ) )
+        {
+            $max_age = $this->settings[ 's3CacheControl' ];
+            $request_headers['Cache-Control'] = 'max-age='.$max_age; 
+
+        }
+
         // Sort it in ascending order
         ksort( $request_headers );
 

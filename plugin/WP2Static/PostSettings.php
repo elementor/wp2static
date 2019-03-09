@@ -113,6 +113,7 @@ class WPSHO_PostSettings {
             's3Region',
             's3RemotePath',
             's3Secret',
+            's3CacheControl',
         );
 
         $key_sets['netlify'] = array(
