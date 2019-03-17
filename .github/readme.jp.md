@@ -8,10 +8,11 @@ WordPressで静的HTMLを生成して、色んな可能性を開きます。
 
 クラスの一番データ配信を使えるになる。
 
-[English ![English](docs/images/flags/greatbritain.png)](readme.md) |
-[日本語 ![日本語](docs/images/flags/japan.png)](readme.jp.md) |
-[Français ![Français](docs/images/flags/france.png)](readme.fr.md) |
-[简体中文 ![Simplified Chinese](docs/images/flags/prchina.png)](readme.zh-cn.md)
+[English ![English](https://cdn.staticaly.com/misc/flags/us.png?w=20)](readme.md) |
+[日本語 ![日本語](https://cdn.staticaly.com/misc/flags/jp.png?w=20)](readme.jp.md) |
+[Français ![Français](https://cdn.staticaly.com/misc/flags/fr.png?w=20)](readme.fr.md) |
+[简体中文 ![Simplified Chinese](https://cdn.staticaly.com/misc/flags/cn.png?w=20)](readme.zh-cn.md) |
+[Indonesia ![Indonesia](https://cdn.staticaly.com/misc/flags/id.png?w=20)](readme.id.md)
 
 ## ワードプレスを静的サイトジェネレータとして使用します
 
