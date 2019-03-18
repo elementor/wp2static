@@ -1,12 +1,6 @@
 # WP2Static
 
-WordPressで静的HTMLを生成して、色んな可能性を開きます。
-
-バックエンドを公共から守って。
-
-リソースよりも幸福をスケールしよう！
-
-クラスの一番データ配信を使えるになる。
+Plugin WordPress untuk generate salinan statis situs Anda dan deploy ke GitHub Pages, S3, Netlify, dll. Meningkatkan keamanan, kecepatan pageload, dan opsi hosting. Hubungkan WordPress ke dalam alur kerja CI/CD Anda.
 
 [English ![English](https://cdn.staticaly.com/misc/flags/us.png?w=20)](readme.md) |
 [日本語 ![日本語](https://cdn.staticaly.com/misc/flags/jp.png?w=20)](readme.jp.md) |
@@ -14,49 +8,49 @@ WordPressで静的HTMLを生成して、色んな可能性を開きます。
 [简体中文 ![Simplified Chinese](https://cdn.staticaly.com/misc/flags/cn.png?w=20)](readme.zh-cn.md) |
 [Indonesia ![Indonesia](https://cdn.staticaly.com/misc/flags/id.png?w=20)](readme.id.md)
 
-## ワードプレスを静的サイトジェネレータとして使用します
+## WordPress sebagai Generator Situs Statis
 
-開発者スタフォード・レオン様の [WordCamp Brisbane 2018でのプレゼンテーション](http://www.youtube.com/watch?v=HPc4JjBvkrU) を見ます。
+Lihat presentasi Leon Stafford [di WordCamp Brisbane 2018](http://www.youtube.com/watch?v=HPc4JjBvkrU)
 
-[![ワードプレスを静的サイトジェネレータとして使用します](http://img.youtube.com/vi/HPc4JjBvkrU/0.jpg)](http://www.youtube.com/watch?v=HPc4JjBvkrU)
+[![WordPress as a Static Site Generator](http://img.youtube.com/vi/HPc4JjBvkrU/0.jpg)](http://www.youtube.com/watch?v=HPc4JjBvkrU)
 
 
-## 目次
+## Daftar Isi
 
-* [外部リソース](#external-resources)
-* [意見のあるソフトウェア](#opinionated-software)
-* [インストール仕方](#installation)
-* [WP-CLIのコマンド](#wp-cli-commands)
-* [フック](#hooks)
-  * [Modify the initial list of URLs to crawl](#modify-the-initial-list-of-urls-to-crawl)
+* [Sumber daya eksternal](#sumber-daya-external)
+* [Opinionated software](#opinionated-software)
+* [Instalasi](#instalasi)
+* [Perintah WP-CLI](#perintah-wp-cli)
+* [Hooks](#hooks)
+  * [Ubah daftar awal URL yang akan dirayapi](#ubah-daftar-awal-url-yang-akan-dirayapi)
   * [Post-deployment hook](#post-deployment-hook)
-* [開発の協力すりには](#development)
-* [ローカライゼーション・翻訳](#localisation--translations)
-* [サポート](#support)
-* [お知らせ](#notes)
-* [オープンソースを応援しましょう〜](#sponsorship--supporting-open-source)
+* [Pengembangan](#pengembangan)
+* [Lokalisasi / terjemahan](#localisasi--terjemahan)
+* [Dukungan](#dukungan)
+* [Catatan](#catatan)
+* [Sponsorship / mendukung open-source](#sponsorship--mendukung-open-source)
 
-## External resources
+## Sumber daya eksternal
 
  - [WordPress.org plugin page](https://wordpress.org/plugins/static-html-output-plugin)
- - [Marketing site](https://wp2static.com)
- - [Documentation](https://docs.wp2static.com)
+ - [Situs utama](https://wp2static.com)
+ - [Dokumentasi](https://docs.wp2static.com)
  - [Forum](https://forum.wp2static.com)
- - [Slack](https://join.slack.com/t/wp2static/shared_invite/enQtNDQ4MDM4MjkwNjEwLTVmN2I2MmU4ODI2MWRkNzM4ZGU3YWU4ZGVhMzgwZTc1MDE2OGNmYTFhOGMwM2U0ZTVlYTljYmM2Yjk2ODJlOTk)
- - [Twitter](https://twitter.com/wp2static)
+ - [Slack](https://join.slack.com/t/wp2static/shared_invite/enQtNDQ4MDM4MjkwNjEwLTVmN2I2MmU4ODI2MWRkNzM4ZGU3YWU4ZGVhMzgwZTc1MDE2OGNmYTFhOGMwM2U0ZTVlYTljYmM2Yjk2ODJlOTk)  
+ - [Twitter](https://twitter.com/wp2static)  
  - [CircleCI](https://circleci.com/gh/leonstafford/wp2static) *master* [![CircleCI](https://circleci.com/gh/leonstafford/wp2static/tree/master.svg?style=svg)](https://circleci.com/gh/leonstafford/wp2static/tree/master) *develop* [![CircleCI](https://circleci.com/gh/leonstafford/wp2static/tree/develop.svg?style=svg)](https://circleci.com/gh/leonstafford/wp2static/tree/develop)
 
 ## Opinionated software
 
- - 完璧のコードよりパーフォーマンス
- - 短い変数名より人間が読めるコード
- - 外部ライブラリより自分達の書いたコード
- - 意見よりもデータ（ベンチマーク、など）
- - クリック数が低い方が良いUX
- - 開発者のお好みよりユーザが決める設定
+ - kecepatan lebih dari kode yang indah
+ - kode yang dapat dibaca manusia dari nama variabel pendek
+ - own-code vs menambahkan perpustakaan
+ - membuat tolok ukur atas pendapat (performa)
+ - lebih sedikit klik == UX yang lebih baik
+ - opsi yang dapat dikonfigurasi pengguna vs opini pengembang
 
 
-## WP-CLI commands
+## Perintah WP-CLI
 
  - `wp wp2static options --help`
 ```
@@ -208,25 +202,17 @@ Archive Object
 
     [path] => /srv/www/example.com/current/web/app/uploads/wp-static-html-output-1547668758/
     [name] => wp-static-html-output-1547668758
-    [crawl_list] =>
-    [export_log] =>
+    [crawl_list] => 
+    [export_log] => 
 )
 
 ```
 
-## Development
+## Development 
 
-このレポの「`develop`」ブランチには最新コードがあります。安定したコードは[リリース](https://github.com/leonstafford/wp2static/releases)または[wordpress.org](https://wordpress.org/plugins/static-html-output-plugin/)の方からダウンロードして下さい。
+This repo contains the latest code, which you can clone/download to get the bleeding edge, else install via the [official WordPress Plugin page](https://wordpress.org/plugins/static-html-output-plugin/)
 
-プラグインに協力したいの方には普通のGitHubの方法で：
-
- - [Issue](https://github.com/leonstafford/wp2static/issues)を作って
- - レポをフォークして
- - PRを送信する
-
-何かの不明所がありましたら、是非開発者に連絡して下さい：
-
-[スタフォード・レオン](mailto:leon@wp2static.com)　（英語・日本語）
+If you'd like to contribute, please follow the usual GitHub procedures (create an Issue, fork repo, submit PR). If you're unsure about any of that, contact me and I'll be happy to help.
 
 In trying to make development/contributing easier, we'll keep requirements to a minimum. If you prefer Docker, Local by FlyWheel, Valet, Bedrock, Linux, BSD, Mac, they're all fine. This is a WordPress plugin, so anywhere you can run WordPress, you can do development on this :)
 
@@ -256,7 +242,7 @@ There is no big company behind this software, besides a sole proprietership in m
 
 Help keep me doing what I love: building and supporting this software. 
 
- - [Buy the Plugin](https://wp2static.com)
+ - [Buy a commercial license](https://wp2static.com)
  - [Back me on Patreon](https://www.patreon.com/leonstafford)
  - [Fund my PayPal](https://www.paypal.me/leonjstafford)
 
