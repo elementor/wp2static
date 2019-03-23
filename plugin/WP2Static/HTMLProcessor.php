@@ -159,29 +159,46 @@ class HTMLProcessor extends WP2Static {
         $this->convertToRelativeURL( $element );
         $this->convertToOfflineURL( $element );
 
-        if ( isset( $this->settings['removeWPLinks'] ) ) {
-            $relative_links_to_rm = array(
-                'shortlink',
-                'canonical',
-                'pingback',
-                'alternate',
-                'EditURI',
-                'wlwmanifest',
-                'index',
-                'profile',
-                'prev',
-                'next',
-                'wlwmanifest',
-            );
+        if ( isset( $this->settings['removeWPLinks'] ) ) 
+        {            
+            if ( $this->settings['removeWPLinks'] )
+            {
+                $relative_links_to_rm = array(
+                    'shortlink',
+                    'pingback',
+                    'alternate',
+                    'EditURI',
+                    'wlwmanifest',
+                    'index',
+                    'profile',
+                    'prev',
+                    'next',
+                    'wlwmanifest',
+                );
 
-            $link_rel = $element->getAttribute( 'rel' );
+                $link_rel = $element->getAttribute( 'rel' );
 
-            if ( in_array( $link_rel, $relative_links_to_rm ) ) {
-                $element->parentNode->removeChild( $element );
-            } elseif ( strpos( $link_rel, '.w.org' ) !== false ) {
-                $element->parentNode->removeChild( $element );
+                if ( in_array( $link_rel, $relative_links_to_rm ) ) {
+                    $element->parentNode->removeChild( $element );
+                } elseif ( strpos( $link_rel, '.w.org' ) !== false ) {
+                    $element->parentNode->removeChild( $element );
+                }
             }
         }
+
+        if ( isset( $this->settings['removeCanonical'] ) ) 
+        {
+            if ( $this->settings['removeCanonical'] )
+            {
+                $link_rel = $element->getAttribute( 'rel' );
+
+                if ( strtolower( $link_rel ) == 'canonical' ) 
+                {
+                    $element->parentNode->removeChild( $element );
+                }
+            }
+        }
+
     }
 
     public function isValidURL( $url ) {
