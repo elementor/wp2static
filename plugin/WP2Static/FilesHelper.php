@@ -593,11 +593,10 @@ class WP2Static_FilesHelper {
     }
 
     public static function cleanDetectedURLs( $urls ) {
+        // NOTE: initial de-dup for faster processing
         $unique_urls = array_unique( $urls );
 
         $wp_site_url = get_home_url();
-
-        $search_text = ' ';
 
         $url_queue = array_filter(
             $unique_urls,
@@ -610,11 +609,26 @@ class WP2Static_FilesHelper {
             $url_queue
         );
 
-        $cleaned_urls = str_replace(
+        $deslashed_urls = str_replace(
             '//',
             '/',
             $stripped_urls
         );
+
+        // trim hashes/query strings
+        function stripTrailingCharacters( $url ) {
+            $url = strtok( $url, '#' );
+            $url = strtok( $url, '?' );
+
+            return $url;
+        }
+
+        $detokenized_urls = array_map(
+            'stripTrailingCharacters',
+            $deslashed_urls
+        );
+
+        $cleaned_urls = array_unique( $detokenized_urls );
 
         return $cleaned_urls;
     }
