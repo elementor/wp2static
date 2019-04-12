@@ -115,9 +115,11 @@ class WP2Static_FilesHelper {
             $vendor_files = array_merge( $vendor_files, $soliloquy_urls );
         }
 
-        if ( class_exists( 'autoptimizeMain' ) ) {
-            $autoptimize_cache_dir =
-                $wp_site->wp_content_path . '/cache/autoptimize';
+        // cache dir used by Autoptimize and other themes/plugins
+        $vendor_cache_dir =
+            $wp_site->wp_content_path . '/cache/';
+
+        if ( is_dir( $vendor_cache_dir ) ) {
 
             // get difference between home and wp-contents URL
             $prefix = str_replace(
@@ -126,13 +128,13 @@ class WP2Static_FilesHelper {
                 $wp_site->wp_content_url
             );
 
-            $autoptimize_urls = self::getAutoptimizeCacheFiles(
-                $autoptimize_cache_dir,
+            $vendor_cache_urls = self::getVendorCacheFiles(
+                $vendor_cache_dir,
                 $wp_site->wp_content_path,
                 $prefix
             );
 
-            $vendor_files = array_merge( $vendor_files, $autoptimize_urls );
+            $vendor_files = array_merge( $vendor_files, $vendor_cache_urls );
         }
 
         if ( class_exists( 'Custom_Permalinks' ) ) {
@@ -218,14 +220,16 @@ class WP2Static_FilesHelper {
     }
 
     /*
-        Autoptimize puts it's cache dir one level above the uploads URL
+        Autoptimize and other vendors use a cache dir one level above the 
+        uploads URL
+
         ie, domain.com/cache/ or domain.com/subdir/cache/
 
         so, we grab all the files from the its actual cache dir
 
         then strip the site path and any subdir path (no extra logic needed?)
     */
-    public static function getAutoptimizeCacheFiles(
+    public static function getVendorCacheFiles(
         $cache_dir,
         $path_to_trim,
         $prefix
