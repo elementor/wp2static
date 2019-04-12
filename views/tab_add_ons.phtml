@@ -5,8 +5,47 @@ Whilst you can get a fully functioning static site using the free version of WP2
 </p>
 
 
+<?php
+
+$add_ons = array(
+    'wp2static-addon-azure/wp2static-addon-azure.php' => 'Azure Add-On',
+    'wp2static-addon-bitbucket/wp2static-addon-bitbucket.php' => 'Bitbucket Add-On',
+    'wp2static-addon-bunnycdn/wp2static-addon-bunnycdn.php' => 'BunnyCDN Add-On',
+    'wp2static-addon-ftp/wp2static-addon-ftp.php' => 'FTP Add-On',
+    'wp2static-addon-github/wp2static-addon-github.php' => 'GitHub Add-On',
+    'wp2static-addon-gitlab/wp2static-addon-gitlab.php' => 'GitLab Add-On',
+    'wp2static-addon-netlify/wp2static-addon-netlify.php' => 'Netlify Add-On',
+    'wp2static-addon-s3/wp2static-addon-s3.php' => 'S3 Add-On',
+);
+
+?>
 
 
+<ul>
 
-</div> <!-- end advanced settings -->
+
+<?php foreach( $add_ons as $add_on_code => $add_on_name ): ?>
+
+    <li>
+      <?php echo $add_on_name; ?>
+
+      <?php if( is_plugin_active( $add_on_code ) ) : ?>
+
+        <span style="color:green;">ACTIVE</span>
+
+      <?php else: ?>
+
+        <span style="color:blue;">Get Add-On</span>
+
+     <?php endif; ?>
+
+
+    </li>
+
+<?php endforeach; ?>
+
+
+</ul>
+
+</div> <!-- end add-ons tab -->
 
