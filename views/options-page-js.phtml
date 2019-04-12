@@ -625,7 +625,7 @@ jQuery(document).ready(function($){
   }
 
   function hideOtherVendorMessages() {
-    notices = $('.update-nag, .updated, .error, .is-dismissible');
+    notices = $('.update-nag, .updated, .error, .is-dismissible, .elementor-message');
 
     $.each(notices, function(index, element) {
         if ( ! $(element).hasClass('wp2static-notice') ) {
