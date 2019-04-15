@@ -19,6 +19,7 @@ class WPSHO_PostSettings {
             'basicAuthPassword',
             'basicAuthUser',
             'crawlPort',
+            'userAgent',
             'crawl_delay',
             'detection_level',
             'parse_css',

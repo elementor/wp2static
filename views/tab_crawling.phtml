@@ -36,6 +36,15 @@
       </tr>
       <tr>
         <th scope="row">
+          <label for="userAgent"><?php echo __('Custom crawling user-agent', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <?php $tpl->displayTextfield($this, 'userAgent', 'Custom crawling user-agent', ''); ?>
+          <small>Configuration option for the request HTTP header User-Agent.</small>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
           <label for="simultaneousCurlRequests"><?php echo __('Simultaneous cURL requests', 'static-html-output-plugin');?></label>
         </th>
         <td>

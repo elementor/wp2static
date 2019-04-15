@@ -348,6 +348,14 @@ class SiteCrawler extends WP2Static {
         curl_setopt( $ch, CURLOPT_HEADER, 0 );
         curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
 
+        if ( isset( $this->settings['userAgent'] ) ) {
+            curl_setopt(
+                $ch,
+                CURLOPT_USERAGENT,
+                $this->settings['userAgent']
+            );
+        }
+
         if ( isset( $this->settings['useBasicAuth'] ) ) {
             curl_setopt(
                 $ch,
@@ -474,6 +482,10 @@ class SiteCrawler extends WP2Static {
 
         if ( isset( $this->settings['crawlPort'] ) ) {
             $options[ CURLOPT_PORT ] = $this->settings['crawlPort'];
+        }
+
+        if ( isset( $this->settings['userAgent'] ) ) {
+            $options[ CURLOPT_USERAGENT ] = $this->settings['userAgent'];
         }
 
         if ( isset( $this->settings['useBasicAuth'] ) ) {
