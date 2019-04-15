@@ -100,7 +100,7 @@ class WP2Static_BitBucket extends WP2Static_SitePublisher {
 
             $this->checkForValidResponses(
                 $this->client->status_code,
-                array( '200', '201', '301', '302', '304' )
+                array( '100', '200', '201', '301', '302', '304' )
             );
         } catch ( Exception $e ) {
             $this->handleException( $e );
@@ -173,7 +173,7 @@ class WP2Static_BitBucket extends WP2Static_SitePublisher {
 
             $this->checkForValidResponses(
                 $this->client->status_code,
-                array( '200', '201', '301', '302', '304' )
+                array( '100', '200', '201', '301', '302', '304' )
             );
         } catch ( Exception $e ) {
             $this->handleException( $e );

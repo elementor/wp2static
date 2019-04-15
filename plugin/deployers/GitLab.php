@@ -154,7 +154,7 @@ class WP2Static_GitLab extends WP2Static_SitePublisher {
 
             $this->checkForValidResponses(
                 $client->status_code,
-                array( '200', '201', '301', '302', '304' )
+                array( '100', '200', '201', '301', '302', '304' )
             );
 
             $this->writeFilePathAndHashesToFile();
@@ -209,7 +209,14 @@ class WP2Static_GitLab extends WP2Static_SitePublisher {
             $headers
         );
 
-        $good_response_codes = array( '200', '201', '301', '302', '304' );
+        $good_response_codes = array(
+            '100',
+            '200',
+            '201',
+            '301',
+            '302',
+            '304'
+        );
 
         if ( ! in_array( $client->status_code, $good_response_codes ) ) {
             require_once dirname( __FILE__ ) .
@@ -277,7 +284,7 @@ class WP2Static_GitLab extends WP2Static_SitePublisher {
 
             $this->checkForValidResponses(
                 $client->status_code,
-                array( '200', '201', '301', '302', '304' )
+                array( '100', '200', '201', '301', '302', '304' )
             );
         } catch ( Exception $e ) {
             $this->handleException( $e );

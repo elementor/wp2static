@@ -67,7 +67,7 @@ class WP2Static_Netlify extends WP2Static_SitePublisher {
 
             $this->checkForValidResponses(
                 $this->client->status_code,
-                array( '200', '201', '301', '302', '304' )
+                array( '100', '200', '201', '301', '302', '304' )
             );
 
             $this->finalizeDeployment();

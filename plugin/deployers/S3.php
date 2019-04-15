@@ -268,7 +268,7 @@ class WP2Static_S3 extends WP2Static_SitePublisher {
 
         $this->checkForValidResponses(
             $http_code,
-            array( '200' )
+            array( '100', '200' )
         );
 
         curl_close( $ch );

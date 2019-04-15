@@ -166,7 +166,14 @@ class WP2Static_GitHub extends WP2Static_SitePublisher {
 
             curl_close( $ch );
 
-            $good_response_codes = array( '200', '201', '301', '302', '304' );
+            $good_response_codes = array(
+                '100',
+                '200',
+                '201',
+                '301',
+                '302',
+                '304'
+            );
 
             if ( ! in_array( $status_code, $good_response_codes ) ) {
                 require_once dirname( __FILE__ ) .
@@ -235,7 +242,7 @@ JSON;
 
         $this->checkForValidResponses(
             $this->client->status_code,
-            array( '200', '201', '301', '302', '304' )
+            array( '100', '200', '201', '301', '302', '304' )
         );
 
         $gh_file_info = json_decode( $this->client->body, true );
@@ -309,7 +316,7 @@ JSON;
 
             $this->checkForValidResponses(
                 $this->client->status_code,
-                array( '200', '201', '301', '302', '304' )
+                array( '100', '200', '201', '301', '302', '304' )
             );
         } catch ( Exception $e ) {
             $this->handleException( $e );
@@ -369,7 +376,7 @@ JSON;
 
             $this->checkForValidResponses(
                 $this->client->status_code,
-                array( '200', '201', '301', '302', '304' )
+                array( '100', '200', '201', '301', '302', '304' )
             );
 
         } catch ( Exception $e ) {
