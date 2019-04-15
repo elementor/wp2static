@@ -85,19 +85,6 @@ var deploy_options = {
           bunnycdnAPIKey: 'Please specify your BunnyCDN API/FTP password in order to deploy to BunnyCDN.',
         }
     },
-    s3: {
-        exportSteps: [
-            's3_prepare_export',
-            's3_transfer_files',
-            'cloudfront_invalidate_all_items',
-            'finalize_deployment'
-        ],
-        required_fields: {
-          s3Key: 'Please input an S3 Key in order to authenticate when using the S3 deployment method.',
-          s3Secret: 'Please input an S3 Secret in order to authenticate when using the S3 deployment method.',
-          s3Bucket: 'Please input the name of the S3 bucket you are trying to deploy to.',
-        }
-    },
     netlify: {
         exportSteps: [
             'netlify_do_export',
@@ -143,9 +130,6 @@ var status_descriptions = {
     'post_process_archive_dir' : 'Processing the crawled files',
     'post_export_teardown' : 'Cleaning up after processing',
     'netlify_do_export' : 'Deploying to Netlify',
-    's3_prepare_export' : 'Preparing files for S3 deployment',
-    's3_transfer_files' : 'Deploying files to S3',
-    'cloudfront_invalidate_all_items' : 'Invalidating CloudFront cache',
     'bunnycdn_prepare_export' : 'Preparing files for BunnyCDN deployment',
     'bunnycdn_transfer_files' : 'Deploying files to BunnyCDN',
     'bunnycdn_purge_cache' : 'Purging BunnyCDN cache',
