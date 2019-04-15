@@ -185,28 +185,6 @@ class WP2Static_SitePublisher {
             $basename_in_target
         );
 
-        // TODO: detect and use `cat | wc -l` if available
-        $linecount = 0;
-        $handle = fopen( $this->export_file_list, 'r' );
-
-        while ( ! feof( $handle ) ) {
-            $line = fgets( $handle );
-            $linecount++;
-        }
-
-        fclose( $handle );
-
-        $deploy_count_path = $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-TOTAL-FILES-TO-DEPLOY.txt';
-
-        file_put_contents(
-            $deploy_count_path,
-            $linecount,
-            LOCK_EX
-        );
-
-        chmod( $deploy_count_path, 0664 );
-
         if ( ! defined( 'WP_CLI' ) ) {
             echo 'SUCCESS';
         }
