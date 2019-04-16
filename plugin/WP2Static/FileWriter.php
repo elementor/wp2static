@@ -16,6 +16,7 @@ class FileWriter extends WP2Static {
 
     public function saveFile( $archive_dir ) {
         $url_info = parse_url( $this->url );
+
         $path_info = array();
 
         if ( ! isset( $url_info['path'] ) ) {
@@ -87,7 +88,6 @@ class FileWriter extends WP2Static {
         $file_contents = $this->content;
 
         if ( $file_contents ) {
-            $this->logAction( 'SAVING ' . $this->url . ' to ' . $filename );
             file_put_contents( $filename, $file_contents );
             chmod( $filename, 0664 );
         } else {

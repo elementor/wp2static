@@ -15,7 +15,6 @@ class Exporter extends WP2Static {
     public function pre_export_cleanup() {
         $files_to_clean = array(
             'WP-STATIC-2ND-CRAWL-LIST.txt',
-            'WP-STATIC-404-LOG.txt',
             'WP-STATIC-CRAWLED-LINKS.txt',
             'WP-STATIC-DISCOVERED-URLS-LOG.txt',
             'WP-STATIC-DISCOVERED-URLS.txt',

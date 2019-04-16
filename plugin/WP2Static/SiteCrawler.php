@@ -19,8 +19,6 @@ class SiteCrawler extends WP2Static {
         $this->processed_file = '';
         $this->file_type = '';
         $this->content_type = '';
-        $this->url = '';
-        $this->full_url = '';
         $this->extension = '';
         $this->archive_dir = '';
         $this->list_of_urls_to_crawl_path = '';
@@ -113,6 +111,7 @@ class SiteCrawler extends WP2Static {
 
     public function crawl_discovered_links() {
         if ( defined( 'WP_CLI' ) && ! defined( 'CRAWLING_DISCOVERED' ) ) {
+            $this->logAction( 'Starting to crawl discovered URLs' );
             define( 'CRAWLING_DISCOVERED', true );
         }
 
@@ -184,6 +183,8 @@ class SiteCrawler extends WP2Static {
     }
 
     public function crawlABitMore() {
+        $this->logAction( 'Crawling a bit more...:' );
+
         $batch_of_links_to_crawl = array();
 
         $this->urls_to_crawl = file(
@@ -207,6 +208,11 @@ class SiteCrawler extends WP2Static {
             $this->settings['crawl_increment'] = $total_links;
         }
 
+        $this->logAction( 'Total links remaining: ' . $total_links );
+        $this->logAction(
+            'Current crawl increment: ' . $this->settings['crawl_increment']
+        );
+
         for ( $i = 0; $i < $this->settings['crawl_increment']; $i++ ) {
             $link_from_crawl_list = array_shift( $this->urls_to_crawl );
 
@@ -216,6 +222,15 @@ class SiteCrawler extends WP2Static {
         }
 
         $this->remaining_urls_to_crawl = count( $this->urls_to_crawl );
+
+        $this->logAction(
+            'Remaining URLs to crawl: ' . $this->remaining_urls_to_crawl
+        );
+
+        $this->logAction(
+            'Current batch size of URLs to crawl: ' .
+            count( $batch_of_links_to_crawl )
+        );
 
         // resave crawl list file, minus those from this batch
         file_put_contents(
@@ -268,20 +283,17 @@ class SiteCrawler extends WP2Static {
             'Exclusion rules ' . implode( PHP_EOL, $exclusions )
         );
 
-        $crawl_queue = array();
-
         foreach ( $batch_of_links_to_crawl as $link_to_crawl ) {
-            $this->url = $link_to_crawl;
+            $url = $link_to_crawl;
 
-            $this->full_url = $this->settings['wp_site_url'] .
-                ltrim( $this->url, '/' );
+            $full_url = $this->settings['wp_site_url'] . ltrim( $url, '/' );
 
             foreach ( $exclusions as $exclusion ) {
                 $exclusion = trim( $exclusion );
                 if ( $exclusion != '' ) {
-                    if ( false !== strpos( $this->url, $exclusion ) ) {
+                    if ( false !== strpos( $url, $exclusion ) ) {
                         $this->logAction(
-                            'Excluding ' . $this->url .
+                            'Excluding ' . $url .
                             ' because of rule ' . $exclusion
                         );
 
@@ -292,10 +304,8 @@ class SiteCrawler extends WP2Static {
             }
 
             // add url to list to crawl
-            $crawl_queue[] = $this->full_url;
+            $this->crawlSingleURL( $full_url );
         }
-
-        $this->crawlMultipleURLs( $crawl_queue );
 
         $this->checkIfMoreCrawlingNeeded();
 
@@ -304,44 +314,9 @@ class SiteCrawler extends WP2Static {
         unset( $url_reponse );
     }
 
-    public function addURLToCrawlQueue( $url ) {
-        $this->logAction( "adding to crawl queue: {$url}" );
-
-        $ch = curl_init();
-
-        if ( isset( $this->settings['crawlPort'] ) ) {
-            curl_setopt(
-                $ch,
-                CURLOPT_PORT,
-                $this->settings['crawlPort']
-            );
-        }
-
-        curl_setopt( $ch, CURLOPT_URL, $url );
-        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
-        curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
-        curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
-        curl_setopt( $ch, CURLOPT_USERAGENT, 'WP2Static.com' );
-        curl_setopt( $ch, CURLOPT_CONNECTTIMEOUT, 0 );
-        curl_setopt( $ch, CURLOPT_TIMEOUT, 600 );
-        curl_setopt( $ch, CURLOPT_HEADER, 0 );
-        curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
-
-        if ( isset( $this->settings['useBasicAuth'] ) ) {
-            curl_setopt(
-                $ch,
-                CURLOPT_USERPWD,
-                $this->settings['basicAuthUser'] . ':' .
-                    $this->settings['basicAuthPassword']
-            );
-        }
-
-        curl_multi_add_handle( $this->curl_multi_handle, $ch );
-
-        return $ch;
-    }
-
     public function checkIfMoreCrawlingNeeded() {
+        $this->logAction( 'Checking if more crawling needed' );
+
         if ( $this->remaining_urls_to_crawl > 0 ) {
             if ( ! defined( 'WP_CLI' ) ) {
                 echo $this->remaining_urls_to_crawl;
@@ -349,6 +324,8 @@ class SiteCrawler extends WP2Static {
                 $this->crawl_site();
             }
         } else {
+            $this->logAction( 'No more crawling needed' );
+
             if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
             }
@@ -422,94 +399,55 @@ class SiteCrawler extends WP2Static {
         }
     }
 
-    public function crawlMultipleURLs( $urls ) {
-        $total_urls = count( $urls );
-        $running = null;
+    public function crawlSingleURL( $url ) {
+        $this->logAction( 'Crawling single URL:' . $url );
 
-        $rolling_window = 5;
+        $ch = curl_init();
 
-        if ( isset( $this->settings['simultaneousCurlRequests'] ) ) {
-            $rolling_window =
-                (int) $this->settings['simultaneousCurlRequests'];
-        }
-
-        if ( $total_urls < $rolling_window ) {
-            $rolling_window = $total_urls;
-        }
-
-        $master = curl_multi_init();
-        // $curl_arr = array();
-        // add additional curl options here
-        $options = array(
-            CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_SSL_VERIFYHOST => 0,
-            CURLOPT_SSL_VERIFYPEER => 0,
-            CURLOPT_USERAGENT => 'WP2Static.com',
-            CURLOPT_CONNECTTIMEOUT => 0,
-            CURLOPT_TIMEOUT => 600,
-            CURLOPT_HEADER => 0,
-            CURLOPT_FOLLOWLOCATION => 1,
-        );
+        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
+        curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
+        curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
+        curl_setopt( $ch, CURLOPT_URL, $url );
+        curl_setopt( $ch, CURLOPT_USERAGENT, 'WP2Static.com' );
+        curl_setopt( $ch, CURLOPT_CONNECTTIMEOUT, 0 );
+        curl_setopt( $ch, CURLOPT_TIMEOUT, 600 );
+        curl_setopt( $ch, CURLOPT_HEADER, 0 );
+        curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
 
         if ( isset( $this->settings['crawlPort'] ) ) {
-            $options[ CURLOPT_PORT ] = $this->settings['crawlPort'];
+            curl_setopt( $ch, CURLOPT_PORT, $this->settings['crawlPort'] );
         }
 
         if ( isset( $this->settings['useBasicAuth'] ) ) {
-            $options[ CURLOPT_USERPWD ] =
+            curl_setopt(
+                $ch,
+                CURLOPT_USERPWD,  
                 $this->settings['basicAuthUser'] . ':' .
-                $this->settings['basicAuthPassword'];
+                $this->settings['basicAuthPassword']
+            );
         }
 
-        // start the first batch of requests
-        for ( $i = 0; $i < $rolling_window; $i++ ) {
-            $ch = curl_init();
-            $options[ CURLOPT_URL ] = array_pop( $urls );
-            curl_setopt_array( $ch, $options );
-            curl_multi_add_handle( $master, $ch );
-        }
-        do {
-            $execrun = curl_multi_exec( $master, $running );
+        $body = curl_exec( $ch );
 
-            if ( $execrun != CURLM_OK ) {
-                break;
-            }
-            // a request was just completed -- find out which one
-            while ( $done = curl_multi_info_read( $master ) ) {
-                $info = curl_getinfo( $done['handle'] );
-                $this->processCrawledURL( $done['handle'], $info );
-                $results[ $info['url'] ] = $info;
-                $new_url = array_pop( $urls );
+        $this->logAction( 'Completed crawling:' . $url );
 
-                if ( isset( $new_url ) ) {
-                    $ch = curl_init();
-                    $options[ CURLOPT_URL ] = $new_url;
-                    curl_setopt_array( $ch, $options );
-                    curl_multi_add_handle( $master, $ch );
-                }
-
-                // remove the curl handle that just completed
-                curl_multi_remove_handle( $master, $done['handle'] );
-            }
-        } while ( $running );
-
-        curl_multi_close( $master );
+        $this->processCrawledURL( $ch, $body );
     }
 
-
-    public function processCrawledURL( $curl_handle, $curl_info ) {
-        // $info = curl_getinfo($curl_handle);
-        // error_log('processing: ' . $info['url']);
-        $output = curl_multi_getcontent( $curl_handle );
+    public function processCrawledURL( $curl_handle, $output ) {
+        $curl_info = curl_getinfo( $curl_handle );
 
         $this->checkForCurlErrors( $output, $curl_handle );
 
         $status_code = $curl_info['http_code'];
+        $this->logAction( 'status code:' . $status_code );
 
         $curl_content_type = isset( $curl_info['content_type'] ) ?
             $curl_info['content_type'] : '';
 
         $full_url = $curl_info['url'];
+
+        $this->logAction( 'processing crawled url:' . $full_url );
 
         $url = $this->getRelativeURLFromFullURL( $full_url );
 
@@ -521,22 +459,11 @@ class SiteCrawler extends WP2Static {
 
         if ( ! in_array( $status_code, $good_response_codes ) ) {
             $this->logAction(
-                'BAD RESPONSE STATUS (' . $status_code . '): ' . $this->url
-            );
-
-            file_put_contents(
-                $this->settings['wp_uploads_path'] .
-                    '/WP-STATIC-404-LOG.txt',
-                $status_code . ':' . $url . PHP_EOL,
-                FILE_APPEND | LOCK_EX
-            );
-
-            chmod(
-                $this->settings['wp_uploads_path'] .
-                    '/WP-STATIC-404-LOG.txt',
-                0664
+                'BAD RESPONSE STATUS (' . $status_code . '): ' . $full_url
             );
         } else {
+            $this->logAction( 'URL added to Crawled Links file:' . $full_url );
+
             file_put_contents(
                 $this->crawled_links_file,
                 $url . PHP_EOL,
@@ -643,9 +570,13 @@ class SiteCrawler extends WP2Static {
             $file_type,
             $curl_content_type
         );
+
+        curl_close( $curl_handle );
     }
 
     public function saveCrawledURL( $url, $body, $file_type, $content_type ) {
+        $this->logAction( 'SAVING ' . $this->url );
+
         require_once dirname( __FILE__ ) .
             '/../WP2Static/FileWriter.php';
 

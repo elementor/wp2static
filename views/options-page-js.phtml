@@ -109,7 +109,6 @@ var log_file_url = wp_site.uploads_url + '/WP-STATIC-EXPORT-LOG.txt';
 var discovered_urls_file_url = wp_site.uploads_url + '/WP-STATIC-DISCOVERED-URLS-LOG.txt';
 var modified_crawl_list_file_url = wp_site.uploads_url + '/WP-STATIC-MODIFIED-CRAWL-LIST.txt';
 var detected_wordpress_urls_file_url = wp_site.uploads_url + '/WP-STATIC-INITIAL-CRAWL-LIST.txt';
-var encountered_404s_list_file_url = wp_site.uploads_url + '/WP-STATIC-404-LOG.txt';
 var crawled_links_list_file_url = wp_site.uploads_url + '/WP-STATIC-CRAWLED-LINKS.txt';
 var progress_file = wp_site.uploads_url + '/WP-STATIC-PROGRESS.txt';
 
@@ -730,10 +729,6 @@ jQuery(document).ready(function($){
         case 'crawled_links':
             log_url = crawled_links_list_file_url;
         break;
-
-        case 'encountered_404s':
-            log_url = encountered_404s_list_file_url;
-        break;
     }
 
     // load the log file
@@ -857,6 +852,7 @@ jQuery(document).ready(function($){
 	});
 
   $('#startExportButton').click(function() {
+      clearProgressAndResults();
       $(this).prop('disabled', true);
       $('.saveSettingsButton').prop('disabled', true);
       $('.resetDefaultSettingsButton').prop('disabled', true);
