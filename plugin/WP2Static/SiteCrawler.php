@@ -579,8 +579,6 @@ class SiteCrawler extends WP2Static {
     }
 
     public function saveCrawledURL( $url, $body, $file_type, $content_type ) {
-        $this->logAction( 'SAVING ' . $this->url );
-
         require_once dirname( __FILE__ ) .
             '/../WP2Static/FileWriter.php';
 
