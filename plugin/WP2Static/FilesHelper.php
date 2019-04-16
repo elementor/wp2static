@@ -325,6 +325,7 @@ class WP2Static_FilesHelper {
             'thumbs.db',
             'vendor',
             'wp-static-html-output', // exclude earlier version exports
+            'wp2static-exported-site',
         );
 
         foreach ( $filenames_to_ignore as $ignorable ) {

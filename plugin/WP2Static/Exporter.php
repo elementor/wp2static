@@ -93,7 +93,11 @@ class Exporter extends WP2Static {
             );
 
         foreach ( $leftover_files as $filename ) {
-            if ( strpos( $filename, 'wp2static-exported-site' ) !== false ) {
+            // Note: cleanup legacy export dirs
+            if (
+                strpos( $filename, 'wp-static-html-output-' ) !== false ||
+                strpos( $filename, 'wp2static-exported-site' ) !== false
+            ) {
                 $deletion_target = $this->settings['wp_uploads_path'] .
                     '/' . $filename;
                 if ( is_dir( $deletion_target ) ) {
