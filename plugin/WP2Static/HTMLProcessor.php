@@ -236,11 +236,6 @@ class HTMLProcessor extends WP2Static {
                         $url
                     );
 
-                $this->logAction(
-                    'Adding discovered URL: ' .
-                    $discovered_url_without_site_url
-                );
-
                 $this->discovered_urls[] = $discovered_url_without_site_url;
             }
         }

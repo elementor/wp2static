@@ -33,7 +33,7 @@ class Archive extends WP2Static {
 
     public function create() {
         $this->name = $this->settings['wp_uploads_path'] .
-            '/wp-static-html-output-' . time();
+            '/wp2static-exported-site';
 
         $this->path = $this->name . '/';
         $this->name = basename( $this->path );

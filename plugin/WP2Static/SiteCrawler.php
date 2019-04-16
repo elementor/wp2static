@@ -400,7 +400,18 @@ class SiteCrawler extends WP2Static {
     }
 
     public function crawlSingleURL( $url ) {
-        $this->logAction( 'Crawling single URL:' . $url );
+        if (
+            defined( 'CRAWLING_DISCOVERED' ) ||
+            ( isset( $_POST['ajax_action'] ) &&
+                $_POST['ajax_action'] == 'crawl_again'
+            )
+        ) {
+            $discovered = ' Discovered ';
+        } else {
+            $discovered = '';
+        }
+
+        $this->logAction( "Crawling {$discovered} URL: " . $url );
 
         $ch = curl_init();
 
@@ -429,8 +440,6 @@ class SiteCrawler extends WP2Static {
 
         $body = curl_exec( $ch );
 
-        $this->logAction( 'Completed crawling:' . $url );
-
         $this->processCrawledURL( $ch, $body );
     }
 
@@ -440,14 +449,11 @@ class SiteCrawler extends WP2Static {
         $this->checkForCurlErrors( $output, $curl_handle );
 
         $status_code = $curl_info['http_code'];
-        $this->logAction( 'status code:' . $status_code );
 
         $curl_content_type = isset( $curl_info['content_type'] ) ?
             $curl_info['content_type'] : '';
 
         $full_url = $curl_info['url'];
-
-        $this->logAction( 'processing crawled url:' . $full_url );
 
         $url = $this->getRelativeURLFromFullURL( $full_url );
 
@@ -462,8 +468,6 @@ class SiteCrawler extends WP2Static {
                 'BAD RESPONSE STATUS (' . $status_code . '): ' . $full_url
             );
         } else {
-            $this->logAction( 'URL added to Crawled Links file:' . $full_url );
-
             file_put_contents(
                 $this->crawled_links_file,
                 $url . PHP_EOL,
