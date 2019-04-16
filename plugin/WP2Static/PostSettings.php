@@ -105,16 +105,6 @@ class WPSHO_PostSettings {
             'bunnycdnRemotePath',
         );
 
-        $key_sets['s3'] = array(
-            'baseUrl-s3',
-            'cfDistributionId',
-            's3Bucket',
-            's3Key',
-            's3Region',
-            's3RemotePath',
-            's3Secret',
-        );
-
         $key_sets['netlify'] = array(
             'baseUrl-netlify',
             'netlifyHeaders',

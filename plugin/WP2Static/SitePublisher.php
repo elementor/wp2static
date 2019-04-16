@@ -13,7 +13,6 @@ class WP2Static_SitePublisher {
         if ( isset( $_POST['selected_deployment_option'] ) ) {
             require_once dirname( __FILE__ ) .
                 '/PostSettings.php';
-
             $this->settings = WPSHO_PostSettings::get( $target_settings, $specify_keys );
         } else {
             require_once dirname( __FILE__ ) .
