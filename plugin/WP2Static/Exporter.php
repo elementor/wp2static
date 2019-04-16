@@ -106,10 +106,6 @@ class Exporter extends WP2Static {
                 }
             }
         }
-
-        if ( ! defined( 'WP_CLI' ) ) {
-            echo 'SUCCESS';
-        }
     }
 
     public function generateModifiedFileList() {
