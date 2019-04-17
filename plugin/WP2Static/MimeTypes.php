@@ -40,6 +40,7 @@ function GuessMimeType( $file ) {
         'ppt' => 'application/vnd.ms-powerpoint',
         'pptx' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
         'rtf' => 'application/rtf',
+        'rss' => 'application/rss+xml',
         'svg' => 'image/svg+xml',
         'swf' => 'application/x-shockwave-flash',
         'tar' => 'application/x-tarbb',
