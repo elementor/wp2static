@@ -400,12 +400,8 @@ class WP2Static_Controller {
             WsLog::l( "{$value['Option name']}: {$value['Value']}" );
         }
 
-        WsLog::l( 'Installed extensions:' );
-
         $extensions = get_loaded_extensions();
 
-        foreach ( $extensions as $extension ) {
-            WsLog::l( $extension );
-        }
+        WsLog::l( 'Installed extensions: ' . join( ', ', $extensions ) );
     }
 }

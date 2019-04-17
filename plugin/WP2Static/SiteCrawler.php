@@ -183,7 +183,7 @@ class SiteCrawler extends WP2Static {
     }
 
     public function crawlABitMore() {
-        $this->logAction( 'Crawling a bit more...:' );
+        $this->logAction( 'Crawling a bit more...' );
 
         $batch_of_links_to_crawl = array();
 
@@ -220,17 +220,6 @@ class SiteCrawler extends WP2Static {
                 $batch_of_links_to_crawl[] = $link_from_crawl_list;
             }
         }
-
-        $this->remaining_urls_to_crawl = count( $this->urls_to_crawl );
-
-        $this->logAction(
-            'Remaining URLs to crawl: ' . $this->remaining_urls_to_crawl
-        );
-
-        $this->logAction(
-            'Current batch size of URLs to crawl: ' .
-            count( $batch_of_links_to_crawl )
-        );
 
         // resave crawl list file, minus those from this batch
         file_put_contents(
@@ -303,28 +292,26 @@ class SiteCrawler extends WP2Static {
                 }
             }
 
-            // add url to list to crawl
             $this->crawlSingleURL( $full_url );
         }
 
-        $this->checkIfMoreCrawlingNeeded();
+        $this->checkIfMoreCrawlingNeeded( $this->urls_to_crawl );
 
         // reclaim memory after each crawl
         $url_reponse = null;
         unset( $url_reponse );
     }
 
-    public function checkIfMoreCrawlingNeeded() {
-        $this->logAction( 'Checking if more crawling needed' );
-
-        if ( $this->remaining_urls_to_crawl > 0 ) {
+    public function checkIfMoreCrawlingNeeded( $urls_to_crawl ) {
+        $remaining_urls = count( $urls_to_crawl );
+        if ( $remaining_urls > 0 ) {
             if ( ! defined( 'WP_CLI' ) ) {
-                echo $this->remaining_urls_to_crawl;
+                echo $remaining_urls;
             } else {
                 $this->crawl_site();
             }
         } else {
-            $this->logAction( 'No more crawling needed' );
+            $this->logAction( 'Crawling phase completed' );
 
             if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
