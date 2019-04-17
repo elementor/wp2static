@@ -183,8 +183,6 @@ class SiteCrawler extends WP2Static {
     }
 
     public function crawlABitMore() {
-        $this->logAction( 'Crawling a bit more...' );
-
         $batch_of_links_to_crawl = array();
 
         $this->urls_to_crawl = file(
@@ -207,11 +205,6 @@ class SiteCrawler extends WP2Static {
         if ( $this->settings['crawl_increment'] > $total_links ) {
             $this->settings['crawl_increment'] = $total_links;
         }
-
-        $this->logAction( 'Total links remaining: ' . $total_links );
-        $this->logAction(
-            'Current crawl increment: ' . $this->settings['crawl_increment']
-        );
 
         for ( $i = 0; $i < $this->settings['crawl_increment']; $i++ ) {
             $link_from_crawl_list = array_shift( $this->urls_to_crawl );
@@ -268,10 +261,6 @@ class SiteCrawler extends WP2Static {
             );
         }
 
-        $this->logAction(
-            'Exclusion rules ' . implode( PHP_EOL, $exclusions )
-        );
-
         foreach ( $batch_of_links_to_crawl as $link_to_crawl ) {
             $url = $link_to_crawl;
 
@@ -311,7 +300,18 @@ class SiteCrawler extends WP2Static {
                 $this->crawl_site();
             }
         } else {
-            $this->logAction( 'Crawling phase completed' );
+            if (
+                defined( 'CRAWLING_DISCOVERED' ) ||
+                ( isset( $_POST['ajax_action'] ) &&
+                    $_POST['ajax_action'] == 'crawl_again'
+                )
+            ) {
+                $discovered = ' Discovered ';
+            } else {
+                $discovered = '';
+            }
+
+            $this->logAction( "Crawling {$discovered} URLs phase completed" );
 
             if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
