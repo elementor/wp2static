@@ -290,7 +290,6 @@ class WP2Static_Controller {
 
         $this->exporter->pre_export_cleanup();
         $this->exporter->cleanup_leftover_archives();
-        $this->exporter->initialize_cache_files();
 
         require_once dirname( __FILE__ ) . '/WP2Static/Archive.php';
 

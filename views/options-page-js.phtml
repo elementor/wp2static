@@ -106,11 +106,6 @@ var current_deployment_method = '<?php echo $this->options->selected_deployment_
 
 // TODO: get the log out of the archive, along with it's meta infos
 var log_file_url = wp_site.uploads_url + '/WP-STATIC-EXPORT-LOG.txt';
-var discovered_urls_file_url = wp_site.uploads_url + '/WP-STATIC-DISCOVERED-URLS-LOG.txt';
-var modified_crawl_list_file_url = wp_site.uploads_url + '/WP-STATIC-MODIFIED-CRAWL-LIST.txt';
-var detected_wordpress_urls_file_url = wp_site.uploads_url + '/WP-STATIC-INITIAL-CRAWL-LIST.txt';
-var crawled_links_list_file_url = wp_site.uploads_url + '/WP-STATIC-CRAWLED-LINKS.txt';
-var progress_file = wp_site.uploads_url + '/WP-STATIC-PROGRESS.txt';
 
 var export_action = '';
 var export_targets = [];
@@ -156,7 +151,7 @@ jQuery(document).ready(function($){
           $('#startExportButton').prop('disabled', false);
           $('.saveSettingsButton').prop('disabled', false);
           $('.resetDefaultSettingsButton').prop('disabled', false);
-          $('#current_action').html(serverResponse + ' URLs were detected for initial crawl list. <a href="#" id="GoToCrawlTabButton">Add/Remove URLs via the Crawl tab.</a>');
+          $('#current_action').html(serverResponse + ' URLs were detected for initial crawl list. <a href="#" id="GoToDetectionTabButton">Adjust detection via the URL Detection tab.</a>');
           $('.pulsate-css').hide();
       }
   }
@@ -566,31 +561,6 @@ jQuery(document).ready(function($){
       });
   }
 
-  function startPolling() {
-    // pollingIntervalID = window.setInterval(checkProgress, 5000);
-  }
-
-  function stopPolling() {
-    // window.clearInterval( pollingIntervalID );
-
-    // setProgressBarPercent( 0 );
-  }
-
-  function checkProgress() {
-    // get WP2STATIC-PROGRESS.txt
-    $.get( progress_file + '?cacheBuster=' + Date.now(), function( data ) {
-      progress_amount = parseInt( data );
-
-      setProgressBarPercent( progress_amount );
-    });
-
-    // TODO: append progress to current task if we're in certain task
-  }
-
-  function setProgressBarPercent( percent ) {
-    $('#pbar-fill').css('width', percent.toString() + '%');
-  }
-
   function updateBaseURLReferences() {
     var base_url_previews = $('.base_url_preview' );
 
@@ -687,7 +657,7 @@ jQuery(document).ready(function($){
 
   function reloadLogFile() {
     // get current log selection
-    current_log_target = $("#log_switcher").val();
+    current_log_target = 'export_log';
 
     // if not empty, call loadLogFile again
     if ( current_log_target ) {
@@ -696,7 +666,7 @@ jQuery(document).ready(function($){
   }
 
 
-  function loadLogFile( log_name ) {
+  function loadLogFile() {
     // display loading icon
     $('#log_load_progress').show();
         
@@ -706,33 +676,9 @@ jQuery(document).ready(function($){
     // set textarea content to 'Loading log file...'
     $("#export_log_textarea" ).html('Loading log file...');
 
-    var log_url = '';
-
-    switch ( log_name ) {
-        case 'export_log':
-            // TODO: rename ambiguous export log name
-            log_url = log_file_url;
-        break;
-
-        case 'discovered_urls':
-            log_url = discovered_urls_file_url;
-        break;
-
-        case 'detected_wordpress_urls':
-            log_url = detected_wordpress_urls_file_url;
-        break;
-
-        case 'modified_crawl_list':
-            log_url = modified_crawl_list_file_url;
-        break;
-
-        case 'crawled_links':
-            log_url = crawled_links_list_file_url;
-        break;
-    }
 
     // load the log file
-    $.get( log_url, function( data ) {
+    $.get( wp_site.uploads_url + '/WP-STATIC-EXPORT-LOG.txt', function( data ) {
       // hide loading icon
       $('#log_load_progress').hide();
 
@@ -785,11 +731,7 @@ jQuery(document).ready(function($){
 
 	// handler when log selector is changed
 	$('#log_switcher').change(function() {
-      target_log = this.value;
-
-      if (target_log) {
-        loadLogFile( target_log );
-      }
+      loadLogFile( target_log );
     });
 
 	// update base url previews in realtime
@@ -805,8 +747,9 @@ jQuery(document).ready(function($){
       advanced_settings: 'Advanced options',
       export_your_site: 'Deploy static website',
       help_troubleshooting: 'Help',
-      export_logs: 'Logs',
+      export_logs: 'Debug Log',
       crawl_settings: 'Crawling',
+      url_detection: 'URL Detection',
       processing_settings: 'Processing',
       add_ons: 'Add-ons'
     };
@@ -835,9 +778,9 @@ jQuery(document).ready(function($){
     }
   }
 
-  $(document).on('click', '#GoToCrawlTabButton', function(evt) {
+  $(document).on('click', '#GoToDetectionTabButton', function(evt) {
     evt.preventDefault();
-    changeTab( 'Crawling' );
+    changeTab( 'URL Detection' );
   });
 
   $(document).on('click', '.nav-tab', function(evt) {

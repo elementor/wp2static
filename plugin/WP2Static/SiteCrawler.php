@@ -357,7 +357,7 @@ class SiteCrawler extends WP2Static {
                     '/../WP2Static/WsLog.php';
                 WsLog::l(
                     'no filetype inferred from content-type: ' .
-                    $content_type .
+                    $type .
                     ' url: ' . $url
                 );
             }
@@ -444,24 +444,12 @@ class SiteCrawler extends WP2Static {
 
         $url = $this->getRelativeURLFromFullURL( $full_url );
 
-        $this->crawled_links_file =
-            $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-CRAWLED-LINKS.txt';
-
         $good_response_codes = array( '200', '201', '301', '302', '304' );
 
         if ( ! in_array( $status_code, $good_response_codes ) ) {
             $this->logAction(
                 'BAD RESPONSE STATUS (' . $status_code . '): ' . $full_url
             );
-        } else {
-            file_put_contents(
-                $this->crawled_links_file,
-                $url . PHP_EOL,
-                FILE_APPEND | LOCK_EX
-            );
-
-            chmod( $this->crawled_links_file, 0664 );
         }
 
         $base_url = $this->settings['baseUrl'];

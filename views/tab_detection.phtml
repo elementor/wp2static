@@ -1,0 +1,50 @@
+<div class="url_detection" style="display:none;">
+
+  <table class="form-table">
+    <tbody>
+      <tr>
+        <th scope="row">
+          <label for="detection_level"><?php echo __('Detection level', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+            <select name="detection_level" id="detection_level">
+    <?php 
+      // TODO: shift this into helper function for select
+      $detection_levels = array(
+            'everything' => 'As much as possible',
+            'posts_and_pages' => 'Posts and pages only',
+            'homepage' => 'Homepage only'      
+      );
+
+      foreach($detection_levels as $key => $level) : ?>
+              <option value="<?php echo $key; ?>"<?php echo $this->options->detection_level == $key ? ' selected' : ''; ?>><?php echo $level; ?></option>
+
+           <?php endforeach; ?>
+            </select>
+
+        <button class="button button-secondary" id="save-and-reload">Save and reload</button>
+
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          <label><?php echo __('Initial crawl list', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <p>Before it starts to export your site, the plugin first generates a list of all WordPress URLs it thinks it should include. It takes these from what it knows about your posts, pages, tags, archives and media.</p>
+
+          <div id="initial_crawl_list_loader" class="spinner is-active" style="float:none;width:auto;height:auto;padding:10px 0 10px 50px;background-position:20px 0;">
+            Generating initial file list
+          </div>
+
+          <i><p id="initial_crawl_list_count"></p></i>
+        <br>
+        <a id="preview_initial_crawl_list_button" style="display:none;" href="<?php echo $this->wp_site->uploads_url; ?>/WP-STATIC-INITIAL-CRAWL-LIST.txt" class="button button-secondary" target="_blank">Preview initial crawl list</a>
+
+
+
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div><!-- end crawl_setings -->

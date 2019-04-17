@@ -4,6 +4,30 @@
     <tbody>
       <tr>
         <th scope="row">
+          <label for="crawl_increment"><?php echo __('Crawl Increment', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <select name="crawl_increment" id="crawl_increment">
+  <?php 
+    // TODO: shift this into helper function for select
+    $increments = array(1, 5, 10, 25, 50, 100, 500, 1000, 999999);
+  
+    foreach($increments as $increment) :
+       if ($increment == 999999): ?>
+            <option value="999999"<?php echo $this->options->crawl_increment == $increment ? ' selected' : ''; ?>>Maximum</option>
+  <?php else: ?>
+            <option value="<?php echo $increment; ?>"<?php echo $this->options->crawl_increment == $increment ? ' selected' : ''; ?>><?php echo $increment; ?></option>
+  
+  <?php endif; 
+         endforeach; ?>
+          </select><br>
+  
+          <p>This is set to 1, by default, in order to allow exporting on low-resource environments, such as shared hosting servers. Each increment is the amount of files the server will try to process on each request that the browser sends it. Incrementing this will speed up your exports, by processing more are a time. If your export is failing, due to resource (memory, CPU) limits being reached, try setting this to a lower number.</p>
+  
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
           <label for="useBasicAuth"><?php echo __('Use basic authentication', 'static-html-output-plugin');?></label>
         </th>
         <td>
@@ -32,77 +56,6 @@
         </th>
         <td>
           <?php $tpl->displayTextfield($this, 'crawlPort', 'Custom crawling port', ''); ?>
-        </td>
-      </tr>
-      <tr>
-        <th scope="row">
-          <label for="simultaneousCurlRequests"><?php echo __('Simultaneous cURL requests', 'static-html-output-plugin');?></label>
-        </th>
-        <td>
-            <select name="simultaneousCurlRequests" id="simultaneousCurlRequests">
-    <?php 
-      // TODO: shift this into helper function for select
-      $simultaneous_curl_requests = array(
-            '1' => '1',
-            '2' => '2',
-            '3' => '3',
-            '4' => '4',
-            '5' => '5',
-            '6' => '6',
-            '7' => '7',
-            '8' => '8',
-            '9' => '9',
-            '10' => '10',
-      );
-
-      foreach($simultaneous_curl_requests as $key => $number) : ?>
-              <option value="<?php echo $key; ?>"<?php echo $this->options->simultaneousCurlRequests == $key ? ' selected' : ''; ?>><?php echo $number; ?></option>
-
-           <?php endforeach; ?>
-            </select>
-        </td>
-      </tr>
-      <tr>
-        <th scope="row">
-          <label><?php echo __('Initial crawl list', 'static-html-output-plugin');?></label>
-        </th>
-        <td>
-          <p>Before it starts to export your site, the plugin first generates a list of all WordPress URLs it thinks it should include. It takes these from what it knows about your posts, pages, tags, archives and media.</p>
-
-          <div id="initial_crawl_list_loader" class="spinner is-active" style="float:none;width:auto;height:auto;padding:10px 0 10px 50px;background-position:20px 0;">
-            Generating initial file list
-          </div>
-
-          <i><p id="initial_crawl_list_count"></p></i>
-        <br>
-        <a id="preview_initial_crawl_list_button" style="display:none;" href="<?php echo $this->wp_site->uploads_url; ?>/WP-STATIC-INITIAL-CRAWL-LIST.txt" class="button button-secondary" target="_blank">Preview initial crawl list</a>
-
-
-
-        </td>
-      </tr>
-      <tr>
-        <th scope="row">
-          <label for="detection_level"><?php echo __('Detection level', 'static-html-output-plugin');?></label>
-        </th>
-        <td>
-            <select name="detection_level" id="detection_level">
-    <?php 
-      // TODO: shift this into helper function for select
-      $detection_levels = array(
-            'everything' => 'As much as possible',
-            'posts_and_pages' => 'Posts and pages only',
-            'homepage' => 'Homepage only'      
-      );
-
-      foreach($detection_levels as $key => $level) : ?>
-              <option value="<?php echo $key; ?>"<?php echo $this->options->detection_level == $key ? ' selected' : ''; ?>><?php echo $level; ?></option>
-
-           <?php endforeach; ?>
-            </select>
-
-        <button class="button button-secondary" id="save-and-reload">Save and reload</button>
-
         </td>
       </tr>
       <tr>

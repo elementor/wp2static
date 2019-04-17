@@ -15,7 +15,6 @@ class Exporter extends WP2Static {
     public function pre_export_cleanup() {
         $files_to_clean = array(
             'WP-STATIC-2ND-CRAWL-LIST.txt',
-            'WP-STATIC-CRAWLED-LINKS.txt',
             'WP-STATIC-DISCOVERED-URLS-LOG.txt',
             'WP-STATIC-DISCOVERED-URLS.txt',
             'WP2STATIC-FILES-TO-DEPLOY.txt',
@@ -55,7 +54,6 @@ class Exporter extends WP2Static {
 
         $files_to_clean = array(
             '/WP-STATIC-2ND-CRAWL-LIST.txt',
-            '/WP-STATIC-CRAWLED-LINKS.txt',
             '/WP-STATIC-DISCOVERED-URLS.txt',
             '/WP2STATIC-FILES-TO-DEPLOY.txt',
             '/WP-STATIC-FINAL-2ND-CRAWL-LIST.txt',
@@ -72,17 +70,6 @@ class Exporter extends WP2Static {
                 );
             }
         }
-    }
-
-    public function initialize_cache_files() {
-        // TODO: is this still necessary?
-        $crawled_links_file =
-            $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-CRAWLED-LINKS.txt';
-
-        $resource = fopen( $crawled_links_file, 'w' );
-        fwrite( $resource, '' );
-        fclose( $resource );
     }
 
     public function cleanup_leftover_archives() {

@@ -23,7 +23,6 @@ class WPSHO_PostSettings {
             'detection_level',
             'parse_css',
             'excludeURLs',
-            'simultaneousCurlRequests',
             'useBasicAuth',
         );
 

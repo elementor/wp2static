@@ -2,17 +2,11 @@
 
 <br>
 
-<select id="log_switcher">
-    <option value="">Choose a log to view</option>
-    <option value="detected_wordpress_urls">Detected WordPress URLs</option>
-    <option value="modified_crawl_list">Modified crawl list</option>
-    <option value="discovered_urls">Discovered URLs during crawl</option>
-    <option value="crawled_links">Crawled links</option>
-    <option value="export_log">Export log</option>
-</select>
+<p>Log files will be generated during export if the <b>Debug Mode</b> has been enabled (from within the Advanced tab).</p>
 
 <button id="reload_log_button" class="button-secondary">(Re)load log</button>
 
+<a href="<?php echo $this->wp_site->uploads_url; ?>/WP-STATIC-EXPORT-LOG.txt" class="button-secondary" target="_blank">Open log in new tab</a>
 
 
 <div id="log_load_progress" class="pulsate-css" style="float:none;display:none;"></div>
@@ -21,9 +15,9 @@
 <br>
 
 <textarea id="export_log_textarea" style="width:100%;min-height:300px;" disabled>
-Please select a log to view from the menu above
+Load log to show contents here
 </textarea>
 
 
-</div> <!-- end advanced settings -->
+</div> <!-- end Debug Logs -->
 

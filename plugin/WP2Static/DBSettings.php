@@ -24,7 +24,6 @@ class WPSHO_DBSettings {
             'detection_level',
             'excludeURLs',
             'parse_css',
-            'simultaneousCurlRequests',
             'useBasicAuth',
         );
 
