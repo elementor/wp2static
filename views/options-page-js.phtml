@@ -308,6 +308,16 @@ jQuery(document).ready(function($){
         startExport();
   });
 
+  $(document).on('click', '#detectEverythingButton', function(evt) {
+        evt.preventDefault();
+        $('#detectionOptionsTable input[type="checkbox"]').attr('checked', true);
+  });
+
+  $(document).on('click', '#detectNothingButton', function(evt) {
+        evt.preventDefault();
+        $('#detectionOptionsTable input[type="checkbox"]').attr('checked', false);
+  });
+
   $(document).on('click', '#downloadExportLogButton', function(evt) {
         evt.preventDefault();
         downloadExportLog();

@@ -219,11 +219,13 @@ class WP2Static_SitePublisher {
     }
 
     public function getRemainingItemsCount() {
-        $contents = file( $this->export_file_list, FILE_IGNORE_NEW_LINES );
+        if ( is_file( $this->export_file_list ) ) {
+            $contents = file( $this->export_file_list, FILE_IGNORE_NEW_LINES );
 
-        // return the amount left if another item is taken
-        // return count($contents) - 1;
-        return count( $contents );
+            return count( $contents );
+        }
+
+        return 0;
     }
 
     // TODO: rename to signalSuccessfulAction or such

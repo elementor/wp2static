@@ -388,28 +388,37 @@ class WP2Static_FilesHelper {
             array( '/sitemap.xml' )
         );
 
-        switch ( $settings['detection_level'] ) {
-            case 'homepage':
-                break;
-            case 'posts_and_pages':
-                $url_queue = array_merge(
-                    $url_queue,
-                    self::getAllWPPostURLs( $base_url )
-                );
 
-                break;
-
-            case 'everything':
-            default:
-                $url_queue = array_merge(
-                    $url_queue,
-                    self::getThemeFiles( 'parent' ),
-                    self::getThemeFiles( 'child' ),
-                    self::detectVendorFiles( $wp_site->site_url ),
-                    self::getListOfLocalFilesByUrl( $uploads_url ),
-                    self::getAllWPPostURLs( $base_url )
-                );
+        if ( isset( $settings['detectPosts'] ) ) {
+            $url_queue = array_merge(
+                $url_queue,
+                self::getAllWPPostURLs( $base_url )
+            );
         }
+
+
+        // switch ( $settings['detection_level'] ) {
+        //     case 'homepage':
+        //         break;
+        //     case 'posts_and_pages':
+        //         $url_queue = array_merge(
+        //             $url_queue,
+        //             self::getAllWPPostURLs( $base_url )
+        //         );
+
+        //         break;
+
+        //     case 'everything':
+        //     default:
+        //         $url_queue = array_merge(
+        //             $url_queue,
+        //             self::getThemeFiles( 'parent' ),
+        //             self::getThemeFiles( 'child' ),
+        //             self::detectVendorFiles( $wp_site->site_url ),
+        //             self::getListOfLocalFilesByUrl( $uploads_url ),
+        //             self::getAllWPPostURLs( $base_url )
+        //         );
+        // }
 
         $url_queue = self::cleanDetectedURLs( $url_queue );
 
@@ -453,6 +462,38 @@ class WP2Static_FilesHelper {
     }
 
     public static function getAllWPPostURLs( $wp_site_url ) {
+        global $wpdb;
+
+        $post_urls = array();
+
+        $query = "
+            SELECT ID
+            FROM %s
+            WHERE post_status = '%s'
+            AND post_type = 'POST'";
+
+        $posts = $wpdb->get_results(
+            sprintf(
+                $query,
+                $wpdb->posts,
+                'publish'
+            )
+        );
+
+        foreach ( $posts as $post ) {
+            $permalink = get_permalink( $post->ID );
+
+            if ( strpos( $permalink, '?post_type' ) !== false ) {
+                continue;
+            }
+
+            $post_urls[] = $permalink;
+        }
+
+        return $post_urls;
+    }
+
+    public static function getAllTHEOTHERSTUFFPOSTS( $wp_site_url ) {
         global $wpdb;
 
         $post_urls = array();

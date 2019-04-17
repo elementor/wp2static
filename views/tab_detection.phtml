@@ -4,23 +4,168 @@
     <tbody>
       <tr>
         <th scope="row">
-          <label for="detection_level"><?php echo __('Detection level', 'static-html-output-plugin');?></label>
+          <label for="detection_level"><?php echo __('Control Detected URLs', 'static-html-output-plugin');?></label>
         </th>
         <td>
-            <select name="detection_level" id="detection_level">
-    <?php 
-      // TODO: shift this into helper function for select
-      $detection_levels = array(
-            'everything' => 'As much as possible',
-            'posts_and_pages' => 'Posts and pages only',
-            'homepage' => 'Homepage only'      
-      );
+        <p>Control which URLs from this WordPress site we want to use for our initial crawl list.</p>
 
-      foreach($detection_levels as $key => $level) : ?>
-              <option value="<?php echo $key; ?>"<?php echo $this->options->detection_level == $key ? ' selected' : ''; ?>><?php echo $level; ?></option>
+        <p>Detecting less will result in faster crawling, but if you end up with missing URLs in your exported site, enable more options.</p>
 
-           <?php endforeach; ?>
-            </select>
+        <br>
+
+        <button id="detectEverythingButton">Select all</button>
+        <button id="detectNothingButton">Select none</button>
+
+        <table id="detectionOptionsTable">
+            <tr>
+                <td>
+                    <label for="detectHomepage"><b>Homepage</b></label>
+
+                    <br>
+                    <br>
+                    <p>On by default, this will always include the <code>/</code> URL or site root.</p>
+                </td>
+                <td>
+                    &nbsp;
+                </td>
+                <td>
+                    <label for="detectPages"><b>Pages</b></label>
+                    <input type="checkbox" value="1" name="detectPages" />
+                    <br>
+                    <br>
+                    <p>All published Pages. Use the date range option below to further filter.</p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="detectPosts"><b>Posts</b></label>
+                    <input type="checkbox" value="1" name="detectPosts" />
+                    <br>
+                    <br>
+                    <p>All published Posts. Use the date range option below to further filter.</p>
+                </td>
+                <td>
+                    &nbsp;
+                </td>
+                <td>
+                    <label for="detectCustomPostTypes"><b>Posts</b></label>
+                    <input type="checkbox" value="1" name="detectCustomPostTypes" />
+                    <br>
+                    <br>
+                    <p>Include URLs for all Custom Post types.</p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="detectFeedURLs"><b>Feed URLs</b></label>
+                    <input type="checkbox" value="1" name="detectFeedURLs" />
+                    <br>
+                    <br>
+                    <p>RSS/Atom feeds, such as <code>mydomain.com/some-post/feed/</code>.</p>
+                </td>
+                <td>
+                    &nbsp;
+                </td>
+                <td>
+                    <label for="detectVendorCacheDirs"><b>Vendor cache</b></label>
+                    <input type="checkbox" value="1" name="detectVendorCacheDirs" />
+                    <br>
+                    <br>
+                    <p>Vendor cache dirs, as used by Autoptimize and certain themes to store images and assets.</p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="detectAttachments"><b>Attachment URLs</b></label>
+                    <input type="checkbox" value="1" name="detectAttachments" />
+                    <br>
+                    <br>
+                    <p>The additional URLs for attachments, such as images. Usually not needed.</p>
+                </td>
+                <td>
+                    &nbsp;
+                </td>
+                <td>
+                    <label for="detectArchives"><b>Archives</b></label>
+                    <input type="checkbox" value="1" name="detectArchives" />
+                    <br>
+                    <br>
+                    <p>All Archive pages, such as Post Categories and Date Archives, etc.</p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="detectPostPagination"><b>Posts Pagination</b></label>
+                    <input type="checkbox" value="1" name="detectPostPagination" />
+                    <br>
+                    <br>
+                    <p>Get all paginated URLs for Posts.</p>
+                </td>
+                <td>
+                    &nbsp;
+                </td>
+                <td>
+                    <label for="detectCategoryPagination"><b>Category Pagination</b></label>
+                    <input type="checkbox" value="1" name="detectCategoryPagination" />
+                    <br>
+                    <br>
+                    <p>Get all paginated URLs for Categories.</p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="detectComments"><b>Comment URLs</b></label>
+                    <input type="checkbox" value="1" name="detectComments" />
+                    <br>
+                    <br>
+                    <p>Get all URLs for Comments.</p>
+                </td>
+                <td>
+                    &nbsp;
+                </td>
+                <td>
+                    <label for="detectCommentPagination"><b>Comments Pagination</b></label>
+                    <input type="checkbox" value="1" name="detectCommentPagination" />
+                    <br>
+                    <br>
+                    <p>Get all paginated URLs for Comments.</p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="detectParentTheme"><b>Parent Theme URLs</b></label>
+                    <input type="checkbox" value="1" name="detectParentTheme" />
+                    <br>
+                    <br>
+                    <p>Get all URLs within Parent Theme dir.</p>
+                </td>
+                <td>
+                    &nbsp;
+                </td>
+                <td>
+                    <label for="detectChildTheme"><b>Child Theme URLs</b></label>
+                    <input type="checkbox" value="1" name="detectChildTheme" />
+                    <br>
+                    <br>
+                    <p>Get all URLs within Child Theme dir.</p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="detectUploads"><b>Uploads URLs</b></label>
+                    <input type="checkbox" value="1" name="detectUploads" />
+                    <br>
+                    <br>
+                    <p>Get all public URLs for WP uploads dir.</p>
+                </td>
+                <td>
+                    &nbsp;
+                </td>
+                <td>
+                    <!-- empty -->
+                </td>
+            </tr>
+        </table>
 
         <button class="button button-secondary" id="save-and-reload">Save and reload</button>
 
