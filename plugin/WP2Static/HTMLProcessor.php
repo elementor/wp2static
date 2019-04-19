@@ -162,7 +162,6 @@ class HTMLProcessor extends WP2Static {
         if ( isset( $this->settings['removeWPLinks'] ) ) {
             $relative_links_to_rm = array(
                 'shortlink',
-                'canonical',
                 'pingback',
                 'alternate',
                 'EditURI',
@@ -180,6 +179,16 @@ class HTMLProcessor extends WP2Static {
                 $element->parentNode->removeChild( $element );
             } elseif ( strpos( $link_rel, '.w.org' ) !== false ) {
                 $element->parentNode->removeChild( $element );
+            }
+        }
+
+        if ( isset( $this->settings['removeCanonical'] ) ) {
+            if ( $this->settings['removeCanonical'] ) {
+                $link_rel = $element->getAttribute( 'rel' );
+
+                if ( strtolower( $link_rel ) == 'canonical' ) {
+                    $element->parentNode->removeChild( $element );
+                }
             }
         }
     }
@@ -524,13 +533,20 @@ class HTMLProcessor extends WP2Static {
             str_replace( "\r", '', $this->settings['rewrite_rules'] )
         );
 
+        $tmp_rules = array();
+
         foreach ( $rewrite_rules as $rewrite_rule_line ) {
             if ( $rewrite_rule_line ) {
                 list($from, $to) = explode( ',', $rewrite_rule_line );
-
-                $rewrite_from[] = $from;
-                $rewrite_to[] = $to;
+                $tmp_rules[ $from ] = $to;
             }
+        }
+
+        uksort( $tmp_rules, array( $this, 'ruleSort' ) );
+
+        foreach ( $tmp_rules as $from => $to ) {
+            $rewrite_from[] = $from;
+            $rewrite_to[] = $to;
         }
 
         $rewritten_source = str_replace(
@@ -578,13 +594,20 @@ class HTMLProcessor extends WP2Static {
             str_replace( "\r", '', $this->settings['rewrite_rules'] )
         );
 
+        $tmp_rules = array();
+
         foreach ( $rewrite_rules as $rewrite_rule_line ) {
             if ( $rewrite_rule_line ) {
                 list($from, $to) = explode( ',', $rewrite_rule_line );
-
-                $rewrite_from[] = addcslashes( $from, '/' );
-                $rewrite_to[] = addcslashes( $to, '/' );
+                $tmp_rules[ $from ] = $to;
             }
+        }
+
+        uksort( $tmp_rules, array( $this, 'ruleSort' ) );
+
+        foreach ( $tmp_rules as $from => $to ) {
+            $rewrite_from[] = addcslashes( $from, '/' );;
+            $rewrite_to[] = addcslashes( $to, '/' );
         }
 
         $rewritten_source = str_replace(
@@ -610,9 +633,18 @@ class HTMLProcessor extends WP2Static {
             str_replace( "\r", '', $this->settings['rewrite_rules'] )
         );
 
-        foreach ( $rewrite_rules as $rewrite_rule_line ) {
-            list($from, $to) = explode( ',', $rewrite_rule_line );
+        $tmp_rules = array();
 
+        foreach ( $rewrite_rules as $rewrite_rule_line ) {
+            if ( $rewrite_rule_line ) {
+                list($from, $to) = explode( ',', $rewrite_rule_line );
+                $tmp_rules[ $from ] = $to;
+            }
+        }
+
+        uksort( $tmp_rules, array( $this, 'ruleSort' ) );
+
+        foreach ( $tmp_rules as $from => $to ) {
             $rewrite_from[] = $from;
             $rewrite_to[] = $to;
         }
@@ -639,9 +671,18 @@ class HTMLProcessor extends WP2Static {
             str_replace( "\r", '', $this->settings['rewrite_rules'] )
         );
 
-        foreach ( $rewrite_rules as $rewrite_rule_line ) {
-            list($from, $to) = explode( ',', $rewrite_rule_line );
+        $tmp_rules = array();
 
+        foreach ( $rewrite_rules as $rewrite_rule_line ) {
+            if ( $rewrite_rule_line ) {
+                list($from, $to) = explode( ',', $rewrite_rule_line );
+                $tmp_rules[ $from ] = $to;
+            }
+        }
+
+        uksort( $tmp_rules, array( $this, 'ruleSort' ) );
+
+        foreach ( $tmp_rules as $from => $to ) {
             $rewrite_from[] = $from;
             $rewrite_to[] = $to;
         }

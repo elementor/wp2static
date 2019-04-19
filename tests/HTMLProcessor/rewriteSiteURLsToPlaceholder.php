@@ -53,11 +53,12 @@ final class HTMLProcessorRewriteSiteURLsToPlaceholderTest extends TestCase {
             'http://mywpsite.com/category/photos/my-gallery/'
         );
 
-        $processor->rewriteSiteURLsToPlaceholder();
+        $processed_html =
+            $processor->rewriteSiteURLsToPlaceholder( $raw_html );
 
         $this->assertEquals(
             $exp_result,
-            $processor->raw_html
+            $processed_html
         );
     }
 

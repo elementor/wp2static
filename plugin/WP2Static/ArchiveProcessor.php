@@ -52,6 +52,12 @@ class ArchiveProcessor extends WP2Static {
     }
 
     public function recursive_copy( $srcdir, $dstdir ) {
+        require_once dirname( __FILE__ ) .
+            '/../WP2Static/WsLog.php';
+        WsLog::l(
+            'Recursively copying: ' . $srcdir . ' to ' . $dstdir
+        );
+
         $dir = opendir( $srcdir );
 
         if ( ! is_dir( $dstdir ) ) {
@@ -283,6 +289,10 @@ class ArchiveProcessor extends WP2Static {
         );
     }
 
+    /* 
+        takes user-defined directory renaming rules, sorts them 
+        by longest path (mitigating issues with user-input order PR#216)
+    */
     public function renameArchiveDirectories() {
         if ( ! isset( $this->settings['rename_rules'] ) ) {
             return;
@@ -293,13 +303,22 @@ class ArchiveProcessor extends WP2Static {
             str_replace( "\r", '', $this->settings['rename_rules'] )
         );
 
-        foreach ( $rename_rules as $rename_rule_line ) {
-            list($original_dir, $target_dir) =
-                explode( ',', $rename_rule_line );
+        $tmp_rules = array();
 
-            $this->renameWPDirectory( $original_dir, $target_dir );
+        foreach ( $rename_rules as $rename_rule_line ) {
+            if ( $rename_rule_line ) {
+                list($original_dir, $target_dir) =
+                    explode( ',', $rename_rule_line );
+
+                $tmp_rules[ $original_dir ] = $target_dir;
+            }
         }
 
+        uksort( $tmp_rules, array( $this, 'ruleSort' ) );
+
+        foreach ( $tmp_rules as $original_dir => $target_dir ) {
+            $this->renameWPDirectory( $original_dir, $target_dir );
+        }
     }
 }
 

@@ -89,13 +89,20 @@ class TXTProcessor extends WP2Static {
             str_replace( "\r", '', $this->settings['rewrite_rules'] )
         );
 
+        $tmp_rules = array();
+
         foreach ( $rewrite_rules as $rewrite_rule_line ) {
             if ( $rewrite_rule_line ) {
                 list($from, $to) = explode( ',', $rewrite_rule_line );
-
-                $rewrite_from[] = $from;
-                $rewrite_to[] = $to;
+                $tmp_rules[ $from ] = $to;
             }
+        }
+
+        uksort( $tmp_rules, array( $this, 'ruleSort' ) );
+
+        foreach ( $tmp_rules as $from => $to ) {
+            $rewrite_from[] = $from;
+            $rewrite_to[] = $to;
         }
 
         $rewritten_source = str_replace(
@@ -143,13 +150,20 @@ class TXTProcessor extends WP2Static {
             str_replace( "\r", '', $this->settings['rewrite_rules'] )
         );
 
+        $tmp_rules = array();
+
         foreach ( $rewrite_rules as $rewrite_rule_line ) {
             if ( $rewrite_rule_line ) {
                 list($from, $to) = explode( ',', $rewrite_rule_line );
-
-                $rewrite_from[] = addcslashes( $from, '/' );
-                $rewrite_to[] = addcslashes( $to, '/' );
+                $tmp_rules[ $from ] = $to;
             }
+        }
+
+        uksort( $tmp_rules, array( $this, 'ruleSort' ) );
+
+        foreach ( $tmp_rules as $from => $to ) {
+            $rewrite_from[] = addcslashes( $from, '/' );
+            $rewrite_to[] = addcslashes( $to, '/' );
         }
 
         $rewritten_source = str_replace(

@@ -55,6 +55,7 @@ class WPSHO_PostSettings {
             'removeWPMeta',
             'removeWPLinks',
             'removeHTMLComments',
+            'removeCanonical',
         );
 
         $key_sets['advanced'] = array(
