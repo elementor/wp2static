@@ -20,6 +20,7 @@ class WPSHO_PostSettings {
             'basicAuthUser',
             'crawlPort',
             'crawl_delay',
+            'crawlUserAgent',
             'detectArchives',
             'detectAttachments',
             'detectCategoryPagination',

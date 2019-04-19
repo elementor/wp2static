@@ -60,6 +60,16 @@
       </tr>
       <tr>
         <th scope="row">
+          <label for="crawlUserAgent"><?php echo __('Custom crawling user-agent', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <?php $tpl->displayTextfield($this, 'crawlUserAgent', 'Custom crawling user-agent', ''); ?>
+          <br>
+          <p><i>Override the request HTTP header User-Agent (defaults to WP2Static.com).</i></p>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
           <label><?php echo __('Exclude certain URLs', 'static-html-output-plugin');?></label>
         </th>
         <td>

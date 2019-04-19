@@ -21,6 +21,7 @@ class WPSHO_DBSettings {
             'basicAuthUser',
             'crawlPort',
             'crawl_delay',
+            'crawlUserAgent',
             'detectArchives',
             'detectAttachments',
             'detectCategoryPagination',

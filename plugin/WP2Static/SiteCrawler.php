@@ -416,6 +416,14 @@ class SiteCrawler extends WP2Static {
             curl_setopt( $ch, CURLOPT_PORT, $this->settings['crawlPort'] );
         }
 
+        if ( isset( $this->settings['crawlUserAgent'] ) ) {
+            curl_setopt(
+                $ch,
+                CURLOPT_USERAGENT,
+                $this->settings['crawlUserAgent']
+            );
+        }
+
         if ( isset( $this->settings['useBasicAuth'] ) ) {
             curl_setopt(
                 $ch,
