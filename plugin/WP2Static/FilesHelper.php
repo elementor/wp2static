@@ -312,6 +312,8 @@ class WP2Static_FilesHelper {
             'WP-STATIC',
             '__MACOSX',
             'backwpup',
+            'wpallexport',
+            'wpallimport',
             'bower.json',
             'bower_components',
             'composer.json',
@@ -388,6 +390,31 @@ class WP2Static_FilesHelper {
             array( '/sitemap.xml' )
         );
 
+/* 
+
+    URLs to optionally detect 
+        'detectArchives',
+        'detectAttachments',
+        'detectCategoryPagination',
+        'detectCommentPagination',
+        'detectComments',
+        'detectCustomPostTypes',
+        'detectFeedURLs',
+        'detectPostPagination',
+
+// other options:
+
+ - robots
+ - favicon
+ - sitemaps
+
+*/
+        if ( isset( $settings['detectAttachments'] ) ) {
+            $url_queue = array_merge(
+                $url_queue,
+                self::getAllWPAttachmentURLs( $base_url )
+            );
+        }
 
         if ( isset( $settings['detectPosts'] ) ) {
             $url_queue = array_merge(
@@ -396,29 +423,47 @@ class WP2Static_FilesHelper {
             );
         }
 
+        if ( isset( $settings['detectPages'] ) ) {
+            $url_queue = array_merge(
+                $url_queue,
+                self::getAllWPPageURLs( $base_url )
+            );
+        }
 
-        // switch ( $settings['detection_level'] ) {
-        //     case 'homepage':
-        //         break;
-        //     case 'posts_and_pages':
-        //         $url_queue = array_merge(
-        //             $url_queue,
-        //             self::getAllWPPostURLs( $base_url )
-        //         );
+        if ( isset( $settings['detectCustomPostTypes'] ) ) {
+            $url_queue = array_merge(
+                $url_queue,
+                self::getAllWPCustomPostTypeURLs( $base_url )
+            );
+        }
 
-        //         break;
+        if ( isset( $settings['detectUploads'] ) ) {
+            $url_queue = array_merge(
+                $url_queue,
+                self::getListOfLocalFilesByUrl( $uploads_url )
+            );
+        }
 
-        //     case 'everything':
-        //     default:
-        //         $url_queue = array_merge(
-        //             $url_queue,
-        //             self::getThemeFiles( 'parent' ),
-        //             self::getThemeFiles( 'child' ),
-        //             self::detectVendorFiles( $wp_site->site_url ),
-        //             self::getListOfLocalFilesByUrl( $uploads_url ),
-        //             self::getAllWPPostURLs( $base_url )
-        //         );
-        // }
+        if ( isset( $settings['detectParentTheme'] ) ) {
+            $url_queue = array_merge(
+                $url_queue,
+                self::getThemeFiles( 'parent' )
+            );
+        }
+
+        if ( isset( $settings['detectChildTheme'] ) ) {
+            $url_queue = array_merge(
+                $url_queue,
+                self::getThemeFiles( 'child' )
+            );
+        }
+
+        if ( isset( $settings['detectVendorCacheDirs'] ) ) {
+            $url_queue = array_merge(
+                $url_queue,
+                self::detectVendorFiles( $wp_site->site_url )
+            );
+        }
 
         $url_queue = self::cleanDetectedURLs( $url_queue );
 
@@ -470,7 +515,7 @@ class WP2Static_FilesHelper {
             SELECT ID
             FROM %s
             WHERE post_status = '%s'
-            AND post_type = 'POST'";
+            AND post_type = 'post'";
 
         $posts = $wpdb->get_results(
             sprintf(
@@ -482,6 +527,109 @@ class WP2Static_FilesHelper {
 
         foreach ( $posts as $post ) {
             $permalink = get_permalink( $post->ID );
+
+            if ( strpos( $permalink, '?post_type' ) !== false ) {
+                continue;
+            }
+
+            $post_urls[] = $permalink;
+        }
+
+        return $post_urls;
+    }
+
+    public static function getAllWPPageURLs( $wp_site_url ) {
+        global $wpdb;
+
+        $page_urls = array();
+
+        $query = "
+            SELECT ID
+            FROM %s
+            WHERE post_status = '%s'
+            AND post_type = 'page'";
+
+        $pages = $wpdb->get_results(
+            sprintf(
+                $query,
+                $wpdb->posts,
+                'publish'
+            )
+        );
+
+        foreach ( $pages as $page ) {
+            $permalink = get_page_link( $page->ID );
+
+            if ( strpos( $permalink, '?post_type' ) !== false ) {
+                continue;
+            }
+
+            $page_urls[] = $permalink;
+        }
+
+        return $page_urls;
+    }
+
+    public static function getAllWPCustomPostTypeURLs( $wp_site_url ) {
+        global $wpdb;
+
+        $post_urls = array();
+        $unique_post_types = array();
+
+        $query = "
+            SELECT ID,post_type
+            FROM %s
+            WHERE post_status = '%s'
+            AND post_type NOT IN ('%s','%s')";
+
+        $posts = $wpdb->get_results(
+            sprintf(
+                $query,
+                $wpdb->posts,
+                'publish',
+                'revision',
+                'nav_menu_item'
+            )
+        );
+
+        foreach ( $posts as $post ) {
+            // capture all post types
+            $unique_post_types[] = $post->post_type;
+
+            $permalink = get_post_permalink( $post->ID );
+
+            if ( strpos( $permalink, '?post_type' ) !== false ) {
+                continue;
+            }
+
+            $post_urls[] = $permalink;
+        }
+
+        return $post_urls;
+    }
+
+    public static function getAllWPAttachmentURLs( $wp_site_url ) {
+        global $wpdb;
+
+        $post_urls = array();
+        $unique_post_types = array();
+
+        $query = "
+            SELECT ID,post_type
+            FROM %s
+            WHERE post_status = '%s'
+            AND post_type = 'attachment'";
+
+        $posts = $wpdb->get_results(
+            sprintf(
+                $query,
+                $wpdb->posts,
+                'publish'
+            )
+        );
+
+        foreach ( $posts as $post ) {
+            $permalink = get_attachment_link( $post->ID );
 
             if ( strpos( $permalink, '?post_type' ) !== false ) {
                 continue;

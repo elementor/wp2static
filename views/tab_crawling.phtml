@@ -78,24 +78,6 @@
       </tr>
       <tr>
         <th scope="row">
-          <label><?php echo __('Include additional URLs', 'static-html-output-plugin');?></label>
-        </th>
-        <td>
-  <p>Where the plugin fails to detect certain URLs that you know you want to include, please add these here. This will be applied after any exclusions, in case you want to exclude a whole directory, then include just one file from it.</p> <br>
-
-          <i><p>Supported formats are relative URLs</p> <br>
-
-          <?php echo $this->wp_site_url; ?><br>
-          <?php echo $this->wp_site_url; ?>/wp-content/themes/twentyseventeen/banana.jpg<br>
-          /my_pricelist.pdf<br>
-          </i>
-          <br>
-
-            <textarea class="widefat" name="additionalUrls" id="additionalUrls" rows="5" cols="10"><?php echo $this->options->additionalUrls ? $this->options->additionalUrls : ''  ?></textarea>
-        </td>
-      </tr>
-      <tr>
-        <th scope="row">
           <label for="parse_css"><?php echo __('Parse CSS files', 'static-html-output-plugin');?></label>
         </th>
         <td>

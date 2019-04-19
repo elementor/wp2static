@@ -254,9 +254,7 @@ jQuery(document).ready(function($){
         // clear export commence time for next run
         export_commence_time = '';
 
-        stopPolling();
         stopTimer();
-        setProgressBarPercent( 0 );
         $('#current_action').text('Process completed in ' +  millisToMinutesAndSeconds(export_duration) + ' (mins:ss)');
         $("#goToMyStaticSite").focus();
         $(".pulsate-css").hide();
@@ -324,7 +322,6 @@ jQuery(document).ready(function($){
   });
 
   function ajaxErrorHandler () {
-      // stopPolling();
       stopTimer();
 
       failed_deploy_message = 'Failed during "' + status_text;

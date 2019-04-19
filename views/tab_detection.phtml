@@ -4,6 +4,25 @@
     <tbody>
       <tr>
         <th scope="row">
+          <label><?php echo __('Initial crawl list', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <p>Before it starts to export your site, the plugin first generates a list of all WordPress URLs it thinks it should include. It takes these from what it knows about your posts, pages, tags, archives and media.</p>
+
+          <div id="initial_crawl_list_loader" class="spinner is-active" style="float:none;width:auto;height:auto;padding:10px 0 10px 50px;background-position:20px 0;">
+            Generating initial file list
+          </div>
+
+          <i><p id="initial_crawl_list_count"></p></i>
+        <br>
+        <a id="preview_initial_crawl_list_button" style="display:none;" href="<?php echo $this->wp_site->uploads_url; ?>/WP-STATIC-INITIAL-CRAWL-LIST.txt" class="button button-secondary" target="_blank">Preview initial crawl list</a>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
           <label for="detection_level"><?php echo __('Control Detected URLs', 'static-html-output-plugin');?></label>
         </th>
         <td>
@@ -30,7 +49,7 @@
                 </td>
                 <td>
                     <label for="detectPages"><b>Pages</b></label>
-                    <input type="checkbox" value="1" name="detectPages" />
+                    <?php $tpl->displayCheckbox($this, 'detectPages', ''); ?>
                     <br>
                     <br>
                     <p>All published Pages. Use the date range option below to further filter.</p>
@@ -39,7 +58,7 @@
             <tr>
                 <td>
                     <label for="detectPosts"><b>Posts</b></label>
-                    <input type="checkbox" value="1" name="detectPosts" />
+                    <?php $tpl->displayCheckbox($this, 'detectPosts', ''); ?>
                     <br>
                     <br>
                     <p>All published Posts. Use the date range option below to further filter.</p>
@@ -48,17 +67,17 @@
                     &nbsp;
                 </td>
                 <td>
-                    <label for="detectCustomPostTypes"><b>Posts</b></label>
-                    <input type="checkbox" value="1" name="detectCustomPostTypes" />
+                    <label for="detectCustomPostTypes"><b>Custom Post Types</b></label>
+                    <?php $tpl->displayCheckbox($this, 'detectCustomPostTypes', ''); ?>
                     <br>
                     <br>
-                    <p>Include URLs for all Custom Post types.</p>
+                    <p>Include URLs for all Custom Post Types.</p>
                 </td>
             </tr>
             <tr>
                 <td>
                     <label for="detectFeedURLs"><b>Feed URLs</b></label>
-                    <input type="checkbox" value="1" name="detectFeedURLs" />
+                    <?php $tpl->displayCheckbox($this, 'detectFeedURLs', ''); ?>
                     <br>
                     <br>
                     <p>RSS/Atom feeds, such as <code>mydomain.com/some-post/feed/</code>.</p>
@@ -68,7 +87,7 @@
                 </td>
                 <td>
                     <label for="detectVendorCacheDirs"><b>Vendor cache</b></label>
-                    <input type="checkbox" value="1" name="detectVendorCacheDirs" />
+                    <?php $tpl->displayCheckbox($this, 'detectVendorCacheDirs', ''); ?>
                     <br>
                     <br>
                     <p>Vendor cache dirs, as used by Autoptimize and certain themes to store images and assets.</p>
@@ -77,7 +96,7 @@
             <tr>
                 <td>
                     <label for="detectAttachments"><b>Attachment URLs</b></label>
-                    <input type="checkbox" value="1" name="detectAttachments" />
+                    <?php $tpl->displayCheckbox($this, 'detectAttachments', ''); ?>
                     <br>
                     <br>
                     <p>The additional URLs for attachments, such as images. Usually not needed.</p>
@@ -87,7 +106,7 @@
                 </td>
                 <td>
                     <label for="detectArchives"><b>Archives</b></label>
-                    <input type="checkbox" value="1" name="detectArchives" />
+                    <?php $tpl->displayCheckbox($this, 'detectArchives', ''); ?>
                     <br>
                     <br>
                     <p>All Archive pages, such as Post Categories and Date Archives, etc.</p>
@@ -96,7 +115,7 @@
             <tr>
                 <td>
                     <label for="detectPostPagination"><b>Posts Pagination</b></label>
-                    <input type="checkbox" value="1" name="detectPostPagination" />
+                    <?php $tpl->displayCheckbox($this, 'detectPostPagination', ''); ?>
                     <br>
                     <br>
                     <p>Get all paginated URLs for Posts.</p>
@@ -106,7 +125,7 @@
                 </td>
                 <td>
                     <label for="detectCategoryPagination"><b>Category Pagination</b></label>
-                    <input type="checkbox" value="1" name="detectCategoryPagination" />
+                    <?php $tpl->displayCheckbox($this, 'detectCategoryPagination', ''); ?>
                     <br>
                     <br>
                     <p>Get all paginated URLs for Categories.</p>
@@ -115,7 +134,7 @@
             <tr>
                 <td>
                     <label for="detectComments"><b>Comment URLs</b></label>
-                    <input type="checkbox" value="1" name="detectComments" />
+                    <?php $tpl->displayCheckbox($this, 'detectComments', ''); ?>
                     <br>
                     <br>
                     <p>Get all URLs for Comments.</p>
@@ -125,7 +144,7 @@
                 </td>
                 <td>
                     <label for="detectCommentPagination"><b>Comments Pagination</b></label>
-                    <input type="checkbox" value="1" name="detectCommentPagination" />
+                    <?php $tpl->displayCheckbox($this, 'detectCommentPagination', ''); ?>
                     <br>
                     <br>
                     <p>Get all paginated URLs for Comments.</p>
@@ -134,7 +153,7 @@
             <tr>
                 <td>
                     <label for="detectParentTheme"><b>Parent Theme URLs</b></label>
-                    <input type="checkbox" value="1" name="detectParentTheme" />
+                    <?php $tpl->displayCheckbox($this, 'detectParentTheme', ''); ?>
                     <br>
                     <br>
                     <p>Get all URLs within Parent Theme dir.</p>
@@ -144,7 +163,7 @@
                 </td>
                 <td>
                     <label for="detectChildTheme"><b>Child Theme URLs</b></label>
-                    <input type="checkbox" value="1" name="detectChildTheme" />
+                    <?php $tpl->displayCheckbox($this, 'detectChildTheme', ''); ?>
                     <br>
                     <br>
                     <p>Get all URLs within Child Theme dir.</p>
@@ -153,7 +172,7 @@
             <tr>
                 <td>
                     <label for="detectUploads"><b>Uploads URLs</b></label>
-                    <input type="checkbox" value="1" name="detectUploads" />
+                    <?php $tpl->displayCheckbox($this, 'detectUploads', ''); ?>
                     <br>
                     <br>
                     <p>Get all public URLs for WP uploads dir.</p>
@@ -173,21 +192,45 @@
       </tr>
       <tr>
         <th scope="row">
-          <label><?php echo __('Initial crawl list', 'static-html-output-plugin');?></label>
+          <label><?php echo __('Filter detected URLs', 'static-html-output-plugin');?></label>
         </th>
         <td>
-          <p>Before it starts to export your site, the plugin first generates a list of all WordPress URLs it thinks it should include. It takes these from what it knows about your posts, pages, tags, archives and media.</p>
+  <p>After checking the Initial Crawl List, add any paths to filter out here.</p> <br>
 
-          <div id="initial_crawl_list_loader" class="spinner is-active" style="float:none;width:auto;height:auto;padding:10px 0 10px 50px;background-position:20px 0;">
-            Generating initial file list
-          </div>
+  <p>WP2Static automatically filters out common backup plugin directories, but please review your initial crawl list to ensure no unwanted URLs are detectected.</p> <br>
 
-          <i><p id="initial_crawl_list_count"></p></i>
+        <i><p>You can enter this as a partial string or full path (wildcards/regex not currently supported)</p> <br>
+
+          .zip<br>
+          768x768.jpg<br>
+          <?php echo $this->wp_site_url; ?>/wp-content/themes/twentyseventeen/banana.jpg<br>
+          /my_pricelist.pdf<br>
+          </i>
+          <br>
+
+            <textarea class="widefat" name="additionalUrls" id="additionalUrls" rows="5" cols="10"><?php echo $this->options->additionalUrls ? $this->options->additionalUrls : ''  ?></textarea>
+
         <br>
-        <a id="preview_initial_crawl_list_button" style="display:none;" href="<?php echo $this->wp_site->uploads_url; ?>/WP-STATIC-INITIAL-CRAWL-LIST.txt" class="button button-secondary" target="_blank">Preview initial crawl list</a>
+        <button class="button button-secondary" id="save-and-reload">Save and reload (CHANGE TO CLASS)</button>
+        </td>
 
+      </tr>
+      <tr>
+        <th scope="row">
+          <label><?php echo __('Include additional URLs', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+  <p>Where the plugin fails to detect certain URLs that you know you want to include, please add these here. This will be applied after any exclusions, in case you want to exclude a whole directory, then include just one file from it.</p> <br>
 
+          <i><p>Supported formats are relative URLs</p> <br>
 
+          <?php echo $this->wp_site_url; ?><br>
+          <?php echo $this->wp_site_url; ?>/wp-content/themes/twentyseventeen/banana.jpg<br>
+          /my_pricelist.pdf<br>
+          </i>
+          <br>
+
+            <textarea class="widefat" name="additionalUrls" id="additionalUrls" rows="5" cols="10"><?php echo $this->options->additionalUrls ? $this->options->additionalUrls : ''  ?></textarea>
         </td>
       </tr>
     </tbody>
