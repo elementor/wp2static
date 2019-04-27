@@ -69,16 +69,6 @@ var deploy_options = {
           bunnycdnAPIKey: 'Please specify your BunnyCDN API/FTP password in order to deploy to BunnyCDN.',
         }
     },
-    netlify: {
-        exportSteps: [
-            'netlify_do_export',
-            'finalize_deployment'
-        ],
-        required_fields: {
-          netlifyPersonalAccessToken: 'Please specify your Netlify personal access token in order to deploy to Netlify.',
-          netlifySiteID: 'Please specify the id of your Netlify site you want to deploy to.',
-        }
-    },
 };
 
 var wp_site = <?php echo json_encode($this->wp_site, JSON_FORCE_OBJECT|JSON_UNESCAPED_SLASHES); ?>
@@ -107,7 +97,6 @@ var status_descriptions = {
     'crawl_again' : 'Crawling discovered URLs',
     'post_process_archive_dir' : 'Processing the crawled files',
     'post_export_teardown' : 'Cleaning up after processing',
-    'netlify_do_export' : 'Deploying to Netlify',
     'bunnycdn_prepare_export' : 'Preparing files for BunnyCDN deployment',
     'bunnycdn_transfer_files' : 'Deploying files to BunnyCDN',
     'bunnycdn_purge_cache' : 'Purging BunnyCDN cache',

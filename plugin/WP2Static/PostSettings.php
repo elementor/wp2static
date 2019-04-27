@@ -111,14 +111,6 @@ class WPSHO_PostSettings {
             'bunnycdnRemotePath',
         );
 
-        $key_sets['netlify'] = array(
-            'baseUrl-netlify',
-            'netlifyHeaders',
-            'netlifyPersonalAccessToken',
-            'netlifyRedirects',
-            'netlifySiteID',
-        );
-
         $key_sets['wpenv'] = array(
             'wp_site_url',
             'wp_site_path',
