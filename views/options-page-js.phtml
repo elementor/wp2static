@@ -29,18 +29,6 @@ var deploy_options = {
           ftpPassword: 'Please input an FTP password in order to authenticate when using the FTP deployment method.',
         }
     },
-    bunnycdn: {
-        exportSteps: [
-            'bunnycdn_prepare_export',
-            'bunnycdn_transfer_files',
-            'bunnycdn_purge_cache',
-            'finalize_deployment'
-        ],
-        required_fields: {
-          bunnycdnPullZoneName: 'Please specify your BunnyCDN pull zone name in order to deploy to BunnyCDN.',
-          bunnycdnAPIKey: 'Please specify your BunnyCDN API/FTP password in order to deploy to BunnyCDN.',
-        }
-    },
 };
 
 var wp_site = <?php echo json_encode($this->wp_site, JSON_FORCE_OBJECT|JSON_UNESCAPED_SLASHES); ?>
@@ -69,9 +57,6 @@ var status_descriptions = {
     'crawl_again' : 'Crawling discovered URLs',
     'post_process_archive_dir' : 'Processing the crawled files',
     'post_export_teardown' : 'Cleaning up after processing',
-    'bunnycdn_prepare_export' : 'Preparing files for BunnyCDN deployment',
-    'bunnycdn_transfer_files' : 'Deploying files to BunnyCDN',
-    'bunnycdn_purge_cache' : 'Purging BunnyCDN cache',
     'ftp_prepare_export' : 'Preparing files for FTP deployment',
     'ftp_transfer_files' : 'Deploying files via FTP',
     'finalize_deployment' : 'Performing post-deployment actions'

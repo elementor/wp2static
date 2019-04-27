@@ -94,13 +94,7 @@ $tpl = new TemplateHelper();
     function generateDeploymentMethodOptions() {
       $options = array(
         "folder" => array('Subdirectory on current server', 'free'),
-        "blank1" => array("--- Manual Deployment ---", 'free'),
-        "zip" => array('ZIP archive (.zip)'),
-        "blank2" => array("--- Automated Deployment ---"),
-        "bunnycdn" => array("BunnyCDN"),
-        "gitlab" => array("GitLab"),
-        "blank3" => array("--- Other Automated Deployments ---"),
-        "ftp" => array("FTP"),
+        "zip" => array('ZIP archive (.zip)', 'free'),
       );
 
       $options = apply_filters(

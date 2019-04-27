@@ -87,15 +87,6 @@ class WPSHO_DBSettings {
             'useActiveFTP',
         );
 
-        $key_sets['bunnycdn'] = array(
-            'baseUrl-bunnycdn',
-            'bunnycdnStorageZoneAccessKey',
-            'bunnycdnPullZoneAccessKey',
-            'bunnycdnPullZoneID',
-            'bunnycdnStorageZoneName',
-            'bunnycdnRemotePath',
-        );
-
         $key_sets['wpenv'] = array(
             'wp_site_url',
             'wp_site_path',
