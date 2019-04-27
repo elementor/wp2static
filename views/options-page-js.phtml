@@ -15,22 +15,6 @@ var deploy_options = {
           glBranch: 'Please specify which branch in your GitLab repository you want to deploy to.'
         }
     },
-    bitbucket: {
-        exportSteps: [
-            'bitbucket_prepare_export',
-            'bitbucket_upload_files',
-            'finalize_deployment'
-        ],
-        required_fields: {
-          bbToken: 'Please specify your Bitbucket personal access token in order to deploy to Bitbucket.',
-          bbRepo: 'Please specify your Bitbucket repository name in order to deploy to Bitbucket.',
-          bbBranch: 'Please specify which branch in your Bitbucket repository you want to deploy to.'
-        },
-        repo_field: {
-          field: 'bbRepo',
-          message: "Please ensure your Bitbucket repo is specified as USER_OR_ORG_NAME/REPO_NAME\n"
-        }
-    },
     zip: {
         exportSteps: [
             'finalize_deployment'
@@ -102,8 +86,6 @@ var status_descriptions = {
     'bunnycdn_purge_cache' : 'Purging BunnyCDN cache',
     'ftp_prepare_export' : 'Preparing files for FTP deployment',
     'ftp_transfer_files' : 'Deploying files via FTP',
-    'bitbucket_prepare_export' : 'Preparing files for Bitbucket deployment',
-    'bitbucket_upload_files' : 'Deploying files to Bitbucket (progress will look slow at end if using large batch sizes)',
     'gitlab_prepare_export' : 'Preparing files for GitLab deployment',
     'gitlab_upload_files' : 'Deploying files to GitLab',
     'finalize_deployment' : 'Performing post-deployment actions'
