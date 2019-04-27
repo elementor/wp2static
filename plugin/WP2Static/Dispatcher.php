@@ -15,26 +15,5 @@ if ( $ajax_action === 'crawl_site' || $ajax_action === 'crawl_again' ) {
 
     wp_die();
     return null;
-} elseif ( $ajax_action == 'test_ftp' ) {
-    require_once dirname( __FILE__ ) .
-        '/SitePublisher.php';
-    require_once $deployers_dir . '/FTP.php';
-
-    wp_die();
-    return null;
-} elseif ( $ajax_action == 'ftp_prepare_export' ) {
-    require_once dirname( __FILE__ ) .
-        '/SitePublisher.php';
-    require_once $deployers_dir . '/FTP.php';
-
-    wp_die();
-    return null;
-} elseif ( $ajax_action == 'ftp_transfer_files' ) {
-    require_once dirname( __FILE__ ) .
-        '/SitePublisher.php';
-    require_once $deployers_dir . '/FTP.php';
-
-    wp_die();
-    return null;
 }
 

@@ -76,17 +76,6 @@ class WPSHO_DBSettings {
             'allowOfflineUsage',
         );
 
-        $key_sets['ftp'] = array(
-            'baseUrl-ftp',
-            'ftpPassword',
-            'ftpRemotePath',
-            'ftpServer',
-            'ftpPort',
-            'ftpTLS',
-            'ftpUsername',
-            'useActiveFTP',
-        );
-
         $key_sets['wpenv'] = array(
             'wp_site_url',
             'wp_site_path',

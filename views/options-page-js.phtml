@@ -17,18 +17,6 @@ var deploy_options = {
         required_fields: {
         }
     },
-    ftp: {
-        exportSteps: [
-            'ftp_prepare_export',
-            'ftp_transfer_files',
-            'finalize_deployment'
-        ],
-        required_fields: {
-          ftpServer: 'Please specify the FTP server address needed to transfer your files via FTP',
-          ftpUsername: 'Please input an FTP username in order to authenticate when using the FTP deployment method.',
-          ftpPassword: 'Please input an FTP password in order to authenticate when using the FTP deployment method.',
-        }
-    },
 };
 
 var wp_site = <?php echo json_encode($this->wp_site, JSON_FORCE_OBJECT|JSON_UNESCAPED_SLASHES); ?>
@@ -56,10 +44,7 @@ var status_descriptions = {
     'crawl_site' : 'Crawling initial file list',
     'crawl_again' : 'Crawling discovered URLs',
     'post_process_archive_dir' : 'Processing the crawled files',
-    'post_export_teardown' : 'Cleaning up after processing',
-    'ftp_prepare_export' : 'Preparing files for FTP deployment',
-    'ftp_transfer_files' : 'Deploying files via FTP',
-    'finalize_deployment' : 'Performing post-deployment actions'
+    'post_export_teardown' : 'Cleaning up after processing'
 };
 
 jQuery(document).ready(function($){
