@@ -75,14 +75,6 @@ class WPSHO_PostSettings {
             'allowOfflineUsage',
         );
 
-        $key_sets['gitlab'] = array(
-            'baseUrl-gitlab',
-            'glBranch',
-            'glPath',
-            'glToken',
-            'glProject',
-        );
-
         $key_sets['ftp'] = array(
             'baseUrl-ftp',
             'ftpPassword',
