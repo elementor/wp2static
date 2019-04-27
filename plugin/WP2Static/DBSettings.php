@@ -76,15 +76,6 @@ class WPSHO_DBSettings {
             'allowOfflineUsage',
         );
 
-        $key_sets['github'] = array(
-            'baseUrl-github',
-            'ghBranch',
-            'ghPath',
-            'ghToken',
-            'ghRepo',
-            'ghCommitMessage',
-        );
-
         $key_sets['bitbucket'] = array(
             'baseUrl-bitbucket',
             'bbBranch',

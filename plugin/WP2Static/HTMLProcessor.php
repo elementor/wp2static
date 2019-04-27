@@ -5,7 +5,6 @@ class HTMLProcessor extends WP2Static {
     public function __construct() {
         $this->loadSettings(
             array(
-                'github',
                 'wpenv',
                 'processing',
                 'advanced',
