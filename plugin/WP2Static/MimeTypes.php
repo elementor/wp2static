@@ -12,7 +12,9 @@ function GuessMimeType( $file ) {
         'css' => 'text/css',
         'csv' => 'text/csv',
         'doc' => 'application/msword',
-        'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'docx' =>
+            'application/vnd.openxmlformats-officedocument' .
+            '.wordprocessingml.document',
         'eot' => 'application/vnd.ms-fontobject',
         'epub' => 'application/epub+zip',
         'gif' => 'image/gif',
@@ -38,7 +40,9 @@ function GuessMimeType( $file ) {
         'png' => 'image/png',
         'pdf' => 'application/pdf',
         'ppt' => 'application/vnd.ms-powerpoint',
-        'pptx' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        'pptx' =>
+            'application/vnd.openxmlformats-officedocument' .
+            '.presentationml.presentation',
         'rtf' => 'application/rtf',
         'rss' => 'application/rss+xml',
         'svg' => 'image/svg+xml',
@@ -57,7 +61,8 @@ function GuessMimeType( $file ) {
         'woff2' => 'font/woff2',
         'xhtml' => 'application/xhtml+xml',
         'xls' => 'application/vnd.ms-excel',
-        'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'xlsx' =>
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         'xml' => 'application/xml',
         'xul' => 'application/vnd.mozilla.xul+xml',
         'zip' => 'application/zip',

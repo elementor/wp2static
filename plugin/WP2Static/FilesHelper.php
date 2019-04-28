@@ -220,7 +220,7 @@ class WP2Static_FilesHelper {
     }
 
     /*
-        Autoptimize and other vendors use a cache dir one level above the 
+        Autoptimize and other vendors use a cache dir one level above the
         uploads URL
 
         ie, domain.com/cache/ or domain.com/subdir/cache/
@@ -390,25 +390,24 @@ class WP2Static_FilesHelper {
             array( '/sitemap.xml' )
         );
 
-/* 
+        /*
+            URLs to optionally detect
+                'detectArchives',
+                'detectAttachments',
+                'detectCategoryPagination',
+                'detectCommentPagination',
+                'detectComments',
+                'detectCustomPostTypes',
+                'detectFeedURLs',
+                'detectPostPagination',
 
-    URLs to optionally detect 
-        'detectArchives',
-        'detectAttachments',
-        'detectCategoryPagination',
-        'detectCommentPagination',
-        'detectComments',
-        'detectCustomPostTypes',
-        'detectFeedURLs',
-        'detectPostPagination',
+        // other options:
 
-// other options:
+         - robots
+         - favicon
+         - sitemaps
 
- - robots
- - favicon
- - sitemaps
-
-*/
+        */
         if ( isset( $settings['detectAttachments'] ) ) {
             $url_queue = array_merge(
                 $url_queue,

@@ -289,8 +289,8 @@ class ArchiveProcessor extends WP2Static {
         );
     }
 
-    /* 
-        takes user-defined directory renaming rules, sorts them 
+    /*
+        Takes user-defined directory renaming rules, sorts them
         by longest path (mitigating issues with user-input order PR#216)
     */
     public function renameArchiveDirectories() {

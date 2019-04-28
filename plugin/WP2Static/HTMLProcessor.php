@@ -605,7 +605,7 @@ class HTMLProcessor extends WP2Static {
         uksort( $tmp_rules, array( $this, 'ruleSort' ) );
 
         foreach ( $tmp_rules as $from => $to ) {
-            $rewrite_from[] = addcslashes( $from, '/' );;
+            $rewrite_from[] = addcslashes( $from, '/' );
             $rewrite_to[] = addcslashes( $to, '/' );
         }
 

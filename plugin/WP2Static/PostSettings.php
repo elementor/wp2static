@@ -92,7 +92,7 @@ class WPSHO_PostSettings {
 
         if ( ! empty( $specify_keys ) ) {
             // manually add extra keys when deploying
-            $key_sets[$specify_keys[0]] = $specify_keys[1];
+            $key_sets[ $specify_keys[0] ] = $specify_keys[1];
         } else {
             // apply filters when full WP execution
             $key_sets = apply_filters(
