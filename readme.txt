@@ -3,8 +3,8 @@ Contributors: leonstafford
 Tags: security, performance, static
 Requires at least: 3.2
 Tested up to: 5.1
-Requires PHP: 5.6
-Stable tag: 6.6.5
+Requires PHP: 7.2
+Stable tag: 7.0
 
 Security & Performance via static website publishing. One plugin to solve WordPress's biggest problems.
 
@@ -134,13 +134,17 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
 
 == Changelog ==
 
-= 6.6.6 =
+= 7.0 =
 
+ * Enhancement: granular control over WP URL detection
  * Enhancement: improved UX when an error occurs
  * Enhancement: prevent vendor notices distorting WP2Static UI
  * Enhancement: warn when DOMDocument not available
  * Enhancement: warn when ZIP extension not available for Netlify deploy
  * Enhancement: set outdated PHP detection version to < 5.6
+ * Change: removed progress indicators due to poor implementation
+ * New feature: New hooks for writing your own Add-on to WP2Static
+ * New feature (Premium): Add-on for 1-click deploys to Microsoft Azure
 
 = 6.6.5 =
 
