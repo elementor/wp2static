@@ -262,7 +262,7 @@ class HTMLProcessor extends WP2Static {
         } elseif ( $element->hasAttribute( 'content' ) ) {
             $attribute_to_change = 'content';
         } else {
-            return;
+            return false;
         }
 
         return $attribute_to_change;
@@ -335,9 +335,10 @@ class HTMLProcessor extends WP2Static {
 
             $attribute_to_change = $this->getAttributeToChange( $element );
 
-            $element->setAttribute( $attribute_to_change, $absolute_url );
+            if ( $attribute_to_change ) {
+                $element->setAttribute( $attribute_to_change, $absolute_url );
+            }
         }
-
     }
 
     public function processLink( $element ) {
