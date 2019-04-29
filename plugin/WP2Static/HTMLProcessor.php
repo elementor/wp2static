@@ -34,10 +34,6 @@ class HTMLProcessor extends WP2Static {
             return false;
         }
 
-        // instantiate the XML body here
-        $this->xml_doc = new DOMDocument();
-
-
         // NOTE: set placeholder_url to same protocol as target
         // making it easier to rewrite URLs without considering protocol
         $this->destination_protocol =
@@ -48,12 +44,21 @@ class HTMLProcessor extends WP2Static {
 
         $wp_site_root = $this->settings['wp_site_url'];
 
-        $this->rewriteAllLocalURLsToAbsolutePlaceholders(
+        // instantiate the XML body here
+        $this->xml_doc = new DOMDocument();
+
+        // PERF: 70% of function time
+        // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
+        libxml_use_internal_errors( true );
+        $this->xml_doc->loadHTML( $this->raw_html );
+        libxml_use_internal_errors( false );
+
+        $html_with_absolute_urls = $this->rewriteAllLocalURLsToAbsolutePlaceholders(
+            $this->xml_doc 
             $wp_site_root,
             $placeholder_url,
             $page_url
         );
-
 
         $search_patterns = $this->getWPSiteURLSearchPatterns(
             $wp_site_root
@@ -67,7 +72,7 @@ class HTMLProcessor extends WP2Static {
             'rewriteSiteURLsToPlaceholder.php';
 
         $this->raw_html = rewriteSiteURLsToPlaceholder(
-            $html_document,
+            $html_with_absolute_urls,
             $search_patterns,
             $replace_patterns
         );
@@ -128,6 +133,43 @@ class HTMLProcessor extends WP2Static {
         $this->writeDiscoveredURLs();
 
         return true;
+    }
+
+    /*
+        As a first-pass, we normalize any document or site root-relative URLs
+
+        to make further processing easier
+
+        Takes in an XML DOMDocument and outputs raw HTML document
+    */
+    public function rewriteAllLocalURLsToAbsolutePlaceholders(
+            $xml_doc,
+            $wp_site_root,
+            $placeholder_url,
+            $page_url
+    ) {
+        $elements = iterator_to_array(
+            $xml_doc->getElementsByTagName( '*' )
+        );
+
+        $elements_to_normalize = array(
+            'meta',
+            'a',
+            'img',
+            'head',
+            'link',
+            'script',
+        }
+
+        foreach ( $elements as $element ) {
+            if ( array_key_exists( $element->tagName, $a ) ) {
+                $this->processScript( $element );
+            }
+        }
+
+        $source_with_absolute_urls = $this->getHTML( $xml_doc, false );
+
+        return $source_with_absolute_urls;
     }
 
     /*
@@ -874,14 +916,23 @@ class HTMLProcessor extends WP2Static {
         }
     }
 
-    public function getHTML() {
-        $processed_html = $this->xml_doc->saveHtml();
+    public function getHTML( $xml_doc, $rewrite_unchanged_urls = true ) {
+        $processed_html = $xml_doc->saveHtml();
 
-        // process the resulting HTML as text
-        $processed_html = $this->detectEscapedSiteURLs( $processed_html );
-        $processed_html = $this->detectUnchangedPlaceholderURLs(
-            $processed_html
-        );
+        /*
+            Last chance to catch any URLS not already rewritten correctly
+
+            TODO: sharing this function in 2 places, split out for separation
+
+            of responsibilities
+        */
+        if ( $rewrite_unchanged_urls ) {
+            // process the resulting HTML as text
+            $processed_html = $this->detectEscapedSiteURLs( $processed_html );
+            $processed_html = $this->detectUnchangedPlaceholderURLs(
+                $processed_html
+            );
+        }
 
         $processed_html = html_entity_decode(
             $processed_html,

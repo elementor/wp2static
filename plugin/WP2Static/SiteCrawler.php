@@ -482,7 +482,9 @@ class SiteCrawler extends WP2Static {
                 );
 
                 if ( $this->processed_file ) {
-                    $this->processed_file = $processor->getHTML();
+                    $this->processed_file = $processor->getHTML(
+                        $processor->xml_doc;
+                    );
                 }
 
                 break;

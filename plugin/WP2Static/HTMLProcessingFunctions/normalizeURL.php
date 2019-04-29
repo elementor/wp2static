@@ -3,7 +3,9 @@
 /*
     make link absolute, using current page to determine full path
 
-    take a URL like '../theimage.jpg'
+    take a document-relative URL like '../theimage.jpg'
+
+    a site root-relative URL like '/theimage.jpg'
 
     and the current page URL like https://site.com/cat/post/
 
