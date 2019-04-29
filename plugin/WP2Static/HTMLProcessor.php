@@ -30,9 +30,21 @@ class HTMLProcessor extends WP2Static {
         $this->placeholder_url =
             $this->destination_protocol . 'PLACEHOLDER.wpsho/';
 
+        $wp_site_url = $this->settings['wp_site_url'];
+        $wp_site_url_with_cslashes = addcslashes( $wp_site_url, '/' );
+
+        $protocol_relative_wp_site_url = $this->getProtocolRelativeURL(
+            $wp_site_url
+        );
+
         // initial rewrite of all site URLs to placeholder URLs
         $this->raw_html = $this->rewriteSiteURLsToPlaceholder(
-            $html_document
+            $raw_html_document,
+            $this->placeholder_url,
+            $wp_site_url,
+            $wp_site_url_with_cslashes,
+            $protocol_relative_wp_site_url,
+            $protocol_relative_wp_site_url_with_cslashes
         );
 
         // detect if a base tag exists while in the loop
@@ -990,26 +1002,35 @@ class HTMLProcessor extends WP2Static {
     }
 
     public function getTargetSiteProtocol( $url ) {
-        $this->destination_protocol = '//';
+        $destination_protocol = '//';
 
         if ( strpos( $url, 'https://' ) !== false ) {
-            $this->destination_protocol = 'https://';
+            $destination_protocol = 'https://';
         } elseif ( strpos( $url, 'http://' ) !== false ) {
-            $this->destination_protocol = 'http://';
+            $destination_protocol = 'http://';
         } else {
-            $this->destination_protocol = '//';
+            $destination_protocol = '//';
         }
 
-        return $this->destination_protocol;
+        return $destination_protocol;
     }
 
-    public function rewriteSiteURLsToPlaceholder( $raw_html ) {
-        $site_url = rtrim( $this->settings['wp_site_url'], '/' );
+    public function rewriteSiteURLsToPlaceholder(
+        $raw_html_document,
+        $placeholder_url,
+        $wp_site_url,
+        $wp_site_url_with_cslashes,
+        $protocol_relative_wp_site_url,
+        $protocol_relative_wp_site_url_with_cslashes
+    ) {
+
+        
+        $wp_site_url = rtrim( $wp_site_url, '/' );
         $placeholder_url = rtrim( $this->placeholder_url, '/' );
 
         $patterns = array(
             $site_url,
-            addcslashes( $site_url, '/' ),
+            $wp_site_url_with_cslashes,
             $this->getProtocolRelativeURL(
                 $site_url
             ),
