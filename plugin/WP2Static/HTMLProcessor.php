@@ -30,21 +30,61 @@ class HTMLProcessor extends WP2Static {
         $this->placeholder_url =
             $this->destination_protocol . 'PLACEHOLDER.wpsho/';
 
+        // site URLs for rewriting pattern
         $wp_site_url = $this->settings['wp_site_url'];
+
+        $wp_site_url = rtrim( $wp_site_url, '/' );
+
         $wp_site_url_with_cslashes = addcslashes( $wp_site_url, '/' );
 
         $protocol_relative_wp_site_url = $this->getProtocolRelativeURL(
             $wp_site_url
         );
+            
+        $protocol_relative_wp_site_url_with_extra_2_slashes =
+            $this->getProtocolRelativeURL( $wp_site_url . '//' );
 
-        // initial rewrite of all site URLs to placeholder URLs
-        $this->raw_html = $this->rewriteSiteURLsToPlaceholder(
-            $raw_html_document,
-            $this->placeholder_url,
+        $protocol_relative_wp_site_url_with_cslashes =
+            $this->getProtocolRelativeURL( addcslashes( $wp_site_url, '/' ) );
+
+        $search_patterns = array(
             $wp_site_url,
             $wp_site_url_with_cslashes,
             $protocol_relative_wp_site_url,
-            $protocol_relative_wp_site_url_with_cslashes
+            $protocol_relative_wp_site_url_with_extra_2_slashes,
+            $protocol_relative_wp_site_url_with_cslashes,
+        );
+
+        // site URLs for rewriting pattern
+        $placeholder_url = rtrim( $this->placeholder_url, '/' );
+        $placeholder_url_with_cslashes = addcslashes( $placeholder_url, '/' );
+
+        $protocol_relative_placeholder =
+            $this->getProtocolRelativeURL( $placeholder_url );
+
+        $protocol_relative_placeholder_with_extra_slash =
+            $this->getProtocolRelativeURL( $placeholder_url . '/' );
+
+        $protocol_relative_placeholder_with_cslashes =
+            $this->getProtocolRelativeURL(
+                addcslashes( $placeholder_url, '/' )
+            );
+
+        $replace_patterns = array(
+            $placeholder_url,
+            $placeholder_url_with_cslashes,
+            $protocol_relative_placeholder,
+            $protocol_relative_placeholder_with_extra_slash,
+            $protocol_relative_placeholder_with_cslashes,
+        );
+
+        require_once 'HTMLProcessingFunctions/' .
+            'rewriteSiteURLsToPlaceholder.php';
+
+        $this->raw_html = rewriteSiteURLsToPlaceholder(
+            $html_document,
+            $search_patterns,
+            $replace_patterns
         );
 
         // detect if a base tag exists while in the loop
@@ -1013,56 +1053,6 @@ class HTMLProcessor extends WP2Static {
         }
 
         return $destination_protocol;
-    }
-
-    public function rewriteSiteURLsToPlaceholder(
-        $raw_html_document,
-        $placeholder_url,
-        $wp_site_url,
-        $wp_site_url_with_cslashes,
-        $protocol_relative_wp_site_url,
-        $protocol_relative_wp_site_url_with_cslashes
-    ) {
-
-        
-        $wp_site_url = rtrim( $wp_site_url, '/' );
-        $placeholder_url = rtrim( $this->placeholder_url, '/' );
-
-        $patterns = array(
-            $site_url,
-            $wp_site_url_with_cslashes,
-            $this->getProtocolRelativeURL(
-                $site_url
-            ),
-            $this->getProtocolRelativeURL(
-                $site_url . '//'
-            ),
-            $this->getProtocolRelativeURL(
-                addcslashes( $site_url, '/' )
-            ),
-        );
-
-        $replacements = array(
-            $placeholder_url,
-            addcslashes( $placeholder_url, '/' ),
-            $this->getProtocolRelativeURL(
-                $placeholder_url
-            ),
-            $this->getProtocolRelativeURL(
-                $placeholder_url . '/'
-            ),
-            $this->getProtocolRelativeURL(
-                addcslashes( $placeholder_url, '/' )
-            ),
-        );
-
-        $rewritten_source = str_replace(
-            $patterns,
-            $replacements,
-            $raw_html
-        );
-
-        return $rewritten_source;
     }
 
     public function shouldUseRelativeURLs() {
