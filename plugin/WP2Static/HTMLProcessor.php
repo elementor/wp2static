@@ -54,7 +54,7 @@ class HTMLProcessor extends WP2Static {
         libxml_use_internal_errors( false );
 
         $html_with_absolute_urls = $this->rewriteAllLocalURLsToAbsolutePlaceholders(
-            $this->xml_doc 
+            $this->xml_doc,
             $wp_site_root,
             $placeholder_url,
             $page_url
@@ -159,7 +159,7 @@ class HTMLProcessor extends WP2Static {
             'head',
             'link',
             'script',
-        }
+        );
 
         foreach ( $elements as $element ) {
             if ( array_key_exists( $element->tagName, $a ) ) {
