@@ -1,8 +1,8 @@
 === WP2Static ===
 Contributors: leonstafford
 Tags: security, performance, static
-Requires at least: 3.2
-Tested up to: 5.1
+Requires at least: 4.0
+Tested up to: 5.2
 Requires PHP: 7.2
 Stable tag: 7.0
 
