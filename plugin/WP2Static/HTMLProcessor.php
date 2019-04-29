@@ -149,6 +149,77 @@ class HTMLProcessor extends WP2Static {
         }
     }
 
+    public function getURLToChangeBasedOnAttribute( $element ) {
+        if ( $element->hasAttribute( 'href' ) ) {
+            $attribute_to_change = 'href';
+        } elseif ( $element->hasAttribute( 'src' ) ) {
+            $attribute_to_change = 'src';
+        } elseif ( $element->hasAttribute( 'content' ) ) {
+            $attribute_to_change = 'content';
+        } else {
+            return;
+        }
+
+        $url_to_change = $element->getAttribute( $attribute_to_change );
+
+        return $url_to_change;
+    }
+
+    public function getAttributeToChange( $element ) {
+        if ( $element->hasAttribute( 'href' ) ) {
+            $attribute_to_change = 'href';
+        } elseif ( $element->hasAttribute( 'src' ) ) {
+            $attribute_to_change = 'src';
+        } elseif ( $element->hasAttribute( 'content' ) ) {
+            $attribute_to_change = 'content';
+        } else {
+            return;
+        }
+
+        return $attribute_to_change;
+    }
+
+    public function convertElementAttributeToOfflineURL( $element ) {
+        $url_to_change = $this->getURLToChangeBasedOnAttribute( $element );
+
+        if ( ! $this->isInternalLink( $url_to_change) ) {
+            return false;
+        }
+
+        $offline_url = $this->convertToOfflineURL(
+            $url_to_change,
+            $this->page_url,
+            $this->placeholder_url
+        );
+
+        $attribute_to_change = $this->getAttributeToChange( $element );
+
+        $element->setAttribute( $attribute_to_change, $offline_url );
+    }
+
+    public function removeLinkElementsBasedOnRelAttr( $element ) {
+        $relative_links_to_rm = array(
+            'shortlink',
+            'pingback',
+            'alternate',
+            'EditURI',
+            'wlwmanifest',
+            'index',
+            'profile',
+            'prev',
+            'next',
+            'wlwmanifest',
+        );
+
+        $link_rel = $element->getAttribute( 'rel' );
+
+        if ( in_array( $link_rel, $relative_links_to_rm ) ) {
+            $element->parentNode->removeChild( $element );
+        } elseif ( strpos( $link_rel, '.w.org' ) !== false ) {
+            $element->parentNode->removeChild( $element );
+        }
+    }
+
     public function processLink( $element ) {
         $this->normalizeURL( $element, 'href' );
         $this->removeQueryStringFromInternalLink( $element );
@@ -156,29 +227,13 @@ class HTMLProcessor extends WP2Static {
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
         $this->convertToRelativeURL( $element );
-        $this->convertToOfflineURL( $element );
+
+        if ( $this->shouldCreateOfflineURLs() ) {
+            $this->convertElementAttributeToOfflineURL( $element );
+        }
 
         if ( isset( $this->settings['removeWPLinks'] ) ) {
-            $relative_links_to_rm = array(
-                'shortlink',
-                'pingback',
-                'alternate',
-                'EditURI',
-                'wlwmanifest',
-                'index',
-                'profile',
-                'prev',
-                'next',
-                'wlwmanifest',
-            );
-
-            $link_rel = $element->getAttribute( 'rel' );
-
-            if ( in_array( $link_rel, $relative_links_to_rm ) ) {
-                $element->parentNode->removeChild( $element );
-            } elseif ( strpos( $link_rel, '.w.org' ) !== false ) {
-                $element->parentNode->removeChild( $element );
-            }
+            $this->removeLinkElementsBasedOnRelAttr( $element );
         }
 
         if ( isset( $this->settings['removeCanonical'] ) ) {
@@ -297,7 +352,10 @@ class HTMLProcessor extends WP2Static {
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
         $this->convertToRelativeURL( $element );
-        $this->convertToOfflineURL( $element );
+
+        if ( $this->shouldCreateOfflineURLs() ) {
+            $this->convertToOfflineURL( $element );
+        }
     }
 
     public function stripHTMLComments() {
@@ -339,7 +397,10 @@ class HTMLProcessor extends WP2Static {
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
         $this->convertToRelativeURL( $element );
-        $this->convertToOfflineURL( $element );
+
+        if ( $this->shouldCreateOfflineURLs() ) {
+            $this->convertToOfflineURL( $element );
+        }
     }
 
     public function processAnchor( $element ) {
@@ -367,7 +428,10 @@ class HTMLProcessor extends WP2Static {
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
         $this->convertToRelativeURL( $element );
-        $this->convertToOfflineURL( $element );
+
+        if ( $this->shouldCreateOfflineURLs() ) {
+            $this->convertToOfflineURL( $element );
+        }
     }
 
     public function processMeta( $element ) {
@@ -397,7 +461,10 @@ class HTMLProcessor extends WP2Static {
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
         $this->convertToRelativeURL( $element );
-        $this->convertToOfflineURL( $element );
+
+        if ( $this->shouldCreateOfflineURLs() ) {
+            $this->convertToOfflineURL( $element );
+        }
     }
 
     public function writeDiscoveredURLs() {
@@ -830,24 +897,10 @@ class HTMLProcessor extends WP2Static {
         return $offline_url;
     }
 
-    public function convertToOfflineURL( $element ) {
-        if ( ! $this->shouldCreateOfflineURLs() ) {
-            return;
-        }
+    public function convertToOfflineURL( $element, $page_url, $placeholder_url  ) {
 
-        if ( $element->hasAttribute( 'href' ) ) {
-            $attribute_to_change = 'href';
-        } elseif ( $element->hasAttribute( 'src' ) ) {
-            $attribute_to_change = 'src';
-        } elseif ( $element->hasAttribute( 'content' ) ) {
-            $attribute_to_change = 'content';
-        } else {
-            return;
-        }
-
-        $url_to_change = $element->getAttribute( $attribute_to_change );
         $current_page_path_to_root = '';
-        $current_page_path = parse_url( $this->page_url, PHP_URL_PATH );
+        $current_page_path = parse_url( $page_url, PHP_URL_PATH );
         $number_of_segments_in_path = explode( '/', $current_page_path );
         $num_dots_to_root = count( $number_of_segments_in_path ) - 2;
 
@@ -855,14 +908,8 @@ class HTMLProcessor extends WP2Static {
             $current_page_path_to_root .= '../';
         }
 
-        if ( ! $this->isInternalLink(
-            $url_to_change
-        ) ) {
-            return false;
-        }
-
         $rewritten_url = str_replace(
-            $this->placeholder_url,
+            $placeholder_url,
             '',
             $url_to_change
         );
@@ -875,7 +922,7 @@ class HTMLProcessor extends WP2Static {
             $offline_url .= 'index.html';
         }
 
-        $element->setAttribute( $attribute_to_change, $offline_url );
+        return $offline_url;
     }
 
     // TODO: move some of these URLs into settings to avoid extra calls
