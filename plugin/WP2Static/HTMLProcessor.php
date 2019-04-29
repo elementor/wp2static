@@ -14,25 +14,7 @@ class HTMLProcessor extends WP2Static {
         $this->processed_urls = array();
     }
 
-    public function processHTML( $html_document, $page_url ) {
-        if ( $html_document == '' ) {
-            return false;
-        }
-
-        // instantiate the XML body here
-        $this->xml_doc = new DOMDocument();
-
-        // NOTE: set placeholder_url to same protocol as target
-        // making it easier to rewrite URLs without considering protocol
-        $this->destination_protocol =
-            $this->getTargetSiteProtocol( $this->settings['baseUrl'] );
-
-        $this->placeholder_url =
-            $this->destination_protocol . 'PLACEHOLDER.wpsho/';
-
-        // site URLs for rewriting pattern
-        $wp_site_url = $this->settings['wp_site_url'];
-
+    public function getWPSiteURLSearchPatterns( $wp_site_url ) {
         $wp_site_url = rtrim( $wp_site_url, '/' );
 
         $wp_site_url_with_cslashes = addcslashes( $wp_site_url, '/' );
@@ -55,8 +37,11 @@ class HTMLProcessor extends WP2Static {
             $protocol_relative_wp_site_url_with_cslashes,
         );
 
-        // site URLs for rewriting pattern
-        $placeholder_url = rtrim( $this->placeholder_url, '/' );
+        return $search_patterns;
+    }
+
+    public function getWPSiteURLSearchPatterns( $placeholder_url ) {
+        $placeholder_url = rtrim( $placeholder_url, '/' );
         $placeholder_url_with_cslashes = addcslashes( $placeholder_url, '/' );
 
         $protocol_relative_placeholder =
@@ -78,6 +63,34 @@ class HTMLProcessor extends WP2Static {
             $protocol_relative_placeholder_with_cslashes,
         );
 
+        return $replace_patterns;
+    }
+
+
+    public function processHTML( $html_document, $page_url ) {
+        if ( $html_document == '' ) {
+            return false;
+        }
+
+        // instantiate the XML body here
+        $this->xml_doc = new DOMDocument();
+
+        // NOTE: set placeholder_url to same protocol as target
+        // making it easier to rewrite URLs without considering protocol
+        $this->destination_protocol =
+            $this->getTargetSiteProtocol( $this->settings['baseUrl'] );
+
+        $this->placeholder_url =
+            $this->destination_protocol . 'PLACEHOLDER.wpsho/';
+
+        $search_patterns = $this->getWPSiteURLSearchPatterns(
+            $this->settings['wp_site_url']
+        );
+
+        $replace_patterns = $this->getPlaceholderURLReplacementPatterns(
+            $this->placeholder_url
+        );
+
         require_once 'HTMLProcessingFunctions/' .
             'rewriteSiteURLsToPlaceholder.php';
 
@@ -93,7 +106,7 @@ class HTMLProcessor extends WP2Static {
 
         $this->page_url = $page_url;
 
-        $this->detectIfURLsShouldBeHarvested();
+        $this->harvest_new_urls = $this->detectIfURLsShouldBeHarvested();
 
         $this->discovered_urls = array();
 
@@ -183,19 +196,24 @@ class HTMLProcessor extends WP2Static {
         return true;
     }
 
+    /* 
+        Initial phase of crawling is using detected URLs only
+
+        we detect if we're still doing our initial craw, if so
+
+        we keep recording any discovered URLs
+    */
     public function detectIfURLsShouldBeHarvested() {
         if ( ! defined( 'WP_CLI' ) ) {
             // @codingStandardsIgnoreStart
-            $this->harvest_new_urls = (
-                 $_POST['ajax_action'] === 'crawl_site'
-            );
+            return ( $_POST['ajax_action'] === 'crawl_site' );
             // @codingStandardsIgnoreEnd
         } else {
             // we shouldn't harvest any while we're in the second crawl
             if ( defined( 'CRAWLING_DISCOVERED' ) ) {
-                return;
+                return false;
             } else {
-                $this->harvest_new_urls = true;
+                return true;
             }
         }
     }
