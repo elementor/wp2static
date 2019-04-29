@@ -39,8 +39,7 @@ class HTMLProcessor extends WP2Static {
         // use in later base href creation to decide: append or create
         $this->base_tag_exists = false;
 
-        require_once dirname( __FILE__ ) . '/../URL2/URL2.php';
-        $this->page_url = new Net_url2( $page_url );
+        $this->page_url = $page_url;
 
         $this->detectIfURLsShouldBeHarvested();
 
@@ -201,7 +200,20 @@ class HTMLProcessor extends WP2Static {
     }
 
     public function processLink( $element ) {
-        $this->normalizeURL( $element, 'href' );
+        $original_url = $element->getAttribute( 'html' );
+
+        if ( $this->isInternalLink( $original_url ) ) {
+            require_once 'HTMLProcessingFunctions/' .
+                'normalizeURL.php';
+
+            $absolute_url = normalizeURL(
+                $original_url,
+                $this->page_url
+            );
+
+            $element->setAttribute( 'html', $absolute_url );
+        }
+
         $this->removeQueryStringFromInternalLink( $element );
         $this->addDiscoveredURL( $element->getAttribute( 'href' ) );
         $this->rewriteWPPaths( $element );
@@ -313,6 +325,7 @@ class HTMLProcessor extends WP2Static {
 
             // normalize urls
             if ( $this->isInternalLink( $url ) ) {
+                // TODO: require and convert to URL2 to use resolve()
                 $url = $this->page_url->resolve( $url );
 
                 // rm query string
@@ -331,7 +344,20 @@ class HTMLProcessor extends WP2Static {
     }
 
     public function processImage( $element ) {
-        $this->normalizeURL( $element, 'src' );
+        $original_url = $element->getAttribute( 'src' );
+
+        if ( $this->isInternalLink( $original_url ) ) {
+            require_once 'HTMLProcessingFunctions/' .
+                'normalizeURL.php';
+
+            $absolute_url = normalizeURL(
+                $original_url,
+                $this->page_url
+            );
+
+            $element->setAttribute( 'src', $absolute_url );
+        }
+
         $this->removeQueryStringFromInternalLink( $element );
         $this->addDiscoveredURL( $element->getAttribute( 'src' ) );
         $this->rewriteWPPaths( $element );
@@ -376,7 +402,20 @@ class HTMLProcessor extends WP2Static {
     }
 
     public function processScript( $element ) {
-        $this->normalizeURL( $element, 'src' );
+        $original_url = $element->getAttribute( 'src' );
+
+        if ( $this->isInternalLink( $original_url ) ) {
+            require_once 'HTMLProcessingFunctions/' .
+                'normalizeURL.php';
+
+            $absolute_url = normalizeURL(
+                $original_url,
+                $this->page_url
+            );
+
+            $element->setAttribute( 'src', $absolute_url );
+        }
+
         $this->removeQueryStringFromInternalLink( $element );
         $this->addDiscoveredURL( $element->getAttribute( 'src' ) );
         $this->rewriteWPPaths( $element );
@@ -407,7 +446,20 @@ class HTMLProcessor extends WP2Static {
             return;
         }
 
-        $this->normalizeURL( $element, 'href' );
+        $original_url = $element->getAttribute( 'href' );
+
+        if ( $this->isInternalLink( $original_url ) ) {
+            require_once 'HTMLProcessingFunctions/' .
+                'normalizeURL.php';
+
+            $absolute_url = normalizeURL(
+                $original_url,
+                $this->page_url
+            );
+
+            $element->setAttribute( 'href', $absolute_url );
+        }
+
         $this->removeQueryStringFromInternalLink( $element );
         $this->addDiscoveredURL( $url );
         $this->rewriteWPPaths( $element );
@@ -440,7 +492,21 @@ class HTMLProcessor extends WP2Static {
         }
 
         $url = $element->getAttribute( 'content' );
-        $this->normalizeURL( $element, 'content' );
+
+        $original_url = $element->getAttribute( 'content' );
+
+        if ( $this->isInternalLink( $original_url ) ) {
+            require_once 'HTMLProcessingFunctions/' .
+                'normalizeURL.php';
+
+            $absolute_url = normalizeURL(
+                $original_url,
+                $this->page_url
+            );
+
+            $element->setAttribute( 'content', $absolute_url );
+        }
+
         $this->removeQueryStringFromInternalLink( $element );
         $this->addDiscoveredURL( $url );
         $this->rewriteWPPaths( $element );
@@ -479,17 +545,6 @@ class HTMLProcessor extends WP2Static {
                 '/WP-STATIC-DISCOVERED-URLS.txt',
             0664
         );
-    }
-
-    // make link absolute, using current page to determine full path
-    public function normalizeURL( $element, $attribute ) {
-        $original_link = $element->getAttribute( $attribute );
-
-        if ( $this->isInternalLink( $original_link ) ) {
-            $abs = $this->page_url->resolve( $original_link );
-            $element->setAttribute( $attribute, $abs );
-        }
-
     }
 
     public function isInternalLink( $link, $domain = false ) {
