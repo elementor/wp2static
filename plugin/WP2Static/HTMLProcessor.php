@@ -186,7 +186,10 @@ class HTMLProcessor extends WP2Static {
             return false;
         }
 
-        $offline_url = $this->convertToOfflineURL(
+        require_once 'HTMLProcessingFunctions/' .
+            'convertToOfflineURL.php';
+
+        $offline_url = convertToOfflineURL(
             $url_to_change,
             $this->page_url,
             $this->placeholder_url
@@ -195,29 +198,6 @@ class HTMLProcessor extends WP2Static {
         $attribute_to_change = $this->getAttributeToChange( $element );
 
         $element->setAttribute( $attribute_to_change, $offline_url );
-    }
-
-    public function removeLinkElementsBasedOnRelAttr( $element ) {
-        $relative_links_to_rm = array(
-            'shortlink',
-            'pingback',
-            'alternate',
-            'EditURI',
-            'wlwmanifest',
-            'index',
-            'profile',
-            'prev',
-            'next',
-            'wlwmanifest',
-        );
-
-        $link_rel = $element->getAttribute( 'rel' );
-
-        if ( in_array( $link_rel, $relative_links_to_rm ) ) {
-            $element->parentNode->removeChild( $element );
-        } elseif ( strpos( $link_rel, '.w.org' ) !== false ) {
-            $element->parentNode->removeChild( $element );
-        }
     }
 
     public function processLink( $element ) {
@@ -233,17 +213,22 @@ class HTMLProcessor extends WP2Static {
         }
 
         if ( isset( $this->settings['removeWPLinks'] ) ) {
-            $this->removeLinkElementsBasedOnRelAttr( $element );
+            require_once 'HTMLProcessingFunctions/' .
+                'removeLinkElementsBasedOnRelAttr.php';
+
+            removeLinkElementsBasedOnRelAttr( $element );
         }
 
         if ( isset( $this->settings['removeCanonical'] ) ) {
-            if ( $this->settings['removeCanonical'] ) {
-                $link_rel = $element->getAttribute( 'rel' );
+            $this->removeCanonicalLink( $element );
+        }
+    }
 
-                if ( strtolower( $link_rel ) == 'canonical' ) {
-                    $element->parentNode->removeChild( $element );
-                }
-            }
+    public function removeCanonicalLink( $element ) {
+        $link_rel = $element->getAttribute( 'rel' );
+
+        if ( strtolower( $link_rel ) == 'canonical' ) {
+            $element->parentNode->removeChild( $element );
         }
     }
 
@@ -354,7 +339,7 @@ class HTMLProcessor extends WP2Static {
         $this->convertToRelativeURL( $element );
 
         if ( $this->shouldCreateOfflineURLs() ) {
-            $this->convertToOfflineURL( $element );
+            $this->convertElementAttributeToOfflineURL( $element );
         }
     }
 
@@ -399,7 +384,7 @@ class HTMLProcessor extends WP2Static {
         $this->convertToRelativeURL( $element );
 
         if ( $this->shouldCreateOfflineURLs() ) {
-            $this->convertToOfflineURL( $element );
+            $this->convertElementAttributeToOfflineURL( $element );
         }
     }
 
@@ -430,7 +415,7 @@ class HTMLProcessor extends WP2Static {
         $this->convertToRelativeURL( $element );
 
         if ( $this->shouldCreateOfflineURLs() ) {
-            $this->convertToOfflineURL( $element );
+            $this->convertElementAttributeToOfflineURL( $element );
         }
     }
 
@@ -463,7 +448,7 @@ class HTMLProcessor extends WP2Static {
         $this->convertToRelativeURL( $element );
 
         if ( $this->shouldCreateOfflineURLs() ) {
-            $this->convertToOfflineURL( $element );
+            $this->convertElementAttributeToOfflineURL( $element );
         }
     }
 
@@ -882,34 +867,6 @@ class HTMLProcessor extends WP2Static {
 
         $rewritten_url = str_replace(
             $this->placeholder_url,
-            '',
-            $url_to_change
-        );
-
-        $offline_url = $current_page_path_to_root . $rewritten_url;
-
-        // add index.html if no extension
-        if ( substr( $offline_url, -1 ) === '/' ) {
-            // TODO: check XML/RSS case
-            $offline_url .= 'index.html';
-        }
-
-        return $offline_url;
-    }
-
-    public function convertToOfflineURL( $element, $page_url, $placeholder_url  ) {
-
-        $current_page_path_to_root = '';
-        $current_page_path = parse_url( $page_url, PHP_URL_PATH );
-        $number_of_segments_in_path = explode( '/', $current_page_path );
-        $num_dots_to_root = count( $number_of_segments_in_path ) - 2;
-
-        for ( $i = 0; $i < $num_dots_to_root; $i++ ) {
-            $current_page_path_to_root .= '../';
-        }
-
-        $rewritten_url = str_replace(
-            $placeholder_url,
             '',
             $url_to_change
         );
