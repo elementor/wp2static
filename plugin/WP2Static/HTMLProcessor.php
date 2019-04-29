@@ -40,7 +40,7 @@ class HTMLProcessor extends WP2Static {
         return $search_patterns;
     }
 
-    public function getWPSiteURLSearchPatterns( $placeholder_url ) {
+    public function getPlaceholderURLReplacementPatterns( $placeholder_url ) {
         $placeholder_url = rtrim( $placeholder_url, '/' );
         $placeholder_url_with_cslashes = addcslashes( $placeholder_url, '/' );
 
@@ -141,17 +141,31 @@ class HTMLProcessor extends WP2Static {
                     $this->processLink( $element );
                     break;
                 case 'script':
-                    // can contain src=,
-                    // can also contain URLs within scripts
-                    // and escaped urls
+                    /*
+                        Script tags may contain src=
+                        can also contain URLs within scripts
+                        and escaped urls
+                    */
                     $this->processScript( $element );
                     break;
-
-                    // TODO: how about other places that can contain URLs
-                    // data attr, reacty stuff, etc?
             }
         }
 
+        $this->dealWithBaseHREFElement();
+        $this->stripHTMLComments();
+        $this->writeDiscoveredURLs();
+
+        return true;
+    }
+
+    /*
+        When we use relative links, we'll need to set the base HREF tag
+
+        if we are exporting for offline usage or have not specific a base HREF
+
+        we will remove any that we find 
+    */
+    public function dealWithBaseHREFElement() {
         if ( $this->base_tag_exists ) {
             $base_element =
                 $this->xml_doc->getElementsByTagName( 'base' )->item( 0 );
@@ -187,13 +201,6 @@ class HTMLProcessor extends WP2Static {
                 );
             }
         }
-
-        // strip comments
-        $this->stripHTMLComments();
-
-        $this->writeDiscoveredURLs();
-
-        return true;
     }
 
     /* 
