@@ -14,59 +14,21 @@ class HTMLProcessor extends WP2Static {
         $this->processed_urls = array();
     }
 
-    public function getWPSiteURLSearchPatterns( $wp_site_url ) {
-        $wp_site_url = rtrim( $wp_site_url, '/' );
+    /*
+        Processing HTML documents is core to WP2Static's functions, involving:
 
-        $wp_site_url_with_cslashes = addcslashes( $wp_site_url, '/' );
-
-        $protocol_relative_wp_site_url = $this->getProtocolRelativeURL(
-            $wp_site_url
-        );
-            
-        $protocol_relative_wp_site_url_with_extra_2_slashes =
-            $this->getProtocolRelativeURL( $wp_site_url . '//' );
-
-        $protocol_relative_wp_site_url_with_cslashes =
-            $this->getProtocolRelativeURL( addcslashes( $wp_site_url, '/' ) );
-
-        $search_patterns = array(
-            $wp_site_url,
-            $wp_site_url_with_cslashes,
-            $protocol_relative_wp_site_url,
-            $protocol_relative_wp_site_url_with_extra_2_slashes,
-            $protocol_relative_wp_site_url_with_cslashes,
-        );
-
-        return $search_patterns;
-    }
-
-    public function getPlaceholderURLReplacementPatterns( $placeholder_url ) {
-        $placeholder_url = rtrim( $placeholder_url, '/' );
-        $placeholder_url_with_cslashes = addcslashes( $placeholder_url, '/' );
-
-        $protocol_relative_placeholder =
-            $this->getProtocolRelativeURL( $placeholder_url );
-
-        $protocol_relative_placeholder_with_extra_slash =
-            $this->getProtocolRelativeURL( $placeholder_url . '/' );
-
-        $protocol_relative_placeholder_with_cslashes =
-            $this->getProtocolRelativeURL(
-                addcslashes( $placeholder_url, '/' )
-            );
-
-        $replace_patterns = array(
-            $placeholder_url,
-            $placeholder_url_with_cslashes,
-            $protocol_relative_placeholder,
-            $protocol_relative_placeholder_with_extra_slash,
-            $protocol_relative_placeholder_with_cslashes,
-        );
-
-        return $replace_patterns;
-    }
-
-
+            - grabbing the whole content body
+            - iterating all links to rewrite doc/site relative URLs to
+              absolute PLACEHOLDER URLs
+            - rewriting all absolute URLs to the original WP site to absolute
+              PLACEHOLDER URLs
+            - recording all valid links on each page for further crawling
+            - performing various transformations of the HTML content/links as
+              specified by the user
+            - rewriting PLACEHOLDER URLs to the Destination URL as specified 
+              by the user
+            - saving the resultant processed HTML content to the export dir 
+    */
     public function processHTML( $html_document, $page_url ) {
         if ( $html_document == '' ) {
             return false;
@@ -74,6 +36,7 @@ class HTMLProcessor extends WP2Static {
 
         // instantiate the XML body here
         $this->xml_doc = new DOMDocument();
+
 
         // NOTE: set placeholder_url to same protocol as target
         // making it easier to rewrite URLs without considering protocol
@@ -83,8 +46,17 @@ class HTMLProcessor extends WP2Static {
         $this->placeholder_url =
             $this->destination_protocol . 'PLACEHOLDER.wpsho/';
 
+        $wp_site_root = $this->settings['wp_site_url'];
+
+        $this->rewriteAllLocalURLsToAbsolutePlaceholders(
+            $wp_site_root,
+            $placeholder_url,
+            $page_url
+        );
+
+
         $search_patterns = $this->getWPSiteURLSearchPatterns(
-            $this->settings['wp_site_url']
+            $wp_site_root
         );
 
         $replace_patterns = $this->getPlaceholderURLReplacementPatterns(
@@ -1157,6 +1129,58 @@ class HTMLProcessor extends WP2Static {
         );
 
         return $replacements;
+    }
+
+    public function getWPSiteURLSearchPatterns( $wp_site_url ) {
+        $wp_site_url = rtrim( $wp_site_url, '/' );
+
+        $wp_site_url_with_cslashes = addcslashes( $wp_site_url, '/' );
+
+        $protocol_relative_wp_site_url = $this->getProtocolRelativeURL(
+            $wp_site_url
+        );
+            
+        $protocol_relative_wp_site_url_with_extra_2_slashes =
+            $this->getProtocolRelativeURL( $wp_site_url . '//' );
+
+        $protocol_relative_wp_site_url_with_cslashes =
+            $this->getProtocolRelativeURL( addcslashes( $wp_site_url, '/' ) );
+
+        $search_patterns = array(
+            $wp_site_url,
+            $wp_site_url_with_cslashes,
+            $protocol_relative_wp_site_url,
+            $protocol_relative_wp_site_url_with_extra_2_slashes,
+            $protocol_relative_wp_site_url_with_cslashes,
+        );
+
+        return $search_patterns;
+    }
+
+    public function getPlaceholderURLReplacementPatterns( $placeholder_url ) {
+        $placeholder_url = rtrim( $placeholder_url, '/' );
+        $placeholder_url_with_cslashes = addcslashes( $placeholder_url, '/' );
+
+        $protocol_relative_placeholder =
+            $this->getProtocolRelativeURL( $placeholder_url );
+
+        $protocol_relative_placeholder_with_extra_slash =
+            $this->getProtocolRelativeURL( $placeholder_url . '/' );
+
+        $protocol_relative_placeholder_with_cslashes =
+            $this->getProtocolRelativeURL(
+                addcslashes( $placeholder_url, '/' )
+            );
+
+        $replace_patterns = array(
+            $placeholder_url,
+            $placeholder_url_with_cslashes,
+            $protocol_relative_placeholder,
+            $protocol_relative_placeholder_with_extra_slash,
+            $protocol_relative_placeholder_with_cslashes,
+        );
+
+        return $replace_patterns;
     }
 
     public function logAction( $action ) {
