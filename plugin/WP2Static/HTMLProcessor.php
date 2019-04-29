@@ -50,10 +50,10 @@ class HTMLProcessor extends WP2Static {
         // PERF: 70% of function time
         // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
         libxml_use_internal_errors( true );
-        $this->xml_doc->loadHTML( $this->raw_html );
+        $this->xml_doc->loadHTML( $html_document );
         libxml_use_internal_errors( false );
 
-        $html_with_absolute_urls = $this->rewriteAllLocalURLsToAbsolutePlaceholders(
+        $html_with_absolute_urls = $this->rewriteRelativeWPSiteURLsToAbsolute(
             $this->xml_doc,
             $wp_site_root,
             $placeholder_url,
@@ -142,7 +142,7 @@ class HTMLProcessor extends WP2Static {
 
         Takes in an XML DOMDocument and outputs raw HTML document
     */
-    public function rewriteAllLocalURLsToAbsolutePlaceholders(
+    public function rewriteRelativeWPSiteURLsToAbsolute(
             $xml_doc,
             $wp_site_root,
             $placeholder_url,
@@ -152,18 +152,17 @@ class HTMLProcessor extends WP2Static {
             $xml_doc->getElementsByTagName( '*' )
         );
 
-        $elements_to_normalize = array(
-            'meta',
-            'a',
-            'img',
-            'head',
-            'link',
-            'script',
-        );
+        $elements_to_normalize = array();
+        $elements_to_normalize['meta'] = 1;
+        $elements_to_normalize['a'] = 1;
+        $elements_to_normalize['img'] = 1;
+        $elements_to_normalize['head'] = 1;
+        $elements_to_normalize['link'] = 1;
+        $elements_to_normalize['script'] = 1;
 
         foreach ( $elements as $element ) {
-            if ( array_key_exists( $element->tagName, $a ) ) {
-                $this->processScript( $element );
+            if ( isset ( $elements_to_normalize[$element->tagName] ) ) {
+                $this->convertRelativeURLToAbsolute( $element, $page_url );
             }
         }
 
@@ -288,6 +287,60 @@ class HTMLProcessor extends WP2Static {
         $attribute_to_change = $this->getAttributeToChange( $element );
 
         $element->setAttribute( $attribute_to_change, $offline_url );
+    }
+
+    /*
+        For initially normalizing all WP Site URLs to be absolute
+
+        we check for any URLs not already absolute, protocol-relative or 
+
+        otherwise known to be ignorable. 
+
+        TODO: extra checking to eliminate false-positives, such as links
+        with colons in the path
+    */
+    public function isURLDocumentOrSiteRootRelative( $url ) {
+        // check if start of URL isn't any of 
+        $url_protocols_to_ignore = array(
+            'http://',
+            'https://',
+            '//',
+            'file://',
+            'ftp://',
+            'mailto:',
+        );
+
+        foreach ( $url_protocols_to_ignore as $ignoreable_url ) {
+             $match_length = strlen( $ignoreable_url );
+
+             if ( strncasecmp( $url, $ignoreable_url, $match_length) === 0 ) {
+                return false;
+            }
+        }
+
+        error_log( '322: ' . $url );
+        return true;
+    }
+
+    public function convertRelativeURLToAbsolute( $element, $page_url ) {
+        $url_to_change = $this->getURLToChangeBasedOnAttribute( $element );
+
+        if ( $this->isURLDocumentOrSiteRootRelative( $url_to_change) ) {
+            require_once 'HTMLProcessingFunctions/' .
+                'normalizeURL.php';
+
+            error_log( '333: ' . $url_to_change );
+
+            $absolute_url = normalizeURL(
+                $url_to_change,
+                $page_url
+            );
+
+            $attribute_to_change = $this->getAttributeToChange( $element );
+
+            $element->setAttribute( $attribute_to_change, $absolute_url );
+        }
+
     }
 
     public function processLink( $element ) {
