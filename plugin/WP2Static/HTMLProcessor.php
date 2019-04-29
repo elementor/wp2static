@@ -318,7 +318,6 @@ class HTMLProcessor extends WP2Static {
             }
         }
 
-        error_log( '322: ' . $url );
         return true;
     }
 
@@ -328,8 +327,6 @@ class HTMLProcessor extends WP2Static {
         if ( $this->isURLDocumentOrSiteRootRelative( $url_to_change) ) {
             require_once 'HTMLProcessingFunctions/' .
                 'normalizeURL.php';
-
-            error_log( '333: ' . $url_to_change );
 
             $absolute_url = normalizeURL(
                 $url_to_change,
