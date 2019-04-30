@@ -36,10 +36,10 @@ class WP2Static_SitePublisher {
     public function bootstrap() {
         $this->export_file_list =
             $this->settings['wp_uploads_path'] .
-                '/WP2STATIC-FILES-TO-DEPLOY.txt';
+                '/wp2static-working-files/FILES-TO-DEPLOY.txt';
         $this->archive_dir = file_get_contents(
             $this->settings['wp_uploads_path'] .
-                '/WP2STATIC-CURRENT-ARCHIVE.txt'
+                '/wp2static-working-files/CURRENT-ARCHIVE.txt'
         );
     }
 

@@ -14,19 +14,20 @@ class Exporter extends WP2Static {
 
     public function pre_export_cleanup() {
         $files_to_clean = array(
-            'WP-STATIC-2ND-CRAWL-LIST.txt',
-            'WP-STATIC-DISCOVERED-URLS-LOG.txt',
-            'WP-STATIC-DISCOVERED-URLS.txt',
-            'WP2STATIC-FILES-TO-DEPLOY.txt',
-            'WP-STATIC-EXPORT-LOG.txt',
-            'WP-STATIC-FINAL-2ND-CRAWL-LIST.txt',
-            'WP-STATIC-FINAL-CRAWL-LIST.txt',
-            'WP2STATIC-GITLAB-FILES-IN-REPO.txt',
+            '2ND-CRAWL-LIST.txt',
+            'DISCOVERED-URLS-LOG.txt',
+            'DISCOVERED-URLS.txt',
+            'FILES-TO-DEPLOY.txt',
+            'EXPORT-LOG.txt',
+            'FINAL-2ND-CRAWL-LIST.txt',
+            'FINAL-CRAWL-LIST.txt',
+            'GITLAB-FILES-IN-REPO.txt',
         );
 
         foreach ( $files_to_clean as $file_to_clean ) {
             if ( file_exists(
-                $this->settings['wp_uploads_path'] . '/' . $file_to_clean
+                $this->settings['wp_uploads_path'] .
+                    '/wp2static-working-files/' . $file_to_clean
             ) ) {
                 unlink(
                     $this->settings['wp_uploads_path'] . '/' .
@@ -41,32 +42,32 @@ class Exporter extends WP2Static {
         // skip first export state
         if ( is_file(
             $this->settings['wp_uploads_path'] .
-                '/WP2STATIC-CURRENT-ARCHIVE.txt'
+                '/wp2static-working-files/CURRENT-ARCHIVE.txt'
         ) ) {
 
             $handle = fopen(
                 $this->settings['wp_uploads_path'] .
-                    '/WP2STATIC-CURRENT-ARCHIVE.txt',
+                    '/wp2static-working-files/CURRENT-ARCHIVE.txt',
                 'r'
             );
             $this->settings['archive_dir'] = stream_get_line( $handle, 0 );
         }
 
         $files_to_clean = array(
-            '/WP-STATIC-2ND-CRAWL-LIST.txt',
-            '/WP-STATIC-DISCOVERED-URLS.txt',
-            '/WP2STATIC-FILES-TO-DEPLOY.txt',
-            '/WP-STATIC-FINAL-2ND-CRAWL-LIST.txt',
-            '/WP-STATIC-FINAL-CRAWL-LIST.txt',
-            '/WP2STATIC-GITLAB-FILES-IN-REPO.txt',
+            '2ND-CRAWL-LIST.txt',
+            'DISCOVERED-URLS.txt',
+            'FILES-TO-DEPLOY.txt',
+            'FINAL-2ND-CRAWL-LIST.txt',
+            'FINAL-CRAWL-LIST.txt',
+            'GITLAB-FILES-IN-REPO.txt',
         );
 
         foreach ( $files_to_clean as $file_to_clean ) {
             if ( file_exists(
-                $this->settings['wp_uploads_path'] . '/' . $file_to_clean
+                $this->settings['wp_uploads_path'] . '/wp2static-working-files/' . $file_to_clean
             ) ) {
                 unlink(
-                    $this->settings['wp_uploads_path'] . '/' . $file_to_clean
+                    $this->settings['wp_uploads_path'] . '/wp2static-working-files/' . $file_to_clean
                 );
             }
         }
@@ -102,14 +103,14 @@ class Exporter extends WP2Static {
         // preserve the initial crawl list, to be used in debugging + more
         copy(
             $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-INITIAL-CRAWL-LIST.txt',
+                '/wp2static-working-files/INITIAL-CRAWL-LIST.txt',
             $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-MODIFIED-CRAWL-LIST.txt'
+                '/wp2static-working-files/MODIFIED-CRAWL-LIST.txt'
         );
 
         chmod(
             $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-MODIFIED-CRAWL-LIST.txt',
+                '/wp2static-working-files/MODIFIED-CRAWL-LIST.txt',
             0664
         );
 
@@ -118,9 +119,9 @@ class Exporter extends WP2Static {
             ! isset( $this->settings['additionalUrls'] ) ) {
             copy(
                 $this->settings['wp_uploads_path'] .
-                    '/WP-STATIC-INITIAL-CRAWL-LIST.txt',
+                    '/wp2static-working-files/INITIAL-CRAWL-LIST.txt',
                 $this->settings['wp_uploads_path'] .
-                    '/WP-STATIC-FINAL-CRAWL-LIST.txt'
+                    '/wp2static-working-files/FINAL-CRAWL-LIST.txt'
             );
 
             return;
@@ -131,7 +132,7 @@ class Exporter extends WP2Static {
         // load crawl list into array
         $crawl_list = file(
             $this->settings['wp_uploads_path'] .
-            '/WP-STATIC-MODIFIED-CRAWL-LIST.txt'
+            '/wp2static-working-files/MODIFIED-CRAWL-LIST.txt'
         );
 
         // applying exclusions before inclusions
@@ -189,13 +190,13 @@ class Exporter extends WP2Static {
 
         file_put_contents(
             $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-FINAL-CRAWL-LIST.txt',
+                '/wp2static-working-files/FINAL-CRAWL-LIST.txt',
             $str
         );
 
         chmod(
             $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-FINAL-CRAWL-LIST.txt',
+                '/wp2static-working-files/FINAL-CRAWL-LIST.txt',
             0664
         );
     }

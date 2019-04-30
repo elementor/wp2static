@@ -31,7 +31,8 @@ class WsLog {
 
         $wp_uploads_path = $settings['wp_uploads_path'];
 
-        $log_file_path = $wp_uploads_path . '/WP-STATIC-EXPORT-LOG.txt';
+        $log_file_path = $wp_uploads_path .
+            '/wp2static-working-files/EXPORT-LOG.txt';
 
         file_put_contents(
             $log_file_path,

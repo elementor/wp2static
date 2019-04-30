@@ -37,18 +37,18 @@ class SiteCrawler extends WP2Static {
 
     public function generate_discovered_links_list() {
         $second_crawl_file_path = $this->settings['wp_uploads_path'] .
-        '/WP-STATIC-2ND-CRAWL-LIST.txt';
+        '/wp2static-working-files/2ND-CRAWL-LIST.txt';
 
         $already_crawled = file(
             $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-INITIAL-CRAWL-LIST.txt',
+                '/wp2static-working-files/INITIAL-CRAWL-LIST.txt',
             FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
         );
 
         $unique_discovered_links = array();
 
         $discovered_links_file = $this->settings['wp_uploads_path'] .
-            '/WP-STATIC-DISCOVERED-URLS.txt';
+            '/wp2static-working-files/DISCOVERED-URLS.txt';
 
         if ( is_file( $discovered_links_file ) ) {
             $discovered_links = file(
@@ -62,25 +62,25 @@ class SiteCrawler extends WP2Static {
 
         file_put_contents(
             $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-DISCOVERED-URLS-LOG.txt',
+                '/wp2static-working-files/DISCOVERED-URLS-LOG.txt',
             implode( PHP_EOL, $unique_discovered_links )
         );
 
         chmod(
             $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-DISCOVERED-URLS-LOG.txt',
+                '/wp2static-working-files/DISCOVERED-URLS-LOG.txt',
             0664
         );
 
         file_put_contents(
             $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-DISCOVERED-URLS-TOTAL.txt',
+                '/wp2static-working-files/DISCOVERED-URLS-TOTAL.txt',
             count( $unique_discovered_links )
         );
 
         chmod(
             $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-DISCOVERED-URLS-TOTAL.txt',
+                '/wp2static-working-files/DISCOVERED-URLS-TOTAL.txt',
             0664
         );
 
@@ -99,12 +99,12 @@ class SiteCrawler extends WP2Static {
         copy(
             $second_crawl_file_path,
             $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-FINAL-2ND-CRAWL-LIST.txt'
+                '/wp2static-working-files/FINAL-2ND-CRAWL-LIST.txt'
         );
 
         chmod(
             $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-FINAL-2ND-CRAWL-LIST.txt',
+                '/wp2static-working-files/FINAL-2ND-CRAWL-LIST.txt',
             0664
         );
     }
@@ -116,7 +116,7 @@ class SiteCrawler extends WP2Static {
         }
 
         $second_crawl_file_path = $this->settings['wp_uploads_path'] .
-        '/WP-STATIC-2ND-CRAWL-LIST.txt';
+        '/wp2static-working-files/2ND-CRAWL-LIST.txt';
 
         // NOTE: the first iteration of the 2nd crawl phase,
         // the list of URLs for 2nd crawl is prepared
@@ -126,7 +126,7 @@ class SiteCrawler extends WP2Static {
 
         $this->list_of_urls_to_crawl_path =
             $this->settings['wp_uploads_path'] .
-            '/WP-STATIC-FINAL-2ND-CRAWL-LIST.txt';
+            '/wp2static-working-files/FINAL-2ND-CRAWL-LIST.txt';
 
         if ( ! is_file( $this->list_of_urls_to_crawl_path ) ) {
             require_once dirname( __FILE__ ) .
@@ -151,7 +151,7 @@ class SiteCrawler extends WP2Static {
         // crude detection for CLI export to use 2nd crawl phase
         $this->list_of_urls_to_crawl_path =
             $this->settings['wp_uploads_path'] .
-            '/WP-STATIC-FINAL-2ND-CRAWL-LIST.txt';
+            '/wp2static-working-files/FINAL-2ND-CRAWL-LIST.txt';
 
         if ( is_file( $this->list_of_urls_to_crawl_path ) ) {
             $this->crawl_discovered_links();
@@ -161,7 +161,7 @@ class SiteCrawler extends WP2Static {
 
         $this->list_of_urls_to_crawl_path =
             $this->settings['wp_uploads_path'] .
-            '/WP-STATIC-FINAL-CRAWL-LIST.txt';
+            '/wp2static-working-files/FINAL-CRAWL-LIST.txt';
 
         if ( ! is_file( $this->list_of_urls_to_crawl_path ) ) {
             require_once dirname( __FILE__ ) .
@@ -225,14 +225,14 @@ class SiteCrawler extends WP2Static {
         // TODO: required in saving/copying, but not here? optimize...
         $handle = fopen(
             $this->settings['wp_uploads_path'] .
-                '/WP2STATIC-CURRENT-ARCHIVE.txt',
+                '/wp2static-working-files/CURRENT-ARCHIVE.txt',
             'r'
         );
 
         $this->archive_dir = stream_get_line( $handle, 0 );
 
         $total_urls_path = $this->settings['wp_uploads_path'] .
-            '/WP-STATIC-INITIAL-CRAWL-TOTAL.txt';
+            '/wp2static-working-files/INITIAL-CRAWL-TOTAL.txt';
 
         // TODO: avoid mutation
         // @codingStandardsIgnoreStart
@@ -243,7 +243,7 @@ class SiteCrawler extends WP2Static {
             )
         ) {
             $total_urls_path = $this->settings['wp_uploads_path'] .
-            '/WP-STATIC-DISCOVERED-URLS-TOTAL.txt';
+            '/wp2static-working-files/DISCOVERED-URLS-TOTAL.txt';
         }
         // @codingStandardsIgnoreEnd
 

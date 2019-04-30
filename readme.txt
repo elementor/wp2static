@@ -141,7 +141,8 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
  * Enhancement: prevent vendor notices distorting WP2Static UI
  * Enhancement: warn when DOMDocument not available
  * Enhancement: warn when ZIP extension not available for Netlify deploy
- * Enhancement: set outdated PHP detection version to < 5.6
+ * Enhancement: set outdated PHP detection version to < 7.0
+ * Enhancement: stop cluttering uploads dir with WP2Static working files
  * Change: removed progress indicators due to poor implementation
  * New feature: New hooks for writing your own Add-on to WP2Static
  * New feature (Premium): Add-on for 1-click deploys to Microsoft Azure

@@ -27,7 +27,7 @@ var current_archive = {};
 var current_deployment_method = '<?php echo $this->options->selected_deployment_option ? $this->options->selected_deployment_option : 'folder'; ?>';
 
 // TODO: get the log out of the archive, along with it's meta infos
-var log_file_url = wp_site.uploads_url + '/WP-STATIC-EXPORT-LOG.txt';
+var log_file_url = wp_site.uploads_url + '/wp2static-working-files/EXPORT-LOG.txt';
 
 var export_action = '';
 var export_targets = [];
@@ -141,7 +141,7 @@ jQuery(document).ready(function($){
         if (current_deployment_method === 'zip') {
           $('#downloadZIP').show();
 
-          $.get( wp_site.uploads_url + '/WP2STATIC-CURRENT-ARCHIVE.txt?cacheBuster=' + Date.now(),
+          $.get( wp_site.uploads_url + '/wp2static-working-files/CURRENT-ARCHIVE.txt?cacheBuster=' + Date.now(),
               function( archive_path ) {
                   path_segments = archive_path.split('/');
                   current_archive.name = path_segments[path_segments.length - 2];
@@ -594,7 +594,7 @@ jQuery(document).ready(function($){
 
 
     // load the log file
-    $.get( wp_site.uploads_url + '/WP-STATIC-EXPORT-LOG.txt', function( data ) {
+    $.get( wp_site.uploads_url + '/wp2static-working-files/EXPORT-LOG.txt', function( data ) {
       // hide loading icon
       $('#log_load_progress').hide();
 

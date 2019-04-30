@@ -676,7 +676,7 @@ class HTMLProcessor extends WP2Static {
 
         file_put_contents(
             $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-DISCOVERED-URLS.txt',
+                '/wp2static-working-files/DISCOVERED-URLS.txt',
             PHP_EOL .
                 implode( PHP_EOL, array_unique( $this->discovered_urls ) ),
             FILE_APPEND | LOCK_EX
@@ -684,7 +684,7 @@ class HTMLProcessor extends WP2Static {
 
         chmod(
             $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-DISCOVERED-URLS.txt',
+                '/wp2static-working-files/DISCOVERED-URLS.txt',
             0664
         );
     }

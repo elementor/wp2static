@@ -309,7 +309,7 @@ class WP2Static_FilesHelper {
             '.php',
             '.sql',
             '.yarn',
-            'WP-STATIC',
+            'wp2static-working-files',
             '__MACOSX',
             'backwpup',
             'wpallexport',
@@ -479,30 +479,50 @@ class WP2Static_FilesHelper {
         $str = implode( "\n", $unique_urls );
 
         $initial_crawl_file = $uploads_path .
-            '/WP-STATIC-INITIAL-CRAWL-LIST.txt';
+            '/wp2static-working-files/INITIAL-CRAWL-LIST.txt';
 
         $initial_crawl_total = $uploads_path .
-            '/WP-STATIC-INITIAL-CRAWL-TOTAL.txt';
+            '/wp2static-working-files/INITIAL-CRAWL-TOTAL.txt';
 
-        file_put_contents(
-            $initial_crawl_file,
-            $str
-        );
+        if ( wp_mkdir_p( $uploads_path . '/wp2static-working-files' ) ) {
+            $result = file_put_contents(
+                $initial_crawl_file,
+                $str
+            );
 
-        chmod( $initial_crawl_file, 0664 );
+            if ( ! $result ) {
+                require_once dirname( __FILE__ ) .
+                    '/../WP2Static/WsLog.php';
+                WsLog::l( 'USER WORKING DIRECTORY NOT WRITABLE' );
 
-        file_put_contents(
-            $initial_crawl_total,
-            $initial_crawl_list_total
-        );
+                return 'ERROR WRITING INITIAL CRAWL LIST';
+            }
 
-        if ( ! is_file( $initial_crawl_total ) ) {
-            return false;
+            chmod( $initial_crawl_file, 0664 );
+
+            file_put_contents(
+                $initial_crawl_total,
+                $initial_crawl_list_total
+            );
+
+            if ( ! is_file( $initial_crawl_total ) ) {
+                return false;
+            }
+
+            chmod( $initial_crawl_total, 0664 );
+
+            return count( $url_queue );
+        } else {
+            require_once dirname( __FILE__ ) .
+                '/../WP2Static/WsLog.php';
+            WsLog::l(
+                "Couldn't create working directory at " .
+                    $uploads_path . '/wp2static-working-files'
+            );
+
+            return 'ERROR WRITING INITIAL CRAWL LIST';
         }
 
-        chmod( $initial_crawl_total, 0664 );
-
-        return count( $url_queue );
     }
 
     public static function getAllWPPostURLs( $wp_site_url ) {

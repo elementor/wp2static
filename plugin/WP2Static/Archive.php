@@ -16,7 +16,7 @@ class Archive extends WP2Static {
     public function setToCurrentArchive() {
         $handle = fopen(
             $this->settings['wp_uploads_path'] .
-                '/WP2STATIC-CURRENT-ARCHIVE.txt',
+                '/wp2static-working-files/CURRENT-ARCHIVE.txt',
             'r'
         );
 
@@ -27,7 +27,7 @@ class Archive extends WP2Static {
     public function currentArchiveExists() {
         return is_file(
             $this->settings['wp_uploads_path'] .
-            '/WP2STATIC-CURRENT-ARCHIVE.txt'
+            '/wp2static-working-files/CURRENT-ARCHIVE.txt'
         );
     }
 
@@ -41,7 +41,7 @@ class Archive extends WP2Static {
         if ( wp_mkdir_p( $this->path ) ) {
             $result = file_put_contents(
                 $this->settings['wp_uploads_path'] .
-                    '/WP2STATIC-CURRENT-ARCHIVE.txt',
+                    '/wp2static-working-files/CURRENT-ARCHIVE.txt',
                 $this->path
             );
 
@@ -53,7 +53,7 @@ class Archive extends WP2Static {
 
             chmod(
                 $this->settings['wp_uploads_path'] .
-                    '/WP2STATIC-CURRENT-ARCHIVE.txt',
+                    '/wp2static-working-files/CURRENT-ARCHIVE.txt',
                 0664
             );
         } else {
