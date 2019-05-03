@@ -17,7 +17,7 @@
 function normalizeURL( $url, $page_url ) {
     require_once __DIR__ . '/../../URL2/URL2.php';
 
-    $page_url = new Net_url2( $page_url );
+    $page_url = new Net_URL2( $page_url );
 
     $absolute_url = $page_url->resolve( $url );
 
