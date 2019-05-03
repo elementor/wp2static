@@ -56,7 +56,7 @@ class HTMLProcessor extends WP2Static {
         $html_with_absolute_urls = $this->rewriteRelativeWPSiteURLsToAbsolute(
             $this->xml_doc,
             $wp_site_root,
-            $placeholder_url,
+            $this->placeholder_url,
             $page_url
         );
 
