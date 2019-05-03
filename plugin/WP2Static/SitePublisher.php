@@ -20,7 +20,7 @@ class WP2Static_SitePublisher {
                 '/DBSettings.php';
 
             $this->settings =
-                WPSHO_DBSettings::get( $target_settings, $specify_keys );
+                WPSHO_DBSettings::get( $target_settings );
         }
     }
 
