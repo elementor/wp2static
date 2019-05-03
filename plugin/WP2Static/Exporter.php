@@ -31,7 +31,7 @@ class Exporter extends WP2Static {
             ) ) {
                 unlink(
                     $this->settings['wp_uploads_path'] . '/' .
-                        $file_to_clean
+                        '/wp2static-working-files/' . $file_to_clean
                 );
             }
         }
