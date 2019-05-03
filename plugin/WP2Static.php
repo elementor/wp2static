@@ -132,8 +132,8 @@ class WP2Static_Controller {
 
         wp_enqueue_style(
             self::HOOK . '-admin',
-            $plugins_url . 'wp2static.css?sdf=sdfd',
-            null,
+            $plugins_url . 'wp2static.css?cache-buster=wp2static',
+            array(),
             $this::VERSION
         );
     }
