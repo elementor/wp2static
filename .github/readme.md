@@ -12,7 +12,7 @@ WordPress plugin to generate a static copy of your site and deploy to GitHub Pag
 
 Watch Leon Stafford's [talk from WordCamp Brisbane 2018](http://www.youtube.com/watch?v=HPc4JjBvkrU)
 
-[![WordPress as a Static Site Generator](http://img.youtube.com/vi/HPc4JjBvkrU/0.jpg)](http://www.youtube.com/watch?v=HPc4JjBvkrU)
+[![WordPress as a Static Site Generator](/.github/youtube-thumbnail.jpg)](http://www.youtube.com/watch?v=HPc4JjBvkrU)
 
 
 ## Table of contents
