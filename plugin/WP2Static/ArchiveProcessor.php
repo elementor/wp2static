@@ -246,7 +246,7 @@ class ArchiveProcessor extends WP2Static {
 
         $zip_archive = new ZipArchive();
 
-        if ( $zip_archive->open( $temp_zip, ZIPARCHIVE::CREATE ) !== true ) {
+        if ( $zip_archive->open( $temp_zip, ZipArchive::CREATE ) !== true ) {
             return new WP_Error( 'Could not create archive' );
         }
 
