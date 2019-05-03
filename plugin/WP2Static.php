@@ -181,7 +181,7 @@ class WP2Static_Controller {
 
             $zip_archive = new ZipArchive();
             $zip_opened =
-                $zip_archive->open( $export_log_zip, ZIPARCHIVE::CREATE );
+                $zip_archive->open( $export_log_zip, ZipArchive::CREATE );
 
             if ( $zip_opened !== true ) {
                 return new WP_Error( 'Could not create archive' );
