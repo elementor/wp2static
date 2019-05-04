@@ -9,16 +9,15 @@ class Archive extends Base {
             array( 'wpenv' )
         );
 
-        $this->path = '';
+        $this->path = $this->settings['wp_uploads_path'] .
+            '/wp2static-exported-site/';
         $this->name = '';
         $this->crawl_list = '';
         $this->export_log = '';
     }
 
     public function currentArchiveExists() {
-        return is_dir(
-            $this->settings['wp_uploads_path'] . '/wp2static-exported-site'
-        );
+        return is_dir( $this->path );
     }
 
     public function create() {

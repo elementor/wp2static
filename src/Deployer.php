@@ -191,7 +191,6 @@ class Deployer extends Base {
         require_once dirname( __FILE__ ) .
             '/Archive.php';
         $this->archive = new Archive();
-        $this->archive->setToCurrentArchive();
 
         do_action( 'wp2static_post_deploy_trigger', $this->archive );
     }
