@@ -1,6 +1,9 @@
 <?php
 
 namespace WP2Static;
+
+use WP_CLI;
+
 /**
  * Generate a static copy of your website & publish remotely
  */
@@ -99,10 +102,7 @@ class CLI {
         $plugin->generate_filelist_preview();
         $plugin->prepare_for_export();
 
-        require_once dirname( __FILE__ ) .
-            '/WP2Static/WP2Static.php';
-        require_once dirname( __FILE__ ) .
-            '/WP2Static/SiteCrawler.php';
+        $site_crawler = new SiteCrawler();
 
         $site_crawler->crawl_site();
         $site_crawler->crawl_discovered_links();

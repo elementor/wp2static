@@ -2,6 +2,8 @@
 
 namespace WP2Static;
 
+use Exception;
+
 class CSSProcessor extends Base {
 
     public function __construct() {
@@ -163,9 +165,16 @@ class CSSProcessor extends Base {
     }
 
     public function addDiscoveredURL( $url ) {
+        if ( ! $url ) { return; }
+
         // trim any query strings or anchors
         $url = strtok( $url, '#' );
+
+        if ( ! $url ) { return; }
+
         $url = strtok( $url, '?' );
+
+        if ( ! $url ) { return; }
 
         if ( trim( $url ) === '' ) {
             return;
