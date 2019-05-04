@@ -3,6 +3,8 @@
 namespace WP2Static;
 
 use ZipArchive;
+use WP_Error;
+use Exception;
 
 class Controller {
     const VERSION = '7.0-dev';
@@ -182,8 +184,16 @@ class Controller {
                 return new WP_Error( 'Could not create archive' );
             }
 
+            $real_filepath = realpath( $export_log );
+
+            if ( ! $real_filepath ) {
+                $err = 'Trying to add unknown file to Zip: ' . $export_log;
+                WsLog::l( $err );
+                throw new Exception( $err );
+            }
+
             if ( ! $zip_archive->addFile(
-                realpath( $export_log ),
+                $real_filepath,
                 'EXPORT-LOG.txt'
             )
             ) {

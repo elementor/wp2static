@@ -63,7 +63,6 @@ class ArchiveProcessor extends Base {
 
         if ( ! $dir ) {
             $err = 'Trying to copy non-existent directory: ' .  $srcdir;
-
             WsLog::l( $err );
             throw new Exception( $err );
         }
