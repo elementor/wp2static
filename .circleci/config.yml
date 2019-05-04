@@ -2,7 +2,7 @@ version: 2
 jobs:
   code-quality-and-unit-tests:
     docker:
-      - image: php:7.2
+      - image: composer:latest
     steps:
       - checkout
       - run:
