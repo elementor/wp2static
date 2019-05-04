@@ -2,6 +2,8 @@
 
 namespace WP2Static;
 
+use Exception;
+
 class Exporter extends Base {
 
     public function __construct() {
@@ -61,10 +63,14 @@ class Exporter extends Base {
     }
 
     public function cleanup_leftover_archives() {
+        $files_in_uploads_dir = scandir( $this->settings['wp_uploads_path'] );
+
+        if ( ! $files_in_uploads_dir ) { return; }
+
         $leftover_files =
             preg_grep(
                 '/^([^.])/',
-                scandir( $this->settings['wp_uploads_path'] )
+                $files_in_uploads_dir
             );
 
         foreach ( $leftover_files as $filename ) {
@@ -121,6 +127,12 @@ class Exporter extends Base {
             $this->settings['wp_uploads_path'] .
             '/wp2static-working-files/MODIFIED-CRAWL-LIST.txt'
         );
+
+        if ( ! $crawl_list ) {
+            $err = 'Unable to load crawl list';
+            WsLog::l( $err );
+            throw new Exception( $err );
+        }
 
         // applying exclusions before inclusions
         if ( isset( $this->settings['excludeURLs'] ) ) {
