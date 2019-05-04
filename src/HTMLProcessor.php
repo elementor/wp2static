@@ -327,7 +327,7 @@ class HTMLProcessor extends Base {
         $url_to_change = $this->getURLToChangeBasedOnAttribute( $element );
 
         if ( $this->isURLDocumentOrSiteRootRelative( $url_to_change) ) {
-            $absolute_url = \WP2Static\NormalizeURL::normalize(
+            $absolute_url = NormalizeURL::normalize(
                 $url_to_change,
                 $page_url
             );
@@ -344,7 +344,7 @@ class HTMLProcessor extends Base {
         $original_url = $element->getAttribute( 'html' );
 
         if ( $this->isInternalLink( $original_url ) ) {
-            $absolute_url = \WP2Static\NormalizeURL::normalize(
+            $absolute_url = NormalizeURL::normalize(
                 $original_url,
                 $this->page_url
             );
@@ -485,7 +485,7 @@ class HTMLProcessor extends Base {
         $original_url = $element->getAttribute( 'src' );
 
         if ( $this->isInternalLink( $original_url ) ) {
-            $absolute_url = \WP2Static\NormalizeURL::normalize(
+            $absolute_url = NormalizeURL::normalize(
                 $original_url,
                 $this->page_url
             );
@@ -540,7 +540,7 @@ class HTMLProcessor extends Base {
         $original_url = $element->getAttribute( 'src' );
 
         if ( $this->isInternalLink( $original_url ) ) {
-            $absolute_url = \WP2Static\NormalizeURL::normalize(
+            $absolute_url = NormalizeURL::normalize(
                 $original_url,
                 $this->page_url
             );
@@ -581,7 +581,7 @@ class HTMLProcessor extends Base {
         $original_url = $element->getAttribute( 'href' );
 
         if ( $this->isInternalLink( $original_url ) ) {
-            $absolute_url = \WP2Static\NormalizeURL::normalize(
+            $absolute_url = NormalizeURL::normalize(
                 $original_url,
                 $this->page_url
             );
@@ -625,7 +625,7 @@ class HTMLProcessor extends Base {
         $original_url = $element->getAttribute( 'content' );
 
         if ( $this->isInternalLink( $original_url ) ) {
-            $absolute_url = \WP2Static\NormalizeURL::normalize(
+            $absolute_url = NormalizeURL::normalize(
                 $original_url,
                 $this->page_url
             );

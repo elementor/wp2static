@@ -131,7 +131,7 @@ class SiteCrawler extends Base {
             '/wp2static-working-files/FINAL-2ND-CRAWL-LIST.txt';
 
         if ( ! is_file( $this->list_of_urls_to_crawl_path ) ) {
-            \WP2Static\WsLog::l(
+            WsLog::l(
                 'ERROR: LIST OF URLS TO CRAWL NOT FOUND AT: ' .
                     $this->list_of_urls_to_crawl_path
             );
@@ -164,7 +164,7 @@ class SiteCrawler extends Base {
             '/wp2static-working-files/FINAL-CRAWL-LIST.txt';
 
         if ( ! is_file( $this->list_of_urls_to_crawl_path ) ) {
-            \WP2Static\WsLog::l(
+            WsLog::l(
                 'ERROR: LIST OF URLS TO CRAWL NOT FOUND AT: ' .
                     $this->list_of_urls_to_crawl_path
             );
@@ -191,7 +191,7 @@ class SiteCrawler extends Base {
         $total_links = count( $this->urls_to_crawl );
 
         if ( $total_links < 1 ) {
-            \WP2Static\WsLog::l(
+            WsLog::l(
                 'ERROR: LIST OF URLS TO CRAWL NOT FOUND AT: ' .
                 $this->list_of_urls_to_crawl_path
             );
@@ -349,7 +349,7 @@ class SiteCrawler extends Base {
             } elseif ( stripos( $type, 'application/json' ) !== false ) {
                 $file_type = 'json';
             } else {
-                \WP2Static\WsLog::l(
+                WsLog::l(
                     'no filetype inferred from content-type: ' .
                     $type .
                     ' url: ' . $url
@@ -365,7 +365,7 @@ class SiteCrawler extends Base {
             return;
         }
 
-        \WP2Static\WsLog::l( $action );
+        WsLog::l( $action );
     }
 
     public function checkForCurlErrors( $response, $curl_handle ) {
@@ -461,7 +461,7 @@ class SiteCrawler extends Base {
 
         switch ( $file_type ) {
             case 'html':
-                $processor = new \WP2Static\HTMLProcessor();
+                $processor = new HTMLProcessor();
 
                 $this->processed_file = $processor->processHTML(
                     $output,
@@ -478,7 +478,7 @@ class SiteCrawler extends Base {
 
             case 'css':
                 if ( isset( $this->settings['parse_css'] ) ) {
-                    $processor = new \WP2Static\CSSProcessor();
+                    $processor = new CSSProcessor();
 
                     $this->processed_file = $processor->processCSS(
                         $output,
@@ -489,7 +489,7 @@ class SiteCrawler extends Base {
                         $this->processed_file = $processor->getCSS();
                     }
                 } else {
-                    $processor = new \WP2Static\TXTProcessor();
+                    $processor = new TXTProcessor();
 
                     $this->processed_file = $processor->processTXT(
                         $output,
@@ -506,7 +506,7 @@ class SiteCrawler extends Base {
             case 'js':
             case 'json':
             case 'xml':
-                $processor = new \WP2Static\TXTProcessor();
+                $processor = new TXTProcessor();
 
                 $this->processed_file = $processor->processTXT(
                     $output,
@@ -537,7 +537,7 @@ class SiteCrawler extends Base {
     }
 
     public function saveCrawledURL( $url, $body, $file_type, $content_type ) {
-        $file_writer = new \WP2Static\FileWriter(
+        $file_writer = new FileWriter(
             $url,
             $body,
             $file_type,

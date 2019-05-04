@@ -14,10 +14,10 @@ class Controller {
     public static function getInstance() {
         if ( null === self::$instance ) {
             self::$instance = new self();
-            self::$instance->options = new \WP2Static\Options(
+            self::$instance->options = new Options(
                 self::OPTIONS_KEY
             );
-            self::$instance->view = new \WP2Static\View();
+            self::$instance->view = new View();
         }
 
         return self::$instance;
@@ -141,14 +141,14 @@ class Controller {
     }
 
     public function finalize_deployment() {
-        $deployer = new \WP2Static\Deployer();
+        $deployer = new Deployer();
         $deployer->finalizeDeployment();
 
         echo 'SUCCESS';
     }
 
     public function download_export_log() {
-        $this->wp_site = new \WP2Static\WPSite();
+        $this->wp_site = new WPSite();
 
         $target_settings = array(
             'general',
@@ -157,10 +157,10 @@ class Controller {
 
         if ( defined( 'WP_CLI' ) ) {
             $this->settings =
-                \WP2Static\DBSettings::get( $target_settings );
+                DBSettings::get( $target_settings );
         } else {
             $this->settings =
-                \WP2Static\PostSettings::get( $target_settings );
+                PostSettings::get( $target_settings );
         }
 
         // get export log path
@@ -198,7 +198,7 @@ class Controller {
     }
 
     public function generate_filelist_preview() {
-        $this->wp_site = new \WP2Static\WPSite();
+        $this->wp_site = new WPSite();
 
         $target_settings = array(
             'general',
@@ -207,16 +207,16 @@ class Controller {
 
         if ( defined( 'WP_CLI' ) ) {
             $this->settings =
-                \WP2Static\DBSettings::get( $target_settings );
+                DBSettings::get( $target_settings );
         } else {
             $this->settings =
-                \WP2Static\PostSettings::get( $target_settings );
+                PostSettings::get( $target_settings );
         }
 
         $plugin_hook = 'wp2static';
 
         $initial_file_list_count =
-            \WP2Static\FilesHelper::buildInitialFileList(
+            FilesHelper::buildInitialFileList(
                 true,
                 $this->wp_site->wp_uploads_path,
                 $this->wp_site->uploads_url,
@@ -233,7 +233,7 @@ class Controller {
     }
 
     public function renderOptionsPage() {
-        $this->wp_site = new \WP2Static\WPSite();
+        $this->wp_site = new WPSite();
         $this->current_archive = '';
 
         $this->view
@@ -267,12 +267,12 @@ class Controller {
     }
 
     public function prepare_for_export() {
-        $this->exporter = new \WP2Static\Exporter();
+        $this->exporter = new Exporter();
 
         $this->exporter->pre_export_cleanup();
         $this->exporter->cleanup_leftover_archives();
 
-        $archive = new \WP2Static\Archive();
+        $archive = new Archive();
         $archive->create();
 
         $this->logEnvironmentalInfo();
@@ -289,14 +289,14 @@ class Controller {
             error_log( "Couldn't reset plugin to default settings" );
         }
 
-        $this->options = new WP2Static_Options( self::OPTIONS_KEY );
+        $this->options = new Options( self::OPTIONS_KEY );
         $this->setDefaultOptions();
 
         echo 'SUCCESS';
     }
 
     public function post_process_archive_dir() {
-        $processor = new \WP2Static\ArchiveProcessor();
+        $processor = new ArchiveProcessor();
 
         $processor->createNetlifySpecialFiles();
         // NOTE: renameWP Directories also doing same server publish
@@ -317,10 +317,10 @@ class Controller {
 
         if ( defined( 'WP_CLI' ) ) {
             $this->settings =
-                \WP2Static\DBSettings::get( $target_settings );
+                DBSettings::get( $target_settings );
         } else {
             $this->settings =
-                \WP2Static\PostSettings::get( $target_settings );
+                PostSettings::get( $target_settings );
         }
 
         $uploads_dir = $this->settings['wp_uploads_path'];
@@ -352,26 +352,26 @@ class Controller {
             $info[] = 'SERVER SOFTWARE ' . $_SERVER['SERVER_SOFTWARE'];
         }
 
-        \WP2Static\WsLog::l( implode( PHP_EOL, $info ) );
+        WsLog::l( implode( PHP_EOL, $info ) );
 
-        \WP2Static\WsLog::l( 'Active plugins:' );
+        WsLog::l( 'Active plugins:' );
 
         $active_plugins = get_option( 'active_plugins' );
 
         foreach ( $active_plugins as $active_plugin ) {
-            \WP2Static\WsLog::l( $active_plugin );
+            WsLog::l( $active_plugin );
         }
 
-        \WP2Static\WsLog::l( 'Plugin options:' );
+        WsLog::l( 'Plugin options:' );
 
         $options = $this->options->getAllOptions( false );
 
         foreach ( $options as $key => $value ) {
-            \WP2Static\WsLog::l( "{$value['Option name']}: {$value['Value']}" );
+            WsLog::l( "{$value['Option name']}: {$value['Value']}" );
         }
 
         $extensions = get_loaded_extensions();
 
-        \WP2Static\WsLog::l( 'Installed extensions: ' . join( ', ', $extensions ) );
+        WsLog::l( 'Installed extensions: ' . join( ', ', $extensions ) );
     }
 }

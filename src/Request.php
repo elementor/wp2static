@@ -1,6 +1,8 @@
 <?php
 
-class WP2Static_Request {
+namespace WP2Static;
+
+class Request {
 
     public function __construct() {
         $this->default_options = array(

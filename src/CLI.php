@@ -16,7 +16,7 @@ class CLI {
         $environmental_info = array(
             array(
                 'key' => 'PLUGIN VERSION',
-                'value' => \WP2Static\Controller::VERSION,
+                'value' => Controller::VERSION,
             ),
             array(
                 'key' => 'PHP_VERSION',
@@ -95,7 +95,7 @@ class CLI {
     public function generate() {
         $start_time = microtime();
 
-        $plugin = \WP2Static\Controller::getInstance();
+        $plugin = Controller::getInstance();
         $plugin->generate_filelist_preview();
         $plugin->prepare_for_export();
 

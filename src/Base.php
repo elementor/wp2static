@@ -15,9 +15,9 @@ class Base {
         );
 
         if ( isset( $_POST['selected_deployment_option'] ) ) {
-            $this->settings = \WP2Static\PostSettings::get( $target_settings );
+            $this->settings = PostSettings::get( $target_settings );
         } else {
-            $this->settings = \WP2Static\DBSettings::get( $target_settings );
+            $this->settings = DBSettings::get( $target_settings );
         }
     }
 

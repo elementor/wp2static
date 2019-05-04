@@ -25,13 +25,13 @@ require WP2STATIC_PATH . 'vendor/autoload.php';
 
 // NOTE: bypass instantiating plugin for specific AJAX requests
 if ( $ajax_action === 'crawl_site' || $ajax_action === 'crawl_again' ) {
-    new \WP2Static\SiteCrawler();
+    new WP2Static\SiteCrawler();
 
     wp_die();
     return null;
 }
 
-\WP2Static\Controller::init( __FILE__ );
+WP2Static\Controller::init( __FILE__ );
 
 function plugin_action_links( $links ) {
     $settings_link = '<a href="admin.php?page=wp2static">' . __( 'Settings', 'static-html-output-plugin' ) . '</a>';
@@ -42,7 +42,7 @@ function plugin_action_links( $links ) {
 
 
 function wp_static_html_output_server_side_export() {
-    $plugin = WP2Static_Controller::getInstance();
+    $plugin = WP2Static\Controller::getInstance();
     $plugin->doExportWithoutGUI();
     wp_die();
     return null;
@@ -65,7 +65,7 @@ function wp_static_html_output_ajax() {
     $instance_method = filter_input( INPUT_POST, 'ajax_action' );
 
     if ( '' !== $instance_method && is_string( $instance_method ) ) {
-        $plugin_instance = \WP2Static\Controller::getInstance();
+        $plugin_instance = WP2Static\Controller::getInstance();
         call_user_func( array( $plugin_instance, $instance_method ) );
     }
 

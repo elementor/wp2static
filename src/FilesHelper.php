@@ -19,7 +19,7 @@ class FilesHelper {
     }
 
     public static function getThemeFiles( $theme_type ) {
-        $wp_site = new \WP2Static\WPSite();
+        $wp_site = new WPSite();
 
         $files = array();
         $template_path = '';

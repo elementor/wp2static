@@ -1,6 +1,9 @@
 <?php
 
-class WP2Static_SitePublisher {
+namespace WP2Static;
+
+class SitePublisher {
+
     public function loadSettings( $deploy_method, $specify_keys = array() ) {
         $target_settings = array(
             'general',
@@ -11,24 +14,15 @@ class WP2Static_SitePublisher {
         $target_settings[] = $deploy_method;
 
         if ( isset( $_POST['selected_deployment_option'] ) ) {
-            require_once dirname( __FILE__ ) .
-                '/PostSettings.php';
             $this->settings =
-                WPSHO_PostSettings::get( $target_settings, $specify_keys );
+                PostSettings::get( $target_settings, $specify_keys );
         } else {
-            require_once dirname( __FILE__ ) .
-                '/DBSettings.php';
-
             $this->settings =
-                WPSHO_DBSettings::get( $target_settings, $specify_keys );
+                DBSettings::get( $target_settings, $specify_keys );
         }
     }
 
     public function loadArchive() {
-        require_once dirname( __FILE__ ) .
-            '/WP2Static.php';
-        require_once dirname( __FILE__ ) .
-            '/Archive.php';
         $this->archive = new Archive();
         $this->archive->setToCurrentArchive();
     }
@@ -252,17 +246,14 @@ class WP2Static_SitePublisher {
     }
 
     public function handleException( $e ) {
-        require_once dirname( __FILE__ ) .
-            '/WsLog.php';
         WsLog::l( 'Deployment: error encountered' );
         WsLog::l( $e );
+
         throw new Exception( $e );
     }
 
     public function checkForValidResponses( $code, $good_codes ) {
         if ( ! in_array( $code, $good_codes ) ) {
-            require_once dirname( __FILE__ ) .
-                '/WsLog.php';
             WsLog::l(
                 'BAD RESPONSE STATUS FROM API (' . $code . ')'
             );
@@ -314,8 +305,6 @@ class WP2Static_SitePublisher {
             return;
         }
 
-        require_once dirname( __FILE__ ) .
-            '/WsLog.php';
         WsLog::l( $action );
     }
 }

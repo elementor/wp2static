@@ -14,9 +14,9 @@ class WsLog {
         $settings = '';
 
         if ( defined( 'WP_CLI' ) ) {
-            $settings = \WP2Static\DBSettings::get( $target_settings );
+            $settings = DBSettings::get( $target_settings );
         } else {
-            $settings = \WP2Static\PostSettings::get( $target_settings );
+            $settings = PostSettings::get( $target_settings );
         }
 
         // NOTE: should be checked before sending to speed up requests

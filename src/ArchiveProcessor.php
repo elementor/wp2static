@@ -5,7 +5,7 @@ namespace WP2Static;
 class ArchiveProcessor extends Base {
 
     public function __construct() {
-        $this->archive = new \WP2Static\Archive();
+        $this->archive = new Archive();
         $this->archive->setToCurrentArchive();
 
         $this->loadSettings(
@@ -23,7 +23,7 @@ class ArchiveProcessor extends Base {
 
     public function renameWPDirectory( $source, $target ) {
         if ( empty( $source ) || empty( $target ) ) {
-            \WP2Static\WsLog::l(
+            WsLog::l(
                 'Failed trying to rename: ' .
                 'Source: ' . $source .
                 ' to: ' . $target
@@ -37,11 +37,11 @@ class ArchiveProcessor extends Base {
         if ( is_dir( $original_dir ) ) {
             $this->recursive_copy( $original_dir, $new_dir );
 
-            \WP2Static\FilesHelper::delete_dir_with_files(
+            FilesHelper::delete_dir_with_files(
                 $original_dir
             );
         } else {
-            \WP2Static\WsLog::l(
+            WsLog::l(
                 'Trying to rename non-existent directory: ' .
                 $original_dir
             );
@@ -49,7 +49,7 @@ class ArchiveProcessor extends Base {
     }
 
     public function recursive_copy( $srcdir, $dstdir ) {
-        \WP2Static\WsLog::l(
+        WsLog::l(
             'Recursively copying: ' . $srcdir . ' to ' . $dstdir
         );
 
@@ -138,7 +138,7 @@ class ArchiveProcessor extends Base {
             } else {
                 if ( wp_mkdir_p( $target_folder ) ) {
                     if ( ! $this->put_safety_file( $target_folder ) ) {
-                        \WP2Static\WsLog::l(
+                        WsLog::l(
                             'Couldn\'t put safety file in ' .
                             'Target Directory' .
                             $target_folder
@@ -147,7 +147,7 @@ class ArchiveProcessor extends Base {
                         die();
                     }
                 } else {
-                    \WP2Static\WsLog::l(
+                    WsLog::l(
                         'Couldn\'t create Target Directory: ' .
                         $target_folder
                     );
@@ -159,7 +159,7 @@ class ArchiveProcessor extends Base {
             // CHECK #2: check directory empty and add safety file
             if ( $directory_empty ) {
                 if ( ! $this->put_safety_file( $target_folder ) ) {
-                    \WP2Static\WsLog::l(
+                    WsLog::l(
                         'Couldn\'t put safety file in ' .
                         'Target Directory' .
                         $target_folder
@@ -179,7 +179,7 @@ class ArchiveProcessor extends Base {
                 );
 
                 if ( ! $this->put_safety_file( $target_folder ) ) {
-                    \WP2Static\WsLog::l(
+                    WsLog::l(
                         'Couldn\'t put safety file in ' .
                         'Target Directory' .
                         $target_folder
@@ -188,7 +188,7 @@ class ArchiveProcessor extends Base {
                     die();
                 }
             } else {
-                \WP2Static\WsLog::l(
+                WsLog::l(
                     'Target Directory wasn\'t empty ' .
                     'or didn\'t contain safety file ' .
                     $target_folder
@@ -269,7 +269,7 @@ class ArchiveProcessor extends Base {
             unlink( $this->archive->path . '/wp-login.php' );
         }
 
-        \WP2Static\FilesHelper::delete_dir_with_files(
+        FilesHelper::delete_dir_with_files(
             $this->archive->path . '/wp-json/'
         );
     }

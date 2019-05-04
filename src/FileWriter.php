@@ -102,7 +102,7 @@ class FileWriter extends Base {
             return;
         }
 
-        \WP2Static\WsLog::l( $action );
+        WsLog::l( $action );
     }
 }
 
