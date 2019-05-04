@@ -25,7 +25,7 @@
     ],
     "require": {
         "php": ">7",
-        "pear/Net_URL2": "^2.1.2",
+        "pear/net_url2": "^2.1.2",
         "sabberworm/php-css-parser": "^8.3.0"
     },
     "autoload": {
