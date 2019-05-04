@@ -1,6 +1,8 @@
 <?php
 
-class WP2Static_Controller {
+namespace WP2Static;
+
+class Controller {
     const VERSION = '6.6.6-dev-curlmulti';
     const OPTIONS_KEY = 'wp2static-options';
     const HOOK = 'wp2static';

@@ -1,6 +1,6 @@
 <?php
 
-class HTMLProcessor extends WP2Static {
+class HTMLProcessor extends Base {
 
     public function __construct() {
         $this->loadSettings(

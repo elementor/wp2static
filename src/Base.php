@@ -1,6 +1,8 @@
 <?php
 
-class WP2Static {
+namespace WP2Static;
+
+class Base {
 
     public function loadSettings( $target_settings ) {
         $general_settings = array(
