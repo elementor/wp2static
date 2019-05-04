@@ -24,13 +24,22 @@
         }
     ],
     "require": {
-        "php": ">7",
+        "php": ">=7.0",
         "pear/net_url2": "^2.1.2",
         "sabberworm/php-css-parser": "^8.3.0"
+    },
+    "require-dev": {
+        "phpstan/phpstan-shim": "^0.11.5",
+        "giacocorsiglia/wordpress-stubs": "^5.1"
     },
     "autoload": {
         "psr-4": {
             "WP2Static\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PHPStan\\WordPress\\": "tests/phpstan/"
         }
     },
     "config": {
