@@ -1,0 +1,42 @@
+{
+    "name": "wp2static/wp2static",
+    "description": "Security & Performance via static website publishing.",
+    "homepage": "https://wp2static.com",
+      "license": "UNLICENSE",
+      "authors": [
+        {
+          "name": "Leon Stafford",
+          "email": "me@ljs.dev",
+          "homepage": "https://ljs.dev"
+        }
+      ],
+    "type": "wordpress-plugin",
+    "support": {
+        "issues": "https://github.com/WP2Static/wp2static/issues",
+        "forum": "https://wp2static.com/community",
+        "docs": "https://wp2static.com/documentation",
+        "source": "https://github.com/WP2Static/wp2static"
+    },
+    "repositories": [
+        {
+            "type": "pear",
+            "url": "https://pear.php.net"
+        }
+    ],
+    "require": {
+        "php": ">7",
+        "pear/Net_URL2": "^2.1.2",
+        "sabberworm/php-css-parser": "^8.3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "WP2Static\\": "src/"
+        }
+    },
+    "config": {
+        "preferred-install": {
+            "*": "dist"
+        },
+        "classmap-authoritative": true
+    }
+}
