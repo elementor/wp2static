@@ -22,8 +22,17 @@ class Archive extends Base {
             'r'
         );
 
-        $this->path = stream_get_line( $handle, 0 );
-        $this->name = basename( $this->path );
+        if ( $handle ) {
+            $this->path = stream_get_line( $handle, 0 );
+
+            if ( $this->path ) {
+                $this->name = basename( $this->path );
+
+                return true;
+            }
+        }
+
+        WsLog::l( 'Unable to set current Archive' );
     }
 
     public function currentArchiveExists() {
@@ -48,8 +57,6 @@ class Archive extends Base {
             );
 
             if ( ! $result ) {
-                require_once dirname( __FILE__ ) .
-                    '/../WP2Static/WsLog.php';
                 WsLog::l( 'USER WORKING DIRECTORY NOT WRITABLE' );
             }
 

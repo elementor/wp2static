@@ -5,6 +5,8 @@ namespace WP2Static;
 use ZipArchive;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
+use Exception;
+use WP_Error;
 
 class ArchiveProcessor extends Base {
 
@@ -59,6 +61,13 @@ class ArchiveProcessor extends Base {
 
         $dir = opendir( $srcdir );
 
+        if ( ! $dir ) {
+            $err = 'Trying to copy non-existent directory: ' .  $srcdir;
+
+            WsLog::l( $err );
+            throw new Exception( $err );
+        }
+
         if ( ! is_dir( $dstdir ) ) {
             mkdir( $dstdir );
         }
@@ -84,7 +93,13 @@ class ArchiveProcessor extends Base {
 
         $dotfiles = array( '.', '..', '/.wp2static_safety' );
 
-        foreach ( scandir( $dirname ) as $file ) {
+        $dir_files = scandir( $dirname );
+
+        if ( ! $dir_files ) {
+            return false;
+        }
+
+        foreach ( $dir_files as $file ) {
             if ( ! in_array( $file, $dotfiles ) ) {
                  return false;
             }
@@ -98,7 +113,13 @@ class ArchiveProcessor extends Base {
             return false;
         }
 
-        foreach ( scandir( $dirname ) as $file ) {
+        $dir_files = scandir( $dirname );
+
+        if ( ! $dir_files ) {
+            return false;
+        }
+
+        foreach ( $dir_files as $file ) {
             if ( $file == '.wp2static_safety' ) {
                  return true;
             }
@@ -244,10 +265,19 @@ class ArchiveProcessor extends Base {
         );
 
         foreach ( $iterator as $filename => $file_object ) {
+
             $base_name = basename( $filename );
             if ( $base_name != '.' && $base_name != '..' ) {
+                $real_filepath = realpath( $filename );
+
+                if ( ! $real_filepath ) {
+                    $err = 'Trying to add unknown file to Zip: ' . $filename;
+                    WsLog::l( $err );
+                    throw new Exception( $err );
+                }
+
                 if ( ! $zip_archive->addFile(
-                    realpath( $filename ),
+                    $real_filepath,
                     str_replace( $this->archive->path, '', $filename )
                 )
                 ) {
