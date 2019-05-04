@@ -13,17 +13,26 @@
 
 
 // intercept low latency dependent actions and avoid boostrapping whole plugin
-require_once dirname( __FILE__ ) .
-    '/plugin/WP2Static/Dispatcher.php';
+// @codingStandardsIgnoreStart
+$ajax_action = isset( $_POST['ajax_action'] ) ? $_POST['ajax_action'] : '';
+// @codingStandardsIgnoreEnd
 
-require_once 'plugin/WP2Static/WP2Static.php';
-require_once 'plugin/WP2Static/Options.php';
-require_once 'plugin/WP2Static/TemplateHelper.php';
-require_once 'plugin/WP2Static/View.php';
-require_once 'plugin/WP2Static/WsLog.php';
-require_once 'plugin/WP2Static/FilesHelper.php';
-require_once 'plugin/WP2Static.php';
-require_once 'plugin/URL2/URL2.php';
+$deployers_dir = dirname( __FILE__ ) . '/../deployers';
+
+// NOTE: bypass instantiating plugin for specific AJAX requests
+if ( $ajax_action === 'crawl_site' || $ajax_action === 'crawl_again' ) {
+    require_once dirname( __FILE__ ) .
+        '/WP2Static.php';
+    require_once dirname( __FILE__ ) .
+        '/SiteCrawler.php';
+
+    wp_die();
+    return null;
+}
+
+define( 'WP2STATIC_PATH', plugin_dir_path( __FILE__ ) );
+
+require WP2STATIC_PATH . 'vendor/autoload.php';
 
 WP2Static_Controller::init( __FILE__ );
 
