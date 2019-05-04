@@ -2,6 +2,10 @@
 
 namespace WP2Static;
 
+use RecursiveIteratorIterator;
+use RecursiveArrayIterator;
+use RecursiveDirectoryIterator;
+
 class FilesHelper {
 
     public static function delete_dir_with_files( $dir ) {
@@ -36,10 +40,10 @@ class FilesHelper {
         $directory = $template_path;
 
         if ( is_dir( $directory ) ) {
-            $iterator = new \RecursiveIteratorIterator(
-                new \RecursiveDirectoryIterator(
+            $iterator = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator(
                     $directory,
-                    \RecursiveDirectoryIterator::SKIP_DOTS
+                    RecursiveDirectoryIterator::SKIP_DOTS
                 )
             );
 
@@ -238,9 +242,9 @@ class FilesHelper {
 
         if ( is_dir( $directory ) ) {
             $iterator = new RecursiveIteratorIterator(
-                new \RecursiveDirectoryIterator(
+                new RecursiveDirectoryIterator(
                     $directory,
-                    \RecursiveDirectoryIterator::SKIP_DOTS
+                    RecursiveDirectoryIterator::SKIP_DOTS
                 )
             );
 
@@ -266,10 +270,10 @@ class FilesHelper {
         $directory = str_replace( home_url( '/' ), ABSPATH, $url );
 
         if ( is_dir( $directory ) ) {
-            $iterator = new \RecursiveIteratorIterator(
-                new \RecursiveDirectoryIterator(
+            $iterator = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator(
                     $directory,
-                    \RecursiveDirectoryIterator::SKIP_DOTS
+                    RecursiveDirectoryIterator::SKIP_DOTS
                 )
             );
 

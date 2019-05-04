@@ -2,6 +2,10 @@
 
 namespace WP2Static;
 
+use ZipArchive;
+use RecursiveIteratorIterator;
+use RecursiveDirectoryIterator;
+
 class ArchiveProcessor extends Base {
 
     public function __construct() {
@@ -229,14 +233,14 @@ class ArchiveProcessor extends Base {
         $archive_path = rtrim( $this->archive->path, '/' );
         $temp_zip = $archive_path . '.tmp';
 
-        $zip_archive = new \ZipArchive();
+        $zip_archive = new ZipArchive();
 
-        if ( $zip_archive->open( $temp_zip, \ZipArchive::CREATE ) !== true ) {
+        if ( $zip_archive->open( $temp_zip, ZipArchive::CREATE ) !== true ) {
             return new WP_Error( 'Could not create archive' );
         }
 
-        $iterator = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator( $this->archive->path )
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator( $this->archive->path )
         );
 
         foreach ( $iterator as $filename => $file_object ) {

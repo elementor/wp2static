@@ -2,6 +2,8 @@
 
 namespace WP2Static;
 
+use ZipArchive;
+
 class Controller {
     const VERSION = '7.0-dev';
     const OPTIONS_KEY = 'wp2static-options';
