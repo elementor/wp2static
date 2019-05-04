@@ -32,7 +32,9 @@
         "phpstan/phpstan-shim": "^0.11.5",
         "giacocorsiglia/wordpress-stubs": "^5.1",
         "squizlabs/php_codesniffer": "3.*",
-        "phpunit/phpunit": "^8"
+        "phpunit/phpunit": "^8",
+        "dealerdirect/phpcodesniffer-composer-installer": "*",
+        "wp-coding-standards/wpcs": "*"
     },
     "autoload": {
         "psr-4": {
@@ -51,6 +53,8 @@
         "classmap-authoritative": true
     },
     "scripts": {
-        "phpstan": "vendor/bin/phpstan analyse"
+        "phpstan": "vendor/bin/phpstan analyse",
+        "phpcs": "vendor/bin/phpcs --standard=./tools/phpcs.xml --ignore=,*/tests/*,*/vendor/*,wp2static.php ./",
+        "phpunit": "vendor/bin/phpunit --testdox ./tests/HTMLProcessor/"
     }
 }
