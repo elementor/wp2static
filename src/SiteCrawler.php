@@ -219,7 +219,7 @@ class SiteCrawler extends Base {
         chmod( $this->list_of_urls_to_crawl_path, 0664 );
 
         $this->archive_dir = $this->settings['wp_uploads_path'] .
-            '/wp2static-exported-site';
+            '/wp2static-exported-site/';
 
         $total_urls_path = $this->settings['wp_uploads_path'] .
             '/wp2static-working-files/INITIAL-CRAWL-TOTAL.txt';

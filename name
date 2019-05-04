@@ -1,0 +1,26 @@
+src/ArchiveProcessor.php:        $original_dir = $this->archive->path . $source;
+src/ArchiveProcessor.php:        $new_dir = $this->archive->path . $target;
+src/ArchiveProcessor.php:                    $this->archive->path,
+src/ArchiveProcessor.php:            $redirect_path = $this->archive->path . '_redirects';
+src/ArchiveProcessor.php:            $header_path = $this->archive->path . '_headers';
+src/ArchiveProcessor.php:        $archive_path = rtrim( $this->archive->path, '/' );
+src/ArchiveProcessor.php:        if ( $zip_archive->open( $temp_zip, ZipArchive::CREATE ) !== true ) {
+src/ArchiveProcessor.php:            new RecursiveDirectoryIterator( $this->archive->path )
+src/ArchiveProcessor.php:                if ( ! $zip_archive->addFile(
+src/ArchiveProcessor.php:                    str_replace( $this->archive->path, '', $filename )
+src/ArchiveProcessor.php:        $zip_archive->close();
+src/ArchiveProcessor.php:            $this->archive->name . '.zip';
+src/ArchiveProcessor.php:        if ( file_exists( $this->archive->path . '/xmlrpc.php' ) ) {
+src/ArchiveProcessor.php:            unlink( $this->archive->path . '/xmlrpc.php' );
+src/ArchiveProcessor.php:        if ( file_exists( $this->archive->path . '/wp-login.php' ) ) {
+src/ArchiveProcessor.php:            unlink( $this->archive->path . '/wp-login.php' );
+src/ArchiveProcessor.php:            $this->archive->path . '/wp-json/'
+src/Controller.php:                $zip_archive->open( $export_log_zip, ZipArchive::CREATE );
+src/Controller.php:            if ( ! $zip_archive->addFile(
+src/Controller.php:            $zip_archive->close();
+src/Controller.php:        $archive->create();
+src/SitePublisher.php:        $this->archive->setToCurrentArchive();
+src/SitePublisher.php:            $this->getArchivePathForReplacement( $this->archive->path );
+src/SitePublisher.php:                $this->archive->name,
+tests/multi_deploy_test_cli.sh:#     error_log( $archive->settings['baseUrl'] );
+views/zip_settings_block.phtml:         <li><a target="_blank" href="https://www.digitalocean.com/community/questions/php-7-0-ziparchive-library-is-missing-or-disabled">DigitalOcean</a></li>

@@ -286,8 +286,8 @@ class ArchiveProcessor extends Base {
 
         $zip_archive->close();
 
-        $zip_path = $this->settings['wp_uploads_path'] . '/' .
-            $this->archive->name . '.zip';
+        $zip_path = $this->settings['wp_uploads_path'] .
+            '/wp2static-exported-site.zip';
 
         rename( $temp_zip, $zip_path );
     }
