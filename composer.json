@@ -47,5 +47,8 @@
             "*": "dist"
         },
         "classmap-authoritative": true
+    },
+    "scripts": {
+        "phpstan": "vendor/bin/phpstan analyse"
     }
 }
