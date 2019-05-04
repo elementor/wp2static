@@ -1,5 +1,7 @@
 <?php
 
+namespace WP2Static;
+
 class Deployer extends Base {
 
     public function __construct() {
