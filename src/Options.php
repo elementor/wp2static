@@ -1,6 +1,8 @@
 <?php
 
-class WP2Static_Options {
+namespace WP2Static;
+
+class Options {
     public $wp2static_options = array();
     public $wp2static_option_key = null;
     public $wp2static_options_keys = array(

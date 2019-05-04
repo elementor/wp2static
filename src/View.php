@@ -1,5 +1,8 @@
 <?php
-class WP2Static_View {
+
+namespace WP2Static;
+
+class View {
 
     protected $variables = array();
     protected $path = null;

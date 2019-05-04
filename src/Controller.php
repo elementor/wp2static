@@ -14,10 +14,10 @@ class Controller {
     public static function getInstance() {
         if ( null === self::$instance ) {
             self::$instance = new self();
-            self::$instance->options = new WP2Static_Options(
+            self::$instance->options = new \WP2Static\Options(
                 self::OPTIONS_KEY
             );
-            self::$instance->view = new WP2Static_View();
+            self::$instance->view = new \WP2Static\View();
         }
 
         return self::$instance;
