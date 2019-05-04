@@ -2,7 +2,7 @@ version: 2
 jobs:
   code-quality-and-unit-tests:
     docker:
-      - image: composer:latest
+      - image: circleci/php:7.2-apache-node-browsers-legacy
     steps:
       - checkout
       - run:
