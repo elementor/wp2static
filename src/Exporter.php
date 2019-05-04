@@ -40,21 +40,6 @@ class Exporter extends Base {
     }
 
     public function cleanup_working_files() {
-        // keep log files here for debugging
-        // skip first export state
-        if ( is_file(
-            $this->settings['wp_uploads_path'] .
-                '/wp2static-working-files/CURRENT-ARCHIVE.txt'
-        ) ) {
-
-            $handle = fopen(
-                $this->settings['wp_uploads_path'] .
-                    '/wp2static-working-files/CURRENT-ARCHIVE.txt',
-                'r'
-            );
-            $this->settings['archive_dir'] = stream_get_line( $handle, 0 );
-        }
-
         $files_to_clean = array(
             '2ND-CRAWL-LIST.txt',
             'DISCOVERED-URLS.txt',
