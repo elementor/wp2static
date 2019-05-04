@@ -1,5 +1,7 @@
 <?php
 
+namespace WP2Static;
+
 // TODO: if this fails to locate the local file for the remote,
 // it should fall back to regular crawl processing method
 // (where response status will also be checked in case of 404)
@@ -20,9 +22,7 @@ class FileCopier {
         if ( is_file( $local_file ) ) {
             return $local_file;
         } else {
-            require_once dirname( __FILE__ ) .
-                '/../WP2Static/WsLog.php';
-            WsLog::l(
+            \WP2Static\WsLog::l(
                 'ERROR: trying to copy local file: ' . $local_file .
                 ' for URL: ' . $this->url .
                 ' (FILE NOT FOUND/UNREADABLE)'
@@ -73,9 +73,7 @@ class FileCopier {
         if ( is_file( $local_file ) ) {
             copy( $local_file, $filename );
         } else {
-            require_once dirname( __FILE__ ) .
-                '/../WP2Static/WsLog.php';
-            WsLog::l(
+            \WP2Static\WsLog::l(
                 'ERROR: trying to copy local file: ' . $local_file .
                 ' to: ' . $filename .
                 ' in archive dir: ' . $archive_dir .

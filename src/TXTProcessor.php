@@ -1,6 +1,8 @@
 <?php
 
-class TXTProcessor extends WP2Static {
+namespace WP2Static;
+
+class TXTProcessor extends Base {
 
     public function __construct() {
         $this->loadSettings(

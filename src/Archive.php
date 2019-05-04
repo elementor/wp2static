@@ -1,6 +1,8 @@
 <?php
 
-class Archive extends WP2Static {
+namespace WP2Static;
+
+class Archive extends Base {
 
     public function __construct() {
         $this->loadSettings(

@@ -1,5 +1,7 @@
 <?php
 
+namespace WP2Static;
+
 class HTMLProcessor extends Base {
 
     public function __construct() {
@@ -45,7 +47,7 @@ class HTMLProcessor extends Base {
         $wp_site_root = $this->settings['wp_site_url'];
 
         // instantiate the XML body here
-        $this->xml_doc = new DOMDocument();
+        $this->xml_doc = new \DOMDocument();
 
         // PERF: 70% of function time
         // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
@@ -325,10 +327,7 @@ class HTMLProcessor extends Base {
         $url_to_change = $this->getURLToChangeBasedOnAttribute( $element );
 
         if ( $this->isURLDocumentOrSiteRootRelative( $url_to_change) ) {
-            require_once 'HTMLProcessingFunctions/' .
-                'normalizeURL.php';
-
-            $absolute_url = normalizeURL(
+            $absolute_url = \WP2Static\NormalizeURL::normalize(
                 $url_to_change,
                 $page_url
             );
@@ -345,10 +344,7 @@ class HTMLProcessor extends Base {
         $original_url = $element->getAttribute( 'html' );
 
         if ( $this->isInternalLink( $original_url ) ) {
-            require_once 'HTMLProcessingFunctions/' .
-                'normalizeURL.php';
-
-            $absolute_url = normalizeURL(
+            $absolute_url = \WP2Static\NormalizeURL::normalize(
                 $original_url,
                 $this->page_url
             );
@@ -489,10 +485,7 @@ class HTMLProcessor extends Base {
         $original_url = $element->getAttribute( 'src' );
 
         if ( $this->isInternalLink( $original_url ) ) {
-            require_once 'HTMLProcessingFunctions/' .
-                'normalizeURL.php';
-
-            $absolute_url = normalizeURL(
+            $absolute_url = \WP2Static\NormalizeURL::normalize(
                 $original_url,
                 $this->page_url
             );
@@ -513,7 +506,7 @@ class HTMLProcessor extends Base {
 
     public function stripHTMLComments() {
         if ( isset( $this->settings['removeHTMLComments'] ) ) {
-            $xpath = new DOMXPath( $this->xml_doc );
+            $xpath = new \DOMXPath( $this->xml_doc );
 
             foreach ( $xpath->query( '//comment()' ) as $comment ) {
                 $comment->parentNode->removeChild( $comment );
@@ -527,7 +520,7 @@ class HTMLProcessor extends Base {
         );
 
         foreach ( $head_elements as $node ) {
-            if ( $node instanceof DOMComment ) {
+            if ( $node instanceof \DOMComment ) {
                 if (
                     isset( $this->settings['removeConditionalHeadComments'] )
                 ) {
@@ -547,10 +540,7 @@ class HTMLProcessor extends Base {
         $original_url = $element->getAttribute( 'src' );
 
         if ( $this->isInternalLink( $original_url ) ) {
-            require_once 'HTMLProcessingFunctions/' .
-                'normalizeURL.php';
-
-            $absolute_url = normalizeURL(
+            $absolute_url = \WP2Static\NormalizeURL::normalize(
                 $original_url,
                 $this->page_url
             );
@@ -591,10 +581,7 @@ class HTMLProcessor extends Base {
         $original_url = $element->getAttribute( 'href' );
 
         if ( $this->isInternalLink( $original_url ) ) {
-            require_once 'HTMLProcessingFunctions/' .
-                'normalizeURL.php';
-
-            $absolute_url = normalizeURL(
+            $absolute_url = \WP2Static\NormalizeURL::normalize(
                 $original_url,
                 $this->page_url
             );
@@ -638,10 +625,7 @@ class HTMLProcessor extends Base {
         $original_url = $element->getAttribute( 'content' );
 
         if ( $this->isInternalLink( $original_url ) ) {
-            require_once 'HTMLProcessingFunctions/' .
-                'normalizeURL.php';
-
-            $absolute_url = normalizeURL(
+            $absolute_url = \WP2Static\NormalizeURL::normalize(
                 $original_url,
                 $this->page_url
             );

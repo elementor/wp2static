@@ -1,9 +1,10 @@
 <?php
 
+namespace WP2Static;
 /**
  * Generate a static copy of your website & publish remotely
  */
-class WP2Static_CLI {
+class CLI {
     /**
      * Display system information and health check
      */
@@ -15,7 +16,7 @@ class WP2Static_CLI {
         $environmental_info = array(
             array(
                 'key' => 'PLUGIN VERSION',
-                'value' => WP2Static_Controller::VERSION,
+                'value' => \WP2Static\Controller::VERSION,
             ),
             array(
                 'key' => 'PHP_VERSION',
@@ -94,7 +95,7 @@ class WP2Static_CLI {
     public function generate() {
         $start_time = microtime();
 
-        $plugin = WP2Static_Controller::getInstance();
+        $plugin = \WP2Static\Controller::getInstance();
         $plugin->generate_filelist_preview();
         $plugin->prepare_for_export();
 

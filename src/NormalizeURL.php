@@ -14,13 +14,17 @@
     and the current page URL like https://site.com/cat/theimage.jpg
 
 */
-function normalizeURL( $url, $page_url ) {
-    require_once __DIR__ . '/../../URL2/URL2.php';
 
-    $page_url = new Net_URL2( $page_url );
+namespace WP2Static;
 
-    $absolute_url = $page_url->resolve( $url );
+class NormalizeURL {
 
-    return $absolute_url;
+    static function normalize( $url, $page_url ) {
+        $page_url = new \Net_URL2( $page_url );
+
+        $absolute_url = $page_url->resolve( $url );
+
+        return $absolute_url;
+    }
 }
 

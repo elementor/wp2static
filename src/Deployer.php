@@ -1,6 +1,6 @@
 <?php
 
-class Deployer extends WP2Static {
+class Deployer extends Base {
 
     public function __construct() {
         $this->loadSettings(

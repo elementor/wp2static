@@ -1,5 +1,7 @@
 <?php
 
+namespace WP2Static;
+
 class DBSettings {
 
     public static function get( $sets = array() ) {

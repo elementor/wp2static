@@ -19,20 +19,17 @@ $ajax_action = isset( $_POST['ajax_action'] ) ? $_POST['ajax_action'] : '';
 
 $deployers_dir = dirname( __FILE__ ) . '/../deployers';
 
+define( 'WP2STATIC_PATH', plugin_dir_path( __FILE__ ) );
+
+require WP2STATIC_PATH . 'vendor/autoload.php';
+
 // NOTE: bypass instantiating plugin for specific AJAX requests
 if ( $ajax_action === 'crawl_site' || $ajax_action === 'crawl_again' ) {
-    require_once dirname( __FILE__ ) .
-        '/WP2Static.php';
-    require_once dirname( __FILE__ ) .
-        '/SiteCrawler.php';
+    new \WP2Static\SiteCrawler();
 
     wp_die();
     return null;
 }
-
-define( 'WP2STATIC_PATH', plugin_dir_path( __FILE__ ) );
-
-require WP2STATIC_PATH . 'vendor/autoload.php';
 
 \WP2Static\Controller::init( __FILE__ );
 

@@ -1,5 +1,7 @@
 <?php
 
+namespace WP2Static;
+
 class WsLog {
 
     public static function l( $text ) {
@@ -12,15 +14,9 @@ class WsLog {
         $settings = '';
 
         if ( defined( 'WP_CLI' ) ) {
-            require_once dirname( __FILE__ ) .
-                '/DBSettings.php';
-
-            $settings = WPSHO_DBSettings::get( $target_settings );
+            $settings = \WP2Static\DBSettings::get( $target_settings );
         } else {
-            require_once dirname( __FILE__ ) .
-                '/PostSettings.php';
-
-            $settings = WPSHO_PostSettings::get( $target_settings );
+            $settings = \WP2Static\PostSettings::get( $target_settings );
         }
 
         // NOTE: should be checked before sending to speed up requests

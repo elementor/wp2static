@@ -3,7 +3,7 @@
 namespace WP2Static;
 
 class Controller {
-    const VERSION = '6.6.6-dev-curlmulti';
+    const VERSION = '7.0-dev';
     const OPTIONS_KEY = 'wp2static-options';
     const HOOK = 'wp2static';
 
@@ -141,17 +141,14 @@ class Controller {
     }
 
     public function finalize_deployment() {
-        require_once dirname( __FILE__ ) . '/WP2Static/Deployer.php';
-
-        $deployer = new Deployer();
+        $deployer = new \WP2Static\Deployer();
         $deployer->finalizeDeployment();
 
         echo 'SUCCESS';
     }
 
     public function download_export_log() {
-        require_once dirname( __FILE__ ) . '/WP2Static/WPSite.php';
-        $this->wp_site = new WPSite();
+        $this->wp_site = new \WP2Static\WPSite();
 
         $target_settings = array(
             'general',
@@ -159,17 +156,11 @@ class Controller {
         );
 
         if ( defined( 'WP_CLI' ) ) {
-            require_once dirname( __FILE__ ) .
-                '/WP2Static/DBSettings.php';
-
             $this->settings =
-                WPSHO_DBSettings::get( $target_settings );
+                \WP2Static\DBSettings::get( $target_settings );
         } else {
-            require_once dirname( __FILE__ ) .
-                '/WP2Static/PostSettings.php';
-
             $this->settings =
-                WPSHO_PostSettings::get( $target_settings );
+                \WP2Static\PostSettings::get( $target_settings );
         }
 
         // get export log path
@@ -276,17 +267,12 @@ class Controller {
     }
 
     public function prepare_for_export() {
-        require_once dirname( __FILE__ ) .
-            '/WP2Static/Exporter.php';
-
-        $this->exporter = new Exporter();
+        $this->exporter = new \WP2Static\Exporter();
 
         $this->exporter->pre_export_cleanup();
         $this->exporter->cleanup_leftover_archives();
 
-        require_once dirname( __FILE__ ) . '/WP2Static/Archive.php';
-
-        $archive = new Archive();
+        $archive = new \WP2Static\Archive();
         $archive->create();
 
         $this->logEnvironmentalInfo();
@@ -310,9 +296,7 @@ class Controller {
     }
 
     public function post_process_archive_dir() {
-        require_once dirname( __FILE__ ) .
-            '/WP2Static/ArchiveProcessor.php';
-        $processor = new ArchiveProcessor();
+        $processor = new \WP2Static\ArchiveProcessor();
 
         $processor->createNetlifySpecialFiles();
         // NOTE: renameWP Directories also doing same server publish
@@ -368,26 +352,26 @@ class Controller {
             $info[] = 'SERVER SOFTWARE ' . $_SERVER['SERVER_SOFTWARE'];
         }
 
-        WsLog::l( implode( PHP_EOL, $info ) );
+        \WP2Static\WsLog::l( implode( PHP_EOL, $info ) );
 
-        WsLog::l( 'Active plugins:' );
+        \WP2Static\WsLog::l( 'Active plugins:' );
 
         $active_plugins = get_option( 'active_plugins' );
 
         foreach ( $active_plugins as $active_plugin ) {
-            WsLog::l( $active_plugin );
+            \WP2Static\WsLog::l( $active_plugin );
         }
 
-        WsLog::l( 'Plugin options:' );
+        \WP2Static\WsLog::l( 'Plugin options:' );
 
         $options = $this->options->getAllOptions( false );
 
         foreach ( $options as $key => $value ) {
-            WsLog::l( "{$value['Option name']}: {$value['Value']}" );
+            \WP2Static\WsLog::l( "{$value['Option name']}: {$value['Value']}" );
         }
 
         $extensions = get_loaded_extensions();
 
-        WsLog::l( 'Installed extensions: ' . join( ', ', $extensions ) );
+        \WP2Static\WsLog::l( 'Installed extensions: ' . join( ', ', $extensions ) );
     }
 }

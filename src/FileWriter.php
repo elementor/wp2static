@@ -1,6 +1,8 @@
 <?php
 
-class FileWriter extends WP2Static {
+namespace WP2Static;
+
+class FileWriter extends Base {
     public function __construct( $url, $content, $file_type, $content_type ) {
         $this->url = $url;
         $this->content = $content;
@@ -100,9 +102,7 @@ class FileWriter extends WP2Static {
             return;
         }
 
-        require_once dirname( __FILE__ ) .
-            '/WsLog.php';
-        WsLog::l( $action );
+        \WP2Static\WsLog::l( $action );
     }
 }
 
