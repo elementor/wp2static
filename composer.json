@@ -47,13 +47,16 @@
         }
     },
     "config": {
+        "platform": {
+          "php": "7.2.17"
+        },
         "preferred-install": {
             "*": "dist"
         },
         "classmap-authoritative": true
     },
     "scripts": {
-        "phpstan": "vendor/bin/phpstan analyse",
+        "phpstan": "php -d memory_limit=-1 ./vendor/bin/phpstan analyse",
         "phpcs": "vendor/bin/phpcs --standard=./tools/phpcs.xml --ignore=,*/tests/*,*/vendor/*,wp2static.php ./",
         "phpunit": "vendor/bin/phpunit --testdox ./tests/HTMLProcessor/"
     }
