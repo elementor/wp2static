@@ -218,14 +218,8 @@ class SiteCrawler extends Base {
 
         chmod( $this->list_of_urls_to_crawl_path, 0664 );
 
-        // TODO: required in saving/copying, but not here? optimize...
-        $handle = fopen(
-            $this->settings['wp_uploads_path'] .
-                '/wp2static-working-files/CURRENT-ARCHIVE.txt',
-            'r'
-        );
-
-        $this->archive_dir = stream_get_line( $handle, 0 );
+        $this->archive_dir = $this->settings['wp_uploads_path'] .
+            '/wp2static-exported-site';
 
         $total_urls_path = $this->settings['wp_uploads_path'] .
             '/wp2static-working-files/INITIAL-CRAWL-TOTAL.txt';

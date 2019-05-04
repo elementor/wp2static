@@ -15,30 +15,9 @@ class Archive extends Base {
         $this->export_log = '';
     }
 
-    public function setToCurrentArchive() {
-        $handle = fopen(
-            $this->settings['wp_uploads_path'] .
-                '/wp2static-working-files/CURRENT-ARCHIVE.txt',
-            'r'
-        );
-
-        if ( $handle ) {
-            $this->path = stream_get_line( $handle, 0 );
-
-            if ( $this->path ) {
-                $this->name = basename( $this->path );
-
-                return true;
-            }
-        }
-
-        WsLog::l( 'Unable to set current Archive' );
-    }
-
     public function currentArchiveExists() {
-        return is_file(
-            $this->settings['wp_uploads_path'] .
-            '/wp2static-working-files/CURRENT-ARCHIVE.txt'
+        return is_dir(
+            $this->settings['wp_uploads_path'] . '/wp2static-exported-site'
         );
     }
 
@@ -49,24 +28,10 @@ class Archive extends Base {
         $this->path = $this->name . '/';
         $this->name = basename( $this->path );
 
-        if ( wp_mkdir_p( $this->path ) ) {
-            $result = file_put_contents(
-                $this->settings['wp_uploads_path'] .
-                    '/wp2static-working-files/CURRENT-ARCHIVE.txt',
-                $this->path
-            );
-
-            if ( ! $result ) {
-                WsLog::l( 'USER WORKING DIRECTORY NOT WRITABLE' );
-            }
-
-            chmod(
-                $this->settings['wp_uploads_path'] .
-                    '/wp2static-working-files/CURRENT-ARCHIVE.txt',
-                0664
-            );
-        } else {
-            error_log( "Couldn't create archive directory at " . $this->path );
+        if ( ! wp_mkdir_p( $this->path ) ) {
+            $err = "Couldn't create archive directory:" .  $this->path;
+            WsLog::l( $err );
+            throw new Exception( $err );
         }
     }
 }
