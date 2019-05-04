@@ -1,9 +1,9 @@
 <?php
 
-class WPSHO_DBSettings {
+class DBSettings {
 
     public static function get( $sets = array() ) {
-        $plugin = WP2Static_Controller::getInstance();
+        $plugin = \WP2Static\Controller::getInstance();
 
         $settings = array();
         $key_sets = array();

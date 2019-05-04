@@ -1,5 +1,6 @@
 <?php
 
+namespace WP2Static;
 // phpcs:disable
 class TemplateHelper {
     public function __construct() {

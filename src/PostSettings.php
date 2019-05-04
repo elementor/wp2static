@@ -1,6 +1,8 @@
 <?php
 
-class WPSHO_PostSettings {
+namespace WP2Static;
+
+class PostSettings {
 
     public static function get( $sets = array(), $specify_keys = array() ) {
 

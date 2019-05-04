@@ -68,7 +68,7 @@ function wp_static_html_output_ajax() {
     $instance_method = filter_input( INPUT_POST, 'ajax_action' );
 
     if ( '' !== $instance_method && is_string( $instance_method ) ) {
-        $plugin_instance = WP2Static_Controller::getInstance();
+        $plugin_instance = \WP2Static\Controller::getInstance();
         call_user_func( array( $plugin_instance, $instance_method ) );
     }
 

@@ -207,8 +207,7 @@ class Controller {
     }
 
     public function generate_filelist_preview() {
-        require_once dirname( __FILE__ ) . '/WP2Static/WPSite.php';
-        $this->wp_site = new WPSite();
+        $this->wp_site = new \WP2Static\WPSite();
 
         $target_settings = array(
             'general',
@@ -216,23 +215,17 @@ class Controller {
         );
 
         if ( defined( 'WP_CLI' ) ) {
-            require_once dirname( __FILE__ ) .
-                '/WP2Static/DBSettings.php';
-
             $this->settings =
-                WPSHO_DBSettings::get( $target_settings );
+                \WP2Static\DBSettings::get( $target_settings );
         } else {
-            require_once dirname( __FILE__ ) .
-                '/WP2Static/PostSettings.php';
-
             $this->settings =
-                WPSHO_PostSettings::get( $target_settings );
+                \WP2Static\PostSettings::get( $target_settings );
         }
 
         $plugin_hook = 'wp2static';
 
         $initial_file_list_count =
-            WP2Static_FilesHelper::buildInitialFileList(
+            \WP2Static\FilesHelper::buildInitialFileList(
                 true,
                 $this->wp_site->wp_uploads_path,
                 $this->wp_site->uploads_url,
@@ -249,9 +242,7 @@ class Controller {
     }
 
     public function renderOptionsPage() {
-        require_once dirname( __FILE__ ) . '/WP2Static/WPSite.php';
-
-        $this->wp_site = new WPSite();
+        $this->wp_site = new \WP2Static\WPSite();
         $this->current_archive = '';
 
         $this->view
@@ -341,17 +332,11 @@ class Controller {
         );
 
         if ( defined( 'WP_CLI' ) ) {
-            require_once dirname( __FILE__ ) .
-                '/WP2Static/DBSettings.php';
-
             $this->settings =
-                WPSHO_DBSettings::get( $target_settings );
+                \WP2Static\DBSettings::get( $target_settings );
         } else {
-            require_once dirname( __FILE__ ) .
-                '/WP2Static/PostSettings.php';
-
             $this->settings =
-                WPSHO_PostSettings::get( $target_settings );
+                \WP2Static\PostSettings::get( $target_settings );
         }
 
         $uploads_dir = $this->settings['wp_uploads_path'];

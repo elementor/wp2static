@@ -1,10 +1,8 @@
 <?php
 
-function filter_arr_empty_vals( $url ) {
-    return ( strpos( $url, ' ' ) === false );
-}
+namespace WP2Static;
 
-class WP2Static_FilesHelper {
+class FilesHelper {
 
     public static function delete_dir_with_files( $dir ) {
         if ( is_dir( $dir ) ) {
@@ -21,8 +19,7 @@ class WP2Static_FilesHelper {
     }
 
     public static function getThemeFiles( $theme_type ) {
-        require_once dirname( __FILE__ ) . '/WPSite.php';
-        $wp_site = new WPSite();
+        $wp_site = new \WP2Static\WPSite();
 
         $files = array();
         $template_path = '';
@@ -39,10 +36,10 @@ class WP2Static_FilesHelper {
         $directory = $template_path;
 
         if ( is_dir( $directory ) ) {
-            $iterator = new RecursiveIteratorIterator(
-                new RecursiveDirectoryIterator(
+            $iterator = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator(
                     $directory,
-                    RecursiveDirectoryIterator::SKIP_DOTS
+                    \RecursiveDirectoryIterator::SKIP_DOTS
                 )
             );
 
@@ -241,9 +238,9 @@ class WP2Static_FilesHelper {
 
         if ( is_dir( $directory ) ) {
             $iterator = new RecursiveIteratorIterator(
-                new RecursiveDirectoryIterator(
+                new \RecursiveDirectoryIterator(
                     $directory,
-                    RecursiveDirectoryIterator::SKIP_DOTS
+                    \RecursiveDirectoryIterator::SKIP_DOTS
                 )
             );
 
@@ -269,10 +266,10 @@ class WP2Static_FilesHelper {
         $directory = str_replace( home_url( '/' ), ABSPATH, $url );
 
         if ( is_dir( $directory ) ) {
-            $iterator = new RecursiveIteratorIterator(
-                new RecursiveDirectoryIterator(
+            $iterator = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator(
                     $directory,
-                    RecursiveDirectoryIterator::SKIP_DOTS
+                    \RecursiveDirectoryIterator::SKIP_DOTS
                 )
             );
 
@@ -809,7 +806,9 @@ class WP2Static_FilesHelper {
 
         $url_queue = array_filter(
             $unique_urls,
-            'filter_arr_empty_vals'
+            function ( $url ) {
+                return ( strpos( $url, ' ' ) === false );
+            }
         );
 
         $stripped_urls = str_replace(
@@ -824,16 +823,14 @@ class WP2Static_FilesHelper {
             $stripped_urls
         );
 
-        // trim hashes/query strings
-        function stripTrailingCharacters( $url ) {
-            $url = strtok( $url, '#' );
-            $url = strtok( $url, '?' );
-
-            return $url;
-        }
-
         $detokenized_urls = array_map(
-            'stripTrailingCharacters',
+            // trim hashes/query strings
+            function ( $url ) {
+                $url = strtok( $url, '#' );
+                $url = strtok( $url, '?' );
+
+                return $url;
+            },
             $deslashed_urls
         );
 
