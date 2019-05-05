@@ -34,7 +34,8 @@
         "squizlabs/php_codesniffer": "3.*",
         "phpunit/phpunit": "^8",
         "dealerdirect/phpcodesniffer-composer-installer": "*",
-        "wp-coding-standards/wpcs": "*"
+        "wp-coding-standards/wpcs": "*",
+        "jakub-onderka/php-parallel-lint": "*"
     },
     "autoload": {
         "psr-4": {
@@ -59,6 +60,7 @@
     "scripts": {
         "phpstan": "php -d memory_limit=-1 ./vendor/bin/phpstan analyse",
         "phpcs": "vendor/bin/phpcs --standard=./tools/phpcs.xml --ignore=,*/tests/*,*/vendor/*,wp2static.php ./",
-        "phpunit": "vendor/bin/phpunit ./tests/unit/"
+        "phpunit": "vendor/bin/phpunit ./tests/unit/",
+        "lint": "vendor/bin/parallel-lint --exclude vendor ."
     }
 }
