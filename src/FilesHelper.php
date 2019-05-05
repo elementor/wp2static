@@ -5,12 +5,21 @@ namespace WP2Static;
 use RecursiveIteratorIterator;
 use RecursiveArrayIterator;
 use RecursiveDirectoryIterator;
+use Exception;
 
 class FilesHelper {
 
     public static function delete_dir_with_files( $dir ) {
         if ( is_dir( $dir ) ) {
-            $files = array_diff( scandir( $dir ), array( '.', '..' ) );
+            $dir_files = scandir( $dir );
+
+            if ( ! $dir_files ) {
+                $err = "Trying to delete nonexistant dir: " .  $dir;
+                WsLog::l( $err );
+                throw new Exception( $err );
+            }
+
+            $files = array_diff( $dir_files, array( '.', '..' ) );
 
             foreach ( $files as $file ) {
                 ( is_dir( "$dir/$file" ) ) ?
@@ -185,6 +194,12 @@ class FilesHelper {
     public static function recursively_scan_dir( $dir, $siteroot, $list_path ) {
         $dir = str_replace( '//', '/', $dir );
         $files = scandir( $dir );
+
+        if ( ! $files ) {
+            $err = "Trying to scan nonexistant dir: " .  $dir;
+            WsLog::l( $err );
+            throw new Exception( $err );
+        }
 
         foreach ( $files as $item ) {
             if ( $item != '.' && $item != '..' && $item != '.git' ) {
@@ -548,6 +563,10 @@ class FilesHelper {
         foreach ( $posts as $post ) {
             $permalink = get_permalink( $post->ID );
 
+            if ( ! $permalink ) {
+                continue;
+            }
+
             if ( strpos( $permalink, '?post_type' ) !== false ) {
                 continue;
             }
@@ -617,6 +636,10 @@ class FilesHelper {
             $unique_post_types[] = $post->post_type;
 
             $permalink = get_post_permalink( $post->ID );
+
+            if ( ! is_string( $permalink ) ) {
+                continue;
+            }
 
             if ( strpos( $permalink, '?post_type' ) !== false ) {
                 continue;
@@ -702,6 +725,10 @@ class FilesHelper {
                     break;
             }
 
+            if ( ! is_string( $permalink ) ) {
+                continue;
+            }
+
             if ( strpos( $permalink, '?post_type' ) !== false ) {
                 continue;
             }
@@ -724,6 +751,11 @@ class FilesHelper {
             // subdomain, ie http://domain.com/mywpinstall/
             $link_host = $wp_site_url . '/';
             $link_path = $parsed_link['path'];
+
+
+            if ( ! is_string( $link_path ) ) {
+                continue;
+            }
 
             // NOTE: Windows filepath support
             $path_segments = explode( '/', $link_path );
@@ -755,6 +787,10 @@ class FilesHelper {
         $category_links = array();
 
         foreach ( $taxonomies as $taxonomy ) {
+            if ( ! property_exists( $taxonomy, 'name' ) ) {
+                continue;
+            }
+
             $terms = get_terms(
                 $taxonomy->name,
                 array(
@@ -762,8 +798,22 @@ class FilesHelper {
                 )
             );
 
+            if ( ! is_iterable( $terms ) ) {
+                continue;
+            }
+
             foreach ( $terms as $term ) {
-                $permalink = trim( get_term_link( $term ) );
+                if ( is_string( $term ) ) {
+                    continue;
+                }
+
+                $term_link = get_term_link( $term );
+
+                if ( ! is_string( $term_link ) ) {
+                    continue;
+                }
+
+                $permalink = trim( $term_link );
                 $total_posts = $term->count;
 
                 $term_url = str_replace(
@@ -830,7 +880,16 @@ class FilesHelper {
         $detokenized_urls = array_map(
             // trim hashes/query strings
             function ( $url ) {
+                if ( ! $url ) {
+                    return;
+                }
+
                 $url = strtok( $url, '#' );
+
+                if ( ! $url ) {
+                    return;
+                }
+
                 $url = strtok( $url, '?' );
 
                 return $url;
@@ -868,6 +927,11 @@ class FilesHelper {
             );
 
             $post_type_obj = get_post_type_object( $post_type );
+
+            if ( ! $post_type_obj ) {
+                continue;
+            }
+
             $plural_form = strtolower( $post_type_obj->labels->name );
 
             $count = $wpdb->num_rows;
@@ -913,10 +977,19 @@ class FilesHelper {
 
         $urls_to_include = array();
         $comments_pagination_base = $wp_rewrite->comments_pagination_base;
+        $comments = get_comments();
 
-        foreach ( get_comments() as $comment ) {
+        if ( ! is_iterable( $comments ) ) {
+            return array();
+        }
+
+        foreach ( $comments as $comment ) {
             $comment_url = get_comment_link( $comment->comment_ID );
             $comment_url = strtok( $comment_url, '#' );
+
+            if ( ! is_string( $comment_url ) ) {
+                continue;
+            }
 
             $urls_to_include[] = str_replace(
                 $wp_site_url,

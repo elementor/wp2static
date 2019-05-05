@@ -12,6 +12,11 @@ class Deployer extends Base {
         );
     }
 
+    /*
+        TODO: refactor all deploy code for CLI/unattended usage
+
+              None of this expected to work currently
+    */
     public function deploy( $test = false ) {
         $method = $this->settings['selected_deployment_option'];
 

@@ -195,7 +195,7 @@ function wp2static_options( $args, $assoc_args ) {
         WP_CLI::error( 'Missing required argument: <get|set|list>' );
     }
 
-    $plugin = WP2Static_Controller::getInstance();
+    $plugin = Controller::getInstance();
 
     if ( $action === 'get' ) {
         if ( empty( $option_name ) ) {

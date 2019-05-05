@@ -2,6 +2,8 @@
 
 namespace WP2Static;
 
+use Exception;
+
 class Archive extends Base {
 
     public function __construct() {
