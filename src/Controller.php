@@ -173,7 +173,7 @@ class Controller {
 
         if ( is_file( $export_log ) ) {
             // create zip of export log in tmp file
-            $export_log_zip = $this->wp_site->wp_uploads_path . 
+            $export_log_zip = $this->wp_site->wp_uploads_path .
                 '/wp2static-working-files/EXPORT-LOG.zip';
 
             $zip_archive = new ZipArchive();
@@ -202,7 +202,8 @@ class Controller {
 
             $zip_archive->close();
 
-            echo $this->wp_site->wp_uploads_url . '/wp2static-working-files/EXPORT-LOG.zip';
+            echo $this->wp_site->wp_uploads_url .
+                '/wp2static-working-files/EXPORT-LOG.zip';
         } else {
             // serve 500 response to client
             throw new Exception( 'Unable to find Export Log to create ZIP' );
@@ -236,7 +237,7 @@ class Controller {
             );
 
         if ( $initial_file_list_count < 1 ) {
-           return false;
+            return false;
         }
 
         if ( ! defined( 'WP_CLI' ) ) {
@@ -336,8 +337,8 @@ class Controller {
         }
 
         $uploads_dir = $this->settings['wp_uploads_path'];
-        $hash_files = glob("{$uploads_dir}/*PREVIOUS-HASHES*.txt");
-        array_map('unlink', $hash_files);
+        $hash_files = glob( "{$uploads_dir}/*PREVIOUS-HASHES*.txt" );
+        array_map( 'unlink', $hash_files );
 
         if ( ! defined( 'WP_CLI' ) ) {
             echo 'SUCCESS';

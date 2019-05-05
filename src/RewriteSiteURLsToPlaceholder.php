@@ -2,13 +2,13 @@
 
 namespace WP2Static;
 
-/* 
+/*
     In order to better rewrite all URLs to the Destination URL
-    we first normalize them to the same full URL format, converting 
+    we first normalize them to the same full URL format, converting
     to an easily detectable domain name for further rewriting
 */
 class RewriteSiteURLsToPlaceholder {
-    static function rewrite(
+    public static function rewrite(
         $html_document,
         $search_patterns,
         $replace_patterns

@@ -1,7 +1,7 @@
 <?php
 
 /*
-    make link absolute, using current page to determine full path
+    Make link absolute, using current page to determine full path
 
     take a document-relative URL like '../theimage.jpg'
 
@@ -19,7 +19,7 @@ namespace WP2Static;
 
 class NormalizeURL {
 
-    static function normalize( $url, $page_url ) {
+    public static function normalize( $url, $page_url ) {
         $page_url = new \Net_URL2( $page_url );
 
         $absolute_url = $page_url->resolve( $url );

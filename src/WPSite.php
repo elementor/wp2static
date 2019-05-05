@@ -1,6 +1,7 @@
 <?php
 
 namespace WP2Static;
+
 // TODO: better named WPEnvironment
 class WPSite {
 

@@ -1,8 +1,9 @@
 <?php
 
 namespace WP2Static;
+
 /*
-    for <link> elements, choose whether to remove
+    For <link> elements, choose whether to remove
     based on the `rel` attribute
 
     this removes some extra cruft added by WP
@@ -10,7 +11,7 @@ namespace WP2Static;
     less cruft == faster loading!
 */
 class RemoveLinkElementsBasedOnRelAttr {
-    static function remove( $element ) {
+    public static function remove( $element ) {
         $relative_links_to_rm = array(
             'shortlink',
             'pingback',
