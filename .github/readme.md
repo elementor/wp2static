@@ -358,13 +358,63 @@ add_filter(
     'add_post_and_db_keys'
 );
 ```
-## Development 
+## Development
 
 This repo contains the latest code, which you can clone/download to get the bleeding edge, else install via the [official WordPress Plugin page](https://wordpress.org/plugins/static-html-output-plugin/)
 
-If you'd like to contribute, please follow the usual GitHub procedures (create an Issue, fork repo, submit PR). If you're unsure about any of that, contact me and I'll be happy to help.
+If you'd like to contribute, please follow the usual GitHub procedures (create an Issue, fork repo, submit PR). The default branch is `develop`, from which you should base your new branches from. If you're unsure about any of that, contact me and I'll be happy to help.
 
 In trying to make development/contributing easier, we'll keep requirements to a minimum. If you prefer Docker, Local by FlyWheel, Valet, Bedrock, Linux, BSD, Mac, they're all fine. This is a WordPress plugin, so anywhere you can run WordPress, you can do development on this :)
+
+### Composer
+
+Composer is used to manage development dependencies and allow autoloading classes in production.
+
+Use `composer install` and `composer update` to keep in sync with the `composer.json` and `composer.lock` files.
+
+The following commands are available within the WP2Static project for code quality checking:
+
+ - `composer lint`
+ - `composer phpcs`
+ - `composer phpstan`
+ - `composer phpunit`
+
+### Tests
+
+Unit tests live in `./tests/unit/`
+
+### Codebase initiation
+
+As with any project that's been around a while, there can be hidden knowledge not covered in the docs or unit tests and hard to identify in the code.
+
+Rather than waste time on the intuitive, here, we'll cover some of the non-obvious design decisions/hacks/other useful information for new contributors:
+
+ - avoiding WordPress call stack where possible
+
+WP2Static needs to run as fast as possible. When it crawls your site, it needs to load each WordPress page. This is already some heavy resource usage on your server. Because we can be crawling, processing and saving many URLs per second and need to minimize server resource usage, especially on shared hosting we're trying to help people migrate their site away from, we bypass WordPress for the majority of our actions. This is especially true when we're running the export via the browser.
+
+In order to send information about/from WordPress, we gather as much information as we need and dump it into the plugin's main settings page, much in a JSON object behind the scenes.
+
+When we trigger an export via the UI, we can consider that our JavaScript is our "task manager".  Some JS logic determines which actions are to be sent to the server and what type data of data is needed to be sent. For large sites, there may be thousands of requests made to the server during an export, so sending the minimal required data on each request is just as important as having the server-side processes consume as few resources as possible.
+
+ - basic end to end execution (exporting via WP dashboard > WP2Static):
+
+   - instantiate plugin
+   - load settings from DB
+   - get information about the WP site/environment
+   - load information into our main view
+   - trigger a request to detect the Initial File List (used to start crawling the site)
+   - enabled UI elements once we have our Initial File List
+   - accept user configuration options / reload page when they save changes
+   - queue list of actions to perform when user Starts export
+   - take item from queue, make request to server, await response
+   - continue iterating for batch actions (crawl, transfer to S3, etc)
+   - proceed to next action in queue when iteration is complete
+   - report success upon all actions being completed
+
+
+
+
 
 
 ### Localisation / translations
