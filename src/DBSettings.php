@@ -4,7 +4,7 @@ namespace WP2Static;
 
 class DBSettings {
 
-    public static function get( $sets = array() ) {
+    public static function get( $sets = array(), $specify_keys = array() ) {
         $plugin = Controller::getInstance();
 
         $settings = array();

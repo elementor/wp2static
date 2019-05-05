@@ -2,6 +2,8 @@
 
 namespace WP2Static;
 
+use Exception;
+
 class SitePublisher {
 
     public function loadSettings( $deploy_method, $specify_keys = array() ) {
@@ -78,6 +80,10 @@ class SitePublisher {
             $original_filepath
         );
 
+        if ( ! is_string( $original_file_without_archive ) ) {
+            return false;
+        }
+
         $original_file_without_archive = ltrim(
             $original_file_without_archive,
             '/'
@@ -126,7 +132,15 @@ class SitePublisher {
         $archive_path_to_replace =
             $this->getArchivePathForReplacement( $this->archive->path );
 
-        foreach ( scandir( $dir ) as $item ) {
+        $dir_files = scandir( $dir );
+
+        if ( ! $dir_files ) {
+            $err = "Couldn't get files in dir: " . $dir;
+            WsLog::l( $err );
+            throw new Exception( $err );
+        }
+
+        foreach ( $dir_files as $item ) {
             if ( $this->isSkippableFile( $item ) ) {
                 continue;
             }
@@ -182,14 +196,32 @@ class SitePublisher {
 
         $f = fopen( $this->export_file_list, 'r' );
 
+        if ( ! $f ) {
+            $err = "Failed to open export file list";
+            WsLog::l( $err );
+            throw new Exception( $err );
+        }
+
         for ( $i = 0; $i < $batch_size; $i++ ) {
-            $lines[] = rtrim( fgets( $f ) );
+            $item_to_deploy = fgets( $f );
+
+            if ( ! is_string( $item_to_deploy ) ) {
+                $err = "Failed getting item to deploy";
+                WsLog::l( $err );
+                throw new Exception( $err );
+            }
+
+            $lines[] = rtrim( $item_to_deploy );
         }
 
         fclose( $f );
 
         // TODO: optimize this for just one read, one write within func
         $contents = file( $this->export_file_list, FILE_IGNORE_NEW_LINES );
+
+        if ( ! is_array( $contents ) ) {
+            return false;
+        }
 
         for ( $i = 0; $i < $batch_size; $i++ ) {
             // rewrite file minus the lines we took
@@ -210,6 +242,10 @@ class SitePublisher {
         if ( is_file( $this->export_file_list ) ) {
             $contents = file( $this->export_file_list, FILE_IGNORE_NEW_LINES );
 
+            if ( ! is_array( $contents ) ) {
+                return false;
+            }
+
             return count( $contents );
         }
 
@@ -229,11 +265,13 @@ class SitePublisher {
         if ( $this->files_remaining <= 0 ) {
             return true;
         } else {
-            if ( defined( 'WP_CLI' ) ) {
-                $this->upload_files();
-            } else {
-                echo $this->files_remaining;
-            }
+            // TODO: refactor when fixing CLI executor
+            // if ( defined( 'WP_CLI' ) ) {
+            //     $this->upload_files();
+            // } else {
+            //     echo $this->files_remaining;
+            // }
+            echo $this->files_remaining;
         }
     }
 
@@ -264,6 +302,10 @@ class SitePublisher {
         if ( is_file( $this->previous_hashes_path ) ) {
             $file = fopen( $this->previous_hashes_path, 'r' );
 
+            if ( ! $file ) {
+                return false;
+            }
+
             while ( ( $line = fgetcsv( $file ) ) !== false ) {
                 if ( isset( $line[0] ) && isset( $line[1] ) ) {
                     $this->file_paths_and_hashes[ $line[0] ] = $line[1];
@@ -284,6 +326,12 @@ class SitePublisher {
 
     public function writeFilePathAndHashesToFile() {
         $fp = fopen( $this->previous_hashes_path, 'w' );
+
+        if ( ! $fp ) {
+            $err = "Couldn't open previous hashes file for writing";
+            WsLog::l( $err );
+            throw new Exception( $err );
+        }
 
         foreach ( $this->file_paths_and_hashes as $key => $value ) {
             fwrite( $fp, $key . ',' . $value . PHP_EOL );
