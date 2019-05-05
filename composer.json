@@ -44,8 +44,7 @@
     "autoload-dev": {
         "psr-4": {
             "PHPStan\\WordPress\\": "tests/phpstan/",
-            "WP2Static\\": "src/",
-            "WP2Static\\": "tests/unit"
+            "WP2Static\\": "src/"
         }
     },
     "config": {
@@ -60,6 +59,6 @@
     "scripts": {
         "phpstan": "php -d memory_limit=-1 ./vendor/bin/phpstan analyse",
         "phpcs": "vendor/bin/phpcs --standard=./tools/phpcs.xml --ignore=,*/tests/*,*/vendor/*,wp2static.php ./",
-        "phpunit": "vendor/bin/phpunit --testdox ./tests/HTMLProcessor/"
+        "phpunit": "vendor/bin/phpunit ./tests/unit/"
     }
 }
