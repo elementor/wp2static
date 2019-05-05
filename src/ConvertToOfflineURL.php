@@ -65,10 +65,9 @@ class ConvertToOfflineURL {
 
         */
 
-        // add index.html if no extension
-        if ( substr( $offline_url, -1 ) === '/' ) {
-            // TODO: check XML/RSS case
-            $offline_url .= 'index.html';
+        if ( strpos( basename( $offline_url ), '.' ) === false ) {
+            $offline_url .= '/index.html';
+            $offline_url = str_replace( '//', '/', $offline_url );
         }
 
         return $offline_url;
