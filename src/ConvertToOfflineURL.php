@@ -29,17 +29,61 @@ class ConvertToOfflineURL {
         $number_of_segments_in_path = explode( '/', $current_page_path );
         $num_dots_to_root = count( $number_of_segments_in_path ) - 2;
 
-        for ( $i = 0; $i < $num_dots_to_root; $i++ ) {
-            $current_page_path_to_root .= '../';
-        }
-
-        $rewritten_url = str_replace(
+        $page_url_without_domain = str_replace(
             $placeholder_url,
             '',
-            $url_to_change
+            $page_url
         );
 
-        $offline_url = $current_page_path_to_root . $rewritten_url;
+        /*
+            For target URLs at the same level or higher level as the current
+            page, strip the current page from the target URL
+
+            Match current page in target URL to determine
+        */
+        if ( strpos( $url_to_change, $page_url_without_domain ) !== false ) {
+            $rewritten_url = str_replace(
+                $page_url_without_domain,
+                '',
+                $url_to_change
+            );
+
+            // TODO: into one array or match/replaces
+            $rewritten_url = str_replace(
+                $placeholder_url,
+                '',
+                $rewritten_url
+            );
+
+            $offline_url = $rewritten_url;
+        } else {
+            /*
+                For target URLs not below the current page's hierarchy
+                build the document relative path from current page
+            */
+            for ( $i = 0; $i < $num_dots_to_root; $i++ ) {
+                $current_page_path_to_root .= '../';
+            }
+
+            $rewritten_url = str_replace(
+                $placeholder_url,
+                '',
+                $url_to_change
+            );
+
+            $offline_url = $current_page_path_to_root . $rewritten_url;
+
+            /*
+                Cover case of root relative URLs incorrectly ending as
+                ..//some/path by replacing double slashes with /../
+            */
+            $offline_url = str_replace(
+                '..//',
+                '../../',
+                $offline_url
+            );
+
+        }
 
         /*
             We must address the case where the WP site uses a URL such as
@@ -64,11 +108,13 @@ class ConvertToOfflineURL {
             /an-img.jpg # no match
 
         */
+        if ( ! is_string( $offline_url ) ) {
+            return false;
+        }
 
-        // add index.html if no extension
-        if ( substr( $offline_url, -1 ) === '/' ) {
-            // TODO: check XML/RSS case
-            $offline_url .= 'index.html';
+        if ( strpos( basename( $offline_url ), '.' ) === false ) {
+            $offline_url .= '/index.html';
+            $offline_url = str_replace( '//', '/', $offline_url );
         }
 
         return $offline_url;
