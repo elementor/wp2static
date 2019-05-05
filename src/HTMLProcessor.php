@@ -277,10 +277,7 @@ class HTMLProcessor extends Base {
             return false;
         }
 
-        require_once 'HTMLProcessingFunctions/' .
-            'convertToOfflineURL.php';
-
-        $offline_url = convertToOfflineURL(
+        $offline_url = ConvertToOfflineURL::convert(
             $url_to_change,
             $this->page_url,
             $this->placeholder_url
