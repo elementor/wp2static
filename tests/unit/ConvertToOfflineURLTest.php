@@ -36,14 +36,7 @@ final class ConvertToOfflineURLTest extends TestCase{
                 'https://myplaceholderdomain.com/',
                 '../../mytheme/assets/link-to-an-image.jpg'
             ],
-           'asset at same level (current)' =>  [
-                'https://myplaceholderdomain.com/some-post/' .
-                    'link-to-an-image.jpg',
-                'https://myplaceholderdomain.com/some-post/',
-                'https://myplaceholderdomain.com/',
-                '../some-post/link-to-an-image.jpg'
-            ],
-           'asset at same level (intended)' =>  [
+           'asset at same level' =>  [
                 'https://myplaceholderdomain.com/some-post/' .
                     'link-to-an-image.jpg',
                 'https://myplaceholderdomain.com/some-post/',
