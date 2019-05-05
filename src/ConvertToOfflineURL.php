@@ -61,7 +61,7 @@ class ConvertToOfflineURL {
 
         /*
             For target URLs not below the current page's hierarchy
-            build the complete  
+            build the document relative path from current page  
         */
         else {
             for ( $i = 0; $i < $num_dots_to_root; $i++ ) {
