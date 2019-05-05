@@ -9,6 +9,7 @@ jobs:
           name: Run code quality checks
           command: |
             composer install
+            composer lint
             composer phpcs
             composer phpstan
             composer phpunit
