@@ -35,7 +35,6 @@ class ConvertToOfflineURL {
             $page_url
         );
 
-
         /*
             For target URLs at the same level or higher level as the current
             page, strip the current page from the target URL
@@ -57,13 +56,11 @@ class ConvertToOfflineURL {
             );
 
             $offline_url = $rewritten_url;
-        }
-
-        /*
-            For target URLs not below the current page's hierarchy
-            build the document relative path from current page  
-        */
-        else {
+        } else {
+            /*
+                For target URLs not below the current page's hierarchy
+                build the document relative path from current page
+            */
             for ( $i = 0; $i < $num_dots_to_root; $i++ ) {
                 $current_page_path_to_root .= '../';
             }
@@ -77,8 +74,8 @@ class ConvertToOfflineURL {
             $offline_url = $current_page_path_to_root . $rewritten_url;
 
             /*
-                Cover case of root relative URLs incorrectly ending as 
-                ..//some/path by replacing double slashes with /../ 
+                Cover case of root relative URLs incorrectly ending as
+                ..//some/path by replacing double slashes with /../
             */
             $offline_url = str_replace(
                 '..//',
@@ -87,7 +84,6 @@ class ConvertToOfflineURL {
             );
 
         }
-
 
         /*
             We must address the case where the WP site uses a URL such as
@@ -112,6 +108,9 @@ class ConvertToOfflineURL {
             /an-img.jpg # no match
 
         */
+        if ( ! is_string( $offline_url ) ) {
+            return false;
+        }
 
         if ( strpos( basename( $offline_url ), '.' ) === false ) {
             $offline_url .= '/index.html';
