@@ -49,8 +49,8 @@ class SiteCrawler extends Base {
             FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
         );
 
-        if ( empty ( $already_crawled ) ) {
-            $err = "Missing list of already crawled URLS";
+        if ( empty( $already_crawled ) ) {
+            $err = 'Missing list of already crawled URLS';
             WsLog::l( $err );
             throw new Exception( $err );
         }
@@ -71,7 +71,6 @@ class SiteCrawler extends Base {
                     array_unique( $discovered_links );
                 sort( $unique_discovered_links );
             }
-
         }
 
         file_put_contents(
@@ -201,7 +200,7 @@ class SiteCrawler extends Base {
         );
 
         if ( ! $this->urls_to_crawl ) {
-            $err = "Expected more URLs to crawl, found none";
+            $err = 'Expected more URLs to crawl, found none';
             WsLog::l( $err );
             throw new Exception( $err );
         }
@@ -331,7 +330,7 @@ class SiteCrawler extends Base {
         $url_path = parse_url( $url, PHP_URL_PATH );
 
         if ( ! is_string( $url_path ) ) {
-            $err = "Invalid URL encountered when checking extension";
+            $err = 'Invalid URL encountered when checking extension';
             WsLog::l( $err );
             throw new Exception( $err );
         }

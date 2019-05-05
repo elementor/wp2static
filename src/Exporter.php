@@ -53,10 +53,12 @@ class Exporter extends Base {
 
         foreach ( $files_to_clean as $file_to_clean ) {
             if ( file_exists(
-                $this->settings['wp_uploads_path'] . '/wp2static-working-files/' . $file_to_clean
+                $this->settings['wp_uploads_path'] .
+                    '/wp2static-working-files/' . $file_to_clean
             ) ) {
                 unlink(
-                    $this->settings['wp_uploads_path'] . '/wp2static-working-files/' . $file_to_clean
+                    $this->settings['wp_uploads_path'] .
+                        '/wp2static-working-files/' . $file_to_clean
                 );
             }
         }
@@ -65,7 +67,9 @@ class Exporter extends Base {
     public function cleanup_leftover_archives() {
         $files_in_uploads_dir = scandir( $this->settings['wp_uploads_path'] );
 
-        if ( ! $files_in_uploads_dir ) { return; }
+        if ( ! $files_in_uploads_dir ) {
+            return;
+        }
 
         $leftover_files =
             preg_grep(

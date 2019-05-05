@@ -24,7 +24,7 @@ class Archive extends Base {
     public function create() {
 
         if ( ! wp_mkdir_p( $this->path ) ) {
-            $err = "Couldn't create archive directory:" .  $this->path;
+            $err = "Couldn't create archive directory:" . $this->path;
             WsLog::l( $err );
             throw new Exception( $err );
         }

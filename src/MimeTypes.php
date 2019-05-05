@@ -4,7 +4,7 @@ namespace WP2Static;
 
 class MimeType {
 
-    static function guess( $file ) {
+    public static function guess( $file ) {
         $mime_types = array(
             '3gp' => 'video/3gpp',
             'aac' => 'audio/aac',
@@ -66,7 +66,8 @@ class MimeType {
             'xhtml' => 'application/xhtml+xml',
             'xls' => 'application/vnd.ms-excel',
             'xlsx' =>
-                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'application/vnd.openxmlformats-officedocument' .
+                    '.spreadsheetml.sheet',
             'xml' => 'application/xml',
             'xul' => 'application/vnd.mozilla.xul+xml',
             'zip' => 'application/zip',

@@ -43,7 +43,7 @@ class FileCopier {
         $local_file = $this->getLocalFileForURL();
 
         // TODO: here we can allow certain external host files to be crawled
-        if ( ! array_key_exists( 'path', $url_info  ) ) {
+        if ( ! array_key_exists( 'path', $url_info ) ) {
             return false;
         }
 
@@ -70,7 +70,7 @@ class FileCopier {
             wp_mkdir_p( $file_dir );
         }
 
-        if ( ! array_key_exists( 'extension', $path_info  ) ) {
+        if ( ! array_key_exists( 'extension', $path_info ) ) {
             return false;
         }
 

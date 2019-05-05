@@ -27,9 +27,9 @@ class HTMLProcessor extends Base {
             - recording all valid links on each page for further crawling
             - performing various transformations of the HTML content/links as
               specified by the user
-            - rewriting PLACEHOLDER URLs to the Destination URL as specified 
+            - rewriting PLACEHOLDER URLs to the Destination URL as specified
               by the user
-            - saving the resultant processed HTML content to the export dir 
+            - saving the resultant processed HTML content to the export dir
     */
     public function processHTML( $html_document, $page_url ) {
         if ( $html_document == '' ) {
@@ -160,7 +160,7 @@ class HTMLProcessor extends Base {
         $elements_to_normalize['script'] = 1;
 
         foreach ( $elements as $element ) {
-            if ( isset ( $elements_to_normalize[$element->tagName] ) ) {
+            if ( isset( $elements_to_normalize[ $element->tagName ] ) ) {
                 $this->convertRelativeURLToAbsolute( $element, $page_url );
             }
         }
@@ -175,7 +175,7 @@ class HTMLProcessor extends Base {
 
         if we are exporting for offline usage or have not specific a base HREF
 
-        we will remove any that we find 
+        we will remove any that we find
     */
     public function dealWithBaseHREFElement() {
         if ( $this->base_tag_exists ) {
@@ -215,7 +215,7 @@ class HTMLProcessor extends Base {
         }
     }
 
-    /* 
+    /*
         Initial phase of crawling is using detected URLs only
 
         we detect if we're still doing our initial craw, if so
@@ -270,7 +270,7 @@ class HTMLProcessor extends Base {
     public function convertElementAttributeToOfflineURL( $element ) {
         $url_to_change = $this->getURLToChangeBasedOnAttribute( $element );
 
-        if ( ! $this->isInternalLink( $url_to_change) ) {
+        if ( ! $this->isInternalLink( $url_to_change ) ) {
             return false;
         }
 
@@ -288,15 +288,15 @@ class HTMLProcessor extends Base {
     /*
         For initially normalizing all WP Site URLs to be absolute
 
-        we check for any URLs not already absolute, protocol-relative or 
+        we check for any URLs not already absolute, protocol-relative or
 
-        otherwise known to be ignorable. 
+        otherwise known to be ignorable.
 
         TODO: extra checking to eliminate false-positives, such as links
         with colons in the path
     */
     public function isURLDocumentOrSiteRootRelative( $url ) {
-        // check if start of URL isn't any of 
+        // check if start of URL isn't any of
         $url_protocols_to_ignore = array(
             'http://',
             'https://',
@@ -309,7 +309,7 @@ class HTMLProcessor extends Base {
         foreach ( $url_protocols_to_ignore as $ignoreable_url ) {
              $match_length = strlen( $ignoreable_url );
 
-             if ( strncasecmp( $url, $ignoreable_url, $match_length) === 0 ) {
+            if ( strncasecmp( $url, $ignoreable_url, $match_length ) === 0 ) {
                 return false;
             }
         }
@@ -320,7 +320,7 @@ class HTMLProcessor extends Base {
     public function convertRelativeURLToAbsolute( $element, $page_url ) {
         $url_to_change = $this->getURLToChangeBasedOnAttribute( $element );
 
-        if ( $this->isURLDocumentOrSiteRootRelative( $url_to_change) ) {
+        if ( $this->isURLDocumentOrSiteRootRelative( $url_to_change ) ) {
             $absolute_url = NormalizeURL::normalize(
                 $url_to_change,
                 $page_url
@@ -398,12 +398,16 @@ class HTMLProcessor extends Base {
     }
 
     public function addDiscoveredURL( $url ) {
-        if ( ! $url ) { return; }
+        if ( ! $url ) {
+            return;
+        }
 
         // trim any query strings or anchors
         $url = strtok( $url, '#' );
 
-        if ( ! $url ) { return; }
+        if ( ! $url ) {
+            return;
+        }
 
         $url = strtok( $url, '?' );
 
@@ -411,7 +415,9 @@ class HTMLProcessor extends Base {
             return;
         }
 
-        if ( ! $url ) { return; }
+        if ( ! $url ) {
+            return;
+        }
 
         if ( trim( $url ) === '' ) {
             return;
@@ -1228,7 +1234,7 @@ class HTMLProcessor extends Base {
         $protocol_relative_wp_site_url = $this->getProtocolRelativeURL(
             $wp_site_url
         );
-            
+
         $protocol_relative_wp_site_url_with_extra_2_slashes =
             $this->getProtocolRelativeURL( $wp_site_url . '//' );
 

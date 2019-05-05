@@ -25,7 +25,7 @@ class FileWriter extends Base {
 
         $path_info = array();
 
-        if ( ! array_key_exists( 'path', $url_info  ) ) {
+        if ( ! array_key_exists( 'path', $url_info ) ) {
             return false;
         }
 

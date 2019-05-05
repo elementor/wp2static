@@ -165,16 +165,22 @@ class CSSProcessor extends Base {
     }
 
     public function addDiscoveredURL( $url ) {
-        if ( ! $url ) { return; }
+        if ( ! $url ) {
+            return;
+        }
 
         // trim any query strings or anchors
         $url = strtok( $url, '#' );
 
-        if ( ! $url ) { return; }
+        if ( ! $url ) {
+            return;
+        }
 
         $url = strtok( $url, '?' );
 
-        if ( ! $url ) { return; }
+        if ( ! $url ) {
+            return;
+        }
 
         if ( trim( $url ) === '' ) {
             return;

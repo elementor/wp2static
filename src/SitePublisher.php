@@ -197,7 +197,7 @@ class SitePublisher {
         $f = fopen( $this->export_file_list, 'r' );
 
         if ( ! $f ) {
-            $err = "Failed to open export file list";
+            $err = 'Failed to open export file list';
             WsLog::l( $err );
             throw new Exception( $err );
         }
@@ -206,7 +206,7 @@ class SitePublisher {
             $item_to_deploy = fgets( $f );
 
             if ( ! is_string( $item_to_deploy ) ) {
-                $err = "Failed getting item to deploy";
+                $err = 'Failed getting item to deploy';
                 WsLog::l( $err );
                 throw new Exception( $err );
             }
@@ -265,12 +265,6 @@ class SitePublisher {
         if ( $this->files_remaining <= 0 ) {
             return true;
         } else {
-            // TODO: refactor when fixing CLI executor
-            // if ( defined( 'WP_CLI' ) ) {
-            //     $this->upload_files();
-            // } else {
-            //     echo $this->files_remaining;
-            // }
             echo $this->files_remaining;
         }
     }

@@ -14,7 +14,7 @@ class FilesHelper {
             $dir_files = scandir( $dir );
 
             if ( ! $dir_files ) {
-                $err = "Trying to delete nonexistant dir: " .  $dir;
+                $err = 'Trying to delete nonexistant dir: ' . $dir;
                 WsLog::l( $err );
                 throw new Exception( $err );
             }
@@ -196,7 +196,7 @@ class FilesHelper {
         $files = scandir( $dir );
 
         if ( ! $files ) {
-            $err = "Trying to scan nonexistant dir: " .  $dir;
+            $err = 'Trying to scan nonexistant dir: ' . $dir;
             WsLog::l( $err );
             throw new Exception( $err );
         }
@@ -751,7 +751,6 @@ class FilesHelper {
             // subdomain, ie http://domain.com/mywpinstall/
             $link_host = $wp_site_url . '/';
             $link_path = $parsed_link['path'];
-
 
             if ( ! is_string( $link_path ) ) {
                 continue;
