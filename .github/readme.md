@@ -391,7 +391,7 @@ Rather than waste time on the intuitive, here, we'll cover some of the non-obvio
 
  - avoiding WordPress call stack where possible
 
-WP2Static needs to run as fast as possible. When it crawls your site, it needs to load each WordPress page. This is already some heavy resource usage on your server. Because we can be crawling, processing and saving many URLs per second and need to minimize server resource usage, especially on shared hosting we're trying to help people migrate their site away from, we bypass WordPress for the majority of our actions. This is especially true when we're running the export via the browser.
+WP2Static needs to run as fast as possible. When it crawls your site, it needs to load each WordPress page. This is already some heavy resource usage on your server. Because we can be crawling, processing and saving many URLs per second and need to minimize server resource usage, especially on shared hosting we're trying to help people migrate their site away from, we bypass WordPress for the majority of our actions. This is especially true when we're running the export via the browser. We intercept certain AJAX requests and redirect them to load just enough code needed to perform the action, rather than allow the whole plugin initialization / WordPress hooks/actions and other processes to take place.
 
 In order to send information about/from WordPress, we gather as much information as we need and dump it into the plugin's main settings page, much in a JSON object behind the scenes.
 
