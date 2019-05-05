@@ -1,6 +1,7 @@
 # WP2Static
 
-WordPress plugin to generate a static copy of your site and deploy to GitHub Pages, S3, Netlify, etc.  Increase security, pageload speed and hosting options. Connect WordPress into your CI/CD workflow.
+WP2Static is a WordPress plugin to generate a static copy of your site and deploy to GitHub Pages, S3, Netlify etc.
+Increase security, pageload speed and hosting options. Connect WordPress into your CI/CD workflow.
 
 [English ![English](https://cdn.staticaly.com/misc/flags/us.png?w=20)](readme.md) |
 [日本語 ![日本語](https://cdn.staticaly.com/misc/flags/jp.png?w=20)](readme.jp.md) |
@@ -8,7 +9,7 @@ WordPress plugin to generate a static copy of your site and deploy to GitHub Pag
 [简体中文 ![Simplified Chinese](https://cdn.staticaly.com/misc/flags/cn.png?w=20)](readme.zh-cn.md) |
 [Indonesia ![Indonesia](https://cdn.staticaly.com/misc/flags/id.png?w=20)](readme.id.md)
 
-## WordPress as a Static Site Generator
+## Static Site Generator for WordPress
 
 Watch Leon Stafford's [talk from WordCamp Brisbane 2018](http://www.youtube.com/watch?v=HPc4JjBvkrU)
 
