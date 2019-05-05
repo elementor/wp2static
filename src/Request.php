@@ -92,6 +92,10 @@ class Request {
         $this->status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
         $header_size = curl_getinfo( $ch, CURLINFO_HEADER_SIZE );
 
+        if ( ! is_string( $output ) ) {
+            return false;
+        }
+
         $this->body = substr( $output, $header_size );
         $header = substr( $output, 0, $header_size );
 
@@ -257,6 +261,4 @@ class Request {
         curl_close( $ch );
     }
 }
-
-$wp2static_request = new WP2Static_Request();
 

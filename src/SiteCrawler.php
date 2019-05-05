@@ -2,6 +2,8 @@
 
 namespace WP2Static;
 
+use Exception;
+
 class SiteCrawler extends Base {
 
     public function __construct() {
@@ -47,6 +49,12 @@ class SiteCrawler extends Base {
             FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
         );
 
+        if ( empty ( $already_crawled ) ) {
+            $err = "Missing list of already crawled URLS";
+            WsLog::l( $err );
+            throw new Exception( $err );
+        }
+
         $unique_discovered_links = array();
 
         $discovered_links_file = $this->settings['wp_uploads_path'] .
@@ -58,8 +66,12 @@ class SiteCrawler extends Base {
                 FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
             );
 
-            $unique_discovered_links = array_unique( $discovered_links );
-            sort( $unique_discovered_links );
+            if ( ! empty( $discovered_links ) ) {
+                $unique_discovered_links =
+                    array_unique( $discovered_links );
+                sort( $unique_discovered_links );
+            }
+
         }
 
         file_put_contents(
@@ -188,6 +200,12 @@ class SiteCrawler extends Base {
             FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
         );
 
+        if ( ! $this->urls_to_crawl ) {
+            $err = "Expected more URLs to crawl, found none";
+            WsLog::l( $err );
+            throw new Exception( $err );
+        }
+
         $total_links = count( $this->urls_to_crawl );
 
         if ( $total_links < 1 ) {
@@ -311,6 +329,13 @@ class SiteCrawler extends Base {
 
     public function getExtensionFromURL( $url ) {
         $url_path = parse_url( $url, PHP_URL_PATH );
+
+        if ( ! is_string( $url_path ) ) {
+            $err = "Invalid URL encountered when checking extension";
+            WsLog::l( $err );
+            throw new Exception( $err );
+        }
+
         $extension = pathinfo( $url_path, PATHINFO_EXTENSION );
 
         if ( ! $extension ) {

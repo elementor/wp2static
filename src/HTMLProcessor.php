@@ -398,13 +398,20 @@ class HTMLProcessor extends Base {
     }
 
     public function addDiscoveredURL( $url ) {
+        if ( ! $url ) { return; }
+
         // trim any query strings or anchors
         $url = strtok( $url, '#' );
+
+        if ( ! $url ) { return; }
+
         $url = strtok( $url, '?' );
 
         if ( in_array( $url, $this->processed_urls ) ) {
             return;
         }
+
+        if ( ! $url ) { return; }
 
         if ( trim( $url ) === '' ) {
             return;
@@ -1033,6 +1040,11 @@ class HTMLProcessor extends Base {
 
         $current_page_path_to_root = '';
         $current_page_path = parse_url( $this->page_url, PHP_URL_PATH );
+
+        if ( ! is_string( $current_page_path ) ) {
+            return;
+        }
+
         $number_of_segments_in_path = explode( '/', $current_page_path );
         $num_dots_to_root = count( $number_of_segments_in_path ) - 2;
 
