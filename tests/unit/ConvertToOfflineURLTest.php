@@ -6,18 +6,18 @@ use PHPUnit\Framework\TestCase;
 
 final class ConvertToOfflineURLTest extends TestCase{
 
-    public function testOfflineConversion() {
-        $url_to_change = '';
-        $page_url = '';
-        $placeholder_url = '';
+    public function testaddsRelativePathToURL() {
+        $url_to_change = 'mytheme/assets/link-to-an-image.jpg';
+        $page_url = 'https://myplaceholderdomain.com/some-post/';
+        $placeholder_url = 'https://myplaceholderdomain.com/';
 
         $converted_url = ConvertToOfflineURL::convert(
             $url_to_change, $page_url, $placeholder_url
         );
 
         $this->assertEquals(
-            $converted_url,
-            'https://google.com'
+            '../mytheme/assets/link-to-an-image.jpg',
+            $converted_url
         );
     }
 }
