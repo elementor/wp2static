@@ -43,7 +43,9 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "PHPStan\\WordPress\\": "tests/phpstan/"
+            "PHPStan\\WordPress\\": "tests/phpstan/",
+            "WP2Static\\": "src/",
+            "WP2Static\\": "tests/unit"
         }
     },
     "config": {
