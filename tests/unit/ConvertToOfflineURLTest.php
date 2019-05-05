@@ -36,6 +36,32 @@ final class ConvertToOfflineURLTest extends TestCase{
                 'https://myplaceholderdomain.com/',
                 '../../mytheme/assets/link-to-an-image.jpg'
             ],
+           'asset at same level (current)' =>  [
+                'https://myplaceholderdomain.com/some-post/' .
+                    'link-to-an-image.jpg',
+                'https://myplaceholderdomain.com/some-post/',
+                'https://myplaceholderdomain.com/',
+                '../some-post/link-to-an-image.jpg'
+            ],
+           'asset at same level (intended)' =>  [
+                'https://myplaceholderdomain.com/some-post/' .
+                    'link-to-an-image.jpg',
+                'https://myplaceholderdomain.com/some-post/',
+                'https://myplaceholderdomain.com/',
+                'link-to-an-image.jpg'
+            ],
+           'page URL originally with trailing slash' =>  [
+                'https://myplaceholderdomain.com/some-post/',
+                'https://myplaceholderdomain.com/another-post/',
+                'https://myplaceholderdomain.com/',
+                '../some-post/index.html'
+            ],
+           'page URL originally without trailing slash' =>  [
+                'https://myplaceholderdomain.com/some-post',
+                'https://myplaceholderdomain.com/another-post/',
+                'https://myplaceholderdomain.com/',
+                '../some-post/index.html'
+            ],
         ];
     }
 }
