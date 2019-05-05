@@ -19,9 +19,13 @@ class FileWriter extends Base {
     public function saveFile( $archive_dir ) {
         $url_info = parse_url( $this->url );
 
+        if ( ! is_array( $url_info ) ) {
+            return false;
+        }
+
         $path_info = array();
 
-        if ( ! isset( $url_info['path'] ) ) {
+        if ( ! array_key_exists( 'path', $url_info  ) ) {
             return false;
         }
 
