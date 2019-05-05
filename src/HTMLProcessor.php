@@ -70,10 +70,7 @@ class HTMLProcessor extends Base {
             $this->placeholder_url
         );
 
-        require_once 'HTMLProcessingFunctions/' .
-            'rewriteSiteURLsToPlaceholder.php';
-
-        $this->raw_html = rewriteSiteURLsToPlaceholder(
+        $this->raw_html = RewriteSiteURLsToPlaceholder::rewrite(
             $html_with_absolute_urls,
             $search_patterns,
             $replace_patterns
@@ -360,10 +357,7 @@ class HTMLProcessor extends Base {
         }
 
         if ( isset( $this->settings['removeWPLinks'] ) ) {
-            require_once 'HTMLProcessingFunctions/' .
-                'removeLinkElementsBasedOnRelAttr.php';
-
-            removeLinkElementsBasedOnRelAttr( $element );
+            RemoveLinkElementsBasedOnRelAttr::remove( $element );
         }
 
         if ( isset( $this->settings['removeCanonical'] ) ) {

@@ -20,6 +20,11 @@ class ConvertToOfflineURL {
 
         $current_page_path_to_root = '';
         $current_page_path = parse_url( $page_url, PHP_URL_PATH );
+
+        if ( ! is_string( $current_page_path ) ) {
+            return $url_to_change;
+        }
+
         $number_of_segments_in_path = explode( '/', $current_page_path );
         $num_dots_to_root = count( $number_of_segments_in_path ) - 2;
 
