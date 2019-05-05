@@ -9,9 +9,9 @@ jobs:
           name: Run code quality checks
           command: |
             composer install
+            composer phpunit
             composer phpstan
             composer phpcs
-            composer phpunit
 
 workflows:
   version: 2
