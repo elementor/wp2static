@@ -139,17 +139,9 @@ jQuery(document).ready(function($){
     } else {
         // if zip was selected, call to get zip name and enable the button with the link to download
         if (current_deployment_method === 'zip') {
+          zipURL = wp_site.uploads_url + '/wp2static-exported-site.zip?cacheBuster=' + Date.now();
+          $('#downloadZIP').attr('href', zipURL);
           $('#downloadZIP').show();
-
-          $.get( wp_site.uploads_url + '/wp2static-working-files/CURRENT-ARCHIVE.txt?cacheBuster=' + Date.now(),
-              function( archive_path ) {
-                  path_segments = archive_path.split('/');
-                  current_archive.name = path_segments[path_segments.length - 2];
-                  zipURL = wp_site.uploads_url + '/' + current_archive.name + '.zip';
-                  $('#downloadZIP').attr('href', zipURL);
-              },
-              'text'
-          );
         } else {
             // for other methods, show the Go to my static site link
             $('#goToMyStaticSite').attr('href', $('#baseUrl').val());
