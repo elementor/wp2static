@@ -75,6 +75,17 @@ class ConvertToOfflineURL {
             );
 
             $offline_url = $current_page_path_to_root . $rewritten_url;
+
+            /*
+                Cover case of root relative URLs incorrectly ending as 
+                ..//some/path by replacing double slashes with /../ 
+            */
+            $offline_url = str_replace(
+                '..//',
+                '../../',
+                $offline_url
+            );
+
         }
 
 
