@@ -418,6 +418,13 @@ class FilesHelper {
             // rely on WP's site URL vs reconstructing from parsed
             // subdomain, ie http://domain.com/mywpinstall/
             $link_host = $wp_site_url . '/';
+
+            if (
+                ! $parsed_link || ! array_key_exists( 'path', $parsed_link )
+            ) {
+                continue;
+            }
+
             $link_path = $parsed_link['path'];
 
             if ( ! is_string( $link_path ) ) {

@@ -16,7 +16,7 @@ class DetectVendorFiles {
             to static workflow
         */
         if ( class_exists( '\\Elementor\Api' ) ) {
-            $elementor_font_dir = WP_PLUGIN_DIR .
+            $elementor_font_dir = $wp_site->plugins_path .
                 '/elementor/assets/lib/font-awesome';
 
             $elementor_urls = FilesHelper::getListOfLocalFilesByUrl(
@@ -38,8 +38,8 @@ class DetectVendorFiles {
             $vendor_files = array_merge( $vendor_files, $yoast_sitemaps );
         }
 
-        if ( is_dir( WP_PLUGIN_DIR . '/soliloquy/' ) ) {
-            $soliloquy_assets = WP_PLUGIN_DIR .
+        if ( is_dir( $wp_site->plugins_path . '/soliloquy/' ) ) {
+            $soliloquy_assets = $wp_site->plugins_path .
                 '/soliloquy/assets/css/images/';
 
             $soliloquy_urls = FilesHelper::getListOfLocalFilesByUrl(
@@ -103,7 +103,7 @@ class DetectVendorFiles {
         }
 
         if ( class_exists( 'molongui_authorship' ) ) {
-            $molongui_path = WP_PLUGIN_DIR . '/molongui-authorship';
+            $molongui_path = $wp_site->plugins_path . '/molongui-authorship';
 
             $molongui_urls = FilesHelper::getListOfLocalFilesByUrl(
                 $molongui_path
