@@ -1,5 +1,7 @@
 # WP2Static
 
+[![CircleCI](https://circleci.com/gh/WP2Static/wp2static.svg?style=svg)](https://circleci.com/gh/WP2Static/wp2static)
+
 WP2Static is a WordPress plugin to generate a static copy of your site and deploy to GitHub Pages, S3, Netlify etc.
 Increase security, pageload speed and hosting options. Connect WordPress into your CI/CD workflow.
 
