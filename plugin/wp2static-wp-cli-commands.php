@@ -234,6 +234,25 @@ function wp2static_options( $args, $assoc_args ) {
         }
     }
 
+    if ( $action === 'unset' ) {
+        if ( empty( $option_name ) ) {
+            WP_CLI::error( 'Missing required argument: <option-name>' );
+        }
+
+        if ( ! $plugin->options->optionExists( $option_name ) ) {
+            WP_CLI::error( 'Invalid option name' );
+        }
+
+        $plugin->options->setOption( $option_name, '' );
+        $plugin->options->save();
+
+        $result = $plugin->options->getOption( $option_name );
+
+        if ( ! empty( $result ) ) {
+            WP_CLI::error( 'Option not able to be updated' );
+        }
+    }
+
     if ( $action === 'list' ) {
         if ( isset( $assoc_args['reveal-sensitive-values'] ) ) {
             $reveal_sensitive_values = true;
