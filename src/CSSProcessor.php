@@ -104,8 +104,6 @@ class CSSProcessor extends Base {
             }
         }
 
-        $this->writeDiscoveredURLs();
-
         return true;
     }
 

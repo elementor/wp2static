@@ -125,7 +125,6 @@ class HTMLProcessor extends Base {
 
         $this->dealWithBaseHREFElement();
         $this->stripHTMLComments();
-        $this->writeDiscoveredURLs();
 
         return true;
     }

@@ -109,19 +109,6 @@ class SiteCrawler extends Base {
         $total_urls_path = $this->settings['wp_uploads_path'] .
             '/wp2static-working-files/INITIAL-CRAWL-TOTAL.txt';
 
-        // TODO: avoid mutation
-        // @codingStandardsIgnoreStart
-        if (
-            defined( 'CRAWLING_DISCOVERED' ) ||
-            ( isset( $_POST['ajax_action'] ) &&
-                $_POST['ajax_action'] == 'crawl_again'
-            )
-        ) {
-            $total_urls_path = $this->settings['wp_uploads_path'] .
-            '/wp2static-working-files/DISCOVERED-URLS-TOTAL.txt';
-        }
-        // @codingStandardsIgnoreEnd
-
         $exclusions = array( 'wp-json' );
 
         if ( isset( $this->settings['excludeURLs'] ) ) {
