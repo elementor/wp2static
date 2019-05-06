@@ -32,4 +32,7 @@ parameters:
     #autoload_directories:
     #    - %currentWorkingDirectory%/
     ignoreErrors:
+        # WP-CLI accepts a class too
+        - '/^Parameter #2 \$callable of static method WP_CLI::add_command\(\) expects callable\(\): mixed, \S+ given\.$/'
+        # TODO Add proper PHPDoc blocks
         - '#^Access to an undefined property #'
