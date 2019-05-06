@@ -13,3 +13,8 @@ define( 'OBJECT', 'OBJECT' );
 define( 'OBJECT_K', 'OBJECT_K' );
 define( 'ARRAY_A', 'ARRAY_A' );
 define( 'ARRAY_N', 'ARRAY_N' );
+
+// We use core constants
+define( 'WPINC', '' );
+define( 'WP_CONTENT_DIR', '' );
+define( 'WP_PLUGIN_DIR', '' );
