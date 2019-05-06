@@ -12,14 +12,14 @@ class Controller {
     const HOOK = 'wp2static';
 
     /**
-     * @var \WP2Static\Controller
+     * @var \WP2Static\Controller Instance.
      */
     protected static $instance = null;
 
     protected function __construct() {}
 
     /**
-     * @return \WP2Static\Controller
+     * @return \WP2Static\Controller Instance of self.
      */
     public static function getInstance() {
         if ( null === self::$instance ) {
