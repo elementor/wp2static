@@ -324,6 +324,7 @@ class FilesHelper {
             '.map',
             '.php',
             '.sql',
+            'tinymce',
             '.yarn',
             'wp2static-working-files',
             '__MACOSX',
@@ -470,6 +471,20 @@ class FilesHelper {
             $url_queue = array_merge(
                 $url_queue,
                 self::getThemeFiles( 'child' )
+            );
+        }
+
+        if ( isset( $settings['detectPluginAssets'] ) ) {
+            $url_queue = array_merge(
+                $url_queue,
+                DetectPluginAssets::detect()
+            );
+        }
+
+        if ( isset( $settings['detectWPIncludesAssets'] ) ) {
+            $url_queue = array_merge(
+                $url_queue,
+                DetectWPIncludesAssets::detect()
             );
         }
 

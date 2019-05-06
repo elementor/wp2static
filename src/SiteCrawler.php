@@ -162,7 +162,7 @@ class SiteCrawler extends Base {
                 $this->crawl_site();
             }
         } else {
-            $this->logAction( "Crawling URLs phase completed" );
+            $this->logAction( 'Crawling URLs phase completed' );
 
             if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
@@ -241,7 +241,7 @@ class SiteCrawler extends Base {
     }
 
     public function crawlSingleURL( $url ) {
-        $this->logAction( "Crawling URL: " . $url );
+        $this->logAction( 'Crawling URL: ' . $url );
 
         $ch = curl_init();
 
