@@ -12,6 +12,8 @@ class Controller {
     const HOOK = 'wp2static';
 
     /**
+     * Main controller of WP2Static
+     *
      * @var \WP2Static\Controller Instance.
      */
     protected static $instance = null;
@@ -19,6 +21,8 @@ class Controller {
     protected function __construct() {}
 
     /**
+     * Returns instance of WP2Static Controller
+     *
      * @return \WP2Static\Controller Instance of self.
      */
     public static function getInstance() {
