@@ -11,10 +11,16 @@ class Controller {
     const OPTIONS_KEY = 'wp2static-options';
     const HOOK = 'wp2static';
 
+    /**
+     * @var \WP2Static\Controller
+     */
     protected static $instance = null;
 
     protected function __construct() {}
 
+    /**
+     * @return \WP2Static\Controller
+     */
     public static function getInstance() {
         if ( null === self::$instance ) {
             self::$instance = new self();
