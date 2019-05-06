@@ -75,50 +75,6 @@ class FilesHelper {
         }
     }
 
-    /*
-        Autoptimize and other vendors use a cache dir one level above the
-        uploads URL
-
-        ie, domain.com/cache/ or domain.com/subdir/cache/
-
-        so, we grab all the files from the its actual cache dir
-
-        then strip the site path and any subdir path (no extra logic needed?)
-    */
-    public static function getVendorCacheFiles(
-        $cache_dir,
-        $path_to_trim,
-        $prefix
-        ) {
-
-        $files = array();
-
-        $directory = $cache_dir;
-
-        if ( is_dir( $directory ) ) {
-            $iterator = new RecursiveIteratorIterator(
-                new RecursiveDirectoryIterator(
-                    $directory,
-                    RecursiveDirectoryIterator::SKIP_DOTS
-                )
-            );
-
-            foreach ( $iterator as $filename => $file_object ) {
-                $path_crawlable = self::filePathLooksCrawlable( $filename );
-
-                if ( $path_crawlable ) {
-                    array_push(
-                        $files,
-                        $prefix .
-                        home_url( str_replace( $path_to_trim, '', $filename ) )
-                    );
-                }
-            }
-        }
-
-        return $files;
-    }
-
     public static function getListOfLocalFilesByUrl( $url ) {
         $files = array();
 
@@ -275,14 +231,14 @@ class FilesHelper {
         if ( isset( $settings['detectPosts'] ) ) {
             $url_queue = array_merge(
                 $url_queue,
-                self::getAllWPPostURLs( $base_url )
+                DetectPostURLs::detect( $base_url )
             );
         }
 
         if ( isset( $settings['detectPages'] ) ) {
             $url_queue = array_merge(
                 $url_queue,
-                self::getAllWPPageURLs( $base_url )
+                DetectPageURLs::detect( $base_url )
             );
         }
 
@@ -394,74 +350,6 @@ class FilesHelper {
             return 'ERROR WRITING INITIAL CRAWL LIST';
         }
 
-    }
-
-    public static function getAllWPPostURLs( $wp_site_url ) {
-        global $wpdb;
-
-        $post_urls = array();
-
-        $query = "
-            SELECT ID
-            FROM %s
-            WHERE post_status = '%s'
-            AND post_type = 'post'";
-
-        $posts = $wpdb->get_results(
-            sprintf(
-                $query,
-                $wpdb->posts,
-                'publish'
-            )
-        );
-
-        foreach ( $posts as $post ) {
-            $permalink = get_permalink( $post->ID );
-
-            if ( ! $permalink ) {
-                continue;
-            }
-
-            if ( strpos( $permalink, '?post_type' ) !== false ) {
-                continue;
-            }
-
-            $post_urls[] = $permalink;
-        }
-
-        return $post_urls;
-    }
-
-    public static function getAllWPPageURLs( $wp_site_url ) {
-        global $wpdb;
-
-        $page_urls = array();
-
-        $query = "
-            SELECT ID
-            FROM %s
-            WHERE post_status = '%s'
-            AND post_type = 'page'";
-
-        $pages = $wpdb->get_results(
-            sprintf(
-                $query,
-                $wpdb->posts,
-                'publish'
-            )
-        );
-
-        foreach ( $pages as $page ) {
-            $permalink = get_page_link( $page->ID );
-
-            if ( strpos( $permalink, '?post_type' ) !== false ) {
-                continue;
-            }
-
-            $page_urls[] = $permalink;
-        }
-
-        return $page_urls;
     }
 
     public static function getAllWPCustomPostTypeURLs( $wp_site_url ) {

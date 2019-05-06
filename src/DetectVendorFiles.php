@@ -62,7 +62,7 @@ class DetectVendorFiles {
                 $wp_site->wp_content_url
             );
 
-            $vendor_cache_urls = FilesHelper::getVendorCacheFiles(
+            $vendor_cache_urls = DetectVendorCache::detect(
                 $vendor_cache_dir,
                 $wp_site->wp_content_path,
                 $prefix
