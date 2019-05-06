@@ -33,7 +33,8 @@ class DetectThemeAssets {
             );
 
             foreach ( $iterator as $filename => $file_object ) {
-                $path_crawlable = FilesHelper::filePathLooksCrawlable( $filename );
+                $path_crawlable =
+                    FilesHelper::filePathLooksCrawlable( $filename );
 
                 $detected_filename =
                     str_replace(

@@ -224,7 +224,7 @@ class FilesHelper {
         if ( isset( $settings['detectAttachments'] ) ) {
             $url_queue = array_merge(
                 $url_queue,
-                self::getAllWPAttachmentURLs( $base_url )
+                DetectAttachmentURLs::detect( $base_url )
             );
         }
 
@@ -245,7 +245,7 @@ class FilesHelper {
         if ( isset( $settings['detectCustomPostTypes'] ) ) {
             $url_queue = array_merge(
                 $url_queue,
-                self::getAllWPCustomPostTypeURLs( $base_url )
+                DetectCustomPostTypeURLs::detect( $base_url )
             );
         }
 
@@ -350,81 +350,6 @@ class FilesHelper {
             return 'ERROR WRITING INITIAL CRAWL LIST';
         }
 
-    }
-
-    public static function getAllWPCustomPostTypeURLs( $wp_site_url ) {
-        global $wpdb;
-
-        $post_urls = array();
-        $unique_post_types = array();
-
-        $query = "
-            SELECT ID,post_type
-            FROM %s
-            WHERE post_status = '%s'
-            AND post_type NOT IN ('%s','%s')";
-
-        $posts = $wpdb->get_results(
-            sprintf(
-                $query,
-                $wpdb->posts,
-                'publish',
-                'revision',
-                'nav_menu_item'
-            )
-        );
-
-        foreach ( $posts as $post ) {
-            // capture all post types
-            $unique_post_types[] = $post->post_type;
-
-            $permalink = get_post_permalink( $post->ID );
-
-            if ( ! is_string( $permalink ) ) {
-                continue;
-            }
-
-            if ( strpos( $permalink, '?post_type' ) !== false ) {
-                continue;
-            }
-
-            $post_urls[] = $permalink;
-        }
-
-        return $post_urls;
-    }
-
-    public static function getAllWPAttachmentURLs( $wp_site_url ) {
-        global $wpdb;
-
-        $post_urls = array();
-        $unique_post_types = array();
-
-        $query = "
-            SELECT ID,post_type
-            FROM %s
-            WHERE post_status = '%s'
-            AND post_type = 'attachment'";
-
-        $posts = $wpdb->get_results(
-            sprintf(
-                $query,
-                $wpdb->posts,
-                'publish'
-            )
-        );
-
-        foreach ( $posts as $post ) {
-            $permalink = get_attachment_link( $post->ID );
-
-            if ( strpos( $permalink, '?post_type' ) !== false ) {
-                continue;
-            }
-
-            $post_urls[] = $permalink;
-        }
-
-        return $post_urls;
     }
 
     public static function getAllTHEOTHERSTUFFPOSTS( $wp_site_url ) {

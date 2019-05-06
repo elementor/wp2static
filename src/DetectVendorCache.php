@@ -6,7 +6,6 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
 class DetectVendorCache {
-
     /*
         Autoptimize and other vendors use a cache dir one level above the
         uploads URL
@@ -36,7 +35,8 @@ class DetectVendorCache {
             );
 
             foreach ( $iterator as $filename => $file_object ) {
-                $path_crawlable = FilesHelper::filePathLooksCrawlable( $filename );
+                $path_crawlable =
+                    FilesHelper::filePathLooksCrawlable( $filename );
 
                 if ( $path_crawlable ) {
                     array_push(
