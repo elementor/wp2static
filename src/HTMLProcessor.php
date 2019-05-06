@@ -82,10 +82,6 @@ class HTMLProcessor extends Base {
 
         $this->page_url = $page_url;
 
-        $this->harvest_new_urls = $this->detectIfURLsShouldBeHarvested();
-
-        $this->discovered_urls = array();
-
         // PERF: 70% of function time
         // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
         libxml_use_internal_errors( true );
@@ -215,28 +211,6 @@ class HTMLProcessor extends Base {
         }
     }
 
-    /*
-        Initial phase of crawling is using detected URLs only
-
-        we detect if we're still doing our initial craw, if so
-
-        we keep recording any discovered URLs
-    */
-    public function detectIfURLsShouldBeHarvested() {
-        if ( ! defined( 'WP_CLI' ) ) {
-            // @codingStandardsIgnoreStart
-            return ( $_POST['ajax_action'] === 'crawl_site' );
-            // @codingStandardsIgnoreEnd
-        } else {
-            // we shouldn't harvest any while we're in the second crawl
-            if ( defined( 'CRAWLING_DISCOVERED' ) ) {
-                return false;
-            } else {
-                return true;
-            }
-        }
-    }
-
     public function getURLToChangeBasedOnAttribute( $element ) {
         if ( $element->hasAttribute( 'href' ) ) {
             $attribute_to_change = 'href';
@@ -347,7 +321,6 @@ class HTMLProcessor extends Base {
         }
 
         $this->removeQueryStringFromInternalLink( $element );
-        $this->addDiscoveredURL( $element->getAttribute( 'href' ) );
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
         $this->convertToRelativeURL( $element );
@@ -397,52 +370,6 @@ class HTMLProcessor extends Base {
         return true;
     }
 
-    public function addDiscoveredURL( $url ) {
-        if ( ! $url ) {
-            return;
-        }
-
-        // trim any query strings or anchors
-        $url = strtok( $url, '#' );
-
-        if ( ! $url ) {
-            return;
-        }
-
-        $url = strtok( $url, '?' );
-
-        if ( in_array( $url, $this->processed_urls ) ) {
-            return;
-        }
-
-        if ( ! $url ) {
-            return;
-        }
-
-        if ( trim( $url ) === '' ) {
-            return;
-        }
-
-        $this->processed_urls[] = $url;
-
-        if ( isset( $this->harvest_new_urls ) ) {
-            if ( ! $this->isValidURL( $url ) ) {
-                return;
-            }
-
-            if ( $this->isInternalLink( $url ) ) {
-                $discovered_url_without_site_url =
-                    str_replace(
-                        rtrim( $this->placeholder_url, '/' ),
-                        '',
-                        $url
-                    );
-
-                $this->discovered_urls[] = $discovered_url_without_site_url;
-            }
-        }
-    }
-
     public function processImageSrcSet( $element ) {
         if ( ! $element->hasAttribute( 'srcset' ) ) {
             return;
@@ -472,7 +399,6 @@ class HTMLProcessor extends Base {
 
                 // rm query string
                 $url = strtok( $url, '?' );
-                $this->addDiscoveredURL( $url );
                 $url = $this->rewriteWPPathsSrcSetURL( $url );
                 $url = $this->rewriteBaseURLSrcSetURL( $url );
                 $url = $this->convertToRelativeURLSrcSetURL( $url );
@@ -498,7 +424,6 @@ class HTMLProcessor extends Base {
         }
 
         $this->removeQueryStringFromInternalLink( $element );
-        $this->addDiscoveredURL( $element->getAttribute( 'src' ) );
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
         $this->convertToRelativeURL( $element );
@@ -553,7 +478,6 @@ class HTMLProcessor extends Base {
         }
 
         $this->removeQueryStringFromInternalLink( $element );
-        $this->addDiscoveredURL( $element->getAttribute( 'src' ) );
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
         $this->convertToRelativeURL( $element );
@@ -594,7 +518,6 @@ class HTMLProcessor extends Base {
         }
 
         $this->removeQueryStringFromInternalLink( $element );
-        $this->addDiscoveredURL( $url );
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
         $this->convertToRelativeURL( $element );
@@ -638,7 +561,6 @@ class HTMLProcessor extends Base {
         }
 
         $this->removeQueryStringFromInternalLink( $element );
-        $this->addDiscoveredURL( $url );
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
         $this->convertToRelativeURL( $element );
@@ -646,35 +568,6 @@ class HTMLProcessor extends Base {
         if ( $this->shouldCreateOfflineURLs() ) {
             $this->convertElementAttributeToOfflineURL( $element );
         }
-    }
-
-    public function writeDiscoveredURLs() {
-        // @codingStandardsIgnoreStart
-        if ( isset( $_POST['ajax_action'] ) &&
-            $_POST['ajax_action'] === 'crawl_again' ) {
-            return;
-        }
-        // @codingStandardsIgnoreEnd
-
-        if ( defined( 'WP_CLI' ) ) {
-            if ( defined( 'CRAWLING_DISCOVERED' ) ) {
-                return;
-            }
-        }
-
-        file_put_contents(
-            $this->settings['wp_uploads_path'] .
-                '/wp2static-working-files/DISCOVERED-URLS.txt',
-            PHP_EOL .
-                implode( PHP_EOL, array_unique( $this->discovered_urls ) ),
-            FILE_APPEND | LOCK_EX
-        );
-
-        chmod(
-            $this->settings['wp_uploads_path'] .
-                '/wp2static-working-files/DISCOVERED-URLS.txt',
-            0664
-        );
     }
 
     public function isInternalLink( $link, $domain = false ) {

@@ -30,146 +30,14 @@ class SiteCrawler extends Base {
 
         if ( ! defined( 'WP_CLI' ) ) {
             // @codingStandardsIgnoreStart
-            if ( $_POST['ajax_action'] === 'crawl_again' ) {
-                $this->crawl_discovered_links();
-            } elseif ( $_POST['ajax_action'] === 'crawl_site' ) {
+            if ( $_POST['ajax_action'] === 'crawl_site' ) {
                 $this->crawl_site();
             }
             // @codingStandardsIgnoreEnd
         }
     }
 
-    public function generate_discovered_links_list() {
-        $second_crawl_file_path = $this->settings['wp_uploads_path'] .
-        '/wp2static-working-files/2ND-CRAWL-LIST.txt';
-
-        $already_crawled = file(
-            $this->settings['wp_uploads_path'] .
-                '/wp2static-working-files/INITIAL-CRAWL-LIST.txt',
-            FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
-        );
-
-        if ( empty( $already_crawled ) ) {
-            $err = 'Missing list of already crawled URLS';
-            WsLog::l( $err );
-            throw new Exception( $err );
-        }
-
-        $unique_discovered_links = array();
-
-        $discovered_links_file = $this->settings['wp_uploads_path'] .
-            '/wp2static-working-files/DISCOVERED-URLS.txt';
-
-        if ( is_file( $discovered_links_file ) ) {
-            $discovered_links = file(
-                $discovered_links_file,
-                FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
-            );
-
-            if ( ! empty( $discovered_links ) ) {
-                $unique_discovered_links =
-                    array_unique( $discovered_links );
-                sort( $unique_discovered_links );
-            }
-        }
-
-        file_put_contents(
-            $this->settings['wp_uploads_path'] .
-                '/wp2static-working-files/DISCOVERED-URLS-LOG.txt',
-            implode( PHP_EOL, $unique_discovered_links )
-        );
-
-        chmod(
-            $this->settings['wp_uploads_path'] .
-                '/wp2static-working-files/DISCOVERED-URLS-LOG.txt',
-            0664
-        );
-
-        file_put_contents(
-            $this->settings['wp_uploads_path'] .
-                '/wp2static-working-files/DISCOVERED-URLS-TOTAL.txt',
-            count( $unique_discovered_links )
-        );
-
-        chmod(
-            $this->settings['wp_uploads_path'] .
-                '/wp2static-working-files/DISCOVERED-URLS-TOTAL.txt',
-            0664
-        );
-
-        $discovered_links = array_diff(
-            $unique_discovered_links,
-            $already_crawled
-        );
-
-        file_put_contents(
-            $second_crawl_file_path,
-            implode( PHP_EOL, $discovered_links )
-        );
-
-        chmod( $second_crawl_file_path, 0664 );
-
-        copy(
-            $second_crawl_file_path,
-            $this->settings['wp_uploads_path'] .
-                '/wp2static-working-files/FINAL-2ND-CRAWL-LIST.txt'
-        );
-
-        chmod(
-            $this->settings['wp_uploads_path'] .
-                '/wp2static-working-files/FINAL-2ND-CRAWL-LIST.txt',
-            0664
-        );
-    }
-
-    public function crawl_discovered_links() {
-        if ( defined( 'WP_CLI' ) && ! defined( 'CRAWLING_DISCOVERED' ) ) {
-            $this->logAction( 'Starting to crawl discovered URLs' );
-            define( 'CRAWLING_DISCOVERED', true );
-        }
-
-        $second_crawl_file_path = $this->settings['wp_uploads_path'] .
-        '/wp2static-working-files/2ND-CRAWL-LIST.txt';
-
-        // NOTE: the first iteration of the 2nd crawl phase,
-        // the list of URLs for 2nd crawl is prepared
-        if ( ! is_file( $second_crawl_file_path ) ) {
-            $this->generate_discovered_links_list();
-        }
-
-        $this->list_of_urls_to_crawl_path =
-            $this->settings['wp_uploads_path'] .
-            '/wp2static-working-files/FINAL-2ND-CRAWL-LIST.txt';
-
-        if ( ! is_file( $this->list_of_urls_to_crawl_path ) ) {
-            WsLog::l(
-                'ERROR: LIST OF URLS TO CRAWL NOT FOUND AT: ' .
-                    $this->list_of_urls_to_crawl_path
-            );
-            die();
-        } else {
-            if ( filesize( $this->list_of_urls_to_crawl_path ) ) {
-                $this->crawlABitMore();
-            } else {
-                if ( ! defined( 'WP_CLI' ) ) {
-                    echo 'SUCCESS';
-                }
-            }
-        }
-    }
-
     public function crawl_site() {
-        // crude detection for CLI export to use 2nd crawl phase
-        $this->list_of_urls_to_crawl_path =
-            $this->settings['wp_uploads_path'] .
-            '/wp2static-working-files/FINAL-2ND-CRAWL-LIST.txt';
-
-        if ( is_file( $this->list_of_urls_to_crawl_path ) ) {
-            $this->crawl_discovered_links();
-
-            return;
-        }
-
         $this->list_of_urls_to_crawl_path =
             $this->settings['wp_uploads_path'] .
             '/wp2static-working-files/FINAL-CRAWL-LIST.txt';
@@ -307,18 +175,7 @@ class SiteCrawler extends Base {
                 $this->crawl_site();
             }
         } else {
-            if (
-                defined( 'CRAWLING_DISCOVERED' ) ||
-                ( isset( $_POST['ajax_action'] ) &&
-                    $_POST['ajax_action'] == 'crawl_again'
-                )
-            ) {
-                $discovered = ' Discovered ';
-            } else {
-                $discovered = '';
-            }
-
-            $this->logAction( "Crawling {$discovered} URLs phase completed" );
+            $this->logAction( "Crawling URLs phase completed" );
 
             if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
@@ -397,18 +254,7 @@ class SiteCrawler extends Base {
     }
 
     public function crawlSingleURL( $url ) {
-        if (
-            defined( 'CRAWLING_DISCOVERED' ) ||
-            ( isset( $_POST['ajax_action'] ) &&
-                $_POST['ajax_action'] == 'crawl_again'
-            )
-        ) {
-            $discovered = ' Discovered ';
-        } else {
-            $discovered = '';
-        }
-
-        $this->logAction( "Crawling {$discovered} URL: " . $url );
+        $this->logAction( "Crawling URL: " . $url );
 
         $ch = curl_init();
 

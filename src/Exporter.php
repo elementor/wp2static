@@ -19,8 +19,6 @@ class Exporter extends Base {
     public function pre_export_cleanup() {
         $files_to_clean = array(
             '2ND-CRAWL-LIST.txt',
-            'DISCOVERED-URLS-LOG.txt',
-            'DISCOVERED-URLS.txt',
             'FILES-TO-DEPLOY.txt',
             'EXPORT-LOG.txt',
             'FINAL-2ND-CRAWL-LIST.txt',
@@ -44,7 +42,6 @@ class Exporter extends Base {
     public function cleanup_working_files() {
         $files_to_clean = array(
             '2ND-CRAWL-LIST.txt',
-            'DISCOVERED-URLS.txt',
             'FILES-TO-DEPLOY.txt',
             'FINAL-2ND-CRAWL-LIST.txt',
             'FINAL-CRAWL-LIST.txt',
