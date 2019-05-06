@@ -497,7 +497,7 @@ class FilesHelper {
 
         // get all pagination links for each category
         $category_pagination_urls =
-            self::getPaginationURLsForCategories( $category_links );
+            DetectCategoryPaginationURLs::detect( $category_links );
 
         // get all pagination links for each post_type
         $post_pagination_urls =
@@ -507,7 +507,7 @@ class FilesHelper {
 
         // get all comment links
         $comment_pagination_urls =
-            self::getPaginationURLsForComments( $wp_site_url );
+            DetectCommentPaginationURLs::detect( $wp_site_url );
 
         $post_urls = array_merge(
             $post_urls,
@@ -618,54 +618,6 @@ class FilesHelper {
         }
 
         return $urls_to_include;
-    }
-
-    public static function getPaginationURLsForCategories( $categories ) {
-        global $wp_rewrite;
-
-        $urls_to_include = array();
-        $pagination_base = $wp_rewrite->pagination_base;
-        $default_posts_per_page = get_option( 'posts_per_page' );
-
-        foreach ( $categories as $term => $total_posts ) {
-            $total_pages = ceil( $total_posts / $default_posts_per_page );
-
-            for ( $page = 1; $page <= $total_pages; $page++ ) {
-                $urls_to_include[] =
-                    "{$term}/{$pagination_base}/{$page}";
-            }
-        }
-
-        return $urls_to_include;
-    }
-
-    public static function getPaginationURLsForComments( $wp_site_url ) {
-        global $wp_rewrite;
-
-        $urls_to_include = array();
-        $comments_pagination_base = $wp_rewrite->comments_pagination_base;
-        $comments = get_comments();
-
-        if ( ! is_iterable( $comments ) ) {
-            return array();
-        }
-
-        foreach ( $comments as $comment ) {
-            $comment_url = get_comment_link( $comment->comment_ID );
-            $comment_url = strtok( $comment_url, '#' );
-
-            if ( ! is_string( $comment_url ) ) {
-                continue;
-            }
-
-            $urls_to_include[] = str_replace(
-                $wp_site_url,
-                '',
-                $comment_url
-            );
-        }
-
-        return array_unique( $urls_to_include );
     }
 }
 
