@@ -105,7 +105,6 @@ class CLI {
         $site_crawler = new SiteCrawler();
 
         $site_crawler->crawl_site();
-        $site_crawler->crawl_discovered_links();
         $plugin->post_process_archive_dir();
 
         $end_time = microtime();

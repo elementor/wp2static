@@ -35,10 +35,6 @@ class CSSProcessor extends Base {
 
         $this->page_url = new \Net_URL2( $page_url );
 
-        $this->detectIfURLsShouldBeHarvested();
-
-        $this->discovered_urls = array();
-
         foreach ( $this->css_doc->getAllValues() as $node_value ) {
             if ( $node_value instanceof \Sabberworm\CSS\Value\URL ) {
                 $original_link = $node_value->getURL();
@@ -51,8 +47,6 @@ class CSSProcessor extends Base {
                 if ( $inline_img !== false ) {
                     continue;
                 }
-
-                $this->addDiscoveredURL( $original_link );
 
                 if ( $this->isInternalLink( $original_link ) ) {
                     if ( ! isset( $this->settings['rewrite_rules'] ) ) {
@@ -110,8 +104,6 @@ class CSSProcessor extends Base {
             }
         }
 
-        $this->writeDiscoveredURLs();
-
         return true;
     }
 
@@ -146,91 +138,6 @@ class CSSProcessor extends Base {
         );
 
         $this->raw_css = $rewritten_source;
-    }
-
-    public function detectIfURLsShouldBeHarvested() {
-        if ( defined( 'WP_CLI' ) ) {
-            if ( defined( 'CRAWLING_DISCOVERED' ) ) {
-                return;
-            } else {
-                $this->harvest_new_urls = true;
-            }
-        } else {
-            // @codingStandardsIgnoreStart
-            $this->harvest_new_urls = (
-                 $_POST['ajax_action'] === 'crawl_site'
-            );
-            // @codingStandardsIgnoreEnd
-        }
-    }
-
-    public function addDiscoveredURL( $url ) {
-        if ( ! $url ) {
-            return;
-        }
-
-        // trim any query strings or anchors
-        $url = strtok( $url, '#' );
-
-        if ( ! $url ) {
-            return;
-        }
-
-        $url = strtok( $url, '?' );
-
-        if ( ! $url ) {
-            return;
-        }
-
-        if ( trim( $url ) === '' ) {
-            return;
-        }
-
-        if ( isset( $this->harvest_new_urls ) ) {
-            if ( ! $this->isValidURL( $url ) ) {
-                return;
-            }
-
-            if ( $this->isInternalLink( $url ) ) {
-                $discovered_url_without_site_url =
-                    str_replace(
-                        rtrim( $this->placeholder_url, '/' ),
-                        '',
-                        $url
-                    );
-
-                $this->discovered_urls[] = $discovered_url_without_site_url;
-            }
-        }
-    }
-
-    public function writeDiscoveredURLs() {
-        // @codingStandardsIgnoreStart
-        if ( isset( $_POST['ajax_action'] ) &&
-            $_POST['ajax_action'] === 'crawl_again' ) {
-            return;
-        }
-        // @codingStandardsIgnoreEnd
-
-        if ( defined( 'WP_CLI' ) ) {
-            if ( defined( 'CRAWLING_DISCOVERED' ) ) {
-                return;
-            }
-        }
-
-        file_put_contents(
-            $this->settings['wp_uploads_path'] .
-                '/wp2static-working-files/DISCOVERED-URLS.txt',
-            PHP_EOL .
-                implode( PHP_EOL, array_unique( $this->discovered_urls ) ),
-            FILE_APPEND | LOCK_EX
-        );
-
-        chmod(
-            $this->settings['wp_uploads_path'] .
-                '/wp2static-working-files/DISCOVERED-URLS.txt',
-            0664
-        );
     }
 
     public function isValidURL( $url ) {

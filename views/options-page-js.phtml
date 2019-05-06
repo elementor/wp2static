@@ -42,7 +42,6 @@ var pollingIntervalID = '';
 var timerIntervalID = '';
 var status_descriptions = {
     'crawl_site' : 'Crawling initial file list',
-    'crawl_again' : 'Crawling discovered URLs',
     'post_process_archive_dir' : 'Processing the crawled files',
     'post_export_teardown' : 'Cleaning up after processing'
 };
@@ -244,7 +243,6 @@ jQuery(document).ready(function($){
   function startExportSuccessCallback( serverResponse ) {
       var initial_steps = [
         'crawl_site',
-        'crawl_again',
         'post_process_archive_dir'
       ];
 
@@ -407,7 +405,7 @@ jQuery(document).ready(function($){
       SUCCESS - action is complete
       > 0 - action is in progress inremental task
       ERROR
-        
+
       if an action is successful, and there are other actions queued up,
       it will call the function again with the remaining arguments/actions
 
@@ -577,8 +575,7 @@ jQuery(document).ready(function($){
   function loadLogFile() {
     // display loading icon
     $('#log_load_progress').show();
-        
-    // set textarea to disabled
+
     $("#export_log_textarea" ).attr('disabled', true);
 
     // set textarea content to 'Loading log file...'
