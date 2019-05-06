@@ -8,7 +8,7 @@ jobs:
       - run:
           name: Run code quality checks
           command: |
-            composer install
+            composer install --ansi --no-suggest 2>&1 | sed -e 's#\x08\+# #g' -e 's#\(Downloading (\x1b\[[0-9]\+m[0-9]\?[0-9]%\x1b\[[0-9]\+m)\)\+##g'
             composer lint
             composer phpcs
             composer phpstan
