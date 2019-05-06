@@ -181,6 +181,25 @@
                     &nbsp;
                 </td>
                 <td>
+                    <label for="detectPluginAssets"><b>Plugin Assets</b></label>
+                    <?php $tpl->displayCheckbox($this, 'detectPluginAssets', ''); ?>
+                    <br>
+                    <br>
+                    <p>Detect all assets from within all plugin directories.</p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="detectWPIncludesAssets"><b>WP-INC JS</b></label>
+                    <?php $tpl->displayCheckbox($this, 'detectWPIncludesAssets', ''); ?>
+                    <br>
+                    <br>
+                    <p>Get all public URLs for wp-includes assets.</p>
+                </td>
+                <td>
+                    &nbsp;
+                </td>
+                <td>
                     <!-- empty -->
                 </td>
             </tr>
