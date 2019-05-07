@@ -39,7 +39,7 @@ $tpl = new \WP2Static\TemplateHelper();
 
   <?php endif; ?>
 
-  <?php if ( ! $this->wp_site->curl_enabled ) : ?>
+  <?php if ( ! $this->curl_supported ) : ?>
 
    <div class="notice notice-error inline wp2static-notice">
       <h2 class="title">You need the cURL extension enabled on your web server</h2>

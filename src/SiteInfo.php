@@ -29,7 +29,6 @@ class SiteInfo {
             // ??? 'permalink_structure' => get_option( 'permalink_structure' ),
             // Does it matter? 'subdirectory' => $this->isSiteInstalledInSubDirectory(), // it shouldn't, but current mechanism for rewriting URLs has some cases that require knowledge of it...
             // ??? 'permalinks_set' => $this->permalinksAreDefined(),
-            // TODO Use WP_Http 'curl_enabled' => $this->hasCurlSupport(),
 
             // Content
             'content_path' => trailingslashit( WP_CONTENT_DIR ),
@@ -90,6 +89,11 @@ class SiteInfo {
     public function getUrlBasename( $name ) {
     }
 */
+
+    // TODO Use WP_Http 'curl_enabled' => $this->hasCurlSupport(), // didn't see the method vailable in WP_Http
+    public function hasCURLSupport() {
+        return extension_loaded( 'curl' );
+    }
 
     public function isUploadsWritable() {
         $uploadsDir = self::$info['uploads_path'];
