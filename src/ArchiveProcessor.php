@@ -243,6 +243,9 @@ class ArchiveProcessor extends Base {
     }
 
     public function create_zip() {
+        $site_info = new SiteInfo();
+        $site_info = $site_info->get();
+
         $deployer = $this->settings['selected_deployment_option'];
 
         if ( ! in_array( $deployer, array( 'zip', 'netlify' ) ) ) {
@@ -286,7 +289,7 @@ class ArchiveProcessor extends Base {
 
         $zip_archive->close();
 
-        $zip_path = $this->settings['wp_uploads_path'] .
+        $zip_path = $site_info['uploads_path'] .
             '/wp2static-exported-site.zip';
 
         rename( $temp_zip, $zip_path );
