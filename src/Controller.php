@@ -165,20 +165,6 @@ class Controller {
         $site_info = new SiteInfo();
         $site_info = $site_info->get();
 
-        $target_settings = array(
-            'general',
-            'crawling',
-        );
-
-        if ( defined( 'WP_CLI' ) ) {
-            $this->settings =
-                DBSettings::get( $target_settings );
-        } else {
-            $this->settings =
-                PostSettings::get( $target_settings );
-        }
-
-        // get export log path
         $export_log = $site_info['uploads_path'] .
             '/wp2static-working-files/EXPORT-LOG.txt';
 
@@ -341,20 +327,10 @@ class Controller {
     }
 
     public function delete_deploy_cache() {
-        $target_settings = array(
-            'wpenv',
-        );
+        $site_info = new SiteInfo();
+        $site_info = $site_info->get();
 
-        if ( defined( 'WP_CLI' ) ) {
-            $this->settings =
-                DBSettings::get( $target_settings );
-        } else {
-            $this->settings =
-                PostSettings::get( $target_settings );
-        }
-
-        $uploads_dir = $this->settings['wp_uploads_path'];
-        $hash_files = glob( "{$uploads_dir}/*PREVIOUS-HASHES*.txt" );
+        $hash_files = glob( "{$site_info['uploads_dir']}/*PREVIOUS-HASHES*.txt" );
         array_map( 'unlink', $hash_files );
 
         if ( ! defined( 'WP_CLI' ) ) {

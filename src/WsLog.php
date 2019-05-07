@@ -7,10 +7,8 @@ class WsLog {
     public static function l( $text ) {
         $target_settings = array(
             'general',
-            'wpenv',
         );
 
-        $wp_uploads_path = '';
         $settings = '';
 
         if ( defined( 'WP_CLI' ) ) {
