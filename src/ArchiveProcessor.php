@@ -19,7 +19,6 @@ class ArchiveProcessor extends Base {
                 'crawling',
                 'advanced',
                 'processing',
-                'netlify',
                 'zip',
                 'folder',
             )
@@ -222,6 +221,7 @@ class ArchiveProcessor extends Base {
         }
     }
 
+    // TODO: migrate to add-on
     public function createNetlifySpecialFiles() {
         if ( $this->settings['selected_deployment_option'] !== 'netlify' ) {
             return false;
