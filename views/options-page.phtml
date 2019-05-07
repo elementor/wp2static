@@ -28,11 +28,11 @@ $tpl = new \WP2Static\TemplateHelper();
   <?php endif; ?>
 
 
-  <?php if ( ! $this->wp_site->uploads_writable ) : ?>
+  <?php if ( ! $this->uploads_writable ) : ?>
 
    <div class="notice notice-error inline wp2static-notice">
       <h2 class="title">Your uploads directory is not writable</h2>
-      <p>Please ensure that <code><?php echo $this->wp_site->wp_uploads_path; ?></code>
+      <p>Please ensure that <code><?php echo $this->wp_site->uploads_path; ?></code>
             is writable by your webserver. 
     </p>
     </div>

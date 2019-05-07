@@ -260,9 +260,8 @@ class Controller {
     }
 
     public function renderOptionsPage() {
-        $site_info = new SiteInfo();
-        $site_info = $site_info->get();
-        $this->current_archive = '';
+        $site_info_instance = new SiteInfo();
+        $site_info = $site_info_instance->get();
 
         $this->view
             ->setTemplate( 'options-page-js' )
@@ -274,6 +273,7 @@ class Controller {
         $this->view
             ->setTemplate( 'options-page' )
             ->assign( 'wp_site', $site_info )
+            ->assign( 'uploads_writable', $site_info_instance->isUploadsWritable() )
             ->assign( 'options', $this->options )
             ->assign( 'onceAction', self::HOOK . '-options' )
             ->render();

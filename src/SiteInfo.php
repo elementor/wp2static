@@ -91,6 +91,11 @@ class SiteInfo {
     }
 */
 
+    public function isUploadsWritable() {
+        $uploadsDir = self::$info['uploads_path'];
+        return file_exists( $uploadsDir ) && is_writeable( $uploadsDir );
+    }
+
     public function debug() {
         var_export( self::$info );
     }
