@@ -190,8 +190,6 @@ class FilesHelper {
         $uploads_url,
         $settings
         ) {
-        error_log( $uploads_path );die();
-
         $site_info = new SiteInfo();
         $site_info = $site_info->get();
 
@@ -289,7 +287,7 @@ class FilesHelper {
         if ( isset( $settings['detectVendorCacheDirs'] ) ) {
             $url_queue = array_merge(
                 $url_queue,
-                DetectVendorFiles::detect( $site_info->site_url )
+                DetectVendorFiles::detect( $site_info['site_url'] )
             );
         }
 
@@ -539,7 +537,7 @@ class FilesHelper {
         );
 
         $stripped_urls = str_replace(
-            $site_info->home_url,
+            $site_info['home_url'],
             '/',
             $url_queue
         );

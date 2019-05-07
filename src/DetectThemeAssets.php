@@ -16,10 +16,10 @@ class DetectThemeAssets {
         $template_url = '';
 
         if ( $theme_type === 'parent' ) {
-            $template_path = $site_info->parent_theme_path;
+            $template_path = $site_info['parent_theme_path'];
             $template_url = get_template_directory_uri();
         } else {
-            $template_path = $site_info->child_theme_path;
+            $template_path = $site_info['child_theme_path'];
             $template_url = get_stylesheet_directory_uri();
         }
 

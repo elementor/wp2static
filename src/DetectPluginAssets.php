@@ -18,8 +18,8 @@ class DetectPluginAssets {
             a symlinked plugin directory. Our WPSite->plugins_path is more
             reliable.
         */
-        $plugins_path = $site_info->plugins_path;
-        $plugins_url = plugins_url();
+        $plugins_path = $site_info['plugins_path'];
+        $plugins_url = $site_info['plugins_url'];
 
         $directory = $plugins_path;
 

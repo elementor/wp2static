@@ -179,12 +179,12 @@ class Controller {
         }
 
         // get export log path
-        $export_log = $site_info->uploads_path .
+        $export_log = $site_info['uploads_path'] .
             '/wp2static-working-files/EXPORT-LOG.txt';
 
         if ( is_file( $export_log ) ) {
             // create zip of export log in tmp file
-            $export_log_zip = $site_info->uploads_path .
+            $export_log_zip = $site_info['uploads_path'] .
                 '/wp2static-working-files/EXPORT-LOG.zip';
 
             $zip_archive = new ZipArchive();
@@ -213,7 +213,7 @@ class Controller {
 
             $zip_archive->close();
 
-            echo $site_info->uploads_url .
+            echo $site_info['uploads_url'] .
                 '/wp2static-working-files/EXPORT-LOG.zip';
         } else {
             // serve 500 response to client
@@ -243,8 +243,8 @@ class Controller {
         $initial_file_list_count =
             FilesHelper::buildInitialFileList(
                 true,
-                $site_info->uploads_path,
-                $site_info->uploads_url,
+                $site_info['uploads_path'],
+                $site_info['uploads_url'],
                 $this->settings
             );
 

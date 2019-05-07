@@ -18,7 +18,7 @@ class DetectWPIncludesAssets {
             a symlinked plugin directory. Our WPSite->plugins_path is more
             reliable.
         */
-        $directory = $site_info->includes_path;
+        $directory = $site_info['includes_path'];
 
         if ( is_dir( $directory ) ) {
             $iterator = new RecursiveIteratorIterator(
