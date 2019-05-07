@@ -8,7 +8,8 @@ use RecursiveDirectoryIterator;
 class DetectWPIncludesAssets {
 
     public static function detect() {
-        $wp_site = new WPSite();
+        $site_info = new SiteInfo();
+        $site_info = $site_info->get();
 
         $files = array();
 
@@ -17,10 +18,7 @@ class DetectWPIncludesAssets {
             a symlinked plugin directory. Our WPSite->plugins_path is more
             reliable.
         */
-        $includes_path = $wp_site->wp_includes_path;
-        $includes_url = $wp_site->wp_inc;
-
-        $directory = $includes_path;
+        $directory = $site_info->includes_path;
 
         if ( is_dir( $directory ) ) {
             $iterator = new RecursiveIteratorIterator(

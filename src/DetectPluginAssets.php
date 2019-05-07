@@ -8,7 +8,8 @@ use RecursiveDirectoryIterator;
 class DetectPluginAssets {
 
     public static function detect() {
-        $wp_site = new WPSite();
+        $site_info = new SiteInfo();
+        $site_info = $site_info->get();
 
         $files = array();
 
@@ -17,7 +18,7 @@ class DetectPluginAssets {
             a symlinked plugin directory. Our WPSite->plugins_path is more
             reliable.
         */
-        $plugins_path = $wp_site->plugins_path;
+        $plugins_path = $site_info->plugins_path;
         $plugins_url = plugins_url();
 
         $directory = $plugins_path;

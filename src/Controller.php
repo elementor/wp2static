@@ -162,7 +162,8 @@ class Controller {
     }
 
     public function download_export_log() {
-        $this->wp_site = new WPSite();
+        $site_info = new SiteInfo();
+        $site_info = $site_info->get();
 
         $target_settings = array(
             'general',
@@ -178,12 +179,12 @@ class Controller {
         }
 
         // get export log path
-        $export_log = $this->wp_site->wp_uploads_path .
+        $export_log = $site_info->uploads_path .
             '/wp2static-working-files/EXPORT-LOG.txt';
 
         if ( is_file( $export_log ) ) {
             // create zip of export log in tmp file
-            $export_log_zip = $this->wp_site->wp_uploads_path .
+            $export_log_zip = $site_info->uploads_path .
                 '/wp2static-working-files/EXPORT-LOG.zip';
 
             $zip_archive = new ZipArchive();
@@ -212,7 +213,7 @@ class Controller {
 
             $zip_archive->close();
 
-            echo $this->wp_site->wp_uploads_url .
+            echo $site_info->uploads_url .
                 '/wp2static-working-files/EXPORT-LOG.zip';
         } else {
             // serve 500 response to client
@@ -221,7 +222,8 @@ class Controller {
     }
 
     public function generate_filelist_preview() {
-        $this->wp_site = new WPSite();
+        $site_info = new SiteInfo();
+        $site_info = $site_info->get();
 
         $target_settings = array(
             'general',
@@ -241,13 +243,15 @@ class Controller {
         $initial_file_list_count =
             FilesHelper::buildInitialFileList(
                 true,
-                $this->wp_site->wp_uploads_path,
-                $this->wp_site->uploads_url,
+                $site_info->uploads_path,
+                $site_info->uploads_url,
                 $this->settings
             );
 
         if ( $initial_file_list_count < 1 ) {
-            return false;
+            $err = 'Initial file list unable to be generated';
+            WsLog::l( $err );
+            throw new Exception( $err );
         }
 
         if ( ! defined( 'WP_CLI' ) ) {
@@ -256,19 +260,20 @@ class Controller {
     }
 
     public function renderOptionsPage() {
-        $this->wp_site = new WPSite();
+        $site_info = new SiteInfo();
+        $site_info = $site_info->get();
         $this->current_archive = '';
 
         $this->view
             ->setTemplate( 'options-page-js' )
             ->assign( 'options', $this->options )
-            ->assign( 'wp_site', $this->wp_site )
+            ->assign( 'wp_site', $site_info )
             ->assign( 'onceAction', self::HOOK . '-options' )
             ->render();
 
         $this->view
             ->setTemplate( 'options-page' )
-            ->assign( 'wp_site', $this->wp_site )
+            ->assign( 'wp_site', $site_info )
             ->assign( 'options', $this->options )
             ->assign( 'onceAction', self::HOOK . '-options' )
             ->render();

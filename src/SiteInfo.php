@@ -22,12 +22,12 @@ class SiteInfo {
             // Core
             'site_path' => ABSPATH,
             'site_url' => trailingslashit( site_url() ),
-            'home_path' => get_home_path(),
+            // 'home_path' => get_home_path(), // errors trying to find it in WP2Static\get_home_path()...
             'home_url' => trailingslashit( get_home_url() ),
             'includes_path' => trailingslashit( ABSPATH . WPINC ),
             'includes_url' => includes_url(),
             // ??? 'permalink_structure' => get_option( 'permalink_structure' ),
-            // Does it matter? 'subdirectory' => $this->isSiteInstalledInSubDirectory(),
+            // Does it matter? 'subdirectory' => $this->isSiteInstalledInSubDirectory(), // it shouldn't, but current mechanism for rewriting URLs has some cases that require knowledge of it...
             // ??? 'permalinks_set' => $this->permalinksAreDefined(),
             // TODO Use WP_Http 'curl_enabled' => $this->hasCurlSupport(),
 
@@ -94,7 +94,10 @@ class SiteInfo {
     public function debug() {
         var_export( self::$info );
     }
+
+    public function get() {
+        return self::$info;
+    }
 }
 
 $si = new SiteInfo();
-$si->debug();

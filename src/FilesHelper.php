@@ -190,8 +190,10 @@ class FilesHelper {
         $uploads_url,
         $settings
         ) {
-        require_once dirname( __FILE__ ) . '/WPSite.php';
-        $wp_site = new WPSite();
+        error_log( $uploads_path );die();
+
+        $site_info = new SiteInfo();
+        $site_info = $site_info->get();
 
         $base_url = untrailingslashit( home_url() );
 
@@ -287,7 +289,7 @@ class FilesHelper {
         if ( isset( $settings['detectVendorCacheDirs'] ) ) {
             $url_queue = array_merge(
                 $url_queue,
-                DetectVendorFiles::detect( $wp_site->site_url )
+                DetectVendorFiles::detect( $site_info->site_url )
             );
         }
 
@@ -318,8 +320,6 @@ class FilesHelper {
             );
 
             if ( ! $result ) {
-                require_once dirname( __FILE__ ) .
-                    '/../WP2Static/WsLog.php';
                 WsLog::l( 'USER WORKING DIRECTORY NOT WRITABLE' );
 
                 return 'ERROR WRITING INITIAL CRAWL LIST';
@@ -340,8 +340,6 @@ class FilesHelper {
 
             return count( $url_queue );
         } else {
-            require_once dirname( __FILE__ ) .
-                '/../WP2Static/WsLog.php';
             WsLog::l(
                 "Couldn't create working directory at " .
                     $uploads_path . '/wp2static-working-files'
@@ -530,7 +528,8 @@ class FilesHelper {
         // NOTE: initial de-dup for faster processing
         $unique_urls = array_unique( $urls );
 
-        $wp_site_url = get_home_url();
+        $site_info = new SiteInfo();
+        $site_info = $site_info->get();
 
         $url_queue = array_filter(
             $unique_urls,
@@ -540,7 +539,7 @@ class FilesHelper {
         );
 
         $stripped_urls = str_replace(
-            $wp_site_url,
+            $site_info->home_url,
             '/',
             $url_queue
         );

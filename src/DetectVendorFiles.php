@@ -5,7 +5,8 @@ namespace WP2Static;
 class DetectVendorFiles {
 
     public static function detect( $wp_site_url ) {
-        $wp_site = new WPSite();
+        $site_info = new SiteInfo();
+        $site_info = $site_info->get();
 
         $vendor_files = array();
 
@@ -16,7 +17,7 @@ class DetectVendorFiles {
             to static workflow
         */
         if ( class_exists( '\\Elementor\Api' ) ) {
-            $elementor_font_dir = $wp_site->plugins_path .
+            $elementor_font_dir = $site_info->plugins_path .
                 '/elementor/assets/lib/font-awesome';
 
             $elementor_urls = FilesHelper::getListOfLocalFilesByUrl(
@@ -38,8 +39,8 @@ class DetectVendorFiles {
             $vendor_files = array_merge( $vendor_files, $yoast_sitemaps );
         }
 
-        if ( is_dir( $wp_site->plugins_path . '/soliloquy/' ) ) {
-            $soliloquy_assets = $wp_site->plugins_path .
+        if ( is_dir( $site_info->plugins_path . '/soliloquy/' ) ) {
+            $soliloquy_assets = $site_info->plugins_path .
                 '/soliloquy/assets/css/images/';
 
             $soliloquy_urls = FilesHelper::getListOfLocalFilesByUrl(
@@ -51,20 +52,20 @@ class DetectVendorFiles {
 
         // cache dir used by Autoptimize and other themes/plugins
         $vendor_cache_dir =
-            $wp_site->wp_content_path . '/cache/';
+            $site_info->content_path . '/cache/';
 
         if ( is_dir( $vendor_cache_dir ) ) {
 
             // get difference between home and wp-contents URL
             $prefix = str_replace(
-                $wp_site->site_url,
+                $site_info->site_url,
                 '/',
-                $wp_site->wp_content_url
+                $site_info->content_url
             );
 
             $vendor_cache_urls = DetectVendorCache::detect(
                 $vendor_cache_dir,
-                $wp_site->wp_content_path,
+                $site_info->content_path,
                 $prefix
             );
 
