@@ -26,7 +26,6 @@ class SiteInfo {
             'home_url' => trailingslashit( get_home_url() ),
             'includes_path' => trailingslashit( ABSPATH . WPINC ),
             'includes_url' => includes_url(),
-            // ??? 'permalink_structure' => get_option( 'permalink_structure' ),
             // Does it matter? 'subdirectory' => $this->isSiteInstalledInSubDirectory(), // it shouldn't, but current mechanism for rewriting URLs has some cases that require knowledge of it...
             // ??? 'permalinks_set' => $this->permalinksAreDefined(),
 
@@ -98,6 +97,11 @@ class SiteInfo {
     public function isUploadsWritable() {
         $uploadsDir = self::$info['uploads_path'];
         return file_exists( $uploadsDir ) && is_writeable( $uploadsDir );
+    }
+
+    // ??? 'permalink_structure' => get_option( 'permalink_structure' ),
+    public function permalinksAreDefined() {
+        return strlen( get_option( 'permalink_structure' ) );
     }
 
     public function debug() {

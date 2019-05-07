@@ -57,7 +57,7 @@ $tpl = new \WP2Static\TemplateHelper();
 
   <?php endif; ?>
 
-  <?php if ( ! $this->wp_site->permalinks_set ) : ?>
+  <?php if ( ! $this->permalinks_defined ) : ?>
 
    <div class="notice notice-error inline wp2static-notice">
       <h2 class="title">You need to set your WordPress Pemalinks</h2>

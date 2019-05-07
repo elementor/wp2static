@@ -275,6 +275,7 @@ class Controller {
             ->assign( 'wp_site', $site_info )
             ->assign( 'uploads_writable', $site_info_instance->isUploadsWritable() )
             ->assign( 'curl_supported', $site_info_instance->hasCURLSupport() )
+            ->assign( 'permalinks_defined', $site_info_instance->permalinksAreDefined() )
             ->assign( 'options', $this->options )
             ->assign( 'onceAction', self::HOOK . '-options' )
             ->render();
