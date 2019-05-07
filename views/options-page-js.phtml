@@ -21,9 +21,6 @@ var deploy_options = {
 
 var wp_site = <?php echo json_encode($this->wp_site, JSON_FORCE_OBJECT|JSON_UNESCAPED_SLASHES); ?>
 
-// TODO: update this from prapre_for_export() response;
-var current_archive = {}; 
-
 var current_deployment_method = '<?php echo $this->options->selected_deployment_option ? $this->options->selected_deployment_option : 'folder'; ?>';
 
 // TODO: get the log out of the archive, along with it's meta infos
