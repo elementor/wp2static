@@ -6,9 +6,6 @@ class PostSettings {
 
     public static function get( $sets = array(), $specify_keys = array() ) {
 
-        error_log(print_r($sets, true));
-        error_log(print_r($specify_keys, true));
-
         $settings = array();
         $key_sets = array();
         $target_keys = array();
