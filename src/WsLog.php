@@ -25,9 +25,10 @@ class WsLog {
             return;
         }
 
-        $wp_uploads_path = $settings['wp_uploads_path'];
+        $site_info = new SiteInfo();
+        $site_info = $site_info->get();
 
-        $log_file_path = $wp_uploads_path .
+        $log_file_path = $site_info['uploads_path'] .
             '/wp2static-working-files/EXPORT-LOG.txt';
 
         file_put_contents(
