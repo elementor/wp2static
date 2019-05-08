@@ -2,6 +2,24 @@
 
 namespace WP2Static;
 
+/*
+ * Processes HTML files while crawling.
+ * Works in multiple phases:
+ *
+ * Parses HTML into a DOMDocument and iterates all elements
+ * For each element, it checks the type and handles with specific functions
+ *
+ * For elements containing links we want to process, we first normalize it:
+ * to get all URLs to a uniform structure for later processing, we convert to
+ * absolute URLs and rewrite to our own placeholder URL for ease of rewriting
+ * we also transform URLs if the user requests document-relative or offline
+ * URLs in the final output
+ *
+ * Before returning the final HTML for saving, we perform bulk transformations
+ * such as enforcing UTF-8 encoding, replacing all placeholder links or
+ * transforming to site root-relative URLs
+ *
+ */
 class HTMLProcessor extends Base {
 
     public function __construct() {
