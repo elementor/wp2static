@@ -82,7 +82,6 @@ class SiteInfo {
      */
     public static function getPath( $name ) {
         if (self::$instance === NULL) {
-             error_log('creating new SiteInfo');
              self::$instance = new SiteInfo();
         }
 
@@ -102,7 +101,6 @@ class SiteInfo {
      */
     public static function getUrl( $name ) {
         if (self::$instance === NULL) {
-             error_log('creating new SiteInfo');
              self::$instance = new SiteInfo();
         }
 
@@ -123,7 +121,6 @@ class SiteInfo {
     // TODO Use WP_Http 'curl_enabled' => $this->hasCurlSupport(), // didn't see the method vailable in WP_Http
     public function hasCURLSupport() {
         if (self::$instance === NULL) {
-             error_log('creating new SiteInfo');
              self::$instance = new SiteInfo();
         }
 
@@ -132,7 +129,6 @@ class SiteInfo {
 
     public function isUploadsWritable() {
         if (self::$instance === NULL) {
-             error_log('creating new SiteInfo');
              self::$instance = new SiteInfo();
         }
 
@@ -143,7 +139,6 @@ class SiteInfo {
     // ??? 'permalink_structure' => get_option( 'permalink_structure' ),
     public function permalinksAreDefined() {
         if (self::$instance === NULL) {
-             error_log('creating new SiteInfo');
              self::$instance = new SiteInfo();
         }
 
