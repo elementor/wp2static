@@ -1,5 +1,7 @@
 # WP2Static
 
+[![CircleCI](https://circleci.com/gh/WP2Static/wp2static.svg?style=svg)](https://circleci.com/gh/WP2Static/wp2static)
+
 Plugin WordPress untuk generate salinan statis situs Anda dan deploy ke GitHub Pages, S3, Netlify, dll. Meningkatkan keamanan, kecepatan pageload, dan opsi hosting. Hubungkan WordPress ke dalam alur kerja CI/CD Anda.
 
 [English ![English](https://cdn.staticaly.com/misc/flags/us.png?w=20)](readme.md) |

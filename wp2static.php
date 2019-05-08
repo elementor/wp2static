@@ -13,19 +13,25 @@
 
 
 // intercept low latency dependent actions and avoid boostrapping whole plugin
-require_once dirname( __FILE__ ) .
-    '/plugin/WP2Static/Dispatcher.php';
+// @codingStandardsIgnoreStart
+$ajax_action = isset( $_POST['ajax_action'] ) ? $_POST['ajax_action'] : '';
+// @codingStandardsIgnoreEnd
 
-require_once 'plugin/WP2Static/WP2Static.php';
-require_once 'plugin/WP2Static/Options.php';
-require_once 'plugin/WP2Static/TemplateHelper.php';
-require_once 'plugin/WP2Static/View.php';
-require_once 'plugin/WP2Static/WsLog.php';
-require_once 'plugin/WP2Static/FilesHelper.php';
-require_once 'plugin/WP2Static.php';
-require_once 'plugin/URL2/URL2.php';
+$deployers_dir = dirname( __FILE__ ) . '/../deployers';
 
-WP2Static_Controller::init( __FILE__ );
+define( 'WP2STATIC_PATH', plugin_dir_path( __FILE__ ) );
+
+require WP2STATIC_PATH . 'vendor/autoload.php';
+
+// NOTE: bypass instantiating plugin for specific AJAX requests
+if ( $ajax_action === 'crawl_site' || $ajax_action === 'crawl_again' ) {
+    new WP2Static\SiteCrawler();
+
+    wp_die();
+    return null;
+}
+
+WP2Static\Controller::init( __FILE__ );
 
 function plugin_action_links( $links ) {
     $settings_link = '<a href="admin.php?page=wp2static">' . __( 'Settings', 'static-html-output-plugin' ) . '</a>';
@@ -36,7 +42,7 @@ function plugin_action_links( $links ) {
 
 
 function wp_static_html_output_server_side_export() {
-    $plugin = WP2Static_Controller::getInstance();
+    $plugin = WP2Static\Controller::getInstance();
     $plugin->doExportWithoutGUI();
     wp_die();
     return null;
@@ -59,7 +65,7 @@ function wp_static_html_output_ajax() {
     $instance_method = filter_input( INPUT_POST, 'ajax_action' );
 
     if ( '' !== $instance_method && is_string( $instance_method ) ) {
-        $plugin_instance = WP2Static_Controller::getInstance();
+        $plugin_instance = WP2Static\Controller::getInstance();
         call_user_func( array( $plugin_instance, $instance_method ) );
     }
 

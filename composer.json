@@ -1,0 +1,66 @@
+{
+    "name": "wp2static/wp2static",
+    "description": "Security & Performance via static website publishing.",
+    "homepage": "https://wp2static.com",
+      "license": "UNLICENSE",
+      "authors": [
+        {
+          "name": "Leon Stafford",
+          "email": "me@ljs.dev",
+          "homepage": "https://ljs.dev"
+        }
+      ],
+    "type": "wordpress-plugin",
+    "support": {
+        "issues": "https://github.com/WP2Static/wp2static/issues",
+        "forum": "https://wp2static.com/community",
+        "docs": "https://wp2static.com/documentation",
+        "source": "https://github.com/WP2Static/wp2static"
+    },
+    "repositories": [
+        {
+            "type": "pear",
+            "url": "https://pear.php.net"
+        }
+    ],
+    "require": {
+        "php": ">=7.0",
+        "pear/net_url2": "^2.1.2",
+        "sabberworm/php-css-parser": "^8.3.0"
+    },
+    "require-dev": {
+        "phpstan/phpstan-shim": "^0.11.5",
+        "giacocorsiglia/wordpress-stubs": "^5.1",
+        "squizlabs/php_codesniffer": "3.*",
+        "phpunit/phpunit": "^8",
+        "dealerdirect/phpcodesniffer-composer-installer": "*",
+        "wp-coding-standards/wpcs": "*",
+        "jakub-onderka/php-parallel-lint": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "WP2Static\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PHPStan\\WordPress\\": "tests/phpstan/",
+            "WP2Static\\": "src/"
+        }
+    },
+    "config": {
+        "platform": {
+          "php": "7.2.17"
+        },
+        "preferred-install": {
+            "*": "dist"
+        },
+        "classmap-authoritative": true
+    },
+    "scripts": {
+        "phpstan": "php -d memory_limit=-1 ./vendor/bin/phpstan analyse",
+        "phpcs": "vendor/bin/phpcs --standard=./tools/phpcs.xml --ignore=,*/tests/*,*/vendor/*,wp2static.php ./",
+        "phpunit": "vendor/bin/phpunit ./tests/unit/",
+        "lint": "vendor/bin/parallel-lint --exclude vendor ."
+    }
+}

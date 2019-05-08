@@ -1,0 +1,38 @@
+# See options in https://github.com/phpstan/phpstan/blob/master/conf/config.neon
+services:
+    -
+        class: PHPStan\WordPress\IsWpErrorFunctionTypeSpecifyingExtension
+        tags:
+            - phpstan.typeSpecifier.functionTypeSpecifyingExtension
+    -
+        class: PHPStan\WordPress\WpThemeMagicPropertiesClassReflectionExtension
+        tags:
+            - phpstan.broker.propertiesClassReflectionExtension
+    -
+        class: PHPStan\WordPress\RedirectCanonicalDynamicFunctionReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicFunctionReturnTypeExtension
+    -
+        class: PHPStan\WordPress\EscSqlDynamicFunctionReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicFunctionReturnTypeExtension
+includes:
+    # https://github.com/phpstan/phpstan/blob/master/conf/bleedingEdge.neon
+    - phar://phpstan.phar/conf/bleedingEdge.neon
+parameters:
+    level: max
+    paths:
+        - %currentWorkingDirectory%/src/
+    #excludes_analyse:
+    #    - %currentWorkingDirectory%/
+    autoload_files:
+        - %currentWorkingDirectory%/vendor/giacocorsiglia/wordpress-stubs/wordpress-stubs.php
+        - %currentWorkingDirectory%/tests/phpstan/bootstrap.php
+        - %currentWorkingDirectory%/tests/phpstan/wp-cli-stubs-2.2.0.php
+    #autoload_directories:
+    #    - %currentWorkingDirectory%/
+    ignoreErrors:
+        # WP-CLI accepts a class too
+        - '/^Parameter #2 \$callable of static method WP_CLI::add_command\(\) expects callable\(\): mixed, \S+ given\.$/'
+        # TODO Add proper PHPDoc blocks
+        - '#^Access to an undefined property #'

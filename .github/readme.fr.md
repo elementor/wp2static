@@ -1,5 +1,7 @@
 # WP2Static
 
+[![CircleCI](https://circleci.com/gh/WP2Static/wp2static.svg?style=svg)](https://circleci.com/gh/WP2Static/wp2static)
+
 Plugin WordPress pour générer une copie statique de votre site et la déployer sur GitHub Pages, S3, Netlify, etc. Améliore la sécurité, offre un meilleur temps de chargement des pages et propose plusieurs options d'hébergement. Connectez WordPress à votre chaîne d'intégration et de déploiement continu.
 
 [English ![English](https://cdn.staticaly.com/misc/flags/us.png?w=20)](readme.md) |

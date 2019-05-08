@@ -2,28 +2,17 @@ version: 2
 jobs:
   code-quality-and-unit-tests:
     docker:
-      - image: circleci/php:7.3-apache-node-browsers-legacy
+      - image: circleci/php:7.2-apache-node-browsers-legacy
     steps:
-      - run:
-          name: Install dependencies
-          command: |
-            git clone --depth 1 -b master https://github.com/squizlabs/PHP_CodeSniffer.git /tmp/phpcs
-
-            git clone --depth 1 -b master https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards.git /tmp/wpcs
-            git clone --depth 1 -b master https://github.com/PHPCompatibility/PHPCompatibility.git /tmp/phpcompat
-            /tmp/phpcs/bin/phpcs --config-set installed_paths /tmp/wpcs,/tmp/phpcompat
       - checkout
       - run:
-          name: Run Code Sniffs
+          name: Run code quality checks
           command: |
-            /tmp/phpcs/bin/phpcs --standard=./tools/phpcs.xml --ignore=,*/tests/*,*/CSSParser/*,*/FTP/*,*/URL2/*,wp2static.php ./
-      - run:
-          name: Run Unit Tests
-          command: |
-            wget -O phpunit https://phar.phpunit.de/phpunit-7.phar
-            chmod +x phpunit
-            sudo mv phpunit /usr/local/bin/
-            ./tests/unit_tests.sh
+            composer install --quiet
+            composer lint
+            composer phpcs
+            composer phpstan
+            composer phpunit
 
 workflows:
   version: 2
