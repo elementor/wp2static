@@ -95,6 +95,8 @@ class HTMLProcessor extends Base {
         // detect if a base tag exists while in the loop
         // use in later base href creation to decide: append or create
         $this->base_tag_exists = false;
+        $this->base_element = null;
+        $this->head_element = null;
 
         $this->page_url = $page_url;
 
@@ -122,6 +124,7 @@ class HTMLProcessor extends Base {
                     $this->processImageSrcSet( $element );
                     break;
                 case 'head':
+                    $this->head_element = $element;
                     $this->processHead( $element );
                     break;
                 case 'link':
@@ -139,7 +142,9 @@ class HTMLProcessor extends Base {
             }
         }
 
-        $this->dealWithBaseHREFElement();
+        // NOTE: $this->base_tag_exists is being set during iteration of
+        // elements, this prevents us from needing to do another iteration
+        $this->dealWithBaseHREFElement( $this->xml_doc, $this->base_tag_exists);
         $this->stripHTMLComments();
 
         return true;
@@ -147,42 +152,38 @@ class HTMLProcessor extends Base {
 
     /*
         When we use relative links, we'll need to set the base HREF tag
-
         if we are exporting for offline usage or have not specific a base HREF
-
         we will remove any that we find
-    */
-    public function dealWithBaseHREFElement() {
-        if ( $this->base_tag_exists ) {
-            $base_element =
-                $this->xml_doc->getElementsByTagName( 'base' )->item( 0 );
 
+        HEAD and BASE elements have been looked for during the main DOM
+        iteration and recorded if found.
+    */
+    public function dealWithBaseHREFElement( $xml_doc, $base_tag_exists ) {
+        if ( $base_tag_exists ) {
             if ( $this->shouldCreateBaseHREF() ) {
-                $base_element->setAttribute(
+                $this->base_element->setAttribute(
                     'href',
                     $this->settings['baseHREF']
                 );
             } else {
-                $base_element->parentNode->removeChild( $base_element );
+                $this->base_element->parentNode->removeChild( $base_element );
             }
         } elseif ( $this->shouldCreateBaseHREF() ) {
-            $base_element = $this->xml_doc->createElement( 'base' );
+            $base_element = $xml_doc->createElement( 'base' );
             $base_element->setAttribute(
                 'href',
                 $this->settings['baseHREF']
             );
-            $head_element =
-                $this->xml_doc->getElementsByTagName( 'head' )->item( 0 );
-            if ( $head_element ) {
-                $first_head_child = $head_element->firstChild;
+
+            if ( $this->head_element ) {
+                $first_head_child = $this->head_element->firstChild;
                 $head_element->insertBefore(
-                    $base_element,
+                    $this->base_element,
                     $first_head_child
                 );
             } else {
                 WsLog::l(
-                    'WARNING: no valid head elemnent to attach base to: ' .
-                        $this->page_url
+                    'No head element to attach base to: ' . $this->page_url
                 );
             }
         }
@@ -430,7 +431,7 @@ class HTMLProcessor extends Base {
 
     public function stripHTMLComments() {
         if ( isset( $this->settings['removeHTMLComments'] ) ) {
-            $xpath = new \DOMXPath( $this->xml_doc );
+            $xpath = new DOMXPath( $this->xml_doc );
 
             foreach ( $xpath->query( '//comment()' ) as $comment ) {
                 $comment->parentNode->removeChild( $comment );
@@ -444,7 +445,7 @@ class HTMLProcessor extends Base {
         );
 
         foreach ( $head_elements as $node ) {
-            if ( $node instanceof \DOMComment ) {
+            if ( $node instanceof DOMComment ) {
                 if (
                     isset( $this->settings['removeConditionalHeadComments'] )
                 ) {
@@ -455,6 +456,7 @@ class HTMLProcessor extends Base {
                     // as smaller iteration to run conditional
                     // against here
                     $this->base_tag_exists = true;
+                    $this->base_element = $node;
                 }
             }
         }
