@@ -44,7 +44,7 @@ class HTMLProcessor extends Base {
         $this->placeholder_url =
             $this->destination_protocol . 'PLACEHOLDER.wpsho/';
 
-        $wp_site_root = $this->settings['wp_site_url'];
+        $wp_site_root = SiteInfo::getUrl( 'site' );
 
         // instantiate the XML body here
         $this->xml_doc = new \DOMDocument();
