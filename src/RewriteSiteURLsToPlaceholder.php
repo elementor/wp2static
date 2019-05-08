@@ -9,15 +9,15 @@ namespace WP2Static;
 */
 class RewriteSiteURLsToPlaceholder {
 
-   /**
-    * 
-    * Rewrite site urls to placeholder using patterns
-    *
-    * @param string $html_document HTML document source
-    * @param array $search_patterns Patterns to search 
-    * @param array $replace_patterns Patterns to replace 
-    * @return string HTML document with placeholder URLs
-    */
+    /**
+     *
+     * Rewrite site urls to placeholder using patterns
+     *
+     * @param string $html_document HTML document source
+     * @param array $search_patterns Patterns to search
+     * @param array $replace_patterns Patterns to replace
+     * @return string HTML document with placeholder URLs
+     */
     public static function rewrite(
         $html_document,
         $search_patterns,
