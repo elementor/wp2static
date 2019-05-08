@@ -125,10 +125,18 @@ class CSSProcessor extends Base {
     }
 
     public function rewriteSiteURLsToPlaceholder() {
+        $site_url = SiteInfo::getUrl( 'site' );
+
+        if ( ! is_string( $site_url ) ) {
+            $err = 'Site URL not defined ';
+            WsLog::l( $err );
+            throw new Exception( $err );
+        }
+
         $rewritten_source = str_replace(
             array(
-                SiteInfo::getUrl( 'site' ),
-                addcslashes( SiteInfo::getUrl( 'site' ), '/' ),
+                $site_url,
+                addcslashes( $site_url, '/' ),
             ),
             array(
                 $this->placeholder_url,

@@ -86,6 +86,7 @@ class SiteInfo {
      *
      * @param string $name
      * @return string|bool|null
+     * @throws Exception
      */
     public static function getPath( $name ) {
         if ( self::$instance === null ) {
@@ -109,6 +110,7 @@ class SiteInfo {
      *
      * @param string $name
      * @return string|bool|null
+     * @throws Exception
      */
     public static function getUrl( $name ) {
         if ( self::$instance === null ) {
@@ -158,7 +160,7 @@ class SiteInfo {
         var_export( self::$info );
     }
 
-    public function getAllInfo() {
+    public static function getAllInfo() {
         return self::$info;
     }
 }
