@@ -2,6 +2,8 @@
 
 namespace WP2Static;
 
+use Exception;
+
 /*
     Singleton instance to allow instantiating once and allow reading
     static properties throughout plugin
@@ -94,7 +96,9 @@ class SiteInfo {
         $key = $name . '_path';
 
         if ( ! array_key_exists( $key, self::$info ) ) {
-            return null;
+            $err = 'Attempted to access missing SiteInfo path';
+            WsLog::l( $err );
+            throw new Exception( $err );
         }
 
         return self::$info[ $key ];
@@ -114,7 +118,9 @@ class SiteInfo {
         $key = $name . '_url';
 
         if ( ! array_key_exists( $key, self::$info ) ) {
-            return null;
+            $err = 'Attempted to access missing SiteInfo URL';
+            WsLog::l( $err );
+            throw new Exception( $err );
         }
 
         return self::$info[ $key ];
@@ -122,7 +128,7 @@ class SiteInfo {
 
     // TODO Use WP_Http 'curl_enabled' => $this->hasCurlSupport(),
     // didn't see the method vailable in WP_Http
-    public function hasCURLSupport() {
+    public static function hasCURLSupport() {
         if ( self::$instance === null ) {
              self::$instance = new SiteInfo();
         }
@@ -130,7 +136,7 @@ class SiteInfo {
         return extension_loaded( 'curl' );
     }
 
-    public function isUploadsWritable() {
+    public static function isUploadsWritable() {
         if ( self::$instance === null ) {
              self::$instance = new SiteInfo();
         }
@@ -140,7 +146,7 @@ class SiteInfo {
     }
 
     // ??? 'permalink_structure' => get_option( 'permalink_structure' ),
-    public function permalinksAreDefined() {
+    public static function permalinksAreDefined() {
         if ( self::$instance === null ) {
              self::$instance = new SiteInfo();
         }

@@ -392,11 +392,19 @@ class SiteCrawler extends Base {
     }
 
     public function getRelativeURLFromFullURL( $full_url ) {
-        $this->full_url = SiteInfo::getUrl( 'site' ) .
+        $site_url = SiteInfo::getUrl( 'site' );
+
+        if ( ! is_string( $site_url ) ) {
+            $err = 'Site URL not defined ';
+            WsLog::l( $err );
+            throw new Exception( $err );
+        }
+
+        $this->full_url = $site_url .
             ltrim( $this->url, '/' );
 
         $relative_url = str_replace(
-            SiteInfo::getUrl( 'site' ),
+            $site_url,
             '',
             $full_url
         );

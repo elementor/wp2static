@@ -531,8 +531,16 @@ class FilesHelper {
             }
         );
 
+        $home_url = SiteInfo::getUrl( 'home' );
+
+        if ( ! is_string( $home_url ) ) {
+            $err = 'Home URL not defined ';
+            WsLog::l( $err );
+            throw new Exception( $err );
+        }
+
         $stripped_urls = str_replace(
-            SiteInfo::getUrl( 'home' ),
+            $home_url,
             '/',
             $url_queue
         );

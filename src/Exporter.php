@@ -60,7 +60,15 @@ class Exporter extends Base {
     }
 
     public function cleanup_leftover_archives() {
-        $files_in_uploads_dir = scandir( SiteInfo::getPath( 'uploads' ) );
+        $uploads_path = SiteInfo::getPath( 'uploads' );
+
+        if ( ! is_string( $uploads_path ) ) {
+            $err = 'Home URL not defined ';
+            WsLog::l( $err );
+            throw new Exception( $err );
+        }
+
+        $files_in_uploads_dir = scandir( $uploads_path );
 
         if ( ! $files_in_uploads_dir ) {
             return;

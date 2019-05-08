@@ -2,6 +2,8 @@
 
 namespace WP2Static;
 
+use Exception;
+
 class TXTProcessor extends Base {
 
     public function __construct() {
@@ -178,19 +180,27 @@ class TXTProcessor extends Base {
     }
 
     public function rewriteSiteURLsToPlaceholder() {
+        $site_url = SiteInfo::getUrl( 'site' );
+
+        if ( ! is_string( $site_url ) ) {
+            $err = 'Site URL not defined ';
+            WsLog::l( $err );
+            throw new Exception( $err );
+        }
+
         $patterns = array(
-            SiteInfo::getUrl( 'site' ),
+            $site_url,
             $this->getProtocolRelativeURL(
-                SiteInfo::getUrl( 'site' )
+                $site_url
             ),
             $this->getProtocolRelativeURL(
-                rtrim( SiteInfo::getUrl( 'site' ), '/' )
+                rtrim( $site_url, '/' )
             ),
             $this->getProtocolRelativeURL(
-                SiteInfo::getUrl( 'site' ) . '//'
+                $site_url . '//'
             ),
             $this->getProtocolRelativeURL(
-                addcslashes( SiteInfo::getUrl( 'site' ), '/' )
+                addcslashes( $site_url, '/' )
             ),
         );
 
@@ -215,7 +225,7 @@ class TXTProcessor extends Base {
             $patterns[] = str_replace(
                 'http:',
                 'https:',
-                SiteInfo::getUrl( 'site' )
+                $site_url
             );
 
             $replacements[] = $this->placeholder_url;
