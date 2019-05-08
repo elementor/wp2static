@@ -17,6 +17,7 @@ class GenerateRewriteRules {
         /*
          * Pseudo steps:
          * 
+         * get plugin's rules 
          * get user rules 
          * combine into full URLs for replacement 
          * add escaped versions of the URLs 
@@ -24,6 +25,40 @@ class GenerateRewriteRules {
          *
          */ 
         
+        $plugin_rules['search_patterns'] = array(
+            $this->placeholder_url,
+            addcslashes( $this->placeholder_url, '/' ),
+            $this->getProtocolRelativeURL(
+                $this->placeholder_url
+            ),
+            $this->getProtocolRelativeURL(
+                $this->placeholder_url
+            ),
+            $this->getProtocolRelativeURL(
+                $this->placeholder_url . '/'
+            ),
+            $this->getProtocolRelativeURL(
+                addcslashes( $this->placeholder_url, '/' )
+            ),
+        );
+
+
+        $plugin_rules['replace_patterns'] = array(
+            $this->settings['baseUrl'],
+            addcslashes( $this->settings['baseUrl'], '/' ),
+            $this->getProtocolRelativeURL(
+                $this->settings['baseUrl']
+            ),
+            $this->getProtocolRelativeURL(
+                rtrim( $this->settings['baseUrl'], '/' )
+            ),
+            $this->getProtocolRelativeURL(
+                $this->settings['baseUrl'] . '//'
+            ),
+            $this->getProtocolRelativeURL(
+                addcslashes( $this->settings['baseUrl'], '/' )
+            ),
+        );
 
         // if no user defined rewrite rules, init empty string for building
         if ( ! isset( $this->settings['rewrite_rules'] ) ) {
