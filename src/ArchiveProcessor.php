@@ -291,7 +291,7 @@ class ArchiveProcessor extends Base {
 
         $zip_archive->close();
 
-        $zip_path = SiteInfo::getPath('uploads') .
+        $zip_path = SiteInfo::getPath( 'uploads' ) .
             'wp2static-exported-site.zip';
 
         rename( $temp_zip, $zip_path );

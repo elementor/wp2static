@@ -285,7 +285,7 @@ class FilesHelper {
         if ( isset( $settings['detectVendorCacheDirs'] ) ) {
             $url_queue = array_merge(
                 $url_queue,
-                DetectVendorFiles::detect( SiteInfo::getURL('site') )
+                DetectVendorFiles::detect( SiteInfo::getURL( 'site' ) )
             );
         }
 
@@ -532,7 +532,7 @@ class FilesHelper {
         );
 
         $stripped_urls = str_replace(
-            SiteInfo::getUrl('home'),
+            SiteInfo::getUrl( 'home' ),
             '/',
             $url_queue
         );

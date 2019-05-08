@@ -162,12 +162,12 @@ class Controller {
     }
 
     public function download_export_log() {
-        $export_log = SiteInfo::getPath('uploads') .
+        $export_log = SiteInfo::getPath( 'uploads' ) .
             'wp2static-working-files/EXPORT-LOG.txt';
 
         if ( is_file( $export_log ) ) {
             // create zip of export log in tmp file
-            $export_log_zip = SiteInfo::getPath('uploads') .
+            $export_log_zip = SiteInfo::getPath( 'uploads' ) .
                 'wp2static-working-files/EXPORT-LOG.zip';
 
             $zip_archive = new ZipArchive();
@@ -196,7 +196,7 @@ class Controller {
 
             $zip_archive->close();
 
-            echo SiteInfo::getUrl('uploads') .
+            echo SiteInfo::getUrl( 'uploads' ) .
                 'wp2static-working-files/EXPORT-LOG.zip';
         } else {
             // serve 500 response to client
@@ -223,8 +223,8 @@ class Controller {
         $initial_file_list_count =
             FilesHelper::buildInitialFileList(
                 true,
-                SiteInfo::getPath('uploads'),
-                SiteInfo::getUrl('uploads'),
+                SiteInfo::getPath( 'uploads' ),
+                SiteInfo::getUrl( 'uploads' ),
                 $this->settings
             );
 
@@ -250,12 +250,18 @@ class Controller {
         $this->view
             ->setTemplate( 'options-page' )
             ->assign( 'site_info', SiteInfo::getAllInfo() )
-            ->assign( 'uploads_writable',
-                SiteInfo::isUploadsWritable() )
-            ->assign( 'curl_supported',
-                SiteInfo::hasCURLSupport() )
-            ->assign( 'permalinks_defined',
-                SiteInfo::permalinksAreDefined() )
+            ->assign(
+                'uploads_writable',
+                SiteInfo::isUploadsWritable()
+            )
+            ->assign(
+                'curl_supported',
+                SiteInfo::hasCURLSupport()
+            )
+            ->assign(
+                'permalinks_defined',
+                SiteInfo::permalinksAreDefined()
+            )
             ->assign( 'options', $this->options )
             ->assign( 'onceAction', self::HOOK . '-options' )
             ->render();
@@ -321,7 +327,7 @@ class Controller {
     }
 
     public function delete_deploy_cache() {
-        $working_dir = SiteInfo::getPath('uploads') .
+        $working_dir = SiteInfo::getPath( 'uploads' ) .
             'wp2static-working-files';
         $hash_files = glob( "{$working_dir}/*PREVIOUS-HASHES*.txt" );
         array_map( 'unlink', $hash_files );

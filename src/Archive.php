@@ -7,7 +7,7 @@ use Exception;
 class Archive extends Base {
 
     public function __construct() {
-        $this->path = SiteInfo::getPath('uploads') .
+        $this->path = SiteInfo::getPath( 'uploads' ) .
             'wp2static-exported-site/';
         $this->crawl_list = '';
         $this->export_log = '';

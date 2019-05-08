@@ -16,7 +16,7 @@ class View {
 
         // making up an absolute path to views directory
         $path_array = array(
-            SiteInfo::getPath('plugins'),
+            SiteInfo::getPath( 'plugins' ),
             $plugin_dir,
             $this->directory,
         );

@@ -14,7 +14,7 @@ class DetectVendorFiles {
             to static workflow
         */
         if ( class_exists( '\\Elementor\Api' ) ) {
-            $elementor_font_dir = SiteInfo::getPath('plugins') .
+            $elementor_font_dir = SiteInfo::getPath( 'plugins' ) .
                 '/elementor/assets/lib/font-awesome';
 
             $elementor_urls = FilesHelper::getListOfLocalFilesByUrl(
@@ -36,8 +36,8 @@ class DetectVendorFiles {
             $vendor_files = array_merge( $vendor_files, $yoast_sitemaps );
         }
 
-        if ( is_dir( SiteInfo::getPath('plugins') . '/soliloquy/' ) ) {
-            $soliloquy_assets = SiteInfo::getPath('plugins') .
+        if ( is_dir( SiteInfo::getPath( 'plugins' ) . '/soliloquy/' ) ) {
+            $soliloquy_assets = SiteInfo::getPath( 'plugins' ) .
                 '/soliloquy/assets/css/images/';
 
             $soliloquy_urls = FilesHelper::getListOfLocalFilesByUrl(
@@ -49,20 +49,20 @@ class DetectVendorFiles {
 
         // cache dir used by Autoptimize and other themes/plugins
         $vendor_cache_dir =
-            SiteInfo::getPath('content') . '/cache/';
+            SiteInfo::getPath( 'content' ) . '/cache/';
 
         if ( is_dir( $vendor_cache_dir ) ) {
 
             // get difference between home and wp-contents URL
             $prefix = str_replace(
-                SiteInfo::getUrl('site'),
+                SiteInfo::getUrl( 'site' ),
                 '/',
-                SiteInfo::getUrl('content')
+                SiteInfo::getUrl( 'content' )
             );
 
             $vendor_cache_urls = DetectVendorCache::detect(
                 $vendor_cache_dir,
-                SiteInfo::getPath('content'),
+                SiteInfo::getPath( 'content' ),
                 $prefix
             );
 
@@ -101,7 +101,7 @@ class DetectVendorFiles {
         }
 
         if ( class_exists( 'molongui_authorship' ) ) {
-            $molongui_path = SiteInfo::getPath('plugins') .
+            $molongui_path = SiteInfo::getPath( 'plugins' ) .
                 '/molongui-authorship';
 
             $molongui_urls = FilesHelper::getListOfLocalFilesByUrl(

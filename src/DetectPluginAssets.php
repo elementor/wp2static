@@ -10,10 +10,10 @@ class DetectPluginAssets {
     public static function detect() {
         $files = array();
 
-        if ( is_dir( SiteInfo::getPath('plugins') ) ) {
+        if ( is_dir( SiteInfo::getPath( 'plugins' ) ) ) {
             $iterator = new RecursiveIteratorIterator(
                 new RecursiveDirectoryIterator(
-                    SiteInfo::getPath('plugins'),
+                    SiteInfo::getPath( 'plugins' ),
                     RecursiveDirectoryIterator::SKIP_DOTS
                 )
             );
@@ -24,8 +24,8 @@ class DetectPluginAssets {
 
                 $detected_filename =
                     str_replace(
-                        SiteInfo::getPath('plugins'),
-                        SiteInfo::getUrl('plugins'),
+                        SiteInfo::getPath( 'plugins' ),
+                        SiteInfo::getUrl( 'plugins' ),
                         $filename
                     );
 

@@ -26,7 +26,7 @@ class SitePublisher {
 
     public function bootstrap() {
         $this->export_file_list =
-            SiteInfo::getPath('uploads') .
+            SiteInfo::getPath( 'uploads' ) .
                 'wp2static-working-files/FILES-TO-DEPLOY.txt';
 
         // TODO: should be removable;test
@@ -183,7 +183,7 @@ class SitePublisher {
         $this->clearFileList();
 
         $this->createDeploymentList(
-            SiteInfo::getPath('uploads') . 'wp2static-exported-site/',
+            SiteInfo::getPath( 'uploads' ) . 'wp2static-exported-site/',
             $basename_in_target
         );
 

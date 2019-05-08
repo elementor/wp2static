@@ -10,7 +10,7 @@ class DetectWPIncludesAssets {
     public static function detect() {
         $files = array();
 
-        $directory = SiteInfo::getPath('includes');
+        $directory = SiteInfo::getPath( 'includes' );
 
         if ( is_dir( $directory ) ) {
             $iterator = new RecursiveIteratorIterator(
@@ -26,14 +26,14 @@ class DetectWPIncludesAssets {
 
                 $detected_filename =
                     str_replace(
-                        SiteInfo::getPath('includes'),
-                        SiteInfo::getUrl('includes'),
+                        SiteInfo::getPath( 'includes' ),
+                        SiteInfo::getUrl( 'includes' ),
                         $filename
                     );
 
                 $detected_filename =
                     str_replace(
-                        SiteInfo::getUrl('home'),
+                        SiteInfo::getUrl( 'home' ),
                         '',
                         $detected_filename
                     );

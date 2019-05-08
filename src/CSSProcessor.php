@@ -127,8 +127,8 @@ class CSSProcessor extends Base {
     public function rewriteSiteURLsToPlaceholder() {
         $rewritten_source = str_replace(
             array(
-                SiteInfo::getUrl('site'),
-                addcslashes( SiteInfo::getUrl('site'), '/' ),
+                SiteInfo::getUrl( 'site' ),
+                addcslashes( SiteInfo::getUrl( 'site' ), '/' ),
             ),
             array(
                 $this->placeholder_url,

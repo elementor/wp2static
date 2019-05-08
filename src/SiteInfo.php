@@ -8,7 +8,7 @@ namespace WP2Static;
 */
 class SiteInfo {
 
-    private static $instance = NULL;
+    private static $instance = null;
 
     /**
      * Site info.
@@ -55,7 +55,7 @@ class SiteInfo {
             'uploads_url' => trailingslashit( $upload_path_and_url['baseurl'] ),
 
             // Plugins
-            'plugins_path'=> trailingslashit( WP_PLUGIN_DIR ),
+            'plugins_path' => trailingslashit( WP_PLUGIN_DIR ),
             'plugins_url' => trailingslashit( plugins_url() ),
 
             // Themes
@@ -66,13 +66,13 @@ class SiteInfo {
             'child_theme_path' => trailingslashit( get_stylesheet_directory() ),
             'child_theme_url' => trailingslashit( get_stylesheet_directory_uri() ),
 
-/*
+        /*
             // TODO: rm these once refactored to use consistent naming
             $this->wp_site_subdir = $this->subdirectory;
             $this->wp_site_url = $this->site_url;
             $this->wp_site_path = $this->site_path;
             $this->wp_uploads_url = $this->uploads_url;
-*/
+        */
         ];
     }
 
@@ -81,7 +81,7 @@ class SiteInfo {
      * @return string|bool|null
      */
     public static function getPath( $name ) {
-        if (self::$instance === NULL) {
+        if ( self::$instance === null ) {
              self::$instance = new SiteInfo();
         }
 
@@ -100,7 +100,7 @@ class SiteInfo {
      * @return string|bool|null
      */
     public static function getUrl( $name ) {
-        if (self::$instance === NULL) {
+        if ( self::$instance === null ) {
              self::$instance = new SiteInfo();
         }
 
@@ -113,14 +113,14 @@ class SiteInfo {
         return self::$info[ $key ];
     }
 
-/*
+    /*
     public function getUrlBasename( $name ) {
     }
-*/
+    */
 
     // TODO Use WP_Http 'curl_enabled' => $this->hasCurlSupport(), // didn't see the method vailable in WP_Http
     public function hasCURLSupport() {
-        if (self::$instance === NULL) {
+        if ( self::$instance === null ) {
              self::$instance = new SiteInfo();
         }
 
@@ -128,7 +128,7 @@ class SiteInfo {
     }
 
     public function isUploadsWritable() {
-        if (self::$instance === NULL) {
+        if ( self::$instance === null ) {
              self::$instance = new SiteInfo();
         }
 
@@ -138,7 +138,7 @@ class SiteInfo {
 
     // ??? 'permalink_structure' => get_option( 'permalink_structure' ),
     public function permalinksAreDefined() {
-        if (self::$instance === NULL) {
+        if ( self::$instance === null ) {
              self::$instance = new SiteInfo();
         }
 

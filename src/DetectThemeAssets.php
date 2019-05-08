@@ -13,11 +13,11 @@ class DetectThemeAssets {
         $template_url = '';
 
         if ( $theme_type === 'parent' ) {
-            $template_path = SiteInfo::getPath('parent_theme');
-            $template_url = SiteInfo::getUrl('parent_theme');
+            $template_path = SiteInfo::getPath( 'parent_theme' );
+            $template_url = SiteInfo::getUrl( 'parent_theme' );
         } else {
-            $template_path = SiteInfo::getPath('child_theme');
-            $template_url = SiteInfo::getUrl('child_theme');
+            $template_path = SiteInfo::getPath( 'child_theme' );
+            $template_url = SiteInfo::getUrl( 'child_theme' );
         }
 
         if ( is_dir( $template_path ) ) {

@@ -39,7 +39,7 @@ class SiteCrawler extends Base {
 
     public function crawl_site() {
         $this->list_of_urls_to_crawl_path =
-            SiteInfo::getPath('uploads') .
+            SiteInfo::getPath( 'uploads' ) .
             'wp2static-working-files/FINAL-CRAWL-LIST.txt';
 
         if ( ! is_file( $this->list_of_urls_to_crawl_path ) ) {
@@ -103,10 +103,10 @@ class SiteCrawler extends Base {
 
         chmod( $this->list_of_urls_to_crawl_path, 0664 );
 
-        $this->archive_dir = SiteInfo::getPath('uploads') .
+        $this->archive_dir = SiteInfo::getPath( 'uploads' ) .
             '/wp2static-exported-site/';
 
-        $total_urls_path = SiteInfo::getPath('uploads') .
+        $total_urls_path = SiteInfo::getPath( 'uploads' ) .
             'wp2static-working-files/INITIAL-CRAWL-TOTAL.txt';
 
         $exclusions = array( 'wp-json' );
@@ -126,7 +126,7 @@ class SiteCrawler extends Base {
         foreach ( $batch_of_links_to_crawl as $link_to_crawl ) {
             $url = $link_to_crawl;
 
-            $full_url = SiteInfo::getUrl('site') . ltrim( $url, '/' );
+            $full_url = SiteInfo::getUrl( 'site' ) . ltrim( $url, '/' );
 
             foreach ( $exclusions as $exclusion ) {
                 $exclusion = trim( $exclusion );
@@ -392,11 +392,11 @@ class SiteCrawler extends Base {
     }
 
     public function getRelativeURLFromFullURL( $full_url ) {
-        $this->full_url = SiteInfo::getUrl('site') .
+        $this->full_url = SiteInfo::getUrl( 'site' ) .
             ltrim( $this->url, '/' );
 
         $relative_url = str_replace(
-            SiteInfo::getUrl('site'),
+            SiteInfo::getUrl( 'site' ),
             '',
             $full_url
         );

@@ -108,7 +108,7 @@ class DBSettings {
 
         // TODO: wpenv should be removable with SiteInfo now
         // foreach ( $key_sets['wpenv'] as $key ) {
-        //     $settings[ $key ] = $site_info->{ $key };
+        // $settings[ $key ] = $site_info->{ $key };
         // }
 
         $settings['crawl_increment'] =
