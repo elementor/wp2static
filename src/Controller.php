@@ -162,15 +162,12 @@ class Controller {
     }
 
     public function download_export_log() {
-        $site_info = new SiteInfo();
-        $site_info = $site_info->get();
-
-        $export_log = $site_info['uploads_path'] .
+        $export_log = SiteInfo::getPath('uploads') .
             'wp2static-working-files/EXPORT-LOG.txt';
 
         if ( is_file( $export_log ) ) {
             // create zip of export log in tmp file
-            $export_log_zip = $site_info['uploads_path'] .
+            $export_log_zip = SiteInfo::getPath('uploads') .
                 'wp2static-working-files/EXPORT-LOG.zip';
 
             $zip_archive = new ZipArchive();
@@ -199,7 +196,7 @@ class Controller {
 
             $zip_archive->close();
 
-            echo $site_info['uploads_url'] .
+            echo SiteInfo::getUrl('uploads') .
                 'wp2static-working-files/EXPORT-LOG.zip';
         } else {
             // serve 500 response to client
@@ -208,9 +205,6 @@ class Controller {
     }
 
     public function generate_filelist_preview() {
-        $site_info = new SiteInfo();
-        $site_info = $site_info->get();
-
         $target_settings = array(
             'general',
             'crawling',
@@ -229,8 +223,8 @@ class Controller {
         $initial_file_list_count =
             FilesHelper::buildInitialFileList(
                 true,
-                $site_info['uploads_path'],
-                $site_info['uploads_url'],
+                SiteInfo::getPath('uploads'),
+                SiteInfo::getUrl('uploads'),
                 $this->settings
             );
 
@@ -259,9 +253,12 @@ class Controller {
         $this->view
             ->setTemplate( 'options-page' )
             ->assign( 'site_info', $site_info )
-            ->assign( 'uploads_writable', $site_info_instance->isUploadsWritable() )
-            ->assign( 'curl_supported', $site_info_instance->hasCURLSupport() )
-            ->assign( 'permalinks_defined', $site_info_instance->permalinksAreDefined() )
+            ->assign( 'uploads_writable',
+                $site_info_instance->isUploadsWritable() )
+            ->assign( 'curl_supported',
+                $site_info_instance->hasCURLSupport() )
+            ->assign( 'permalinks_defined',
+                $site_info_instance->permalinksAreDefined() )
             ->assign( 'options', $this->options )
             ->assign( 'onceAction', self::HOOK . '-options' )
             ->render();

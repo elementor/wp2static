@@ -125,13 +125,10 @@ class CSSProcessor extends Base {
     }
 
     public function rewriteSiteURLsToPlaceholder() {
-        $site_info = new SiteInfo();
-        $site_info = $site_info->get();
-
         $rewritten_source = str_replace(
             array(
-                $site_info['site_url'],
-                addcslashes( $site_info['site_url'], '/' ),
+                SiteInfo::getUrl('site'),
+                addcslashes( SiteInfo::getUrl('site'), '/' ),
             ),
             array(
                 $this->placeholder_url,

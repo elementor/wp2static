@@ -14,12 +14,9 @@ class View {
         // Looking for a basic directory where plugin resides
         list($plugin_dir) = explode( '/', plugin_basename( __FILE__ ) );
 
-        $site_info = new SiteInfo();
-        $site_info = $site_info->get();
-
         // making up an absolute path to views directory
         $path_array = array(
-            $site_info['plugins_path'],
+            SiteInfo::getPath('plugins'),
             $plugin_dir,
             $this->directory,
         );

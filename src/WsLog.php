@@ -12,7 +12,7 @@ class WsLog {
 
         if ( ! is_dir( $log_dir ) ) {
             if ( ! mkdir( $log_dir ) ) {
-                error_log('Unable to create WP2Static logging dir');
+                error_log( 'Unable to create WP2Static logging dir' );
                 return;
             }
         }

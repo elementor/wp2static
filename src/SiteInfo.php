@@ -2,7 +2,13 @@
 
 namespace WP2Static;
 
+/*
+    Singleton instance to allow instantiating once and allow reading
+    static properties throughout plugin
+*/
 class SiteInfo {
+
+    private static $instance = NULL;
 
     /**
      * Site info.
@@ -18,23 +24,35 @@ class SiteInfo {
      */
     public function __construct() {
         $upload_path_and_url = wp_upload_dir();
+
         self::$info = [
             // Core
             'site_path' => ABSPATH,
             'site_url' => trailingslashit( site_url() ),
-            // 'home_path' => get_home_path(), // errors trying to find it in WP2Static\get_home_path()...
+
+            /*
+                Note:  'home_path' => get_home_path(),
+                // errors trying to find it in WP2Static\get_home_path()...
+            */
             'home_url' => trailingslashit( get_home_url() ),
             'includes_path' => trailingslashit( ABSPATH . WPINC ),
             'includes_url' => includes_url(),
-            // Does it matter? 'subdirectory' => $this->isSiteInstalledInSubDirectory(), // it shouldn't, but current mechanism for rewriting URLs has some cases that require knowledge of it...
-            // ??? 'permalinks_set' => $this->permalinksAreDefined(),
+
+            /*
+                TODO: Q on subdir:
+
+                Does it matter?
+                'subdirectory' => $this->isSiteInstalledInSubDirectory(),
+
+                A: It shouldn't, but current mechanism for rewriting URLs hassome cases that require knowledge of it...
+
+            */
 
             // Content
             'content_path' => trailingslashit( WP_CONTENT_DIR ),
             'content_url' => trailingslashit( content_url() ),
             'uploads_path' => trailingslashit( $upload_path_and_url['basedir'] ),
             'uploads_url' => trailingslashit( $upload_path_and_url['baseurl'] ),
-            // ??? 'uploads_writable' => $this->uploadsPathIsWritable(),
 
             // Plugins
             'plugins_path'=> trailingslashit( WP_PLUGIN_DIR ),
@@ -47,7 +65,6 @@ class SiteInfo {
             'parent_theme_url' => trailingslashit( get_template_directory_uri() ),
             'child_theme_path' => trailingslashit( get_stylesheet_directory() ),
             'child_theme_url' => trailingslashit( get_stylesheet_directory_uri() ),
-            // ??? 'using_child_theme' => ( $this->parent_theme_path !== $this->child_theme_path ),
 
 /*
             // TODO: rm these once refactored to use consistent naming
@@ -63,12 +80,19 @@ class SiteInfo {
      * @param string $name
      * @return string|bool|null
      */
-    public function getPath( $name ) {
-// Move trailingslashit() here ???
+    public static function getPath( $name ) {
+        if (self::$instance === NULL) {
+             error_log('creating new SiteInfo');
+             self::$instance = new SiteInfo();
+        }
+
+        // TODO: Move trailingslashit() here ???
         $key = $name . '_path';
+
         if ( ! array_key_exists( $key, self::$info ) ) {
             return null;
         }
+
         return self::$info[ $key ];
     }
 
@@ -76,11 +100,18 @@ class SiteInfo {
      * @param string $name
      * @return string|bool|null
      */
-    public function getUrl( $name ) {
+    public static function getUrl( $name ) {
+        if (self::$instance === NULL) {
+             error_log('creating new SiteInfo');
+             self::$instance = new SiteInfo();
+        }
+
         $key = $name . '_url';
+
         if ( ! array_key_exists( $key, self::$info ) ) {
             return null;
         }
+
         return self::$info[ $key ];
     }
 
@@ -107,10 +138,5 @@ class SiteInfo {
     public function debug() {
         var_export( self::$info );
     }
-
-    public function get() {
-        return self::$info;
-    }
 }
 
-$si = new SiteInfo();
