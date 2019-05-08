@@ -132,13 +132,13 @@ class SiteCrawler extends Base {
         foreach ( $batch_of_links_to_crawl as $link_to_crawl ) {
             $url = $link_to_crawl;
 
-            $full_url = $this->settings['wp_site_url'] . ltrim( $url, '/' );
+            $full_url = $site_info['site_url'] . ltrim( $url, '/' );
 
             foreach ( $exclusions as $exclusion ) {
                 $exclusion = trim( $exclusion );
                 if ( $exclusion != '' ) {
                     if ( false !== strpos( $url, $exclusion ) ) {
-                        WsLog::log(
+                        WsLog::l(
                             'Excluding ' . $url .
                             ' because of rule ' . $exclusion
                         );
@@ -168,7 +168,7 @@ class SiteCrawler extends Base {
                 $this->crawl_site();
             }
         } else {
-            WsLog::log( 'Crawling URLs phase completed' );
+            WsLog::l( 'Crawling URLs phase completed' );
 
             if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
@@ -296,7 +296,7 @@ class SiteCrawler extends Base {
         $good_response_codes = array( '200', '201', '301', '302', '304' );
 
         if ( ! in_array( $status_code, $good_response_codes ) ) {
-            WsLog::log(
+            WsLog::l(
                 'BAD RESPONSE STATUS (' . $status_code . '): ' . $full_url
             );
         }
