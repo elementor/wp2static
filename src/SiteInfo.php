@@ -44,14 +44,15 @@ class SiteInfo {
                 Does it matter?
                 'subdirectory' => $this->isSiteInstalledInSubDirectory(),
 
-                A: It shouldn't, but current mechanism for rewriting URLs hassome cases that require knowledge of it...
-
+                A: It shouldn't, but current mechanism for rewriting URLs
+                hassome cases that require knowledge of it...
             */
 
             // Content
             'content_path' => trailingslashit( WP_CONTENT_DIR ),
             'content_url' => trailingslashit( content_url() ),
-            'uploads_path' => trailingslashit( $upload_path_and_url['basedir'] ),
+            'uploads_path' =>
+                trailingslashit( $upload_path_and_url['basedir'] ),
             'uploads_url' => trailingslashit( $upload_path_and_url['baseurl'] ),
 
             // Plugins
@@ -62,9 +63,11 @@ class SiteInfo {
             'themes_root_path' => trailingslashit( get_theme_root() ),
             'themes_root_url' => trailingslashit( get_theme_root_uri() ),
             'parent_theme_path' => trailingslashit( get_template_directory() ),
-            'parent_theme_url' => trailingslashit( get_template_directory_uri() ),
+            'parent_theme_url' =>
+                trailingslashit( get_template_directory_uri() ),
             'child_theme_path' => trailingslashit( get_stylesheet_directory() ),
-            'child_theme_url' => trailingslashit( get_stylesheet_directory_uri() ),
+            'child_theme_url' =>
+                trailingslashit( get_stylesheet_directory_uri() ),
 
         /*
             // TODO: rm these once refactored to use consistent naming
@@ -77,6 +80,8 @@ class SiteInfo {
     }
 
     /**
+     * Get Path via name
+     *
      * @param string $name
      * @return string|bool|null
      */
@@ -96,6 +101,8 @@ class SiteInfo {
     }
 
     /**
+     * Get URL via name
+     *
      * @param string $name
      * @return string|bool|null
      */
@@ -113,12 +120,8 @@ class SiteInfo {
         return self::$info[ $key ];
     }
 
-    /*
-    public function getUrlBasename( $name ) {
-    }
-    */
-
-    // TODO Use WP_Http 'curl_enabled' => $this->hasCurlSupport(), // didn't see the method vailable in WP_Http
+    // TODO Use WP_Http 'curl_enabled' => $this->hasCurlSupport(),
+    // didn't see the method vailable in WP_Http
     public function hasCURLSupport() {
         if ( self::$instance === null ) {
              self::$instance = new SiteInfo();
@@ -132,8 +135,8 @@ class SiteInfo {
              self::$instance = new SiteInfo();
         }
 
-        $uploadsDir = self::$info['uploads_path'];
-        return file_exists( $uploadsDir ) && is_writeable( $uploadsDir );
+        $uploads_dir = self::$info['uploads_path'];
+        return file_exists( $uploads_dir ) && is_writeable( $uploads_dir );
     }
 
     // ??? 'permalink_structure' => get_option( 'permalink_structure' ),
