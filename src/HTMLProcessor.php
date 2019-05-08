@@ -56,16 +56,21 @@ class HTMLProcessor extends Base {
 
         // NOTE: set placeholder_url to same protocol as target
         // making it easier to rewrite URLs without considering protocol
-        $this->destination_protocol =
+        $destination_protocol =
             $this->getTargetSiteProtocol( $this->settings['baseUrl'] );
 
         $this->placeholder_url =
             $this->destination_protocol . 'PLACEHOLDER.wpsho/';
 
-        $wp_site_root = SiteInfo::getUrl( 'site' );
+        $site_root = SiteInfo::getUrl( 'site' );
+
+        // capture URL hosts for use in detecting internal links
+        $this->site_url_host  = parse_url( $site_root, PHP_URL_HOST );
+        $this->placeholder_url_host  =
+            parse_url( $this->placeholder_url, PHP_URL_HOST );
 
         // instantiate the XML body here
-        $this->xml_doc = new \DOMDocument();
+        $this->xml_doc = new DOMDocument();
 
         // PERF: 70% of function time
         // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
@@ -73,23 +78,16 @@ class HTMLProcessor extends Base {
         $this->xml_doc->loadHTML( $html_document );
         libxml_use_internal_errors( false );
 
-        $html_with_absolute_urls = $this->rewriteRelativeWPSiteURLsToAbsolute(
-            $this->xml_doc,
-            $wp_site_root,
-            $this->placeholder_url,
-            $page_url
+        $search_patterns = SiteURLPatterns::getWPSiteURLSearchPatterns(
+            $site_root
         );
 
-        $search_patterns = $this->getWPSiteURLSearchPatterns(
-            $wp_site_root
-        );
-
-        $replace_patterns = $this->getPlaceholderURLReplacementPatterns(
+        $replace_patterns = SiteURLPatterns::getPlaceholderURLReplacementPatterns(
             $this->placeholder_url
         );
 
         $this->raw_html = RewriteSiteURLsToPlaceholder::rewrite(
-            $html_with_absolute_urls,
+            $this->xml_doc,
             $search_patterns,
             $replace_patterns
         );
@@ -145,42 +143,6 @@ class HTMLProcessor extends Base {
         $this->stripHTMLComments();
 
         return true;
-    }
-
-    /*
-        As a first-pass, we normalize any document or site root-relative URLs
-
-        to make further processing easier
-
-        Takes in an XML DOMDocument and outputs raw HTML document
-    */
-    public function rewriteRelativeWPSiteURLsToAbsolute(
-            $xml_doc,
-            $wp_site_root,
-            $placeholder_url,
-            $page_url
-    ) {
-        $elements = iterator_to_array(
-            $xml_doc->getElementsByTagName( '*' )
-        );
-
-        $elements_to_normalize = array();
-        $elements_to_normalize['meta'] = 1;
-        $elements_to_normalize['a'] = 1;
-        $elements_to_normalize['img'] = 1;
-        $elements_to_normalize['head'] = 1;
-        $elements_to_normalize['link'] = 1;
-        $elements_to_normalize['script'] = 1;
-
-        foreach ( $elements as $element ) {
-            if ( isset( $elements_to_normalize[ $element->tagName ] ) ) {
-                $this->convertRelativeURLToAbsolute( $element, $page_url );
-            }
-        }
-
-        $source_with_absolute_urls = $this->getHTML( $xml_doc, false );
-
-        return $source_with_absolute_urls;
     }
 
     /*
@@ -422,10 +384,7 @@ class HTMLProcessor extends Base {
 
         $url_to_change = $element->getAttribute( $attribute_to_change );
 
-        // TODO: DRY this up/move to higher exec position
-        // early abort invalid links as early as possible
-        // to save overhead/potential errors
-        // apply to other functions
+        // quickly abort for invalid URLs
         if ( $url[0] === '#' ) {
             return;
         }
@@ -558,20 +517,39 @@ class HTMLProcessor extends Base {
         }
     }
 
-    public function isInternalLink( $link, $domain = false ) {
-        if ( ! $domain ) {
-            $domain = $this->placeholder_url;
+    /*
+     * Detect if a URL belongs to our WP site
+     * We check against known internal prefixes, WP site root and
+     * our placeholder, as this check may be taking place before or after
+     * the link has been rewritten to the placeholder
+     *
+     * @param string $link Any potential URL
+     * @return boolean true for explicit match
+     */
+    public function isInternalLink( $link ) {
+        // quickly match known internal links   ./   ../   /
+        $first_char = $url[0];
+
+        if ( $first_char === '.' || $first_char === '/' ) {
+            return true;
         }
+
+        // TODO: check against both site_url and placeholder, as we don't want
+        // to do costly extra bulk rewrite in the beginning
 
         // TODO: apply only to links starting with .,..,/,
         // or any with just a path, like banana.png
         // check link is same host as $this->url and not a subdomain
-        $is_internal_link = parse_url( $link, PHP_URL_HOST ) === parse_url(
-            $domain,
-            PHP_URL_HOST
-        );
+        $link_host = parse_url( $link, PHP_URL_HOST );
 
-        return $is_internal_link;
+        if (
+            $link_host === $this->site_url_host ||
+            $link_host === $this->placeholder_url_host ||
+        ) {
+            return true;
+        }
+
+        return false;
     }
 
     public function removeQueryStringFromInternalLink( $url ) {
@@ -885,66 +863,6 @@ class HTMLProcessor extends Base {
         }
 
         return true;
-    }
-
-    /*
-     * WordPress site URLs used in rewriting links to placeholder URLs
-     *
-     */
-    public function getWPSiteURLSearchPatterns( $wp_site_url ) {
-        $wp_site_url = rtrim( $wp_site_url, '/' );
-
-        $wp_site_url_with_cslashes = addcslashes( $wp_site_url, '/' );
-
-        $protocol_relative_wp_site_url = $this->getProtocolRelativeURL(
-            $wp_site_url
-        );
-
-        $protocol_relative_wp_site_url_with_extra_2_slashes =
-            $this->getProtocolRelativeURL( $wp_site_url . '//' );
-
-        $protocol_relative_wp_site_url_with_cslashes =
-            $this->getProtocolRelativeURL( addcslashes( $wp_site_url, '/' ) );
-
-        $search_patterns = array(
-            $wp_site_url,
-            $wp_site_url_with_cslashes,
-            $protocol_relative_wp_site_url,
-            $protocol_relative_wp_site_url_with_extra_2_slashes,
-            $protocol_relative_wp_site_url_with_cslashes,
-        );
-
-        return $search_patterns;
-    }
-
-    /*
-     * Placeholders to replace WP site URLs for easier processing
-     *
-     */
-    public function getPlaceholderURLReplacementPatterns( $placeholder_url ) {
-        $placeholder_url = rtrim( $placeholder_url, '/' );
-        $placeholder_url_with_cslashes = addcslashes( $placeholder_url, '/' );
-
-        $protocol_relative_placeholder =
-            $this->getProtocolRelativeURL( $placeholder_url );
-
-        $protocol_relative_placeholder_with_extra_slash =
-            $this->getProtocolRelativeURL( $placeholder_url . '/' );
-
-        $protocol_relative_placeholder_with_cslashes =
-            $this->getProtocolRelativeURL(
-                addcslashes( $placeholder_url, '/' )
-            );
-
-        $replace_patterns = array(
-            $placeholder_url,
-            $placeholder_url_with_cslashes,
-            $protocol_relative_placeholder,
-            $protocol_relative_placeholder_with_extra_slash,
-            $protocol_relative_placeholder_with_cslashes,
-        );
-
-        return $replace_patterns;
     }
 }
 
