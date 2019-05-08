@@ -8,7 +8,7 @@ jobs:
       - run:
           name: Run code quality checks
           command: |
-            composer install
+            composer install --quiet
             composer lint
             composer phpcs
             composer phpstan
