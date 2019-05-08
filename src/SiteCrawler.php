@@ -398,10 +398,14 @@ class SiteCrawler extends Base {
     }
 
     public function getRelativeURLFromFullURL( $full_url ) {
-            $this->full_url = $this->settings['wp_site_url'] .
-                ltrim( $this->url, '/' );
+        $site_info = new SiteInfo();
+        $site_info = $site_info->get();
+
+        $this->full_url = $site_info['site_url'] .
+            ltrim( $this->url, '/' );
+
         $relative_url = str_replace(
-            $this->settings['wp_site_url'],
+            $site_info['site_url'],
             '',
             $full_url
         );
