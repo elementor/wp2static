@@ -1169,15 +1169,5 @@ class HTMLProcessor extends Base {
 
         return $replace_patterns;
     }
-
-    public function logAction( $action ) {
-        if ( ! isset( $this->settings['debug_mode'] ) ) {
-            return;
-        }
-
-        require_once dirname( __FILE__ ) .
-            '/../WP2Static/WsLog.php';
-        WsLog::l( $action );
-    }
 }
 

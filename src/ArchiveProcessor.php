@@ -6,7 +6,6 @@ use ZipArchive;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 use Exception;
-use WP_Error;
 
 class ArchiveProcessor extends Base {
 
@@ -258,14 +257,21 @@ class ArchiveProcessor extends Base {
         $zip_archive = new ZipArchive();
 
         if ( $zip_archive->open( $temp_zip, ZipArchive::CREATE ) !== true ) {
-            return new WP_Error( 'Could not create archive' );
+            $err = 'Could not create zip: ' . $temp_zip;
+            WsLog::l( $err );
+            throw new Exception( $err );
         }
 
         $iterator = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator( $this->archive->path )
+            new RecursiveDirectoryIterator(
+                $this->archive->path,
+                RecursiveDirectoryIterator::SKIP_DOTS
+            )
         );
 
         foreach ( $iterator as $filename => $file_object ) {
+
+            error_log($filename);
 
             $base_name = basename( $filename );
             if ( $base_name != '.' && $base_name != '..' ) {
@@ -282,7 +288,9 @@ class ArchiveProcessor extends Base {
                     str_replace( $this->archive->path, '', $filename )
                 )
                 ) {
-                    return new WP_Error( 'Could not add file: ' . $filename );
+                    $err = 'Could not add file: ' . $filename;
+                    WsLog::l( $err );
+                    throw new Exception( $err );
                 }
             }
         }
@@ -290,7 +298,7 @@ class ArchiveProcessor extends Base {
         $zip_archive->close();
 
         $zip_path = $site_info['uploads_path'] .
-            '/wp2static-exported-site.zip';
+            'wp2static-exported-site.zip';
 
         rename( $temp_zip, $zip_path );
     }

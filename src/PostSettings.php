@@ -12,7 +12,6 @@ class PostSettings {
 
         $key_sets['general'] = array(
             'baseUrl',
-            'debug_mode',
             'selected_deployment_option',
         );
 

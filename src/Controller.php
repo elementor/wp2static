@@ -166,12 +166,12 @@ class Controller {
         $site_info = $site_info->get();
 
         $export_log = $site_info['uploads_path'] .
-            '/wp2static-working-files/EXPORT-LOG.txt';
+            'wp2static-working-files/EXPORT-LOG.txt';
 
         if ( is_file( $export_log ) ) {
             // create zip of export log in tmp file
             $export_log_zip = $site_info['uploads_path'] .
-                '/wp2static-working-files/EXPORT-LOG.zip';
+                'wp2static-working-files/EXPORT-LOG.zip';
 
             $zip_archive = new ZipArchive();
             $zip_opened =
@@ -200,7 +200,7 @@ class Controller {
             $zip_archive->close();
 
             echo $site_info['uploads_url'] .
-                '/wp2static-working-files/EXPORT-LOG.zip';
+                'wp2static-working-files/EXPORT-LOG.zip';
         } else {
             // serve 500 response to client
             throw new Exception( 'Unable to find Export Log to create ZIP' );
@@ -252,13 +252,13 @@ class Controller {
         $this->view
             ->setTemplate( 'options-page-js' )
             ->assign( 'options', $this->options )
-            ->assign( 'wp_site', $site_info )
+            ->assign( 'site_info', $site_info )
             ->assign( 'onceAction', self::HOOK . '-options' )
             ->render();
 
         $this->view
             ->setTemplate( 'options-page' )
-            ->assign( 'wp_site', $site_info )
+            ->assign( 'site_info', $site_info )
             ->assign( 'uploads_writable', $site_info_instance->isUploadsWritable() )
             ->assign( 'curl_supported', $site_info_instance->hasCURLSupport() )
             ->assign( 'permalinks_defined', $site_info_instance->permalinksAreDefined() )

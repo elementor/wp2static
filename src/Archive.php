@@ -11,7 +11,7 @@ class Archive extends Base {
         $site_info = $site_info->get();
 
         $this->path = $site_info['uploads_path'] .
-            '/wp2static-exported-site/';
+            'wp2static-exported-site/';
         $this->crawl_list = '';
         $this->export_log = '';
     }

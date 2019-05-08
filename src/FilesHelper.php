@@ -306,12 +306,12 @@ class FilesHelper {
         $str = implode( "\n", $unique_urls );
 
         $initial_crawl_file = $uploads_path .
-            '/wp2static-working-files/INITIAL-CRAWL-LIST.txt';
+            'wp2static-working-files/INITIAL-CRAWL-LIST.txt';
 
         $initial_crawl_total = $uploads_path .
-            '/wp2static-working-files/INITIAL-CRAWL-TOTAL.txt';
+            'wp2static-working-files/INITIAL-CRAWL-TOTAL.txt';
 
-        if ( wp_mkdir_p( $uploads_path . '/wp2static-working-files' ) ) {
+        if ( wp_mkdir_p( $uploads_path . 'wp2static-working-files' ) ) {
             $result = file_put_contents(
                 $initial_crawl_file,
                 $str
@@ -340,7 +340,7 @@ class FilesHelper {
         } else {
             WsLog::l(
                 "Couldn't create working directory at " .
-                    $uploads_path . '/wp2static-working-files'
+                    $uploads_path . 'wp2static-working-files'
             );
 
             return 'ERROR WRITING INITIAL CRAWL LIST';

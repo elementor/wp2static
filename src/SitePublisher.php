@@ -30,7 +30,7 @@ class SitePublisher {
 
         $this->export_file_list =
             $site_info['uploads_path'] .
-                '/wp2static-working-files/FILES-TO-DEPLOY.txt';
+                'wp2static-working-files/FILES-TO-DEPLOY.txt';
 
         $this->archive_dir = '/wp2static-exported-site/';
     }
@@ -338,14 +338,6 @@ class SitePublisher {
         }
 
         fclose( $fp );
-    }
-
-    public function logAction( $action ) {
-        if ( ! isset( $this->settings['debug_mode'] ) ) {
-            return;
-        }
-
-        WsLog::l( $action );
     }
 }
 

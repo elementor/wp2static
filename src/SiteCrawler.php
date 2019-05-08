@@ -43,7 +43,7 @@ class SiteCrawler extends Base {
 
         $this->list_of_urls_to_crawl_path =
             $site_info['uploads_path'] .
-            '/wp2static-working-files/FINAL-CRAWL-LIST.txt';
+            'wp2static-working-files/FINAL-CRAWL-LIST.txt';
 
         if ( ! is_file( $this->list_of_urls_to_crawl_path ) ) {
             WsLog::l(
@@ -113,7 +113,7 @@ class SiteCrawler extends Base {
             '/wp2static-exported-site/';
 
         $total_urls_path = $site_info['uploads_path'] .
-            '/wp2static-working-files/INITIAL-CRAWL-TOTAL.txt';
+            'wp2static-working-files/INITIAL-CRAWL-TOTAL.txt';
 
         $exclusions = array( 'wp-json' );
 
@@ -138,7 +138,7 @@ class SiteCrawler extends Base {
                 $exclusion = trim( $exclusion );
                 if ( $exclusion != '' ) {
                     if ( false !== strpos( $url, $exclusion ) ) {
-                        $this->logAction(
+                        WsLog::log(
                             'Excluding ' . $url .
                             ' because of rule ' . $exclusion
                         );
@@ -168,7 +168,7 @@ class SiteCrawler extends Base {
                 $this->crawl_site();
             }
         } else {
-            $this->logAction( 'Crawling URLs phase completed' );
+            WsLog::log( 'Crawling URLs phase completed' );
 
             if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
@@ -228,18 +228,10 @@ class SiteCrawler extends Base {
         return $file_type;
     }
 
-    public function logAction( $action ) {
-        if ( ! isset( $this->settings['debug_mode'] ) ) {
-            return;
-        }
-
-        WsLog::l( $action );
-    }
-
     public function checkForCurlErrors( $response, $curl_handle ) {
         if ( $response === false ) {
             $response = curl_error( $curl_handle );
-            $this->logAction(
+            WsLog::l(
                 'cURL error:' .
                 stripslashes( $response )
             );
@@ -247,7 +239,7 @@ class SiteCrawler extends Base {
     }
 
     public function crawlSingleURL( $url ) {
-        $this->logAction( 'Crawling URL: ' . $url );
+        WsLog::l( 'Crawling URL: ' . $url );
 
         $ch = curl_init();
 
@@ -304,7 +296,7 @@ class SiteCrawler extends Base {
         $good_response_codes = array( '200', '201', '301', '302', '304' );
 
         if ( ! in_array( $status_code, $good_response_codes ) ) {
-            $this->logAction(
+            WsLog::log(
                 'BAD RESPONSE STATUS (' . $status_code . '): ' . $full_url
             );
         }

@@ -9,25 +9,11 @@ class WsLog {
             'general',
         );
 
-        $settings = '';
-
-        if ( defined( 'WP_CLI' ) ) {
-            $settings = DBSettings::get( $target_settings );
-        } else {
-            $settings = PostSettings::get( $target_settings );
-        }
-
-        // NOTE: should be checked before sending to speed up requests
-        // extra check here until old WsLog calls updated
-        if ( ! isset( $settings['debug_mode'] ) ) {
-            return;
-        }
-
         $site_info = new SiteInfo();
         $site_info = $site_info->get();
 
         $log_file_path = $site_info['uploads_path'] .
-            '/wp2static-working-files/EXPORT-LOG.txt';
+            'wp2static-working-files/EXPORT-LOG.txt';
 
         file_put_contents(
             $log_file_path,

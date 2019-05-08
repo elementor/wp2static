@@ -20,7 +20,7 @@
       </th>
       <td>
         <input id="targetFolder" name="targetFolder" class="regular-text" style="width:100%;" 
-          value="<?php echo $this->options->targetFolder ? $this->options->targetFolder : $this->wp_site->site_path . 'mystaticsite'; ?>" /><br>
+          value="<?php echo $this->options->targetFolder ? $this->options->targetFolder : $this->site_info['site_path'] . 'mystaticsite'; ?>" /><br>
 
         <p>By exporting to a directory on your current server, you can check how it will look when published and make any adjustments needed. If you put this in a publicly accessible path and the links have been rewritten to support it, you may use this method to easily preview your static site without needing to leave your browser.</p>
 

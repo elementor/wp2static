@@ -31,11 +31,11 @@ class Exporter extends Base {
         foreach ( $files_to_clean as $file_to_clean ) {
             if ( file_exists(
                 $site_info['uploads_path'] .
-                    '/wp2static-working-files/' . $file_to_clean
+                    'wp2static-working-files/' . $file_to_clean
             ) ) {
                 unlink(
                     $site_info['uploads_path'] . '/' .
-                        '/wp2static-working-files/' . $file_to_clean
+                        'wp2static-working-files/' . $file_to_clean
                 );
             }
         }
@@ -55,11 +55,11 @@ class Exporter extends Base {
         foreach ( $files_to_clean as $file_to_clean ) {
             if ( file_exists(
                 $site_info['uploads_path'] .
-                    '/wp2static-working-files/' . $file_to_clean
+                    'wp2static-working-files/' . $file_to_clean
             ) ) {
                 unlink(
                     $site_info['uploads_path'] .
-                        '/wp2static-working-files/' . $file_to_clean
+                        'wp2static-working-files/' . $file_to_clean
                 );
             }
         }
@@ -107,14 +107,14 @@ class Exporter extends Base {
         // preserve the initial crawl list, to be used in debugging + more
         copy(
             $site_info['uploads_path'] .
-                '/wp2static-working-files/INITIAL-CRAWL-LIST.txt',
+                'wp2static-working-files/INITIAL-CRAWL-LIST.txt',
             $site_info['uploads_path'] .
-                '/wp2static-working-files/MODIFIED-CRAWL-LIST.txt'
+                'wp2static-working-files/MODIFIED-CRAWL-LIST.txt'
         );
 
         chmod(
             $site_info['uploads_path'] .
-                '/wp2static-working-files/MODIFIED-CRAWL-LIST.txt',
+                'wp2static-working-files/MODIFIED-CRAWL-LIST.txt',
             0664
         );
 
@@ -123,9 +123,9 @@ class Exporter extends Base {
             ! isset( $this->settings['additionalUrls'] ) ) {
             copy(
                 $site_info['uploads_path'] .
-                    '/wp2static-working-files/INITIAL-CRAWL-LIST.txt',
+                    'wp2static-working-files/INITIAL-CRAWL-LIST.txt',
                 $site_info['uploads_path'] .
-                    '/wp2static-working-files/FINAL-CRAWL-LIST.txt'
+                    'wp2static-working-files/FINAL-CRAWL-LIST.txt'
             );
 
             return;
@@ -136,7 +136,7 @@ class Exporter extends Base {
         // load crawl list into array
         $crawl_list = file(
             $site_info['uploads_path'] .
-            '/wp2static-working-files/MODIFIED-CRAWL-LIST.txt'
+            'wp2static-working-files/MODIFIED-CRAWL-LIST.txt'
         );
 
         if ( ! $crawl_list ) {
@@ -162,10 +162,9 @@ class Exporter extends Base {
 
                     if ( $exclusion != '' ) {
                         if ( strpos( $url_to_crawl, $exclusion ) !== false ) {
-                            $this->logAction(
-                                'Excluding ' . $url_to_crawl .
-                                ' because of rule ' . $exclusion
-                            );
+                            $msg = 'Excluding ' . $url_to_crawl .
+                                ' because of rule ' . $exclusion;
+                            WsLog::l( $msg );
 
                             $match = true;
                         }
@@ -200,25 +199,15 @@ class Exporter extends Base {
 
         file_put_contents(
             $site_info['uploads_path'] .
-                '/wp2static-working-files/FINAL-CRAWL-LIST.txt',
+                'wp2static-working-files/FINAL-CRAWL-LIST.txt',
             $str
         );
 
         chmod(
             $site_info['uploads_path'] .
-                '/wp2static-working-files/FINAL-CRAWL-LIST.txt',
+                'wp2static-working-files/FINAL-CRAWL-LIST.txt',
             0664
         );
-    }
-
-    public function logAction( $action ) {
-        if ( ! isset( $this->settings['debug_mode'] ) ) {
-            return;
-        }
-
-        require_once dirname( __FILE__ ) .
-            '/../WP2Static/WsLog.php';
-        WsLog::l( $action );
     }
 }
 
