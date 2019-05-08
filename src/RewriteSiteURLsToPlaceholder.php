@@ -23,7 +23,6 @@ class RewriteSiteURLsToPlaceholder {
         $search_patterns,
         $replace_patterns
     ) {
-
         $rewritten_source = str_replace(
             $search_patterns,
             $replace_patterns,
