@@ -318,8 +318,6 @@ class HTMLProcessor extends Base {
         }
 
         $this->removeQueryStringFromInternalLink( $element );
-        $this->rewriteWPPaths( $element );
-        $this->rewriteBaseURL( $element );
         $this->convertToRelativeURL( $element );
 
         if ( $this->shouldCreateOfflineURLs() ) {
@@ -396,8 +394,6 @@ class HTMLProcessor extends Base {
 
                 // rm query string
                 $url = strtok( $url, '?' );
-                $url = $this->rewriteWPPathsSrcSetURL( $url );
-                $url = $this->rewriteBaseURLSrcSetURL( $url );
                 $url = $this->convertToRelativeURLSrcSetURL( $url );
                 $url = $this->convertToOfflineURLSrcSetURL( $url );
             }
@@ -421,8 +417,6 @@ class HTMLProcessor extends Base {
         }
 
         $this->removeQueryStringFromInternalLink( $element );
-        $this->rewriteWPPaths( $element );
-        $this->rewriteBaseURL( $element );
         $this->convertToRelativeURL( $element );
 
         if ( $this->shouldCreateOfflineURLs() ) {
@@ -475,7 +469,6 @@ class HTMLProcessor extends Base {
         }
 
         $this->removeQueryStringFromInternalLink( $element );
-        $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
         $this->convertToRelativeURL( $element );
 
@@ -515,8 +508,6 @@ class HTMLProcessor extends Base {
         }
 
         $this->removeQueryStringFromInternalLink( $element );
-        $this->rewriteWPPaths( $element );
-        $this->rewriteBaseURL( $element );
         $this->convertToRelativeURL( $element );
 
         if ( $this->shouldCreateOfflineURLs() ) {
@@ -558,8 +549,6 @@ class HTMLProcessor extends Base {
         }
 
         $this->removeQueryStringFromInternalLink( $element );
-        $this->rewriteWPPaths( $element );
-        $this->rewriteBaseURL( $element );
         $this->convertToRelativeURL( $element );
 
         if ( $this->shouldCreateOfflineURLs() ) {
@@ -709,70 +698,10 @@ class HTMLProcessor extends Base {
         return $rewritten_url;
     }
 
-    public function rewriteWPPaths( $element ) {
-        if ( ! isset( $this->settings['rewrite_rules'] ) ) {
-            return;
-        }
-
-        $rewrite_from = array();
-        $rewrite_to = array();
-
-        $rewrite_rules = explode(
-            "\n",
-            str_replace( "\r", '', $this->settings['rewrite_rules'] )
-        );
-
-        $tmp_rules = array();
-
-        foreach ( $rewrite_rules as $rewrite_rule_line ) {
-            if ( $rewrite_rule_line ) {
-                list($from, $to) = explode( ',', $rewrite_rule_line );
-                $tmp_rules[ $from ] = $to;
-            }
-        }
-
-        uksort( $tmp_rules, array( $this, 'ruleSort' ) );
-
-        foreach ( $tmp_rules as $from => $to ) {
-            $rewrite_from[] = $from;
-            $rewrite_to[] = $to;
-        }
-
-        // array of: wp-content/themes/twentyseventeen/,contents/ui/theme/
-        // for each of these, addd the rewrite_from and rewrite_to to their
-        // respective arrays
-        $attribute_to_change = '';
-        $url_to_change = '';
-
-        if ( $element->hasAttribute( 'href' ) ) {
-            $attribute_to_change = 'href';
-        } elseif ( $element->hasAttribute( 'src' ) ) {
-            $attribute_to_change = 'src';
-        } elseif ( $element->hasAttribute( 'content' ) ) {
-            $attribute_to_change = 'content';
-        } else {
-            return;
-        }
-
-        $url_to_change = $element->getAttribute( $attribute_to_change );
-
-        if ( $this->isInternalLink( $url_to_change ) ) {
-            // rewrite URLs, starting with longest paths down to shortest
-            // TODO: is the internal link check needed here or these
-            // arr values are already normalized?
-            $rewritten_url = str_replace(
-                $rewrite_from,
-                $rewrite_to,
-                $url_to_change
-            );
-
-            $element->setAttribute( $attribute_to_change, $rewritten_url );
-        }
-    }
-
     public function getHTML( $xml_doc, $rewrite_unchanged_urls = true ) {
         $processed_html = $xml_doc->saveHtml();
 
+        // NOTE: add to plugin rewrite rules
         // NOTE: fix input HTML, which can have \ slashes modified to %5C
         $processed_html = str_replace(
             '%5C/',
@@ -780,17 +709,19 @@ class HTMLProcessor extends Base {
             $processed_html
         );
 
-        $processed_html = return ReplaceMultipleStrings:replace(
-            $processed_html,
-            $search_patterns,
-            $replace_patterns
-        );
 
         // TODO: add escaped URLs into the search/replace patterns
         // rewriteEscapedURLs
 
         // get user rewrite rules, use regular and escaped versions of them
+        $rewrite_rules =
+            GenerateRewriteRules::generate( $plugin_rules, $user_rules);
 
+        $processed_html = return ReplaceMultipleStrings:replace(
+            $processed_html,
+            $search_patterns,
+            $replace_patterns
+        );
 
         $processed_html = html_entity_decode(
             $processed_html,
@@ -920,7 +851,7 @@ class HTMLProcessor extends Base {
     public function rewriteBaseURLSrcSetURL( $url_to_change ) {
         $rewritten_url = str_replace(
             $this->getBaseURLRewritePatterns(),
-            $this->getBaseURLRewritePatterns(),
+            $this->getBaseURLRewriteReplacements(),
             $url_to_change
         );
 
@@ -944,7 +875,7 @@ class HTMLProcessor extends Base {
         if ( $this->isInternalLink( $url_to_change ) ) {
             $rewritten_url = str_replace(
                 $this->getBaseURLRewritePatterns(),
-                $this->getBaseURLRewritePatterns(),
+                $this->getBaseURLRewriteReplacements(),
                 $url_to_change
             );
 
