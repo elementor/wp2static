@@ -4,28 +4,31 @@ namespace WP2Static;
 
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
+use Exception;
 
 class DetectWPIncludesAssets {
 
     public static function detect() {
-        $wp_site = new WPSite();
-
         $files = array();
 
-        /*
-            We cannot rely on the plugin's location here, as it will fail for
-            a symlinked plugin directory. Our WPSite->plugins_path is more
-            reliable.
-        */
-        $includes_path = $wp_site->wp_includes_path;
-        $includes_url = $wp_site->wp_inc;
+        $includes_path = SiteInfo::getPath( 'includes' );
+        $includes_url = SiteInfo::getUrl( 'includes' );
+        $home_url = SiteInfo::getUrl( 'home' );
 
-        $directory = $includes_path;
+        if (
+             ! is_string( $includes_path ) ||
+             ! is_string( $includes_url ) ||
+             ! is_string( $home_url )
+            ) {
+            $err = 'WP URLs not defined ';
+            WsLog::l( $err );
+            throw new Exception( $err );
+        }
 
-        if ( is_dir( $directory ) ) {
+        if ( is_dir( $includes_path ) ) {
             $iterator = new RecursiveIteratorIterator(
                 new RecursiveDirectoryIterator(
-                    $directory,
+                    $includes_path,
                     RecursiveDirectoryIterator::SKIP_DOTS
                 )
             );
@@ -43,7 +46,7 @@ class DetectWPIncludesAssets {
 
                 $detected_filename =
                     str_replace(
-                        get_home_url(),
+                        $home_url,
                         '',
                         $detected_filename
                     );

@@ -190,9 +190,7 @@ class FilesHelper {
         $uploads_url,
         $settings
         ) {
-        require_once dirname( __FILE__ ) . '/WPSite.php';
-        $wp_site = new WPSite();
-
+        // TODO: convert to SiteInfo
         $base_url = untrailingslashit( home_url() );
 
         // TODO: detect robots.txt, etc before adding
@@ -287,7 +285,7 @@ class FilesHelper {
         if ( isset( $settings['detectVendorCacheDirs'] ) ) {
             $url_queue = array_merge(
                 $url_queue,
-                DetectVendorFiles::detect( $wp_site->site_url )
+                DetectVendorFiles::detect( SiteInfo::getURL( 'site' ) )
             );
         }
 
@@ -306,20 +304,18 @@ class FilesHelper {
         $str = implode( "\n", $unique_urls );
 
         $initial_crawl_file = $uploads_path .
-            '/wp2static-working-files/INITIAL-CRAWL-LIST.txt';
+            'wp2static-working-files/INITIAL-CRAWL-LIST.txt';
 
         $initial_crawl_total = $uploads_path .
-            '/wp2static-working-files/INITIAL-CRAWL-TOTAL.txt';
+            'wp2static-working-files/INITIAL-CRAWL-TOTAL.txt';
 
-        if ( wp_mkdir_p( $uploads_path . '/wp2static-working-files' ) ) {
+        if ( wp_mkdir_p( $uploads_path . 'wp2static-working-files' ) ) {
             $result = file_put_contents(
                 $initial_crawl_file,
                 $str
             );
 
             if ( ! $result ) {
-                require_once dirname( __FILE__ ) .
-                    '/../WP2Static/WsLog.php';
                 WsLog::l( 'USER WORKING DIRECTORY NOT WRITABLE' );
 
                 return 'ERROR WRITING INITIAL CRAWL LIST';
@@ -340,11 +336,9 @@ class FilesHelper {
 
             return count( $url_queue );
         } else {
-            require_once dirname( __FILE__ ) .
-                '/../WP2Static/WsLog.php';
             WsLog::l(
                 "Couldn't create working directory at " .
-                    $uploads_path . '/wp2static-working-files'
+                    $uploads_path . 'wp2static-working-files'
             );
 
             return 'ERROR WRITING INITIAL CRAWL LIST';
@@ -530,8 +524,6 @@ class FilesHelper {
         // NOTE: initial de-dup for faster processing
         $unique_urls = array_unique( $urls );
 
-        $wp_site_url = get_home_url();
-
         $url_queue = array_filter(
             $unique_urls,
             function ( $url ) {
@@ -539,8 +531,16 @@ class FilesHelper {
             }
         );
 
+        $home_url = SiteInfo::getUrl( 'home' );
+
+        if ( ! is_string( $home_url ) ) {
+            $err = 'Home URL not defined ';
+            WsLog::l( $err );
+            throw new Exception( $err );
+        }
+
         $stripped_urls = str_replace(
-            $wp_site_url,
+            $home_url,
             '/',
             $url_queue
         );

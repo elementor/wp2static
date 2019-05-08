@@ -162,29 +162,13 @@ class Controller {
     }
 
     public function download_export_log() {
-        $this->wp_site = new WPSite();
-
-        $target_settings = array(
-            'general',
-            'crawling',
-        );
-
-        if ( defined( 'WP_CLI' ) ) {
-            $this->settings =
-                DBSettings::get( $target_settings );
-        } else {
-            $this->settings =
-                PostSettings::get( $target_settings );
-        }
-
-        // get export log path
-        $export_log = $this->wp_site->wp_uploads_path .
-            '/wp2static-working-files/EXPORT-LOG.txt';
+        $export_log = SiteInfo::getPath( 'uploads' ) .
+            'wp2static-working-files/EXPORT-LOG.txt';
 
         if ( is_file( $export_log ) ) {
             // create zip of export log in tmp file
-            $export_log_zip = $this->wp_site->wp_uploads_path .
-                '/wp2static-working-files/EXPORT-LOG.zip';
+            $export_log_zip = SiteInfo::getPath( 'uploads' ) .
+                'wp2static-working-files/EXPORT-LOG.zip';
 
             $zip_archive = new ZipArchive();
             $zip_opened =
@@ -212,8 +196,8 @@ class Controller {
 
             $zip_archive->close();
 
-            echo $this->wp_site->wp_uploads_url .
-                '/wp2static-working-files/EXPORT-LOG.zip';
+            echo SiteInfo::getUrl( 'uploads' ) .
+                'wp2static-working-files/EXPORT-LOG.zip';
         } else {
             // serve 500 response to client
             throw new Exception( 'Unable to find Export Log to create ZIP' );
@@ -221,8 +205,6 @@ class Controller {
     }
 
     public function generate_filelist_preview() {
-        $this->wp_site = new WPSite();
-
         $target_settings = array(
             'general',
             'crawling',
@@ -241,13 +223,15 @@ class Controller {
         $initial_file_list_count =
             FilesHelper::buildInitialFileList(
                 true,
-                $this->wp_site->wp_uploads_path,
-                $this->wp_site->uploads_url,
+                SiteInfo::getPath( 'uploads' ),
+                SiteInfo::getUrl( 'uploads' ),
                 $this->settings
             );
 
         if ( $initial_file_list_count < 1 ) {
-            return false;
+            $err = 'Initial file list unable to be generated';
+            WsLog::l( $err );
+            throw new Exception( $err );
         }
 
         if ( ! defined( 'WP_CLI' ) ) {
@@ -256,19 +240,28 @@ class Controller {
     }
 
     public function renderOptionsPage() {
-        $this->wp_site = new WPSite();
-        $this->current_archive = '';
-
         $this->view
             ->setTemplate( 'options-page-js' )
             ->assign( 'options', $this->options )
-            ->assign( 'wp_site', $this->wp_site )
+            ->assign( 'site_info', SiteInfo::getAllInfo() )
             ->assign( 'onceAction', self::HOOK . '-options' )
             ->render();
 
         $this->view
             ->setTemplate( 'options-page' )
-            ->assign( 'wp_site', $this->wp_site )
+            ->assign( 'site_info', SiteInfo::getAllInfo() )
+            ->assign(
+                'uploads_writable',
+                SiteInfo::isUploadsWritable()
+            )
+            ->assign(
+                'curl_supported',
+                SiteInfo::hasCURLSupport()
+            )
+            ->assign(
+                'permalinks_defined',
+                SiteInfo::permalinksAreDefined()
+            )
             ->assign( 'options', $this->options )
             ->assign( 'onceAction', self::HOOK . '-options' )
             ->render();
@@ -334,20 +327,9 @@ class Controller {
     }
 
     public function delete_deploy_cache() {
-        $target_settings = array(
-            'wpenv',
-        );
-
-        if ( defined( 'WP_CLI' ) ) {
-            $this->settings =
-                DBSettings::get( $target_settings );
-        } else {
-            $this->settings =
-                PostSettings::get( $target_settings );
-        }
-
-        $uploads_dir = $this->settings['wp_uploads_path'];
-        $hash_files = glob( "{$uploads_dir}/*PREVIOUS-HASHES*.txt" );
+        $working_dir = SiteInfo::getPath( 'uploads' ) .
+            'wp2static-working-files';
+        $hash_files = glob( "{$working_dir}/*PREVIOUS-HASHES*.txt" );
         array_map( 'unlink', $hash_files );
 
         if ( ! defined( 'WP_CLI' ) ) {

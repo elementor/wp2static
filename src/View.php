@@ -14,11 +14,9 @@ class View {
         // Looking for a basic directory where plugin resides
         list($plugin_dir) = explode( '/', plugin_basename( __FILE__ ) );
 
-        $wp_site = new WPSite();
-
         // making up an absolute path to views directory
         $path_array = array(
-            $wp_site->plugins_path,
+            SiteInfo::getPath( 'plugins' ),
             $plugin_dir,
             $this->directory,
         );

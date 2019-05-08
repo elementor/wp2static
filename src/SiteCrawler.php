@@ -39,8 +39,8 @@ class SiteCrawler extends Base {
 
     public function crawl_site() {
         $this->list_of_urls_to_crawl_path =
-            $this->settings['wp_uploads_path'] .
-            '/wp2static-working-files/FINAL-CRAWL-LIST.txt';
+            SiteInfo::getPath( 'uploads' ) .
+            'wp2static-working-files/FINAL-CRAWL-LIST.txt';
 
         if ( ! is_file( $this->list_of_urls_to_crawl_path ) ) {
             WsLog::l(
@@ -103,11 +103,11 @@ class SiteCrawler extends Base {
 
         chmod( $this->list_of_urls_to_crawl_path, 0664 );
 
-        $this->archive_dir = $this->settings['wp_uploads_path'] .
+        $this->archive_dir = SiteInfo::getPath( 'uploads' ) .
             '/wp2static-exported-site/';
 
-        $total_urls_path = $this->settings['wp_uploads_path'] .
-            '/wp2static-working-files/INITIAL-CRAWL-TOTAL.txt';
+        $total_urls_path = SiteInfo::getPath( 'uploads' ) .
+            'wp2static-working-files/INITIAL-CRAWL-TOTAL.txt';
 
         $exclusions = array( 'wp-json' );
 
@@ -126,13 +126,13 @@ class SiteCrawler extends Base {
         foreach ( $batch_of_links_to_crawl as $link_to_crawl ) {
             $url = $link_to_crawl;
 
-            $full_url = $this->settings['wp_site_url'] . ltrim( $url, '/' );
+            $full_url = SiteInfo::getUrl( 'site' ) . ltrim( $url, '/' );
 
             foreach ( $exclusions as $exclusion ) {
                 $exclusion = trim( $exclusion );
                 if ( $exclusion != '' ) {
                     if ( false !== strpos( $url, $exclusion ) ) {
-                        $this->logAction(
+                        WsLog::l(
                             'Excluding ' . $url .
                             ' because of rule ' . $exclusion
                         );
@@ -162,7 +162,7 @@ class SiteCrawler extends Base {
                 $this->crawl_site();
             }
         } else {
-            $this->logAction( 'Crawling URLs phase completed' );
+            WsLog::l( 'Crawling URLs phase completed' );
 
             if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
@@ -222,18 +222,10 @@ class SiteCrawler extends Base {
         return $file_type;
     }
 
-    public function logAction( $action ) {
-        if ( ! isset( $this->settings['debug_mode'] ) ) {
-            return;
-        }
-
-        WsLog::l( $action );
-    }
-
     public function checkForCurlErrors( $response, $curl_handle ) {
         if ( $response === false ) {
             $response = curl_error( $curl_handle );
-            $this->logAction(
+            WsLog::l(
                 'cURL error:' .
                 stripslashes( $response )
             );
@@ -241,7 +233,7 @@ class SiteCrawler extends Base {
     }
 
     public function crawlSingleURL( $url ) {
-        $this->logAction( 'Crawling URL: ' . $url );
+        WsLog::l( 'Crawling URL: ' . $url );
 
         $ch = curl_init();
 
@@ -298,7 +290,7 @@ class SiteCrawler extends Base {
         $good_response_codes = array( '200', '201', '301', '302', '304' );
 
         if ( ! in_array( $status_code, $good_response_codes ) ) {
-            $this->logAction(
+            WsLog::l(
                 'BAD RESPONSE STATUS (' . $status_code . '): ' . $full_url
             );
         }
@@ -400,10 +392,19 @@ class SiteCrawler extends Base {
     }
 
     public function getRelativeURLFromFullURL( $full_url ) {
-            $this->full_url = $this->settings['wp_site_url'] .
-                ltrim( $this->url, '/' );
+        $site_url = SiteInfo::getUrl( 'site' );
+
+        if ( ! is_string( $site_url ) ) {
+            $err = 'Site URL not defined ';
+            WsLog::l( $err );
+            throw new Exception( $err );
+        }
+
+        $this->full_url = $site_url .
+            ltrim( $this->url, '/' );
+
         $relative_url = str_replace(
-            $this->settings['wp_site_url'],
+            $site_url,
             '',
             $full_url
         );

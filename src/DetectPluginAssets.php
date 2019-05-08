@@ -2,30 +2,28 @@
 
 namespace WP2Static;
 
+use Exception;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 
 class DetectPluginAssets {
 
     public static function detect() {
-        $wp_site = new WPSite();
-
         $files = array();
 
-        /*
-            We cannot rely on the plugin's location here, as it will fail for
-            a symlinked plugin directory. Our WPSite->plugins_path is more
-            reliable.
-        */
-        $plugins_path = $wp_site->plugins_path;
-        $plugins_url = plugins_url();
+        $plugins_path = SiteInfo::getPath( 'plugins' );
+        $plugins_url = SiteInfo::getUrl( 'plugins' );
 
-        $directory = $plugins_path;
+        if ( ! is_string( $plugins_path ) || ! is_string( $plugins_url ) ) {
+            $err = 'Plugins path not defined ';
+            WsLog::l( $err );
+            throw new Exception( $err );
+        }
 
-        if ( is_dir( $directory ) ) {
+        if ( is_dir( $plugins_path ) ) {
             $iterator = new RecursiveIteratorIterator(
                 new RecursiveDirectoryIterator(
-                    $directory,
+                    $plugins_path,
                     RecursiveDirectoryIterator::SKIP_DOTS
                 )
             );

@@ -17,52 +17,58 @@ class Exporter extends Base {
     }
 
     public function pre_export_cleanup() {
+        // TODO: filter here for add-on generated files
         $files_to_clean = array(
-            '2ND-CRAWL-LIST.txt',
             'FILES-TO-DEPLOY.txt',
             'EXPORT-LOG.txt',
-            'FINAL-2ND-CRAWL-LIST.txt',
             'FINAL-CRAWL-LIST.txt',
             'GITLAB-FILES-IN-REPO.txt',
         );
 
         foreach ( $files_to_clean as $file_to_clean ) {
             if ( file_exists(
-                $this->settings['wp_uploads_path'] .
-                    '/wp2static-working-files/' . $file_to_clean
+                SiteInfo::getPath( 'uploads' ) .
+                    'wp2static-working-files/' . $file_to_clean
             ) ) {
                 unlink(
-                    $this->settings['wp_uploads_path'] . '/' .
-                        '/wp2static-working-files/' . $file_to_clean
+                    SiteInfo::getPath( 'uploads' ) . '/' .
+                        'wp2static-working-files/' . $file_to_clean
                 );
             }
         }
     }
 
     public function cleanup_working_files() {
+        // TODO: filter here for add-on generated files
         $files_to_clean = array(
-            '2ND-CRAWL-LIST.txt',
             'FILES-TO-DEPLOY.txt',
-            'FINAL-2ND-CRAWL-LIST.txt',
             'FINAL-CRAWL-LIST.txt',
             'GITLAB-FILES-IN-REPO.txt',
         );
 
         foreach ( $files_to_clean as $file_to_clean ) {
             if ( file_exists(
-                $this->settings['wp_uploads_path'] .
-                    '/wp2static-working-files/' . $file_to_clean
+                SiteInfo::getPath( 'uploads' ) .
+                    'wp2static-working-files/' . $file_to_clean
             ) ) {
                 unlink(
-                    $this->settings['wp_uploads_path'] .
-                        '/wp2static-working-files/' . $file_to_clean
+                    SiteInfo::getPath( 'uploads' ) .
+                        'wp2static-working-files/' . $file_to_clean
                 );
             }
         }
     }
 
     public function cleanup_leftover_archives() {
-        $files_in_uploads_dir = scandir( $this->settings['wp_uploads_path'] );
+        $uploads_path = SiteInfo::getPath( 'uploads' );
+
+        if ( ! is_string( $uploads_path ) ) {
+            $err = 'Home URL not defined ';
+            WsLog::l( $err );
+            throw new Exception( $err );
+        }
+
+        $files_in_uploads_dir = scandir( $uploads_path );
 
         if ( ! $files_in_uploads_dir ) {
             return;
@@ -80,7 +86,7 @@ class Exporter extends Base {
                 strpos( $filename, 'wp-static-html-output-' ) !== false ||
                 strpos( $filename, 'wp2static-exported-site' ) !== false
             ) {
-                $deletion_target = $this->settings['wp_uploads_path'] .
+                $deletion_target = SiteInfo::getPath( 'uploads' ) .
                     '/' . $filename;
                 if ( is_dir( $deletion_target ) ) {
                     FilesHelper::delete_dir_with_files(
@@ -96,15 +102,15 @@ class Exporter extends Base {
     public function generateModifiedFileList() {
         // preserve the initial crawl list, to be used in debugging + more
         copy(
-            $this->settings['wp_uploads_path'] .
-                '/wp2static-working-files/INITIAL-CRAWL-LIST.txt',
-            $this->settings['wp_uploads_path'] .
-                '/wp2static-working-files/MODIFIED-CRAWL-LIST.txt'
+            SiteInfo::getPath( 'uploads' ) .
+                'wp2static-working-files/INITIAL-CRAWL-LIST.txt',
+            SiteInfo::getPath( 'uploads' ) .
+                'wp2static-working-files/MODIFIED-CRAWL-LIST.txt'
         );
 
         chmod(
-            $this->settings['wp_uploads_path'] .
-                '/wp2static-working-files/MODIFIED-CRAWL-LIST.txt',
+            SiteInfo::getPath( 'uploads' ) .
+                'wp2static-working-files/MODIFIED-CRAWL-LIST.txt',
             0664
         );
 
@@ -112,10 +118,10 @@ class Exporter extends Base {
         if ( ! isset( $this->settings['excludeURLs'] ) &&
             ! isset( $this->settings['additionalUrls'] ) ) {
             copy(
-                $this->settings['wp_uploads_path'] .
-                    '/wp2static-working-files/INITIAL-CRAWL-LIST.txt',
-                $this->settings['wp_uploads_path'] .
-                    '/wp2static-working-files/FINAL-CRAWL-LIST.txt'
+                SiteInfo::getPath( 'uploads' ) .
+                    'wp2static-working-files/INITIAL-CRAWL-LIST.txt',
+                SiteInfo::getPath( 'uploads' ) .
+                    'wp2static-working-files/FINAL-CRAWL-LIST.txt'
             );
 
             return;
@@ -125,8 +131,8 @@ class Exporter extends Base {
 
         // load crawl list into array
         $crawl_list = file(
-            $this->settings['wp_uploads_path'] .
-            '/wp2static-working-files/MODIFIED-CRAWL-LIST.txt'
+            SiteInfo::getPath( 'uploads' ) .
+            'wp2static-working-files/MODIFIED-CRAWL-LIST.txt'
         );
 
         if ( ! $crawl_list ) {
@@ -152,10 +158,9 @@ class Exporter extends Base {
 
                     if ( $exclusion != '' ) {
                         if ( strpos( $url_to_crawl, $exclusion ) !== false ) {
-                            $this->logAction(
-                                'Excluding ' . $url_to_crawl .
-                                ' because of rule ' . $exclusion
-                            );
+                            $msg = 'Excluding ' . $url_to_crawl .
+                                ' because of rule ' . $exclusion;
+                            WsLog::l( $msg );
 
                             $match = true;
                         }
@@ -189,26 +194,16 @@ class Exporter extends Base {
         $str = implode( PHP_EOL, $modified_crawl_list );
 
         file_put_contents(
-            $this->settings['wp_uploads_path'] .
-                '/wp2static-working-files/FINAL-CRAWL-LIST.txt',
+            SiteInfo::getPath( 'uploads' ) .
+                'wp2static-working-files/FINAL-CRAWL-LIST.txt',
             $str
         );
 
         chmod(
-            $this->settings['wp_uploads_path'] .
-                '/wp2static-working-files/FINAL-CRAWL-LIST.txt',
+            SiteInfo::getPath( 'uploads' ) .
+                'wp2static-working-files/FINAL-CRAWL-LIST.txt',
             0664
         );
-    }
-
-    public function logAction( $action ) {
-        if ( ! isset( $this->settings['debug_mode'] ) ) {
-            return;
-        }
-
-        require_once dirname( __FILE__ ) .
-            '/../WP2Static/WsLog.php';
-        WsLog::l( $action );
     }
 }
 

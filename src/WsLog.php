@@ -5,30 +5,16 @@ namespace WP2Static;
 class WsLog {
 
     public static function l( $text ) {
-        $target_settings = array(
-            'general',
-            'wpenv',
-        );
+        $log_dir = SiteInfo::getPath( 'uploads' ) . 'wp2static-working-files';
 
-        $wp_uploads_path = '';
-        $settings = '';
-
-        if ( defined( 'WP_CLI' ) ) {
-            $settings = DBSettings::get( $target_settings );
-        } else {
-            $settings = PostSettings::get( $target_settings );
+        if ( ! is_dir( $log_dir ) ) {
+            if ( ! mkdir( $log_dir ) ) {
+                error_log( 'Unable to create WP2Static logging dir' );
+                return;
+            }
         }
 
-        // NOTE: should be checked before sending to speed up requests
-        // extra check here until old WsLog calls updated
-        if ( ! isset( $settings['debug_mode'] ) ) {
-            return;
-        }
-
-        $wp_uploads_path = $settings['wp_uploads_path'];
-
-        $log_file_path = $wp_uploads_path .
-            '/wp2static-working-files/EXPORT-LOG.txt';
+        $log_file_path = $log_dir . '/EXPORT-LOG.txt';
 
         file_put_contents(
             $log_file_path,

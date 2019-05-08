@@ -2,11 +2,11 @@
 
 namespace WP2Static;
 
+use Exception;
+
 class DetectVendorFiles {
 
     public static function detect( $wp_site_url ) {
-        $wp_site = new WPSite();
-
         $vendor_files = array();
 
         /*
@@ -16,7 +16,7 @@ class DetectVendorFiles {
             to static workflow
         */
         if ( class_exists( '\\Elementor\Api' ) ) {
-            $elementor_font_dir = $wp_site->plugins_path .
+            $elementor_font_dir = SiteInfo::getPath( 'plugins' ) .
                 '/elementor/assets/lib/font-awesome';
 
             $elementor_urls = FilesHelper::getListOfLocalFilesByUrl(
@@ -38,8 +38,8 @@ class DetectVendorFiles {
             $vendor_files = array_merge( $vendor_files, $yoast_sitemaps );
         }
 
-        if ( is_dir( $wp_site->plugins_path . '/soliloquy/' ) ) {
-            $soliloquy_assets = $wp_site->plugins_path .
+        if ( is_dir( SiteInfo::getPath( 'plugins' ) . '/soliloquy/' ) ) {
+            $soliloquy_assets = SiteInfo::getPath( 'plugins' ) .
                 '/soliloquy/assets/css/images/';
 
             $soliloquy_urls = FilesHelper::getListOfLocalFilesByUrl(
@@ -51,20 +51,32 @@ class DetectVendorFiles {
 
         // cache dir used by Autoptimize and other themes/plugins
         $vendor_cache_dir =
-            $wp_site->wp_content_path . '/cache/';
+            SiteInfo::getPath( 'content' ) . '/cache/';
 
         if ( is_dir( $vendor_cache_dir ) ) {
 
+            $site_url = SiteInfo::getUrl( 'site' );
+            $content_url = SiteInfo::getUrl( 'content' );
+
+            if (
+                 ! is_string( $site_url ) ||
+                 ! is_string( $content_url )
+                ) {
+                $err = 'WP URLs not defined ';
+                WsLog::l( $err );
+                throw new Exception( $err );
+            }
+
             // get difference between home and wp-contents URL
             $prefix = str_replace(
-                $wp_site->site_url,
+                $site_url,
                 '/',
-                $wp_site->wp_content_url
+                $content_url
             );
 
             $vendor_cache_urls = DetectVendorCache::detect(
                 $vendor_cache_dir,
-                $wp_site->wp_content_path,
+                SiteInfo::getPath( 'content' ),
                 $prefix
             );
 
@@ -103,7 +115,8 @@ class DetectVendorFiles {
         }
 
         if ( class_exists( 'molongui_authorship' ) ) {
-            $molongui_path = $wp_site->plugins_path . '/molongui-authorship';
+            $molongui_path = SiteInfo::getPath( 'plugins' ) .
+                '/molongui-authorship';
 
             $molongui_urls = FilesHelper::getListOfLocalFilesByUrl(
                 $molongui_path

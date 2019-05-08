@@ -97,16 +97,8 @@ class FileWriter extends Base {
             file_put_contents( $filename, $file_contents );
             chmod( $filename, 0664 );
         } else {
-            $this->logAction( 'NOT SAVING EMTPY FILE ' . $this->url );
+            WsLog::l( 'NOT SAVING EMTPY FILE ' . $this->url );
         }
-    }
-
-    public function logAction( $action ) {
-        if ( ! isset( $this->settings['debug_mode'] ) ) {
-            return;
-        }
-
-        WsLog::l( $action );
     }
 }
 

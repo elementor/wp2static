@@ -6,7 +6,6 @@ use ZipArchive;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 use Exception;
-use WP_Error;
 
 class ArchiveProcessor extends Base {
 
@@ -19,7 +18,6 @@ class ArchiveProcessor extends Base {
                 'crawling',
                 'advanced',
                 'processing',
-                'netlify',
                 'zip',
                 'folder',
             )
@@ -222,6 +220,7 @@ class ArchiveProcessor extends Base {
         }
     }
 
+    // TODO: migrate to add-on
     public function createNetlifySpecialFiles() {
         if ( $this->settings['selected_deployment_option'] !== 'netlify' ) {
             return false;
@@ -255,15 +254,19 @@ class ArchiveProcessor extends Base {
         $zip_archive = new ZipArchive();
 
         if ( $zip_archive->open( $temp_zip, ZipArchive::CREATE ) !== true ) {
-            return new WP_Error( 'Could not create archive' );
+            $err = 'Could not create zip: ' . $temp_zip;
+            WsLog::l( $err );
+            throw new Exception( $err );
         }
 
         $iterator = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator( $this->archive->path )
+            new RecursiveDirectoryIterator(
+                $this->archive->path,
+                RecursiveDirectoryIterator::SKIP_DOTS
+            )
         );
 
         foreach ( $iterator as $filename => $file_object ) {
-
             $base_name = basename( $filename );
             if ( $base_name != '.' && $base_name != '..' ) {
                 $real_filepath = realpath( $filename );
@@ -279,15 +282,17 @@ class ArchiveProcessor extends Base {
                     str_replace( $this->archive->path, '', $filename )
                 )
                 ) {
-                    return new WP_Error( 'Could not add file: ' . $filename );
+                    $err = 'Could not add file: ' . $filename;
+                    WsLog::l( $err );
+                    throw new Exception( $err );
                 }
             }
         }
 
         $zip_archive->close();
 
-        $zip_path = $this->settings['wp_uploads_path'] .
-            '/wp2static-exported-site.zip';
+        $zip_path = SiteInfo::getPath( 'uploads' ) .
+            'wp2static-exported-site.zip';
 
         rename( $temp_zip, $zip_path );
     }

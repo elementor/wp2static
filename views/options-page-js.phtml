@@ -19,15 +19,12 @@ var deploy_options = {
     },
 };
 
-var wp_site = <?php echo json_encode($this->wp_site, JSON_FORCE_OBJECT|JSON_UNESCAPED_SLASHES); ?>
-
-// TODO: update this from prapre_for_export() response;
-var current_archive = {}; 
+var site_info = <?php echo json_encode($this->site_info, JSON_FORCE_OBJECT|JSON_UNESCAPED_SLASHES); ?>
 
 var current_deployment_method = '<?php echo $this->options->selected_deployment_option ? $this->options->selected_deployment_option : 'folder'; ?>';
 
 // TODO: get the log out of the archive, along with it's meta infos
-var log_file_url = wp_site.uploads_url + '/wp2static-working-files/EXPORT-LOG.txt';
+var log_file_url = site_info.uploads_url + 'wp2static-working-files/EXPORT-LOG.txt';
 
 var export_action = '';
 var export_targets = [];
@@ -138,7 +135,7 @@ jQuery(document).ready(function($){
     } else {
         // if zip was selected, call to get zip name and enable the button with the link to download
         if (current_deployment_method === 'zip') {
-          zipURL = wp_site.uploads_url + '/wp2static-exported-site.zip?cacheBuster=' + Date.now();
+          zipURL = site_info.uploads_url + 'wp2static-exported-site.zip?cacheBuster=' + Date.now();
           $('#downloadZIP').attr('href', zipURL);
           $('#downloadZIP').show();
         } else {
@@ -166,15 +163,6 @@ jQuery(document).ready(function($){
     }
   }
 
-  function isDebugModeEnabled() {
-    return $('#debug_mode').is(":checked");
-  }
-
-  function enableDebugMode() {
-    $('#debug_mode').attr('checked', true);
-  }
-
-
   function downloadExportLogSuccessCallback( serverResponse) {
     if ( ! serverResponse ) {
       $('#current_action').html( 'Failed to download Export Log <a id="downloadExportLogButton" href="#">try again</a>' );
@@ -200,12 +188,6 @@ jQuery(document).ready(function($){
     ); 
   }
 
-  $(document).on('click', '#exportWithDebugEnabledButton', function(evt) {
-        evt.preventDefault();
-        enableDebugMode();
-        startExport();
-  });
-
   $(document).on('click', '#detectEverythingButton', function(evt) {
         evt.preventDefault();
         $('#detectionOptionsTable input[type="checkbox"]').attr('checked', true);
@@ -224,13 +206,8 @@ jQuery(document).ready(function($){
   function ajaxErrorHandler () {
       stopTimer();
 
-      failed_deploy_message = 'Failed during "' + status_text;
-
-      if ( ! isDebugModeEnabled() ) {
-        failed_deploy_message += '", re-run with Debug Mode enabled? <button id="exportWithDebugEnabledButton">Yes</button>';
-      } else {
-        failed_deploy_message += '", <button id="downloadExportLogButton">Download export log</button>';
-      }
+      failed_deploy_message = 'Failed during "' + status_text +
+          '", <button id="downloadExportLogButton">Download export log</button>';
 
       $('#current_action').html( failed_deploy_message );
       $(".pulsate-css").hide();
@@ -478,8 +455,8 @@ jQuery(document).ready(function($){
       base_url_previews.text(base_url.replace(/\/$/, "") + '/');
 
       // update the clickable preview url in folder options
-      $('#folderPreviewURL').text(wp_site.site_url + '/');
-      $('#folderPreviewURL').attr('href', (wp_site.site_url + '/'));
+      $('#folderPreviewURL').text(site_info.site_url + '/');
+      $('#folderPreviewURL').attr('href', (site_info.site_url + '/'));
     }
   }
 
@@ -583,7 +560,7 @@ jQuery(document).ready(function($){
 
 
     // load the log file
-    $.get( wp_site.uploads_url + '/wp2static-working-files/EXPORT-LOG.txt', function( data ) {
+    $.get( site_info.uploads_url + 'wp2static-working-files/EXPORT-LOG.txt', function( data ) {
       // hide loading icon
       $('#log_load_progress').hide();
 
@@ -816,13 +793,13 @@ jQuery(document).ready(function($){
   });
 
   // populate some hidden fields
-  $('#wp_site_url').val(wp_site.site_url);
-  $('#wp_uploads_path').val(wp_site.wp_uploads_path);
-  $('#wp_uploads_url').val(wp_site.uploads_url);
-  $('#wp_site_path').val(wp_site.site_path);
-  $('#wp_inc').val(wp_site.wp_inc);
-  $('#wp_active_theme').val(wp_site.wp_active_theme);
-  $('#wp_uploads').val(wp_site.wp_uploads);
+  $('#site_url').val(site_info.site_url);
+  $('#wp_uploads_path').val(site_info.wp_uploads_path);
+  $('#wp_uploads_url').val(site_info.uploads_url);
+  $('#site_path').val(site_info.site_path);
+  $('#wp_inc').val(site_info.wp_inc);
+  $('#wp_active_theme').val(site_info.wp_active_theme);
+  $('#wp_uploads').val(site_info.wp_uploads);
   $('.spinner').hide();
 
   // call change handler on page load, to set correct state

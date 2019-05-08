@@ -13,7 +13,6 @@ class DBSettings {
 
         $key_sets['general'] = array(
             'baseUrl',
-            'debug_mode',
             'selected_deployment_option',
         );
 
@@ -107,12 +106,10 @@ class DBSettings {
             $settings[ $key ] = $plugin->options->{ $key };
         }
 
-        require_once dirname( __FILE__ ) . '/../WP2Static/WPSite.php';
-        $wp_site = new WPSite();
-
-        foreach ( $key_sets['wpenv'] as $key ) {
-            $settings[ $key ] = $wp_site->{ $key };
-        }
+        // TODO: wpenv should be removable with SiteInfo now
+        // foreach ( $key_sets['wpenv'] as $key ) {
+        // $settings[ $key ] = $site_info->{ $key };
+        // }
 
         $settings['crawl_increment'] =
             isset( $plugin->options->crawl_increment ) ?
