@@ -4,18 +4,18 @@ namespace WP2Static;
 
 use PHPUnit\Framework\TestCase;
 
-final class RewriteSiteURLsToPlaceholderTest extends TestCase{
+final class ReplaceMultipleStringsTest extends TestCase{
 
     /**
-     * @dataProvider rewriteToOfflineProvider
+     * @dataProvider replaceMultipleStringsProvider
      */
-    public function testaddsRelativePathToURL(
+    public function testReplace(
         $html_document,
         $search_patterns,
         $replace_patterns,
         $expectation
     ) {
-        $rewritten_source = RewriteSiteURLsToPlaceholder::rewrite(
+        $rewritten_source = ReplaceMultipleStrings::replace(
             $html_document, $search_patterns, $replace_patterns
         );
 
@@ -25,7 +25,7 @@ final class RewriteSiteURLsToPlaceholderTest extends TestCase{
         );
     }
 
-    public function rewriteToOfflineProvider() {
+    public function replaceMultipleStringsProvider() {
         return [
            'http site url without trailing slash, https destination' =>  [
                 '<a href="http://localhost/banana.jpg">Link to some file</a>',

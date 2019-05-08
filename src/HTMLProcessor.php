@@ -609,81 +609,6 @@ class HTMLProcessor extends Base {
         }
     }
 
-    public function detectEscapedSiteURLs( $processed_html ) {
-        // NOTE: this does return the expected http:\/\/172.18.0.3
-        // but your error log may escape again and
-        // show http:\\/\\/172.18.0.3
-        $escaped_site_url = addcslashes( $this->placeholder_url, '/' );
-
-        if ( strpos( $processed_html, $escaped_site_url ) !== false ) {
-            return $this->rewriteEscapedURLs( $processed_html );
-        }
-
-        return $processed_html;
-    }
-
-    public function detectUnchangedPlaceholderURLs( $processed_html ) {
-        $placeholder_url = $this->placeholder_url;
-
-        if ( strpos( $processed_html, $placeholder_url ) !== false ) {
-            return $this->rewriteUnchangedPlaceholderURLs(
-                $processed_html
-            );
-        }
-
-        return $processed_html;
-    }
-
-    public function rewriteUnchangedPlaceholderURLs( $processed_html ) {
-        if ( ! isset( $this->settings['rewrite_rules'] ) ) {
-            $this->settings['rewrite_rules'] = '';
-        }
-
-        $placeholder_url = rtrim( $this->placeholder_url, '/' );
-        $destination_url = rtrim(
-            $this->settings['baseUrl'],
-            '/'
-        );
-
-        // add base URL to rewrite_rules
-        $this->settings['rewrite_rules'] .=
-            PHP_EOL .
-                $placeholder_url . ',' .
-                $destination_url;
-
-        $rewrite_from = array();
-        $rewrite_to = array();
-
-        $rewrite_rules = explode(
-            "\n",
-            str_replace( "\r", '', $this->settings['rewrite_rules'] )
-        );
-
-        $tmp_rules = array();
-
-        foreach ( $rewrite_rules as $rewrite_rule_line ) {
-            if ( $rewrite_rule_line ) {
-                list($from, $to) = explode( ',', $rewrite_rule_line );
-                $tmp_rules[ $from ] = $to;
-            }
-        }
-
-        uksort( $tmp_rules, array( $this, 'ruleSort' ) );
-
-        foreach ( $tmp_rules as $from => $to ) {
-            $rewrite_from[] = $from;
-            $rewrite_to[] = $to;
-        }
-
-        $rewritten_source = str_replace(
-            $rewrite_from,
-            $rewrite_to,
-            $processed_html
-        );
-
-        return $rewritten_source;
-    }
-
     public function rewriteEscapedURLs( $processed_html ) {
         // NOTE: fix input HTML, which can have \ slashes modified to %5C
         $processed_html = str_replace(
@@ -848,20 +773,24 @@ class HTMLProcessor extends Base {
     public function getHTML( $xml_doc, $rewrite_unchanged_urls = true ) {
         $processed_html = $xml_doc->saveHtml();
 
-        /*
-            Last chance to catch any URLS not already rewritten correctly
+        // NOTE: fix input HTML, which can have \ slashes modified to %5C
+        $processed_html = str_replace(
+            '%5C/',
+            '\\/',
+            $processed_html
+        );
 
-            TODO: sharing this function in 2 places, split out for separation
+        $processed_html = return ReplaceMultipleStrings:replace(
+            $processed_html,
+            $search_patterns,
+            $replace_patterns
+        );
 
-            of responsibilities
-        */
-        if ( $rewrite_unchanged_urls ) {
-            // process the resulting HTML as text
-            $processed_html = $this->detectEscapedSiteURLs( $processed_html );
-            $processed_html = $this->detectUnchangedPlaceholderURLs(
-                $processed_html
-            );
-        }
+        // TODO: add escaped URLs into the search/replace patterns
+        // rewriteEscapedURLs
+
+        // get user rewrite rules, use regular and escaped versions of them
+
 
         $processed_html = html_entity_decode(
             $processed_html,
