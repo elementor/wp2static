@@ -190,9 +190,7 @@ class FilesHelper {
         $uploads_url,
         $settings
         ) {
-        $site_info = new SiteInfo();
-        $site_info = $site_info->get();
-
+        // TODO: convert to SiteInfo
         $base_url = untrailingslashit( home_url() );
 
         // TODO: detect robots.txt, etc before adding
@@ -287,7 +285,7 @@ class FilesHelper {
         if ( isset( $settings['detectVendorCacheDirs'] ) ) {
             $url_queue = array_merge(
                 $url_queue,
-                DetectVendorFiles::detect( $site_info['site_url'] )
+                DetectVendorFiles::detect( SiteInfo::getURL('site') )
             );
         }
 
@@ -526,9 +524,6 @@ class FilesHelper {
         // NOTE: initial de-dup for faster processing
         $unique_urls = array_unique( $urls );
 
-        $site_info = new SiteInfo();
-        $site_info = $site_info->get();
-
         $url_queue = array_filter(
             $unique_urls,
             function ( $url ) {
@@ -537,7 +532,7 @@ class FilesHelper {
         );
 
         $stripped_urls = str_replace(
-            $site_info['home_url'],
+            SiteInfo::getUrl('home'),
             '/',
             $url_queue
         );

@@ -25,13 +25,11 @@ class SitePublisher {
     }
 
     public function bootstrap() {
-        $site_info = new SiteInfo();
-        $site_info = $site_info->get();
-
         $this->export_file_list =
-            $site_info['uploads_path'] .
+            SiteInfo::getPath('uploads') .
                 'wp2static-working-files/FILES-TO-DEPLOY.txt';
 
+        // TODO: should be removable;test
         $this->archive_dir = '/wp2static-exported-site/';
     }
 
@@ -182,13 +180,10 @@ class SitePublisher {
     }
 
     public function prepareDeploy( $basename_in_target = false ) {
-        $site_info = new SiteInfo();
-        $site_info = $site_info->get();
-
         $this->clearFileList();
 
         $this->createDeploymentList(
-            $site_info['uploads_path'] . '/wp2static-exported-site/',
+            SiteInfo::getPath('uploads') . 'wp2static-exported-site/',
             $basename_in_target
         );
 

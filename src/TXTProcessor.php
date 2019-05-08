@@ -178,22 +178,19 @@ class TXTProcessor extends Base {
     }
 
     public function rewriteSiteURLsToPlaceholder() {
-        $site_info = new SiteInfo();
-        $site_info = $site_info->get();
-
         $patterns = array(
-            $site_info['site_url'],
+            SiteInfo::getUrl('site'),
             $this->getProtocolRelativeURL(
-                $site_info['site_url']
+                SiteInfo::getUrl('site')
             ),
             $this->getProtocolRelativeURL(
-                rtrim( $site_info['site_url'], '/' )
+                rtrim( SiteInfo::getUrl('site'), '/' )
             ),
             $this->getProtocolRelativeURL(
-                $site_info['site_url'] . '//'
+                SiteInfo::getUrl('site') . '//'
             ),
             $this->getProtocolRelativeURL(
-                addcslashes( $site_info['site_url'], '/' )
+                addcslashes( SiteInfo::getUrl('site'), '/' )
             ),
         );
 
@@ -218,7 +215,7 @@ class TXTProcessor extends Base {
             $patterns[] = str_replace(
                 'http:',
                 'https:',
-                $site_info['site_url']
+                SiteInfo::getUrl('site')
             );
 
             $replacements[] = $this->placeholder_url;

@@ -106,12 +106,10 @@ class DBSettings {
             $settings[ $key ] = $plugin->options->{ $key };
         }
 
-        $site_info = new SiteInfo();
-        $site_info = $site_info->get();
-
-        foreach ( $key_sets['wpenv'] as $key ) {
-            $settings[ $key ] = $site_info->{ $key };
-        }
+        // TODO: wpenv should be removable with SiteInfo now
+        // foreach ( $key_sets['wpenv'] as $key ) {
+        //     $settings[ $key ] = $site_info->{ $key };
+        // }
 
         $settings['crawl_increment'] =
             isset( $plugin->options->crawl_increment ) ?

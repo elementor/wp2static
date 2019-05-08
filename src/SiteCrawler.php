@@ -38,11 +38,8 @@ class SiteCrawler extends Base {
     }
 
     public function crawl_site() {
-        $site_info = new SiteInfo();
-        $site_info = $site_info->get();
-
         $this->list_of_urls_to_crawl_path =
-            $site_info['uploads_path'] .
+            SiteInfo::getPath('uploads') .
             'wp2static-working-files/FINAL-CRAWL-LIST.txt';
 
         if ( ! is_file( $this->list_of_urls_to_crawl_path ) ) {
@@ -63,9 +60,6 @@ class SiteCrawler extends Base {
     }
 
     public function crawlABitMore() {
-        $site_info = new SiteInfo();
-        $site_info = $site_info->get();
-
         $batch_of_links_to_crawl = array();
 
         $this->urls_to_crawl = file(
@@ -109,10 +103,10 @@ class SiteCrawler extends Base {
 
         chmod( $this->list_of_urls_to_crawl_path, 0664 );
 
-        $this->archive_dir = $site_info['uploads_path'] .
+        $this->archive_dir = SiteInfo::getPath('uploads') .
             '/wp2static-exported-site/';
 
-        $total_urls_path = $site_info['uploads_path'] .
+        $total_urls_path = SiteInfo::getPath('uploads') .
             'wp2static-working-files/INITIAL-CRAWL-TOTAL.txt';
 
         $exclusions = array( 'wp-json' );
@@ -132,7 +126,7 @@ class SiteCrawler extends Base {
         foreach ( $batch_of_links_to_crawl as $link_to_crawl ) {
             $url = $link_to_crawl;
 
-            $full_url = $site_info['site_url'] . ltrim( $url, '/' );
+            $full_url = SiteInfo::getUrl('site') . ltrim( $url, '/' );
 
             foreach ( $exclusions as $exclusion ) {
                 $exclusion = trim( $exclusion );
@@ -398,14 +392,11 @@ class SiteCrawler extends Base {
     }
 
     public function getRelativeURLFromFullURL( $full_url ) {
-        $site_info = new SiteInfo();
-        $site_info = $site_info->get();
-
-        $this->full_url = $site_info['site_url'] .
+        $this->full_url = SiteInfo::getUrl('site') .
             ltrim( $this->url, '/' );
 
         $relative_url = str_replace(
-            $site_info['site_url'],
+            SiteInfo::getUrl('site'),
             '',
             $full_url
         );

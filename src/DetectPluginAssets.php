@@ -8,25 +8,12 @@ use RecursiveDirectoryIterator;
 class DetectPluginAssets {
 
     public static function detect() {
-        $site_info = new SiteInfo();
-        $site_info = $site_info->get();
-
         $files = array();
 
-        /*
-            We cannot rely on the plugin's location here, as it will fail for
-            a symlinked plugin directory. Our WPSite->plugins_path is more
-            reliable.
-        */
-        $plugins_path = $site_info['plugins_path'];
-        $plugins_url = $site_info['plugins_url'];
-
-        $directory = $plugins_path;
-
-        if ( is_dir( $directory ) ) {
+        if ( is_dir( SiteInfo::getPath('plugins') ) ) {
             $iterator = new RecursiveIteratorIterator(
                 new RecursiveDirectoryIterator(
-                    $directory,
+                    SiteInfo::getPath('plugins'),
                     RecursiveDirectoryIterator::SKIP_DOTS
                 )
             );
@@ -37,8 +24,8 @@ class DetectPluginAssets {
 
                 $detected_filename =
                     str_replace(
-                        $plugins_path,
-                        $plugins_url,
+                        SiteInfo::getPath('plugins'),
+                        SiteInfo::getUrl('plugins'),
                         $filename
                     );
 

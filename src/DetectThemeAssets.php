@@ -8,27 +8,22 @@ use RecursiveDirectoryIterator;
 class DetectThemeAssets {
 
     public static function detect( $theme_type ) {
-        $site_info = new SiteInfo();
-        $site_info = $site_info->get();
-
         $files = array();
         $template_path = '';
         $template_url = '';
 
         if ( $theme_type === 'parent' ) {
-            $template_path = $site_info['parent_theme_path'];
-            $template_url = get_template_directory_uri();
+            $template_path = SiteInfo::getPath('parent_theme');
+            $template_url = SiteInfo::getUrl('parent_theme');
         } else {
-            $template_path = $site_info['child_theme_path'];
-            $template_url = get_stylesheet_directory_uri();
+            $template_path = SiteInfo::getPath('child_theme');
+            $template_url = SiteInfo::getUrl('child_theme');
         }
 
-        $directory = $template_path;
-
-        if ( is_dir( $directory ) ) {
+        if ( is_dir( $template_path ) ) {
             $iterator = new RecursiveIteratorIterator(
                 new RecursiveDirectoryIterator(
-                    $directory,
+                    $template_path,
                     RecursiveDirectoryIterator::SKIP_DOTS
                 )
             );

@@ -17,9 +17,6 @@ class Exporter extends Base {
     }
 
     public function pre_export_cleanup() {
-        $site_info = new SiteInfo();
-        $site_info = $site_info->get();
-
         // TODO: filter here for add-on generated files
         $files_to_clean = array(
             'FILES-TO-DEPLOY.txt',
@@ -30,11 +27,11 @@ class Exporter extends Base {
 
         foreach ( $files_to_clean as $file_to_clean ) {
             if ( file_exists(
-                $site_info['uploads_path'] .
+                SiteInfo::getPath('uploads') .
                     'wp2static-working-files/' . $file_to_clean
             ) ) {
                 unlink(
-                    $site_info['uploads_path'] . '/' .
+                    SiteInfo::getPath('uploads') . '/' .
                         'wp2static-working-files/' . $file_to_clean
                 );
             }
@@ -42,9 +39,6 @@ class Exporter extends Base {
     }
 
     public function cleanup_working_files() {
-        $site_info = new SiteInfo();
-        $site_info = $site_info->get();
-
         // TODO: filter here for add-on generated files
         $files_to_clean = array(
             'FILES-TO-DEPLOY.txt',
@@ -54,11 +48,11 @@ class Exporter extends Base {
 
         foreach ( $files_to_clean as $file_to_clean ) {
             if ( file_exists(
-                $site_info['uploads_path'] .
+                SiteInfo::getPath('uploads') .
                     'wp2static-working-files/' . $file_to_clean
             ) ) {
                 unlink(
-                    $site_info['uploads_path'] .
+                    SiteInfo::getPath('uploads') .
                         'wp2static-working-files/' . $file_to_clean
                 );
             }
@@ -66,10 +60,7 @@ class Exporter extends Base {
     }
 
     public function cleanup_leftover_archives() {
-        $site_info = new SiteInfo();
-        $site_info = $site_info->get();
-
-        $files_in_uploads_dir = scandir( $site_info['uploads_path'] );
+        $files_in_uploads_dir = scandir( SiteInfo::getPath('uploads') );
 
         if ( ! $files_in_uploads_dir ) {
             return;
@@ -87,7 +78,7 @@ class Exporter extends Base {
                 strpos( $filename, 'wp-static-html-output-' ) !== false ||
                 strpos( $filename, 'wp2static-exported-site' ) !== false
             ) {
-                $deletion_target = $site_info['uploads_path'] .
+                $deletion_target = SiteInfo::getPath('uploads') .
                     '/' . $filename;
                 if ( is_dir( $deletion_target ) ) {
                     FilesHelper::delete_dir_with_files(
@@ -101,19 +92,16 @@ class Exporter extends Base {
     }
 
     public function generateModifiedFileList() {
-        $site_info = new SiteInfo();
-        $site_info = $site_info->get();
-
         // preserve the initial crawl list, to be used in debugging + more
         copy(
-            $site_info['uploads_path'] .
+            SiteInfo::getPath('uploads') .
                 'wp2static-working-files/INITIAL-CRAWL-LIST.txt',
-            $site_info['uploads_path'] .
+            SiteInfo::getPath('uploads') .
                 'wp2static-working-files/MODIFIED-CRAWL-LIST.txt'
         );
 
         chmod(
-            $site_info['uploads_path'] .
+            SiteInfo::getPath('uploads') .
                 'wp2static-working-files/MODIFIED-CRAWL-LIST.txt',
             0664
         );
@@ -122,9 +110,9 @@ class Exporter extends Base {
         if ( ! isset( $this->settings['excludeURLs'] ) &&
             ! isset( $this->settings['additionalUrls'] ) ) {
             copy(
-                $site_info['uploads_path'] .
+                SiteInfo::getPath('uploads') .
                     'wp2static-working-files/INITIAL-CRAWL-LIST.txt',
-                $site_info['uploads_path'] .
+                SiteInfo::getPath('uploads') .
                     'wp2static-working-files/FINAL-CRAWL-LIST.txt'
             );
 
@@ -135,7 +123,7 @@ class Exporter extends Base {
 
         // load crawl list into array
         $crawl_list = file(
-            $site_info['uploads_path'] .
+            SiteInfo::getPath('uploads') .
             'wp2static-working-files/MODIFIED-CRAWL-LIST.txt'
         );
 
@@ -198,13 +186,13 @@ class Exporter extends Base {
         $str = implode( PHP_EOL, $modified_crawl_list );
 
         file_put_contents(
-            $site_info['uploads_path'] .
+            SiteInfo::getPath('uploads') .
                 'wp2static-working-files/FINAL-CRAWL-LIST.txt',
             $str
         );
 
         chmod(
-            $site_info['uploads_path'] .
+            SiteInfo::getPath('uploads') .
                 'wp2static-working-files/FINAL-CRAWL-LIST.txt',
             0664
         );

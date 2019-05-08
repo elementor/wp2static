@@ -8,12 +8,9 @@ use RecursiveDirectoryIterator;
 class DetectWPIncludesAssets {
 
     public static function detect() {
-        $site_info = new SiteInfo();
-        $site_info = $site_info->get();
-
         $files = array();
 
-        $directory = $site_info['includes_path'];
+        $directory = SiteInfo::getPath('includes');
 
         if ( is_dir( $directory ) ) {
             $iterator = new RecursiveIteratorIterator(
@@ -29,14 +26,14 @@ class DetectWPIncludesAssets {
 
                 $detected_filename =
                     str_replace(
-                        $site_info['includes_path'],
-                        $site_info['includes_url'],
+                        SiteInfo::getPath('includes'),
+                        SiteInfo::getUrl('includes'),
                         $filename
                     );
 
                 $detected_filename =
                     str_replace(
-                        get_home_url(),
+                        SiteInfo::getUrl('home'),
                         '',
                         $detected_filename
                     );

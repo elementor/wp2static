@@ -5,9 +5,6 @@ namespace WP2Static;
 class DetectVendorFiles {
 
     public static function detect( $wp_site_url ) {
-        $site_info = new SiteInfo();
-        $site_info = $site_info->get();
-
         $vendor_files = array();
 
         /*
@@ -17,7 +14,7 @@ class DetectVendorFiles {
             to static workflow
         */
         if ( class_exists( '\\Elementor\Api' ) ) {
-            $elementor_font_dir = $site_info['plugins_path'] .
+            $elementor_font_dir = SiteInfo::getPath('plugins') .
                 '/elementor/assets/lib/font-awesome';
 
             $elementor_urls = FilesHelper::getListOfLocalFilesByUrl(
@@ -39,8 +36,8 @@ class DetectVendorFiles {
             $vendor_files = array_merge( $vendor_files, $yoast_sitemaps );
         }
 
-        if ( is_dir( $site_info['plugins_path'] . '/soliloquy/' ) ) {
-            $soliloquy_assets = $site_info['plugins_path'] .
+        if ( is_dir( SiteInfo::getPath('plugins') . '/soliloquy/' ) ) {
+            $soliloquy_assets = SiteInfo::getPath('plugins') .
                 '/soliloquy/assets/css/images/';
 
             $soliloquy_urls = FilesHelper::getListOfLocalFilesByUrl(
@@ -52,20 +49,20 @@ class DetectVendorFiles {
 
         // cache dir used by Autoptimize and other themes/plugins
         $vendor_cache_dir =
-            $site_info['content_path'] . '/cache/';
+            SiteInfo::getPath('content') . '/cache/';
 
         if ( is_dir( $vendor_cache_dir ) ) {
 
             // get difference between home and wp-contents URL
             $prefix = str_replace(
-                $site_info['site_url'],
+                SiteInfo::getUrl('site'),
                 '/',
-                $site_info['content_url']
+                SiteInfo::getUrl('content')
             );
 
             $vendor_cache_urls = DetectVendorCache::detect(
                 $vendor_cache_dir,
-                $site_info['content_path'],
+                SiteInfo::getPath('content'),
                 $prefix
             );
 
@@ -104,7 +101,7 @@ class DetectVendorFiles {
         }
 
         if ( class_exists( 'molongui_authorship' ) ) {
-            $molongui_path = $site_info['plugins_path'] .
+            $molongui_path = SiteInfo::getPath('plugins') .
                 '/molongui-authorship';
 
             $molongui_urls = FilesHelper::getListOfLocalFilesByUrl(

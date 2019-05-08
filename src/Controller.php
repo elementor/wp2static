@@ -240,25 +240,22 @@ class Controller {
     }
 
     public function renderOptionsPage() {
-        $site_info_instance = new SiteInfo();
-        $site_info = $site_info_instance->get();
-
         $this->view
             ->setTemplate( 'options-page-js' )
             ->assign( 'options', $this->options )
-            ->assign( 'site_info', $site_info )
+            ->assign( 'site_info', SiteInfo::getAllInfo() )
             ->assign( 'onceAction', self::HOOK . '-options' )
             ->render();
 
         $this->view
             ->setTemplate( 'options-page' )
-            ->assign( 'site_info', $site_info )
+            ->assign( 'site_info', SiteInfo::getAllInfo() )
             ->assign( 'uploads_writable',
-                $site_info_instance->isUploadsWritable() )
+                SiteInfo::isUploadsWritable() )
             ->assign( 'curl_supported',
-                $site_info_instance->hasCURLSupport() )
+                SiteInfo::hasCURLSupport() )
             ->assign( 'permalinks_defined',
-                $site_info_instance->permalinksAreDefined() )
+                SiteInfo::permalinksAreDefined() )
             ->assign( 'options', $this->options )
             ->assign( 'onceAction', self::HOOK . '-options' )
             ->render();
@@ -324,10 +321,9 @@ class Controller {
     }
 
     public function delete_deploy_cache() {
-        $site_info = new SiteInfo();
-        $site_info = $site_info->get();
-
-        $hash_files = glob( "{$site_info['uploads_dir']}/*PREVIOUS-HASHES*.txt" );
+        $working_dir = SiteInfo::getPath('uploads') .
+            'wp2static-working-files';
+        $hash_files = glob( "{$working_dir}/*PREVIOUS-HASHES*.txt" );
         array_map( 'unlink', $hash_files );
 
         if ( ! defined( 'WP_CLI' ) ) {

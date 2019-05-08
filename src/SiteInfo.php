@@ -122,21 +122,40 @@ class SiteInfo {
 
     // TODO Use WP_Http 'curl_enabled' => $this->hasCurlSupport(), // didn't see the method vailable in WP_Http
     public function hasCURLSupport() {
+        if (self::$instance === NULL) {
+             error_log('creating new SiteInfo');
+             self::$instance = new SiteInfo();
+        }
+
         return extension_loaded( 'curl' );
     }
 
     public function isUploadsWritable() {
+        if (self::$instance === NULL) {
+             error_log('creating new SiteInfo');
+             self::$instance = new SiteInfo();
+        }
+
         $uploadsDir = self::$info['uploads_path'];
         return file_exists( $uploadsDir ) && is_writeable( $uploadsDir );
     }
 
     // ??? 'permalink_structure' => get_option( 'permalink_structure' ),
     public function permalinksAreDefined() {
+        if (self::$instance === NULL) {
+             error_log('creating new SiteInfo');
+             self::$instance = new SiteInfo();
+        }
+
         return strlen( get_option( 'permalink_structure' ) );
     }
 
     public function debug() {
         var_export( self::$info );
+    }
+
+    public function getAllInfo() {
+        return self::$info;
     }
 }
 
