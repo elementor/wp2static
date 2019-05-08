@@ -13,15 +13,14 @@ class SiteURLPatterns {
 
         $wp_site_url_with_cslashes = addcslashes( $wp_site_url, '/' );
 
-        $protocol_relative_wp_site_url = $this->getProtocolRelativeURL(
-            $wp_site_url
-        );
+        $protocol_relative_wp_site_url =
+            URLHelper::getProtocolRelativeURL( $wp_site_url );
 
         $protocol_relative_wp_site_url_with_extra_2_slashes =
-            $this->getProtocolRelativeURL( $wp_site_url . '//' );
+            URLHelper::getProtocolRelativeURL( $wp_site_url . '//' );
 
         $protocol_relative_wp_site_url_with_cslashes =
-            $this->getProtocolRelativeURL( addcslashes( $wp_site_url, '/' ) );
+            URLHelper::getProtocolRelativeURL( addcslashes( $wp_site_url, '/' ) );
 
         $search_patterns = array(
             $wp_site_url,
@@ -43,13 +42,13 @@ class SiteURLPatterns {
         $placeholder_url_with_cslashes = addcslashes( $placeholder_url, '/' );
 
         $protocol_relative_placeholder =
-            $this->getProtocolRelativeURL( $placeholder_url );
+            URLHelper::getProtocolRelativeURL( $placeholder_url );
 
         $protocol_relative_placeholder_with_extra_slash =
-            $this->getProtocolRelativeURL( $placeholder_url . '/' );
+            URLHelper::getProtocolRelativeURL( $placeholder_url . '/' );
 
         $protocol_relative_placeholder_with_cslashes =
-            $this->getProtocolRelativeURL(
+            URLHelper::getProtocolRelativeURL(
                 addcslashes( $placeholder_url, '/' )
             );
 

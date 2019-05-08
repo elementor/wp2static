@@ -2,6 +2,8 @@
 
 namespace WP2Static;
 
+use DOMDocument;
+
 /*
  * Processes HTML files while crawling.
  * Works in multiple phases:
@@ -189,7 +191,7 @@ class HTMLProcessor extends Base {
         }
     }
 
-    public function getURLToChangeBasedOnAttribute( $element ) {
+    public function getURLAndTargetAttribute( $element ) {
         if ( $element->hasAttribute( 'href' ) ) {
             $attribute_to_change = 'href';
         } elseif ( $element->hasAttribute( 'src' ) ) {
@@ -197,30 +199,19 @@ class HTMLProcessor extends Base {
         } elseif ( $element->hasAttribute( 'content' ) ) {
             $attribute_to_change = 'content';
         } else {
-            return;
+            $err = 'Trying to process unsupport element type ';
+            WsLog::l( $err );
+            throw new Exception( $err );
         }
 
         $url_to_change = $element->getAttribute( $attribute_to_change );
 
-        return $url_to_change;
-    }
-
-    public function getAttributeToChange( $element ) {
-        if ( $element->hasAttribute( 'href' ) ) {
-            $attribute_to_change = 'href';
-        } elseif ( $element->hasAttribute( 'src' ) ) {
-            $attribute_to_change = 'src';
-        } elseif ( $element->hasAttribute( 'content' ) ) {
-            $attribute_to_change = 'content';
-        } else {
-            return false;
-        }
-
-        return $attribute_to_change;
+        return [ $url_to_change, $attribute_to_change ];
     }
 
     public function convertElementAttributeToOfflineURL( $element ) {
-        $url_to_change = $this->getURLToChangeBasedOnAttribute( $element );
+        list( $url_to_change, $attribute_to_change ) =
+            $this->getURLAndTargetAttribute( $element );
 
         if ( ! $this->isInternalLink( $url_to_change ) ) {
             return false;
@@ -231,8 +222,6 @@ class HTMLProcessor extends Base {
             $this->page_url,
             $this->placeholder_url
         );
-
-        $attribute_to_change = $this->getAttributeToChange( $element );
 
         $element->setAttribute( $attribute_to_change, $offline_url );
     }
@@ -270,15 +259,14 @@ class HTMLProcessor extends Base {
     }
 
     public function convertRelativeURLToAbsolute( $element, $page_url ) {
-        $url_to_change = $this->getURLToChangeBasedOnAttribute( $element );
+        list( $url_to_change, $attribute_to_change ) =
+            $this->getURLAndTargetAttribute( $element );
 
         if ( $this->isURLDocumentOrSiteRootRelative( $url_to_change ) ) {
             $absolute_url = NormalizeURL::normalize(
                 $url_to_change,
                 $page_url
             );
-
-            $attribute_to_change = $this->getAttributeToChange( $element );
 
             if ( $attribute_to_change ) {
                 $element->setAttribute( $attribute_to_change, $absolute_url );
@@ -369,21 +357,8 @@ class HTMLProcessor extends Base {
      * @return DOMAttr|false
      */
     public function processElementURL( $element ) {
-        // get the URL and Attribute
-        $attribute_to_change = '';
-        $url_to_change = '';
-
-        if ( $element->hasAttribute( 'href' ) ) {
-            $attribute_to_change = 'href';
-        } elseif ( $element->hasAttribute( 'src' ) ) {
-            $attribute_to_change = 'src';
-        } elseif ( $element->hasAttribute( 'content' ) ) {
-            $attribute_to_change = 'content';
-        } else {
-            return;
-        }
-
-        $url_to_change = $element->getAttribute( $attribute_to_change );
+        list( $url_to_change, $attribute_to_change ) =
+            $this->getURLAndTargetAttribute( $element );
 
         // quickly abort for invalid URLs
         if ( $url[0] === '#' ) {
@@ -413,6 +388,7 @@ class HTMLProcessor extends Base {
         $this->convertNormalizedURLToPlaceholder( $url );
 
         // optionally transform URL structure here
+        $this->postProcessElementURLSructure( $url, $this->page_url );
 
         /*
          * Note: We want to to perform as many functions on the URL, not have
@@ -475,7 +451,12 @@ class HTMLProcessor extends Base {
         needs to be rewritten in a different manner for offline mode rewriting
 
     */
-    public function postProcessElementURLSructure( $url, $this->page_url ) {
+    public function postProcessElementURLSructure( $url, $page_url ) {
+        $this->convertToDocumentRelativeURL( $element );
+
+        if ( $this->shouldCreateOfflineURLs() ) {
+            $this->convertElementAttributeToOfflineURL( $element );
+        }
     }
 
     public function processMeta( $element ) {
@@ -498,25 +479,7 @@ class HTMLProcessor extends Base {
             }
         }
 
-        $url = $element->getAttribute( 'content' );
-
-        $original_url = $element->getAttribute( 'content' );
-
-        if ( $this->isInternalLink( $original_url ) ) {
-            $absolute_url = NormalizeURL::normalize(
-                $original_url,
-                $this->page_url
-            );
-
-            $element->setAttribute( 'content', $absolute_url );
-        }
-
-        $this->removeQueryStringFromInternalLink( $element );
-        $this->convertToDocumentRelativeURL( $element );
-
-        if ( $this->shouldCreateOfflineURLs() ) {
-            $this->convertElementAttributeToOfflineURL( $element );
-        }
+        $this->processElementURL( $element );
     }
 
     /*
@@ -546,7 +509,7 @@ class HTMLProcessor extends Base {
 
         if (
             $link_host === $this->site_url_host ||
-            $link_host === $this->placeholder_url_host ||
+            $link_host === $this->placeholder_url_host
         ) {
             return true;
         }
@@ -556,7 +519,7 @@ class HTMLProcessor extends Base {
 
     public function removeQueryStringFromInternalLink( $url ) {
         // strip anything from the ? onwards
-        $url = strtok( $url, '?' ));
+        $url = strtok( $url, '?' );
     }
 
     public function rewriteEscapedURLs( $processed_html ) {
@@ -681,9 +644,7 @@ class HTMLProcessor extends Base {
         $rewrite_rules =
             GenerateRewriteRules::generate( $plugin_rules, $user_rules);
 
-
-
-        $processed_html = return ReplaceMultipleStrings:replace(
+        $processed_html = ReplaceMultipleStrings::replace(
             $processed_html,
             $search_patterns,
             $replace_patterns
@@ -798,23 +759,6 @@ class HTMLProcessor extends Base {
         }
 
         return $offline_url;
-    }
-
-    // TODO: move some of these URLs into settings to avoid extra calls
-    public function getProtocolRelativeURL( $url ) {
-        $this->destination_protocol_relative_url = str_replace(
-            array(
-                'https:',
-                'http:',
-            ),
-            array(
-                '',
-                '',
-            ),
-            $url
-        );
-
-        return $this->destination_protocol_relative_url;
     }
 
     public function getTargetSiteProtocol( $url ) {

@@ -28,16 +28,16 @@ class GenerateRewriteRules {
         $plugin_rules['search_patterns'] = array(
             $this->placeholder_url,
             addcslashes( $this->placeholder_url, '/' ),
-            $this->getProtocolRelativeURL(
+            URLHelper::getProtocolRelativeURL(
                 $this->placeholder_url
             ),
-            $this->getProtocolRelativeURL(
+            URLHelper::getProtocolRelativeURL(
                 $this->placeholder_url
             ),
-            $this->getProtocolRelativeURL(
+            URLHelper::getProtocolRelativeURL(
                 $this->placeholder_url . '/'
             ),
-            $this->getProtocolRelativeURL(
+            URLHelper::getProtocolRelativeURL(
                 addcslashes( $this->placeholder_url, '/' )
             ),
         );
@@ -46,16 +46,16 @@ class GenerateRewriteRules {
         $plugin_rules['replace_patterns'] = array(
             $this->settings['baseUrl'],
             addcslashes( $this->settings['baseUrl'], '/' ),
-            $this->getProtocolRelativeURL(
+            URLHelper::getProtocolRelativeURL(
                 $this->settings['baseUrl']
             ),
-            $this->getProtocolRelativeURL(
+            URLHelper::getProtocolRelativeURL(
                 rtrim( $this->settings['baseUrl'], '/' )
             ),
-            $this->getProtocolRelativeURL(
+            URLHelper::getProtocolRelativeURL(
                 $this->settings['baseUrl'] . '//'
             ),
-            $this->getProtocolRelativeURL(
+            URLHelper::getProtocolRelativeURL(
                 addcslashes( $this->settings['baseUrl'], '/' )
             ),
         );

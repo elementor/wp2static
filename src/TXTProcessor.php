@@ -82,8 +82,8 @@ class TXTProcessor extends Base {
         // add protocol relative URL to rewrite_rules
         $this->settings['rewrite_rules'] .=
             PHP_EOL .
-                $this->getProtocolRelativeURL( $this->placeholder_url ) . ',' .
-                $this->getProtocolRelativeURL( $this->settings['baseUrl'] );
+                URLHelper::getProtocolRelativeURL( $this->placeholder_url ) . ',' .
+                URLHelper::getProtocolRelativeURL( $this->settings['baseUrl'] );
 
         $rewrite_from = array();
         $rewrite_to = array();
@@ -190,32 +190,32 @@ class TXTProcessor extends Base {
 
         $patterns = array(
             $site_url,
-            $this->getProtocolRelativeURL(
+            URLHelper::getProtocolRelativeURL(
                 $site_url
             ),
-            $this->getProtocolRelativeURL(
+            URLHelper::getProtocolRelativeURL(
                 rtrim( $site_url, '/' )
             ),
-            $this->getProtocolRelativeURL(
+            URLHelper::getProtocolRelativeURL(
                 $site_url . '//'
             ),
-            $this->getProtocolRelativeURL(
+            URLHelper::getProtocolRelativeURL(
                 addcslashes( $site_url, '/' )
             ),
         );
 
         $replacements = array(
             $this->placeholder_url,
-            $this->getProtocolRelativeURL(
+            URLHelper::getProtocolRelativeURL(
                 $this->placeholder_url
             ),
-            $this->getProtocolRelativeURL(
+            URLHelper::getProtocolRelativeURL(
                 $this->placeholder_url
             ),
-            $this->getProtocolRelativeURL(
+            URLHelper::getProtocolRelativeURL(
                 $this->placeholder_url . '/'
             ),
-            $this->getProtocolRelativeURL(
+            URLHelper::getProtocolRelativeURL(
                 addcslashes( $this->placeholder_url, '/' )
             ),
         );
@@ -252,22 +252,6 @@ class TXTProcessor extends Base {
         }
 
         return $protocol;
-    }
-
-    public function getProtocolRelativeURL( $url ) {
-        $this->destination_protocol_relative_url = str_replace(
-            array(
-                'https:',
-                'http:',
-            ),
-            array(
-                '',
-                '',
-            ),
-            $url
-        );
-
-        return $this->destination_protocol_relative_url;
     }
 }
 
