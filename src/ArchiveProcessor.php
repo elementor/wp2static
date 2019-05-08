@@ -270,9 +270,6 @@ class ArchiveProcessor extends Base {
         );
 
         foreach ( $iterator as $filename => $file_object ) {
-
-            error_log($filename);
-
             $base_name = basename( $filename );
             if ( $base_name != '.' && $base_name != '..' ) {
                 $real_filepath = realpath( $filename );
