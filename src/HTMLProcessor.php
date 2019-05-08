@@ -84,9 +84,10 @@ class HTMLProcessor extends Base {
             $site_root
         );
 
-        $replace_patterns = SiteURLPatterns::getPlaceholderURLReplacementPatterns(
-            $this->placeholder_url
-        );
+        $replace_patterns =
+            SiteURLPatterns::getPlaceholderURLReplacementPatterns(
+                $this->placeholder_url
+            );
 
         $this->raw_html = RewriteSiteURLsToPlaceholder::rewrite(
             $this->xml_doc,

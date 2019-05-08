@@ -20,7 +20,9 @@ class SiteURLPatterns {
             URLHelper::getProtocolRelativeURL( $wp_site_url . '//' );
 
         $protocol_relative_wp_site_url_with_cslashes =
-            URLHelper::getProtocolRelativeURL( addcslashes( $wp_site_url, '/' ) );
+            URLHelper::getProtocolRelativeURL(
+                addcslashes( $wp_site_url, '/' )
+            );
 
         $search_patterns = array(
             $wp_site_url,
@@ -37,7 +39,9 @@ class SiteURLPatterns {
      * Placeholders to replace WP site URLs for easier processing
      *
      */
-    public static function getPlaceholderURLReplacementPatterns( $placeholder_url ) {
+    public static function getPlaceholderURLReplacementPatterns(
+        $placeholder_url
+    ) {
         $placeholder_url = rtrim( $placeholder_url, '/' );
         $placeholder_url_with_cslashes = addcslashes( $placeholder_url, '/' );
 
