@@ -200,8 +200,6 @@ class HTMLProcessor extends Base {
                     $first_head_child
                 );
             } else {
-                require_once dirname( __FILE__ ) .
-                    '/../WP2Static/WsLog.php';
                 WsLog::l(
                     'WARNING: no valid head elemnent to attach base to: ' .
                         $this->page_url

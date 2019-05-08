@@ -65,8 +65,6 @@ class Deployer extends Base {
     }
 
     public function triggerPostDeployHooks() {
-        require_once dirname( __FILE__ ) .
-            '/Archive.php';
         $this->archive = new Archive();
 
         do_action( 'wp2static_post_deploy_trigger', $this->archive );

@@ -140,8 +140,6 @@ class CLI {
             }
         }
 
-        require_once dirname( __FILE__ ) . '/WP2Static/Deployer.php';
-
         $deployer = new Deployer();
 
         $deployer->deploy( $test );
