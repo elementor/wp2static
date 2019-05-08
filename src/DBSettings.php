@@ -107,11 +107,11 @@ class DBSettings {
             $settings[ $key ] = $plugin->options->{ $key };
         }
 
-        require_once dirname( __FILE__ ) . '/../WP2Static/WPSite.php';
-        $wp_site = new WPSite();
+        $site_info = new SiteInfo();
+        $site_info = $site_info->get();
 
         foreach ( $key_sets['wpenv'] as $key ) {
-            $settings[ $key ] = $wp_site->{ $key };
+            $settings[ $key ] = $site_info->{ $key };
         }
 
         $settings['crawl_increment'] =

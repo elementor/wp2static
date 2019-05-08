@@ -104,7 +104,7 @@ class DetectVendorFiles {
         }
 
         if ( class_exists( 'molongui_authorship' ) ) {
-            $molongui_path = $wp_site->plugins_path . '/molongui-authorship';
+            $molongui_path = $site_info['plugins_path'] . '/molongui-authorship';
 
             $molongui_urls = FilesHelper::getListOfLocalFilesByUrl(
                 $molongui_path

@@ -13,11 +13,6 @@ class DetectWPIncludesAssets {
 
         $files = array();
 
-        /*
-            We cannot rely on the plugin's location here, as it will fail for
-            a symlinked plugin directory. Our WPSite->plugins_path is more
-            reliable.
-        */
         $directory = $site_info['includes_path'];
 
         if ( is_dir( $directory ) ) {
@@ -34,8 +29,8 @@ class DetectWPIncludesAssets {
 
                 $detected_filename =
                     str_replace(
-                        $includes_path,
-                        $includes_url,
+                        $site_info['includes_path'],
+                        $site_info['includes_url'],
                         $filename
                     );
 

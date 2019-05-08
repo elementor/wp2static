@@ -17,11 +17,13 @@ class Exporter extends Base {
     }
 
     public function pre_export_cleanup() {
+        $site_info = new SiteInfo();
+        $site_info = $site_info->get();
+
+        // TODO: filter here for add-on generated files
         $files_to_clean = array(
-            '2ND-CRAWL-LIST.txt',
             'FILES-TO-DEPLOY.txt',
             'EXPORT-LOG.txt',
-            'FINAL-2ND-CRAWL-LIST.txt',
             'FINAL-CRAWL-LIST.txt',
             'GITLAB-FILES-IN-REPO.txt',
         );
@@ -40,10 +42,12 @@ class Exporter extends Base {
     }
 
     public function cleanup_working_files() {
+        $site_info = new SiteInfo();
+        $site_info = $site_info->get();
+
+        // TODO: filter here for add-on generated files
         $files_to_clean = array(
-            '2ND-CRAWL-LIST.txt',
             'FILES-TO-DEPLOY.txt',
-            'FINAL-2ND-CRAWL-LIST.txt',
             'FINAL-CRAWL-LIST.txt',
             'GITLAB-FILES-IN-REPO.txt',
         );
