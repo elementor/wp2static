@@ -12,7 +12,12 @@ class GenerateRewriteRules {
      * @param array $user_rules user's path rewriting rules 
      * @return array combining search and replacement rules 
      */
-    public static function generate( $plugin_rules, $user_rules ) {
+    public static function generate(
+        $plugin_rules,
+        $user_rules,
+        $placeholder_url,
+        $base_url
+    ) {
 
         /*
          * Pseudo steps:
@@ -26,53 +31,53 @@ class GenerateRewriteRules {
          */ 
         
         $plugin_rules['search_patterns'] = array(
-            $this->placeholder_url,
-            addcslashes( $this->placeholder_url, '/' ),
+            $placeholder_url,
+            addcslashes( $placeholder_url, '/' ),
             URLHelper::getProtocolRelativeURL(
-                $this->placeholder_url
+                $placeholder_url
             ),
             URLHelper::getProtocolRelativeURL(
-                $this->placeholder_url
+                $placeholder_url
             ),
             URLHelper::getProtocolRelativeURL(
-                $this->placeholder_url . '/'
+                $placeholder_url . '/'
             ),
             URLHelper::getProtocolRelativeURL(
-                addcslashes( $this->placeholder_url, '/' )
+                addcslashes( $placeholder_url, '/' )
             ),
         );
 
 
         $plugin_rules['replace_patterns'] = array(
-            $this->settings['baseUrl'],
-            addcslashes( $this->settings['baseUrl'], '/' ),
+            $base_url,
+            addcslashes( $base_url, '/' ),
             URLHelper::getProtocolRelativeURL(
-                $this->settings['baseUrl']
+                $base_url
             ),
             URLHelper::getProtocolRelativeURL(
-                rtrim( $this->settings['baseUrl'], '/' )
+                rtrim( $base_url, '/' )
             ),
             URLHelper::getProtocolRelativeURL(
-                $this->settings['baseUrl'] . '//'
+                $base_url . '//'
             ),
             URLHelper::getProtocolRelativeURL(
-                addcslashes( $this->settings['baseUrl'], '/' )
+                addcslashes( $base_url, '/' )
             ),
         );
 
         // if no user defined rewrite rules, init empty string for building
-        if ( ! isset( $this->settings['rewrite_rules'] ) ) {
-            $this->settings['rewrite_rules'] = '';
+        if ( ! isset( $user_rules ) ) {
+            $user_rules = '';
         }
 
-        $placeholder_url = rtrim( $this->placeholder_url, '/' );
+        $placeholder_url = rtrim( $placeholder_url, '/' );
         $destination_url = rtrim(
-            $this->settings['baseUrl'],
+            $base_url,
             '/'
         );
 
         // add base URL to rewrite_rules
-        $this->settings['rewrite_rules'] .=
+        $user_rules .=
             PHP_EOL .
                 $placeholder_url . ',' .
                 $destination_url;
@@ -82,7 +87,7 @@ class GenerateRewriteRules {
 
         $rewrite_rules = explode(
             "\n",
-            str_replace( "\r", '', $this->settings['rewrite_rules'] )
+            str_replace( "\r", '', $user_rules )
         );
 
         $tmp_rules = array();
@@ -94,7 +99,12 @@ class GenerateRewriteRules {
             }
         }
 
-        uksort( $tmp_rules, array( $this, 'ruleSort' ) );
+        uksort(
+            $tmp_rules,
+            function ( $str1, $str2 ) {
+                return 0 - strcmp( $str1, $str2 );
+            }
+        );
 
         foreach ( $tmp_rules as $from => $to ) {
             $rewrite_from[] = $from;

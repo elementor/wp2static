@@ -3,6 +3,8 @@
 namespace WP2Static;
 
 use DOMDocument;
+use DOMXPath;
+use Exception;
 
 /*
  * Processes HTML files while crawling.
@@ -71,14 +73,6 @@ class HTMLProcessor extends Base {
         $this->placeholder_url_host  =
             parse_url( $this->placeholder_url, PHP_URL_HOST );
 
-        // instantiate the XML body here
-        $this->xml_doc = new DOMDocument();
-
-        // PERF: 70% of function time
-        // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
-        libxml_use_internal_errors( true );
-        $this->xml_doc->loadHTML( $html_document );
-        libxml_use_internal_errors( false );
 
         $search_patterns = SiteURLPatterns::getWPSiteURLSearchPatterns(
             $site_root
@@ -89,8 +83,8 @@ class HTMLProcessor extends Base {
                 $this->placeholder_url
             );
 
-        $this->raw_html = RewriteSiteURLsToPlaceholder::rewrite(
-            $this->xml_doc,
+        $this->raw_html = ReplaceMultipleStrings::replace(
+            $html_document,
             $search_patterns,
             $replace_patterns
         );
@@ -102,6 +96,9 @@ class HTMLProcessor extends Base {
         $this->head_element = null;
 
         $this->page_url = $page_url;
+
+        // instantiate the XML body here
+        $this->xml_doc = new DOMDocument();
 
         // PERF: 70% of function time
         // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
@@ -200,9 +197,7 @@ class HTMLProcessor extends Base {
         } elseif ( $element->hasAttribute( 'content' ) ) {
             $attribute_to_change = 'content';
         } else {
-            $err = 'Trying to process unsupport element type ';
-            WsLog::l( $err );
-            throw new Exception( $err );
+            return;
         }
 
         $url_to_change = $element->getAttribute( $attribute_to_change );
@@ -213,6 +208,10 @@ class HTMLProcessor extends Base {
     public function convertElementAttributeToOfflineURL( $element ) {
         list( $url_to_change, $attribute_to_change ) =
             $this->getURLAndTargetAttribute( $element );
+
+        if ( ! $url_to_change || ! $attribute_to_change ) {
+            return;
+        }
 
         if ( ! $this->isInternalLink( $url_to_change ) ) {
             return false;
@@ -361,6 +360,10 @@ class HTMLProcessor extends Base {
         list( $url_to_change, $attribute_to_change ) =
             $this->getURLAndTargetAttribute( $element );
 
+        if ( ! $url_to_change || ! $attribute_to_change ) {
+            return;
+        }
+
         // quickly abort for invalid URLs
         if ( $url[0] === '#' ) {
             return;
@@ -386,10 +389,10 @@ class HTMLProcessor extends Base {
 
         // convert to Placeholder - just the base URL here? complete rewriting
         // happens later.
-        $this->convertNormalizedURLToPlaceholder( $url );
+        // $this->convertNormalizedURLToPlaceholder( $url );
 
         // optionally transform URL structure here
-        $this->postProcessElementURLSructure( $url, $this->page_url );
+        //$this->postProcessElementURLSructure( $url, $this->page_url );
 
         /*
          * Note: We want to to perform as many functions on the URL, not have
@@ -643,7 +646,12 @@ class HTMLProcessor extends Base {
 
         // get user rewrite rules, use regular and escaped versions of them
         $rewrite_rules =
-            GenerateRewriteRules::generate( $plugin_rules, $user_rules);
+            GenerateRewriteRules::generate( 
+                $plugin_rules,
+                $user_rules,
+                $this->placeholder_url,
+                $this->settings['baseUrl']
+            );
 
         $processed_html = ReplaceMultipleStrings::replace(
             $processed_html,

@@ -1,9 +1,8 @@
 <?php
 
-namespace WPStatic;
+namespace WP2Static;
 
 class URLHelper {
-
     /*
      * Takes either an http or https URL and returns a // protocol-relative URL
      *
