@@ -2,6 +2,7 @@
 
 namespace WP2Static;
 
+use Exception;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 
@@ -18,6 +19,15 @@ class DetectThemeAssets {
         } else {
             $template_path = SiteInfo::getPath( 'child_theme' );
             $template_url = SiteInfo::getUrl( 'child_theme' );
+        }
+
+        if (
+             ! is_string( $template_path ) ||
+             ! is_string( $template_url )
+            ) {
+            $err = 'WP URLs not defined ';
+            WsLog::l( $err );
+            throw new Exception( $err );
         }
 
         if ( is_dir( $template_path ) ) {
