@@ -54,7 +54,7 @@ class DetectWPIncludesAssets {
                 if ( $path_crawlable ) {
                     array_push(
                         $files,
-                        $detected_filename
+                        '/' . $detected_filename
                     );
                 }
             }
