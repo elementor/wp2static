@@ -2,16 +2,44 @@
 
 namespace WP2Static;
 
+use DOMDocument;
+use DOMComment;
+use DOMXPath;
+use Exception;
+
+/*
+ * Processes HTML files while crawling.
+ * Works in multiple phases:
+ *
+ * Parses HTML into a DOMDocument and iterates all elements
+ * For each element, it checks the type and handles with specific functions
+ *
+ * For elements containing links we want to process, we first normalize it:
+ * to get all URLs to a uniform structure for later processing, we convert to
+ * absolute URLs and rewrite to the Destination URL for ease of rewriting
+ * we also transform URLs if the user requests document-relative or offline
+ * URLs in the final output
+ *
+ * Before returning the final HTML for saving, we perform bulk transformations
+ * such as enforcing UTF-8 encoding, replacing any site URLs to Destination or
+ * transforming to site root-relative URLs
+ *
+ */
 class HTMLProcessor extends Base {
 
-    public function __construct() {
-        $this->loadSettings(
-            array(
-                'wpenv',
-                'processing',
-                'advanced',
-            )
-        );
+    // TODO: clean up the passed var
+    public function __construct(
+        $rewrite_rules,
+        $site_url_host,
+        $destination_url,
+        $user_rewrite_rules
+    ) {
+        $this->loadSettings();
+
+        $this->rewrite_rules = $rewrite_rules;
+        $this->user_rewrite_rules = $user_rewrite_rules;
+        $this->site_url_host = $site_url_host;
+        $this->destination_url = $destination_url;
 
         $this->processed_urls = array();
     }
@@ -36,56 +64,21 @@ class HTMLProcessor extends Base {
             return false;
         }
 
-        // NOTE: set placeholder_url to same protocol as target
-        // making it easier to rewrite URLs without considering protocol
-        $this->destination_protocol =
-            $this->getTargetSiteProtocol( $this->settings['baseUrl'] );
+        // detect if a base tag exists while in the loop
+        // use in later base href creation to decide: append or create
+        $this->base_tag_exists = false;
+        $this->base_element = null;
+        $this->head_element = null;
 
-        $this->placeholder_url =
-            $this->destination_protocol . 'PLACEHOLDER.wpsho/';
-
-        $wp_site_root = SiteInfo::getUrl( 'site' );
+        $this->page_url = $page_url;
 
         // instantiate the XML body here
-        $this->xml_doc = new \DOMDocument();
+        $this->xml_doc = new DOMDocument();
 
         // PERF: 70% of function time
         // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
         libxml_use_internal_errors( true );
         $this->xml_doc->loadHTML( $html_document );
-        libxml_use_internal_errors( false );
-
-        $html_with_absolute_urls = $this->rewriteRelativeWPSiteURLsToAbsolute(
-            $this->xml_doc,
-            $wp_site_root,
-            $this->placeholder_url,
-            $page_url
-        );
-
-        $search_patterns = $this->getWPSiteURLSearchPatterns(
-            $wp_site_root
-        );
-
-        $replace_patterns = $this->getPlaceholderURLReplacementPatterns(
-            $this->placeholder_url
-        );
-
-        $this->raw_html = RewriteSiteURLsToPlaceholder::rewrite(
-            $html_with_absolute_urls,
-            $search_patterns,
-            $replace_patterns
-        );
-
-        // detect if a base tag exists while in the loop
-        // use in later base href creation to decide: append or create
-        $this->base_tag_exists = false;
-
-        $this->page_url = $page_url;
-
-        // PERF: 70% of function time
-        // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
-        libxml_use_internal_errors( true );
-        $this->xml_doc->loadHTML( $this->raw_html );
         libxml_use_internal_errors( false );
 
         // start the full iterator here, along with copy of dom
@@ -106,6 +99,7 @@ class HTMLProcessor extends Base {
                     $this->processImageSrcSet( $element );
                     break;
                 case 'head':
+                    $this->head_element = $element;
                     $this->processHead( $element );
                     break;
                 case 'link':
@@ -123,92 +117,60 @@ class HTMLProcessor extends Base {
             }
         }
 
-        $this->dealWithBaseHREFElement();
+        // NOTE: $this->base_tag_exists is being set during iteration of
+        // elements, this prevents us from needing to do another iteration
+        $this->dealWithBaseHREFElement(
+            $this->xml_doc,
+            $this->base_tag_exists
+        );
+
         $this->stripHTMLComments();
 
         return true;
     }
 
     /*
-        As a first-pass, we normalize any document or site root-relative URLs
-
-        to make further processing easier
-
-        Takes in an XML DOMDocument and outputs raw HTML document
-    */
-    public function rewriteRelativeWPSiteURLsToAbsolute(
-            $xml_doc,
-            $wp_site_root,
-            $placeholder_url,
-            $page_url
-    ) {
-        $elements = iterator_to_array(
-            $xml_doc->getElementsByTagName( '*' )
-        );
-
-        $elements_to_normalize = array();
-        $elements_to_normalize['meta'] = 1;
-        $elements_to_normalize['a'] = 1;
-        $elements_to_normalize['img'] = 1;
-        $elements_to_normalize['head'] = 1;
-        $elements_to_normalize['link'] = 1;
-        $elements_to_normalize['script'] = 1;
-
-        foreach ( $elements as $element ) {
-            if ( isset( $elements_to_normalize[ $element->tagName ] ) ) {
-                $this->convertRelativeURLToAbsolute( $element, $page_url );
-            }
-        }
-
-        $source_with_absolute_urls = $this->getHTML( $xml_doc, false );
-
-        return $source_with_absolute_urls;
-    }
-
-    /*
         When we use relative links, we'll need to set the base HREF tag
-
         if we are exporting for offline usage or have not specific a base HREF
-
         we will remove any that we find
-    */
-    public function dealWithBaseHREFElement() {
-        if ( $this->base_tag_exists ) {
-            $base_element =
-                $this->xml_doc->getElementsByTagName( 'base' )->item( 0 );
 
+        HEAD and BASE elements have been looked for during the main DOM
+        iteration and recorded if found.
+    */
+    public function dealWithBaseHREFElement( $xml_doc, $base_tag_exists ) {
+        if ( $base_tag_exists ) {
             if ( $this->shouldCreateBaseHREF() ) {
-                $base_element->setAttribute(
+                $this->base_element->setAttribute(
                     'href',
                     $this->settings['baseHREF']
                 );
             } else {
-                $base_element->parentNode->removeChild( $base_element );
+                $this->base_element->parentNode->removeChild(
+                    $this->base_element
+                );
             }
         } elseif ( $this->shouldCreateBaseHREF() ) {
-            $base_element = $this->xml_doc->createElement( 'base' );
+            $base_element = $xml_doc->createElement( 'base' );
             $base_element->setAttribute(
                 'href',
                 $this->settings['baseHREF']
             );
-            $head_element =
-                $this->xml_doc->getElementsByTagName( 'head' )->item( 0 );
-            if ( $head_element ) {
-                $first_head_child = $head_element->firstChild;
-                $head_element->insertBefore(
-                    $base_element,
+
+            if ( $this->head_element ) {
+                $first_head_child = $this->head_element->firstChild;
+                $this->head_element->insertBefore(
+                    $this->base_element,
                     $first_head_child
                 );
             } else {
                 WsLog::l(
-                    'WARNING: no valid head elemnent to attach base to: ' .
-                        $this->page_url
+                    'No head element to attach base to: ' . $this->page_url
                 );
             }
         }
     }
 
-    public function getURLToChangeBasedOnAttribute( $element ) {
+    public function getURLAndTargetAttribute( $element ) {
         if ( $element->hasAttribute( 'href' ) ) {
             $attribute_to_change = 'href';
         } elseif ( $element->hasAttribute( 'src' ) ) {
@@ -221,39 +183,7 @@ class HTMLProcessor extends Base {
 
         $url_to_change = $element->getAttribute( $attribute_to_change );
 
-        return $url_to_change;
-    }
-
-    public function getAttributeToChange( $element ) {
-        if ( $element->hasAttribute( 'href' ) ) {
-            $attribute_to_change = 'href';
-        } elseif ( $element->hasAttribute( 'src' ) ) {
-            $attribute_to_change = 'src';
-        } elseif ( $element->hasAttribute( 'content' ) ) {
-            $attribute_to_change = 'content';
-        } else {
-            return false;
-        }
-
-        return $attribute_to_change;
-    }
-
-    public function convertElementAttributeToOfflineURL( $element ) {
-        $url_to_change = $this->getURLToChangeBasedOnAttribute( $element );
-
-        if ( ! $this->isInternalLink( $url_to_change ) ) {
-            return false;
-        }
-
-        $offline_url = ConvertToOfflineURL::convert(
-            $url_to_change,
-            $this->page_url,
-            $this->placeholder_url
-        );
-
-        $attribute_to_change = $this->getAttributeToChange( $element );
-
-        $element->setAttribute( $attribute_to_change, $offline_url );
+        return [ $url_to_change, $attribute_to_change ];
     }
 
     /*
@@ -288,43 +218,8 @@ class HTMLProcessor extends Base {
         return true;
     }
 
-    public function convertRelativeURLToAbsolute( $element, $page_url ) {
-        $url_to_change = $this->getURLToChangeBasedOnAttribute( $element );
-
-        if ( $this->isURLDocumentOrSiteRootRelative( $url_to_change ) ) {
-            $absolute_url = NormalizeURL::normalize(
-                $url_to_change,
-                $page_url
-            );
-
-            $attribute_to_change = $this->getAttributeToChange( $element );
-
-            if ( $attribute_to_change ) {
-                $element->setAttribute( $attribute_to_change, $absolute_url );
-            }
-        }
-    }
-
     public function processLink( $element ) {
-        $original_url = $element->getAttribute( 'html' );
-
-        if ( $this->isInternalLink( $original_url ) ) {
-            $absolute_url = NormalizeURL::normalize(
-                $original_url,
-                $this->page_url
-            );
-
-            $element->setAttribute( 'html', $absolute_url );
-        }
-
-        $this->removeQueryStringFromInternalLink( $element );
-        $this->rewriteWPPaths( $element );
-        $this->rewriteBaseURL( $element );
-        $this->convertToRelativeURL( $element );
-
-        if ( $this->shouldCreateOfflineURLs() ) {
-            $this->convertElementAttributeToOfflineURL( $element );
-        }
+        $this->processElementURL( $element );
 
         if ( isset( $this->settings['removeWPLinks'] ) ) {
             RemoveLinkElementsBasedOnRelAttr::remove( $element );
@@ -341,30 +236,6 @@ class HTMLProcessor extends Base {
         if ( strtolower( $link_rel ) == 'canonical' ) {
             $element->parentNode->removeChild( $element );
         }
-    }
-
-    public function isValidURL( $url ) {
-        // NOTE: not using native URL filter as it won't accept
-        // non-ASCII URLs, which we want to support
-        $url = trim( $url );
-
-        if ( $url == '' ) {
-            return false;
-        }
-
-        if ( strpos( $url, '.php' ) !== false ) {
-            return false;
-        }
-
-        if ( strpos( $url, ' ' ) !== false ) {
-            return false;
-        }
-
-        if ( $url[0] == '#' ) {
-            return false;
-        }
-
-        return true;
     }
 
     public function processImageSrcSet( $element ) {
@@ -391,15 +262,18 @@ class HTMLProcessor extends Base {
 
             // normalize urls
             if ( $this->isInternalLink( $url ) ) {
-                // TODO: require and convert to URL2 to use resolve()
-                $url = $this->page_url->resolve( $url );
+                $absolute_url = NormalizeURL::normalize(
+                    $url,
+                    $this->page_url
+                );
 
                 // rm query string
-                $url = strtok( $url, '?' );
-                $url = $this->rewriteWPPathsSrcSetURL( $url );
-                $url = $this->rewriteBaseURLSrcSetURL( $url );
-                $url = $this->convertToRelativeURLSrcSetURL( $url );
-                $url = $this->convertToOfflineURLSrcSetURL( $url );
+                $url = strtok( $absolute_url, '?' );
+                $url = $this->convertToDocumentRelativeURLSrcSetURL( $url );
+                $url = $this->convertToOfflineURLSrcSetURL(
+                    $url,
+                    $this->destination_url
+                );
             }
 
             $new_src_set[] = "{$url} {$dimension}";
@@ -408,31 +282,126 @@ class HTMLProcessor extends Base {
         $element->setAttribute( 'srcset', implode( ',', $new_src_set ) );
     }
 
+    // TODO: save actual image here as an alternative to getting all uploads
     public function processImage( $element ) {
-        $original_url = $element->getAttribute( 'src' );
+        $this->processElementURL( $element );
+    }
 
-        if ( $this->isInternalLink( $original_url ) ) {
-            $absolute_url = NormalizeURL::normalize(
-                $original_url,
-                $this->page_url
+    public function processScript( $element ) {
+        $this->processElementURL( $element );
+    }
+
+    public function processAnchor( $element ) {
+        $this->processElementURL( $element );
+    }
+
+
+    /*
+     * Process URL within a DOMElement
+     *
+     * @param DOMElement $element candidate for URL change
+     * @return DOMAttr|false
+     */
+    public function processElementURL( $element ) {
+        list( $url_to_change, $attribute_to_change ) =
+            $this->getURLAndTargetAttribute( $element );
+
+        if ( ! $url_to_change || ! $attribute_to_change ) {
+            return;
+        }
+
+        // quickly abort for invalid URLs
+        if ( $url_to_change[0] === '#' ) {
+            return;
+        }
+
+        if ( substr( $url_to_change, 0, 7 ) == 'mailto:' ) {
+            return;
+        }
+
+        // exit if not an internal link
+        if ( ! $this->isInternalLink( $url_to_change ) ) {
+            return;
+        }
+
+        $site_url = SiteInfo::getUrl( 'site' );
+
+        if ( ! is_string( $site_url ) ) {
+            $err = 'Site URL not defined ';
+            WsLog::l( $err );
+            throw new Exception( $err );
+        }
+
+        // replace protocol-relative URLs here to absolute site-url
+        if ( $url_to_change[0] === '/' ) {
+            if ( $url_to_change[1] === '/' ) {
+                $url_to_change = str_replace(
+                    URLHelper::getProtocolRelativeURL( $site_url ),
+                    $site_url,
+                    $url_to_change
+                );
+            }
+        }
+
+        // normalize site root-relative URLs here to absolute site-url
+        if ( $url_to_change[0] === '/' ) {
+            if ( $url_to_change[1] !== '/' ) {
+                $url_to_change = $site_url . ltrim( $url_to_change, '/' );
+            }
+        }
+
+        // TODO: enfore trailing slash
+
+        // TODO: download approved static files
+            // defaults (images, fonts, css, js)
+
+            // check for user additions
+
+            // determine save path
+
+            // check for existing image
+
+            // check for cache
+
+        // normalize the URL / make absolute
+        $url_to_change = NormalizeURL::normalize(
+            $url_to_change,
+            $this->page_url
+        );
+
+        // after normalizing, we need to rewrite to Destination URL
+        $url_to_change = str_replace(
+            $this->rewrite_rules['site_url_patterns'],
+            $this->rewrite_rules['destination_url_patterns'],
+            $url_to_change
+        );
+
+        $url_to_change =
+            $this->removeQueryStringFromInternalLink( $url_to_change );
+
+        // convert to Placeholder - just the base URL here? complete rewriting
+        // happens later.
+        // $this->convertNormalizedURLToPlaceholder( $url );
+
+        /*
+         * Note: We want to to perform as many functions on the URL, not have
+         * to access the element multiple times. So, once we have it, do all
+         * the things to it before sending back/updating the attribute
+         */
+        $url_to_change =
+            $this->postProcessElementURLStructure(
+                $url_to_change,
+                $this->page_url,
+                $site_url
             );
 
-            $element->setAttribute( 'src', $absolute_url );
-        }
-
-        $this->removeQueryStringFromInternalLink( $element );
-        $this->rewriteWPPaths( $element );
-        $this->rewriteBaseURL( $element );
-        $this->convertToRelativeURL( $element );
-
-        if ( $this->shouldCreateOfflineURLs() ) {
-            $this->convertElementAttributeToOfflineURL( $element );
-        }
+        // true if attribute was able to be set
+        return $element->setAttribute( $attribute_to_change, $url_to_change );
     }
 
     public function stripHTMLComments() {
         if ( isset( $this->settings['removeHTMLComments'] ) ) {
-            $xpath = new \DOMXPath( $this->xml_doc );
+            $xpath = new DOMXPath( $this->xml_doc );
 
             foreach ( $xpath->query( '//comment()' ) as $comment ) {
                 $comment->parentNode->removeChild( $comment );
@@ -446,7 +415,7 @@ class HTMLProcessor extends Base {
         );
 
         foreach ( $head_elements as $node ) {
-            if ( $node instanceof \DOMComment ) {
+            if ( $node instanceof DOMComment ) {
                 if (
                     isset( $this->settings['removeConditionalHeadComments'] )
                 ) {
@@ -457,71 +426,43 @@ class HTMLProcessor extends Base {
                     // as smaller iteration to run conditional
                     // against here
                     $this->base_tag_exists = true;
+                    $this->base_element = $node;
                 }
             }
         }
     }
 
-    public function processScript( $element ) {
-        $original_url = $element->getAttribute( 'src' );
+    /*
+        After we have normalized the element's URL and have an absolute
+        Placeholder URL, we can perform transformations, such as making it
+        an offline URL or document relative
 
-        if ( $this->isInternalLink( $original_url ) ) {
-            $absolute_url = NormalizeURL::normalize(
-                $original_url,
-                $this->page_url
-            );
+        site root relative URLs can be bulk rewritten before outputting HTML
+        so we don't both doing those here
 
-            $element->setAttribute( 'src', $absolute_url );
+        We need to do while iterating the URLs, as we cannot accurately
+        iterate individual URLs in bulk rewriting mode and each URL
+        needs to be rewritten in a different manner for offline mode rewriting
+
+    */
+    public function postProcessElementURLStructure(
+        $url,
+        $page_url,
+        $site_url
+    ) {
+        if ( $this->shouldUseRelativeURLs() ) {
+            $url = $this->convertToDocumentRelativeURL( $url );
         }
-
-        $this->removeQueryStringFromInternalLink( $element );
-        $this->rewriteWPPaths( $element );
-        $this->rewriteBaseURL( $element );
-        $this->convertToRelativeURL( $element );
 
         if ( $this->shouldCreateOfflineURLs() ) {
-            $this->convertElementAttributeToOfflineURL( $element );
-        }
-    }
-
-    public function processAnchor( $element ) {
-        $url = $element->getAttribute( 'href' );
-
-        // TODO: DRY this up/move to higher exec position
-        // early abort invalid links as early as possible
-        // to save overhead/potential errors
-        // apply to other functions
-        if ( $url[0] === '#' ) {
-            return;
-        }
-
-        if ( substr( $url, 0, 7 ) == 'mailto:' ) {
-            return;
-        }
-
-        if ( ! $this->isInternalLink( $url ) ) {
-            return;
-        }
-
-        $original_url = $element->getAttribute( 'href' );
-
-        if ( $this->isInternalLink( $original_url ) ) {
-            $absolute_url = NormalizeURL::normalize(
-                $original_url,
-                $this->page_url
+            $url = ConvertToOfflineURL::convert(
+                $url,
+                $page_url,
+                $site_url
             );
-
-            $element->setAttribute( 'href', $absolute_url );
         }
 
-        $this->removeQueryStringFromInternalLink( $element );
-        $this->rewriteWPPaths( $element );
-        $this->rewriteBaseURL( $element );
-        $this->convertToRelativeURL( $element );
-
-        if ( $this->shouldCreateOfflineURLs() ) {
-            $this->convertElementAttributeToOfflineURL( $element );
-        }
+        return $url;
     }
 
     public function processMeta( $element ) {
@@ -544,206 +485,40 @@ class HTMLProcessor extends Base {
             }
         }
 
-        $url = $element->getAttribute( 'content' );
-
-        $original_url = $element->getAttribute( 'content' );
-
-        if ( $this->isInternalLink( $original_url ) ) {
-            $absolute_url = NormalizeURL::normalize(
-                $original_url,
-                $this->page_url
-            );
-
-            $element->setAttribute( 'content', $absolute_url );
-        }
-
-        $this->removeQueryStringFromInternalLink( $element );
-        $this->rewriteWPPaths( $element );
-        $this->rewriteBaseURL( $element );
-        $this->convertToRelativeURL( $element );
-
-        if ( $this->shouldCreateOfflineURLs() ) {
-            $this->convertElementAttributeToOfflineURL( $element );
-        }
+        $this->processElementURL( $element );
     }
 
-    public function isInternalLink( $link, $domain = false ) {
-        if ( ! $domain ) {
-            $domain = $this->placeholder_url;
+    /*
+     * Detect if a URL belongs to our WP site
+     * We check against known internal prefixes and WP site host
+     *
+     * @param string $link Any potential URL
+     * @return boolean true for explicit match
+     */
+    public function isInternalLink( $url ) {
+        // quickly match known internal links   ./   ../   /
+        $first_char = $url[0];
+
+        if ( $first_char === '.' || $first_char === '/' ) {
+            return true;
         }
 
-        // TODO: apply only to links starting with .,..,/,
-        // or any with just a path, like banana.png
-        // check link is same host as $this->url and not a subdomain
-        $is_internal_link = parse_url( $link, PHP_URL_HOST ) === parse_url(
-            $domain,
-            PHP_URL_HOST
-        );
+        $url_host = parse_url( $url, PHP_URL_HOST );
 
-        return $is_internal_link;
+        if ( $url_host === $this->site_url_host ) {
+            return true;
+        }
+
+        return false;
     }
 
-    public function removeQueryStringFromInternalLink( $element ) {
-        $attribute_to_change = '';
-        $url_to_change = '';
-
-        if ( $element->hasAttribute( 'href' ) ) {
-            $attribute_to_change = 'href';
-        } elseif ( $element->hasAttribute( 'src' ) ) {
-            $attribute_to_change = 'src';
-        } elseif ( $element->hasAttribute( 'content' ) ) {
-            $attribute_to_change = 'content';
-        } else {
-            return;
-        }
-
-        $url_to_change = $element->getAttribute( $attribute_to_change );
-
-        if ( $this->isInternalLink( $url_to_change ) ) {
+    public function removeQueryStringFromInternalLink( $url ) {
+        if ( strpos( $url, '?' ) !== false ) {
             // strip anything from the ? onwards
-            // https://stackoverflow.com/a/42476194/1668057
-            $element->setAttribute(
-                $attribute_to_change,
-                strtok( $url_to_change, '?' )
-            );
-        }
-    }
-
-    public function detectEscapedSiteURLs( $processed_html ) {
-        // NOTE: this does return the expected http:\/\/172.18.0.3
-        // but your error log may escape again and
-        // show http:\\/\\/172.18.0.3
-        $escaped_site_url = addcslashes( $this->placeholder_url, '/' );
-
-        if ( strpos( $processed_html, $escaped_site_url ) !== false ) {
-            return $this->rewriteEscapedURLs( $processed_html );
+            $url = strtok( $url, '?' );
         }
 
-        return $processed_html;
-    }
-
-    public function detectUnchangedPlaceholderURLs( $processed_html ) {
-        $placeholder_url = $this->placeholder_url;
-
-        if ( strpos( $processed_html, $placeholder_url ) !== false ) {
-            return $this->rewriteUnchangedPlaceholderURLs(
-                $processed_html
-            );
-        }
-
-        return $processed_html;
-    }
-
-    public function rewriteUnchangedPlaceholderURLs( $processed_html ) {
-        if ( ! isset( $this->settings['rewrite_rules'] ) ) {
-            $this->settings['rewrite_rules'] = '';
-        }
-
-        $placeholder_url = rtrim( $this->placeholder_url, '/' );
-        $destination_url = rtrim(
-            $this->settings['baseUrl'],
-            '/'
-        );
-
-        // add base URL to rewrite_rules
-        $this->settings['rewrite_rules'] .=
-            PHP_EOL .
-                $placeholder_url . ',' .
-                $destination_url;
-
-        $rewrite_from = array();
-        $rewrite_to = array();
-
-        $rewrite_rules = explode(
-            "\n",
-            str_replace( "\r", '', $this->settings['rewrite_rules'] )
-        );
-
-        $tmp_rules = array();
-
-        foreach ( $rewrite_rules as $rewrite_rule_line ) {
-            if ( $rewrite_rule_line ) {
-                list($from, $to) = explode( ',', $rewrite_rule_line );
-                $tmp_rules[ $from ] = $to;
-            }
-        }
-
-        uksort( $tmp_rules, array( $this, 'ruleSort' ) );
-
-        foreach ( $tmp_rules as $from => $to ) {
-            $rewrite_from[] = $from;
-            $rewrite_to[] = $to;
-        }
-
-        $rewritten_source = str_replace(
-            $rewrite_from,
-            $rewrite_to,
-            $processed_html
-        );
-
-        return $rewritten_source;
-    }
-
-    public function rewriteEscapedURLs( $processed_html ) {
-        // NOTE: fix input HTML, which can have \ slashes modified to %5C
-        $processed_html = str_replace(
-            '%5C/',
-            '\\/',
-            $processed_html
-        );
-
-        /*
-        This function will be a bit more costly. To cover bases like:
-
-         data-images="[&quot;https:\/\/mysite.example.com\/wp...
-        from the onepress(?) theme, for example
-
-        */
-        $site_url = addcslashes( $this->placeholder_url, '/' );
-        $destination_url = addcslashes( $this->settings['baseUrl'], '/' );
-
-        if ( ! isset( $this->settings['rewrite_rules'] ) ) {
-            $this->settings['rewrite_rules'] = '';
-        }
-
-        // add base URL to rewrite_rules
-        $this->settings['rewrite_rules'] .=
-            PHP_EOL .
-                $site_url . ',' .
-                $destination_url;
-
-        $rewrite_from = array();
-        $rewrite_to = array();
-
-        $rewrite_rules = explode(
-            "\n",
-            str_replace( "\r", '', $this->settings['rewrite_rules'] )
-        );
-
-        $tmp_rules = array();
-
-        foreach ( $rewrite_rules as $rewrite_rule_line ) {
-            if ( $rewrite_rule_line ) {
-                list($from, $to) = explode( ',', $rewrite_rule_line );
-                $tmp_rules[ $from ] = $to;
-            }
-        }
-
-        uksort( $tmp_rules, array( $this, 'ruleSort' ) );
-
-        foreach ( $tmp_rules as $from => $to ) {
-            $rewrite_from[] = addcslashes( $from, '/' );
-            $rewrite_to[] = addcslashes( $to, '/' );
-        }
-
-        $rewritten_source = str_replace(
-            $rewrite_from,
-            $rewrite_to,
-            $processed_html
-        );
-
-        return $rewritten_source;
-
+        return $url;
     }
 
     public function rewriteWPPathsSrcSetURL( $url_to_change ) {
@@ -784,81 +559,23 @@ class HTMLProcessor extends Base {
         return $rewritten_url;
     }
 
-    public function rewriteWPPaths( $element ) {
-        if ( ! isset( $this->settings['rewrite_rules'] ) ) {
-            return;
-        }
-
-        $rewrite_from = array();
-        $rewrite_to = array();
-
-        $rewrite_rules = explode(
-            "\n",
-            str_replace( "\r", '', $this->settings['rewrite_rules'] )
-        );
-
-        $tmp_rules = array();
-
-        foreach ( $rewrite_rules as $rewrite_rule_line ) {
-            if ( $rewrite_rule_line ) {
-                list($from, $to) = explode( ',', $rewrite_rule_line );
-                $tmp_rules[ $from ] = $to;
-            }
-        }
-
-        uksort( $tmp_rules, array( $this, 'ruleSort' ) );
-
-        foreach ( $tmp_rules as $from => $to ) {
-            $rewrite_from[] = $from;
-            $rewrite_to[] = $to;
-        }
-
-        // array of: wp-content/themes/twentyseventeen/,contents/ui/theme/
-        // for each of these, addd the rewrite_from and rewrite_to to their
-        // respective arrays
-        $attribute_to_change = '';
-        $url_to_change = '';
-
-        if ( $element->hasAttribute( 'href' ) ) {
-            $attribute_to_change = 'href';
-        } elseif ( $element->hasAttribute( 'src' ) ) {
-            $attribute_to_change = 'src';
-        } elseif ( $element->hasAttribute( 'content' ) ) {
-            $attribute_to_change = 'content';
-        } else {
-            return;
-        }
-
-        $url_to_change = $element->getAttribute( $attribute_to_change );
-
-        if ( $this->isInternalLink( $url_to_change ) ) {
-            // rewrite URLs, starting with longest paths down to shortest
-            // TODO: is the internal link check needed here or these
-            // arr values are already normalized?
-            $rewritten_url = str_replace(
-                $rewrite_from,
-                $rewrite_to,
-                $url_to_change
-            );
-
-            $element->setAttribute( $attribute_to_change, $rewritten_url );
-        }
-    }
-
-    public function getHTML( $xml_doc, $rewrite_unchanged_urls = true ) {
+    public function getHTML( $xml_doc ) {
         $processed_html = $xml_doc->saveHtml();
 
-        /*
-            Last chance to catch any URLS not already rewritten correctly
+        // TODO: here is where we convertToSiteRelativeURLs, as this can be
+        // bulk performed, just stripping the domain when rewriting
 
-            TODO: sharing this function in 2 places, split out for separation
+        // TODO: allow for user-defined rewrites to be done after all other
+        // rewrites - enables fixes for situations where certain links haven't
+        // been rewritten / arbitrary rewriting of any URLs, even external
+        // allow filter here, for 3rd party development
+        if ( $this->user_rewrite_rules ) {
+            $rewrite_rules =
+                RewriteRules::getUserRewriteRules( $this->user_rewrite_rules );
 
-            of responsibilities
-        */
-        if ( $rewrite_unchanged_urls ) {
-            // process the resulting HTML as text
-            $processed_html = $this->detectEscapedSiteURLs( $processed_html );
-            $processed_html = $this->detectUnchangedPlaceholderURLs(
+            $processed_html = str_replace(
+                $rewrite_rules['from'],
+                $rewrite_rules['to'],
                 $processed_html
             );
         }
@@ -879,7 +596,7 @@ class HTMLProcessor extends Base {
         return $processed_html;
     }
 
-    public function convertToRelativeURLSrcSetURL( $url_to_change ) {
+    public function convertToDocumentRelativeURLSrcSetURL( $url_to_change ) {
         if ( ! $this->shouldUseRelativeURLs() ) {
             return $url_to_change;
         }
@@ -887,7 +604,7 @@ class HTMLProcessor extends Base {
         $site_root = '';
 
         $relative_url = str_replace(
-            $this->settings['baseUrl'],
+            $this->destination_url,
             $site_root,
             $url_to_change
         );
@@ -895,41 +612,25 @@ class HTMLProcessor extends Base {
         return $relative_url;
     }
 
-    public function convertToRelativeURL( $element ) {
-        if ( ! $this->shouldUseRelativeURLs() ) {
-            return;
-        }
 
-        if ( $element->hasAttribute( 'href' ) ) {
-            $attribute_to_change = 'href';
-        } elseif ( $element->hasAttribute( 'src' ) ) {
-            $attribute_to_change = 'src';
-        } elseif ( $element->hasAttribute( 'content' ) ) {
-            $attribute_to_change = 'content';
-        } else {
-            return;
-        }
-
-        $url_to_change = $element->getAttribute( $attribute_to_change );
-
+    // TODO: This function is to be performed on site URLs
+    // allowing the user to convert URLs to document or site relative form
+    public function convertToDocumentRelativeURL( $url ) {
         $site_root = '';
 
-        // check it actually needs to be changed
-        if ( $this->isInternalLink(
-            $url_to_change,
-            $this->settings['baseUrl']
-        ) ) {
-            $rewritten_url = str_replace(
-                $this->settings['baseUrl'],
-                $site_root,
-                $url_to_change
-            );
+        $rewritten_url = str_replace(
+            $this->settings['baseUrl'],
+            $site_root,
+            $url
+        );
 
-            $element->setAttribute( $attribute_to_change, $rewritten_url );
-        }
+        return $rewritten_url;
     }
 
-    public function convertToOfflineURLSrcSetURL( $url_to_change ) {
+    public function convertToOfflineURLSrcSetURL(
+        $url_to_change,
+        $destination_url
+    ) {
         if ( ! $this->shouldCreateOfflineURLs() ) {
             return $url_to_change;
         }
@@ -955,7 +656,7 @@ class HTMLProcessor extends Base {
         }
 
         $rewritten_url = str_replace(
-            $this->placeholder_url,
+            $destination_url,
             '',
             $url_to_change
         );
@@ -969,72 +670,6 @@ class HTMLProcessor extends Base {
         }
 
         return $offline_url;
-    }
-
-    // TODO: move some of these URLs into settings to avoid extra calls
-    public function getProtocolRelativeURL( $url ) {
-        $this->destination_protocol_relative_url = str_replace(
-            array(
-                'https:',
-                'http:',
-            ),
-            array(
-                '',
-                '',
-            ),
-            $url
-        );
-
-        return $this->destination_protocol_relative_url;
-    }
-
-    public function rewriteBaseURLSrcSetURL( $url_to_change ) {
-        $rewritten_url = str_replace(
-            $this->getBaseURLRewritePatterns(),
-            $this->getBaseURLRewritePatterns(),
-            $url_to_change
-        );
-
-        return $rewritten_url;
-    }
-
-    public function rewriteBaseURL( $element ) {
-        if ( $element->hasAttribute( 'href' ) ) {
-            $attribute_to_change = 'href';
-        } elseif ( $element->hasAttribute( 'src' ) ) {
-            $attribute_to_change = 'src';
-        } elseif ( $element->hasAttribute( 'content' ) ) {
-            $attribute_to_change = 'content';
-        } else {
-            return;
-        }
-
-        $url_to_change = $element->getAttribute( $attribute_to_change );
-
-        // check it actually needs to be changed
-        if ( $this->isInternalLink( $url_to_change ) ) {
-            $rewritten_url = str_replace(
-                $this->getBaseURLRewritePatterns(),
-                $this->getBaseURLRewritePatterns(),
-                $url_to_change
-            );
-
-            $element->setAttribute( $attribute_to_change, $rewritten_url );
-        }
-    }
-
-    public function getTargetSiteProtocol( $url ) {
-        $destination_protocol = '//';
-
-        if ( strpos( $url, 'https://' ) !== false ) {
-            $destination_protocol = 'https://';
-        } elseif ( strpos( $url, 'http://' ) !== false ) {
-            $destination_protocol = 'http://';
-        } else {
-            $destination_protocol = '//';
-        }
-
-        return $destination_protocol;
     }
 
     public function shouldUseRelativeURLs() {
@@ -1071,101 +706,6 @@ class HTMLProcessor extends Base {
         }
 
         return true;
-    }
-
-    // TODO: move this up to WPSite level or higher, log only once
-    public function getBaseURLRewritePatterns() {
-        $patterns = array(
-            $this->placeholder_url,
-            addcslashes( $this->placeholder_url, '/' ),
-            $this->getProtocolRelativeURL(
-                $this->placeholder_url
-            ),
-            $this->getProtocolRelativeURL(
-                $this->placeholder_url
-            ),
-            $this->getProtocolRelativeURL(
-                $this->placeholder_url . '/'
-            ),
-            $this->getProtocolRelativeURL(
-                addcslashes( $this->placeholder_url, '/' )
-            ),
-        );
-
-        return $patterns;
-    }
-
-    public function getBaseURLRewriteReplacements() {
-        $replacements = array(
-            $this->settings['baseUrl'],
-            addcslashes( $this->settings['baseUrl'], '/' ),
-            $this->getProtocolRelativeURL(
-                $this->settings['baseUrl']
-            ),
-            $this->getProtocolRelativeURL(
-                rtrim( $this->settings['baseUrl'], '/' )
-            ),
-            $this->getProtocolRelativeURL(
-                $this->settings['baseUrl'] . '//'
-            ),
-            $this->getProtocolRelativeURL(
-                addcslashes( $this->settings['baseUrl'], '/' )
-            ),
-        );
-
-        return $replacements;
-    }
-
-    public function getWPSiteURLSearchPatterns( $wp_site_url ) {
-        $wp_site_url = rtrim( $wp_site_url, '/' );
-
-        $wp_site_url_with_cslashes = addcslashes( $wp_site_url, '/' );
-
-        $protocol_relative_wp_site_url = $this->getProtocolRelativeURL(
-            $wp_site_url
-        );
-
-        $protocol_relative_wp_site_url_with_extra_2_slashes =
-            $this->getProtocolRelativeURL( $wp_site_url . '//' );
-
-        $protocol_relative_wp_site_url_with_cslashes =
-            $this->getProtocolRelativeURL( addcslashes( $wp_site_url, '/' ) );
-
-        $search_patterns = array(
-            $wp_site_url,
-            $wp_site_url_with_cslashes,
-            $protocol_relative_wp_site_url,
-            $protocol_relative_wp_site_url_with_extra_2_slashes,
-            $protocol_relative_wp_site_url_with_cslashes,
-        );
-
-        return $search_patterns;
-    }
-
-    public function getPlaceholderURLReplacementPatterns( $placeholder_url ) {
-        $placeholder_url = rtrim( $placeholder_url, '/' );
-        $placeholder_url_with_cslashes = addcslashes( $placeholder_url, '/' );
-
-        $protocol_relative_placeholder =
-            $this->getProtocolRelativeURL( $placeholder_url );
-
-        $protocol_relative_placeholder_with_extra_slash =
-            $this->getProtocolRelativeURL( $placeholder_url . '/' );
-
-        $protocol_relative_placeholder_with_cslashes =
-            $this->getProtocolRelativeURL(
-                addcslashes( $placeholder_url, '/' )
-            );
-
-        $replace_patterns = array(
-            $placeholder_url,
-            $placeholder_url_with_cslashes,
-            $protocol_relative_placeholder,
-            $protocol_relative_placeholder_with_extra_slash,
-            $protocol_relative_placeholder_with_cslashes,
-        );
-
-        return $replace_patterns;
     }
 }
 

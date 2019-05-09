@@ -6,22 +6,9 @@ use Exception;
 
 class SitePublisher {
 
-    public function loadSettings( $deploy_method, $specify_keys = array() ) {
-        $target_settings = array(
-            'general',
-            'wpenv',
-            'advanced',
-        );
-
-        $target_settings[] = $deploy_method;
-
-        if ( isset( $_POST['selected_deployment_option'] ) ) {
-            $this->settings =
-                PostSettings::get( $target_settings, $specify_keys );
-        } else {
-            $this->settings =
-                DBSettings::get( $target_settings, $specify_keys );
-        }
+    public function loadSettings() {
+        $plugin = Controller::getInstance();
+        $this->settings = $plugin->options->getSettings( true );
     }
 
     public function bootstrap() {

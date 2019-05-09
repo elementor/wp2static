@@ -7,14 +7,7 @@ use Exception;
 class SiteCrawler extends Base {
 
     public function __construct() {
-        $this->loadSettings(
-            array(
-                'wpenv',
-                'crawling',
-                'processing',
-                'advanced',
-            )
-        );
+        $this->loadSettings();
 
         if ( isset( $this->settings['crawl_delay'] ) ) {
             sleep( $this->settings['crawl_delay'] );
@@ -302,9 +295,51 @@ class SiteCrawler extends Base {
             $curl_content_type
         );
 
+        $site_url = SiteInfo::getUrl( 'site' );
+
+        if ( ! is_string( $site_url ) ) {
+            $err = 'Site URL not defined ';
+            WsLog::l( $err );
+            throw new Exception( $err );
+        }
+
+        // capture URL hosts for use in detecting internal links
+        $site_url_host = parse_url( $site_url, PHP_URL_HOST );
+
+        $destination_url = $this->settings['baseUrl'];
+        $user_rewrite_rules = $this->settings['rewrite_rules'];
+
+        // get user rewrite rules, use regular and escaped versions of them
+        $rewrite_rules =
+            RewriteRules::generate(
+                $site_url,
+                $destination_url
+            );
+
+        // TODO: move rewrite stuff higher up
+        // WsLog::l(
+        // 'Site URL patterns: ' .
+        // implode(',', $rewrite_rules['site_url_patterns']) . PHP_EOL .
+        // 'Placeholder URL patterns: ' .
+        // implode(',', $rewrite_rules['placeholder_url_patterns']) . PHP_EOL .
+        // 'Destination URL patterns: ' .
+        // implode(',', $rewrite_rules['destination_url_patterns'])
+        // );
+
+        if ( ! $rewrite_rules ) {
+            $err = 'No URL rewrite rules defined';
+            WsLog::l( $err );
+            throw new Exception( $err );
+        }
+
         switch ( $file_type ) {
             case 'html':
-                $processor = new HTMLProcessor();
+                $processor = new HTMLProcessor(
+                    $rewrite_rules,
+                    $site_url_host,
+                    $destination_url,
+                    $user_rewrite_rules
+                );
 
                 $this->processed_file = $processor->processHTML(
                     $output,

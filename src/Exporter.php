@@ -7,13 +7,7 @@ use Exception;
 class Exporter extends Base {
 
     public function __construct() {
-        $this->loadSettings(
-            array(
-                'wpenv',
-                'crawling',
-                'advanced',
-            )
-        );
+        $this->loadSettings();
     }
 
     public function pre_export_cleanup() {

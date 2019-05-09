@@ -14,11 +14,13 @@ class ConvertToOfflineURL {
          - with no webserver to render default documents like /index.html, we
            need to rewrite all links to full post/index.html style URLs
 
+         - we need these URLs to already be rewritten to the destination_url
+           before we can process them
+
     */
     public static function convert(
-        $url_to_change, $page_url, $placeholder_url
+        $url_to_change, $page_url, $destination_url
     ) {
-
         $current_page_path_to_root = '';
         $current_page_path = parse_url( $page_url, PHP_URL_PATH );
 
@@ -30,7 +32,7 @@ class ConvertToOfflineURL {
         $num_dots_to_root = count( $number_of_segments_in_path ) - 2;
 
         $page_url_without_domain = str_replace(
-            $placeholder_url,
+            $destination_url,
             '',
             $page_url
         );
@@ -50,7 +52,7 @@ class ConvertToOfflineURL {
 
             // TODO: into one array or match/replaces
             $rewritten_url = str_replace(
-                $placeholder_url,
+                $destination_url,
                 '',
                 $rewritten_url
             );
@@ -66,7 +68,7 @@ class ConvertToOfflineURL {
             }
 
             $rewritten_url = str_replace(
-                $placeholder_url,
+                $destination_url,
                 '',
                 $url_to_change
             );
@@ -82,7 +84,6 @@ class ConvertToOfflineURL {
                 '../../',
                 $offline_url
             );
-
         }
 
         /*

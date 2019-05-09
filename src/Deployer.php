@@ -7,11 +7,7 @@ use WP_CLI;
 class Deployer extends Base {
 
     public function __construct() {
-        $this->loadSettings(
-            array(
-                'advanced',
-            )
-        );
+        $this->loadSettings();
     }
 
     /*
