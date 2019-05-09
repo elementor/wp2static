@@ -346,6 +346,17 @@ class HTMLProcessor extends Base {
 
         // TODO: enfore trailing slash
 
+        // TODO: download approved static files
+            // defaults (images, fonts, css, js)
+
+            // check for user additions
+
+            // determine save path
+
+            // check for existing image
+
+            // check for cache
+
         // normalize the URL / make absolute
         $url_to_change = NormalizeURL::normalize(
             $url_to_change,
