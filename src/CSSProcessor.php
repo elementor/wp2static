@@ -7,14 +7,7 @@ use Exception;
 class CSSProcessor extends Base {
 
     public function __construct() {
-        $this->loadSettings(
-            array(
-                'crawling',
-                'wpenv',
-                'processing',
-                'advanced',
-            )
-        );
+        $this->loadSettings();
     }
 
     public function processCSS( $css_document, $page_url ) {

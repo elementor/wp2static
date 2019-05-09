@@ -7,14 +7,7 @@ use Exception;
 class TXTProcessor extends Base {
 
     public function __construct() {
-        $this->loadSettings(
-            array(
-                'crawling',
-                'wpenv',
-                'processing',
-                'advanced',
-            )
-        );
+        $this->loadSettings();
 
     }
 

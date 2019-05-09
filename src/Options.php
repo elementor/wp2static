@@ -175,6 +175,18 @@ class Options {
         return $options_array;
     }
 
+    public function getSettings() {
+        $settings = [];
+
+        foreach ( $this->wp2static_options_keys as $key ) {
+            $value = $this->__get( $key );
+
+            $settings[ $key ] = $value;
+        }
+
+        return $settings;
+    }
+
     public function optionExists( $name ) {
         return in_array( $name, $this->wp2static_options_keys );
     }

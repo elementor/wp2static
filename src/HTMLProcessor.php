@@ -33,13 +33,7 @@ class HTMLProcessor extends Base {
         $destination_url,
         $user_rewrite_rules
     ) {
-        $this->loadSettings(
-            array(
-                'wpenv',
-                'processing',
-                'advanced',
-            )
-        );
+        $this->loadSettings();
 
         $this->rewrite_rules = $rewrite_rules;
         $this->user_rewrite_rules = $user_rewrite_rules;
@@ -337,9 +331,7 @@ class HTMLProcessor extends Base {
 
         // normalize site root-relative URLs here to absolute site-url
         if ( $url_to_change[0] === '/' ) {
-                error_log('POTENTIAL site root relative URL: ' . $url_to_change);
             if ( $url_to_change[1] !== '/' ) {
-                error_log('site root relative URL: ' . $url_to_change);
                 $url_to_change = $site_url . ltrim( $url_to_change, '/' );
             }
         }

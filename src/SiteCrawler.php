@@ -7,14 +7,7 @@ use Exception;
 class SiteCrawler extends Base {
 
     public function __construct() {
-        $this->loadSettings(
-            array(
-                'wpenv',
-                'crawling',
-                'processing',
-                'advanced',
-            )
-        );
+        $this->loadSettings();
 
         if ( isset( $this->settings['crawl_delay'] ) ) {
             sleep( $this->settings['crawl_delay'] );

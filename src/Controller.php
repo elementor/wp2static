@@ -209,18 +209,7 @@ class Controller {
     }
 
     public function generate_filelist_preview() {
-        $target_settings = array(
-            'general',
-            'crawling',
-        );
-
-        if ( defined( 'WP_CLI' ) ) {
-            $this->settings =
-                DBSettings::get( $target_settings );
-        } else {
-            $this->settings =
-                PostSettings::get( $target_settings );
-        }
+        $this->settings = $this->options->getSettings( true );
 
         $plugin_hook = 'wp2static';
 

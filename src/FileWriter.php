@@ -9,11 +9,7 @@ class FileWriter extends Base {
         $this->file_type = $file_type;
         $this->content_type = $content_type;
 
-        $this->loadSettings(
-            array(
-                'wpenv',
-            )
-        );
+        $this->loadSettings();
     }
 
     public function saveFile( $archive_dir ) {

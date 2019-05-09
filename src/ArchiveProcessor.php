@@ -12,16 +12,7 @@ class ArchiveProcessor extends Base {
     public function __construct() {
         $this->archive = new Archive();
 
-        $this->loadSettings(
-            array(
-                'wpenv',
-                'crawling',
-                'advanced',
-                'processing',
-                'zip',
-                'folder',
-            )
-        );
+        $this->loadSettings();
     }
 
     public function renameWPDirectory( $source, $target ) {
