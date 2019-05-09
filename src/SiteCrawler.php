@@ -302,9 +302,45 @@ class SiteCrawler extends Base {
             $curl_content_type
         );
 
+        // NOTE: set placeholder_url to same protocol as target
+        // making it easier to rewrite URLs without considering protocol
+        $destination_protocol =
+            $this->getTargetSiteProtocol( $this->settings['baseUrl'] );
+
+        $placeholder_url =
+            $destination_protocol . 'PLACEHOLDER.wpsho/';
+
+        $site_url = SiteInfo::getUrl( 'site' );
+
+        // capture URL hosts for use in detecting internal links
+        $site_url_host  = parse_url( $site_url, PHP_URL_HOST );
+        $placeholder_url_host  = 'PLACEHOLDER.wpsho';
+
+        $destination_url = $this->settings['baseUrl'];
+        $user_rewrite_rules = $this->settings['rewrite_rules'];
+
+        // get user rewrite rules, use regular and escaped versions of them
+        $rewrite_rules =
+            RewriteRules::generate(
+                $site_url,
+                $placeholder_url,
+                $destination_url,
+                $user_rewrite_rules
+            );
+
+        if ( ! $rewrite_rules ) {
+            $err = 'No URL rewrite rules defined';
+            WsLog::l( $err );
+            throw new Exception( $err );
+        }
+
         switch ( $file_type ) {
             case 'html':
-                $processor = new HTMLProcessor();
+                $processor = new HTMLProcessor(
+                    $rewrite_rules,
+                    $site_url_host,
+                    $placeholder_url_host
+                );
 
                 $this->processed_file = $processor->processHTML(
                     $output,
@@ -321,7 +357,7 @@ class SiteCrawler extends Base {
 
             case 'css':
                 if ( isset( $this->settings['parse_css'] ) ) {
-                    $processor = new CSSProcessor();
+                    $processor = new CSSProcessor( $rewrite_rules );
 
                     $this->processed_file = $processor->processCSS(
                         $output,
@@ -349,7 +385,7 @@ class SiteCrawler extends Base {
             case 'js':
             case 'json':
             case 'xml':
-                $processor = new TXTProcessor();
+                $processor = new TXTProcessor( $rewrite_rules );
 
                 $this->processed_file = $processor->processTXT(
                     $output,
@@ -414,4 +450,19 @@ class SiteCrawler extends Base {
 
         return '/' . $relative_url;
     }
+
+    public function getTargetSiteProtocol( $url ) {
+        $destination_protocol = '//';
+
+        if ( strpos( $url, 'https://' ) !== false ) {
+            $destination_protocol = 'https://';
+        } elseif ( strpos( $url, 'http://' ) !== false ) {
+            $destination_protocol = 'http://';
+        } else {
+            $destination_protocol = '//';
+        }
+
+        return $destination_protocol;
+    }
+
 }

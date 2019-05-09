@@ -2,21 +2,23 @@
 
 namespace WP2Static;
 
-class GenerateRewriteRules {
+class RewriteRules {
 
     /*
      * We only peform rewrites against our placeholder URLs
      * We combine our rules with user-defined rewrites and perform all at once 
      *
-     * @param array $plugin_rules our default placeholder -> destination rules
-     * @param array $user_rules user's path rewriting rules 
-     * @return array combining search and replacement rules 
+     * @param string $site_url WP site URL
+     * @param string $placeholder_url WP site URL
+     * @param string $destination_url WP site URL
+     * @param array|false $user_rules user's path rewriting rules 
+     * @return array combining search and replacement rules for the 3 URL types
      */
     public static function generate(
-        $plugin_rules,
-        $user_rules,
+        $site_url,
         $placeholder_url,
-        $base_url
+        $destination_url,
+        $user_rewrite_rules
     ) {
 
         /*
@@ -29,67 +31,80 @@ class GenerateRewriteRules {
          * return  
          *
          */ 
+
+        $rewrite_rules = [];
         
-        $plugin_rules['search_patterns'] = array(
-            $placeholder_url,
-            addcslashes( $placeholder_url, '/' ),
+        $rewrite_rules['site_url_patterns'] =
+            self::generatePatterns( $site_url, $user_rewrite_rules);
+
+        $rewrite_rules['placeholder_url_patterns'] =
+            self::generatePatterns( $placeholder_url, $user_rewrite_rules );
+
+        $rewrite_rules['destination_url_patterns'] =
+            self::generatePatterns( $destination_url, $user_rewrite_rules );
+
+        return $rewrite_rules;
+    }
+
+    /*
+     * Generate patterns used for searching / replacing
+     *
+     * @param string $url URL
+     * @param string $user_rewrite_rules csv user-defined rewrite rules
+     */
+    public static function generatePatterns( $url, $user_rewrite_rules ) {
+        $url = rtrim( $url, '/' );
+        $url_with_cslashes = addcslashes( $url, '/' );
+
+        $protocol_relative =
+            URLHelper::getProtocolRelativeURL( $url );
+
+        $protocol_relative_with_extra_slash =
+            URLHelper::getProtocolRelativeURL( $url . '/' );
+
+        $protocol_relative_with_cslashes =
             URLHelper::getProtocolRelativeURL(
-                $placeholder_url
-            ),
-            URLHelper::getProtocolRelativeURL(
-                $placeholder_url
-            ),
-            URLHelper::getProtocolRelativeURL(
-                $placeholder_url . '/'
-            ),
-            URLHelper::getProtocolRelativeURL(
-                addcslashes( $placeholder_url, '/' )
-            ),
+                addcslashes( $url, '/' )
+            );
+
+        $patterns = array(
+            $url,
+            $url_with_cslashes,
+            $protocol_relative,
+            $protocol_relative_with_extra_slash,
+            $protocol_relative_with_cslashes,
         );
 
-
-        $plugin_rules['replace_patterns'] = array(
-            $base_url,
-            addcslashes( $base_url, '/' ),
-            URLHelper::getProtocolRelativeURL(
-                $base_url
-            ),
-            URLHelper::getProtocolRelativeURL(
-                rtrim( $base_url, '/' )
-            ),
-            URLHelper::getProtocolRelativeURL(
-                $base_url . '//'
-            ),
-            URLHelper::getProtocolRelativeURL(
-                addcslashes( $base_url, '/' )
-            ),
-        );
-
-        // if no user defined rewrite rules, init empty string for building
-        if ( ! isset( $user_rules ) ) {
-            $user_rules = '';
+        if ( $user_rewrite_rules ) {
+            return self::mergeUserRewriteRules(
+                $patterns, $user_rewrite_rules
+            );
         }
 
-        $placeholder_url = rtrim( $placeholder_url, '/' );
-        $destination_url = rtrim(
-            $base_url,
-            '/'
-        );
+        return $patterns;
+    }
 
-        // add base URL to rewrite_rules
-        $user_rules .=
-            PHP_EOL .
-                $placeholder_url . ',' .
-                $destination_url;
-
+    /*
+     * Combine user-defined rewrite rules into plugin defaults
+     *
+     * @param array $patterns set of patterns for one URL
+     * @param string $user_rewrite_rules csv user-defined rewrite rules
+     * @return array patterns including user-defined rewrite rules
+     *
+     */
+    public static function mergeUserRewriteRules(
+        $patterns,
+        $user_rewrite_rules
+    ) {
         $rewrite_from = array();
         $rewrite_to = array();
 
         $rewrite_rules = explode(
             "\n",
-            str_replace( "\r", '', $user_rules )
+            str_replace( "\r", '', $user_rewrite_rules )
         );
 
+        // hold all values in transient array
         $tmp_rules = array();
 
         foreach ( $rewrite_rules as $rewrite_rule_line ) {
@@ -99,6 +114,8 @@ class GenerateRewriteRules {
             }
         }
 
+        // sort the transient array by longest path first to help users
+        // not worry about order of input
         uksort(
             $tmp_rules,
             function ( $str1, $str2 ) {

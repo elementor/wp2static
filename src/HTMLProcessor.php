@@ -26,7 +26,12 @@ use Exception;
  */
 class HTMLProcessor extends Base {
 
-    public function __construct() {
+    // TODO: clean up the passed var
+    public function __construct(
+        $rewrite_rules,
+        $site_url_host,
+        $placeholder_url_host
+    ) {
         $this->loadSettings(
             array(
                 'wpenv',
@@ -34,6 +39,10 @@ class HTMLProcessor extends Base {
                 'advanced',
             )
         );
+
+        $this->rewrite_rules = $rewrite_rules;
+        $this->site_url_host = $site_url_host;
+        $this->placeholder_url_host = $placeholder_url_host;
 
         $this->processed_urls = array();
     }
@@ -58,35 +67,24 @@ class HTMLProcessor extends Base {
             return false;
         }
 
-        // NOTE: set placeholder_url to same protocol as target
-        // making it easier to rewrite URLs without considering protocol
-        $destination_protocol =
-            $this->getTargetSiteProtocol( $this->settings['baseUrl'] );
+        $site_url_patterns = $this->rewrite_rules['site_url_patterns'];
+        $placeholder_url_patterns =
+            $this->rewrite_rules['placeholder_url_patterns'];
 
-        $this->placeholder_url =
-            $this->destination_protocol . 'PLACEHOLDER.wpsho/';
+        /*
+         * First wave of rewriting replaces detectable site_urls
+         * with our placeholder URLs
+         *
+         * At this point, we still have relative URLs in place
 
-        $site_root = SiteInfo::getUrl( 'site' );
-
-        // capture URL hosts for use in detecting internal links
-        $this->site_url_host  = parse_url( $site_root, PHP_URL_HOST );
-        $this->placeholder_url_host  =
-            parse_url( $this->placeholder_url, PHP_URL_HOST );
-
-
-        $search_patterns = SiteURLPatterns::getWPSiteURLSearchPatterns(
-            $site_root
-        );
-
-        $replace_patterns =
-            SiteURLPatterns::getPlaceholderURLReplacementPatterns(
-                $this->placeholder_url
-            );
-
+         * It may be possible to skip this step, as we do a bulk replace again
+         * later from Placeholder to Destination URLs
+         *
+         */
         $this->raw_html = ReplaceMultipleStrings::replace(
             $html_document,
-            $search_patterns,
-            $replace_patterns
+            $site_url_patterns,
+            $placeholder_url_patterns
         );
 
         // detect if a base tag exists while in the loop
@@ -626,7 +624,7 @@ class HTMLProcessor extends Base {
         return $rewritten_url;
     }
 
-    public function getHTML( $xml_doc, $rewrite_unchanged_urls = true ) {
+    public function getHTML( $xml_doc ) {
         $processed_html = $xml_doc->saveHtml();
 
         // NOTE: add to plugin rewrite rules
@@ -644,19 +642,17 @@ class HTMLProcessor extends Base {
         // TODO: here is where we convertToSiteRelativeURLs, as this can be
         // bulk performed, just stripping the domain when rewriting
 
-        // get user rewrite rules, use regular and escaped versions of them
-        $rewrite_rules =
-            GenerateRewriteRules::generate( 
-                $plugin_rules,
-                $user_rules,
-                $this->placeholder_url,
-                $this->settings['baseUrl']
-            );
 
         $processed_html = ReplaceMultipleStrings::replace(
             $processed_html,
             $search_patterns,
             $replace_patterns
+        );
+
+        $processed_html = ReplaceMultipleStrings::replace(
+            $processed_html,
+            $placeholder_url_patterns,
+            $destination_url_patterns
         );
 
         $processed_html = html_entity_decode(
@@ -768,20 +764,6 @@ class HTMLProcessor extends Base {
         }
 
         return $offline_url;
-    }
-
-    public function getTargetSiteProtocol( $url ) {
-        $destination_protocol = '//';
-
-        if ( strpos( $url, 'https://' ) !== false ) {
-            $destination_protocol = 'https://';
-        } elseif ( strpos( $url, 'http://' ) !== false ) {
-            $destination_protocol = 'http://';
-        } else {
-            $destination_protocol = '//';
-        }
-
-        return $destination_protocol;
     }
 
     public function shouldUseRelativeURLs() {
