@@ -184,6 +184,19 @@ class Options {
             $settings[ $key ] = $value;
         }
 
+        /*
+            Settings requiring transformation
+        */
+        $settings['crawl_increment'] =
+            isset( $settings['crawl_increment'] ) ?
+            (int) $settings['crawl_increment'] :
+            1;
+
+        $settings['baseUrl'] =
+            isset( $settings['baseUrl'] ) ?
+            rtrim( $settings['baseUrl'], '/' ) . '/' :
+            SiteInfo::getUrl('site');
+
         return $settings;
     }
 
