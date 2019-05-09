@@ -30,7 +30,8 @@ class HTMLProcessor extends Base {
     public function __construct(
         $rewrite_rules,
         $site_url_host,
-        $destination_url
+        $destination_url,
+        $user_rewrite_rules
     ) {
         $this->loadSettings(
             array(
@@ -41,6 +42,7 @@ class HTMLProcessor extends Base {
         );
 
         $this->rewrite_rules = $rewrite_rules;
+        $this->user_rewrite_rules = $user_rewrite_rules;
         $this->site_url_host = $site_url_host;
         $this->destination_url = $destination_url;
 
@@ -66,26 +68,6 @@ class HTMLProcessor extends Base {
         if ( $html_document == '' ) {
             return false;
         }
-
-        // $site_url_patterns = $this->rewrite_rules['site_url_patterns'];
-        // $destination_url_patterns =
-        //     $this->rewrite_rules['destination_url_patterns'];
-
-        /*
-         * First wave of rewriting replaces detectable site_urls
-         * with Destination URLs
-         *
-         * At this point, we still have relative URLs in place
-
-         * It may be possible to skip this step, as we do a bulk replace again
-         * later from Placeholder to Destination URLs
-         *
-         */
-        //$this->raw_html = ReplaceMultipleStrings::replace(
-        //    $html_document,
-        //    $site_url_patterns,
-        //    $destination_url_patterns
-        //);
 
         // detect if a base tag exists while in the loop
         // use in later base href creation to decide: append or create
@@ -544,28 +526,24 @@ class HTMLProcessor extends Base {
     public function getHTML( $xml_doc ) {
         $processed_html = $xml_doc->saveHtml();
 
-        // NOTE: add to plugin rewrite rules
-        // NOTE: fix input HTML, which can have \ slashes modified to %5C
-        $processed_html = str_replace(
-            '%5C/',
-            '\\/',
-            $processed_html
-        );
-
-
         // TODO: here is where we convertToSiteRelativeURLs, as this can be
         // bulk performed, just stripping the domain when rewriting
 
-        // DEBUG: should be no need for extra rewrite
-        $site_url_patterns = $this->rewrite_rules['site_url_patterns'];
-        $destination_url_patterns =
-            $this->rewrite_rules['destination_url_patterns'];
 
-        $processed_html = ReplaceMultipleStrings::replace(
-            $processed_html,
-            $site_url_patterns,
-            $destination_url_patterns
-        );
+        // TODO: allow for user-defined rewrites to be done after all other
+        // rewrites - enables fixes for situations where certain links haven't
+        // been rewritten / arbitrary rewriting of any URLs, even external
+        // allow filter here, for 3rd party development
+        if ( $this->user_rewrite_rules ) {
+            $rewrite_rules =
+                RewriteRules::getUserRewriteRules( $this->user_rewrite_rules );
+
+            $processed_html = ReplaceMultipleStrings::replace(
+                $processed_html,
+                $rewrite_rules['from'],
+                $rewrite_rules['to']
+            );
+        }
 
         $processed_html = html_entity_decode(
             $processed_html,

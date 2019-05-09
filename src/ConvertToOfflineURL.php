@@ -21,7 +21,6 @@ class ConvertToOfflineURL {
     public static function convert(
         $url_to_change, $page_url, $destination_url
     ) {
-        error_log("$url_to_change, $page_url, $destination_url");
         $current_page_path_to_root = '';
         $current_page_path = parse_url( $page_url, PHP_URL_PATH );
 

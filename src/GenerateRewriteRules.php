@@ -14,8 +14,7 @@ class RewriteRules {
      */
     public static function generate(
         $site_url,
-        $destination_url,
-        $user_rewrite_rules
+        $destination_url
     ) {
 
         /*
@@ -46,43 +45,33 @@ class RewriteRules {
      * @param string $url URL
      * @param string $user_rewrite_rules csv user-defined rewrite rules
      */
-    public static function generatePatterns( $url, $user_rewrite_rules ) {
+    public static function generatePatterns( $url ) {
         $url = rtrim( $url, '/' );
         $url_with_cslashes = addcslashes( $url, '/' );
 
-        // TODO: normalize protocol-relative URLs in first phase
-        // When we don't use placeholders to rewrite, we encouter issues
-        // when rewriting localhost/ to localhost/somedir/ as it will rewrite 
-        // multiple times. Perhaps just block this use case and enforce using 
-        // different domains for WP dev and destination
         $patterns = array(
             $url,
             $url_with_cslashes,
         );
 
-        if ( $user_rewrite_rules ) {
-            return self::mergeUserRewriteRules(
-                $patterns, $user_rewrite_rules
-            );
-        }
-
         return $patterns;
     }
 
     /*
-     * Combine user-defined rewrite rules into plugin defaults
+     * Get user-defined rewrite rules into plugin defaults
      *
-     * @param array $patterns set of patterns for one URL
      * @param string $user_rewrite_rules csv user-defined rewrite rules
      * @return array patterns including user-defined rewrite rules
      *
      */
-    public static function mergeUserRewriteRules(
-        $patterns,
-        $user_rewrite_rules
-    ) {
-        $rewrite_from = array();
-        $rewrite_to = array();
+    public static function getUserRewriteRules( $user_rewrite_rules ) {
+        if ( ! $user_rewrite_rules ) {
+            return;
+        }
+
+        $rewrite_rules = [];
+        $rewrite_rules['from'] = [];
+        $rewrite_rules['to'] = [];
 
         $rewrite_rules = explode(
             "\n",
@@ -109,8 +98,10 @@ class RewriteRules {
         );
 
         foreach ( $tmp_rules as $from => $to ) {
-            $rewrite_from[] = $from;
-            $rewrite_to[] = $to;
+            $rewrite_rules['from'] = $from;
+            $rewrite_rules['to'] = $to;
         }
+
+        return $rewrite_rules;
     }
 }

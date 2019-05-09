@@ -302,14 +302,6 @@ class SiteCrawler extends Base {
             $curl_content_type
         );
 
-        // NOTE: set placeholder_url to same protocol as target
-        // making it easier to rewrite URLs without considering protocol
-        $destination_protocol =
-            $this->getTargetSiteProtocol( $this->settings['baseUrl'] );
-
-        $placeholder_url =
-            $destination_protocol . 'PLACEHOLDER.wpsho/';
-
         $site_url = SiteInfo::getUrl( 'site' );
 
         // capture URL hosts for use in detecting internal links
@@ -322,8 +314,7 @@ class SiteCrawler extends Base {
         $rewrite_rules =
             RewriteRules::generate(
                 $site_url,
-                $destination_url,
-                $user_rewrite_rules
+                $destination_url
             );
 
         // TODO: move rewrite stuff higher up
@@ -347,7 +338,8 @@ class SiteCrawler extends Base {
                 $processor = new HTMLProcessor(
                     $rewrite_rules,
                     $site_url_host,
-                    $destination_url
+                    $destination_url,
+                    $user_rewrite_rules
                 );
 
                 $this->processed_file = $processor->processHTML(
@@ -459,19 +451,4 @@ class SiteCrawler extends Base {
 
         return '/' . $relative_url;
     }
-
-    public function getTargetSiteProtocol( $url ) {
-        $destination_protocol = '//';
-
-        if ( strpos( $url, 'https://' ) !== false ) {
-            $destination_protocol = 'https://';
-        } elseif ( strpos( $url, 'http://' ) !== false ) {
-            $destination_protocol = 'http://';
-        } else {
-            $destination_protocol = '//';
-        }
-
-        return $destination_protocol;
-    }
-
 }
