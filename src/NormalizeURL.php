@@ -5,13 +5,7 @@
 
     take a document-relative URL like '../theimage.jpg'
 
-    a site root-relative URL like '/theimage.jpg'
-
     and the current page URL like https://site.com/cat/post/
-
-      - or -
-
-    TODO: a protocol-relative URL like //mydomain.com/theimage.jpg
 
     and return the full path to the URL, like
 

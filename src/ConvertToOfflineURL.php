@@ -84,7 +84,6 @@ class ConvertToOfflineURL {
                 '../../',
                 $offline_url
             );
-
         }
 
         /*

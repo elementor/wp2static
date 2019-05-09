@@ -128,10 +128,11 @@ class PostSettings {
             1;
 
         // any baseUrl required if creating an offline ZIP
+        // use original WP siteURL whe no other base URL set
         $settings['baseUrl'] =
             isset( $_POST['baseUrl'] ) ?
             rtrim( $_POST['baseUrl'], '/' ) . '/' :
-            'http://OFFLINEZIP.wpsho';
+            $_POST['site_url'];
         // @codingStandardsIgnoreEnd
 
         return array_filter( $settings );

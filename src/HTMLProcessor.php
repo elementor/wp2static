@@ -261,7 +261,6 @@ class HTMLProcessor extends Base {
 
             // normalize urls
             if ( $this->isInternalLink( $url ) ) {
-                // TODO: require and convert to URL2 to use resolve()
                 $absolute_url = NormalizeURL::normalize(
                     $url,
                     $this->page_url
@@ -323,8 +322,29 @@ class HTMLProcessor extends Base {
             return;
         }
 
-        // TODO: replace protocol-relative URLs here to absolute site-url
         $site_url = SiteInfo::getUrl('site');
+
+        // replace protocol-relative URLs here to absolute site-url
+        if ( $url_to_change[0] === '/' ) {
+            if ( $url_to_change[1] === '/' ) {
+                $url_to_change = str_replace(
+                    URLHelper::getProtocolRelativeURL( $site_url ),
+                    $site_url,
+                    $url_to_change
+                );
+            }
+        }
+
+        // normalize site root-relative URLs here to absolute site-url
+        if ( $url_to_change[0] === '/' ) {
+                error_log('POTENTIAL site root relative URL: ' . $url_to_change);
+            if ( $url_to_change[1] !== '/' ) {
+                error_log('site root relative URL: ' . $url_to_change);
+                $url_to_change = $site_url . ltrim( $url_to_change, '/' );
+            }
+        }
+
+        // TODO: enfore trailing slash
 
         // normalize the URL / make absolute
         $url_to_change = NormalizeURL::normalize(
@@ -459,7 +479,7 @@ class HTMLProcessor extends Base {
      * @param string $link Any potential URL
      * @return boolean true for explicit match
      */
-    public function isInternalLink( $link ) {
+    public function isInternalLink( $url ) {
         // quickly match known internal links   ./   ../   /
         $first_char = $url[0];
 
@@ -467,10 +487,9 @@ class HTMLProcessor extends Base {
             return true;
         }
 
-        // TODO: are we covering doc relative URLs in Processor?
-        $link_host = parse_url( $link, PHP_URL_HOST );
+        $url_host = parse_url( $url, PHP_URL_HOST );
 
-        if ( $link_host === $this->site_url_host) {
+        if ( $url_host === $this->site_url_host) {
             return true;
         }
 
