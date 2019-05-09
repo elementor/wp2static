@@ -67,9 +67,9 @@ class HTMLProcessor extends Base {
             return false;
         }
 
-        $site_url_patterns = $this->rewrite_rules['site_url_patterns'];
-        $destination_url_patterns =
-            $this->rewrite_rules['destination_url_patterns'];
+        // $site_url_patterns = $this->rewrite_rules['site_url_patterns'];
+        // $destination_url_patterns =
+        //     $this->rewrite_rules['destination_url_patterns'];
 
         /*
          * First wave of rewriting replaces detectable site_urls
@@ -235,22 +235,6 @@ class HTMLProcessor extends Base {
         return true;
     }
 
-    public function convertRelativeURLToAbsolute( $element, $page_url ) {
-        list( $url_to_change, $attribute_to_change ) =
-            $this->getURLAndTargetAttribute( $element );
-
-        if ( $this->isURLDocumentOrSiteRootRelative( $url_to_change ) ) {
-            $absolute_url = NormalizeURL::normalize(
-                $url_to_change,
-                $page_url
-            );
-
-            if ( $attribute_to_change ) {
-                $element->setAttribute( $attribute_to_change, $absolute_url );
-            }
-        }
-    }
-
     public function processLink( $element ) {
         $this->processElementURL( $element );
 
@@ -357,12 +341,14 @@ class HTMLProcessor extends Base {
             return;
         }
 
+        // TODO: replace protocol-relative URLs here to absolute site-url
+        $site_url = SiteInfo::getUrl('site');
+
         // normalize the URL / make absolute
         $url_to_change = NormalizeURL::normalize(
             $url_to_change,
             $this->page_url
         );
-
 
         // after normalizing, we need to rewrite to Destination URL
         $url_to_change = ReplaceMultipleStrings::replace(
@@ -386,7 +372,8 @@ class HTMLProcessor extends Base {
         $url_to_change =
             $this->postProcessElementURLStructure(
                 $url_to_change,
-                $this->page_url
+                $this->page_url,
+                $site_url
             );
 
         // true if attribute was able to be set
@@ -439,18 +426,20 @@ class HTMLProcessor extends Base {
         needs to be rewritten in a different manner for offline mode rewriting
 
     */
-    public function postProcessElementURLStructure( $url, $page_url ) {
+    public function postProcessElementURLStructure(
+        $url,
+        $page_url,
+        $site_url
+    ) {
         if ( $this->shouldUseRelativeURLs() ) {
             $url = $this->convertToDocumentRelativeURL( $url );
         }
 
         if ( $this->shouldCreateOfflineURLs() ) {
-            $destination_url = $this->destination_url;
-
             $url = ConvertToOfflineURL::convert(
                 $url,
                 $page_url,
-                $destination_url
+                $site_url
             );
         }
 

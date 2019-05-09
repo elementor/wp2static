@@ -9,9 +9,14 @@
 
     and the current page URL like https://site.com/cat/post/
 
-    and return the full path to the first URL, like
+      - or -
 
-    and the current page URL like https://site.com/cat/theimage.jpg
+    TODO: a protocol-relative URL like //mydomain.com/theimage.jpg
+
+    and return the full path to the URL, like
+
+    https://site.com/cat/theimage.jpg
+
 
 */
 

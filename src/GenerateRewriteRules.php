@@ -5,18 +5,15 @@ namespace WP2Static;
 class RewriteRules {
 
     /*
-     * We only peform rewrites against our placeholder URLs
      * We combine our rules with user-defined rewrites and perform all at once 
      *
      * @param string $site_url WP site URL
-     * @param string $placeholder_url WP site URL
      * @param string $destination_url WP site URL
      * @param array|false $user_rules user's path rewriting rules 
      * @return array combining search and replacement rules for the 3 URL types
      */
     public static function generate(
         $site_url,
-        $placeholder_url,
         $destination_url,
         $user_rewrite_rules
     ) {
@@ -37,9 +34,6 @@ class RewriteRules {
         $rewrite_rules['site_url_patterns'] =
             self::generatePatterns( $site_url, $user_rewrite_rules);
 
-        $rewrite_rules['placeholder_url_patterns'] =
-            self::generatePatterns( $placeholder_url, $user_rewrite_rules );
-
         $rewrite_rules['destination_url_patterns'] =
             self::generatePatterns( $destination_url, $user_rewrite_rules );
 
@@ -56,23 +50,14 @@ class RewriteRules {
         $url = rtrim( $url, '/' );
         $url_with_cslashes = addcslashes( $url, '/' );
 
-        $protocol_relative =
-            URLHelper::getProtocolRelativeURL( $url );
-
-        $protocol_relative_with_extra_slash =
-            URLHelper::getProtocolRelativeURL( $url . '/' );
-
-        $protocol_relative_with_cslashes =
-            URLHelper::getProtocolRelativeURL(
-                addcslashes( $url, '/' )
-            );
-
+        // TODO: normalize protocol-relative URLs in first phase
+        // When we don't use placeholders to rewrite, we encouter issues
+        // when rewriting localhost/ to localhost/somedir/ as it will rewrite 
+        // multiple times. Perhaps just block this use case and enforce using 
+        // different domains for WP dev and destination
         $patterns = array(
             $url,
             $url_with_cslashes,
-            $protocol_relative,
-            $protocol_relative_with_extra_slash,
-            $protocol_relative_with_cslashes,
         );
 
         if ( $user_rewrite_rules ) {

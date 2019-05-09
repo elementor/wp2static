@@ -322,7 +322,6 @@ class SiteCrawler extends Base {
         $rewrite_rules =
             RewriteRules::generate(
                 $site_url,
-                $placeholder_url,
                 $destination_url,
                 $user_rewrite_rules
             );
