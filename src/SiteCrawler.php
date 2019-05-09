@@ -13,6 +13,20 @@ class SiteCrawler extends Base {
             sleep( $this->settings['crawl_delay'] );
         }
 
+        /* TODO: implement crawl-caching, to greatly speed up the process
+         *
+         * helps to recover from mid-crawl failures. Use export-dir, keep
+         * between runs. Load cache when starting a run. Check speed DB vs disk 
+         *
+         * option in UI to delete the cache dir contents, else will
+         * always append
+         *
+
+         * for saving detected static assets during crawl, check both Crawl
+         * Cache and whether file exists within export dir
+         *
+         */
+
         $this->processed_file = '';
         $this->file_type = '';
         $this->content_type = '';
