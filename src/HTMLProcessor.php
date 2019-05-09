@@ -332,11 +332,12 @@ class HTMLProcessor extends Base {
             $this->page_url
         );
 
+
         // after normalizing, we need to rewrite to Destination URL
-        $url_to_change = ReplaceMultipleStrings::replace(
-            $url_to_change,
-            $site_url_patterns,
-            $destination_url_patterns
+        $url_to_change = str_replace(
+            $this->rewrite_rules['site_url_patterns'],
+            $this->rewrite_rules['destination_url_patterns'],
+            $url_to_change
         );
 
         $url_to_change =
@@ -538,10 +539,10 @@ class HTMLProcessor extends Base {
             $rewrite_rules =
                 RewriteRules::getUserRewriteRules( $this->user_rewrite_rules );
 
-            $processed_html = ReplaceMultipleStrings::replace(
-                $processed_html,
+            $processed_html = str_replace(
                 $rewrite_rules['from'],
-                $rewrite_rules['to']
+                $rewrite_rules['to'],
+                $processed_html
             );
         }
 
