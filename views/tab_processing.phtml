@@ -25,10 +25,12 @@
       </tr>
       <tr>
         <th scope="row">
-          <label><?php echo __('Rewrite Links in source code', 'static-html-output-plugin');?></label>
+          <label><?php echo __('Custom rewrites in exported source code', 'static-html-output-plugin');?></label>
         </th>
         <td>
-        <p>In order to hide any trace that your site uses WordPress, the following paths will be rewritten. You can leave these default options in, but for more control, you can overwrite them.</p><br>
+        <p>In order to hide any trace that your site uses WordPress, you can choose to rewrite common URL structures, such as wp-content/themes, etc.</p>
+    
+        <p>You can also rewrite external URLs or arbitray text. WP2Static rewrites exactly what you specify as search and replace strings.</p>
 
         <p>Replace, for example, default WordPress paths within the source code</p> <br>
 
@@ -39,15 +41,11 @@
             wp-includes/,inc/
         </pre>
     
-        <i>URLs will be first checked to ensure they are part of this site, not an external WordPress site, which would mess up URLs of linked images, etc</i>
+        <p>The plugin does its best to sort rewrite rules in order needed, to process the longest items first.</p>
 
         <br>
 
-<?php
-    $default_rewrite_rules = '';
-?>
-
-          <textarea class="widefat" name="rewrite_rules" id="rewrite_rules" rows="5" cols="10"><?php echo $this->options->rewrite_rules ? $this->options->rewrite_rules : $default_rewrite_rules;  ?></textarea>
+          <textarea class="widefat" name="rewrite_rules" id="rewrite_rules" rows="5" cols="10"><?php echo $this->options->rewrite_rules ? $this->options->rewrite_rules : '';  ?></textarea>
         </td>
     </tr>
     <tr>
@@ -55,7 +53,7 @@
           <label><?php echo __('Rename Exported Directories', 'static-html-output-plugin');?></label>
         </th>
         <td>
-        <p>Likely required if doing any URL rewriting above.</p><br>
+        <p>Required if rewriting any local URLs within the site.</p><br>
 
         <p>Set the source directory, then a comma and the target directory. </p
 
@@ -73,11 +71,8 @@ wp-includes/,inc/
 
 
          <br>
-<?php
-    $default_rename_rules = '';
-?>
 
-          <textarea class="widefat" name="rename_rules" id="rename_rules" rows="5" cols="10"><?php echo $this->options->rename_rules ? $this->options->rename_rules : $default_rename_rules;  ?></textarea>
+          <textarea class="widefat" name="rename_rules" id="rename_rules" rows="5" cols="10"><?php echo $this->options->rename_rules ? $this->options->rename_rules : '';  ?></textarea>
         </td>
     </tr>
     <tr>
