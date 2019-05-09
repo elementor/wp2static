@@ -3,38 +3,36 @@
 namespace WP2Static;
 
 class RewriteRules {
-
     /*
-     * We combine our rules with user-defined rewrites and perform all at once 
+     * We combine our rules with user-defined rewrites and perform all at once
      *
      * @param string $site_url WP site URL
      * @param string $destination_url WP site URL
-     * @param array|false $user_rules user's path rewriting rules 
+     * @param array|false $user_rules user's path rewriting rules
      * @return array combining search and replacement rules for the 3 URL types
      */
     public static function generate(
         $site_url,
         $destination_url
     ) {
-
         /*
          * Pseudo steps:
-         * 
-         * get plugin's rules 
-         * get user rules 
-         * combine into full URLs for replacement 
-         * add escaped versions of the URLs 
-         * return  
          *
-         */ 
+         * get plugin's rules
+         * get user rules
+         * combine into full URLs for replacement
+         * add escaped versions of the URLs
+         * return
+         *
+         */
 
         $rewrite_rules = [];
-        
+
         $rewrite_rules['site_url_patterns'] =
-            self::generatePatterns( $site_url, $user_rewrite_rules);
+            self::generatePatterns( $site_url );
 
         $rewrite_rules['destination_url_patterns'] =
-            self::generatePatterns( $destination_url, $user_rewrite_rules );
+            self::generatePatterns( $destination_url );
 
         return $rewrite_rules;
     }

@@ -3,6 +3,7 @@
 namespace WP2Static;
 
 use DOMDocument;
+use DOMComment;
 use DOMXPath;
 use Exception;
 
@@ -118,7 +119,11 @@ class HTMLProcessor extends Base {
 
         // NOTE: $this->base_tag_exists is being set during iteration of
         // elements, this prevents us from needing to do another iteration
-        $this->dealWithBaseHREFElement( $this->xml_doc, $this->base_tag_exists);
+        $this->dealWithBaseHREFElement(
+            $this->xml_doc,
+            $this->base_tag_exists
+        );
+
         $this->stripHTMLComments();
 
         return true;
@@ -140,7 +145,9 @@ class HTMLProcessor extends Base {
                     $this->settings['baseHREF']
                 );
             } else {
-                $this->base_element->parentNode->removeChild( $base_element );
+                $this->base_element->parentNode->removeChild(
+                    $this->base_element
+                );
             }
         } elseif ( $this->shouldCreateBaseHREF() ) {
             $base_element = $xml_doc->createElement( 'base' );
@@ -151,7 +158,7 @@ class HTMLProcessor extends Base {
 
             if ( $this->head_element ) {
                 $first_head_child = $this->head_element->firstChild;
-                $head_element->insertBefore(
+                $this->head_element->insertBefore(
                     $this->base_element,
                     $first_head_child
                 );
@@ -264,7 +271,8 @@ class HTMLProcessor extends Base {
                 $url = strtok( $absolute_url, '?' );
                 $url = $this->convertToDocumentRelativeURLSrcSetURL( $url );
                 $url = $this->convertToOfflineURLSrcSetURL(
-                    $url, $this->destination_url
+                    $url,
+                    $this->destination_url
                 );
             }
 
@@ -316,7 +324,13 @@ class HTMLProcessor extends Base {
             return;
         }
 
-        $site_url = SiteInfo::getUrl('site');
+        $site_url = SiteInfo::getUrl( 'site' );
+
+        if ( ! is_string( $site_url ) ) {
+            $err = 'Site URL not defined ';
+            WsLog::l( $err );
+            throw new Exception( $err );
+        }
 
         // replace protocol-relative URLs here to absolute site-url
         if ( $url_to_change[0] === '/' ) {
@@ -354,7 +368,6 @@ class HTMLProcessor extends Base {
             $url_to_change,
             $this->page_url
         );
-
 
         // after normalizing, we need to rewrite to Destination URL
         $url_to_change = str_replace(
@@ -492,7 +505,7 @@ class HTMLProcessor extends Base {
 
         $url_host = parse_url( $url, PHP_URL_HOST );
 
-        if ( $url_host === $this->site_url_host) {
+        if ( $url_host === $this->site_url_host ) {
             return true;
         }
 
@@ -551,7 +564,6 @@ class HTMLProcessor extends Base {
 
         // TODO: here is where we convertToSiteRelativeURLs, as this can be
         // bulk performed, just stripping the domain when rewriting
-
 
         // TODO: allow for user-defined rewrites to be done after all other
         // rewrites - enables fixes for situations where certain links haven't
@@ -615,7 +627,10 @@ class HTMLProcessor extends Base {
         return $rewritten_url;
     }
 
-    public function convertToOfflineURLSrcSetURL( $url_to_change, $destination_url ) {
+    public function convertToOfflineURLSrcSetURL(
+        $url_to_change,
+        $destination_url
+    ) {
         if ( ! $this->shouldCreateOfflineURLs() ) {
             return $url_to_change;
         }

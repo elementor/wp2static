@@ -75,7 +75,8 @@ class TXTProcessor extends Base {
         // add protocol relative URL to rewrite_rules
         $this->settings['rewrite_rules'] .=
             PHP_EOL .
-                URLHelper::getProtocolRelativeURL( $this->placeholder_url ) . ',' .
+                URLHelper::getProtocolRelativeURL( $this->placeholder_url ) .
+                ',' .
                 URLHelper::getProtocolRelativeURL( $this->settings['baseUrl'] );
 
         $rewrite_from = array();

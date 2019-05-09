@@ -195,7 +195,7 @@ class Options {
         $settings['baseUrl'] =
             isset( $settings['baseUrl'] ) ?
             rtrim( $settings['baseUrl'], '/' ) . '/' :
-            SiteInfo::getUrl('site');
+            SiteInfo::getUrl( 'site' );
 
         return $settings;
     }
