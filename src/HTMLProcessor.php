@@ -15,12 +15,12 @@ use Exception;
  *
  * For elements containing links we want to process, we first normalize it:
  * to get all URLs to a uniform structure for later processing, we convert to
- * absolute URLs and rewrite to our own placeholder URL for ease of rewriting
+ * absolute URLs and rewrite to the Destination URL for ease of rewriting
  * we also transform URLs if the user requests document-relative or offline
  * URLs in the final output
  *
  * Before returning the final HTML for saving, we perform bulk transformations
- * such as enforcing UTF-8 encoding, replacing all placeholder links or
+ * such as enforcing UTF-8 encoding, replacing any site URLs to Destination or
  * transforming to site root-relative URLs
  *
  */
@@ -30,7 +30,7 @@ class HTMLProcessor extends Base {
     public function __construct(
         $rewrite_rules,
         $site_url_host,
-        $placeholder_url_host
+        $destination_url
     ) {
         $this->loadSettings(
             array(
@@ -42,7 +42,7 @@ class HTMLProcessor extends Base {
 
         $this->rewrite_rules = $rewrite_rules;
         $this->site_url_host = $site_url_host;
-        $this->placeholder_url_host = $placeholder_url_host;
+        $this->destination_url = $destination_url;
 
         $this->processed_urls = array();
     }
@@ -68,12 +68,12 @@ class HTMLProcessor extends Base {
         }
 
         $site_url_patterns = $this->rewrite_rules['site_url_patterns'];
-        $placeholder_url_patterns =
-            $this->rewrite_rules['placeholder_url_patterns'];
+        $destination_url_patterns =
+            $this->rewrite_rules['destination_url_patterns'];
 
         /*
          * First wave of rewriting replaces detectable site_urls
-         * with our placeholder URLs
+         * with Destination URLs
          *
          * At this point, we still have relative URLs in place
 
@@ -81,11 +81,11 @@ class HTMLProcessor extends Base {
          * later from Placeholder to Destination URLs
          *
          */
-        $this->raw_html = ReplaceMultipleStrings::replace(
-            $html_document,
-            $site_url_patterns,
-            $placeholder_url_patterns
-        );
+        //$this->raw_html = ReplaceMultipleStrings::replace(
+        //    $html_document,
+        //    $site_url_patterns,
+        //    $destination_url_patterns
+        //);
 
         // detect if a base tag exists while in the loop
         // use in later base href creation to decide: append or create
@@ -101,7 +101,7 @@ class HTMLProcessor extends Base {
         // PERF: 70% of function time
         // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
         libxml_use_internal_errors( true );
-        $this->xml_doc->loadHTML( $this->raw_html );
+        $this->xml_doc->loadHTML( $html_document );
         libxml_use_internal_errors( false );
 
         // start the full iterator here, along with copy of dom
@@ -201,27 +201,6 @@ class HTMLProcessor extends Base {
         $url_to_change = $element->getAttribute( $attribute_to_change );
 
         return [ $url_to_change, $attribute_to_change ];
-    }
-
-    public function convertElementAttributeToOfflineURL( $element ) {
-        list( $url_to_change, $attribute_to_change ) =
-            $this->getURLAndTargetAttribute( $element );
-
-        if ( ! $url_to_change || ! $attribute_to_change ) {
-            return;
-        }
-
-        if ( ! $this->isInternalLink( $url_to_change ) ) {
-            return false;
-        }
-
-        $offline_url = ConvertToOfflineURL::convert(
-            $url_to_change,
-            $this->page_url,
-            $this->placeholder_url
-        );
-
-        $element->setAttribute( $attribute_to_change, $offline_url );
     }
 
     /*
@@ -325,7 +304,9 @@ class HTMLProcessor extends Base {
                 // rm query string
                 $url = strtok( $absolute_url, '?' );
                 $url = $this->convertToDocumentRelativeURLSrcSetURL( $url );
-                $url = $this->convertToOfflineURLSrcSetURL( $url );
+                $url = $this->convertToOfflineURLSrcSetURL(
+                    $url, $this->destination_url
+                );
             }
 
             $new_src_set[] = "{$url} {$dimension}";
@@ -363,11 +344,11 @@ class HTMLProcessor extends Base {
         }
 
         // quickly abort for invalid URLs
-        if ( $url[0] === '#' ) {
+        if ( $url_to_change[0] === '#' ) {
             return;
         }
 
-        if ( substr( $url, 0, 7 ) == 'mailto:' ) {
+        if ( substr( $url_to_change, 0, 7 ) == 'mailto:' ) {
             return;
         }
 
@@ -377,9 +358,17 @@ class HTMLProcessor extends Base {
         }
 
         // normalize the URL / make absolute
-        $absolute_url = NormalizeURL::normalize(
+        $url_to_change = NormalizeURL::normalize(
             $url_to_change,
             $this->page_url
+        );
+
+
+        // after normalizing, we need to rewrite to Destination URL
+        $url_to_change = ReplaceMultipleStrings::replace(
+            $url_to_change,
+            $site_url_patterns,
+            $destination_url_patterns
         );
 
         $url_to_change =
@@ -389,19 +378,16 @@ class HTMLProcessor extends Base {
         // happens later.
         // $this->convertNormalizedURLToPlaceholder( $url );
 
-        // optionally transform URL structure here
-        //$this->postProcessElementURLSructure( $url, $this->page_url );
-
         /*
          * Note: We want to to perform as many functions on the URL, not have
          * to access the element multiple times. So, once we have it, do all
          * the things to it before sending back/updating the attribute
          */
-        $this->convertToDocumentRelativeURL( $element );
-
-        if ( $this->shouldCreateOfflineURLs() ) {
-            $this->convertElementAttributeToOfflineURL( $element );
-        }
+        $url_to_change =
+            $this->postProcessElementURLStructure(
+                $url_to_change,
+                $this->page_url
+            );
 
         // true if attribute was able to be set
         return $element->setAttribute( $attribute_to_change, $url_to_change );
@@ -453,12 +439,22 @@ class HTMLProcessor extends Base {
         needs to be rewritten in a different manner for offline mode rewriting
 
     */
-    public function postProcessElementURLSructure( $url, $page_url ) {
-        $this->convertToDocumentRelativeURL( $element );
+    public function postProcessElementURLStructure( $url, $page_url ) {
+        if ( $this->shouldUseRelativeURLs() ) {
+            $url = $this->convertToDocumentRelativeURL( $url );
+        }
 
         if ( $this->shouldCreateOfflineURLs() ) {
-            $this->convertElementAttributeToOfflineURL( $element );
+            $destination_url = $this->destination_url;
+
+            $url = ConvertToOfflineURL::convert(
+                $url,
+                $page_url,
+                $destination_url
+            );
         }
+
+        return $url;
     }
 
     public function processMeta( $element ) {
@@ -486,9 +482,7 @@ class HTMLProcessor extends Base {
 
     /*
      * Detect if a URL belongs to our WP site
-     * We check against known internal prefixes, WP site root and
-     * our placeholder, as this check may be taking place before or after
-     * the link has been rewritten to the placeholder
+     * We check against known internal prefixes and WP site host
      *
      * @param string $link Any potential URL
      * @return boolean true for explicit match
@@ -501,18 +495,10 @@ class HTMLProcessor extends Base {
             return true;
         }
 
-        // TODO: check against both site_url and placeholder, as we don't want
-        // to do costly extra bulk rewrite in the beginning
-
-        // TODO: apply only to links starting with .,..,/,
-        // or any with just a path, like banana.png
-        // check link is same host as $this->url and not a subdomain
+        // TODO: are we covering doc relative URLs in Processor?
         $link_host = parse_url( $link, PHP_URL_HOST );
 
-        if (
-            $link_host === $this->site_url_host ||
-            $link_host === $this->placeholder_url_host
-        ) {
+        if ( $link_host === $this->site_url_host) {
             return true;
         }
 
@@ -520,70 +506,12 @@ class HTMLProcessor extends Base {
     }
 
     public function removeQueryStringFromInternalLink( $url ) {
-        // strip anything from the ? onwards
-        $url = strtok( $url, '?' );
-    }
-
-    public function rewriteEscapedURLs( $processed_html ) {
-        // NOTE: fix input HTML, which can have \ slashes modified to %5C
-        $processed_html = str_replace(
-            '%5C/',
-            '\\/',
-            $processed_html
-        );
-
-        /*
-        This function will be a bit more costly. To cover bases like:
-
-         data-images="[&quot;https:\/\/mysite.example.com\/wp...
-        from the onepress(?) theme, for example
-
-        */
-        $site_url = addcslashes( $this->placeholder_url, '/' );
-        $destination_url = addcslashes( $this->settings['baseUrl'], '/' );
-
-        if ( ! isset( $this->settings['rewrite_rules'] ) ) {
-            $this->settings['rewrite_rules'] = '';
+        if ( strpos( $url, '?' ) !== false ) {
+            // strip anything from the ? onwards
+            $url = strtok( $url, '?' );
         }
 
-        // add base URL to rewrite_rules
-        $this->settings['rewrite_rules'] .=
-            PHP_EOL .
-                $site_url . ',' .
-                $destination_url;
-
-        $rewrite_from = array();
-        $rewrite_to = array();
-
-        $rewrite_rules = explode(
-            "\n",
-            str_replace( "\r", '', $this->settings['rewrite_rules'] )
-        );
-
-        $tmp_rules = array();
-
-        foreach ( $rewrite_rules as $rewrite_rule_line ) {
-            if ( $rewrite_rule_line ) {
-                list($from, $to) = explode( ',', $rewrite_rule_line );
-                $tmp_rules[ $from ] = $to;
-            }
-        }
-
-        uksort( $tmp_rules, array( $this, 'ruleSort' ) );
-
-        foreach ( $tmp_rules as $from => $to ) {
-            $rewrite_from[] = addcslashes( $from, '/' );
-            $rewrite_to[] = addcslashes( $to, '/' );
-        }
-
-        $rewritten_source = str_replace(
-            $rewrite_from,
-            $rewrite_to,
-            $processed_html
-        );
-
-        return $rewritten_source;
-
+        return $url;
     }
 
     public function rewriteWPPathsSrcSetURL( $url_to_change ) {
@@ -636,22 +564,17 @@ class HTMLProcessor extends Base {
         );
 
 
-        // TODO: add escaped URLs into the search/replace patterns
-        // rewriteEscapedURLs
-
         // TODO: here is where we convertToSiteRelativeURLs, as this can be
         // bulk performed, just stripping the domain when rewriting
 
+        // DEBUG: should be no need for extra rewrite
+        $site_url_patterns = $this->rewrite_rules['site_url_patterns'];
+        $destination_url_patterns =
+            $this->rewrite_rules['destination_url_patterns'];
 
         $processed_html = ReplaceMultipleStrings::replace(
             $processed_html,
-            $search_patterns,
-            $replace_patterns
-        );
-
-        $processed_html = ReplaceMultipleStrings::replace(
-            $processed_html,
-            $placeholder_url_patterns,
+            $site_url_patterns,
             $destination_url_patterns
         );
 
@@ -679,7 +602,7 @@ class HTMLProcessor extends Base {
         $site_root = '';
 
         $relative_url = str_replace(
-            $this->settings['baseUrl'],
+            $this->destination_url,
             $site_root,
             $url_to_change
         );
@@ -688,43 +611,21 @@ class HTMLProcessor extends Base {
     }
 
 
-    // TODO: This function is to be performed on placeholder URLs
+    // TODO: This function is to be performed on site URLs
     // allowing the user to convert URLs to document or site relative form
-    public function convertToDocumentRelativeURL( $element ) {
-        if ( ! $this->shouldUseRelativeURLs() ) {
-            return;
-        }
-
-        if ( $element->hasAttribute( 'href' ) ) {
-            $attribute_to_change = 'href';
-        } elseif ( $element->hasAttribute( 'src' ) ) {
-            $attribute_to_change = 'src';
-        } elseif ( $element->hasAttribute( 'content' ) ) {
-            $attribute_to_change = 'content';
-        } else {
-            return;
-        }
-
-        $url_to_change = $element->getAttribute( $attribute_to_change );
-
+    public function convertToDocumentRelativeURL( $url ) {
         $site_root = '';
 
-        // check it actually needs to be changed
-        if ( $this->isInternalLink(
-            $url_to_change,
-            $this->settings['baseUrl']
-        ) ) {
-            $rewritten_url = str_replace(
-                $this->settings['baseUrl'],
-                $site_root,
-                $url_to_change
-            );
+        $rewritten_url = str_replace(
+            $this->settings['baseUrl'],
+            $site_root,
+            $url
+        );
 
-            $element->setAttribute( $attribute_to_change, $rewritten_url );
-        }
+        return $rewritten_url;
     }
 
-    public function convertToOfflineURLSrcSetURL( $url_to_change ) {
+    public function convertToOfflineURLSrcSetURL( $url_to_change, $destination_url ) {
         if ( ! $this->shouldCreateOfflineURLs() ) {
             return $url_to_change;
         }
@@ -750,7 +651,7 @@ class HTMLProcessor extends Base {
         }
 
         $rewritten_url = str_replace(
-            $this->placeholder_url,
+            $destination_url,
             '',
             $url_to_change
         );

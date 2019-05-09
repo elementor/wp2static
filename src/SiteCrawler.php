@@ -314,7 +314,6 @@ class SiteCrawler extends Base {
 
         // capture URL hosts for use in detecting internal links
         $site_url_host  = parse_url( $site_url, PHP_URL_HOST );
-        $placeholder_url_host  = 'PLACEHOLDER.wpsho';
 
         $destination_url = $this->settings['baseUrl'];
         $user_rewrite_rules = $this->settings['rewrite_rules'];
@@ -328,6 +327,16 @@ class SiteCrawler extends Base {
                 $user_rewrite_rules
             );
 
+        // TODO: move rewrite stuff higher up
+        // WsLog::l(
+        //     'Site URL patterns: ' .
+        //     implode(',', $rewrite_rules['site_url_patterns']) . PHP_EOL .
+        //     'Placeholder URL patterns: ' .
+        //     implode(',', $rewrite_rules['placeholder_url_patterns']) . PHP_EOL .
+        //     'Destination URL patterns: ' .
+        //     implode(',', $rewrite_rules['destination_url_patterns'])
+        // );
+
         if ( ! $rewrite_rules ) {
             $err = 'No URL rewrite rules defined';
             WsLog::l( $err );
@@ -339,12 +348,13 @@ class SiteCrawler extends Base {
                 $processor = new HTMLProcessor(
                     $rewrite_rules,
                     $site_url_host,
-                    $placeholder_url_host
+                    $destination_url
                 );
 
                 $this->processed_file = $processor->processHTML(
                     $output,
                     $full_url
+
                 );
 
                 if ( $this->processed_file ) {

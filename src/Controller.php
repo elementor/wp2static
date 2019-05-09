@@ -204,6 +204,10 @@ class Controller {
         }
     }
 
+    public function crawl_site() {
+        $site_crawler = new SiteCrawler();
+    }
+
     public function generate_filelist_preview() {
         $target_settings = array(
             'general',
