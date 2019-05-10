@@ -60,8 +60,6 @@ function wp_static_html_output_ajax() {
     return null;
 }
 
-remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
-remove_action( 'wp_print_styles', 'print_emoji_styles' );
 
 function wp_static_html_output_add_dashboard_widgets() {
     wp_add_dashboard_widget(
@@ -83,5 +81,8 @@ function wp_static_html_output_deregister_scripts() {
 }
 
 add_action( 'wp_footer', 'wp_static_html_output_deregister_scripts' );
-remove_action( 'wp_head', 'wlwmanifest_link' );
 
+// TODO: move into own plugin for WP cleanup, don't belong in core
+remove_action( 'wp_head', 'wlwmanifest_link' );
+remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
+remove_action( 'wp_print_styles', 'print_emoji_styles' );
