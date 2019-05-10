@@ -6,12 +6,27 @@ use Exception;
 
 class SiteCrawler extends Base {
 
-    public function __construct() {
+    public function __construct(
+        $rewrite_rules,
+        $site_url_host,
+        $destination_url
+    ) {
         $this->loadSettings();
 
-        if ( isset( $this->settings['crawl_delay'] ) ) {
-            sleep( $this->settings['crawl_delay'] );
-        }
+        /*
+         TODO: implement crawl-caching, to greatly speed up the process
+         *
+         * helps to recover from mid-crawl failures. Use export-dir, keep
+         * between runs. Load cache when starting a run. Check speed DB vs disk
+         *
+         * option in UI to delete the cache dir contents, else will
+         * always append
+         *
+
+         * for saving detected static assets during crawl, check both Crawl
+         * Cache and whether file exists within export dir
+         *
+         */
 
         $this->processed_file = '';
         $this->file_type = '';
@@ -20,27 +35,21 @@ class SiteCrawler extends Base {
         $this->archive_dir = '';
         $this->list_of_urls_to_crawl_path = '';
         $this->urls_to_crawl = '';
-
-        if ( ! defined( 'WP_CLI' ) ) {
-            // @codingStandardsIgnoreStart
-            if ( $_POST['ajax_action'] === 'crawl_site' ) {
-                $this->crawl_site();
-            }
-            // @codingStandardsIgnoreEnd
-        }
+        $this->rewrite_rules = $rewrite_rules;
+        $this->site_url_host = $site_url_host;
+        $this->site_url_host = $destination_url;
     }
 
-    public function crawl_site() {
+    public function crawl() {
         $this->list_of_urls_to_crawl_path =
             SiteInfo::getPath( 'uploads' ) .
             'wp2static-working-files/FINAL-CRAWL-LIST.txt';
 
         if ( ! is_file( $this->list_of_urls_to_crawl_path ) ) {
-            WsLog::l(
-                'ERROR: LIST OF URLS TO CRAWL NOT FOUND AT: ' .
-                    $this->list_of_urls_to_crawl_path
-            );
-            die();
+            $err = 'ERROR: LIST OF URLS TO CRAWL NOT FOUND AT: ' .
+                $this->list_of_urls_to_crawl_path;
+            WsLog::l( $err );
+            throw new Exception( $err );
         } else {
             if ( filesize( $this->list_of_urls_to_crawl_path ) ) {
                 $this->crawlABitMore();
@@ -152,7 +161,7 @@ class SiteCrawler extends Base {
             if ( ! defined( 'WP_CLI' ) ) {
                 echo $remaining_urls;
             } else {
-                $this->crawl_site();
+                $this->crawl();
             }
         } else {
             WsLog::l( 'Crawling URLs phase completed' );
@@ -295,50 +304,13 @@ class SiteCrawler extends Base {
             $curl_content_type
         );
 
-        $site_url = SiteInfo::getUrl( 'site' );
-
-        if ( ! is_string( $site_url ) ) {
-            $err = 'Site URL not defined ';
-            WsLog::l( $err );
-            throw new Exception( $err );
-        }
-
-        // capture URL hosts for use in detecting internal links
-        $site_url_host = parse_url( $site_url, PHP_URL_HOST );
-
-        $destination_url = $this->settings['baseUrl'];
-        $user_rewrite_rules = $this->settings['rewrite_rules'];
-
-        // get user rewrite rules, use regular and escaped versions of them
-        $rewrite_rules =
-            RewriteRules::generate(
-                $site_url,
-                $destination_url
-            );
-
-        // TODO: move rewrite stuff higher up
-        // WsLog::l(
-        // 'Site URL patterns: ' .
-        // implode(',', $rewrite_rules['site_url_patterns']) . PHP_EOL .
-        // 'Placeholder URL patterns: ' .
-        // implode(',', $rewrite_rules['placeholder_url_patterns']) . PHP_EOL .
-        // 'Destination URL patterns: ' .
-        // implode(',', $rewrite_rules['destination_url_patterns'])
-        // );
-
-        if ( ! $rewrite_rules ) {
-            $err = 'No URL rewrite rules defined';
-            WsLog::l( $err );
-            throw new Exception( $err );
-        }
-
         switch ( $file_type ) {
             case 'html':
                 $processor = new HTMLProcessor(
-                    $rewrite_rules,
-                    $site_url_host,
-                    $destination_url,
-                    $user_rewrite_rules
+                    $this->rewrite_rules,
+                    $this->site_url_host,
+                    $this->destination_url,
+                    $this->settings['rewrite_rules']
                 );
 
                 $this->processed_file = $processor->processHTML(
