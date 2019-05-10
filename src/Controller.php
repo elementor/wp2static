@@ -69,7 +69,8 @@ class Controller {
         }
 
         // capture URL hosts for use in detecting internal links
-        $instance->site_url_host = parse_url( $instance->site_url, PHP_URL_HOST );
+        $instance->site_url_host =
+            parse_url( $instance->site_url, PHP_URL_HOST );
 
         $instance->destination_url = $instance->settings['baseUrl'];
 
