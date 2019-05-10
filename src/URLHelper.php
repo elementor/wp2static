@@ -2,6 +2,8 @@
 
 namespace WP2Static;
 
+use Exception;
+
 class URLHelper {
     /*
      * Takes either an http or https URL and returns a // protocol-relative URL

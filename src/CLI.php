@@ -102,9 +102,8 @@ class CLI {
         $plugin->generate_filelist_preview();
         $plugin->prepare_for_export();
 
-        $site_crawler = new SiteCrawler();
+        $plugin->crawl_site();
 
-        $site_crawler->crawl_site();
         $plugin->post_process_archive_dir();
 
         $end_time = microtime();

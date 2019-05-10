@@ -6,7 +6,11 @@ use Exception;
 
 class SiteCrawler extends Base {
 
-    public function __construct( $rewrite_rules, $site_url_host ) {
+    public function __construct(
+        $rewrite_rules,
+        $site_url_host,
+        $destination_url
+    ) {
         $this->loadSettings();
 
         /*
@@ -33,6 +37,7 @@ class SiteCrawler extends Base {
         $this->urls_to_crawl = '';
         $this->rewrite_rules = $rewrite_rules;
         $this->site_url_host = $site_url_host;
+        $this->site_url_host = $destination_url;
     }
 
     public function crawl() {
@@ -156,7 +161,7 @@ class SiteCrawler extends Base {
             if ( ! defined( 'WP_CLI' ) ) {
                 echo $remaining_urls;
             } else {
-                $this->crawl_site();
+                $this->crawl();
             }
         } else {
             WsLog::l( 'Crawling URLs phase completed' );
@@ -304,7 +309,7 @@ class SiteCrawler extends Base {
                 $processor = new HTMLProcessor(
                     $this->rewrite_rules,
                     $this->site_url_host,
-                    $destination_url,
+                    $this->destination_url,
                     $this->settings['rewrite_rules']
                 );
 

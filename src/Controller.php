@@ -59,6 +59,20 @@ class Controller {
 
         $instance->loadRewriteRules();
 
+        $instance->settings = $instance->options->getSettings( true );
+        $instance->site_url = SiteInfo::getUrl( 'site' );
+
+        if ( ! is_string( $instance->site_url ) ) {
+            $err = 'Site URL not defined ';
+            WsLog::l( $err );
+            throw new Exception( $err );
+        }
+
+        // capture URL hosts for use in detecting internal links
+        $instance->site_url_host = parse_url( $instance->site_url, PHP_URL_HOST );
+
+        $instance->destination_url = $instance->settings['baseUrl'];
+
         return $instance;
     }
 
@@ -208,25 +222,11 @@ class Controller {
     }
 
     public function loadRewriteRules() {
-        $this->settings = $this->options->getSettings( true );
-        $site_url = SiteInfo::getUrl( 'site' );
-
-        if ( ! is_string( $site_url ) ) {
-            $err = 'Site URL not defined ';
-            WsLog::l( $err );
-            throw new Exception( $err );
-        }
-
-        // capture URL hosts for use in detecting internal links
-        $this->site_url_host = parse_url( $site_url, PHP_URL_HOST );
-
-        $destination_url = $this->settings['baseUrl'];
-
         // get user rewrite rules, use regular and escaped versions of them
         $this->rewrite_rules =
             RewriteRules::generate(
-                $site_url,
-                $destination_url
+                $this->site_url,
+                $this->destination_url
             );
 
         if ( ! $this->rewrite_rules ) {
@@ -239,7 +239,8 @@ class Controller {
     public function crawl_site() {
         $site_crawler = new SiteCrawler(
             $this->rewrite_rules,
-            $this->site_url_host
+            $this->site_url_host,
+            $this->destination_url
         );
 
         $site_crawler->crawl();
