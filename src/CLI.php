@@ -143,114 +143,110 @@ class CLI {
 
         $deployer->deploy( $test );
     }
-}
 
-/**
- * Read / write plugin options
- *
- * ## OPTIONS
- *
- * <list> [--reveal-sensitive-values]
- *
- * Get all option names and values (explicitly reveal sensitive values)
- *
- * <get> <option-name>
- *
- * Get or set a specific option via name
- *
- * <set> <option-name> <value>
- *
- * Set a specific option via name
- *
- *
- * ## EXAMPLES
- *
- * List all options
- *
- *     wp wp2static options list
- *
- * List all options (revealing sensitive values)
- *
- *     wp wp2static options list --reveal_sensitive_values
- *
- * Get option
- *
- *     wp wp2static options get selected_deployment_option
- *
- * Set option
- *
- *     wp wp2static options set baseUrl 'https://mystaticsite.com'
- */
-function wp2static_options( $args, $assoc_args ) {
-    $action = isset( $args[0] ) ? $args[0] : null;
-    $option_name = isset( $args[1] ) ? $args[1] : null;
-    $value = isset( $args[2] ) ? $args[2] : null;
-    $reveal_sensitive_values = false;
+    /**
+     * Read / write plugin options
+     *
+     * ## OPTIONS
+     *
+     * <list> [--reveal-sensitive-values]
+     *
+     * Get all option names and values (explicitly reveal sensitive values)
+     *
+     * <get> <option-name>
+     *
+     * Get or set a specific option via name
+     *
+     * <set> <option-name> <value>
+     *
+     * Set a specific option via name
+     *
+     *
+     * ## EXAMPLES
+     *
+     * List all options
+     *
+     *     wp wp2static options list
+     *
+     * List all options (revealing sensitive values)
+     *
+     *     wp wp2static options list --reveal_sensitive_values
+     *
+     * Get option
+     *
+     *     wp wp2static options get selected_deployment_option
+     *
+     * Set option
+     *
+     *     wp wp2static options set baseUrl 'https://mystaticsite.com'
+     */
+    function options( $args, $assoc_args ) {
+        $action = isset( $args[0] ) ? $args[0] : null;
+        $option_name = isset( $args[1] ) ? $args[1] : null;
+        $value = isset( $args[2] ) ? $args[2] : null;
+        $reveal_sensitive_values = false;
 
-    if ( empty( $action ) ) {
-        WP_CLI::error( 'Missing required argument: <get|set|list>' );
-    }
-
-    $plugin = Controller::getInstance();
-
-    if ( $action === 'get' ) {
-        if ( empty( $option_name ) ) {
-            WP_CLI::error( 'Missing required argument: <option-name>' );
+        if ( empty( $action ) ) {
+            WP_CLI::error( 'Missing required argument: <get|set|list>' );
         }
 
-        if ( ! $plugin->options->optionExists( $option_name ) ) {
-            WP_CLI::error( 'Invalid option name' );
-        } else {
-            $option_value =
-                $plugin->options->getOption( $option_name );
+        $plugin = Controller::getInstance();
 
-            WP_CLI::line( $option_value );
-        }
-    }
+        if ( $action === 'get' ) {
+            if ( empty( $option_name ) ) {
+                WP_CLI::error( 'Missing required argument: <option-name>' );
+            }
 
-    if ( $action === 'set' ) {
-        if ( empty( $option_name ) ) {
-            WP_CLI::error( 'Missing required argument: <option-name>' );
-        }
+            if ( ! $plugin->options->optionExists( $option_name ) ) {
+                WP_CLI::error( 'Invalid option name' );
+            } else {
+                $option_value =
+                    $plugin->options->getOption( $option_name );
 
-        if ( empty( $value ) ) {
-            WP_CLI::error( 'Missing required argument: <value>' );
-        }
-
-        if ( ! $plugin->options->optionExists( $option_name ) ) {
-            WP_CLI::error( 'Invalid option name' );
-        } else {
-            $plugin->options->setOption( $option_name, $value );
-            $plugin->options->save();
-
-            $result = $plugin->options->getOption( $option_name );
-
-            if ( ! $result === $value ) {
-                WP_CLI::error( 'Option not able to be updated' );
+                WP_CLI::line( $option_value );
             }
         }
-    }
 
-    if ( $action === 'list' ) {
-        if ( isset( $assoc_args['reveal-sensitive-values'] ) ) {
-            $reveal_sensitive_values = true;
+        if ( $action === 'set' ) {
+            if ( empty( $option_name ) ) {
+                WP_CLI::error( 'Missing required argument: <option-name>' );
+            }
+
+            if ( empty( $value ) ) {
+                WP_CLI::error( 'Missing required argument: <value>' );
+            }
+
+            if ( ! $plugin->options->optionExists( $option_name ) ) {
+                WP_CLI::error( 'Invalid option name' );
+            } else {
+                $plugin->options->setOption( $option_name, $value );
+                $plugin->options->save();
+
+                $result = $plugin->options->getOption( $option_name );
+
+                if ( ! $result === $value ) {
+                    WP_CLI::error( 'Option not able to be updated' );
+                }
+            }
         }
 
-        $options =
-            $plugin->options->getAllOptions( $reveal_sensitive_values );
+        if ( $action === 'list' ) {
+            if ( isset( $assoc_args['reveal-sensitive-values'] ) ) {
+                $reveal_sensitive_values = true;
+            }
 
-        WP_CLI\Utils\format_items(
-            'table',
-            $options,
-            array( 'Option name', 'Value' )
-        );
+            $options =
+                $plugin->options->getAllOptions( $reveal_sensitive_values );
+
+            WP_CLI\Utils\format_items(
+                'table',
+                $options,
+                array( 'Option name', 'Value' )
+            );
+        }
     }
 }
 
-if ( defined( 'WP_CLI' ) ) {
-    WP_CLI::add_command( 'wp2static', 'wp2static_cli' );
-    WP_CLI::add_command( 'wp2static options', 'wp2static_options' );
-}
 
 /*
 TODO:
