@@ -44,6 +44,7 @@ function plugins_have_been_loaded() {
 
 add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'plugin_action_links' );
 add_action( 'plugins_loaded', 'plugins_have_been_loaded' );
+
 add_action( 'wp_ajax_wp_static_html_output_ajax', 'wp_static_html_output_ajax' );
 
 function wp_static_html_output_ajax() {

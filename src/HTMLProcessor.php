@@ -323,7 +323,6 @@ class HTMLProcessor extends Base {
         return $url;
     }
 
-
     /*
      * Process URL within a DOMElement
      *

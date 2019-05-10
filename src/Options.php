@@ -178,6 +178,11 @@ class Options {
     public function getSettings() {
         $settings = [];
 
+        $this->wp2static_options_keys = apply_filters(
+            'wp2static_add_option_keys',
+            $this->wp2static_options_keys
+        );
+
         foreach ( $this->wp2static_options_keys as $key ) {
             $value = $this->__get( $key );
 
@@ -220,6 +225,7 @@ class Options {
             'wp2static_add_option_keys',
             $this->wp2static_options_keys
         );
+
 
         foreach ( $this->wp2static_options_keys as $option ) {
             // TODO: set which fields should get which sanitzation upon saving

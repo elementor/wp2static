@@ -9,6 +9,7 @@ class SitePublisher {
     public function loadSettings() {
         $plugin = Controller::getInstance();
         $this->settings = $plugin->options->getSettings( true );
+
     }
 
     public function bootstrap() {
