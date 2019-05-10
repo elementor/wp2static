@@ -123,8 +123,8 @@ class HTMLProcessor extends Base {
                     */
                     $this->processElementURL( $element );
 
-                    //  get the CDATA sections within <SCRIPT>
-                    foreach( $element->childNodes as $node) {
+                    // get the CDATA sections within <SCRIPT>
+                    foreach ( $element->childNodes as $node ) {
                         if ( $node->nodeType == XML_CDATA_SECTION_NODE ) {
                             $this->processCDATA( $node );
                         }

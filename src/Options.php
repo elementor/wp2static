@@ -226,7 +226,6 @@ class Options {
             $this->wp2static_options_keys
         );
 
-
         foreach ( $this->wp2static_options_keys as $option ) {
             // TODO: set which fields should get which sanitzation upon saving
             // TODO: validate before save & avoid making empty settings fields

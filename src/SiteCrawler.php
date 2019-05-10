@@ -9,10 +9,11 @@ class SiteCrawler extends Base {
     public function __construct( $rewrite_rules, $site_url_host ) {
         $this->loadSettings();
 
-        /* TODO: implement crawl-caching, to greatly speed up the process
+        /*
+         TODO: implement crawl-caching, to greatly speed up the process
          *
          * helps to recover from mid-crawl failures. Use export-dir, keep
-         * between runs. Load cache when starting a run. Check speed DB vs disk 
+         * between runs. Load cache when starting a run. Check speed DB vs disk
          *
          * option in UI to delete the cache dir contents, else will
          * always append
@@ -297,7 +298,6 @@ class SiteCrawler extends Base {
             $full_url,
             $curl_content_type
         );
-
 
         switch ( $file_type ) {
             case 'html':

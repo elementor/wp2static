@@ -404,7 +404,7 @@ class Controller {
         $theme = wp_get_theme();
 
         WsLog::l(
-            $theme->get( 'Name' ) . " is version " .
+            $theme->get( 'Name' ) . ' is version ' .
             $theme->get( 'Version' )
         );
 
@@ -418,9 +418,9 @@ class Controller {
 
         WsLog::l(
             'SITE URL PATTERNS: ' .
-            implode(',', $this->rewrite_rules['site_url_patterns']) . PHP_EOL .
+            implode( ',', $this->rewrite_rules['site_url_patterns'] ) . PHP_EOL .
             'DESTINATION URL PATTERNS: ' .
-            implode(',', $this->rewrite_rules['destination_url_patterns'])
+            implode( ',', $this->rewrite_rules['destination_url_patterns'] )
         );
 
         $extensions = get_loaded_extensions();
