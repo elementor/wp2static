@@ -67,9 +67,9 @@ class RewriteRules {
             return;
         }
 
-        $rewrite_rules = [];
-        $rewrite_rules['from'] = [];
-        $rewrite_rules['to'] = [];
+        $rewrite_rules_output = [];
+        $rewrite_rules_output['from'] = [];
+        $rewrite_rules_output['to'] = [];
 
         $rewrite_rules = explode(
             "\n",
@@ -96,10 +96,10 @@ class RewriteRules {
         );
 
         foreach ( $tmp_rules as $from => $to ) {
-            $rewrite_rules['from'] = $from;
-            $rewrite_rules['to'] = $to;
+            $rewrite_rules_output['from'][] = $from;
+            $rewrite_rules_output['to'][] = $to;
         }
 
-        return $rewrite_rules;
+        return $rewrite_rules_output;
     }
 }

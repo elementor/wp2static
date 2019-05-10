@@ -51,4 +51,42 @@ final class RewriteRulesTest extends TestCase{
             ],
         ];
     }
+
+    /**
+     * @dataProvider getUserRewriteRulesProvider
+     */
+    public function testgetUserRewriteRules( $user_rewrite_rules, $expectation) {
+        $rewrite_rules =
+           RewriteRules::getUserRewriteRules( $user_rewrite_rules );
+
+        $this->assertEquals(
+            $expectation,
+            $rewrite_rules
+        );
+    }
+
+    public function getUserRewriteRulesProvider() {
+        return [
+           'puts shortest paths first' =>  [
+                'wp-content/themes/,content/ui/' . PHP_EOL .
+                'content/ui/twentyseventeen/,content/ui/theme/' . PHP_EOL .
+                'https://somedomain.com,https://mycdn.com' . PHP_EOL .
+                'wp-includes/,inc/' . PHP_EOL,
+                [
+                    'from' => [
+                        'wp-includes/',
+                        'wp-content/themes/',
+                        'https://somedomain.com',
+                        'content/ui/twentyseventeen/',
+                    ],
+                    'to' => [
+                        'inc/',
+                        'content/ui/',
+                        'https://mycdn.com',
+                        'content/ui/theme/',
+                    ],
+                ],
+            ],
+        ];
+    }
 }
