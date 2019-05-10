@@ -10,10 +10,10 @@ final class ConvertToOfflineURLTest extends TestCase{
      * @dataProvider offlineURLConversionProvider
      */
     public function testaddsRelativePathToURL(
-        $url_to_change, $page_url, $placeholder_url, $expectation
+        $url_to_change, $page_url, $site_url, $expectation
     ) {
         $converted_url = ConvertToOfflineURL::convert(
-            $url_to_change, $page_url, $placeholder_url
+            $url_to_change, $page_url, $site_url
         );
 
         $this->assertEquals(

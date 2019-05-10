@@ -304,10 +304,6 @@ class HTMLProcessor extends Base {
         $url =
             $this->removeQueryStringFromInternalLink( $url );
 
-        // convert to Placeholder - just the base URL here? complete rewriting
-        // happens later.
-        // $this->convertNormalizedURLToPlaceholder( $url );
-
         /*
          * Note: We want to to perform as many functions on the URL, not have
          * to access the element multiple times. So, once we have it, do all
@@ -317,7 +313,7 @@ class HTMLProcessor extends Base {
             $this->postProcessElementURLStructure(
                 $url,
                 $this->page_url,
-                $site_url
+                $this->site_url
             );
 
         return $url;
