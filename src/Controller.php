@@ -262,6 +262,8 @@ class Controller {
 
         if ( $initial_file_list_count < 1 ) {
             $err = 'Initial file list unable to be generated';
+            echo $err;
+            http_response_code(500); 
             WsLog::l( $err );
             throw new Exception( $err );
         }
