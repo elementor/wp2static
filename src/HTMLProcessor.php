@@ -122,6 +122,13 @@ class HTMLProcessor extends Base {
                         and escaped urls
                     */
                     $this->processElementURL( $element );
+
+                    //  get the CDATA sections within <SCRIPT>
+                    foreach( $element->childNodes as $node) {
+                        if ( $node->nodeType == XML_CDATA_SECTION_NODE ) {
+                            $this->processCDATA( $node );
+                        }
+                    }
                     break;
             }
         }
@@ -623,6 +630,22 @@ class HTMLProcessor extends Base {
         }
 
         return true;
+    }
+
+    public function processCDATA( $node ) {
+        $nodeText = $node->textContent;
+
+        $nodeText = str_replace(
+            $this->rewrite_rules['site_url_patterns'],
+            $this->rewrite_rules['destination_url_patterns'],
+            $nodeText
+        );
+
+        $newNode =
+            $this->xml_doc->createTextNode( $nodeText );
+
+        // replace old node with new
+        $node->parentNode->replaceChild( $newNode, $node );
     }
 }
 
