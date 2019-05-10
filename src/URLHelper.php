@@ -61,6 +61,8 @@ class URLHelper {
             $site_url,
             $url
         );
+
+        return $url;
     }
 
     /*

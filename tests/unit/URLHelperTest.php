@@ -115,4 +115,35 @@ final class URLHelperTest extends TestCase{
             ],
         ];
     }
+
+    /**
+     * @dataProvider protocolRelativeToAbsoluteURLProvider
+     */
+    public function testprotocolRelativeToAbsoluteURL(
+        $url,
+        $site_url,
+        $expectation
+    ) {
+        $url = URLHelper::protocolRelativeToAbsoluteURL( $url, $site_url );
+
+        $this->assertEquals(
+            $expectation,
+            $url
+        );
+    }
+
+    public function protocolRelativeToAbsoluteURLProvider() {
+        return [
+           'same domain host returns abs url' =>  [
+                '//mydomain.com/animage.jpg',
+                'http://mydomain.com/',
+                'http://mydomain.com/animage.jpg',
+            ],
+           'different domain host returns unchanged protocol rel url' =>  [
+                '//mydomain.com/animage.jpg',
+                'http://example.com/',
+                '//mydomain.com/animage.jpg',
+            ],
+        ];
+    }
 }
