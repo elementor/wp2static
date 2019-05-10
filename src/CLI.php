@@ -179,6 +179,10 @@ class CLI {
      * Set option
      *
      *     wp wp2static options set baseUrl 'https://mystaticsite.com'
+     *
+     * Unset option
+     *
+     *     wp wp2static options unset baseUrl
      */
     public function options( $args, $assoc_args ) {
         $action = isset( $args[0] ) ? $args[0] : null;
@@ -227,6 +231,24 @@ class CLI {
                 if ( ! $result === $value ) {
                     WP_CLI::error( 'Option not able to be updated' );
                 }
+            }
+        }
+
+        if ( $action === 'unset' ) {
+            if ( empty( $option_name ) ) {
+                WP_CLI::error( 'Missing required argument: <option-name>' );
+            }
+
+            if ( ! $plugin->options->optionExists( $option_name ) ) {
+                WP_CLI::error( 'Invalid option name' );
+            }
+
+            $plugin->options->setOption( $option_name, '' );
+            $plugin->options->save();
+            $result = $plugin->options->getOption( $option_name );
+
+            if ( ! empty( $result ) ) {
+                WP_CLI::error( 'Option not able to be updated' );
             }
         }
 

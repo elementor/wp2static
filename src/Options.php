@@ -134,6 +134,10 @@ class Options {
     public function __set( $name, $value ) {
         $this->wp2static_options[ $name ] = $value;
 
+        if ( empty( $value ) ) {
+            unset( $this->wp2static_options[ $name ] );
+        }
+
         // NOTE: this is required, not certain why, investigate
         // and make more intuitive
         return $this;
