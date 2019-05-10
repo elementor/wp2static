@@ -34,13 +34,13 @@ class URLHelper {
     }
 
     public static function isMailto( $url ) {
-        if ( substr( $url_to_change, 0, 7 ) == 'mailto:' ) {
+        if ( substr( $url, 0, 7 ) == 'mailto:' ) {
             return true;
         }
     }
 
     public static function isProtocolRelative( $url ) {
-        if ( $url_to_change[0] === '/' ) {
+        if ( $url[0] === '/' ) {
             if ( $url_to_change[1] === '/' ) {
                 return true;
             }
@@ -56,10 +56,10 @@ class URLHelper {
             throw new Exception( $err );
         }
 
-        $url_to_change = str_replace(
+        $url = str_replace(
             self::getProtocolRelativeURL( $site_url ),
             $site_url,
-            $url_to_change
+            $url
         );
     }
 

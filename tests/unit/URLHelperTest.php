@@ -69,4 +69,27 @@ final class URLHelperTest extends TestCase{
             ],
         ];
     }
+
+    /**
+     * @dataProvider isMailtoProvider
+     */
+    public function testisMailto( $url, $expectation) {
+        $this->assertEquals(
+            $expectation,
+            URLHelper::isMailto( $url )
+        );
+    }
+
+    public function isMailtoProvider() {
+        return [
+           'doc relative url starting with mailto returns true' =>  [
+                'mailto:leon@wp2static.com',
+                true,
+            ],
+           'site root relative url starting with / returns false' =>  [
+                '/someurl',
+                false,
+            ],
+        ];
+    }
 }
