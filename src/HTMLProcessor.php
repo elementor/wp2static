@@ -274,11 +274,10 @@ class HTMLProcessor extends Base {
             );
         }
 
-
         // normalize site root-relative URLs here to absolute site-url
         if ( $url[0] === '/' ) {
             if ( $url[1] !== '/' ) {
-                $url = $site_url . ltrim( $url, '/' );
+                $url = $this->site_url . ltrim( $url, '/' );
             }
         }
 
@@ -308,20 +307,18 @@ class HTMLProcessor extends Base {
             $url
         );
 
-        $url =
-            $this->removeQueryStringFromInternalLink( $url );
+        $url = $this->removeQueryStringFromInternalLink( $url );
 
         /*
          * Note: We want to to perform as many functions on the URL, not have
          * to access the element multiple times. So, once we have it, do all
          * the things to it before sending back/updating the attribute
          */
-        $url =
-            $this->postProcessElementURLStructure(
-                $url,
-                $this->page_url,
-                $this->site_url
-            );
+        $url = $this->postProcessElementURLStructure(
+            $url,
+            $this->page_url,
+            $this->site_url
+        );
 
         return $url;
     }
