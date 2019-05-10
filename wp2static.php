@@ -85,9 +85,3 @@ function wp_static_html_output_deregister_scripts() {
 add_action( 'wp_footer', 'wp_static_html_output_deregister_scripts' );
 remove_action( 'wp_head', 'wlwmanifest_link' );
 
-function wp2static_stop_heartbeat() {
-    wp_deregister_script('heartbeat');
-}
-
-add_action( 'init', 'wp2static_stop_heartbeat', 1 );
-
