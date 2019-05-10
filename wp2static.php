@@ -91,7 +91,3 @@ function wp2static_stop_heartbeat() {
 
 add_action( 'init', 'wp2static_stop_heartbeat', 1 );
 
-// WP CLI support
-if ( defined( 'WP_CLI' ) ) {
-    require_once dirname( __FILE__ ) . '/plugin/wp2static-wp-cli-commands.php';
-}

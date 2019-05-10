@@ -248,8 +248,10 @@ function wp2static_options( $args, $assoc_args ) {
     }
 }
 
-WP_CLI::add_command( 'wp2static', 'wp2static_cli' );
-WP_CLI::add_command( 'wp2static options', 'wp2static_options' );
+if ( defined( 'WP_CLI' ) ) {
+    WP_CLI::add_command( 'wp2static', 'wp2static_cli' );
+    WP_CLI::add_command( 'wp2static options', 'wp2static_options' );
+}
 
 /*
 TODO:
