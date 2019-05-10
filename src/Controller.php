@@ -418,8 +418,8 @@ class Controller {
 
         WsLog::l(
             'SITE URL PATTERNS: ' .
-            implode( ',', $this->rewrite_rules['site_url_patterns'] ) . PHP_EOL .
-            'DESTINATION URL PATTERNS: ' .
+            implode( ',', $this->rewrite_rules['site_url_patterns'] ) .
+             PHP_EOL . 'DESTINATION URL PATTERNS: ' .
             implode( ',', $this->rewrite_rules['destination_url_patterns'] )
         );
 

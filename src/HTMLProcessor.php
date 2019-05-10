@@ -629,19 +629,19 @@ class HTMLProcessor extends Base {
     }
 
     public function processCDATA( $node ) {
-        $nodeText = $node->textContent;
+        $node_text = $node->textContent;
 
-        $nodeText = str_replace(
+        $node_text = str_replace(
             $this->rewrite_rules['site_url_patterns'],
             $this->rewrite_rules['destination_url_patterns'],
-            $nodeText
+            $node_text
         );
 
-        $newNode =
-            $this->xml_doc->createTextNode( $nodeText );
+        $new_node =
+            $this->xml_doc->createTextNode( $node_text );
 
         // replace old node with new
-        $node->parentNode->replaceChild( $newNode, $node );
+        $node->parentNode->replaceChild( $new_node, $node );
     }
 }
 
