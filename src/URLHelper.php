@@ -28,7 +28,7 @@ class URLHelper {
     public static function startsWithHash( $url ) {
         // TODO: this won't fire for absolute URLs unless strip site_url first?
         // quickly abort for invalid URLs
-        if ( $url_to_change[0] === '#' ) {
+        if ( $url[0] === '#' ) {
             return true;
         }
     }

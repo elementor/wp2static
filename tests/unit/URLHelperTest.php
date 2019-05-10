@@ -46,4 +46,27 @@ final class URLHelperTest extends TestCase{
             ],
         ];
     }
+
+    /**
+     * @dataProvider startsWithHashProvider
+     */
+    public function teststartsWithHash( $url, $expectation) {
+        $this->assertEquals(
+            $expectation,
+            URLHelper::startsWithHash( $url )
+        );
+    }
+
+    public function startsWithHashProvider() {
+        return [
+           'doc relative url starting with hash returns true' =>  [
+                '#somehash',
+                true,
+            ],
+           'site root relative url starting with / returns false' =>  [
+                '/someurl',
+                false,
+            ],
+        ];
+    }
 }
