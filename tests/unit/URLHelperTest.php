@@ -146,4 +146,43 @@ final class URLHelperTest extends TestCase{
             ],
         ];
     }
+
+    /**
+     * @dataProvider isInternalLinkProvider
+     */
+    public function testisInternalLink(
+        $url,
+        $site_url_host,
+        $expectation
+    ) {
+        $this->assertEquals(
+            $expectation,
+            URLHelper::isInternalLink( $url, $site_url_host )
+        );
+    }
+
+    public function isInternalLinkProvider() {
+        return [
+           'starts with / is internal' =>  [
+                '/somelink',
+                'anyhost.com',
+                true,
+            ],
+           'starts with . is internal' =>  [
+                './somelink',
+                'anyhost.com',
+                true,
+            ],
+           'matching URL hosts is internal' =>  [
+                'http://mywpsite.com/some/image.jpg',
+                'mywpsite.com',
+                true,
+            ],
+           'different URL hosts is false' =>  [
+                'http://someremsite.com/some/image.jpg',
+                'mywpsite.com',
+                false,
+            ],
+        ];
+    }
 }
