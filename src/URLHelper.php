@@ -41,7 +41,7 @@ class URLHelper {
 
     public static function isProtocolRelative( $url ) {
         if ( $url[0] === '/' ) {
-            if ( $url_to_change[1] === '/' ) {
+            if ( $url[1] === '/' ) {
                 return true;
             }
         }

@@ -92,4 +92,27 @@ final class URLHelperTest extends TestCase{
             ],
         ];
     }
+
+    /**
+     * @dataProvider isProtocolRelativeProvider
+     */
+    public function testisProtocolRelative( $url, $expectation) {
+        $this->assertEquals(
+            $expectation,
+            URLHelper::isProtocolRelative( $url )
+        );
+    }
+
+    public function isProtocolRelativeProvider() {
+        return [
+           'protocol relative URL returns true' =>  [
+                '//mydomain.com/animage.jpg',
+                true,
+            ],
+           'site root relative url starting with / returns false' =>  [
+                '/someurl',
+                false,
+            ],
+        ];
+    }
 }
