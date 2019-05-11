@@ -693,16 +693,16 @@
         },
         {
             "name": "phpstan/phpstan-shim",
-            "version": "0.11.5",
+            "version": "0.11.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan-shim.git",
-                "reference": "d09662232a3d8e352c6fad4d30a57c16eb5342b5"
+                "reference": "f38e0658f497517aff0635f4a622858a5d20c37f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan-shim/zipball/d09662232a3d8e352c6fad4d30a57c16eb5342b5",
-                "reference": "d09662232a3d8e352c6fad4d30a57c16eb5342b5",
+                "url": "https://api.github.com/repos/phpstan/phpstan-shim/zipball/f38e0658f497517aff0635f4a622858a5d20c37f",
+                "reference": "f38e0658f497517aff0635f4a622858a5d20c37f",
                 "shasum": ""
             },
             "require": {
@@ -710,7 +710,7 @@
             },
             "replace": {
                 "nikic/php-parser": "^4.0.2",
-                "phpstan/phpdoc-parser": "^0.3",
+                "phpstan/phpdoc-parser": "^0.3.3",
                 "phpstan/phpstan": "self.version"
             },
             "bin": [
@@ -733,7 +733,7 @@
                 "MIT"
             ],
             "description": "PHPStan Phar distribution",
-            "time": "2019-03-25T21:30:19+00:00"
+            "time": "2019-05-08T19:07:51+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -989,16 +989,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "8.1.3",
+            "version": "8.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "2a676677982b484ee36b54961f570c02eabbe7e1"
+                "reference": "b534b017daaef2d7f60c6ee61e6aa2e13fdc6910"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/2a676677982b484ee36b54961f570c02eabbe7e1",
-                "reference": "2a676677982b484ee36b54961f570c02eabbe7e1",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/b534b017daaef2d7f60c6ee61e6aa2e13fdc6910",
+                "reference": "b534b017daaef2d7f60c6ee61e6aa2e13fdc6910",
                 "shasum": ""
             },
             "require": {
@@ -1067,7 +1067,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2019-04-19T15:52:00+00:00"
+            "time": "2019-05-09T05:13:39+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
