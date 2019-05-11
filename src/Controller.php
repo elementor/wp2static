@@ -262,6 +262,8 @@ class Controller {
 
         if ( $initial_file_list_count < 1 ) {
             $err = 'Initial file list unable to be generated';
+            echo $err;
+            http_response_code( 500 );
             WsLog::l( $err );
             throw new Exception( $err );
         }
@@ -364,6 +366,12 @@ class Controller {
         $working_dir = SiteInfo::getPath( 'uploads' ) .
             'wp2static-working-files';
         $hash_files = glob( "{$working_dir}/*PREVIOUS-HASHES*.txt" );
+
+        if ( ! $hash_files ) {
+            echo 'SUCCESS';
+            return;
+        }
+
         array_map( 'unlink', $hash_files );
 
         if ( ! defined( 'WP_CLI' ) ) {
