@@ -37,6 +37,7 @@ class SiteCrawler extends Base {
         $this->urls_to_crawl = '';
         $this->rewrite_rules = $rewrite_rules;
         $this->site_url_host = $site_url_host;
+        $this->destination_url = $destination_url;
     }
 
     public function crawl() {

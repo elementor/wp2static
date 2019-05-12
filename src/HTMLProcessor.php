@@ -273,8 +273,7 @@ class HTMLProcessor extends Base {
 
                 // rm query string
                 $url = strtok( $absolute_url, '?' );
-                $url = $this->convertToDocumentRelativeURLSrcSetURL( $url );
-                $url = $this->convertToOfflineURLSrcSetURL(
+                $url = $this->convertToDocumentRelativeURLSrcSetURL(
                     $url,
                     $this->destination_url
                 );
@@ -421,7 +420,7 @@ class HTMLProcessor extends Base {
      *
      * @param string $url absolute Site URL to change
      * @param string $page_url URL of current page for doc relative calculation
-     * @param string $site_url Site URL reference for rewriting
+     * @param string $destination_url Site URL reference for rewriting
      * @return string Rewritten URL
      *
     */
@@ -435,14 +434,14 @@ class HTMLProcessor extends Base {
             $url = ConvertToDocumentRelativeURL::convert(
                 $url,
                 $page_url,
-                $site_url
+                $this->destination_url
             );
+        }
 
         if ( isset( $this->settings['useSiteRootRelativeURLs'] ) ) {
             $url = ConvertToSiteRootRelativeURL::convert(
                 $url,
-                $page_url,
-                $site_url
+                $this->destination_url
             );
         }
 
@@ -557,10 +556,6 @@ class HTMLProcessor extends Base {
     }
 
     public function convertToDocumentRelativeURLSrcSetURL( $url_to_change ) {
-        if ( ! $this->shouldUseRelativeURLs() ) {
-            return $url_to_change;
-        }
-
         $site_root = '';
 
         $relative_url = str_replace(

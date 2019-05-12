@@ -10,10 +10,10 @@ final class ConvertToSiteRootRelativeURLTest extends TestCase{
      * @dataProvider siteRootRelativeURLConversionProvider
      */
     public function testconvertsToSiteRootRelativeURL(
-        $url_to_change, $site_url, $expectation
+        $url, $destination_url, $expectation
     ) {
         $converted_url = ConvertToSiteRootRelativeURL::convert(
-            $url_to_change, $site_url
+            $url, $destination_url
         );
 
         $this->assertEquals(
@@ -25,9 +25,9 @@ final class ConvertToSiteRootRelativeURLTest extends TestCase{
     public function siteRootRelativeURLConversionProvider() {
         return [
            'nested asset' =>  [
-                'https://myplaceholderdomain.com/some-post/' .
+                'https://myplaceholderdomain.com/mystaticsite/some-post/' .
                     'link-to-an-image.jpg',
-                'https://myplaceholderdomain.com/',
+                'https://myplaceholderdomain.com/mystaticsite/',
                 '/some-post/link-to-an-image.jpg',
             ],
            'site url' =>  [
