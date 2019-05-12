@@ -2,6 +2,8 @@
 
 namespace WP2Static;
 
+use Exception;
+
 class View {
 
     protected $variables = array();
@@ -51,7 +53,9 @@ class View {
         $file = $this->path . '/' . $this->template . $this->extension;
 
         if ( ! is_readable( $file ) ) {
-            error_log( 'Can\'t find view template: ' . $file );
+            $err = 'Can\'t find view template: ' . $file;
+            WsLog::l( $err );
+            throw new Exception( $err );
         }
 
         include $file;
