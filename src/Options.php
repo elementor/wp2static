@@ -19,6 +19,7 @@ class Options {
         'crawl_increment',
         'crawlPort',
         'crawlUserAgent',
+        'createEmptyFavicon',
         'delayBetweenAPICalls',
         'detectArchives',
         'detectAttachments',
@@ -52,7 +53,8 @@ class Options {
         'useActiveFTP',
         'useBaseHref',
         'useBasicAuth',
-        'useRelativeURLs',
+        'useDocumentRelativeURLs',
+        'useSiteRootRelativeURLs',
     );
 
     public $whitelisted_keys = array(
@@ -70,6 +72,7 @@ class Options {
         'crawl_increment',
         'crawlPort',
         'crawlUserAgent',
+        'createEmptyFavicon',
         'delayBetweenAPICalls',
         'detectArchives',
         'detectAttachments',
@@ -107,7 +110,8 @@ class Options {
         'useActiveFTP',
         'useBaseHref',
         'useBasicAuth',
-        'useRelativeURLs',
+        'useDocumentRelativeURLs',
+        'useSiteRootRelativeURLs',
     );
 
     public function __construct( $option_key ) {

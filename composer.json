@@ -62,6 +62,12 @@
         "phpcs": "vendor/bin/phpcs --standard=./tools/phpcs.xml --ignore=,*/tests/*,*/vendor/*,wp2static.php ./",
         "phpcbf": "vendor/bin/phpcbf --standard=./tools/phpcs.xml --ignore=,*/tests/*,*/vendor/*,wp2static.php ./",
         "phpunit": "vendor/bin/phpunit ./tests/unit/",
-        "lint": "vendor/bin/parallel-lint --exclude vendor ."
+        "lint": "vendor/bin/parallel-lint --exclude vendor .",
+        "test": [
+            "@lint",
+            "@phpcs",
+            "@phpstan",
+            "@phpunit"
+        ]
     }
 }

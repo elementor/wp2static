@@ -114,6 +114,7 @@ class HTMLProcessor extends Base {
                     if ( isset( $this->settings['removeCanonical'] ) ) {
                         $this->removeCanonicalLink( $element );
                     }
+
                     break;
                 case 'script':
                     /*
@@ -139,6 +140,11 @@ class HTMLProcessor extends Base {
             $this->xml_doc,
             $this->base_tag_exists
         );
+
+        // allow empty favicon to prevent extra browser request
+        if ( isset( $this->settings['createEmptyFavicon'] ) ) {
+            $this->createEmptyFaviconLink( $this->xml_doc );
+        }
 
         $this->stripHTMLComments();
 
@@ -175,7 +181,7 @@ class HTMLProcessor extends Base {
             if ( $this->head_element ) {
                 $first_head_child = $this->head_element->firstChild;
                 $this->head_element->insertBefore(
-                    $this->base_element,
+                    $base_element,
                     $first_head_child
                 );
             } else {
@@ -183,6 +189,32 @@ class HTMLProcessor extends Base {
                     'No head element to attach base to: ' . $this->page_url
                 );
             }
+        }
+    }
+
+    public function createEmptyFaviconLink( $xml_doc ) {
+        $link_element = $xml_doc->createElement( 'link' );
+        $link_element->setAttribute(
+            'rel',
+            'icon'
+        );
+
+        $link_element->setAttribute(
+            'href',
+            'data:,'
+        );
+
+        if ( $this->head_element ) {
+            $first_head_child = $this->head_element->firstChild;
+            $this->head_element->insertBefore(
+                $link_element,
+                $first_head_child
+            );
+        } else {
+            WsLog::l(
+                'No head element to attach favicon link to to: ' .
+                $this->page_url
+            );
         }
     }
 
@@ -242,10 +274,6 @@ class HTMLProcessor extends Base {
                 // rm query string
                 $url = strtok( $absolute_url, '?' );
                 $url = $this->convertToDocumentRelativeURLSrcSetURL( $url );
-                $url = $this->convertToOfflineURLSrcSetURL(
-                    $url,
-                    $this->destination_url
-                );
             }
 
             $new_src_set[] = "{$url} {$dimension}";
@@ -376,32 +404,48 @@ class HTMLProcessor extends Base {
     }
 
     /*
-        After we have normalized the element's URL and have an absolute
-        Placeholder URL, we can perform transformations, such as making it
-        an offline URL or document relative
+     * After we have normalized the element's URL and have an absolute
+     * Placeholder URL, we can perform transformations, such as making it
+     * an offline URL or document relative
 
-        site root relative URLs can be bulk rewritten before outputting HTML
-        so we don't both doing those here
+     * site root relative URLs can be bulk rewritten before outputting HTML
+     * so we don't both doing those here
 
-        We need to do while iterating the URLs, as we cannot accurately
-        iterate individual URLs in bulk rewriting mode and each URL
-        needs to be rewritten in a different manner for offline mode rewriting
-
+     * We need to do while iterating the URLs, as we cannot accurately
+     * iterate individual URLs in bulk rewriting mode and each URL
+     * needs to be rewritten in a different manner for offline mode rewriting
+     *
+     * @param string $url absolute Site URL to change
+     * @param string $page_url URL of current page for doc relative calculation
+     * @param string $destination_url Site URL reference for rewriting
+     * @return string Rewritten URL
+     *
     */
     public function postProcessElementURLStructure(
         $url,
         $page_url,
         $site_url
     ) {
-        if ( $this->shouldUseRelativeURLs() ) {
-            $url = $this->convertToDocumentRelativeURL( $url );
+        $offline_mode = false;
+
+        if ( isset( $this->settings['allowOfflineUsage'] ) ) {
+            $offline_mode = true;
         }
 
-        if ( $this->shouldCreateOfflineURLs() ) {
-            $url = ConvertToOfflineURL::convert(
+        // TODO: move detection func higher
+        if ( isset( $this->settings['useDocumentRelativeURLs'] ) ) {
+            $url = ConvertToDocumentRelativeURL::convert(
                 $url,
                 $page_url,
-                $site_url
+                $site_url,
+                $offline_mode
+            );
+        }
+
+        if ( isset( $this->settings['useSiteRootRelativeURLs'] ) ) {
+            $url = ConvertToSiteRootRelativeURL::convert(
+                $url,
+                $this->destination_url
             );
         }
 
@@ -516,10 +560,6 @@ class HTMLProcessor extends Base {
     }
 
     public function convertToDocumentRelativeURLSrcSetURL( $url_to_change ) {
-        if ( ! $this->shouldUseRelativeURLs() ) {
-            return $url_to_change;
-        }
-
         $site_root = '';
 
         $relative_url = str_replace(
@@ -546,11 +586,8 @@ class HTMLProcessor extends Base {
         return $rewritten_url;
     }
 
-    public function convertToOfflineURLSrcSetURL(
-        $url_to_change,
-        $destination_url
-    ) {
-        if ( ! $this->shouldCreateOfflineURLs() ) {
+    public function convertToDocumentRelativeSrcSetURLs( $url_to_change ) {
+        if ( ! isset( $this->settings['useDocumentRelativeURLs'] ) ) {
             return $url_to_change;
         }
 
@@ -576,7 +613,7 @@ class HTMLProcessor extends Base {
         }
 
         $rewritten_url = str_replace(
-            $destination_url,
+            $this->destination_url,
             '',
             $url_to_change
         );
@@ -592,17 +629,6 @@ class HTMLProcessor extends Base {
         return $offline_url;
     }
 
-    public function shouldUseRelativeURLs() {
-        if ( ! isset( $this->settings['useRelativeURLs'] ) ) {
-            return false;
-        }
-
-        // NOTE: relative URLs should not be used when creating an offline ZIP
-        if ( isset( $this->settings['allowOfflineUsage'] ) ) {
-            return false;
-        }
-    }
-
     public function shouldCreateBaseHREF() {
         if ( empty( $this->settings['baseHREF'] ) ) {
             return false;
@@ -610,18 +636,6 @@ class HTMLProcessor extends Base {
 
         // NOTE: base HREF should not be set when creating an offline ZIP
         if ( isset( $this->settings['allowOfflineUsage'] ) ) {
-            return false;
-        }
-
-        return true;
-    }
-
-    public function shouldCreateOfflineURLs() {
-        if ( ! isset( $this->settings['allowOfflineUsage'] ) ) {
-            return false;
-        }
-
-        if ( $this->settings['selected_deployment_option'] != 'zip' ) {
             return false;
         }
 

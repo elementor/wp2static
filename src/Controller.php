@@ -57,8 +57,6 @@ class Controller {
             add_filter( 'menu_order', array( $instance, 'set_menu_order' ) );
         }
 
-        $instance->loadRewriteRules();
-
         $instance->settings = $instance->options->getSettings( true );
         $instance->site_url = SiteInfo::getUrl( 'site' );
 
@@ -73,6 +71,14 @@ class Controller {
             parse_url( $instance->site_url, PHP_URL_HOST );
 
         $instance->destination_url = $instance->settings['baseUrl'];
+
+        if ( ! is_string( $instance->destination_url ) ) {
+            $err = 'Destination URL not defined';
+            WsLog::l( $err );
+            throw new Exception( $err );
+        }
+
+        $instance->loadRewriteRules();
 
         return $instance;
     }
@@ -262,8 +268,8 @@ class Controller {
 
         if ( $initial_file_list_count < 1 ) {
             $err = 'Initial file list unable to be generated';
-            echo $err;
             http_response_code( 500 );
+            echo $err;
             WsLog::l( $err );
             throw new Exception( $err );
         }

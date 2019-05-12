@@ -4,15 +4,36 @@
   <tbody>
     <tr>
       <th scope="row">
-        <label for="useRelativeURLs"><?php echo __('Use relative URLs', 'static-html-output-plugin');?></label>
+        <label for="useDocumentRelativeURLs"><?php echo __('Use document-relative URLs', 'static-html-output-plugin');?></label>
       </th>
       <td>
 
-        <?php $tpl->displayCheckbox($this, 'useRelativeURLs', 'Use relative URLs'); ?>
+        <?php $tpl->displayCheckbox($this, 'useDocumentRelativeURLs', 'Use document-relative URLs'); ?>
 
         <p> URLs in the exported site will be rewritten as <a href="https://www.w3schools.com/tags/tag_base.asp" target="_blank">relative URLs</a>. ie, <code>http://mydomain.com/some_dir/some_file.jpg</code> will become <code>some_dir/some_file.jpg</code></p>
       </td>
     </tr>
+    <tr>
+      <th scope="row">
+        <label for="useSiteRootRelativeURLs"><?php echo __('Use site-root relative URLs', 'static-html-output-plugin');?></label>
+      </th>
+      <td>
+
+        <?php $tpl->displayCheckbox($this, 'useSiteRootRelativeURLs', 'Use site root-relative URLs'); ?>
+
+        <p> URLs in the exported site will be rewritten as site root-relative. ie, <code>http://mydomain.com/some_dir/some_file.jpg</code> will become <code>/some_dir/some_file.jpg</code></p>
+      </td>
+    </tr>
+      <tr>
+        <th scope="row">
+          <strong><?php echo __('Allow offline usage', 'static-html-output-plugin');?></strong>
+        </th>
+        <td>
+          <?php $tpl->displayCheckbox($this, 'allowOfflineUsage', "Check this if you're going to run your site locally, ie on a USB drive given to a client."); ?>
+
+        <p>Destination URL will be ignored. Must combine with Document-Relative URLs option. <code>index.html</code> will be appended to all directory paths</p>
+        </td>
+      </tr>
       <tr>
         <th scope="row">
           <label for="baseHREF"><?php echo __('Base HREF', 'static-html-output-plugin');?></label>
@@ -20,7 +41,9 @@
         <td>
           <?php $tpl->displayTextfield($this, 'baseHREF', 'Base HREF', '', ''); ?>
 
-          <p>Setting this will tell the browser to resolve all URLs using this as a base. ie, with a Base HREF of <code>/</code> and the relative URL setting enabled above, a relative link of <code>some_dir/some_file.jpg</code> will resolve to <code>/some_dir/some_file.jpg</code></p>
+          <p>Setting this will tell the browser to resolve all URLs using the URL you set (<code>https://mydomain.com</code>, <code>/</code>, etc).</p>
+
+          <p><b>Note:</b>If you want to deploy your static site to work in a subdirectory of any domain, set your Destination URL to the same as your Site URL and choose Use Document Relative URLs.</p>
         </td>
       </tr>
       <tr>
@@ -100,6 +123,17 @@ wp-includes/,inc/
         <?php $tpl->displayCheckbox($this, 'removeCanonical', 'Remove Canonical tags from pages (best left unchecked)'); ?>
 
         <p>Search engines use the canonical tag to identify how to index a page.  i.e domain.com/page/ and domain.com/page/index.html are 2 different URLs that represent the same page. This could trigger a duplicate content penalty.  The canonical tag tells the search engine that they are same page and they should be indexed as domain.com/page/</p><br>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <label for="Modifications"><?php echo __('Modify HTML', 'static-html-output-plugin');?></label>
+      </th>
+      <td>
+
+        <?php $tpl->displayCheckbox($this, 'createEmptyFavicon', 'Insert empty icon rel to prevent favicon requests', 'checked'); ?>
+
+        <p>If you don't have a favicon for your site, block extra requests taking up speed</p><br>
       </td>
     </tr>
   </tbody>
