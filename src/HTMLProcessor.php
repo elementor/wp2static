@@ -429,12 +429,17 @@ class HTMLProcessor extends Base {
         $page_url,
         $site_url
     ) {
+        if ( isset( $this->settings['useDocumentRelativeURLs'] ) ) {
+            $offline_mode = true;
+        }
+
         // TODO: move detection func higher
         if ( isset( $this->settings['useDocumentRelativeURLs'] ) ) {
             $url = ConvertToDocumentRelativeURL::convert(
                 $url,
                 $page_url,
-                $this->destination_url
+                $this->destination_url,
+                $offline_mode
             );
         }
 

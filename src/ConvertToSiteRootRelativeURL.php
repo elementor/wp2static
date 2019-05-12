@@ -20,9 +20,19 @@ class ConvertToSiteRootRelativeURL {
             return $url;
         }
 
-        $site_root_relative_url = str_replace(
+        $from = [
             $destination_url,
+            addcslashes( $destination_url, '/'),
+        ];
+
+        $to = [
             '/',
+            '\/',
+        ];
+
+        $site_root_relative_url = str_replace(
+            $from,
+            $to,
             $url
         );
 

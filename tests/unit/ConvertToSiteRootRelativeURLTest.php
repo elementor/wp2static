@@ -35,6 +35,17 @@ final class ConvertToSiteRootRelativeURLTest extends TestCase{
                 'https://myplaceholderdomain.com/',
                 '/'
             ],
+           'escaped nested asset' =>  [
+                'https:\/\/myplaceholderdomain.com\/mystaticsite\/some-post\/' .
+                    'link-to-an-image.jpg',
+                'https://myplaceholderdomain.com/mystaticsite/',
+                '\/some-post\/link-to-an-image.jpg',
+            ],
+           'site url' =>  [
+                'https:\/\/myplaceholderdomain.com\/',
+                'https://myplaceholderdomain.com/',
+                '\/'
+            ],
         ];
     }
 }

@@ -10,24 +10,25 @@ class ConvertToDocumentRelativeURL {
      *
      * @param string $url URL to change
      * @param string $page_url URL of current page to determine hierarchy
-     * @param string $site_url Site URL reference for rewriting
+     * @param string $destination_url Site URL reference for rewriting
+     * @param bool $offline_mode Whether to append index.html to URLs
      * @return string Rewritten URL
      */
     public static function convert(
-        $url_to_change, $page_url, $site_url
+        $url, $page_url, $destination_url, $offline_mode = false
     ) {
         $current_page_path_to_root = '';
         $current_page_path = parse_url( $page_url, PHP_URL_PATH );
 
         if ( ! is_string( $current_page_path ) ) {
-            return $url_to_change;
+            return $url;
         }
 
         $number_of_segments_in_path = explode( '/', $current_page_path );
         $num_dots_to_root = count( $number_of_segments_in_path ) - 2;
 
         $page_url_without_domain = str_replace(
-            $site_url,
+            $destination_url,
             '',
             $page_url
         );
@@ -38,16 +39,17 @@ class ConvertToDocumentRelativeURL {
 
             Match current page in target URL to determine
         */
-        if ( strpos( $url_to_change, $page_url_without_domain ) !== false ) {
+        // TODO: encountering occurrances of empty $page_url_without_domain
+        if ( strpos( $url, $page_url_without_domain ) !== false ) {
             $rewritten_url = str_replace(
                 $page_url_without_domain,
                 '',
-                $url_to_change
+                $url
             );
 
             // TODO: into one array or match/replaces
             $rewritten_url = str_replace(
-                $site_url,
+                $destination_url,
                 '',
                 $rewritten_url
             );
@@ -63,9 +65,9 @@ class ConvertToDocumentRelativeURL {
             }
 
             $rewritten_url = str_replace(
-                $site_url,
+                $destination_url,
                 '',
-                $url_to_change
+                $url
             );
 
             $offline_url = $current_page_path_to_root . $rewritten_url;
@@ -108,9 +110,11 @@ class ConvertToDocumentRelativeURL {
             return false;
         }
 
-        if ( strpos( basename( $offline_url ), '.' ) === false ) {
-            $offline_url .= '/index.html';
-            $offline_url = str_replace( '//', '/', $offline_url );
+        if ( $offline_mode ) {
+            if ( strpos( basename( $offline_url ), '.' ) === false ) {
+                $offline_url .= '/index.html';
+                $offline_url = str_replace( '//', '/', $offline_url );
+            }
         }
 
         return $offline_url;

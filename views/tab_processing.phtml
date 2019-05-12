@@ -26,6 +26,16 @@
     </tr>
       <tr>
         <th scope="row">
+          <strong><?php echo __('Allow offline usage', 'static-html-output-plugin');?></strong>
+        </th>
+        <td>
+          <?php $tpl->displayCheckbox($this, 'allowOfflineUsage', "Check this if you're going to run your site locally, ie on a USB drive given to a client."); ?>
+
+        <p>Destination URL will be ignored. Must combine with Document-Relative URLs option. <code>index.html</code> will be appended to all directory paths</p>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
           <label for="baseHREF"><?php echo __('Base HREF', 'static-html-output-plugin');?></label>
         </th>
         <td>
