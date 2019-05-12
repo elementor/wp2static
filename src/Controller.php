@@ -326,7 +326,9 @@ class Controller {
         $this->exporter = new Exporter();
 
         $this->exporter->pre_export_cleanup();
-        $this->exporter->cleanup_leftover_archives();
+        
+        // TODO: kill this / make UI/CLI option to delete export dir
+        // $this->exporter->cleanup_leftover_archives();
 
         $archive = new Archive();
         $archive->create();

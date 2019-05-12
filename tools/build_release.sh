@@ -13,7 +13,8 @@ mkdir $TMP_DIR/static-html-output-plugin
 
 
 cp -r $EXEC_DIR/languages $TMP_DIR/static-html-output-plugin/
-cp -r $EXEC_DIR/plugin $TMP_DIR/static-html-output-plugin/
+cp -r $EXEC_DIR/src $TMP_DIR/static-html-output-plugin/
+cp -r $EXEC_DIR/vendor $TMP_DIR/static-html-output-plugin/
 cp -r $EXEC_DIR/readme.txt $TMP_DIR/static-html-output-plugin/
 cp -r $EXEC_DIR/views $TMP_DIR/static-html-output-plugin/
 cp -r $EXEC_DIR/wp2static.php $TMP_DIR/static-html-output-plugin/

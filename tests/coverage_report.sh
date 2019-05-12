@@ -8,6 +8,7 @@ find ./src/ -name "*.php" -exec basename {} \; | sort > /tmp/classes
 
 printf "\\n\\nFollowing classes are missing unit tests:\\n\\n"
 
-diff --suppress-common-lines /tmp/unittests /tmp/classes | sed 's/> //g' | grep php
+# diff --suppress-common-lines /tmp/unittests /tmp/classes | sed 's/> //g' | grep php
+diff /tmp/unittests /tmp/classes | sed 's/> //g' | grep php
 
 printf "\\n\\n"
