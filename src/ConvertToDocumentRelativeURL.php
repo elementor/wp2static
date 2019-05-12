@@ -2,20 +2,21 @@
 
 namespace WP2Static;
 
-class ConvertToDocumentRelativeURL {
+use Exception;
 
+class ConvertToDocumentRelativeURL {
     /*
      * Convert absolute URL to document-relative.
      * Required for offline URLs
      *
      * @param string $url URL to change
      * @param string $page_url URL of current page to determine hierarchy
-     * @param string $destination_url Site URL reference for rewriting
+     * @param string $site_url Site URL reference for rewriting
      * @param bool $offline_mode Whether to append index.html to URLs
      * @return string Rewritten URL
      */
     public static function convert(
-        $url, $page_url, $destination_url, $offline_mode = false
+        $url, $page_url, $site_url, $offline_mode = false
     ) {
         $current_page_path_to_root = '';
         $current_page_path = parse_url( $page_url, PHP_URL_PATH );
@@ -28,10 +29,20 @@ class ConvertToDocumentRelativeURL {
         $num_dots_to_root = count( $number_of_segments_in_path ) - 2;
 
         $page_url_without_domain = str_replace(
-            $destination_url,
+            $site_url,
             '',
             $page_url
         );
+
+        // TODO: encountering occurrances of empty $page_url_without_domain
+        if ( ! is_string( $page_url_without_domain ) ) {
+            $err = 'Warning: page URL without domain encountered ' .
+                "url: {$url} \\n page_url: $page_url \\n " .
+                "site_url: {$site_url} \\n offline mode: $offline_mode";
+            WsLog::l( $err );
+
+            return $url;
+        }
 
         /*
             For target URLs at the same level or higher level as the current
@@ -39,7 +50,6 @@ class ConvertToDocumentRelativeURL {
 
             Match current page in target URL to determine
         */
-        // TODO: encountering occurrances of empty $page_url_without_domain
         if ( strpos( $url, $page_url_without_domain ) !== false ) {
             $rewritten_url = str_replace(
                 $page_url_without_domain,
@@ -49,7 +59,7 @@ class ConvertToDocumentRelativeURL {
 
             // TODO: into one array or match/replaces
             $rewritten_url = str_replace(
-                $destination_url,
+                $site_url,
                 '',
                 $rewritten_url
             );
@@ -65,7 +75,7 @@ class ConvertToDocumentRelativeURL {
             }
 
             $rewritten_url = str_replace(
-                $destination_url,
+                $site_url,
                 '',
                 $url
             );
@@ -116,7 +126,7 @@ class ConvertToDocumentRelativeURL {
 
             $basename_doesnt_contain_dot =
                 strpos( basename( $offline_url ), '.' ) === false;
-            
+
             if ( $last_char_is_slash || $basename_doesnt_contain_dot ) {
                 $offline_url .= '/index.html';
                 $offline_url = str_replace( '//', '/', $offline_url );

@@ -7,13 +7,13 @@ use PHPUnit\Framework\TestCase;
 final class ConvertToDocumentRelativeURLTest extends TestCase{
 
     /**
-     * @dataProvider offlineURLConversionProvider
+     * @dataProvider documentRelativeURLConversionProvider
      */
     public function testaddsRelativePathToURL(
-        $url, $page_url, $destination_url, $offline_mode, $expectation
+        $url, $page_url, $site_url, $offline_mode, $expectation
     ) {
         $converted_url = ConvertToDocumentRelativeURL::convert(
-            $url, $page_url, $destination_url, $offline_mode
+            $url, $page_url, $site_url, $offline_mode
         );
 
         $this->assertEquals(
@@ -22,8 +22,16 @@ final class ConvertToDocumentRelativeURLTest extends TestCase{
         );
     }
 
-    public function offlineURLConversionProvider() {
+    public function documentRelativeURLConversionProvider() {
         return [
+           'destination URL with subdir nested asset' =>  [
+                'https://myplaceholderdomain.com/mystaticsite/mytheme/' .
+                    'assets/link-to-an-image.jpg',
+                'https://myplaceholderdomain.com/some-post/',
+                'https://myplaceholderdomain.com/mystaticsite/',
+                false,
+                '../mytheme/assets/link-to-an-image.jpg'
+            ],
            'document relative asset' =>  [
                 'https://myplaceholderdomain.com/mytheme/' .
                     'assets/link-to-an-image.jpg',

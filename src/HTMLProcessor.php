@@ -114,7 +114,7 @@ class HTMLProcessor extends Base {
                     if ( isset( $this->settings['removeCanonical'] ) ) {
                         $this->removeCanonicalLink( $element );
                     }
-                    
+
                     break;
                 case 'script':
                     /*
@@ -142,7 +142,7 @@ class HTMLProcessor extends Base {
         );
 
         // allow empty favicon to prevent extra browser request
-        if ( isset( $this->settings['createEmptyFavicon'] )) {
+        if ( isset( $this->settings['createEmptyFavicon'] ) ) {
             $this->createEmptyFaviconLink( $this->xml_doc );
         }
 
@@ -181,7 +181,7 @@ class HTMLProcessor extends Base {
             if ( $this->head_element ) {
                 $first_head_child = $this->head_element->firstChild;
                 $this->head_element->insertBefore(
-                    $this->base_element,
+                    $base_element,
                     $first_head_child
                 );
             } else {
@@ -273,10 +273,7 @@ class HTMLProcessor extends Base {
 
                 // rm query string
                 $url = strtok( $absolute_url, '?' );
-                $url = $this->convertToDocumentRelativeURLSrcSetURL(
-                    $url,
-                    $this->destination_url
-                );
+                $url = $this->convertToDocumentRelativeURLSrcSetURL( $url );
             }
 
             $new_src_set[] = "{$url} {$dimension}";
@@ -429,7 +426,9 @@ class HTMLProcessor extends Base {
         $page_url,
         $site_url
     ) {
-        if ( isset( $this->settings['useDocumentRelativeURLs'] ) ) {
+        $offline_mode = false;
+
+        if ( isset( $this->settings['allowOfflineUsage'] ) ) {
             $offline_mode = true;
         }
 
@@ -438,7 +437,7 @@ class HTMLProcessor extends Base {
             $url = ConvertToDocumentRelativeURL::convert(
                 $url,
                 $page_url,
-                $this->destination_url,
+                $site_url,
                 $offline_mode
             );
         }
@@ -587,10 +586,7 @@ class HTMLProcessor extends Base {
         return $rewritten_url;
     }
 
-    public function convertToDocumentRelativeSrcSetURLs(
-        $url_to_change,
-        $destination_url
-    ) {
+    public function convertToDocumentRelativeSrcSetURLs( $url_to_change ) {
         if ( ! isset( $this->settings['useDocumentRelativeURLs'] ) ) {
             return $url_to_change;
         }
@@ -617,7 +613,7 @@ class HTMLProcessor extends Base {
         }
 
         $rewritten_url = str_replace(
-            $destination_url,
+            $this->destination_url,
             '',
             $url_to_change
         );
