@@ -408,29 +408,38 @@ class HTMLProcessor extends Base {
     }
 
     /*
-        After we have normalized the element's URL and have an absolute
-        Placeholder URL, we can perform transformations, such as making it
-        an offline URL or document relative
+     * After we have normalized the element's URL and have an absolute
+     * Placeholder URL, we can perform transformations, such as making it
+     * an offline URL or document relative
 
-        site root relative URLs can be bulk rewritten before outputting HTML
-        so we don't both doing those here
+     * site root relative URLs can be bulk rewritten before outputting HTML
+     * so we don't both doing those here
 
-        We need to do while iterating the URLs, as we cannot accurately
-        iterate individual URLs in bulk rewriting mode and each URL
-        needs to be rewritten in a different manner for offline mode rewriting
-
+     * We need to do while iterating the URLs, as we cannot accurately
+     * iterate individual URLs in bulk rewriting mode and each URL
+     * needs to be rewritten in a different manner for offline mode rewriting
+     *
+     * @param string $url absolute Site URL to change
+     * @param string $page_url URL of current page for doc relative calculation
+     * @param string $site_url Site URL reference for rewriting
+     * @return string Rewritten URL
+     *
     */
     public function postProcessElementURLStructure(
         $url,
         $page_url,
         $site_url
     ) {
-        if ( $this->shouldUseRelativeURLs() ) {
-            $url = $this->convertToDocumentRelativeURL( $url );
-        }
+        // TODO: move detection func higher
+        if ( isset( $this->settings['useDocumentRelativeURLs'] ) ) {
+            $url = ConvertToDocumentRelativeURL::convert(
+                $url,
+                $page_url,
+                $site_url
+            );
 
-        if ( $this->shouldCreateOfflineURLs() ) {
-            $url = ConvertToOfflineURL::convert(
+        if ( isset( $this->settings['useSiteRootRelativeURLs'] ) ) {
+            $url = ConvertToSiteRootRelativeURL::convert(
                 $url,
                 $page_url,
                 $site_url
@@ -578,11 +587,11 @@ class HTMLProcessor extends Base {
         return $rewritten_url;
     }
 
-    public function convertToOfflineURLSrcSetURL(
+    public function convertToDocumentRelativeSrcSetURLs(
         $url_to_change,
         $destination_url
     ) {
-        if ( ! $this->shouldCreateOfflineURLs() ) {
+        if ( ! isset( $this->settings['useDocumentRelativeURLs'] ) ) {
             return $url_to_change;
         }
 
@@ -624,17 +633,6 @@ class HTMLProcessor extends Base {
         return $offline_url;
     }
 
-    public function shouldUseRelativeURLs() {
-        if ( ! isset( $this->settings['useRelativeURLs'] ) ) {
-            return false;
-        }
-
-        // NOTE: relative URLs should not be used when creating an offline ZIP
-        if ( isset( $this->settings['allowOfflineUsage'] ) ) {
-            return false;
-        }
-    }
-
     public function shouldCreateBaseHREF() {
         if ( empty( $this->settings['baseHREF'] ) ) {
             return false;
@@ -642,18 +640,6 @@ class HTMLProcessor extends Base {
 
         // NOTE: base HREF should not be set when creating an offline ZIP
         if ( isset( $this->settings['allowOfflineUsage'] ) ) {
-            return false;
-        }
-
-        return true;
-    }
-
-    public function shouldCreateOfflineURLs() {
-        if ( ! isset( $this->settings['allowOfflineUsage'] ) ) {
-            return false;
-        }
-
-        if ( $this->settings['selected_deployment_option'] != 'zip' ) {
             return false;
         }
 

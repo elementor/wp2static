@@ -53,7 +53,8 @@ class Options {
         'useActiveFTP',
         'useBaseHref',
         'useBasicAuth',
-        'useRelativeURLs',
+        'useDocumentRelativeURLs',
+        'useSiteRootRelativeURLs',
     );
 
     public $whitelisted_keys = array(
@@ -109,7 +110,8 @@ class Options {
         'useActiveFTP',
         'useBaseHref',
         'useBasicAuth',
-        'useRelativeURLs',
+        'useDocumentRelativeURLs',
+        'useSiteRootRelativeURLs',
     );
 
     public function __construct( $option_key ) {

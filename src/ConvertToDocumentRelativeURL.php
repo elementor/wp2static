@@ -2,22 +2,17 @@
 
 namespace WP2Static;
 
-class ConvertToOfflineURL {
+class ConvertToDocumentRelativeURL {
+
     /*
-        When publishing our static site for offline usage, we need to ensure a
-        few transformations are made:
-
-         - with no site relativity possible to rely on, we need all links to be
-           document relative, ie to go to parent page, use ../page not /page or
-           file:///page (allowing for C:\page,/home/me/page, etc
-
-         - with no webserver to render default documents like /index.html, we
-           need to rewrite all links to full post/index.html style URLs
-
-         - we need these URLs to already be rewritten to the site_url
-           before we can process them
-
-    */
+     * Convert absolute URL to document-relative.
+     * Required for offline URLs
+     *
+     * @param string $url URL to change
+     * @param string $page_url URL of current page to determine hierarchy
+     * @param string $site_url Site URL reference for rewriting
+     * @return string Rewritten URL
+     */
     public static function convert(
         $url_to_change, $page_url, $site_url
     ) {

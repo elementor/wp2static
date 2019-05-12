@@ -1,0 +1,40 @@
+<?php
+
+namespace WP2Static;
+
+use PHPUnit\Framework\TestCase;
+
+final class ConvertToSiteRootRelativeURLTest extends TestCase{
+
+    /**
+     * @dataProvider siteRootRelativeURLConversionProvider
+     */
+    public function testconvertsToSiteRootRelativeURL(
+        $url_to_change, $site_url, $expectation
+    ) {
+        $converted_url = ConvertToSiteRootRelativeURL::convert(
+            $url_to_change, $site_url
+        );
+
+        $this->assertEquals(
+            $expectation,
+            $converted_url
+        );
+    }
+
+    public function siteRootRelativeURLConversionProvider() {
+        return [
+           'nested asset' =>  [
+                'https://myplaceholderdomain.com/some-post/' .
+                    'link-to-an-image.jpg',
+                'https://myplaceholderdomain.com/',
+                '/some-post/link-to-an-image.jpg',
+            ],
+           'site url' =>  [
+                'https://myplaceholderdomain.com/',
+                'https://myplaceholderdomain.com/',
+                '/'
+            ],
+        ];
+    }
+}

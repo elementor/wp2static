@@ -4,7 +4,7 @@ namespace WP2Static;
 
 use PHPUnit\Framework\TestCase;
 
-final class ConvertToOfflineURLTest extends TestCase{
+final class ConvertToDocumentRelativeURLTest extends TestCase{
 
     /**
      * @dataProvider offlineURLConversionProvider
@@ -12,7 +12,7 @@ final class ConvertToOfflineURLTest extends TestCase{
     public function testaddsRelativePathToURL(
         $url_to_change, $page_url, $site_url, $expectation
     ) {
-        $converted_url = ConvertToOfflineURL::convert(
+        $converted_url = ConvertToDocumentRelativeURL::convert(
             $url_to_change, $page_url, $site_url
         );
 
