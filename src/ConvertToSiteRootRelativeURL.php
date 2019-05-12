@@ -20,6 +20,8 @@ class ConvertToSiteRootRelativeURL {
             return $url;
         }
 
+        // TODO: do we ever receive escaped URLs to this method?
+        // if isInternalLink blocks it, then this is wasted rewrite 
         $from = [
             $destination_url,
             addcslashes( $destination_url, '/'),

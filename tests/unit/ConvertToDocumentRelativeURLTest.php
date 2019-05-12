@@ -69,6 +69,13 @@ final class ConvertToDocumentRelativeURLTest extends TestCase{
                 true,
                 '../../../../../1/2/3/4/5/index.html'
             ],
+           'link to homepage from child adds index.html' =>  [
+                'https://a.com/',
+                'https://a.com/lvl1/2/',
+                'https://a.com/',
+                true,
+                '../../index.html'
+            ],
         ];
     }
 }
