@@ -61,6 +61,7 @@ class CSSProcessor extends WP2Static {
         $this->placeholder_url = $protocol . 'PLACEHOLDER.wpsho/';
 
         $this->raw_css = $css_document;
+
         // initial rewrite of all site URLs to placeholder URLs
         $this->rewriteSiteURLsToPlaceholder();
 
@@ -89,8 +90,13 @@ class CSSProcessor extends WP2Static {
 
                 $this->addDiscoveredURL( $original_link );
 
-                if ( $this->isInternalLink( $original_link ) ) {
-                    if ( ! isset( $this->settings['rewrite_rules'] ) ) {
+                // #401 - url embeded in css rules not being rewritten
+                //        Check for the presence of PLACEHOLDER.wpsho within the URL
+
+                if ( $this->isInternalLink( $original_link ) || strpos( $original_link, $this->placeholder_url ) !== false ) 
+                {
+                    if ( ! isset( $this->settings['rewrite_rules'] ) ) 
+                    {
                         $this->settings['rewrite_rules'] = '';
                     }
 
@@ -136,7 +142,7 @@ class CSSProcessor extends WP2Static {
                 }
             }
         }
-
+        
         $this->writeDiscoveredURLs();
 
         return true;

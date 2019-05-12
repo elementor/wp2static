@@ -3,7 +3,11 @@
  * Plugin Name: WP2Static
  * Plugin URI:  https://wp2static.com
  * Description: Security & Performance via static website publishing. One plugin to solve WordPress's biggest problems.
+<<<<<<< HEAD
  * Version:     6.6.5
+=======
+ * Version:     6.6.8-dev-MED
+>>>>>>> 97671a0... #401 - url embeded in css rules not being rewritten
  * Author:      Leon Stafford
  * Author URI:  https://leonstafford.github.io
  * Text Domain: static-html-output-plugin
