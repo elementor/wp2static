@@ -111,7 +111,13 @@ class ConvertToDocumentRelativeURL {
         }
 
         if ( $offline_mode ) {
-            if ( strpos( basename( $offline_url ), '.' ) === false ) {
+            // if last char is a ., we're linking to a dir path, add index.html
+            $last_char_is_slash = substr( $offline_url, -1 ) == '/';
+
+            $basename_doesnt_contain_dot =
+                strpos( basename( $offline_url ), '.' ) === false;
+            
+            if ( $last_char_is_slash || $basename_doesnt_contain_dot ) {
                 $offline_url .= '/index.html';
                 $offline_url = str_replace( '//', '/', $offline_url );
             }

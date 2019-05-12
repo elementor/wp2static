@@ -76,6 +76,13 @@ final class ConvertToDocumentRelativeURLTest extends TestCase{
                 true,
                 '../../index.html'
             ],
+           'link to root asset from child' =>  [
+                'https://a.com/animage.jpg',
+                'https://a.com/lvl1/2/',
+                'https://a.com/',
+                true,
+                '../../animage.jpg'
+            ],
         ];
     }
 }
