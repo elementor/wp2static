@@ -37,7 +37,6 @@ class SiteCrawler extends Base {
         $this->urls_to_crawl = '';
         $this->rewrite_rules = $rewrite_rules;
         $this->site_url_host = $site_url_host;
-        $this->site_url_host = $destination_url;
     }
 
     public function crawl() {
@@ -128,7 +127,7 @@ class SiteCrawler extends Base {
         foreach ( $batch_of_links_to_crawl as $link_to_crawl ) {
             $url = $link_to_crawl;
 
-            $full_url = SiteInfo::getUrl( 'site' ) . ltrim( $url, '/' );
+            $page_url = SiteInfo::getUrl( 'site' ) . ltrim( $url, '/' );
 
             foreach ( $exclusions as $exclusion ) {
                 $exclusion = trim( $exclusion );
@@ -145,7 +144,7 @@ class SiteCrawler extends Base {
                 }
             }
 
-            $this->crawlSingleURL( $full_url );
+            $this->crawlSingleURL( $page_url );
         }
 
         $this->checkIfMoreCrawlingNeeded( $this->urls_to_crawl );
@@ -285,22 +284,22 @@ class SiteCrawler extends Base {
         $curl_content_type = isset( $curl_info['content_type'] ) ?
             $curl_info['content_type'] : '';
 
-        $full_url = $curl_info['url'];
+        $page_url = $curl_info['url'];
 
-        $url = $this->getRelativeURLFromFullURL( $full_url );
+        $url = $this->getRelativeURLFromFullURL( $page_url );
 
         $good_response_codes = array( '200', '201', '301', '302', '304' );
 
         if ( ! in_array( $status_code, $good_response_codes ) ) {
             WsLog::l(
-                'BAD RESPONSE STATUS (' . $status_code . '): ' . $full_url
+                'BAD RESPONSE STATUS (' . $status_code . '): ' . $page_url
             );
         }
 
         $base_url = $this->settings['baseUrl'];
 
         $file_type = $this->detectFileType(
-            $full_url,
+            $page_url,
             $curl_content_type
         );
 
@@ -315,7 +314,7 @@ class SiteCrawler extends Base {
 
                 $this->processed_file = $processor->processHTML(
                     $output,
-                    $full_url
+                    $page_url
                 );
 
                 if ( $this->processed_file ) {
@@ -332,7 +331,7 @@ class SiteCrawler extends Base {
 
                     $this->processed_file = $processor->processCSS(
                         $output,
-                        $full_url
+                        $page_url
                     );
 
                     if ( $this->processed_file ) {
@@ -343,7 +342,7 @@ class SiteCrawler extends Base {
 
                     $this->processed_file = $processor->processTXT(
                         $output,
-                        $full_url
+                        $page_url
                     );
 
                     if ( $this->processed_file ) {
@@ -360,7 +359,7 @@ class SiteCrawler extends Base {
 
                 $this->processed_file = $processor->processTXT(
                     $output,
-                    $full_url
+                    $page_url
                 );
 
                 if ( $this->processed_file ) {
@@ -398,7 +397,7 @@ class SiteCrawler extends Base {
 
     }
 
-    public function getRelativeURLFromFullURL( $full_url ) {
+    public function getRelativeURLFromFullURL( $page_url ) {
         $site_url = SiteInfo::getUrl( 'site' );
 
         if ( ! is_string( $site_url ) ) {
@@ -407,13 +406,13 @@ class SiteCrawler extends Base {
             throw new Exception( $err );
         }
 
-        $this->full_url = $site_url .
+        $this->page_url = $site_url .
             ltrim( $this->url, '/' );
 
         $relative_url = str_replace(
             $site_url,
             '',
-            $full_url
+            $page_url
         );
 
         // ensure consistency with leading slash
