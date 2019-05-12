@@ -102,6 +102,17 @@ wp-includes/,inc/
         <p>Search engines use the canonical tag to identify how to index a page.  i.e domain.com/page/ and domain.com/page/index.html are 2 different URLs that represent the same page. This could trigger a duplicate content penalty.  The canonical tag tells the search engine that they are same page and they should be indexed as domain.com/page/</p><br>
       </td>
     </tr>
+    <tr>
+      <th scope="row">
+        <label for="Modifications"><?php echo __('Modify HTML', 'static-html-output-plugin');?></label>
+      </th>
+      <td>
+
+        <?php $tpl->displayCheckbox($this, 'createEmptyFavicon', 'Insert empty icon rel to prevent favicon requests', 'checked'); ?>
+
+        <p>If you don't have a favicon for your site, block extra requests taking up speed</p><br>
+      </td>
+    </tr>
   </tbody>
 </table>
 

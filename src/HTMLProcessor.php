@@ -114,6 +114,7 @@ class HTMLProcessor extends Base {
                     if ( isset( $this->settings['removeCanonical'] ) ) {
                         $this->removeCanonicalLink( $element );
                     }
+                    
                     break;
                 case 'script':
                     /*
@@ -139,6 +140,11 @@ class HTMLProcessor extends Base {
             $this->xml_doc,
             $this->base_tag_exists
         );
+
+        // allow empty favicon to prevent extra browser request
+        if ( isset( $this->settings['createEmptyFavicon'] )) {
+            $this->createEmptyFaviconLink( $this->xml_doc );
+        }
 
         $this->stripHTMLComments();
 
@@ -183,6 +189,32 @@ class HTMLProcessor extends Base {
                     'No head element to attach base to: ' . $this->page_url
                 );
             }
+        }
+    }
+
+    public function createEmptyFaviconLink( $xml_doc ) {
+        $link_element = $xml_doc->createElement( 'link' );
+        $link_element->setAttribute(
+            'rel',
+            'icon'
+        );
+
+        $link_element->setAttribute(
+            'href',
+            'data:,'
+        );
+
+        if ( $this->head_element ) {
+            $first_head_child = $this->head_element->firstChild;
+            $this->head_element->insertBefore(
+                $link_element,
+                $first_head_child
+            );
+        } else {
+            WsLog::l(
+                'No head element to attach favicon link to to: ' .
+                $this->page_url
+            );
         }
     }
 
