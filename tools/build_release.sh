@@ -6,6 +6,7 @@ EXEC_DIR=$(pwd)
 # give argument for name of zip to be created, ie user-leon-test-new-function
 
 TMP_DIR=$HOME/plugintmp
+rm -Rf $TMP_DIR
 mkdir -p $TMP_DIR
 
 rm -Rf $TMP_DIR/static-html-output-plugin
@@ -21,8 +22,6 @@ cp -r $EXEC_DIR/wp2static.php $TMP_DIR/static-html-output-plugin/
 cp -r $EXEC_DIR/wp2static.css $TMP_DIR/static-html-output-plugin/
 
 cd $TMP_DIR
-
-rm static-html-output-plugin/plugin/.htaccess
 
 # tidy permissions
 find . -type d -exec chmod 755 {} \;

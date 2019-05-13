@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 echo "compressing: $1"
 php -w $1 > $1BAK
