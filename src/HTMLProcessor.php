@@ -331,14 +331,20 @@ class HTMLProcessor extends Base {
 
         $url = $this->removeQueryStringFromInternalLink( $url );
 
-        // check url has extension at all
-        $extension = pathinfo( $url, PATHINFO_EXTENSION );
+        if ( isset( $this->settings['includeDiscoveredAssets'] ) ) {
+            // check url has extension at all
+            $extension = pathinfo( $url, PATHINFO_EXTENSION );
 
-        // only try to dl urls with extension
-        if ( $extension ) {
-            // TODO: where does this go?
-            $this->downloadAsset( $url, $extension );
+            // only try to dl urls with extension
+            if ( $extension ) {
+                // TODO: where is the best place to put this
+                // considering caching, ie, build array here
+                // exclude Excludes, already crawled lists
+                // then iterate just the ones not already on disk
+                $this->downloadAsset( $url, $extension );
+            }
         }
+        
 
         // after normalizing, we need to rewrite to Destination URL
         $url = str_replace(
@@ -704,10 +710,9 @@ class HTMLProcessor extends Base {
                     $url
                 );
 
-                $this->archive_dir = SiteInfo::getPath( 'uploads' ) .
-                    'wp2static-exported-site';
-
-                $filename = $this->archive_dir . $save_path;
+                $filename = SiteInfo::getPath( 'uploads' ) .
+                    'wp2static-exported-site/' .
+                    $save_path;
 
                 // check if file exists on disk
                 if ( is_file( $filename ) ) {
@@ -764,7 +769,7 @@ class HTMLProcessor extends Base {
                 );
 
                 if ( ! $result ) {
-                    error_log('attemptubng to save' . $filename);
+                    error_log('attempting to save' . $filename);
                 }
 
                 //chmod( $filename, 0664 );

@@ -16,9 +16,6 @@ class SitePublisher {
         $this->export_file_list =
             SiteInfo::getPath( 'uploads' ) .
                 'wp2static-working-files/FILES-TO-DEPLOY.txt';
-
-        // TODO: should be removable;test
-        $this->archive_dir = '/wp2static-exported-site/';
     }
 
     public function pauseBetweenAPICalls() {
@@ -81,24 +78,11 @@ class SitePublisher {
         return $original_file_without_archive;
     }
 
-    public function getArchivePathForReplacement( $archive_path ) {
-        $local_path_to_strip = $archive_path;
-        $local_path_to_strip = rtrim( $local_path_to_strip, '/' );
-
-        $local_path_to_strip = str_replace(
-            '//',
-            '/',
-            $local_path_to_strip
-        );
-
-        return $local_path_to_strip;
-    }
-
     public function getRemoteDeploymentPath(
-        $dir, $file_in_archive, $archive_path_to_replace, $basename_in_target
+        $dir, $file_in_archive, $archive_path, $basename_in_target
         ) {
         $deploy_path = str_replace(
-            $archive_path_to_replace,
+            $archive_path,
             '',
             $dir
         );
@@ -118,8 +102,8 @@ class SitePublisher {
     }
 
     public function createDeploymentList( $dir, $basename_in_target ) {
-        $archive_path_to_replace =
-            $this->getArchivePathForReplacement( $this->archive->path );
+        $archive_path =
+            SiteInfo::getPath( 'uploads' ) . 'wp2static-exported-site';
 
         $dir_files = scandir( $dir );
 
@@ -145,14 +129,14 @@ class SitePublisher {
                 $local_file_path =
                     $this->getLocalFileToDeploy(
                         $file_in_archive,
-                        $archive_path_to_replace
+                        $archive_path
                     );
 
                 $remote_deployment_path =
                     $this->getRemoteDeploymentPath(
                         $dir,
                         $file_in_archive,
-                        $archive_path_to_replace,
+                        $archive_path,
                         $basename_in_target
                     );
 
