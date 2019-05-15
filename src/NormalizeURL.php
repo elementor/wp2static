@@ -5,13 +5,12 @@
 
     take a document-relative URL like '../theimage.jpg'
 
-    a site root-relative URL like '/theimage.jpg'
-
     and the current page URL like https://site.com/cat/post/
 
-    and return the full path to the first URL, like
+    and return the full path to the URL, like
 
-    and the current page URL like https://site.com/cat/theimage.jpg
+    https://site.com/cat/theimage.jpg
+
 
 */
 

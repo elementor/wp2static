@@ -114,6 +114,8 @@ class Request {
         }
 
         curl_close( $ch );
+
+        return $this->status_code;
     }
 
     public function putWithJSONPayloadCustomHeaders(

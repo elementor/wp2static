@@ -6,19 +6,27 @@ use Exception;
 
 class SiteCrawler extends Base {
 
-    public function __construct() {
-        $this->loadSettings(
-            array(
-                'wpenv',
-                'crawling',
-                'processing',
-                'advanced',
-            )
-        );
+    public function __construct(
+        $rewrite_rules,
+        $site_url_host,
+        $destination_url
+    ) {
+        $this->loadSettings();
 
-        if ( isset( $this->settings['crawl_delay'] ) ) {
-            sleep( $this->settings['crawl_delay'] );
-        }
+        /*
+         TODO: implement crawl-caching, to greatly speed up the process
+         *
+         * helps to recover from mid-crawl failures. Use export-dir, keep
+         * between runs. Load cache when starting a run. Check speed DB vs disk
+         *
+         * option in UI to delete the cache dir contents, else will
+         * always append
+         *
+
+         * for saving detected static assets during crawl, check both Crawl
+         * Cache and whether file exists within export dir
+         *
+         */
 
         $this->processed_file = '';
         $this->file_type = '';
@@ -27,27 +35,21 @@ class SiteCrawler extends Base {
         $this->archive_dir = '';
         $this->list_of_urls_to_crawl_path = '';
         $this->urls_to_crawl = '';
-
-        if ( ! defined( 'WP_CLI' ) ) {
-            // @codingStandardsIgnoreStart
-            if ( $_POST['ajax_action'] === 'crawl_site' ) {
-                $this->crawl_site();
-            }
-            // @codingStandardsIgnoreEnd
-        }
+        $this->rewrite_rules = $rewrite_rules;
+        $this->site_url_host = $site_url_host;
+        $this->destination_url = $destination_url;
     }
 
-    public function crawl_site() {
+    public function crawl() {
         $this->list_of_urls_to_crawl_path =
             SiteInfo::getPath( 'uploads' ) .
             'wp2static-working-files/FINAL-CRAWL-LIST.txt';
 
         if ( ! is_file( $this->list_of_urls_to_crawl_path ) ) {
-            WsLog::l(
-                'ERROR: LIST OF URLS TO CRAWL NOT FOUND AT: ' .
-                    $this->list_of_urls_to_crawl_path
-            );
-            die();
+            $err = 'ERROR: LIST OF URLS TO CRAWL NOT FOUND AT: ' .
+                $this->list_of_urls_to_crawl_path;
+            WsLog::l( $err );
+            throw new Exception( $err );
         } else {
             if ( filesize( $this->list_of_urls_to_crawl_path ) ) {
                 $this->crawlABitMore();
@@ -126,7 +128,7 @@ class SiteCrawler extends Base {
         foreach ( $batch_of_links_to_crawl as $link_to_crawl ) {
             $url = $link_to_crawl;
 
-            $full_url = SiteInfo::getUrl( 'site' ) . ltrim( $url, '/' );
+            $page_url = SiteInfo::getUrl( 'site' ) . ltrim( $url, '/' );
 
             foreach ( $exclusions as $exclusion ) {
                 $exclusion = trim( $exclusion );
@@ -143,7 +145,7 @@ class SiteCrawler extends Base {
                 }
             }
 
-            $this->crawlSingleURL( $full_url );
+            $this->crawlSingleURL( $page_url );
         }
 
         $this->checkIfMoreCrawlingNeeded( $this->urls_to_crawl );
@@ -159,7 +161,7 @@ class SiteCrawler extends Base {
             if ( ! defined( 'WP_CLI' ) ) {
                 echo $remaining_urls;
             } else {
-                $this->crawl_site();
+                $this->crawl();
             }
         } else {
             WsLog::l( 'Crawling URLs phase completed' );
@@ -283,32 +285,37 @@ class SiteCrawler extends Base {
         $curl_content_type = isset( $curl_info['content_type'] ) ?
             $curl_info['content_type'] : '';
 
-        $full_url = $curl_info['url'];
+        $page_url = $curl_info['url'];
 
-        $url = $this->getRelativeURLFromFullURL( $full_url );
+        $url = $this->getRelativeURLFromFullURL( $page_url );
 
         $good_response_codes = array( '200', '201', '301', '302', '304' );
 
         if ( ! in_array( $status_code, $good_response_codes ) ) {
             WsLog::l(
-                'BAD RESPONSE STATUS (' . $status_code . '): ' . $full_url
+                'BAD RESPONSE STATUS (' . $status_code . '): ' . $page_url
             );
         }
 
         $base_url = $this->settings['baseUrl'];
 
         $file_type = $this->detectFileType(
-            $full_url,
+            $page_url,
             $curl_content_type
         );
 
         switch ( $file_type ) {
             case 'html':
-                $processor = new HTMLProcessor();
+                $processor = new HTMLProcessor(
+                    $this->rewrite_rules,
+                    $this->site_url_host,
+                    $this->destination_url,
+                    $this->settings['rewrite_rules']
+                );
 
                 $this->processed_file = $processor->processHTML(
                     $output,
-                    $full_url
+                    $page_url
                 );
 
                 if ( $this->processed_file ) {
@@ -325,7 +332,7 @@ class SiteCrawler extends Base {
 
                     $this->processed_file = $processor->processCSS(
                         $output,
-                        $full_url
+                        $page_url
                     );
 
                     if ( $this->processed_file ) {
@@ -336,7 +343,7 @@ class SiteCrawler extends Base {
 
                     $this->processed_file = $processor->processTXT(
                         $output,
-                        $full_url
+                        $page_url
                     );
 
                     if ( $this->processed_file ) {
@@ -353,7 +360,7 @@ class SiteCrawler extends Base {
 
                 $this->processed_file = $processor->processTXT(
                     $output,
-                    $full_url
+                    $page_url
                 );
 
                 if ( $this->processed_file ) {
@@ -391,7 +398,7 @@ class SiteCrawler extends Base {
 
     }
 
-    public function getRelativeURLFromFullURL( $full_url ) {
+    public function getRelativeURLFromFullURL( $page_url ) {
         $site_url = SiteInfo::getUrl( 'site' );
 
         if ( ! is_string( $site_url ) ) {
@@ -400,13 +407,13 @@ class SiteCrawler extends Base {
             throw new Exception( $err );
         }
 
-        $this->full_url = $site_url .
+        $this->page_url = $site_url .
             ltrim( $this->url, '/' );
 
         $relative_url = str_replace(
             $site_url,
             '',
-            $full_url
+            $page_url
         );
 
         // ensure consistency with leading slash

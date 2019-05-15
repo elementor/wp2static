@@ -11,25 +11,11 @@
  * @package     WP_Static_HTML_Output
  */
 
-
-// intercept low latency dependent actions and avoid boostrapping whole plugin
-// @codingStandardsIgnoreStart
-$ajax_action = isset( $_POST['ajax_action'] ) ? $_POST['ajax_action'] : '';
-// @codingStandardsIgnoreEnd
-
 $deployers_dir = dirname( __FILE__ ) . '/../deployers';
 
 define( 'WP2STATIC_PATH', plugin_dir_path( __FILE__ ) );
 
 require WP2STATIC_PATH . 'vendor/autoload.php';
-
-// NOTE: bypass instantiating plugin for specific AJAX requests
-if ( $ajax_action === 'crawl_site' || $ajax_action === 'crawl_again' ) {
-    new WP2Static\SiteCrawler();
-
-    wp_die();
-    return null;
-}
 
 WP2Static\Controller::init( __FILE__ );
 
@@ -58,6 +44,7 @@ function plugins_have_been_loaded() {
 
 add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'plugin_action_links' );
 add_action( 'plugins_loaded', 'plugins_have_been_loaded' );
+
 add_action( 'wp_ajax_wp_static_html_output_ajax', 'wp_static_html_output_ajax' );
 
 function wp_static_html_output_ajax() {
@@ -73,8 +60,6 @@ function wp_static_html_output_ajax() {
     return null;
 }
 
-remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
-remove_action( 'wp_print_styles', 'print_emoji_styles' );
 
 function wp_static_html_output_add_dashboard_widgets() {
     wp_add_dashboard_widget(
@@ -96,15 +81,14 @@ function wp_static_html_output_deregister_scripts() {
 }
 
 add_action( 'wp_footer', 'wp_static_html_output_deregister_scripts' );
+
+// TODO: move into own plugin for WP cleanup, don't belong in core
 remove_action( 'wp_head', 'wlwmanifest_link' );
+remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
+remove_action( 'wp_print_styles', 'print_emoji_styles' );
 
-function wp2static_stop_heartbeat() {
-    wp_deregister_script('heartbeat');
-}
-
-add_action( 'init', 'wp2static_stop_heartbeat', 1 );
-
-// WP CLI support
 if ( defined( 'WP_CLI' ) ) {
-    require_once dirname( __FILE__ ) . '/plugin/wp2static-wp-cli-commands.php';
+    WP_CLI::add_command( 'wp2static', 'WP2Static\CLI' );
+    WP_CLI::add_command( 'wp2static options', ['WP2Static\CLI','options'] );
 }
+

@@ -56,6 +56,30 @@ class Controller {
             add_filter( 'custom_menu_order', '__return_true' );
             add_filter( 'menu_order', array( $instance, 'set_menu_order' ) );
         }
+
+        $instance->settings = $instance->options->getSettings( true );
+        $instance->site_url = SiteInfo::getUrl( 'site' );
+
+        if ( ! is_string( $instance->site_url ) ) {
+            $err = 'Site URL not defined ';
+            WsLog::l( $err );
+            throw new Exception( $err );
+        }
+
+        // capture URL hosts for use in detecting internal links
+        $instance->site_url_host =
+            parse_url( $instance->site_url, PHP_URL_HOST );
+
+        $instance->destination_url = $instance->settings['baseUrl'];
+
+        if ( ! is_string( $instance->destination_url ) ) {
+            $err = 'Destination URL not defined';
+            WsLog::l( $err );
+            throw new Exception( $err );
+        }
+
+        $instance->loadRewriteRules();
+
         return $instance;
     }
 
@@ -204,19 +228,33 @@ class Controller {
         }
     }
 
-    public function generate_filelist_preview() {
-        $target_settings = array(
-            'general',
-            'crawling',
+    public function loadRewriteRules() {
+        // get user rewrite rules, use regular and escaped versions of them
+        $this->rewrite_rules =
+            RewriteRules::generate(
+                $this->site_url,
+                $this->destination_url
+            );
+
+        if ( ! $this->rewrite_rules ) {
+            $err = 'No URL rewrite rules defined';
+            WsLog::l( $err );
+            throw new Exception( $err );
+        }
+    }
+
+    public function crawl_site() {
+        $site_crawler = new SiteCrawler(
+            $this->rewrite_rules,
+            $this->site_url_host,
+            $this->destination_url
         );
 
-        if ( defined( 'WP_CLI' ) ) {
-            $this->settings =
-                DBSettings::get( $target_settings );
-        } else {
-            $this->settings =
-                PostSettings::get( $target_settings );
-        }
+        $site_crawler->crawl();
+    }
+
+    public function generate_filelist_preview() {
+        $this->settings = $this->options->getSettings( true );
 
         $plugin_hook = 'wp2static';
 
@@ -230,6 +268,8 @@ class Controller {
 
         if ( $initial_file_list_count < 1 ) {
             $err = 'Initial file list unable to be generated';
+            http_response_code( 500 );
+            echo $err;
             WsLog::l( $err );
             throw new Exception( $err );
         }
@@ -302,7 +342,9 @@ class Controller {
 
     public function reset_default_settings() {
         if ( ! delete_option( 'wp2static-options' ) ) {
-            error_log( "Couldn't reset plugin to default settings" );
+            $err = 'Couldn\'t reset plugin to default settings';
+            WsLog::l( $err );
+            throw new Exception( $err );
         }
 
         $this->options = new Options( self::OPTIONS_KEY );
@@ -330,6 +372,12 @@ class Controller {
         $working_dir = SiteInfo::getPath( 'uploads' ) .
             'wp2static-working-files';
         $hash_files = glob( "{$working_dir}/*PREVIOUS-HASHES*.txt" );
+
+        if ( ! $hash_files ) {
+            echo 'SUCCESS';
+            return;
+        }
+
         array_map( 'unlink', $hash_files );
 
         if ( ! defined( 'WP_CLI' ) ) {
@@ -359,7 +407,7 @@ class Controller {
 
         WsLog::l( implode( PHP_EOL, $info ) );
 
-        WsLog::l( 'Active plugins:' );
+        WsLog::l( 'ACTIVE PLUGINS:' );
 
         $active_plugins = get_option( 'active_plugins' );
 
@@ -367,7 +415,16 @@ class Controller {
             WsLog::l( $active_plugin );
         }
 
-        WsLog::l( 'Plugin options:' );
+        WsLog::l( 'ACTIVE THEME:' );
+
+        $theme = wp_get_theme();
+
+        WsLog::l(
+            $theme->get( 'Name' ) . ' is version ' .
+            $theme->get( 'Version' )
+        );
+
+        WsLog::l( 'WP2STATIC OPTIONS:' );
 
         $options = $this->options->getAllOptions( false );
 
@@ -375,8 +432,16 @@ class Controller {
             WsLog::l( "{$value['Option name']}: {$value['Value']}" );
         }
 
+        WsLog::l(
+            'SITE URL PATTERNS: ' .
+            implode( ',', $this->rewrite_rules['site_url_patterns'] ) .
+             PHP_EOL . 'DESTINATION URL PATTERNS: ' .
+            implode( ',', $this->rewrite_rules['destination_url_patterns'] )
+        );
+
         $extensions = get_loaded_extensions();
 
-        WsLog::l( 'Installed extensions: ' . join( ', ', $extensions ) );
+        WsLog::l( 'INSTALLED EXTENSIONS: ' . join( ', ', $extensions ) );
+
     }
 }

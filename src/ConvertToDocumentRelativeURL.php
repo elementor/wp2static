@@ -2,38 +2,47 @@
 
 namespace WP2Static;
 
-class ConvertToOfflineURL {
+use Exception;
+
+class ConvertToDocumentRelativeURL {
     /*
-        When publishing our static site for offline usage, we need to ensure a
-        few transformations are made:
-
-         - with no site relativity possible to rely on, we need all links to be
-           document relative, ie to go to parent page, use ../page not /page or
-           file:///page (allowing for C:\page,/home/me/page, etc
-
-         - with no webserver to render default documents like /index.html, we
-           need to rewrite all links to full post/index.html style URLs
-
-    */
+     * Convert absolute URL to document-relative.
+     * Required for offline URLs
+     *
+     * @param string $url URL to change
+     * @param string $page_url URL of current page to determine hierarchy
+     * @param string $site_url Site URL reference for rewriting
+     * @param bool $offline_mode Whether to append index.html to URLs
+     * @return string Rewritten URL
+     */
     public static function convert(
-        $url_to_change, $page_url, $placeholder_url
+        $url, $page_url, $site_url, $offline_mode = false
     ) {
-
         $current_page_path_to_root = '';
         $current_page_path = parse_url( $page_url, PHP_URL_PATH );
 
         if ( ! is_string( $current_page_path ) ) {
-            return $url_to_change;
+            return $url;
         }
 
         $number_of_segments_in_path = explode( '/', $current_page_path );
         $num_dots_to_root = count( $number_of_segments_in_path ) - 2;
 
         $page_url_without_domain = str_replace(
-            $placeholder_url,
+            $site_url,
             '',
             $page_url
         );
+
+        // TODO: encountering occurrances of empty $page_url_without_domain
+        if ( ! is_string( $page_url_without_domain ) ) {
+            $err = 'Warning: page URL without domain encountered ' .
+                "url: {$url} \\n page_url: $page_url \\n " .
+                "site_url: {$site_url} \\n offline mode: $offline_mode";
+            WsLog::l( $err );
+
+            return $url;
+        }
 
         /*
             For target URLs at the same level or higher level as the current
@@ -41,16 +50,16 @@ class ConvertToOfflineURL {
 
             Match current page in target URL to determine
         */
-        if ( strpos( $url_to_change, $page_url_without_domain ) !== false ) {
+        if ( strpos( $url, $page_url_without_domain ) !== false ) {
             $rewritten_url = str_replace(
                 $page_url_without_domain,
                 '',
-                $url_to_change
+                $url
             );
 
             // TODO: into one array or match/replaces
             $rewritten_url = str_replace(
-                $placeholder_url,
+                $site_url,
                 '',
                 $rewritten_url
             );
@@ -66,9 +75,9 @@ class ConvertToOfflineURL {
             }
 
             $rewritten_url = str_replace(
-                $placeholder_url,
+                $site_url,
                 '',
-                $url_to_change
+                $url
             );
 
             $offline_url = $current_page_path_to_root . $rewritten_url;
@@ -82,7 +91,6 @@ class ConvertToOfflineURL {
                 '../../',
                 $offline_url
             );
-
         }
 
         /*
@@ -112,9 +120,17 @@ class ConvertToOfflineURL {
             return false;
         }
 
-        if ( strpos( basename( $offline_url ), '.' ) === false ) {
-            $offline_url .= '/index.html';
-            $offline_url = str_replace( '//', '/', $offline_url );
+        if ( $offline_mode ) {
+            // if last char is a ., we're linking to a dir path, add index.html
+            $last_char_is_slash = substr( $offline_url, -1 ) == '/';
+
+            $basename_doesnt_contain_dot =
+                strpos( basename( $offline_url ), '.' ) === false;
+
+            if ( $last_char_is_slash || $basename_doesnt_contain_dot ) {
+                $offline_url .= '/index.html';
+                $offline_url = str_replace( '//', '/', $offline_url );
+            }
         }
 
         return $offline_url;
