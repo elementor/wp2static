@@ -187,6 +187,7 @@ class Request {
         $this->status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
 
         curl_close( $ch );
+        fclose( $file_stream );
     }
 
     public function postWithFileStreamAndHeaders(
@@ -222,6 +223,7 @@ class Request {
         $this->status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
 
         curl_close( $ch );
+        fclose( $file_stream );
     }
 
     public function postWithArray(

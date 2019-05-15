@@ -251,16 +251,10 @@ class SitePublisher {
 
     public function checkForValidResponses( $code, $good_codes ) {
         if ( ! in_array( $code, $good_codes ) ) {
-            WsLog::l(
-                'BAD RESPONSE STATUS FROM API (' . $code . ')'
-            );
-
-            http_response_code( $code );
-
-            throw new Exception(
-                'BAD RESPONSE STATUS FROM API (' . $code . ')'
-            );
+            return false;
         }
+
+        return true;
     }
 
     public function openPreviousHashesFile() {
