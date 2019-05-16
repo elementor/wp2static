@@ -68,6 +68,7 @@
             "@phpcs",
             "@phpstan",
             "@phpunit"
-        ]
+        ],
+        "build": "/bin/sh tools/build_release.sh"
     }
 }

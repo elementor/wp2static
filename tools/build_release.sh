@@ -1,9 +1,17 @@
 #!/bin/bash
 
-# run from project root
+######################################
+##
+## Build WP2Static for wp.org
+##
+## script archive_name dont_minify
+##
+## places archive in $HOME/Downloads
+##
+######################################
 
+# run script from project root
 EXEC_DIR=$(pwd)
-# give argument for name of zip to be created, ie user-leon-test-new-function
 
 TMP_DIR=$HOME/plugintmp
 rm -Rf $TMP_DIR
@@ -19,6 +27,7 @@ rm -Rf $EXEC_DIR/vendor/*
 composer install --no-dev
 
 
+# cp all required sources to build dir
 cp -r $EXEC_DIR/languages $TMP_DIR/static-html-output-plugin/
 cp -r $EXEC_DIR/src $TMP_DIR/static-html-output-plugin/
 cp -r $EXEC_DIR/vendor $TMP_DIR/static-html-output-plugin/
