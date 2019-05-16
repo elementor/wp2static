@@ -309,7 +309,6 @@ class HTMLProcessor extends Base {
             }
         }
 
-
         // TODO: enfore trailing slash
 
         // TODO: download approved static files
@@ -344,7 +343,6 @@ class HTMLProcessor extends Base {
                 $this->downloadAsset( $url, $extension );
             }
         }
-        
 
         // after normalizing, we need to rewrite to Destination URL
         $url = str_replace(
@@ -680,7 +678,7 @@ class HTMLProcessor extends Base {
      * @param string $url Absolute local URL to potentially download
      * @return void
      *
-     */ 
+     */
     public function downloadAsset( $url, $extension ) {
         // check if user wants to download discovered assets
 
@@ -699,10 +697,6 @@ class HTMLProcessor extends Base {
         foreach ( $crawlable_filetypes as $filetype ) {
             // error_log('testing filetype: ' . $filetype);
             if ( $extension == $filetype ) {
-
-                // do the download
-                // error_log( 'maybe dling this ' . $url );
-
                 // get url without Site URL
                 $save_path = str_replace(
                     $this->site_url,
@@ -719,14 +713,14 @@ class HTMLProcessor extends Base {
                     return;
                 }
 
-                // we now havbe something like 
+                // we now havbe something like
                 // wp-content/plugins/elementor-pro/assets/css/frontend.min.css
 
                 $args = array(
                     'timeout'     => 1,
                     'redirection' => 5,
                     'httpversion' => '1.0',
-                    'user-agent'  => 'WordPress/' . $wp_version . '; ' . home_url(),
+                    'user-agent'  => 'WP2Static.com',
                     'blocking'    => true,
                     'headers'     => array(),
                     'cookies'     => array(),
@@ -735,7 +729,7 @@ class HTMLProcessor extends Base {
                     'decompress'  => true,
                     'sslverify'   => true,
                     'stream'      => false,
-                    'filename'    => null
+                    'filename'    => null,
                 );
 
                 $response = wp_remote_get( $url, $args );
@@ -744,8 +738,8 @@ class HTMLProcessor extends Base {
                 $body = '';
 
                 if ( is_array( $response ) ) {
-                  $header = $response['headers']; // array of http header lines
-                  $body = $response['body']; // use the content
+                    $header = $response['headers'];
+                    $body = $response['body'];
                 }
 
                 $basename = basename( $filename );
@@ -762,17 +756,16 @@ class HTMLProcessor extends Base {
 
                 // chmod( $dir_without_filename, 0664 );
 
-
                 $result = file_put_contents(
                     $filename,
                     $body
                 );
 
                 if ( ! $result ) {
-                    error_log('attempting to save' . $filename);
+                    error_log( 'attempting to save' . $filename );
                 }
 
-                //chmod( $filename, 0664 );
+                // chmod( $filename, 0664 );
 
             }
         }
@@ -780,7 +773,6 @@ class HTMLProcessor extends Base {
         // check if user wants to download discovered assets
 
         // check if in crawl cache and we want to use cache
-
 
         // download it!
     }

@@ -164,7 +164,12 @@ class Request {
         $ch = curl_init();
 
         $file_stream = fopen( $local_file, 'r' );
+
         $data_length = filesize( $local_file );
+
+        if ( ! $data_length ) {
+            return;
+        }
 
         curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'PUT' );
         curl_setopt( $ch, CURLOPT_URL, $url );
@@ -194,7 +199,10 @@ class Request {
         }
 
         curl_close( $ch );
-        fclose( $file_stream );
+
+        if ( is_resource( $file_stream ) ) {
+            fclose( $file_stream );
+        }
     }
 
     public function postWithFileStreamAndHeaders(
@@ -230,7 +238,10 @@ class Request {
         $this->status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
 
         curl_close( $ch );
-        fclose( $file_stream );
+
+        if ( is_resource( $file_stream ) ) {
+            fclose( $file_stream );
+        }
     }
 
     public function postWithArray(

@@ -256,22 +256,24 @@ class Controller {
     public function send_support_request() {
         $url = 'https://hooks.zapier.com/hooks/catch/4977245/jqj3l4/';
 
-        $response = wp_remote_post( $url, array(
-            'method'      => 'POST',
-            'timeout'     => 45,
-            'redirection' => 5,
-            'httpversion' => '1.0',
-            'blocking'    => true,
-            'headers'     => array(),
-            // send body complete here, let it be fwd'd by Zapier
-            'body'        => array(
-                'tes' => 'lkjkljkj',
-                'something' => 'lkjsdlkfjk'
-            ),
-            'cookies'     => array()
+        $response = wp_remote_post(
+            $url,
+            array(
+                'method'      => 'POST',
+                'timeout'     => 45,
+                'redirection' => 5,
+                'httpversion' => '1.0',
+                'blocking'    => true,
+                'headers'     => array(),
+                // send body complete here, let it be fwd'd by Zapier
+                'body'        => array(
+                    'tes' => 'lkjkljkj',
+                    'something' => 'lkjsdlkfjk',
+                ),
+                'cookies'     => array(),
             )
         );
-         
+
         if ( is_wp_error( $response ) ) {
             http_response_code( 404 );
             $error_message = $response->get_error_message();
@@ -357,7 +359,7 @@ class Controller {
         $this->exporter = new Exporter();
 
         $this->exporter->pre_export_cleanup();
-        
+
         // TODO: kill this / make UI/CLI option to delete export dir
         // $this->exporter->cleanup_leftover_archives();
 
