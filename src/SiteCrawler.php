@@ -335,33 +335,24 @@ class SiteCrawler extends Base {
                         $this->processed_file = $processor->getCSS();
                     }
                 } else {
-                    $processor = new TXTProcessor();
-
-                    $this->processed_file = $processor->processTXT(
-                        $output,
-                        $page_url
+                    $this->processed_file = str_replace(
+                        $this->rewrite_rules['site_url_patterns'],
+                        $this->rewrite_rules['destination_url_patterns'],
+                        $output
                     );
-
-                    if ( $this->processed_file ) {
-                        $this->processed_file = $processor->getTXT();
-                    }
                 }
+
                 break;
 
             case 'txt':
             case 'js':
             case 'json':
             case 'xml':
-                $processor = new TXTProcessor();
-
-                $this->processed_file = $processor->processTXT(
-                    $output,
-                    $page_url
+                $this->processed_file = str_replace(
+                    $this->rewrite_rules['site_url_patterns'],
+                    $this->rewrite_rules['destination_url_patterns'],
+                    $output
                 );
-
-                if ( $this->processed_file ) {
-                    $this->processed_file = $processor->getTXT();
-                }
 
                 break;
 
