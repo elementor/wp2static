@@ -9,6 +9,7 @@ class Request {
             CURLOPT_USERAGENT => 'WP2Static.com',
             CURLOPT_CONNECTTIMEOUT => 0,
             CURLOPT_TIMEOUT => 600,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         );
     }
 
@@ -159,6 +160,7 @@ class Request {
         $local_file,
         $headers
         ) {
+
         $ch = curl_init();
 
         $file_stream = fopen( $local_file, 'r' );
@@ -185,6 +187,11 @@ class Request {
 
         $this->body = curl_exec( $ch );
         $this->status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
+
+        // TODO: DRY this up, include in Debug Log
+        if ( curl_errno( $ch ) ) {
+            error_log( 'cURL error: ' . curl_error( $ch ) );
+        }
 
         curl_close( $ch );
         fclose( $file_stream );
