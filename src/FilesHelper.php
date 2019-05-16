@@ -191,25 +191,22 @@ class FilesHelper {
         $uploads_url,
         $settings
         ) {
-        // TODO: convert to SiteInfo
-        $base_url = untrailingslashit( home_url() );
+        $arrays_to_merge = [];
 
         // TODO: detect robots.txt, etc before adding
-        $url_queue = array_merge(
-            array( trailingslashit( $base_url ) ),
-            array( '/robots.txt' ),
-            array( '/favicon.ico' ),
-            array( '/sitemap.xml' )
-        );
+        $arrays_to_merge[] = [
+            '/',
+            '/robots.txt',
+            '/favicon.ico',
+            '/sitemap.xml'
+        ];
 
         /*
-            URLs to optionally detect
+            TODO: reimplement detection for URLs:
                 'detectArchives',
-                'detectAttachments',
                 'detectCategoryPagination',
                 'detectCommentPagination',
                 'detectComments',
-                'detectCustomPostTypes',
                 'detectFeedURLs',
                 'detectPostPagination',
 
@@ -221,74 +218,47 @@ class FilesHelper {
 
         */
         if ( isset( $settings['detectAttachments'] ) ) {
-            $url_queue = array_merge(
-                $url_queue,
-                DetectAttachmentURLs::detect( $base_url )
-            );
+            $arrays_to_merge[] = DetectAttachmentURLs::detect();
         }
 
         if ( isset( $settings['detectPosts'] ) ) {
-            $url_queue = array_merge(
-                $url_queue,
-                DetectPostURLs::detect( $base_url )
-            );
+            $arrays_to_merge[] = DetectPostURLs::detect();
         }
 
         if ( isset( $settings['detectPages'] ) ) {
-            $url_queue = array_merge(
-                $url_queue,
-                DetectPageURLs::detect( $base_url )
-            );
+            $arrays_to_merge[] = DetectPageURLs::detect();
         }
 
         if ( isset( $settings['detectCustomPostTypes'] ) ) {
-            $url_queue = array_merge(
-                $url_queue,
-                DetectCustomPostTypeURLs::detect( $base_url )
-            );
+            $arrays_to_merge[] = DetectCustomPostTypeURLs::detect();
         }
 
         if ( isset( $settings['detectUploads'] ) ) {
-            $url_queue = array_merge(
-                $url_queue,
-                self::getListOfLocalFilesByUrl( $uploads_url )
-            );
+            $arrays_to_merge[] = self::getListOfLocalFilesByUrl( $uploads_url );
         }
 
         if ( isset( $settings['detectParentTheme'] ) ) {
-            $url_queue = array_merge(
-                $url_queue,
-                DetectThemeAssets::detect( 'parent' )
-            );
+            $arrays_to_merge[] = DetectThemeAssets::detect( 'parent' );
         }
 
         if ( isset( $settings['detectChildTheme'] ) ) {
-            $url_queue = array_merge(
-                $url_queue,
-                DetectThemeAssets::detect( 'child' )
-            );
+            $arrays_to_merge[] = DetectThemeAssets::detect( 'child' );
         }
 
         if ( isset( $settings['detectPluginAssets'] ) ) {
-            $url_queue = array_merge(
-                $url_queue,
-                DetectPluginAssets::detect()
-            );
+            $arrays_to_merge[] = DetectPluginAssets::detect();
         }
 
         if ( isset( $settings['detectWPIncludesAssets'] ) ) {
-            $url_queue = array_merge(
-                $url_queue,
-                DetectWPIncludesAssets::detect()
-            );
+            $arrays_to_merge[] = DetectWPIncludesAssets::detect();
         }
 
         if ( isset( $settings['detectVendorCacheDirs'] ) ) {
-            $url_queue = array_merge(
-                $url_queue,
-                DetectVendorFiles::detect( SiteInfo::getURL( 'site' ) )
-            );
+            $arrays_to_merge[] =
+                DetectVendorFiles::detect( SiteInfo::getURL( 'site' ) );
         }
+
+        $url_queue = call_user_func_array( 'array_merge', $arrays_to_merge );
 
         $url_queue = self::cleanDetectedURLs( $url_queue );
 
@@ -300,15 +270,10 @@ class FilesHelper {
         $unique_urls = array_unique( $url_queue );
         sort( $unique_urls );
 
-        $initial_crawl_list_total = count( $unique_urls );
-
         $str = implode( "\n", $unique_urls );
 
         $initial_crawl_file = $uploads_path .
             'wp2static-working-files/INITIAL-CRAWL-LIST.txt';
-
-        $initial_crawl_total = $uploads_path .
-            'wp2static-working-files/INITIAL-CRAWL-TOTAL.txt';
 
         if ( wp_mkdir_p( $uploads_path . 'wp2static-working-files' ) ) {
             $result = file_put_contents(
@@ -323,17 +288,6 @@ class FilesHelper {
             }
 
             chmod( $initial_crawl_file, 0664 );
-
-            file_put_contents(
-                $initial_crawl_total,
-                $initial_crawl_list_total
-            );
-
-            if ( ! is_file( $initial_crawl_total ) ) {
-                return false;
-            }
-
-            chmod( $initial_crawl_total, 0664 );
 
             return count( $url_queue );
         } else {
@@ -522,16 +476,6 @@ class FilesHelper {
     }
 
     public static function cleanDetectedURLs( $urls ) {
-        // NOTE: initial de-dup for faster processing
-        $unique_urls = array_unique( $urls );
-
-        $url_queue = array_filter(
-            $unique_urls,
-            function ( $url ) {
-                return ( strpos( $url, ' ' ) === false );
-            }
-        );
-
         $home_url = SiteInfo::getUrl( 'home' );
 
         if ( ! is_string( $home_url ) ) {
@@ -540,24 +484,18 @@ class FilesHelper {
             throw new Exception( $err );
         }
 
-        $stripped_urls = str_replace(
-            $home_url,
-            '/',
-            $url_queue
-        );
-
-        $deslashed_urls = str_replace(
-            '//',
-            '/',
-            $stripped_urls
-        );
-
-        $detokenized_urls = array_map(
+        $cleaned_urls = array_map(
             // trim hashes/query strings
-            function ( $url ) {
+            function ( $url ) use ( $home_url ) {
                 if ( ! $url ) {
                     return;
                 }
+
+                $url = str_replace(
+                    $home_url,
+                    '/',
+                    $url
+                );
 
                 $url = strtok( $url, '#' );
 
@@ -569,10 +507,8 @@ class FilesHelper {
 
                 return $url;
             },
-            $deslashed_urls
+            $urls
         );
-
-        $cleaned_urls = array_unique( $detokenized_urls );
 
         return $cleaned_urls;
     }

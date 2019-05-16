@@ -108,9 +108,6 @@ class SiteCrawler extends Base {
         $this->archive_dir = SiteInfo::getPath( 'uploads' ) .
             '/wp2static-exported-site/';
 
-        $total_urls_path = SiteInfo::getPath( 'uploads' ) .
-            'wp2static-working-files/INITIAL-CRAWL-TOTAL.txt';
-
         $exclusions = array( 'wp-json' );
 
         if ( isset( $this->settings['excludeURLs'] ) ) {

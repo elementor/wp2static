@@ -17,7 +17,7 @@ class DetectVendorFiles {
         */
         if ( class_exists( '\\Elementor\Api' ) ) {
             $elementor_font_dir = SiteInfo::getPath( 'plugins' ) .
-                '/elementor/assets/lib/font-awesome';
+                'elementor/assets/lib/font-awesome';
 
             $elementor_urls = FilesHelper::getListOfLocalFilesByUrl(
                 $elementor_font_dir
@@ -38,9 +38,9 @@ class DetectVendorFiles {
             $vendor_files = array_merge( $vendor_files, $yoast_sitemaps );
         }
 
-        if ( is_dir( SiteInfo::getPath( 'plugins' ) . '/soliloquy/' ) ) {
+        if ( is_dir( SiteInfo::getPath( 'plugins' ) . 'soliloquy/' ) ) {
             $soliloquy_assets = SiteInfo::getPath( 'plugins' ) .
-                '/soliloquy/assets/css/images/';
+                'soliloquy/assets/css/images/';
 
             $soliloquy_urls = FilesHelper::getListOfLocalFilesByUrl(
                 $soliloquy_assets
@@ -51,7 +51,7 @@ class DetectVendorFiles {
 
         // cache dir used by Autoptimize and other themes/plugins
         $vendor_cache_dir =
-            SiteInfo::getPath( 'content' ) . '/cache/';
+            SiteInfo::getPath( 'content' ) . 'cache/';
 
         if ( is_dir( $vendor_cache_dir ) ) {
 
@@ -116,7 +116,7 @@ class DetectVendorFiles {
 
         if ( class_exists( 'molongui_authorship' ) ) {
             $molongui_path = SiteInfo::getPath( 'plugins' ) .
-                '/molongui-authorship';
+                'molongui-authorship';
 
             $molongui_urls = FilesHelper::getListOfLocalFilesByUrl(
                 $molongui_path

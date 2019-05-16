@@ -4,7 +4,7 @@ namespace WP2Static;
 
 class DetectPageURLs {
 
-    public static function detect( $wp_site_url ) {
+    public static function detect() {
         global $wpdb;
 
         $page_urls = array();
