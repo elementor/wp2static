@@ -32,49 +32,79 @@
     </tr>
     <tr>
       <th scope="row">
-        <span class="dashicons dashicons-format-chat"></span>
-        <label><?php echo __('Community', 'static-html-output-plugin');?></label>
-      </th>
-      <td>
-        <a href="https://join.slack.com/t/wp2static/shared_invite/enQtNDQ4MDM4MjkwNjEwLTVmN2I2MmU4ODI2MWRkNzM4ZGU3YWU4ZGVhMzgwZTc1MDE2OGNmYTFhOGMwM2U0ZTVlYTljYmM2Yjk2ODJlOTk" target="_blank">
-          Join 200+ users & developers in our Slack community
-        </a>
-      </td>
-    </tr>
-    <tr>
-      <th scope="row">
-        <span class="dashicons dashicons-twitter"></span>
-        <label><?php echo __('Follow on Twitter', 'static-html-output-plugin');?></label>
-      </th>
-      <td>
-        <a href="https://twitter.com/WP2Static" target="_blank">
-          Follow us on Twitter for latest news and offers
-        </a>
-      </td>
-    </tr>
-    <tr>
-      <th scope="row">
-        <span class="dashicons dashicons-star-filled"></span>
-        <label><?php echo __('Star on GitHub', 'static-html-output-plugin');?></label>
-      </th>
-      <td>
-        <a href="https://github.com/WP2Static/wp2static" target="_blank">
-          Follow the main or development branches to preview the latest code
-        </a>
-      </td>
-    </tr>
-    <tr>
-      <th scope="row">
         <label><?php echo __('Videos', 'static-html-output-plugin');?></label>
       </th>
       <td>
-        
+
         <a href="https://www.youtube.com/watch?v=HPc4JjBvkrU" target="_blank">
             <span class="dashicons dashicons-video-alt3"></span> WordPress as a Static Site Generator
 
         </a>
 
         <p>A good introduction to what a static site is and how it can benefit your WordPress site.</p>
+
+
+      </td>
+
+    </tr>
+    <tr>
+      <th scope="row">
+        <label><?php echo __('Create Support Request', 'static-html-output-plugin');?></label>
+      </th>
+      <td>
+
+        <p>Get help from the WP2Static team - we'll open a ticket for you and follow-up soon!</p>
+
+        <br>
+
+          <label for="supportRequestEmail">
+            <?php echo __('Your email', 'static-html-output-plugin');?>
+          </label>
+
+        <br>
+        <br>
+
+<?php
+
+// default support request to user email
+global $current_user;
+get_currentuserinfo();
+
+?>
+
+        <input type="text" id="supportRequestEmail" name="supportRequestEmail" value="<?php echo $current_user->user_email ?>" size="50" />
+
+        <br>
+        <br>
+          <label for="supportRequestContent">
+            <?php echo __('Your issue', 'static-html-output-plugin');?>
+          </label>
+        <br>
+        <br>
+
+<textarea class="widefat" name="supportRequestContent" id="supportRequestContent" rows="5" cols="10">
+Example:
+
+Help! I'm having trouble with exporting my site - it's missing some images and fonts.
+I'm hosting with Acme Company. I'm new to WordPress.
+Attached is my Debug Log to give you more info.
+
+        </textarea>
+        <br>
+        <br>
+
+          <label for="supportRequestIncludeLog"><?php echo __('', 'static-html-output-plugin');?></label>
+          <?php $tpl->displayCheckbox($this, 'supportRequestIncludeLog', 'Include Debug Log (helps us diagnose quicker)'); ?>
+
+        <br>
+
+        <button id="send_support_request">Create new support request</button>
+
+        <br>
+        <br>
+
+        <p>Check the status of your ticket or create one via the web: <a href="https://wp2static.zammad.com" target="_blank">https://wp2static.zammad.com</a>.</p>
+
       </td>
 
     </tr>

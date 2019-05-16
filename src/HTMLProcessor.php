@@ -328,14 +328,28 @@ class HTMLProcessor extends Base {
             $this->page_url
         );
 
+        $url = $this->removeQueryStringFromInternalLink( $url );
+
+        if ( isset( $this->settings['includeDiscoveredAssets'] ) ) {
+            // check url has extension at all
+            $extension = pathinfo( $url, PATHINFO_EXTENSION );
+
+            // only try to dl urls with extension
+            if ( $extension ) {
+                // TODO: where is the best place to put this
+                // considering caching, ie, build array here
+                // exclude Excludes, already crawled lists
+                // then iterate just the ones not already on disk
+                $this->downloadAsset( $url, $extension );
+            }
+        }
+
         // after normalizing, we need to rewrite to Destination URL
         $url = str_replace(
             $this->rewrite_rules['site_url_patterns'],
             $this->rewrite_rules['destination_url_patterns'],
             $url
         );
-
-        $url = $this->removeQueryStringFromInternalLink( $url );
 
         /*
          * Note: We want to to perform as many functions on the URL, not have
@@ -656,6 +670,111 @@ class HTMLProcessor extends Base {
 
         // replace old node with new
         $node->parentNode->replaceChild( $new_node, $node );
+    }
+
+    /*
+     * Download discovered assets
+     *
+     * @param string $url Absolute local URL to potentially download
+     * @return void
+     *
+     */
+    public function downloadAsset( $url, $extension ) {
+        // check if user wants to download discovered assets
+
+        $crawlable_filetypes = [
+            'css',
+            'img',
+            'jpeg',
+            'png',
+            'gif',
+            // move to helper
+        ];
+
+        // add filter to allow user to specify extra downloadable extensions
+
+        // check if supported filetype for crawling
+        foreach ( $crawlable_filetypes as $filetype ) {
+            // error_log('testing filetype: ' . $filetype);
+            if ( $extension == $filetype ) {
+                // get url without Site URL
+                $save_path = str_replace(
+                    $this->site_url,
+                    '',
+                    $url
+                );
+
+                $filename = SiteInfo::getPath( 'uploads' ) .
+                    'wp2static-exported-site/' .
+                    $save_path;
+
+                // check if file exists on disk
+                if ( is_file( $filename ) ) {
+                    return;
+                }
+
+                // we now havbe something like
+                // wp-content/plugins/elementor-pro/assets/css/frontend.min.css
+
+                $args = array(
+                    'timeout'     => 1,
+                    'redirection' => 5,
+                    'httpversion' => '1.0',
+                    'user-agent'  => 'WP2Static.com',
+                    'blocking'    => true,
+                    'headers'     => array(),
+                    'cookies'     => array(),
+                    'body'        => null,
+                    'compress'    => false,
+                    'decompress'  => true,
+                    'sslverify'   => true,
+                    'stream'      => false,
+                    'filename'    => null,
+                );
+
+                $response = wp_remote_get( $url, $args );
+
+                $header = '';
+                $body = '';
+
+                if ( is_array( $response ) ) {
+                    $header = $response['headers'];
+                    $body = $response['body'];
+                }
+
+                $basename = basename( $filename );
+
+                $dir_without_filename = str_replace(
+                    $basename,
+                    $filename,
+                    $filename
+                );
+
+                if ( ! is_dir( $dir_without_filename ) ) {
+                    wp_mkdir_p( $dir_without_filename );
+                }
+
+                // chmod( $dir_without_filename, 0664 );
+
+                $result = file_put_contents(
+                    $filename,
+                    $body
+                );
+
+                if ( ! $result ) {
+                    error_log( 'attempting to save' . $filename );
+                }
+
+                // chmod( $filename, 0664 );
+
+            }
+        }
+
+        // check if user wants to download discovered assets
+
+        // check if in crawl cache and we want to use cache
+
+        // download it!
     }
 }
 
