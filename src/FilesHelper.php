@@ -222,7 +222,8 @@ class FilesHelper {
         }
 
         if ( isset( $settings['detectPosts'] ) ) {
-            $arrays_to_merge[] = DetectPostURLs::detect();
+            $permalink_structure = get_option( 'permalink_structure' );
+            $arrays_to_merge[] = DetectPostURLs::detect( $permalink_structure );
         }
 
         if ( isset( $settings['detectPages'] ) ) {
@@ -301,6 +302,7 @@ class FilesHelper {
 
     }
 
+    // TODO: finish porting these over
     public static function getAllTHEOTHERSTUFFPOSTS( $wp_site_url ) {
         global $wpdb;
 
@@ -332,7 +334,11 @@ class FilesHelper {
                     $permalink = get_page_link( $post->ID );
                     break;
                 case 'post':
-                    $permalink = get_permalink( $post->ID );
+                    $permalink_structure = get_option( 'permalink_structure' );
+                    $permalink = WPOverrides::get_permalink(
+                        $post->ID,
+                        $permalink_structure
+                    );
                     break;
                 case 'attachment':
                     $permalink = get_attachment_link( $post->ID );
@@ -491,8 +497,16 @@ class FilesHelper {
                     return;
                 }
 
+                // NOTE: 2 x str_replace's significantly faster than
+                //       1 x str_replace with search/replace arrays of 2 length
                 $url = str_replace(
                     $home_url,
+                    '/',
+                    $url
+                );
+
+                $url = str_replace(
+                    '//',
                     '/',
                     $url
                 );
