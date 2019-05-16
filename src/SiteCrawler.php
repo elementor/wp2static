@@ -235,8 +235,6 @@ class SiteCrawler extends Base {
     }
 
     public function crawlSingleURL( $url ) {
-        WsLog::l( 'Crawling URL: ' . $url );
-
         $ch = curl_init();
 
         curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
@@ -246,6 +244,7 @@ class SiteCrawler extends Base {
         curl_setopt( $ch, CURLOPT_USERAGENT, 'WP2Static.com' );
         curl_setopt( $ch, CURLOPT_CONNECTTIMEOUT, 0 );
         curl_setopt( $ch, CURLOPT_TIMEOUT, 600 );
+        curl_setopt( $ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1 );
         curl_setopt( $ch, CURLOPT_HEADER, 0 );
         curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
 
