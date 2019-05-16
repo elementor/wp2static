@@ -4,6 +4,53 @@
     <tbody>
       <tr>
         <th scope="row">
+          <label for="crawl_caching_time_unit"><?php echo __('Crawl Caching Time Unit', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <select name="crawl_caching_time_unit" id="crawl_caching">
+  <?php 
+    // TODO: shift this into helper function for select
+    $increments = array(1, 5, 10, 25, 50, 100, 500, 1000, 999999);
+  
+    foreach($increments as $increment) :
+       if ($increment == 999999): ?>
+            <option value="999999"<?php echo $this->options->crawl_caching_time_unit == $increment ? ' selected' : ''; ?>>Maximum</option>
+  <?php else: ?>
+            <option value="<?php echo $increment; ?>"<?php echo $this->options->crawl_caching_time_unit == $increment ? ' selected' : ''; ?>><?php echo $increment; ?></option>
+  
+  <?php endif; 
+         endforeach; ?>
+          </select><br>
+
+          <select name="crawl_caching_time_period" id="crawl_caching_time_period">
+  <?php 
+    // TODO: shift this into helper function for select
+    $increments = [
+        'Minutes',
+        'Hours',
+        'Days',
+    ];
+  
+    foreach($increments as $increment) :
+       if ($increment == 999999): ?>
+            <option value="999999"<?php echo $this->options->crawl_caching_time_period == $increment ? ' selected' : ''; ?>>Maximum</option>
+  <?php else: ?>
+            <option value="<?php echo $increment; ?>"<?php echo $this->options->crawl_caching_time_period == $increment ? ' selected' : ''; ?>><?php echo $increment; ?></option>
+  
+  <?php endif; 
+         endforeach; ?>
+          </select><br>
+
+          <?php $tpl->displayCheckbox($this, 'dontUseCrawlCaching', 'Crawl everything!'); ?>
+
+            <br>
+  
+          <p>Don't recrawl files crawled within last n period.</p>
+  
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
           <label for="crawl_increment"><?php echo __('Crawl Increment', 'static-html-output-plugin');?></label>
         </th>
         <td>
@@ -24,6 +71,16 @@
   
           <p>This is set to 1, by default, in order to allow exporting on low-resource environments, such as shared hosting servers. Each increment is the amount of files the server will try to process on each request that the browser sends it. Incrementing this will speed up your exports, by processing more are a time. If your export is failing, due to resource (memory, CPU) limits being reached, try setting this to a lower number.</p>
   
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          <label for="includeDiscoveredAssets"><?php echo __('Include Discovered Assets', 'static-html-output-plugin');?></label>
+        </th>
+        <td>
+          <?php $tpl->displayCheckbox($this, 'includeDiscoveredAssets', 'Include Discovered Assets'); ?>
+
+          <p>As we crawl the site, force-include any static assets found within the page (images, fonts, css, etc). Must have a supported file extension to be included.</p>
         </td>
       </tr>
       <tr>

@@ -174,3 +174,15 @@ p.submit{
 .cancelExportButton:hover {
   color: red !important;
 }
+
+#detectionOptionsTable td {
+  padding: 0;
+}
+
+#detectionOptionsTable {
+  margin-top: 10px;
+}
+
+#detectEverythingButton, #detectNothingButton {
+  margin: 10px;
+}

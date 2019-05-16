@@ -24,6 +24,9 @@
       <tr>
         <th scope="row">
           <label for="detection_level"><?php echo __('Control Detected URLs', 'static-html-output-plugin');?></label>
+
+        <button id="detectEverythingButton">Select all</button>
+        <button id="detectNothingButton">Select none</button>
         </th>
         <td>
         <p>Control which URLs from this WordPress site we want to use for our initial crawl list.</p>
@@ -32,180 +35,142 @@
 
         <br>
 
-        <button id="detectEverythingButton">Select all</button>
-        <button id="detectNothingButton">Select none</button>
 
-        <table id="detectionOptionsTable">
-            <tr>
-                <td>
-                    <label for="detectHomepage"><b>Homepage</b></label>
 
-                    <br>
-                    <br>
-                    <p>On by default, this will always include the <code>/</code> URL or site root.</p>
-                </td>
-                <td>
-                    &nbsp;
-                </td>
-                <td>
-                    <label for="detectPages"><b>Pages</b></label>
-                    <?php $tpl->displayCheckbox($this, 'detectPages', ''); ?>
-                    <br>
-                    <br>
-                    <p>All published Pages. Use the date range option below to further filter.</p>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label for="detectPosts"><b>Posts</b></label>
-                    <?php $tpl->displayCheckbox($this, 'detectPosts', ''); ?>
-                    <br>
-                    <br>
-                    <p>All published Posts. Use the date range option below to further filter.</p>
-                </td>
-                <td>
-                    &nbsp;
-                </td>
-                <td>
-                    <label for="detectCustomPostTypes"><b>Custom Post Types</b></label>
-                    <?php $tpl->displayCheckbox($this, 'detectCustomPostTypes', ''); ?>
-                    <br>
-                    <br>
-                    <p>Include URLs for all Custom Post Types.</p>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label for="detectFeedURLs"><b>Feed URLs</b></label>
-                    <?php $tpl->displayCheckbox($this, 'detectFeedURLs', ''); ?>
-                    <br>
-                    <br>
-                    <p>RSS/Atom feeds, such as <code>mydomain.com/some-post/feed/</code>.</p>
-                </td>
-                <td>
-                    &nbsp;
-                </td>
-                <td>
-                    <label for="detectVendorCacheDirs"><b>Vendor cache</b></label>
-                    <?php $tpl->displayCheckbox($this, 'detectVendorCacheDirs', ''); ?>
-                    <br>
-                    <br>
-                    <p>Vendor cache dirs, as used by Autoptimize and certain themes to store images and assets.</p>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label for="detectAttachments"><b>Attachment URLs</b></label>
-                    <?php $tpl->displayCheckbox($this, 'detectAttachments', ''); ?>
-                    <br>
-                    <br>
-                    <p>The additional URLs for attachments, such as images. Usually not needed.</p>
-                </td>
-                <td>
-                    &nbsp;
-                </td>
-                <td>
-                    <label for="detectArchives"><b>Archives</b></label>
-                    <?php $tpl->displayCheckbox($this, 'detectArchives', ''); ?>
-                    <br>
-                    <br>
-                    <p>All Archive pages, such as Post Categories and Date Archives, etc.</p>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label for="detectPostPagination"><b>Posts Pagination</b></label>
-                    <?php $tpl->displayCheckbox($this, 'detectPostPagination', ''); ?>
-                    <br>
-                    <br>
-                    <p>Get all paginated URLs for Posts.</p>
-                </td>
-                <td>
-                    &nbsp;
-                </td>
-                <td>
-                    <label for="detectCategoryPagination"><b>Category Pagination</b></label>
-                    <?php $tpl->displayCheckbox($this, 'detectCategoryPagination', ''); ?>
-                    <br>
-                    <br>
-                    <p>Get all paginated URLs for Categories.</p>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label for="detectComments"><b>Comment URLs</b></label>
-                    <?php $tpl->displayCheckbox($this, 'detectComments', ''); ?>
-                    <br>
-                    <br>
-                    <p>Get all URLs for Comments.</p>
-                </td>
-                <td>
-                    &nbsp;
-                </td>
-                <td>
-                    <label for="detectCommentPagination"><b>Comments Pagination</b></label>
-                    <?php $tpl->displayCheckbox($this, 'detectCommentPagination', ''); ?>
-                    <br>
-                    <br>
-                    <p>Get all paginated URLs for Comments.</p>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label for="detectParentTheme"><b>Parent Theme URLs</b></label>
-                    <?php $tpl->displayCheckbox($this, 'detectParentTheme', ''); ?>
-                    <br>
-                    <br>
-                    <p>Get all URLs within Parent Theme dir.</p>
-                </td>
-                <td>
-                    &nbsp;
-                </td>
-                <td>
-                    <label for="detectChildTheme"><b>Child Theme URLs</b></label>
-                    <?php $tpl->displayCheckbox($this, 'detectChildTheme', ''); ?>
-                    <br>
-                    <br>
-                    <p>Get all URLs within Child Theme dir.</p>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label for="detectUploads"><b>Uploads URLs</b></label>
-                    <?php $tpl->displayCheckbox($this, 'detectUploads', ''); ?>
-                    <br>
-                    <br>
-                    <p>Get all public URLs for WP uploads dir.</p>
-                </td>
-                <td>
-                    &nbsp;
-                </td>
-                <td>
-                    <label for="detectPluginAssets"><b>Plugin Assets</b></label>
-                    <?php $tpl->displayCheckbox($this, 'detectPluginAssets', ''); ?>
-                    <br>
-                    <br>
-                    <p>Detect all assets from within all plugin directories.</p>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label for="detectWPIncludesAssets"><b>WP-INC JS</b></label>
-                    <?php $tpl->displayCheckbox($this, 'detectWPIncludesAssets', ''); ?>
-                    <br>
-                    <br>
-                    <p>Get all public URLs for wp-includes assets.</p>
-                </td>
-                <td>
-                    &nbsp;
-                </td>
-                <td>
-                    <!-- empty -->
-                </td>
-            </tr>
-        </table>
+<?php
 
-        <button class="button button-secondary" id="save-and-reload">Save and reload</button>
+$detection_options_table = [
+    [
+        false,
+        'detectHomepage',
+        'Homepage',
+        'On by default, this will always include the <code>/</code> URL or site root.',
+    ],
+    [
+        'checkbox',
+        'detectPages',
+        'Pages',
+        'All published Pages. Use the date range option below to further filter.',
+    ],
+    [
+        'checkbox',
+        'detectPost',
+        'Posts',
+        'All published Posts. Use the date range option below to further filter.',
+    ],
+    [
+        'checkbox',
+        'detectCustomPostTypes',
+        'Custom Post Types',
+        'Include URLs for all Custom Post Types.',
+    ],
+    [
+        'checkbox',
+        'detectFeedURLs',
+        'Feed URLs',
+        'RSS/Atom feeds, such as <code>mydomain.com/some-post/feed/</code>.',
+    ],
+    [
+        'checkbox',
+        'detectVendorCacheDirs',
+        'Vendor cache',
+        'Vendor cache dirs, as used by Autoptimize and certain themes to store images and assets.',
+    ],
+    [
+        'checkbox',
+        'detectAttachments',
+        'Attachment URLs',
+        'The additional URLs for attachments, such as images. Usually not needed.',
+    ],
+    [
+        'checkbox',
+        'detectArchives',
+        'Archive URLs',
+        'All Archive pages, such as Post Categories and Date Archives, etc.',
+    ],
+    [
+        'checkbox',
+        'detectPostPagination',
+        'Posts Pagination',
+        'Get all paginated URLs for Posts.',
+    ],
+    [
+        'checkbox',
+        'detectCategoryPagination',
+        'Category Pagination',
+        'Get all paginated URLs for Categories.',
+    ],
+    [
+        'checkbox',
+        'detectComments',
+        'Comment URLs',
+        'Get all URLs for Comments.',
+    ],
+    [
+        'checkbox',
+        'detectCommentPagination',
+        'Comments Pagination',
+        'Get all paginated URLs for Comments.',
+    ],
+    [
+        'checkbox',
+        'detectParentTheme',
+        'Parent Theme URLs',
+        'Get all URLs within Parent Theme dir.',
+    ],
+    [
+        'checkbox',
+        'detectChildTheme',
+        'Child Theme URLs',
+        'Get all URLs within Child Theme dir.',
+    ],
+    [
+        'checkbox',
+        'detectUploads',
+        'Uploads URLs',
+        'Get all public URLs for WP uploads dir.',
+    ],
+    [
+        'checkbox',
+        'detectPluginAssets',
+        'Plugin Assets',
+        'Detect all assets from within all plugin directories.',
+    ],
+    [
+        'checkbox',
+        'detectWPIncludesAssets',
+        'WP-INC JS',
+        'Get all public URLs for wp-includes assets.',
+    ],
+];
+?>
+
+<table id="detectionOptionsTable">
+    <?php foreach ( $detection_options_table as $detection_option ) : ?>
+        <tr>
+            <td>
+                <label for='<?php echo $detection_option[1]; ?>'>
+                    <b><?php echo $detection_option[2]; ?></b>
+                </label>
+            </td>
+            <td>
+            <?php 
+
+            if ( $detection_option[0] ) {
+                $tpl->displayCheckbox($this, $detection_option[1], $detection_option[3]);
+
+            } else {
+                echo '&nbsp;';
+            }
+
+             ?>
+            </td>
+
+        <tr>
+    <?php endforeach; ?>
+</table>
+
+        <p><i>Save options to reload the page and see the effect of your detection options</i></p>
 
         </td>
       </tr>
@@ -230,7 +195,9 @@
             <textarea class="widefat" name="additionalUrls" id="additionalUrls" rows="5" cols="10"><?php echo $this->options->additionalUrls ? $this->options->additionalUrls : ''  ?></textarea>
 
         <br>
-        <button class="button button-secondary" id="save-and-reload">Save and reload (CHANGE TO CLASS)</button>
+        <br>
+
+        <p><i>Save options to reload the page and see the effect of your detection options</i></p>
         </td>
 
       </tr>

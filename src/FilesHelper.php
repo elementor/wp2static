@@ -175,6 +175,7 @@ class FilesHelper {
                 'sh',
                 'mo',
                 'md',
+                'crt',
             );
 
         if ( in_array( $path_info['extension'], $extensions_to_ignore ) ) {
