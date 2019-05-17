@@ -144,7 +144,6 @@ class SiteCrawler extends Base {
                     }
                 }
 
-                
                 if ( ! isset( $this->settings['dontUseCrawlCaching'] ) ) {
                     if ( CrawlCache::getUrl( $url ) ) {
                         continue 2;
