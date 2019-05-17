@@ -1,94 +1,90 @@
 <div class="advanced_settings" style="display:none;">
 
-<table class="form-table">
-  <tbody>
-      <tr>
-        <th scope="row">
-          <label for="deployBatchSize"><?php echo __('Deployment Batch Size', 'static-html-output-plugin');?></label>
-        </th>
-        <td>
-          <select name="deployBatchSize" id="deployBatchSize">
-<?php 
-  // TODO: shift this into helper function for select
-  $increments = array(1, 5, 10, 25, 50, 100, 500, 1000, 999999);
+<section class="wp2static-content wp2static-flex">
+  <div class="content" style="max-width:30%">
+    <h2><?php echo __('Deployment Batch Size', 'static-html-output-plugin');?></h2>
+  </div>
 
-  foreach($increments as $increment) :
-       if ($increment == 999999): ?>
-            <option value="999999"<?php echo $this->options->deployBatchSize == $increment ? ' selected' : ''; ?>>Maximum</option>
-<?php else: ?>
-            <option value="<?php echo $increment; ?>"<?php echo $this->options->deployBatchSize == $increment ? ' selected' : ''; ?>><?php echo $increment; ?></option>
+  <div class="content">
+    <select name="deployBatchSize" id="deployBatchSize">
+  
+      <?php 
+      // TODO: shift this into helper function for select
+      $increments = array(1, 5, 10, 25, 50, 100, 500, 1000, 999999);
 
-<?php endif; 
-         endforeach; ?>
-          </select><br>
+      foreach($increments as $increment) :
+          if ($increment == 999999): ?>
+                <option value="999999"<?php echo $this->options->deployBatchSize == $increment ? ' selected' : ''; ?>>Maximum</option>
+      <?php else: ?>
+                  <option value="<?php echo $increment; ?>"<?php echo $this->options->deployBatchSize == $increment ? ' selected' : ''; ?>><?php echo $increment; ?></option>
 
-          <p>This is set to 1, by default, in order to avoid execution limit timeouts on restricted environments, such as shared hosting servers. Each increment is the amount of files the server will try to deploy on each request. Incrementing this will speed up your exports, by processing more are a time. If your export is failing, due to execution limits or API rate limits being reached, try setting this to a lower number.</p>
+      <?php endif; 
+              endforeach; ?>
+    </select>
 
-        </td>
-      </tr>
-      <tr>
-        <th scope="row">
-          <label for="delayBetweenAPICalls"><?php echo __('API Request Delay', 'static-html-output-plugin');?></label>
-        </th>
-        <td>
-          <select name="delayBetweenAPICalls" id="delayBetweenAPICalls">
-<?php 
-  // TODO: shift this into helper function for select
-  $increments = array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 2, 3, 4, 10);
+    <p>This is set to 1, by default, in order to avoid execution limit timeouts on restricted environments, such as shared hosting servers. Each increment is the amount of files the server will try to deploy on each request. Incrementing this will speed up your exports, by processing more are a time. If your export is failing, due to execution limits or API rate limits being reached, try setting this to a lower number.</p>    
+   </div>
+</section>
 
-  foreach($increments as $increment) : ?>
-            <option value="<?php echo $increment; ?>"<?php echo $this->options->delayBetweenAPICalls == $increment ? ' selected' : ''; ?>><?php echo $increment; ?></option>
- <?php endforeach; ?>
-          </select><br>
+<section class="wp2static-content wp2static-flex">
+  <div class="content" style="max-width:30%">
+    <h2><?php echo __('API Request Delay', 'static-html-output-plugin');?></h2>
+  </div>
 
-          <p>This is set to 0, by default, but if your deploy is hitting the remote API too rapidly for their rate limit, you can increase this to add a delay between each API request.</p>
+  <div class="content">
+    <select name="delayBetweenAPICalls" id="delayBetweenAPICalls">
 
-        </td>
-      </tr>
-    <tr>
-      <th scope="row">
-        <label for="wp_cli"><?php echo __('WP-CLI', 'static-html-output-plugin');?></label>
-      </th>
-      <td>
-          <p>Replacing the former, limited support for scheduled deploys via WP-Cron, WP2Static now integrates with the great <a href="https://wp-cli.org/" target="_blank">WP-CLI</a> for programmatic access to deploying your WordPress site statically. Control settings and trigger deployments to better suit your development workflow.</p>
+    <?php 
+      // TODO: shift this into helper function for select
+      $increments = array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 2, 3, 4, 10);
+
+      foreach($increments as $increment) : ?>
+                <option value="<?php echo $increment; ?>"<?php echo $this->options->delayBetweenAPICalls == $increment ? ' selected' : ''; ?>><?php echo $increment; ?></option>
+      <?php endforeach; ?>
+
+    </select>
+
+    <p>This is set to 0, by default, but if your deploy is hitting the remote API too rapidly for their rate limit, you can increase this to add a delay between each API request.</p>    
+  </div>
+</section>
+
+<section class="wp2static-content wp2static-flex">
+  <div class="content" style="max-width:30%">
+    <h2><?php echo __('WP-CLI', 'static-html-output-plugin');?></h2>
+  </div>
+
+  <div class="content">
+    <p>Replacing the former, limited support for scheduled deploys via WP-Cron, WP2Static now integrates with the great <a href="https://wp-cli.org/" target="_blank">WP-CLI</a> for programmatic access to deploying your WordPress site statically. Control settings and trigger deployments to better suit your development workflow.</p>
 
     <p>More information available on the GitHub project page: <a href="https://github.com/leonstafford/wp2static" target="_blank">https://github.com/leonstafford/wp2static</a></p>
-<br>
+   </div>
+</section>
 
+<section class="wp2static-content wp2static-flex">
+  <div class="content" style="max-width:30%">
+    <h2><?php echo __('Email upon completion', 'static-html-output-plugin');?></h2>
+  </div>
 
-      </td>
-    </tr>
-    <tr>
-      <th scope="row">
-        <label for="completionEmail"><?php echo __('Email upon completion', 'static-html-output-plugin');?></label>
-      </th>
-      <td>
-        <?php
-         $current_user = wp_get_current_user();
-         $to = $current_user->user_email;
-         $tpl->displayCheckbox($this, 'completionEmail', 'Will send to: ' . $to); ?>
+  <div class="content">
+    <?php
+      $current_user = wp_get_current_user();
+      $to = $current_user->user_email;
+      $tpl->displayCheckbox($this, 'completionEmail', 'Will send to: ' . $to); ?>
 
-        <p>
-            Be alerted when your deployment process is complete.
-        </p>
+    <p>Be alerted when your deployment process is complete.</p>
+   </div>
+</section>
 
-      </td>
-    </tr>
-      <tr>
-        <th scope="row">
-          <label for="delete_deploy_cache_button"><?php echo __('Delete deploy cache', 'static-html-output-plugin');?></label>
-        </th>
-        <td>
-          <button id="delete_deploy_cache_button" type="button" class="btn-primary button">Delete deploy cache</button>
+<section class="wp2static-content wp2static-flex">
+  <div class="content" style="max-width:30%">
+    <h2><?php echo __('Delete deploy cache', 'static-html-output-plugin');?></h2>
+  </div>
 
-          <p>When deploying, WP2Static will check each file to see if it's changed since the last deployment. It will skip unchanged files based on this information. If you want to force an uncached deployment, click this button and any caches will be emptied, requiring a full deploy on the next run.</p>
-        </td>
-      </tr>
-  </tbody>
-</table>
+  <div class="content">
+    <p>When deploying, WP2Static will check each file to see if it's changed since the last deployment. It will skip unchanged files based on this information. If you want to force an uncached deployment, click this button and any caches will be emptied, requiring a full deploy on the next run.</p>
 
-
-
+    <button id="delete_deploy_cache_button" type="button" class="wp2static-btn btn-sm">Delete deploy cache</button>
+  </div>
+</section>
 
 </div> <!-- end advanced settings -->
-

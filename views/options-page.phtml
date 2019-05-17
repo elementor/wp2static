@@ -67,7 +67,7 @@ $tpl = new \WP2Static\TemplateHelper();
 
   <?php endif; ?>
 
-  <h2 class="nav-tab-wrapper">
+  <nav class="nav-tab-wrapper">
     <a href="#" class="nav-tab nav-tab-active">Help</a>
     <a href="#" class="nav-tab">URL Detection</a>
     <a href="#" class="nav-tab">Crawling</a>
@@ -76,7 +76,7 @@ $tpl = new \WP2Static\TemplateHelper();
     <a href="#" class="nav-tab">Deploy static website</a>
     <a href="#" class="nav-tab">Debug Log</a>
     <a href="#" class="nav-tab">Add-ons</a>
-  </h2>
+  </nav>
 
 
   <!-- main form containing options that get sent -->
@@ -109,6 +109,8 @@ $tpl = new \WP2Static\TemplateHelper();
 
     ?>
 
+    <div class="wp2static-content-wrapper">
+
     <?php require_once(__DIR__ . '/tab_help.phtml'); ?>
     <?php require_once(__DIR__ . '/tab_detection.phtml'); ?>
     <?php require_once(__DIR__ . '/tab_crawling.phtml'); ?>
@@ -118,7 +120,7 @@ $tpl = new \WP2Static\TemplateHelper();
     <?php require_once(__DIR__ . '/tab_logs.phtml'); ?>
     <?php require_once(__DIR__ . '/tab_add_ons.phtml'); ?>
 
-    <br>
+    </div>
 
     <span class="submit" style="display:none;">
       <?php wp_nonce_field($this->onceAction) ?>
@@ -147,14 +149,14 @@ $tpl = new \WP2Static\TemplateHelper();
 
             <div class="submit">
               <?php wp_nonce_field($this->onceAction) ?>
-              <button id="startExportButton" class="button-primary button-hero" disabled>Start static site export</button>
-              <button class="saveSettingsButton button-secondary" disabled>Save current options</button>
-              <button class="button resetDefaultSettingsButton" disabled>Reset to default settings</button>
-              <button style="display:none;" class="button cancelExportButton">Cancel export</button>
+              <button id="startExportButton" class="wp2static-btn blue" disabled>Start static site export</button>
+              <button class="wp2static-btn saveSettingsButton" disabled>Save current options</button>
+              <button class="wp2static-btn resetDefaultSettingsButton" disabled>Reset to default settings</button>
+              <button style="display:none;" class="wp2static-btn cancelExportButton">Cancel export</button>
 
-              <a href="" id="downloadZIP"><button class="button button-secondary button-call-to-action" target="_blank">Download ZIP</button></a>
+              <a href="" id="downloadZIP"><button class="wp2static-btn btn-call-to-action" target="_blank">Download ZIP</button></a>
 
-              <a href="#" class="button button-secondary button-call-to-action" target="_blank" id="goToMyStaticSite" style="display:none;">Go to my deployed site</a>
+              <a href="#" class="wp2static-btn btn-call-to-action" target="_blank" id="goToMyStaticSite" style="display:none;">Go to my deployed site</a>
 
               <div id="export_timer"></div>
 

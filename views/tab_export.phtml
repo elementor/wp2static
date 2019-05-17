@@ -1,26 +1,19 @@
 <div class="export_your_site" style="display:none;">
 
+<section class="wp2static-content wp2static-flex">
+  <div class="content" style="max-width:30%">
+    <h2><?php echo __('Where will you host the optimized version of your site?', 'static-html-output-plugin');?></h2>
+  </div>
 
-<table class="form-table">
-  <tbody>
-    <tr>
-      <th scope="row">
-        <label for="selected_deployment_option"><?php echo __('Where will you host the optimized version of your site?', 'static-html-output-plugin');?></label>
-      </th>
-      <td>
-        <select class="selected_deployment_method" name="selected_deployment_option">
-          <?php generateDeploymentMethodOptions(); ?>
-        </select>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-
+  <div class="content">
+    <select class="selected_deployment_method" name="selected_deployment_option">
+      <?php generateDeploymentMethodOptions(); ?>
+    </select>
+   </div>
+</section>
 
 <!-- legacy multi-export functionality relied on the baseUrl field being first in the settings block -->
 <input style="display:none;" type="text" id="baseUrl" name="baseUrl" value="<?php echo esc_attr($this->baseUrl) ?>" size="50" placeholder="http://mystaticsite.com" />
-
 
 <?php
 
@@ -42,4 +35,3 @@
 ?>
 
 </div> <!-- end export_your_site -->
-
