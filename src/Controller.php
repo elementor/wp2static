@@ -319,10 +319,10 @@ class Controller {
 
         $table_name = $wpdb->prefix . 'wp2static_crawl_cache';
 
-        $wpdb->query("TRUNCATE TABLE $table_name");
+        $wpdb->query( "TRUNCATE TABLE $table_name" );
 
         $sql =
-            "SELECT count(*) FROM $table_name";// phpcs:ignore WordPress
+            "SELECT count(*) FROM $table_name";
 
         $count = $wpdb->get_var( $sql );
 
