@@ -75,15 +75,15 @@ class FilesHelper {
         }
     }
 
-    public static function getListOfLocalFilesByUrl( $url ) {
+    public static function getListOfLocalFilesByDir( $dir ) {
         $files = array();
 
-        $directory = str_replace( home_url( '/' ), ABSPATH, $url );
+        $site_path = SiteInfo::getPath( 'site' );
 
-        if ( is_dir( $directory ) ) {
+        if ( is_dir( $dir ) ) {
             $iterator = new RecursiveIteratorIterator(
                 new RecursiveDirectoryIterator(
-                    $directory,
+                    $dir,
                     RecursiveDirectoryIterator::SKIP_DOTS
                 )
             );
@@ -92,10 +92,9 @@ class FilesHelper {
                 $path_crawlable = self::filePathLooksCrawlable( $filename );
 
                 if ( $path_crawlable ) {
-                    array_push(
-                        $files,
-                        home_url( str_replace( ABSPATH, '', $filename ) )
-                    );
+                    if ( is_string( $site_path ) ) {
+                        $files[] = str_replace( $site_path, '/', $filename );
+                    }
                 }
             }
         }
@@ -104,29 +103,36 @@ class FilesHelper {
     }
 
     public static function filePathLooksCrawlable( $file_name ) {
-        $path_info = pathinfo( $file_name );
-
-        if ( ! is_file( $file_name ) ) {
-            return false;
-        }
-
-        $filenames_to_ignore = array(
+        $filenames_to_ignore = [
             '.DS_Store',
             '.PHP',
             '.SQL',
+            '.crt',
             '.git',
             '.idea',
             '.ini',
+            '.less',
             '.map',
+            '.md',
+            '.mo',
+            '.mo',
             '.php',
+            '.php',
+            '.phtml',
+            '.po',
+            '.po',
+            '.pot',
+            '.scss',
+            '.sh',
+            '.sh',
             '.sql',
-            'tinymce',
+            '.tar.gz',
+            '.tpl',
+            '.txt',
             '.yarn',
-            'wp2static-working-files',
+            '.zip',
             '__MACOSX',
             'backwpup',
-            'wpallexport',
-            'wpallimport',
             'bower.json',
             'bower_components',
             'composer.json',
@@ -138,47 +144,20 @@ class FilesHelper {
             'pb_backupbuddy',
             'previous-export',
             'thumbs.db',
+            'tinymce',
             'vendor',
             'wp-static-html-output', // exclude earlier version exports
             'wp2static-exported-site',
-        );
+            'wp2static-working-files',
+            'wpallexport',
+            'wpallimport',
+        ];
 
-        foreach ( $filenames_to_ignore as $ignorable ) {
-            if ( strpos( $file_name, $ignorable ) !== false ) {
-                return false;
-            }
-        }
+        $matches = 0;
 
-        if ( $path_info['basename'][0] === '.' ) {
-            return false;
-        }
+        str_replace( $filenames_to_ignore, '', $file_name, $matches );
 
-        if ( ! isset( $path_info['extension'] ) ) {
-            return false;
-        }
-
-        $extensions_to_ignore =
-            array(
-                'php',
-                'phtml',
-                'tpl',
-                'less',
-                'scss',
-                'po',
-                'mo',
-                'tar.gz',
-                'zip',
-                'txt',
-                'po',
-                'pot',
-                'sh',
-                'sh',
-                'mo',
-                'md',
-                'crt',
-            );
-
-        if ( in_array( $path_info['extension'], $extensions_to_ignore ) ) {
+        if ( $matches > 0 ) {
             return false;
         }
 
@@ -188,28 +167,24 @@ class FilesHelper {
     public static function buildInitialFileList(
         $via_cli = false,
         $uploads_path,
-        $uploads_url,
         $settings
         ) {
-        // TODO: convert to SiteInfo
-        $base_url = untrailingslashit( home_url() );
+        $arrays_to_merge = [];
 
         // TODO: detect robots.txt, etc before adding
-        $url_queue = array_merge(
-            array( trailingslashit( $base_url ) ),
-            array( '/robots.txt' ),
-            array( '/favicon.ico' ),
-            array( '/sitemap.xml' )
-        );
+        $arrays_to_merge[] = [
+            '/',
+            '/robots.txt',
+            '/favicon.ico',
+            '/sitemap.xml',
+        ];
 
         /*
-            URLs to optionally detect
+            TODO: reimplement detection for URLs:
                 'detectArchives',
-                'detectAttachments',
                 'detectCategoryPagination',
                 'detectCommentPagination',
                 'detectComments',
-                'detectCustomPostTypes',
                 'detectFeedURLs',
                 'detectPostPagination',
 
@@ -221,74 +196,49 @@ class FilesHelper {
 
         */
         if ( isset( $settings['detectAttachments'] ) ) {
-            $url_queue = array_merge(
-                $url_queue,
-                DetectAttachmentURLs::detect( $base_url )
-            );
+            $arrays_to_merge[] = DetectAttachmentURLs::detect();
         }
 
         if ( isset( $settings['detectPosts'] ) ) {
-            $url_queue = array_merge(
-                $url_queue,
-                DetectPostURLs::detect( $base_url )
-            );
+            $permalink_structure = get_option( 'permalink_structure' );
+            $arrays_to_merge[] = DetectPostURLs::detect( $permalink_structure );
         }
 
         if ( isset( $settings['detectPages'] ) ) {
-            $url_queue = array_merge(
-                $url_queue,
-                DetectPageURLs::detect( $base_url )
-            );
+            $arrays_to_merge[] = DetectPageURLs::detect();
         }
 
         if ( isset( $settings['detectCustomPostTypes'] ) ) {
-            $url_queue = array_merge(
-                $url_queue,
-                DetectCustomPostTypeURLs::detect( $base_url )
-            );
+            $arrays_to_merge[] = DetectCustomPostTypeURLs::detect();
         }
 
         if ( isset( $settings['detectUploads'] ) ) {
-            $url_queue = array_merge(
-                $url_queue,
-                self::getListOfLocalFilesByUrl( $uploads_url )
-            );
+            $arrays_to_merge[] =
+                self::getListOfLocalFilesByDir( $uploads_path );
         }
 
         if ( isset( $settings['detectParentTheme'] ) ) {
-            $url_queue = array_merge(
-                $url_queue,
-                DetectThemeAssets::detect( 'parent' )
-            );
+            $arrays_to_merge[] = DetectThemeAssets::detect( 'parent' );
         }
 
         if ( isset( $settings['detectChildTheme'] ) ) {
-            $url_queue = array_merge(
-                $url_queue,
-                DetectThemeAssets::detect( 'child' )
-            );
+            $arrays_to_merge[] = DetectThemeAssets::detect( 'child' );
         }
 
         if ( isset( $settings['detectPluginAssets'] ) ) {
-            $url_queue = array_merge(
-                $url_queue,
-                DetectPluginAssets::detect()
-            );
+            $arrays_to_merge[] = DetectPluginAssets::detect();
         }
 
         if ( isset( $settings['detectWPIncludesAssets'] ) ) {
-            $url_queue = array_merge(
-                $url_queue,
-                DetectWPIncludesAssets::detect()
-            );
+            $arrays_to_merge[] = DetectWPIncludesAssets::detect();
         }
 
         if ( isset( $settings['detectVendorCacheDirs'] ) ) {
-            $url_queue = array_merge(
-                $url_queue,
-                DetectVendorFiles::detect( SiteInfo::getURL( 'site' ) )
-            );
+            $arrays_to_merge[] =
+                DetectVendorFiles::detect( SiteInfo::getURL( 'site' ) );
         }
+
+        $url_queue = call_user_func_array( 'array_merge', $arrays_to_merge );
 
         $url_queue = self::cleanDetectedURLs( $url_queue );
 
@@ -298,17 +248,13 @@ class FilesHelper {
         );
 
         $unique_urls = array_unique( $url_queue );
-        sort( $unique_urls );
 
-        $initial_crawl_list_total = count( $unique_urls );
+        sort( $unique_urls );
 
         $str = implode( "\n", $unique_urls );
 
         $initial_crawl_file = $uploads_path .
             'wp2static-working-files/INITIAL-CRAWL-LIST.txt';
-
-        $initial_crawl_total = $uploads_path .
-            'wp2static-working-files/INITIAL-CRAWL-TOTAL.txt';
 
         if ( wp_mkdir_p( $uploads_path . 'wp2static-working-files' ) ) {
             $result = file_put_contents(
@@ -324,17 +270,6 @@ class FilesHelper {
 
             chmod( $initial_crawl_file, 0664 );
 
-            file_put_contents(
-                $initial_crawl_total,
-                $initial_crawl_list_total
-            );
-
-            if ( ! is_file( $initial_crawl_total ) ) {
-                return false;
-            }
-
-            chmod( $initial_crawl_total, 0664 );
-
             return count( $url_queue );
         } else {
             WsLog::l(
@@ -347,6 +282,7 @@ class FilesHelper {
 
     }
 
+    // TODO: finish porting these over
     public static function getAllTHEOTHERSTUFFPOSTS( $wp_site_url ) {
         global $wpdb;
 
@@ -378,7 +314,11 @@ class FilesHelper {
                     $permalink = get_page_link( $post->ID );
                     break;
                 case 'post':
-                    $permalink = get_permalink( $post->ID );
+                    $permalink_structure = get_option( 'permalink_structure' );
+                    $permalink = WPOverrides::get_permalink(
+                        $post->ID,
+                        $permalink_structure
+                    );
                     break;
                 case 'attachment':
                     $permalink = get_attachment_link( $post->ID );
@@ -522,16 +462,6 @@ class FilesHelper {
     }
 
     public static function cleanDetectedURLs( $urls ) {
-        // NOTE: initial de-dup for faster processing
-        $unique_urls = array_unique( $urls );
-
-        $url_queue = array_filter(
-            $unique_urls,
-            function ( $url ) {
-                return ( strpos( $url, ' ' ) === false );
-            }
-        );
-
         $home_url = SiteInfo::getUrl( 'home' );
 
         if ( ! is_string( $home_url ) ) {
@@ -540,22 +470,28 @@ class FilesHelper {
             throw new Exception( $err );
         }
 
-        $stripped_urls = str_replace(
-            $home_url,
-            '/',
-            $url_queue
-        );
-
-        $deslashed_urls = str_replace(
-            '//',
-            '/',
-            $stripped_urls
-        );
-
-        $detokenized_urls = array_map(
+        $cleaned_urls = array_map(
             // trim hashes/query strings
-            function ( $url ) {
+            function ( $url ) use ( $home_url ) {
                 if ( ! $url ) {
+                    return;
+                }
+
+                // NOTE: 2 x str_replace's significantly faster than
+                // 1 x str_replace with search/replace arrays of 2 length
+                $url = str_replace(
+                    $home_url,
+                    '/',
+                    $url
+                );
+
+                $url = str_replace(
+                    '//',
+                    '/',
+                    $url
+                );
+
+                if ( ! is_string( $url ) ) {
                     return;
                 }
 
@@ -569,10 +505,8 @@ class FilesHelper {
 
                 return $url;
             },
-            $deslashed_urls
+            $urls
         );
-
-        $cleaned_urls = array_unique( $detokenized_urls );
 
         return $cleaned_urls;
     }

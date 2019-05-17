@@ -4,7 +4,7 @@ namespace WP2Static;
 
 class DetectPostURLs {
 
-    public static function detect( $wp_site_url ) {
+    public static function detect( $permalink_structure ) {
         global $wpdb;
 
         $post_urls = array();
@@ -24,7 +24,12 @@ class DetectPostURLs {
         );
 
         foreach ( $posts as $post ) {
-            $permalink = get_permalink( $post->ID );
+            $permalink = WPOverrides::get_permalink(
+                $post->ID,
+                $permalink_structure
+            );
+
+            $permalink = WPOverrides::get_permalink( $post->ID, $permalink );
 
             if ( ! $permalink ) {
                 continue;

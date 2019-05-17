@@ -186,6 +186,16 @@ jQuery(document).ready(function($){
     $('#current_action').html( 'Failed to download Export Log <a id="downloadExportLogButton" href="#">try again</a>' );
   }
 
+  function deleteCrawlCacheSuccessCallback( serverResponse) {
+    $('#current_action').html('Crawl Cache successfully deleted.');
+    $('.pulsate-css').hide();
+  }
+
+  function deleteCrawlCacheFailCallback( serverResponse) {
+    $('.pulsate-css').hide();
+    $('#current_action').html( 'Failed to delete Crawl Cache.' );
+  }
+
   function downloadExportLog() {
     $('#current_action').html( 'Downloading Export Log...' );
 
@@ -199,6 +209,16 @@ jQuery(document).ready(function($){
   $(document).on('click', '#detectEverythingButton', function(evt) {
         evt.preventDefault();
         $('#detectionOptionsTable input[type="checkbox"]').attr('checked', true);
+  });
+
+  $(document).on('click', '#deleteCrawlCache', function(evt) {
+        evt.preventDefault();
+
+        sendWP2StaticAJAX(
+            'delete_crawl_cache',
+            deleteCrawlCacheSuccessCallback,
+            deleteCrawlCacheFailCallback
+        ); 
   });
 
   $(document).on('click', '#detectNothingButton', function(evt) {

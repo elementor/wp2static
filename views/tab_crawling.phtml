@@ -7,6 +7,10 @@
           <label for="crawl_caching_time_unit"><?php echo __('Crawl Caching Time Unit', 'static-html-output-plugin');?></label>
         </th>
         <td>
+          <p>Don't recrawl files crawled within last n period.</p>
+
+            <br>
+
           <select name="crawl_caching_time_unit" id="crawl_caching">
   <?php 
     // TODO: shift this into helper function for select
@@ -20,7 +24,7 @@
   
   <?php endif; 
          endforeach; ?>
-          </select><br>
+          </select> &nbsp;
 
           <select name="crawl_caching_time_period" id="crawl_caching_time_period">
   <?php 
@@ -41,11 +45,13 @@
          endforeach; ?>
           </select><br>
 
-          <?php $tpl->displayCheckbox($this, 'dontUseCrawlCaching', 'Crawl everything!'); ?>
+            <br>
+          <?php $tpl->displayCheckbox($this, 'dontUseCrawlCaching', 'Disregard cache and crawl everything'); ?>
 
             <br>
   
-          <p>Don't recrawl files crawled within last n period.</p>
+
+          <button id="deleteCrawlCache">Delete Crawl Cache</button>
   
         </td>
       </tr>

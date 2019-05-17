@@ -66,6 +66,9 @@ class Controller {
             throw new Exception( $err );
         }
 
+        // create DB table for crawl caching
+        CrawlCache::createTable();
+
         // capture URL hosts for use in detecting internal links
         $instance->site_url_host =
             parse_url( $instance->site_url, PHP_URL_HOST );
@@ -295,7 +298,6 @@ class Controller {
             FilesHelper::buildInitialFileList(
                 true,
                 SiteInfo::getPath( 'uploads' ),
-                SiteInfo::getUrl( 'uploads' ),
                 $this->settings
             );
 
@@ -422,61 +424,61 @@ class Controller {
 
     public function logEnvironmentalInfo() {
         $info = array(
-            '' . date( 'Y-m-d h:i:s' ),
-            'PHP VERSION ' . phpversion(),
-            'OS VERSION ' . php_uname(),
-            'WP VERSION ' . get_bloginfo( 'version' ),
-            'WP URL ' . get_bloginfo( 'url' ),
-            'WP SITEURL ' . get_option( 'siteurl' ),
-            'WP HOME ' . get_option( 'home' ),
-            'WP ADDRESS ' . get_bloginfo( 'wpurl' ),
-            'PLUGIN VERSION ' . $this::VERSION,
-            'VIA WP-CLI? ' . defined( 'WP_CLI' ),
-            'STATIC EXPORT URL ' . $this->exporter->settings['baseUrl'],
-            'PERMALINK STRUCTURE ' . get_option( 'permalink_structure' ),
+            'EXPORT START: ' . date( 'Y-m-d h:i:s' ),
+            'PLUGIN VERSION: ' . $this::VERSION,
+            'PHP VERSION: ' . phpversion(),
+            'OS VERSION: ' . php_uname(),
+            'WP VERSION: ' . get_bloginfo( 'version' ),
+            'WP URL: ' . get_bloginfo( 'url' ),
+            'WP SITEURL: ' . get_option( 'siteurl' ),
+            'WP HOME: ' . get_option( 'home' ),
+            'WP ADDRESS: ' . get_bloginfo( 'wpurl' ),
+            defined( 'WP_CLI' ) ? 'WP-CLI: YES' : 'WP-CLI: NO',
+            'STATIC EXPORT URL: ' . $this->exporter->settings['baseUrl'],
+            'PERMALINK STRUCTURE: ' . get_option( 'permalink_structure' ),
         );
 
         if ( isset( $_SERVER['SERVER_SOFTWARE'] ) ) {
-            $info[] = 'SERVER SOFTWARE ' . $_SERVER['SERVER_SOFTWARE'];
+            $info[] = 'SERVER SOFTWARE: ' . $_SERVER['SERVER_SOFTWARE'] .
+            PHP_EOL;
         }
 
-        WsLog::l( implode( PHP_EOL, $info ) );
-
-        WsLog::l( 'ACTIVE PLUGINS:' );
+        $environmental_info = '';
+        $environmental_info .= implode( PHP_EOL, $info );
+        $environmental_info .= 'ACTIVE PLUGINS: ' . PHP_EOL;
 
         $active_plugins = get_option( 'active_plugins' );
 
         foreach ( $active_plugins as $active_plugin ) {
-            WsLog::l( $active_plugin );
+            $environmental_info .= $active_plugin . PHP_EOL;
         }
 
-        WsLog::l( 'ACTIVE THEME:' );
+        $environmental_info .= 'ACTIVE THEME: ';
 
         $theme = wp_get_theme();
 
-        WsLog::l(
-            $theme->get( 'Name' ) . ' is version ' .
-            $theme->get( 'Version' )
-        );
+        $environmental_info .= $theme->get( 'Name' ) . ' is version ' .
+            $theme->get( 'Version' ) . PHP_EOL;
 
-        WsLog::l( 'WP2STATIC OPTIONS:' );
+        $environmental_info .= 'WP2STATIC OPTIONS: ' . PHP_EOL;
 
         $options = $this->options->getAllOptions( false );
 
         foreach ( $options as $key => $value ) {
-            WsLog::l( "{$value['Option name']}: {$value['Value']}" );
+            $environmental_info .=
+                "{$value['Option name']}: {$value['Value']}" . PHP_EOL;
         }
 
-        WsLog::l(
-            'SITE URL PATTERNS: ' .
+        $environmental_info .= 'SITE URL PATTERNS: ' .
             implode( ',', $this->rewrite_rules['site_url_patterns'] ) .
              PHP_EOL . 'DESTINATION URL PATTERNS: ' .
-            implode( ',', $this->rewrite_rules['destination_url_patterns'] )
-        );
+            implode( ',', $this->rewrite_rules['destination_url_patterns'] );
 
         $extensions = get_loaded_extensions();
 
-        WsLog::l( 'INSTALLED EXTENSIONS: ' . join( ', ', $extensions ) );
+        $environmental_info .= PHP_EOL . 'INSTALLED EXTENSIONS: ' .
+            join( ', ', $extensions );
 
+        WsLog::l( $environmental_info );
     }
 }
