@@ -92,7 +92,9 @@ class FilesHelper {
                 $path_crawlable = self::filePathLooksCrawlable( $filename );
 
                 if ( $path_crawlable ) {
-                    $files[] = str_replace( $site_path, '/', $filename );
+                    if ( is_string( $site_path ) ) {
+                        $files[] = str_replace( $site_path, '/', $filename );
+                    }
                 }
             }
         }
@@ -488,6 +490,10 @@ class FilesHelper {
                     '/',
                     $url
                 );
+
+                if ( ! is_string( $url ) ) {
+                    return;
+                }
 
                 $url = strtok( $url, '#' );
 

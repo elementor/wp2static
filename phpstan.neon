@@ -34,3 +34,5 @@ parameters:
     ignoreErrors:
         # TODO Add proper PHPDoc blocks
         - '#^Access to an undefined property #'
+    excludes_analyse:
+        - %currentWorkingDirectory%/src/WPOverrides.php

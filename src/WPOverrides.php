@@ -9,6 +9,8 @@ class WPOverrides {
      * reducing the get_home_url and get_option calls will be helpful
      *
      * Taken from original WP get_permalink() function
+     *
+     * TODO: Excluded from phpstan due to WP class dependencies; revisit
      */
     public static function get_permalink( $post, $permalink ) {
         $rewritecode = array(
@@ -69,6 +71,7 @@ class WPOverrides {
                     );
 
                 $category_object = get_term( $category_object, 'category' );
+
                 $category = $category_object->slug;
 
                 if ( $category_object->parent ) {
