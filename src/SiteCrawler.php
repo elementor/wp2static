@@ -38,6 +38,25 @@ class SiteCrawler extends Base {
         $this->rewrite_rules = $rewrite_rules;
         $this->site_url_host = $site_url_host;
         $this->destination_url = $destination_url;
+        $this->ch = curl_init();
+        $this->request = new Request();
+
+        $this->curl_options = [];
+
+        if ( isset( $this->settings['crawlPort'] ) ) {
+            $this->curl_options[ CURLOPT_PORT ] = $this->settings['crawlPort'];
+        }
+
+        if ( isset( $this->settings['crawlUserAgent'] ) ) {
+            $this->curl_options[ CURLOPT_USERAGENT ] =
+                $this->settings['crawlUserAgent'];
+        }
+
+        if ( isset( $this->settings['useBasicAuth'] ) ) {
+            $this->curl_options[ CURLOPT_USERPWD ] =
+                $this->settings['basicAuthUser'] . ':' .
+                $this->settings['basicAuthPassword'];
+        }
     }
 
     public function crawl() {
@@ -241,28 +260,10 @@ class SiteCrawler extends Base {
     }
 
     public function crawlSingleURL( $url ) {
-        $curl_options = [];
-
-        if ( isset( $this->settings['crawlPort'] ) ) {
-            $curl_options[ CURLOPT_PORT ] = $this->settings['crawlPort'];
-        }
-
-        if ( isset( $this->settings['crawlUserAgent'] ) ) {
-            $curl_options[ CURLOPT_USERAGENT ] =
-                $this->settings['crawlUserAgent'];
-        }
-
-        if ( isset( $this->settings['useBasicAuth'] ) ) {
-            $curl_options[ CURLOPT_USERPWD ] =
-                $this->settings['basicAuthUser'] . ':' .
-                $this->settings['basicAuthPassword'];
-        }
-
-        $request = new Request();
-
-        $response = $request->getURL(
+        $response = $this->request->getURL(
             $url,
-            $curl_options
+            $this->ch,
+            $this->curl_options
         );
 
         $this->processCrawledURL( $response['ch'], $response['body'] );
@@ -366,8 +367,6 @@ class SiteCrawler extends Base {
             $file_type,
             $curl_content_type
         );
-
-        curl_close( $curl_handle );
     }
 
     public function saveCrawledURL( $url, $body, $file_type, $content_type ) {
