@@ -64,6 +64,8 @@ class SiteCrawler extends Base {
     public function crawlABitMore() {
         $batch_of_links_to_crawl = array();
 
+        // get urls to crawl (can skip this with targeted query)
+
         $this->urls_to_crawl = file(
             $this->list_of_urls_to_crawl_path,
             FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
@@ -127,6 +129,8 @@ class SiteCrawler extends Base {
 
             $page_url = SiteInfo::getUrl( 'site' ) . ltrim( $url, '/' );
 
+            $skip_url = false;
+
             foreach ( $exclusions as $exclusion ) {
                 $exclusion = trim( $exclusion );
                 if ( $exclusion != '' ) {
@@ -137,12 +141,19 @@ class SiteCrawler extends Base {
                         );
 
                         // skip the outer foreach loop
-                        continue 2;
+                        $skip_url = true;
                     }
+                }
+
+                // check the root relative URL in cache
+                if ( CrawlCache::getUrl( $url ) ) {
+                    $skip_url = true;
                 }
             }
 
-            $this->crawlSingleURL( $page_url );
+            if ( ! $skip_url ) {
+                $this->crawlSingleURL( $page_url );
+            }
         }
 
         $this->checkIfMoreCrawlingNeeded( $this->urls_to_crawl );
@@ -381,8 +392,10 @@ class SiteCrawler extends Base {
             $content_type
         );
 
+        // TODO: better validate save success
         $file_writer->saveFile( $this->archive_dir );
 
+        CrawlCache::addUrl( $url );
     }
 
     public function getRelativeURLFromFullURL( $page_url ) {

@@ -66,6 +66,10 @@ class Controller {
             throw new Exception( $err );
         }
 
+        // create DB table for crawl caching
+        CrawlCache::createTable(); 
+
+
         // capture URL hosts for use in detecting internal links
         $instance->site_url_host =
             parse_url( $instance->site_url, PHP_URL_HOST );
