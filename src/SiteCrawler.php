@@ -241,43 +241,30 @@ class SiteCrawler extends Base {
     }
 
     public function crawlSingleURL( $url ) {
-        $ch = curl_init();
-
-        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
-        curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
-        curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
-        curl_setopt( $ch, CURLOPT_URL, $url );
-        curl_setopt( $ch, CURLOPT_USERAGENT, 'WP2Static.com' );
-        curl_setopt( $ch, CURLOPT_CONNECTTIMEOUT, 0 );
-        curl_setopt( $ch, CURLOPT_TIMEOUT, 600 );
-        curl_setopt( $ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1 );
-        curl_setopt( $ch, CURLOPT_HEADER, 0 );
-        curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
+        $curl_options = [];
 
         if ( isset( $this->settings['crawlPort'] ) ) {
-            curl_setopt( $ch, CURLOPT_PORT, $this->settings['crawlPort'] );
+            $curl_options[CURLOPT_PORT] = $this->settings['crawlPort'];
         }
 
         if ( isset( $this->settings['crawlUserAgent'] ) ) {
-            curl_setopt(
-                $ch,
-                CURLOPT_USERAGENT,
-                $this->settings['crawlUserAgent']
-            );
+            $curl_options[CURLOPT_USERAGENT] = $this->settings['crawlUserAgent'];
         }
 
         if ( isset( $this->settings['useBasicAuth'] ) ) {
-            curl_setopt(
-                $ch,
-                CURLOPT_USERPWD,
+            $curl_options[CURLOPT_USERPWD] =
                 $this->settings['basicAuthUser'] . ':' .
-                $this->settings['basicAuthPassword']
-            );
+                $this->settings['basicAuthPassword'];
         }
 
-        $body = curl_exec( $ch );
+        $request = new Request();
 
-        $this->processCrawledURL( $ch, $body );
+        $response = $request->getURL(
+            $url,
+            $curl_options
+        ); 
+
+        $this->processCrawledURL( $response['ch'], $response['body'] );
     }
 
     public function processCrawledURL( $curl_handle, $output ) {

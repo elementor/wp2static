@@ -23,6 +23,36 @@ class Request {
         }
     }
 
+    public function getURL( $url,  $curl_options = array() ) {
+        $ch = curl_init();
+
+        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
+        curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
+        curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
+        curl_setopt( $ch, CURLOPT_URL, $url );
+        curl_setopt( $ch, CURLOPT_HEADER, 0 );
+        curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
+
+        $this->applyDefaultOptions( $ch );
+
+        if ( ! empty( $curl_options ) ) {
+            foreach ( $curl_options as $option => $value ) {
+                curl_setopt(
+                    $ch,
+                    $option,
+                    $value
+                );
+            }
+        }
+
+        $response = [];
+
+        $response['body'] = curl_exec( $ch );
+        $response['ch'] = $ch;
+
+        return $response;
+    }
+
     public function postWithJSONPayloadCustomHeaders(
         $url,
         $data,
