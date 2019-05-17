@@ -23,7 +23,7 @@ class Request {
         }
     }
 
-    public function getURL( $url,  $curl_options = array() ) {
+    public function getURL( $url, $curl_options = array() ) {
         $ch = curl_init();
 
         curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );

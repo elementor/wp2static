@@ -616,15 +616,17 @@ class HTMLProcessor extends Base {
                 $curl_options = [];
 
                 if ( isset( $this->settings['crawlPort'] ) ) {
-                    $curl_options[CURLOPT_PORT] = $this->settings['crawlPort'];
+                    $curl_options[ CURLOPT_PORT ] =
+                        $this->settings['crawlPort'];
                 }
 
                 if ( isset( $this->settings['crawlUserAgent'] ) ) {
-                    $curl_options[CURLOPT_USERAGENT] = $this->settings['crawlUserAgent'];
+                    $curl_options[ CURLOPT_USERAGENT ] =
+                        $this->settings['crawlUserAgent'];
                 }
 
                 if ( isset( $this->settings['useBasicAuth'] ) ) {
-                    $curl_options[CURLOPT_USERPWD] =
+                    $curl_options[ CURLOPT_USERPWD ] =
                         $this->settings['basicAuthUser'] . ':' .
                         $this->settings['basicAuthPassword'];
                 }
