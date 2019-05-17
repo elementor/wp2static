@@ -23,9 +23,7 @@ class Request {
         }
     }
 
-    public function getURL( $url, $curl_options = array() ) {
-        $ch = curl_init();
-
+    public function getURL( $url, $ch, $curl_options = array() ) {
         curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
         curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
         curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
