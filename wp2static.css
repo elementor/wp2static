@@ -111,6 +111,10 @@ button {
   font-size: 18px;
 }
 
+.btn-sm {
+  padding: 5px 8px;
+}
+
 .wp2s-form .control {
   margin-top: 10px;
 }
@@ -303,4 +307,20 @@ p.submit{
 
 #detectionOptionsTable {
   margin-top: 10px;
+}
+
+.no-tb-bs {
+  box-shadow: 0 0 0 0px rgba(213, 213, 213, 0.5), 0 1px 2px #eee;
+}
+
+.pd-top0 {
+  padding-top: 0;
+}
+
+.mg-top10 {
+  margin-top: 10px;
+}
+
+.crawl_settings fieldset {
+  margin-top: 20px;
 }
