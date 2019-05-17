@@ -1,15 +1,13 @@
 <div class="help_troubleshooting">
 
-<main class="wp2static-content">
-  <p>Congratulations on choosing to <b>Go Static</b>!</p>
-</main>
-
-<section class="wp2static-content"> 
-  <p>We think it's the best way to deal with 90% of WordPress sites, but the concept does take a little while to get used to.</p>
-
-  <p>The tabs above are presented in a logical order for you to check/adjust settings.</p>
+<section class="wp2static-content">
+  <p>Congratulations on choosing to <strong>Go Static</strong>! We think it's the best way to deal with 90% of WordPress sites, but the concept does take a little while to get used to.</p>
 
   <p>We understand this can be daunting at first. Please use the links below to review documentation, especially the "Getting Started" section in the <a href="https://wp2static.com/documentation" target="_blank">documentation</a>.</p>
+
+  <a href="" class="wp2static-btn btn-lg">Generate ZIP for offline use</a>
+  <a href="" class="wp2static-btn btn-lg">Generate ZIP to deploy anywhere</a>
+  <a href="" class="wp2static-btn btn-lg">Advanced usage</a>
 </section>
 
 <section class="wp2static-content wp2static-flex">
@@ -32,10 +30,7 @@
 <section class="wp2static-content wp2static-flex">
   <div class="content">
     <h2><i class="dashicons dashicons-sos"></i> <?php echo __('Create Support Request', 'static-html-output-plugin');?></h2>
-    <p>Get help from the WP2Static team - we'll open a ticket for you and follow-up soon!</p>
-  </div>
-  
-  <div class="content">
+ 
     <div class="wp2s-form">
     <?php
 
@@ -66,17 +61,22 @@ Attached is my Debug Log to give you more info.
       </textarea>
     </div>
 
-    <div class="control">
-      <label for="supportRequestIncludeLog"><?php echo __('', 'static-html-output-plugin');?></label>
-      <?php $tpl->displayCheckbox($this, 'supportRequestIncludeLog', 'Include Debug Log (helps us diagnose quicker)'); ?>
     </div>
+  </div>
 
-    <div class="control">
-      <button id="send_support_request" class="wp2static-btn">Create new support request</button>
-    </div>
+  <div class="content">
+    <div class="wp2s-form">
+      <div class="control">
+      <p>Get help from the WP2Static team - we'll open a ticket for you and follow-up soon!</p>
+          <label for="supportRequestIncludeLog"><?php echo __('', 'static-html-output-plugin');?></label>
+          <?php $tpl->displayCheckbox($this, 'supportRequestIncludeLog', 'Include Debug Log (helps us diagnose quicker)'); ?>
+      </div>
 
-    <p>Check the status of your ticket or create one via the web: <a href="https://wp2static.zammad.com" target="_blank">https://wp2static.zammad.com</a>.</p>
+      <div class="control">
+        <button id="send_support_request" class="wp2static-btn">Create new support request</button>
+      </div>
 
+      <p>Check the status of your ticket or create one via the web: <a href="https://wp2static.zammad.com" target="_blank">https://wp2static.zammad.com</a>.</p>
     </div>
   </div>
 </section>

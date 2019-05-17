@@ -62,6 +62,15 @@ button {
   flex: 1;
 }
 
+.wp2static-flex .content {
+  padding-right: 10px;
+}
+
+.wp2static-flex .content+.content {
+  padding-left: 10px;
+  padding-right: 0;
+}
+
 .wp2static-btn {
   background: #eee;
   border: none;
@@ -72,6 +81,7 @@ button {
   display: inline-block;
   font-weight: 700;
   text-decoration: none;
+  outline: 0;
 }
 
 .wp2static-btn:hover {
@@ -96,8 +106,17 @@ button {
   background: #2976f5;
 }
 
+.btn-lg {
+  padding: 15px 22px;
+  font-size: 18px;
+}
+
 .wp2s-form .control {
   margin-top: 10px;
+}
+
+.content pre {
+  margin-left: -4em;  
 }
 
 .postbox p, li {
@@ -284,8 +303,4 @@ p.submit{
 
 #detectionOptionsTable {
   margin-top: 10px;
-}
-
-#detectEverythingButton, #detectNothingButton {
-  margin: 10px;
 }
