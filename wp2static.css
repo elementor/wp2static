@@ -1,5 +1,9 @@
 @CHARSET "UTF-8";
 
+button {
+  cursor: pointer;
+}
+
 .wrap.wp2static {
   padding: 20px 10px;
 }
@@ -12,6 +16,15 @@
   background: #fff;
   padding: 20px;
   box-shadow: 0 0 0 1px rgba(213, 213, 213, 0.5), 0 1px 2px #eee;
+}
+
+.wp2static-textarea {
+  height: 183px;
+  padding: 10px;
+  border-spacing: 0;
+  width: 100%;
+  clear: both;
+  margin: 0;
 }
 
 .nav-tab-wrapper {
@@ -38,6 +51,53 @@
 
 .nav-tab-active {
   background: #eee;
+}
+
+.wp2static-flex {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.wp2static-flex .content {
+  flex: 1;
+}
+
+.wp2static-btn {
+  background: #eee;
+  border: none;
+  border-radius: 2px;
+  padding: 10px 20px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  color: #444;
+  display: inline-block;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.wp2static-btn:hover {
+  background: #444;
+  color: #fff;
+}
+
+.wp2static-btn:focus {
+  box-shadow: none;
+}
+
+.wp2static-btn+.wp2static-btn {
+  margin-left: 10px;
+}
+
+.wp2static-btn.blue {
+  background: #4285f4;
+  color: #fff;
+}
+
+.wp2static-btn.blue:hover {
+  background: #2976f5;
+}
+
+.wp2s-form .control {
+  margin-top: 10px;
 }
 
 .postbox p, li {
@@ -143,12 +203,23 @@ div.postbox div.inside {
 
 }
 
-.button-call-to-action {
-  background-color: greenyellow !important;
+.btn-call-to-action {
+  background-color: #37CD49 !important;
+  color: #fff !important;
+  margin-left: 10px;
 }
 
-.cancelExportButton{
-  background-color: orange !important;
+.btn-call-to-action:hover, .btn-call-to-action:focus {
+  background-color: #32B741 !important;
+}
+
+.cancelExportButton {
+  background-color: #F5B958;
+  color: #fff;
+}
+
+.cancelExportButton:hover, .cancelExportButton:focus {
+  background-color: #E7A73F;
 }
 
 p.submit{
@@ -170,10 +241,10 @@ p.submit{
   width: 100%;
   position: fixed;
   bottom: 0;
-  border-top: 1px solid black;
+  border-top: 1px solid #ddd;
   min-height: 110px;
   margin-left: -20px;
-  padding-left: 20px;
+  padding-left: 30px;
 
 }
 
@@ -205,14 +276,6 @@ p.submit{
 
 #export_timer {
   display: inline;
-}
-
-.cancelExportButton {
-  color: white !important;
-}
-
-.cancelExportButton:hover {
-  color: red !important;
 }
 
 #detectionOptionsTable td {
