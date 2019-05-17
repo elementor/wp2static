@@ -129,10 +129,20 @@ class SiteCrawler extends Base {
 
             $page_url = SiteInfo::getUrl( 'site' ) . ltrim( $url, '/' );
 
-            $skip_url = false;
-
+            /* we have a list of exclusions, like
+            /* pdf
+             * exe
+             * tinymce
+             *
+             *
+             * we iterate each of these, make sure not empty
+             * we then check if it's a match (we should exclude!)
+             *
+             */
             foreach ( $exclusions as $exclusion ) {
+
                 $exclusion = trim( $exclusion );
+
                 if ( $exclusion != '' ) {
                     if ( false !== strpos( $url, $exclusion ) ) {
                         WsLog::l(
@@ -140,20 +150,17 @@ class SiteCrawler extends Base {
                             ' because of rule ' . $exclusion
                         );
 
-                        // skip the outer foreach loop
-                        $skip_url = true;
+                        continue 2;
                     }
                 }
 
                 // check the root relative URL in cache
                 if ( CrawlCache::getUrl( $url ) ) {
-                    $skip_url = true;
+                    continue 2;
                 }
             }
 
-            if ( ! $skip_url ) {
-                $this->crawlSingleURL( $page_url );
-            }
+            $this->crawlSingleURL( $page_url );
         }
 
         $this->checkIfMoreCrawlingNeeded( $this->urls_to_crawl );
