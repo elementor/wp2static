@@ -372,7 +372,6 @@ class Controller {
 
     public function save_options() {
         if ( ! $this->userIsAllowed() ) {
-            
             exit( 'Not allowed to change plugin options.' );
         }
 
