@@ -613,29 +613,33 @@ class HTMLProcessor extends Base {
                 // we now havbe something like
                 // wp-content/plugins/elementor-pro/assets/css/frontend.min.css
 
-                $args = array(
-                    'timeout'     => 1,
-                    'redirection' => 5,
-                    'httpversion' => '1.0',
-                    'user-agent'  => 'WP2Static.com',
-                    'blocking'    => true,
-                    'headers'     => array(),
-                    'cookies'     => array(),
-                    'body'        => null,
-                    'compress'    => false,
-                    'decompress'  => true,
-                    'sslverify'   => true,
-                    'stream'      => false,
-                    'filename'    => null,
+                $curl_options = [];
+
+                if ( isset( $this->settings['crawlPort'] ) ) {
+                    $curl_options[ CURLOPT_PORT ] =
+                        $this->settings['crawlPort'];
+                }
+
+                if ( isset( $this->settings['crawlUserAgent'] ) ) {
+                    $curl_options[ CURLOPT_USERAGENT ] =
+                        $this->settings['crawlUserAgent'];
+                }
+
+                if ( isset( $this->settings['useBasicAuth'] ) ) {
+                    $curl_options[ CURLOPT_USERPWD ] =
+                        $this->settings['basicAuthUser'] . ':' .
+                        $this->settings['basicAuthPassword'];
+                }
+
+                $request = new Request();
+
+                $response = $request->getURL(
+                    $url,
+                    $curl_options
                 );
 
-                $response = wp_remote_get( $url, $args );
-
-                $header = '';
-                $body = '';
-
                 if ( is_array( $response ) ) {
-                    $header = $response['headers'];
+                    $ch = $response['ch'];
                     $body = $response['body'];
                 }
 
@@ -651,7 +655,9 @@ class HTMLProcessor extends Base {
                     wp_mkdir_p( $dir_without_filename );
                 }
 
-                // chmod( $dir_without_filename, 0664 );
+                if ( ! isset( $body ) ) {
+                    return;
+                }
 
                 $result = file_put_contents(
                     $filename,
@@ -661,17 +667,8 @@ class HTMLProcessor extends Base {
                 if ( ! $result ) {
                     error_log( 'attempting to save' . $filename );
                 }
-
-                // chmod( $filename, 0664 );
-
             }
         }
-
-        // check if user wants to download discovered assets
-
-        // check if in crawl cache and we want to use cache
-
-        // download it!
     }
 }
 
