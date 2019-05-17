@@ -372,6 +372,7 @@ class Controller {
 
     public function save_options() {
         if ( ! $this->userIsAllowed() ) {
+            
             exit( 'Not allowed to change plugin options.' );
         }
 
@@ -379,6 +380,8 @@ class Controller {
     }
 
     public function prepare_for_export() {
+        $this->save_options();
+
         $this->exporter = new Exporter();
 
         $this->exporter->pre_export_cleanup();
