@@ -314,6 +314,27 @@ class Controller {
         }
     }
 
+    public function delete_crawl_cache() {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'wp2static_crawl_cache';
+
+        $wpdb->query( "TRUNCATE TABLE $table_name" );
+
+        $sql =
+            "SELECT count(*) FROM $table_name";
+
+        $count = $wpdb->get_var( $sql );
+
+        if ( $count === '0' ) {
+            http_response_code( 200 );
+
+            echo 'SUCCESS';
+        } else {
+            http_response_code( 500 );
+        }
+    }
+
     public function renderOptionsPage() {
         $this->view
             ->setTemplate( 'options-page-js' )

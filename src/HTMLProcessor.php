@@ -258,23 +258,14 @@ class HTMLProcessor extends Base {
 
             // rm empty elements
             $pieces = array_filter( $all_pieces );
+
             // reindex array
             $pieces = array_values( $pieces );
 
             $url = $pieces[0];
             $dimension = $pieces[1];
 
-            // normalize urls
-            if ( URLHelper::isInternalLink( $url, $this->site_url_host ) ) {
-                $absolute_url = NormalizeURL::normalize(
-                    $url,
-                    $this->page_url
-                );
-
-                // rm query string
-                $url = strtok( $absolute_url, '?' );
-                $url = $this->convertToDocumentRelativeURLSrcSetURL( $url );
-            }
+            $url = $this->rewriteLocalURL( $url );
 
             $new_src_set[] = "{$url} {$dimension}";
         }
@@ -498,44 +489,6 @@ class HTMLProcessor extends Base {
         return $url;
     }
 
-    public function rewriteWPPathsSrcSetURL( $url_to_change ) {
-        if ( ! isset( $this->settings['rewrite_rules'] ) ) {
-            return $url_to_change;
-        }
-
-        $rewrite_from = array();
-        $rewrite_to = array();
-
-        $rewrite_rules = explode(
-            "\n",
-            str_replace( "\r", '', $this->settings['rewrite_rules'] )
-        );
-
-        $tmp_rules = array();
-
-        foreach ( $rewrite_rules as $rewrite_rule_line ) {
-            if ( $rewrite_rule_line ) {
-                list($from, $to) = explode( ',', $rewrite_rule_line );
-                $tmp_rules[ $from ] = $to;
-            }
-        }
-
-        uksort( $tmp_rules, array( $this, 'ruleSort' ) );
-
-        foreach ( $tmp_rules as $from => $to ) {
-            $rewrite_from[] = $from;
-            $rewrite_to[] = $to;
-        }
-
-        $rewritten_url = str_replace(
-            $rewrite_from,
-            $rewrite_to,
-            $url_to_change
-        );
-
-        return $rewritten_url;
-    }
-
     public function getHTML( $xml_doc ) {
         $processed_html = $xml_doc->saveHtml();
 
@@ -573,19 +526,6 @@ class HTMLProcessor extends Base {
         return $processed_html;
     }
 
-    public function convertToDocumentRelativeURLSrcSetURL( $url_to_change ) {
-        $site_root = '';
-
-        $relative_url = str_replace(
-            $this->destination_url,
-            $site_root,
-            $url_to_change
-        );
-
-        return $relative_url;
-    }
-
-
     // TODO: This function is to be performed on site URLs
     // allowing the user to convert URLs to document or site relative form
     public function convertToDocumentRelativeURL( $url ) {
@@ -598,49 +538,6 @@ class HTMLProcessor extends Base {
         );
 
         return $rewritten_url;
-    }
-
-    public function convertToDocumentRelativeSrcSetURLs( $url_to_change ) {
-        if ( ! isset( $this->settings['useDocumentRelativeURLs'] ) ) {
-            return $url_to_change;
-        }
-
-        $current_page_path_to_root = '';
-        $current_page_path = parse_url( $this->page_url, PHP_URL_PATH );
-
-        if ( ! is_string( $current_page_path ) ) {
-            return;
-        }
-
-        $number_of_segments_in_path = explode( '/', $current_page_path );
-        $num_dots_to_root = count( $number_of_segments_in_path ) - 2;
-
-        for ( $i = 0; $i < $num_dots_to_root; $i++ ) {
-            $current_page_path_to_root .= '../';
-        }
-
-        if ( ! URLHelper::isInternalLink(
-            $url_to_change,
-            $this->site_url_host
-        ) ) {
-            return false;
-        }
-
-        $rewritten_url = str_replace(
-            $this->destination_url,
-            '',
-            $url_to_change
-        );
-
-        $offline_url = $current_page_path_to_root . $rewritten_url;
-
-        // add index.html if no extension
-        if ( substr( $offline_url, -1 ) === '/' ) {
-            // TODO: check XML/RSS case
-            $offline_url .= 'index.html';
-        }
-
-        return $offline_url;
     }
 
     public function shouldCreateBaseHREF() {
