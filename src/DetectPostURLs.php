@@ -29,7 +29,7 @@ class DetectPostURLs {
                 $permalink_structure
             );
 
-            $permalink = WPOverrides::get_permalink( $post->ID, $permalink);
+            $permalink = WPOverrides::get_permalink( $post->ID, $permalink );
 
             if ( ! $permalink ) {
                 continue;

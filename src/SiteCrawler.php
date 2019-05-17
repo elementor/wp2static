@@ -129,16 +129,6 @@ class SiteCrawler extends Base {
 
             $page_url = SiteInfo::getUrl( 'site' ) . ltrim( $url, '/' );
 
-            /* we have a list of exclusions, like
-            /* pdf
-             * exe
-             * tinymce
-             *
-             *
-             * we iterate each of these, make sure not empty
-             * we then check if it's a match (we should exclude!)
-             *
-             */
             foreach ( $exclusions as $exclusion ) {
 
                 $exclusion = trim( $exclusion );
@@ -154,7 +144,6 @@ class SiteCrawler extends Base {
                     }
                 }
 
-                // check the root relative URL in cache
                 if ( CrawlCache::getUrl( $url ) ) {
                     continue 2;
                 }

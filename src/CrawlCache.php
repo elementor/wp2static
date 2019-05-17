@@ -8,7 +8,7 @@ class CrawlCache {
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'wp2static_crawl_cache';
-        
+
         $charset_collate = $wpdb->get_charset_collate();
 
         $sql = "CREATE TABLE $table_name (
@@ -18,39 +18,40 @@ class CrawlCache {
             PRIMARY KEY  (id)
         ) $charset_collate;";
 
-        require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+        require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         dbDelta( $sql );
     }
 
     public static function addUrl( $url ) {
         global $wpdb;
-        
+
         $table_name = $wpdb->prefix . 'wp2static_crawl_cache';
-        
-        $wpdb->insert( 
-            $table_name, 
-            array( 
-                'time' => current_time( 'mysql' ), 
-                'hashed_url' => md5( $url ), 
-            ) 
+
+        $wpdb->insert(
+            $table_name,
+            array(
+                'time' => current_time( 'mysql' ),
+                'hashed_url' => md5( $url ),
+            )
         );
     }
 
     // TODO: enable date filter as option/alternate method
     public static function getUrl( $url ) {
         global $wpdb;
-      
+
         $hashed_url = md5( $url );
- 
+
         $table_name = $wpdb->prefix . 'wp2static_crawl_cache';
-       
+
         $sql = $wpdb->prepare(
-            "SELECT id FROM $table_name WHERE hashed_url = %s LIMIT 1",
+            "SELECT id FROM $table_name WHERE" . // phpcs:ignore WordPress
+            ' hashed_url = %s LIMIT 1',
             $hashed_url
         );
 
         $id = $wpdb->get_var( $sql );
- 
+
         return $id;
     }
 }

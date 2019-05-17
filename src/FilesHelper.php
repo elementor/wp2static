@@ -78,7 +78,7 @@ class FilesHelper {
     public static function getListOfLocalFilesByDir( $dir ) {
         $files = array();
 
-        $site_path = SiteInfo::getPath('site');
+        $site_path = SiteInfo::getPath( 'site' );
 
         if ( is_dir( $dir ) ) {
             $iterator = new RecursiveIteratorIterator(
@@ -174,7 +174,7 @@ class FilesHelper {
             '/',
             '/robots.txt',
             '/favicon.ico',
-            '/sitemap.xml'
+            '/sitemap.xml',
         ];
 
         /*
@@ -211,7 +211,8 @@ class FilesHelper {
         }
 
         if ( isset( $settings['detectUploads'] ) ) {
-            $arrays_to_merge[] = self::getListOfLocalFilesByDir( $uploads_path );
+            $arrays_to_merge[] =
+                self::getListOfLocalFilesByDir( $uploads_path );
         }
 
         if ( isset( $settings['detectParentTheme'] ) ) {
@@ -245,6 +246,7 @@ class FilesHelper {
         );
 
         $unique_urls = array_unique( $url_queue );
+
         sort( $unique_urls );
 
         $str = implode( "\n", $unique_urls );
@@ -474,7 +476,7 @@ class FilesHelper {
                 }
 
                 // NOTE: 2 x str_replace's significantly faster than
-                //       1 x str_replace with search/replace arrays of 2 length
+                // 1 x str_replace with search/replace arrays of 2 length
                 $url = str_replace(
                     $home_url,
                     '/',

@@ -67,8 +67,7 @@ class Controller {
         }
 
         // create DB table for crawl caching
-        CrawlCache::createTable(); 
-
+        CrawlCache::createTable();
 
         // capture URL hosts for use in detecting internal links
         $instance->site_url_host =
@@ -461,7 +460,7 @@ class Controller {
         $environmental_info .= $theme->get( 'Name' ) . ' is version ' .
             $theme->get( 'Version' ) . PHP_EOL;
 
-        $environmental_info .=  'WP2STATIC OPTIONS: ' . PHP_EOL;
+        $environmental_info .= 'WP2STATIC OPTIONS: ' . PHP_EOL;
 
         $options = $this->options->getAllOptions( false );
 
