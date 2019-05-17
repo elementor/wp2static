@@ -73,7 +73,7 @@
     <exclude name="WordPress.DB.DirectDatabaseQuery.DirectQuery" />
     <exclude name="WordPress.DB.DirectDatabaseQuery.NoCaching" />
     <exclude name="WordPress.DB.DirectDatabaseQuery.SchemaChange" />
-    <exclude name="WordPress.DB.PreparedSQL.NotPrepared" />
+    <exclude name="WordPress.DB.PreparedSQL" />
     <exclude name="WordPress.Files.FileName.InvalidClassFileName" />
     <exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
     <exclude name="WordPress.NamingConventions.ValidFunctionName.FunctionNameInvalid" />
