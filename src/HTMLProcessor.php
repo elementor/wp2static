@@ -655,6 +655,10 @@ class HTMLProcessor extends Base {
                     wp_mkdir_p( $dir_without_filename );
                 }
 
+                if ( ! isset( $body ) ) {
+                    return;
+                }
+
                 $result = file_put_contents(
                     $filename,
                     $body
