@@ -52,3 +52,10 @@ zip -r -9 ./$1.zip ./static-html-output-plugin
 cd -
 
 cp $TMP_DIR/$1.zip $HOME/Downloads/
+
+# reset dev dependencies
+cd $EXEC_DIR
+# clear dev dependencies
+rm -Rf $EXEC_DIR/vendor/*
+# load prod deps
+composer install

@@ -3,7 +3,7 @@
 namespace WP2Static;
 
 class DetectCustomPostTypeURLs {
-    public static function detect( $wp_site_url ) {
+    public static function detect() {
         global $wpdb;
 
         $post_urls = array();

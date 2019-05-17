@@ -64,6 +64,8 @@ class SiteCrawler extends Base {
     public function crawlABitMore() {
         $batch_of_links_to_crawl = array();
 
+        // get urls to crawl (can skip this with targeted query)
+
         $this->urls_to_crawl = file(
             $this->list_of_urls_to_crawl_path,
             FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
@@ -108,9 +110,6 @@ class SiteCrawler extends Base {
         $this->archive_dir = SiteInfo::getPath( 'uploads' ) .
             '/wp2static-exported-site/';
 
-        $total_urls_path = SiteInfo::getPath( 'uploads' ) .
-            'wp2static-working-files/INITIAL-CRAWL-TOTAL.txt';
-
         $exclusions = array( 'wp-json' );
 
         if ( isset( $this->settings['excludeURLs'] ) ) {
@@ -131,7 +130,9 @@ class SiteCrawler extends Base {
             $page_url = SiteInfo::getUrl( 'site' ) . ltrim( $url, '/' );
 
             foreach ( $exclusions as $exclusion ) {
+
                 $exclusion = trim( $exclusion );
+
                 if ( $exclusion != '' ) {
                     if ( false !== strpos( $url, $exclusion ) ) {
                         WsLog::l(
@@ -139,7 +140,13 @@ class SiteCrawler extends Base {
                             ' because of rule ' . $exclusion
                         );
 
-                        // skip the outer foreach loop
+                        continue 2;
+                    }
+                }
+
+                
+                if ( ! isset( $this->settings['dontUseCrawlCaching'] ) ) {
+                    if ( CrawlCache::getUrl( $url ) ) {
                         continue 2;
                     }
                 }
@@ -235,8 +242,6 @@ class SiteCrawler extends Base {
     }
 
     public function crawlSingleURL( $url ) {
-        WsLog::l( 'Crawling URL: ' . $url );
-
         $ch = curl_init();
 
         curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
@@ -246,6 +251,7 @@ class SiteCrawler extends Base {
         curl_setopt( $ch, CURLOPT_USERAGENT, 'WP2Static.com' );
         curl_setopt( $ch, CURLOPT_CONNECTTIMEOUT, 0 );
         curl_setopt( $ch, CURLOPT_TIMEOUT, 600 );
+        curl_setopt( $ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1 );
         curl_setopt( $ch, CURLOPT_HEADER, 0 );
         curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
 
@@ -339,33 +345,24 @@ class SiteCrawler extends Base {
                         $this->processed_file = $processor->getCSS();
                     }
                 } else {
-                    $processor = new TXTProcessor();
-
-                    $this->processed_file = $processor->processTXT(
-                        $output,
-                        $page_url
+                    $this->processed_file = str_replace(
+                        $this->rewrite_rules['site_url_patterns'],
+                        $this->rewrite_rules['destination_url_patterns'],
+                        $output
                     );
-
-                    if ( $this->processed_file ) {
-                        $this->processed_file = $processor->getTXT();
-                    }
                 }
+
                 break;
 
             case 'txt':
             case 'js':
             case 'json':
             case 'xml':
-                $processor = new TXTProcessor();
-
-                $this->processed_file = $processor->processTXT(
-                    $output,
-                    $page_url
+                $this->processed_file = str_replace(
+                    $this->rewrite_rules['site_url_patterns'],
+                    $this->rewrite_rules['destination_url_patterns'],
+                    $output
                 );
-
-                if ( $this->processed_file ) {
-                    $this->processed_file = $processor->getTXT();
-                }
 
                 break;
 
@@ -394,8 +391,10 @@ class SiteCrawler extends Base {
             $content_type
         );
 
+        // TODO: better validate save success
         $file_writer->saveFile( $this->archive_dir );
 
+        CrawlCache::addUrl( $url );
     }
 
     public function getRelativeURLFromFullURL( $page_url ) {
