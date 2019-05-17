@@ -109,6 +109,7 @@ button {
 .btn-lg {
   padding: 15px 22px;
   font-size: 18px;
+  font-weight: 500;
 }
 
 .btn-sm {
@@ -321,6 +322,78 @@ p.submit{
   margin-top: 10px;
 }
 
-.crawl_settings fieldset {
+.wp2static-flex input {
+  margin-top: 10px;
+}
+
+.wp2static-flex select {
+  margin-top: 15px;
+}
+
+.wp2static-flex fieldset {
   margin-top: 20px;
+}
+
+.wp2s-header {
+  margin: 10px 0;
+}
+
+.wp2static-column {
+  float: left;
+  width: calc(33.3% - 20px);
+  margin: 0 10px 15px;
+}
+
+.wp2static-content-addon {
+  margin: 15px -10px;
+}
+
+.wp2static-content-addon:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.addon img.hero {
+  max-width: 120px;
+  min-width: 120px;
+  max-height: 120px;
+  min-height: 120px;
+}
+
+.addon {
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(213, 213, 213, 0.5), 0 1px 2px #eee;
+}
+
+.addon .main {
+  text-align: center;
+  padding: 30px;
+}
+
+.addon .bottom {
+  border-top: 1px solid #eee;
+  display: flex;
+  padding: 10px 15px;
+}
+
+.addon .bottom .left {
+  width: 50%;
+}
+
+.addon .bottom .right {
+  text-align: right;
+  width: 50%;
+}
+
+.addon .bottom .right img {
+  margin-top: 5px;
+}
+
+@media screen and (max-width: 600px) {
+  .wp2static-column {
+    width: 100%;
+    display: block;
+    margin-bottom: 20px;
+  }
 }

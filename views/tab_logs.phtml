@@ -1,21 +1,15 @@
 <div class="export_logs" style="display:none;">
 
-<br>
-
-<button id="reload_log_button" class="button-secondary">(Re)load log</button>
-
-<a href="<?php echo $this->wp_site->uploads_url; ?>wp2static-working-files/EXPORT-LOG.txt" class="button-secondary" target="_blank">Open log in new tab</a>
-
+<div class="wp2s-header">
+  <button id="reload_log_button" class="wp2static-btn blue btn-sm">(Re)load log</button>
+  <a href="<?php echo $this->wp_site->uploads_url; ?>wp2static-working-files/EXPORT-LOG.txt" class="wp2static-btn btn-sm" target="_blank">Open log in new tab</a>
+</div>
 
 <div id="log_load_progress" class="pulsate-css" style="float:none;display:none;"></div>
-
-<br>
-<br>
 
 <textarea id="export_log_textarea" style="width:100%;min-height:300px;" disabled>
 Load log to show contents here
 </textarea>
-
 
 </div> <!-- end Debug Logs -->
 

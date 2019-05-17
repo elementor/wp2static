@@ -1,142 +1,137 @@
 <div class="processing_settings" style="display:none;">
 
-<table class="form-table">
-  <tbody>
-    <tr>
-      <th scope="row">
-        <label for="useDocumentRelativeURLs"><?php echo __('Use document-relative URLs', 'static-html-output-plugin');?></label>
-      </th>
-      <td>
+<section class="wp2static-content wp2static-flex">
+  <div class="content" style="max-width:30%">
+    <h2><?php echo __('Use document-relative URLs', 'static-html-output-plugin');?></h2>
+  </div>
+  
+  <div class="content">
+    <?php $tpl->displayCheckbox($this, 'useDocumentRelativeURLs', 'Use document-relative URLs'); ?>
 
-        <?php $tpl->displayCheckbox($this, 'useDocumentRelativeURLs', 'Use document-relative URLs'); ?>
+    <p>URLs in the exported site will be rewritten as <a href="https://www.w3schools.com/tags/tag_base.asp" target="_blank">relative URLs</a>. ie, <code>http://mydomain.com/some_dir/some_file.jpg</code> will become <code>some_dir/some_file.jpg</code></p>
+  </div>
+</section>
 
-        <p> URLs in the exported site will be rewritten as <a href="https://www.w3schools.com/tags/tag_base.asp" target="_blank">relative URLs</a>. ie, <code>http://mydomain.com/some_dir/some_file.jpg</code> will become <code>some_dir/some_file.jpg</code></p>
-      </td>
-    </tr>
-    <tr>
-      <th scope="row">
-        <label for="useSiteRootRelativeURLs"><?php echo __('Use site-root relative URLs', 'static-html-output-plugin');?></label>
-      </th>
-      <td>
+<section class="wp2static-content wp2static-flex">
+  <div class="content" style="max-width:30%">
+    <h2><?php echo __('Use site-root relative URLs', 'static-html-output-plugin');?></h2>
+  </div>
+  
+  <div class="content">
+    <?php $tpl->displayCheckbox($this, 'useSiteRootRelativeURLs', 'Use site root-relative URLs'); ?>
 
-        <?php $tpl->displayCheckbox($this, 'useSiteRootRelativeURLs', 'Use site root-relative URLs'); ?>
+    <p>URLs in the exported site will be rewritten as site root-relative. ie, <code>http://mydomain.com/some_dir/some_file.jpg</code> will become <code>/some_dir/some_file.jpg</code></p>
+  </div>
+</section>
 
-        <p> URLs in the exported site will be rewritten as site root-relative. ie, <code>http://mydomain.com/some_dir/some_file.jpg</code> will become <code>/some_dir/some_file.jpg</code></p>
-      </td>
-    </tr>
-      <tr>
-        <th scope="row">
-          <strong><?php echo __('Allow offline usage', 'static-html-output-plugin');?></strong>
-        </th>
-        <td>
-          <?php $tpl->displayCheckbox($this, 'allowOfflineUsage', "Check this if you're going to run your site locally, ie on a USB drive given to a client."); ?>
+<section class="wp2static-content wp2static-flex">
+  <div class="content" style="max-width:30%">
+    <h2><?php echo __('Allow offline usage', 'static-html-output-plugin');?></h2>
+  </div>
+  
+  <div class="content">
+    <?php $tpl->displayCheckbox($this, 'allowOfflineUsage', "Check this if you're going to run your site locally, ie on a USB drive given to a client."); ?>
 
-        <p>Destination URL will be ignored. Must combine with Document-Relative URLs option. <code>index.html</code> will be appended to all directory paths</p>
-        </td>
-      </tr>
-      <tr>
-        <th scope="row">
-          <label for="baseHREF"><?php echo __('Base HREF', 'static-html-output-plugin');?></label>
-        </th>
-        <td>
-          <?php $tpl->displayTextfield($this, 'baseHREF', 'Base HREF', '', ''); ?>
+    <p>Destination URL will be ignored. Must combine with Document-Relative URLs option. <code>index.html</code> will be appended to all directory paths</p>
+  </div>
+</section>
 
-          <p>Setting this will tell the browser to resolve all URLs using the URL you set (<code>https://mydomain.com</code>, <code>/</code>, etc).</p>
+<section class="wp2static-content wp2static-flex">
+  <div class="content" style="max-width:30%">
+    <h2><?php echo __('Base HREF', 'static-html-output-plugin');?></h2>
+  </div>
+  
+  <div class="content">
+    <?php $tpl->displayTextfield($this, 'baseHREF', 'Base HREF', '', ''); ?>
 
-          <p><b>Note:</b>If you want to deploy your static site to work in a subdirectory of any domain, set your Destination URL to the same as your Site URL and choose Use Document Relative URLs.</p>
-        </td>
-      </tr>
-      <tr>
-        <th scope="row">
-          <label><?php echo __('Custom rewrites in exported source code', 'static-html-output-plugin');?></label>
-        </th>
-        <td>
-        <p>In order to hide any trace that your site uses WordPress, you can choose to rewrite common URL structures, such as wp-content/themes, etc.</p>
-    
-        <p>You can also rewrite external URLs or arbitray text. WP2Static rewrites exactly what you specify as search and replace strings.</p>
+    <p>Setting this will tell the browser to resolve all URLs using the URL you set (<code>https://mydomain.com</code>, <code>/</code>, etc).</p>
 
-        <p>Replace, for example, default WordPress paths within the source code</p> <br>
+    <p><b>Note:</b>If you want to deploy your static site to work in a subdirectory of any domain, set your Destination URL to the same as your Site URL and choose Use Document Relative URLs.</p>
+  </div>
+</section>
 
-        <p>use the full path, such as:</p>
+<section class="wp2static-content wp2static-flex">
+  <div class="content" style="max-width:30%">
+    <h2><?php echo __('Custom rewrites in exported source code', 'static-html-output-plugin');?></h2>
+  </div>
 
-        <pre>
-            wp-content/themes/twentyseventeen/,contents/ui/mytheme/
-            wp-includes/,inc/
-        </pre>
-    
-        <p>The plugin does its best to sort rewrite rules in order needed, to process the longest items first.</p>
+  <div class="content">
+    <p>In order to hide any trace that your site uses WordPress, you can choose to rewrite common URL structures, such as wp-content/themes, etc.</p>
+    <p>You can also rewrite external URLs or arbitray text. WP2Static rewrites exactly what you specify as search and replace strings.</p>
+    <p>Replace, for example, default WordPress paths within the source code</p> <br>
+    <p>use the full path, such as:</p>
 
-        <br>
+    <pre>
+      <code>wp-content/themes/twentyseventeen/,contents/ui/mytheme/</code>
+      <code>wp-includes/,inc/</code>
+    </code></pre>
 
-          <textarea class="widefat" name="rewrite_rules" id="rewrite_rules" rows="5" cols="10"><?php echo $this->options->rewrite_rules ? $this->options->rewrite_rules : '';  ?></textarea>
-        </td>
-    </tr>
-    <tr>
-        <th scope="row">
-          <label><?php echo __('Rename Exported Directories', 'static-html-output-plugin');?></label>
-        </th>
-        <td>
-        <p>Required if rewriting any local URLs within the site.</p><br>
+    <p>The plugin does its best to sort rewrite rules in order needed, to process the longest items first.</p>
 
-        <p>Set the source directory, then a comma and the target directory. </p
+    <textarea class="wp2static-textarea" name="rewrite_rules" id="rewrite_rules" rows="5" cols="10"><?php echo $this->options->rewrite_rules ? $this->options->rewrite_rules : '';  ?></textarea>
+  </div>
+</section>
 
-        <p>
-In order to move wp-content/themes/twentyseventeen to contents/ui/mytheme, we'd need:
-</p>
+<section class="wp2static-content wp2static-flex">
+  <div class="content" style="max-width:30%">
+    <h2><?php echo __('Rename Exported Directories', 'static-html-output-plugin');?></h2>
+  </div>
 
-<pre>
-wp-content,contents
-contents/themes,contents/ui
-contents/ui/twentyseventeen,contents/ui/mytheme
-wp-includes/,inc/
-</pre>
+  <div class="content">
+    <p>Required if rewriting any local URLs within the site.</p>
+    <p>Set the source directory, then a comma and the target directory.</p>
+    <p>In order to move wp-content/themes/twentyseventeen to contents/ui/mytheme, we'd need:</p>
 
+    <pre>
+      <code>wp-content,contents</code>
+      <code>contents/themes,contents/ui</code>
+      <code>contents/ui/twentyseventeen,contents/ui/mytheme</code>
+      <code>wp-includes/,inc/</code>
+    </pre>
 
+    <textarea class="widefat" name="rename_rules" id="rename_rules" rows="5" cols="10"><?php echo $this->options->rename_rules ? $this->options->rename_rules : '';  ?></textarea>
+  </div>
+</section>
 
-         <br>
+<section class="wp2static-content wp2static-flex">
+  <div class="content" style="max-width:30%">
+    <h2><?php echo __('Remove cruft', 'static-html-output-plugin');?></h2>
+  </div>
 
-          <textarea class="widefat" name="rename_rules" id="rename_rules" rows="5" cols="10"><?php echo $this->options->rename_rules ? $this->options->rename_rules : '';  ?></textarea>
-        </td>
-    </tr>
-    <tr>
-      <th scope="row">
-        <label for="stripping"><?php echo __('Remove cruft', 'static-html-output-plugin');?></label>
-      </th>
-      <td>
+  <div class="content">
+    <?php $tpl->displayCheckbox($this, 'removeConditionalHeadComments', 'Remove conditional comments within HEAD', 'checked'); ?>
 
-        <?php $tpl->displayCheckbox($this, 'removeConditionalHeadComments', 'Remove conditional comments within HEAD', 'checked'); ?>
+    <p>Mostly obsolete, previously used for detecting versions of Internet Explorer and serving different CSS or JS.</p>
 
-        <p>Mostly obsolete, previously used for detecting versions of Internet Explorer and serving different CSS or JS.</p><br>
+    <?php $tpl->displayCheckbox($this, 'removeWPMeta', 'Remove WP Meta tags'); ?>
 
-        <?php $tpl->displayCheckbox($this, 'removeWPMeta', 'Remove WP Meta tags'); ?>
+    <p>The <code>&lt;meta&gt; name="generator" content="WordPress 4.9.8" /&gt;</code> type tags.</p>
 
-        <p>The <code>&lt;meta&gt; name="generator" content="WordPress 4.9.8" /&gt;</code> type tags.</p><br>
+    <?php $tpl->displayCheckbox($this, 'removeWPLinks', 'Remove WP &lt;link&gt; tags'); ?>
 
-        <?php $tpl->displayCheckbox($this, 'removeWPLinks', 'Remove WP &lt;link&gt; tags'); ?>
+    <p>ie, <code>&lt;link& rel="EditURI"...</code> type tags that usually aren't needed.</p>
 
-        <p>ie, <code>&lt;link& rel="EditURI"...</code> type tags that usually aren't needed.</p><br>
+    <?php $tpl->displayCheckbox($this, 'removeHTMLComments', 'Remove HTML comments'); ?>
 
-        <?php $tpl->displayCheckbox($this, 'removeHTMLComments', 'Remove HTML comments'); ?>
+    <p>ie, <code>&lt;!-- / Yoast SEO plugin. --&gt;</code> type comments that are ridiculously wasting bytes</p>
 
-        <p>ie, <code>&lt;!-- / Yoast SEO plugin. --&gt;</code> type comments that are ridiculously wasting bytes</p><br>
+    <?php $tpl->displayCheckbox($this, 'removeCanonical', 'Remove Canonical tags from pages (best left unchecked)'); ?>
 
-        <?php $tpl->displayCheckbox($this, 'removeCanonical', 'Remove Canonical tags from pages (best left unchecked)'); ?>
+    <p>Search engines use the canonical tag to identify how to index a page.  i.e domain.com/page/ and domain.com/page/index.html are 2 different URLs that represent the same page. This could trigger a duplicate content penalty.  The canonical tag tells the search engine that they are same page and they should be indexed as domain.com/page/</p>    
+  </div>
+</section>
 
-        <p>Search engines use the canonical tag to identify how to index a page.  i.e domain.com/page/ and domain.com/page/index.html are 2 different URLs that represent the same page. This could trigger a duplicate content penalty.  The canonical tag tells the search engine that they are same page and they should be indexed as domain.com/page/</p><br>
-      </td>
-    </tr>
-    <tr>
-      <th scope="row">
-        <label for="Modifications"><?php echo __('Modify HTML', 'static-html-output-plugin');?></label>
-      </th>
-      <td>
+<section class="wp2static-content wp2static-flex">
+  <div class="content" style="max-width:30%">
+    <h2><?php echo __('Modify HTML', 'static-html-output-plugin');?></h2>
+  </div>
 
-        <?php $tpl->displayCheckbox($this, 'createEmptyFavicon', 'Insert empty icon rel to prevent favicon requests', 'checked'); ?>
+  <div class="content">
+    <?php $tpl->displayCheckbox($this, 'createEmptyFavicon', 'Insert empty icon rel to prevent favicon requests', 'checked'); ?>
 
-        <p>If you don't have a favicon for your site, block extra requests taking up speed</p><br>
-      </td>
-    </tr>
-  </tbody>
-</table>
+    <p>If you don't have a favicon for your site, block extra requests taking up speed</p>
+  </div>
+</section>
+
 
 </div><!-- end processing_setings -->
