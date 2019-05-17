@@ -295,7 +295,6 @@ class Controller {
             FilesHelper::buildInitialFileList(
                 true,
                 SiteInfo::getPath( 'uploads' ),
-                SiteInfo::getUrl( 'uploads' ),
                 $this->settings
             );
 
