@@ -1,5 +1,45 @@
 @CHARSET "UTF-8";
 
+.wrap.wp2static {
+  padding: 20px 10px;
+}
+
+.wp2static-content-wrapper {
+  margin-top: 1em;
+}
+
+.wp2static-content {
+  background: #fff;
+  padding: 20px;
+  box-shadow: 0 0 0 1px rgba(213, 213, 213, 0.5), 0 1px 2px #eee;
+}
+
+.nav-tab-wrapper {
+  background: #fff;
+  box-shadow: 0 1px 0 rgba(213,213,213,0.5), 0 1px 2px #eee;
+  border: none;
+  padding: 10px;
+}
+
+.nav-tab {
+  float: left;
+  border: none;
+  border-bottom: none;
+  margin-left: .5em;
+  padding: 5px 10px;
+  font-size: 14px;
+  line-height: 1.71428571;
+  font-weight: 600;
+  background: #fff;
+  color: #555;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.nav-tab-active {
+  background: #eee;
+}
+
 .postbox p, li {
   font-size: 1em;
   line-height: 1.375em;

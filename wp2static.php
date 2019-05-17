@@ -5,7 +5,7 @@
  * Description: Security & Performance via static website publishing. One plugin to solve WordPress's biggest problems.
  * Version:     6.6.6-dev-curl-multi
  * Author:      Leon Stafford
- * Author URI:  https://leonstafford.github.io
+ * Author URI:  https://ljs.dev
  * Text Domain: static-html-output-plugin
  *
  * @package     WP_Static_HTML_Output
