@@ -5,24 +5,32 @@
 
   <p>We understand this can be daunting at first. Please use the links below to review documentation, especially the "Getting Started" section in the <a href="https://wp2static.com/documentation" target="_blank">documentation</a>.</p>
 
-  <a href="" class="wp2static-btn btn-lg">Generate ZIP for offline use</a>
-  <a href="" class="wp2static-btn btn-lg">Generate ZIP to deploy anywhere</a>
-  <a href="" class="wp2static-btn btn-lg">Advanced usage</a>
+  <a href="#" id="GenerateZIPOfflineUse" class="wp2static-btn btn-lg">Generate ZIP for offline use</a>
+  <a href="#" id="GenerateZIPDeployAnywhere" class="wp2static-btn btn-lg">Generate ZIP to deploy anywhere</a>
+  <a href="#" id="GoToAdvancedTabButton" class="wp2static-btn btn-lg">Advanced usage</a>
 </section>
 
 <section class="wp2static-content wp2static-flex">
   <div class="content">
     <h2><span class="dashicons dashicons-book-alt"></span> <?php echo __('Documentation', 'static-html-output-plugin');?></h2>
-    <a href="https://wp2static.com/documentation" target="_blank">
-      Official documentation and tutorials at wp2static.com
-    </a>
+    <p>Learn how to getting started with WP2Static:</p>
+    <ul>
+      <li><a href="https://wp2static.com/how-wp2static-works" target="_blank">How WP2Static Works</a></li>
+      <li><a href="https://wp2static.com/system-requirements" target="_blank">System requirements</a></li>
+      <li><a href="https://wp2static.com/preparing-to-go-static-with-wordpress" target="_blank">Preparing to go static with WordPress</a></li>
+      <li><a href="https://wp2static.com/doing-a-test-export" target="_blank">Doing a test export</a></li>
+      <li><a href="https://wp2static.com/contact-forms-for-static-sites/" target="_blank">Contact Forms for Static Websites</a></li>
+      <li><a href="https://wp2static.com/search-options-for-static-sites/" target="_blank">Search Options for Static Sites</a></li>
+    </ul>
+    <a href="https://wp2static.com/documentation" class="wp2static-btn btn-sm">Visit our documentation</a>
   </div>
 
   <div class="content">
-    <h2><i class="dashicons dashicons-video-alt3"></i> <?php echo __('Videos', 'static-html-output-plugin');?></h2>
+    <h2><i class="dashicons dashicons-video-alt3"></i> <?php echo __('Tutorial', 'static-html-output-plugin');?></h2>
     <p>A good introduction to what a static site is and how it can benefit your WordPress site.</p>
     <a href="https://www.youtube.com/watch?v=HPc4JjBvkrU" target="_blank">
-      WordPress as a Static Site Generator
+      <img src="<?php echo plugins_url( "/../assets/vidthumb.jpg", __FILE__ ); ?>" alt="YouTube"><br>
+      <button class="wp2static-btn btn-sm mg-top10">Watch video on YouTube</button>
     </a>
   </div>
 </section>

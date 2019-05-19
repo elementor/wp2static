@@ -9,14 +9,14 @@
 <?php
 
 $add_ons = array(
+    'wp2static-addon-ftp/wp2static-addon-ftp.php' => 'FTP',
+    'wp2static-addon-s3/wp2static-addon-s3.php' => 'S3',
     'wp2static-addon-azure/wp2static-addon-azure.php' => 'Azure',
     'wp2static-addon-bitbucket/wp2static-addon-bitbucket.php' => 'Bitbucket',
     'wp2static-addon-bunnycdn/wp2static-addon-bunnycdn.php' => 'BunnyCDN',
-    'wp2static-addon-ftp/wp2static-addon-ftp.php' => 'FTP',
     'wp2static-addon-github/wp2static-addon-github.php' => 'GitHub',
     'wp2static-addon-gitlab/wp2static-addon-gitlab.php' => 'GitLab',
     'wp2static-addon-netlify/wp2static-addon-netlify.php' => 'Netlify',
-    'wp2static-addon-s3/wp2static-addon-s3.php' => 'S3',
     'wp2static-addon-now/wp2static-addon-now.php' => 'now'
 );
 
@@ -28,17 +28,17 @@ $add_ons = array(
 
   <div class="content addon wp2static-column active">
     <div class="main">
-      <img src="<?php echo strtolower( plugins_url( "/../assets/$add_on_name.svg", __FILE__ ) ) ;?>" alt="" class="hero">
+      <img src="<?php echo strtolower( plugins_url( "/../assets/$add_on_name.svg", __FILE__ ) ) ;?>" alt="<?php echo $add_on_name; ?>" class="hero">
       <h2><?php echo $add_on_name; ?> Add-on</h2>
       <p>Deploy your site statically with <?php echo $add_on_name; ?> Add-on and feels the speed!</p>
     </div>
     <div class="bottom">
       <div class="left">
-        <a href="" class="wp2static-btn blue">
+        <a href="#" id="GoToDeployTabButton" class="wp2static-btn blue" target="_blank">
           <i class="dashicon dashicon-yes"></i> Settings
         </a>
       </div>
-      <div class="right"><a href=""><img src="<?php echo strtolower( plugins_url( "/../assets/github.svg", __FILE__ ) ) ;?>" alt="" style="max-width:32px"></a></div>
+      <div class="right"><a href="https://github.com/wp2static/wp2static-addon-<?php echo strtolower($add_on_name); ?>" target="_blank"><img src="<?php echo strtolower( plugins_url( "/../assets/github.svg", __FILE__ ) ) ;?>" alt="GitHub" style="max-width:32px"></a></div>
     </div>
   </div>
 
@@ -46,22 +46,22 @@ $add_ons = array(
 
   <div class="content addon wp2static-column noactive">
     <div class="main">
-      <img src="<?php echo strtolower( plugins_url( "/../assets/$add_on_name.svg", __FILE__ ) ) ;?>" alt="" class="hero">
+      <img src="<?php echo strtolower( plugins_url( "/../assets/$add_on_name.svg", __FILE__ ) ) ;?>" alt="<?php echo $add_on_name; ?>" class="hero">
       <h2><?php echo $add_on_name; ?> Add-on</h2>
       <p>Deploy your site statically with <?php echo $add_on_name; ?> Add-on and feels the speed!</p>
     </div>
     <div class="bottom">
       <div class="left">
-        <a href="" class="wp2static-btn">
+        <a href="https://wp2static.com/#download-purchase-donate" class="wp2static-btn">
           Get Add-on
         </a>
       </div>
-      <div class="right"><a href=""><img src="<?php echo strtolower( plugins_url( "/../assets/github.svg", __FILE__ ) ) ;?>" alt="" style="max-width:32px"></a></div>
+      <div class="right"><a href="https://github.com/wp2static/wp2static-addon-<?php echo strtolower($add_on_name); ?>" target="_blank"><img src="<?php echo strtolower( plugins_url( "/../assets/github.svg", __FILE__ ) ) ;?>" alt="GitHub" style="max-width:32px"></a></div>
     </div>
   </div>
 
   <?php endif; ?>
-
+ 
 <?php endforeach; ?>
 
 </section>

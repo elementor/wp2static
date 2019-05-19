@@ -693,6 +693,19 @@ jQuery(document).ready(function($){
     changeTab( 'URL Detection' );
   });
 
+  $(document).on('click', '#GoToDeployTabButton', function(evt) {
+    evt.preventDefault();
+    changeTab( 'Deploy static website' );
+  });
+
+  // TODO: create action for #GenerateZIPOfflineUse
+  // and #GenerateZIPDeployAnywhere
+
+  $(document).on('click', '#GoToAdvancedTabButton', function(evt) {
+    evt.preventDefault();
+    changeTab( 'Advanced options' );
+  });
+
   $(document).on('click', '.nav-tab', function(evt) {
     evt.preventDefault();
     current_tab = $(this);
