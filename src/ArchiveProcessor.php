@@ -43,10 +43,6 @@ class ArchiveProcessor extends Base {
     }
 
     public function recursive_copy( $srcdir, $dstdir ) {
-        WsLog::l(
-            'Recursively copying: ' . $srcdir . ' to ' . $dstdir
-        );
-
         $dir = opendir( $srcdir );
 
         if ( ! $dir ) {
