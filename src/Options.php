@@ -170,6 +170,11 @@ class Options {
     public function getAllOptions( $reveal_sensitive_values = false ) {
         $options_array = array();
 
+        $this->whitelisted_keys = apply_filters(
+            'wp2static_whitelist_option_keys',
+            $this->whitelisted_keys
+        );
+
         foreach ( $this->wp2static_options_keys as $key ) {
 
             $value = '*******************';
