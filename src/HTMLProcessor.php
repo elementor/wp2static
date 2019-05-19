@@ -501,7 +501,7 @@ class HTMLProcessor extends Base {
         return $url;
     }
 
-    public function getHTML( $xml_doc ) {
+    public function getHTML( $xml_doc, $force_https = false ) {
         $processed_html = $xml_doc->saveHtml();
 
         // TODO: here is where we convertToSiteRelativeURLs, as this can be
@@ -518,6 +518,14 @@ class HTMLProcessor extends Base {
             $processed_html = str_replace(
                 $rewrite_rules['from'],
                 $rewrite_rules['to'],
+                $processed_html
+            );
+        }
+
+        if ( isset( $this->settings['forceHTTPS'] ) ) {
+            $processed_html = str_replace(
+                'http://',
+                'https://',
                 $processed_html
             );
         }

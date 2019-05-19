@@ -130,6 +130,10 @@
     <?php $tpl->displayCheckbox($this, 'createEmptyFavicon', 'Insert empty icon rel to prevent favicon requests', 'checked'); ?>
 
     <p>If you don't have a favicon for your site, block extra requests taking up speed</p>
+
+    <?php $tpl->displayCheckbox($this, 'forceHTTPS', 'Force rewriting any http links to https', 'checked'); ?>
+
+    <p>If you are left with a few remaining http protocol links in your exported site and are unable to fix in the original WordPress site, this option will force rewrite any links in the exported pages that start with http to https. Warning, this is a brute force approach and may alter texts on the page that should not be rewritten.</p>
   </div>
 </section>
 
