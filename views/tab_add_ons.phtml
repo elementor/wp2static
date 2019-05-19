@@ -22,29 +22,45 @@ $add_ons = array(
 
 ?>
 
-<?php foreach( $add_ons as $add_on_code => $add_on_name ): ?>
+<?php foreach( $add_ons as $add_on_code => $add_on_name ):
+  
+  if ( is_plugin_active( $add_on_code ) ) : ?>
 
-  <div class="content addon wp2static-column">
+  <div class="content addon wp2static-column active">
     <div class="main">
-      <img src="<?php echo strtolower( plugins_url( "/../wpassets/$add_on_name.svg", __FILE__ ) ) ;?>" alt="" class="hero">
+      <img src="<?php echo strtolower( plugins_url( "/../assets/$add_on_name.svg", __FILE__ ) ) ;?>" alt="" class="hero">
       <h2><?php echo $add_on_name; ?> Add-on</h2>
       <p>Deploy your site statically with <?php echo $add_on_name; ?> Add-on and feels the speed!</p>
     </div>
     <div class="bottom">
       <div class="left">
-        <?php if( is_plugin_active( $add_on_code ) ) : ?>
-        <a href="" class="wp2static-btn btn-call-to-action">
-          Active
+        <a href="" class="wp2static-btn blue">
+          <i class="dashicon dashicon-yes"></i> Settings
         </a>
-        <?php else: ?>
+      </div>
+      <div class="right"><a href=""><img src="<?php echo strtolower( plugins_url( "/../assets/github.svg", __FILE__ ) ) ;?>" alt="" style="max-width:32px"></a></div>
+    </div>
+  </div>
+
+  <?php else : ?>
+
+  <div class="content addon wp2static-column noactive">
+    <div class="main">
+      <img src="<?php echo strtolower( plugins_url( "/../assets/$add_on_name.svg", __FILE__ ) ) ;?>" alt="" class="hero">
+      <h2><?php echo $add_on_name; ?> Add-on</h2>
+      <p>Deploy your site statically with <?php echo $add_on_name; ?> Add-on and feels the speed!</p>
+    </div>
+    <div class="bottom">
+      <div class="left">
         <a href="" class="wp2static-btn">
           Get Add-on
         </a>
-        <?php endif; ?>
       </div>
-      <div class="right"><a href=""><img src="<?php echo strtolower( plugins_url( "/../wpassets/github.svg", __FILE__ ) ) ;?>" alt="" style="max-width:32px"></a></div>
+      <div class="right"><a href=""><img src="<?php echo strtolower( plugins_url( "/../assets/github.svg", __FILE__ ) ) ;?>" alt="" style="max-width:32px"></a></div>
     </div>
   </div>
+
+  <?php endif; ?>
 
 <?php endforeach; ?>
 
