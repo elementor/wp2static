@@ -71,6 +71,11 @@ button {
   padding-right: 0;
 }
 
+.wp2static-flex span.description {
+  display: block;
+  margin-top: 10px;
+}
+
 .wp2static-btn {
   background: #eee;
   border: none;
@@ -319,10 +324,6 @@ p.submit{
 }
 
 .mg-top10 {
-  margin-top: 10px;
-}
-
-.wp2static-flex input {
   margin-top: 10px;
 }
 
