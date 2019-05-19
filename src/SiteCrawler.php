@@ -38,6 +38,25 @@ class SiteCrawler extends Base {
         $this->rewrite_rules = $rewrite_rules;
         $this->site_url_host = $site_url_host;
         $this->destination_url = $destination_url;
+        $this->ch = curl_init();
+        $this->request = new Request();
+
+        $this->curl_options = [];
+
+        if ( isset( $this->settings['crawlPort'] ) ) {
+            $this->curl_options[ CURLOPT_PORT ] = $this->settings['crawlPort'];
+        }
+
+        if ( isset( $this->settings['crawlUserAgent'] ) ) {
+            $this->curl_options[ CURLOPT_USERAGENT ] =
+                $this->settings['crawlUserAgent'];
+        }
+
+        if ( isset( $this->settings['useBasicAuth'] ) ) {
+            $this->curl_options[ CURLOPT_USERPWD ] =
+                $this->settings['basicAuthUser'] . ':' .
+                $this->settings['basicAuthPassword'];
+        }
     }
 
     public function crawl() {
@@ -241,43 +260,13 @@ class SiteCrawler extends Base {
     }
 
     public function crawlSingleURL( $url ) {
-        $ch = curl_init();
+        $response = $this->request->getURL(
+            $url,
+            $this->ch,
+            $this->curl_options
+        );
 
-        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
-        curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
-        curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
-        curl_setopt( $ch, CURLOPT_URL, $url );
-        curl_setopt( $ch, CURLOPT_USERAGENT, 'WP2Static.com' );
-        curl_setopt( $ch, CURLOPT_CONNECTTIMEOUT, 0 );
-        curl_setopt( $ch, CURLOPT_TIMEOUT, 600 );
-        curl_setopt( $ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1 );
-        curl_setopt( $ch, CURLOPT_HEADER, 0 );
-        curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
-
-        if ( isset( $this->settings['crawlPort'] ) ) {
-            curl_setopt( $ch, CURLOPT_PORT, $this->settings['crawlPort'] );
-        }
-
-        if ( isset( $this->settings['crawlUserAgent'] ) ) {
-            curl_setopt(
-                $ch,
-                CURLOPT_USERAGENT,
-                $this->settings['crawlUserAgent']
-            );
-        }
-
-        if ( isset( $this->settings['useBasicAuth'] ) ) {
-            curl_setopt(
-                $ch,
-                CURLOPT_USERPWD,
-                $this->settings['basicAuthUser'] . ':' .
-                $this->settings['basicAuthPassword']
-            );
-        }
-
-        $body = curl_exec( $ch );
-
-        $this->processCrawledURL( $ch, $body );
+        $this->processCrawledURL( $response['ch'], $response['body'] );
     }
 
     public function processCrawledURL( $curl_handle, $output ) {
@@ -315,7 +304,8 @@ class SiteCrawler extends Base {
                     $this->rewrite_rules,
                     $this->site_url_host,
                     $this->destination_url,
-                    $this->settings['rewrite_rules']
+                    $this->settings['rewrite_rules'],
+                    $this->ch
                 );
 
                 $this->processed_file = $processor->processHTML(
@@ -325,7 +315,8 @@ class SiteCrawler extends Base {
 
                 if ( $this->processed_file ) {
                     $this->processed_file = $processor->getHTML(
-                        $processor->xml_doc
+                        $processor->xml_doc,
+                        $this->settings['forceHTTPS']
                     );
                 }
 
@@ -378,8 +369,6 @@ class SiteCrawler extends Base {
             $file_type,
             $curl_content_type
         );
-
-        curl_close( $curl_handle );
     }
 
     public function saveCrawledURL( $url, $body, $file_type, $content_type ) {
