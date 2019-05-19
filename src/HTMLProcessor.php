@@ -32,7 +32,8 @@ class HTMLProcessor extends Base {
         $rewrite_rules,
         $site_url_host,
         $destination_url,
-        $user_rewrite_rules
+        $user_rewrite_rules,
+        $ch
     ) {
         $this->loadSettings();
 
@@ -41,8 +42,19 @@ class HTMLProcessor extends Base {
         $this->site_url_host = $site_url_host;
         $this->destination_url = $destination_url;
         $this->site_url = SiteInfo::getUrl( 'site' );
+        $this->ch = $ch;
 
-        $this->processed_urls = array();
+        $this->processed_urls = [];
+
+        // add filter to allow user to specify extra downloadable extensions
+        $this->crawlable_filetypes = [];
+        $this->crawlable_filetypes['img'] = 1;
+        $this->crawlable_filetypes['jpeg'] = 1;
+        $this->crawlable_filetypes['jpg'] = 1;
+        $this->crawlable_filetypes['png'] = 1;
+        $this->crawlable_filetypes['webp'] = 1;
+        $this->crawlable_filetypes['gif'] = 1;
+        $this->crawlable_filetypes['svg'] = 1;
     }
 
     /*
@@ -579,94 +591,83 @@ class HTMLProcessor extends Base {
     public function downloadAsset( $url, $extension ) {
         // check if user wants to download discovered assets
 
-        $crawlable_filetypes = [
-            'css',
-            'img',
-            'jpeg',
-            'png',
-            'gif',
-            // move to helper
-        ];
-
-        // add filter to allow user to specify extra downloadable extensions
-
         // check if supported filetype for crawling
-        foreach ( $crawlable_filetypes as $filetype ) {
-            // error_log('testing filetype: ' . $filetype);
-            if ( $extension == $filetype ) {
-                // get url without Site URL
-                $save_path = str_replace(
-                    $this->site_url,
-                    '',
-                    $url
-                );
+        if ( isset( $this->crawlable_filetypes[ $extension ] ) ) {
+            // get url without Site URL
+            $save_path = str_replace(
+                $this->site_url,
+                '',
+                $url
+            );
 
-                $filename = SiteInfo::getPath( 'uploads' ) .
-                    'wp2static-exported-site/' .
-                    $save_path;
+            $filename = SiteInfo::getPath( 'uploads' ) .
+                'wp2static-exported-site/' .
+                $save_path;
 
-                // check if file exists on disk
-                if ( is_file( $filename ) ) {
-                    return;
-                }
+            // check if file exists on disk
+            if ( is_file( $filename ) ) {
+                return;
+            }
 
-                // we now havbe something like
-                // wp-content/plugins/elementor-pro/assets/css/frontend.min.css
+            // we now havbe something like
+            // wp-content/plugins/elementor-pro/assets/css/frontend.min.css
 
-                $curl_options = [];
+            $curl_options = [];
 
-                if ( isset( $this->settings['crawlPort'] ) ) {
-                    $curl_options[ CURLOPT_PORT ] =
-                        $this->settings['crawlPort'];
-                }
+            if ( isset( $this->settings['crawlPort'] ) ) {
+                $curl_options[ CURLOPT_PORT ] =
+                    $this->settings['crawlPort'];
+            }
 
-                if ( isset( $this->settings['crawlUserAgent'] ) ) {
-                    $curl_options[ CURLOPT_USERAGENT ] =
-                        $this->settings['crawlUserAgent'];
-                }
+            if ( isset( $this->settings['crawlUserAgent'] ) ) {
+                $curl_options[ CURLOPT_USERAGENT ] =
+                    $this->settings['crawlUserAgent'];
+            }
 
-                if ( isset( $this->settings['useBasicAuth'] ) ) {
-                    $curl_options[ CURLOPT_USERPWD ] =
-                        $this->settings['basicAuthUser'] . ':' .
-                        $this->settings['basicAuthPassword'];
-                }
+            if ( isset( $this->settings['useBasicAuth'] ) ) {
+                $curl_options[ CURLOPT_USERPWD ] =
+                    $this->settings['basicAuthUser'] . ':' .
+                    $this->settings['basicAuthPassword'];
+            }
 
-                $request = new Request();
+            $request = new Request();
 
-                $response = $request->getURL(
-                    $url,
-                    $curl_options
-                );
+            $response = $request->getURL(
+                $url,
+                $this->ch,
+                $curl_options
+            );
 
-                if ( is_array( $response ) ) {
-                    $ch = $response['ch'];
-                    $body = $response['body'];
-                }
+            if ( is_array( $response ) ) {
+                $ch = $response['ch'];
+                $body = $response['body'];
+            }
 
-                $basename = basename( $filename );
+            $basename = basename( $filename );
 
-                $dir_without_filename = str_replace(
-                    $basename,
-                    $filename,
-                    $filename
-                );
+            $dir_without_filename = str_replace(
+                $basename,
+                $filename,
+                $filename
+            );
 
-                if ( ! is_dir( $dir_without_filename ) ) {
-                    wp_mkdir_p( $dir_without_filename );
-                }
+            if ( ! is_dir( $dir_without_filename ) ) {
+                wp_mkdir_p( $dir_without_filename );
+            }
 
-                if ( ! isset( $body ) ) {
-                    return;
-                }
+            if ( ! isset( $body ) ) {
+                return;
+            }
 
-                $result = file_put_contents(
-                    $filename,
-                    $body
-                );
+            $result = file_put_contents(
+                $filename,
+                $body
+            );
 
-                if ( ! $result ) {
-                    error_log( 'attempting to save' . $filename );
-                }
+            if ( ! $result ) {
+                $err = 'Error attempting to save' . $filename;
+                WsLog::l( $err );
+                throw new Exception( $err );
             }
         }
     }

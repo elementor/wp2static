@@ -304,7 +304,8 @@ class SiteCrawler extends Base {
                     $this->rewrite_rules,
                     $this->site_url_host,
                     $this->destination_url,
-                    $this->settings['rewrite_rules']
+                    $this->settings['rewrite_rules'],
+                    $this->ch
                 );
 
                 $this->processed_file = $processor->processHTML(
