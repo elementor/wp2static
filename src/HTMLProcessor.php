@@ -591,8 +591,18 @@ class HTMLProcessor extends Base {
     public function downloadAsset( $url, $extension ) {
         // check if user wants to download discovered assets
 
+        // TODO: add local cache per iteration of HTMLProcessor to
+        // faster skip cached files without querying DB
+
         // check if supported filetype for crawling
         if ( isset( $this->crawlable_filetypes[ $extension ] ) ) {
+            // skip if in Crawl Cache already
+            if ( ! isset( $this->settings['dontUseCrawlCaching'] ) ) {
+                if ( CrawlCache::getUrl( $url ) ) {
+                    return;
+                }
+            }
+
             // get url without Site URL
             $save_path = str_replace(
                 $this->site_url,
@@ -603,14 +613,6 @@ class HTMLProcessor extends Base {
             $filename = SiteInfo::getPath( 'uploads' ) .
                 'wp2static-exported-site/' .
                 $save_path;
-
-            // check if file exists on disk
-            if ( is_file( $filename ) ) {
-                return;
-            }
-
-            // we now havbe something like
-            // wp-content/plugins/elementor-pro/assets/css/frontend.min.css
 
             $curl_options = [];
 
@@ -667,8 +669,11 @@ class HTMLProcessor extends Base {
             if ( ! $result ) {
                 $err = 'Error attempting to save' . $filename;
                 WsLog::l( $err );
-                throw new Exception( $err );
+
+                return;
             }
+
+            CrawlCache::addUrl( $url );
         }
     }
 }
