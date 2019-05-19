@@ -87,6 +87,7 @@ button {
   font-weight: 700;
   text-decoration: none;
   outline: 0;
+  transition: .15s ease-in-out;
 }
 
 .wp2static-btn:hover {
