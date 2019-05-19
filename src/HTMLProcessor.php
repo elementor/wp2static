@@ -32,7 +32,8 @@ class HTMLProcessor extends Base {
         $rewrite_rules,
         $site_url_host,
         $destination_url,
-        $user_rewrite_rules
+        $user_rewrite_rules,
+        $ch
     ) {
         $this->loadSettings();
 
@@ -41,8 +42,19 @@ class HTMLProcessor extends Base {
         $this->site_url_host = $site_url_host;
         $this->destination_url = $destination_url;
         $this->site_url = SiteInfo::getUrl( 'site' );
+        $this->ch = $ch;
 
-        $this->processed_urls = array();
+        $this->processed_urls = [];
+
+        // add filter to allow user to specify extra downloadable extensions
+        $this->crawlable_filetypes = [];
+        $this->crawlable_filetypes['img'] = 1;
+        $this->crawlable_filetypes['jpeg'] = 1;
+        $this->crawlable_filetypes['jpg'] = 1;
+        $this->crawlable_filetypes['png'] = 1;
+        $this->crawlable_filetypes['webp'] = 1;
+        $this->crawlable_filetypes['gif'] = 1;
+        $this->crawlable_filetypes['svg'] = 1;
     }
 
     /*
@@ -258,23 +270,14 @@ class HTMLProcessor extends Base {
 
             // rm empty elements
             $pieces = array_filter( $all_pieces );
+
             // reindex array
             $pieces = array_values( $pieces );
 
             $url = $pieces[0];
             $dimension = $pieces[1];
 
-            // normalize urls
-            if ( URLHelper::isInternalLink( $url, $this->site_url_host ) ) {
-                $absolute_url = NormalizeURL::normalize(
-                    $url,
-                    $this->page_url
-                );
-
-                // rm query string
-                $url = strtok( $absolute_url, '?' );
-                $url = $this->convertToDocumentRelativeURLSrcSetURL( $url );
-            }
+            $url = $this->rewriteLocalURL( $url );
 
             $new_src_set[] = "{$url} {$dimension}";
         }
@@ -498,45 +501,7 @@ class HTMLProcessor extends Base {
         return $url;
     }
 
-    public function rewriteWPPathsSrcSetURL( $url_to_change ) {
-        if ( ! isset( $this->settings['rewrite_rules'] ) ) {
-            return $url_to_change;
-        }
-
-        $rewrite_from = array();
-        $rewrite_to = array();
-
-        $rewrite_rules = explode(
-            "\n",
-            str_replace( "\r", '', $this->settings['rewrite_rules'] )
-        );
-
-        $tmp_rules = array();
-
-        foreach ( $rewrite_rules as $rewrite_rule_line ) {
-            if ( $rewrite_rule_line ) {
-                list($from, $to) = explode( ',', $rewrite_rule_line );
-                $tmp_rules[ $from ] = $to;
-            }
-        }
-
-        uksort( $tmp_rules, array( $this, 'ruleSort' ) );
-
-        foreach ( $tmp_rules as $from => $to ) {
-            $rewrite_from[] = $from;
-            $rewrite_to[] = $to;
-        }
-
-        $rewritten_url = str_replace(
-            $rewrite_from,
-            $rewrite_to,
-            $url_to_change
-        );
-
-        return $rewritten_url;
-    }
-
-    public function getHTML( $xml_doc ) {
+    public function getHTML( $xml_doc, $force_https = false ) {
         $processed_html = $xml_doc->saveHtml();
 
         // TODO: here is where we convertToSiteRelativeURLs, as this can be
@@ -557,6 +522,14 @@ class HTMLProcessor extends Base {
             );
         }
 
+        if ( isset( $this->settings['forceHTTPS'] ) ) {
+            $processed_html = str_replace(
+                'http://',
+                'https://',
+                $processed_html
+            );
+        }
+
         $processed_html = html_entity_decode(
             $processed_html,
             ENT_QUOTES,
@@ -573,19 +546,6 @@ class HTMLProcessor extends Base {
         return $processed_html;
     }
 
-    public function convertToDocumentRelativeURLSrcSetURL( $url_to_change ) {
-        $site_root = '';
-
-        $relative_url = str_replace(
-            $this->destination_url,
-            $site_root,
-            $url_to_change
-        );
-
-        return $relative_url;
-    }
-
-
     // TODO: This function is to be performed on site URLs
     // allowing the user to convert URLs to document or site relative form
     public function convertToDocumentRelativeURL( $url ) {
@@ -598,49 +558,6 @@ class HTMLProcessor extends Base {
         );
 
         return $rewritten_url;
-    }
-
-    public function convertToDocumentRelativeSrcSetURLs( $url_to_change ) {
-        if ( ! isset( $this->settings['useDocumentRelativeURLs'] ) ) {
-            return $url_to_change;
-        }
-
-        $current_page_path_to_root = '';
-        $current_page_path = parse_url( $this->page_url, PHP_URL_PATH );
-
-        if ( ! is_string( $current_page_path ) ) {
-            return;
-        }
-
-        $number_of_segments_in_path = explode( '/', $current_page_path );
-        $num_dots_to_root = count( $number_of_segments_in_path ) - 2;
-
-        for ( $i = 0; $i < $num_dots_to_root; $i++ ) {
-            $current_page_path_to_root .= '../';
-        }
-
-        if ( ! URLHelper::isInternalLink(
-            $url_to_change,
-            $this->site_url_host
-        ) ) {
-            return false;
-        }
-
-        $rewritten_url = str_replace(
-            $this->destination_url,
-            '',
-            $url_to_change
-        );
-
-        $offline_url = $current_page_path_to_root . $rewritten_url;
-
-        // add index.html if no extension
-        if ( substr( $offline_url, -1 ) === '/' ) {
-            // TODO: check XML/RSS case
-            $offline_url .= 'index.html';
-        }
-
-        return $offline_url;
     }
 
     public function shouldCreateBaseHREF() {
@@ -682,99 +599,90 @@ class HTMLProcessor extends Base {
     public function downloadAsset( $url, $extension ) {
         // check if user wants to download discovered assets
 
-        $crawlable_filetypes = [
-            'css',
-            'img',
-            'jpeg',
-            'png',
-            'gif',
-            // move to helper
-        ];
-
-        // add filter to allow user to specify extra downloadable extensions
+        // TODO: add local cache per iteration of HTMLProcessor to
+        // faster skip cached files without querying DB
 
         // check if supported filetype for crawling
-        foreach ( $crawlable_filetypes as $filetype ) {
-            // error_log('testing filetype: ' . $filetype);
-            if ( $extension == $filetype ) {
-                // get url without Site URL
-                $save_path = str_replace(
-                    $this->site_url,
-                    '',
-                    $url
-                );
-
-                $filename = SiteInfo::getPath( 'uploads' ) .
-                    'wp2static-exported-site/' .
-                    $save_path;
-
-                // check if file exists on disk
-                if ( is_file( $filename ) ) {
+        if ( isset( $this->crawlable_filetypes[ $extension ] ) ) {
+            // skip if in Crawl Cache already
+            if ( ! isset( $this->settings['dontUseCrawlCaching'] ) ) {
+                if ( CrawlCache::getUrl( $url ) ) {
                     return;
                 }
-
-                // we now havbe something like
-                // wp-content/plugins/elementor-pro/assets/css/frontend.min.css
-
-                $args = array(
-                    'timeout'     => 1,
-                    'redirection' => 5,
-                    'httpversion' => '1.0',
-                    'user-agent'  => 'WP2Static.com',
-                    'blocking'    => true,
-                    'headers'     => array(),
-                    'cookies'     => array(),
-                    'body'        => null,
-                    'compress'    => false,
-                    'decompress'  => true,
-                    'sslverify'   => true,
-                    'stream'      => false,
-                    'filename'    => null,
-                );
-
-                $response = wp_remote_get( $url, $args );
-
-                $header = '';
-                $body = '';
-
-                if ( is_array( $response ) ) {
-                    $header = $response['headers'];
-                    $body = $response['body'];
-                }
-
-                $basename = basename( $filename );
-
-                $dir_without_filename = str_replace(
-                    $basename,
-                    $filename,
-                    $filename
-                );
-
-                if ( ! is_dir( $dir_without_filename ) ) {
-                    wp_mkdir_p( $dir_without_filename );
-                }
-
-                // chmod( $dir_without_filename, 0664 );
-
-                $result = file_put_contents(
-                    $filename,
-                    $body
-                );
-
-                if ( ! $result ) {
-                    error_log( 'attempting to save' . $filename );
-                }
-
-                // chmod( $filename, 0664 );
-
             }
+
+            // get url without Site URL
+            $save_path = str_replace(
+                $this->site_url,
+                '',
+                $url
+            );
+
+            $filename = SiteInfo::getPath( 'uploads' ) .
+                'wp2static-exported-site/' .
+                $save_path;
+
+            $curl_options = [];
+
+            if ( isset( $this->settings['crawlPort'] ) ) {
+                $curl_options[ CURLOPT_PORT ] =
+                    $this->settings['crawlPort'];
+            }
+
+            if ( isset( $this->settings['crawlUserAgent'] ) ) {
+                $curl_options[ CURLOPT_USERAGENT ] =
+                    $this->settings['crawlUserAgent'];
+            }
+
+            if ( isset( $this->settings['useBasicAuth'] ) ) {
+                $curl_options[ CURLOPT_USERPWD ] =
+                    $this->settings['basicAuthUser'] . ':' .
+                    $this->settings['basicAuthPassword'];
+            }
+
+            $request = new Request();
+
+            $response = $request->getURL(
+                $url,
+                $this->ch,
+                $curl_options
+            );
+
+            if ( is_array( $response ) ) {
+                $ch = $response['ch'];
+                $body = $response['body'];
+            }
+
+            $basename = basename( $filename );
+
+            $dir_without_filename = str_replace(
+                $basename,
+                $filename,
+                $filename
+            );
+
+            if ( ! is_dir( $dir_without_filename ) ) {
+                wp_mkdir_p( $dir_without_filename );
+            }
+
+            if ( ! isset( $body ) ) {
+                return;
+            }
+
+            $result = file_put_contents(
+                $filename,
+                $body
+            );
+
+            if ( ! $result ) {
+                $err = 'Error attempting to save' . $filename;
+                WsLog::l( $err );
+
+                return;
+            }
+
+            CrawlCache::addUrl( $url );
         }
-
-        // check if user wants to download discovered assets
-
-        // check if in crawl cache and we want to use cache
-
-        // download it!
     }
 }
 

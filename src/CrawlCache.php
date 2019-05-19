@@ -45,7 +45,7 @@ class CrawlCache {
         $table_name = $wpdb->prefix . 'wp2static_crawl_cache';
 
         $sql = $wpdb->prepare(
-            "SELECT id FROM $table_name WHERE" . // phpcs:ignore WordPress
+            "SELECT id FROM $table_name WHERE" .
             ' hashed_url = %s LIMIT 1',
             $hashed_url
         );

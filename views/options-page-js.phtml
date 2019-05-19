@@ -187,8 +187,13 @@ jQuery(document).ready(function($){
   }
 
   function deleteCrawlCacheSuccessCallback( serverResponse) {
-    $('#current_action').html('Crawl Cache successfully deleted.');
-    $('.pulsate-css').hide();
+    if ( ! serverResponse ) {
+        $('.pulsate-css').hide();
+        $('#current_action').html( 'Failed to delete Crawl Cache.' );
+    } else {
+        $('#current_action').html('Crawl Cache successfully deleted.');
+        $('.pulsate-css').hide();
+    }
   }
 
   function deleteCrawlCacheFailCallback( serverResponse) {
@@ -203,7 +208,7 @@ jQuery(document).ready(function($){
         'download_export_log',
         downloadExportLogSuccessCallback,
         downloadExportLogFailCallback
-    ); 
+    );
   }
 
   $(document).on('click', '#detectEverythingButton', function(evt) {
@@ -213,12 +218,13 @@ jQuery(document).ready(function($){
 
   $(document).on('click', '#deleteCrawlCache', function(evt) {
         evt.preventDefault();
+        $('#current_action').html( 'Deleting Crawl Cache...' );
 
         sendWP2StaticAJAX(
             'delete_crawl_cache',
             deleteCrawlCacheSuccessCallback,
             deleteCrawlCacheFailCallback
-        ); 
+        );
   });
 
   $(document).on('click', '#detectNothingButton', function(evt) {
