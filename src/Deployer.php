@@ -18,7 +18,12 @@ class Deployer extends Base {
     public function deploy( $test = false ) {
         $method = $this->settings['selected_deployment_option'];
 
-        WP_CLI::log( 'Deploying static site via: ' . $method );
+        if ( defined( 'WP_CLI' ) ) {
+            WP_CLI::log( 'Deploying static site via: ' . $method );
+        } else {
+            $msg = 'Starting headless deployment of ' . $method . ' method';
+            WsLog::l( $msg );
+        }
 
         $start_time = microtime( true );
 
@@ -33,10 +38,18 @@ class Deployer extends Base {
 
         $duration = $end_time - $start_time;
 
-        WP_CLI::success(
-            'Deployed to: ' . $method . ' in ' .
-            date( 'H:i:s', (int) $duration )
-        );
+        $via_ui = filter_input( INPUT_POST, 'ajax_action' );
+
+        // Note when running via UI, we save all options
+        if ( ! is_string( $via_ui) ) {
+            $msg = 'Deployed to: ' . $method . ' in ' .
+                date( 'H:i:s', (int) $duration );
+            if ( defined( 'WP_CLI' ) ) {
+                WP_CLI::success( $msg );
+            } else {
+                WsLog::l( $msg );
+            }
+        }
 
         $this->finalizeDeployment();
     }

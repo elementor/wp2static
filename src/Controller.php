@@ -84,9 +84,15 @@ class Controller {
 
         $instance->loadRewriteRules();
 
+        add_action(
+            'wp2static_headless_hook',
+            ['WP2Static\Controller','wp2static_headless'],
+            10,
+            0
+        );
+
         return $instance;
     }
-
 
     public function set_menu_order( $menu_order ) {
         $order = array();
@@ -363,12 +369,14 @@ class Controller {
     }
 
     public function save_options() {
-        if ( ! $this->userIsAllowed() ) {
-            exit( 'Not allowed to change plugin options.' );
-        }
+        $via_ui = filter_input( INPUT_POST, 'ajax_action' );
 
         // Note when running via UI, we save all options
-        if ( ! defined( 'WP_CLI' ) ) {
+        if ( is_string( $via_ui) ) {
+            if ( ! $this->userIsAllowed() ) {
+                exit( 'Not allowed to change plugin options.' );
+            }
+
             $this->options->saveAllOptions();
         }
     }
@@ -498,5 +506,42 @@ class Controller {
             join( ', ', $extensions );
 
         WsLog::l( $environmental_info );
+    }
+
+    public function wp2static_headless() {
+        $start_time = microtime();
+
+        $plugin = Controller::getInstance();
+        $plugin->generate_filelist_preview();
+        $plugin->prepare_for_export();
+        $plugin->crawl_site();
+        $plugin->post_process_archive_dir();
+
+        $end_time = microtime();
+
+        $duration = $plugin->microtime_diff( $start_time, $end_time );
+
+        WsLog::l( "Generated static site archive in $duration seconds" );
+
+        $deployer = new Deployer();
+        $deployer->deploy();
+
+        wp_die();
+
+        return null;
+    }
+
+    public function microtime_diff( $start, $end = null ) {
+        if ( ! $end ) {
+            $end = microtime();
+        }
+
+        list( $start_usec, $start_sec ) = explode( ' ', $start );
+        list( $end_usec, $end_sec ) = explode( ' ', $end );
+
+        $diff_sec = intval( $end_sec ) - intval( $start_sec );
+        $diff_usec = floatval( $end_usec ) - floatval( $start_usec );
+
+        return floatval( $diff_sec ) + $diff_usec;
     }
 }
