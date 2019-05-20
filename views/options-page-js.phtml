@@ -594,7 +594,7 @@ jQuery(document).ready(function($){
 
 
     // load the log file
-    $.get( log_file_url, function( data ) {
+    $.get( log_file_url + '?cacheBuster=' + Date.now(), function( data ) {
       // hide loading icon
       $('#log_load_progress').hide();
 
