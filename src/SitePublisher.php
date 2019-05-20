@@ -159,7 +159,9 @@ class SitePublisher {
             $basename_in_target
         );
 
-        if ( ! defined( 'WP_CLI' ) ) {
+            $via_ui = filter_input( INPUT_POST, 'ajax_action' );
+
+        if ( is_string( $via_ui ) ) {
             echo 'SUCCESS';
         }
     }
@@ -228,7 +230,9 @@ class SitePublisher {
     // TODO: rename to signalSuccessfulAction or such
     // as is used in deployment tests/not just finalizing deploys
     public function finalizeDeployment() {
-        if ( ! defined( 'WP_CLI' ) ) {
+        $via_ui = filter_input( INPUT_POST, 'ajax_action' );
+
+        if ( is_string( $via_ui ) ) {
             echo 'SUCCESS'; }
     }
 
