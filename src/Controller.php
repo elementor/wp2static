@@ -258,9 +258,28 @@ class Controller {
         $site_crawler->crawl();
     }
 
-    public function generate_filelist_preview() {
-        $this->settings = $this->options->getSettings( true );
+    public function test_folder() {
+        $archive_processor = new ArchiveProcessor();
 
+        $target_folder = $this->settings['targetFolder'];
+
+        $has_safety_file =
+            $archive_processor->dir_has_safety_file( $target_folder );
+        $is_empty =
+            $archive_processor->dir_is_empty( $target_folder );
+
+        if ( $has_safety_file || $is_empty ) {
+            wp_die( 'SUCCESS', '', 200 );
+        }
+
+        wp_die(
+            'Not permitted to write to target directory',
+            '',
+            500
+        );
+    }
+
+    public function generate_filelist_preview() {
         $plugin_hook = 'wp2static';
 
         $initial_file_list_count =

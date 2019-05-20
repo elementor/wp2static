@@ -82,6 +82,7 @@ class ArchiveProcessor extends Base {
             return false;
         }
 
+        // FALSE if we have anything besides dot paths or our safety file
         foreach ( $dir_files as $file ) {
             if ( ! in_array( $file, $dotfiles ) ) {
                  return false;
