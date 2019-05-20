@@ -91,6 +91,29 @@ class Controller {
             0
         );
 
+        /*
+         * Register actions for when we should invalidate cache for
+         * a URL(s) or whole site
+         *
+         */
+
+        $single_url_invalidation_events = [
+            'save_post',
+            'deleted_post',
+        ];
+
+        $full_site_invalidation_events = [
+            'switch_theme',
+        ];
+
+        foreach ( $single_url_invalidation_events as $invalidation_events ) {
+            add_action(
+                $invalidation_events,
+                [ 'WP2Static\Controller', 'invalidate_single_url_cache' ],
+                0
+            );
+        }
+
         return $instance;
     }
 
@@ -543,5 +566,25 @@ class Controller {
         $diff_usec = floatval( $end_usec ) - floatval( $start_usec );
 
         return floatval( $diff_sec ) + $diff_usec;
+    }
+
+    public function invalidate_single_url_cache( $post_id = 0, $post = null ) {
+        $permalink = get_permalink(
+            $post->ID
+        );
+
+        $site_url = SiteInfo::getUrl( 'site' );
+
+        if ( ! is_string( $permalink ) || ! is_string( $site_url ) ) {
+            return;
+        }
+
+        $url = str_replace(
+            $site_url,
+            '/',
+            $permalink
+        );
+
+        CrawlCache::rmUrl( $url );
     }
 }
