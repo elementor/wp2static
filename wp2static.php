@@ -60,7 +60,6 @@ function wp_static_html_output_ajax() {
     return null;
 }
 
-
 function wp_static_html_output_add_dashboard_widgets() {
     wp_add_dashboard_widget(
         'wp_static_html_output_dashboard_widget',

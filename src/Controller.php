@@ -5,6 +5,7 @@ namespace WP2Static;
 use ZipArchive;
 use WP_Error;
 use Exception;
+use WP_CLI;
 
 class Controller {
     const VERSION = '7.0-dev';
@@ -364,6 +365,10 @@ class Controller {
     }
 
     public function userIsAllowed() {
+        if ( defined( 'WP_CLI') ) {
+            return true;
+        }
+
         $referred_by_admin = check_admin_referer( self::HOOK . '-options' );
         $user_can_manage_options = current_user_can( 'manage_options' );
 
@@ -375,7 +380,10 @@ class Controller {
             exit( 'Not allowed to change plugin options.' );
         }
 
-        $this->options->saveAllPostData();
+        // Note when running via UI, we save all options
+        if ( ! defined( 'WP_CLI' ) ) {
+            $this->options->saveAllOptions();
+        }
     }
 
     public function prepare_for_export() {
