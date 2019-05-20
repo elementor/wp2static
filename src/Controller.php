@@ -366,7 +366,7 @@ class Controller {
     }
 
     public function userIsAllowed() {
-        if ( defined( 'WP_CLI') ) {
+        if ( defined( 'WP_CLI' ) ) {
             return true;
         }
 
