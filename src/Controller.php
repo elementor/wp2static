@@ -86,7 +86,7 @@ class Controller {
 
         add_action(
             'wp2static_headless_hook',
-            ['WP2Static\Controller','wp2static_headless'],
+            [ 'WP2Static\Controller', 'wp2static_headless' ],
             10,
             0
         );
@@ -372,7 +372,7 @@ class Controller {
         $via_ui = filter_input( INPUT_POST, 'ajax_action' );
 
         // Note when running via UI, we save all options
-        if ( is_string( $via_ui) ) {
+        if ( is_string( $via_ui ) ) {
             if ( ! $this->userIsAllowed() ) {
                 exit( 'Not allowed to change plugin options.' );
             }
@@ -511,7 +511,7 @@ class Controller {
     public function wp2static_headless() {
         $start_time = microtime();
 
-        $plugin = Controller::getInstance();
+        $plugin = self::getInstance();
         $plugin->generate_filelist_preview();
         $plugin->prepare_for_export();
         $plugin->crawl_site();

@@ -41,7 +41,7 @@ class Deployer extends Base {
         $via_ui = filter_input( INPUT_POST, 'ajax_action' );
 
         // Note when running via UI, we save all options
-        if ( ! is_string( $via_ui) ) {
+        if ( ! is_string( $via_ui ) ) {
             $msg = 'Deployed to: ' . $method . ' in ' .
                 date( 'H:i:s', (int) $duration );
             if ( defined( 'WP_CLI' ) ) {
