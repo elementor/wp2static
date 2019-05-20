@@ -22,7 +22,12 @@ class Deployer extends Base {
 
         $start_time = microtime( true );
 
-        // TODO: reimplement CLI based deployment for add-ons / local
+        // give the selected_deployment_option to Add-ons to determine if
+        // they should do their deployment actions
+        do_action(
+            'wp2static_addon_trigger_deploy',
+            $method
+        );
 
         $end_time = microtime( true );
 

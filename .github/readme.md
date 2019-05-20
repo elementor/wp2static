@@ -279,7 +279,11 @@ apply_filters(
 ```php
 function addWP2StaticOption( $options ) {
     $new_options = array(
-      'baseUrl-azure',
+        'baseUrl-azure',
+        'azStorageAccountName',
+        'azContainerName',
+        'azAccessKey',
+        'azPath',
     );
 
     $options = array_merge(
@@ -328,37 +332,38 @@ add_filter(
     'addWP2StaticOption'
 );
 ```
-### Register plugin options for Post/DB exports
 
- - `wp2static_add_post_and_db_keys`
- - Filter hook
+### Add deployment option for CLI usage
+
+Every Add-on listens for this event, checks selected deployment method matches
+ Add-on type and triggers the deployment actions specific to the Add-on.
+
+ - `wp2static_addon_trigger_deploy`
+ - Action hook
 
 *signature*
 ```php
-apply_filters(
-    'wp2static_add_post_and_db_keys',
-    $options
+do_action(
+  'wp2static_addon_trigger_deploy',
+  $method
 );
 ```
 
 *example usage*
 ```php
-    public function add_post_and_db_keys( $keys ) {
-        $keys['azure'] = array(
-          'baseUrl-azure',
-          'azStorageAccountName',
-          'azContainerName',
-          'azAccessKey',
-          'azPath',
-        );
-
-        return $keys;
+function runBackendDeployment( $method ) {
+    if ( $method !== 'bunnycdn' ) {
+        return;
     }
 
-add_filter(
-    'wp2static_add_post_and_db_keys',
-    'add_post_and_db_keys'
-);
+    $bunnyCDN = new WP2Static\BunnyCDN();
+    $bunnyCDN->bootstrap();
+    $bunnyCDN->prepareDeploy( true );
+    $bunnyCDN->bunnycdn_transfer_files();
+    $bunnyCDN->bunnycdn_purge_cache();
+}
+
+add_filter( 'wp2static_addon_trigger_deploy', 'runBackendDeployment' );
 ```
 ## Development 
 
