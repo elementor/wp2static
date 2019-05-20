@@ -332,6 +332,39 @@ add_filter(
     'addWP2StaticOption'
 );
 ```
+
+### Add deployment option for CLI usage
+
+Every Add-on listens for this event, checks selected deployment method matches
+ Add-on type and triggers the deployment actions specific to the Add-on.
+
+ - `wp2static_addon_trigger_deploy`
+ - Action hook
+
+*signature*
+```php
+do_action(
+  'wp2static_addon_trigger_deploy',
+  $method
+);
+```
+
+*example usage*
+```php
+function runBackendDeployment( $method ) {
+    if ( $method !== 'bunnycdn' ) {
+        return;
+    }
+
+    $bunnyCDN = new WP2Static\BunnyCDN();
+    $bunnyCDN->bootstrap();
+    $bunnyCDN->prepareDeploy( true );
+    $bunnyCDN->bunnycdn_transfer_files();
+    $bunnyCDN->bunnycdn_purge_cache();
+}
+
+add_filter( 'wp2static_addon_trigger_deploy', 'runBackendDeployment' );
+```
 ## Development 
 
 This repo contains the latest code, which you can clone/download to get the bleeding edge, else install via the [official WordPress Plugin page](https://wordpress.org/plugins/static-html-output-plugin/)
