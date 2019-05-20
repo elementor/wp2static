@@ -23,6 +23,14 @@ class Deployer extends Base {
         $start_time = microtime( true );
 
         // TODO: reimplement CLI based deployment for add-ons / local
+       
+        // get selected_deployment_option
+ 
+        // run filter to get deploy option 
+
+        $bunnyCDN = new BunnyCDN();
+        $bunnyCDN->bunnycdn_transfer_files();
+        $bunnyCDN->purgeCache();         
 
         $end_time = microtime( true );
 

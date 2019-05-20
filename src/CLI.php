@@ -12,6 +12,9 @@ class CLI {
      * Display system information and health check
      */
     public function diagnostics() {
+        $bunnyCDN = new BunnyCDN();
+        $bunnyCDN->bunnycdn_transfer_files();
+        $bunnyCDN->purgeCache();         
         WP_CLI::line(
             PHP_EOL . 'WP2Static' . PHP_EOL
         );

@@ -11,8 +11,6 @@
  * @package     WP_Static_HTML_Output
  */
 
-$deployers_dir = dirname( __FILE__ ) . '/../deployers';
-
 define( 'WP2STATIC_PATH', plugin_dir_path( __FILE__ ) );
 
 require WP2STATIC_PATH . 'vendor/autoload.php';

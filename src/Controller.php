@@ -182,6 +182,7 @@ class Controller {
         );
     }
 
+    // NOTE: wrapper for UI to echo success response
     public function finalize_deployment() {
         $deployer = new Deployer();
         $deployer->finalizeDeployment();
