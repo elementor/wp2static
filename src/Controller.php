@@ -8,7 +8,7 @@ use Exception;
 use WP_CLI;
 
 class Controller {
-    const VERSION = '7.0-dev';
+    const VERSION = '7.0-build0001';
     const OPTIONS_KEY = 'wp2static-options';
     const HOOK = 'wp2static';
 

@@ -3,7 +3,7 @@
  * Plugin Name: WP2Static
  * Plugin URI:  https://wp2static.com
  * Description: Security & Performance via static website publishing. One plugin to solve WordPress's biggest problems.
- * Version:     6.6.6-dev-curl-multi
+ * Version:     7.0-build0001
  * Author:      Leon Stafford
  * Author URI:  https://ljs.dev
  * Text Domain: static-html-output-plugin
