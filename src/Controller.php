@@ -96,7 +96,6 @@ class Controller {
          * a URL(s) or whole site
          *
          */
-
         $single_url_invalidation_events = [
             'save_post',
             'deleted_post',
@@ -110,6 +109,14 @@ class Controller {
             add_action(
                 $invalidation_events,
                 [ 'WP2Static\Controller', 'invalidate_single_url_cache' ],
+                0
+            );
+        }
+
+        if ( isset( $instance->settings['redeployOnPostUpdates'] ) ) {
+            add_action(
+                'save_post',
+                [ 'WP2Static\Controller', 'wp2static_headless' ],
                 0
             );
         }
@@ -326,7 +333,9 @@ class Controller {
             throw new Exception( $err );
         }
 
-        if ( ! defined( 'WP_CLI' ) ) {
+        $via_ui = filter_input( INPUT_POST, 'ajax_action' );
+
+        if ( is_string( $via_ui ) ) {
             echo $initial_file_list_count;
         }
     }
@@ -421,7 +430,9 @@ class Controller {
 
         $this->exporter->generateModifiedFileList();
 
-        if ( ! defined( 'WP_CLI' ) ) {
+        $via_ui = filter_input( INPUT_POST, 'ajax_action' );
+
+        if ( is_string( $via_ui ) ) {
             echo 'SUCCESS';
         }
     }
@@ -449,7 +460,9 @@ class Controller {
         $processor->copyStaticSiteToPublicFolder();
         $processor->create_zip();
 
-        if ( ! defined( 'WP_CLI' ) ) {
+        $via_ui = filter_input( INPUT_POST, 'ajax_action' );
+
+        if ( is_string( $via_ui ) ) {
             echo 'SUCCESS';
         }
     }
@@ -466,7 +479,9 @@ class Controller {
 
         array_map( 'unlink', $hash_files );
 
-        if ( ! defined( 'WP_CLI' ) ) {
+        $via_ui = filter_input( INPUT_POST, 'ajax_action' );
+
+        if ( is_string( $via_ui ) ) {
             echo 'SUCCESS';
         }
     }
@@ -548,8 +563,6 @@ class Controller {
 
         $deployer = new Deployer();
         $deployer->deploy();
-
-        wp_die();
 
         return null;
     }

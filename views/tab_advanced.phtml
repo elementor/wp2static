@@ -28,35 +28,13 @@
 
 <section class="wp2static-content wp2static-flex">
   <div class="content" style="max-width:30%">
-    <h2><?php echo __('API Request Delay', 'static-html-output-plugin');?></h2>
+    <h2><?php echo __('Re-deploy when site changes', 'static-html-output-plugin');?></h2>
   </div>
 
   <div class="content">
-    <select name="delayBetweenAPICalls" id="delayBetweenAPICalls">
+    <p>With Crawl and Deploy Caches enabled, only the files changed since your last deployment need processing. Choose which actions in WordPress will trigger a redeployment:</p>
 
-    <?php 
-      // TODO: shift this into helper function for select
-      $increments = array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 2, 3, 4, 10);
-
-      foreach($increments as $increment) : ?>
-                <option value="<?php echo $increment; ?>"<?php echo $this->options->delayBetweenAPICalls == $increment ? ' selected' : ''; ?>><?php echo $increment; ?></option>
-      <?php endforeach; ?>
-
-    </select>
-
-    <p>This is set to 0, by default, but if your deploy is hitting the remote API too rapidly for their rate limit, you can increase this to add a delay between each API request.</p>    
-  </div>
-</section>
-
-<section class="wp2static-content wp2static-flex">
-  <div class="content" style="max-width:30%">
-    <h2><?php echo __('WP-CLI', 'static-html-output-plugin');?></h2>
-  </div>
-
-  <div class="content">
-    <p>Replacing the former, limited support for scheduled deploys via WP-Cron, WP2Static now integrates with the great <a href="https://wp-cli.org/" target="_blank">WP-CLI</a> for programmatic access to deploying your WordPress site statically. Control settings and trigger deployments to better suit your development workflow.</p>
-
-    <p>More information available on the GitHub project page: <a href="https://github.com/leonstafford/wp2static" target="_blank">https://github.com/leonstafford/wp2static</a></p>
+    <?php $tpl->displayCheckbox($this, 'redeployOnPostUpdates', 'When a post is created/updated' . $to); ?>
    </div>
 </section>
 
@@ -77,14 +55,27 @@
 
 <section class="wp2static-content wp2static-flex">
   <div class="content" style="max-width:30%">
-    <h2><?php echo __('Delete deploy cache', 'static-html-output-plugin');?></h2>
+    <h2><?php echo __('API Request Delay', 'static-html-output-plugin');?></h2>
   </div>
 
   <div class="content">
-    <p>When deploying, WP2Static will check each file to see if it's changed since the last deployment. It will skip unchanged files based on this information. If you want to force an uncached deployment, click this button and any caches will be emptied, requiring a full deploy on the next run.</p>
+    <select name="delayBetweenAPICalls" id="delayBetweenAPICalls">
 
-    <button id="delete_deploy_cache_button" type="button" class="wp2static-btn btn-sm">Delete deploy cache</button>
+    <?php 
+      // TODO: shift this into helper function for select
+      $increments = array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 2, 3, 4, 10);
+
+      foreach($increments as $increment) : ?>
+                <option value="<?php echo $increment; ?>"<?php echo $this->options->delayBetweenAPICalls == $increment ? ' selected' : ''; ?>><?php echo $increment; ?></option>
+      <?php endforeach; ?>
+
+    </select>
+
+    <p>This is set to 0, by default, but if your deploy is hitting the remote API too rapidly for their rate limit, you can increase this to add a delay between each API request.</p>    
   </div>
 </section>
+
+
+
 
 </div> <!-- end advanced settings -->
