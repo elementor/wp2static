@@ -8,13 +8,17 @@ button {
   padding: 20px 10px;
 }
 
+.wrap.wp2static p {
+  font-size: 14px;
+}
+
 .wp2static-content-wrapper {
   margin-top: 1em;
 }
 
 .wp2static-content {
   background: #fff;
-  padding: 20px;
+  padding: 3.5em 3em 4em;
   box-shadow: 0 0 0 1px rgba(213, 213, 213, 0.5), 0 1px 2px #eee;
 }
 
@@ -87,6 +91,7 @@ button {
   font-weight: 700;
   text-decoration: none;
   outline: 0;
+  transition: .15s ease-in-out;
 }
 
 .wp2static-btn:hover {
@@ -111,9 +116,18 @@ button {
   background: #2976f5;
 }
 
+.wp2static-btn.pink {
+  background: #e56285;
+  color: #fff;
+}
+
+.wp2static-btn.pink:hover {
+  background: #dd4970;
+}
+
 .btn-lg {
-  padding: 15px 22px;
-  font-size: 18px;
+  padding: 12px 18px;
+  font-size: 15px;
   font-weight: 500;
 }
 
@@ -373,7 +387,7 @@ p.submit{
 }
 
 .addon .bottom {
-  border-top: 1px solid #eee;
+  border-top: 2px solid #666;
   display: flex;
   padding: 10px 15px;
 }
@@ -389,6 +403,26 @@ p.submit{
 
 .addon .bottom .right img {
   margin-top: 5px;
+}
+
+.addon.noactive .bottom {
+  background: #fafafa;
+}
+
+.addon.active {
+  background: linear-gradient(to right, rgb(194, 253, 242) 0%, rgb(216, 255, 180) 100%);
+}
+
+.text-center {
+  text-align: center;
+}
+
+.lead {
+  font-size: 20px!important;
+}
+
+img.welcome {
+  max-width: 275px;
 }
 
 @media screen and (max-width: 600px) {
