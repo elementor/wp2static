@@ -279,7 +279,11 @@ apply_filters(
 ```php
 function addWP2StaticOption( $options ) {
     $new_options = array(
-      'baseUrl-azure',
+        'baseUrl-azure',
+        'azStorageAccountName',
+        'azContainerName',
+        'azAccessKey',
+        'azPath',
     );
 
     $options = array_merge(
@@ -326,38 +330,6 @@ function whitelistWP2StaticOption( $options ) {
 add_filter(                                                             
     'wp2static_load_deploy_option_template',
     'addWP2StaticOption'
-);
-```
-### Register plugin options for Post/DB exports
-
- - `wp2static_add_post_and_db_keys`
- - Filter hook
-
-*signature*
-```php
-apply_filters(
-    'wp2static_add_post_and_db_keys',
-    $options
-);
-```
-
-*example usage*
-```php
-    public function add_post_and_db_keys( $keys ) {
-        $keys['azure'] = array(
-          'baseUrl-azure',
-          'azStorageAccountName',
-          'azContainerName',
-          'azAccessKey',
-          'azPath',
-        );
-
-        return $keys;
-    }
-
-add_filter(
-    'wp2static_add_post_and_db_keys',
-    'add_post_and_db_keys'
 );
 ```
 ## Development 
