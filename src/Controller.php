@@ -258,39 +258,6 @@ class Controller {
         $site_crawler->crawl();
     }
 
-    public function send_support_request() {
-        $url = 'https://hooks.zapier.com/hooks/catch/4977245/jqj3l4/';
-
-        $response = wp_remote_post(
-            $url,
-            array(
-                'method'      => 'POST',
-                'timeout'     => 45,
-                'redirection' => 5,
-                'httpversion' => '1.0',
-                'blocking'    => true,
-                'headers'     => array(),
-                // send body complete here, let it be fwd'd by Zapier
-                'body'        => array(
-                    'tes' => 'lkjkljkj',
-                    'something' => 'lkjsdlkfjk',
-                ),
-                'cookies'     => array(),
-            )
-        );
-
-        if ( is_wp_error( $response ) ) {
-            http_response_code( 404 );
-            $error_message = $response->get_error_message();
-            echo "Something went wrong: $error_message";
-        } else {
-            http_response_code( 200 );
-            echo 'Response:<pre>';
-            print_r( $response );
-            echo '</pre>';
-        }
-    }
-
     public function generate_filelist_preview() {
         $this->settings = $this->options->getSettings( true );
 

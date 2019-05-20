@@ -594,7 +594,7 @@ jQuery(document).ready(function($){
 
 
     // load the log file
-    $.get( site_info.uploads_url + 'wp2static-working-files/EXPORT-LOG.txt', function( data ) {
+    $.get( log_file_url, function( data ) {
       // hide loading icon
       $('#log_load_progress').hide();
 
@@ -726,24 +726,45 @@ jQuery(document).ready(function($){
 	$(document).on('click', '#send_support_request' , function(evt) {
         evt.preventDefault();
 
-        console.log('doing stuff');
-        $('.hiddenActionField').val('wp_static_html_output_ajax');
-        $('#hiddenAJAXAction').val('send_support_request');
+        var support_request = $('#supportRequestContent').val();
 
-        data = $(".options-form :input")
-            .filter(function(index, element) {
-                return $(element).val() != '';
-            })
-            .serialize();
+        if ( $('#supportRequestIncludeLog').is(":checked") ) {
+            $.get( log_file_url, function( data ) {
+                support_request += '#### EXPORT LOG ###';
+                support_request += data;
 
+                data = {
+                    email: $('#supportRequestEmail').val(),
+                    support_request: support_request,
+                };
+            
+                $.ajax({
+                    url: 'https://hooks.zapier.com/hooks/catch/4977245/jqj3l4/',
+                    data: data,
+                    dataType: 'html',
+                    method: 'POST',
+                    success: send_support_success_callback,
+                    error: send_support_fail_callback
+                });
+            }).fail(function() {
+                console.log('failed to retrieve export log');
+            });
+        }
+
+        data = {
+            email: $('#supportRequestEmail').val(),
+            support_request: support_request,
+        };
+    
         $.ajax({
-            url: ajaxurl,
+            url: 'https://hooks.zapier.com/hooks/catch/4977245/jqj3l4/',
             data: data,
             dataType: 'html',
             method: 'POST',
             success: send_support_success_callback,
             error: send_support_fail_callback
         });
+
 	});
 
   $('#startExportButton').click(function() {
