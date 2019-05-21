@@ -121,6 +121,14 @@ class Controller {
             );
         }
 
+        if ( isset( $instance->settings['displayDashboardWidget'] ) ) {
+            add_action(
+                'wp_dashboard_setup',
+                [ 'WP2Static\Controller', 'wp2static_add_dashboard_widgets' ],
+                0
+            );
+        }
+
         return $instance;
     }
 
@@ -600,4 +608,20 @@ class Controller {
 
         CrawlCache::rmUrl( $url );
     }
+
+    public function wp2static_add_dashboard_widgets() {
+        wp_add_dashboard_widget(
+            'wp2static__dashboard_widget',
+            'WP2Static',
+            [ 'WP2Static\Controller', 'wp2static_dashboard_widget_function' ]
+        );
+    }
+
+    public function wp2static_dashboard_widget_function() {
+        echo '<p>Publish whole site as static HTML</p>';
+        echo "<button class='button button-primary'>Publish whole site" .
+            '</button>';
+    }
+
+
 }

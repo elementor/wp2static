@@ -83,22 +83,6 @@ function wp_static_html_output_ajax() {
     return null;
 }
 
-function wp_static_html_output_add_dashboard_widgets() {
-    wp_add_dashboard_widget(
-        'wp_static_html_output_dashboard_widget',
-        'Static HTML Output',
-        'wp_static_html_output_dashboard_widget_function'
-    );
-}
-
-// add_action( 'wp_dashboard_setup',
-// 'wp_static_html_output_add_dashboard_widgets' );
-function wp_static_html_output_dashboard_widget_function() {
-    echo '<p>Publish whole site as static HTML</p>';
-    echo "<button class='button button-primary'>Publish whole site' .
-        </button>";
-}
-
 function wp_static_html_output_deregister_scripts() {
     wp_deregister_script( 'wp-embed' );
     wp_deregister_script( 'comment-reply' );
