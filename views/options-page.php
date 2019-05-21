@@ -113,14 +113,14 @@ $tpl = new \WP2Static\TemplateHelper();
 
     <div class="wp2static-content-wrapper">
 
-    <?php require_once(__DIR__ . '/tab_help.phtml'); ?>
-    <?php require_once(__DIR__ . '/tab_detection.phtml'); ?>
-    <?php require_once(__DIR__ . '/tab_crawling.phtml'); ?>
-    <?php require_once(__DIR__ . '/tab_processing.phtml'); ?>
-    <?php require_once(__DIR__ . '/tab_advanced.phtml'); ?>
-    <?php require_once(__DIR__ . '/tab_export.phtml'); ?>
-    <?php require_once(__DIR__ . '/tab_logs.phtml'); ?>
-    <?php require_once(__DIR__ . '/tab_add_ons.phtml'); ?>
+    <?php require_once(__DIR__ . '/tab_help.php'); ?>
+    <?php require_once(__DIR__ . '/tab_detection.php'); ?>
+    <?php require_once(__DIR__ . '/tab_crawling.php'); ?>
+    <?php require_once(__DIR__ . '/tab_processing.php'); ?>
+    <?php require_once(__DIR__ . '/tab_advanced.php'); ?>
+    <?php require_once(__DIR__ . '/tab_export.php'); ?>
+    <?php require_once(__DIR__ . '/tab_logs.php'); ?>
+    <?php require_once(__DIR__ . '/tab_add_ons.php'); ?>
 
     </div>
 

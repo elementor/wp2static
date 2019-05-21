@@ -19,8 +19,8 @@
 
   // load up each deployment settings block
   $deployment_option_templates = array(
-    __DIR__ . '/folder_settings_block.phtml',
-    __DIR__ . '/zip_settings_block.phtml',
+    __DIR__ . '/folder_settings_block.php',
+    __DIR__ . '/zip_settings_block.php',
   );
 
   $deployment_option_templates = apply_filters(
