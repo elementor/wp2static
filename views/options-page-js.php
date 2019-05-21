@@ -1,6 +1,4 @@
 <script>
-//TODO: in help screen and error dialog, give button to display all client settings (excluding pwds) for easier troubleshooting
-
 var validation_errors = '';
 var deploy_options = {
     zip: {
@@ -660,10 +658,10 @@ jQuery(document).ready(function($){
 
   function changeTab( target_tab ) {
     var tabsContentMapping = {
-      advanced_settings: 'Advanced options',
-      export_your_site: 'Deploy static website',
+      advanced_settings: 'Advanced Options',
+      export_your_site: 'Deployment',
       help_troubleshooting: 'Help',
-      export_logs: 'Debug Log',
+      export_logs: 'Logs',
       crawl_settings: 'Crawling',
       url_detection: 'URL Detection',
       processing_settings: 'Processing',
@@ -699,9 +697,9 @@ jQuery(document).ready(function($){
     changeTab( 'URL Detection' );
   });
 
-  $(document).on('click', '#GoToDeployTabButton', function(evt) {
+  $(document).on('click', '#GoToDeployTabButton,#GoToDeployTabLink', function(evt) {
     evt.preventDefault();
-    changeTab( 'Deploy static website' );
+    changeTab( 'Deployment' );
   });
 
   // TODO: create action for #GenerateZIPOfflineUse
@@ -709,7 +707,7 @@ jQuery(document).ready(function($){
 
   $(document).on('click', '#GoToAdvancedTabButton', function(evt) {
     evt.preventDefault();
-    changeTab( 'Advanced options' );
+    changeTab( 'Advanced Options' );
   });
 
   $(document).on('click', '.nav-tab', function(evt) {

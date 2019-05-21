@@ -7,7 +7,7 @@
 
   <div class="content">
     <p>Whilst you can get a fully functioning static site using the free version of WP2Static, our suite of <a href="https://wp2static.com" target="_blank">Add-ons</a> give you a range of powerful enhancements. Browse our premium and free Add-ons for faster and more powerful static site exports.</p>
-    <a href="https://wp2static.com" class="wp2static-btn btn-sm" target="_blank">Browse Add-on</a>
+    <a href="https://wp2static.com" class="wp2static-btn btn-sm" target="_blank">Browse Add-ons</a>
   </div>
 </section>
 

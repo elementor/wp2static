@@ -3,13 +3,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WP2Static 7.0-build0001\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp2static\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/static-html-output-plugin\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2019-05-21T18:10:02+07:00\n"
+"POT-Creation-Date: 2019-05-21T17:41:50+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.2.0\n"
 "X-Domain: static-html-output-plugin\n"
@@ -36,8 +36,22 @@ msgstr ""
 msgid "https://ljs.dev"
 msgstr ""
 
-#: wp2static.php:24
-msgid "Settings"
+#: views/folder_settings_block.php:5
+#: views/zip_settings_block.php:28
+msgid "Destination URL"
+msgstr ""
+
+#: views/folder_settings_block.php:11
+#: views/zip_settings_block.php:34
+msgid "Set this to the URL you intend to host your static exported site on, ie http://mystaticsite.com. Do not set this to the same URL as the WordPress site you're currently using (the address in your browser above). This plugin will rewrite all URLs in the exported static html from your current WordPress URL to what you set here. Supports http, https and protocol relative URLs."
+msgstr ""
+
+#: views/folder_settings_block.php:17
+msgid "Target Directory"
+msgstr ""
+
+#: views/folder_settings_block.php:31
+msgid "Test Directory"
 msgstr ""
 
 #: views/tab_advanced.php:5
@@ -58,16 +72,6 @@ msgstr ""
 
 #: views/tab_advanced.php:71
 msgid "API Request Delay"
-msgstr ""
-
-#: views/zip_settings_block.php:28
-#: views/folder_settings_block.php:5
-msgid "Destination URL"
-msgstr ""
-
-#: views/zip_settings_block.php:34
-#: views/folder_settings_block.php:11
-msgid "Set this to the URL you intend to host your static exported site on, ie http://mystaticsite.com. Do not set this to the same URL as the WordPress site you're currently using (the address in your browser above). This plugin will rewrite all URLs in the exported static html from your current WordPress URL to what you set here. Supports http, https and protocol relative URLs."
 msgstr ""
 
 #: views/tab_crawling.php:5
@@ -130,20 +134,84 @@ msgstr ""
 msgid "Include additional URLs"
 msgstr ""
 
-#: views/folder_settings_block.php:17
-msgid "Target Directory"
-msgstr ""
-
-#: views/folder_settings_block.php:31
-msgid "Test Directory"
-msgstr ""
-
-#: views/options-page.php:72
-msgid "Help"
-msgstr ""
-
 #: views/tab_export.php:5
 msgid "Where will you host the optimized version of your site?"
+msgstr ""
+
+#: views/tab_help.php:7
+msgid "Congratulations on choosing to"
+msgstr ""
+
+#: views/tab_help.php:8
+msgid "Go Static!"
+msgstr ""
+
+#: views/tab_help.php:12
+msgid "We think it's the best way to deal with 90% of WordPress sites,<br> but the concept does take a little while to get used to."
+msgstr ""
+
+#: views/tab_help.php:20
+msgid "Try a 1-click deployment option below or"
+msgstr ""
+
+#: views/tab_help.php:20
+msgid "list available deploy methods"
+msgstr ""
+
+#: views/tab_help.php:24
+msgid "Generate ZIP for Offline Use"
+msgstr ""
+
+#: views/tab_help.php:28
+msgid "Generate ZIP to Deploy Anywhere"
+msgstr ""
+
+#: views/tab_help.php:32
+msgid "Other Deployments"
+msgstr ""
+
+#: views/tab_help.php:38
+msgid "Documentation"
+msgstr ""
+
+#: views/tab_help.php:39
+msgid "Learn how to getting started with WP2Static:"
+msgstr ""
+
+#: views/tab_help.php:52
+msgid "Tutorial"
+msgstr ""
+
+#: views/tab_help.php:53
+msgid "A good introduction to static site benefits for WordPress users."
+msgstr ""
+
+#: views/tab_help.php:56
+msgid "Watch Video on YouTube"
+msgstr ""
+
+#: views/tab_help.php:63
+msgid "Create Support Request"
+msgstr ""
+
+#: views/tab_help.php:75
+msgid "Your email"
+msgstr ""
+
+#: views/tab_help.php:83
+msgid "Your issue"
+msgstr ""
+
+#: views/tab_help.php:102
+msgid "Get help from the WP2Static team - we'll open a ticket for you and follow-up soon!"
+msgstr ""
+
+#: views/tab_help.php:114
+msgid "Create New Support Request"
+msgstr ""
+
+#: views/tab_help.php:118
+msgid "Check the status of your ticket or create one via the web"
 msgstr ""
 
 #: views/tab_processing.php:5
@@ -178,22 +246,6 @@ msgstr ""
 msgid "Modify HTML"
 msgstr ""
 
-#: views/tab_help.php:20
-msgid "Documentation"
-msgstr ""
-
-#: views/tab_help.php:34
-msgid "Tutorial"
-msgstr ""
-
-#: views/tab_help.php:45
-msgid "Create Support Request"
-msgstr ""
-
-#: views/tab_help.php:57
-msgid "Your email"
-msgstr ""
-
-#: views/tab_help.php:65
-msgid "Your issue"
+#: wp2static.php:24
+msgid "Settings"
 msgstr ""
