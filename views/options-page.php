@@ -68,16 +68,26 @@ $tpl = new \WP2Static\TemplateHelper();
     <?php endif; ?>
 
   <nav class="nav-tab-wrapper">
-    <a href="#" class="nav-tab nav-tab-active">
-        <?php echo __( 'Help', 'static-html-output-plugin' ); ?>
-    </a>
-    <a href="#" class="nav-tab">URL Detection</a>
-    <a href="#" class="nav-tab">Crawling</a>
-    <a href="#" class="nav-tab">Processing</a>
-    <a href="#" class="nav-tab">Advanced options</a>
-    <a href="#" class="nav-tab">Deploy static website</a>
-    <a href="#" class="nav-tab">Debug Log</a>
-    <a href="#" class="nav-tab">Add-ons</a>
+    <?php $tab_names = [
+            'Help',
+            'URL Detection',
+            'Crawling',
+            'Processing',
+            'Advanced options',
+            'Deploy static website',
+            'Debug Log',
+            'Add-ons',
+        ];
+    ?>
+
+    <?php foreach ( $tab_names as $tab_name ) : ?>
+        <?php $active_tab = $tab_name === 'Help' ? ' nav-tab-active' : ''; ?>
+
+        <a href="#" class="nav-tab <?php echo $active_tab; ?>">
+            <?php echo __( 'Help', 'static-html-output-plugin' ); ?>
+        </a>
+
+    <?php endforeach; ?>
   </nav>
 
 
