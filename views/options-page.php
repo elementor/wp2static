@@ -80,12 +80,12 @@ $tpl = new \WP2Static\TemplateHelper();
         ];
     ?>
 
+
+
     <?php foreach ( $tab_names as $tab_name ) : ?>
         <?php $active_tab = $tab_name === 'Help' ? ' nav-tab-active' : ''; ?>
 
-        <a href="#" class="nav-tab <?php echo $active_tab; ?>">
-            <?php echo __( $tab_name, 'static-html-output-plugin' ); ?>
-        </a>
+        <a href="#" class="nav-tab<?php echo $active_tab; ?>"><?php echo __( $tab_name, 'static-html-output-plugin' ); ?></a>
 
     <?php endforeach; ?>
   </nav>
