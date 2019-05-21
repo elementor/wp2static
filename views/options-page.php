@@ -159,20 +159,34 @@ $tpl = new \WP2Static\TemplateHelper();
 
             <div class="submit">
                 <?php wp_nonce_field( $view['onceAction'] ); ?>
-              <button id="startExportButton" class="wp2static-btn blue" disabled>Start static site export</button>
-              <button class="wp2static-btn saveSettingsButton" disabled>Save current options</button>
-              <button class="wp2static-btn resetDefaultSettingsButton" disabled>Reset to default settings</button>
-              <button style="display:none;" class="wp2static-btn cancelExportButton">Cancel export</button>
+              <button id="startExportButton" class="wp2static-btn blue" disabled>
+                <?php echo __( 'Start Static Site Export', 'static-html-output-plugin' ); ?>
+              </button>
+              <button class="wp2static-btn saveSettingsButton" disabled>
+                <?php echo __( 'Save Current Options', 'static-html-output-plugin' ); ?>
+              </button>
+              <button class="wp2static-btn resetDefaultSettingsButton" disabled>
+                <?php echo __( 'Reset to Default Settings', 'static-html-output-plugin' ); ?>
+              </button>
+              <button style="display:none;" class="wp2static-btn cancelExportButton">
+                <?php echo __( 'Cancel Export', 'static-html-output-plugin' ); ?>
+                </button>
 
-              <a href="" id="downloadZIP"><button class="wp2static-btn btn-call-to-action" target="_blank">Download ZIP</button></a>
+              <a href="" id="downloadZIP">
+                <button class="wp2static-btn btn-call-to-action" target="_blank">
+                <?php echo __( 'Download ZIP', 'static-html-output-plugin' ); ?>
+                </button>
+              </a>
 
-              <a href="#" class="wp2static-btn btn-call-to-action" target="_blank" id="goToMyStaticSite" style="display:none;">Go to my deployed site</a>
+              <a href="#" class="wp2static-btn btn-call-to-action" target="_blank" id="goToMyStaticSite" style="display:none;">
+                <?php echo __( 'Open Deployed Site', 'static-html-output-plugin' ); ?>
+              </a>
 
               <div id="export_timer"></div>
 
             </div>
 
-        </div><!-- end inside -->
+        </div>
 
             <div id="pbar-container">
                 <div id="pbar-fill">
@@ -182,7 +196,9 @@ $tpl = new \WP2Static\TemplateHelper();
                 <div id="progress-container">
                   <div id="progress">
                     <div class="pulsate-css"></div>
-                    <div id="current_action">Starting export</div>
+                    <div id="current_action">
+                        <?php echo __( 'Starting Export', 'static-html-output-plugin' ); ?>
+                    </div>
                   </div>
 
                   <p id="exportDuration" style="display:block;"></p>
