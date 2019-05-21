@@ -128,8 +128,10 @@ class Controller {
             );
         }
 
-        add_action( 'admin_enqueue_scripts', [ 'WP2Static\Controller', 'load_wp2static_admin_js' ] );
-
+        add_action(
+            'admin_enqueue_scripts',
+            [ 'WP2Static\Controller', 'load_wp2static_admin_js' ]
+        );
 
         return $instance;
     }
@@ -378,10 +380,9 @@ class Controller {
 
         $plugin = self::getInstance();
 
-
         wp_register_script(
             'wp2static_admin_js',
-            SiteInfo::getUrl('plugins') .
+            SiteInfo::getUrl( 'plugins' ) .
                 WP2STATIC_PATH .
                 'views/wp2static-admin.js',
             array( 'jquery' ),
@@ -392,15 +393,14 @@ class Controller {
         $options = $plugin->options;
 
         $site_info = json_encode(
-                SiteInfo::getAllInfo(),
-                JSON_FORCE_OBJECT | JSON_UNESCAPED_SLASHES
-            );
+            SiteInfo::getAllInfo(),
+            JSON_FORCE_OBJECT | JSON_UNESCAPED_SLASHES
+        );
 
         $current_deployment_method =
             $plugin->options->selected_deployment_option ?
             $plugin->options->selected_deployment_option :
             'folder';
-
 
         $data = array(
             'some_string' => __( 'Some string to translate', 'plugin-domain' ),
