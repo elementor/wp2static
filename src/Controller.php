@@ -128,6 +128,9 @@ class Controller {
             );
         }
 
+        add_action( 'admin_enqueue_scripts', [ 'WP2Static\Controller', 'load_wp2static_admin_js' ] );
+
+
         return $instance;
     }
 
@@ -368,14 +371,57 @@ class Controller {
         }
     }
 
+    public function load_wp2static_admin_js( $hook ) {
+        if ( $hook !== 'toplevel_page_wp2static' ) {
+            return;
+        }
+
+        $plugin = self::getInstance();
+
+
+        wp_register_script(
+            'wp2static_admin_js',
+            SiteInfo::getUrl('plugins') .
+                WP2STATIC_PATH .
+                'views/wp2static-admin.js',
+            array( 'jquery' ),
+            $plugin->version,
+            false
+        );
+
+        $options = $plugin->options;
+
+        $site_info = json_encode(
+                SiteInfo::getAllInfo(),
+                JSON_FORCE_OBJECT | JSON_UNESCAPED_SLASHES
+            );
+
+        $current_deployment_method =
+            $plugin->options->selected_deployment_option ?
+            $plugin->options->selected_deployment_option :
+            'folder';
+
+
+        $data = array(
+            'some_string' => __( 'Some string to translate', 'plugin-domain' ),
+            'options' => $plugin->options,
+            'site_info' => $site_info,
+            'onceAction' => self::HOOK . '-options',
+            '' => self::HOOK . '-options',
+            'current_deployment_method' => $current_deployment_method,
+        );
+
+        wp_localize_script( 'wp2static_admin_js', 'wp2staticString', $data );
+        wp_enqueue_script( 'wp2static_admin_js' );
+    }
+
     public function renderOptionsPage() {
         $view = [];
         $view['options'] = $this->options;
         $view['site_info'] = SiteInfo::getAllInfo();
         $view['onceAction'] = self::HOOK . '-options';
 
-        require_once WP2STATIC_PATH . 'views/options-page-js.php';
-
+        // TODO: check which are only needed in JS and rm from func
         $view['uploads_writable'] = SiteInfo::isUploadsWritable();
         $view['curl_supported'] = SiteInfo::hasCURLSupport();
         $view['permalinks_defined'] = SiteInfo::permalinksAreDefined();

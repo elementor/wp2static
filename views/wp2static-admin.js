@@ -1,4 +1,3 @@
-<script>
 var validation_errors = '';
 var deploy_options = {
     zip: {
@@ -17,9 +16,8 @@ var deploy_options = {
     },
 };
 
-var site_info = <?php echo json_encode( $view['site_info'], JSON_FORCE_OBJECT | JSON_UNESCAPED_SLASHES ); ?>
-
-var current_deployment_method = '<?php echo $view['options']->selected_deployment_option ? $view['options']->selected_deployment_option : 'folder'; ?>';
+var site_info = wp2staticString.site_info;
+var current_deployment_method = wp2staticString.current_deployment_method;
 
 // TODO: get the log out of the archive, along with it's meta infos
 var log_file_url = site_info.uploads_url + 'wp2static-working-files/EXPORT-LOG.txt';
@@ -907,5 +905,4 @@ jQuery(document).ready(function($){
 
   prepareInitialFileList();
 });
-</script>
 
