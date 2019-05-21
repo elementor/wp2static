@@ -69,7 +69,7 @@ $tpl = new \WP2Static\TemplateHelper();
 
   <nav class="nav-tab-wrapper">
     <a href="#" class="nav-tab nav-tab-active">
-        <?php___( 'Help', 'static-html-output-plugin' );?>
+        <?php echo  __( 'Help', 'static-html-output-plugin' );?>
     </a>
     <a href="#" class="nav-tab">URL Detection</a>
     <a href="#" class="nav-tab">Crawling</a>

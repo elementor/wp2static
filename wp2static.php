@@ -21,7 +21,7 @@ WP2Static\Controller::init( __FILE__ );
 function plugin_action_links( $links ) {
     $settings_link =
         '<a href="admin.php?page=wp2static">' .
-        ___( 'Settings', 'static-html-output-plugin' ) .
+        __( 'Settings', 'static-html-output-plugin' ) .
         '</a>';
     array_unshift( $links, $settings_link );
 

@@ -70,6 +70,6 @@
             "@phpunit"
         ],
         "build": "/bin/sh tools/build_release.sh",
-        "generate-pot": "wp i18n make-pot --include=\"src/*.php\" . languages/static-html-output-plugin.pot"
+        "generate-pot": "wp i18n make-pot . languages/static-html-output-plugin.pot"
     }
 }
