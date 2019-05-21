@@ -889,14 +889,6 @@ jQuery(document).ready(function($){
       saveOptions();
   });
 
-  // populate some hidden fields
-  $('#site_url').val(site_info.site_url);
-  $('#wp_uploads_path').val(site_info.wp_uploads_path);
-  $('#wp_uploads_url').val(site_info.uploads_url);
-  $('#site_path').val(site_info.site_path);
-  $('#wp_inc').val(site_info.wp_inc);
-  $('#wp_active_theme').val(site_info.wp_active_theme);
-  $('#wp_uploads').val(site_info.wp_uploads);
   $('.spinner').hide();
 
   // call change handler on page load, to set correct state
