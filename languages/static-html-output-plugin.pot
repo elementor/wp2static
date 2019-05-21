@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2019-05-21T17:41:50+00:00\n"
+"POT-Creation-Date: 2019-05-21T17:48:30+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.2.0\n"
 "X-Domain: static-html-output-plugin\n"
@@ -52,6 +52,34 @@ msgstr ""
 
 #: views/folder_settings_block.php:31
 msgid "Test Directory"
+msgstr ""
+
+#: views/options-page.php:163
+msgid "Start Static Site Export"
+msgstr ""
+
+#: views/options-page.php:166
+msgid "Save Current Options"
+msgstr ""
+
+#: views/options-page.php:169
+msgid "Reset to Default Settings"
+msgstr ""
+
+#: views/options-page.php:172
+msgid "Cancel Export"
+msgstr ""
+
+#: views/options-page.php:177
+msgid "Download ZIP"
+msgstr ""
+
+#: views/options-page.php:182
+msgid "Open Deployed Site"
+msgstr ""
+
+#: views/options-page.php:200
+msgid "Starting Export"
 msgstr ""
 
 #: views/tab_advanced.php:5
