@@ -1,7 +1,7 @@
 <div class="help_troubleshooting">
 
 <section class="wp2static-content text-center">
-  <img class="welcome" src="<?php echo plugins_url( "/../assets/welcome.svg", __FILE__ ); ?>" alt="Welcome">
+  <img class="welcome" src="<?php echo plugins_url( '/../assets/welcome.svg', __FILE__ ); ?>" alt="Welcome">
 
   <p class="lead">Congratulations on choosing to <strong>Go Static</strong>!</p>
   
@@ -17,7 +17,7 @@
 
 <section class="wp2static-content wp2static-flex">
   <div class="content">
-    <h2><span class="dashicons dashicons-book-alt"></span> <?php echo __('Documentation', 'static-html-output-plugin');?></h2>
+    <h2><span class="dashicons dashicons-book-alt"></span> <?php echo __( 'Documentation', 'static-html-output-plugin' ); ?></h2>
     <p>Learn how to getting started with WP2Static:</p>
     <ul>
       <li><a href="https://wp2static.com/how-wp2static-works" target="_blank">How WP2Static Works</a></li>
@@ -31,10 +31,10 @@
   </div>
 
   <div class="content">
-    <h2><i class="dashicons dashicons-video-alt3"></i> <?php echo __('Tutorial', 'static-html-output-plugin');?></h2>
+    <h2><i class="dashicons dashicons-video-alt3"></i> <?php echo __( 'Tutorial', 'static-html-output-plugin' ); ?></h2>
     <p>A good introduction to what a static site is and how it can benefit your WordPress site.</p>
     <a href="https://www.youtube.com/watch?v=HPc4JjBvkrU" target="_blank">
-      <img src="<?php echo plugins_url( "/../assets/vidthumb.jpg", __FILE__ ); ?>" alt="YouTube"><br>
+      <img src="<?php echo plugins_url( '/../assets/vidthumb.jpg', __FILE__ ); ?>" alt="YouTube"><br>
       <span class="wp2static-btn btn-sm mg-top10">Watch video on YouTube</span>
     </a>
   </div>
@@ -42,7 +42,7 @@
 
 <section class="wp2static-content wp2static-flex">
   <div class="content">
-    <h2><i class="dashicons dashicons-sos"></i> <?php echo __('Create Support Request', 'static-html-output-plugin');?></h2>
+    <h2><i class="dashicons dashicons-sos"></i> <?php echo __( 'Create Support Request', 'static-html-output-plugin' ); ?></h2>
  
     <div class="wp2s-form">
     <?php
@@ -54,15 +54,15 @@
     ?>
     <div class="control">
       <label for="supportRequestEmail">
-        <?php echo __('Your email', 'static-html-output-plugin');?>
+        <?php echo __( 'Your email', 'static-html-output-plugin' ); ?>
       </label>
 
-      <input type="text" id="supportRequestEmail" name="supportRequestEmail" value="<?php echo $current_user->user_email ?>" size="50">
+      <input type="text" id="supportRequestEmail" name="supportRequestEmail" value="<?php echo $current_user->user_email; ?>" size="50">
     </div>
 
     <div class="control">
       <label for="supportRequestContent">
-        <?php echo __('Your issue', 'static-html-output-plugin');?>
+        <?php echo __( 'Your issue', 'static-html-output-plugin' ); ?>
       </label>
 
       <textarea class="wp2static-textarea" name="supportRequestContent" id="supportRequestContent" rows="5" cols="10">
@@ -81,8 +81,8 @@ Attached is my Debug Log to give you more info.
     <div class="wp2s-form">
       <div class="control">
       <p>Get help from the WP2Static team - we'll open a ticket for you and follow-up soon!</p>
-          <label for="supportRequestIncludeLog"><?php echo __('', 'static-html-output-plugin');?></label>
-          <?php $tpl->displayCheckbox($this, 'supportRequestIncludeLog', 'Include Debug Log (helps us diagnose quicker)'); ?>
+          <label for="supportRequestIncludeLog"><?php echo __( '', 'static-html-output-plugin' ); ?></label>
+            <?php $tpl->displayCheckbox( $this, 'supportRequestIncludeLog', 'Include Debug Log (helps us diagnose quicker)' ); ?>
       </div>
 
       <p>Unless you choose to send us your export log (really helps!), we won't collect any other information about you, your server, etc. You can verify the code we are using for this plugin at: <a href="https://github.com/WP2Static/wp2static" target="_blank">https://github.com/WP2Static/wp2static</a></p>

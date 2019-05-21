@@ -1,6 +1,6 @@
 <div class="zip_settings_block" style="display:none;">
 
-<?php if ( ! extension_loaded('zip') ) : ?>
+<?php if ( ! extension_loaded( 'zip' ) ) : ?>
 <section class="wp2static-content">
 
 <div class="notice notice-error inline wp2static-notice">
@@ -21,17 +21,17 @@
 </div>
 
 </section>
-<?php endif;?>
+<?php endif; ?>
 
 <section class="wp2static-content wp2static-flex">
   <div class="content" style="max-width:30%">
-    <h2><?php echo __('Destination URL', 'static-html-output-plugin');?></h2>
+    <h2><?php echo __( 'Destination URL', 'static-html-output-plugin' ); ?></h2>
   </div>
 
   <div class="content">
-    <?php $tpl->displayTextfield($this, 'baseUrl-zip', 'http://mystaticsite.com', '', ''); ?>
+    <?php $tpl->displayTextfield( $this, 'baseUrl-zip', 'http://mystaticsite.com', '', '' ); ?>
 
-    <p><em><?php echo __("Set this to the URL you intend to host your static exported site on, ie http://mystaticsite.com. Do not set this to the same URL as the WordPress site you're currently using (the address in your browser above). This plugin will rewrite all URLs in the exported static html from your current WordPress URL to what you set here. Supports http, https and protocol relative URLs.", 'static-html-output-plugin');?></em></p>
+    <p><em><?php echo __( "Set this to the URL you intend to host your static exported site on, ie http://mystaticsite.com. Do not set this to the same URL as the WordPress site you're currently using (the address in your browser above). This plugin will rewrite all URLs in the exported static html from your current WordPress URL to what you set here. Supports http, https and protocol relative URLs.", 'static-html-output-plugin' ); ?></em></p>
   </div>
 </section>
 

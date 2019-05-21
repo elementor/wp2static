@@ -19,7 +19,7 @@ var deploy_options = {
     },
 };
 
-var site_info = <?php echo json_encode($view['site_info'], JSON_FORCE_OBJECT|JSON_UNESCAPED_SLASHES); ?>
+var site_info = <?php echo json_encode( $view['site_info'], JSON_FORCE_OBJECT | JSON_UNESCAPED_SLASHES ); ?>
 
 var current_deployment_method = '<?php echo $view['options']->selected_deployment_option ? $view['options']->selected_deployment_option : 'folder'; ?>';
 
@@ -623,40 +623,40 @@ jQuery(document).ready(function($){
       Notification.requestPermission();
   }
 
-	$('input[type="checkbox"]').change(function() {
-		setExportSettingDetailsVisibility(this);
+    $('input[type="checkbox"]').change(function() {
+        setExportSettingDetailsVisibility(this);
     });
 
-	// disable zip base url field when offline usage is checked
-	$('#allowOfflineUsage').change(function() {
+    // disable zip base url field when offline usage is checked
+    $('#allowOfflineUsage').change(function() {
     offlineUsageChangeHandler($(this));
   });
 
-	// handler when deployment method is changed
-	$('.selected_deployment_method').change(function() {
-		renderSettingsBlock(this.value);
-		setDeploymentMethod(this.value);
-		updateBaseURLReferences();
+    // handler when deployment method is changed
+    $('.selected_deployment_method').change(function() {
+        renderSettingsBlock(this.value);
+        setDeploymentMethod(this.value);
+        updateBaseURLReferences();
     clearProgressAndResults();
     });
 
-	// handler when log selector is changed
-	$('#reload_log_button').click(function() {
+    // handler when log selector is changed
+    $('#reload_log_button').click(function() {
         reloadLogFile();
     });
 
-	// handler when log selector is changed
-	$('#log_switcher').change(function() {
+    // handler when log selector is changed
+    $('#log_switcher').change(function() {
       loadLogFile( target_log );
     });
 
-	// update base url previews in realtime
-	$(document).on('input', 
-		'[id^="baseUrl-"]', 
-		function() {
-			updateBaseURLReferences();
-		}
-	);
+    // update base url previews in realtime
+    $(document).on('input', 
+        '[id^="baseUrl-"]', 
+        function() {
+            updateBaseURLReferences();
+        }
+    );
 
   function changeTab( target_tab ) {
     var tabsContentMapping = {
@@ -719,11 +719,11 @@ jQuery(document).ready(function($){
     changeTab( current_tab_text );
   });
 
-	$(document).on('submit', '#general-options' , function(evt) {
+    $(document).on('submit', '#general-options' , function(evt) {
     evt.preventDefault();
-	});
+    });
 
-	$(document).on('click', '#send_support_request' , function(evt) {
+    $(document).on('click', '#send_support_request' , function(evt) {
         evt.preventDefault();
 
         var support_request = $('#supportRequestContent').val();
@@ -765,7 +765,7 @@ jQuery(document).ready(function($){
             error: send_support_fail_callback
         });
 
-	});
+    });
 
   $('#startExportButton').click(function() {
       clearProgressAndResults();

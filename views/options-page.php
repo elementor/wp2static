@@ -12,7 +12,7 @@ $tpl = new \WP2Static\TemplateHelper();
 ?>
 
 <div class="wrap wp2static">
-  <?php if ( PHP_VERSION < 7 ) : ?>
+    <?php if ( PHP_VERSION < 7 ) : ?>
 
    <div class="notice notice-error inline wp2static-notice">
       <h2 class="title">Outdated PHP version detected</h2>
@@ -25,10 +25,10 @@ $tpl = new \WP2Static\TemplateHelper();
       <p>Your current PHP version is: <?php echo PHP_VERSION; ?></p>
     </div>
 
-  <?php endif; ?>
+    <?php endif; ?>
 
 
-  <?php if ( ! $view['uploads_writable'] ) : ?>
+    <?php if ( ! $view['uploads_writable'] ) : ?>
 
    <div class="notice notice-error inline wp2static-notice">
       <h2 class="title">Your uploads directory is not writable</h2>
@@ -37,27 +37,27 @@ $tpl = new \WP2Static\TemplateHelper();
     </p>
     </div>
 
-  <?php endif; ?>
+    <?php endif; ?>
 
-  <?php if ( ! $view['curl_supported'] ) : ?>
+    <?php if ( ! $view['curl_supported'] ) : ?>
 
    <div class="notice notice-error inline wp2static-notice">
       <h2 class="title">You need the cURL extension enabled on your web server</h2>
         <p> This is a library that allows the plugin to better export your static site out to services like GitHub, S3, Dropbox, BunnyCDN, etc. It's usually an easy fix to get this working. You can try Googling "How to enable cURL extension for PHP", along with the name of the environment you are using to run your WordPress site. This may be something like DigitalOcean, GoDaddy or LAMP, MAMP, WAMP for your webserver on your local computer. If you're still having trouble, the developer of this plugin is easger to help you get up and running. Please ask for help on our <a href="https://forum.wp2static.com">forum</a>.</p>
     </div>
 
-  <?php endif; ?>
+    <?php endif; ?>
 
-  <?php if ( ! class_exists('DOMDocument') ) : ?>
+    <?php if ( ! class_exists( 'DOMDocument' ) ) : ?>
 
    <div class="notice notice-error inline wp2static-notice">
       <h2 class="title">You're missing a required PHP library (DOMDocument)</h2>
         <p> This is a library that is used to parse the HTML documents when WP2Static crawls your site. It's usually an easy fix to get this working. You can try Googling "DOMDocument missing", along with the name of the environment you are using to run your WordPress site. This may be something like DigitalOcean, GoDaddy or LAMP, MAMP, WAMP for your webserver on your local computer. If you're still having trouble, the developer of this plugin is easger to help you get up and running. Please ask for help on our <a href="https://forum.wp2static.com">forum</a>.</p>
     </div>
 
-  <?php endif; ?>
+    <?php endif; ?>
 
-  <?php if ( ! $view['permalinks_defined'] ) : ?>
+    <?php if ( ! $view['permalinks_defined'] ) : ?>
 
    <div class="notice notice-error inline wp2static-notice">
       <h2 class="title">You need to set your WordPress Pemalinks</h2>
@@ -65,11 +65,11 @@ $tpl = new \WP2Static\TemplateHelper();
         <p>Due to the nature of how static sites work, you'll need to have some kind of permalinks structure defined in your <a href="<?php echo admin_url( 'options-permalink.php' ); ?>">Permalink Settings</a> within WordPress. To learn more on how to do this, please see WordPress's official guide to the <a href="https://codex.wordpress.org/Settings_Permalinks_Screen">Settings Permalinks Screen</a>.</p>
     </div>
 
-  <?php endif; ?>
+    <?php endif; ?>
 
   <nav class="nav-tab-wrapper">
     <a href="#" class="nav-tab nav-tab-active">
-        <?php echo  __( 'Help', 'static-html-output-plugin' );?>
+        <?php echo __( 'Help', 'static-html-output-plugin' ); ?>
     </a>
     <a href="#" class="nav-tab">URL Detection</a>
     <a href="#" class="nav-tab">Crawling</a>
@@ -86,46 +86,46 @@ $tpl = new \WP2Static\TemplateHelper();
 
     <!-- placeholder input fields to allow select menu deployment options to use existing behaviour -->
     <span class="hiddenExportOptions" style="display:none;">
-      <?php $tpl->displayCheckbox($this, 'createZip', 'Create a ZIP file of your statically exported site, ready for you to manually deploy. Download link will appear in the Export Log below'); ?>
+        <?php $tpl->displayCheckbox( $this, 'createZip', 'Create a ZIP file of your statically exported site, ready for you to manually deploy. Download link will appear in the Export Log below' ); ?>
     </span>
 
     <?php
 
     function generateDeploymentMethodOptions() {
-      $options = array(
-        "folder" => array('Subdirectory on current server', 'free'),
-        "zip" => array('ZIP archive (.zip)', 'free'),
-      );
+        $options = array(
+            'folder' => array( 'Subdirectory on current server', 'free' ),
+            'zip' => array( 'ZIP archive (.zip)', 'free' ),
+        );
 
-      $options = apply_filters(
-          'wp2static_add_deployment_method_option_to_ui',
-          $options
-      );
+        $options = apply_filters(
+            'wp2static_add_deployment_method_option_to_ui',
+            $options
+        );
 
-      // TODO: format list here, grouping free and add-on deploy types
+        // TODO: format list here, grouping free and add-on deploy types
 
-      foreach ($options as $key => $value) {
+        foreach ( $options as $key => $value ) {
             echo "<option value='$key'>$value[0]</option>";
-      }
+        }
     }
 
     ?>
 
     <div class="wp2static-content-wrapper">
 
-    <?php require_once(__DIR__ . '/tab_help.php'); ?>
-    <?php require_once(__DIR__ . '/tab_detection.php'); ?>
-    <?php require_once(__DIR__ . '/tab_crawling.php'); ?>
-    <?php require_once(__DIR__ . '/tab_processing.php'); ?>
-    <?php require_once(__DIR__ . '/tab_advanced.php'); ?>
-    <?php require_once(__DIR__ . '/tab_export.php'); ?>
-    <?php require_once(__DIR__ . '/tab_logs.php'); ?>
-    <?php require_once(__DIR__ . '/tab_add_ons.php'); ?>
+    <?php require_once __DIR__ . '/tab_help.php'; ?>
+    <?php require_once __DIR__ . '/tab_detection.php'; ?>
+    <?php require_once __DIR__ . '/tab_crawling.php'; ?>
+    <?php require_once __DIR__ . '/tab_processing.php'; ?>
+    <?php require_once __DIR__ . '/tab_advanced.php'; ?>
+    <?php require_once __DIR__ . '/tab_export.php'; ?>
+    <?php require_once __DIR__ . '/tab_logs.php'; ?>
+    <?php require_once __DIR__ . '/tab_add_ons.php'; ?>
 
     </div>
 
     <span class="submit" style="display:none;">
-      <?php wp_nonce_field($view['onceAction']) ?>
+        <?php wp_nonce_field( $view['onceAction'] ); ?>
       <input id="formActionHiddenField" class="hiddenActionField" type="hidden" name="action" value="wp_static_html_output_ajax" />
       <input id="basedir" type="hidden" name="basedir" value="" />
       <input id="site_url" type="hidden" name="site_url" value="" />
@@ -150,7 +150,7 @@ $tpl = new \WP2Static\TemplateHelper();
           <div class="inside">
 
             <div class="submit">
-              <?php wp_nonce_field($view['onceAction']) ?>
+                <?php wp_nonce_field( $view['onceAction'] ); ?>
               <button id="startExportButton" class="wp2static-btn blue" disabled>Start static site export</button>
               <button class="wp2static-btn saveSettingsButton" disabled>Save current options</button>
               <button class="wp2static-btn resetDefaultSettingsButton" disabled>Reset to default settings</button>
