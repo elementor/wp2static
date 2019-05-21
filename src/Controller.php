@@ -32,7 +32,6 @@ class Controller {
             self::$instance->options = new Options(
                 self::OPTIONS_KEY
             );
-            self::$instance->view = new View();
         }
 
         return self::$instance;
@@ -370,31 +369,18 @@ class Controller {
     }
 
     public function renderOptionsPage() {
-        $this->view
-            ->setTemplate( 'options-page-js' )
-            ->assign( 'options', $this->options )
-            ->assign( 'site_info', SiteInfo::getAllInfo() )
-            ->assign( 'onceAction', self::HOOK . '-options' )
-            ->render();
+        $view = [];
+        $view['options'] = $this->options;
+        $view['site_info'] = SiteInfo::getAllInfo();
+        $view['onceAction'] = self::HOOK . '-options';
 
-        $this->view
-            ->setTemplate( 'options-page' )
-            ->assign( 'site_info', SiteInfo::getAllInfo() )
-            ->assign(
-                'uploads_writable',
-                SiteInfo::isUploadsWritable()
-            )
-            ->assign(
-                'curl_supported',
-                SiteInfo::hasCURLSupport()
-            )
-            ->assign(
-                'permalinks_defined',
-                SiteInfo::permalinksAreDefined()
-            )
-            ->assign( 'options', $this->options )
-            ->assign( 'onceAction', self::HOOK . '-options' )
-            ->render();
+        require_once WP2STATIC_PATH . 'views/options-page-js.php';
+
+        $view['uploads_writable'] = SiteInfo::isUploadsWritable();
+        $view['curl_supported'] = SiteInfo::hasCURLSupport();
+        $view['permalinks_defined'] = SiteInfo::permalinksAreDefined();
+
+        require_once WP2STATIC_PATH . 'views/options-page.php';
     }
 
     public function userIsAllowed() {

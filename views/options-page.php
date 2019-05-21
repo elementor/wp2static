@@ -28,18 +28,18 @@ $tpl = new \WP2Static\TemplateHelper();
   <?php endif; ?>
 
 
-  <?php if ( ! $this->uploads_writable ) : ?>
+  <?php if ( ! $view['uploads_writable'] ) : ?>
 
    <div class="notice notice-error inline wp2static-notice">
       <h2 class="title">Your uploads directory is not writable</h2>
-      <p>Please ensure that <code><?php echo $this->site_info->uploads_path; ?></code>
+      <p>Please ensure that <code><?php echo $view['site_info']->uploads_path; ?></code>
             is writable by your webserver. 
     </p>
     </div>
 
   <?php endif; ?>
 
-  <?php if ( ! $this->curl_supported ) : ?>
+  <?php if ( ! $view['curl_supported'] ) : ?>
 
    <div class="notice notice-error inline wp2static-notice">
       <h2 class="title">You need the cURL extension enabled on your web server</h2>
@@ -57,7 +57,7 @@ $tpl = new \WP2Static\TemplateHelper();
 
   <?php endif; ?>
 
-  <?php if ( ! $this->permalinks_defined ) : ?>
+  <?php if ( ! $view['permalinks_defined'] ) : ?>
 
    <div class="notice notice-error inline wp2static-notice">
       <h2 class="title">You need to set your WordPress Pemalinks</h2>
@@ -68,7 +68,9 @@ $tpl = new \WP2Static\TemplateHelper();
   <?php endif; ?>
 
   <nav class="nav-tab-wrapper">
-    <a href="#" class="nav-tab nav-tab-active">Help</a>
+    <a href="#" class="nav-tab nav-tab-active">
+        <?php___( 'Help', 'static-html-output-plugin' );?>
+    </a>
     <a href="#" class="nav-tab">URL Detection</a>
     <a href="#" class="nav-tab">Crawling</a>
     <a href="#" class="nav-tab">Processing</a>
@@ -123,13 +125,13 @@ $tpl = new \WP2Static\TemplateHelper();
     </div>
 
     <span class="submit" style="display:none;">
-      <?php wp_nonce_field($this->onceAction) ?>
+      <?php wp_nonce_field($view['onceAction']) ?>
       <input id="formActionHiddenField" class="hiddenActionField" type="hidden" name="action" value="wp_static_html_output_ajax" />
       <input id="basedir" type="hidden" name="basedir" value="" />
       <input id="site_url" type="hidden" name="site_url" value="" />
       <input id="wp_uploads_path" type="hidden" name="wp_uploads_path" value="" />
       <input id="wp_uploads_url" type="hidden" name="wp_uploads_url" value="" />
-      <input id="subdirectory" type="hidden" name="subdirectory" value="<?php echo $this->site_info->subdirectory; ?>" />
+      <input id="subdirectory" type="hidden" name="subdirectory" value="<?php echo $view['site_info']->subdirectory; ?>" />
       <input id="site_path" type="hidden" name="site_path" value="" />
       <input id="wp_inc" type="hidden" name="wp_inc" value="" />
       <input id="wp_active_theme" type="hidden" name="wp_active_theme" value="" />
@@ -148,7 +150,7 @@ $tpl = new \WP2Static\TemplateHelper();
           <div class="inside">
 
             <div class="submit">
-              <?php wp_nonce_field($this->onceAction) ?>
+              <?php wp_nonce_field($view['onceAction']) ?>
               <button id="startExportButton" class="wp2static-btn blue" disabled>Start static site export</button>
               <button class="wp2static-btn saveSettingsButton" disabled>Save current options</button>
               <button class="wp2static-btn resetDefaultSettingsButton" disabled>Reset to default settings</button>
