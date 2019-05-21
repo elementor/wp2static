@@ -34,5 +34,6 @@ parameters:
     ignoreErrors:
         # TODO Add proper PHPDoc blocks
         - '#^Access to an undefined property #'
+        - '#^Constant WP2STATIC_PATH not found#'
     excludes_analyse:
         - %currentWorkingDirectory%/src/WPOverrides.php

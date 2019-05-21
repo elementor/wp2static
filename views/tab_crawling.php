@@ -2,7 +2,7 @@
 
 <section class="wp2static-content wp2static-flex">
   <div class="content" style="max-width:30%">
-    <h2><?php echo __('Crawl Caching', 'static-html-output-plugin');?></h2>
+    <h2><?php echo __( 'Crawl Caching', 'static-html-output-plugin' ); ?></h2>
   </div>
 
   <div class="content">
@@ -10,43 +10,43 @@
 
     <select name="crawl_caching_time_unit" id="crawl_caching">
 
-    <?php 
+    <?php
         // TODO: shift this into helper function for select
-        $increments = array(1, 5, 10, 25, 50, 100, 500, 1000, 999999);
-      
-        foreach($increments as $increment) :
-          if ($increment == 999999): ?>
+        $increments = array( 1, 5, 10, 25, 50, 100, 500, 1000, 999999 );
+
+    foreach ( $increments as $increment ) :
+        if ( $increment == 999999 ) : ?>
             <option value="999999"<?php echo $this->options->crawl_caching_time_unit == $increment ? ' selected' : ''; ?>>Maximum</option>
-      <?php else: ?>
+            <?php else : ?>
             <option value="<?php echo $increment; ?>"<?php echo $this->options->crawl_caching_time_unit == $increment ? ' selected' : ''; ?>><?php echo $increment; ?></option>
       
-      <?php endif;
+        <?php endif;
             endforeach; ?>
 
     </select>
 
     <select name="crawl_caching_time_period" id="crawl_caching_time_period">
 
-      <?php 
+        <?php
         // TODO: shift this into helper function for select
         $increments = [
             'Minutes',
             'Hours',
             'Days',
         ];
-      
-        foreach($increments as $increment) :
-          if ($increment == 999999): ?>
+
+        foreach ( $increments as $increment ) :
+            if ( $increment == 999999 ) : ?>
             <option value="999999"<?php echo $this->options->crawl_caching_time_period == $increment ? ' selected' : ''; ?>>Maximum</option>
-      <?php else: ?>
+        <?php else : ?>
             <option value="<?php echo $increment; ?>"<?php echo $this->options->crawl_caching_time_period == $increment ? ' selected' : ''; ?>><?php echo $increment; ?></option>
       
-      <?php endif; 
+        <?php endif;
             endforeach; ?>
     
       </select>
 
-      <?php $tpl->displayCheckbox($this, 'dontUseCrawlCaching', 'Disregard cache and crawl everything'); ?>
+        <?php $tpl->displayCheckbox( $this, 'dontUseCrawlCaching', 'Disregard cache and crawl everything' ); ?>
 
       <button id="deleteCrawlCache" class="wp2static-btn btn-sm mg-top10">Delete Crawl Cache</button>
   </div>
@@ -54,22 +54,22 @@
 
 <section class="wp2static-content wp2static-flex">
   <div class="content" style="max-width:30%">
-    <h2><?php echo __('Crawl Increment', 'static-html-output-plugin');?></h2>
+    <h2><?php echo __( 'Crawl Increment', 'static-html-output-plugin' ); ?></h2>
   </div>
 
   <div class="content">
   <select name="crawl_increment" id="crawl_increment">
-  <?php 
+    <?php
     // TODO: shift this into helper function for select
-    $increments = array(1, 5, 10, 25, 50, 100, 500, 1000, 999999);
-  
-    foreach($increments as $increment) :
-       if ($increment == 999999): ?>
+    $increments = array( 1, 5, 10, 25, 50, 100, 500, 1000, 999999 );
+
+    foreach ( $increments as $increment ) :
+        if ( $increment == 999999 ) : ?>
             <option value="999999"<?php echo $this->options->crawl_increment == $increment ? ' selected' : ''; ?>>Maximum</option>
-  <?php else: ?>
+<?php else : ?>
             <option value="<?php echo $increment; ?>"<?php echo $this->options->crawl_increment == $increment ? ' selected' : ''; ?>><?php echo $increment; ?></option>
   
-  <?php endif; 
+    <?php endif;
          endforeach; ?>
           </select><br>
   
@@ -79,10 +79,10 @@
 
 <section class="wp2static-content wp2static-flex">
   <div class="content" style="max-width:30%">
-    <h2><?php echo __('Include Discovered Assets', 'static-html-output-plugin');?></h2>
+    <h2><?php echo __( 'Include Discovered Assets', 'static-html-output-plugin' ); ?></h2>
   </div>
   <div class="content">
-    <?php $tpl->displayCheckbox($this, 'includeDiscoveredAssets', 'Include Discovered Assets'); ?>
+    <?php $tpl->displayCheckbox( $this, 'includeDiscoveredAssets', 'Include Discovered Assets' ); ?>
 
     <p>As we crawl the site, force-include any static assets found within the page (images, fonts, css, etc). Must have a supported file extension to be included.</p>
   </div>
@@ -90,54 +90,54 @@
 
 <section class="wp2static-content wp2static-flex">
   <div class="content" style="max-width:30%">
-    <h2><?php echo __('Use basic authentication', 'static-html-output-plugin');?></h2>
+    <h2><?php echo __( 'Use basic authentication', 'static-html-output-plugin' ); ?></h2>
   </div>
 
   <div class="content">
-    <?php $tpl->displayCheckbox($this, 'useBasicAuth', 'My WP site requires Basic Auth to access'); ?>
+    <?php $tpl->displayCheckbox( $this, 'useBasicAuth', 'My WP site requires Basic Auth to access' ); ?>
   </div>
 </section>
 
 <section class="wp2static-content wp2static-flex no-tb-bs pd-top0">
   <div class="content" style="max-width:30%">
-    <h2><?php echo __('Basic auth user', 'static-html-output-plugin');?></h2>
+    <h2><?php echo __( 'Basic auth user', 'static-html-output-plugin' ); ?></h2>
   </div>
   <div class="content">
-    <?php $tpl->displayTextfield($this, 'basicAuthUser', 'Basic Auth user', '', ''); ?>
+    <?php $tpl->displayTextfield( $this, 'basicAuthUser', 'Basic Auth user', '', '' ); ?>
   </div>
 </section>
 
 <section class="wp2static-content wp2static-flex no-tb-bs pd-top0">
   <div class="content" style="max-width:30%">
-    <h2><?php echo __('Basic auth password', 'static-html-output-plugin');?></h2>
+    <h2><?php echo __( 'Basic auth password', 'static-html-output-plugin' ); ?></h2>
   </div>
   <div class="content">
-    <?php $tpl->displayTextfield($this, 'basicAuthPassword', 'Basic Auth password', '', 'password'); ?>
+    <?php $tpl->displayTextfield( $this, 'basicAuthPassword', 'Basic Auth password', '', 'password' ); ?>
   </div>
 </section>
 
 <section class="wp2static-content wp2static-flex no-tb-bs pd-top0">
   <div class="content" style="max-width:30%">
-    <h2><?php echo __('Custom crawling port', 'static-html-output-plugin');?></h2>
+    <h2><?php echo __( 'Custom crawling port', 'static-html-output-plugin' ); ?></h2>
   </div>
   <div class="content">
-    <?php $tpl->displayTextfield($this, 'basicAuthPassword', 'Basic Auth password', '', 'password'); ?>
+    <?php $tpl->displayTextfield( $this, 'basicAuthPassword', 'Basic Auth password', '', 'password' ); ?>
   </div>
 </section>
 
 <section class="wp2static-content wp2static-flex no-tb-bs pd-top0">
   <div class="content" style="max-width:30%">
-    <h2><?php echo __('Custom crawling user-agent', 'static-html-output-plugin');?></h2>
+    <h2><?php echo __( 'Custom crawling user-agent', 'static-html-output-plugin' ); ?></h2>
   </div>
   <div class="content">
-    <?php $tpl->displayTextfield($this, 'crawlUserAgent', 'Custom crawling user-agent', ''); ?>
+    <?php $tpl->displayTextfield( $this, 'crawlUserAgent', 'Custom crawling user-agent', '' ); ?>
     <p><em>Override the request HTTP header User-Agent (defaults to WP2Static.com).</em></p>
   </div>
 </section>
 
 <section class="wp2static-content wp2static-flex">
   <div class="content" style="max-width:30%">
-    <h2><?php echo __('Exclude certain URLs', 'static-html-output-plugin');?></h2>
+    <h2><?php echo __( 'Exclude certain URLs', 'static-html-output-plugin' ); ?></h2>
   </div>
 
   <div class="content">
@@ -151,17 +151,17 @@
       <code>.js</code>
     </pre>
 
-    <textarea class="wp2static-textarea" name="excludeURLs" id="excludeURLs" rows="5" cols="10"><?php echo $this->options->excludeURLs ? $this->options->excludeURLs : ''  ?></textarea>
+    <textarea class="wp2static-textarea" name="excludeURLs" id="excludeURLs" rows="5" cols="10"><?php echo $this->options->excludeURLs ? $this->options->excludeURLs : ''; ?></textarea>
   </div>
 </section>
 
 <section class="wp2static-content wp2static-flex">
   <div class="content" style="max-width:30%">
-    <h2><?php echo __('Parse CSS files', 'static-html-output-plugin');?></h2>
+    <h2><?php echo __( 'Parse CSS files', 'static-html-output-plugin' ); ?></h2>
   </div>
 
   <div class="content">
-    <?php $tpl->displayCheckbox($this, 'parse_css', 'Parse CSS files'); ?>
+    <?php $tpl->displayCheckbox( $this, 'parse_css', 'Parse CSS files' ); ?>
 
     <p>This will result in better exports, but will consume more memory on the server. Try disabling this if you're unable to complete your export and suspect it's running out of memory.</p>
   </div>
@@ -169,19 +169,19 @@
 
 <section class="wp2static-content wp2static-flex">
   <div class="content" style="max-width:30%">
-    <h2><?php echo __('Crawl Delay', 'static-html-output-plugin');?></h2>
+    <h2><?php echo __( 'Crawl Delay', 'static-html-output-plugin' ); ?></h2>
   </div>
 
   <div class="content">
     <select name="crawl_delay" id="crawl_delay">
 
-    <?php 
+    <?php
       // TODO: shift this into helper function for select
-      $delays = array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 2, 3, 4, 10);
+      $delays = array( 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 2, 3, 4, 10 );
 
-      foreach($delays as $delay) : ?>
+    foreach ( $delays as $delay ) : ?>
               <option value="<?php echo $delay; ?>"<?php echo $this->options->crawl_delay == $delay ? ' selected' : ''; ?>><?php echo $delay; ?></option>
-      <?php endforeach; ?>
+        <?php endforeach; ?>
     
     </select>
 

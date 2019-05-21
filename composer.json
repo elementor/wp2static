@@ -59,8 +59,8 @@
     },
     "scripts": {
         "phpstan": "php -d memory_limit=-1 ./vendor/bin/phpstan analyse",
-        "phpcs": "vendor/bin/phpcs --standard=./tools/phpcs.xml --ignore=,*/tests/*,*/vendor/*,wp2static.php ./",
-        "phpcbf": "vendor/bin/phpcbf --standard=./tools/phpcs.xml --ignore=,*/tests/*,*/vendor/*,wp2static.php ./",
+        "phpcs": "vendor/bin/phpcs --standard=./tools/phpcs.xml --ignore=,*/tests/*,*/vendor/*,*/views/*.php ./",
+        "phpcbf": "vendor/bin/phpcbf --standard=./tools/phpcs.xml --ignore=,*/tests/*,*/vendor/*,*/views/*.php ./",
         "phpunit": "vendor/bin/phpunit ./tests/unit/",
         "lint": "vendor/bin/parallel-lint --exclude vendor .",
         "test": [
@@ -69,6 +69,7 @@
             "@phpstan",
             "@phpunit"
         ],
-        "build": "/bin/sh tools/build_release.sh"
+        "build": "/bin/sh tools/build_release.sh",
+        "generate-pot": "wp i18n make-pot . languages/static-html-output-plugin.pot"
     }
 }
