@@ -59,8 +59,8 @@
     },
     "scripts": {
         "phpstan": "php -d memory_limit=-1 ./vendor/bin/phpstan analyse",
-        "phpcs": "vendor/bin/phpcs --standard=./tools/phpcs.xml --ignore=,*/tests/*,*/vendor/*,*/views/* ./",
-        "phpcbf": "vendor/bin/phpcbf --standard=./tools/phpcs.xml --ignore=,*/tests/*,*/vendor/*,*/views/* ./",
+        "phpcs": "vendor/bin/phpcs --standard=./tools/phpcs.xml --ignore=,*/tests/*,*/vendor/*,*/views/*.php ./",
+        "phpcbf": "vendor/bin/phpcbf --standard=./tools/phpcs.xml --ignore=,*/tests/*,*/vendor/*,*/views/*.php ./",
         "phpunit": "vendor/bin/phpunit ./tests/unit/",
         "lint": "vendor/bin/parallel-lint --exclude vendor .",
         "test": [
