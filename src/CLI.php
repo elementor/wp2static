@@ -101,9 +101,7 @@ class CLI {
         $plugin = Controller::getInstance();
         $plugin->generate_filelist_preview();
         $plugin->prepare_for_export();
-
         $plugin->crawl_site();
-
         $plugin->post_process_archive_dir();
 
         $end_time = microtime();

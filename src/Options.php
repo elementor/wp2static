@@ -2,6 +2,9 @@
 
 namespace WP2Static;
 
+use WP_CLI;
+use Exception;
+
 class Options {
     public $wp2static_options = array();
     public $wp2static_option_key = null;
@@ -39,11 +42,13 @@ class Options {
         'detectVendorCacheDirs',
         'detectWPIncludesAssets',
         'deployBatchSize',
+        'displayDashboardWidget',
         'dontUseCrawlCaching',
         'includeDiscoveredAssets',
         'excludeURLs',
         'forceHTTPS',
         'parse_css',
+        'redeployOnPostUpdates',
         'removeConditionalHeadComments',
         'removeHTMLComments',
         'removeCanonical',
@@ -95,6 +100,7 @@ class Options {
         'detectVendorCacheDirs',
         'detectWPIncludesAssets',
         'deployBatchSize',
+        'displayDashboardWidget',
         'dontUseCrawlCaching',
         'includeDiscoveredAssets',
         'excludeURLs',
@@ -104,6 +110,7 @@ class Options {
         'ghPath',
         'ghRepo',
         'parse_css',
+        'redeployOnPostUpdates',
         'removeConditionalHeadComments',
         'removeHTMLComments',
         'removeCanonical',
@@ -144,12 +151,16 @@ class Options {
     public function __set( $name, $value ) {
         $this->wp2static_options[ $name ] = $value;
 
+        if ( ! array_key_exists( $name, $this->wp2static_options ) ) {
+            $err = 'Trying to save an unrecognized option: ' . $name;
+            WsLog::l( $err );
+            throw new Exception( $err );
+        }
+
         if ( empty( $value ) ) {
             unset( $this->wp2static_options[ $name ] );
         }
 
-        // NOTE: this is required, not certain why, investigate
-        // and make more intuitive
         return $this;
     }
 
@@ -160,6 +171,7 @@ class Options {
     public function __get( $name ) {
         $value = array_key_exists( $name, $this->wp2static_options ) ?
             $this->wp2static_options[ $name ] : null;
+
         return $value;
     }
 
@@ -169,6 +181,11 @@ class Options {
 
     public function getAllOptions( $reveal_sensitive_values = false ) {
         $options_array = array();
+
+        $this->whitelisted_keys = apply_filters(
+            'wp2static_whitelist_option_keys',
+            $this->whitelisted_keys
+        );
 
         foreach ( $this->wp2static_options_keys as $key ) {
 
@@ -234,7 +251,7 @@ class Options {
         return delete_option( $this->wp2static_option_key );
     }
 
-    public function saveAllPostData() {
+    public function saveAllOptions() {
         $this->wp2static_options_keys = apply_filters(
             'wp2static_add_option_keys',
             $this->wp2static_options_keys

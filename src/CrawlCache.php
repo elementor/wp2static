@@ -54,4 +54,19 @@ class CrawlCache {
 
         return $id;
     }
+
+    public static function rmUrl( $url ) {
+        global $wpdb;
+
+        $hashed_url = md5( $url );
+
+        $table_name = $wpdb->prefix . 'wp2static_crawl_cache';
+
+        $wpdb->delete(
+            $table_name,
+            array(
+                'hashed_url' => md5( $url ),
+            )
+        );
+    }
 }

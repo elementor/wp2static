@@ -5,9 +5,10 @@ namespace WP2Static;
 use ZipArchive;
 use WP_Error;
 use Exception;
+use WP_CLI;
 
 class Controller {
-    const VERSION = '7.0-dev';
+    const VERSION = '7.0-build0001';
     const OPTIONS_KEY = 'wp2static-options';
     const HOOK = 'wp2static';
 
@@ -31,7 +32,6 @@ class Controller {
             self::$instance->options = new Options(
                 self::OPTIONS_KEY
             );
-            self::$instance->view = new View();
         }
 
         return self::$instance;
@@ -83,9 +83,58 @@ class Controller {
 
         $instance->loadRewriteRules();
 
+        add_action(
+            'wp2static_headless_hook',
+            [ 'WP2Static\Controller', 'wp2static_headless' ],
+            10,
+            0
+        );
+
+        /*
+         * Register actions for when we should invalidate cache for
+         * a URL(s) or whole site
+         *
+         */
+        $single_url_invalidation_events = [
+            'save_post',
+            'deleted_post',
+        ];
+
+        $full_site_invalidation_events = [
+            'switch_theme',
+        ];
+
+        foreach ( $single_url_invalidation_events as $invalidation_events ) {
+            add_action(
+                $invalidation_events,
+                [ 'WP2Static\Controller', 'invalidate_single_url_cache' ],
+                0
+            );
+        }
+
+        if ( isset( $instance->settings['redeployOnPostUpdates'] ) ) {
+            add_action(
+                'save_post',
+                [ 'WP2Static\Controller', 'wp2static_headless' ],
+                0
+            );
+        }
+
+        if ( isset( $instance->settings['displayDashboardWidget'] ) ) {
+            add_action(
+                'wp_dashboard_setup',
+                [ 'WP2Static\Controller', 'wp2static_add_dashboard_widgets' ],
+                0
+            );
+        }
+
+        add_action(
+            'admin_enqueue_scripts',
+            [ 'WP2Static\Controller', 'load_wp2static_admin_js' ]
+        );
+
         return $instance;
     }
-
 
     public function set_menu_order( $menu_order ) {
         $order = array();
@@ -181,6 +230,7 @@ class Controller {
         );
     }
 
+    // NOTE: wrapper for UI to echo success response
     public function finalize_deployment() {
         $deployer = new Deployer();
         $deployer->finalizeDeployment();
@@ -256,42 +306,28 @@ class Controller {
         $site_crawler->crawl();
     }
 
-    public function send_support_request() {
-        $url = 'https://hooks.zapier.com/hooks/catch/4977245/jqj3l4/';
+    public function test_folder() {
+        $archive_processor = new ArchiveProcessor();
 
-        $response = wp_remote_post(
-            $url,
-            array(
-                'method'      => 'POST',
-                'timeout'     => 45,
-                'redirection' => 5,
-                'httpversion' => '1.0',
-                'blocking'    => true,
-                'headers'     => array(),
-                // send body complete here, let it be fwd'd by Zapier
-                'body'        => array(
-                    'tes' => 'lkjkljkj',
-                    'something' => 'lkjsdlkfjk',
-                ),
-                'cookies'     => array(),
-            )
-        );
+        $target_folder = $this->settings['targetFolder'];
 
-        if ( is_wp_error( $response ) ) {
-            http_response_code( 404 );
-            $error_message = $response->get_error_message();
-            echo "Something went wrong: $error_message";
-        } else {
-            http_response_code( 200 );
-            echo 'Response:<pre>';
-            print_r( $response );
-            echo '</pre>';
+        $has_safety_file =
+            $archive_processor->dir_has_safety_file( $target_folder );
+        $is_empty =
+            $archive_processor->dir_is_empty( $target_folder );
+
+        if ( $has_safety_file || $is_empty ) {
+            wp_die( 'SUCCESS', '', 200 );
         }
+
+        wp_die(
+            'Not permitted to write to target directory',
+            '',
+            500
+        );
     }
 
     public function generate_filelist_preview() {
-        $this->settings = $this->options->getSettings( true );
-
         $plugin_hook = 'wp2static';
 
         $initial_file_list_count =
@@ -309,7 +345,9 @@ class Controller {
             throw new Exception( $err );
         }
 
-        if ( ! defined( 'WP_CLI' ) ) {
+        $via_ui = filter_input( INPUT_POST, 'ajax_action' );
+
+        if ( is_string( $via_ui ) ) {
             echo $initial_file_list_count;
         }
     }
@@ -335,35 +373,67 @@ class Controller {
         }
     }
 
-    public function renderOptionsPage() {
-        $this->view
-            ->setTemplate( 'options-page-js' )
-            ->assign( 'options', $this->options )
-            ->assign( 'site_info', SiteInfo::getAllInfo() )
-            ->assign( 'onceAction', self::HOOK . '-options' )
-            ->render();
+    public function load_wp2static_admin_js( $hook ) {
+        if ( $hook !== 'toplevel_page_wp2static' ) {
+            return;
+        }
 
-        $this->view
-            ->setTemplate( 'options-page' )
-            ->assign( 'site_info', SiteInfo::getAllInfo() )
-            ->assign(
-                'uploads_writable',
-                SiteInfo::isUploadsWritable()
-            )
-            ->assign(
-                'curl_supported',
-                SiteInfo::hasCURLSupport()
-            )
-            ->assign(
-                'permalinks_defined',
-                SiteInfo::permalinksAreDefined()
-            )
-            ->assign( 'options', $this->options )
-            ->assign( 'onceAction', self::HOOK . '-options' )
-            ->render();
+        $plugin = self::getInstance();
+
+        wp_register_script(
+            'wp2static_admin_js',
+            SiteInfo::getUrl( 'plugins' ) .
+                WP2STATIC_PATH .
+                'views/wp2static-admin.js',
+            array( 'jquery' ),
+            $plugin->version,
+            false
+        );
+
+        $options = $plugin->options;
+
+        $site_info = json_encode(
+            SiteInfo::getAllInfo(),
+            JSON_FORCE_OBJECT | JSON_UNESCAPED_SLASHES
+        );
+
+        $current_deployment_method =
+            $plugin->options->selected_deployment_option ?
+            $plugin->options->selected_deployment_option :
+            'folder';
+
+        $data = array(
+            'some_string' => __( 'Some string to translate', 'plugin-domain' ),
+            'options' => $plugin->options,
+            'site_info' => $site_info,
+            'onceAction' => self::HOOK . '-options',
+            '' => self::HOOK . '-options',
+            'current_deployment_method' => $current_deployment_method,
+        );
+
+        wp_localize_script( 'wp2static_admin_js', 'wp2staticString', $data );
+        wp_enqueue_script( 'wp2static_admin_js' );
+    }
+
+    public function renderOptionsPage() {
+        $view = [];
+        $view['options'] = $this->options;
+        $view['site_info'] = SiteInfo::getAllInfo();
+        $view['onceAction'] = self::HOOK . '-options';
+
+        // TODO: check which are only needed in JS and rm from func
+        $view['uploads_writable'] = SiteInfo::isUploadsWritable();
+        $view['curl_supported'] = SiteInfo::hasCURLSupport();
+        $view['permalinks_defined'] = SiteInfo::permalinksAreDefined();
+
+        require_once WP2STATIC_PATH . 'views/options-page.php';
     }
 
     public function userIsAllowed() {
+        if ( defined( 'WP_CLI' ) ) {
+            return true;
+        }
+
         $referred_by_admin = check_admin_referer( self::HOOK . '-options' );
         $user_can_manage_options = current_user_can( 'manage_options' );
 
@@ -371,11 +441,16 @@ class Controller {
     }
 
     public function save_options() {
-        if ( ! $this->userIsAllowed() ) {
-            exit( 'Not allowed to change plugin options.' );
-        }
+        $via_ui = filter_input( INPUT_POST, 'ajax_action' );
 
-        $this->options->saveAllPostData();
+        // Note when running via UI, we save all options
+        if ( is_string( $via_ui ) ) {
+            if ( ! $this->userIsAllowed() ) {
+                exit( 'Not allowed to change plugin options.' );
+            }
+
+            $this->options->saveAllOptions();
+        }
     }
 
     public function prepare_for_export() {
@@ -395,7 +470,9 @@ class Controller {
 
         $this->exporter->generateModifiedFileList();
 
-        if ( ! defined( 'WP_CLI' ) ) {
+        $via_ui = filter_input( INPUT_POST, 'ajax_action' );
+
+        if ( is_string( $via_ui ) ) {
             echo 'SUCCESS';
         }
     }
@@ -423,7 +500,9 @@ class Controller {
         $processor->copyStaticSiteToPublicFolder();
         $processor->create_zip();
 
-        if ( ! defined( 'WP_CLI' ) ) {
+        $via_ui = filter_input( INPUT_POST, 'ajax_action' );
+
+        if ( is_string( $via_ui ) ) {
             echo 'SUCCESS';
         }
     }
@@ -440,7 +519,9 @@ class Controller {
 
         array_map( 'unlink', $hash_files );
 
-        if ( ! defined( 'WP_CLI' ) ) {
+        $via_ui = filter_input( INPUT_POST, 'ajax_action' );
+
+        if ( is_string( $via_ui ) ) {
             echo 'SUCCESS';
         }
     }
@@ -504,4 +585,75 @@ class Controller {
 
         WsLog::l( $environmental_info );
     }
+
+    public function wp2static_headless() {
+        $start_time = microtime();
+
+        $plugin = self::getInstance();
+        $plugin->generate_filelist_preview();
+        $plugin->prepare_for_export();
+        $plugin->crawl_site();
+        $plugin->post_process_archive_dir();
+
+        $end_time = microtime();
+
+        $duration = $plugin->microtime_diff( $start_time, $end_time );
+
+        WsLog::l( "Generated static site archive in $duration seconds" );
+
+        $deployer = new Deployer();
+        $deployer->deploy();
+
+        return null;
+    }
+
+    public function microtime_diff( $start, $end = null ) {
+        if ( ! $end ) {
+            $end = microtime();
+        }
+
+        list( $start_usec, $start_sec ) = explode( ' ', $start );
+        list( $end_usec, $end_sec ) = explode( ' ', $end );
+
+        $diff_sec = intval( $end_sec ) - intval( $start_sec );
+        $diff_usec = floatval( $end_usec ) - floatval( $start_usec );
+
+        return floatval( $diff_sec ) + $diff_usec;
+    }
+
+    public function invalidate_single_url_cache( $post_id = 0, $post = null ) {
+        $permalink = get_permalink(
+            $post->ID
+        );
+
+        $site_url = SiteInfo::getUrl( 'site' );
+
+        if ( ! is_string( $permalink ) || ! is_string( $site_url ) ) {
+            return;
+        }
+
+        $url = str_replace(
+            $site_url,
+            '/',
+            $permalink
+        );
+
+        CrawlCache::rmUrl( $url );
+    }
+
+    public function wp2static_add_dashboard_widgets() {
+        wp_add_dashboard_widget(
+            'wp2static__dashboard_widget',
+            'WP2Static',
+            [ 'WP2Static\Controller', 'wp2static_dashboard_widget_function' ]
+        );
+    }
+
+    public function wp2static_dashboard_widget_function() {
+        echo '<p>Publish whole site as static HTML</p>';
+        echo "<button class='button button-primary'>Publish whole site" .
+            '</button>';
+    }
+
+
 }

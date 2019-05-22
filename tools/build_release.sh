@@ -23,8 +23,8 @@ mkdir $TMP_DIR/static-html-output-plugin
 
 # clear dev dependencies
 rm -Rf $EXEC_DIR/vendor/*
-# load prod deps
-composer install --no-dev
+# load prod deps and optimize loader
+composer install --no-dev --optimize-autoloader
 
 
 # cp all required sources to build dir

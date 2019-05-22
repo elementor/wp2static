@@ -73,7 +73,9 @@ class SiteCrawler extends Base {
             if ( filesize( $this->list_of_urls_to_crawl_path ) ) {
                 $this->crawlABitMore();
             } else {
-                if ( ! defined( 'WP_CLI' ) ) {
+                $via_ui = filter_input( INPUT_POST, 'ajax_action' );
+
+                if ( is_string( $via_ui ) ) {
                     echo 'SUCCESS';
                 }
             }
@@ -182,8 +184,10 @@ class SiteCrawler extends Base {
 
     public function checkIfMoreCrawlingNeeded( $urls_to_crawl ) {
         $remaining_urls = count( $urls_to_crawl );
+        $via_ui = filter_input( INPUT_POST, 'ajax_action' );
+
         if ( $remaining_urls > 0 ) {
-            if ( ! defined( 'WP_CLI' ) ) {
+            if ( is_string( $via_ui ) ) {
                 echo $remaining_urls;
             } else {
                 $this->crawl();
@@ -191,7 +195,7 @@ class SiteCrawler extends Base {
         } else {
             WsLog::l( 'Crawling URLs phase completed' );
 
-            if ( ! defined( 'WP_CLI' ) ) {
+            if ( is_string( $via_ui ) ) {
                 echo 'SUCCESS';
             }
         }
