@@ -3,7 +3,7 @@ Contributors: leonstafford
 Tags: security, performance, static
 Requires at least: 4.0
 Tested up to: 5.2
-Requires PHP: 7.2
+Requires PHP: 7.0
 Stable tag: 7.0
 
 Security & Performance via static website publishing. One plugin to solve WordPress's biggest problems.
