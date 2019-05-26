@@ -582,9 +582,10 @@ jQuery( document ).ready(
                 return;
             }
 
-            if (Notification.permission !== "granted") {
-                Notification.requestPermission();
-            } else {
+            if ( window.location.protocol === 'https:' ) {
+              if (Notification.permission !== "granted") {
+                  Notification.requestPermission();
+              } else {
                 var notification = new Notification(
                     'WP Static HTML Export',
                     {
@@ -599,6 +600,7 @@ jQuery( document ).ready(
                     this.close();
                 };
             }
+          }
         }
 
         function reloadLogFile() {
@@ -647,7 +649,9 @@ jQuery( document ).ready(
         }
 
         if (Notification.permission !== "granted") {
-            Notification.requestPermission();
+            if ( window.location.protocol === 'https:' ) {
+              Notification.requestPermission();
+            }
         }
 
         $( 'input[type="checkbox"]' ).change(
