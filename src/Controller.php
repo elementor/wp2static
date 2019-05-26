@@ -383,7 +383,7 @@ class Controller {
         wp_register_script(
             'wp2static_admin_js',
             SiteInfo::getUrl( 'plugins' ) .
-                WP2STATIC_PATH .
+                'static-html-output-plugin/' . // TODO: rm hardcoding slug
                 'views/wp2static-admin.js',
             array( 'jquery' ),
             $plugin->version,
