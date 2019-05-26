@@ -287,15 +287,15 @@ class HTMLProcessor extends Base {
 
     public function rewriteLocalURL( $url ) {
         if ( URLHelper::startsWithHash( $url ) ) {
-            return;
+            return $url;
         }
 
         if ( URLHelper::isMailto( $url ) ) {
-            return;
+            return $url;
         }
 
         if ( ! URLHelper::isInternalLink( $url, $this->site_url_host ) ) {
-            return;
+            return $url;
         }
 
         if ( URLHelper::isProtocolRelative( $url ) ) {
@@ -378,11 +378,15 @@ class HTMLProcessor extends Base {
         list( $url, $attribute_to_change ) =
             $this->getURLAndTargetAttribute( $element );
 
+        error_log($url);
+
         if ( ! $url || ! $attribute_to_change ) {
             return;
         }
 
         $url = $this->rewriteLocalURL( $url );
+
+        error_log($url);
 
         return $element->setAttribute( $attribute_to_change, $url );
     }
