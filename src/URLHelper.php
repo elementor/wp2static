@@ -79,7 +79,9 @@ class URLHelper {
         // quickly match known internal links   ./   ../   /
         $first_char = $url[0];
 
-        if ( $first_char === '.' || $first_char === '/' ) {
+        // TODO: // was false-positive for things like //fonts.google.com
+        // add better detection for doc/site root relative protocol-rel URLs
+        if ( $first_char === '.' ) {
             return true;
         }
 
