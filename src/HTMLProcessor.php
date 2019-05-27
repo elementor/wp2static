@@ -35,6 +35,7 @@ class HTMLProcessor extends Base {
         $user_rewrite_rules,
         $ch
     ) {
+        error_log('HTML proc');die();
         $this->loadSettings();
 
         $this->rewrite_rules = $rewrite_rules;
@@ -305,9 +306,12 @@ class HTMLProcessor extends Base {
             );
         }
 
+        error_log('check for site root rel');die();
+        error_log($url);
         // normalize site root-relative URLs here to absolute site-url
         if ( $url[0] === '/' ) {
             if ( $url[1] !== '/' ) {
+                error_log($url);
                 $url = $this->site_url . ltrim( $url, '/' );
             }
         }
@@ -375,6 +379,7 @@ class HTMLProcessor extends Base {
      * @return DOMAttr|false
      */
     public function processElementURL( $element ) {
+        error_log('blah');die();
         list( $url, $attribute_to_change ) =
             $this->getURLAndTargetAttribute( $element );
 
@@ -556,20 +561,6 @@ class HTMLProcessor extends Base {
         );
 
         return $processed_html;
-    }
-
-    // TODO: This function is to be performed on site URLs
-    // allowing the user to convert URLs to document or site relative form
-    public function convertToDocumentRelativeURL( $url ) {
-        $site_root = '';
-
-        $rewritten_url = str_replace(
-            $this->settings['baseUrl'],
-            $site_root,
-            $url
-        );
-
-        return $rewritten_url;
     }
 
     public function shouldCreateBaseHREF() {

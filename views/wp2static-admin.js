@@ -17,7 +17,12 @@ var deploy_options = {
 };
 
 var site_info = JSON.parse( wp2staticString.site_info );
-var current_deployment_method = wp2staticString.current_deployment_method;
+var current_deployment_method;
+if ( wp2staticString.current_deployment_method ) {
+  current_deployment_method = wp2staticString.current_deployment_method;
+} else {
+  current_deployment_method = 'folder';
+}
 
 
 // TODO: get the log out of the archive, along with it's meta infos
