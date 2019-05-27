@@ -526,7 +526,7 @@ class HTMLProcessor extends Base {
             );
         }
 
-        if ( isset( $this->settings['forceHTTPS'] ) ) {
+        if ( isset( $force_https ) ) {
             $processed_html = str_replace(
                 'http://',
                 'https://',
@@ -534,11 +534,11 @@ class HTMLProcessor extends Base {
             );
         }
 
-        if ( isset( $this->settings['forceHTTPS'] ) ) {
+        if ( isset( $force_rewrite ) ) {
             $processed_html = str_replace(
                 $this->rewrite_rules['site_url_patterns'],
                 $this->rewrite_rules['destination_url_patterns'],
-                $url
+                $processed_html
             );
         }
 
