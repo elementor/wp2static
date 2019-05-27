@@ -16,7 +16,7 @@ var deploy_options = {
     },
 };
 
-var site_info = JSON.parse(wp2staticString.site_info);
+var site_info = JSON.parse( wp2staticString.site_info );
 var current_deployment_method = wp2staticString.current_deployment_method;
 
 
@@ -583,24 +583,24 @@ jQuery( document ).ready(
             }
 
             if ( window.location.protocol === 'https:' ) {
-              if (Notification.permission !== "granted") {
-                  Notification.requestPermission();
-              } else {
-                var notification = new Notification(
-                    'WP Static HTML Export',
-                    {
-                        icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png',
-                        body: "Exports have finished!",
-                    }
-                );
+                if (Notification.permission !== "granted") {
+                    Notification.requestPermission();
+                } else {
+                    var notification = new Notification(
+                        'WP Static HTML Export',
+                        {
+                            icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png',
+                            body: "Exports have finished!",
+                        }
+                    );
 
-                notification.onclick = function () {
-                    parent.focus();
-                    window.focus();
-                    this.close();
-                };
+                    notification.onclick = function () {
+                        parent.focus();
+                        window.focus();
+                        this.close();
+                    };
+                }
             }
-          }
         }
 
         function reloadLogFile() {
@@ -650,7 +650,7 @@ jQuery( document ).ready(
 
         if (Notification.permission !== "granted") {
             if ( window.location.protocol === 'https:' ) {
-              Notification.requestPermission();
+                Notification.requestPermission();
             }
         }
 
@@ -984,7 +984,7 @@ jQuery( document ).ready(
 
         // guard against selected option for add-on not currently activated
         if ( $( '#baseUrl-' + current_deployment_method ).val() === undefined ) {
-          current_deployment_method = 'folder';
+            current_deployment_method = 'folder';
         }
 
         // call change handler on page load, to set correct state
