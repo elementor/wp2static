@@ -19,6 +19,7 @@ var deploy_options = {
 var site_info = wp2staticString.site_info;
 var current_deployment_method = wp2staticString.current_deployment_method;
 
+
 // TODO: get the log out of the archive, along with it's meta infos
 var log_file_url = site_info.uploads_url + 'wp2static-working-files/EXPORT-LOG.txt';
 
@@ -505,17 +506,15 @@ jQuery( document ).ready(
         function updateBaseURLReferences() {
             var base_url_previews = $( '.base_url_preview' );
 
-            if ($( '#baseUrl-' + current_deployment_method )) {
-                base_url = $( '#baseUrl-' + current_deployment_method ).val();
+            var base_url = $( '#baseUrl-' + current_deployment_method ).val();
 
-                $( '#baseUrl' ).val( $( '#baseUrl-' + current_deployment_method ).val() );
+            $( '#baseUrl' ).val( $( '#baseUrl-' + current_deployment_method ).val() );
 
-                base_url_previews.text( base_url.replace( /\/$/, "" ) + '/' );
+            base_url_previews.text( base_url.replace( /\/$/, "" ) + '/' );
 
-                // update the clickable preview url in folder options
-                $( '#folderPreviewURL' ).text( site_info.site_url + '/' );
-                $( '#folderPreviewURL' ).attr( 'href', (site_info.site_url + '/') );
-            }
+            // update the clickable preview url in folder options
+            $( '#folderPreviewURL' ).text( site_info.site_url + '/' );
+            $( '#folderPreviewURL' ).attr( 'href', (site_info.site_url + '/') );
         }
 
         function hideOtherVendorMessages() {
@@ -978,6 +977,11 @@ jQuery( document ).ready(
         );
 
         $( '.spinner' ).hide();
+
+        // guard against selected option for add-on not currently activated
+        if ( $( '#baseUrl-' + current_deployment_method ).val() === undefined ) {
+          current_deployment_method = 'folder';
+        }
 
         // call change handler on page load, to set correct state
         offlineUsageChangeHandler( $( '#allowOfflineUsage' ) );
