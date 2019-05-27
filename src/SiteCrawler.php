@@ -320,7 +320,8 @@ class SiteCrawler extends Base {
                 if ( $this->processed_file ) {
                     $this->processed_file = $processor->getHTML(
                         $processor->xml_doc,
-                        $this->settings['forceHTTPS']
+                        $this->settings['forceHTTPS'],
+                        $this->settings['forceRewriteSiteURLs']
                     );
                 }
 

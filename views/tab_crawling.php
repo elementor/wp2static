@@ -157,18 +157,6 @@
 
 <section class="wp2static-content wp2static-flex">
   <div class="content" style="max-width:30%">
-    <h2><?php echo __( 'Parse CSS files', 'static-html-output-plugin' ); ?></h2>
-  </div>
-
-  <div class="content">
-    <?php $tpl->displayCheckbox( $this, 'parse_css', 'Parse CSS files' ); ?>
-
-    <p>This will result in better exports, but will consume more memory on the server. Try disabling this if you're unable to complete your export and suspect it's running out of memory.</p>
-  </div>
-</section>
-
-<section class="wp2static-content wp2static-flex">
-  <div class="content" style="max-width:30%">
     <h2><?php echo __( 'Crawl Delay', 'static-html-output-plugin' ); ?></h2>
   </div>
 

@@ -123,6 +123,19 @@
 
 <section class="wp2static-content wp2static-flex">
   <div class="content" style="max-width:30%">
+    <h2><?php echo __( 'Parse CSS files', 'static-html-output-plugin' ); ?></h2>
+  </div>
+
+  <div class="content">
+    <?php $tpl->displayCheckbox( $this, 'parse_css', 'Parse CSS files' ); ?>
+
+    <p>This will result in better exports, but will consume more memory on the server. Try disabling this if you're unable to complete your export and suspect it's running out of memory.</p>
+  </div>
+</section>
+
+
+<section class="wp2static-content wp2static-flex">
+  <div class="content" style="max-width:30%">
     <h2><?php echo __( 'Modify HTML', 'static-html-output-plugin' ); ?></h2>
   </div>
 
@@ -134,6 +147,10 @@
     <?php $tpl->displayCheckbox( $this, 'forceHTTPS', 'Force rewriting any http links to https', 'checked' ); ?>
 
     <p>If you are left with a few remaining http protocol links in your exported site and are unable to fix in the original WordPress site, this option will force rewrite any links in the exported pages that start with http to https. Warning, this is a brute force approach and may alter texts on the page that should not be rewritten.</p>
+
+    <?php $tpl->displayCheckbox( $this, 'forceRewriteSiteURLs', 'Force rewriting any left-over Site URLs to your Destination URL', 'checked' ); ?>
+
+    <p>This is a last-resort method to rewrite any Site URLs that weren't able to be intelligently rewritten. This can be the case when the Site URL is within a custom HTML tag that WP2Static doesn't know how to handle, or within some inline CSS or JavaScript sections, for example.</p>
   </div>
 </section>
 
