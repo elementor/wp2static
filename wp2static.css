@@ -379,11 +379,18 @@ p.submit{
 .addon {
   background: #fff;
   box-shadow: 0 0 0 1px rgba(213, 213, 213, 0.5), 0 1px 2px #eee;
+  min-height: 29em;
+  max-height: 29em;
 }
 
 .addon .main {
   text-align: center;
   padding: 30px;
+}
+
+.addon .main p {
+  max-height: 3em;
+  min-height: 3em;
 }
 
 .addon .bottom {
@@ -430,5 +437,15 @@ img.welcome {
     width: 100%;
     display: block;
     margin-bottom: 20px;
+  }
+}
+
+@media screen and (max-width: 782px) {
+  .wp2static-column {
+    width: calc(50% - 20px);
+  }
+
+  .add_ons .wp2static-flex .content {
+    flex: unset;
   }
 }
