@@ -328,8 +328,6 @@ class Controller {
     }
 
     public function generate_filelist_preview() {
-        $plugin_hook = 'wp2static';
-
         $initial_file_list_count =
             FilesHelper::buildInitialFileList(
                 true,

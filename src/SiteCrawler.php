@@ -301,8 +301,6 @@ class SiteCrawler extends Base {
             $page_url,
             $curl_content_type
         );
-        error_log($file_type);
-        error_log($page_url);die();
 
         switch ( $file_type ) {
             case 'html':

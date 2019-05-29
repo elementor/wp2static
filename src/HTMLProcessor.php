@@ -35,7 +35,6 @@ class HTMLProcessor extends Base {
         $user_rewrite_rules,
         $ch
     ) {
-        error_log('HTML proc');die();
         $this->loadSettings();
 
         $this->rewrite_rules = $rewrite_rules;
@@ -306,7 +305,6 @@ class HTMLProcessor extends Base {
             );
         }
 
-        error_log('check for site root rel');die();
         error_log($url);
         // normalize site root-relative URLs here to absolute site-url
         if ( $url[0] === '/' ) {
@@ -379,7 +377,6 @@ class HTMLProcessor extends Base {
      * @return DOMAttr|false
      */
     public function processElementURL( $element ) {
-        error_log('blah');die();
         list( $url, $attribute_to_change ) =
             $this->getURLAndTargetAttribute( $element );
 
