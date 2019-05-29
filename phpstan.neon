@@ -28,6 +28,5 @@ parameters:
         - %currentWorkingDirectory%/tests/phpstan/wp-cli-stubs-2.2.0.php
     ignoreErrors:
         - '#^Constant WP2STATIC_PATH not found#'
-        - '#^Access to an undefined property object::$name#'
     excludes_analyse:
         - %currentWorkingDirectory%/src/WPOverrides.php
