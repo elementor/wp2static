@@ -4,6 +4,11 @@ namespace WP2Static;
 
 class Request {
 
+    public $body;
+    public $default_options;
+    public $headers;
+    public $status_code;
+
     public function __construct() {
         $this->default_options = array(
             CURLOPT_USERAGENT => 'WP2Static.com',

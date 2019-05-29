@@ -6,6 +6,11 @@ use Exception;
 
 class CSSProcessor extends Base {
 
+    public $placeholder_url;
+    public $raw_css;
+    public $page_url;
+    public $css_doc;
+
     public function __construct() {
         $this->loadSettings();
     }

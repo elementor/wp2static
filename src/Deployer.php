@@ -6,6 +6,8 @@ use WP_CLI;
 
 class Deployer extends Base {
 
+    public $archive;
+
     public function __construct() {
         $this->loadSettings();
     }

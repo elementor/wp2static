@@ -5,7 +5,12 @@ namespace WP2Static;
 // TODO: if this fails to locate the local file for the remote,
 // it should fall back to regular crawl processing method
 // (where response status will also be checked in case of 404)
-class FileCopier {
+class FileCopier extends Base {
+
+    public $url;
+    public $wp_site_url;
+    public $wp_site_path;
+
     public function __construct( $url, $wp_site_url, $wp_site_path ) {
         $this->url = $url;
         $this->wp_site_url = $wp_site_url;

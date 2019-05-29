@@ -540,6 +540,7 @@ class FilesHelper {
                 continue;
             }
 
+            // TODO: need service for WP to understand post_type_obj?
             $plural_form = strtolower( $post_type_obj->labels->name );
 
             $count = $wpdb->num_rows;

@@ -27,6 +27,20 @@ use Exception;
  */
 class HTMLProcessor extends Base {
 
+    public $base_element;
+    public $base_tag_exists;
+    public $ch;
+    public $crawlable_filetypes;
+    public $destination_url;
+    public $head_element;
+    public $page_url;
+    public $processed_urls;
+    public $rewrite_rules;
+    public $site_url;
+    public $site_url_host;
+    public $user_rewrite_rules;
+    public $xml_doc;
+
     // TODO: clean up the passed var
     public function __construct(
         $rewrite_rules,
