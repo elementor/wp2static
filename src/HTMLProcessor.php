@@ -319,11 +319,9 @@ class HTMLProcessor extends Base {
             );
         }
 
-        error_log( $url );
         // normalize site root-relative URLs here to absolute site-url
         if ( $url[0] === '/' ) {
             if ( $url[1] !== '/' ) {
-                error_log( $url );
                 $url = $this->site_url . ltrim( $url, '/' );
             }
         }
