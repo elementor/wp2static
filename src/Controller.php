@@ -12,6 +12,15 @@ class Controller {
     const OPTIONS_KEY = 'wp2static-options';
     const HOOK = 'wp2static';
 
+    public $options;
+    public $settings;
+    public $site_url;
+    public $site_url_host;
+    public $destination_url;
+    public $rewrite_rules;
+    public $version;
+    public $exporter;
+
     /**
      * Main controller of WP2Static
      *
@@ -328,8 +337,6 @@ class Controller {
     }
 
     public function generate_filelist_preview() {
-        $plugin_hook = 'wp2static';
-
         $initial_file_list_count =
             FilesHelper::buildInitialFileList(
                 true,

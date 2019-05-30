@@ -27,6 +27,20 @@ use Exception;
  */
 class HTMLProcessor extends Base {
 
+    public $base_element;
+    public $base_tag_exists;
+    public $ch;
+    public $crawlable_filetypes;
+    public $destination_url;
+    public $head_element;
+    public $page_url;
+    public $processed_urls;
+    public $rewrite_rules;
+    public $site_url;
+    public $site_url_host;
+    public $user_rewrite_rules;
+    public $xml_doc;
+
     // TODO: clean up the passed var
     public function __construct(
         $rewrite_rules,
@@ -287,15 +301,15 @@ class HTMLProcessor extends Base {
 
     public function rewriteLocalURL( $url ) {
         if ( URLHelper::startsWithHash( $url ) ) {
-            return;
+            return $url;
         }
 
         if ( URLHelper::isMailto( $url ) ) {
-            return;
+            return $url;
         }
 
         if ( ! URLHelper::isInternalLink( $url, $this->site_url_host ) ) {
-            return;
+            return $url;
         }
 
         if ( URLHelper::isProtocolRelative( $url ) ) {
@@ -501,7 +515,11 @@ class HTMLProcessor extends Base {
         return $url;
     }
 
-    public function getHTML( $xml_doc, $force_https = false ) {
+    public function getHTML(
+        $xml_doc,
+        $force_https = false,
+        $force_rewrite = false
+    ) {
         $processed_html = $xml_doc->saveHtml();
 
         // TODO: here is where we convertToSiteRelativeURLs, as this can be
@@ -522,10 +540,18 @@ class HTMLProcessor extends Base {
             );
         }
 
-        if ( isset( $this->settings['forceHTTPS'] ) ) {
+        if ( isset( $force_https ) ) {
             $processed_html = str_replace(
                 'http://',
                 'https://',
+                $processed_html
+            );
+        }
+
+        if ( isset( $force_rewrite ) ) {
+            $processed_html = str_replace(
+                $this->rewrite_rules['site_url_patterns'],
+                $this->rewrite_rules['destination_url_patterns'],
                 $processed_html
             );
         }
@@ -544,20 +570,6 @@ class HTMLProcessor extends Base {
         );
 
         return $processed_html;
-    }
-
-    // TODO: This function is to be performed on site URLs
-    // allowing the user to convert URLs to document or site relative form
-    public function convertToDocumentRelativeURL( $url ) {
-        $site_root = '';
-
-        $rewritten_url = str_replace(
-            $this->settings['baseUrl'],
-            $site_root,
-            $url
-        );
-
-        return $rewritten_url;
     }
 
     public function shouldCreateBaseHREF() {

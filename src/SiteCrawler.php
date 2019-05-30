@@ -6,6 +6,22 @@ use Exception;
 
 class SiteCrawler extends Base {
 
+    public $processed_file;
+    public $file_type;
+    public $content_type;
+    public $extension;
+    public $archive_dir;
+    public $list_of_urls_to_crawl_path;
+    public $urls_to_crawl;
+    public $rewrite_rules;
+    public $site_url_host;
+    public $destination_url;
+    public $ch;
+    public $request;
+    public $url;
+    public $page_url;
+    public $curl_options;
+
     public function __construct(
         $rewrite_rules,
         $site_url_host,
@@ -320,7 +336,8 @@ class SiteCrawler extends Base {
                 if ( $this->processed_file ) {
                     $this->processed_file = $processor->getHTML(
                         $processor->xml_doc,
-                        $this->settings['forceHTTPS']
+                        $this->settings['forceHTTPS'],
+                        $this->settings['forceRewriteSiteURLs']
                     );
                 }
 

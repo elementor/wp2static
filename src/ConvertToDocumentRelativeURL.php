@@ -50,7 +50,11 @@ class ConvertToDocumentRelativeURL {
 
             Match current page in target URL to determine
         */
-        if ( strpos( $url, $page_url_without_domain ) !== false ) {
+        if (
+            // when homepage of site, page url without domain will be empty
+            $page_url_without_domain &&
+            strpos( $url, $page_url_without_domain ) !== false
+        ) {
             $rewritten_url = str_replace(
                 $page_url_without_domain,
                 '',

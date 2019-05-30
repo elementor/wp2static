@@ -3,6 +3,12 @@
 namespace WP2Static;
 
 class FileWriter extends Base {
+
+    public $url;
+    public $content;
+    public $file_type;
+    public $content_type;
+
     public function __construct( $url, $content, $file_type, $content_type ) {
         $this->url = $url;
         $this->content = $content;

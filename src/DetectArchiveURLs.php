@@ -2,9 +2,10 @@
 
 namespace WP2Static;
 
-class DetectCategoryPaginationURLs {
+class DetectArchiveURLs {
+
     public static function detect( $wp_site_url ) {
-        global $wp_rewrite, $wpdb;
+        global $wpdb;
 
         $post_urls = array();
         $unique_post_types = array();
@@ -26,12 +27,8 @@ class DetectCategoryPaginationURLs {
         );
 
         foreach ( $posts as $post ) {
-            // capture all post types
-            $unique_post_types[] = $post->post_type;
-
             switch ( $post->post_type ) {
                 case 'page':
-                    $permalink = get_page_link( $post->ID );
                     break;
                 case 'post':
                     $permalink_structure = get_option( 'permalink_structure' );
@@ -41,14 +38,13 @@ class DetectCategoryPaginationURLs {
                     );
                     break;
                 case 'attachment':
-                    $permalink = get_attachment_link( $post->ID );
                     break;
                 default:
                     $permalink = get_post_permalink( $post->ID );
                     break;
             }
 
-            if ( ! is_string( $permalink ) ) {
+            if ( ! isset( $permalink ) || ! is_string( $permalink ) ) {
                 continue;
             }
 
@@ -100,76 +96,12 @@ class DetectCategoryPaginationURLs {
                 $full_url = $link_host;
 
                 for ( $x = 0; $x <= $i; $x++ ) {
-                    $full_url .= $path_segments[ $x ];
+                    $full_url .= $path_segments[ $x ] . '/';
                 }
                 $post_urls[] = $full_url;
             }
         }
 
-        // gets all category page links
-        $args = array(
-            'public'   => true,
-        );
-
-        $taxonomies = get_taxonomies( $args, 'objects' );
-
-        $category_links = array();
-
-        foreach ( $taxonomies as $taxonomy ) {
-            if ( ! property_exists( $taxonomy, 'name' ) ) {
-                continue;
-            }
-
-            $terms = get_terms(
-                $taxonomy->name,
-                array(
-                    'hide_empty' => true,
-                )
-            );
-
-            if ( ! is_iterable( $terms ) ) {
-                continue;
-            }
-
-            foreach ( $terms as $term ) {
-                if ( is_string( $term ) ) {
-                    continue;
-                }
-
-                $term_link = get_term_link( $term );
-
-                if ( ! is_string( $term_link ) ) {
-                    continue;
-                }
-
-                $permalink = trim( $term_link );
-                $total_posts = $term->count;
-
-                $term_url = str_replace(
-                    $wp_site_url,
-                    '',
-                    $permalink
-                );
-
-                $category_links[ $term_url ] = $total_posts;
-
-                $post_urls[] = $permalink;
-            }
-        }
-
-        $urls_to_include = array();
-        $pagination_base = $wp_rewrite->pagination_base;
-        $default_posts_per_page = get_option( 'posts_per_page' );
-
-        foreach ( $category_links as $term => $total_posts ) {
-            $total_pages = ceil( $total_posts / $default_posts_per_page );
-
-            for ( $page = 1; $page <= $total_pages; $page++ ) {
-                $urls_to_include[] =
-                    "{$term}/{$pagination_base}/{$page}";
-            }
-        }
-
-        return $urls_to_include;
+        return $post_urls;
     }
 }

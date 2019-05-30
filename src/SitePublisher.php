@@ -6,6 +6,12 @@ use Exception;
 
 class SitePublisher {
 
+    public $settings;
+    public $export_file_list;
+    public $files_remaining;
+    public $file_paths_and_hashes;
+    public $previous_hashes_path;
+
     public function loadSettings() {
         $plugin = Controller::getInstance();
         $this->settings = $plugin->options->getSettings( true );

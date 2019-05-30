@@ -8,9 +8,9 @@
   </div>
 
   <p><em id="initial_crawl_list_count"></p>
-  
+ 
   <p>
-    <a id="preview_initial_crawl_list_button" style="display:none;" href="<?php echo $this->site_info['uploads_url']; ?>wp2static-working-files/INITIAL-CRAWL-LIST.txt" class="wp2static-btn" target="_blank">Preview initial crawl list</a>
+    <a id="preview_initial_crawl_list_button" style="display:none;" href="<?php echo $view['site_info']['uploads_url']; ?>wp2static-working-files/INITIAL-CRAWL-LIST.txt" class="wp2static-btn" target="_blank">Preview initial crawl list</a>
   </p>
 </section>
 
@@ -179,7 +179,7 @@
     <pre>
       <code>.zip</code>
       <code>768x768.jpg</code>
-      <code><?php echo $this->site_info['site_url']; ?>/wp-content/themes/twentyseventeen/banana.jpg</code>
+      <code><?php echo $view['site_info']['site_url']; ?>/wp-content/themes/twentyseventeen/banana.jpg</code>
       <code>/my_pricelist.pdf</code>
     </pre>
 
@@ -199,8 +199,8 @@
     <p><em>Supported formats are relative URLs</em></p>
 
     <pre>
-      <code><?php echo $this->site_info['site_url']; ?></code>
-      <code><?php echo $this->site_info['site_url']; ?>/wp-content/themes/twentyseventeen/banana.jpg</code>
+      <code><?php echo $view['site_info']['site_url']; ?></code>
+      <code><?php echo $view['site_info']['site_url']; ?>/wp-content/themes/twentyseventeen/banana.jpg</code>
       <code>my_pricelist.pdf</code>
     </pre>
 
