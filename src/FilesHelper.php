@@ -180,8 +180,6 @@ class FilesHelper {
 
         /*
             TODO: reimplement detection for URLs:
-                'detectArchives',
-                'detectCategoryPagination',
                 'detectCommentPagination',
                 'detectComments',
                 'detectFeedURLs',
@@ -243,6 +241,13 @@ class FilesHelper {
         if ( isset( $settings['detectArchives'] ) ) {
             $arrays_to_merge[] =
                 DetectArchiveURLs::detect( SiteInfo::getUrl( 'site' ) );
+        }
+
+        if ( isset( $settings['detectCategoryPagination'] ) ) {
+            $arrays_to_merge[] =
+                DetectCategoryPaginationURLs::detect(
+                    SiteInfo::getUrl( 'site' )
+                );
         }
 
         $url_queue = call_user_func_array( 'array_merge', $arrays_to_merge );
