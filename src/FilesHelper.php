@@ -185,7 +185,6 @@ class FilesHelper {
                 'detectCommentPagination',
                 'detectComments',
                 'detectFeedURLs',
-                'detectPostPagination',
 
         // other options:
 
@@ -235,6 +234,11 @@ class FilesHelper {
         if ( isset( $settings['detectVendorCacheDirs'] ) ) {
             $arrays_to_merge[] =
                 DetectVendorFiles::detect( SiteInfo::getURL( 'site' ) );
+        }
+
+        if ( isset( $settings['detectPostPagination'] ) ) {
+            $arrays_to_merge[] =
+                self::getPaginationURLsForPosts();
         }
 
         $url_queue = call_user_func_array( 'array_merge', $arrays_to_merge );
@@ -440,19 +444,12 @@ class FilesHelper {
         $category_pagination_urls =
             DetectCategoryPaginationURLs::detect( $category_links );
 
-        // get all pagination links for each post_type
-        $post_pagination_urls =
-            self::getPaginationURLsForPosts(
-                array_unique( $unique_post_types )
-            );
-
         // get all comment links
         $comment_pagination_urls =
             DetectCommentPaginationURLs::detect( $wp_site_url );
 
         $post_urls = array_merge(
             $post_urls,
-            $post_pagination_urls,
             $category_pagination_urls,
             $comment_pagination_urls
         );
@@ -510,9 +507,35 @@ class FilesHelper {
         return $cleaned_urls;
     }
 
-    public static function getPaginationURLsForPosts( $post_types ) {
+    public static function getPaginationURLsForPosts() {
         global $wpdb, $wp_rewrite;
 
+        $post_urls = array();
+        $unique_post_types = array();
+
+        $query = "
+            SELECT ID,post_type
+            FROM %s
+            WHERE post_status = '%s'
+            AND post_type NOT IN ('%s','%s')";
+
+        $posts = $wpdb->get_results(
+            sprintf(
+                $query,
+                $wpdb->posts,
+                'publish',
+                'revision',
+                'nav_menu_item'
+            )
+        );
+
+        foreach ( $posts as $post ) {
+            // capture all post types
+            $unique_post_types[] = $post->post_type;
+        }
+
+        // get all pagination links for each post_type
+        $post_types = array_unique( $unique_post_types );
         $pagination_base = $wp_rewrite->pagination_base;
         $default_posts_per_page = get_option( 'posts_per_page' );
 
@@ -540,8 +563,15 @@ class FilesHelper {
                 continue;
             }
 
-            // TODO: need service for WP to understand post_type_obj?
-            $plural_form = strtolower( $post_type_obj->labels->name );
+            // cast WP's object back to array
+            $post_type_labels = (array) $post_type_obj->labels;
+
+            $plural_form = strtolower( $post_type_labels['name'] );
+
+            // skip post type names containing spaces
+            if ( strpos( $plural_form, ' ' ) !== false ) {
+                continue;
+            }
 
             $count = $wpdb->num_rows;
 
