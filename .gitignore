@@ -1,3 +1,4 @@
 /vendor/
 /vendor_prefixed/
+node_modules/
 

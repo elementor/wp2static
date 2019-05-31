@@ -73,6 +73,7 @@ $tpl = new \WP2Static\TemplateHelper();
             'URL Detection',
             'Crawling',
             'Processing',
+            'Forms',
             'Advanced Options',
             'Deployment',
             'Logs',
@@ -101,16 +102,14 @@ $tpl = new \WP2Static\TemplateHelper();
 
     function generateDeploymentMethodOptions() {
         $options = array(
-            'folder' => array( 'Subdirectory on current server', 'free' ),
-            'zip' => array( 'ZIP archive (.zip)', 'free' ),
+            'folder' => array( 'Subdirectory on current server' ),
+            'zip' => array( 'ZIP archive (.zip)' ),
         );
 
         $options = apply_filters(
             'wp2static_add_deployment_method_option_to_ui',
             $options
         );
-
-        // TODO: format list here, grouping free and add-on deploy types
 
         foreach ( $options as $key => $value ) {
             echo "<option value='$key'>$value[0]</option>";
@@ -125,6 +124,7 @@ $tpl = new \WP2Static\TemplateHelper();
     <?php require_once __DIR__ . '/tab_detection.php'; ?>
     <?php require_once __DIR__ . '/tab_crawling.php'; ?>
     <?php require_once __DIR__ . '/tab_processing.php'; ?>
+    <?php require_once __DIR__ . '/tab_forms.php'; ?>
     <?php require_once __DIR__ . '/tab_advanced.php'; ?>
     <?php require_once __DIR__ . '/tab_export.php'; ?>
     <?php require_once __DIR__ . '/tab_logs.php'; ?>
