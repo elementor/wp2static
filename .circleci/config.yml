@@ -6,6 +6,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: install-npm-packages
+          command: 'npm i'
+      - run:
           name: Run code quality checks
           command: |
             composer install --quiet
