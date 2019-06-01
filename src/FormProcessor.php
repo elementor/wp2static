@@ -2,8 +2,11 @@
 
 namespace WP2Static;
 
+use DOMElement;
+
 class FormProcessor {
-    public static function process( $element ) {
+
+    public static function process( DOMElement $element ) : void {
         // check if any form detection options are enabled
 
         // detect form types user wants converted
