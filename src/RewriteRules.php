@@ -3,18 +3,15 @@
 namespace WP2Static;
 
 class RewriteRules {
-    /*
-     * We combine our rules with user-defined rewrites and perform all at once
+    /**
+     * Combine our rules with user-defined rewrites and perform all at once
      *
-     * @param string $site_url WP site URL
-     * @param string $destination_url WP site URL
-     * @param array|false $user_rules user's path rewriting rules
-     * @return array combining search and replacement rules for the 3 URL types
+     * @return mixed[] combined search and replacement rules
      */
     public static function generate(
-        $site_url,
-        $destination_url
-    ) {
+        string $site_url,
+        string $destination_url
+    ) : array {
         /*
          * Pseudo steps:
          *
@@ -37,13 +34,12 @@ class RewriteRules {
         return $rewrite_rules;
     }
 
-    /*
+    /**
      * Generate patterns used for searching / replacing
      *
-     * @param string $url URL
-     * @param string $user_rewrite_rules csv user-defined rewrite rules
+     * @return string[]] rewrite rules
      */
-    public static function generatePatterns( $url ) {
+    public static function generatePatterns( string $url ) : array {
         $url = rtrim( $url, '/' );
         $url_with_cslashes = addcslashes( $url, '/' );
 
@@ -55,16 +51,17 @@ class RewriteRules {
         return $patterns;
     }
 
-    /*
+    /**
      * Get user-defined rewrite rules into plugin defaults
      *
      * @param string $user_rewrite_rules csv user-defined rewrite rules
-     * @return array patterns including user-defined rewrite rules
-     *
+     * @return mixed[] patterns including user-defined rewrite rules
      */
-    public static function getUserRewriteRules( $user_rewrite_rules ) {
+    public static function getUserRewriteRules(
+        string $user_rewrite_rules
+    ) : array {
         if ( ! $user_rewrite_rules ) {
-            return;
+            return [];
         }
 
         $rewrite_rules_output = [];
