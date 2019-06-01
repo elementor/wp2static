@@ -1,49 +1,73 @@
-var validation_errors = ''
-var deploy_options = {
+var formProcessors = {
+  basin: {
+    name: 'Basin',
+    placeholder: 'https://usebasin.com/f/',
+    website: 'https://usebasin.com'
+  },
+  formspree: {
+    name: 'Formspree',
+    placeholder: 'https://formspree.io/myemail@domain.com',
+    website: 'https://formspree.io',
+    description: 'FormSpree is very simple to start with, just set your endpoint, including your email address and start sending.'
+  },
+  zapier: {
+    name: 'Zapier',
+    placeholder: 'https://hooks.zapier.com/hooks/catch/4977245/jqj3l4/',
+    website: 'https://zapier.com'
+  },
+  formkeep: {
+    name: 'FormKeep',
+    placeholder: 'https://formkeep.com/f/5dd8de73ce2c',
+    website: 'https://formkeep.com'
+  },
+  custom: {
+    name: 'Custom endpoint',
+    placeholder: 'https://mycustomendpoint.com/SOMEPATH',
+    website: 'https://docs.wp2static.com'
+  }
+}
+var validationErrors = ''
+var deployOptions = {
   zip: {
     exportSteps: [
       'finalize_deployment'
     ],
-    required_fields: {
+    requiredFields: {
     }
   },
   folder: {
     exportSteps: [
       'finalize_deployment'
     ],
-    required_fields: {
+    requiredFields: {
     }
   }
 }
-
-var site_info = JSON.parse(wp2staticString.site_info)
-var current_deployment_method
-if (wp2staticString.current_deployment_method) {
-  current_deployment_method = wp2staticString.current_deployment_method
+var spinner
+var siteInfo = JSON.parse(wp2staticString.siteInfo)
+var currentDeploymentMethod
+if (wp2staticString.currentDeploymentMethod) {
+  currentDeploymentMethod = wp2staticString.currentDeploymentMethod
 } else {
-  current_deployment_method = 'folder'
+  currentDeploymentMethod = 'folder'
 }
 
 // TODO: get the log out of the archive, along with it's meta infos
-var log_file_url = site_info.uploads_url + 'wp2static-working-files/EXPORT-LOG.txt'
-var selected_form_processor = ''
-var export_action = ''
-var export_targets = []
-var export_commence_time = ''
-var export_duration = ''
-var batch_increment = 0
-var status_text = ''
+var logFileUrl = siteInfo.uploads_url + 'wp2static-working-files/EXPORT-LOG.txt'
+var selectedFormProcessor = ''
+var exportAction = ''
+var exportTargets = []
+var exportCommenceTime = ''
+var statusText = ''
 var protocolAndDomainRE = /^(?:\w+:)?\/\/(\S+)$/
-var localhostDomainRE = /^localhost[\:?\d]*(?:[^\:?\d]\S*)?$/
-var nonLocalhostDomainRE = /^[^\s\.]+\.\S{2,}$/
-var pollingIntervalID = ''
+var localhostDomainRE = /^localhost[:?\d]*(?:[^:?\d]\S*)?$/
+var nonLocalhostDomainRE = /^[^\s.]+\.\S{2,}$/
 var timerIntervalID = ''
-var status_descriptions = {
+var statusDescriptions = {
   'crawl_site': 'Crawling initial file list',
   'post_process_archive_dir': 'Processing the crawled files',
   'post_export_teardown': 'Cleaning up after processing'
 }
-
 jQuery(document).ready(
   function ($) {
     function generateFileListSuccessCallback (serverResponse) {
@@ -64,9 +88,9 @@ jQuery(document).ready(
     }
 
     function generateFileListFailCallback (serverResponse) {
-      failed_deploy_message = 'Failed to generate Initial Crawl List. Please check your permissions to the WordPress upload directory or check your Export Log in case of more info.'
+      const failedDeployMessage = 'Failed to generate Initial Crawl List. Please check your permissions to the WordPress upload directory or check your Export Log in case of more info.'
 
-      $('#current_action').html(failed_deploy_message)
+      $('#current_action').html(failedDeployMessage)
       $('.pulsate-css').hide()
       $('#startExportButton').prop('disabled', true)
       $('.saveSettingsButton').prop('disabled', false)
@@ -76,8 +100,8 @@ jQuery(document).ready(
     }
 
     function prepareInitialFileList () {
-      status_text = 'Analyzing site... this may take a few minutes (but it\'s worth it!)'
-      $('#current_action').html(status_text)
+      statusText = 'Analyzing site... this may take a few minutes (but it\'s worth it!)'
+      $('#current_action').html(statusText)
 
       sendWP2StaticAJAX(
         'generate_filelist_preview',
@@ -86,16 +110,16 @@ jQuery(document).ready(
       )
     }
 
-    function sendWP2StaticAJAX (ajax_action, success_callback, fail_callback) {
+    function sendWP2StaticAJAX (ajaxAction, successCallback, failCallback) {
       $('.hiddenActionField').val('wp_static_html_output_ajax')
-      $('#hiddenAJAXAction').val(ajax_action)
+      $('#hiddenAJAXAction').val(ajaxAction)
       $('#progress').show()
       $('.pulsate-css').show()
 
-      data = $('.options-form :input')
+      const data = $('.options-form :input')
         .filter(
           function (index, element) {
-            return $(element).val() != ''
+            return $(element).val() !== ''
           }
         )
         .serialize()
@@ -106,8 +130,8 @@ jQuery(document).ready(
           data: data,
           dataType: 'html',
           method: 'POST',
-          success: success_callback,
-          error: fail_callback
+          success: successCallback,
+          error: failCallback
         }
       )
     }
@@ -140,16 +164,15 @@ jQuery(document).ready(
     }
 
     function processExportTargets () {
-      if (export_targets.length > 0) {
-        target = export_targets.shift()
+      if (exportTargets.length > 0) {
+        const target = exportTargets.shift()
+        const exportSteps = deployOptions[target]['exportSteps']
 
-        export_steps = deploy_options[target]['exportSteps']
-
-        doAJAXExport(export_steps)
+        doAJAXExport(exportSteps)
       } else {
         // if zip was selected, call to get zip name and enable the button with the link to download
-        if (current_deployment_method === 'zip') {
-          zipURL = site_info.uploads_url + 'wp2static-exported-site.zip?cacheBuster=' + Date.now()
+        if (currentDeploymentMethod === 'zip') {
+          const zipURL = siteInfo.uploads_url + 'wp2static-exported-site.zip?cacheBuster=' + Date.now()
           $('#downloadZIP').attr('href', zipURL)
           $('#downloadZIP').show()
         } else {
@@ -159,14 +182,14 @@ jQuery(document).ready(
         }
 
         // all complete
-        exportCompleteTime = +new Date()
-        export_duration = exportCompleteTime - export_commence_time
+        const exportCompleteTime = +new Date()
+        const exportDuration = exportCompleteTime - exportCommenceTime
 
         // clear export commence time for next run
-        export_commence_time = ''
+        exportCommenceTime = ''
 
         stopTimer()
-        $('#current_action').text('Process completed in ' + millisToMinutesAndSeconds(export_duration) + ' (mins:ss)')
+        $('#current_action').text('Process completed in ' + millisToMinutesAndSeconds(exportDuration) + ' (mins:ss)')
         $('#goToMyStaticSite').focus()
         $('.pulsate-css').hide()
         $('#startExportButton').prop('disabled', false)
@@ -262,10 +285,10 @@ jQuery(document).ready(
     function ajaxErrorHandler () {
       stopTimer()
 
-      failed_deploy_message = 'Failed during "' + status_text +
+      const failedDeployMessage = 'Failed during "' + statusText +
               '", <button id="downloadExportLogButton">Download export log</button>'
 
-      $('#current_action').html(failed_deploy_message)
+      $('#current_action').html(failedDeployMessage)
       $('.pulsate-css').hide()
       $('#startExportButton').prop('disabled', false)
       $('.saveSettingsButton').prop('disabled', false)
@@ -274,12 +297,12 @@ jQuery(document).ready(
     }
 
     function startExportSuccessCallback (serverResponse) {
-      var initial_steps = [
+      var initialSteps = [
         'crawl_site',
         'post_process_archive_dir'
       ]
 
-      doAJAXExport(initial_steps)
+      doAJAXExport(initialSteps)
     }
 
     function startTimer () {
@@ -291,8 +314,8 @@ jQuery(document).ready(
     }
 
     function updateTimer () {
-      exportCompleteTime = +new Date()
-      runningTime = exportCompleteTime - export_commence_time
+      const exportCompleteTime = +new Date()
+      const runningTime = exportCompleteTime - exportCommenceTime
 
       $('#export_timer').html(
         '<b>Export duration: </b>' + millisToMinutesAndSeconds(runningTime)
@@ -301,15 +324,15 @@ jQuery(document).ready(
 
     function startExport () {
       // start timer
-      export_commence_time = +new Date()
+      exportCommenceTime = +new Date()
       startTimer()
 
       // startPolling();
 
-      validation_errors = getValidationErrors()
+      validationErrors = getValidationErrors()
 
-      if (validation_errors !== '') {
-        alert(validation_errors)
+      if (validationErrors !== '') {
+        alert(validationErrors)
 
         // TODO: place in function that resets any in progress counters, etc
         $('#progress').hide()
@@ -323,15 +346,13 @@ jQuery(document).ready(
 
       $('#current_action').html('Starting export...')
 
-      // showProgress();
-
       // reset export targets to avoid having left-overs from a failed run
-      export_targets = []
+      exportTargets = []
 
-      if (current_deployment_method === 'zip') {
+      if (currentDeploymentMethod === 'zip') {
         $('#createZip').attr('checked', 'checked')
       }
-      export_targets.push(current_deployment_method)
+      exportTargets.push(currentDeploymentMethod)
 
       sendWP2StaticAJAX(
         'prepare_for_export',
@@ -346,65 +367,59 @@ jQuery(document).ready(
       $('#exportDuration').hide()
     }
 
-    function showProgress () {
-      clearProgressAndResults()
-      $('#progress').show()
-      $('.pulsate-css').show()
-    }
-
     function getValidationErrors () {
-      validation_errors = ''
+      var validationErrors = ''
       // check for when targetFolder is showing (plugin reset state)
       if ($('#targetFolder').is(':visible') &&
-            ($('#targetFolder').val() == '')) {
-        validation_errors += 'Target folder may not be empty. Please adjust your settings.'
+            ($('#targetFolder').val() === '')) {
+        validationErrors += 'Target folder may not be empty. Please adjust your settings.'
       }
 
       if (($('#baseUrl').val() === undefined ||
-            $('#baseUrl').val() == '') &&
+            $('#baseUrl').val() === '') &&
             !$('#allowOfflineUsage').is(':checked')) {
-        validation_errors += 'Please set the Base URL field to the address you will host your static site.\n'
+        validationErrors += 'Please set the Base URL field to the address you will host your static site.\n'
       }
 
       // TODO: on new Debian package-managed environment, this was falsely erroring
       if (!isUrl($('#baseUrl').val()) && !$('#allowOfflineUsage').is(':checked')) {
         // TODO: testing / URL as base
         if ($('#baseUrl').val() !== '/') {
-          validation_errors += 'Please set the Base URL field to a valid URL, ie http://mystaticsite.com.\n'
+          validationErrors += 'Please set the Base URL field to a valid URL, ie http://mystaticsite.com.\n'
         }
       }
 
-      required_fields =
-            deploy_options[current_deployment_method]['required_fields']
+      const requiredFields =
+            deployOptions[currentDeploymentMethod]['requiredFields']
 
-      if (required_fields) {
-        validateEmptyFields(required_fields)
+      if (requiredFields) {
+        validateEmptyFields(requiredFields)
       }
 
-      repo_field = deploy_options[current_deployment_method]['repo_field']
+      const repoField = deployOptions[currentDeploymentMethod]['repoField']
 
-      if (repo_field) {
-        validateRepoField(repo_field)
+      if (repoField) {
+        validateRepoField(repoField)
       }
 
-      return validation_errors
+      return validationErrors
     }
 
-    function validateRepoField (repo_field) {
-      repo = $('#' + repo_field['field'] + '').val()
+    function validateRepoField (repoField) {
+      const repo = $('#' + repoField['field'] + '').val()
 
-      if (repo != '') {
+      if (repo !== '') {
         if (repo.split('/').length !== 2) {
-          validation_errors += repo_field['message']
+          validationErrors += repoField['message']
         }
       }
     }
 
-    function validateEmptyFields (required_fields) {
-      Object.keys(required_fields).forEach(
+    function validateEmptyFields (requiredFields) {
+      Object.keys(requiredFields).forEach(
         function (key, index) {
-          if ($('#' + key).val() == '') {
-            validation_errors += required_fields[key] + '\n'
+          if ($('#' + key).val() === '') {
+            validationErrors += requiredFields[key] + '\n'
           }
         }
       )
@@ -454,23 +469,23 @@ jQuery(document).ready(
         if an action fails, ajaxErrorHandler() is called
         */
     function doAJAXExport (args) {
-      export_action = args[0]
-      status_text = export_action
+      exportAction = args[0]
+      statusText = exportAction
 
-      if (status_descriptions[export_action] != undefined) {
-        status_text = status_descriptions[export_action]
+      if (statusDescriptions[exportAction] !== undefined) {
+        statusText = statusDescriptions[exportAction]
       } else {
-        status_text = export_action
+        statusText = exportAction
       }
 
-      $('#current_action').html(status_text)
+      $('#current_action').html(statusText)
       $('.hiddenActionField').val('wp_static_html_output_ajax')
-      $('#hiddenAJAXAction').val(export_action)
+      $('#hiddenAJAXAction').val(exportAction)
 
-      data = $('.options-form :input')
+      const data = $('.options-form :input')
         .filter(
           function (index, element) {
-            return $(element).val() != ''
+            return $(element).val() !== ''
           }
         )
         .serialize()
@@ -484,7 +499,6 @@ jQuery(document).ready(
           success: function (serverResponse) {
             // if an action is successful, and there are other actions queued up
             if (serverResponse === 'SUCCESS' && args.length > 1) {
-              batch_increment = 0
               // rm first action now that it's succeeded
               args.shift()
               // call function with all other actions
@@ -492,12 +506,9 @@ jQuery(document).ready(
               // if an action is in progress incremental, it will call itself again
             } else if (serverResponse > 0) {
               doAJAXExport(args)
-
-              batch_increment += 1
             } else if (serverResponse === 'SUCCESS') {
               // not an incremental action, continue on with export targets
               processExportTargets()
-              batch_increment = 0
             } else {
               ajaxErrorHandler()
             }
@@ -508,21 +519,21 @@ jQuery(document).ready(
     }
 
     function updateBaseURLReferences () {
-      var base_url_previews = $('.base_url_preview')
+      var baseUrlPreviews = $('.baseUrl_preview')
 
-      var base_url = $('#baseUrl-' + current_deployment_method).val()
+      var baseUrl = $('#baseUrl-' + currentDeploymentMethod).val()
 
-      $('#baseUrl').val($('#baseUrl-' + current_deployment_method).val())
+      $('#baseUrl').val($('#baseUrl-' + currentDeploymentMethod).val())
 
-      base_url_previews.text(base_url.replace(/\/$/, '') + '/')
+      baseUrlPreviews.text(baseUrl.replace(/\/$/, '') + '/')
 
       // update the clickable preview url in folder options
-      $('#folderPreviewURL').text(site_info.site_url + '/')
-      $('#folderPreviewURL').attr('href', (site_info.site_url + '/'))
+      $('#folderPreviewURL').text(siteInfo.site_url + '/')
+      $('#folderPreviewURL').attr('href', (siteInfo.site_url + '/'))
     }
 
     function hideOtherVendorMessages () {
-      notices = $('.update-nag, .updated, .error, .is-dismissible, .elementor-message')
+      const notices = $('.update-nag, .updated, .error, .is-dismissible, .elementor-message')
 
       $.each(
         notices,
@@ -534,53 +545,24 @@ jQuery(document).ready(
       )
     }
 
-    var form_processors = {
-      basin: {
-        name: 'Basin',
-        placeholder: 'https://usebasin.com/f/',
-        website: 'https://usebasin.com'
-      },
-      formspree: {
-        name: 'Formspree',
-        placeholder: 'https://formspree.io/myemail@domain.com',
-        website: 'https://formspree.io',
-        description: 'FormSpree is very simple to start with, just set your '
-      },
-      zapier: {
-        name: 'Zapier',
-        placeholder: 'https://hooks.zapier.com/hooks/catch/4977245/jqj3l4/',
-        website: 'https://zapier.com'
-      },
-      formkeep: {
-        name: 'FormKeep',
-        placeholder: 'https://formkeep.com/f/5dd8de73ce2c',
-        website: 'https://formkeep.com'
-      },
-      basin: {
-        name: 'Basin',
-        placeholder: 'https://usebasin.com/f/f58i90f4a674',
-        website: 'https://usebasin.com'
-      },
-      custom: {
-        name: 'Custom endpoint',
-        placeholder: 'https://mycustomendpoint.com/SOMEPATH',
-        website: 'https://docs.wp2static.com'
-      }
-    }
-
-    function setFormProcessor (selected_form_processor) {
-      if (form_processors[selected_form_processor] !== '') {
-        $('#form_processor_description').val(form_processors[selected_form_processor].description)
+    function setFormProcessor (selectedFormProcessor) {
+      if (selectedFormProcessor in formProcessors) {
+        $('#formProcessor_description').text(formProcessors[selectedFormProcessor].description)
+        var website = formProcessors[selectedFormProcessor].website
+        var websiteLink = $('<a>').attr('href', website).text('Visit ' + formProcessors[selectedFormProcessor].name)
+        $('#formProcessor_website').html(websiteLink)
+        $('#formProcessor_endpoint').attr('placeholder', formProcessors[selectedFormProcessor].placeholder)
       } else {
-        $('#form_processor_description').val('')
+        $('#formProcessor_description').text('')
+        $('#formProcessor_website').html('')
+        $('#formProcessor_endpoint').attr('placeholder', 'Form endpoint')
       }
     }
 
-    function populateFormProcessorOptions () {
-      for (const [form_processor, options] of Object.entries(form_processors)) {
-        console.log(form_processor, options)
-        var opt = $('<option>').val(form_processor).text(options.name)
-        $('#form_processor').append(opt)
+    function populateFormProcessorOptions (formProcessors) {
+      for (const [formProcessor, options] of Object.entries(formProcessors)) {
+        var opt = $('<option>').val(formProcessor).text(options.name)
+        $('#formProcessor_select').append(opt)
       }
     }
 
@@ -588,13 +570,13 @@ jQuery(document).ready(
         TODO: quick win to get the select menu options to behave like the sendViaFTP, etc checkboxes
         */
     // TODO: remove this completely?
-    function setDeploymentMethod (selected_deployment_method) {
+    function setDeploymentMethod (selectedDeploymentMethod) {
       // hide zip dl link for all
       $('#downloadZIP').hide()
-      current_deployment_method = selected_deployment_method
+      currentDeploymentMethod = selectedDeploymentMethod
 
       // set the selected option in case calling this from outside the event handler
-      $('.selected_deployment_method').val(selected_deployment_method)
+      $('.selectedDeploymentMethod').val(selectedDeploymentMethod)
     }
 
     function offlineUsageChangeHandler (checkbox) {
@@ -605,29 +587,28 @@ jQuery(document).ready(
       }
     }
 
-    function setExportSettingDetailsVisibility (changed_checkbox) {
-      checkbox_name = $(changed_checkbox).attr('name')
-      export_option_name = checkbox_name.replace('sendVia', '').toLowerCase()
+    function setExportSettingDetailsVisibility (changedCheckbox) {
+      const checkboxName = $(changedCheckbox).attr('name')
+      const exportOptionName = checkboxName.replace('sendVia', '').toLowerCase()
+      const exportOptionElements = $('.' + exportOptionName)
 
-      var export_option_elements = $('.' + export_option_name)
-
-      if ($(changed_checkbox).is(':checked')) {
-        export_option_elements.show()
+      if ($(changedCheckbox).is(':checked')) {
+        exportOptionElements.show()
         // unhide all the inputs, the following span and the following br
       } else {
         // hide all the inputs, the following span and the following br
-        export_option_elements.hide()
+        exportOptionElements.hide()
       }
     }
 
     /*
         render the information and settings blocks based on the deployment method selected
         */
-    function renderSettingsBlock (selected_deployment_method) {
+    function renderSettingsBlock (selectedDeploymentMethod) {
       // hide non-active deployment methods
       $('[class$="_settings_block"]').hide()
       // hide those not selected
-      $('.' + selected_deployment_method + '_settings_block').show()
+      $('.' + selectedDeploymentMethod + '_settings_block').show()
     }
 
     function notifyMe () {
@@ -658,13 +639,7 @@ jQuery(document).ready(
     }
 
     function reloadLogFile () {
-      // get current log selection
-      current_log_target = 'export_log'
-
-      // if not empty, call loadLogFile again
-      if (current_log_target) {
-        loadLogFile(current_log_target)
-      }
+      loadLogFile('export_log')
     }
 
     function loadLogFile () {
@@ -678,7 +653,7 @@ jQuery(document).ready(
 
       // load the log file
       $.get(
-        log_file_url + '?cacheBuster=' + Date.now(),
+        logFileUrl + '?cacheBuster=' + Date.now(),
         function (data) {
           // hide loading icon
           $('#log_load_progress').hide()
@@ -722,14 +697,14 @@ jQuery(document).ready(
     )
 
     // handler when form processor is changed
-    $('#form_processor').change(
+    $('#formProcessor_select').change(
       function () {
         setFormProcessor(this.value)
       }
     )
 
     // handler when deployment method is changed
-    $('.selected_deployment_method').change(
+    $('.selectedDeploymentMethod').change(
       function () {
         renderSettingsBlock(this.value)
         setDeploymentMethod(this.value)
@@ -745,13 +720,6 @@ jQuery(document).ready(
       }
     )
 
-    // handler when log selector is changed
-    $('#log_switcher').change(
-      function () {
-        loadLogFile(target_log)
-      }
-    )
-
     // update base url previews in realtime
     $(document).on(
       'input',
@@ -761,7 +729,7 @@ jQuery(document).ready(
       }
     )
 
-    function changeTab (target_tab) {
+    function changeTab (targetTab) {
       var tabsContentMapping = {
         advanced_settings: 'Advanced Options',
         form_settings: 'Forms',
@@ -778,7 +746,7 @@ jQuery(document).ready(
       $.each(
         $('.nav-tab'),
         function (index, element) {
-          if ($(element).text() === target_tab) {
+          if ($(element).text() === targetTab) {
             $(element).addClass('nav-tab-active')
             $(element).blur()
           } else {
@@ -790,7 +758,7 @@ jQuery(document).ready(
       // hide/show the tab content
       for (var key in tabsContentMapping) {
         if (tabsContentMapping.hasOwnProperty(key)) {
-          if (tabsContentMapping[key] === target_tab) {
+          if (tabsContentMapping[key] === targetTab) {
             $('.' + key).show()
             $('html, body').scrollTop(0)
           } else {
@@ -835,9 +803,7 @@ jQuery(document).ready(
       '.nav-tab',
       function (evt) {
         evt.preventDefault()
-        current_tab = $(this)
-        current_tab_text = current_tab.text()
-        changeTab(current_tab_text)
+        changeTab($(this).text())
       }
     )
 
@@ -851,22 +817,22 @@ jQuery(document).ready(
 
     $(document).on(
       'click',
-      '#send_support_request',
+      '#send_supportRequest',
       function (evt) {
         evt.preventDefault()
 
-        var support_request = $('#supportRequestContent').val()
+        var supportRequest = $('#supportRequestContent').val()
 
         if ($('#supportRequestIncludeLog').is(':checked')) {
           $.get(
-            log_file_url,
+            logFileUrl,
             function (data) {
-              support_request += '#### EXPORT LOG ###'
-              support_request += data
+              supportRequest += '#### EXPORT LOG ###'
+              supportRequest += data
 
               data = {
                 email: $('#supportRequestEmail').val(),
-                support_request: support_request
+                supportRequest: supportRequest
               }
 
               $.ajax(
@@ -875,8 +841,8 @@ jQuery(document).ready(
                   data: data,
                   dataType: 'html',
                   method: 'POST',
-                  success: send_support_success_callback,
-                  error: send_support_fail_callback
+                  success: sendSupportSuccessCallback,
+                  error: sendSupportFailCallback
                 }
               )
             }
@@ -887,9 +853,9 @@ jQuery(document).ready(
           )
         }
 
-        data = {
+        var data = {
           email: $('#supportRequestEmail').val(),
-          support_request: support_request
+          supportRequest: supportRequest
         }
 
         $.ajax(
@@ -898,8 +864,8 @@ jQuery(document).ready(
             data: data,
             dataType: 'html',
             method: 'POST',
-            success: send_support_success_callback,
-            error: send_support_fail_callback
+            success: sendSupportSuccessCallback,
+            error: sendSupportFailCallback
           }
         )
       }
@@ -925,11 +891,11 @@ jQuery(document).ready(
       }
     )
 
-    function send_support_success_callback (serverResponse) {
+    function sendSupportSuccessCallback (serverResponse) {
       alert('Successful support request sent')
     }
 
-    function send_support_fail_callback (serverResponse) {
+    function sendSupportFailCallback (serverResponse) {
       alert('Failed to send support request. Please try again or contact help@wp2static.com.')
     }
 
@@ -988,8 +954,8 @@ jQuery(document).ready(
       '#delete_deploy_cache_button',
       function (event) {
         event.preventDefault()
-        button = event.currentTarget
-        spinner = $('button').siblings('div.spinner')
+        var button = event.currentTarget
+        spinner = $(button).siblings('div.spinner')
         spinner.show()
         sendWP2StaticAJAX(
           'delete_deploy_cache',
@@ -1003,7 +969,7 @@ jQuery(document).ready(
       if (serverResponse === 'SUCCESS') {
         alert('Connection/Upload Test Successful')
       } else {
-        alert('FAIL: Unable to complete test upload to ' + current_deployment_method)
+        alert('FAIL: Unable to complete test upload to ' + currentDeploymentMethod)
       }
 
       spinner.hide()
@@ -1011,7 +977,7 @@ jQuery(document).ready(
     }
 
     function testDeploymentFailCallback (serverResponse) {
-      alert('FAIL: Unable to complete test upload to ' + current_deployment_method)
+      alert('FAIL: Unable to complete test upload to ' + currentDeploymentMethod)
       spinner.hide()
       $('.pulsate-css').hide()
     }
@@ -1025,7 +991,7 @@ jQuery(document).ready(
         spinner.show()
 
         sendWP2StaticAJAX(
-          'test_' + current_deployment_method,
+          'test_' + currentDeploymentMethod,
           testDeploymentSuccessCallback,
           testDeploymentFailCallback
         )
@@ -1044,13 +1010,13 @@ jQuery(document).ready(
     $('.spinner').hide()
 
     // guard against selected option for add-on not currently activated
-    if ($('#baseUrl-' + current_deployment_method).val() === undefined) {
-      current_deployment_method = 'folder'
+    if ($('#baseUrl-' + currentDeploymentMethod).val() === undefined) {
+      currentDeploymentMethod = 'folder'
     }
 
-    populateFormProcessorOptions()
+    populateFormProcessorOptions(formProcessors)
 
-    setFormProcessor(selected_form_processor)
+    setFormProcessor(selectedFormProcessor)
 
     // call change handler on page load, to set correct state
     offlineUsageChangeHandler($('#allowOfflineUsage'))
@@ -1058,10 +1024,10 @@ jQuery(document).ready(
     updateBaseURLReferences($('#baseUrl').val())
 
     // set and show the previous selected deployment method
-    renderSettingsBlock(current_deployment_method)
+    renderSettingsBlock(currentDeploymentMethod)
 
     // set the select to the current deployment type
-    setDeploymentMethod(current_deployment_method)
+    setDeploymentMethod(currentDeploymentMethod)
 
     // hide all but WP2Static messages
     hideOtherVendorMessages()

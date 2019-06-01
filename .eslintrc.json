@@ -6,7 +6,10 @@
     "extends": "standard",
     "globals": {
         "Atomics": "readonly",
-        "SharedArrayBuffer": "readonly"
+        "SharedArrayBuffer": "readonly",
+        "ajaxurl": true,
+        "wp2staticString": true,
+        "jQuery": true
     },
     "parserOptions": {
         "ecmaVersion": 2018
