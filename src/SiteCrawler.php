@@ -433,6 +433,10 @@ class SiteCrawler extends Base {
                 break;
         }
 
+        if ( ! is_string( $this->processed_file ) ) {
+            return;
+        }
+
         // need to make sure we've aborted before here if we shouldn't save
         $this->saveCrawledURL(
             $url,
