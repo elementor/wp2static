@@ -22,10 +22,15 @@ class SiteCrawler extends Base {
     public $page_url;
     public $curl_options;
 
+    /**
+     *  SiteCrawler constructor
+     *
+     * @param mixed[] $rewrite_rules rewrite rules
+     */
     public function __construct(
-        $rewrite_rules,
-        $site_url_host,
-        $destination_url
+        array $rewrite_rules,
+        string $site_url_host,
+        string $destination_url
     ) {
         $this->loadSettings();
 
@@ -75,7 +80,12 @@ class SiteCrawler extends Base {
         }
     }
 
-    public function crawl() {
+    /**
+     *  Initiate crawling
+     *
+     * @throws WP2StaticException
+     */
+    public function crawl() : void {
         $this->list_of_urls_to_crawl_path =
             SiteInfo::getPath( 'uploads' ) .
             'wp2static-working-files/FINAL-CRAWL-LIST.txt';
@@ -84,7 +94,7 @@ class SiteCrawler extends Base {
             $err = 'ERROR: LIST OF URLS TO CRAWL NOT FOUND AT: ' .
                 $this->list_of_urls_to_crawl_path;
             WsLog::l( $err );
-            throw new Exception( $err );
+            throw new WP2StaticException( $err );
         } else {
             if ( filesize( $this->list_of_urls_to_crawl_path ) ) {
                 $this->crawlABitMore();
@@ -98,7 +108,12 @@ class SiteCrawler extends Base {
         }
     }
 
-    public function crawlABitMore() {
+    /**
+     *  Crawl more URLs
+     *
+     * @throws WP2StaticException
+     */
+    public function crawlABitMore() : void {
         $batch_of_links_to_crawl = array();
 
         // get urls to crawl (can skip this with targeted query)
@@ -111,7 +126,7 @@ class SiteCrawler extends Base {
         if ( ! $this->urls_to_crawl ) {
             $err = 'Expected more URLs to crawl, found none';
             WsLog::l( $err );
-            throw new Exception( $err );
+            throw new WP2StaticException( $err );
         }
 
         $total_links = count( $this->urls_to_crawl );
@@ -198,7 +213,12 @@ class SiteCrawler extends Base {
         unset( $url_reponse );
     }
 
-    public function checkIfMoreCrawlingNeeded( $urls_to_crawl ) {
+    /**
+     *  Check if more crawling is required
+     *
+     *  @param string[] $urls_to_crawl Remaining URLs to crawl in batch
+     */
+    public function checkIfMoreCrawlingNeeded( array $urls_to_crawl ) : void {
         $remaining_urls = count( $urls_to_crawl );
         $via_ui = filter_input( INPUT_POST, 'ajax_action' );
 
@@ -217,13 +237,18 @@ class SiteCrawler extends Base {
         }
     }
 
-    public function getExtensionFromURL( $url ) {
+    /**
+     *  Get extension from URL
+     *
+     * @throws WP2StaticException
+     */
+    public function getExtensionFromURL( string $url ) : string {
         $url_path = parse_url( $url, PHP_URL_PATH );
 
         if ( ! is_string( $url_path ) ) {
             $err = 'Invalid URL encountered when checking extension';
             WsLog::l( $err );
-            throw new Exception( $err );
+            throw new WP2StaticException( $err );
         }
 
         $extension = pathinfo( $url_path, PATHINFO_EXTENSION );
@@ -235,7 +260,10 @@ class SiteCrawler extends Base {
         return $extension;
     }
 
-    public function detectFileType( $url, $content_type ) {
+    public function detectFileType(
+        string $url,
+        string $content_type
+    ) : string {
         // TODO: this needs to go after the crawling...
         $file_extension = $this->getExtensionFromURL( $url );
 
@@ -269,8 +297,17 @@ class SiteCrawler extends Base {
         return $file_type;
     }
 
-    public function checkForCurlErrors( $response, $curl_handle ) {
-        if ( $response === false ) {
+    /**
+     * Check for cURL errors
+     *
+     * @param string $response response body
+     * @param resource $curl_handle cURL handle
+     */
+    public function checkForCurlErrors(
+        string $response,
+        $curl_handle
+    ) : void {
+        if ( ! $response ) {
             $response = curl_error( $curl_handle );
             WsLog::l(
                 'cURL error:' .
@@ -279,7 +316,7 @@ class SiteCrawler extends Base {
         }
     }
 
-    public function crawlSingleURL( $url ) {
+    public function crawlSingleURL( string $url ) : void {
         $response = $this->request->getURL(
             $url,
             $this->ch,
