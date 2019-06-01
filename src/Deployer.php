@@ -17,7 +17,7 @@ class Deployer extends Base {
 
               None of this expected to work currently
     */
-    public function deploy( $test = false ) {
+    public function deploy( bool $test = false ) : void {
         $method = $this->settings['selected_deployment_option'];
 
         if ( defined( 'WP_CLI' ) ) {
@@ -56,12 +56,12 @@ class Deployer extends Base {
         $this->finalizeDeployment();
     }
 
-    public function finalizeDeployment() {
+    public function finalizeDeployment() : void {
         $this->emailDeployNotification();
         $this->triggerPostDeployHooks();
     }
 
-    public function emailDeployNotification() {
+    public function emailDeployNotification() : void {
         if ( ! isset( $this->settings['completionEmail'] ) ) {
             return;
         }
@@ -80,7 +80,7 @@ class Deployer extends Base {
         wp_mail( $to, $subject, $body, $headers );
     }
 
-    public function triggerPostDeployHooks() {
+    public function triggerPostDeployHooks() : void {
         $this->archive = new Archive();
 
         do_action( 'wp2static_post_deploy_trigger', $this->archive );

@@ -2,15 +2,13 @@
 
 namespace WP2Static;
 
-use Exception;
-
 class Exporter extends Base {
 
     public function __construct() {
         $this->loadSettings();
     }
 
-    public function pre_export_cleanup() {
+    public function pre_export_cleanup() : void {
         // TODO: filter here for add-on generated files
         $files_to_clean = array(
             'FILES-TO-DEPLOY.txt',
@@ -32,7 +30,7 @@ class Exporter extends Base {
         }
     }
 
-    public function cleanup_working_files() {
+    public function cleanup_working_files() : void {
         // TODO: filter here for add-on generated files
         $files_to_clean = array(
             'FILES-TO-DEPLOY.txt',
@@ -53,13 +51,18 @@ class Exporter extends Base {
         }
     }
 
-    public function cleanup_leftover_archives() {
+    /**
+     * Cleanup previous exports
+     *
+     * @throws WP2StaticException
+     */
+    public function cleanup_leftover_archives() : void {
         $uploads_path = SiteInfo::getPath( 'uploads' );
 
         if ( ! is_string( $uploads_path ) ) {
             $err = 'Home URL not defined ';
             WsLog::l( $err );
-            throw new Exception( $err );
+            throw new WP2StaticException( $err );
         }
 
         $files_in_uploads_dir = scandir( $uploads_path );
@@ -93,7 +96,7 @@ class Exporter extends Base {
         }
     }
 
-    public function generateModifiedFileList() {
+    public function generateModifiedFileList() : void {
         // preserve the initial crawl list, to be used in debugging + more
         copy(
             SiteInfo::getPath( 'uploads' ) .
@@ -132,7 +135,7 @@ class Exporter extends Base {
         if ( ! $crawl_list ) {
             $err = 'Unable to load crawl list';
             WsLog::l( $err );
-            throw new Exception( $err );
+            throw new WP2StaticException( $err );
         }
 
         // applying exclusions before inclusions

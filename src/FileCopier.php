@@ -11,13 +11,17 @@ class FileCopier extends Base {
     public $wp_site_url;
     public $wp_site_path;
 
-    public function __construct( $url, $wp_site_url, $wp_site_path ) {
+    public function __construct(
+        string $url,
+        string $wp_site_url,
+        string $wp_site_path
+    ) {
         $this->url = $url;
         $this->wp_site_url = $wp_site_url;
         $this->wp_site_path = $wp_site_path;
     }
 
-    public function getLocalFileForURL() {
+    public function getLocalFileForURL() : string {
         $local_file = str_replace(
             $this->wp_site_url,
             $this->wp_site_path,
@@ -32,15 +36,17 @@ class FileCopier extends Base {
                 ' for URL: ' . $this->url .
                 ' (FILE NOT FOUND/UNREADABLE)'
             );
+
+            return '';
         }
 
     }
 
-    public function copyFile( $archive_dir ) {
+    public function copyFile( string $archive_dir ) : void {
         $url_info = parse_url( $this->url );
 
         if ( ! is_array( $url_info ) ) {
-            return false;
+            return;
         }
 
         $path_info = array();
@@ -49,7 +55,7 @@ class FileCopier extends Base {
 
         // TODO: here we can allow certain external host files to be crawled
         if ( ! array_key_exists( 'path', $url_info ) ) {
-            return false;
+            return;
         }
 
         $path_info = pathinfo( $url_info['path'] );
@@ -76,7 +82,7 @@ class FileCopier extends Base {
         }
 
         if ( ! array_key_exists( 'extension', $path_info ) ) {
-            return false;
+            return;
         }
 
         $file_extension = $path_info['extension'];

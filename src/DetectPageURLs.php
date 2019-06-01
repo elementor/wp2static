@@ -4,10 +4,15 @@ namespace WP2Static;
 
 class DetectPageURLs {
 
-    public static function detect() {
+    /**
+     * Detect Page URLs
+     *
+     * @return string[] list of URLs
+     */
+    public static function detect() : array {
         global $wpdb;
 
-        $page_urls = array();
+        $page_urls = [];
 
         $query = "
             SELECT ID

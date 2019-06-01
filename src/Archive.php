@@ -2,8 +2,6 @@
 
 namespace WP2Static;
 
-use Exception;
-
 class Archive extends Base {
     public $path;
 
@@ -12,15 +10,20 @@ class Archive extends Base {
             'wp2static-exported-site/';
     }
 
-    public function currentArchiveExists() {
+    public function currentArchiveExists() : bool {
         return is_dir( $this->path );
     }
 
-    public function create() {
+    /**
+     * Create archive
+     *
+     * @throws WP2StaticException
+     */
+    public function create() : void {
         if ( ! wp_mkdir_p( $this->path ) ) {
             $err = "Couldn't create archive directory:" . $this->path;
             WsLog::l( $err );
-            throw new Exception( $err );
+            throw new WP2StaticException( $err );
         }
     }
 }

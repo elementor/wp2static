@@ -18,7 +18,7 @@ namespace WP2Static;
 
 class NormalizeURL {
 
-    public static function normalize( $url, $page_url ) {
+    public static function normalize( string $url, string $page_url ) : string {
         $page_url = new \Net_URL2( $page_url );
 
         $absolute_url = $page_url->resolve( $url );

@@ -4,11 +4,16 @@ namespace WP2Static;
 
 class DetectArchiveURLs {
 
-    public static function detect( $wp_site_url ) {
+    /**
+     * Detect Archive URLs
+     *
+     * @return string[] list of URLs
+     */
+    public static function detect( string $wp_site_url ) : array {
         global $wpdb;
 
-        $post_urls = array();
-        $unique_post_types = array();
+        $post_urls = [];
+        $unique_post_types = [];
 
         $query = "
             SELECT ID,post_type

@@ -4,10 +4,15 @@ namespace WP2Static;
 
 class DetectPostURLs {
 
-    public static function detect( $permalink_structure ) {
+    /**
+     * Detect Post URLs
+     *
+     * @return string[] list of URLs
+     */
+    public static function detect( string $permalink_structure ) : array {
         global $wpdb;
 
-        $post_urls = array();
+        $post_urls = [];
 
         $query = "
             SELECT ID

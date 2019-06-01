@@ -11,7 +11,7 @@ class CLI {
     /**
      * Display system information and health check
      */
-    public function diagnostics() {
+    public function diagnostics() : void {
         WP_CLI::line(
             PHP_EOL . 'WP2Static' . PHP_EOL
         );
@@ -78,7 +78,10 @@ class CLI {
 
     }
 
-    public function microtime_diff( $start, $end = null ) {
+    public function microtime_diff(
+        string $start,
+        string $end = null
+    ) : float {
         if ( ! $end ) {
             $end = microtime();
         }
@@ -95,7 +98,7 @@ class CLI {
     /**
      * Generate a static copy of your WordPress site.
      */
-    public function generate() {
+    public function generate() : void {
         $start_time = microtime();
 
         $plugin = Controller::getInstance();
@@ -122,8 +125,14 @@ class CLI {
      *
      * [--selected_deployment_option]
      * : Override the deployment option
+     *
+     * @param string[] $args CLI args
+     * @param string[] $assoc_args CLI args
      */
-    public function deploy( $args, $assoc_args ) {
+    public function deploy(
+        array $args,
+        array $assoc_args
+    ) : void {
         $test = false;
 
         if ( ! empty( $assoc_args['test'] ) ) {
@@ -181,8 +190,14 @@ class CLI {
      * Unset option
      *
      *     wp wp2static options unset baseUrl
+     *
+     * @param string[] $args CLI args
+     * @param string[] $assoc_args CLI args
      */
-    public function options( $args, $assoc_args ) {
+    public function options(
+        array $args,
+        array $assoc_args
+    ) : void {
         $action = isset( $args[0] ) ? $args[0] : null;
         $option_name = isset( $args[1] ) ? $args[1] : null;
         $value = isset( $args[2] ) ? $args[2] : null;
@@ -226,7 +241,7 @@ class CLI {
 
                 $result = $plugin->options->getOption( $option_name );
 
-                if ( ! $result === $value ) {
+                if ( $result !== $value ) {
                     WP_CLI::error( 'Option not able to be updated' );
                 }
             }

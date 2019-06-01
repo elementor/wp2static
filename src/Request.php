@@ -18,17 +18,33 @@ class Request {
         );
     }
 
-    public function applyDefaultOptions( $curl_handle ) {
+    /**
+     * Apply default cURL options
+     *
+     * @param resource $ch cURL resource
+     */
+    public function applyDefaultOptions( $ch ) : void {
         foreach ( $this->default_options as $option => $value ) {
             curl_setopt(
-                $curl_handle,
+                $ch,
                 $option,
                 $value
             );
         }
     }
 
-    public function getURL( $url, $ch, $curl_options = array() ) {
+    /**
+     * GET with cURL handle and options
+     *
+     * @param resource $ch cURL resource
+     * @param mixed[] $curl_options cURL options
+     * @return mixed[] response and cURL handle in array
+     */
+    public function getURL(
+        string $url,
+        $ch,
+        array $curl_options = []
+    ) : array {
         curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
         curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
         curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
@@ -40,6 +56,10 @@ class Request {
 
         if ( ! empty( $curl_options ) ) {
             foreach ( $curl_options as $option => $value ) {
+                if ( ! is_int( $option ) ) {
+                    continue;
+                }
+
                 curl_setopt(
                     $ch,
                     $option,
@@ -56,12 +76,19 @@ class Request {
         return $response;
     }
 
+    /**
+     * POST with JSON payload and custom headers
+     *
+     * @param mixed[] $data payload
+     * @param mixed[] $headers custom headers
+     * @param mixed[] $curl_options cURL options
+     */
     public function postWithJSONPayloadCustomHeaders(
-        $url,
-        $data,
-        $headers,
-        $curl_options = array()
-        ) {
+        string $url,
+        array $data,
+        array $headers,
+        array $curl_options = []
+        ) : void {
         $ch = curl_init();
 
         curl_setopt( $ch, CURLOPT_URL, $url );
@@ -77,6 +104,10 @@ class Request {
 
         if ( ! empty( $curl_options ) ) {
             foreach ( $curl_options as $option => $value ) {
+                if ( ! is_int( $option ) ) {
+                    continue;
+                }
+
                 curl_setopt(
                     $ch,
                     $option,
@@ -103,7 +134,15 @@ class Request {
         curl_close( $ch );
     }
 
-    public function getWithCustomHeaders( $url, $headers ) {
+    /**
+     * GET with custom headers
+     *
+     * @param mixed[] $headers custom headers
+     */
+    public function getWithCustomHeaders(
+        string $url,
+        array $headers
+    ) : int {
         $ch = curl_init();
 
         curl_setopt( $ch, CURLOPT_URL, $url );
@@ -127,7 +166,7 @@ class Request {
         $header_size = curl_getinfo( $ch, CURLINFO_HEADER_SIZE );
 
         if ( ! is_string( $output ) ) {
-            return false;
+            return 0;
         }
 
         $this->body = substr( $output, $header_size );
@@ -152,11 +191,17 @@ class Request {
         return $this->status_code;
     }
 
+    /**
+     * PUT with JSON payload and custom headers
+     *
+     * @param mixed[] $data payload
+     * @param mixed[] $headers custom headers
+     */
     public function putWithJSONPayloadCustomHeaders(
-        $url,
-        $data,
-        $headers
-        ) {
+        string $url,
+        array $data,
+        array $headers
+        ) : void {
         $ch = curl_init();
 
         curl_setopt( $ch, CURLOPT_URL, $url );
@@ -188,11 +233,16 @@ class Request {
         curl_close( $ch );
     }
 
+    /**
+     * PUT file with custom headers
+     *
+     * @param mixed[] $headers custom headers
+     */
     public function putWithFileStreamAndHeaders(
-        $url,
-        $local_file,
-        $headers
-        ) {
+        string $url,
+        string $local_file,
+        array $headers
+        ) : void {
 
         $ch = curl_init();
 
@@ -238,11 +288,16 @@ class Request {
         }
     }
 
+    /**
+     *  POST with file handle and custom headers
+     *
+     *  @param mixed[] $headers header options
+     */
     public function postWithFileStreamAndHeaders(
-        $url,
-        $local_file,
-        $headers
-        ) {
+        string $url,
+        string $local_file,
+        array $headers
+        ) : void {
         $ch = curl_init();
 
         $file_stream = fopen( $local_file, 'r' );
@@ -277,11 +332,17 @@ class Request {
         }
     }
 
+    /**
+     *  POST with options array
+     *
+     * @param mixed[] $data payload
+     * @param mixed[] $curl_options cURL options
+     */
     public function postWithArray(
-        $url,
-        $data,
-        $curl_options = array()
-        ) {
+        string $url,
+        array $data,
+        array $curl_options = []
+        ) : void {
         $ch = curl_init();
 
         curl_setopt( $ch, CURLOPT_URL, $url );
@@ -296,6 +357,10 @@ class Request {
 
         if ( ! empty( $curl_options ) ) {
             foreach ( $curl_options as $option => $value ) {
+                if ( ! is_int( $option ) ) {
+                    continue;
+                }
+
                 curl_setopt(
                     $ch,
                     $option,

@@ -4,7 +4,7 @@ namespace WP2Static;
 
 class MimeType {
 
-    public static function guess( $file ) {
+    public static function guess( string $file ) : string {
         $mime_types = array(
             '3gp' => 'video/3gpp',
             'aac' => 'audio/aac',

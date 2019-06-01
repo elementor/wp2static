@@ -2,13 +2,17 @@
 
 namespace WP2Static;
 
-use Exception;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 
 class DetectThemeAssets {
 
-    public static function detect( $theme_type ) {
+    /**
+     * Detect theme public URLs from filesystem
+     *
+     * @return string[] list of URLs
+     */
+    public static function detect( string $theme_type ) : array {
         $files = array();
         $template_path = '';
         $template_url = '';
@@ -19,15 +23,6 @@ class DetectThemeAssets {
         } else {
             $template_path = SiteInfo::getPath( 'child_theme' );
             $template_url = SiteInfo::getUrl( 'child_theme' );
-        }
-
-        if (
-             ! is_string( $template_path ) ||
-             ! is_string( $template_url )
-            ) {
-            $err = 'WP URLs not defined ';
-            WsLog::l( $err );
-            throw new Exception( $err );
         }
 
         if ( is_dir( $template_path ) ) {
@@ -57,10 +52,12 @@ class DetectThemeAssets {
                     );
 
                 if ( $path_crawlable ) {
-                    array_push(
-                        $files,
-                        $detected_filename
-                    );
+                    if ( is_string( $detected_filename ) ) {
+                        array_push(
+                            $files,
+                            $detected_filename
+                        );
+                    }
                 }
             }
         }

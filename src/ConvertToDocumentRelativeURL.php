@@ -5,19 +5,16 @@ namespace WP2Static;
 use Exception;
 
 class ConvertToDocumentRelativeURL {
-    /*
+    /**
      * Convert absolute URL to document-relative.
      * Required for offline URLs
-     *
-     * @param string $url URL to change
-     * @param string $page_url URL of current page to determine hierarchy
-     * @param string $site_url Site URL reference for rewriting
-     * @param bool $offline_mode Whether to append index.html to URLs
-     * @return string Rewritten URL
      */
     public static function convert(
-        $url, $page_url, $site_url, $offline_mode = false
-    ) {
+        string $url,
+        string $page_url,
+        string $site_url,
+        bool $offline_mode = false
+    ) : string {
         $current_page_path_to_root = '';
         $current_page_path = parse_url( $page_url, PHP_URL_PATH );
 
@@ -121,7 +118,7 @@ class ConvertToDocumentRelativeURL {
 
         */
         if ( ! is_string( $offline_url ) ) {
-            return false;
+            return '';
         }
 
         if ( $offline_mode ) {

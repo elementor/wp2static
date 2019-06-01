@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "73a35b370605abb5f86fae588b54b3ae",
+    "content-hash": "facd34804fc509e9567533043dec4353",
     "packages": [
         {
             "name": "pear/net_url2",
@@ -241,16 +241,16 @@
         },
         {
             "name": "giacocorsiglia/wordpress-stubs",
-            "version": "v5.1.1",
+            "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/GiacoCorsiglia/wordpress-stubs.git",
-                "reference": "1c6f011f5c241bab7293315d7fb7fca27fe79473"
+                "url": "https://github.com/leonstafford/wordpress-stubs.git",
+                "reference": "8c707190835bba2c611601ad1a95b673b3e8d5c2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/GiacoCorsiglia/wordpress-stubs/zipball/1c6f011f5c241bab7293315d7fb7fca27fe79473",
-                "reference": "1c6f011f5c241bab7293315d7fb7fca27fe79473",
+                "url": "https://api.github.com/repos/leonstafford/wordpress-stubs/zipball/8c707190835bba2c611601ad1a95b673b3e8d5c2",
+                "reference": "8c707190835bba2c611601ad1a95b673b3e8d5c2",
                 "shasum": ""
             },
             "require-dev": {
@@ -260,7 +260,6 @@
                 "php": "^7.1"
             },
             "type": "library",
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "GPL-2.0+"
             ],
@@ -276,7 +275,10 @@
                 "static analysis",
                 "wordpress"
             ],
-            "time": "2019-03-13T21:16:05+00:00"
+            "support": {
+                "source": "https://github.com/leonstafford/wordpress-stubs/tree/master"
+            },
+            "time": "2019-06-01T12:43:35+00:00"
         },
         {
             "name": "jakub-onderka/php-parallel-lint",
@@ -693,16 +695,16 @@
         },
         {
             "name": "phpstan/phpstan-shim",
-            "version": "0.11.6",
+            "version": "0.11.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan-shim.git",
-                "reference": "f38e0658f497517aff0635f4a622858a5d20c37f"
+                "reference": "f71f7bc73849191e1d044e69f99046b58253054e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan-shim/zipball/f38e0658f497517aff0635f4a622858a5d20c37f",
-                "reference": "f38e0658f497517aff0635f4a622858a5d20c37f",
+                "url": "https://api.github.com/repos/phpstan/phpstan-shim/zipball/f71f7bc73849191e1d044e69f99046b58253054e",
+                "reference": "f71f7bc73849191e1d044e69f99046b58253054e",
                 "shasum": ""
             },
             "require": {
@@ -733,20 +735,20 @@
                 "MIT"
             ],
             "description": "PHPStan Phar distribution",
-            "time": "2019-05-08T19:07:51+00:00"
+            "time": "2019-05-28T20:19:02+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "7.0.3",
+            "version": "7.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "0317a769a81845c390e19684d9ba25d7f6aa4707"
+                "reference": "6024c8a6cb962d496b7bd049ed8f48473824176d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/0317a769a81845c390e19684d9ba25d7f6aa4707",
-                "reference": "0317a769a81845c390e19684d9ba25d7f6aa4707",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/6024c8a6cb962d496b7bd049ed8f48473824176d",
+                "reference": "6024c8a6cb962d496b7bd049ed8f48473824176d",
                 "shasum": ""
             },
             "require": {
@@ -796,7 +798,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2019-02-26T07:38:26+00:00"
+            "time": "2019-05-29T09:59:31+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -989,16 +991,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "8.1.4",
+            "version": "8.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "b534b017daaef2d7f60c6ee61e6aa2e13fdc6910"
+                "reference": "e3c9da6e645492c461e0a11eca117f83f4f4c840"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/b534b017daaef2d7f60c6ee61e6aa2e13fdc6910",
-                "reference": "b534b017daaef2d7f60c6ee61e6aa2e13fdc6910",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/e3c9da6e645492c461e0a11eca117f83f4f4c840",
+                "reference": "e3c9da6e645492c461e0a11eca117f83f4f4c840",
                 "shasum": ""
             },
             "require": {
@@ -1067,7 +1069,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2019-05-09T05:13:39+00:00"
+            "time": "2019-05-28T11:53:42+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
@@ -1748,6 +1750,57 @@
             "time": "2019-02-06T07:57:58+00:00"
         },
         {
+            "name": "thecodingmachine/phpstan-strict-rules",
+            "version": "v0.11.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thecodingmachine/phpstan-strict-rules.git",
+                "reference": "57fb5d835948b507ce78fcf4173cc9e7a54a1297"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thecodingmachine/phpstan-strict-rules/zipball/57fb5d835948b507ce78fcf4173cc9e7a54a1297",
+                "reference": "57fb5d835948b507ce78fcf4173cc9e7a54a1297",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1",
+                "phpstan/phpstan": "^0.11.7"
+            },
+            "require-dev": {
+                "php-coveralls/php-coveralls": "^2.1",
+                "phpunit/phpunit": "^7.1"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.10-dev"
+                },
+                "phpstan": {
+                    "includes": [
+                        "phpstan-strict-rules.neon"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "TheCodingMachine\\PHPStan\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "David Négrier",
+                    "email": "d.negrier@thecodingmachine.com"
+                }
+            ],
+            "description": "A set of additional rules for PHPStan based on best practices followed at TheCodingMachine",
+            "time": "2019-05-27T16:30:44+00:00"
+        },
+        {
             "name": "theseer/tokenizer",
             "version": "1.1.2",
             "source": {
@@ -1840,16 +1893,16 @@
         },
         {
             "name": "wp-coding-standards/wpcs",
-            "version": "2.1.0",
+            "version": "2.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards.git",
-                "reference": "8c7a2e7682de9ef5955251874b639deda51ef470"
+                "reference": "bd9c33152115e6741e3510ff7189605b35167908"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/WordPress-Coding-Standards/WordPress-Coding-Standards/zipball/8c7a2e7682de9ef5955251874b639deda51ef470",
-                "reference": "8c7a2e7682de9ef5955251874b639deda51ef470",
+                "url": "https://api.github.com/repos/WordPress-Coding-Standards/WordPress-Coding-Standards/zipball/bd9c33152115e6741e3510ff7189605b35167908",
+                "reference": "bd9c33152115e6741e3510ff7189605b35167908",
                 "shasum": ""
             },
             "require": {
@@ -1881,12 +1934,14 @@
                 "standards",
                 "wordpress"
             ],
-            "time": "2019-04-08T10:53:57+00:00"
+            "time": "2019-05-21T02:50:00+00:00"
         }
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "giacocorsiglia/wordpress-stubs": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

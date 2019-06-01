@@ -3,12 +3,11 @@
 namespace WP2Static;
 
 use WP_CLI;
-use Exception;
 
 class Options {
-    public $wp2static_options = array();
+    public $wp2static_options = [];
     public $wp2static_option_key = null;
-    public $wp2static_options_keys = array(
+    public $wp2static_options_keys = [
         'additionalUrls',
         'allowOfflineUsage',
         'baseHREF',
@@ -64,9 +63,9 @@ class Options {
         'useBasicAuth',
         'useDocumentRelativeURLs',
         'useSiteRootRelativeURLs',
-    );
+    ];
 
-    public $whitelisted_keys = array(
+    public $whitelisted_keys = [
         'additionalUrls',
         'allowOfflineUsage',
         'baseHREF',
@@ -127,9 +126,9 @@ class Options {
         'useBasicAuth',
         'useDocumentRelativeURLs',
         'useSiteRootRelativeURLs',
-    );
+    ];
 
-    public function __construct( $option_key ) {
+    public function __construct( string $option_key ) {
         $this->wp2static_options_keys = apply_filters(
             'wp2static_add_option_keys',
             $this->wp2static_options_keys
@@ -150,13 +149,19 @@ class Options {
         $this->wp2static_option_key = $option_key;
     }
 
-    public function __set( $name, $value ) {
+    /**
+     *  Set an option
+     *
+     * @param mixed $value new value for option
+     * @throws WP2StaticException
+     */
+    public function __set( string $name, $value ) : Options {
         $this->wp2static_options[ $name ] = $value;
 
         if ( ! array_key_exists( $name, $this->wp2static_options ) ) {
             $err = 'Trying to save an unrecognized option: ' . $name;
             WsLog::l( $err );
-            throw new Exception( $err );
+            throw new WP2StaticException( $err );
         }
 
         if ( empty( $value ) ) {
@@ -166,22 +171,45 @@ class Options {
         return $this;
     }
 
-    public function setOption( $name, $value ) {
+    /**
+     *  Set an option
+     *
+     * @param mixed $value new value for option
+     * @throws WP2StaticException
+     */
+    public function setOption( string $name, $value ) : Options {
         return $this->__set( $name, $value );
     }
 
-    public function __get( $name ) {
+    /**
+     *  Get an option
+     *
+     * @return mixed options's value
+     */
+    public function __get( string $name ) {
         $value = array_key_exists( $name, $this->wp2static_options ) ?
             $this->wp2static_options[ $name ] : null;
 
         return $value;
     }
 
-    public function getOption( $name ) {
+    /**
+     *  Get an option
+     *
+     * @return mixed options's value
+     */
+    public function getOption( string $name ) {
         return $this->__get( $name );
     }
 
-    public function getAllOptions( $reveal_sensitive_values = false ) {
+    /**
+     *  Get all options
+     *
+     * @return mixed[] all options
+     */
+    public function getAllOptions(
+        bool $reveal_sensitive_values = false
+    ) : array {
         $options_array = array();
 
         $this->whitelisted_keys = apply_filters(
@@ -208,7 +236,12 @@ class Options {
         return $options_array;
     }
 
-    public function getSettings() {
+    /**
+     *  Get all settings (transformed options in alternate format)
+     *
+     * @return mixed[] all settings
+     */
+    public function getSettings() : array {
         $settings = [];
 
         $this->wp2static_options_keys = apply_filters(
@@ -238,22 +271,22 @@ class Options {
         return $settings;
     }
 
-    public function optionExists( $name ) {
+    public function optionExists( string $name ) : bool {
         return in_array( $name, $this->wp2static_options_keys );
     }
 
-    public function save() {
+    public function save() : bool {
         return update_option(
             $this->wp2static_option_key,
             $this->wp2static_options
         );
     }
 
-    public function delete() {
+    public function delete() : bool {
         return delete_option( $this->wp2static_option_key );
     }
 
-    public function saveAllOptions() {
+    public function saveAllOptions() : void {
         $this->wp2static_options_keys = apply_filters(
             'wp2static_add_option_keys',
             $this->wp2static_options_keys

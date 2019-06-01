@@ -3,11 +3,17 @@
 namespace WP2Static;
 
 class DetectCategoryPaginationURLs {
-    public static function detect( $wp_site_url ) {
+
+    /**
+     * Detect Category Pagination URLs
+     *
+     * @return string[] list of URLs
+     */
+    public static function detect( string $wp_site_url ) : array {
         global $wp_rewrite, $wpdb;
 
-        $post_urls = array();
-        $unique_post_types = array();
+        $post_urls = [];
+        $unique_post_types = [];
 
         $query = "
             SELECT ID,post_type

@@ -17,7 +17,10 @@ class ArchiveProcessor extends Base {
         $this->loadSettings();
     }
 
-    public function renameWPDirectory( $source, $target ) {
+    public function renameWPDirectory(
+        string $source,
+        string $target
+    ) :void {
         if ( empty( $source ) || empty( $target ) ) {
             WsLog::l(
                 'Failed trying to rename: ' .
@@ -44,13 +47,21 @@ class ArchiveProcessor extends Base {
         }
     }
 
-    public function recursive_copy( $srcdir, $dstdir ) {
+    /**
+     *  Recursively copy a directory
+     *
+     * @throws WP2StaticException
+     */
+    public function recursive_copy(
+        string $srcdir,
+        string $dstdir
+    ) : void {
         $dir = opendir( $srcdir );
 
         if ( ! $dir ) {
             $err = 'Trying to copy non-existent directory: ' . $srcdir;
             WsLog::l( $err );
-            throw new Exception( $err );
+            throw new WP2StaticException( $err );
         }
 
         if ( ! is_dir( $dstdir ) ) {
@@ -71,7 +82,7 @@ class ArchiveProcessor extends Base {
         closedir( $dir );
     }
 
-    public function dir_is_empty( $dirname ) {
+    public function dir_is_empty( string $dirname ) : bool {
         if ( ! is_dir( $dirname ) ) {
             return false;
         }
@@ -94,7 +105,7 @@ class ArchiveProcessor extends Base {
         return true;
     }
 
-    public function dir_has_safety_file( $dirname ) {
+    public function dir_has_safety_file( string $dirname ) : bool {
         if ( ! is_dir( $dirname ) ) {
             return false;
         }
@@ -114,7 +125,7 @@ class ArchiveProcessor extends Base {
         return false;
     }
 
-    public function put_safety_file( $dirname ) {
+    public function put_safety_file( string $dirname ) : bool {
         if ( ! is_dir( $dirname ) ) {
             return false;
         }
@@ -124,10 +135,10 @@ class ArchiveProcessor extends Base {
 
         chmod( $safety_file, 0664 );
 
-        return $result;
+        return (bool) $result;
     }
 
-    public function copyStaticSiteToPublicFolder() {
+    public function copyStaticSiteToPublicFolder() : void {
         if ( $this->settings['selected_deployment_option'] !== 'folder' ) {
             return;
         }
@@ -212,9 +223,9 @@ class ArchiveProcessor extends Base {
     }
 
     // TODO: migrate to add-on
-    public function createNetlifySpecialFiles() {
+    public function createNetlifySpecialFiles() : void {
         if ( $this->settings['selected_deployment_option'] !== 'netlify' ) {
-            return false;
+            return;
         }
 
         if ( isset( $this->settings['netlifyRedirects'] ) ) {
@@ -232,7 +243,12 @@ class ArchiveProcessor extends Base {
         }
     }
 
-    public function create_zip() {
+    /**
+     *  Create ZIP of export dir
+     *
+     * @throws WP2StaticException
+     */
+    public function create_zip() : void {
         $deployer = $this->settings['selected_deployment_option'];
 
         if ( ! in_array( $deployer, array( 'zip', 'netlify' ) ) ) {
@@ -247,7 +263,7 @@ class ArchiveProcessor extends Base {
         if ( $zip_archive->open( $temp_zip, ZipArchive::CREATE ) !== true ) {
             $err = 'Could not create zip: ' . $temp_zip;
             WsLog::l( $err );
-            throw new Exception( $err );
+            throw new WP2StaticException( $err );
         }
 
         $iterator = new RecursiveIteratorIterator(
@@ -265,7 +281,7 @@ class ArchiveProcessor extends Base {
                 if ( ! $real_filepath ) {
                     $err = 'Trying to add unknown file to Zip: ' . $filename;
                     WsLog::l( $err );
-                    throw new Exception( $err );
+                    throw new WP2StaticException( $err );
                 }
 
                 if ( ! $zip_archive->addFile(
@@ -275,7 +291,7 @@ class ArchiveProcessor extends Base {
                 ) {
                     $err = 'Could not add file: ' . $filename;
                     WsLog::l( $err );
-                    throw new Exception( $err );
+                    throw new WP2StaticException( $err );
                 }
             }
         }
@@ -288,7 +304,7 @@ class ArchiveProcessor extends Base {
         rename( $temp_zip, $zip_path );
     }
 
-    public function removeWPCruft() {
+    public function removeWPCruft() : void {
         if ( file_exists( $this->archive->path . '/xmlrpc.php' ) ) {
             unlink( $this->archive->path . '/xmlrpc.php' );
         }
@@ -306,7 +322,7 @@ class ArchiveProcessor extends Base {
         Takes user-defined directory renaming rules, sorts them
         by longest path (mitigating issues with user-input order PR#216)
     */
-    public function renameArchiveDirectories() {
+    public function renameArchiveDirectories() : void {
         if ( ! isset( $this->settings['rename_rules'] ) ) {
             return;
         }

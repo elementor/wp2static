@@ -4,7 +4,7 @@ namespace WP2Static;
 
 class CrawlCache {
 
-    public static function createTable() {
+    public static function createTable() : void {
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'wp2static_crawl_cache';
@@ -22,7 +22,7 @@ class CrawlCache {
         dbDelta( $sql );
     }
 
-    public static function addUrl( $url ) {
+    public static function addUrl( string $url ) : void {
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'wp2static_crawl_cache';
@@ -37,7 +37,7 @@ class CrawlCache {
     }
 
     // TODO: enable date filter as option/alternate method
-    public static function getUrl( $url ) {
+    public static function getUrl( string $url ) : int {
         global $wpdb;
 
         $hashed_url = md5( $url );
@@ -55,7 +55,7 @@ class CrawlCache {
         return $id;
     }
 
-    public static function rmUrl( $url ) {
+    public static function rmUrl( string $url ) : void {
         global $wpdb;
 
         $hashed_url = md5( $url );

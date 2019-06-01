@@ -5,18 +5,22 @@ namespace WP2Static;
 use RecursiveIteratorIterator;
 use RecursiveArrayIterator;
 use RecursiveDirectoryIterator;
-use Exception;
 
 class FilesHelper {
 
-    public static function delete_dir_with_files( $dir ) {
+    /**
+     * Recursively delete a directory
+     *
+     * @throws WP2StaticException
+     */
+    public static function delete_dir_with_files( string $dir ) : void {
         if ( is_dir( $dir ) ) {
             $dir_files = scandir( $dir );
 
             if ( ! $dir_files ) {
                 $err = 'Trying to delete nonexistant dir: ' . $dir;
                 WsLog::l( $err );
-                throw new Exception( $err );
+                throw new WP2StaticException( $err );
             }
 
             $files = array_diff( $dir_files, array( '.', '..' ) );
@@ -27,18 +31,27 @@ class FilesHelper {
                 unlink( "$dir/$file" );
             }
 
-            return rmdir( $dir );
+            rmdir( $dir );
         }
     }
 
-    public static function recursively_scan_dir( $dir, $siteroot, $list_path ) {
+    /**
+     * Recursively scan a directory and save all filenames to list
+     *
+     * @throws WP2StaticException
+     */
+    public static function recursively_scan_dir(
+        string $dir,
+        string $siteroot,
+        string $list_path
+    ) : void {
         $dir = str_replace( '//', '/', $dir );
         $files = scandir( $dir );
 
         if ( ! $files ) {
             $err = 'Trying to scan nonexistant dir: ' . $dir;
             WsLog::l( $err );
-            throw new Exception( $err );
+            throw new WP2StaticException( $err );
         }
 
         foreach ( $files as $item ) {
@@ -75,8 +88,13 @@ class FilesHelper {
         }
     }
 
-    public static function getListOfLocalFilesByDir( $dir ) {
-        $files = array();
+    /**
+     * Get public URLs for all files in a local directory
+     *
+     * @return string[] list of URLs
+     */
+    public static function getListOfLocalFilesByDir( string $dir ) : array {
+        $files = [];
 
         $site_path = SiteInfo::getPath( 'site' );
 
@@ -93,7 +111,11 @@ class FilesHelper {
 
                 if ( $path_crawlable ) {
                     if ( is_string( $site_path ) ) {
-                        $files[] = str_replace( $site_path, '/', $filename );
+                        $url = str_replace( $site_path, '/', $filename );
+
+                        if ( is_string( $url ) ) {
+                            $files[] = $url;
+                        }
                     }
                 }
             }
@@ -102,7 +124,7 @@ class FilesHelper {
         return $files;
     }
 
-    public static function filePathLooksCrawlable( $file_name ) {
+    public static function filePathLooksCrawlable( string $file_name ) : bool {
         $filenames_to_ignore = [
             '.DS_Store',
             '.PHP',
@@ -163,11 +185,16 @@ class FilesHelper {
         return true;
     }
 
+    /**
+     * Build the initial file list to crawl
+     *
+     * @param mixed[] $settings all settings
+     */
     public static function buildInitialFileList(
-        $via_cli = false,
-        $uploads_path,
-        $settings
-        ) {
+        bool $via_cli = false,
+        string $uploads_path,
+        array $settings
+        ) : string {
         $arrays_to_merge = [];
 
         // TODO: detect robots.txt, etc before adding
@@ -282,7 +309,7 @@ class FilesHelper {
 
             chmod( $initial_crawl_file, 0664 );
 
-            return count( $url_queue );
+            return (string) count( $url_queue );
         } else {
             WsLog::l(
                 "Couldn't create working directory at " .
@@ -291,15 +318,21 @@ class FilesHelper {
 
             return 'ERROR WRITING INITIAL CRAWL LIST';
         }
-
     }
 
     // TODO: finish porting these over
-    public static function getAllTHEOTHERSTUFFPOSTS( $wp_site_url ) {
+    /**
+     * Detect all other URL types (TODO: continue to split me into classes)
+     *
+     * @return string[] list of URLs
+     */
+    public static function getAllTHEOTHERSTUFFPOSTS(
+        string $wp_site_url
+    ) : array {
         global $wpdb;
 
-        $post_urls = array();
-        $unique_post_types = array();
+        $post_urls = [];
+        $unique_post_types = [];
 
         $query = "
             SELECT ID,post_type
@@ -405,7 +438,7 @@ class FilesHelper {
 
         $taxonomies = get_taxonomies( $args, 'objects' );
 
-        $category_links = array();
+        $category_links = [];
 
         foreach ( $taxonomies as $taxonomy ) {
             if ( ! property_exists( $taxonomy, 'name' ) ) {
@@ -449,30 +482,32 @@ class FilesHelper {
             }
         }
 
-        // get all pagination links for each category
-        $category_pagination_urls =
-            DetectCategoryPaginationURLs::detect( $category_links );
-
         // get all comment links
         $comment_pagination_urls =
             DetectCommentPaginationURLs::detect( $wp_site_url );
 
         $post_urls = array_merge(
             $post_urls,
-            $category_pagination_urls,
             $comment_pagination_urls
         );
 
         return $post_urls;
     }
 
-    public static function cleanDetectedURLs( $urls ) {
+    /**
+     * Clean all detected URLs before use
+     *
+     * @param string[] $urls list of URLs
+     * @return string[] list of URLs
+     * @throws WP2StaticException
+     */
+    public static function cleanDetectedURLs( array $urls ) : array {
         $home_url = SiteInfo::getUrl( 'home' );
 
         if ( ! is_string( $home_url ) ) {
             $err = 'Home URL not defined ';
             WsLog::l( $err );
-            throw new Exception( $err );
+            throw new WP2StaticException( $err );
         }
 
         $cleaned_urls = array_map(

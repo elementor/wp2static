@@ -4,8 +4,8 @@ namespace WP2Static;
 
 use ZipArchive;
 use WP_Error;
-use Exception;
 use WP_CLI;
+use WP_Post;
 
 class Controller {
     const VERSION = '7.0-build0001';
@@ -35,7 +35,7 @@ class Controller {
      *
      * @return \WP2Static\Controller Instance of self.
      */
-    public static function getInstance() {
+    public static function getInstance() : Controller {
         if ( null === self::$instance ) {
             self::$instance = new self();
             self::$instance->options = new Options(
@@ -46,7 +46,7 @@ class Controller {
         return self::$instance;
     }
 
-    public static function init( $bootstrap_file ) {
+    public static function init( string $bootstrap_file ) : Controller {
         $instance = self::getInstance();
 
         register_activation_hook(
@@ -69,12 +69,6 @@ class Controller {
         $instance->settings = $instance->options->getSettings( true );
         $instance->site_url = SiteInfo::getUrl( 'site' );
 
-        if ( ! is_string( $instance->site_url ) ) {
-            $err = 'Site URL not defined ';
-            WsLog::l( $err );
-            throw new Exception( $err );
-        }
-
         // create DB table for crawl caching
         CrawlCache::createTable();
 
@@ -87,7 +81,7 @@ class Controller {
         if ( ! is_string( $instance->destination_url ) ) {
             $err = 'Destination URL not defined';
             WsLog::l( $err );
-            throw new Exception( $err );
+            throw new WP2StaticException( $err );
         }
 
         $instance->loadRewriteRules();
@@ -145,9 +139,16 @@ class Controller {
         return $instance;
     }
 
-    public function set_menu_order( $menu_order ) {
-        $order = array();
+    /**
+     * Adjusts position of dashboard menu icons
+     *
+     * @param string[] $menu_order list of menu items
+     * @return string[] list of menu items
+     */
+    public function set_menu_order( array $menu_order ) : array {
+        $order = [];
         $file  = plugin_basename( __FILE__ );
+
         foreach ( $menu_order as $index => $item ) {
             if ( $item === 'index.php' ) {
                 $order[] = $item;
@@ -163,7 +164,7 @@ class Controller {
     }
 
 
-    public function setDefaultOptions() {
+    public function setDefaultOptions() : void {
         if ( null === $this->options->getOption( 'version' ) ) {
             $this->options
             ->setOption( 'version', self::VERSION )
@@ -179,11 +180,11 @@ class Controller {
         }
     }
 
-    public function activate_for_single_site() {
+    public function activate_for_single_site() : void {
         $this->setDefaultOptions();
     }
 
-    public function activate( $network_wide ) {
+    public function activate( bool $network_wide ) : void {
         if ( $network_wide ) {
             global $wpdb;
 
@@ -208,7 +209,7 @@ class Controller {
         }
     }
 
-    public function registerOptionsPage() {
+    public function registerOptionsPage() : void {
         $plugins_url = plugin_dir_url( dirname( __FILE__ ) );
         $page = add_menu_page(
             __( 'WP2Static', 'static-html-output-plugin' ),
@@ -228,7 +229,7 @@ class Controller {
         );
     }
 
-    public function enqueueAdminStyles() {
+    public function enqueueAdminStyles() : void {
         $plugins_url = plugin_dir_url( dirname( __FILE__ ) );
 
         wp_enqueue_style(
@@ -240,14 +241,19 @@ class Controller {
     }
 
     // NOTE: wrapper for UI to echo success response
-    public function finalize_deployment() {
+    public function finalize_deployment() : void {
         $deployer = new Deployer();
         $deployer->finalizeDeployment();
 
         echo 'SUCCESS';
     }
 
-    public function download_export_log() {
+    /**
+     * Generate ZIP of export log and print URL to UI
+     *
+     * @throws WP2StaticException
+     */
+    public function download_export_log() : void {
         $export_log = SiteInfo::getPath( 'uploads' ) .
             'wp2static-working-files/EXPORT-LOG.txt';
 
@@ -261,7 +267,9 @@ class Controller {
                 $zip_archive->open( $export_log_zip, ZipArchive::CREATE );
 
             if ( $zip_opened !== true ) {
-                return new WP_Error( 'Could not create archive' );
+                throw new WP2StaticException(
+                    'Could not create archive'
+                );
             }
 
             $real_filepath = realpath( $export_log );
@@ -269,7 +277,7 @@ class Controller {
             if ( ! $real_filepath ) {
                 $err = 'Trying to add unknown file to Zip: ' . $export_log;
                 WsLog::l( $err );
-                throw new Exception( $err );
+                throw new WP2StaticException( $err );
             }
 
             if ( ! $zip_archive->addFile(
@@ -277,7 +285,9 @@ class Controller {
                 'EXPORT-LOG.txt'
             )
             ) {
-                return new WP_Error( 'Could not add Export Log to zip' );
+                throw new WP2StaticException(
+                    'Could not add Export Log to zip'
+                );
             }
 
             $zip_archive->close();
@@ -285,12 +295,18 @@ class Controller {
             echo SiteInfo::getUrl( 'uploads' ) .
                 'wp2static-working-files/EXPORT-LOG.zip';
         } else {
-            // serve 500 response to client
-            throw new Exception( 'Unable to find Export Log to create ZIP' );
+            throw new WP2StaticException(
+                'Unable to find Export Log to create ZIP'
+            );
         }
     }
 
-    public function loadRewriteRules() {
+    /**
+     * Load user rewrite rules
+     *
+     * @throws WP2StaticException
+     */
+    public function loadRewriteRules() : void {
         // get user rewrite rules, use regular and escaped versions of them
         $this->rewrite_rules =
             RewriteRules::generate(
@@ -301,11 +317,11 @@ class Controller {
         if ( ! $this->rewrite_rules ) {
             $err = 'No URL rewrite rules defined';
             WsLog::l( $err );
-            throw new Exception( $err );
+            throw new WP2StaticException( $err );
         }
     }
 
-    public function crawl_site() {
+    public function crawl_site() : void {
         $site_crawler = new SiteCrawler(
             $this->rewrite_rules,
             $this->site_url_host,
@@ -315,7 +331,7 @@ class Controller {
         $site_crawler->crawl();
     }
 
-    public function test_folder() {
+    public function test_folder() : void {
         $archive_processor = new ArchiveProcessor();
 
         $target_folder = $this->settings['targetFolder'];
@@ -336,7 +352,12 @@ class Controller {
         );
     }
 
-    public function generate_filelist_preview() {
+    /**
+     * Generate initial crawl list and echo number of files to UI
+     *
+     * @throws WP2StaticException
+     */
+    public function generate_filelist_preview() : void {
         $initial_file_list_count =
             FilesHelper::buildInitialFileList(
                 true,
@@ -349,7 +370,7 @@ class Controller {
             http_response_code( 500 );
             echo $err;
             WsLog::l( $err );
-            throw new Exception( $err );
+            throw new WP2StaticException( $err );
         }
 
         $via_ui = filter_input( INPUT_POST, 'ajax_action' );
@@ -359,7 +380,7 @@ class Controller {
         }
     }
 
-    public function delete_crawl_cache() {
+    public function delete_crawl_cache() : void {
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'wp2static_crawl_cache';
@@ -380,7 +401,7 @@ class Controller {
         }
     }
 
-    public function load_wp2static_admin_js( $hook ) {
+    public function load_wp2static_admin_js( string $hook ) : void {
         if ( $hook !== 'toplevel_page_wp2static' ) {
             return;
         }
@@ -410,19 +431,19 @@ class Controller {
             'folder';
 
         $data = array(
-            'some_string' => __( 'Some string to translate', 'plugin-domain' ),
+            'someString' => __( 'Some string to translate', 'plugin-domain' ),
             'options' => $plugin->options,
-            'site_info' => $site_info,
+            'siteInfo' => $site_info,
             'onceAction' => self::HOOK . '-options',
             '' => self::HOOK . '-options',
-            'current_deployment_method' => $current_deployment_method,
+            'currentDeploymentMethod' => $current_deployment_method,
         );
 
         wp_localize_script( 'wp2static_admin_js', 'wp2staticString', $data );
         wp_enqueue_script( 'wp2static_admin_js' );
     }
 
-    public function renderOptionsPage() {
+    public function renderOptionsPage() : void {
         $view = [];
         $view['options'] = $this->options;
         $view['site_info'] = SiteInfo::getAllInfo();
@@ -436,7 +457,7 @@ class Controller {
         require_once WP2STATIC_PATH . 'views/options-page.php';
     }
 
-    public function userIsAllowed() {
+    public function userIsAllowed() : bool {
         if ( defined( 'WP_CLI' ) ) {
             return true;
         }
@@ -447,7 +468,7 @@ class Controller {
         return $referred_by_admin && $user_can_manage_options;
     }
 
-    public function save_options() {
+    public function save_options() : void {
         $via_ui = filter_input( INPUT_POST, 'ajax_action' );
 
         // Note when running via UI, we save all options
@@ -460,7 +481,7 @@ class Controller {
         }
     }
 
-    public function prepare_for_export() {
+    public function prepare_for_export() : void {
         $this->save_options();
 
         $this->exporter = new Exporter();
@@ -484,11 +505,16 @@ class Controller {
         }
     }
 
-    public function reset_default_settings() {
+    /**
+     * Reset all plugin options to defaults
+     *
+     * @throws WP2StaticException
+     */
+    public function reset_default_settings() : void {
         if ( ! delete_option( 'wp2static-options' ) ) {
             $err = 'Couldn\'t reset plugin to default settings';
             WsLog::l( $err );
-            throw new Exception( $err );
+            throw new WP2StaticException( $err );
         }
 
         $this->options = new Options( self::OPTIONS_KEY );
@@ -497,7 +523,7 @@ class Controller {
         echo 'SUCCESS';
     }
 
-    public function post_process_archive_dir() {
+    public function post_process_archive_dir() : void {
         $processor = new ArchiveProcessor();
 
         $processor->createNetlifySpecialFiles();
@@ -514,7 +540,7 @@ class Controller {
         }
     }
 
-    public function delete_deploy_cache() {
+    public function delete_deploy_cache() : void {
         $working_dir = SiteInfo::getPath( 'uploads' ) .
             'wp2static-working-files';
         $hash_files = glob( "{$working_dir}/*PREVIOUS-HASHES*.txt" );
@@ -533,7 +559,7 @@ class Controller {
         }
     }
 
-    public function logEnvironmentalInfo() {
+    public function logEnvironmentalInfo() : void {
         $info = array(
             'EXPORT START: ' . date( 'Y-m-d h:i:s' ),
             'PLUGIN VERSION: ' . $this::VERSION,
@@ -593,7 +619,7 @@ class Controller {
         WsLog::l( $environmental_info );
     }
 
-    public function wp2static_headless() {
+    public function wp2static_headless() : void {
         $start_time = microtime();
 
         $plugin = self::getInstance();
@@ -610,11 +636,12 @@ class Controller {
 
         $deployer = new Deployer();
         $deployer->deploy();
-
-        return null;
     }
 
-    public function microtime_diff( $start, $end = null ) {
+    public function microtime_diff(
+        string $start,
+        string $end = null
+    ) : float {
         if ( ! $end ) {
             $end = microtime();
         }
@@ -628,7 +655,10 @@ class Controller {
         return floatval( $diff_sec ) + $diff_usec;
     }
 
-    public function invalidate_single_url_cache( $post_id = 0, $post = null ) {
+    public function invalidate_single_url_cache(
+        int $post_id = 0,
+        WP_Post $post
+    ) : void {
         $permalink = get_permalink(
             $post->ID
         );
@@ -648,7 +678,7 @@ class Controller {
         CrawlCache::rmUrl( $url );
     }
 
-    public function wp2static_add_dashboard_widgets() {
+    public function wp2static_add_dashboard_widgets() : void {
         wp_add_dashboard_widget(
             'wp2static__dashboard_widget',
             'WP2Static',
@@ -656,7 +686,7 @@ class Controller {
         );
     }
 
-    public function wp2static_dashboard_widget_function() {
+    public function wp2static_dashboard_widget_function() : void {
         echo '<p>Publish whole site as static HTML</p>';
         echo "<button class='button button-primary'>Publish whole site" .
             '</button>';

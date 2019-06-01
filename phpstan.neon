@@ -17,7 +17,8 @@ services:
         tags:
             - phpstan.broker.dynamicFunctionReturnTypeExtension
 includes:
-    - phar://phpstan.phar/conf/bleedingEdge.neon
+#    - phar://phpstan.phar/conf/bleedingEdge.neon
+    - vendor/thecodingmachine/phpstan-strict-rules/phpstan-strict-rules.neon
 parameters:
     level: max
     paths:

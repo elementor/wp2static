@@ -2,8 +2,6 @@
 
 namespace WP2Static;
 
-use Exception;
-
 class CSSProcessor extends Base {
 
     public $placeholder_url;
@@ -15,11 +13,10 @@ class CSSProcessor extends Base {
         $this->loadSettings();
     }
 
-    public function processCSS( $css_document, $page_url ) {
-        if ( $css_document == '' ) {
-            return false;
-        }
-
+    public function processCSS(
+        string $css_document,
+        string $page_url
+    ) : bool {
         $protocol = $this->getTargetSiteProtocol( $this->settings['baseUrl'] );
 
         $this->placeholder_url = $protocol . 'PLACEHOLDER.wpsho/';
@@ -105,7 +102,10 @@ class CSSProcessor extends Base {
         return true;
     }
 
-    public function isInternalLink( $link, $domain = false ) {
+    public function isInternalLink(
+        string $link,
+        string $domain = ''
+    ) : bool {
         if ( ! $domain ) {
             $domain = $this->placeholder_url;
         }
@@ -118,17 +118,22 @@ class CSSProcessor extends Base {
         return $is_internal_link;
     }
 
-    public function getCSS() {
+    public function getCSS() : string {
         return $this->css_doc->render();
     }
 
-    public function rewriteSiteURLsToPlaceholder() {
+    /**
+     * Rewrite site urls to placeholder NOTE: unused
+     *
+     * @throws WP2StaticException
+     */
+    public function rewriteSiteURLsToPlaceholder() : void {
         $site_url = SiteInfo::getUrl( 'site' );
 
         if ( ! is_string( $site_url ) ) {
             $err = 'Site URL not defined ';
             WsLog::l( $err );
-            throw new Exception( $err );
+            throw new WP2StaticException( $err );
         }
 
         $rewritten_source = str_replace(
@@ -146,7 +151,7 @@ class CSSProcessor extends Base {
         $this->raw_css = $rewritten_source;
     }
 
-    public function isValidURL( $url ) {
+    public function isValidURL( string $url ) : bool {
         // NOTE: not using native URL filter as it won't accept
         // non-ASCII URLs, which we want to support
         $url = trim( $url );
@@ -170,7 +175,7 @@ class CSSProcessor extends Base {
         return true;
     }
 
-    public function getTargetSiteProtocol( $url ) {
+    public function getTargetSiteProtocol( string $url ) : string {
         $protocol = '//';
 
         if ( strpos( $url, 'https://' ) !== false ) {
