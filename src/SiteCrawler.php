@@ -364,13 +364,19 @@ class SiteCrawler extends Base {
             $curl_content_type
         );
 
+        $user_rewrite_rules = $this->settings['rewrite_rules'];
+
+        if ( ! $user_rewrite_rules ) {
+            $user_rewrite_rules = '';
+        }
+
         switch ( $file_type ) {
             case 'html':
                 $processor = new HTMLProcessor(
                     $this->rewrite_rules,
                     $this->site_url_host,
                     $this->destination_url,
-                    $this->settings['rewrite_rules'],
+                    $user_rewrite_rules,
                     $this->ch
                 );
 
@@ -382,8 +388,8 @@ class SiteCrawler extends Base {
                 if ( $this->processed_file ) {
                     $this->processed_file = $processor->getHTML(
                         $processor->xml_doc,
-                        $this->settings['forceHTTPS'],
-                        $this->settings['forceRewriteSiteURLs']
+                        isset( $this->settings['forceHTTPS'] ),
+                        isset( $this->settings['forceRewriteSiteURLs'] )
                     );
                 }
 
