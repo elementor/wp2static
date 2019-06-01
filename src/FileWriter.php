@@ -9,7 +9,12 @@ class FileWriter extends Base {
     public $file_type;
     public $content_type;
 
-    public function __construct( $url, $content, $file_type, $content_type ) {
+    public function __construct(
+        string $url,
+        string $content,
+        string $file_type,
+        string $content_type
+    ) {
         $this->url = $url;
         $this->content = $content;
         $this->file_type = $file_type;
@@ -18,17 +23,17 @@ class FileWriter extends Base {
         $this->loadSettings();
     }
 
-    public function saveFile( $archive_dir ) {
+    public function saveFile( string $archive_dir ) : void {
         $url_info = parse_url( $this->url );
 
         if ( ! is_array( $url_info ) ) {
-            return false;
+            return;
         }
 
         $path_info = array();
 
         if ( ! array_key_exists( 'path', $url_info ) ) {
-            return false;
+            return;
         }
 
         // set what the new path will be based on the given url
