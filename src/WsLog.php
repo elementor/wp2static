@@ -4,7 +4,7 @@ namespace WP2Static;
 
 class WsLog {
 
-    public static function l( $text ) {
+    public static function l( string $text ) : void {
         $log_dir = SiteInfo::getPath( 'uploads' ) . 'wp2static-working-files';
 
         if ( ! is_dir( $log_dir ) ) {
