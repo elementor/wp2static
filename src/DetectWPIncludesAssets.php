@@ -8,22 +8,18 @@ use Exception;
 
 class DetectWPIncludesAssets {
 
-    public static function detect() {
+    /**
+     * Detect assets within wp-includes path
+     *
+     * @return string[] list of URLs
+     * @throw WP2StaticException
+     */
+    public static function detect() : array {
         $files = array();
 
         $includes_path = SiteInfo::getPath( 'includes' );
         $includes_url = SiteInfo::getUrl( 'includes' );
         $home_url = SiteInfo::getUrl( 'home' );
-
-        if (
-             ! is_string( $includes_path ) ||
-             ! is_string( $includes_url ) ||
-             ! is_string( $home_url )
-            ) {
-            $err = 'WP URLs not defined ';
-            WsLog::l( $err );
-            throw new Exception( $err );
-        }
 
         if ( is_dir( $includes_path ) ) {
             $iterator = new RecursiveIteratorIterator(
