@@ -38,7 +38,7 @@ class Request {
      *
      * @param resource $ch cURL resource
      * @param mixed[] $curl_options cURL options
-     * @return mixed[] response and cURL handle in array 
+     * @return mixed[] response and cURL handle in array
      */
     public function getURL(
         string $url,

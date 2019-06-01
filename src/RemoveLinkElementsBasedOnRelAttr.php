@@ -2,6 +2,7 @@
 
 namespace WP2Static;
 
+use DOMElement;
 /*
     For <link> elements, choose whether to remove
     based on the `rel` attribute
@@ -11,7 +12,7 @@ namespace WP2Static;
     less cruft == faster loading!
 */
 class RemoveLinkElementsBasedOnRelAttr {
-    public static function remove( $element ) {
+    public static function remove( DOMElement $element ) : void {
         $relative_links_to_rm = array(
             'shortlink',
             'pingback',
