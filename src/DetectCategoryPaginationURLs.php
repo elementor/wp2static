@@ -9,7 +9,7 @@ class DetectCategoryPaginationURLs {
      *
      * @return string[] list of URLs
      */
-    public static function detect( string  $wp_site_url ) : array {
+    public static function detect( string $wp_site_url ) : array {
         global $wp_rewrite, $wpdb;
 
         $post_urls = [];

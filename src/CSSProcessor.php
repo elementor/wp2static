@@ -14,7 +14,7 @@ class CSSProcessor extends Base {
     }
 
     public function processCSS(
-        string  $css_document,
+        string $css_document,
         string $page_url
     ) : bool {
         $protocol = $this->getTargetSiteProtocol( $this->settings['baseUrl'] );
@@ -103,7 +103,7 @@ class CSSProcessor extends Base {
     }
 
     public function isInternalLink(
-        string  $link,
+        string $link,
         string $domain = ''
     ) : bool {
         if ( ! $domain ) {
@@ -125,7 +125,7 @@ class CSSProcessor extends Base {
     /**
      * Rewrite site urls to placeholder NOTE: unused
      *
-     * @throws WP2StaticException 
+     * @throws WP2StaticException
      */
     public function rewriteSiteURLsToPlaceholder() : void {
         $site_url = SiteInfo::getUrl( 'site' );

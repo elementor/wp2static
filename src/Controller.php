@@ -636,8 +636,6 @@ class Controller {
 
         $deployer = new Deployer();
         $deployer->deploy();
-
-        return;
     }
 
     public function microtime_diff(

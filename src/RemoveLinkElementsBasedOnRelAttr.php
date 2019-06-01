@@ -3,6 +3,7 @@
 namespace WP2Static;
 
 use DOMElement;
+
 /*
     For <link> elements, choose whether to remove
     based on the `rel` attribute

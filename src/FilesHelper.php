@@ -326,7 +326,9 @@ class FilesHelper {
      *
      * @return string[] list of URLs
      */
-    public static function getAllTHEOTHERSTUFFPOSTS( string $wp_site_url ) : array {
+    public static function getAllTHEOTHERSTUFFPOSTS(
+        string $wp_site_url
+    ) : array {
         global $wpdb;
 
         $post_urls = [];
