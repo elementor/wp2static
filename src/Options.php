@@ -3,7 +3,6 @@
 namespace WP2Static;
 
 use WP_CLI;
-use Exception;
 
 class Options {
     public $wp2static_options = [];

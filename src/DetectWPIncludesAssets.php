@@ -4,7 +4,6 @@ namespace WP2Static;
 
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
-use Exception;
 
 class DetectWPIncludesAssets {
 

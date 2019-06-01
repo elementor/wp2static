@@ -5,7 +5,6 @@ namespace WP2Static;
 use RecursiveIteratorIterator;
 use RecursiveArrayIterator;
 use RecursiveDirectoryIterator;
-use Exception;
 
 class FilesHelper {
 

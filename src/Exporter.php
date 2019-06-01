@@ -2,8 +2,6 @@
 
 namespace WP2Static;
 
-use Exception;
-
 class Exporter extends Base {
 
     public function __construct() {

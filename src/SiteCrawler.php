@@ -2,8 +2,6 @@
 
 namespace WP2Static;
 
-use Exception;
-
 class SiteCrawler extends Base {
 
     public $processed_file;

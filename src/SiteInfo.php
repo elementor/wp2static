@@ -2,8 +2,6 @@
 
 namespace WP2Static;
 
-use Exception;
-
 /*
     Singleton instance to allow instantiating once and allow reading
     static properties throughout plugin

@@ -2,8 +2,6 @@
 
 namespace WP2Static;
 
-use Exception;
-
 class SitePublisher {
 
     public $settings;
