@@ -289,7 +289,16 @@ class SiteCrawler extends Base {
         $this->processCrawledURL( $response['ch'], $response['body'] );
     }
 
-    public function processCrawledURL( $curl_handle, $output ) {
+    /**
+     * Process crawled URL
+     *
+     * @param resource $curl_handle curl handle resource
+     * @param string $output response body
+     */
+    public function processCrawledURL(
+            $curl_handle,
+            string $output
+    ) : void {
         $curl_info = curl_getinfo( $curl_handle );
 
         $this->checkForCurlErrors( $output, $curl_handle );
@@ -392,7 +401,12 @@ class SiteCrawler extends Base {
         );
     }
 
-    public function saveCrawledURL( $url, $body, $file_type, $content_type ) {
+    public function saveCrawledURL(
+        string $url,
+        string $body,
+        string $file_type,
+        string $content_type
+    ) : void {
         $file_writer = new FileWriter(
             $url,
             $body,
@@ -406,13 +420,19 @@ class SiteCrawler extends Base {
         CrawlCache::addUrl( $url );
     }
 
-    public function getRelativeURLFromFullURL( $page_url ) {
+    /**
+     * Get relative URL from absolute URL
+     *
+     * @throws WP2StaticException
+     *
+     */
+    public function getRelativeURLFromFullURL( string $page_url ) : string {
         $site_url = SiteInfo::getUrl( 'site' );
 
         if ( ! is_string( $site_url ) ) {
             $err = 'Site URL not defined ';
             WsLog::l( $err );
-            throw new Exception( $err );
+            throw new WP2StaticException( $err );
         }
 
         $this->page_url = $site_url .
