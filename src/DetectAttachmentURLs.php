@@ -4,7 +4,12 @@ namespace WP2Static;
 
 class DetectAttachmentURLs {
 
-    public static function detect() {
+    /**
+     * Detect Attachment URLs
+     *
+     * @return string[] list of URLs
+     */
+    public static function detect() : array {
         global $wpdb;
 
         $post_urls = array();

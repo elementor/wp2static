@@ -3,11 +3,17 @@
 namespace WP2Static;
 
 class DetectCustomPostTypeURLs {
-    public static function detect() {
+
+    /**
+     * Detect Custom Post Type URLs
+     *
+     * @return string[] list of URLs
+     */
+    public static function detect() : array {
         global $wpdb;
 
-        $post_urls = array();
-        $unique_post_types = array();
+        $post_urls = [];
+        $unique_post_types = [];
 
         $query = "
             SELECT ID,post_type

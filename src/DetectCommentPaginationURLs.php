@@ -4,10 +4,15 @@ namespace WP2Static;
 
 class DetectCommentPaginationURLs {
 
-    public static function detect( $wp_site_url ) {
+    /**
+     * Detect Comment pagination URLs
+     *
+     * @return string[] list of URLs
+     */
+    public static function detect( string $wp_site_url ) : array {
         global $wp_rewrite;
 
-        $urls_to_include = array();
+        $urls_to_include = [];
         $comments_pagination_base = $wp_rewrite->comments_pagination_base;
         $comments = get_comments();
 

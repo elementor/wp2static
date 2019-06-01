@@ -480,17 +480,12 @@ class FilesHelper {
             }
         }
 
-        // get all pagination links for each category
-        $category_pagination_urls =
-            DetectCategoryPaginationURLs::detect( $category_links );
-
         // get all comment links
         $comment_pagination_urls =
             DetectCommentPaginationURLs::detect( $wp_site_url );
 
         $post_urls = array_merge(
             $post_urls,
-            $category_pagination_urls,
             $comment_pagination_urls
         );
 
