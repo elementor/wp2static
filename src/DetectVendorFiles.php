@@ -2,11 +2,14 @@
 
 namespace WP2Static;
 
-use Exception;
-
 class DetectVendorFiles {
 
-    public static function detect( $wp_site_url ) {
+    /**
+     * Detect vendor URLs from filesystem
+     *
+     * @return string[] list of URLs
+     */
+    public static function detect( string $wp_site_url ) : array {
         $vendor_files = array();
 
         // Yoast
@@ -29,15 +32,6 @@ class DetectVendorFiles {
         if ( is_dir( $vendor_cache_dir ) ) {
             $site_url = SiteInfo::getUrl( 'site' );
             $content_url = SiteInfo::getUrl( 'content' );
-
-            if (
-                 ! is_string( $site_url ) ||
-                 ! is_string( $content_url )
-                ) {
-                $err = 'WP URLs not defined ';
-                WsLog::l( $err );
-                throw new Exception( $err );
-            }
 
             // get difference between home and wp-contents URL
             $prefix = str_replace(
