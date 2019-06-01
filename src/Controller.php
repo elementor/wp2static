@@ -410,12 +410,12 @@ class Controller {
             'folder';
 
         $data = array(
-            'some_string' => __( 'Some string to translate', 'plugin-domain' ),
+            'someString' => __( 'Some string to translate', 'plugin-domain' ),
             'options' => $plugin->options,
-            'site_info' => $site_info,
+            'siteInfo' => $site_info,
             'onceAction' => self::HOOK . '-options',
             '' => self::HOOK . '-options',
-            'current_deployment_method' => $current_deployment_method,
+            'currentDeploymentMethod' => $current_deployment_method,
         );
 
         wp_localize_script( 'wp2static_admin_js', 'wp2staticString', $data );

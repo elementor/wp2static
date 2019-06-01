@@ -12,26 +12,25 @@ class SitePublisher {
     public $file_paths_and_hashes;
     public $previous_hashes_path;
 
-    public function loadSettings() {
+    public function loadSettings() : void {
         $plugin = Controller::getInstance();
         $this->settings = $plugin->options->getSettings( true );
-
     }
 
-    public function bootstrap() {
+    public function bootstrap() : void {
         $this->export_file_list =
             SiteInfo::getPath( 'uploads' ) .
                 'wp2static-working-files/FILES-TO-DEPLOY.txt';
     }
 
-    public function pauseBetweenAPICalls() {
+    public function pauseBetweenAPICalls() : void {
         if ( isset( $this->settings['delayBetweenAPICalls'] ) &&
             $this->settings['delayBetweenAPICalls'] > 0 ) {
             sleep( $this->settings['delayBetweenAPICalls'] );
         }
     }
 
-    public function clearFileList() {
+    public function clearFileList() : void {
         if ( is_file( $this->export_file_list ) ) {
             $f = fopen( $this->export_file_list, 'r+' );
             if ( $f !== false ) {
@@ -51,13 +50,18 @@ class SitePublisher {
         }
     }
 
-    public function isSkippableFile( $file ) {
+    public function isSkippableFile( string $file ) : bool {
         if ( $file == '.' || $file == '..' || $file == '.git' ) {
             return true;
         }
+
+        return false;
     }
 
-    public function getLocalFileToDeploy( $file_in_archive, $replace_path ) {
+    public function getLocalFileToDeploy(
+        string $file_in_archive,
+        string $replace_path
+    ) : string {
         // NOTE: untested fix for Windows filepaths
         // https://github.com/leonstafford/wp2static/issues/221
         $original_filepath = str_replace(
@@ -72,10 +76,6 @@ class SitePublisher {
             $original_filepath
         );
 
-        if ( ! is_string( $original_file_without_archive ) ) {
-            return false;
-        }
-
         $original_file_without_archive = ltrim(
             $original_file_without_archive,
             '/'
@@ -85,8 +85,11 @@ class SitePublisher {
     }
 
     public function getRemoteDeploymentPath(
-        $dir, $file_in_archive, $archive_path, $basename_in_target
-        ) {
+        string $dir,
+        string $file_in_archive,
+        string $archive_path,
+        string $basename_in_target
+    ) : string {
         $deploy_path = str_replace(
             $archive_path,
             '',
@@ -107,7 +110,10 @@ class SitePublisher {
         return $deploy_path;
     }
 
-    public function createDeploymentList( $dir, $basename_in_target ) {
+    public function createDeploymentList(
+        string $dir,
+        string $basename_in_target
+    ) : void {
         $archive_path =
             SiteInfo::getPath( 'uploads' ) . 'wp2static-exported-site';
 
@@ -116,7 +122,7 @@ class SitePublisher {
         if ( ! $dir_files ) {
             $err = "Couldn't get files in dir: " . $dir;
             WsLog::l( $err );
-            throw new Exception( $err );
+            throw new WP2StaticException( $err );
         }
 
         foreach ( $dir_files as $item ) {
@@ -157,7 +163,7 @@ class SitePublisher {
         }
     }
 
-    public function prepareDeploy( $basename_in_target = false ) {
+    public function prepareDeploy( string $basename_in_target = '' ) : void {
         $this->clearFileList();
 
         $this->createDeploymentList(
@@ -165,14 +171,20 @@ class SitePublisher {
             $basename_in_target
         );
 
-            $via_ui = filter_input( INPUT_POST, 'ajax_action' );
+        $via_ui = filter_input( INPUT_POST, 'ajax_action' );
 
         if ( is_string( $via_ui ) ) {
             echo 'SUCCESS';
         }
     }
 
-    public function getItemsToDeploy( $batch_size = 1 ) {
+    /**
+     * Get list of items to deploy
+     *
+     * @throws WP2StaticException
+     * @return string[] list of URLs
+     */
+    public function getItemsToDeploy( int $batch_size = 1 ) : array {
         $lines = array();
 
         $f = fopen( $this->export_file_list, 'r' );
@@ -180,7 +192,7 @@ class SitePublisher {
         if ( ! $f ) {
             $err = 'Failed to open export file list';
             WsLog::l( $err );
-            throw new Exception( $err );
+            throw new WP2StaticException( $err );
         }
 
         for ( $i = 0; $i < $batch_size; $i++ ) {
@@ -189,7 +201,7 @@ class SitePublisher {
             if ( ! is_string( $item_to_deploy ) ) {
                 $err = 'Failed getting item to deploy';
                 WsLog::l( $err );
-                throw new Exception( $err );
+                throw new WP2StaticException( $err );
             }
 
             $lines[] = rtrim( $item_to_deploy );
@@ -201,7 +213,7 @@ class SitePublisher {
         $contents = file( $this->export_file_list, FILE_IGNORE_NEW_LINES );
 
         if ( ! is_array( $contents ) ) {
-            return false;
+            return [];
         }
 
         for ( $i = 0; $i < $batch_size; $i++ ) {
@@ -219,12 +231,12 @@ class SitePublisher {
         return $lines;
     }
 
-    public function getRemainingItemsCount() {
+    public function getRemainingItemsCount() : int {
         if ( is_file( $this->export_file_list ) ) {
             $contents = file( $this->export_file_list, FILE_IGNORE_NEW_LINES );
 
             if ( ! is_array( $contents ) ) {
-                return false;
+                return 0;
             }
 
             return count( $contents );
@@ -235,31 +247,33 @@ class SitePublisher {
 
     // TODO: rename to signalSuccessfulAction or such
     // as is used in deployment tests/not just finalizing deploys
-    public function finalizeDeployment() {
+    public function finalizeDeployment() : void {
         $via_ui = filter_input( INPUT_POST, 'ajax_action' );
 
         if ( is_string( $via_ui ) ) {
             echo 'SUCCESS'; }
     }
 
-    public function uploadsCompleted() {
+    public function uploadsCompleted() : bool {
         $this->files_remaining = $this->getRemainingItemsCount();
 
         if ( $this->files_remaining <= 0 ) {
             return true;
         } else {
             echo $this->files_remaining;
+            return false;
         }
     }
 
-    public function handleException( $e ) {
-        WsLog::l( 'Deployment: error encountered' );
-        WsLog::l( $e );
-
-        throw new Exception( $e );
-    }
-
-    public function checkForValidResponses( $code, $good_codes ) {
+    /**
+     *  Check response code from a list of accpetable ones
+     *
+     *  @param string[] $good_codes Acceptable status codes
+     */
+    public function checkForValidResponses(
+        int $code,
+        array $good_codes
+    ) : bool {
         if ( ! in_array( $code, $good_codes ) ) {
             return false;
         }
@@ -267,14 +281,14 @@ class SitePublisher {
         return true;
     }
 
-    public function openPreviousHashesFile() {
+    public function openPreviousHashesFile() : void {
         $this->file_paths_and_hashes = array();
 
         if ( is_file( $this->previous_hashes_path ) ) {
             $file = fopen( $this->previous_hashes_path, 'r' );
 
             if ( ! $file ) {
-                return false;
+                return;
             }
 
             while ( ( $line = fgetcsv( $file ) ) !== false ) {
@@ -288,20 +302,20 @@ class SitePublisher {
     }
 
     public function recordFilePathAndHashInMemory(
-        $target_path,
-        $local_file_contents
-        ) {
+        string $target_path,
+        string $local_file_contents
+        ) : void {
         $this->file_paths_and_hashes[ $target_path ] =
             crc32( $local_file_contents );
     }
 
-    public function writeFilePathAndHashesToFile() {
+    public function writeFilePathAndHashesToFile() : void {
         $fp = fopen( $this->previous_hashes_path, 'w' );
 
         if ( ! $fp ) {
             $err = "Couldn't open previous hashes file for writing";
             WsLog::l( $err );
-            throw new Exception( $err );
+            throw new WP2StaticException( $err );
         }
 
         foreach ( $this->file_paths_and_hashes as $key => $value ) {

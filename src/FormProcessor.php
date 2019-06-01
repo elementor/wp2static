@@ -10,12 +10,13 @@ class FormProcessor {
 
         // perform transformations
 
-    
         // example gravity
         $element->setAttribute( 'target', '' );
-        $element->setAttribute( 'action', 'https://usebasin.com/f/f58d90a5a674' );
+        $element->setAttribute(
+            'action',
+            'https://usebasin.com/f/f58d90a5a674'
+        );
 
         // inject any JS required
-
     }
 }
