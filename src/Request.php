@@ -277,11 +277,17 @@ class Request {
         }
     }
 
+    /**
+     *  POST with options array
+     *
+     * @param mixed[] $data payload
+     * @param mixed[] $curl_options cURL options
+     */
     public function postWithArray(
-        $url,
-        $data,
-        $curl_options = array()
-        ) {
+        string $url,
+        array $data,
+        array $curl_options = []
+        ) : void {
         $ch = curl_init();
 
         curl_setopt( $ch, CURLOPT_URL, $url );
