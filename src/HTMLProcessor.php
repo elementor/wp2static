@@ -119,7 +119,7 @@ class HTMLProcessor extends Base {
                     $this->processMeta( $element );
                     break;
                 case 'form':
-                    FormProcessor( $element );
+                    FormProcessor::process( $element );
                     break;
                 case 'a':
                     $this->processElementURL( $element );
