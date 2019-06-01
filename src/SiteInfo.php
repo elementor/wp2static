@@ -84,11 +84,9 @@ class SiteInfo {
     /**
      * Get Path via name
      *
-     * @param string $name
-     * @return string|bool|null
-     * @throws Exception
+     * @throws WP2StaticException
      */
-    public static function getPath( $name ) {
+    public static function getPath( string $name ) : string {
         if ( self::$instance === null ) {
              self::$instance = new SiteInfo();
         }
@@ -99,7 +97,7 @@ class SiteInfo {
         if ( ! array_key_exists( $key, self::$info ) ) {
             $err = 'Attempted to access missing SiteInfo path';
             WsLog::l( $err );
-            throw new Exception( $err );
+            throw new WP2StaticException( $err );
         }
 
         return self::$info[ $key ];
@@ -108,11 +106,9 @@ class SiteInfo {
     /**
      * Get URL via name
      *
-     * @param string $name
-     * @return string|bool|null
-     * @throws Exception
+     * @throws WP2StaticException
      */
-    public static function getUrl( $name ) {
+    public static function getUrl( string $name ) : string {
         if ( self::$instance === null ) {
              self::$instance = new SiteInfo();
         }
@@ -122,7 +118,7 @@ class SiteInfo {
         if ( ! array_key_exists( $key, self::$info ) ) {
             $err = 'Attempted to access missing SiteInfo URL';
             WsLog::l( $err );
-            throw new Exception( $err );
+            throw new WP2StaticException( $err );
         }
 
         return self::$info[ $key ];
@@ -130,7 +126,7 @@ class SiteInfo {
 
     // TODO Use WP_Http 'curl_enabled' => $this->hasCurlSupport(),
     // didn't see the method vailable in WP_Http
-    public static function hasCURLSupport() {
+    public static function hasCURLSupport() : bool {
         if ( self::$instance === null ) {
              self::$instance = new SiteInfo();
         }
@@ -138,7 +134,7 @@ class SiteInfo {
         return extension_loaded( 'curl' );
     }
 
-    public static function isUploadsWritable() {
+    public static function isUploadsWritable() : bool {
         if ( self::$instance === null ) {
              self::$instance = new SiteInfo();
         }
@@ -148,7 +144,7 @@ class SiteInfo {
     }
 
     // ??? 'permalink_structure' => get_option( 'permalink_structure' ),
-    public static function permalinksAreDefined() {
+    public static function permalinksAreDefined() : int {
         if ( self::$instance === null ) {
              self::$instance = new SiteInfo();
         }
@@ -156,11 +152,16 @@ class SiteInfo {
         return strlen( get_option( 'permalink_structure' ) );
     }
 
-    public function debug() {
+    public function debug() : void {
         var_export( self::$info );
     }
 
-    public static function getAllInfo() {
+    /**
+     *  Get all WP site info
+     *
+     *  @return mixed[]
+     */
+    public static function getAllInfo() : array {
         return self::$info;
     }
 }
