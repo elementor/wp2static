@@ -4,6 +4,9 @@ namespace WP2Static;
 
 use DOMDocument;
 use DOMComment;
+use DOMAttr;
+use DOMNode;
+use DOMElement;
 use DOMXPath;
 use Exception;
 
@@ -41,12 +44,17 @@ class HTMLProcessor extends Base {
     public $user_rewrite_rules;
     public $xml_doc;
 
-    // TODO: clean up the passed var
+    /**
+     * HTMLProcessor constructor
+     *
+     * @param mixed[] $rewrite_rules URL replacement pattern
+     * @param resource $ch cURL handle
+     */
     public function __construct(
-        $rewrite_rules,
-        $site_url_host,
-        $destination_url,
-        $user_rewrite_rules,
+        array $rewrite_rules,
+        string $site_url_host,
+        string $destination_url,
+        string $user_rewrite_rules,
         $ch
     ) {
         $this->loadSettings();
@@ -86,7 +94,10 @@ class HTMLProcessor extends Base {
               by the user
             - saving the resultant processed HTML content to the export dir
     */
-    public function processHTML( $html_document, $page_url ) {
+    public function processHTML(
+        string $html_document,
+        string $page_url
+    ) : bool {
         if ( $html_document == '' ) {
             return false;
         }
@@ -188,7 +199,10 @@ class HTMLProcessor extends Base {
         HEAD and BASE elements have been looked for during the main DOM
         iteration and recorded if found.
     */
-    public function dealWithBaseHREFElement( $xml_doc, $base_tag_exists ) {
+    public function dealWithBaseHREFElement(
+        DOMDocument $xml_doc,
+        bool $base_tag_exists
+    ) : void {
         if ( $base_tag_exists ) {
             if ( $this->shouldCreateBaseHREF() ) {
                 $this->base_element->setAttribute(
@@ -221,7 +235,7 @@ class HTMLProcessor extends Base {
         }
     }
 
-    public function createEmptyFaviconLink( $xml_doc ) {
+    public function createEmptyFaviconLink( DOMDocument $xml_doc ) : void {
         $link_element = $xml_doc->createElement( 'link' );
         $link_element->setAttribute(
             'rel',
@@ -247,7 +261,12 @@ class HTMLProcessor extends Base {
         }
     }
 
-    public function getURLAndTargetAttribute( $element ) {
+    /**
+     * Get URL and attribute to change from Element
+     *
+     * @return string[] url and name of attribute
+     */
+    public function getURLAndTargetAttribute( DOMElement $element ) : array {
         if ( $element->hasAttribute( 'href' ) ) {
             $attribute_to_change = 'href';
         } elseif ( $element->hasAttribute( 'src' ) ) {
@@ -255,7 +274,7 @@ class HTMLProcessor extends Base {
         } elseif ( $element->hasAttribute( 'content' ) ) {
             $attribute_to_change = 'content';
         } else {
-            return;
+            return [];
         }
 
         $url_to_change = $element->getAttribute( $attribute_to_change );
@@ -263,7 +282,7 @@ class HTMLProcessor extends Base {
         return [ $url_to_change, $attribute_to_change ];
     }
 
-    public function removeCanonicalLink( $element ) {
+    public function removeCanonicalLink( DOMElement $element ) : void {
         $link_rel = $element->getAttribute( 'rel' );
 
         if ( strtolower( $link_rel ) == 'canonical' ) {
@@ -271,7 +290,7 @@ class HTMLProcessor extends Base {
         }
     }
 
-    public function processImageSrcSet( $element ) {
+    public function processImageSrcSet( DOMElement $element ) : void {
         if ( ! $element->hasAttribute( 'srcset' ) ) {
             return;
         }
@@ -302,7 +321,7 @@ class HTMLProcessor extends Base {
         $element->setAttribute( 'srcset', implode( ',', $new_src_set ) );
     }
 
-    public function rewriteLocalURL( $url ) {
+    public function rewriteLocalURL( string $url ) : string {
         if ( URLHelper::startsWithHash( $url ) ) {
             return $url;
         }
@@ -385,13 +404,12 @@ class HTMLProcessor extends Base {
         return $url;
     }
 
-    /*
+    /**
      * Process URL within a DOMElement
      *
-     * @param DOMElement $element candidate for URL change
-     * @return DOMAttr|false
+     * @return void
      */
-    public function processElementURL( $element ) {
+    public function processElementURL( DOMElement $element ) : void {
         list( $url, $attribute_to_change ) =
             $this->getURLAndTargetAttribute( $element );
 
@@ -401,10 +419,10 @@ class HTMLProcessor extends Base {
 
         $url = $this->rewriteLocalURL( $url );
 
-        return $element->setAttribute( $attribute_to_change, $url );
+        $element->setAttribute( $attribute_to_change, $url );
     }
 
-    public function stripHTMLComments() {
+    public function stripHTMLComments() : void {
         if ( isset( $this->settings['removeHTMLComments'] ) ) {
             $xpath = new DOMXPath( $this->xml_doc );
 
@@ -414,7 +432,7 @@ class HTMLProcessor extends Base {
         }
     }
 
-    public function processHead( $element ) {
+    public function processHead( DOMElement $element ) : void {
         $head_elements = iterator_to_array(
             $element->childNodes
         );
@@ -456,10 +474,10 @@ class HTMLProcessor extends Base {
      *
     */
     public function postProcessElementURLStructure(
-        $url,
-        $page_url,
-        $site_url
-    ) {
+        string $url,
+        string $page_url,
+        string $site_url
+    ) : string {
         $offline_mode = false;
 
         if ( isset( $this->settings['allowOfflineUsage'] ) ) {
@@ -486,7 +504,7 @@ class HTMLProcessor extends Base {
         return $url;
     }
 
-    public function processMeta( $element ) {
+    public function processMeta( DOMElement $element ) : void {
         // TODO: detect meta redirects here + build list for rewriting
         if ( isset( $this->settings['removeWPMeta'] ) ) {
             $meta_name = $element->getAttribute( 'name' );
@@ -509,21 +527,29 @@ class HTMLProcessor extends Base {
         $this->processElementURL( $element );
     }
 
-    public function removeQueryStringFromInternalLink( $url ) {
+    public function removeQueryStringFromInternalLink( string $url ) : string  {
         if ( strpos( $url, '?' ) !== false ) {
             // strip anything from the ? onwards
             $url = strtok( $url, '?' );
+        }
+
+        if ( ! is_string( $url ) ) {
+            return '';
         }
 
         return $url;
     }
 
     public function getHTML(
-        $xml_doc,
-        $force_https = false,
-        $force_rewrite = false
-    ) {
+        DOMDocument $xml_doc,
+        bool $force_https = false,
+        bool $force_rewrite = false
+    ) : string {
         $processed_html = $xml_doc->saveHtml();
+
+        if ( ! is_string( $processed_html ) ) {
+            return '';
+        }
 
         // TODO: here is where we convertToSiteRelativeURLs, as this can be
         // bulk performed, just stripping the domain when rewriting
@@ -536,6 +562,10 @@ class HTMLProcessor extends Base {
             $rewrite_rules =
                 RewriteRules::getUserRewriteRules( $this->user_rewrite_rules );
 
+            if ( ! is_string( $processed_html ) ) {
+                return '';
+            }
+
             $processed_html = str_replace(
                 $rewrite_rules['from'],
                 $rewrite_rules['to'],
@@ -543,7 +573,11 @@ class HTMLProcessor extends Base {
             );
         }
 
-        if ( isset( $force_https ) ) {
+        if ( ! is_string( $processed_html ) ) {
+            return '';
+        }
+
+        if ( $force_https ) {
             $processed_html = str_replace(
                 'http://',
                 'https://',
@@ -551,12 +585,20 @@ class HTMLProcessor extends Base {
             );
         }
 
-        if ( isset( $force_rewrite ) ) {
+        if ( ! is_string( $processed_html ) ) {
+            return '';
+        }
+
+        if ( $force_rewrite ) {
             $processed_html = str_replace(
                 $this->rewrite_rules['site_url_patterns'],
                 $this->rewrite_rules['destination_url_patterns'],
                 $processed_html
             );
+        }
+
+        if ( ! is_string( $processed_html ) ) {
+            return '';
         }
 
         $processed_html = html_entity_decode(
@@ -575,7 +617,7 @@ class HTMLProcessor extends Base {
         return $processed_html;
     }
 
-    public function shouldCreateBaseHREF() {
+    public function shouldCreateBaseHREF() : bool {
         if ( empty( $this->settings['baseHREF'] ) ) {
             return false;
         }
@@ -588,7 +630,7 @@ class HTMLProcessor extends Base {
         return true;
     }
 
-    public function processCDATA( $node ) {
+    public function processCDATA( DOMNode $node ) : void {
         $node_text = $node->textContent;
 
         $node_text = str_replace(
@@ -608,10 +650,8 @@ class HTMLProcessor extends Base {
      * Download discovered assets
      *
      * @param string $url Absolute local URL to potentially download
-     * @return void
-     *
      */
-    public function downloadAsset( $url, $extension ) {
+    public function downloadAsset( string $url, string $extension ) : void {
         // check if user wants to download discovered assets
 
         // TODO: add local cache per iteration of HTMLProcessor to
