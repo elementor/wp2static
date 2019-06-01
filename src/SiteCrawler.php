@@ -461,7 +461,6 @@ class SiteCrawler extends Base {
      * Get relative URL from absolute URL
      *
      * @throws WP2StaticException
-     *
      */
     public function getRelativeURLFromFullURL( string $page_url ) : string {
         $site_url = SiteInfo::getUrl( 'site' );
