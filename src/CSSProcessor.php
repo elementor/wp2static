@@ -77,7 +77,12 @@ class CSSProcessor extends Base {
                         }
                     }
 
-                    uksort( $tmp_rules, array( $this, 'ruleSort' ) );
+                    uksort(
+                        $tmp_rules,
+                        function ( $str1, $str2 ) {
+                            return 0 - strcmp( $str1, $str2 );
+                        }
+                    );
 
                     foreach ( $tmp_rules as $from => $to ) {
                         $rewrite_from[] = $from;
