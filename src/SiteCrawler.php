@@ -380,12 +380,14 @@ class SiteCrawler {
                     $this->ch
                 );
 
-                $this->processed_file = $processor->processHTML(
+                $dom_iterator = new DOMIterator();
+
+                $xml_doc = $dom_iterator->processHTML(
                     $output,
                     $page_url
                 );
 
-                if ( $this->processed_file ) {
+                if ( $xml_doc ) {
                     $this->processed_file = $processor->getHTML(
                         $processor->xml_doc,
                         isset( $this->settings['forceHTTPS'] ),

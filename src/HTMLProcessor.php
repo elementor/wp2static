@@ -31,7 +31,6 @@ use Exception;
 class HTMLProcessor {
 
     public $base_element;
-    public $base_tag_exists;
     public $ch;
     public $crawlable_filetypes;
     public $destination_url;
@@ -81,161 +80,6 @@ class HTMLProcessor {
         $this->crawlable_filetypes['svg'] = 1;
     }
 
-    /*
-        Processing HTML documents is core to WP2Static's functions, involving:
-
-            - grabbing the whole content body
-            - iterating all links to rewrite doc/site relative URLs to
-              absolute PLACEHOLDER URLs
-            - rewriting all absolute URLs to the original WP site to absolute
-              PLACEHOLDER URLs
-            - recording all valid links on each page for further crawling
-            - performing various transformations of the HTML content/links as
-              specified by the user
-            - rewriting PLACEHOLDER URLs to the Destination URL as specified
-              by the user
-            - saving the resultant processed HTML content to the export dir
-    */
-    public function processHTML(
-        string $html_document,
-        string $page_url
-    ) : bool {
-        if ( $html_document == '' ) {
-            return false;
-        }
-
-        // detect if a base tag exists while in the loop
-        // use in later base href creation to decide: append or create
-        $this->base_tag_exists = false;
-        $this->base_element = null;
-        $this->head_element = null;
-
-        $this->page_url = $page_url;
-
-        // instantiate the XML body here
-        $this->xml_doc = new DOMDocument();
-
-        // PERF: 70% of function time
-        // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
-        libxml_use_internal_errors( true );
-        $this->xml_doc->loadHTML( $html_document );
-        libxml_use_internal_errors( false );
-
-        // start the full iterator here, along with copy of dom
-        $elements = iterator_to_array(
-            $this->xml_doc->getElementsByTagName( '*' )
-        );
-
-        foreach ( $elements as $element ) {
-            switch ( $element->tagName ) {
-                case 'meta':
-                    $this->processMeta( $element );
-                    break;
-                case 'form':
-                    FormProcessor::process( $element );
-                    break;
-                case 'a':
-                    $this->processElementURL( $element );
-                    break;
-                case 'img':
-                    $this->processElementURL( $element );
-                    $this->processImageSrcSet( $element );
-                    break;
-                case 'head':
-                    $this->head_element = $element;
-                    $this->processHead( $element );
-                    break;
-                case 'link':
-                    // NOTE: not to confuse with anchor element
-                    $this->processElementURL( $element );
-
-                    if ( isset( $this->settings['removeWPLinks'] ) ) {
-                        RemoveLinkElementsBasedOnRelAttr::remove( $element );
-                    }
-
-                    if ( isset( $this->settings['removeCanonical'] ) ) {
-                        $this->removeCanonicalLink( $element );
-                    }
-
-                    break;
-                case 'script':
-                    /*
-                        Script tags may contain src=
-                        can also contain URLs within scripts
-                        and escaped urls
-                    */
-                    $this->processElementURL( $element );
-
-                    // get the CDATA sections within <SCRIPT>
-                    foreach ( $element->childNodes as $node ) {
-                        if ( $node->nodeType == XML_CDATA_SECTION_NODE ) {
-                            $this->processCDATA( $node );
-                        }
-                    }
-                    break;
-            }
-        }
-
-        // NOTE: $this->base_tag_exists is being set during iteration of
-        // elements, this prevents us from needing to do another iteration
-        $this->dealWithBaseHREFElement(
-            $this->xml_doc,
-            $this->base_tag_exists
-        );
-
-        // allow empty favicon to prevent extra browser request
-        if ( isset( $this->settings['createEmptyFavicon'] ) ) {
-            $this->createEmptyFaviconLink( $this->xml_doc );
-        }
-
-        $this->stripHTMLComments();
-
-        return true;
-    }
-
-    /*
-        When we use relative links, we'll need to set the base HREF tag
-        if we are exporting for offline usage or have not specific a base HREF
-        we will remove any that we find
-
-        HEAD and BASE elements have been looked for during the main DOM
-        iteration and recorded if found.
-    */
-    public function dealWithBaseHREFElement(
-        DOMDocument $xml_doc,
-        bool $base_tag_exists
-    ) : void {
-        if ( $base_tag_exists ) {
-            if ( $this->shouldCreateBaseHREF() ) {
-                $this->base_element->setAttribute(
-                    'href',
-                    $this->settings['baseHREF']
-                );
-            } else {
-                $this->base_element->parentNode->removeChild(
-                    $this->base_element
-                );
-            }
-        } elseif ( $this->shouldCreateBaseHREF() ) {
-            $base_element = $xml_doc->createElement( 'base' );
-            $base_element->setAttribute(
-                'href',
-                $this->settings['baseHREF']
-            );
-
-            if ( $this->head_element ) {
-                $first_head_child = $this->head_element->firstChild;
-                $this->head_element->insertBefore(
-                    $base_element,
-                    $first_head_child
-                );
-            } else {
-                WsLog::l(
-                    'No head element to attach base to: ' . $this->page_url
-                );
-            }
-        }
-    }
 
     public function createEmptyFaviconLink( DOMDocument $xml_doc ) : void {
         $link_element = $xml_doc->createElement( 'link' );
@@ -434,28 +278,6 @@ class HTMLProcessor {
         }
     }
 
-    public function processHead( DOMElement $element ) : void {
-        $head_elements = iterator_to_array(
-            $element->childNodes
-        );
-
-        foreach ( $head_elements as $node ) {
-            if ( $node instanceof DOMComment ) {
-                if (
-                    isset( $this->settings['removeConditionalHeadComments'] )
-                ) {
-                    $node->parentNode->removeChild( $node );
-                }
-            } elseif ( isset( $node->tagName ) ) {
-                if ( $node->tagName === 'base' ) {
-                    // as smaller iteration to run conditional
-                    // against here
-                    $this->base_tag_exists = true;
-                    $this->base_element = $node;
-                }
-            }
-        }
-    }
 
     /*
      * After we have normalized the element's URL and have an absolute
