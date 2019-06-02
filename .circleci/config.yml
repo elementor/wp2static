@@ -5,7 +5,10 @@ jobs:
       - image: circleci/php:7.2-apache-node-browsers-legacy
     steps:
       - checkout
-      - run: npm install
+      - run:
+          name: Install node modules
+          command: |
+            npm install
       - run:
           name: Run code quality checks
           command: |
