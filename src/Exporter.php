@@ -4,6 +4,8 @@ namespace WP2Static;
 
 class Exporter {
 
+    private $settings;
+
     public function __construct() {
         $plugin = Controller::getInstance();
         $this->settings = $plugin->options->getSettings( true );

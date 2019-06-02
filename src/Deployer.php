@@ -6,6 +6,8 @@ use WP_CLI;
 
 class Deployer {
 
+    private $settings;
+
     public function __construct() {
         $plugin = Controller::getInstance();
         $this->settings = $plugin->options->getSettings( true );

@@ -10,6 +10,7 @@ use Exception;
 class ArchiveProcessor {
 
     private $archive_path;
+    private $settings;
 
     public function __construct() {
         $archive_path = SiteInfo::getPath( 'uploads' ) .

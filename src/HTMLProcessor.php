@@ -43,6 +43,7 @@ class HTMLProcessor {
     public $site_url_host;
     public $user_rewrite_rules;
     public $xml_doc;
+    private $settings;
 
     /**
      * HTMLProcessor constructor

@@ -8,6 +8,7 @@ class CSSProcessor {
     public $raw_css;
     public $page_url;
     public $css_doc;
+    private $settings;
 
     public function __construct() {
         $plugin = Controller::getInstance();

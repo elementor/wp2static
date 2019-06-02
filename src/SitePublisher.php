@@ -4,7 +4,7 @@ namespace WP2Static;
 
 class SitePublisher {
 
-    public $settings;
+    private $settings;
     public $export_file_list;
     public $files_remaining;
     public $file_paths_and_hashes;

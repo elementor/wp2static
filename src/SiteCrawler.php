@@ -19,6 +19,7 @@ class SiteCrawler {
     public $url;
     public $page_url;
     public $curl_options;
+    private $settings;
 
     /**
      *  SiteCrawler constructor
