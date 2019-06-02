@@ -2,7 +2,12 @@
 
 namespace WP2Static;
 
+use DOMElement;
+use DOMComment;
+
 class HeadProcessor {
+
+    private $settings;
 
     /**
      *  Process <head> element and return <base> if found

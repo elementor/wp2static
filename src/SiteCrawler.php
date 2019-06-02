@@ -387,14 +387,12 @@ class SiteCrawler {
                     $page_url
                 );
 
-                if ( $xml_doc ) {
-                    $dom_to_html = new DOMToHTMLGenerator();
-                    $this->processed_file = $dom_to_html->getHTML(
-                        $xml_doc,
-                        isset( $this->settings['forceHTTPS'] ),
-                        isset( $this->settings['forceRewriteSiteURLs'] )
-                    );
-                }
+                $dom_to_html = new DOMToHTMLGenerator();
+                $this->processed_file = $dom_to_html->getHTML(
+                    $xml_doc,
+                    isset( $this->settings['forceHTTPS'] ),
+                    isset( $this->settings['forceRewriteSiteURLs'] )
+                );
 
                 break;
 

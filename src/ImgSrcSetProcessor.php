@@ -2,6 +2,8 @@
 
 namespace WP2Static;
 
+use DOMElement;
+
 class ImgSrcSetProcessor {
 
     public function processImageSrcSet( DOMElement $element ) : void {

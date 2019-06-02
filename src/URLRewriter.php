@@ -2,7 +2,15 @@
 
 namespace WP2Static;
 
+use DOMElement;
+
 class URLRewriter {
+
+    private $site_url;
+    private $site_url_host;
+    private $page_url;
+    private $rewrite_rules;
+    private $settings;
 
     /**
      * Process URL within a DOMElement

@@ -2,6 +2,9 @@
 
 namespace WP2Static;
 
+use DOMDocument;
+use DOMNode;
+
 class BaseHrefProcessor {
     /*
         When we use relative links, we'll need to set the base HREF tag

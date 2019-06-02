@@ -2,7 +2,13 @@
 
 namespace WP2Static;
 
+use DOMDocument;
+
 class DOMToHTMLGenerator {
+
+    private $user_rewrite_rules;
+    private $rewrite_rules;
+    private $settings;
 
     public function getHTML(
         DOMDocument $xml_doc,

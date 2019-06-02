@@ -79,14 +79,4 @@ class HTMLProcessor {
         $this->crawlable_filetypes['gif'] = 1;
         $this->crawlable_filetypes['svg'] = 1;
     }
-
-
-    public function removeCanonicalLink( DOMElement $element ) : void {
-        $link_rel = $element->getAttribute( 'rel' );
-
-        if ( strtolower( $link_rel ) == 'canonical' ) {
-            $element->parentNode->removeChild( $element );
-        }
-    }
 }
-

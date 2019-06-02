@@ -2,7 +2,11 @@
 
 namespace WP2Static;
 
+use DOMElement;
+
 class MetaProcessor {
+
+    private $settings;
 
     public function processMeta( DOMElement $element ) : void {
         // TODO: detect meta redirects here + build list for rewriting
@@ -24,6 +28,7 @@ class MetaProcessor {
             }
         }
 
-        $this->processElementURL( $element );
+        $url_rewriter = new URLRewriter();
+        $url_rewriter->processElementURL( $element );
     }
 }

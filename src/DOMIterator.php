@@ -6,34 +6,31 @@ use DOMDocument;
 
 class DOMIterator {
 
+    private $settings;
+
     public function processHTML(
         string $html_document,
         string $page_url
     ) : DOMDocument {
-        // TODO: move check higher
-        if ( $html_document == '' ) {
-            return false;
-        }
-
         // detect if a base tag exists while in the loop
         // use in later base href creation to decide: append or create
         $base_element = null;
         $head_element = null;
 
-        $this->page_url = $page_url;
+        $page_url = $page_url;
 
         // instantiate the XML body here
-        $this->xml_doc = new DOMDocument();
+        $xml_doc = new DOMDocument();
 
         // PERF: 70% of function time
         // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
         libxml_use_internal_errors( true );
-        $this->xml_doc->loadHTML( $html_document );
+        $xml_doc->loadHTML( $html_document );
         libxml_use_internal_errors( false );
 
         // start the full iterator here, along with copy of dom
         $elements = iterator_to_array(
-            $this->xml_doc->getElementsByTagName( '*' )
+            $xml_doc->getElementsByTagName( '*' )
         );
 
         $url_rewriter = new URLRewriter();
@@ -69,7 +66,8 @@ class DOMIterator {
                     }
 
                     if ( isset( $this->settings['removeCanonical'] ) ) {
-                        $this->removeCanonicalLink( $element );
+                        $canonical_remover = new CanonicalLinkRemover();
+                        $canonical_remover->removeCanonicalLink( $element );
                     }
 
                     break;
@@ -97,22 +95,22 @@ class DOMIterator {
         $base_href_processor = new BaseHrefProcessor();
 
         $base_href_processor->dealWithBaseHREFElement(
-            $this->xml_doc,
+            $xml_doc,
             $base_element,
             $head_element
         );
 
         // allow empty favicon to prevent extra browser request
         if ( isset( $this->settings['createEmptyFavicon'] ) ) {
-            $favicon_creator = FaviconRequestBlocker();
-            $favicon_creator->createEmptyFaviconLink( $this->xml_doc );
+            $favicon_creator = new FaviconRequestBlocker();
+            $favicon_creator->createEmptyFaviconLink( $xml_doc );
         }
 
         if ( isset( $this->settings['removeHTMLComments'] ) ) {
             $comment_stripper = new HTMLCommentStripper();
-            $comment_stripper->stripHTMLComments();
+            $comment_stripper->stripHTMLComments( $xml_doc );
         }
 
-        return $this->xml_doc;
+        return $xml_doc;
     }
 }
