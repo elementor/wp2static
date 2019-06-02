@@ -45,7 +45,7 @@ Watch Leon Stafford's [talk from WordCamp Brisbane 2018](http://www.youtube.com/
 
 ## Opinionated software
 
- - speed over beautiful code
+ - ~~speed over beautiful code~~ code quality is now prioritized! Thanks @szepeviktor, @arswright!
  - human readable code over short variable names
  - own-code vs adding libraries
  - benchmarking over opinions (performance)
@@ -365,13 +365,23 @@ function runBackendDeployment( $method ) {
 
 add_filter( 'wp2static_addon_trigger_deploy', 'runBackendDeployment' );
 ```
-## Development 
+## Development
 
 This repo contains the latest code, which you can clone/download to get the bleeding edge, else install via the [official WordPress Plugin page](https://wordpress.org/plugins/static-html-output-plugin/)
 
 If you'd like to contribute, please follow the usual GitHub procedures (create an Issue, fork repo, submit PR). If you're unsure about any of that, contact me and I'll be happy to help.
 
 In trying to make development/contributing easier, we'll keep requirements to a minimum. If you prefer Docker, Local by FlyWheel, Valet, Bedrock, Linux, BSD, Mac, they're all fine. This is a WordPress plugin, so anywhere you can run WordPress, you can do development on this :)
+
+### Installing from source
+
+ - clone `develop` branch
+ - `npm i`
+ - `composer install`
+
+### Running tests
+
+ - `composer test`
 
 
 ### Localisation / translations
