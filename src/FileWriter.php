@@ -2,7 +2,7 @@
 
 namespace WP2Static;
 
-class FileWriter extends Base {
+class FileWriter {
 
     public $url;
     public $content;
@@ -19,8 +19,6 @@ class FileWriter extends Base {
         $this->content = $content;
         $this->file_type = $file_type;
         $this->content_type = $content_type;
-
-        $this->loadSettings();
     }
 
     public function saveFile( string $archive_dir ) : void {
@@ -45,14 +43,6 @@ class FileWriter extends Base {
 
         $directory_in_archive =
             isset( $path_info['dirname'] ) ? $path_info['dirname'] : '';
-
-        if ( ! empty( $this->settings['wp_site_subdir'] ) ) {
-            $directory_in_archive = str_replace(
-                $this->settings['wp_site_subdir'],
-                '',
-                $directory_in_archive
-            );
-        }
 
         $file_dir = $archive_dir . ltrim( $directory_in_archive, '/' );
 
@@ -84,15 +74,6 @@ class FileWriter extends Base {
             // TODO: isolate and fix the cause requiring this trim:
             $filename = rtrim( $file_dir, '.' ) . 'index.html';
         } else {
-            // TODO: deal with this hard to read, but functioning code
-            if ( ! empty( $this->settings['wp_site_subdir'] ) ) {
-                $file_dir = str_replace(
-                    '/' . $this->settings['wp_site_subdir'],
-                    '/',
-                    $file_dir
-                );
-            }
-
             $filename =
                 $file_dir . '/' . $path_info['filename'] .
                 '.' . $file_extension;

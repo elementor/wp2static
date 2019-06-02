@@ -2,10 +2,11 @@
 
 namespace WP2Static;
 
-class Exporter extends Base {
+class Exporter {
 
     public function __construct() {
-        $this->loadSettings();
+        $plugin = Controller::getInstance();
+        $this->settings = $plugin->options->getSettings( true );
     }
 
     public function pre_export_cleanup() : void {

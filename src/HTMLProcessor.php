@@ -28,7 +28,7 @@ use Exception;
  * transforming to site root-relative URLs
  *
  */
-class HTMLProcessor extends Base {
+class HTMLProcessor {
 
     public $base_element;
     public $base_tag_exists;
@@ -57,7 +57,8 @@ class HTMLProcessor extends Base {
         string $user_rewrite_rules,
         $ch
     ) {
-        $this->loadSettings();
+        $plugin = Controller::getInstance();
+        $this->settings = $plugin->options->getSettings( true );
 
         $this->rewrite_rules = $rewrite_rules;
         $this->user_rewrite_rules = $user_rewrite_rules;

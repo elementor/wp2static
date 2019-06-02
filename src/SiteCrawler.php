@@ -2,7 +2,7 @@
 
 namespace WP2Static;
 
-class SiteCrawler extends Base {
+class SiteCrawler {
 
     public $processed_file;
     public $file_type;
@@ -30,10 +30,11 @@ class SiteCrawler extends Base {
         string $site_url_host,
         string $destination_url
     ) {
-        $this->loadSettings();
+        $plugin = Controller::getInstance();
+        $this->settings = $plugin->options->getSettings( true );
 
         /*
-         TODO: implement crawl-caching, to greatly speed up the process
+           Implement crawl-caching, to greatly speed up the process
          *
          * helps to recover from mid-crawl failures. Use export-dir, keep
          * between runs. Load cache when starting a run. Check speed DB vs disk

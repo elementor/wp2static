@@ -5,7 +5,7 @@ namespace WP2Static;
 // TODO: if this fails to locate the local file for the remote,
 // it should fall back to regular crawl processing method
 // (where response status will also be checked in case of 404)
-class FileCopier extends Base {
+class FileCopier {
 
     public $url;
     public $wp_site_url;
@@ -64,16 +64,6 @@ class FileCopier extends Base {
             isset( $path_info['dirname'] ) ?
             $path_info['dirname'] :
             '';
-
-        // TODO: This was never being called
-        // as settings weren't loaded. Investigate necessity
-        if ( ! empty( $this->settings['wp_site_subdir'] ) ) {
-            $directory_in_archive = str_replace(
-                $this->settings['wp_site_subdir'],
-                '',
-                $directory_in_archive
-            );
-        }
 
         $file_dir = $archive_dir . ltrim( $directory_in_archive, '/' );
 

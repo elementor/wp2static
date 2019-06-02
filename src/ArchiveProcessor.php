@@ -7,7 +7,7 @@ use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 use Exception;
 
-class ArchiveProcessor extends Base {
+class ArchiveProcessor {
 
     private $archive_path;
 
@@ -15,7 +15,8 @@ class ArchiveProcessor extends Base {
         $archive_path = SiteInfo::getPath( 'uploads' ) .
             'wp2static-exported-site/';
 
-        $this->loadSettings();
+        $plugin = Controller::getInstance();
+        $this->settings = $plugin->options->getSettings( true );
     }
 
     public function renameWPDirectory(

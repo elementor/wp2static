@@ -2,7 +2,7 @@
 
 namespace WP2Static;
 
-class CSSProcessor extends Base {
+class CSSProcessor {
 
     public $placeholder_url;
     public $raw_css;
@@ -10,7 +10,8 @@ class CSSProcessor extends Base {
     public $css_doc;
 
     public function __construct() {
-        $this->loadSettings();
+        $plugin = Controller::getInstance();
+        $this->settings = $plugin->options->getSettings( true );
     }
 
     public function processCSS(

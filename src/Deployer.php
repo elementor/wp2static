@@ -4,10 +4,11 @@ namespace WP2Static;
 
 use WP_CLI;
 
-class Deployer extends Base {
+class Deployer {
 
     public function __construct() {
-        $this->loadSettings();
+        $plugin = Controller::getInstance();
+        $this->settings = $plugin->options->getSettings( true );
     }
 
     /*
