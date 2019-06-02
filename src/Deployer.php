@@ -6,8 +6,6 @@ use WP_CLI;
 
 class Deployer extends Base {
 
-    public $archive;
-
     public function __construct() {
         $this->loadSettings();
     }
@@ -81,8 +79,9 @@ class Deployer extends Base {
     }
 
     public function triggerPostDeployHooks() : void {
-        $this->archive = new Archive();
+        $archive_path = SiteInfo::getPath( 'uploads' ) .
+                'wp2static-exported-site/';
 
-        do_action( 'wp2static_post_deploy_trigger', $this->archive );
+        do_action( 'wp2static_post_deploy_trigger', $archive_path );
     }
 }

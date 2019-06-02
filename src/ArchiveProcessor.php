@@ -9,10 +9,11 @@ use Exception;
 
 class ArchiveProcessor extends Base {
 
-    public $archive;
+    private $archive_path;
 
     public function __construct() {
-        $this->archive = new Archive();
+        $archive_path = SiteInfo::getPath( 'uploads' ) .
+            'wp2static-exported-site/';
 
         $this->loadSettings();
     }
@@ -30,8 +31,8 @@ class ArchiveProcessor extends Base {
             die();
         }
 
-        $original_dir = $this->archive->path . $source;
-        $new_dir = $this->archive->path . $target;
+        $original_dir = $this->archive_path . $source;
+        $new_dir = $this->archive_path . $target;
 
         if ( is_dir( $original_dir ) ) {
             $this->recursive_copy( $original_dir, $new_dir );
@@ -198,7 +199,7 @@ class ArchiveProcessor extends Base {
 
         if ( $directory_empty || $dir_has_safety_file ) {
             $this->recursive_copy(
-                $this->archive->path,
+                $this->archive_path,
                 $target_folder
             );
 
@@ -230,14 +231,14 @@ class ArchiveProcessor extends Base {
 
         if ( isset( $this->settings['netlifyRedirects'] ) ) {
             $redirect_content = $this->settings['netlifyRedirects'];
-            $redirect_path = $this->archive->path . '_redirects';
+            $redirect_path = $this->archive_path . '_redirects';
             file_put_contents( $redirect_path, $redirect_content );
             chmod( $redirect_path, 0664 );
         }
 
         if ( isset( $this->settings['netlifyHeaders'] ) ) {
             $header_content = $this->settings['netlifyHeaders'];
-            $header_path = $this->archive->path . '_headers';
+            $header_path = $this->archive_path . '_headers';
             file_put_contents( $header_path, $header_content );
             chmod( $header_path, 0664 );
         }
@@ -255,7 +256,7 @@ class ArchiveProcessor extends Base {
             return;
         }
 
-        $archive_path = rtrim( $this->archive->path, '/' );
+        $archive_path = rtrim( $this->archive_path, '/' );
         $temp_zip = $archive_path . '.tmp';
 
         $zip_archive = new ZipArchive();
@@ -268,7 +269,7 @@ class ArchiveProcessor extends Base {
 
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator(
-                $this->archive->path,
+                $this->archive_path,
                 RecursiveDirectoryIterator::SKIP_DOTS
             )
         );
@@ -286,7 +287,7 @@ class ArchiveProcessor extends Base {
 
                 if ( ! $zip_archive->addFile(
                     $real_filepath,
-                    str_replace( $this->archive->path, '', $filename )
+                    str_replace( $this->archive_path, '', $filename )
                 )
                 ) {
                     $err = 'Could not add file: ' . $filename;
@@ -305,16 +306,16 @@ class ArchiveProcessor extends Base {
     }
 
     public function removeWPCruft() : void {
-        if ( file_exists( $this->archive->path . '/xmlrpc.php' ) ) {
-            unlink( $this->archive->path . '/xmlrpc.php' );
+        if ( file_exists( $this->archive_path . '/xmlrpc.php' ) ) {
+            unlink( $this->archive_path . '/xmlrpc.php' );
         }
 
-        if ( file_exists( $this->archive->path . '/wp-login.php' ) ) {
-            unlink( $this->archive->path . '/wp-login.php' );
+        if ( file_exists( $this->archive_path . '/wp-login.php' ) ) {
+            unlink( $this->archive_path . '/wp-login.php' );
         }
 
         FilesHelper::delete_dir_with_files(
-            $this->archive->path . '/wp-json/'
+            $this->archive_path . '/wp-json/'
         );
     }
 

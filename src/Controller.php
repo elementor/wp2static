@@ -481,6 +481,22 @@ class Controller {
         }
     }
 
+    /**
+     * Create export dir
+     *
+     * @throws WP2StaticException
+     */
+    public function create_export_directory() : void {
+        $archive_path = SiteInfo::getPath( 'uploads' ) .
+                'wp2static-exported-site/';
+
+        if ( ! wp_mkdir_p( $archive_path ) ) {
+            $err = "Couldn't create archive directory:" . $archive_path;
+            WsLog::l( $err );
+            throw new WP2StaticException( $err );
+        }
+    }
+
     public function prepare_for_export() : void {
         $this->save_options();
 
@@ -491,8 +507,7 @@ class Controller {
         // TODO: kill this / make UI/CLI option to delete export dir
         // $this->exporter->cleanup_leftover_archives();
 
-        $archive = new Archive();
-        $archive->create();
+        $this->create_export_directory();
 
         $this->logEnvironmentalInfo();
 
