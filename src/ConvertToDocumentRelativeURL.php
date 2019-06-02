@@ -18,7 +18,7 @@ class ConvertToDocumentRelativeURL {
         $current_page_path_to_root = '';
         $current_page_path = parse_url( $page_url, PHP_URL_PATH );
 
-        if ( ! is_string( $current_page_path ) ) {
+        if ( ! $current_page_path ) {
             return $url;
         }
 
@@ -31,9 +31,8 @@ class ConvertToDocumentRelativeURL {
             $page_url
         );
 
-        // TODO: encountering occurrances of empty $page_url_without_domain
-        if ( ! is_string( $page_url_without_domain ) ) {
-            $err = 'Warning: page URL without domain encountered ' .
+        if ( $page_url_without_domain === '' ) {
+            $err = 'Warning: empty $page_url_without_domain encountered ' .
                 "url: {$url} \\n page_url: $page_url \\n " .
                 "site_url: {$site_url} \\n offline mode: $offline_mode";
             WsLog::l( $err );
@@ -117,11 +116,7 @@ class ConvertToDocumentRelativeURL {
             /an-img.jpg # no match
 
         */
-        if ( ! is_string( $offline_url ) ) {
-            return '';
-        }
-
-        if ( $offline_mode ) {
+        if ( is_string( $offline_url ) &&  $offline_mode !== '' ) {
             // if last char is a ., we're linking to a dir path, add index.html
             $last_char_is_slash = substr( $offline_url, -1 ) == '/';
 

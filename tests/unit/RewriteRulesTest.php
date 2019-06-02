@@ -19,6 +19,16 @@ final class RewriteRulesTest extends TestCase{
         );
     }
 
+    public function testgetRulesReturnsEmptyArrayWhenEmptyArg() {
+        $rewrite_rules =
+           RewriteRules::getUserRewriteRules( '' );
+
+        $this->assertEquals(
+            [],
+            $rewrite_rules
+        );
+    }
+
     public function generateProvider() {
         return [
            'naked domain site and destination' =>  [

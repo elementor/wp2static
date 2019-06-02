@@ -4,6 +4,12 @@ namespace WP2Static;
 
 use PHPUnit\Framework\TestCase;
 
+// mock static method
+class WsLog {
+    public static function l() {
+    }
+}
+
 final class ConvertToDocumentRelativeURLTest extends TestCase{
 
     /**
@@ -18,6 +24,44 @@ final class ConvertToDocumentRelativeURLTest extends TestCase{
 
         $this->assertEquals(
             $expectation,
+            $converted_url
+        );
+    }
+
+    public function testPageURLWithoutDomainEmptyReturnsOriginalURL() {
+        $url = 'https://anything.com/';
+        $page_url = 'https://mydomain.com/';
+        $site_url = 'https://mydomain.com/';
+        $offline_mode = false;
+
+        $converted_url = ConvertToDocumentRelativeURL::convert(
+            $url,
+            $page_url,
+            $site_url,
+            $offline_mode
+        );
+
+        $this->assertEquals(
+            $url,
+            $converted_url
+        );
+    }
+
+    public function testNoPagePathReturnsOriginalURL() {
+        $url = 'https://anything.com/';
+        $page_url = '';
+        $site_url = 'https://mydomain.com/';
+        $offline_mode = false;
+
+        $converted_url = ConvertToDocumentRelativeURL::convert(
+            $url,
+            $page_url,
+            $site_url,
+            $offline_mode
+        );
+
+        $this->assertEquals(
+            $url,
             $converted_url
         );
     }

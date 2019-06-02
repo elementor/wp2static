@@ -64,8 +64,8 @@
     },
     "scripts": {
         "phpstan": "php -d memory_limit=-1 ./vendor/bin/phpstan analyse",
-        "phpcs": "vendor/bin/phpcs --standard=./tools/phpcs.xml --ignore=*/tests/*,*.js,*/node_modules/*,*/vendor/*,*/views/*.php ./",
-        "phpcbf": "vendor/bin/phpcbf --standard=./tools/phpcs.xml --ignore=*/tests/*,*.js,*/node_modules/*,*/vendor/*,*/views/*.php ./",
+        "phpcs": "vendor/bin/phpcs --standard=./tools/phpcs.xml --ignore=*/tests/*,*/coverage/*,*.js,*/node_modules/*,*/vendor/*,*/views/*.php ./",
+        "phpcbf": "vendor/bin/phpcbf --standard=./tools/phpcs.xml --ignore=*/tests/*,*/coverage/*,*.js,*/node_modules/*,*/vendor/*,*/views/*.php ./",
         "phpunit": "vendor/bin/phpunit ./tests/unit/",
         "coverage": "vendor/bin/phpunit tests/unit --coverage-html coverage --whitelist src/",
         "lint": "vendor/bin/parallel-lint --exclude vendor .",
