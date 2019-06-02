@@ -116,7 +116,7 @@ class ConvertToDocumentRelativeURL {
             /an-img.jpg # no match
 
         */
-        if ( is_string( $offline_url ) &&  $offline_mode !== '' ) {
+        if ( is_string( $offline_url ) && $offline_mode ) {
             // if last char is a ., we're linking to a dir path, add index.html
             $last_char_is_slash = substr( $offline_url, -1 ) == '/';
 
