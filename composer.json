@@ -67,6 +67,7 @@
         "phpcs": "vendor/bin/phpcs --standard=./tools/phpcs.xml --ignore=*/tests/*,*.js,*/node_modules/*,*/vendor/*,*/views/*.php ./",
         "phpcbf": "vendor/bin/phpcbf --standard=./tools/phpcs.xml --ignore=*/tests/*,*.js,*/node_modules/*,*/vendor/*,*/views/*.php ./",
         "phpunit": "vendor/bin/phpunit ./tests/unit/",
+        "coverage": "vendor/bin/phpunit tests/unit --coverage-html coverage --whitelist src/",
         "lint": "vendor/bin/parallel-lint --exclude vendor .",
         "eslint": "node_modules/eslint/bin/eslint.js views/wp2static-admin.js",
         "test": [
