@@ -36,20 +36,24 @@ class DOMIterator {
             $this->xml_doc->getElementsByTagName( '*' )
         );
 
+        $url_rewriter = new URLRewriter();
+
         foreach ( $elements as $element ) {
             switch ( $element->tagName ) {
                 case 'meta':
-                    $this->processMeta( $element );
+                    $meta_processor = new MetaProcessor();
+                    $meta_processor->processMeta( $element );
                     break;
                 case 'form':
                     FormProcessor::process( $element );
                     break;
                 case 'a':
-                    $this->processElementURL( $element );
+                    $url_rewriter->processElementURL( $element );
                     break;
                 case 'img':
-                    $this->processElementURL( $element );
-                    $this->processImageSrcSet( $element );
+                    $url_rewriter->processElementURL( $element );
+                    $src_set_processor = new ImgSrcSetProcessor();
+                    $src_set_processor->processImageSrcSet( $element );
                     break;
                 case 'head':
                     $head_element = $element;
@@ -58,7 +62,7 @@ class DOMIterator {
                     break;
                 case 'link':
                     // NOTE: not to confuse with anchor element
-                    $this->processElementURL( $element );
+                    $url_rewriter->processElementURL( $element );
 
                     if ( isset( $this->settings['removeWPLinks'] ) ) {
                         RemoveLinkElementsBasedOnRelAttr::remove( $element );
@@ -75,12 +79,13 @@ class DOMIterator {
                         can also contain URLs within scripts
                         and escaped urls
                     */
-                    $this->processElementURL( $element );
+                    $url_rewriter->processElementURL( $element );
 
                     // get the CDATA sections within <SCRIPT>
                     foreach ( $element->childNodes as $node ) {
                         if ( $node->nodeType == XML_CDATA_SECTION_NODE ) {
-                            $this->processCDATA( $node );
+                            $cdata_processor = new CDATAProcessor();
+                            $cdata_processor->processCDATA( $node );
                         }
                     }
                     break;
@@ -99,10 +104,14 @@ class DOMIterator {
 
         // allow empty favicon to prevent extra browser request
         if ( isset( $this->settings['createEmptyFavicon'] ) ) {
-            $this->createEmptyFaviconLink( $this->xml_doc );
+            $favicon_creator = FaviconRequestBlocker();
+            $favicon_creator->createEmptyFaviconLink( $this->xml_doc );
         }
 
-        $this->stripHTMLComments();
+        if ( isset( $this->settings['removeHTMLComments'] ) ) {
+            $comment_stripper = new HTMLCommentStripper();
+            $comment_stripper->stripHTMLComments();
+        }
 
         return $this->xml_doc;
     }
