@@ -3,7 +3,6 @@
 namespace WP2Static;
 
 class AssetDownloader {
-
     /*
      * Download discovered assets
      *

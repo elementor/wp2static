@@ -3,7 +3,6 @@
 namespace WP2Static;
 
 class PostProcessElementURLStructure {
-
     /*
      * After we have normalized the element's URL and have an absolute
      * Placeholder URL, we can perform transformations, such as making it

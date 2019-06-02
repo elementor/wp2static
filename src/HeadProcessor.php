@@ -31,7 +31,7 @@ class HeadProcessor {
                 }
             }
         }
-        
+
         return $base_element;
     }
 }

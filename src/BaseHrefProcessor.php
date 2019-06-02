@@ -3,7 +3,6 @@
 namespace WP2Static;
 
 class BaseHrefProcessor {
-
     /*
         When we use relative links, we'll need to set the base HREF tag
         if we are exporting for offline usage or have not specific a base HREF

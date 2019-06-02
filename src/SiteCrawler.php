@@ -388,7 +388,7 @@ class SiteCrawler {
                 );
 
                 if ( $xml_doc ) {
-                    $dom_to_html = new DOMToHTMLGenerator
+                    $dom_to_html = new DOMToHTMLGenerator();
                     $this->processed_file = $dom_to_html->getHTML(
                         $xml_doc,
                         isset( $this->settings['forceHTTPS'] ),
