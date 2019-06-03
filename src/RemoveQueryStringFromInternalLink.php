@@ -10,7 +10,7 @@ class RemoveQueryStringFromInternalLink {
             $url = strtok( $url, '?' );
         }
 
-        if (  $url === '' ) {
+        if ( $url === '' ) {
             return '';
         }
 
