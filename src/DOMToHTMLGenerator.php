@@ -86,17 +86,4 @@ class DOMToHTMLGenerator {
 
         return $processed_html;
     }
-
-    public function shouldCreateBaseHREF() : bool {
-        if ( empty( $this->settings['baseHREF'] ) ) {
-            return false;
-        }
-
-        // NOTE: base HREF should not be set when creating an offline ZIP
-        if ( isset( $this->settings['allowOfflineUsage'] ) ) {
-            return false;
-        }
-
-        return true;
-    }
 }

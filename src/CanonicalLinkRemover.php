@@ -2,6 +2,8 @@
 
 namespace WP2Static;
 
+use DOMElement;
+
 class CanonicalLinkRemover {
 
     public function removeCanonicalLink( DOMElement $element ) : void {

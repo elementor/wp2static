@@ -6,11 +6,15 @@ use DOMDocument;
 
 class DOMIterator {
 
-    private $settings;
-
+    /**
+     *  Iterate through all DOMElements and process
+     *
+     *  @param mixed[] $settings All settings
+     */
     public function processHTML(
         string $html_document,
-        string $page_url
+        string $page_url,
+        array $settings
     ) : DOMDocument {
         // detect if a base tag exists while in the loop
         // use in later base href creation to decide: append or create
@@ -61,11 +65,11 @@ class DOMIterator {
                     // NOTE: not to confuse with anchor element
                     $url_rewriter->processElementURL( $element );
 
-                    if ( isset( $this->settings['removeWPLinks'] ) ) {
+                    if ( isset( $settings['removeWPLinks'] ) ) {
                         RemoveLinkElementsBasedOnRelAttr::remove( $element );
                     }
 
-                    if ( isset( $this->settings['removeCanonical'] ) ) {
+                    if ( isset( $settings['removeCanonical'] ) ) {
                         $canonical_remover = new CanonicalLinkRemover();
                         $canonical_remover->removeCanonicalLink( $element );
                     }
@@ -83,7 +87,11 @@ class DOMIterator {
                     foreach ( $element->childNodes as $node ) {
                         if ( $node->nodeType == XML_CDATA_SECTION_NODE ) {
                             $cdata_processor = new CDATAProcessor();
-                            $cdata_processor->processCDATA( $node );
+                            $cdata_processor->processCDATA(
+                                $node,
+                                $xml_doc,
+                                $settings['rewrite_rules']
+                            );
                         }
                     }
                     break;
@@ -101,12 +109,12 @@ class DOMIterator {
         );
 
         // allow empty favicon to prevent extra browser request
-        if ( isset( $this->settings['createEmptyFavicon'] ) ) {
+        if ( isset( $settings['createEmptyFavicon'] ) ) {
             $favicon_creator = new FaviconRequestBlocker();
             $favicon_creator->createEmptyFaviconLink( $xml_doc );
         }
 
-        if ( isset( $this->settings['removeHTMLComments'] ) ) {
+        if ( isset( $settings['removeHTMLComments'] ) ) {
             $comment_stripper = new HTMLCommentStripper();
             $comment_stripper->stripHTMLComments( $xml_doc );
         }

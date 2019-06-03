@@ -3,6 +3,17 @@
 namespace WP2Static;
 
 class AssetDownloader {
+
+    private $ch;
+    private $settings;
+    private $site_url;
+    private $crawlable_filetypes;
+
+    public function __construct() {
+        $plugin = Controller::getInstance();
+        $this->settings = $plugin->options->getSettings( true );
+    }
+
     /*
      * Download discovered assets
      *

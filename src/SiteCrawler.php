@@ -384,7 +384,8 @@ class SiteCrawler {
 
                 $xml_doc = $dom_iterator->processHTML(
                     $output,
-                    $page_url
+                    $page_url,
+                    $this->settings
                 );
 
                 $dom_to_html = new DOMToHTMLGenerator();
