@@ -12,7 +12,6 @@ final class CanonicalLinkRemoverTest extends TestCase{
 
         // create parent head 
         $head = $dom->createElement( 'head', ' ' );
-
         $body = $dom->createElement( 'body', ' ' );
 
         // create the link rel Element
@@ -26,12 +25,9 @@ final class CanonicalLinkRemoverTest extends TestCase{
         $anchor->setAttribute('href', 'https://somedomain.com/alink') ;
         $body->appendChild( $anchor );
 
-
         $html = $dom->createElement( 'html' );
-
         $html->appendChild( $head );
         $html->appendChild( $body );
-
         $dom->appendChild( $html );
 
         $canonical_link_remover = new CanonicalLinkRemover();
