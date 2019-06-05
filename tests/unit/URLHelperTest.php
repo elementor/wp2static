@@ -163,10 +163,10 @@ final class URLHelperTest extends TestCase{
 
     public function isInternalLinkProvider() {
         return [
-           'starts with / is not enough to determine internal' =>  [
+           'first char /, 2nd char other is site root rel internal link' =>  [
                 '/somelink',
                 'anyhost.com',
-                false,
+                true,
             ],
            'starts with . is internal' =>  [
                 './somelink',
