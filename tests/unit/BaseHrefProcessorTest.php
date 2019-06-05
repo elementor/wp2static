@@ -78,7 +78,7 @@ final class BaseHrefProcessorTest extends TestCase{
 
         $base_href_processor = new BaseHrefProcessor(
             'https://google.com/', // base_href
-            false, // allow_offline_usage
+            false // allow_offline_usage
         );
 
         $base_href_processor->dealWithBaseHREFElement(
@@ -167,7 +167,7 @@ final class BaseHrefProcessorTest extends TestCase{
 
         $base_href_processor = new BaseHrefProcessor(
             'https://google.com/', // base_href
-            true, // allow_offline_usage
+            true // allow_offline_usage
         );
 
         $base_href_processor->dealWithBaseHREFElement(
@@ -201,7 +201,7 @@ final class BaseHrefProcessorTest extends TestCase{
 
         $base_href_processor = new BaseHrefProcessor(
             'https://google.com/', // base_href
-            false, // allow_offline_usage
+            false // allow_offline_usage
         );
 
         $base_href_processor->dealWithBaseHREFElement(
