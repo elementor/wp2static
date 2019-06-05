@@ -54,6 +54,8 @@ class URLRewriter {
      * @return string[] url and name of attribute
      */
     public function getURLAndTargetAttribute( DOMElement $element ) : array {
+        $attribute_to_change = '';
+
         if ( $element->hasAttribute( 'href' ) ) {
             $attribute_to_change = 'href';
         } elseif ( $element->hasAttribute( 'src' ) ) {
