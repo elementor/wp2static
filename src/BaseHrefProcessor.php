@@ -56,10 +56,6 @@ class BaseHrefProcessor {
                     $base_element,
                     $first_head_child
                 );
-            } else {
-                WsLog::l(
-                    'No head element to attach base to'
-                );
             }
         }
     }
