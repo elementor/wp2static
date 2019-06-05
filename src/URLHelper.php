@@ -87,6 +87,13 @@ class URLHelper {
             return true;
         }
 
+        // site root relative URLs, like /alink
+        if ( $url[0] === '/' ) {
+            if ( $url[1] !== '/' ) {
+                return true;
+            }
+        }
+
         $url_host = parse_url( $url, PHP_URL_HOST );
 
         if ( $url_host === $site_url_host ) {
