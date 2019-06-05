@@ -11,8 +11,9 @@ class MetaProcessor {
     private $site_url_host;
     private $page_url;
     private $rewrite_rules;
-    private $includeDiscoveredAssets;
-    private $asset_downloader;
+    private $include_discovered_assets;
+    private $remove_wp_meta;
+    private $url_rewriter;
 
     /**
      * MetaProcessor constructor
@@ -24,20 +25,22 @@ class MetaProcessor {
         string $site_url_host,
         string $page_url,
         array $rewrite_rules,
-        bool $includeDiscoveredAssets,
-        AssetDownloader $asset_downloader
+        bool $include_discovered_assets,
+        bool $remove_wp_meta,
+        URLRewriter $url_rewriter
     ) {
         $this->site_url = $site_url;
         $this->site_url_host = $site_url_host;
         $this->page_url = $page_url;
         $this->rewrite_rules = $rewrite_rules;
-        $this->includeDiscoveredAssets = $includeDiscoveredAssets;
-        $this->asset_downloader = $asset_downloader;
+        $this->include_discovered_assets = $include_discovered_assets;
+        $this->remove_wp_meta = $remove_wp_meta;
+        $this->url_rewriter = $url_rewriter;
     }
 
     public function processMeta( DOMElement $element ) : void {
         // TODO: detect meta redirects here + build list for rewriting
-        if ( isset( $this->settings['removeWPMeta'] ) ) {
+        if ( isset( $this->remove_wp_meta ) ) {
             $meta_name = $element->getAttribute( 'name' );
 
             if ( strpos( $meta_name, 'generator' ) !== false ) {
@@ -55,14 +58,6 @@ class MetaProcessor {
             }
         }
 
-        $url_rewriter = new URLRewriter(
-            $this->site_url,
-            $this->site_url_host,
-            $this->page_url,
-            $this->rewrite_rules,
-            $this->includeDiscoveredAssets,
-            $this->asset_downloader,
-        );
-        $url_rewriter->processElementURL( $element );
+        $this->url_rewriter->processElementURL( $element );
     }
 }

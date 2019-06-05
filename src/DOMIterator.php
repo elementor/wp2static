@@ -11,7 +11,7 @@ class DOMIterator {
     private $site_url_host;
     private $page_url;
     private $rewrite_rules;
-    private $includeDiscoveredAssets;
+    private $include_discovered_assets;
     private $asset_downloader;
 
     /**
@@ -24,14 +24,14 @@ class DOMIterator {
         string $site_url_host,
         string $page_url,
         array $rewrite_rules,
-        bool $includeDiscoveredAssets,
+        bool $include_discovered_assets,
         AssetDownloader $asset_downloader
     ) {
         $this->site_url = $site_url;
         $this->site_url_host = $site_url_host;
         $this->page_url = $page_url;
         $this->rewrite_rules = $rewrite_rules;
-        $this->includeDiscoveredAssets = $includeDiscoveredAssets;
+        $this->include_discovered_assets = $include_discovered_assets;
         $this->asset_downloader = $asset_downloader;
     }
 
@@ -65,7 +65,7 @@ class DOMIterator {
             $this->site_url_host,
             $this->page_url,
             $this->rewrite_rules,
-            $this->includeDiscoveredAssets,
+            $this->include_discovered_assets,
             $this->asset_downloader,
         );
 
@@ -77,7 +77,8 @@ class DOMIterator {
                         $this->site_url_host,
                         $this->page_url,
                         $this->rewrite_rules,
-                        $this->includeDiscoveredAssets,
+                        $this->include_discovered_assets,
+                        $this->settings['removeWPMeta'],
                         $this->asset_downloader,
                     );
                     $meta_processor->processMeta( $element );
@@ -95,7 +96,7 @@ class DOMIterator {
                         $this->site_url_host,
                         $this->page_url,
                         $this->rewrite_rules,
-                        $this->includeDiscoveredAssets,
+                        $this->include_discovered_assets,
                         $this->asset_downloader,
                     );
                     $src_set_processor->processImageSrcSet( $element );
@@ -144,7 +145,10 @@ class DOMIterator {
 
         // NOTE: $base_element is being recored during iteration of
         // elements, this prevents us from needing to do another iteration
-        $base_href_processor = new BaseHrefProcessor();
+        $base_href_processor = new BaseHrefProcessor(
+            $this->settings['baseHREF'],
+            $this->settings['allowOfflineUsage']
+        );
 
         $base_href_processor->dealWithBaseHREFElement(
             $xml_doc,

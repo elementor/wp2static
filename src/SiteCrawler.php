@@ -4,35 +4,44 @@ namespace WP2Static;
 
 class SiteCrawler {
 
-    public $processed_file;
-    public $file_type;
-    public $content_type;
-    public $extension;
-    public $archive_dir;
-    public $list_of_urls_to_crawl_path;
-    public $urls_to_crawl;
-    public $rewrite_rules;
-    public $site_url_host;
-    public $destination_url;
-    public $ch;
-    public $request;
-    public $url;
-    public $page_url;
-    public $curl_options;
+    private $archive_dir;
+    private $asset_downloader;
+    private $ch;
+    private $content_type;
+    private $curl_options;
+    private $destination_url;
+    private $extension;
+    private $file_type;
+    private $include_discovered_assets;
+    private $list_of_urls_to_crawl_path;
+    private $page_url;
+    private $processed_file;
+    private $request;
+    private $rewrite_rules;
     private $settings;
+    private $site_url;
+    private $site_url_host;
+    private $url;
+    private $urls_to_crawl;
 
     /**
      *  SiteCrawler constructor
      *
      * @param mixed[] $rewrite_rules rewrite rules
+     * @param mixed[] $settings all plugin settings
      */
     public function __construct(
-        array $rewrite_rules,
         string $site_url_host,
-        string $destination_url
+        string $destination_url,
+        array $rewrite_rules,
+        array $settings,
+        AssetDownloader $asset_downloader
     ) {
-        $plugin = Controller::getInstance();
-        $this->settings = $plugin->options->getSettings( true );
+        $this->site_url_host = $site_url_host;
+        $this->destination_url = $destination_url;
+        $this->rewrite_rules = $rewrite_rules;
+        $this->settings = $settings;
+        $this->asset_downloader = $asset_downloader;
 
         /*
            Implement crawl-caching, to greatly speed up the process
@@ -380,12 +389,18 @@ class SiteCrawler {
                     $this->ch
                 );
 
-                $dom_iterator = new DOMIterator();
+                $dom_iterator = new DOMIterator(
+                    $this->site_url,
+                    $this->site_url_host,
+                    $this->page_url,
+                    $this->rewrite_rules,
+                    $this->include_discovered_assets,
+                    $this->asset_downloader,
+                );
 
                 $xml_doc = $dom_iterator->processHTML(
                     $output,
-                    $page_url,
-                    $this->settings
+                    $page_url
                 );
 
                 $dom_to_html = new DOMToHTMLGenerator();

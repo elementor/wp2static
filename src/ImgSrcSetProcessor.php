@@ -10,7 +10,7 @@ class ImgSrcSetProcessor {
     private $site_url_host;
     private $page_url;
     private $rewrite_rules;
-    private $includeDiscoveredAssets;
+    private $include_discovered_assets;
     private $asset_downloader;
 
     /**
@@ -23,14 +23,14 @@ class ImgSrcSetProcessor {
         string $site_url_host,
         string $page_url,
         array $rewrite_rules,
-        bool $includeDiscoveredAssets,
+        bool $include_discovered_assets,
         AssetDownloader $asset_downloader
     ) {
         $this->site_url = $site_url;
         $this->site_url_host = $site_url_host;
         $this->page_url = $page_url;
         $this->rewrite_rules = $rewrite_rules;
-        $this->includeDiscoveredAssets = $includeDiscoveredAssets;
+        $this->include_discovered_assets = $include_discovered_assets;
         $this->asset_downloader = $asset_downloader;
     }
 
@@ -62,7 +62,7 @@ class ImgSrcSetProcessor {
                 $this->site_url_host,
                 $this->page_url,
                 $this->rewrite_rules,
-                $this->includeDiscoveredAssets,
+                $this->include_discovered_assets,
                 $this->asset_downloader,
             );
 

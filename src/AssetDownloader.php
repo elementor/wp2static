@@ -13,7 +13,7 @@ class AssetDownloader {
      * Create AssetDownloader
      *
      * @param resource $ch cURL handle
-     * @param string[] $crawlable_filetypes list of filetypes we'll download
+     * @param mixed[] $crawlable_filetypes list of filetypes we'll download
      * @param mixed[] $settings all plugin settings
      */
     public function __construct(

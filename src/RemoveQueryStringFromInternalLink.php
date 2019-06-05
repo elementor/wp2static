@@ -14,10 +14,6 @@ class RemoveQueryStringFromInternalLink {
             return '';
         }
 
-        if ( ! is_string( $url ) ) {
-            return '';
-        }
-
-        return $url;
+        return (string) $url;
     }
 }

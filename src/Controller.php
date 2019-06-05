@@ -322,10 +322,35 @@ class Controller {
     }
 
     public function crawl_site() : void {
+        // TODO: check where all cURL handles being set, should
+        // just be in SiteCrawler?
+
+        $ch = curl_init();
+        $site_url = SiteInfo::getUrl( 'site' );
+
+        // add filter to allow user to specify extra downloadable extensions
+        $crawlable_filetypes = [];
+        $crawlable_filetypes['img'] = 1;
+        $crawlable_filetypes['jpeg'] = 1;
+        $crawlable_filetypes['jpg'] = 1;
+        $crawlable_filetypes['png'] = 1;
+        $crawlable_filetypes['webp'] = 1;
+        $crawlable_filetypes['gif'] = 1;
+        $crawlable_filetypes['svg'] = 1;
+
+        $asset_downloader = new AssetDownloader(
+            $ch,
+            $site_url,
+            $crawlable_filetypes,
+            $this->settings
+        );
+
         $site_crawler = new SiteCrawler(
-            $this->rewrite_rules,
             $this->site_url_host,
-            $this->destination_url
+            $this->destination_url,
+            $this->rewrite_rules,
+            $this->settings,
+            $asset_downloader
         );
 
         $site_crawler->crawl();

@@ -8,11 +8,15 @@ use DOMElement;
 
 class BaseHrefProcessor {
 
-    private $settings;
+    private $base_href;
+    private $allow_offline_usage;
 
-    public function __construct() {
-        $plugin = Controller::getInstance();
-        $this->settings = $plugin->options->getSettings( true );
+    public function __construct(
+        string $base_href,
+        bool $allow_offline_usage
+    ) {
+        $this->base_href = $base_href;
+        $this->allow_offline_usage = $allow_offline_usage;
     }
 
     /*
@@ -32,7 +36,7 @@ class BaseHrefProcessor {
             if ( $this->shouldCreateBaseHREF() ) {
                 $base_element->setAttribute(
                     'href',
-                    $this->settings['baseHREF']
+                    $this->base_href
                 );
             } else {
                 $base_element->parentNode->removeChild(
@@ -43,7 +47,7 @@ class BaseHrefProcessor {
             $base_element = $xml_doc->createElement( 'base' );
             $base_element->setAttribute(
                 'href',
-                $this->settings['baseHREF']
+                $this->base_href
             );
 
             if ( $head_element ) {
@@ -61,12 +65,12 @@ class BaseHrefProcessor {
     }
 
     public function shouldCreateBaseHREF() : bool {
-        if ( empty( $this->settings['baseHREF'] ) ) {
+        if ( empty( $this->base_href ) ) {
             return false;
         }
 
         // NOTE: base HREF should not be set when creating an offline ZIP
-        if ( isset( $this->settings['allowOfflineUsage'] ) ) {
+        if ( $this->allow_offline_usage ) {
             return false;
         }
 

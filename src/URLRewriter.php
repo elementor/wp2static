@@ -10,7 +10,7 @@ class URLRewriter {
     private $site_url_host;
     private $page_url;
     private $rewrite_rules;
-    private $includeDiscoveredAssets;
+    private $include_discovered_assets;
     private $asset_downloader;
 
     /**
@@ -23,14 +23,14 @@ class URLRewriter {
         string $site_url_host,
         string $page_url,
         array $rewrite_rules,
-        bool $includeDiscoveredAssets,
+        bool $include_discovered_assets,
         AssetDownloader $asset_downloader
     ) {
         $this->site_url = $site_url;
         $this->site_url_host = $site_url_host;
         $this->page_url = $page_url;
         $this->rewrite_rules = $rewrite_rules;
-        $this->includeDiscoveredAssets = $includeDiscoveredAssets;
+        $this->include_discovered_assets = $include_discovered_assets;
         $this->asset_downloader = $asset_downloader;
     }
 
@@ -117,7 +117,7 @@ class URLRewriter {
         $query_string_remover = new RemoveQueryStringFromInternalLink();
         $url = $query_string_remover->removeQueryStringFromInternalLink( $url );
 
-        if ( isset( $this->includeDiscoveredAssets ) ) {
+        if ( isset( $this->include_discovered_assets ) ) {
             // check url has extension at all
             $extension = pathinfo( $url, PATHINFO_EXTENSION );
 

@@ -69,14 +69,5 @@ class HTMLProcessor {
 
         $this->processed_urls = [];
 
-        // add filter to allow user to specify extra downloadable extensions
-        $this->crawlable_filetypes = [];
-        $this->crawlable_filetypes['img'] = 1;
-        $this->crawlable_filetypes['jpeg'] = 1;
-        $this->crawlable_filetypes['jpg'] = 1;
-        $this->crawlable_filetypes['png'] = 1;
-        $this->crawlable_filetypes['webp'] = 1;
-        $this->crawlable_filetypes['gif'] = 1;
-        $this->crawlable_filetypes['svg'] = 1;
     }
 }
