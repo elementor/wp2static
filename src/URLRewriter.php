@@ -13,6 +13,25 @@ class URLRewriter {
     private $settings;
 
     /**
+     * URLRewriter constructor
+     *
+     * @param mixed[] $rewrite_rules URL rewrite rules
+     */
+    public function __construct(
+        string $site_url,
+        string $site_url_host,
+        string $page_url,
+        array $rewrite_rules,
+        bool $includeDiscoveredAssets
+    ) {
+        $this->site_url = $site_url;
+        $this->site_url_host = $site_url_host;
+        $this->page_url = $page_url;
+        $this->rewrite_rules = $rewrite_rules;
+        $this->includeDiscoveredAssets = $includeDiscoveredAssets;
+    }
+
+    /**
      * Process URL within a DOMElement
      *
      * @return void
@@ -101,7 +120,7 @@ class URLRewriter {
         $query_string_remover = new RemoveQueryStringFromInternalLink();
         $url = $query_string_remover->removeQueryStringFromInternalLink( $url );
 
-        if ( isset( $this->settings['includeDiscoveredAssets'] ) ) {
+        if ( isset( $this->includeDiscoveredAssets ) ) {
             // check url has extension at all
             $extension = pathinfo( $url, PATHINFO_EXTENSION );
 
