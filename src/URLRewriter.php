@@ -43,10 +43,6 @@ class URLRewriter {
         list( $url, $attribute_to_change ) =
             $this->getURLAndTargetAttribute( $element );
 
-        if ( ! $url || ! $attribute_to_change ) {
-            return;
-        }
-
         $url = $this->rewriteLocalURL( $url );
 
         $element->setAttribute( $attribute_to_change, $url );
@@ -62,10 +58,6 @@ class URLRewriter {
             $attribute_to_change = 'href';
         } elseif ( $element->hasAttribute( 'src' ) ) {
             $attribute_to_change = 'src';
-        } elseif ( $element->hasAttribute( 'content' ) ) {
-            $attribute_to_change = 'content';
-        } else {
-            return [];
         }
 
         $url_to_change = $element->getAttribute( $attribute_to_change );
