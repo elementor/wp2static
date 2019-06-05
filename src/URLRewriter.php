@@ -10,7 +10,8 @@ class URLRewriter {
     private $site_url_host;
     private $page_url;
     private $rewrite_rules;
-    private $settings;
+    private $includeDiscoveredAssets;
+    private $asset_downloader;
 
     /**
      * URLRewriter constructor
@@ -22,13 +23,15 @@ class URLRewriter {
         string $site_url_host,
         string $page_url,
         array $rewrite_rules,
-        bool $includeDiscoveredAssets
+        bool $includeDiscoveredAssets,
+        AssetDownloader $asset_downloader
     ) {
         $this->site_url = $site_url;
         $this->site_url_host = $site_url_host;
         $this->page_url = $page_url;
         $this->rewrite_rules = $rewrite_rules;
         $this->includeDiscoveredAssets = $includeDiscoveredAssets;
+        $this->asset_downloader = $asset_downloader;
     }
 
     /**
@@ -130,8 +133,8 @@ class URLRewriter {
                 // considering caching, ie, build array here
                 // exclude Excludes, already crawled lists
                 // then iterate just the ones not already on disk
-                $asset_downloader = new AssetDownloader();
-                $asset_downloader->downloadAsset( $url, $extension );
+
+                $this->asset_downloader->downloadAsset( $url, $extension );
             }
         }
 

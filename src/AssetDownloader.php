@@ -9,9 +9,16 @@ class AssetDownloader {
     private $site_url;
     private $crawlable_filetypes;
 
-    public function __construct() {
-        $plugin = Controller::getInstance();
-        $this->settings = $plugin->options->getSettings( true );
+    public function __construct(
+        $ch,
+        string $site_url,
+        array $crawlable_filetypes,
+        array $settings
+    ) {
+        $this->ch = $ch;
+        $this->site_url = $site_url;
+        $this->crawlable_filetypes = $crawlable_filetypes;
+        $this->settings = $settings;
     }
 
     /*

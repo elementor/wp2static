@@ -5,17 +5,11 @@ namespace WP2Static;
 use PHPUnit\Framework\TestCase;
 use DOMDocument;
 
-// mock AssetDownloader
-class AssetDownloader {
-    public function downloadAsset( $url, $extension ) {
-        //
-    }
-
-}
-
 final class URLRewriterTest extends TestCase {
-
     public function testprocessElementURL() {
+        // mock the AssetDownloader class which is passed to processor
+        $asset_downloader = $this->createMock(AssetDownloader::class);
+
         $dom = new DOMDocument('1.0', 'utf-8');
 
         // create parent head 
@@ -50,6 +44,7 @@ final class URLRewriterTest extends TestCase {
                 ],
             ], // $rewrite_rules,
             true, // $includeDiscoveredAssets,
+            $asset_downloader
         );
 
         $url_rewriter->processElementURL( $anchor );
