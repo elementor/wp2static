@@ -11,6 +11,7 @@ class ImgSrcSetProcessor {
     private $page_url;
     private $rewrite_rules;
     private $includeDiscoveredAssets;
+    private $asset_downloader;
 
     /**
      * ImgSrcSetProcessor constructor

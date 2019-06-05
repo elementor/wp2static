@@ -6,15 +6,38 @@ use DOMDocument;
 
 class DOMIterator {
 
+    private $settings;
+    private $site_url;
+    private $site_url_host;
+    private $page_url;
+    private $rewrite_rules;
+    private $includeDiscoveredAssets;
+    private $asset_downloader;
+
     /**
-     *  Iterate through all DOMElements and process
+     * DOMIterator constructor
      *
-     *  @param mixed[] $settings All settings
+     * @param mixed[] $rewrite_rules URL rewrite rules
      */
+    public function __construct(
+        string $site_url,
+        string $site_url_host,
+        string $page_url,
+        array $rewrite_rules,
+        bool $includeDiscoveredAssets,
+        AssetDownloader $asset_downloader
+    ) {
+        $this->site_url = $site_url;
+        $this->site_url_host = $site_url_host;
+        $this->page_url = $page_url;
+        $this->rewrite_rules = $rewrite_rules;
+        $this->includeDiscoveredAssets = $includeDiscoveredAssets;
+        $this->asset_downloader = $asset_downloader;
+    }
+
     public function processHTML(
         string $html_document,
-        string $page_url,
-        array $settings
+        string $page_url
     ) : DOMDocument {
         // detect if a base tag exists while in the loop
         // use in later base href creation to decide: append or create
@@ -37,12 +60,26 @@ class DOMIterator {
             $xml_doc->getElementsByTagName( '*' )
         );
 
-        $url_rewriter = new URLRewriter();
+        $url_rewriter = new URLRewriter(
+            $this->site_url,
+            $this->site_url_host,
+            $this->page_url,
+            $this->rewrite_rules,
+            $this->includeDiscoveredAssets,
+            $this->asset_downloader,
+        );
 
         foreach ( $elements as $element ) {
             switch ( $element->tagName ) {
                 case 'meta':
-                    $meta_processor = new MetaProcessor();
+                    $meta_processor = new MetaProcessor(
+                        $this->site_url,
+                        $this->site_url_host,
+                        $this->page_url,
+                        $this->rewrite_rules,
+                        $this->includeDiscoveredAssets,
+                        $this->asset_downloader,
+                    );
                     $meta_processor->processMeta( $element );
                     break;
                 case 'form':
@@ -53,7 +90,14 @@ class DOMIterator {
                     break;
                 case 'img':
                     $url_rewriter->processElementURL( $element );
-                    $src_set_processor = new ImgSrcSetProcessor();
+                    $src_set_processor = new ImgSrcSetProcessor(
+                        $this->site_url,
+                        $this->site_url_host,
+                        $this->page_url,
+                        $this->rewrite_rules,
+                        $this->includeDiscoveredAssets,
+                        $this->asset_downloader,
+                    );
                     $src_set_processor->processImageSrcSet( $element );
                     break;
                 case 'head':
@@ -65,11 +109,11 @@ class DOMIterator {
                     // NOTE: not to confuse with anchor element
                     $url_rewriter->processElementURL( $element );
 
-                    if ( isset( $settings['removeWPLinks'] ) ) {
+                    if ( isset( $this->settings['removeWPLinks'] ) ) {
                         RemoveLinkElementsBasedOnRelAttr::remove( $element );
                     }
 
-                    if ( isset( $settings['removeCanonical'] ) ) {
+                    if ( isset( $this->settings['removeCanonical'] ) ) {
                         $canonical_remover = new CanonicalLinkRemover();
                         $canonical_remover->removeCanonicalLink( $element );
                     }
@@ -90,7 +134,7 @@ class DOMIterator {
                             $cdata_processor->processCDATA(
                                 $node,
                                 $xml_doc,
-                                $settings['rewrite_rules']
+                                $this->settings['rewrite_rules']
                             );
                         }
                     }
@@ -109,12 +153,12 @@ class DOMIterator {
         );
 
         // allow empty favicon to prevent extra browser request
-        if ( isset( $settings['createEmptyFavicon'] ) ) {
+        if ( isset( $this->settings['createEmptyFavicon'] ) ) {
             $favicon_creator = new FaviconRequestBlocker();
             $favicon_creator->createEmptyFaviconLink( $xml_doc );
         }
 
-        if ( isset( $settings['removeHTMLComments'] ) ) {
+        if ( isset( $this->settings['removeHTMLComments'] ) ) {
             $comment_stripper = new HTMLCommentStripper();
             $comment_stripper->stripHTMLComments( $xml_doc );
         }
