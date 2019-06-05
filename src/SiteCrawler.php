@@ -395,7 +395,7 @@ class SiteCrawler {
                     $this->page_url,
                     $this->rewrite_rules,
                     $this->include_discovered_assets,
-                    $this->asset_downloader,
+                    $this->asset_downloader
                 );
 
                 $xml_doc = $dom_iterator->processHTML(

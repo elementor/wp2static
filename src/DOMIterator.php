@@ -66,7 +66,7 @@ class DOMIterator {
             $this->page_url,
             $this->rewrite_rules,
             $this->include_discovered_assets,
-            $this->asset_downloader,
+            $this->asset_downloader
         );
 
         foreach ( $elements as $element ) {
@@ -79,7 +79,7 @@ class DOMIterator {
                         $this->rewrite_rules,
                         $this->include_discovered_assets,
                         $this->settings['removeWPMeta'],
-                        $this->asset_downloader,
+                        $this->asset_downloader
                     );
                     $meta_processor->processMeta( $element );
                     break;

@@ -63,7 +63,7 @@ class ImgSrcSetProcessor {
                 $this->page_url,
                 $this->rewrite_rules,
                 $this->include_discovered_assets,
-                $this->asset_downloader,
+                $this->asset_downloader
             );
 
             $url = $url_rewriter->rewriteLocalURL( $url );
