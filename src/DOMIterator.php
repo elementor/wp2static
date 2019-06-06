@@ -103,7 +103,10 @@ class DOMIterator {
                     break;
                 case 'head':
                     $head_element = $element;
-                    $head_processor = new HeadProcessor();
+                    $head_processor = new HeadProcessor(
+                        $this->settings['removeConditionalHeadComments']
+                    );
+
                     $base_element = $head_processor->processHead( $element );
                     break;
                 case 'link':
