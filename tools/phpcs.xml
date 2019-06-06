@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <ruleset name="WP2Static">
   <description>WP2Static Project Coding Standard</description>
+  <config name="testVersion" value="7.2-"/>
   <!--
     Note: Applied WP standard override to allow tabs instead
           of spaces, however, PHP CBF is using 4 spaces - Gray

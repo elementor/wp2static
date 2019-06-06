@@ -12,15 +12,15 @@ $tpl = new \WP2Static\TemplateHelper();
 ?>
 
 <div class="wrap wp2static">
-    <?php if ( PHP_VERSION < 7 ) : ?>
+    <?php if ( PHP_VERSION < 7.2 ) : ?>
 
    <div class="notice notice-error inline wp2static-notice">
       <h2 class="title">Outdated PHP version detected</h2>
       <p>The current officially supported PHP versions can be found on <a href="http://php.net/supported-versions.php" target="_blank">PHP.net</a></p>
 
-      <p>Whilst the plugin tries to work on the most common PHP environments, it currently requires PHP 5.6 or higher.</p>
+      <p>Whilst the plugin tries to work on the most common PHP environments, it currently requires PHP 7.2 or higher.</p>
 
-      <p>As official security support drops for PHP 5.6 at the end of 2018, it is strongly recommended to upgraded your WordPress hosting environment to PHP 7, ideally, PHP 7.1 or 7.2, as 7.0 will also stop being supported in December, 2018.<br><br>For help on upgrading your environment, please join our support community at <a href="https://wp2static.com/community/" target="_blank">https://wp2static.com/community/</a></p>
+      <p>As official security support drops for PHP 5.6 at the end of 2018, it is strongly recommended to upgraded your WordPress hosting environment to PHP 7.2 or above.<br><br>For help on upgrading your environment, please join our support community at <a href="https://wp2static.com/community/" target="_blank">https://wp2static.com/community/</a></p>
 
       <p>Your current PHP version is: <?php echo PHP_VERSION; ?></p>
     </div>

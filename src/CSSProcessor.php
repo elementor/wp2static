@@ -2,15 +2,17 @@
 
 namespace WP2Static;
 
-class CSSProcessor extends Base {
+class CSSProcessor {
 
     public $placeholder_url;
     public $raw_css;
     public $page_url;
     public $css_doc;
+    private $settings;
 
     public function __construct() {
-        $this->loadSettings();
+        $plugin = Controller::getInstance();
+        $this->settings = $plugin->options->getSettings( true );
     }
 
     public function processCSS(
@@ -77,7 +79,12 @@ class CSSProcessor extends Base {
                         }
                     }
 
-                    uksort( $tmp_rules, array( $this, 'ruleSort' ) );
+                    uksort(
+                        $tmp_rules,
+                        function ( $str1, $str2 ) {
+                            return 0 - strcmp( $str1, $str2 );
+                        }
+                    );
 
                     foreach ( $tmp_rules as $from => $to ) {
                         $rewrite_from[] = $from;

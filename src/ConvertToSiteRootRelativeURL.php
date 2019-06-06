@@ -12,10 +12,6 @@ class ConvertToSiteRootRelativeURL {
         string $url,
         string $destination_url
     ) : string {
-        if ( ! is_string( $url ) ) {
-            return $url;
-        }
-
         // TODO: do we ever receive escaped URLs to this method?
         // if isInternalLink blocks it, then this is wasted rewrite
         $from = [
