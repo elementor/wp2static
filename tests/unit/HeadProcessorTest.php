@@ -26,6 +26,10 @@ final class HeadProcessorTest extends TestCase{
 </html>
 ENDHTML;
 
+        // NOTE: brittle tests with concatenation and newlines varying
+        //       so concatenating strings for comparison
+        $dom->preserveWhiteSpace = false;
+
         libxml_use_internal_errors( true );
         $dom->loadHTML( $html_with_conditional_comments );
         libxml_use_internal_errors( false );
@@ -40,21 +44,9 @@ ENDHTML;
             $head
         );
 
-        $result = $dom->saveHtml();
+        $result = str_replace( array("\r", "\n"), '', $dom->saveHtml() );
 
-        $expected_result = <<<ENDHTML
-<!DOCTYPE html>
-<html lang="en-US" class="no-js no-svg">
-<head>
-<title>Test</title>
-
-</head>
-<body>
-<p>Document body</p>
-</body>
-</html>
-
-ENDHTML;
+        $expected_result = '<!DOCTYPE html><html lang="en-US" class="no-js no-svg"><head><title>Test</title></head><body><p>Document body</p></body></html>';
 
         $this->assertEquals(
             $expected_result,
