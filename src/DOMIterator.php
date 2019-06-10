@@ -114,7 +114,9 @@ class DOMIterator {
                     $url_rewriter->processElementURL( $element );
 
                     if ( isset( $this->settings['removeWPLinks'] ) ) {
-                        RemoveLinkElementsBasedOnRelAttr::remove( $element );
+                        RemoveLinkElementsBasedOnRelAttr::removeLinkElement(
+                            $element
+                        );
                     }
 
                     if ( isset( $this->settings['removeCanonical'] ) ) {
