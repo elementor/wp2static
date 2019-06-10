@@ -4,6 +4,7 @@ namespace WP2Static;
 
 class SiteCrawler {
 
+    private $allow_offline_usage;
     private $archive_dir;
     private $asset_downloader;
     private $ch;
@@ -23,6 +24,8 @@ class SiteCrawler {
     private $site_url_host;
     private $url;
     private $urls_to_crawl;
+    private $use_document_relative_urls;
+    private $use_site_root_relative_urls;
 
     /**
      *  SiteCrawler constructor
@@ -393,6 +396,10 @@ class SiteCrawler {
                     $this->site_url,
                     $this->site_url_host,
                     $this->page_url,
+                    $this->destination_url,
+                    $this->allow_offline_usage,
+                    $this->use_document_relative_urls,
+                    $this->use_site_root_relative_urls,
                     $this->rewrite_rules,
                     $this->include_discovered_assets,
                     $this->asset_downloader

@@ -6,13 +6,17 @@ use DOMDocument;
 
 class DOMIterator {
 
+    private $allow_offline_usage;
+    private $asset_downloader;
+    private $destination_url;
+    private $include_discovered_assets;
+    private $page_url;
+    private $rewrite_rules;
     private $settings;
     private $site_url;
     private $site_url_host;
-    private $page_url;
-    private $rewrite_rules;
-    private $include_discovered_assets;
-    private $asset_downloader;
+    private $use_document_relative_urls;
+    private $use_site_root_relative_urls;
 
     /**
      * DOMIterator constructor
@@ -23,6 +27,10 @@ class DOMIterator {
         string $site_url,
         string $site_url_host,
         string $page_url,
+        string $destination_url,
+        string $allow_offline_usage,
+        bool $use_document_relative_urls,
+        bool $use_site_root_relative_urls,
         array $rewrite_rules,
         bool $include_discovered_assets,
         AssetDownloader $asset_downloader
@@ -30,6 +38,10 @@ class DOMIterator {
         $this->site_url = $site_url;
         $this->site_url_host = $site_url_host;
         $this->page_url = $page_url;
+        $this->destination_url = $destination_url;
+        $this->allow_offline_usage = $allow_offline_usage;
+        $this->use_document_relative_urls = $use_document_relative_urls;
+        $this->use_site_root_relative_urls = $use_site_root_relative_urls;
         $this->rewrite_rules = $rewrite_rules;
         $this->include_discovered_assets = $include_discovered_assets;
         $this->asset_downloader = $asset_downloader;
@@ -63,6 +75,10 @@ class DOMIterator {
         $url_rewriter = new URLRewriter(
             $this->site_url,
             $this->site_url_host,
+            $this->destination_url,
+            $this->allow_offline_usage,
+            $this->use_document_relative_urls,
+            $this->use_site_root_relative_urls,
             $this->page_url,
             $this->rewrite_rules,
             $this->include_discovered_assets,
@@ -95,6 +111,10 @@ class DOMIterator {
                         $this->site_url,
                         $this->site_url_host,
                         $this->page_url,
+                        $this->destination_url,
+                        $this->allow_offline_usage,
+                        $this->use_document_relative_urls,
+                        $this->use_site_root_relative_urls,
                         $this->rewrite_rules,
                         $this->include_discovered_assets,
                         $this->asset_downloader
