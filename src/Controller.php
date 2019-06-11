@@ -184,7 +184,7 @@ class Controller {
         $this->setDefaultOptions();
     }
 
-    public function activate( bool $network_wide ) : void {
+    public function activate( bool $network_wide = null ) : void {
         if ( $network_wide ) {
             global $wpdb;
 
