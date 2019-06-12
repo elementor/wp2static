@@ -42,6 +42,10 @@ final class ImgSrcSetProcessorTest extends TestCase{
             'https://somedomain.com/', // site_url
             'somedomain.com', // site_url_host
             'https://somedomain.com/apage', // $page_url
+            'https://google.com', // destination_url
+            false, // allow_offline_usage
+            false, // use_document_relative_urls,
+            false, // use_site_root_relative_urls,
             [
                 'site_url_patterns' => [
                     'https://somedomain.com',
@@ -97,6 +101,10 @@ final class ImgSrcSetProcessorTest extends TestCase{
             'https://somedomain.com/', // site_url
             'somedomain.com', // site_url_host
             'https://somedomain.com/apage', // $page_url
+            'https://google.com', // destination_url
+            false, // allow_offline_usage
+            false, // use_document_relative_urls,
+            false, // use_site_root_relative_urls,
             [
                 'site_url_patterns' => [
                     'https://somedomain.com',

@@ -611,7 +611,7 @@ class Controller {
             'WP HOME: ' . get_option( 'home' ),
             'WP ADDRESS: ' . get_bloginfo( 'wpurl' ),
             defined( 'WP_CLI' ) ? 'WP-CLI: YES' : 'WP-CLI: NO',
-            'STATIC EXPORT URL: ' . $this->exporter->settings['baseUrl'],
+            'STATIC EXPORT URL: ' . $this->settings['baseUrl'],
             'PERMALINK STRUCTURE: ' . get_option( 'permalink_structure' ),
         );
 

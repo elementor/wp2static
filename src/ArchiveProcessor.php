@@ -13,7 +13,7 @@ class ArchiveProcessor {
     private $settings;
 
     public function __construct() {
-        $archive_path = SiteInfo::getPath( 'uploads' ) .
+        $this->archive_path = SiteInfo::getPath( 'uploads' ) .
             'wp2static-exported-site/';
 
         $plugin = Controller::getInstance();

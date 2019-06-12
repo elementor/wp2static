@@ -39,6 +39,10 @@ final class URLRewriterTest extends TestCase {
         $url_rewriter = new URLRewriter(
             'https://somedomain.com/', // site_url
             'somedomain.com', // site_url_host
+            'https://google.com', // destination_url
+            false, // allow_offline_usage
+            false, // use_document_relative_urls,
+            false, // use_site_root_relative_urls,
             'https://somedomain.com/apage', // $page_url
             [
                 'site_url_patterns' => [
@@ -91,6 +95,10 @@ final class URLRewriterTest extends TestCase {
         $url_rewriter = new URLRewriter(
             'https://somedomain.com/', // site_url
             'somedomain.com', // site_url_host
+            'https://google.com', // destination_url
+            false, // allow_offline_usage
+            false, // use_document_relative_urls,
+            false, // use_site_root_relative_urls,
             'https://somedomain.com/apage', // $page_url
             [
                 'site_url_patterns' => [
@@ -125,6 +133,10 @@ final class URLRewriterTest extends TestCase {
         $url_rewriter = new URLRewriter(
             'https://somedomain.com/', // site_url
             'somedomain.com', // site_url_host
+            'https://google.com', // destination_url
+            false, // allow_offline_usage
+            false, // use_document_relative_urls,
+            false, // use_site_root_relative_urls,
             'https://somedomain.com/apage', // $page_url
             [
                 'site_url_patterns' => [
