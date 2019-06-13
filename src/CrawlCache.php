@@ -52,7 +52,7 @@ class CrawlCache {
 
         $id = $wpdb->get_var( $sql );
 
-        return $id;
+        return (int) $id;
     }
 
     public static function rmUrl( string $url ) : void {

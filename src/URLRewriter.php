@@ -6,12 +6,16 @@ use DOMElement;
 
 class URLRewriter {
 
-    private $site_url;
-    private $site_url_host;
+    private $allow_offline_usage;
+    private $asset_downloader;
+    private $destination_url;
+    private $include_discovered_assets;
     private $page_url;
     private $rewrite_rules;
-    private $include_discovered_assets;
-    private $asset_downloader;
+    private $site_url;
+    private $site_url_host;
+    private $use_document_relative_urls;
+    private $use_site_root_relative_urls;
 
     /**
      * URLRewriter constructor
@@ -21,6 +25,10 @@ class URLRewriter {
     public function __construct(
         string $site_url,
         string $site_url_host,
+        string $destination_url,
+        string $allow_offline_usage,
+        bool $use_document_relative_urls,
+        bool $use_site_root_relative_urls,
         string $page_url,
         array $rewrite_rules,
         bool $include_discovered_assets,
@@ -28,6 +36,10 @@ class URLRewriter {
     ) {
         $this->site_url = $site_url;
         $this->site_url_host = $site_url_host;
+        $this->destination_url = $destination_url;
+        $this->allow_offline_usage = $allow_offline_usage;
+        $this->use_document_relative_urls = $use_document_relative_urls;
+        $this->use_site_root_relative_urls = $use_site_root_relative_urls;
         $this->page_url = $page_url;
         $this->rewrite_rules = $rewrite_rules;
         $this->include_discovered_assets = $include_discovered_assets;
@@ -42,6 +54,10 @@ class URLRewriter {
     public function processElementURL( DOMElement $element ) : void {
         list( $url, $attribute_to_change ) =
             $this->getURLAndTargetAttribute( $element );
+
+        if ( ! $attribute_to_change ) {
+            return;
+        }
 
         $url = $this->rewriteLocalURL( $url );
 
@@ -144,11 +160,17 @@ class URLRewriter {
          * to access the element multiple times. So, once we have it, do all
          * the things to it before sending back/updating the attribute
          */
-        $url_post_processor = new PostProcessElementURLStructure();
+        $url_post_processor = new PostProcessElementURLStructure(
+            $this->destination_url,
+            $this->site_url,
+            $this->allow_offline_usage,
+            $this->use_document_relative_urls,
+            $this->use_site_root_relative_urls
+        );
+
         $url = $url_post_processor->postProcessElementURLStructure(
             $url,
-            $this->page_url,
-            $this->site_url
+            $this->page_url
         );
 
         return $url;

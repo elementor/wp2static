@@ -57,7 +57,7 @@ ENDHTML;
     public function testReturnsBaseElementIfPresent() {
         $dom = new DOMDocument('1.0', 'utf-8');
 
-        // create parent <head> 
+        // create parent <head>
         $head = $dom->createElement( 'head', ' ' );
         $body = $dom->createElement( 'body', ' ' );
 

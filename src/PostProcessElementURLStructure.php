@@ -4,8 +4,25 @@ namespace WP2Static;
 
 class PostProcessElementURLStructure {
 
-    private $settings;
+    private $allow_offline_usage;
     private $destination_url;
+    private $site_url;
+    private $use_document_relative_urls;
+    private $use_site_root_relative_urls;
+
+    public function __construct(
+        string $destination_url,
+        string $site_url,
+        bool $allow_offline_usage,
+        bool $use_document_relative_urls,
+        bool $use_site_root_relative_urls
+    ) {
+        $this->destination_url = $destination_url;
+        $this->site_url = $site_url;
+        $this->allow_offline_usage = $allow_offline_usage;
+        $this->use_document_relative_urls = $use_document_relative_urls;
+        $this->use_site_root_relative_urls = $use_site_root_relative_urls;
+    }
 
     /*
      * After we have normalized the element's URL and have an absolute
@@ -19,34 +36,24 @@ class PostProcessElementURLStructure {
      * iterate individual URLs in bulk rewriting mode and each URL
      * needs to be rewritten in a different manner for offline mode rewriting
      *
-     * @param string $url absolute Site URL to change
-     * @param string $page_url URL of current page for doc relative calculation
-     * @param string $destination_url Site URL reference for rewriting
      * @return string Rewritten URL
      *
     */
     public function postProcessElementURLStructure(
         string $url,
-        string $page_url,
-        string $site_url
+        string $page_url
     ) : string {
-        $offline_mode = false;
-
-        if ( isset( $this->settings['allowOfflineUsage'] ) ) {
-            $offline_mode = true;
-        }
-
         // TODO: move detection func higher
-        if ( isset( $this->settings['useDocumentRelativeURLs'] ) ) {
+        if ( $this->use_document_relative_urls ) {
             $url = ConvertToDocumentRelativeURL::convert(
                 $url,
                 $page_url,
-                $site_url,
-                $offline_mode
+                $this->site_url,
+                $this->allow_offline_usage
             );
         }
 
-        if ( isset( $this->settings['useSiteRootRelativeURLs'] ) ) {
+        if ( $this->use_site_root_relative_urls ) {
             $url = ConvertToSiteRootRelativeURL::convert(
                 $url,
                 $this->destination_url

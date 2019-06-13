@@ -20,6 +20,12 @@ class Controller {
     public $rewrite_rules;
     public $version;
     public $exporter;
+    private $remove_wp_meta;
+    private $remove_conditional_head_comments;
+    private $remove_wp_links;
+    private $remove_canonical_links;
+    private $create_empty_favicon;
+    private $remove_html_comments;
 
     /**
      * Main controller of WP2Static
@@ -68,6 +74,17 @@ class Controller {
 
         $instance->settings = $instance->options->getSettings( true );
         $instance->site_url = SiteInfo::getUrl( 'site' );
+        $instance->remove_wp_meta = $instance->settings['removeWPMeta'];
+        $instance->remove_conditional_head_comments =
+            $instance->settings['removeConditionalHeadComments'];
+        $instance->remove_wp_links =
+            $instance->settings['removeWPLinks'];
+        $instance->remove_canonical_links =
+            $instance->settings['removeCanonical'];
+        $instance->create_empty_favicon =
+            $instance->settings['createEmptyFavicon'];
+        $instance->remove_html_comments =
+            $instance->settings['removeHTMLComments'];
 
         // create DB table for crawl caching
         CrawlCache::createTable();
@@ -175,7 +192,7 @@ class Controller {
             ->setOption( 'removeWPMeta', '1' )
             ->setOption( 'removeWPLinks', '1' )
             ->setOption( 'removeHTMLComments', '1' )
-            ->setOption( 'parse_css', '1' )
+            ->setOption( 'parse_css', '0' )
             ->save();
         }
     }
@@ -184,7 +201,7 @@ class Controller {
         $this->setDefaultOptions();
     }
 
-    public function activate( bool $network_wide ) : void {
+    public function activate( bool $network_wide = null ) : void {
         if ( $network_wide ) {
             global $wpdb;
 
@@ -346,6 +363,14 @@ class Controller {
         );
 
         $site_crawler = new SiteCrawler(
+            (bool) $this->settings['allowOfflineUsage'],
+            (bool) $this->remove_wp_meta,
+            (bool) $this->remove_conditional_head_comments,
+            (bool) $this->remove_wp_links,
+            (bool) $this->remove_canonical_links,
+            (bool) $this->create_empty_favicon,
+            (bool) $this->remove_html_comments,
+            $this->site_url,
             $this->site_url_host,
             $this->destination_url,
             $this->rewrite_rules,
@@ -611,7 +636,7 @@ class Controller {
             'WP HOME: ' . get_option( 'home' ),
             'WP ADDRESS: ' . get_bloginfo( 'wpurl' ),
             defined( 'WP_CLI' ) ? 'WP-CLI: YES' : 'WP-CLI: NO',
-            'STATIC EXPORT URL: ' . $this->exporter->settings['baseUrl'],
+            'STATIC EXPORT URL: ' . $this->settings['baseUrl'],
             'PERMALINK STRUCTURE: ' . get_option( 'permalink_structure' ),
         );
 
@@ -697,8 +722,12 @@ class Controller {
 
     public function invalidate_single_url_cache(
         int $post_id = 0,
-        WP_Post $post
+        WP_Post $post = null
     ) : void {
+        if ( ! $post ) {
+            return;
+        }
+
         $permalink = get_permalink(
             $post->ID
         );

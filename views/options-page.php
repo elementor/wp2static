@@ -69,7 +69,7 @@ $tpl = new \WP2Static\TemplateHelper();
 
   <nav class="nav-tab-wrapper">
     <?php $tab_names = [
-            'Help',
+            'Workflow',
             'URL Detection',
             'Crawling',
             'Processing',
@@ -78,11 +78,12 @@ $tpl = new \WP2Static\TemplateHelper();
             'Deployment',
             'Logs',
             'Add-ons',
+            'Help',
         ];
     ?>
 
     <?php foreach ( $tab_names as $tab_name ) : ?>
-        <?php $active_tab = $tab_name === 'Help' ? ' nav-tab-active' : ''; ?>
+        <?php $active_tab = $tab_name === 'Workflow' ? ' nav-tab-active' : ''; ?>
 
         <a href="#" class="nav-tab<?php echo $active_tab; ?>"><?php echo $tab_name; ?></a>
 
@@ -120,7 +121,7 @@ $tpl = new \WP2Static\TemplateHelper();
 
     <div class="wp2static-content-wrapper">
 
-    <?php require_once __DIR__ . '/tab_help.php'; ?>
+    <?php require_once __DIR__ . '/tab_workflow.php'; ?>
     <?php require_once __DIR__ . '/tab_detection.php'; ?>
     <?php require_once __DIR__ . '/tab_crawling.php'; ?>
     <?php require_once __DIR__ . '/tab_processing.php'; ?>
@@ -129,6 +130,7 @@ $tpl = new \WP2Static\TemplateHelper();
     <?php require_once __DIR__ . '/tab_export.php'; ?>
     <?php require_once __DIR__ . '/tab_logs.php'; ?>
     <?php require_once __DIR__ . '/tab_add_ons.php'; ?>
+    <?php require_once __DIR__ . '/tab_help.php'; ?>
 
     </div>
 
@@ -149,6 +151,12 @@ $tpl = new \WP2Static\TemplateHelper();
     <div id="wp2static-footer">
 
           <div class="inside">
+
+<!-- Rounded switch -->
+<label class="switch">
+  <input type="checkbox">
+  <span class="slider round"></span>
+</label>
 
             <div class="submit">
                 <?php wp_nonce_field( $view['onceAction'] ); ?>

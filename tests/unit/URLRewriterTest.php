@@ -39,6 +39,10 @@ final class URLRewriterTest extends TestCase {
         $url_rewriter = new URLRewriter(
             'https://somedomain.com/', // site_url
             'somedomain.com', // site_url_host
+            'https://google.com', // destination_url
+            false, // allow_offline_usage
+            false, // use_document_relative_urls,
+            false, // use_site_root_relative_urls,
             'https://somedomain.com/apage', // $page_url
             [
                 'site_url_patterns' => [
@@ -83,6 +87,10 @@ final class URLRewriterTest extends TestCase {
         $img->setAttribute('src', 'https://somedomain.com/an/image.png') ;
         $body->appendChild( $img );
 
+        // element without attribute
+        $img_no_attr = $dom->createElement('img');
+        $body->appendChild( $img_no_attr );
+
         $html = $dom->createElement( 'html' );
         $html->appendChild( $head );
         $html->appendChild( $body );
@@ -91,6 +99,10 @@ final class URLRewriterTest extends TestCase {
         $url_rewriter = new URLRewriter(
             'https://somedomain.com/', // site_url
             'somedomain.com', // site_url_host
+            'https://google.com', // destination_url
+            false, // allow_offline_usage
+            false, // use_document_relative_urls,
+            false, // use_site_root_relative_urls,
             'https://somedomain.com/apage', // $page_url
             [
                 'site_url_patterns' => [
@@ -106,11 +118,12 @@ final class URLRewriterTest extends TestCase {
 
         $url_rewriter->processElementURL( $anchor );
         $url_rewriter->processElementURL( $img );
+        $url_rewriter->processElementURL( $img_no_attr );
 
         $result = $dom->saveHtml();
 
         $this->assertEquals(
-            '<html><head> </head><body> <a href="https://google.com/alink">Some anchor text</a><img src="https://google.com/an/image.png"></body></html>' . PHP_EOL,
+            '<html><head> </head><body> <a href="https://google.com/alink">Some anchor text</a><img src="https://google.com/an/image.png"><img></body></html>' . PHP_EOL,
             $result
         );
     }
@@ -125,6 +138,10 @@ final class URLRewriterTest extends TestCase {
         $url_rewriter = new URLRewriter(
             'https://somedomain.com/', // site_url
             'somedomain.com', // site_url_host
+            'https://google.com', // destination_url
+            false, // allow_offline_usage
+            false, // use_document_relative_urls,
+            false, // use_site_root_relative_urls,
             'https://somedomain.com/apage', // $page_url
             [
                 'site_url_patterns' => [

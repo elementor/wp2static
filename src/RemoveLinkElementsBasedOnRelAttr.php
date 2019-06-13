@@ -13,7 +13,7 @@ use DOMElement;
     less cruft == faster loading!
 */
 class RemoveLinkElementsBasedOnRelAttr {
-    public static function remove( DOMElement $element ) : void {
+    public static function removeLinkElement( DOMElement $element ) : void {
         $relative_links_to_rm = array(
             'shortlink',
             'pingback',
