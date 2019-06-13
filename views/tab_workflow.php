@@ -1,36 +1,55 @@
 <div class="workflow_tab">
 
-<section class="wp2static-content text-center">
-  <img class="welcome" src="<?php echo plugins_url( '/../assets/welcome.svg', __FILE__ ); ?>" alt="Welcome">
+<section class="wp2static-content wp2static-flex">
+  <div class="content" style="max-width:33%">
+    <img src="<?php echo plugins_url( '/../assets/dev-server.svg', __FILE__ ); ?>" style="max-width:250px" alt="Add-on">
 
-  <p class="lead">
-    <?php echo __( 'Congratulations on choosing to', 'static-html-output-plugin' ); ?>
-        <strong><?php echo __( 'Go Static!', 'static-html-output-plugin' ); ?></strong>
-  </p>
+    <h2>Development</h2>
 
-  <p>
-    <?php echo __(
-         'We think it\'s the best way to deal with 90% of WordPress sites,<br> but the concept does take a little while to get used to.',
-          'static-html-output-plugin'
-    ); ?>
-  </p>
+    <p>This server is where you run WordPress as usual. Do not run this on your production server!</p>
 
-  <p style="margin:2  em 0">
-    <strong>
-        <?php echo __('Try a 1-click deployment option below or', 'static-html-output-plugin');?> <a id="GoToDeployTabLink" href="#"><?php echo __('list available deploy methods', 'static-html-output-plugin');?></a>.
-    </strong></p>
+    <h3>Health Checks</h3>
+    <ul>
+       <li>Publicly accessible</li>
+       <li>Local DNS resolution</li>
+       <li>PHP max_execution_time</li>
+       <li>Writable uploads dir</li>
+    </ul>
 
-  <a href="#" id="GenerateZIPOfflineUse" class="wp2static-btn btn-lg">
-    <?php echo __('Generate ZIP for Offline Use', 'static-html-output-plugin');?>
-  </a>
+  </div>
+  <div class="content" style="max-width:33%">
+    <img src="<?php echo plugins_url( '/../assets/staging-server.svg', __FILE__ ); ?>" style="max-width:250px" alt="Add-on">
 
-  <a href="#" id="GenerateZIPDeployAnywhere" class="wp2static-btn btn-lg">
-    <?php echo __('Generate ZIP to Deploy Anywhere', 'static-html-output-plugin');?>
-  </a>
+    <h2>Staging</h2>
 
-  <a href="#" id="GoToDeployTabLink" class="wp2static-btn btn-lg pink">
-    <?php echo __('Other Deployments', 'static-html-output-plugin');?>
-  </a>
+    <p>QA your static site before going to production.</p>
+
+    <h3>Deployment summary</h3>
+    <ul>
+       <li><b>Deployment Method</b> Netlify</li>
+       <li><b>Destination URL</b> https://testmysite.netlify.com</li>
+    </ul>
+
+    <button>Deploy to Staging</button>
+
+  </div>
+
+  <div class="content" style="max-width:33%">
+    <img src="<?php echo plugins_url( '/../assets/production-server.svg', __FILE__ ); ?>" style="max-width:250px" alt="Add-on">
+
+    <h2>Production</h2>
+
+    <p>Your live site hosting.</p>
+
+    <h3>Deployment summary</h3>
+    <ul>
+       <li><b>Deployment Method</b> S3</li>
+       <li><b>Destination URL</b> https://www.mywebsite.com</li>
+    </ul>
+
+    <button>Deploy to Production</button>
+  </div>
 </section>
+
 
 </div> <!-- end workflow settings -->
