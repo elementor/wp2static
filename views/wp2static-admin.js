@@ -735,6 +735,7 @@ jQuery(document).ready(
         form_settings: 'Forms',
         export_your_site: 'Deployment',
         help_troubleshooting: 'Help',
+        workflow_tab: 'Workflow',
         export_logs: 'Logs',
         crawl_settings: 'Crawling',
         url_detection: 'URL Detection',
