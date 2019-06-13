@@ -26,6 +26,12 @@ class SiteCrawler {
     private $urls_to_crawl;
     private $use_document_relative_urls;
     private $use_site_root_relative_urls;
+    private $remove_wp_meta;
+    private $remove_conditional_head_comments;
+    private $remove_wp_links;
+    private $remove_canonical_links;
+    private $create_empty_favicon;
+    private $remove_html_comments;
 
     /**
      *  SiteCrawler constructor
@@ -34,17 +40,34 @@ class SiteCrawler {
      * @param mixed[] $settings all plugin settings
      */
     public function __construct(
+        bool $allow_offline_usage,
+        bool $remove_wp_meta,
+        bool $remove_conditional_head_comments,
+        bool $remove_wp_links,
+        bool $remove_canonical_links,
+        bool $create_empty_favicon,
+        bool $remove_html_comments,
+        string $site_url,
         string $site_url_host,
         string $destination_url,
         array $rewrite_rules,
         array $settings,
         AssetDownloader $asset_downloader
     ) {
+        $this->allow_offline_usage = $allow_offline_usage;
+        $this->site_url = $site_url;
         $this->site_url_host = $site_url_host;
         $this->destination_url = $destination_url;
         $this->rewrite_rules = $rewrite_rules;
         $this->settings = $settings;
         $this->asset_downloader = $asset_downloader;
+        $this->remove_wp_meta = $remove_wp_meta;
+        $this->remove_conditional_head_comments =
+            $remove_conditional_head_comments;
+        $this->remove_wp_links = $remove_wp_links;
+        $this->remove_canonical_links = $remove_canonical_links;
+        $this->create_empty_favicon = $create_empty_favicon;
+        $this->remove_html_comments = $remove_html_comments;
 
         /*
            Implement crawl-caching, to greatly speed up the process
@@ -397,11 +420,17 @@ class SiteCrawler {
                     $this->site_url_host,
                     $this->page_url,
                     $this->destination_url,
-                    $this->allow_offline_usage,
-                    $this->use_document_relative_urls,
-                    $this->use_site_root_relative_urls,
+                    (bool) $this->allow_offline_usage,
+                    (bool) $this->use_document_relative_urls,
+                    (bool) $this->use_site_root_relative_urls,
+                    (bool) $this->remove_wp_meta,
+                    (bool) $this->remove_conditional_head_comments,
+                    (bool) $this->remove_wp_links,
+                    (bool) $this->remove_canonical_links,
+                    (bool) $this->create_empty_favicon,
+                    (bool) $this->remove_html_comments,
                     $this->rewrite_rules,
-                    $this->include_discovered_assets,
+                    (bool) $this->include_discovered_assets,
                     $this->asset_downloader
                 );
 

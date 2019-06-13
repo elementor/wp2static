@@ -12,11 +12,16 @@ class DOMIterator {
     private $include_discovered_assets;
     private $page_url;
     private $rewrite_rules;
-    private $settings;
     private $site_url;
     private $site_url_host;
     private $use_document_relative_urls;
     private $use_site_root_relative_urls;
+    private $remove_wp_meta;
+    private $remove_conditional_head_comments;
+    private $remove_wp_links;
+    private $remove_canonical_links;
+    private $create_empty_favicon;
+    private $remove_html_comments;
 
     /**
      * DOMIterator constructor
@@ -28,9 +33,15 @@ class DOMIterator {
         string $site_url_host,
         string $page_url,
         string $destination_url,
-        string $allow_offline_usage,
+        bool $allow_offline_usage,
         bool $use_document_relative_urls,
         bool $use_site_root_relative_urls,
+        bool $remove_wp_meta,
+        bool $remove_conditional_head_comments,
+        bool $remove_wp_links,
+        bool $remove_canonical_links,
+        bool $create_empty_favicon,
+        bool $remove_html_comments,
         array $rewrite_rules,
         bool $include_discovered_assets,
         AssetDownloader $asset_downloader
@@ -42,6 +53,13 @@ class DOMIterator {
         $this->allow_offline_usage = $allow_offline_usage;
         $this->use_document_relative_urls = $use_document_relative_urls;
         $this->use_site_root_relative_urls = $use_site_root_relative_urls;
+        $this->remove_wp_meta = $remove_wp_meta;
+        $this->remove_conditional_head_comments =
+            $remove_conditional_head_comments;
+        $this->remove_wp_links = $remove_wp_links;
+        $this->remove_canonical_links = $remove_canonical_links;
+        $this->create_empty_favicon = $create_empty_favicon;
+        $this->remove_html_comments = $remove_html_comments;
         $this->rewrite_rules = $rewrite_rules;
         $this->include_discovered_assets = $include_discovered_assets;
         $this->asset_downloader = $asset_downloader;
@@ -94,8 +112,8 @@ class DOMIterator {
                         $this->page_url,
                         $this->rewrite_rules,
                         $this->include_discovered_assets,
-                        $this->settings['removeWPMeta'],
-                        $this->asset_downloader
+                        $this->remove_wp_meta,
+                        $url_rewriter
                     );
                     $meta_processor->processMeta( $element );
                     break;
@@ -124,7 +142,7 @@ class DOMIterator {
                 case 'head':
                     $head_element = $element;
                     $head_processor = new HeadProcessor(
-                        $this->settings['removeConditionalHeadComments']
+                        $this->remove_conditional_head_comments
                     );
 
                     $base_element = $head_processor->processHead( $element );
@@ -133,13 +151,13 @@ class DOMIterator {
                     // NOTE: not to confuse with anchor element
                     $url_rewriter->processElementURL( $element );
 
-                    if ( isset( $this->settings['removeWPLinks'] ) ) {
+                    if ( $this->remove_wp_links ) {
                         RemoveLinkElementsBasedOnRelAttr::removeLinkElement(
                             $element
                         );
                     }
 
-                    if ( isset( $this->settings['removeCanonical'] ) ) {
+                    if ( $this->remove_canonical_links ) {
                         $canonical_remover = new CanonicalLinkRemover();
                         $canonical_remover->removeCanonicalLink( $element );
                     }
@@ -160,7 +178,7 @@ class DOMIterator {
                             $cdata_processor->processCDATA(
                                 $node,
                                 $xml_doc,
-                                $this->settings['rewrite_rules']
+                                $this->rewrite_rules
                             );
                         }
                     }
@@ -171,8 +189,8 @@ class DOMIterator {
         // NOTE: $base_element is being recored during iteration of
         // elements, this prevents us from needing to do another iteration
         $base_href_processor = new BaseHrefProcessor(
-            $this->settings['baseHREF'],
-            $this->settings['allowOfflineUsage']
+            $this->destination_url,
+            $this->allow_offline_usage
         );
 
         $base_href_processor->dealWithBaseHREFElement(
@@ -182,12 +200,12 @@ class DOMIterator {
         );
 
         // allow empty favicon to prevent extra browser request
-        if ( isset( $this->settings['createEmptyFavicon'] ) ) {
+        if ( $this->create_empty_favicon ) {
             $favicon_creator = new FaviconRequestBlocker();
             $favicon_creator->createEmptyFaviconLink( $xml_doc );
         }
 
-        if ( isset( $this->settings['removeHTMLComments'] ) ) {
+        if ( $this->remove_html_comments ) {
             $comment_stripper = new HTMLCommentStripper();
             $comment_stripper->stripHTMLComments( $xml_doc );
         }

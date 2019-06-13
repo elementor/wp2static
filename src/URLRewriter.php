@@ -55,6 +55,10 @@ class URLRewriter {
         list( $url, $attribute_to_change ) =
             $this->getURLAndTargetAttribute( $element );
 
+        if ( ! $attribute_to_change ) {
+            return;
+        }
+
         $url = $this->rewriteLocalURL( $url );
 
         $element->setAttribute( $attribute_to_change, $url );
