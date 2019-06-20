@@ -692,6 +692,18 @@ class HTMLProcessor extends WP2Static {
             $processed_html
         );
 
+        // Allow themes to modify entities to preserve
+        $html_entities_to_preserve = apply_filters( 'wp2static_html_entities_to_preserve', array( '&lt;', '&gt;' ) );
+
+        // Strip entities down to just the "name"
+        $cleaned_entities_to_preserve = preg_replace('/^&(.*?);$/', '\1', $html_entities_to_preserve);
+
+        // Build up the regex from the entity "names"
+        $preserve_entities_rx = sprintf( '/&(%s);/', implode('|', $cleaned_entities_to_preserve) );
+
+        // Replace entities with placeholders to preserve them
+        $processed_html = preg_replace($preserve_entities_rx, '{{wp2static-entity-placeholder:\1}}', $processed_html);
+
         $processed_html = html_entity_decode(
             $processed_html,
             ENT_QUOTES,
@@ -704,6 +716,9 @@ class HTMLProcessor extends WP2Static {
             ENT_QUOTES,
             'UTF-8'
         );
+
+        // Restore actual entities from placeholders
+        $processed_html = preg_replace('/{{wp2static-entity-placeholder:(.*?)}}/', '&\1;', $processed_html);
 
         return $processed_html;
     }
