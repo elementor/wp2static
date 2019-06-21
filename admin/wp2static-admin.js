@@ -576,7 +576,7 @@ jQuery(document).ready(
       currentDeploymentMethod = selectedDeploymentMethod
 
       // set the selected option in case calling this from outside the event handler
-      $('.selectedDeploymentMethod').val(selectedDeploymentMethod)
+      $('.selected_deployment_method').val(selectedDeploymentMethod)
     }
 
     function offlineUsageChangeHandler (checkbox) {
@@ -704,7 +704,7 @@ jQuery(document).ready(
     )
 
     // handler when deployment method is changed
-    $('.selectedDeploymentMethod').change(
+    $('.selected_deployment_method').change(
       function () {
         renderSettingsBlock(this.value)
         setDeploymentMethod(this.value)
