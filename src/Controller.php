@@ -180,7 +180,6 @@ class Controller {
         return $order;
     }
 
-
     public function setDefaultOptions() : void {
         if ( null === $this->options->getOption( 'version' ) ) {
             $this->options
