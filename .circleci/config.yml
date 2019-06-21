@@ -6,9 +6,9 @@ jobs:
     steps:
       - checkout
       - run:
-        name: Dependencies
-        command: |
-          echo "memory_limit = 512M" | sudo -E tee --append /usr/local/etc/php/conf.d/docker-php-memory.ini
+          name: Dependencies
+          command: |
+            echo "memory_limit = 512M" | sudo -E tee --append /usr/local/etc/php/conf.d/docker-php-memory.ini
       - run:
           name: Install node modules
           command: |
