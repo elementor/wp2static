@@ -180,7 +180,6 @@ class Controller {
         return $order;
     }
 
-
     public function setDefaultOptions() : void {
         if ( null === $this->options->getOption( 'version' ) ) {
             $this->options
@@ -190,6 +189,7 @@ class Controller {
             ->setOption( 'rewriteWPPaths', '1' )
             ->setOption( 'removeConditionalHeadComments', '1' )
             ->setOption( 'removeWPMeta', '1' )
+            ->setOption( 'dontUseCrawlCaching', '1' )
             ->setOption( 'removeWPLinks', '1' )
             ->setOption( 'removeHTMLComments', '1' )
             ->setOption( 'parse_css', '0' )
@@ -251,7 +251,7 @@ class Controller {
 
         wp_enqueue_style(
             self::HOOK . '-admin',
-            $plugins_url . 'wp2static.css?cache-buster=wp2static',
+            $plugins_url . 'admin/wp2static.css?cache-buster=wp2static',
             array(),
             $this::VERSION
         );
@@ -462,7 +462,7 @@ class Controller {
             'wp2static_admin_js',
             SiteInfo::getUrl( 'plugins' ) .
                 'static-html-output-plugin/' . // TODO: rm hardcoding slug
-                'views/wp2static-admin.js',
+                'admin/wp2static-admin.js',
             array( 'jquery' ),
             $plugin->version,
             false

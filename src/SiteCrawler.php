@@ -195,7 +195,7 @@ class SiteCrawler {
         chmod( $this->list_of_urls_to_crawl_path, 0664 );
 
         $this->archive_dir = SiteInfo::getPath( 'uploads' ) .
-            '/wp2static-exported-site/';
+            'wp2static-exported-site/';
 
         $exclusions = array( 'wp-json' );
 

@@ -30,6 +30,9 @@ class DetectPluginAssets {
                 $path_crawlable =
                     FilesHelper::filePathLooksCrawlable( $filename );
 
+                // Standardise all paths to use / (Windows support)
+                $filename = str_replace( '\\', '/', $filename );
+
                 $detected_filename =
                     str_replace(
                         $plugins_path,

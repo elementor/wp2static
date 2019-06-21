@@ -45,7 +45,7 @@ class SiteInfo {
                 'subdirectory' => $this->isSiteInstalledInSubDirectory(),
 
                 A: It shouldn't, but current mechanism for rewriting URLs
-                hassome cases that require knowledge of it...
+                has some cases that require knowledge of it...
             */
 
             // Content
@@ -68,14 +68,6 @@ class SiteInfo {
             'child_theme_path' => trailingslashit( get_stylesheet_directory() ),
             'child_theme_url' =>
                 trailingslashit( get_stylesheet_directory_uri() ),
-
-        /*
-            // TODO: rm these once refactored to use consistent naming
-            $this->wp_site_subdir = $this->subdirectory;
-            $this->wp_site_url = $this->site_url;
-            $this->wp_site_path = $this->site_path;
-            $this->wp_uploads_url = $this->uploads_url;
-        */
         ];
     }
 
@@ -98,7 +90,10 @@ class SiteInfo {
             throw new WP2StaticException( $err );
         }
 
-        return self::$info[ $key ];
+        // Standardise all paths to use / (Windows support)
+        $path = str_replace( '\\', '/', self::$info[ $key ] );
+
+        return $path;
     }
 
     /**

@@ -39,6 +39,13 @@ class DetectVendorCache {
                 $path_crawlable =
                     FilesHelper::filePathLooksCrawlable( $filename );
 
+                // Standardise all paths to use / (Windows support)
+                $filename = str_replace( '\\', '/', $filename );
+
+                if ( ! is_string( $filename ) ) {
+                    continue;
+                }
+
                 if ( $path_crawlable ) {
                     array_push(
                         $files,
