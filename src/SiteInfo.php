@@ -90,7 +90,7 @@ class SiteInfo {
             throw new WP2StaticException( $err );
         }
 
-        // Standardise all paths to use /
+        // Standardise all paths to use / (Windows support)
         $path = str_replace( '\\', '/', self::$info[ $key ] );
 
         return $path;

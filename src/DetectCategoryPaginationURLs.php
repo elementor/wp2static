@@ -172,7 +172,7 @@ class DetectCategoryPaginationURLs {
 
             for ( $page = 1; $page <= $total_pages; $page++ ) {
                 $urls_to_include[] =
-                    "{$term}/{$pagination_base}/{$page}";
+                    "/{$term}/{$pagination_base}/{$page}";
             }
         }
 

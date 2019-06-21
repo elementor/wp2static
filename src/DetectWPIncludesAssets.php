@@ -32,6 +32,9 @@ class DetectWPIncludesAssets {
                 $path_crawlable =
                     FilesHelper::filePathLooksCrawlable( $filename );
 
+                // Standardise all paths to use / (Windows support)
+                $filename = str_replace( '\\', '/', $filename );
+
                 $detected_filename =
                     str_replace(
                         $includes_path,
