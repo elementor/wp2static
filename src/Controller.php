@@ -190,6 +190,7 @@ class Controller {
             ->setOption( 'rewriteWPPaths', '1' )
             ->setOption( 'removeConditionalHeadComments', '1' )
             ->setOption( 'removeWPMeta', '1' )
+            ->setOption( 'dontUseCrawlCaching', '1' )
             ->setOption( 'removeWPLinks', '1' )
             ->setOption( 'removeHTMLComments', '1' )
             ->setOption( 'parse_css', '0' )
