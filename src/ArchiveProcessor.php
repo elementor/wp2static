@@ -287,6 +287,12 @@ class ArchiveProcessor {
                     throw new WP2StaticException( $err );
                 }
 
+                // Standardise all paths to use / (Windows support)
+                $filename = str_replace( '\\', '/', $filename );
+
+                error_log($this->archive_path);
+                error_log($filename);
+
                 if ( ! $zip_archive->addFile(
                     $real_filepath,
                     str_replace( $this->archive_path, '', $filename )
