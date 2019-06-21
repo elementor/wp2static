@@ -169,6 +169,7 @@ class FilesHelper {
             'tinymce',
             'wp-static-html-output', // exclude earlier version exports
             'wp2static-exported-site',
+            'static-html-output-plugin',
             'wp2static-working-files',
             'wpallexport',
             'wpallimport',
