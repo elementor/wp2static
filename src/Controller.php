@@ -103,6 +103,11 @@ class Controller {
 
         $instance->loadRewriteRules();
 
+        // override max_execution_time to unlimited
+        if ( $instance->set_max_execution_time() ) {
+            set_time_limit( 0 );
+        }
+
         add_action(
             'wp2static_headless_hook',
             [ 'WP2Static\Controller', 'wp2static_headless' ],
@@ -761,5 +766,20 @@ class Controller {
             '</button>';
     }
 
+    public function set_max_execution_time() : bool {
+        if (
+            ! function_exists( 'set_time_limit' ) ||
+            ! function_exists( 'ini_get' )
+        ) {
+            return false;
+        }
 
+        $current_max_execution_time  = ini_get( 'max_execution_time' );
+        $proposed_max_execution_time =
+            ( $current_max_execution_time == 30 ) ? 31 : 30;
+        set_time_limit( $proposed_max_execution_time );
+        $current_max_execution_time = ini_get( 'max_execution_time' );
+
+        return $proposed_max_execution_time == $current_max_execution_time;
+    }
 }
