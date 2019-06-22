@@ -14,16 +14,29 @@ class Exporter {
     public function pre_export_cleanup() : void {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'wp2static-urls';
+        $tables_to_truncate = [
+            //'wp2static_urls',
+            'wp2static_export_log',
+        ];
 
-        $wpdb->query( "TRUNCATE TABLE $table_name" );
+        $errors = 0;
 
-        $sql =
-            "SELECT count(*) FROM $table_name";
+        foreach ( $tables_to_truncate as $table ) {
+            $table_name = $wpdb->prefix . $table;
 
-        $count = $wpdb->get_var( $sql );
+            $wpdb->query( "TRUNCATE TABLE $table_name" );
 
-        if ( $count === '0' ) {
+            $sql =
+                "SELECT count(*) FROM $table_name";
+
+            $count = $wpdb->get_var( $sql );
+
+            if ( $count === '0' ) {
+                $errors++;
+            }
+        }
+
+        if ( $errors === '0' ) {
             http_response_code( 200 );
 
             echo 'SUCCESS';

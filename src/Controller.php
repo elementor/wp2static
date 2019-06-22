@@ -89,6 +89,7 @@ class Controller {
         // create DB table for crawl caching
         CrawlCache::createTable();
         UrlQueue::createTable();
+        ExportLog::createTable();
 
         // capture URL hosts for use in detecting internal links
         $instance->site_url_host =
@@ -646,47 +647,46 @@ class Controller {
         );
 
         if ( isset( $_SERVER['SERVER_SOFTWARE'] ) ) {
-            $info[] = 'SERVER SOFTWARE: ' . $_SERVER['SERVER_SOFTWARE'] .
-            PHP_EOL;
+            $info[] = 'SERVER SOFTWARE: ' . $_SERVER['SERVER_SOFTWARE'];
         }
 
-        $environmental_info = '';
-        $environmental_info .= implode( PHP_EOL, $info );
-        $environmental_info .= 'ACTIVE PLUGINS: ' . PHP_EOL;
+        $info[] = 'ACTIVE PLUGINS: ';
 
         $active_plugins = get_option( 'active_plugins' );
 
         foreach ( $active_plugins as $active_plugin ) {
-            $environmental_info .= $active_plugin . PHP_EOL;
+            $info[] = $active_plugin;
         }
 
-        $environmental_info .= 'ACTIVE THEME: ';
+        $info[] = 'ACTIVE THEME: ';
 
         $theme = wp_get_theme();
 
-        $environmental_info .= $theme->get( 'Name' ) . ' is version ' .
-            $theme->get( 'Version' ) . PHP_EOL;
+        $info[] = $theme->get( 'Name' ) . ' is version ' .
+            $theme->get( 'Version' );
 
-        $environmental_info .= 'WP2STATIC OPTIONS: ' . PHP_EOL;
+        $info[] = 'WP2STATIC OPTIONS: ';
 
-        $options = $this->options->getAllOptions( false );
+        $options= $this->options->getAllOptions( false );
 
-        foreach ( $options as $key => $value ) {
-            $environmental_info .=
-                "{$value['Option name']}: {$value['Value']}" . PHP_EOL;
+        foreach ( $options as $key[]=> $value ) {
+            $info[] = "{$value['Option name']}: {$value['Value']}";
         }
 
-        $environmental_info .= 'SITE URL PATTERNS: ' .
-            implode( ',', $this->rewrite_rules['site_url_patterns'] ) .
-             PHP_EOL . 'DESTINATION URL PATTERNS: ' .
-            implode( ',', $this->rewrite_rules['destination_url_patterns'] );
+        $info[] = 'SITE URL PATTERNS: ' .
+            $this->rewrite_rules['site_url_patterns'];
+
+        $info[] = 'DESTINATION URL PATTERNS: ' .
+            $this->rewrite_rules['destination_url_patterns'];
 
         $extensions = get_loaded_extensions();
 
-        $environmental_info .= PHP_EOL . 'INSTALLED EXTENSIONS: ' .
-            join( ', ', $extensions );
+        $info[] = 'INSTALLED EXTENSIONS: ' .
+            join( PHP_EOL, $extensions );
 
-        WsLog::l( $environmental_info );
+        foreach ( $info as $log_line ) {
+            WsLog::l( $log_line );
+        }
     }
 
     public function wp2static_headless() : void {

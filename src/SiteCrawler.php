@@ -14,7 +14,6 @@ class SiteCrawler {
     private $extension;
     private $file_type;
     private $include_discovered_assets;
-    private $list_of_urls_to_crawl_path;
     private $page_url;
     private $processed_file;
     private $request;
@@ -89,7 +88,6 @@ class SiteCrawler {
         $this->content_type = '';
         $this->extension = '';
         $this->archive_dir = '';
-        $this->list_of_urls_to_crawl_path = '';
         $this->urls_to_crawl = '';
         $this->rewrite_rules = $rewrite_rules;
         $this->site_url_host = $site_url_host;
@@ -121,24 +119,14 @@ class SiteCrawler {
      * @throws WP2StaticException
      */
     public function crawl() : void {
-        $this->list_of_urls_to_crawl_path =
-            SiteInfo::getPath( 'uploads' ) .
-            'wp2static-working-files/FINAL-CRAWL-LIST.txt';
-
-        if ( ! is_file( $this->list_of_urls_to_crawl_path ) ) {
-            $err = 'ERROR: LIST OF URLS TO CRAWL NOT FOUND AT: ' .
-                $this->list_of_urls_to_crawl_path;
-            WsLog::l( $err );
-            throw new WP2StaticException( $err );
+        // if ( // UrlQueue is not empty ) ) {
+        if ( true ) {
+            $this->crawlABitMore();
         } else {
-            if ( filesize( $this->list_of_urls_to_crawl_path ) ) {
-                $this->crawlABitMore();
-            } else {
-                $via_ui = filter_input( INPUT_POST, 'ajax_action' );
+            $via_ui = filter_input( INPUT_POST, 'ajax_action' );
 
-                if ( is_string( $via_ui ) ) {
-                    echo 'SUCCESS';
-                }
+            if ( is_string( $via_ui ) ) {
+                echo 'SUCCESS';
             }
         }
     }

@@ -14,6 +14,7 @@ class UrlQueue {
         $sql = "CREATE TABLE $table_name (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
             url VARCHAR(2083) NOT NULL,
+            status VARCHAR(10),
             PRIMARY KEY  (id)
         ) $charset_collate;";
 
