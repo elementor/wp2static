@@ -117,43 +117,35 @@ class SiteCrawler {
      * @throws WP2StaticException
      */
     public function crawl() : void {
-        if ( UrlQueue::hasCrawlableURLs() ) {
-            $urls_to_crawl = UrlQueue::getCrawlableURLs();
+        $urls_to_crawl = UrlQueue::getCrawlableURLs();
 
-            if ( ! $urls_to_crawl ) {
-                $err = 'Expected more URLs to crawl, found none';
-                WsLog::l( $err );
-                throw new WP2StaticException( $err );
-            }
+        if ( ! $urls_to_crawl ) {
+            $err = 'Expected more URLs to crawl, found none';
+            WsLog::l( $err );
+            throw new WP2StaticException( $err );
+        }
 
-            $this->archive_dir = SiteInfo::getPath( 'uploads' ) .
-                'wp2static-exported-site/';
+        $this->archive_dir = SiteInfo::getPath( 'uploads' ) .
+            'wp2static-exported-site/';
 
-            $exclusions = array( 'wp-json' );
+        $exclusions = array( 'wp-json' );
 
-            foreach ( $urls_to_crawl as $url ) {
-                $page_url = SiteInfo::getUrl( 'site' ) . ltrim( $url, '/' );
+        foreach ( $urls_to_crawl as $url ) {
+            $page_url = SiteInfo::getUrl( 'site' ) . ltrim( $url, '/' );
 
-                if ( ! isset( $this->settings['dontUseCrawlCaching'] ) ) {
-                    if ( CrawlCache::getUrl( $url ) ) {
-                        continue;
-                    }
+            if ( ! isset( $this->settings['dontUseCrawlCaching'] ) ) {
+                if ( CrawlCache::getUrl( $url ) ) {
+                    continue;
                 }
-
-                $this->crawlSingleURL( $page_url );
-
-                // TODO: check memory usage and return control if hit limit // should not be necessary
-
-                // TODO: check current execution time and return control if close
             }
 
-            $this->crawl();
-        } else {
-            $via_ui = filter_input( INPUT_POST, 'ajax_action' );
+            $this->crawlSingleURL( $page_url );
+        }
 
-            if ( is_string( $via_ui ) ) {
-                echo 'SUCCESS';
-            }
+        $via_ui = filter_input( INPUT_POST, 'ajax_action' );
+
+        if ( is_string( $via_ui ) ) {
+            echo 'SUCCESS';
         }
     }
 
@@ -414,8 +406,9 @@ class SiteCrawler {
         // TODO: better validate save success
         $file_writer->saveFile( $this->archive_dir );
 
-        CrawlCache::addUrl( $url );
-        UrlQueue::markURLCrawled( $url );
+        if ( ! isset( $this->settings['dontUseCrawlCaching'] ) ) {
+            CrawlCache::addUrl( $url );
+        }
     }
 
     /**

@@ -638,9 +638,7 @@ class Controller {
             'PLUGIN VERSION: ' . $this::VERSION,
             'PHP VERSION: ' . phpversion(),
             'OS VERSION: ' . php_uname(),
-            'PHP MEMORY LIMIT: ' .
-                number_format( $this->get_memory_limit() / 1048576, 2 ) .
-                ' MB',
+            'PHP MEMORY LIMIT: ' . ini_get( 'memory_limit' ),
             'WP VERSION: ' . get_bloginfo( 'version' ),
             'WP URL: ' . get_bloginfo( 'url' ),
             'WP SITEURL: ' . get_option( 'siteurl' ),
@@ -672,9 +670,9 @@ class Controller {
 
         $info[] = 'WP2STATIC OPTIONS: ';
 
-        $options= $this->options->getAllOptions( false );
+        $options = $this->options->getAllOptions( false );
 
-        foreach ( $options as $key[]=> $value ) {
+        foreach ( $options as $key[] => $value ) {
             $info[] = "{$value['Option name']}: {$value['Value']}";
         }
 
@@ -786,32 +784,5 @@ class Controller {
         $current_max_execution_time = ini_get( 'max_execution_time' );
 
         return $proposed_max_execution_time == $current_max_execution_time;
-    }
-
-    public function get_memory_limit() : int {
-        if ( function_exists( 'ini_get' ) ) {
-            $memory_limit = ini_get( 'memory_limit' );
-        } else {
-            // Sensible default
-            $memory_limit = '128M';
-        }
-        if ( ! $memory_limit || -1 == $memory_limit ) {
-            // Unlimited, set to 32GB
-            $memory_limit = '32000M';
-        }
-        return intval( $memory_limit ) * 1024 * 1024;
-    }
-
-    public function memory_exceeded( $filter_name = null ) : bool {
-        $memory_limit   = $this->get_memory_limit() * 0.9; // 90% of max memory
-        $current_memory = memory_get_usage( true );
-        $return         = false;
-        if ( $current_memory >= $memory_limit ) {
-            $return = true;
-        }
-        if ( is_null( $filter_name ) || ! is_string( $filter_name ) ) {
-            return $return;
-        }
-        return apply_filters( $filter_name, $return );
     }
 }

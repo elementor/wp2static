@@ -15,7 +15,7 @@ class Exporter {
         global $wpdb;
 
         $tables_to_truncate = [
-            //'wp2static_urls',
+            // 'wp2static_urls',
             'wp2static_export_log',
         ];
 
@@ -36,7 +36,7 @@ class Exporter {
             }
         }
 
-        if ( $errors === '0' ) {
+        if ( $errors === 0 ) {
             http_response_code( 200 );
 
             echo 'SUCCESS';
@@ -62,9 +62,9 @@ class Exporter {
 
                 // TODO: add to DB
             }
-        } 
+        }
 
-        // add each additional URL 
+        // add each additional URL
         if ( isset( $this->settings['additionalUrls'] ) ) {
             $inclusions = explode(
                 "\n",

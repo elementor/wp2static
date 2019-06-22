@@ -14,7 +14,6 @@ class UrlQueue {
         $sql = "CREATE TABLE $table_name (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
             url VARCHAR(2083) NOT NULL,
-            status VARCHAR(10),
             PRIMARY KEY  (id)
         ) $charset_collate;";
 
@@ -22,42 +21,25 @@ class UrlQueue {
         dbDelta( $sql );
     }
 
-    public static function addUrl( string $url ) : void {
+    /**
+     * Add all Urls to queue
+     *
+     * @param string[] $urls List of URLs to crawl
+     */
+    public static function addUrls( array $urls ) : void {
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'wp2static_urls';
 
-        $wpdb->insert(
-            $table_name,
-            array(
-                'url' => $url,
-            )
-        );
-    }
+        $query = "INSERT INTO $table_name (url) VALUES ";
 
-    public static function markURLCrawled( string $url ) : void {
-        global $wpdb;
+        foreach ( $urls as $url ) {
+            $query .= "('$url'),";
+        }
 
-        $table_name = $wpdb->prefix . 'wp2static_urls';
+        $query = rtrim( $query, ',' );
 
-        $wpdb->update( 
-            $table_name, 
-            [ 'status' => 'crawled' ], 
-            [ 'url' => $url ]
-        );
-    }
-
-    public static function hasCrawlableURLs() : int {
-        global $wpdb;
-
-        $table_name = $wpdb->prefix . 'wp2static_urls';
-
-        $rowcount = $wpdb->get_var(
-            "SELECT COUNT(*) FROM $table_name WHERE" .
-            " NOT (status <=> 'crawled')"
-        );
-
-        return $rowcount;
+        $wpdb->query( $query );
     }
 
     /**
@@ -71,15 +53,11 @@ class UrlQueue {
 
         $table_name = $wpdb->prefix . 'wp2static_urls';
 
-        $rows = $wpdb->get_results(
-            "SELECT url FROM $table_name WHERE" .
-            " NOT (status <=> 'crawled')"
-        );
-
+        $rows = $wpdb->get_results( "SELECT url FROM $table_name" );
 
         foreach ( $rows as $row ) {
             $urls[] = $row->url;
-        } 
+        }
 
         return $urls;
     }

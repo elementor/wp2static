@@ -169,6 +169,7 @@ class FilesHelper {
             'tinymce',
             'wp-static-html-output', // exclude earlier version exports
             'wp2static-exported-site',
+            'wp2static-addon',
             'LICENSE',
             'README',
             'static-html-output-plugin',
@@ -291,9 +292,7 @@ class FilesHelper {
 
         $unique_urls = array_unique( $url_queue );
 
-        foreach ( $unique_urls as $url ) {
-            UrlQueue::addUrl ( $url );
-        }
+        UrlQueue::addUrls( $unique_urls );
 
         return (string) count( $url_queue );
     }
