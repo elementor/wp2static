@@ -415,6 +415,8 @@ class Controller {
      * @throws WP2StaticException
      */
     public function generate_filelist_preview() : void {
+        UrlQueue::truncate();
+
         $initial_file_list_count =
             FilesHelper::buildInitialFileList(
                 true,
@@ -636,6 +638,9 @@ class Controller {
             'PLUGIN VERSION: ' . $this::VERSION,
             'PHP VERSION: ' . phpversion(),
             'OS VERSION: ' . php_uname(),
+            'PHP MEMORY LIMIT: ' .
+                number_format( $this->get_memory_limit() / 1048576, 2 ) .
+                ' MB',
             'WP VERSION: ' . get_bloginfo( 'version' ),
             'WP URL: ' . get_bloginfo( 'url' ),
             'WP SITEURL: ' . get_option( 'siteurl' ),

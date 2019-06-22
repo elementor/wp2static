@@ -34,4 +34,61 @@ class UrlQueue {
             )
         );
     }
+
+    public static function markURLCrawled( string $url ) : void {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'wp2static_urls';
+
+        $wpdb->update( 
+            $table_name, 
+            [ 'status' => 'crawled' ], 
+            [ 'url' => $url ]
+        );
+    }
+
+    public static function hasCrawlableURLs() : int {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'wp2static_urls';
+
+        $rowcount = $wpdb->get_var(
+            "SELECT COUNT(*) FROM $table_name WHERE" .
+            " NOT (status <=> 'crawled')"
+        );
+
+        return $rowcount;
+    }
+
+    /**
+     *  Get all crawlable URLs
+     *
+     *  @return string[] All crawlable URLs
+     */
+    public static function getCrawlableURLs() : array {
+        global $wpdb;
+        $urls = [];
+
+        $table_name = $wpdb->prefix . 'wp2static_urls';
+
+        $rows = $wpdb->get_results(
+            "SELECT url FROM $table_name WHERE" .
+            " NOT (status <=> 'crawled')"
+        );
+
+
+        foreach ( $rows as $row ) {
+            $urls[] = $row->url;
+        } 
+
+        return $urls;
+    }
+
+    public static function truncate() : void {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'wp2static_urls';
+
+        $wpdb->query( "TRUNCATE TABLE $table_name" );
+    }
 }

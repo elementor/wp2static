@@ -18,7 +18,6 @@ class Options {
         'basicAuthUser',
         'completionEmail',
         'crawl_delay',
-        'crawl_increment',
         'crawlPort',
         'crawlUserAgent',
         'createEmptyFavicon',
@@ -77,7 +76,6 @@ class Options {
         'basicAuthUser',
         'completionEmail',
         'crawl_delay',
-        'crawl_increment',
         'crawlPort',
         'crawlUserAgent',
         'createEmptyFavicon',
@@ -258,11 +256,6 @@ class Options {
         /*
             Settings requiring transformation
         */
-        $settings['crawl_increment'] =
-            isset( $settings['crawl_increment'] ) ?
-            (int) $settings['crawl_increment'] :
-            1;
-
         $settings['baseUrl'] =
             isset( $settings['baseUrl'] ) ?
             rtrim( $settings['baseUrl'], '/' ) . '/' :
