@@ -687,9 +687,7 @@ class Controller {
         $info[] = 'INSTALLED EXTENSIONS: ' .
             join( PHP_EOL, $extensions );
 
-        foreach ( $info as $log_line ) {
-            WsLog::l( $log_line );
-        }
+        WsLog::lines( $info );
     }
 
     public function wp2static_headless() : void {

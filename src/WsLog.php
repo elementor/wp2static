@@ -12,10 +12,32 @@ class WsLog {
         $wpdb->insert(
             $table_name,
             array(
-                'time' => current_time( 'mysql' ),
                 'log' => $text,
             )
         );
+    }
+
+    /**
+     * Log multiple lines at once
+     *
+     * @param string[] $lines List of lines to log
+     */
+    public static function lines( array $lines ) : void {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'wp2static_export_log';
+
+        $current_time = current_time( 'mysql' );
+
+        $query = "INSERT INTO $table_name (log) VALUES ";
+
+        foreach ( $lines as $line ) {
+            $query .= "('$line'),";
+        }
+
+        $query = rtrim( $query, ',' );
+
+        $wpdb->query( $query );
     }
 }
 
