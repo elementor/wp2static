@@ -88,6 +88,7 @@ class Controller {
 
         // create DB table for crawl caching
         CrawlCache::createTable();
+        UrlQueue::createTable();
 
         // capture URL hosts for use in detecting internal links
         $instance->site_url_host =
@@ -436,6 +437,8 @@ class Controller {
     }
 
     public function delete_crawl_cache() : void {
+
+        // we now have modified file list in DB
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'wp2static_crawl_cache';
@@ -558,9 +561,6 @@ class Controller {
         $this->exporter = new Exporter();
 
         $this->exporter->pre_export_cleanup();
-
-        // TODO: kill this / make UI/CLI option to delete export dir
-        // $this->exporter->cleanup_leftover_archives();
 
         $this->create_export_directory();
 
@@ -781,5 +781,32 @@ class Controller {
         $current_max_execution_time = ini_get( 'max_execution_time' );
 
         return $proposed_max_execution_time == $current_max_execution_time;
+    }
+
+    public function get_memory_limit() : int {
+        if ( function_exists( 'ini_get' ) ) {
+            $memory_limit = ini_get( 'memory_limit' );
+        } else {
+            // Sensible default
+            $memory_limit = '128M';
+        }
+        if ( ! $memory_limit || -1 == $memory_limit ) {
+            // Unlimited, set to 32GB
+            $memory_limit = '32000M';
+        }
+        return intval( $memory_limit ) * 1024 * 1024;
+    }
+
+    public function memory_exceeded( $filter_name = null ) : bool {
+        $memory_limit   = $this->get_memory_limit() * 0.9; // 90% of max memory
+        $current_memory = memory_get_usage( true );
+        $return         = false;
+        if ( $current_memory >= $memory_limit ) {
+            $return = true;
+        }
+        if ( is_null( $filter_name ) || ! is_string( $filter_name ) ) {
+            return $return;
+        }
+        return apply_filters( $filter_name, $return );
     }
 }
