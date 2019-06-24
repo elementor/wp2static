@@ -12,31 +12,38 @@ class DeployCache {
         $charset_collate = $wpdb->get_charset_collate();
 
         $sql = "CREATE TABLE $table_name (
-            file_hash VARCHAR(32) NOT NULL,
-            path_hash VARCHAR(2083) NOT NULL,
-            PRIMARY KEY  (file_hash)
+            path_hash CHAR(32) NOT NULL,
+            file_hash CHAR(32) NOT NULL,
+            PRIMARY KEY  (path_hash)
         ) $charset_collate;";
 
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         dbDelta( $sql );
     }
 
-    public static function addFileHash(
+    public static function addFile(
         string $local_path
     ) : void {
         global $wpdb;
 
-        $path_hash = crc32( $local_path );
-        $file_hash = crc32( file_get_contents( $local_path ) );
-
         $deploy_cache_table = $wpdb->prefix . 'wp2static_deploy_cache';
-        $path_data = [ 'path_hash' => $path_hash, 'file_hash' => $file_hash ];
-        $wpdb->insert( $deploy_cache_table, $path_data, [ '%s','%s' ] );
+
+        $path_hash = md5( $local_path );
+        $file_hash = md5( file_get_contents( $local_path ) );
+
+        $sql = "INSERT INTO {$deploy_cache_table} (path_hash,file_hash)" .
+            " VALUES (%s,%s) ON DUPLICATE KEY UPDATE file_hash = %s";
+
+        $sql = $wpdb->prepare( $sql, $path_hash, $file_hash, $file_hash );
+
+        $wpdb->query($sql); 
     }
 
-    public static function fileisCached( string $local_file ) : bool {
-        $path_hash = crc32( $local_path );
-        $file_hash = crc32( file_get_contents( $local_path ) );
+    public static function fileisCached( string $local_path ) : bool {
+        global $wpdb;
+
+        $path_hash = md5( $local_path );
+        $file_hash = md5( file_get_contents( $local_path ) );
 
         $table_name = $wpdb->prefix . 'wp2static_deploy_cache';
 

@@ -68,4 +68,17 @@ class DeployQueue {
 
         $wpdb->query( "TRUNCATE TABLE $table_name" );
     }
+
+    public static function remove( string $local_path ) : void {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'wp2static_deploy_queue';
+
+        $wpdb->delete(
+            $table_name,
+            [
+                'local_path' => $local_path,
+            ]
+        );
+    }
 }

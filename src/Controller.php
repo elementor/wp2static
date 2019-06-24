@@ -418,6 +418,7 @@ class Controller {
      */
     public function generate_filelist_preview() : void {
         CrawlQueue::truncate();
+        DeployQueue::truncate();
 
         $initial_file_list_count =
             FilesHelper::buildInitialFileList(
@@ -616,16 +617,7 @@ class Controller {
     }
 
     public function delete_deploy_cache() : void {
-        $working_dir = SiteInfo::getPath( 'uploads' ) .
-            'wp2static-working-files';
-        $hash_files = glob( "{$working_dir}/*PREVIOUS-HASHES*.txt" );
-
-        if ( ! $hash_files ) {
-            echo 'SUCCESS';
-            return;
-        }
-
-        array_map( 'unlink', $hash_files );
+        DeployCache::truncate();
 
         $via_ui = filter_input( INPUT_POST, 'ajax_action' );
 

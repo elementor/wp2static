@@ -63,9 +63,9 @@ class CrawlCache {
 
         $wpdb->delete(
             $table_name,
-            array(
+            [
                 'hashed_url' => md5( $url ),
-            )
+            ]
         );
     }
 }
