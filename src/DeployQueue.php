@@ -30,9 +30,9 @@ class DeployQueue {
         $deploy_queue_table = $wpdb->prefix . 'wp2static_deploy_queue';
         $path_data = [
             'local_path' => $local_path,
-            'remote_path' => $remote_path
+            'remote_path' => $remote_path,
         ];
-        $wpdb->insert( $deploy_queue_table, $path_data, [ '%s','%s' ] );
+        $wpdb->insert( $deploy_queue_table, $path_data, [ '%s', '%s' ] );
     }
 
     /**
@@ -55,7 +55,7 @@ class DeployQueue {
         $rows = $wpdb->get_results( $query );
 
         foreach ( $rows as $row ) {
-            $urls[$row->local_path] = $row->remote_path;
+            $urls[ $row->local_path ] = $row->remote_path;
         }
 
         return $urls;

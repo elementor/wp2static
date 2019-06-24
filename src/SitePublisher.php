@@ -87,6 +87,8 @@ class SitePublisher {
 
     /**
      * Recursively add files to deployment list
+     *
+     * @throws WP2StaticException
      */
     public function createDeploymentList(
         string $dir,

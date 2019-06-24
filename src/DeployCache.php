@@ -29,21 +29,33 @@ class DeployCache {
         $deploy_cache_table = $wpdb->prefix . 'wp2static_deploy_cache';
 
         $path_hash = md5( $local_path );
-        $file_hash = md5( file_get_contents( $local_path ) );
+        $file_contents = file_get_contents( $local_path );
+
+        if ( ! $file_contents ) {
+            return;
+        }
+
+        $file_hash = md5( $file_contents );
 
         $sql = "INSERT INTO {$deploy_cache_table} (path_hash,file_hash)" .
-            " VALUES (%s,%s) ON DUPLICATE KEY UPDATE file_hash = %s";
+            ' VALUES (%s,%s) ON DUPLICATE KEY UPDATE file_hash = %s';
 
         $sql = $wpdb->prepare( $sql, $path_hash, $file_hash, $file_hash );
 
-        $wpdb->query($sql); 
+        $wpdb->query( $sql );
     }
 
     public static function fileisCached( string $local_path ) : bool {
         global $wpdb;
 
         $path_hash = md5( $local_path );
-        $file_hash = md5( file_get_contents( $local_path ) );
+        $file_contents = file_get_contents( $local_path );
+
+        if ( ! $file_contents ) {
+            return false;
+        }
+
+        $file_hash = md5( $file_contents );
 
         $table_name = $wpdb->prefix . 'wp2static_deploy_cache';
 
