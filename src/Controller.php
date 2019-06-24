@@ -88,8 +88,10 @@ class Controller {
 
         // create DB table for crawl caching
         CrawlCache::createTable();
-        UrlQueue::createTable();
+        CrawlQueue::createTable();
         ExportLog::createTable();
+        DeployQueue::createTable();
+        DeployCache::createTable();
 
         // capture URL hosts for use in detecting internal links
         $instance->site_url_host =
@@ -415,7 +417,7 @@ class Controller {
      * @throws WP2StaticException
      */
     public function generate_filelist_preview() : void {
-        UrlQueue::truncate();
+        CrawlQueue::truncate();
 
         $initial_file_list_count =
             FilesHelper::buildInitialFileList(

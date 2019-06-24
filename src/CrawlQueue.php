@@ -2,7 +2,7 @@
 
 namespace WP2Static;
 
-class UrlQueue {
+class CrawlQueue {
 
     public static function createTable() : void {
         global $wpdb;

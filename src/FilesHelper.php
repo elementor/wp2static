@@ -292,7 +292,7 @@ class FilesHelper {
 
         $unique_urls = array_unique( $url_queue );
 
-        UrlQueue::addUrls( $unique_urls );
+        CrawlQueue::addUrls( $unique_urls );
 
         return (string) count( $url_queue );
     }

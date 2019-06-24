@@ -117,7 +117,7 @@ class SiteCrawler {
      * @throws WP2StaticException
      */
     public function crawl() : void {
-        $urls_to_crawl = UrlQueue::getCrawlableURLs();
+        $urls_to_crawl = CrawlQueue::getCrawlableURLs();
 
         if ( ! $urls_to_crawl ) {
             $err = 'Expected more URLs to crawl, found none';
