@@ -152,12 +152,6 @@ $tpl = new \WP2Static\TemplateHelper();
 
           <div class="inside">
 
-<!-- Rounded switch -->
-<label class="switch">
-  <input type="checkbox">
-  <span class="slider round"></span>
-</label>
-
             <div class="submit">
                 <?php wp_nonce_field( $view['onceAction'] ); ?>
               <button id="startExportButton" class="wp2static-btn blue" disabled>
