@@ -2,7 +2,7 @@
   "name": "wp2static",
   "version": "1.0.0",
   "description": "WP2Static",
-  "main": "views/wp2static-admin.js",
+  "main": "admin/wp2static-admin.js",
   "directories": {
     "test": "tests"
   },
@@ -25,7 +25,8 @@
     "eslint-plugin-import": "^2.17.3",
     "eslint-plugin-node": "^9.1.0",
     "eslint-plugin-promise": "^4.1.1",
-    "eslint-plugin-standard": "^4.0.0"
+    "eslint-plugin-standard": "^4.0.0",
+    "typescript": "^3.5.2"
   },
   "dependencies": {
     "i": "^0.3.6",

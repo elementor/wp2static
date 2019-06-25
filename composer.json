@@ -65,12 +65,13 @@
     },
     "scripts": {
         "phpstan": "vendor/bin/phpstan analyse",
-        "phpcs": "vendor/bin/phpcs --standard=./tools/phpcs.xml --ignore=*/tests/*,*/admin/*,**/coverage/*,*.js,*/node_modules/*,*/vendor/*,*/views/*.php ./",
-        "phpcbf": "vendor/bin/phpcbf --standard=./tools/phpcs.xml --ignore=*/tests/*,*/admin/*,*/coverage/*,*.js,*/node_modules/*,*/vendor/*,*/views/*.php ./",
+        "phpcs": "vendor/bin/phpcs --standard=./tools/phpcs.xml --ignore=*/js/*,*/tests/*,*/admin/*,**/coverage/*,*.js,*/node_modules/*,*/vendor/*,*/views/*.php ./",
+        "phpcbf": "vendor/bin/phpcbf --standard=./tools/phpcs.xml --ignore=*/js/*,*/tests/*,*/admin/*,*/coverage/*,*.js,*/node_modules/*,*/vendor/*,*/views/*.php ./",
         "phpunit": "vendor/bin/phpunit ./tests/unit/",
         "coverage": "vendor/bin/phpunit tests/unit --coverage-html coverage --whitelist src/",
         "lint": "vendor/bin/parallel-lint --exclude vendor .",
         "eslint": "node_modules/eslint/bin/eslint.js admin/wp2static-admin.js",
+        "ts2js": "node_modules/typescript/bin/tsc -t 'ES2015' --outfile admin/wp2static-admin.js js/wp2static-admin.ts",
         "test": [
             "@lint",
             "@phpcs",
