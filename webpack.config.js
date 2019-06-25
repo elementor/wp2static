@@ -20,5 +20,12 @@ module.exports = {
                 loader: 'ts-loader'
             }
         ]
-    }
+    },
+    plugins: [
+        new webpack.ProvidePlugin({
+            $: 'jquery/src/jquery',
+            jquery: 'jquery/src/jquery'
+        })
+    ],
+    devtool: 'source-map'
 };

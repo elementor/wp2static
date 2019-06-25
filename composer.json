@@ -72,7 +72,7 @@
         "lint": "vendor/bin/parallel-lint --exclude vendor .",
         "tslint": "node_modules/tslint/bin/tslint js/wp2static-admin.ts",
         "tslintfix": "node_modules/tslint/bin/tslint --fix js/wp2static-admin.ts",
-        "ts2js": "node_modules/typescript/bin/tsc",
+        "buildjs": "node_modules/webpack/bin/webpack.js",
         "test": [
             "@lint",
             "@tslint",
