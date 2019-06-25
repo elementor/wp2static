@@ -7,7 +7,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "eslint"
+    "test": "composer test"
   },
   "repository": {
     "type": "git",
@@ -26,5 +26,5 @@
   "dependencies": {
     "i": "^0.3.6",
     "npm": "^6.9.0"
-  },
+  }
 }

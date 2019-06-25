@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "outDir": "./admin",
-        "allowJs": true,
+        "allowJs": false,
         "target": "ES2017",
         "allowSyntheticDefaultImports": true
     },

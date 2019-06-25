@@ -10,54 +10,55 @@ interface FormProcessor {
     description: string;
 }
 
-let formProcessors: FormProcessor[] = [
+const formProcessors: FormProcessor[] = [
   {
+    description: "Basin does stuff",
     id: "basin",
     name: "Basin",
     placeholder: "https://usebasin.com/f/",
     website: "https://usebasin.com",
-    description: "Basin does stuff",
   },
   {
+    description: `FormSpree is very simple to start with, just set your
+ endpoint, including your email address and start sending.`,
     id: "formspree",
     name: "Formspree",
     placeholder: "https://formspree.io/myemail@domain.com",
     website: "https://formspree.io",
-    description: "FormSpree is very simple to start with, just set your endpoint, including your email address and start sending.",
   },
   {
+    description: "Zapier does stuff",
     id: "zapier",
     name: "Zapier",
     placeholder: "https://hooks.zapier.com/hooks/catch/4977245/jqj3l4/",
     website: "https://zapier.com",
-    description: "Zapier does stuff",
   },
   {
+    description: "Formkeep does stuff",
     id: "formkeep",
     name: "FormKeep",
     placeholder: "https://formkeep.com/f/5dd8de73ce2c",
     website: "https://formkeep.com",
-    description: "Formkeep does stuff",
   },
   {
+    description: "Use any custom endpoint",
     id: "custom",
     name: "Custom endpoint",
     placeholder: "https://mycustomendpoint.com/SOMEPATH",
     website: "https://docs.wp2static.com",
-    description: "Use any custom endpoint",
   },
 ];
 
 let validationErrors = "";
-let deployOptions = {
-  zip: {
+const deployOptions = {
+  folder: {
     exportSteps: [
       "finalize_deployment",
     ],
     requiredFields: {
     },
   },
-  folder: {
+  zip: {
     exportSteps: [
       "finalize_deployment",
     ],
@@ -67,7 +68,7 @@ let deployOptions = {
 };
 
 let spinner;
-let siteInfo = JSON.parse(wp2staticString.siteInfo);
+const siteInfo = JSON.parse(wp2staticString.siteInfo);
 let currentDeploymentMethod;
 if (wp2staticString.currentDeploymentMethod) {
   currentDeploymentMethod = wp2staticString.currentDeploymentMethod;
@@ -76,42 +77,49 @@ if (wp2staticString.currentDeploymentMethod) {
 }
 
 // TODO: get the log out of the archive, along with it's meta infos
-let logFileUrl = siteInfo.uploads_url + "wp2static-working-files/EXPORT-LOG.txt";
-let selectedFormProcessor = "";
+const logFileUrl = siteInfo.uploads_url + "wp2static-working-files/EXPORT-LOG.txt";
+const selectedFormProcessor = "";
 let exportAction = "";
 let exportTargets = [];
 let exportCommenceTime: number = 0;
 let statusText = "";
-let protocolAndDomainRE = /^(?:\w+:)?\/\/(\S+)$/;
-let localhostDomainRE = /^localhost[:?\d]*(?:[^:?\d]\S*)?$/;
-let nonLocalhostDomainRE = /^[^\s.]+\.\S{2,}$/;
+const protocolAndDomainRE = /^(?:\w+:)?\/\/(\S+)$/;
+const localhostDomainRE = /^localhost[:?\d]*(?:[^:?\d]\S*)?$/;
+const nonLocalhostDomainRE = /^[^\s.]+\.\S{2,}$/;
 let timerIntervalID: number = 0;
-let statusDescriptions = {
+const statusDescriptions = {
   crawl_site: "Crawling initial file list",
-  post_process_archive_dir: "Processing the crawled files",
   post_export_teardown: "Cleaning up after processing",
+  post_process_archive_dir: "Processing the crawled files",
 };
-jQuery(document).ready(
-  function($) {
+
+jQuery(($) => {
     function generateFileListSuccessCallback(serverResponse) {
       if (!serverResponse) {
-        $("#current_action").html('Failed to generate initial file list. Please <a href="https://docs.wp2static.com" target="_blank">contact support</a>');
+        $("#current_action").html(`Failed to generate initial file list.
+ Please <a href="https://docs.wp2static.com" target="_blank">contact support</a>`);
         $(".pulsate-css").hide();
       } else {
         $("#initial_crawl_list_loader").hide();
-        $("#initial_crawl_list_count").text(serverResponse + " URLs were detected on your site that will be used to initiate the crawl. Other URLs will be discovered while crawling.");
+        $("#initial_crawl_list_count").text(`${serverResponse} URLs were
+ detected on your site that will be used to initiate the crawl.
+ Other URLs will be discovered while crawling.`);
         $("#preview_initial_crawl_list_button").show();
 
         $("#startExportButton").prop("disabled", false);
         $(".saveSettingsButton").prop("disabled", false);
         $(".resetDefaultSettingsButton").prop("disabled", false);
-        $("#current_action").html(serverResponse + ' URLs were detected for initial crawl list. <a href="#" id="GoToDetectionTabButton">Adjust detection via the URL Detection tab.</a>');
+        $("#current_action").html(`${serverResponse} URLs were detected for
+ initial crawl list. <a href="#" id="GoToDetectionTabButton">Adjust detection
+ via the URL Detection tab.</a>`);
         $(".pulsate-css").hide();
       }
     }
 
     function generateFileListFailCallback(serverResponse) {
-      const failedDeployMessage = "Failed to generate Initial Crawl List. Please check your permissions to the WordPress upload directory or check your Export Log in case of more info.";
+      const failedDeployMessage = `Failed to generate Initial Crawl List.
+ Please check your permissions to the WordPress upload directory or check your
+ Export Log in case of more info.`;
 
       $("#current_action").html(failedDeployMessage);
       $(".pulsate-css").hide();
@@ -141,7 +149,7 @@ jQuery(document).ready(
 
       const data = $(".options-form :input")
         .filter(
-          function(index, element) {
+          (index, element) => {
             return $(element).val() !== "";
           },
         )
@@ -149,12 +157,12 @@ jQuery(document).ready(
 
       $.ajax(
         {
-          url: ajaxurl,
           data,
           dataType: "html",
+          error: failCallback,
           method: "POST",
           success: successCallback,
-          error: failCallback,
+          url: ajaxurl,
         },
       );
     }
@@ -213,7 +221,8 @@ jQuery(document).ready(
         exportCommenceTime = 0;
 
         stopTimer();
-        $("#current_action").text("Process completed in " + millisToMinutesAndSeconds(exportDuration) + " (mins:ss)");
+        $("#current_action").text(`Process completed in
+ ${millisToMinutesAndSeconds(exportDuration)} (mins:ss)`);
         $("#goToMyStaticSite").focus();
         $(".pulsate-css").hide();
         $("#startExportButton").prop("disabled", false);
@@ -226,17 +235,20 @@ jQuery(document).ready(
 
     function downloadExportLogSuccessCallback(serverResponse) {
       if (!serverResponse) {
-        $("#current_action").html('Failed to download Export Log <a id="downloadExportLogButton" href="#">try again</a>');
+        $("#current_action").html(`Failed to download Export Log
+ <a id="downloadExportLogButton" href="#">try again</a>`);
         $(".pulsate-css").hide();
       } else {
-        $("#current_action").html('Download <a href="' + serverResponse + '"> ' + serverResponse + "</a>");
+        $("#current_action").html(`Download <a href="${serverResponse}">
+ ${serverResponse}/a>`);
         $(".pulsate-css").hide();
       }
     }
 
     function downloadExportLogFailCallback(serverResponse) {
       $(".pulsate-css").hide();
-      $("#current_action").html('Failed to download Export Log <a id="downloadExportLogButton" href="#">try again</a>');
+      $("#current_action").html(`Failed to download Export Log
+ <a id="downloadExportLogButton" href="#">try again</a>`);
     }
 
     function deleteCrawlCacheSuccessCallback(serverResponse) {
@@ -267,7 +279,7 @@ jQuery(document).ready(
     $(document).on(
       "click",
       "#detectEverythingButton",
-      function(evt) {
+      (evt) => {
         evt.preventDefault();
         $('#detectionOptionsTable input[type="checkbox"]').attr("checked", 1);
       },
@@ -276,7 +288,7 @@ jQuery(document).ready(
     $(document).on(
       "click",
       "#deleteCrawlCache",
-      function(evt) {
+      (evt) => {
         evt.preventDefault();
         $("#current_action").html("Deleting Crawl Cache...");
 
@@ -291,7 +303,7 @@ jQuery(document).ready(
     $(document).on(
       "click",
       "#detectNothingButton",
-      function(evt) {
+      (evt) => {
         evt.preventDefault();
         $('#detectionOptionsTable input[type="checkbox"]').attr("checked", 0);
       },
@@ -300,7 +312,7 @@ jQuery(document).ready(
     $(document).on(
       "click",
       "#downloadExportLogButton",
-      function(evt) {
+      (evt) => {
         evt.preventDefault();
         downloadExportLog();
       },
@@ -321,7 +333,7 @@ jQuery(document).ready(
     }
 
     function startExportSuccessCallback(serverResponse) {
-      let initialSteps = [
+      const initialSteps = [
         "crawl_site",
         "post_process_archive_dir",
       ];
@@ -392,7 +404,6 @@ jQuery(document).ready(
     }
 
     function getValidationErrors() {
-      let validationErrors = "";
       // check for when targetFolder is showing (plugin reset state)
       if ($("#targetFolder").is(":visible") &&
             ($("#targetFolder").val() === "")) {
@@ -441,7 +452,7 @@ jQuery(document).ready(
 
     function validateEmptyFields(requiredFields) {
       Object.keys(requiredFields).forEach(
-        function(key, index) {
+        (key, index) => {
           if ($("#" + key).val() === "") {
             validationErrors += requiredFields[key] + "\n";
           }
@@ -449,18 +460,18 @@ jQuery(document).ready(
       );
     }
 
-    function isUrl(string) {
-      if (typeof string !== "string") {
+    function isUrl(url) {
+      if (typeof url !== "string") {
         return false;
       }
 
-      let match = string.match(protocolAndDomainRE);
+      const match = url.match(protocolAndDomainRE);
 
       if (!match) {
         return false;
       }
 
-      let everythingAfterProtocol = match[1];
+      const everythingAfterProtocol = match[1];
 
       if (!everythingAfterProtocol) {
         return false;
@@ -508,7 +519,7 @@ jQuery(document).ready(
 
       const data = $(".options-form :input")
         .filter(
-          function(index, element) {
+          (index, element) => {
             return $(element).val() !== "";
           },
         )
@@ -516,9 +527,9 @@ jQuery(document).ready(
 
       $.ajax(
         {
-          url: ajaxurl,
           data,
           dataType: "html",
+          error: ajaxErrorHandler,
           method: "POST",
           success(serverResponse) {
             // if an action is successful, and there are other actions queued up
@@ -537,7 +548,7 @@ jQuery(document).ready(
               ajaxErrorHandler();
             }
           },
-          error: ajaxErrorHandler,
+          url: ajaxurl,
         },
       );
     }
@@ -547,7 +558,7 @@ jQuery(document).ready(
 
       $.each(
         notices,
-        function(index, element) {
+        (index, element) => {
           if (!$(element).hasClass("wp2static-notice")) {
             $(element).hide();
           }
@@ -555,14 +566,14 @@ jQuery(document).ready(
       );
     }
 
-    function setFormProcessor(selectedFormProcessor) {
-      if (selectedFormProcessor in formProcessors) {
+    function setFormProcessor(fp: any) {
+      if (fp in formProcessors) {
 
         const formProcessor: FormProcessor = formProcessors[selectedFormProcessor];
 
         $("#form_processor_description").text(formProcessor.description);
 
-        let website = formProcessor.website;
+        const website = formProcessor.website;
 
         const websiteLink: HTMLAnchorElement  = document.createElement("a");
         websiteLink.setAttribute("href", website);
@@ -577,9 +588,9 @@ jQuery(document).ready(
       }
     }
 
-    function populateFormProcessorOptions(formProcessors) {
-      formProcessors.forEach( function( formProcessor) {
-        let opt = $("<option>").val(formProcessor.id).text(formProcessor.name);
+    function populateFormProcessorOptions(fps: FormProcessor[]) {
+      fps.forEach( (formProcessor) => {
+        const opt = $("<option>").val(formProcessor.id).text(formProcessor.name);
         $("#form_processor_select").append(opt);
       });
     }
@@ -639,11 +650,12 @@ jQuery(document).ready(
         if (Notification.permission !== "granted") {
           Notification.requestPermission();
         } else {
-          let notification = new Notification(
+          const notification = new Notification(
             "WP Static HTML Export",
             {
-              icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png",
               body: "Exports have finished!",
+              icon: `https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/
+Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
             },
           );
 
@@ -668,7 +680,7 @@ jQuery(document).ready(
       // load the log file
       $.get(
         logFileUrl + "?cacheBuster=" + Date.now(),
-        function(data) {
+        (data) => {
           // hide loading icon
           $("#log_load_progress").hide();
 
@@ -679,7 +691,7 @@ jQuery(document).ready(
           $("#export_log_textarea").html(data);
         },
       ).fail(
-        function() {
+        () => {
           $("#log_load_progress").hide();
 
           // set textarea to enabled
@@ -698,28 +710,28 @@ jQuery(document).ready(
     }
 
     $('input[type="checkbox"]').change(
-      function() {
+      () => {
         setExportSettingDetailsVisibility(this);
       },
     );
 
     // disable zip base url field when offline usage is checked
     $("#allowOfflineUsage").change(
-      function() {
+      () => {
         offlineUsageChangeHandler($(this));
       },
     );
 
     // handler when form processor is changed
     $("#form_processor_select").change(
-      function(event) {
+      (event) => {
         setFormProcessor((event.currentTarget as HTMLInputElement).value);
       },
     );
 
     // handler when deployment method is changed
     $(".selected_deployment_method").change(
-      function(event) {
+      (event) => {
         renderSettingsBlock((event.currentTarget as HTMLInputElement).value);
         setDeploymentMethod((event.currentTarget as HTMLInputElement).value);
         clearProgressAndResults();
@@ -728,32 +740,32 @@ jQuery(document).ready(
 
     // handler when log selector is changed
     $("#reload_log_button").click(
-      function() {
+      () => {
         loadLogFile();
       },
     );
 
-    function changeTab(targetTab) {
-      let tabsContentMapping = {
+    function changeTab(targetTab: string) {
+      const tabsContentMapping = {
+        add_ons: "Add-ons",
         advanced_settings: "Advanced Options",
+        automation_settings: "Automation",
+        caching_settings: "Caching",
+        crawl_settings: "Crawling",
+        export_logs: "Logs",
         form_settings: "Forms",
+        help_troubleshooting: "Help",
+        processing_settings: "Processing",
         production_deploy: "Production",
         staging_deploy: "Staging",
-        help_troubleshooting: "Help",
-        workflow_tab: "Workflow",
-        export_logs: "Logs",
-        crawl_settings: "Crawling",
-        caching_settings: "Caching",
-        automation_settings: "Automation",
         url_detection: "URL Detection",
-        processing_settings: "Processing",
-        add_ons: "Add-ons",
+        workflow_tab: "Workflow",
       };
 
       // switch the active tab
       $.each(
         $(".nav-tab"),
-        function(index, element) {
+        (index, element) => {
           if ($(element).text() === targetTab) {
             $(element).addClass("nav-tab-active");
             $(element).blur();
@@ -764,7 +776,7 @@ jQuery(document).ready(
       );
 
       // hide/show the tab content
-      for (let key in tabsContentMapping) {
+      for (const key in tabsContentMapping) {
         if (tabsContentMapping.hasOwnProperty(key)) {
           if (tabsContentMapping[key] === targetTab) {
             $("." + key).show();
@@ -779,7 +791,7 @@ jQuery(document).ready(
     $(document).on(
       "click",
       "#GoToDetectionTabButton",
-      function(evt) {
+      (evt) => {
         evt.preventDefault();
         changeTab("URL Detection");
       },
@@ -788,7 +800,7 @@ jQuery(document).ready(
     $(document).on(
       "click",
       "#GoToDeployTabButton,#GoToDeployTabLink",
-      function(evt) {
+      (evt) => {
         evt.preventDefault();
         changeTab("Deployment");
       },
@@ -800,7 +812,7 @@ jQuery(document).ready(
     $(document).on(
       "click",
       "#GoToAdvancedTabButton",
-      function(evt) {
+      (evt) => {
         evt.preventDefault();
         changeTab("Advanced Options");
       },
@@ -809,16 +821,16 @@ jQuery(document).ready(
     $(document).on(
       "click",
       ".nav-tab",
-      function(evt) {
+      (evt) => {
         evt.preventDefault();
-        changeTab($(this).text());
+        changeTab($(evt.currentTarget).text());
       },
     );
 
     $(document).on(
       "submit",
       "#general-options",
-      function(evt) {
+      (evt) => {
         evt.preventDefault();
       },
     );
@@ -826,7 +838,7 @@ jQuery(document).ready(
     $(document).on(
       "click",
       "#send_supportRequest",
-      function(evt) {
+      (evt) => {
         evt.preventDefault();
 
         let supportRequest = $("#supportRequestContent").val();
@@ -834,7 +846,7 @@ jQuery(document).ready(
         if ($("#supportRequestIncludeLog").is(":checked")) {
           $.get(
             logFileUrl,
-            function(data) {
+            (data) => {
               supportRequest += "#### EXPORT LOG ###";
               supportRequest += data;
 
@@ -845,42 +857,38 @@ jQuery(document).ready(
 
               $.ajax(
                 {
-                  url: "https://hooks.zapier.com/hooks/catch/4977245/jqj3l4/",
                   data,
                   dataType: "html",
+                  error: sendSupportFailCallback,
                   method: "POST",
                   success: sendSupportSuccessCallback,
-                  error: sendSupportFailCallback,
+                  url: "https://hooks.zapier.com/hooks/catch/4977245/jqj3l4/",
                 },
               );
-            },
-          ).fail(
-            function() {
-              console.log("failed to retrieve export log");
             },
           );
         }
 
-        let data = {
+        const postData = {
           email: $("#supportRequestEmail").val(),
           supportRequest,
         };
 
         $.ajax(
           {
-            url: "https://hooks.zapier.com/hooks/catch/4977245/jqj3l4/",
-            data,
+            data: postData,
             dataType: "html",
+            error: sendSupportFailCallback,
             method: "POST",
             success: sendSupportSuccessCallback,
-            error: sendSupportFailCallback,
+            url: "https://hooks.zapier.com/hooks/catch/4977245/jqj3l4/",
           },
         );
       },
     );
 
     $("#startExportButton").click(
-      function() {
+      () => {
         clearProgressAndResults();
         $(this).prop("disabled", true);
         $(".saveSettingsButton").prop("disabled", true);
@@ -891,8 +899,8 @@ jQuery(document).ready(
     );
 
     $(".cancelExportButton").click(
-      function() {
-        let reallyCancel = confirm("Stop current export and reload page?");
+      () => {
+        const reallyCancel = confirm("Stop current export and reload page?");
         if (reallyCancel) {
           window.location.href = window.location.href;
         }
@@ -919,7 +927,7 @@ jQuery(document).ready(
     $("#wp2static-footer").on(
       "click",
       ".resetDefaultSettingsButton",
-      function(event) {
+      (event) => {
         event.preventDefault();
 
         sendWP2StaticAJAX(
@@ -933,7 +941,7 @@ jQuery(document).ready(
     $("#wp2static-footer").on(
       "click",
       ".saveSettingsButton",
-      function(event) {
+      (event) => {
         event.preventDefault();
         saveOptions();
       },
@@ -960,9 +968,9 @@ jQuery(document).ready(
     $(".wrap").on(
       "click",
       "#delete_deploy_cache_button",
-      function(event) {
+      (event) => {
         event.preventDefault();
-        let button = event.currentTarget;
+        const button = event.currentTarget;
         spinner = $(button).siblings("div.spinner");
         spinner.show();
         sendWP2StaticAJAX(
@@ -993,7 +1001,7 @@ jQuery(document).ready(
     $(".wrap").on(
       "click",
       '[id$="-test-button"]',
-      function(event) {
+      (event) => {
         event.preventDefault();
         spinner = $("button").siblings("div.spinner");
         spinner.show();
@@ -1009,7 +1017,7 @@ jQuery(document).ready(
     $(".wrap").on(
       "click",
       "#save-and-reload",
-      function(event) {
+      (event) => {
         event.preventDefault();
         saveOptions();
       },

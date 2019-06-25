@@ -71,6 +71,7 @@
         "coverage": "vendor/bin/phpunit tests/unit --coverage-html coverage --whitelist src/",
         "lint": "vendor/bin/parallel-lint --exclude vendor .",
         "tslint": "node_modules/tslint/bin/tslint js/wp2static-admin.ts",
+        "tslintfix": "node_modules/tslint/bin/tslint --fix js/wp2static-admin.ts",
         "ts2js": "node_modules/typescript/bin/tsc",
         "test": [
             "@lint",
