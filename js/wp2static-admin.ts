@@ -2,8 +2,7 @@ declare var wp2staticString: any;
 declare var ajaxurl: string;
 import $ from "jquery";
 import { WP2StaticAJAX } from "./WP2StaticAJAX";
-
-const wp2staticAJAX = new WP2StaticAJAX();
+import { WP2StaticGlobals } from "./WP2StaticGlobals";
 
 interface FormProcessor {
     id: string;
@@ -12,6 +11,9 @@ interface FormProcessor {
     website: string;
     description: string;
 }
+
+export const wp2staticAJAX = new WP2StaticAJAX();
+export const wp2staticGlobals = new WP2StaticGlobals();
 
 const formProcessors: FormProcessor[] = [
   {
@@ -312,7 +314,7 @@ jQuery(($) => {
         exportTargets,
         deployOptions,
         currentDeploymentMethod,
-        siteInfo
+        siteInfo,
       );
     }
 
@@ -617,15 +619,15 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
     }
 
     $('input[type="checkbox"]').change(
-      () => {
-        setExportSettingDetailsVisibility(this);
+      (event) => {
+        setExportSettingDetailsVisibility(event.currentTarget);
       },
     );
 
     // disable zip base url field when offline usage is checked
     $("#allowOfflineUsage").change(
-      () => {
-        offlineUsageChangeHandler($(this));
+      (event) => {
+        offlineUsageChangeHandler($(event.currentTarget));
       },
     );
 
@@ -795,9 +797,9 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
     );
 
     $("#startExportButton").click(
-      () => {
+      (event) => {
         clearProgressAndResults();
-        $(this).prop("disabled", true);
+        $(event.currentTarget).prop("disabled", true);
         $(".saveSettingsButton").prop("disabled", true);
         $(".resetDefaultSettingsButton").prop("disabled", true);
         $(".cancelExportButton").show();
