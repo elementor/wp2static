@@ -1,31 +1,40 @@
-var formProcessors = {
-    basin: {
+var formProcessors = [
+    {
+        id: 'basin',
         name: 'Basin',
         placeholder: 'https://usebasin.com/f/',
-        website: 'https://usebasin.com'
+        website: 'https://usebasin.com',
+        description: 'Basin does stuff'
     },
-    formspree: {
+    {
+        id: 'formspree',
         name: 'Formspree',
         placeholder: 'https://formspree.io/myemail@domain.com',
         website: 'https://formspree.io',
         description: 'FormSpree is very simple to start with, just set your endpoint, including your email address and start sending.'
     },
-    zapier: {
+    {
+        id: 'zapier',
         name: 'Zapier',
         placeholder: 'https://hooks.zapier.com/hooks/catch/4977245/jqj3l4/',
-        website: 'https://zapier.com'
+        website: 'https://zapier.com',
+        description: 'Zapier does stuff'
     },
-    formkeep: {
+    {
+        id: 'formkeep',
         name: 'FormKeep',
         placeholder: 'https://formkeep.com/f/5dd8de73ce2c',
-        website: 'https://formkeep.com'
+        website: 'https://formkeep.com',
+        description: 'Formkeep does stuff'
     },
-    custom: {
+    {
+        id: 'custom',
         name: 'Custom endpoint',
         placeholder: 'https://mycustomendpoint.com/SOMEPATH',
-        website: 'https://docs.wp2static.com'
+        website: 'https://docs.wp2static.com',
+        description: 'Use any custom endpoint'
     }
-};
+];
 var validationErrors = '';
 var deployOptions = {
     zip: {
@@ -55,12 +64,12 @@ var logFileUrl = siteInfo.uploads_url + 'wp2static-working-files/EXPORT-LOG.txt'
 var selectedFormProcessor = '';
 var exportAction = '';
 var exportTargets = [];
-var exportCommenceTime = '';
+var exportCommenceTime = 0;
 var statusText = '';
 var protocolAndDomainRE = /^(?:\w+:)?\/\/(\S+)$/;
 var localhostDomainRE = /^localhost[:?\d]*(?:[^:?\d]\S*)?$/;
 var nonLocalhostDomainRE = /^[^\s.]+\.\S{2,}$/;
-var timerIntervalID = '';
+var timerIntervalID = 0;
 var statusDescriptions = {
     'crawl_site': 'Crawling initial file list',
     'post_process_archive_dir': 'Processing the crawled files',
@@ -130,8 +139,8 @@ jQuery(document).ready(function ($) {
         sendWP2StaticAJAX('save_options', saveOptionsSuccessCallback, saveOptionsFailCallback);
     }
     function millisToMinutesAndSeconds(millis) {
-        var minutes = Math.floor(millis / 60000);
-        var seconds = ((millis % 60000) / 1000).toFixed(0);
+        const minutes = Math.floor(millis / 60000);
+        const seconds = parseFloat(((millis % 60000) / 1000).toFixed(0));
         return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
     }
     function processExportTargets() {
@@ -149,14 +158,15 @@ jQuery(document).ready(function ($) {
             }
             else {
                 // for other methods, show the Go to my static site link
-                $('#goToMyStaticSite').attr('href', $('#baseUrl').val());
+                const baseUrl = String($('#baseUrl').val());
+                $('#goToMyStaticSite').attr('href', baseUrl);
                 $('#goToMyStaticSite').show();
             }
             // all complete
             const exportCompleteTime = +new Date();
             const exportDuration = exportCompleteTime - exportCommenceTime;
             // clear export commence time for next run
-            exportCommenceTime = '';
+            exportCommenceTime = 0;
             stopTimer();
             $('#current_action').text('Process completed in ' + millisToMinutesAndSeconds(exportDuration) + ' (mins:ss)');
             $('#goToMyStaticSite').focus();
@@ -202,7 +212,7 @@ jQuery(document).ready(function ($) {
     }
     $(document).on('click', '#detectEverythingButton', function (evt) {
         evt.preventDefault();
-        $('#detectionOptionsTable input[type="checkbox"]').attr('checked', true);
+        $('#detectionOptionsTable input[type="checkbox"]').attr('checked', 1);
     });
     $(document).on('click', '#deleteCrawlCache', function (evt) {
         evt.preventDefault();
@@ -211,7 +221,7 @@ jQuery(document).ready(function ($) {
     });
     $(document).on('click', '#detectNothingButton', function (evt) {
         evt.preventDefault();
-        $('#detectionOptionsTable input[type="checkbox"]').attr('checked', false);
+        $('#detectionOptionsTable input[type="checkbox"]').attr('checked', 0);
     });
     $(document).on('click', '#downloadExportLogButton', function (evt) {
         evt.preventDefault();
@@ -306,7 +316,7 @@ jQuery(document).ready(function ($) {
         return validationErrors;
     }
     function validateRepoField(repoField) {
-        const repo = $('#' + repoField['field'] + '').val();
+        const repo = String($('#' + repoField['field'] + '').val());
         if (repo !== '') {
             if (repo.split('/').length !== 2) {
                 validationErrors += repoField['message'];
@@ -401,15 +411,6 @@ jQuery(document).ready(function ($) {
             error: ajaxErrorHandler
         });
     }
-    function updateBaseURLReferences() {
-        var baseUrlPreviews = $('.baseUrl_preview');
-        var baseUrl = $('#baseUrl-' + currentDeploymentMethod).val();
-        $('#baseUrl').val($('#baseUrl-' + currentDeploymentMethod).val());
-        baseUrlPreviews.text(baseUrl.replace(/\/$/, '') + '/');
-        // update the clickable preview url in folder options
-        $('#folderPreviewURL').text(siteInfo.site_url + '/');
-        $('#folderPreviewURL').attr('href', (siteInfo.site_url + '/'));
-    }
     function hideOtherVendorMessages() {
         const notices = $('.update-nag, .updated, .error, .is-dismissible, .elementor-message');
         $.each(notices, function (index, element) {
@@ -420,23 +421,26 @@ jQuery(document).ready(function ($) {
     }
     function setFormProcessor(selectedFormProcessor) {
         if (selectedFormProcessor in formProcessors) {
-            $('#formProcessor_description').text(formProcessors[selectedFormProcessor].description);
-            var website = formProcessors[selectedFormProcessor].website;
-            var websiteLink = $('<a>').attr('href', website).text('Visit ' + formProcessors[selectedFormProcessor].name);
-            $('#formProcessor_website').html(websiteLink);
-            $('#formProcessor_endpoint').attr('placeholder', formProcessors[selectedFormProcessor].placeholder);
+            const formProcessor = formProcessors[selectedFormProcessor];
+            $('#form_processor_description').text(formProcessor.description);
+            var website = formProcessor.website;
+            const websiteLink = document.createElement('a');
+            websiteLink.setAttribute('href', website);
+            websiteLink.innerHTML = 'Visit ' + formProcessor.name;
+            $('#form_processor_website').html(websiteLink);
+            $('#form_processor_endpoint').attr('placeholder', formProcessor.placeholder);
         }
         else {
-            $('#formProcessor_description').text('');
-            $('#formProcessor_website').html('');
-            $('#formProcessor_endpoint').attr('placeholder', 'Form endpoint');
+            $('#form_processor_description').text('');
+            $('#form_processor_website').html('');
+            $('#form_processor_endpoint').attr('placeholder', 'Form endpoint');
         }
     }
     function populateFormProcessorOptions(formProcessors) {
-        for (const [formProcessor, options] of Object.entries(formProcessors)) {
-            var opt = $('<option>').val(formProcessor).text(options.name);
-            $('#formProcessor_select').append(opt);
-        }
+        formProcessors.forEach(function (formProcessor) {
+            var opt = $('<option>').val(formProcessor.id).text(formProcessor.name);
+            $('#form_processor_select').append(opt);
+        });
     }
     /*
         TODO: quick win to get the select menu options to behave like the sendViaFTP, etc checkboxes
@@ -501,13 +505,10 @@ jQuery(document).ready(function ($) {
             }
         }
     }
-    function reloadLogFile() {
-        loadLogFile('export_log');
-    }
     function loadLogFile() {
         // display loading icon
         $('#log_load_progress').show();
-        $('#export_log_textarea').attr('disabled', true);
+        $('#export_log_textarea').attr('disabled', 1);
         // set textarea content to 'Loading log file...'
         $('#export_log_textarea').html('Loading log file...');
         // load the log file
@@ -515,13 +516,13 @@ jQuery(document).ready(function ($) {
             // hide loading icon
             $('#log_load_progress').hide();
             // set textarea to enabled
-            $('#export_log_textarea').attr('disabled', false);
+            $('#export_log_textarea').attr('disabled', 0);
             // set textarea content
             $('#export_log_textarea').html(data);
         }).fail(function () {
             $('#log_load_progress').hide();
             // set textarea to enabled
-            $('#export_log_textarea').attr('disabled', false);
+            $('#export_log_textarea').attr('disabled', 0);
             // set textarea content
             $('#export_log_textarea').html('Requested log file not found');
         });
@@ -539,23 +540,18 @@ jQuery(document).ready(function ($) {
         offlineUsageChangeHandler($(this));
     });
     // handler when form processor is changed
-    $('#formProcessor_select').change(function () {
-        setFormProcessor(this.value);
+    $('#form_processor_select').change(function (event) {
+        setFormProcessor(event.currentTarget.value);
     });
     // handler when deployment method is changed
-    $('.selected_deployment_method').change(function () {
-        renderSettingsBlock(this.value);
-        setDeploymentMethod(this.value);
-        updateBaseURLReferences();
+    $('.selected_deployment_method').change(function (event) {
+        renderSettingsBlock(event.currentTarget.value);
+        setDeploymentMethod(event.currentTarget.value);
         clearProgressAndResults();
     });
     // handler when log selector is changed
     $('#reload_log_button').click(function () {
-        reloadLogFile();
-    });
-    // update base url previews in realtime
-    $(document).on('input', '[id^="baseUrl-"]', function () {
-        updateBaseURLReferences();
+        loadLogFile();
     });
     function changeTab(targetTab) {
         var tabsContentMapping = {
@@ -664,7 +660,7 @@ jQuery(document).ready(function ($) {
     $('.cancelExportButton').click(function () {
         var reallyCancel = confirm('Stop current export and reload page?');
         if (reallyCancel) {
-            window.location = window.location.href;
+            window.location.href = window.location.href;
         }
     });
     function sendSupportSuccessCallback(serverResponse) {
@@ -744,7 +740,6 @@ jQuery(document).ready(function ($) {
     setFormProcessor(selectedFormProcessor);
     // call change handler on page load, to set correct state
     offlineUsageChangeHandler($('#allowOfflineUsage'));
-    updateBaseURLReferences($('#baseUrl').val());
     // set and show the previous selected deployment method
     renderSettingsBlock(currentDeploymentMethod);
     // set the select to the current deployment type
