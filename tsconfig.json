@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "outDir": "./admin",
+        "allowJs": true,
+        "target": "ES2015"
+        "allowSyntheticDefaultImports": true
+    },
+    "include": [
+        "./js/wp2static-admin.ts"
+    ]
+}

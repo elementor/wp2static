@@ -1,3 +1,7 @@
+declare var wp2staticString: any;
+declare var ajaxurl: string;
+import $ from "jquery";
+
 var formProcessors = {
   basin: {
     name: 'Basin',
