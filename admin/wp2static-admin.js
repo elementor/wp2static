@@ -76,7 +76,10 @@ const statusDescriptions = {
     post_export_teardown: "Cleaning up after processing",
     post_process_archive_dir: "Processing the crawled files",
 };
+// ignore shadowing warning for $
+/* tslint:disable */
 jQuery(($) => {
+    /* tslint:enable */
     function generateFileListSuccessCallback(serverResponse) {
         if (!serverResponse) {
             $("#current_action").html(`Failed to generate initial file list.
