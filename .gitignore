@@ -2,4 +2,5 @@
 /vendor_prefixed/
 node_modules/
 coverage/
+admin/*.js*
 

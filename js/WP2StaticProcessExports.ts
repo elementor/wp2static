@@ -2,7 +2,6 @@ import $ from "jquery";
 
 import { WP2StaticAJAX } from "./WP2StaticAJAX";
 
-const wp2staticAJAX = new WP2StaticAJAX();
 
 export class WP2StaticProcessExports {
 
@@ -13,6 +12,8 @@ export class WP2StaticProcessExports {
     currentDeploymentMethod,
     siteInfo
   ) {
+
+    const wp2staticAJAX = new WP2StaticAJAX();
 
     if (exportTargets.length > 0) {
       const target = exportTargets.shift();
