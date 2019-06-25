@@ -1,6 +1,9 @@
 declare var wp2staticString: any;
 declare var ajaxurl: string;
 import $ from "jquery";
+import { WP2StaticAJAX } from "./WP2StaticAJAX";
+
+const wp2staticAJAX = new WP2StaticAJAX();
 
 interface FormProcessor {
     id: string;
@@ -79,7 +82,7 @@ if (wp2staticString.currentDeploymentMethod) {
 // TODO: get the log out of the archive, along with it's meta infos
 const logFileUrl = siteInfo.uploads_url + "wp2static-working-files/EXPORT-LOG.txt";
 const selectedFormProcessor = "";
-let exportAction = "";
+const exportAction = "";
 let exportTargets = [];
 let exportCommenceTime: number = 0;
 let statusText = "";
@@ -197,44 +200,6 @@ jQuery(($) => {
       return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
     }
 
-    function processExportTargets() {
-      if (exportTargets.length > 0) {
-        const target = exportTargets.shift();
-        const exportSteps = deployOptions[target].exportSteps;
-
-        doAJAXExport(exportSteps);
-      } else {
-        // if zip was selected, call to get zip name and enable the button with the link to download
-        if (currentDeploymentMethod === "zip") {
-          const zipURL = siteInfo.uploads_url + "wp2static-exported-site.zip?cacheBuster=" + Date.now();
-          $("#downloadZIP").attr("href", zipURL);
-          $("#downloadZIP").show();
-        } else {
-          // for other methods, show the Go to my static site link
-          const baseUrl = String($("#baseUrl").val());
-          $("#goToMyStaticSite").attr("href", baseUrl);
-          $("#goToMyStaticSite").show();
-        }
-
-        // all complete
-        const exportCompleteTime: number = +new Date();
-        const exportDuration = exportCompleteTime - exportCommenceTime;
-
-        // clear export commence time for next run
-        exportCommenceTime = 0;
-
-        stopTimer();
-        $("#current_action").text(`Process completed in
- ${millisToMinutesAndSeconds(exportDuration)} (mins:ss)`);
-        $("#goToMyStaticSite").focus();
-        $(".pulsate-css").hide();
-        $("#startExportButton").prop("disabled", false);
-        $(".saveSettingsButton").prop("disabled", false);
-        $(".resetDefaultSettingsButton").prop("disabled", false);
-        $(".cancelExportButton").hide();
-        notifyMe();
-      }
-    }
 
     function downloadExportLogSuccessCallback(serverResponse) {
       if (!serverResponse) {
@@ -341,7 +306,14 @@ jQuery(($) => {
         "post_process_archive_dir",
       ];
 
-      doAJAXExport(initialSteps);
+      wp2staticAJAX.doAJAXExport(
+        initialSteps,
+        statusDescriptions,
+        exportTargets,
+        deployOptions,
+        currentDeploymentMethod,
+        siteInfo
+      );
     }
 
     function startTimer() {
@@ -486,74 +458,6 @@ jQuery(($) => {
       }
 
       return false;
-    }
-
-    /*
-        doAJAXExport() can handle from 1 to n actions
-        each action runs, with 3 possible results:
-        SUCCESS - action is complete
-        > 0 - action is in progress inremental task
-        ERROR
-
-        if an action is successful, and there are other actions queued up,
-        it will call the function again with the remaining arguments/actions
-
-        if an action is succesful, and there are no other actions queued,
-        it will call processExportTargets() to continue any other exports
-
-        if an action is in progress incremental, it will call itself again,
-        with all the same arguments
-
-        if an action fails, ajaxErrorHandler() is called
-        */
-    function doAJAXExport(args) {
-      exportAction = args[0];
-      statusText = exportAction;
-
-      if (statusDescriptions[exportAction] !== undefined) {
-        statusText = statusDescriptions[exportAction];
-      } else {
-        statusText = exportAction;
-      }
-
-      $("#current_action").html(statusText);
-      $(".hiddenActionField").val("wp_static_html_output_ajax");
-      $("#hiddenAJAXAction").val(exportAction);
-
-      const data = $(".options-form :input")
-        .filter(
-          (index, element) => {
-            return $(element).val() !== "";
-          },
-        )
-        .serialize();
-
-      $.ajax(
-        {
-          data,
-          dataType: "html",
-          error: ajaxErrorHandler,
-          method: "POST",
-          success(serverResponse) {
-            // if an action is successful, and there are other actions queued up
-            if (serverResponse === "SUCCESS" && args.length > 1) {
-              // rm first action now that it's succeeded
-              args.shift();
-              // call function with all other actions
-              doAJAXExport(args);
-              // if an action is in progress incremental, it will call itself again
-            } else if (serverResponse > 0) {
-              doAJAXExport(args);
-            } else if (serverResponse === "SUCCESS") {
-              // not an incremental action, continue on with export targets
-              processExportTargets();
-            } else {
-              ajaxErrorHandler();
-            }
-          },
-          url: ajaxurl,
-        },
-      );
     }
 
     function hideOtherVendorMessages() {

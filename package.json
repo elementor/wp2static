@@ -21,8 +21,11 @@
   "homepage": "https://github.com/leonstafford/wp2static#readme",
   "devDependencies": {
     "@types/jquery": "^3.3.30",
+    "ts-loader": "^6.0.4",
     "tslint": "^5.18.0",
-    "typescript": "^3.5.2"
+    "typescript": "^3.5.2",
+    "webpack": "^4.35.0",
+    "webpack-cli": "^3.3.5"
   },
   "dependencies": {
     "i": "^0.3.6",
