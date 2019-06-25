@@ -55,7 +55,8 @@ const formProcessors: FormProcessor[] = [
 ];
 
 let validationErrors = "";
-const deployOptions = {
+
+export const deployOptions = {
   folder: {
     exportSteps: [
       "finalize_deployment",
@@ -92,7 +93,7 @@ const protocolAndDomainRE = /^(?:\w+:)?\/\/(\S+)$/;
 const localhostDomainRE = /^localhost[:?\d]*(?:[^:?\d]\S*)?$/;
 const nonLocalhostDomainRE = /^[^\s.]+\.\S{2,}$/;
 let timerIntervalID: number = 0;
-const statusDescriptions = {
+export const statusDescriptions = {
   crawl_site: "Crawling initial file list",
   post_export_teardown: "Cleaning up after processing",
   post_process_archive_dir: "Processing the crawled files",
