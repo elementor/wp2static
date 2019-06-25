@@ -733,11 +733,14 @@ jQuery(document).ready(
       var tabsContentMapping = {
         advanced_settings: 'Advanced Options',
         form_settings: 'Forms',
-        export_your_site: 'Deployment',
+        production_deploy: 'Production',
+        staging_deploy: 'Staging',
         help_troubleshooting: 'Help',
         workflow_tab: 'Workflow',
         export_logs: 'Logs',
         crawl_settings: 'Crawling',
+        caching_settings: 'Caching',
+        automation_settings: 'Automation',
         url_detection: 'URL Detection',
         processing_settings: 'Processing',
         add_ons: 'Add-ons'

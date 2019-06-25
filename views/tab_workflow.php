@@ -6,7 +6,7 @@
 
     <h2>Development</h2>
 
-    <p>This server is where you run WordPress as usual. Do not run this on your production server!</p>
+    <p>Run WP2Static on your local computer or private web server. It's WordPress as usual, but without the security concerns. WP2Static generates a static HTML copy of this site, ready for deployment to super-fast static hosting.</p>
 
     <h3>Health Checks</h3>
     <ul>
@@ -28,10 +28,8 @@
     <ul>
        <li><b>Deployment Method</b> Netlify</li>
        <li><b>Destination URL</b> https://testmysite.netlify.com</li>
+        <span><nest1><nest2>sdfsdfsdf</nest2></nest1></span>
     </ul>
-
-    <button>Deploy to Staging</button>
-
   </div>
 
   <div class="content" style="max-width:33%">
@@ -46,8 +44,6 @@
        <li><b>Deployment Method</b> S3</li>
        <li><b>Destination URL</b> https://www.mywebsite.com</li>
     </ul>
-
-    <button>Deploy to Production</button>
   </div>
 </section>
 

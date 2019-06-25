@@ -74,8 +74,11 @@ $tpl = new \WP2Static\TemplateHelper();
             'Crawling',
             'Processing',
             'Forms',
+            'Staging',
+            'Production',
+            'Caching',
+            'Automation',
             'Advanced Options',
-            'Deployment',
             'Logs',
             'Add-ons',
             'Help',
@@ -127,7 +130,10 @@ $tpl = new \WP2Static\TemplateHelper();
     <?php require_once __DIR__ . '/tab_processing.php'; ?>
     <?php require_once __DIR__ . '/tab_forms.php'; ?>
     <?php require_once __DIR__ . '/tab_advanced.php'; ?>
-    <?php require_once __DIR__ . '/tab_export.php'; ?>
+    <?php require_once __DIR__ . '/tab_staging.php'; ?>
+    <?php require_once __DIR__ . '/tab_production.php'; ?>
+    <?php require_once __DIR__ . '/tab_caching.php'; ?>
+    <?php require_once __DIR__ . '/tab_automation.php'; ?>
     <?php require_once __DIR__ . '/tab_logs.php'; ?>
     <?php require_once __DIR__ . '/tab_add_ons.php'; ?>
     <?php require_once __DIR__ . '/tab_help.php'; ?>
@@ -155,7 +161,13 @@ $tpl = new \WP2Static\TemplateHelper();
             <div class="submit">
                 <?php wp_nonce_field( $view['onceAction'] ); ?>
               <button id="startExportButton" class="wp2static-btn blue" disabled>
-                <?php echo __( 'Start Static Site Export', 'static-html-output-plugin' ); ?>
+                <?php echo __( 'Generate', 'static-html-output-plugin' ); ?>
+              </button>
+              <button id="deployToStagingButton" class="wp2static-btn blue" disabled>
+                <?php echo __( 'Deploy to Staging', 'static-html-output-plugin' ); ?>
+              </button>
+              <button id="deployToProductionButton" class="wp2static-btn blue" disabled>
+                <?php echo __( 'Deploy to Production', 'static-html-output-plugin' ); ?>
               </button>
               <button class="wp2static-btn saveSettingsButton" disabled>
                 <?php echo __( 'Save Current Options', 'static-html-output-plugin' ); ?>
