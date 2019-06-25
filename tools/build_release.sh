@@ -35,7 +35,7 @@ cp -r $EXEC_DIR/vendor $TMP_DIR/static-html-output-plugin/
 cp -r $EXEC_DIR/readme.txt $TMP_DIR/static-html-output-plugin/
 cp -r $EXEC_DIR/views $TMP_DIR/static-html-output-plugin/
 cp -r $EXEC_DIR/wp2static.php $TMP_DIR/static-html-output-plugin/
-cp -r $EXEC_DIR/wp2static.css $TMP_DIR/static-html-output-plugin/
+cp -r $EXEC_DIR/admin $TMP_DIR/static-html-output-plugin/
 
 cd $TMP_DIR
 
@@ -51,6 +51,8 @@ fi
 zip -r -9 ./$1.zip ./static-html-output-plugin
 
 cd -
+
+mkdir -p $HOME/Downloads/
 
 cp $TMP_DIR/$1.zip $HOME/Downloads/
 

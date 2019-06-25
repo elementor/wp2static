@@ -8,7 +8,7 @@ use WP_CLI;
 use WP_Post;
 
 class Controller {
-    const VERSION = '7.0-build0001';
+    const VERSION = '7.0-build0003';
     const OPTIONS_KEY = 'wp2static-options';
     const HOOK = 'wp2static';
 
@@ -88,6 +88,10 @@ class Controller {
 
         // create DB table for crawl caching
         CrawlCache::createTable();
+        CrawlQueue::createTable();
+        ExportLog::createTable();
+        DeployQueue::createTable();
+        DeployCache::createTable();
 
         // capture URL hosts for use in detecting internal links
         $instance->site_url_host =
@@ -413,6 +417,9 @@ class Controller {
      * @throws WP2StaticException
      */
     public function generate_filelist_preview() : void {
+        CrawlQueue::truncate();
+        DeployQueue::truncate();
+
         $initial_file_list_count =
             FilesHelper::buildInitialFileList(
                 true,
@@ -436,6 +443,8 @@ class Controller {
     }
 
     public function delete_crawl_cache() : void {
+
+        // we now have modified file list in DB
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'wp2static_crawl_cache';
@@ -559,9 +568,6 @@ class Controller {
 
         $this->exporter->pre_export_cleanup();
 
-        // TODO: kill this / make UI/CLI option to delete export dir
-        // $this->exporter->cleanup_leftover_archives();
-
         $this->create_export_directory();
 
         $this->logEnvironmentalInfo();
@@ -611,16 +617,7 @@ class Controller {
     }
 
     public function delete_deploy_cache() : void {
-        $working_dir = SiteInfo::getPath( 'uploads' ) .
-            'wp2static-working-files';
-        $hash_files = glob( "{$working_dir}/*PREVIOUS-HASHES*.txt" );
-
-        if ( ! $hash_files ) {
-            echo 'SUCCESS';
-            return;
-        }
-
-        array_map( 'unlink', $hash_files );
+        DeployCache::truncate();
 
         $via_ui = filter_input( INPUT_POST, 'ajax_action' );
 
@@ -635,6 +632,7 @@ class Controller {
             'PLUGIN VERSION: ' . $this::VERSION,
             'PHP VERSION: ' . phpversion(),
             'OS VERSION: ' . php_uname(),
+            'PHP MEMORY LIMIT: ' . ini_get( 'memory_limit' ),
             'WP VERSION: ' . get_bloginfo( 'version' ),
             'WP URL: ' . get_bloginfo( 'url' ),
             'WP SITEURL: ' . get_option( 'siteurl' ),
@@ -646,47 +644,44 @@ class Controller {
         );
 
         if ( isset( $_SERVER['SERVER_SOFTWARE'] ) ) {
-            $info[] = 'SERVER SOFTWARE: ' . $_SERVER['SERVER_SOFTWARE'] .
-            PHP_EOL;
+            $info[] = 'SERVER SOFTWARE: ' . $_SERVER['SERVER_SOFTWARE'];
         }
 
-        $environmental_info = '';
-        $environmental_info .= implode( PHP_EOL, $info );
-        $environmental_info .= 'ACTIVE PLUGINS: ' . PHP_EOL;
+        $info[] = 'ACTIVE PLUGINS: ';
 
         $active_plugins = get_option( 'active_plugins' );
 
         foreach ( $active_plugins as $active_plugin ) {
-            $environmental_info .= $active_plugin . PHP_EOL;
+            $info[] = $active_plugin;
         }
 
-        $environmental_info .= 'ACTIVE THEME: ';
+        $info[] = 'ACTIVE THEME: ';
 
         $theme = wp_get_theme();
 
-        $environmental_info .= $theme->get( 'Name' ) . ' is version ' .
-            $theme->get( 'Version' ) . PHP_EOL;
+        $info[] = $theme->get( 'Name' ) . ' is version ' .
+            $theme->get( 'Version' );
 
-        $environmental_info .= 'WP2STATIC OPTIONS: ' . PHP_EOL;
+        $info[] = 'WP2STATIC OPTIONS: ';
 
         $options = $this->options->getAllOptions( false );
 
-        foreach ( $options as $key => $value ) {
-            $environmental_info .=
-                "{$value['Option name']}: {$value['Value']}" . PHP_EOL;
+        foreach ( $options as $key[] => $value ) {
+            $info[] = "{$value['Option name']}: {$value['Value']}";
         }
 
-        $environmental_info .= 'SITE URL PATTERNS: ' .
-            implode( ',', $this->rewrite_rules['site_url_patterns'] ) .
-             PHP_EOL . 'DESTINATION URL PATTERNS: ' .
-            implode( ',', $this->rewrite_rules['destination_url_patterns'] );
+        $info[] = 'SITE URL PATTERNS: ' .
+            $this->rewrite_rules['site_url_patterns'];
+
+        $info[] = 'DESTINATION URL PATTERNS: ' .
+            $this->rewrite_rules['destination_url_patterns'];
 
         $extensions = get_loaded_extensions();
 
-        $environmental_info .= PHP_EOL . 'INSTALLED EXTENSIONS: ' .
-            join( ', ', $extensions );
+        $info[] = 'INSTALLED EXTENSIONS: ' .
+            join( PHP_EOL, $extensions );
 
-        WsLog::l( $environmental_info );
+        WsLog::lines( $info );
     }
 
     public function wp2static_headless() : void {

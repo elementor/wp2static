@@ -169,6 +169,7 @@ class FilesHelper {
             'tinymce',
             'wp-static-html-output', // exclude earlier version exports
             'wp2static-exported-site',
+            'wp2static-addon',
             'LICENSE',
             'README',
             'static-html-output-plugin',
@@ -291,36 +292,9 @@ class FilesHelper {
 
         $unique_urls = array_unique( $url_queue );
 
-        sort( $unique_urls );
+        CrawlQueue::addUrls( $unique_urls );
 
-        $str = implode( "\n", $unique_urls );
-
-        $initial_crawl_file = $uploads_path .
-            'wp2static-working-files/INITIAL-CRAWL-LIST.txt';
-
-        if ( wp_mkdir_p( $uploads_path . 'wp2static-working-files' ) ) {
-            $result = file_put_contents(
-                $initial_crawl_file,
-                $str
-            );
-
-            if ( ! $result ) {
-                WsLog::l( 'USER WORKING DIRECTORY NOT WRITABLE' );
-
-                return 'ERROR WRITING INITIAL CRAWL LIST';
-            }
-
-            chmod( $initial_crawl_file, 0664 );
-
-            return (string) count( $url_queue );
-        } else {
-            WsLog::l(
-                "Couldn't create working directory at " .
-                    $uploads_path . 'wp2static-working-files'
-            );
-
-            return 'ERROR WRITING INITIAL CRAWL LIST';
-        }
+        return (string) count( $url_queue );
     }
 
     // TODO: finish porting these over

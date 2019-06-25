@@ -12,169 +12,59 @@ class Exporter {
     }
 
     public function pre_export_cleanup() : void {
-        // TODO: filter here for add-on generated files
-        $files_to_clean = array(
-            'FILES-TO-DEPLOY.txt',
-            'EXPORT-LOG.txt',
-            'FINAL-CRAWL-LIST.txt',
-            'GITLAB-FILES-IN-REPO.txt',
-        );
+        global $wpdb;
 
-        foreach ( $files_to_clean as $file_to_clean ) {
-            if ( file_exists(
-                SiteInfo::getPath( 'uploads' ) .
-                    'wp2static-working-files/' . $file_to_clean
-            ) ) {
-                unlink(
-                    SiteInfo::getPath( 'uploads' ) . '/' .
-                        'wp2static-working-files/' . $file_to_clean
-                );
+        $tables_to_truncate = [
+            // 'wp2static_urls',
+            'wp2static_export_log',
+        ];
+
+        $errors = 0;
+
+        foreach ( $tables_to_truncate as $table ) {
+            $table_name = $wpdb->prefix . $table;
+
+            $wpdb->query( "TRUNCATE TABLE $table_name" );
+
+            $sql =
+                "SELECT count(*) FROM $table_name";
+
+            $count = $wpdb->get_var( $sql );
+
+            if ( $count === '0' ) {
+                $errors++;
             }
         }
-    }
 
-    public function cleanup_working_files() : void {
-        // TODO: filter here for add-on generated files
-        $files_to_clean = array(
-            'FILES-TO-DEPLOY.txt',
-            'FINAL-CRAWL-LIST.txt',
-            'GITLAB-FILES-IN-REPO.txt',
-        );
+        if ( $errors === 0 ) {
+            http_response_code( 200 );
 
-        foreach ( $files_to_clean as $file_to_clean ) {
-            if ( file_exists(
-                SiteInfo::getPath( 'uploads' ) .
-                    'wp2static-working-files/' . $file_to_clean
-            ) ) {
-                unlink(
-                    SiteInfo::getPath( 'uploads' ) .
-                        'wp2static-working-files/' . $file_to_clean
-                );
-            }
-        }
-    }
-
-    /**
-     * Cleanup previous exports
-     *
-     * @throws WP2StaticException
-     */
-    public function cleanup_leftover_archives() : void {
-        $uploads_path = SiteInfo::getPath( 'uploads' );
-
-        if ( ! is_string( $uploads_path ) ) {
-            $err = 'Home URL not defined ';
-            WsLog::l( $err );
-            throw new WP2StaticException( $err );
-        }
-
-        $files_in_uploads_dir = scandir( $uploads_path );
-
-        if ( ! $files_in_uploads_dir ) {
-            return;
-        }
-
-        $leftover_files =
-            preg_grep(
-                '/^([^.])/',
-                $files_in_uploads_dir
-            );
-
-        foreach ( $leftover_files as $filename ) {
-            // Note: cleanup legacy export dirs
-            if (
-                strpos( $filename, 'wp-static-html-output-' ) !== false ||
-                strpos( $filename, 'wp2static-exported-site' ) !== false
-            ) {
-                $deletion_target = SiteInfo::getPath( 'uploads' ) .
-                    '/' . $filename;
-                if ( is_dir( $deletion_target ) ) {
-                    FilesHelper::delete_dir_with_files(
-                        $deletion_target
-                    );
-                } else {
-                    unlink( $deletion_target );
-                }
-            }
+            echo 'SUCCESS';
+        } else {
+            http_response_code( 500 );
         }
     }
 
     public function generateModifiedFileList() : void {
-        // preserve the initial crawl list, to be used in debugging + more
-        copy(
-            SiteInfo::getPath( 'uploads' ) .
-                'wp2static-working-files/INITIAL-CRAWL-LIST.txt',
-            SiteInfo::getPath( 'uploads' ) .
-                'wp2static-working-files/MODIFIED-CRAWL-LIST.txt'
-        );
-
-        chmod(
-            SiteInfo::getPath( 'uploads' ) .
-                'wp2static-working-files/MODIFIED-CRAWL-LIST.txt',
-            0664
-        );
-
-        // if no excludes or includes, just copy to new target
-        if ( ! isset( $this->settings['excludeURLs'] ) &&
-            ! isset( $this->settings['additionalUrls'] ) ) {
-            copy(
-                SiteInfo::getPath( 'uploads' ) .
-                    'wp2static-working-files/INITIAL-CRAWL-LIST.txt',
-                SiteInfo::getPath( 'uploads' ) .
-                    'wp2static-working-files/FINAL-CRAWL-LIST.txt'
-            );
-
-            return;
-        }
+        // have initial crawl list in wp2static-urls with type 'detected'
 
         $modified_crawl_list = array();
 
-        // load crawl list into array
-        $crawl_list = file(
-            SiteInfo::getPath( 'uploads' ) .
-            'wp2static-working-files/MODIFIED-CRAWL-LIST.txt'
-        );
-
-        if ( ! $crawl_list ) {
-            $err = 'Unable to load crawl list';
-            WsLog::l( $err );
-            throw new WP2StaticException( $err );
-        }
-
-        // applying exclusions before inclusions
+        // add each exclusion to wp2static-urls with type 'exclude'
         if ( isset( $this->settings['excludeURLs'] ) ) {
             $exclusions = explode(
                 "\n",
                 str_replace( "\r", '', $this->settings['excludeURLs'] )
             );
 
-            // iterate through crawl list and add any that aren't excluded
-            foreach ( $crawl_list as $url_to_crawl ) {
-                $url_to_crawl = trim( $url_to_crawl );
-                $match = false;
+            foreach ( $exclusions as $exclusion ) {
+                $exclusion = trim( $exclusion );
 
-                foreach ( $exclusions as $exclusion ) {
-                    $exclusion = trim( $exclusion );
-
-                    if ( $exclusion != '' ) {
-                        if ( strpos( $url_to_crawl, $exclusion ) !== false ) {
-                            $msg = 'Excluding ' . $url_to_crawl .
-                                ' because of rule ' . $exclusion;
-                            WsLog::l( $msg );
-
-                            $match = true;
-                        }
-                    }
-
-                    if ( ! $match ) {
-                        $modified_crawl_list[] = $url_to_crawl;
-                    }
-                }
+                // TODO: add to DB
             }
-        } else {
-            $modified_crawl_list = $crawl_list;
         }
 
+        // add each additional URL
         if ( isset( $this->settings['additionalUrls'] ) ) {
             $inclusions = explode(
                 "\n",
@@ -183,27 +73,12 @@ class Exporter {
 
             foreach ( $inclusions as $inclusion ) {
                 $inclusion = trim( $inclusion );
-                $inclusion = $inclusion;
 
-                $modified_crawl_list[] = $inclusion;
+                // TODO: add to DB
             }
         }
 
-        $modified_crawl_list = array_unique( $modified_crawl_list );
-
-        $str = implode( PHP_EOL, $modified_crawl_list );
-
-        file_put_contents(
-            SiteInfo::getPath( 'uploads' ) .
-                'wp2static-working-files/FINAL-CRAWL-LIST.txt',
-            $str
-        );
-
-        chmod(
-            SiteInfo::getPath( 'uploads' ) .
-                'wp2static-working-files/FINAL-CRAWL-LIST.txt',
-            0664
-        );
+        // we now have modified file list in DB
     }
 }
 

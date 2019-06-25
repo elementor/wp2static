@@ -5,7 +5,6 @@ namespace WP2Static;
 class SitePublisher {
 
     private $settings;
-    public $export_file_list;
     public $files_remaining;
     public $file_paths_and_hashes;
     public $previous_hashes_path;
@@ -13,12 +12,6 @@ class SitePublisher {
     public function loadSettings() : void {
         $plugin = Controller::getInstance();
         $this->settings = $plugin->options->getSettings( true );
-    }
-
-    public function bootstrap() : void {
-        $this->export_file_list =
-            SiteInfo::getPath( 'uploads' ) .
-                'wp2static-working-files/FILES-TO-DEPLOY.txt';
     }
 
     public function pauseBetweenAPICalls() : void {
@@ -29,23 +22,7 @@ class SitePublisher {
     }
 
     public function clearFileList() : void {
-        if ( is_file( $this->export_file_list ) ) {
-            $f = fopen( $this->export_file_list, 'r+' );
-            if ( $f !== false ) {
-                ftruncate( $f, 0 );
-                fclose( $f );
-            }
-        }
-
-        if ( isset( $this->glob_hash_path_list ) ) {
-            if ( is_file( $this->glob_hash_path_list ) ) {
-                $f = fopen( $this->glob_hash_path_list, 'r+' );
-                if ( $f !== false ) {
-                    ftruncate( $f, 0 );
-                    fclose( $f );
-                }
-            }
-        }
+        DeployQueue::truncate();
     }
 
     public function isSkippableFile( string $file ) : bool {
@@ -108,6 +85,11 @@ class SitePublisher {
         return $deploy_path;
     }
 
+    /**
+     * Recursively add files to deployment list
+     *
+     * @throws WP2StaticException
+     */
     public function createDeploymentList(
         string $dir,
         string $basename_in_target
@@ -150,13 +132,10 @@ class SitePublisher {
                         $basename_in_target
                     );
 
-                file_put_contents(
-                    $this->export_file_list,
-                    $local_file_path . ',' . $remote_deployment_path . PHP_EOL,
-                    FILE_APPEND | LOCK_EX
+                DeployQueue::addPath(
+                    $local_file_path,
+                    $remote_deployment_path
                 );
-
-                chmod( $this->export_file_list, 0664 );
             }
         }
     }
@@ -183,64 +162,16 @@ class SitePublisher {
      * @return string[] list of URLs
      */
     public function getItemsToDeploy( int $batch_size = 1 ) : array {
-        $lines = array();
+        $deployment_items = DeployQueue::getDeployableURLs( $batch_size );
 
-        $f = fopen( $this->export_file_list, 'r' );
-
-        if ( ! $f ) {
-            $err = 'Failed to open export file list';
-            WsLog::l( $err );
-            throw new WP2StaticException( $err );
-        }
-
-        for ( $i = 0; $i < $batch_size; $i++ ) {
-            $item_to_deploy = fgets( $f );
-
-            if ( ! is_string( $item_to_deploy ) ) {
-                $err = 'Failed getting item to deploy';
-                WsLog::l( $err );
-                throw new WP2StaticException( $err );
-            }
-
-            $lines[] = rtrim( $item_to_deploy );
-        }
-
-        fclose( $f );
-
-        // TODO: optimize this for just one read, one write within func
-        $contents = file( $this->export_file_list, FILE_IGNORE_NEW_LINES );
-
-        if ( ! is_array( $contents ) ) {
-            return [];
-        }
-
-        for ( $i = 0; $i < $batch_size; $i++ ) {
-            // rewrite file minus the lines we took
-            array_shift( $contents );
-        }
-
-        file_put_contents(
-            $this->export_file_list,
-            implode( PHP_EOL, $contents )
-        );
-
-        chmod( $this->export_file_list, 0664 );
-
-        return $lines;
+        return $deployment_items;
     }
 
+    // TODO: extra call getting all URL data, optimize
     public function getRemainingItemsCount() : int {
-        if ( is_file( $this->export_file_list ) ) {
-            $contents = file( $this->export_file_list, FILE_IGNORE_NEW_LINES );
+        $urls_to_deploy = DeployQueue::getDeployableURLs();
 
-            if ( ! is_array( $contents ) ) {
-                return 0;
-            }
-
-            return count( $contents );
-        }
-
-        return 0;
+        return count( $urls_to_deploy );
     }
 
     // TODO: rename to signalSuccessfulAction or such
@@ -277,50 +208,6 @@ class SitePublisher {
         }
 
         return true;
-    }
-
-    public function openPreviousHashesFile() : void {
-        $this->file_paths_and_hashes = array();
-
-        if ( is_file( $this->previous_hashes_path ) ) {
-            $file = fopen( $this->previous_hashes_path, 'r' );
-
-            if ( ! $file ) {
-                return;
-            }
-
-            while ( ( $line = fgetcsv( $file ) ) !== false ) {
-                if ( isset( $line[0] ) && isset( $line[1] ) ) {
-                    $this->file_paths_and_hashes[ $line[0] ] = $line[1];
-                }
-            }
-
-            fclose( $file );
-        }
-    }
-
-    public function recordFilePathAndHashInMemory(
-        string $target_path,
-        string $local_file_contents
-        ) : void {
-        $this->file_paths_and_hashes[ $target_path ] =
-            crc32( $local_file_contents );
-    }
-
-    public function writeFilePathAndHashesToFile() : void {
-        $fp = fopen( $this->previous_hashes_path, 'w' );
-
-        if ( ! $fp ) {
-            $err = "Couldn't open previous hashes file for writing";
-            WsLog::l( $err );
-            throw new WP2StaticException( $err );
-        }
-
-        foreach ( $this->file_paths_and_hashes as $key => $value ) {
-            fwrite( $fp, $key . ',' . $value . PHP_EOL );
-        }
-
-        fclose( $fp );
     }
 }
 

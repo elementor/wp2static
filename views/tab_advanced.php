@@ -88,6 +88,17 @@
   </div>
 </section>
 
+<section class="wp2static-content wp2static-flex">
+  <div class="content" style="max-width:30%">
+    <h2><?php echo __( 'Delete Deploy Cache', 'static-html-output-plugin' ); ?></h2>
+  </div>
+
+  <div class="content">
+    <button id="delete_deploy_cache_button" type="button" class="btn-primary button">Delete deploy cache</button>
+
+    <p>When deploying, WP2Static will check each file to see if it's changed since the last deployment. It will skip unchanged files based on this information. If you want to force an uncached deployment, click this button and any caches will be emptied, requiring a full deploy on the next run.</p>
+  </div>
+</section>
 
 
 

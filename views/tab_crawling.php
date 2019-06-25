@@ -54,31 +54,6 @@
 
 <section class="wp2static-content wp2static-flex">
   <div class="content" style="max-width:30%">
-    <h2><?php echo __( 'Crawl Increment', 'static-html-output-plugin' ); ?></h2>
-  </div>
-
-  <div class="content">
-  <select name="crawl_increment" id="crawl_increment">
-    <?php
-    // TODO: shift this into helper function for select
-    $increments = array( 1, 5, 10, 25, 50, 100, 500, 1000, 999999 );
-
-    foreach ( $increments as $increment ) :
-        if ( $increment == 999999 ) : ?>
-            <option value="999999"<?php echo $this->options->crawl_increment == $increment ? ' selected' : ''; ?>>Maximum</option>
-<?php else : ?>
-            <option value="<?php echo $increment; ?>"<?php echo $this->options->crawl_increment == $increment ? ' selected' : ''; ?>><?php echo $increment; ?></option>
-  
-    <?php endif;
-         endforeach; ?>
-          </select><br>
-  
-          <p>This is set to 1, by default, in order to allow exporting on low-resource environments, such as shared hosting servers. Each increment is the amount of files the server will try to process on each request that the browser sends it. Incrementing this will speed up your exports, by processing more are a time. If your export is failing, due to resource (memory, CPU) limits being reached, try setting this to a lower number.</p>
-  </div>
-</section>
-
-<section class="wp2static-content wp2static-flex">
-  <div class="content" style="max-width:30%">
     <h2><?php echo __( 'Include Discovered Assets', 'static-html-output-plugin' ); ?></h2>
   </div>
   <div class="content">
