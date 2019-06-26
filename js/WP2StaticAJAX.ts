@@ -7,7 +7,6 @@ import { WP2StaticGlobals } from "./WP2StaticGlobals";
 
 export class WP2StaticAJAX {
 
-    statusText: string;
     wp2staticGlobals: WP2StaticGlobals;
     wp2staticProcessExports: WP2StaticProcessExports;
 
@@ -38,23 +37,18 @@ export class WP2StaticAJAX {
         if an action fails, ajaxErrorHandler() is called
         */
     doAJAXExport(
-        args,
-        statusDescriptions,
-        exportTargets,
-        deployOptions,
-        currentDeploymentMethod,
-        siteInfo
+        args: any
     ) {
         let exportAction = args[0];
-        let statusText = exportAction;
+        this.wp2staticGlobals.statusText = exportAction;
 
-        if (statusDescriptions[exportAction] !== undefined) {
-          statusText = statusDescriptions[exportAction];
+        if (this.wp2staticGlobals.statusDescriptions[exportAction] !== undefined) {
+          this.wp2staticGlobals.statusText = this.wp2staticGlobals.statusDescriptions[exportAction];
         } else {
-          statusText = exportAction;
+          this.wp2staticGlobals.statusText = exportAction;
         }
 
-        $("#current_action").html(statusText);
+        $("#current_action").html(this.wp2staticGlobals.statusText);
         $(".hiddenActionField").val("wp_static_html_output_ajax");
         $("#hiddenAJAXAction").val(exportAction);
 
@@ -78,19 +72,13 @@ export class WP2StaticAJAX {
                 // rm first action now that it's succeeded
                 args.shift();
                 // call function with all other actions
-                this.doAJAXExport(args, statusDescriptions, exportTargets, deployOptions, siteInfo);
+                this.doAJAXExport(args);
                 // if an action is in progress incremental, it will call itself again
               } else if (serverResponse > 0) {
-                this.doAJAXExport(args, statusDescriptions, exportTargets, deployOptions, siteInfo);
+                this.doAJAXExport(args);
               } else if (serverResponse === "SUCCESS") {
                 // not an incremental action, continue on with export targets
-                this.wp2staticProcessExports.processExportTargets(
-                  statusDescriptions,
-                  exportTargets,
-                  deployOptions,
-                  currentDeploymentMethod,
-                  siteInfo
-                );
+                this.wp2staticProcessExports.processExportTargets();
               } else {
                 this.ajaxErrorHandler();
               }
@@ -103,7 +91,7 @@ export class WP2StaticAJAX {
     ajaxErrorHandler() {
       this.wp2staticGlobals.stopTimer();
 
-      const failedDeployMessage = 'Failed during "' + this.statusText +
+      const failedDeployMessage = 'Failed during "' + this.wp2staticGlobals.statusText +
               '", <button id="downloadExportLogButton">Download export log</button>';
 
       $("#current_action").html(failedDeployMessage);

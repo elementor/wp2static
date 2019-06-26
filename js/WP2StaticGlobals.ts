@@ -7,6 +7,31 @@ export class WP2StaticGlobals {
   exportCompleteTime: number = 0;
   timerIntervalID: number = 0;
   exportDuration: number = 0;
+  statusDescriptions: any = {
+    crawl_site: "Crawling initial file list",
+    post_export_teardown: "Cleaning up after processing",
+    post_process_archive_dir: "Processing the crawled files",
+  };
+  currentDeploymentMethod: string = '';
+  siteInfo: any;
+  exportTargets: Array<string> = [];
+  deployOptions: any = {
+    folder: {
+      exportSteps: [
+        "finalize_deployment",
+      ],
+      requiredFields: {
+      },
+    },
+    zip: {
+      exportSteps: [
+        "finalize_deployment",
+      ],
+      requiredFields: {
+      },
+    },
+  };
+  statusText: string = "";
 
   getAll () {
     return { something : this.aProperty }
@@ -33,7 +58,7 @@ export class WP2StaticGlobals {
     );
   }
 
-  millisToMinutesAndSeconds( millis ) {
+  millisToMinutesAndSeconds( millis: number ) {
     const minutes = Math.floor(millis / 60000);
     const seconds: number = parseFloat( ((millis % 60000) / 1000).toFixed(0) );
 

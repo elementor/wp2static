@@ -59,53 +59,29 @@ const formProcessors: FormProcessor[] = [
 ];
 
 let validationErrors = "";
+let spinner: any;
 
-export const deployOptions = {
-  folder: {
-    exportSteps: [
-      "finalize_deployment",
-    ],
-    requiredFields: {
-    },
-  },
-  zip: {
-    exportSteps: [
-      "finalize_deployment",
-    ],
-    requiredFields: {
-    },
-  },
-};
+wp2staticGlobals.siteInfo = JSON.parse(wp2staticString.siteInfo);
 
-let spinner;
-const siteInfo = JSON.parse(wp2staticString.siteInfo);
-let currentDeploymentMethod;
 if (wp2staticString.currentDeploymentMethod) {
-  currentDeploymentMethod = wp2staticString.currentDeploymentMethod;
+  wp2staticGlobals.currentDeploymentMethod = wp2staticString.currentDeploymentMethod;
 } else {
-  currentDeploymentMethod = "folder";
+  wp2staticGlobals.currentDeploymentMethod = "folder";
 }
 
 // TODO: get the log out of the archive, along with it's meta infos
-const logFileUrl = siteInfo.uploads_url + "wp2static-working-files/EXPORT-LOG.txt";
+const logFileUrl = wp2staticGlobals.siteInfo.uploads_url + "wp2static-working-files/EXPORT-LOG.txt";
 const selectedFormProcessor = "";
 const exportAction = "";
-let exportTargets = [];
-let statusText = "";
 const protocolAndDomainRE = /^(?:\w+:)?\/\/(\S+)$/;
 const localhostDomainRE = /^localhost[:?\d]*(?:[^:?\d]\S*)?$/;
 const nonLocalhostDomainRE = /^[^\s.]+\.\S{2,}$/;
-export const statusDescriptions = {
-  crawl_site: "Crawling initial file list",
-  post_export_teardown: "Cleaning up after processing",
-  post_process_archive_dir: "Processing the crawled files",
-};
 
 // ignore shadowing warning for $
 /* tslint:disable */
 jQuery(($) => {
 /* tslint:enable */
-    function generateFileListSuccessCallback(serverResponse) {
+    function generateFileListSuccessCallback(serverResponse: any) {
       if (!serverResponse) {
         $("#current_action").html(`Failed to generate initial file list.
  Please <a href="https://docs.wp2static.com" target="_blank">contact support</a>`);
@@ -127,7 +103,7 @@ jQuery(($) => {
       }
     }
 
-    function generateFileListFailCallback(serverResponse) {
+    function generateFileListFailCallback(serverResponse: any) {
       const failedDeployMessage = `Failed to generate Initial Crawl List.
  Please check your permissions to the WordPress upload directory or check your
  Export Log in case of more info.`;
@@ -142,8 +118,8 @@ jQuery(($) => {
     }
 
     function prepareInitialFileList() {
-      statusText = "Analyzing site... this may take a few minutes (but it's worth it!)";
-      $("#current_action").html(statusText);
+      wp2staticGlobals.statusText = "Analyzing site... this may take a few minutes (but it's worth it!)";
+      $("#current_action").html(wp2staticGlobals.statusText);
 
       sendWP2StaticAJAX(
         "generate_filelist_preview",
@@ -152,7 +128,7 @@ jQuery(($) => {
       );
     }
 
-    function sendWP2StaticAJAX(ajaxAction, successCallback, failCallback) {
+    function sendWP2StaticAJAX(ajaxAction: string, successCallback: any, failCallback: any) {
       $(".hiddenActionField").val("wp_static_html_output_ajax");
       $("#hiddenAJAXAction").val(ajaxAction);
       $("#progress").show();
@@ -178,13 +154,13 @@ jQuery(($) => {
       );
     }
 
-    function saveOptionsSuccessCallback(serverResponse) {
+    function saveOptionsSuccessCallback(serverResponse: any) {
       $("#progress").hide();
 
       location.reload();
     }
 
-    function saveOptionsFailCallback(serverResponse) {
+    function saveOptionsFailCallback(serverResponse: any) {
       $("#progress").hide();
 
       location.reload();
@@ -200,7 +176,7 @@ jQuery(($) => {
     }
 
 
-    function downloadExportLogSuccessCallback(serverResponse) {
+    function downloadExportLogSuccessCallback(serverResponse: any) {
       if (!serverResponse) {
         $("#current_action").html(`Failed to download Export Log
  <a id="downloadExportLogButton" href="#">try again</a>`);
@@ -212,13 +188,13 @@ jQuery(($) => {
       }
     }
 
-    function downloadExportLogFailCallback(serverResponse) {
+    function downloadExportLogFailCallback(serverResponse: any) {
       $(".pulsate-css").hide();
       $("#current_action").html(`Failed to download Export Log
  <a id="downloadExportLogButton" href="#">try again</a>`);
     }
 
-    function deleteCrawlCacheSuccessCallback(serverResponse) {
+    function deleteCrawlCacheSuccessCallback(serverResponse: any) {
       if (!serverResponse) {
         $(".pulsate-css").hide();
         $("#current_action").html("Failed to delete Crawl Cache.");
@@ -228,7 +204,7 @@ jQuery(($) => {
       }
     }
 
-    function deleteCrawlCacheFailCallback(serverResponse) {
+    function deleteCrawlCacheFailCallback(serverResponse: any) {
       $(".pulsate-css").hide();
       $("#current_action").html("Failed to delete Crawl Cache.");
     }
@@ -288,7 +264,7 @@ jQuery(($) => {
     function ajaxErrorHandler() {
       wp2staticGlobals.stopTimer();
 
-      const failedDeployMessage = 'Failed during "' + statusText +
+      const failedDeployMessage = 'Failed during "' + wp2staticGlobals.statusText +
               '", <button id="downloadExportLogButton">Download export log</button>';
 
       $("#current_action").html(failedDeployMessage);
@@ -299,20 +275,13 @@ jQuery(($) => {
       $(".cancelExportButton").hide();
     }
 
-    function startExportSuccessCallback(serverResponse) {
+    function startExportSuccessCallback(serverResponse: any) {
       const initialSteps = [
         "crawl_site",
         "post_process_archive_dir",
       ];
 
-      wp2staticAJAX.doAJAXExport(
-        initialSteps,
-        statusDescriptions,
-        exportTargets,
-        deployOptions,
-        currentDeploymentMethod,
-        siteInfo,
-      );
+      wp2staticAJAX.doAJAXExport( initialSteps );
     }
 
 
@@ -339,12 +308,12 @@ jQuery(($) => {
       $("#current_action").html("Starting export...");
 
       // reset export targets to avoid having left-overs from a failed run
-      exportTargets = [];
+      wp2staticGlobals.exportTargets = [];
 
-      if (currentDeploymentMethod === "zip") {
+      if (wp2staticGlobals.currentDeploymentMethod === "zip") {
         $("#createZip").attr("checked", "checked");
       }
-      exportTargets.push(currentDeploymentMethod);
+      wp2staticGlobals.exportTargets.push(wp2staticGlobals.currentDeploymentMethod);
 
       sendWP2StaticAJAX(
         "prepare_for_export",
@@ -372,8 +341,7 @@ jQuery(($) => {
         validationErrors += "Please set the Base URL field to the address you will host your static site.\n";
       }
 
-      // TODO: on new Debian package-managed environment, this was falsely erroring
-      if (!isUrl($("#baseUrl").val()) && !$("#allowOfflineUsage").is(":checked")) {
+      if (!isUrl(String($("#baseUrl").val())) && !$("#allowOfflineUsage").is(":checked")) {
         // TODO: testing / URL as base
         if ($("#baseUrl").val() !== "/") {
           validationErrors += "Please set the Base URL field to a valid URL, ie http://mystaticsite.com.\n";
@@ -381,13 +349,13 @@ jQuery(($) => {
       }
 
       const requiredFields =
-            deployOptions[currentDeploymentMethod].requiredFields;
+            wp2staticGlobals.deployOptions[wp2staticGlobals.currentDeploymentMethod].requiredFields;
 
       if (requiredFields) {
         validateEmptyFields(requiredFields);
       }
 
-      const repoField = deployOptions[currentDeploymentMethod].repoField;
+      const repoField = wp2staticGlobals.deployOptions[wp2staticGlobals.currentDeploymentMethod].repoField;
 
       if (repoField) {
         validateRepoField(repoField);
@@ -396,7 +364,7 @@ jQuery(($) => {
       return validationErrors;
     }
 
-    function validateRepoField(repoField) {
+    function validateRepoField(repoField: any) {
       const repo: string = String($("#" + repoField.field + "").val());
 
       if (repo !== "") {
@@ -406,7 +374,7 @@ jQuery(($) => {
       }
     }
 
-    function validateEmptyFields(requiredFields) {
+    function validateEmptyFields(requiredFields: any) {
       Object.keys(requiredFields).forEach(
         (key, index) => {
           if ($("#" + key).val() === "") {
@@ -416,14 +384,10 @@ jQuery(($) => {
       );
     }
 
-    function isUrl(url) {
-      if (typeof url !== "string") {
-        return false;
-      }
-
+    function isUrl(url: string) {
       const match = url.match(protocolAndDomainRE);
 
-      if (!match) {
+      if (! match) {
         return false;
       }
 
@@ -457,7 +421,7 @@ jQuery(($) => {
     function setFormProcessor(fp: any) {
       if (fp in formProcessors) {
 
-        const formProcessor: FormProcessor = formProcessors[selectedFormProcessor];
+        const formProcessor: FormProcessor = formProcessors[fp];
 
         $("#form_processor_description").text(formProcessor.description);
 
@@ -487,16 +451,16 @@ jQuery(($) => {
         TODO: quick win to get the select menu options to behave like the sendViaFTP, etc checkboxes
         */
     // TODO: remove this completely?
-    function setDeploymentMethod(selectedDeploymentMethod) {
+    function setDeploymentMethod(selectedDeploymentMethod: string) {
       // hide zip dl link for all
       $("#downloadZIP").hide();
-      currentDeploymentMethod = selectedDeploymentMethod;
+      wp2staticGlobals.currentDeploymentMethod = selectedDeploymentMethod;
 
       // set the selected option in case calling this from outside the event handler
       $(".selected_deployment_method").val(selectedDeploymentMethod);
     }
 
-    function offlineUsageChangeHandler(checkbox) {
+    function offlineUsageChangeHandler(checkbox: HTMLElement) {
       if ($(checkbox).is(":checked")) {
         $("#baseUrl-zip").prop("disabled", true);
       } else {
@@ -504,8 +468,8 @@ jQuery(($) => {
       }
     }
 
-    function setExportSettingDetailsVisibility(changedCheckbox) {
-      const checkboxName = $(changedCheckbox).attr("name");
+    function setExportSettingDetailsVisibility(changedCheckbox: HTMLElement) {
+      const checkboxName = String($(changedCheckbox).attr("name"));
       const exportOptionName = checkboxName.replace("sendVia", "").toLowerCase();
       const exportOptionElements = $("." + exportOptionName);
 
@@ -521,7 +485,7 @@ jQuery(($) => {
     /*
         render the information and settings blocks based on the deployment method selected
         */
-    function renderSettingsBlock(selectedDeploymentMethod) {
+    function renderSettingsBlock(selectedDeploymentMethod: string) {
       // hide non-active deployment methods
       $('[class$="_settings_block"]').hide();
       // hide those not selected
@@ -606,7 +570,7 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
     // disable zip base url field when offline usage is checked
     $("#allowOfflineUsage").change(
       (event) => {
-        offlineUsageChangeHandler($(event.currentTarget));
+        offlineUsageChangeHandler(event.currentTarget);
       },
     );
 
@@ -634,7 +598,7 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
     );
 
     function changeTab(targetTab: string) {
-      const tabsContentMapping = {
+      const tabsContentMapping: any = {
         add_ons: "Add-ons",
         advanced_settings: "Advanced Options",
         automation_settings: "Automation",
@@ -795,20 +759,20 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
       },
     );
 
-    function sendSupportSuccessCallback(serverResponse) {
+    function sendSupportSuccessCallback(serverResponse: any) {
       alert("Successful support request sent");
     }
 
-    function sendSupportFailCallback(serverResponse) {
+    function sendSupportFailCallback(serverResponse: any) {
       alert("Failed to send support request. Please try again or contact help@wp2static.com.");
     }
 
-    function resetDefaultSettingsSuccessCallback(serverResponse) {
+    function resetDefaultSettingsSuccessCallback(serverResponse: any) {
       alert("Settings have been reset to default, the page will now be reloaded.");
       window.location.reload(true);
     }
 
-    function resetDefaultSettingsFailCallback(serverResponse) {
+    function resetDefaultSettingsFailCallback(serverResponse: any) {
       alert("Error encountered in trying to reset settings. Please try refreshing the page.");
     }
 
@@ -835,7 +799,7 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
       },
     );
 
-    function deleteDeployCacheSuccessCallback(serverResponse) {
+    function deleteDeployCacheSuccessCallback(serverResponse: any) {
       if (serverResponse === "SUCCESS") {
         alert("Deploy cache cleared");
       } else {
@@ -846,7 +810,7 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
       $(".pulsate-css").hide();
     }
 
-    function deleteDeployCacheFailCallback(serverResponse) {
+    function deleteDeployCacheFailCallback(serverResponse: any) {
       alert("FAIL: Unable to delete deploy cache");
 
       spinner.hide();
@@ -869,19 +833,19 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
       },
     );
 
-    function testDeploymentSuccessCallback(serverResponse) {
+    function testDeploymentSuccessCallback(serverResponse: any) {
       if (serverResponse === "SUCCESS") {
         alert("Connection/Upload Test Successful");
       } else {
-        alert("FAIL: Unable to complete test upload to " + currentDeploymentMethod);
+        alert("FAIL: Unable to complete test upload to " + wp2staticGlobals.currentDeploymentMethod);
       }
 
       spinner.hide();
       $(".pulsate-css").hide();
     }
 
-    function testDeploymentFailCallback(serverResponse) {
-      alert("FAIL: Unable to complete test upload to " + currentDeploymentMethod);
+    function testDeploymentFailCallback(serverResponse: any) {
+      alert("FAIL: Unable to complete test upload to " + wp2staticGlobals.currentDeploymentMethod);
       spinner.hide();
       $(".pulsate-css").hide();
     }
@@ -895,7 +859,7 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
         spinner.show();
 
         sendWP2StaticAJAX(
-          "test_" + currentDeploymentMethod,
+          "test_" + wp2staticGlobals.currentDeploymentMethod,
           testDeploymentSuccessCallback,
           testDeploymentFailCallback,
         );
@@ -914,8 +878,8 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
     $(".spinner").hide();
 
     // guard against selected option for add-on not currently activated
-    if ($("#baseUrl-" + currentDeploymentMethod).val() === undefined) {
-      currentDeploymentMethod = "folder";
+    if ($("#baseUrl-" + wp2staticGlobals.currentDeploymentMethod).val() === undefined) {
+      wp2staticGlobals.currentDeploymentMethod = "folder";
     }
 
     populateFormProcessorOptions(formProcessors);
@@ -923,13 +887,16 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
     setFormProcessor(selectedFormProcessor);
 
     // call change handler on page load, to set correct state
-    offlineUsageChangeHandler($("#allowOfflineUsage"));
+    const offlineUsageCheckbox: any = document.getElementById("#allowOfflineUsage");
+    if ( offlineUsageCheckbox ) {
+      offlineUsageChangeHandler(offlineUsageCheckbox);
+    }
 
     // set and show the previous selected deployment method
-    renderSettingsBlock(currentDeploymentMethod);
+    renderSettingsBlock(wp2staticGlobals.currentDeploymentMethod);
 
     // set the select to the current deployment type
-    setDeploymentMethod(currentDeploymentMethod);
+    setDeploymentMethod(wp2staticGlobals.currentDeploymentMethod);
 
     // hide all but WP2Static messages
     hideOtherVendorMessages();

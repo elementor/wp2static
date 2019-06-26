@@ -11,32 +11,22 @@ export class WP2StaticProcessExports {
       this.wp2staticGlobals = wp2staticGlobals;
   }
 
-  processExportTargets(
-    statusDescriptions,
-    exportTargets,
-    deployOptions,
-    currentDeploymentMethod,
-    siteInfo
-  ) {
+  processExportTargets() {
 
     const wp2staticAJAX = new WP2StaticAJAX( this.wp2staticGlobals );
 
-    if (exportTargets.length > 0) {
-      const target = exportTargets.shift();
-      const exportSteps = deployOptions[target].exportSteps;
+    if (this.wp2staticGlobals.exportTargets.length > 0) {
+      const target: string = String(this.wp2staticGlobals.exportTargets.shift());
 
-      wp2staticAJAX.doAJAXExport(
-        exportSteps,
-        statusDescriptions,
-        exportTargets,
-        deployOptions,
-        currentDeploymentMethod,
-        siteInfo
-      );
+        
+      const exportSteps = this.wp2staticGlobals.deployOptions[target].exportSteps;
+
+      wp2staticAJAX.doAJAXExport( exportSteps );
     } else {
       // if zip was selected, call to get zip name and enable the button with the link to download
-      if (currentDeploymentMethod === "zip") {
-        const zipURL = siteInfo.uploads_url + "wp2static-exported-site.zip?cacheBuster=" + Date.now();
+      if (this.wp2staticGlobals.currentDeploymentMethod === "zip") {
+        const zipURL = `${this.wp2staticGlobals.siteInfo.uploads_url}
+wp2static-exported-site.zip?cacheBuster=${Date.now()}`;
         $("#downloadZIP").attr("href", zipURL);
         $("#downloadZIP").show();
       } else {

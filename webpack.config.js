@@ -29,5 +29,6 @@ module.exports = {
     devtool: 'source-map',
     externals: {
       jquery: 'jQuery'
-    }
+    },
+    mode: 'none'
 };
