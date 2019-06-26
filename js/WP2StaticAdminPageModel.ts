@@ -17,6 +17,10 @@ export class WP2StaticAdminPageModel {
   resetDefaultSettingsButton: HTMLElement;
   saveSettingsButton: HTMLElement;
   startExportButton: HTMLElement;
+  createZip: HTMLElement;
+  downloadZIP: HTMLElement;
+  goToMyStaticSite: HTMLElement;
+  exportDuration: HTMLElement;
 
   constructor() {
     this.cancelExportButton = document.getElementByClass('cancelExportButton');
@@ -36,6 +40,10 @@ export class WP2StaticAdminPageModel {
     this.resetDefaultSettingsButton = document.getElementByClass('resetDefaultSettingsButton');
     this.saveSettingsButton = document.getElementByClass('saveSettingsButton');
     this.startExportButton = document.getElementById('startExportButton');
+    this.createZip = document.getElementById('createZip');
+    this.downloadZIP = document.getElementById('downloadZIP');
+    this.goToMyStaticSite = document.getElementById('goToMyStaticSite');
+    this.exportDuration = document.getElementById('exportDuration');
 
   } 
 }

@@ -333,7 +333,7 @@ document.addEventListener("DOMContentLoaded", () => {
       wp2staticGlobals.exportTargets = [];
 
       if (wp2staticGlobals.currentDeploymentMethod === "zip") {
-        $("#createZip").attr("checked", "checked");
+        adminPage.createZip.setAttribute("checked", checked);
       }
       wp2staticGlobals.exportTargets.push(wp2staticGlobals.currentDeploymentMethod);
 
@@ -345,9 +345,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function clearProgressAndResults() {
-      $("#downloadZIP").hide();
-      $("#goToMyStaticSite").hide();
-      $("#exportDuration").hide();
+      adminPage.downloadZIP.style.display = "none";
+      adminPage.goToMyStaticSite.style.display = "none";
+      adminPage.exportDuration.style.display = "none";
     }
 
     function getValidationErrors() {
