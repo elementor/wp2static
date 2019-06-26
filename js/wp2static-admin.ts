@@ -16,7 +16,6 @@ interface FormProcessor {
 // from browser.
 // within this entrypoint, access directly. From other classes, this., from
 // browser WP2Static.wp2staticGlobals
-export const adminPage = new WP2StaticAdminPageModel();
 export const wp2staticGlobals = new WP2StaticGlobals();
 export const wp2staticAJAX = new WP2StaticAJAX( wp2staticGlobals );
 
@@ -76,8 +75,8 @@ const exportAction = "";
 const protocolAndDomainRE = /^(?:\w+:)?\/\/(\S+)$/;
 const localhostDomainRE = /^localhost[:?\d]*(?:[^:?\d]\S*)?$/;
 const nonLocalhostDomainRE = /^[^\s.]+\.\S{2,}$/;
-
 document.addEventListener("DOMContentLoaded", () => {
+    const adminPage = new WP2StaticAdminPageModel();
     function generateFileListSuccessCallback(serverResponse: any) {
       if (!serverResponse) {
         adminPage.pulsateCSS.style.display = "none";
@@ -91,8 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
         adminPage.saveSettingsButton.removeAttribute("disabled");
         adminPage.startExportButton.removeAttribute("disabled");
         adminPage.currentAction.innerHTML = `${serverResponse} URLs were detected for
- initial crawl list. <a href="#" id="GoToDetectionTabButton">Adjust detection
- via the URL Detection tab.</a>`;
+ initial crawl list. Adjust detection via the URL Detection tab.`;
         adminPage.initialCrawlListCount.textContent = `${serverResponse} URLs were
  detected on your site that will be used to initiate the crawl.
  Other URLs will be discovered while crawling.`;
@@ -187,24 +185,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    function downloadExportLogSuccessCallback(serverResponse: any) {
-      if (!serverResponse) {
-        adminPage.currentAction.innerHTML = `Failed to download Export Log
- <a id="downloadExportLogButton" href="#">try again</a>`;
-        adminPage.pulsateCSS.style.display = "none";
-      } else {
-        adminPage.currentAction.innerHTML = `Download <a href="${serverResponse}">
- ${serverResponse}/a>`;
-        adminPage.pulsateCSS.style.display = "none";
-      }
-    }
-
-    function downloadExportLogFailCallback(serverResponse: any) {
-      adminPage.pulsateCSS.style.display = "none";
-      adminPage.currentAction.innerHTML = `Failed to download Export Log
- <a id="downloadExportLogButton" href="#">try again</a>`;
-    }
-
     function deleteCrawlCacheSuccessCallback(serverResponse: any) {
       if (!serverResponse) {
         adminPage.pulsateCSS.style.display = "none";
@@ -218,16 +198,6 @@ document.addEventListener("DOMContentLoaded", () => {
     function deleteCrawlCacheFailCallback(serverResponse: any) {
       adminPage.pulsateCSS.style.display = "none";
       adminPage.currentAction.innerHTML = "Failed to delete Crawl Cache.";
-    }
-
-    function downloadExportLog() {
-      adminPage.currentAction.innerHTML = "Downloading Export Log...";
-
-      sendWP2StaticAJAX(
-        "download_export_log",
-        downloadExportLogSuccessCallback,
-        downloadExportLogFailCallback,
-      );
     }
 
     /*
@@ -279,19 +249,10 @@ document.addEventListener("DOMContentLoaded", () => {
       },
     );
 
-    adminPage.downloadExportLogButton.addEventListener(
-      "click",
-      (event: any) => {
-        event.preventDefault();
-        downloadExportLog();
-      },
-    );
-
     function ajaxErrorHandler() {
       wp2staticGlobals.stopTimer();
 
-      const failedDeployMessage = 'Failed during "' + wp2staticGlobals.statusText +
-              '", <button id="downloadExportLogButton">Download export log</button>';
+      const failedDeployMessage = 'Failed during ' + wp2staticGlobals.statusText;
 
       adminPage.currentAction.innerHTML = failedDeployMessage;
       adminPage.pulsateCSS.style.display = "none";
@@ -497,7 +458,7 @@ document.addEventListener("DOMContentLoaded", () => {
       );
 
       const settingsBlock: HTMLElement =
-        document.getElementById("#" + selectedDeploymentMethod + "_settings_block")!;
+        document.getElementById(selectedDeploymentMethod + "_settings_block")!;
 
       settingsBlock.style.display = "none";
     }
@@ -604,35 +565,11 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
       }
     }
 
-    adminPage.goToDetectionTabButton.addEventListener(
-      "click",
-      (event: any) => {
-        event.preventDefault();
-        changeTab("URL Detection");
-      },
-    );
-
     adminPage.goToDeployTabButton.addEventListener(
       "click",
       (event: any) => {
         event.preventDefault();
         changeTab("Deployment");
-      },
-    );
-
-    adminPage.goToDeployTabLink.addEventListener(
-      "click",
-      (event: any) => {
-        event.preventDefault();
-        changeTab("Deployment");
-      },
-    );
-
-    adminPage.goToAdvancedTabButton.addEventListener(
-      "click",
-      (event: any) => {
-        event.preventDefault();
-        changeTab("Advanced Options");
       },
     );
 
@@ -784,9 +721,8 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
       adminPage.pulsateCSS.style.display = "none";
     }
 
-    $(".wrap").on(
+    adminPage.deleteDeployCache.addEventListener(
       "click",
-      "#delete_deploy_cache_button",
       (event: any) => {
         event.preventDefault();
         const button = event.currentTarget;
@@ -831,8 +767,8 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
     */
 
     // guard against selected option for add-on not currently activated
-    const deployBaseUrl: HTMLInputElement = <HTMLInputElement>document.getElementById("#baseUrl-" + wp2staticGlobals.currentDeploymentMethod)!;
-    if (deployBaseUrl.value === undefined) {
+    const deployBaseUrl: HTMLInputElement | null = <HTMLInputElement>document.getElementById("#baseUrl-" + wp2staticGlobals.currentDeploymentMethod)!;
+    if (deployBaseUrl === null) {
       wp2staticGlobals.currentDeploymentMethod = "folder";
     }
 
