@@ -1,27 +1,41 @@
 export class WP2StaticAdminPageModel {
 
-  currentAction: HTMLElement;
-  pulsateCSS: HTMLElement;
-  progress: HTMLElement;
-  initialCrawlListLoader: HTMLElement;
-  initialCrawlListCount: HTMLElement;
-  previewInitialCrawlListButton: HTMLElement;
-  startExportButton: HTMLElement;
-  saveSettingsButton: HTMLElement;
-  resetDefaultSettingsButton: HTMLElement;
   cancelExportButton: HTMLElement;
+  currentAction: HTMLElement;
+  deleteCrawlCache: HTMLInputElement;
+  detectEverythingButton: HTMLInputElement;
+  detectNothingButton: HTMLInputElement;
+  detectionOptionsInputs: <Array>HTMLInputElement;
+  downloadExportLogButton: HTMLInputElement;
+  hiddenAJAXAction: HTMLInputElement;
+  hiddenActionField: HTMLInputElement;
+  initialCrawlListCount: HTMLElement;
+  initialCrawlListLoader: HTMLElement;
+  previewInitialCrawlListButton: HTMLElement;
+  progress: HTMLElement;
+  pulsateCSS: HTMLElement;
+  resetDefaultSettingsButton: HTMLElement;
+  saveSettingsButton: HTMLElement;
+  startExportButton: HTMLElement;
 
   constructor() {
+    this.cancelExportButton = document.getElementByClass('cancelExportButton');
     this.currentAction = document.getElementById('current_action');
+    this.deleteCrawlCache = document.getElementById('deleteCrawlCache');
+    this.detectEverythingButton = document.getElementById('detectEverythingButton');
+    this.detectNothingButton = document.getElementById('detectNothingButton');
+    this.detectionOptionsInputs = document.querySelectorAll('#detectionOptionsTable input[type="checkbox"]');
+    this.downloadExportLogButton = document.getElementById('downloadExportLogButton');
+    this.hiddenAJAXAction = document.getElementById('hiddenAJAXAction');
+    this.hiddenActionField = document.getElementByClass('hiddenActionField');
+    this.initialCrawlListCount = document.getElementById('initial_crawl_list_count');
+    this.initialCrawlListLoader = document.getElementById('initial_crawl_list_loader');
+    this.previewInitialCrawlListButton = document.getElementById('preview_initial_crawl_list_button');
     this.progress = document.getElementById('progress');
     this.pulsateCSS = document.getElementByClass('pulsate-css');
-    this.initialCrawlListLoader = document.getElementById('initial_crawl_list_loader');
-    this.initialCrawlListCount = document.getElementById('initial_crawl_list_count');
-    this.previewInitialCrawlListButton = document.getElementById('preview_initial_crawl_list_button');
-    this.startExportButton = document.getElementById('startExportButton');
-    this.saveSettingsButton = document.getElementByClass('saveSettingsButton');
     this.resetDefaultSettingsButton = document.getElementByClass('resetDefaultSettingsButton');
-    this.cancelExportButton = document.getElementByClass('cancelExportButton');
+    this.saveSettingsButton = document.getElementByClass('saveSettingsButton');
+    this.startExportButton = document.getElementById('startExportButton');
 
   } 
 }

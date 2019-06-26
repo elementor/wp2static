@@ -125,11 +125,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function sendWP2StaticAJAX(ajaxAction: string, successCallback: any, failCallback: any) {
-      $(".hiddenActionField").val("wp_static_html_output_ajax");
-      $("#hiddenAJAXAction").val(ajaxAction);
+      adminPage.hiddenActionField.value = "wp_static_html_output_ajax";
+      adminPage.hiddenAJAXAction.value = ajaxAction;
       adminPage.progress.style.display = 'block';
       adminPage.pulsateCSS.style.display = 'block';
 
+      /*
       const data = $(".options-form :input")
         .filter(
           (index, element) => {
@@ -148,6 +149,18 @@ document.addEventListener("DOMContentLoaded", () => {
           url: ajaxurl,
         },
       );
+      */
+
+      const data = new URLSearchParams(
+        new FormData(".options-form")
+      ).toString()
+
+      let request = new XMLHttpRequest();
+      request.open('POST', ajaxurl, true);
+      request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+      request.onload = successCallback;
+      request.onerror = failCallback;
+      request.send(data);
     }
 
     function saveOptionsSuccessCallback(serverResponse: any) {
@@ -215,6 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
       );
     }
 
+    /*
     $(document).on(
       "click",
       "#detectEverythingButton",
@@ -223,12 +237,36 @@ document.addEventListener("DOMContentLoaded", () => {
         $('#detectionOptionsTable input[type="checkbox"]').attr("checked", 1);
       },
     );
+    */
 
-    $(document).on(
-      "click",
-      "#deleteCrawlCache",
-      (evt) => {
-        evt.preventDefault();
+    adminPage.detectEverythingButton.addEventListener(
+      'click',
+      (event) => {
+        event.preventDefault();
+        var inputs = adminPage.detectionOptionsInputs;
+
+        for( var i = 0; i < inputs.length; i++ ) {
+            inputs[i].setAttribute("checked", 1);   
+        }
+      }
+    );
+
+    adminPage.detectNothingButton.addEventListener(
+      'click',
+      (event) => {
+        event.preventDefault();
+        var inputs = adminPage.detectionOptionsInputs;
+
+        for( var i = 0; i < inputs.length; i++ ) {
+            inputs[i].setAttribute("checked", 0);   
+        }
+      }
+    );
+
+    adminPage.deleteCrawlCache.addEventListener(
+      'click',
+      (event) => {
+        event.preventDefault();
         adminPage.currentAction.innerHTML("Deleting Crawl Cache...");
 
         sendWP2StaticAJAX(
@@ -236,25 +274,15 @@ document.addEventListener("DOMContentLoaded", () => {
           deleteCrawlCacheSuccessCallback,
           deleteCrawlCacheFailCallback,
         );
-      },
+      }
     );
 
-    $(document).on(
-      "click",
-      "#detectNothingButton",
-      (evt) => {
-        evt.preventDefault();
-        $('#detectionOptionsTable input[type="checkbox"]').attr("checked", 0);
-      },
-    );
-
-    $(document).on(
-      "click",
-      "#downloadExportLogButton",
-      (evt) => {
-        evt.preventDefault();
+    adminPage.downloadExportLogButton.addEventListener(
+      'click',
+      (event) => {
+        event.preventDefault();
         downloadExportLog();
-      },
+      }
     );
 
     function ajaxErrorHandler() {
@@ -265,10 +293,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       adminPage.currentAction.innerHTML(failedDeployMessage);
       adminPage.pulsateCSS.style.display = 'none';
-      $("#startExportButton").prop("disabled", false);
-      $(".saveSettingsButton").prop("disabled", false);
-      $(".resetDefaultSettingsButton").prop("disabled", false);
-      $(".cancelExportButton").hide();
+      adminPage.cancelExportButton.style.display = 'none';
+      adminPage.resetDefaultSettingsButton.setAttribute("disabled", false);
+      adminPage.saveSettingsButton.setAttribute("disabled", false);
+      adminPage.startExportButton.setAttribute("disabled", false);
     }
 
     function startExportSuccessCallback(serverResponse: any) {
@@ -282,7 +310,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     function startExport() {
-      // start timer
       wp2staticGlobals.exportCommenceTime = +new Date();
       wp2staticGlobals.startTimer();
 
@@ -291,12 +318,11 @@ document.addEventListener("DOMContentLoaded", () => {
       if (validationErrors !== "") {
         alert(validationErrors);
 
-        // TODO: place in function that resets any in progress counters, etc
         adminPage.progress.style.display = 'none';
-        $("#startExportButton").prop("disabled", false);
-        $(".saveSettingsButton").prop("disabled", false);
-        $(".resetDefaultSettingsButton").prop("disabled", false);
-        $(".cancelExportButton").hide();
+        adminPage.cancelExportButton.style.display = 'none';
+        adminPage.resetDefaultSettingsButton.setAttribute("disabled", false);
+        adminPage.saveSettingsButton.setAttribute("disabled", false);
+        adminPage.startExportButton.setAttribute("disabled", false);
 
         return false;
       }
