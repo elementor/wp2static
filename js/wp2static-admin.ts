@@ -819,14 +819,6 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
     );
     */
 
-    adminPage.saveAndReloadButton.addEventListener(
-      "click",
-      (event) => {
-        event.preventDefault();
-        saveOptions();
-      },
-    );
-
     // guard against selected option for add-on not currently activated
     if (document.getElementById("#baseUrl-" + wp2staticGlobals.currentDeploymentMethod).value === undefined) {
       wp2staticGlobals.currentDeploymentMethod = "folder";

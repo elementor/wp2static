@@ -140,7 +140,7 @@ $tpl = new \WP2Static\TemplateHelper();
 
     <span class="submit" style="display:none;">
         <?php wp_nonce_field( $view['onceAction'] ); ?>
-      <input id="formActionHiddenField" class="hiddenActionField" type="hidden" name="action" value="wp_static_html_output_ajax" />
+      <input id="hiddenActionField" type="hidden" name="action" value="wp_static_html_output_ajax" />
       <input id="basedir" type="hidden" name="basedir" value="" />
       <input id="subdirectory" type="hidden" name="subdirectory" value="<?php echo $view['site_info']->subdirectory; ?>" />
       <input id="hiddenNonceField" type="hidden" name="nonce" value="<?php echo $ajax_nonce; ?>" />
@@ -167,13 +167,13 @@ $tpl = new \WP2Static\TemplateHelper();
               <button id="deployToProductionButton" class="wp2static-btn blue" disabled>
                 <?php echo __( 'Deploy to Production', 'static-html-output-plugin' ); ?>
               </button>
-              <button class="wp2static-btn saveSettingsButton" disabled>
+              <button id="saveSettingsButton" class="wp2static-btn" disabled>
                 <?php echo __( 'Save Current Options', 'static-html-output-plugin' ); ?>
               </button>
-              <button class="wp2static-btn resetDefaultSettingsButton" disabled>
+              <button id="resetDefaultSettingsButton" class="wp2static-btn" disabled>
                 <?php echo __( 'Reset to Default Settings', 'static-html-output-plugin' ); ?>
               </button>
-              <button style="display:none;" class="wp2static-btn cancelExportButton">
+              <button style="display:none;" id="cancelExportButton" class="wp2static-btn">
                 <?php echo __( 'Cancel Export', 'static-html-output-plugin' ); ?>
                 </button>
 
@@ -200,7 +200,7 @@ $tpl = new \WP2Static\TemplateHelper();
 
                 <div id="progress-container">
                   <div id="progress">
-                    <div class="pulsate-css"></div>
+                    <div id="pulsate-css"></div>
                     <div id="current_action">
                         <?php echo __( 'Starting Export', 'static-html-output-plugin' ); ?>
                     </div>

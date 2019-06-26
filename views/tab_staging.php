@@ -6,7 +6,7 @@
   </div>
 
   <div class="content">
-    <select class="selected_deployment_method" name="selected_deployment_option">
+    <select id="selected_deployment_method_staging" name="selected_deployment_option">
         <?php generateDeploymentMethodOptions(); ?>
     </select>
    </div>

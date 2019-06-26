@@ -223,7 +223,7 @@ div.postbox div.inside {
     100% {-webkit-transform: scale(1.2, 1.2); opacity: 0.0;}
 }
 
-.pulsate-css {
+#pulsate-css {
     animation: pulsate 1s ease-out;
     animation-iteration-count: infinite;
     opacity: 0.0;
@@ -256,12 +256,12 @@ div.postbox div.inside {
   background-color: #32B741 !important;
 }
 
-.cancelExportButton {
+#cancelExportButton {
   background-color: #F5B958;
   color: #fff;
 }
 
-.cancelExportButton:hover, .cancelExportButton:focus {
+#cancelExportButton:hover, #cancelExportButton:focus {
   background-color: #E7A73F;
 }
 
