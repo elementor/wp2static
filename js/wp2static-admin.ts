@@ -244,8 +244,8 @@ document.addEventListener("DOMContentLoaded", () => {
         event.preventDefault();
         const inputs = adminPage.detectionOptionsInputs;
 
-        for ( let i = 0; i < inputs.length; i++ ) {
-            inputs[i].setAttribute("checked", 1);
+        for ( const input of inputs ) {
+            input.setAttribute("checked", 1);
         }
       },
     );
@@ -256,8 +256,8 @@ document.addEventListener("DOMContentLoaded", () => {
         event.preventDefault();
         const inputs = adminPage.detectionOptionsInputs;
 
-        for ( let i = 0; i < inputs.length; i++ ) {
-            inputs[i].setAttribute("checked", 0);
+        for ( const input of inputs ) {
+            input.setAttribute("checked", 0);
         }
       },
     );
@@ -351,18 +351,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function getValidationErrors() {
       // check for when targetFolder is showing (plugin reset state)
-      if (adminPage.targetFolder.style.display = "block") &&
+      if ((adminPage.targetFolder.style.display === "block") &&
             (adminPage.targetFolder.value === "")) {
         validationErrors += "Target folder may not be empty. Please adjust your settings.";
       }
 
       if ((adminPage.baseUrl.value === undefined ||
             adminPage.baseUrl.value === "") &&
-            ! adminPage.allowOfflineUsage.getAttribute('checked')) {
+            ! adminPage.allowOfflineUsage.getAttribute("checked")) {
         validationErrors += "Please set the Base URL field to the address you will host your static site.\n";
       }
 
-      if (!isUrl(String(adminPage.baseUrl.value)) && ! adminPage.allowOfflineUsage.getAttribute('checked')) {
+      if (!isUrl(String(adminPage.baseUrl.value)) && ! adminPage.allowOfflineUsage.getAttribute("checked")) {
         // TODO: testing / URL as base
         if (adminPage.baseUrl.value !== "/") {
           validationErrors += "Please set the Base URL field to a valid URL, ie http://mystaticsite.com.\n";
@@ -433,7 +433,7 @@ document.addEventListener("DOMContentLoaded", () => {
             element.style.display = "none";
             // TODO: ensure any wp2static notices are not mistakenly
             // wp2static-notice
-        }
+        },
       );
     }
 
@@ -487,7 +487,7 @@ document.addEventListener("DOMContentLoaded", () => {
         adminPage.settingsBlocks,
         (element, index) => {
             element.style.display = "none";
-        }
+        },
       );
 
       document.getElementByClass("." + selectedDeploymentMethod + "_settings_block").style.display = "none";
@@ -576,7 +576,7 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
           } else {
             element.classList.remove("nav-tab-active");
           }
-        }
+        },
       );
 
       // hide/show the tab content
@@ -635,7 +635,7 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
             changeTab(event.currentTarget.textContent);
           },
         );
-      }
+      },
     );
 
     // prevent submitting main form outside expected use
@@ -651,7 +651,7 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
       (event) => {
         event.preventDefault();
 
-        let supportRequest = adminPage.sendSupportRequestContent.value;
+        const supportRequest = adminPage.sendSupportRequestContent.value;
 
         if (adminPage.sendSupportRequestIncludeLog.getAttribute("checked")) {
           /*
@@ -692,11 +692,6 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
         request.onload = sendSupportSuccessCallback;
         request.onerror = sendSupportFailCallback;
         request.send(postData);
-      },
-    );
-
-    $("#startExportButton").click(
-      (event) => {
       },
     );
 
