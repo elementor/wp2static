@@ -1,6 +1,5 @@
 declare var wp2staticString: any;
 declare var ajaxurl: string;
-import $ from "jquery";
 import { WP2StaticAJAX } from "./WP2StaticAJAX";
 import { WP2StaticGlobals } from "./WP2StaticGlobals";
 
@@ -16,6 +15,7 @@ interface FormProcessor {
 // from browser.
 // within this entrypoint, access directly. From other classes, this., from
 // browser WP2Static.wp2staticGlobals
+export const adminPage = new WP2StaticAdminPageModel();
 export const wp2staticGlobals = new WP2StaticGlobals();
 export const wp2staticAJAX = new WP2StaticAJAX( wp2staticGlobals );
 
@@ -77,14 +77,13 @@ const protocolAndDomainRE = /^(?:\w+:)?\/\/(\S+)$/;
 const localhostDomainRE = /^localhost[:?\d]*(?:[^:?\d]\S*)?$/;
 const nonLocalhostDomainRE = /^[^\s.]+\.\S{2,}$/;
 
-// ignore shadowing warning for $
-/* tslint:disable */
-jQuery(($) => {
-/* tslint:enable */
+document.addEventListener("DOMContentLoaded", () => {
     function generateFileListSuccessCallback(serverResponse: any) {
       if (!serverResponse) {
-        $("#current_action").html(`Failed to generate initial file list.
+
+        adminPage.currentAction.innerHTML(`Failed to generate initial file list.
  Please <a href="https://docs.wp2static.com" target="_blank">contact support</a>`);
+
         $(".pulsate-css").hide();
       } else {
         $("#initial_crawl_list_loader").hide();
@@ -96,7 +95,7 @@ jQuery(($) => {
         $("#startExportButton").prop("disabled", false);
         $(".saveSettingsButton").prop("disabled", false);
         $(".resetDefaultSettingsButton").prop("disabled", false);
-        $("#current_action").html(`${serverResponse} URLs were detected for
+        adminPage.currentAction.innerHTML(`${serverResponse} URLs were detected for
  initial crawl list. <a href="#" id="GoToDetectionTabButton">Adjust detection
  via the URL Detection tab.</a>`);
         $(".pulsate-css").hide();
@@ -108,7 +107,7 @@ jQuery(($) => {
  Please check your permissions to the WordPress upload directory or check your
  Export Log in case of more info.`;
 
-      $("#current_action").html(failedDeployMessage);
+      adminPage.currentAction.innerHTML(failedDeployMessage);
       $(".pulsate-css").hide();
       $("#startExportButton").prop("disabled", true);
       $(".saveSettingsButton").prop("disabled", false);
@@ -119,7 +118,7 @@ jQuery(($) => {
 
     function prepareInitialFileList() {
       wp2staticGlobals.statusText = "Analyzing site... this may take a few minutes (but it's worth it!)";
-      $("#current_action").html(wp2staticGlobals.statusText);
+      adminPage.currentAction.innerHTML(wp2staticGlobals.statusText);
 
       sendWP2StaticAJAX(
         "generate_filelist_preview",
@@ -167,7 +166,7 @@ jQuery(($) => {
     }
 
     function saveOptions() {
-      $("#current_action").html("Saving options");
+      adminPage.currentAction.innerHTML("Saving options");
       sendWP2StaticAJAX(
         "save_options",
         saveOptionsSuccessCallback,
@@ -178,11 +177,11 @@ jQuery(($) => {
 
     function downloadExportLogSuccessCallback(serverResponse: any) {
       if (!serverResponse) {
-        $("#current_action").html(`Failed to download Export Log
+        adminPage.currentAction.innerHTML(`Failed to download Export Log
  <a id="downloadExportLogButton" href="#">try again</a>`);
         $(".pulsate-css").hide();
       } else {
-        $("#current_action").html(`Download <a href="${serverResponse}">
+        adminPage.currentAction.innerHTML(`Download <a href="${serverResponse}">
  ${serverResponse}/a>`);
         $(".pulsate-css").hide();
       }
@@ -190,27 +189,27 @@ jQuery(($) => {
 
     function downloadExportLogFailCallback(serverResponse: any) {
       $(".pulsate-css").hide();
-      $("#current_action").html(`Failed to download Export Log
+      adminPage.currentAction.innerHTML(`Failed to download Export Log
  <a id="downloadExportLogButton" href="#">try again</a>`);
     }
 
     function deleteCrawlCacheSuccessCallback(serverResponse: any) {
       if (!serverResponse) {
         $(".pulsate-css").hide();
-        $("#current_action").html("Failed to delete Crawl Cache.");
+        adminPage.currentAction.innerHTML("Failed to delete Crawl Cache.");
       } else {
-        $("#current_action").html("Crawl Cache successfully deleted.");
+        adminPage.currentAction.innerHTML("Crawl Cache successfully deleted.");
         $(".pulsate-css").hide();
       }
     }
 
     function deleteCrawlCacheFailCallback(serverResponse: any) {
       $(".pulsate-css").hide();
-      $("#current_action").html("Failed to delete Crawl Cache.");
+      adminPage.currentAction.innerHTML("Failed to delete Crawl Cache.");
     }
 
     function downloadExportLog() {
-      $("#current_action").html("Downloading Export Log...");
+      adminPage.currentAction.innerHTML("Downloading Export Log...");
 
       sendWP2StaticAJAX(
         "download_export_log",
@@ -233,7 +232,7 @@ jQuery(($) => {
       "#deleteCrawlCache",
       (evt) => {
         evt.preventDefault();
-        $("#current_action").html("Deleting Crawl Cache...");
+        adminPage.currentAction.innerHTML("Deleting Crawl Cache...");
 
         sendWP2StaticAJAX(
           "delete_crawl_cache",
@@ -267,7 +266,7 @@ jQuery(($) => {
       const failedDeployMessage = 'Failed during "' + wp2staticGlobals.statusText +
               '", <button id="downloadExportLogButton">Download export log</button>';
 
-      $("#current_action").html(failedDeployMessage);
+      adminPage.currentAction.innerHTML(failedDeployMessage);
       $(".pulsate-css").hide();
       $("#startExportButton").prop("disabled", false);
       $(".saveSettingsButton").prop("disabled", false);
@@ -305,7 +304,7 @@ jQuery(($) => {
         return false;
       }
 
-      $("#current_action").html("Starting export...");
+      adminPage.currentAction.innerHTML("Starting export...");
 
       // reset export targets to avoid having left-overs from a failed run
       wp2staticGlobals.exportTargets = [];

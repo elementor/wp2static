@@ -1,5 +1,3 @@
-import $ from "jquery";
-
 import { WP2StaticAJAX } from "./WP2StaticAJAX";
 import { WP2StaticGlobals } from "./WP2StaticGlobals";
 

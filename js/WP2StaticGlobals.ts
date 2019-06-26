@@ -1,5 +1,3 @@
-import $ from "jquery";
-
 export class WP2StaticGlobals {
 
   aProperty: string = 'default value'; 

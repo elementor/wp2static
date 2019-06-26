@@ -1,7 +1,5 @@
 declare var ajaxurl: string;
 
-import $ from "jquery";
-
 import { WP2StaticProcessExports } from "./WP2StaticProcessExports";
 import { WP2StaticGlobals } from "./WP2StaticGlobals";
 

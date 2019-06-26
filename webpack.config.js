@@ -20,15 +20,6 @@ module.exports = {
             }
         ]
     },
-    plugins: [
-        new webpack.ProvidePlugin({
-            $: 'jquery/src/jquery',
-            jquery: 'jquery/src/jquery'
-        })
-    ],
     devtool: 'source-map',
-    externals: {
-      jquery: 'jQuery'
-    },
     mode: 'none'
 };

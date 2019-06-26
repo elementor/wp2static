@@ -20,7 +20,6 @@
   },
   "homepage": "https://github.com/leonstafford/wp2static#readme",
   "devDependencies": {
-    "@types/jquery": "^3.3.30",
     "ts-loader": "^6.0.4",
     "tslint": "^5.18.0",
     "typescript": "^3.5.2",
