@@ -80,13 +80,13 @@ const nonLocalhostDomainRE = /^[^\s.]+\.\S{2,}$/;
 document.addEventListener("DOMContentLoaded", () => {
     function generateFileListSuccessCallback(serverResponse: any) {
       if (!serverResponse) {
-        adminPage.pulsateCSS.style.display = 'none';
+        adminPage.pulsateCSS.style.display = "none";
         adminPage.currentAction.innerHTML(`Failed to generate initial file list.
  Please <a href="https://docs.wp2static.com" target="_blank">contact support</a>`);
       } else {
-        adminPage.initialCrawlListLoader.style.display = 'none';
-        adminPage.previewInitialCrawlListButton.style.display = 'block';
-        adminPage.pulsateCSS.style.display = 'none';
+        adminPage.initialCrawlListLoader.style.display = "none";
+        adminPage.previewInitialCrawlListButton.style.display = "block";
+        adminPage.pulsateCSS.style.display = "none";
         adminPage.resetDefaultSettingsButton.setAttribute("disabled", false);
         adminPage.saveSettingsButton.setAttribute("disabled", false);
         adminPage.startExportButton.setAttribute("disabled", false);
@@ -105,12 +105,12 @@ document.addEventListener("DOMContentLoaded", () => {
  Export Log in case of more info.`;
 
       adminPage.currentAction.innerHTML(failedDeployMessage);
-      adminPage.pulsateCSS.style.display = 'none';
-      adminPage.cancelExportButton.style.display = 'none';
+      adminPage.pulsateCSS.style.display = "none";
+      adminPage.cancelExportButton.style.display = "none";
       adminPage.resetDefaultSettingsButton.setAttribute("disabled", false);
       adminPage.saveSettingsButton.setAttribute("disabled", false);
       adminPage.startExportButton.setAttribute("disabled", true);
-      adminPage.initialCrawlListLoader.style.display = 'none';
+      adminPage.initialCrawlListLoader.style.display = "none";
     }
 
     function prepareInitialFileList() {
@@ -127,8 +127,8 @@ document.addEventListener("DOMContentLoaded", () => {
     function sendWP2StaticAJAX(ajaxAction: string, successCallback: any, failCallback: any) {
       adminPage.hiddenActionField.value = "wp_static_html_output_ajax";
       adminPage.hiddenAJAXAction.value = ajaxAction;
-      adminPage.progress.style.display = 'block';
-      adminPage.pulsateCSS.style.display = 'block';
+      adminPage.progress.style.display = "block";
+      adminPage.pulsateCSS.style.display = "block";
 
       /*
       const data = $(".options-form :input")
@@ -152,25 +152,25 @@ document.addEventListener("DOMContentLoaded", () => {
       */
 
       const data = new URLSearchParams(
-        new FormData(".options-form")
-      ).toString()
+        new FormData(".options-form"),
+      ).toString();
 
-      let request = new XMLHttpRequest();
-      request.open('POST', ajaxurl, true);
-      request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+      const request = new XMLHttpRequest();
+      request.open("POST", ajaxurl, true);
+      request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
       request.onload = successCallback;
       request.onerror = failCallback;
       request.send(data);
     }
 
     function saveOptionsSuccessCallback(serverResponse: any) {
-      adminPage.progress.style.display = 'none';
+      adminPage.progress.style.display = "none";
 
       location.reload();
     }
 
     function saveOptionsFailCallback(serverResponse: any) {
-      adminPage.progress.style.display = 'none';
+      adminPage.progress.style.display = "none";
 
       location.reload();
     }
@@ -189,32 +189,32 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!serverResponse) {
         adminPage.currentAction.innerHTML(`Failed to download Export Log
  <a id="downloadExportLogButton" href="#">try again</a>`);
-        adminPage.pulsateCSS.style.display = 'none';
+        adminPage.pulsateCSS.style.display = "none";
       } else {
         adminPage.currentAction.innerHTML(`Download <a href="${serverResponse}">
  ${serverResponse}/a>`);
-        adminPage.pulsateCSS.style.display = 'none';
+        adminPage.pulsateCSS.style.display = "none";
       }
     }
 
     function downloadExportLogFailCallback(serverResponse: any) {
-      adminPage.pulsateCSS.style.display = 'none';
+      adminPage.pulsateCSS.style.display = "none";
       adminPage.currentAction.innerHTML(`Failed to download Export Log
  <a id="downloadExportLogButton" href="#">try again</a>`);
     }
 
     function deleteCrawlCacheSuccessCallback(serverResponse: any) {
       if (!serverResponse) {
-        adminPage.pulsateCSS.style.display = 'none';
+        adminPage.pulsateCSS.style.display = "none";
         adminPage.currentAction.innerHTML("Failed to delete Crawl Cache.");
       } else {
         adminPage.currentAction.innerHTML("Crawl Cache successfully deleted.");
-        adminPage.pulsateCSS.style.display = 'none';
+        adminPage.pulsateCSS.style.display = "none";
       }
     }
 
     function deleteCrawlCacheFailCallback(serverResponse: any) {
-      adminPage.pulsateCSS.style.display = 'none';
+      adminPage.pulsateCSS.style.display = "none";
       adminPage.currentAction.innerHTML("Failed to delete Crawl Cache.");
     }
 
@@ -240,31 +240,31 @@ document.addEventListener("DOMContentLoaded", () => {
     */
 
     adminPage.detectEverythingButton.addEventListener(
-      'click',
+      "click",
       (event) => {
         event.preventDefault();
-        var inputs = adminPage.detectionOptionsInputs;
+        const inputs = adminPage.detectionOptionsInputs;
 
-        for( var i = 0; i < inputs.length; i++ ) {
-            inputs[i].setAttribute("checked", 1);   
+        for ( let i = 0; i < inputs.length; i++ ) {
+            inputs[i].setAttribute("checked", 1);
         }
-      }
+      },
     );
 
     adminPage.detectNothingButton.addEventListener(
-      'click',
+      "click",
       (event) => {
         event.preventDefault();
-        var inputs = adminPage.detectionOptionsInputs;
+        const inputs = adminPage.detectionOptionsInputs;
 
-        for( var i = 0; i < inputs.length; i++ ) {
-            inputs[i].setAttribute("checked", 0);   
+        for ( let i = 0; i < inputs.length; i++ ) {
+            inputs[i].setAttribute("checked", 0);
         }
-      }
+      },
     );
 
     adminPage.deleteCrawlCache.addEventListener(
-      'click',
+      "click",
       (event) => {
         event.preventDefault();
         adminPage.currentAction.innerHTML("Deleting Crawl Cache...");
@@ -274,15 +274,15 @@ document.addEventListener("DOMContentLoaded", () => {
           deleteCrawlCacheSuccessCallback,
           deleteCrawlCacheFailCallback,
         );
-      }
+      },
     );
 
     adminPage.downloadExportLogButton.addEventListener(
-      'click',
+      "click",
       (event) => {
         event.preventDefault();
         downloadExportLog();
-      }
+      },
     );
 
     function ajaxErrorHandler() {
@@ -292,8 +292,8 @@ document.addEventListener("DOMContentLoaded", () => {
               '", <button id="downloadExportLogButton">Download export log</button>';
 
       adminPage.currentAction.innerHTML(failedDeployMessage);
-      adminPage.pulsateCSS.style.display = 'none';
-      adminPage.cancelExportButton.style.display = 'none';
+      adminPage.pulsateCSS.style.display = "none";
+      adminPage.cancelExportButton.style.display = "none";
       adminPage.resetDefaultSettingsButton.setAttribute("disabled", false);
       adminPage.saveSettingsButton.setAttribute("disabled", false);
       adminPage.startExportButton.setAttribute("disabled", false);
@@ -318,8 +318,8 @@ document.addEventListener("DOMContentLoaded", () => {
       if (validationErrors !== "") {
         alert(validationErrors);
 
-        adminPage.progress.style.display = 'none';
-        adminPage.cancelExportButton.style.display = 'none';
+        adminPage.progress.style.display = "none";
+        adminPage.cancelExportButton.style.display = "none";
         adminPage.resetDefaultSettingsButton.setAttribute("disabled", false);
         adminPage.saveSettingsButton.setAttribute("disabled", false);
         adminPage.startExportButton.setAttribute("disabled", false);
@@ -829,14 +829,14 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
       }
 
       spinner.hide();
-      adminPage.pulsateCSS.style.display = 'none';
+      adminPage.pulsateCSS.style.display = "none";
     }
 
     function deleteDeployCacheFailCallback(serverResponse: any) {
       alert("FAIL: Unable to delete deploy cache");
 
       spinner.hide();
-      adminPage.pulsateCSS.style.display = 'none';
+      adminPage.pulsateCSS.style.display = "none";
     }
 
     $(".wrap").on(
@@ -863,13 +863,13 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
       }
 
       spinner.hide();
-      adminPage.pulsateCSS.style.display = 'none';
+      adminPage.pulsateCSS.style.display = "none";
     }
 
     function testDeploymentFailCallback(serverResponse: any) {
       alert("FAIL: Unable to complete test upload to " + wp2staticGlobals.currentDeploymentMethod);
       spinner.hide();
-      adminPage.pulsateCSS.style.display = 'none';
+      adminPage.pulsateCSS.style.display = "none";
     }
 
     $(".wrap").on(
