@@ -59,7 +59,6 @@ const formProcessors: FormProcessor[] = [
 ];
 
 let validationErrors = "";
-let spinner: any;
 
 wp2staticGlobals.siteInfo = JSON.parse(wp2staticString.siteInfo);
 
@@ -81,8 +80,8 @@ document.addEventListener("DOMContentLoaded", () => {
     function generateFileListSuccessCallback(serverResponse: any) {
       if (!serverResponse) {
         adminPage.pulsateCSS.style.display = "none";
-        adminPage.currentAction.innerHTML(`Failed to generate initial file list.
- Please <a href="https://docs.wp2static.com" target="_blank">contact support</a>`);
+        adminPage.currentAction.innerHTML = `Failed to generate initial file list.
+ Please <a href="https://docs.wp2static.com" target="_blank">contact support</a>`;
       } else {
         adminPage.initialCrawlListLoader.style.display = "none";
         adminPage.previewInitialCrawlListButton.style.display = "block";
@@ -90,9 +89,9 @@ document.addEventListener("DOMContentLoaded", () => {
         adminPage.resetDefaultSettingsButton.setAttribute("disabled", false);
         adminPage.saveSettingsButton.setAttribute("disabled", false);
         adminPage.startExportButton.setAttribute("disabled", false);
-        adminPage.currentAction.innerHTML(`${serverResponse} URLs were detected for
+        adminPage.currentAction.innerHTML = `${serverResponse} URLs were detected for
  initial crawl list. <a href="#" id="GoToDetectionTabButton">Adjust detection
- via the URL Detection tab.</a>`);
+ via the URL Detection tab.</a>`;
         adminPage.initialCrawlListCount.textContent = `${serverResponse} URLs were
  detected on your site that will be used to initiate the crawl.
  Other URLs will be discovered while crawling.`;
@@ -104,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
  Please check your permissions to the WordPress upload directory or check your
  Export Log in case of more info.`;
 
-      adminPage.currentAction.innerHTML(failedDeployMessage);
+      adminPage.currentAction.innerHTML = failedDeployMessage;
       adminPage.pulsateCSS.style.display = "none";
       adminPage.cancelExportButton.style.display = "none";
       adminPage.resetDefaultSettingsButton.setAttribute("disabled", false);
@@ -115,7 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function prepareInitialFileList() {
       wp2staticGlobals.statusText = "Analyzing site... this may take a few minutes (but it's worth it!)";
-      adminPage.currentAction.innerHTML(wp2staticGlobals.statusText);
+      adminPage.currentAction.innerHTML = wp2staticGlobals.statusText;
 
       sendWP2StaticAJAX(
         "generate_filelist_preview",
@@ -176,7 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function saveOptions() {
-      adminPage.currentAction.innerHTML("Saving options");
+      adminPage.currentAction.innerHTML = "Saving options";
       sendWP2StaticAJAX(
         "save_options",
         saveOptionsSuccessCallback,
@@ -187,39 +186,39 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function downloadExportLogSuccessCallback(serverResponse: any) {
       if (!serverResponse) {
-        adminPage.currentAction.innerHTML(`Failed to download Export Log
- <a id="downloadExportLogButton" href="#">try again</a>`);
+        adminPage.currentAction.innerHTML = `Failed to download Export Log
+ <a id="downloadExportLogButton" href="#">try again</a>`;
         adminPage.pulsateCSS.style.display = "none";
       } else {
-        adminPage.currentAction.innerHTML(`Download <a href="${serverResponse}">
- ${serverResponse}/a>`);
+        adminPage.currentAction.innerHTML = `Download <a href="${serverResponse}">
+ ${serverResponse}/a>`;
         adminPage.pulsateCSS.style.display = "none";
       }
     }
 
     function downloadExportLogFailCallback(serverResponse: any) {
       adminPage.pulsateCSS.style.display = "none";
-      adminPage.currentAction.innerHTML(`Failed to download Export Log
- <a id="downloadExportLogButton" href="#">try again</a>`);
+      adminPage.currentAction.innerHTML = `Failed to download Export Log
+ <a id="downloadExportLogButton" href="#">try again</a>`;
     }
 
     function deleteCrawlCacheSuccessCallback(serverResponse: any) {
       if (!serverResponse) {
         adminPage.pulsateCSS.style.display = "none";
-        adminPage.currentAction.innerHTML("Failed to delete Crawl Cache.");
+        adminPage.currentAction.innerHTML = "Failed to delete Crawl Cache.";
       } else {
-        adminPage.currentAction.innerHTML("Crawl Cache successfully deleted.");
+        adminPage.currentAction.innerHTML = "Crawl Cache successfully deleted.";
         adminPage.pulsateCSS.style.display = "none";
       }
     }
 
     function deleteCrawlCacheFailCallback(serverResponse: any) {
       adminPage.pulsateCSS.style.display = "none";
-      adminPage.currentAction.innerHTML("Failed to delete Crawl Cache.");
+      adminPage.currentAction.innerHTML = "Failed to delete Crawl Cache.";
     }
 
     function downloadExportLog() {
-      adminPage.currentAction.innerHTML("Downloading Export Log...");
+      adminPage.currentAction.innerHTML = "Downloading Export Log...";
 
       sendWP2StaticAJAX(
         "download_export_log",
@@ -267,7 +266,7 @@ document.addEventListener("DOMContentLoaded", () => {
       "click",
       (event) => {
         event.preventDefault();
-        adminPage.currentAction.innerHTML("Deleting Crawl Cache...");
+        adminPage.currentAction.innerHTML = "Deleting Crawl Cache...";
 
         sendWP2StaticAJAX(
           "delete_crawl_cache",
@@ -291,7 +290,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const failedDeployMessage = 'Failed during "' + wp2staticGlobals.statusText +
               '", <button id="downloadExportLogButton">Download export log</button>';
 
-      adminPage.currentAction.innerHTML(failedDeployMessage);
+      adminPage.currentAction.innerHTML = failedDeployMessage;
       adminPage.pulsateCSS.style.display = "none";
       adminPage.cancelExportButton.style.display = "none";
       adminPage.resetDefaultSettingsButton.setAttribute("disabled", false);
@@ -327,7 +326,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return false;
       }
 
-      adminPage.currentAction.innerHTML("Starting export...");
+      adminPage.currentAction.innerHTML = "Starting export...";
 
       // reset export targets to avoid having left-overs from a failed run
       wp2staticGlobals.exportTargets = [];
@@ -352,20 +351,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function getValidationErrors() {
       // check for when targetFolder is showing (plugin reset state)
-      if ($("#targetFolder").is(":visible") &&
-            ($("#targetFolder").val() === "")) {
+      if (adminPage.targetFolder.style.display = "block") &&
+            (adminPage.targetFolder.value === "")) {
         validationErrors += "Target folder may not be empty. Please adjust your settings.";
       }
 
-      if (($("#baseUrl").val() === undefined ||
-            $("#baseUrl").val() === "") &&
-            !$("#allowOfflineUsage").is(":checked")) {
+      if ((adminPage.baseUrl.value === undefined ||
+            adminPage.baseUrl.value === "") &&
+            ! adminPage.allowOfflineUsage.getAttribute('checked')) {
         validationErrors += "Please set the Base URL field to the address you will host your static site.\n";
       }
 
-      if (!isUrl(String($("#baseUrl").val())) && !$("#allowOfflineUsage").is(":checked")) {
+      if (!isUrl(String(adminPage.baseUrl.value)) && ! adminPage.allowOfflineUsage.getAttribute('checked')) {
         // TODO: testing / URL as base
-        if ($("#baseUrl").val() !== "/") {
+        if (adminPage.baseUrl.value !== "/") {
           validationErrors += "Please set the Base URL field to a valid URL, ie http://mystaticsite.com.\n";
         }
       }
@@ -387,7 +386,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function validateRepoField(repoField: any) {
-      const repo: string = String($("#" + repoField.field + "").val());
+      const repo: string = String(document.getElementById("#" + repoField.field + "").value);
 
       if (repo !== "") {
         if (repo.split("/").length !== 2) {
@@ -399,7 +398,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function validateEmptyFields(requiredFields: any) {
       Object.keys(requiredFields).forEach(
         (key, index) => {
-          if ($("#" + key).val() === "") {
+          if (document.getElementById("#" + key).value === "") {
             validationErrors += requiredFields[key] + "\n";
           }
         },
@@ -428,15 +427,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function hideOtherVendorMessages() {
-      const notices = $(".update-nag, .updated, .error, .is-dismissible, .elementor-message");
-
-      $.each(
-        notices,
-        (index, element) => {
-          if (!$(element).hasClass("wp2static-notice")) {
-            $(element).hide();
-          }
-        },
+      Array.prototype.forEach.call(
+        adminPage.vendorNotices,
+        (element, index) => {
+            element.style.display = "none";
+            // TODO: ensure any wp2static notices are not mistakenly
+            // wp2static-notice
+        }
       );
     }
 
@@ -445,7 +442,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const formProcessor: FormProcessor = formProcessors[fp];
 
-        $("#form_processor_description").text(formProcessor.description);
+        adminPage.formProcessorDescription.textContent = formProcessor.description;
 
         const website = formProcessor.website;
 
@@ -453,65 +450,47 @@ document.addEventListener("DOMContentLoaded", () => {
         websiteLink.setAttribute("href", website);
         websiteLink.innerHTML = "Visit " + formProcessor.name;
 
-        $("#form_processor_website").html(websiteLink);
-        $("#form_processor_endpoint").attr("placeholder", formProcessor.placeholder);
+        adminPage.formProcessorWebsite.innerHTML = websiteLink;
+        adminPage.formProcessorEndpoint.setAttribute("placeholder", formProcessor.placeholder);
       } else {
-        $("#form_processor_description").text("");
-        $("#form_processor_website").html("");
-        $("#form_processor_endpoint").attr("placeholder", "Form endpoint");
+        adminPage.formProcessorDescription.textContent = "";
+        adminPage.formProcessorWebsite.innerHTML = "";
+        adminPage.formProcessorEndpoint.setAttribute("placeholder", "Form endpoint");
       }
     }
 
     function populateFormProcessorOptions(fps: FormProcessor[]) {
       fps.forEach( (formProcessor) => {
-        const opt = $("<option>").val(formProcessor.id).text(formProcessor.name);
-        $("#form_processor_select").append(opt);
+        adminPage.formProcessorSelect.options[adminPage.formProcessorSelect.options.length] =
+          new Option(formProcessor.name, formProcessor.id);
       });
     }
 
-    /*
-        TODO: quick win to get the select menu options to behave like the sendViaFTP, etc checkboxes
-        */
-    // TODO: remove this completely?
     function setDeploymentMethod(selectedDeploymentMethod: string) {
-      // hide zip dl link for all
-      $("#downloadZIP").hide();
+      adminPage.downloadZIP.style.display = "none";
       wp2staticGlobals.currentDeploymentMethod = selectedDeploymentMethod;
 
       // set the selected option in case calling this from outside the event handler
-      $(".selected_deployment_method").val(selectedDeploymentMethod);
+      adminPage.selectedDeploymentMethod.value = selectedDeploymentMethod;
     }
 
     function offlineUsageChangeHandler(checkbox: HTMLElement) {
-      if ($(checkbox).is(":checked")) {
-        $("#baseUrl-zip").prop("disabled", true);
+      if (checkbox.getAttribute("checked")) {
+        adminPage.baseUrlZip.setAttribute("disabled", 1);
       } else {
-        $("#baseUrl-zip").prop("disabled", false);
+        adminPage.baseUrlZip.setAttribute("disabled", 0);
       }
     }
 
-    function setExportSettingDetailsVisibility(changedCheckbox: HTMLElement) {
-      const checkboxName = String($(changedCheckbox).attr("name"));
-      const exportOptionName = checkboxName.replace("sendVia", "").toLowerCase();
-      const exportOptionElements = $("." + exportOptionName);
-
-      if ($(changedCheckbox).is(":checked")) {
-        exportOptionElements.show();
-        // unhide all the inputs, the following span and the following br
-      } else {
-        // hide all the inputs, the following span and the following br
-        exportOptionElements.hide();
-      }
-    }
-
-    /*
-        render the information and settings blocks based on the deployment method selected
-        */
     function renderSettingsBlock(selectedDeploymentMethod: string) {
-      // hide non-active deployment methods
-      $('[class$="_settings_block"]').hide();
-      // hide those not selected
-      $("." + selectedDeploymentMethod + "_settings_block").show();
+      Array.prototype.forEach.call(
+        adminPage.settingsBlocks,
+        (element, index) => {
+            element.style.display = "none";
+        }
+      );
+
+      document.getElementByClass("." + selectedDeploymentMethod + "_settings_block").style.display = "none";
     }
 
     function notifyMe() {
@@ -533,7 +512,7 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
             },
           );
 
-          notification.onclick = function() {
+          notification.onclick = () => {
             parent.focus();
             window.focus();
             this.close();
@@ -542,80 +521,33 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
       }
     }
 
-    function loadLogFile() {
-      // display loading icon
-      $("#log_load_progress").show();
-
-      $("#export_log_textarea").attr("disabled", 1);
-
-      // set textarea content to 'Loading log file...'
-      $("#export_log_textarea").html("Loading log file...");
-
-      // load the log file
-      $.get(
-        logFileUrl + "?cacheBuster=" + Date.now(),
-        (data) => {
-          // hide loading icon
-          $("#log_load_progress").hide();
-
-          // set textarea to enabled
-          $("#export_log_textarea").attr("disabled", 0);
-
-          // set textarea content
-          $("#export_log_textarea").html(data);
-        },
-      ).fail(
-        () => {
-          $("#log_load_progress").hide();
-
-          // set textarea to enabled
-          $("#export_log_textarea").attr("disabled", 0);
-
-          // set textarea content
-          $("#export_log_textarea").html("Requested log file not found");
-        },
-      );
-    }
-
     if (Notification.permission !== "granted") {
       if (window.location.protocol === "https:") {
         Notification.requestPermission();
       }
     }
 
-    $('input[type="checkbox"]').change(
-      (event) => {
-        setExportSettingDetailsVisibility(event.currentTarget);
-      },
-    );
-
     // disable zip base url field when offline usage is checked
-    $("#allowOfflineUsage").change(
+    adminPage.allowOfflineUsage.addEventListener(
+      "change",
       (event) => {
         offlineUsageChangeHandler(event.currentTarget);
       },
     );
 
-    // handler when form processor is changed
-    $("#form_processor_select").change(
+    adminPage.formProcessorSelect.addEventListener(
+      "change",
       (event) => {
         setFormProcessor((event.currentTarget as HTMLInputElement).value);
       },
     );
 
-    // handler when deployment method is changed
-    $(".selected_deployment_method").change(
+    adminPage.selectedDeploymentMethod.addEventListener(
+      "change",
       (event) => {
         renderSettingsBlock((event.currentTarget as HTMLInputElement).value);
         setDeploymentMethod((event.currentTarget as HTMLInputElement).value);
         clearProgressAndResults();
-      },
-    );
-
-    // handler when log selector is changed
-    $("#reload_log_button").click(
-      () => {
-        loadLogFile();
       },
     );
 
@@ -626,7 +558,6 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
         automation_settings: "Automation",
         caching_settings: "Caching",
         crawl_settings: "Crawling",
-        export_logs: "Logs",
         form_settings: "Forms",
         help_troubleshooting: "Help",
         processing_settings: "Processing",
@@ -636,88 +567,94 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
         workflow_tab: "Workflow",
       };
 
-      // switch the active tab
-      $.each(
-        $(".nav-tab"),
-        (index, element) => {
-          if ($(element).text() === targetTab) {
-            $(element).addClass("nav-tab-active");
-            $(element).blur();
+      Array.prototype.forEach.call(
+        adminPage.navigationTabs,
+        (element, index) => {
+          if (element.textContent === targetTab) {
+            element.classList.remove("nav-tab-active");
+            element.blur();
           } else {
-            $(element).removeClass("nav-tab-active");
+            element.classList.remove("nav-tab-active");
           }
-        },
+        }
       );
 
       // hide/show the tab content
       for (const key in tabsContentMapping) {
         if (tabsContentMapping.hasOwnProperty(key)) {
           if (tabsContentMapping[key] === targetTab) {
-            $("." + key).show();
-            $("html, body").scrollTop(0);
+            document.getElementByClass("." + key).style.display = "block";
+            document.body.scrollTop(0);
+            document.documentElement.scrollTop(0);
           } else {
-            $("." + key).hide();
+            document.getElementByClass("." + key).style.display = "none";
           }
         }
       }
     }
 
-    $(document).on(
+    adminPage.goToDetectionTabButton.addEventListener(
       "click",
-      "#GoToDetectionTabButton",
-      (evt) => {
-        evt.preventDefault();
+      (event) => {
+        event.preventDefault();
         changeTab("URL Detection");
       },
     );
 
-    $(document).on(
+    adminPage.goToDeployTabButton.addEventListener(
       "click",
-      "#GoToDeployTabButton,#GoToDeployTabLink",
-      (evt) => {
-        evt.preventDefault();
+      (event) => {
+        event.preventDefault();
         changeTab("Deployment");
       },
     );
 
-    // TODO: create action for #GenerateZIPOfflineUse
-    // and #GenerateZIPDeployAnywhere
-
-    $(document).on(
+    adminPage.goToDeployTabLink.addEventListener(
       "click",
-      "#GoToAdvancedTabButton",
-      (evt) => {
-        evt.preventDefault();
+      (event) => {
+        event.preventDefault();
+        changeTab("Deployment");
+      },
+    );
+
+    adminPage.goToAdvancedTabButton.addEventListener(
+      "click",
+      (event) => {
+        event.preventDefault();
         changeTab("Advanced Options");
       },
     );
 
-    $(document).on(
-      "click",
-      ".nav-tab",
-      (evt) => {
-        evt.preventDefault();
-        changeTab($(evt.currentTarget).text());
-      },
+    Array.prototype.forEach.call(
+      adminPage.navigationTabs,
+      (element, index) => {
+        element.addEventListener(
+          "click",
+          (event) => {
+            event.preventDefault();
+            changeTab(event.currentTarget.textContent);
+          },
+        );
+      }
     );
 
-    $(document).on(
+    // prevent submitting main form outside expected use
+    adminPage.generalOptions.addEventListener(
       "submit",
-      "#general-options",
-      (evt) => {
-        evt.preventDefault();
+      (event) => {
+        event.preventDefault();
       },
     );
 
-    $(document).on(
+    adminPage.sendSupportRequestButton.addEventListener(
       "click",
-      "#send_supportRequest",
-      (evt) => {
-        evt.preventDefault();
+      (event) => {
+        event.preventDefault();
 
-        let supportRequest = $("#supportRequestContent").val();
+        let supportRequest = adminPage.sendSupportRequestContent.value;
 
-        if ($("#supportRequestIncludeLog").is(":checked")) {
+        if (adminPage.sendSupportRequestIncludeLog.getAttribute("checked")) {
+          /*
           $.get(
             logFileUrl,
             (data) => {
@@ -741,6 +678,7 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
               );
             },
           );
+          */
         }
 
         const postData = {
@@ -748,32 +686,37 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
           supportRequest,
         };
 
-        $.ajax(
-          {
-            data: postData,
-            dataType: "html",
-            error: sendSupportFailCallback,
-            method: "POST",
-            success: sendSupportSuccessCallback,
-            url: "https://hooks.zapier.com/hooks/catch/4977245/jqj3l4/",
-          },
-        );
+        const request = new XMLHttpRequest();
+        request.open("POST", "https://hooks.zapier.com/hooks/catch/4977245/jqj3l4/", true);
+        request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+        request.onload = sendSupportSuccessCallback;
+        request.onerror = sendSupportFailCallback;
+        request.send(postData);
       },
     );
 
     $("#startExportButton").click(
       (event) => {
+      },
+    );
+
+    adminPage.startExportButton.addEventListener(
+      "click",
+      (event) => {
+        event.preventDefault();
         clearProgressAndResults();
-        $(event.currentTarget).prop("disabled", true);
-        $(".saveSettingsButton").prop("disabled", true);
-        $(".resetDefaultSettingsButton").prop("disabled", true);
-        $(".cancelExportButton").show();
+        adminPage.startExportButton.setAttribute("disabled", 1);
+        adminPage.cancelExportButton.style.display = "block";
+        adminPage.resetDefaultSettingsButton.setAttribute("disabled", 1);
+        adminPage.saveSettingsButton.setAttribute("disabled", 1);
         startExport();
       },
     );
 
-    $(".cancelExportButton").click(
-      () => {
+    adminPage.cancelExportButton.addEventListener(
+      "click",
+      (event) => {
+        event.preventDefault();
         const reallyCancel = confirm("Stop current export and reload page?");
         if (reallyCancel) {
           window.location.href = window.location.href;
@@ -798,9 +741,8 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
       alert("Error encountered in trying to reset settings. Please try refreshing the page.");
     }
 
-    $("#wp2static-footer").on(
+    adminPage.resetDefaultSettingsButton.addEventListener(
       "click",
-      ".resetDefaultSettingsButton",
       (event) => {
         event.preventDefault();
 
@@ -812,9 +754,8 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
       },
     );
 
-    $("#wp2static-footer").on(
+    adminPage.saveSettingsButton.addEventListener(
       "click",
-      ".saveSettingsButton",
       (event) => {
         event.preventDefault();
         saveOptions();
@@ -828,14 +769,12 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
         alert("FAIL: Unable to delete deploy cache");
       }
 
-      spinner.hide();
       adminPage.pulsateCSS.style.display = "none";
     }
 
     function deleteDeployCacheFailCallback(serverResponse: any) {
       alert("FAIL: Unable to delete deploy cache");
 
-      spinner.hide();
       adminPage.pulsateCSS.style.display = "none";
     }
 
@@ -845,8 +784,6 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
       (event) => {
         event.preventDefault();
         const button = event.currentTarget;
-        spinner = $(button).siblings("div.spinner");
-        spinner.show();
         sendWP2StaticAJAX(
           "delete_deploy_cache",
           deleteDeployCacheSuccessCallback,
@@ -862,23 +799,21 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
         alert("FAIL: Unable to complete test upload to " + wp2staticGlobals.currentDeploymentMethod);
       }
 
-      spinner.hide();
       adminPage.pulsateCSS.style.display = "none";
     }
 
     function testDeploymentFailCallback(serverResponse: any) {
       alert("FAIL: Unable to complete test upload to " + wp2staticGlobals.currentDeploymentMethod);
-      spinner.hide();
       adminPage.pulsateCSS.style.display = "none";
     }
 
+    /* TODO: reimplement handlers for all test_deploy method buttons
+       need one within each add-on's JS code
     $(".wrap").on(
       "click",
       '[id$="-test-button"]',
       (event) => {
         event.preventDefault();
-        spinner = $("button").siblings("div.spinner");
-        spinner.show();
 
         sendWP2StaticAJAX(
           "test_" + wp2staticGlobals.currentDeploymentMethod,
@@ -887,20 +822,18 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
         );
       },
     );
+    */
 
-    $(".wrap").on(
+    adminPage.saveAndReloadButton.addEventListener(
       "click",
-      "#save-and-reload",
       (event) => {
         event.preventDefault();
         saveOptions();
       },
     );
 
-    $(".spinner").hide();
-
     // guard against selected option for add-on not currently activated
-    if ($("#baseUrl-" + wp2staticGlobals.currentDeploymentMethod).val() === undefined) {
+    if (document.getElementById("#baseUrl-" + wp2staticGlobals.currentDeploymentMethod).value === undefined) {
       wp2staticGlobals.currentDeploymentMethod = "folder";
     }
 

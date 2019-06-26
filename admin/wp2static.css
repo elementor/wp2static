@@ -274,10 +274,6 @@ p.submit{
   margin-left: 10px;
 }
 
-.spinner {
-  float:none;width:auto;height:auto;padding:10px 0 10px 50px;
-}
-
 /* 86% when full sidebar, needs to grow otherwise */
 #wp2static-footer {
   background: rgba(255, 255, 255, 0.9);

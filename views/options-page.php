@@ -79,7 +79,6 @@ $tpl = new \WP2Static\TemplateHelper();
             'Caching',
             'Automation',
             'Advanced Options',
-            'Logs',
             'Add-ons',
             'Help',
         ];
@@ -134,7 +133,6 @@ $tpl = new \WP2Static\TemplateHelper();
     <?php require_once __DIR__ . '/tab_production.php'; ?>
     <?php require_once __DIR__ . '/tab_caching.php'; ?>
     <?php require_once __DIR__ . '/tab_automation.php'; ?>
-    <?php require_once __DIR__ . '/tab_logs.php'; ?>
     <?php require_once __DIR__ . '/tab_add_ons.php'; ?>
     <?php require_once __DIR__ . '/tab_help.php'; ?>
 
