@@ -94,7 +94,7 @@ $tpl = new \WP2Static\TemplateHelper();
 
 
   <!-- main form containing options that get sent -->
-  <form id="general-options" class="options-form" method="post" action="">
+  <form id="general-options" method="post" action="">
 
     <!-- placeholder input fields to allow select menu deployment options to use existing behaviour -->
     <span class="hiddenExportOptions" style="display:none;">

@@ -1,8 +1,8 @@
 declare var wp2staticString: any;
 declare var ajaxurl: string;
 import { WP2StaticAJAX } from "./WP2StaticAJAX";
-import { WP2StaticGlobals } from "./WP2StaticGlobals";
 import { WP2StaticAdminPageModel } from "./WP2StaticAdminPageModel";
+import { WP2StaticGlobals } from "./WP2StaticGlobals";
 
 interface FormProcessor {
     id: string;
@@ -87,9 +87,9 @@ document.addEventListener("DOMContentLoaded", () => {
         adminPage.initialCrawlListLoader.style.display = "none";
         adminPage.previewInitialCrawlListButton.style.display = "block";
         adminPage.pulsateCSS.style.display = "none";
-        adminPage.resetDefaultSettingsButton.setAttribute("disabled", false);
-        adminPage.saveSettingsButton.setAttribute("disabled", false);
-        adminPage.startExportButton.setAttribute("disabled", false);
+        adminPage.resetDefaultSettingsButton.removeAttribute("disabled");
+        adminPage.saveSettingsButton.removeAttribute("disabled");
+        adminPage.startExportButton.removeAttribute("disabled");
         adminPage.currentAction.innerHTML = `${serverResponse} URLs were detected for
  initial crawl list. <a href="#" id="GoToDetectionTabButton">Adjust detection
  via the URL Detection tab.</a>`;
@@ -107,9 +107,9 @@ document.addEventListener("DOMContentLoaded", () => {
       adminPage.currentAction.innerHTML = failedDeployMessage;
       adminPage.pulsateCSS.style.display = "none";
       adminPage.cancelExportButton.style.display = "none";
-      adminPage.resetDefaultSettingsButton.setAttribute("disabled", false);
-      adminPage.saveSettingsButton.setAttribute("disabled", false);
-      adminPage.startExportButton.setAttribute("disabled", true);
+      adminPage.resetDefaultSettingsButton.removeAttribute("disabled");
+      adminPage.saveSettingsButton.removeAttribute("disabled");
+      adminPage.startExportButton.setAttribute("disabled", "");
       adminPage.initialCrawlListLoader.style.display = "none";
     }
 
@@ -152,7 +152,9 @@ document.addEventListener("DOMContentLoaded", () => {
       */
 
       const data = new URLSearchParams(
-        new FormData(".options-form"),
+      // https://github.com/Microsoft/TypeScript/issues/30584
+      // @ts-ignore
+        new FormData(adminPage.optionsForm),
       ).toString();
 
       const request = new XMLHttpRequest();
@@ -246,7 +248,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const inputs = adminPage.detectionOptionsInputs;
 
         for ( const input of inputs ) {
-            input.setAttribute("checked", 1);
+            input.setAttribute("checked", "");
         }
       },
     );
@@ -258,7 +260,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const inputs = adminPage.detectionOptionsInputs;
 
         for ( const input of inputs ) {
-            input.setAttribute("checked", 0);
+            input.removeAttribute("checked");
         }
       },
     );
@@ -294,9 +296,9 @@ document.addEventListener("DOMContentLoaded", () => {
       adminPage.currentAction.innerHTML = failedDeployMessage;
       adminPage.pulsateCSS.style.display = "none";
       adminPage.cancelExportButton.style.display = "none";
-      adminPage.resetDefaultSettingsButton.setAttribute("disabled", false);
-      adminPage.saveSettingsButton.setAttribute("disabled", false);
-      adminPage.startExportButton.setAttribute("disabled", false);
+      adminPage.resetDefaultSettingsButton.removeAttribute("disabled");
+      adminPage.saveSettingsButton.removeAttribute("disabled");
+      adminPage.startExportButton.removeAttribute("disabled");
     }
 
     function startExportSuccessCallback(serverResponse: any) {
@@ -320,9 +322,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         adminPage.progress.style.display = "none";
         adminPage.cancelExportButton.style.display = "none";
-        adminPage.resetDefaultSettingsButton.setAttribute("disabled", false);
-        adminPage.saveSettingsButton.setAttribute("disabled", false);
-        adminPage.startExportButton.setAttribute("disabled", false);
+        adminPage.resetDefaultSettingsButton.removeAttribute("disabled");
+        adminPage.saveSettingsButton.removeAttribute("disabled");
+        adminPage.startExportButton.removeAttribute("disabled");
 
         return false;
       }
@@ -333,7 +335,7 @@ document.addEventListener("DOMContentLoaded", () => {
       wp2staticGlobals.exportTargets = [];
 
       if (wp2staticGlobals.currentDeploymentMethod === "zip") {
-        adminPage.createZip.setAttribute("checked", checked);
+        adminPage.createZip.setAttribute("checked", "");
       }
       wp2staticGlobals.exportTargets.push(wp2staticGlobals.currentDeploymentMethod);
 
@@ -387,7 +389,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function validateRepoField(repoField: any) {
-      const repo: string = String(document.getElementById("#" + repoField.field + "").value);
+      const repositoryField: HTMLInputElement =
+        <HTMLInputElement>document.getElementById("#" + repoField.field + "")!;
+      const repo: string = String(repositoryField.value);
 
       if (repo !== "") {
         if (repo.split("/").length !== 2) {
@@ -399,7 +403,8 @@ document.addEventListener("DOMContentLoaded", () => {
     function validateEmptyFields(requiredFields: any) {
       Object.keys(requiredFields).forEach(
         (key, index) => {
-          if (document.getElementById("#" + key).value === "") {
+          const requiredField: HTMLInputElement = <HTMLInputElement>document.getElementById("#" + key)!;
+          if (requiredField.value === "") {
             validationErrors += requiredFields[key] + "\n";
           }
         },
@@ -451,7 +456,7 @@ document.addEventListener("DOMContentLoaded", () => {
         websiteLink.setAttribute("href", website);
         websiteLink.innerHTML = "Visit " + formProcessor.name;
 
-        adminPage.formProcessorWebsite.innerHTML = websiteLink;
+        adminPage.formProcessorWebsite.innerHTML = website;
         adminPage.formProcessorEndpoint.setAttribute("placeholder", formProcessor.placeholder);
       } else {
         adminPage.formProcessorDescription.textContent = "";
@@ -477,9 +482,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function offlineUsageChangeHandler(checkbox: HTMLElement) {
       if (checkbox.getAttribute("checked")) {
-        adminPage.baseUrlZip.setAttribute("disabled", 1);
+        adminPage.baseUrlZip.setAttribute("disabled", "");
       } else {
-        adminPage.baseUrlZip.setAttribute("disabled", 0);
+        adminPage.baseUrlZip.removeAttribute("disabled");
       }
     }
 
@@ -491,7 +496,10 @@ document.addEventListener("DOMContentLoaded", () => {
         },
       );
 
-      document.getElementById("#" + selectedDeploymentMethod + "_settings_block").style.display = "none";
+      const settingsBlock: HTMLElement =
+        document.getElementById("#" + selectedDeploymentMethod + "_settings_block")!;
+
+      settingsBlock.style.display = "none";
     }
 
     function notifyMe() {
@@ -516,7 +524,7 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
           notification.onclick = () => {
             parent.focus();
             window.focus();
-            this.close();
+            notification.close();
           };
         }
       }
@@ -584,11 +592,13 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
       for (const key in tabsContentMapping) {
         if (tabsContentMapping.hasOwnProperty(key)) {
           if (tabsContentMapping[key] === targetTab) {
-            document.getElementByClass("." + key).style.display = "block";
-            document.body.scrollTop(0);
-            document.documentElement.scrollTop(0);
+            const tabContent = document.getElementById("." + key)!;
+            tabContent.style.display = "block";
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
           } else {
-            document.getElementByClass("." + key).style.display = "none";
+            const tabContent = document.getElementById("." + key)!;
+            tabContent.style.display = "none";
           }
         }
       }
@@ -692,7 +702,7 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
         request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
         request.onload = sendSupportSuccessCallback;
         request.onerror = sendSupportFailCallback;
-        request.send(postData);
+        request.send(JSON.stringify(postData));
       },
     );
 
@@ -701,10 +711,10 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
       (event: any) => {
         event.preventDefault();
         clearProgressAndResults();
-        adminPage.startExportButton.setAttribute("disabled", 1);
+        adminPage.startExportButton.setAttribute("disabled", "");
         adminPage.cancelExportButton.style.display = "block";
-        adminPage.resetDefaultSettingsButton.setAttribute("disabled", 1);
-        adminPage.saveSettingsButton.setAttribute("disabled", 1);
+        adminPage.resetDefaultSettingsButton.setAttribute("disabled", "");
+        adminPage.saveSettingsButton.setAttribute("disabled", "");
         startExport();
       },
     );
@@ -821,7 +831,8 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
     */
 
     // guard against selected option for add-on not currently activated
-    if (document.getElementById("#baseUrl-" + wp2staticGlobals.currentDeploymentMethod).value === undefined) {
+    const deployBaseUrl: HTMLInputElement = <HTMLInputElement>document.getElementById("#baseUrl-" + wp2staticGlobals.currentDeploymentMethod)!;
+    if (deployBaseUrl.value === undefined) {
       wp2staticGlobals.currentDeploymentMethod = "folder";
     }
 
