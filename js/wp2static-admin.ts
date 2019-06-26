@@ -12,8 +12,12 @@ interface FormProcessor {
     description: string;
 }
 
-export const wp2staticAJAX = new WP2StaticAJAX();
+// NOTE: passing around a globals object to allow shared instance and access
+// from browser.
+// within this entrypoint, access directly. From other classes, this., from
+// browser WP2Static.wp2staticGlobals
 export const wp2staticGlobals = new WP2StaticGlobals();
+export const wp2staticAJAX = new WP2StaticAJAX( wp2staticGlobals );
 
 const formProcessors: FormProcessor[] = [
   {
@@ -87,12 +91,10 @@ const logFileUrl = siteInfo.uploads_url + "wp2static-working-files/EXPORT-LOG.tx
 const selectedFormProcessor = "";
 const exportAction = "";
 let exportTargets = [];
-let exportCommenceTime: number = 0;
 let statusText = "";
 const protocolAndDomainRE = /^(?:\w+:)?\/\/(\S+)$/;
 const localhostDomainRE = /^localhost[:?\d]*(?:[^:?\d]\S*)?$/;
 const nonLocalhostDomainRE = /^[^\s.]+\.\S{2,}$/;
-let timerIntervalID: number = 0;
 export const statusDescriptions = {
   crawl_site: "Crawling initial file list",
   post_export_teardown: "Cleaning up after processing",
@@ -197,12 +199,6 @@ jQuery(($) => {
       );
     }
 
-    function millisToMinutesAndSeconds(millis) {
-      const minutes = Math.floor(millis / 60000);
-      const seconds: number = parseFloat( ((millis % 60000) / 1000).toFixed(0) );
-      return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
-    }
-
 
     function downloadExportLogSuccessCallback(serverResponse) {
       if (!serverResponse) {
@@ -290,7 +286,7 @@ jQuery(($) => {
     );
 
     function ajaxErrorHandler() {
-      stopTimer();
+      wp2staticGlobals.stopTimer();
 
       const failedDeployMessage = 'Failed during "' + statusText +
               '", <button id="downloadExportLogButton">Download export log</button>';
@@ -319,29 +315,11 @@ jQuery(($) => {
       );
     }
 
-    function startTimer() {
-      timerIntervalID = window.setInterval(updateTimer, 1000);
-    }
-
-    function stopTimer() {
-      window.clearInterval(timerIntervalID);
-    }
-
-    function updateTimer() {
-      const exportCompleteTime = +new Date();
-      const runningTime = exportCompleteTime - exportCommenceTime;
-
-      $("#export_timer").html(
-        "<b>Export duration: </b>" + millisToMinutesAndSeconds(runningTime),
-      );
-    }
 
     function startExport() {
       // start timer
-      exportCommenceTime = +new Date();
-      startTimer();
-
-      // startPolling();
+      wp2staticGlobals.exportCommenceTime = +new Date();
+      wp2staticGlobals.startTimer();
 
       validationErrors = getValidationErrors();
 

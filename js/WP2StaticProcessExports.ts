@@ -1,9 +1,15 @@
 import $ from "jquery";
 
 import { WP2StaticAJAX } from "./WP2StaticAJAX";
-
+import { WP2StaticGlobals } from "./WP2StaticGlobals";
 
 export class WP2StaticProcessExports {
+  
+  wp2staticGlobals: WP2StaticGlobals;
+
+  constructor( wp2staticGlobals: WP2StaticGlobals ) {
+      this.wp2staticGlobals = wp2staticGlobals;
+  }
 
   processExportTargets(
     statusDescriptions,
@@ -13,7 +19,7 @@ export class WP2StaticProcessExports {
     siteInfo
   ) {
 
-    const wp2staticAJAX = new WP2StaticAJAX();
+    const wp2staticAJAX = new WP2StaticAJAX( this.wp2staticGlobals );
 
     if (exportTargets.length > 0) {
       const target = exportTargets.shift();
@@ -41,15 +47,18 @@ export class WP2StaticProcessExports {
       }
 
       // all complete
-      // const exportCompleteTime: number = +new Date();
-      // const exportDuration = exportCompleteTime - exportCommenceTime;
+      this.wp2staticGlobals.exportCompleteTime = +new Date();
+      this.wp2staticGlobals.exportDuration =
+        this.wp2staticGlobals.exportCompleteTime - this.wp2staticGlobals.exportCommenceTime;
 
       // clear export commence time for next run
-      // exportCommenceTime = 0;
+      this.wp2staticGlobals.exportCommenceTime = 0;
 
-      // stopTimer();
-      // $("#current_action").text(`Process completed in
-//${millisToMinutesAndSeconds(exportDuration)} (mins:ss)`);
+      this.wp2staticGlobals.stopTimer();
+
+      $("#current_action").text(`Process completed in
+${this.wp2staticGlobals.millisToMinutesAndSeconds(this.wp2staticGlobals.exportDuration)} (mins:ss)`);
+
       $("#goToMyStaticSite").focus();
       $(".pulsate-css").hide();
       $("#startExportButton").prop("disabled", false);

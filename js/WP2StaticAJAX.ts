@@ -3,12 +3,21 @@ declare var ajaxurl: string;
 import $ from "jquery";
 
 import { WP2StaticProcessExports } from "./WP2StaticProcessExports";
-
-const wp2staticProcessExports = new WP2StaticProcessExports();
+import { WP2StaticGlobals } from "./WP2StaticGlobals";
 
 export class WP2StaticAJAX {
 
     statusText: string;
+    wp2staticGlobals: WP2StaticGlobals;
+    wp2staticProcessExports: WP2StaticProcessExports;
+
+    constructor( wp2staticGlobals: WP2StaticGlobals ) {
+      this.wp2staticGlobals = wp2staticGlobals;
+      this.wp2staticProcessExports =
+        new WP2StaticProcessExports( this.wp2staticGlobals );
+
+      wp2staticGlobals.changeProperty( 'set from AJAX constructor' );
+    }
 
     /*
         doAJAXExport() can handle from 1 to n actions
@@ -28,14 +37,14 @@ export class WP2StaticAJAX {
 
         if an action fails, ajaxErrorHandler() is called
         */
-      doAJAXExport(
+    doAJAXExport(
         args,
         statusDescriptions,
         exportTargets,
         deployOptions,
         currentDeploymentMethod,
         siteInfo
-      ) {
+    ) {
         let exportAction = args[0];
         let statusText = exportAction;
 
@@ -75,7 +84,7 @@ export class WP2StaticAJAX {
                 this.doAJAXExport(args, statusDescriptions, exportTargets, deployOptions, siteInfo);
               } else if (serverResponse === "SUCCESS") {
                 // not an incremental action, continue on with export targets
-                wp2staticProcessExports.processExportTargets(
+                this.wp2staticProcessExports.processExportTargets(
                   statusDescriptions,
                   exportTargets,
                   deployOptions,
@@ -92,7 +101,7 @@ export class WP2StaticAJAX {
     }
 
     ajaxErrorHandler() {
-      // stopTimer();
+      this.wp2staticGlobals.stopTimer();
 
       const failedDeployMessage = 'Failed during "' + this.statusText +
               '", <button id="downloadExportLogButton">Download export log</button>';
