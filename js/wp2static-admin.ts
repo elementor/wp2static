@@ -682,7 +682,7 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
         }
 
         const postData = {
-          email: $("#supportRequestEmail").val(),
+          email: adminPage.sendSupportRequestEmail.value,
           supportRequest,
         };
 
