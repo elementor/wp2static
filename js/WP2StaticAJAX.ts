@@ -1,19 +1,19 @@
 declare var ajaxurl: string;
 
-import { WP2StaticProcessExports } from "./WP2StaticProcessExports";
 import { WP2StaticGlobals } from "./WP2StaticGlobals";
+import { WP2StaticProcessExports } from "./WP2StaticProcessExports";
 
 export class WP2StaticAJAX {
 
-    wp2staticGlobals: WP2StaticGlobals;
-    wp2staticProcessExports: WP2StaticProcessExports;
+    public wp2staticGlobals: WP2StaticGlobals;
+    public wp2staticProcessExports: WP2StaticProcessExports;
 
     constructor( wp2staticGlobals: WP2StaticGlobals ) {
       this.wp2staticGlobals = wp2staticGlobals;
       this.wp2staticProcessExports =
         new WP2StaticProcessExports( this.wp2staticGlobals );
 
-      wp2staticGlobals.changeProperty( 'set from AJAX constructor' );
+      wp2staticGlobals.changeProperty( "set from AJAX constructor" );
     }
 
     /*
@@ -34,10 +34,10 @@ export class WP2StaticAJAX {
 
         if an action fails, ajaxErrorHandler() is called
         */
-    doAJAXExport(
-        args: any
+    public doAJAXExport(
+        args: any,
     ) {
-        let exportAction = args[0];
+        const exportAction = args[0];
         this.wp2staticGlobals.statusText = exportAction;
 
         if (this.wp2staticGlobals.statusDescriptions[exportAction] !== undefined) {
@@ -86,7 +86,7 @@ export class WP2StaticAJAX {
         );
     }
 
-    ajaxErrorHandler() {
+    public ajaxErrorHandler() {
       this.wp2staticGlobals.stopTimer();
 
       const failedDeployMessage = 'Failed during "' + this.wp2staticGlobals.statusText +

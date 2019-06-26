@@ -70,8 +70,8 @@
         "phpunit": "vendor/bin/phpunit ./tests/unit/",
         "coverage": "vendor/bin/phpunit tests/unit --coverage-html coverage --whitelist src/",
         "lint": "vendor/bin/parallel-lint --exclude vendor .",
-        "tslint": "node_modules/tslint/bin/tslint js/wp2static-admin.ts",
-        "tslintfix": "node_modules/tslint/bin/tslint --fix js/wp2static-admin.ts",
+        "tslint": "node_modules/tslint/bin/tslint js/*.ts",
+        "tslintfix": "node_modules/tslint/bin/tslint --fix js/*.ts",
         "buildjs": "node_modules/webpack/bin/webpack.js",
         "test": [
             "@lint",

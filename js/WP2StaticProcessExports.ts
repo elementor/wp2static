@@ -2,21 +2,21 @@ import { WP2StaticAJAX } from "./WP2StaticAJAX";
 import { WP2StaticGlobals } from "./WP2StaticGlobals";
 
 export class WP2StaticProcessExports {
-  
-  wp2staticGlobals: WP2StaticGlobals;
+
+  public wp2staticGlobals: WP2StaticGlobals;
 
   constructor( wp2staticGlobals: WP2StaticGlobals ) {
       this.wp2staticGlobals = wp2staticGlobals;
   }
 
-  processExportTargets() {
+  public processExportTargets() {
 
     const wp2staticAJAX = new WP2StaticAJAX( this.wp2staticGlobals );
 
     if (this.wp2staticGlobals.exportTargets.length > 0) {
       const target: string = String(this.wp2staticGlobals.exportTargets.shift());
 
-        
+
       const exportSteps = this.wp2staticGlobals.deployOptions[target].exportSteps;
 
       wp2staticAJAX.doAJAXExport( exportSteps );

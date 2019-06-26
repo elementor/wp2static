@@ -1,19 +1,19 @@
 export class WP2StaticGlobals {
 
-  aProperty: string = 'default value'; 
-  exportCommenceTime: number = 0;
-  exportCompleteTime: number = 0;
-  timerIntervalID: number = 0;
-  exportDuration: number = 0;
-  statusDescriptions: any = {
+  public aProperty: string = "default value";
+  public exportCommenceTime: number = 0;
+  public exportCompleteTime: number = 0;
+  public timerIntervalID: number = 0;
+  public exportDuration: number = 0;
+  public statusDescriptions: any = {
     crawl_site: "Crawling initial file list",
     post_export_teardown: "Cleaning up after processing",
     post_process_archive_dir: "Processing the crawled files",
   };
-  currentDeploymentMethod: string = '';
-  siteInfo: any;
-  exportTargets: Array<string> = [];
-  deployOptions: any = {
+  public currentDeploymentMethod: string = "";
+  public siteInfo: any;
+  public exportTargets: string[] = [];
+  public deployOptions: any = {
     folder: {
       exportSteps: [
         "finalize_deployment",
@@ -29,34 +29,34 @@ export class WP2StaticGlobals {
       },
     },
   };
-  statusText: string = "";
+  public statusText: string = "";
 
-  getAll () {
-    return { something : this.aProperty }
+  public getAll() {
+    return { something : this.aProperty };
   }
 
-  changeProperty ( newProp: string ) {
-    this.aProperty = newProp; 
+  public changeProperty( newProp: string ) {
+    this.aProperty = newProp;
   }
 
-  startTimer() {
+  public startTimer() {
     this.timerIntervalID = window.setInterval(this.updateTimer, 1000);
   }
 
-  stopTimer() {
+  public stopTimer() {
     window.clearInterval(this.timerIntervalID);
   }
 
-  updateTimer() {
+  public updateTimer() {
     this.exportCompleteTime = +new Date();
     const runningTime = this.exportCompleteTime - this.exportCommenceTime;
 
     $("#export_timer").html(
-      "<b>Export duration: </b>" + this.millisToMinutesAndSeconds(runningTime)
+      "<b>Export duration: </b>" + this.millisToMinutesAndSeconds(runningTime),
     );
   }
 
-  millisToMinutesAndSeconds( millis: number ) {
+  public millisToMinutesAndSeconds( millis: number ) {
     const minutes = Math.floor(millis / 60000);
     const seconds: number = parseFloat( ((millis % 60000) / 1000).toFixed(0) );
 
