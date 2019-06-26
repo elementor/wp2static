@@ -2,6 +2,7 @@ declare var wp2staticString: any;
 declare var ajaxurl: string;
 import { WP2StaticAJAX } from "./WP2StaticAJAX";
 import { WP2StaticGlobals } from "./WP2StaticGlobals";
+import { WP2StaticAdminPageModel } from "./WP2StaticAdminPageModel";
 
 interface FormProcessor {
     id: string;
@@ -240,7 +241,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     adminPage.detectEverythingButton.addEventListener(
       "click",
-      (event) => {
+      (event: any) => {
         event.preventDefault();
         const inputs = adminPage.detectionOptionsInputs;
 
@@ -252,7 +253,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     adminPage.detectNothingButton.addEventListener(
       "click",
-      (event) => {
+      (event: any) => {
         event.preventDefault();
         const inputs = adminPage.detectionOptionsInputs;
 
@@ -264,7 +265,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     adminPage.deleteCrawlCache.addEventListener(
       "click",
-      (event) => {
+      (event: any) => {
         event.preventDefault();
         adminPage.currentAction.innerHTML = "Deleting Crawl Cache...";
 
@@ -278,7 +279,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     adminPage.downloadExportLogButton.addEventListener(
       "click",
-      (event) => {
+      (event: any) => {
         event.preventDefault();
         downloadExportLog();
       },
@@ -490,7 +491,7 @@ document.addEventListener("DOMContentLoaded", () => {
         },
       );
 
-      document.getElementByClass("." + selectedDeploymentMethod + "_settings_block").style.display = "none";
+      document.getElementById("#" + selectedDeploymentMethod + "_settings_block").style.display = "none";
     }
 
     function notifyMe() {
@@ -530,21 +531,21 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
     // disable zip base url field when offline usage is checked
     adminPage.allowOfflineUsage.addEventListener(
       "change",
-      (event) => {
+      (event: any) => {
         offlineUsageChangeHandler(event.currentTarget);
       },
     );
 
     adminPage.formProcessorSelect.addEventListener(
       "change",
-      (event) => {
+      (event: any) => {
         setFormProcessor((event.currentTarget as HTMLInputElement).value);
       },
     );
 
     adminPage.selectedDeploymentMethod.addEventListener(
       "change",
-      (event) => {
+      (event: any) => {
         renderSettingsBlock((event.currentTarget as HTMLInputElement).value);
         setDeploymentMethod((event.currentTarget as HTMLInputElement).value);
         clearProgressAndResults();
@@ -595,7 +596,7 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
 
     adminPage.goToDetectionTabButton.addEventListener(
       "click",
-      (event) => {
+      (event: any) => {
         event.preventDefault();
         changeTab("URL Detection");
       },
@@ -603,7 +604,7 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
 
     adminPage.goToDeployTabButton.addEventListener(
       "click",
-      (event) => {
+      (event: any) => {
         event.preventDefault();
         changeTab("Deployment");
       },
@@ -611,7 +612,7 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
 
     adminPage.goToDeployTabLink.addEventListener(
       "click",
-      (event) => {
+      (event: any) => {
         event.preventDefault();
         changeTab("Deployment");
       },
@@ -619,7 +620,7 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
 
     adminPage.goToAdvancedTabButton.addEventListener(
       "click",
-      (event) => {
+      (event: any) => {
         event.preventDefault();
         changeTab("Advanced Options");
       },
@@ -630,7 +631,7 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
       (element, index) => {
         element.addEventListener(
           "click",
-          (event) => {
+          (event: any) => {
             event.preventDefault();
             changeTab(event.currentTarget.textContent);
           },
@@ -641,14 +642,14 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
     // prevent submitting main form outside expected use
     adminPage.generalOptions.addEventListener(
       "submit",
-      (event) => {
+      (event: any) => {
         event.preventDefault();
       },
     );
 
     adminPage.sendSupportRequestButton.addEventListener(
       "click",
-      (event) => {
+      (event: any) => {
         event.preventDefault();
 
         const supportRequest = adminPage.sendSupportRequestContent.value;
@@ -697,7 +698,7 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
 
     adminPage.startExportButton.addEventListener(
       "click",
-      (event) => {
+      (event: any) => {
         event.preventDefault();
         clearProgressAndResults();
         adminPage.startExportButton.setAttribute("disabled", 1);
@@ -710,7 +711,7 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
 
     adminPage.cancelExportButton.addEventListener(
       "click",
-      (event) => {
+      (event: any) => {
         event.preventDefault();
         const reallyCancel = confirm("Stop current export and reload page?");
         if (reallyCancel) {
@@ -738,7 +739,7 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
 
     adminPage.resetDefaultSettingsButton.addEventListener(
       "click",
-      (event) => {
+      (event: any) => {
         event.preventDefault();
 
         sendWP2StaticAJAX(
@@ -751,7 +752,7 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
 
     adminPage.saveSettingsButton.addEventListener(
       "click",
-      (event) => {
+      (event: any) => {
         event.preventDefault();
         saveOptions();
       },
@@ -776,7 +777,7 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
     $(".wrap").on(
       "click",
       "#delete_deploy_cache_button",
-      (event) => {
+      (event: any) => {
         event.preventDefault();
         const button = event.currentTarget;
         sendWP2StaticAJAX(
@@ -807,7 +808,7 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
     $(".wrap").on(
       "click",
       '[id$="-test-button"]',
-      (event) => {
+      (event: any) => {
         event.preventDefault();
 
         sendWP2StaticAJAX(
