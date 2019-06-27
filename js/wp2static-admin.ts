@@ -99,6 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
         adminPage.resetDefaultSettingsButton.removeAttribute("disabled");
         adminPage.saveSettingsButton.removeAttribute("disabled");
         adminPage.startExportButton.removeAttribute("disabled");
+        adminPage.generateStaticSiteButton.removeAttribute("disabled");
         adminPage.currentAction.innerHTML = `${fileListCount} URLs were detected for
  initial crawl list. Adjust detection via the URL Detection tab.`;
         adminPage.initialCrawlListCount.textContent = `${fileListCount} URLs were
@@ -118,6 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
       adminPage.resetDefaultSettingsButton.removeAttribute("disabled");
       adminPage.saveSettingsButton.removeAttribute("disabled");
       adminPage.startExportButton.setAttribute("disabled", "");
+      adminPage.generateStaticSiteButton.setAttribute("disabled", "");
       adminPage.initialCrawlListLoader.style.display = "none";
     }
 
@@ -137,27 +139,6 @@ document.addEventListener("DOMContentLoaded", () => {
       adminPage.hiddenAJAXAction.value = ajaxAction;
       adminPage.progress.style.display = "block";
       adminPage.pulsateCSS.style.display = "block";
-
-      /*
-      const data = $(".options-form :input")
-        .filter(
-          (index, element) => {
-            return $(element).val() !== "";
-          },
-        )
-        .serialize();
-
-      $.ajax(
-        {
-          data,
-          dataType: "html",
-          error: failCallback,
-          method: "POST",
-          success: successCallback,
-          url: ajaxurl,
-        },
-      );
-      */
 
       const data = new URLSearchParams(
       // https://github.com/Microsoft/TypeScript/issues/30584
@@ -257,6 +238,7 @@ document.addEventListener("DOMContentLoaded", () => {
       adminPage.resetDefaultSettingsButton.removeAttribute("disabled");
       adminPage.saveSettingsButton.removeAttribute("disabled");
       adminPage.startExportButton.removeAttribute("disabled");
+      adminPage.generateStaticSiteButton.removeAttribute("disabled");
     }
 
     function startExportSuccessCallback(event: any) {
@@ -268,6 +250,38 @@ document.addEventListener("DOMContentLoaded", () => {
       wp2staticAJAX.doAJAXExport( initialSteps );
     }
 
+    function generateStaticSite() {
+      // set hidden baseUrl to staging current deploy method's Destination URL
+      updateBaseUrl();
+      wp2staticGlobals.exportCommenceTime = +new Date();
+
+      // TODO: reimplement validators validationErrors = getValidationErrors();
+      validationErrors = "";
+
+      if (validationErrors !== "") {
+        alert(validationErrors);
+
+        adminPage.progress.style.display = "none";
+        adminPage.cancelExportButton.style.display = "none";
+        adminPage.resetDefaultSettingsButton.removeAttribute("disabled");
+        adminPage.saveSettingsButton.removeAttribute("disabled");
+        adminPage.startExportButton.removeAttribute("disabled");
+        adminPage.generateStaticSiteButton.removeAttribute("disabled");
+
+        return false;
+      }
+
+      adminPage.currentAction.innerHTML = "Generating Static Site Files...";
+
+      // reset export targets to avoid having left-overs from a failed run
+      wp2staticGlobals.exportTargets = [];
+
+      sendWP2StaticAJAX(
+        "prepare_for_export",
+        startExportSuccessCallback,
+        ajaxErrorHandler,
+      );
+    }
 
     function startExport() {
       // set hidden baseUrl to staging current deploy method's Destination URL
@@ -285,6 +299,7 @@ document.addEventListener("DOMContentLoaded", () => {
         adminPage.resetDefaultSettingsButton.removeAttribute("disabled");
         adminPage.saveSettingsButton.removeAttribute("disabled");
         adminPage.startExportButton.removeAttribute("disabled");
+        adminPage.generateStaticSiteButton.removeAttribute("disabled");
 
         return false;
       }
@@ -709,11 +724,26 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
       },
     );
 
+    adminPage.generateStaticSiteButton.addEventListener(
+      "click",
+      (event: any) => {
+        event.preventDefault();
+        clearProgressAndResults();
+        adminPage.generateStaticSiteButton.setAttribute("disabled", "");
+        adminPage.startExportButton.setAttribute("disabled", "");
+        adminPage.cancelExportButton.style.display = "inline";
+        adminPage.resetDefaultSettingsButton.setAttribute("disabled", "");
+        adminPage.saveSettingsButton.setAttribute("disabled", "");
+        generateStaticSite();
+      },
+    );
+
     adminPage.startExportButton.addEventListener(
       "click",
       (event: any) => {
         event.preventDefault();
         clearProgressAndResults();
+        adminPage.generateStaticSiteButton.setAttribute("disabled", "");
         adminPage.startExportButton.setAttribute("disabled", "");
         adminPage.cancelExportButton.style.display = "inline";
         adminPage.resetDefaultSettingsButton.setAttribute("disabled", "");

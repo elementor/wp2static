@@ -174,10 +174,10 @@ $tpl = new \WP2Static\TemplateHelper();
 
             <div class="submit">
                 <?php wp_nonce_field( $view['onceAction'] ); ?>
-              <button id="startExportButton" class="wp2static-btn blue" disabled>
+              <button id="generateStaticSiteButton" class="wp2static-btn blue" disabled>
                 <?php echo __( 'Generate', 'static-html-output-plugin' ); ?>
               </button>
-              <button id="deployToStagingButton" class="wp2static-btn blue" disabled>
+              <button id="startExportButton" class="wp2static-btn blue" disabled>
                 <?php echo __( 'Deploy to Staging', 'static-html-output-plugin' ); ?>
               </button>
               <button id="deployToProductionButton" class="wp2static-btn blue" disabled>
