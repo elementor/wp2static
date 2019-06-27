@@ -1,4 +1,4 @@
-<div class="url_detection" style="display:none;">
+<div id="url_detection" style="display:none;">
 
 <section class="wp2static-content">
   <h2><?php echo __( 'Initial crawl list', 'static-html-output-plugin' ); ?></h2>

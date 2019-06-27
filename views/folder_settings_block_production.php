@@ -1,4 +1,4 @@
-<div id="folder_settings_block">
+<div id="folder_settings_block_production">
 
 <section class="wp2static-content wp2static-flex">
   <div class="content" style="max-width:30%">
@@ -18,7 +18,7 @@
   </div>
 
   <div class="content">
-    <input id="targetFolder" name="targetFolder" class="regular-text" style="width:100%;" value="<?php echo $this->options->targetFolder ? $this->options->targetFolder : $this->site_info['site_path'] . 'mystaticsite'; ?>" />
+    <input id="targetFolderProduction" name="targetFolderProduction" class="regular-text" style="width:100%;" value="<?php echo $this->options->targetFolderProduction ? $this->options->targetFolderProduction : $this->site_info['site_path'] . 'mystaticsite'; ?>" />
 
     <p>By exporting to a directory on your current server, you can check how it will look when published and make any adjustments needed. If you put this in a publicly accessible path and the links have been rewritten to support it, you may use this method to easily preview your static site without needing to leave your browser.</p>
 

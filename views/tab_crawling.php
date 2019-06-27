@@ -1,56 +1,5 @@
-<div class="crawl_settings" style="display:none;">
+<div id="crawl_settings" style="display:none;">
 
-<section class="wp2static-content wp2static-flex">
-  <div class="content" style="max-width:30%">
-    <h2><?php echo __( 'Crawl Caching', 'static-html-output-plugin' ); ?></h2>
-  </div>
-
-  <div class="content">
-    <p>Don't recrawl files crawled within last n period.</p>
-
-    <select name="crawl_caching_time_unit" id="crawl_caching">
-
-    <?php
-        // TODO: shift this into helper function for select
-        $increments = array( 1, 5, 10, 25, 50, 100, 500, 1000, 999999 );
-
-    foreach ( $increments as $increment ) :
-        if ( $increment == 999999 ) : ?>
-            <option value="999999"<?php echo $this->options->crawl_caching_time_unit == $increment ? ' selected' : ''; ?>>Maximum</option>
-            <?php else : ?>
-            <option value="<?php echo $increment; ?>"<?php echo $this->options->crawl_caching_time_unit == $increment ? ' selected' : ''; ?>><?php echo $increment; ?></option>
-      
-        <?php endif;
-            endforeach; ?>
-
-    </select>
-
-    <select name="crawl_caching_time_period" id="crawl_caching_time_period">
-
-        <?php
-        // TODO: shift this into helper function for select
-        $increments = [
-            'Minutes',
-            'Hours',
-            'Days',
-        ];
-
-        foreach ( $increments as $increment ) :
-            if ( $increment == 999999 ) : ?>
-            <option value="999999"<?php echo $this->options->crawl_caching_time_period == $increment ? ' selected' : ''; ?>>Maximum</option>
-        <?php else : ?>
-            <option value="<?php echo $increment; ?>"<?php echo $this->options->crawl_caching_time_period == $increment ? ' selected' : ''; ?>><?php echo $increment; ?></option>
-      
-        <?php endif;
-            endforeach; ?>
-    
-      </select>
-
-        <?php $tpl->displayCheckbox( $this, 'dontUseCrawlCaching', 'Disregard cache and crawl everything' ); ?>
-
-      <button id="deleteCrawlCache" class="wp2static-btn btn-sm mg-top10">Delete Crawl Cache</button>
-  </div>
-</section>
 
 <section class="wp2static-content wp2static-flex">
   <div class="content" style="max-width:30%">

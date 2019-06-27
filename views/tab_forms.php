@@ -1,4 +1,4 @@
-<div class="form_settings" style="display:none;">
+<div id="form_settings" style="display:none;">
 
 <section class="wp2static-content wp2static-flex">
   <div class="content" style="max-width:30%">

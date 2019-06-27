@@ -215,6 +215,17 @@ Archive Object
 
 为了让开发和共享更容易，我们会让参与的需要变得最简单。如果你比较喜欢使用Docker, Local by FlyWheel, Valet, Bedrock, Linux, BSD, Mac,这些已经足够了。这是一个WordPress插件，任何能跑Wordpress的地方都可以在上面开始开发。 :)
 
+### Installing from source
+
+ - `git clone -b git@github.com:WP2Static/wp2static.git static-html-output-plugin`
+ - `cd static-html-output-plugin`
+ - `npm i`
+ - `composer install`
+ - `composer buildjs`
+
+### Running tests
+
+ - `composer test`
 
 ### 本地化 / 翻译
 
@@ -243,9 +254,8 @@ Help keep me doing what I love: building and supporting this software.
 协助让我坚持做我所热爱的————开发和支持这个软件
 
  - [购买商业许可](https://wp2static.com)
- - [在Patreon上资助我](https://www.patreon.com/leonstafford)
- - [在PayPal上资助我](https://www.paypal.me/leonjstafford)
+
 
 Leon
 
-leon@wp2static.com
+[me@ljs.dev](mailto:me@ljs.dev)

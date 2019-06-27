@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "strict": true,
+        "rootDir": "./js",
+        "outDir": "./admin/",
+        "allowJs": false,
+        "target": "ES2017",
+        "module": "commonjs",
+        "sourceMap": true,
+        "allowSyntheticDefaultImports": true
+    }
+}

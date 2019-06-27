@@ -225,6 +225,18 @@ Si vous souhaitez contibuer, merci de suivre [le flow habituel de GitHub](https:
 
 Afin de faciliter au maximum le développement et les contributions, nous essaierons de réduire les pré-requis au minimum. Si vous préférez utiliser Docker, Valet, Bedrock, Linux, BSD ou Mac, pas de problème. C'est un plugin WordPress, partout où vous pouvez faire tourner WordPress, vous pouvez développer ce plugin.
 
+### Installing from source
+
+ - `git clone -b git@github.com:WP2Static/wp2static.git static-html-output-plugin`
+ - `cd static-html-output-plugin`
+ - `npm i`
+ - `composer install`
+ - `composer buildjs`
+
+### Running tests
+
+ - `composer test`
+
 ### Localisation / traductions
 
 La localisation du projet a pris du retard. Toutes les personnes qui peuvent amener leur expertise dans ce domaine et m'aider à faciliter les traductions sont les bienvenues.
@@ -251,9 +263,7 @@ Il n'y a pas de grand groupe derrière ce logiciel, si ce n'est une personne pro
 Aidez-moi à continuer à faire ce que j'aime : développer et maintenir ce logiciel.
 
  - [Acheter le Plugin](https://wp2static.com)
- - [Me soutenir sur Patreon](https://www.patreon.com/leonstafford)
- - [Donner via PayPal](https://www.paypal.me/leonjstafford)
 
 Leon
 
-[leon@wp2static.com](mailto:leon@wp2static.com)
+[me@ljs.dev](mailto:me@ljs.dev)

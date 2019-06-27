@@ -74,9 +74,11 @@ $tpl = new \WP2Static\TemplateHelper();
             'Crawling',
             'Processing',
             'Forms',
+            'Staging',
+            'Production',
+            'Caching',
+            'Automation',
             'Advanced Options',
-            'Deployment',
-            'Logs',
             'Add-ons',
             'Help',
         ];
@@ -92,7 +94,7 @@ $tpl = new \WP2Static\TemplateHelper();
 
 
   <!-- main form containing options that get sent -->
-  <form id="general-options" class="options-form" method="post" action="">
+  <form id="general-options" method="post" action="">
 
     <!-- placeholder input fields to allow select menu deployment options to use existing behaviour -->
     <span class="hiddenExportOptions" style="display:none;">
@@ -102,6 +104,22 @@ $tpl = new \WP2Static\TemplateHelper();
     <?php
 
     function generateDeploymentMethodOptions() {
+        $options = array(
+            'folder' => array( 'Subdirectory on current server' ),
+            'zip' => array( 'ZIP archive (.zip)' ),
+        );
+
+        $options = apply_filters(
+            'wp2static_add_deployment_method_option_to_ui',
+            $options
+        );
+
+        foreach ( $options as $key => $value ) {
+            echo "<option value='$key'>$value[0]</option>";
+        }
+    }
+
+    function generateDeploymentMethodOptionsProduction() {
         $options = array(
             'folder' => array( 'Subdirectory on current server' ),
             'zip' => array( 'ZIP archive (.zip)' ),
@@ -127,8 +145,10 @@ $tpl = new \WP2Static\TemplateHelper();
     <?php require_once __DIR__ . '/tab_processing.php'; ?>
     <?php require_once __DIR__ . '/tab_forms.php'; ?>
     <?php require_once __DIR__ . '/tab_advanced.php'; ?>
-    <?php require_once __DIR__ . '/tab_export.php'; ?>
-    <?php require_once __DIR__ . '/tab_logs.php'; ?>
+    <?php require_once __DIR__ . '/tab_staging.php'; ?>
+    <?php require_once __DIR__ . '/tab_production.php'; ?>
+    <?php require_once __DIR__ . '/tab_caching.php'; ?>
+    <?php require_once __DIR__ . '/tab_automation.php'; ?>
     <?php require_once __DIR__ . '/tab_add_ons.php'; ?>
     <?php require_once __DIR__ . '/tab_help.php'; ?>
 
@@ -136,7 +156,7 @@ $tpl = new \WP2Static\TemplateHelper();
 
     <span class="submit" style="display:none;">
         <?php wp_nonce_field( $view['onceAction'] ); ?>
-      <input id="formActionHiddenField" class="hiddenActionField" type="hidden" name="action" value="wp_static_html_output_ajax" />
+      <input id="hiddenActionField" type="hidden" name="action" value="wp_static_html_output_ajax" />
       <input id="basedir" type="hidden" name="basedir" value="" />
       <input id="subdirectory" type="hidden" name="subdirectory" value="<?php echo $view['site_info']->subdirectory; ?>" />
       <input id="hiddenNonceField" type="hidden" name="nonce" value="<?php echo $ajax_nonce; ?>" />
@@ -152,24 +172,24 @@ $tpl = new \WP2Static\TemplateHelper();
 
           <div class="inside">
 
-<!-- Rounded switch -->
-<label class="switch">
-  <input type="checkbox">
-  <span class="slider round"></span>
-</label>
-
             <div class="submit">
                 <?php wp_nonce_field( $view['onceAction'] ); ?>
               <button id="startExportButton" class="wp2static-btn blue" disabled>
-                <?php echo __( 'Start Static Site Export', 'static-html-output-plugin' ); ?>
+                <?php echo __( 'Generate', 'static-html-output-plugin' ); ?>
               </button>
-              <button class="wp2static-btn saveSettingsButton" disabled>
+              <button id="deployToStagingButton" class="wp2static-btn blue" disabled>
+                <?php echo __( 'Deploy to Staging', 'static-html-output-plugin' ); ?>
+              </button>
+              <button id="deployToProductionButton" class="wp2static-btn blue" disabled>
+                <?php echo __( 'Deploy to Production', 'static-html-output-plugin' ); ?>
+              </button>
+              <button id="saveSettingsButton" class="wp2static-btn" disabled>
                 <?php echo __( 'Save Current Options', 'static-html-output-plugin' ); ?>
               </button>
-              <button class="wp2static-btn resetDefaultSettingsButton" disabled>
+              <button id="resetDefaultSettingsButton" class="wp2static-btn" disabled>
                 <?php echo __( 'Reset to Default Settings', 'static-html-output-plugin' ); ?>
               </button>
-              <button style="display:none;" class="wp2static-btn cancelExportButton">
+              <button style="display:none;" id="cancelExportButton" class="wp2static-btn">
                 <?php echo __( 'Cancel Export', 'static-html-output-plugin' ); ?>
                 </button>
 
@@ -196,7 +216,7 @@ $tpl = new \WP2Static\TemplateHelper();
 
                 <div id="progress-container">
                   <div id="progress">
-                    <div class="pulsate-css"></div>
+                    <div id="pulsate-css"></div>
                     <div id="current_action">
                         <?php echo __( 'Starting Export', 'static-html-output-plugin' ); ?>
                     </div>

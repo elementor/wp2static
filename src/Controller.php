@@ -494,6 +494,11 @@ class Controller {
             $plugin->options->selected_deployment_option :
             'folder';
 
+        $current_deployment_method_production =
+            $plugin->options->selected_deployment_option_production ?
+            $plugin->options->selected_deployment_option_production :
+            'folder';
+
         $data = array(
             'someString' => __( 'Some string to translate', 'plugin-domain' ),
             'options' => $plugin->options,
@@ -501,6 +506,8 @@ class Controller {
             'onceAction' => self::HOOK . '-options',
             '' => self::HOOK . '-options',
             'currentDeploymentMethod' => $current_deployment_method,
+            'currentDeploymentMethodProduction' =>
+                $current_deployment_method_production,
         );
 
         wp_localize_script( 'wp2static_admin_js', 'wp2staticString', $data );
