@@ -12,6 +12,7 @@ export class WP2StaticProcessExports {
   public processExportTargets() {
 
     const wp2staticAJAX = new WP2StaticAJAX( this.wp2staticGlobals );
+    const adminPage = this.wp2staticGlobals.adminPage;
 
     if (this.wp2staticGlobals.exportTargets.length > 0) {
       const target: string = String(this.wp2staticGlobals.exportTargets.shift());
@@ -25,13 +26,13 @@ export class WP2StaticProcessExports {
       if (this.wp2staticGlobals.currentDeploymentMethod === "zip") {
         const zipURL = `${this.wp2staticGlobals.siteInfo.uploads_url}
 wp2static-exported-site.zip?cacheBuster=${Date.now()}`;
-        $("#downloadZIP").attr("href", zipURL);
-        $("#downloadZIP").show();
+        adminPage.downloadZIP.setAttribute("href", zipURL);
+        adminPage.downloadZIP.style.display = "block";
       } else {
         // for other methods, show the Go to my static site link
-        const baseUrl = String($("#baseUrl").val());
-        $("#goToMyStaticSite").attr("href", baseUrl);
-        $("#goToMyStaticSite").show();
+        const baseUrl = String(adminPage.baseUrl.value);
+        adminPage.goToMyStaticSite.setAttribute("href", baseUrl);
+        adminPage.goToMyStaticSite.style.display = "block";
       }
 
       // all complete
@@ -44,16 +45,17 @@ wp2static-exported-site.zip?cacheBuster=${Date.now()}`;
 
       this.wp2staticGlobals.stopTimer();
 
-      $("#current_action").text(`Process completed in
-${this.wp2staticGlobals.millisToMinutesAndSeconds(this.wp2staticGlobals.exportDuration)} (mins:ss)`);
+      adminPage.currentAction.textContent = `Process completed in
+${this.wp2staticGlobals.millisToMinutesAndSeconds(this.wp2staticGlobals.exportDuration)} (mins:ss)`;
 
-      $("#goToMyStaticSite").focus();
-      $(".pulsate-css").hide();
-      $("#startExportButton").prop("disabled", false);
-      $(".saveSettingsButton").prop("disabled", false);
-      $(".resetDefaultSettingsButton").prop("disabled", false);
-      $(".cancelExportButton").hide();
-      // notifyMe();
+      adminPage.cancelExportButton.style.display = "none";
+      adminPage.pulsateCSS.style.display = "none";
+      adminPage.resetDefaultSettingsButton.removeAttribute("disabled");
+      adminPage.saveSettingsButton.removeAttribute("disabled");
+      adminPage.startExportButton.removeAttribute("disabled");
+      adminPage.goToMyStaticSite.focus();
+
+      // TODO: reconnect notifyMe();
     }
   }
 }
