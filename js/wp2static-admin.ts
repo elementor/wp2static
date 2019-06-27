@@ -13,7 +13,7 @@ interface FormProcessor {
 }
 
 // NOTE: passing around a globals object to allow shared instance and access
-// from browser.
+// from browser
 // within this entrypoint, access directly. From other classes, this., from
 // browser WP2Static.wp2staticGlobals
 export const wp2staticGlobals = new WP2StaticGlobals();
@@ -62,10 +62,16 @@ let validationErrors = "";
 
 wp2staticGlobals.siteInfo = JSON.parse(wp2staticString.siteInfo);
 
-if (wp2staticString.currentDeploymentMethod) {
-  wp2staticGlobals.currentDeploymentMethod = wp2staticString.currentDeploymentMethod;
-} else {
+if (!wp2staticString.currentDeploymentMethod) {
   wp2staticGlobals.currentDeploymentMethod = "folder";
+} else {
+  wp2staticGlobals.currentDeploymentMethod = wp2staticString.currentDeploymentMethod;
+}
+
+if (!wp2staticString.currentDeploymentMethodProduction) {
+  wp2staticGlobals.currentDeploymentMethodProduction = "folder";
+} else {
+  wp2staticGlobals.currentDeploymentMethodProduction = wp2staticString.currentDeploymentMethodProduction;
 }
 
 // TODO: get the log out of the archive, along with it's meta infos
@@ -86,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
  Please <a href="https://docs.wp2static.com" target="_blank">contact support</a>`;
       } else {
         adminPage.initialCrawlListLoader.style.display = "none";
-        adminPage.previewInitialCrawlListButton.style.display = "block";
+        adminPage.previewInitialCrawlListButton.style.display = "inline";
         adminPage.pulsateCSS.style.display = "none";
         adminPage.resetDefaultSettingsButton.removeAttribute("disabled");
         adminPage.saveSettingsButton.removeAttribute("disabled");
@@ -289,6 +295,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (wp2staticGlobals.currentDeploymentMethod === "zip") {
         adminPage.createZip.setAttribute("checked", "");
       }
+
       wp2staticGlobals.exportTargets.push(wp2staticGlobals.currentDeploymentMethod);
 
       sendWP2StaticAJAX(
@@ -342,7 +349,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function validateRepoField(repoField: any) {
       const repositoryField: HTMLInputElement =
-        document.getElementById("#" + repoField.field + "")! as HTMLInputElement;
+        document.getElementById(repoField.field + "")! as HTMLInputElement;
       const repo: string = String(repositoryField.value);
 
       if (repo !== "") {
@@ -356,7 +363,7 @@ document.addEventListener("DOMContentLoaded", () => {
       Object.keys(requiredFields).forEach(
         (key, index) => {
           const requiredField: HTMLInputElement =
-            document.getElementById("#" + key)! as HTMLInputElement;
+            document.getElementById(key)! as HTMLInputElement;
           if (requiredField.value === "") {
             validationErrors += requiredFields[key] + "\n";
           }
@@ -431,6 +438,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // set the selected option in case calling this from outside the event handler
       adminPage.selectedDeploymentMethod.value = selectedDeploymentMethod;
+      updateStagingSummary();
+    }
+
+    function setDeploymentMethodProduction(selectedDeploymentMethod: string) {
+      adminPage.downloadZIP.style.display = "none";
+      wp2staticGlobals.currentDeploymentMethodProduction = selectedDeploymentMethod;
+
+      // set the selected option in case calling this from outside the event handler
+      adminPage.selectedDeploymentMethodProduction.value = selectedDeploymentMethod;
+      updateStagingSummary();
+    }
+
+    function updateStagingSummary() {
+      adminPage.stagingSummaryDeployMethod.textContent = wp2staticGlobals.currentDeploymentMethod;
+
+      const currentBaseUrl: HTMLInputElement | null =
+        document.getElementById("baseUrl-" + wp2staticGlobals.currentDeploymentMethod)! as HTMLInputElement;
+
+      adminPage.stagingSummaryDeployUrl.textContent = currentBaseUrl.value;
     }
 
     function offlineUsageChangeHandler(checkbox: HTMLElement) {
@@ -452,7 +478,21 @@ document.addEventListener("DOMContentLoaded", () => {
       const settingsBlock: HTMLElement =
         document.getElementById(selectedDeploymentMethod + "_settings_block")!;
 
-      settingsBlock.style.display = "none";
+      settingsBlock.style.display = "block";
+    }
+
+    function renderSettingsBlockProduction(selectedDeploymentMethod: string) {
+      Array.prototype.forEach.call(
+        adminPage.settingsBlocks,
+        (element, index) => {
+            element.style.display = "none";
+        },
+      );
+
+      const settingsBlock: HTMLElement =
+        document.getElementById(selectedDeploymentMethod + "_settings_block_production")!;
+
+      settingsBlock.style.display = "block";
     }
 
     function notifyMe() {
@@ -554,6 +594,13 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
             tabContent.style.display = "none";
           }
         }
+      }
+
+      // render staging / production deploy options
+      if (targetTab === "Staging") {
+        renderSettingsBlock(wp2staticGlobals.currentDeploymentMethod);
+      } else if (targetTab === "Production") {
+        renderSettingsBlockProduction(wp2staticGlobals.currentDeploymentMethodProduction);
       }
     }
 
@@ -760,7 +807,7 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
 
     // guard against selected option for add-on not currently activated
     const deployBaseUrl: HTMLInputElement | null =
-      document.getElementById("#baseUrl-" + wp2staticGlobals.currentDeploymentMethod)! as HTMLInputElement;
+      document.getElementById("baseUrl-" + wp2staticGlobals.currentDeploymentMethod)! as HTMLInputElement;
     if (deployBaseUrl === null) {
       wp2staticGlobals.currentDeploymentMethod = "folder";
     }
@@ -770,16 +817,18 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
     setFormProcessor(selectedFormProcessor);
 
     // call change handler on page load, to set correct state
-    const offlineUsageCheckbox: any = document.getElementById("#allowOfflineUsage");
+    const offlineUsageCheckbox: any = document.getElementById("allowOfflineUsage");
     if ( offlineUsageCheckbox ) {
       offlineUsageChangeHandler(offlineUsageCheckbox);
     }
 
     // set and show the previous selected deployment method
     renderSettingsBlock(wp2staticGlobals.currentDeploymentMethod);
+    renderSettingsBlockProduction(wp2staticGlobals.currentDeploymentMethodProduction);
 
     // set the select to the current deployment type
     setDeploymentMethod(wp2staticGlobals.currentDeploymentMethod);
+    setDeploymentMethodProduction(wp2staticGlobals.currentDeploymentMethodProduction);
 
     // hide all but WP2Static messages
     hideOtherVendorMessages();

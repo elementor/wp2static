@@ -11,6 +11,7 @@ export class WP2StaticGlobals {
     post_process_archive_dir: "Processing the crawled files",
   };
   public currentDeploymentMethod: string = "";
+  public currentDeploymentMethodProduction: string = "";
   public siteInfo: any;
   public exportTargets: string[] = [];
   public deployOptions: any = {

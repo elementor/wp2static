@@ -32,11 +32,14 @@ export class WP2StaticAdminPageModel {
   public resetDefaultSettingsButton: HTMLElement;
   public saveSettingsButton: HTMLElement;
   public selectedDeploymentMethod: HTMLSelectElement;
+  public selectedDeploymentMethodProduction: HTMLSelectElement;
   public sendSupportRequestButton: HTMLElement;
   public sendSupportRequestContent: HTMLInputElement;
   public sendSupportRequestEmail: HTMLInputElement;
   public sendSupportRequestIncludeLog: HTMLInputElement;
   public settingsBlocks: NodeListOf<Element>;
+  public stagingSummaryDeployMethod: HTMLElement;
+  public stagingSummaryDeployUrl: HTMLElement;
   public startExportButton: HTMLElement;
   public targetFolder: HTMLInputElement;
   public vendorNotices: NodeListOf<Element>;
@@ -74,11 +77,15 @@ export class WP2StaticAdminPageModel {
     this.resetDefaultSettingsButton = document.getElementById("resetDefaultSettingsButton")!;
     this.saveSettingsButton = document.getElementById("saveSettingsButton")!;
     this.selectedDeploymentMethod = document.getElementById("selected_deployment_method")! as HTMLSelectElement;
+    this.selectedDeploymentMethodProduction =
+      document.getElementById("selected_deployment_method_production")! as HTMLSelectElement;
     this.sendSupportRequestButton = document.getElementById("send_support_request")! as HTMLInputElement;
     this.sendSupportRequestContent = document.getElementById("supportRequestContent")! as HTMLInputElement;
     this.sendSupportRequestEmail = document.getElementById("supportRequestEmail")! as HTMLInputElement;
     this.sendSupportRequestIncludeLog = document.getElementById("supportRequestIncludeLog")! as HTMLInputElement;
-    this.settingsBlocks = document.querySelectorAll('[id="_settings_block"]')!;
+    this.settingsBlocks = document.querySelectorAll('[id$="_settings_block"]')!;
+    this.stagingSummaryDeployMethod = document.getElementById("stagingSummaryDeployMethod")!;
+    this.stagingSummaryDeployUrl = document.getElementById("stagingSummaryDeployUrl")!;
     this.startExportButton = document.getElementById("startExportButton")!;
     this.targetFolder = document.getElementById("targetFolder")! as HTMLInputElement;
     this.vendorNotices =

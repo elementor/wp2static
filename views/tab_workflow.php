@@ -26,8 +26,8 @@
 
     <h3>Deployment summary</h3>
     <ul>
-       <li><b>Deployment Method</b> Netlify</li>
-       <li><b>Destination URL</b> https://testmysite.netlify.com</li>
+       <li><b>Deployment Method</b> <span id="stagingSummaryDeployMethod">not set</span></li>
+       <li><b>Destination URL</b> <span id="stagingSummaryDeployUrl">not set</span></li>
     </ul>
   </div>
 

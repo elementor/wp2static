@@ -6,25 +6,25 @@
   </div>
 
   <div class="content">
-    <select id="selected_deployment_method" name="selected_deployment_option">
-        <?php generateDeploymentMethodOptions(); ?>
+    <select id="selected_deployment_method_production" name="selected_deployment_option_production">
+        <?php generateDeploymentMethodOptionsProduction(); ?>
     </select>
    </div>
 </section>
 
 <!-- legacy multi-export functionality relied on the baseUrl field being first in the settings block -->
-<input style="display:none;" type="text" id="baseUrl" name="baseUrl" value="<?php echo esc_attr( $this->baseUrl ); ?>" size="50" placeholder="http://mystaticsite.com" />
+<input style="display:none;" type="text" id="baseUrlProduction" name="baseUrlProduction" value="<?php echo esc_attr( $this->baseUrl ); ?>" size="50" placeholder="http://mystaticsite.com" />
 
 <?php
 
   // load up each deployment settings block
   $deployment_option_templates = array(
-      __DIR__ . '/folder_settings_block.php',
-      __DIR__ . '/zip_settings_block.php',
+      __DIR__ . '/folder_settings_block_production.php',
+      __DIR__ . '/zip_settings_block_production.php',
   );
 
 $deployment_option_templates = apply_filters(
-    'wp2static_load_deploy_option_template',
+    'wp2static_load_deploy_option_template_production',
     $deployment_option_templates
 );
 
@@ -33,5 +33,4 @@ $deployment_option_templates = apply_filters(
   }
 
     ?>
-
 </div> <!-- end export_your_site -->

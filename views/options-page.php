@@ -119,6 +119,22 @@ $tpl = new \WP2Static\TemplateHelper();
         }
     }
 
+    function generateDeploymentMethodOptionsProduction() {
+        $options = array(
+            'folder' => array( 'Subdirectory on current server' ),
+            'zip' => array( 'ZIP archive (.zip)' ),
+        );
+
+        $options = apply_filters(
+            'wp2static_add_deployment_method_option_to_ui',
+            $options
+        );
+
+        foreach ( $options as $key => $value ) {
+            echo "<option value='$key'>$value[0]</option>";
+        }
+    }
+
     ?>
 
     <div class="wp2static-content-wrapper">
