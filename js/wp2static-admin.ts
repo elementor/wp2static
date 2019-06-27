@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    function generateFileListFailCallback(serverResponse: any) {
+    function generateFileListFailCallback(event: any) {
       const failedDeployMessage = `Failed to generate Initial Crawl List.
  Please check your permissions to the WordPress upload directory or check your
  Export Log in case of more info.`;
@@ -165,13 +165,13 @@ document.addEventListener("DOMContentLoaded", () => {
       request.send(data);
     }
 
-    function saveOptionsSuccessCallback(serverResponse: any) {
+    function saveOptionsSuccessCallback(event: any) {
       adminPage.progress.style.display = "none";
 
       location.reload();
     }
 
-    function saveOptionsFailCallback(serverResponse: any) {
+    function saveOptionsFailCallback(event: any) {
       adminPage.progress.style.display = "none";
 
       location.reload();
@@ -187,8 +187,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    function deleteCrawlCacheSuccessCallback(serverResponse: any) {
-      if (!serverResponse) {
+    function deleteCrawlCacheSuccessCallback(event: any) {
+      if (!event.target.response) {
         adminPage.pulsateCSS.style.display = "none";
         adminPage.currentAction.innerHTML = "Failed to delete Crawl Cache.";
       } else {
@@ -197,21 +197,10 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    function deleteCrawlCacheFailCallback(serverResponse: any) {
+    function deleteCrawlCacheFailCallback(event: any) {
       adminPage.pulsateCSS.style.display = "none";
       adminPage.currentAction.innerHTML = "Failed to delete Crawl Cache.";
     }
-
-    /*
-    $(document).on(
-      "click",
-      "#detectEverythingButton",
-      (evt) => {
-        evt.preventDefault();
-        $('#detectionOptionsTable input[type="checkbox"]').attr("checked", 1);
-      },
-    );
-    */
 
     adminPage.detectEverythingButton.addEventListener(
       "click",
@@ -264,7 +253,7 @@ document.addEventListener("DOMContentLoaded", () => {
       adminPage.startExportButton.removeAttribute("disabled");
     }
 
-    function startExportSuccessCallback(serverResponse: any) {
+    function startExportSuccessCallback(event: any) {
       const initialSteps = [
         "crawl_site",
         "post_process_archive_dir",
@@ -669,20 +658,20 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
       },
     );
 
-    function sendSupportSuccessCallback(serverResponse: any) {
+    function sendSupportSuccessCallback(event: any) {
       alert("Successful support request sent");
     }
 
-    function sendSupportFailCallback(serverResponse: any) {
+    function sendSupportFailCallback(event: any) {
       alert("Failed to send support request. Please try again or contact help@wp2static.com.");
     }
 
-    function resetDefaultSettingsSuccessCallback(serverResponse: any) {
+    function resetDefaultSettingsSuccessCallback(event: any) {
       alert("Settings have been reset to default, the page will now be reloaded.");
       window.location.reload(true);
     }
 
-    function resetDefaultSettingsFailCallback(serverResponse: any) {
+    function resetDefaultSettingsFailCallback(event: any) {
       alert("Error encountered in trying to reset settings. Please try refreshing the page.");
     }
 
@@ -707,8 +696,8 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
       },
     );
 
-    function deleteDeployCacheSuccessCallback(serverResponse: any) {
-      if (serverResponse === "SUCCESS") {
+    function deleteDeployCacheSuccessCallback(event: any) {
+      if (event.target.response === "SUCCESS") {
         alert("Deploy cache cleared");
       } else {
         alert("FAIL: Unable to delete deploy cache");
@@ -717,7 +706,7 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
       adminPage.pulsateCSS.style.display = "none";
     }
 
-    function deleteDeployCacheFailCallback(serverResponse: any) {
+    function deleteDeployCacheFailCallback(event: any) {
       alert("FAIL: Unable to delete deploy cache");
 
       adminPage.pulsateCSS.style.display = "none";
@@ -736,8 +725,8 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
       },
     );
 
-    function testDeploymentSuccessCallback(serverResponse: any) {
-      if (serverResponse === "SUCCESS") {
+    function testDeploymentSuccessCallback(event: any) {
+      if (event.target.response === "SUCCESS") {
         alert("Connection/Upload Test Successful");
       } else {
         alert("FAIL: Unable to complete test upload to " + wp2staticGlobals.currentDeploymentMethod);
@@ -746,7 +735,7 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
       adminPage.pulsateCSS.style.display = "none";
     }
 
-    function testDeploymentFailCallback(serverResponse: any) {
+    function testDeploymentFailCallback(event: any) {
       alert("FAIL: Unable to complete test upload to " + wp2staticGlobals.currentDeploymentMethod);
       adminPage.pulsateCSS.style.display = "none";
     }
