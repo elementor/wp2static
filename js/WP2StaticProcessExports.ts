@@ -43,8 +43,6 @@ wp2static-exported-site.zip?cacheBuster=${Date.now()}`;
       // clear export commence time for next run
       this.wp2staticGlobals.exportCommenceTime = 0;
 
-      this.wp2staticGlobals.stopTimer();
-
       adminPage.currentAction.textContent = `Process completed in
 ${this.wp2staticGlobals.millisToMinutesAndSeconds(this.wp2staticGlobals.exportDuration)} (mins:ss)`;
 

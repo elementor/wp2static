@@ -34,24 +34,6 @@ export class WP2StaticGlobals {
   };
   public statusText: string = "";
 
-  public startTimer() {
-    this.timerIntervalID = window.setInterval(this.updateTimer, 1000);
-  }
-
-  public stopTimer() {
-    window.clearInterval(this.timerIntervalID);
-  }
-
-  public updateTimer() {
-    this.exportCompleteTime = +new Date();
-    const runningTime = this.exportCompleteTime - this.exportCommenceTime;
-
-    const exportTimer: HTMLElement =
-      document.getElementById("export_timer")! as HTMLElement;
-
-    exportTimer.innerHTML = `<b>Export duration: </b> ${this.millisToMinutesAndSeconds(runningTime)}`;
-  }
-
   public millisToMinutesAndSeconds( millis: number ) {
     const minutes = Math.floor(millis / 60000);
     const seconds: number = parseFloat( ((millis % 60000) / 1000).toFixed(0) );

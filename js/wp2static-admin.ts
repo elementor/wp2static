@@ -249,8 +249,6 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
     function ajaxErrorHandler() {
-      wp2staticGlobals.stopTimer();
-
       const failedDeployMessage = `Failed during ${wp2staticGlobals.statusText}`;
 
       adminPage.currentAction.innerHTML = failedDeployMessage;
@@ -273,7 +271,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function startExport() {
       wp2staticGlobals.exportCommenceTime = +new Date();
-      wp2staticGlobals.startTimer();
 
       // TODO: reimplement validators validationErrors = getValidationErrors();
       validationErrors = "";

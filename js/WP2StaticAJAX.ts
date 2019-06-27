@@ -87,8 +87,6 @@ export class WP2StaticAJAX {
     }
 
     public ajaxErrorHandler() {
-      this.wp2staticGlobals.stopTimer();
-
       const failedDeployMessage = 'Failed during "' + this.wp2staticGlobals.statusText +
               '", <button id="downloadExportLogButton">Download export log</button>';
 
