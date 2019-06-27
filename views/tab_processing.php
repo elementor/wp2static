@@ -1,4 +1,4 @@
-<div class="processing_settings" style="display:none;">
+<div id="processing_settings" style="display:none;">
 
 <section class="wp2static-content wp2static-flex">
   <div class="content" style="max-width:30%">

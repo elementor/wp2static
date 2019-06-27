@@ -1,4 +1,4 @@
-<div class="staging_deploy" style="display:none;">
+<div id="staging_deploy" style="display:none;">
 
 <section class="wp2static-content wp2static-flex">
   <div class="content" style="max-width:30%">

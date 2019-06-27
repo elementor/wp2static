@@ -77,8 +77,10 @@ const localhostDomainRE = /^localhost[:?\d]*(?:[^:?\d]\S*)?$/;
 const nonLocalhostDomainRE = /^[^\s.]+\.\S{2,}$/;
 document.addEventListener("DOMContentLoaded", () => {
     const adminPage = new WP2StaticAdminPageModel();
-    function generateFileListSuccessCallback(serverResponse: any) {
-      if (!serverResponse) {
+    function generateFileListSuccessCallback(event: any) {
+      const fileListCount: number = <number>event.target.response;
+
+      if (!fileListCount) {
         adminPage.pulsateCSS.style.display = "none";
         adminPage.currentAction.innerHTML = `Failed to generate initial file list.
  Please <a href="https://docs.wp2static.com" target="_blank">contact support</a>`;
@@ -89,9 +91,9 @@ document.addEventListener("DOMContentLoaded", () => {
         adminPage.resetDefaultSettingsButton.removeAttribute("disabled");
         adminPage.saveSettingsButton.removeAttribute("disabled");
         adminPage.startExportButton.removeAttribute("disabled");
-        adminPage.currentAction.innerHTML = `${serverResponse} URLs were detected for
+        adminPage.currentAction.innerHTML = `${fileListCount} URLs were detected for
  initial crawl list. Adjust detection via the URL Detection tab.`;
-        adminPage.initialCrawlListCount.textContent = `${serverResponse} URLs were
+        adminPage.initialCrawlListCount.textContent = `${fileListCount} URLs were
  detected on your site that will be used to initiate the crawl.
  Other URLs will be discovered while crawling.`;
       }
@@ -553,12 +555,12 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
       for (const key in tabsContentMapping) {
         if (tabsContentMapping.hasOwnProperty(key)) {
           if (tabsContentMapping[key] === targetTab) {
-            const tabContent = document.getElementById("." + key)!;
+            const tabContent = document.getElementById(key)!;
             tabContent.style.display = "block";
             document.body.scrollTop = 0;
             document.documentElement.scrollTop = 0;
           } else {
-            const tabContent = document.getElementById("." + key)!;
+            const tabContent = document.getElementById(key)!;
             tabContent.style.display = "none";
           }
         }

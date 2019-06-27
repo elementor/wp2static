@@ -22,12 +22,13 @@
 
     <h2>Staging</h2>
 
-    <p>Automatically deploy any changes to your WordPress site here. If you don't want to stage before production use your production environment details here.</p>
+    <p>QA your static site before going to production.</p>
 
     <h3>Deployment summary</h3>
     <ul>
        <li><b>Deployment Method</b> Netlify</li>
        <li><b>Destination URL</b> https://testmysite.netlify.com</li>
+        <span><nest1><nest2>sdfsdfsdf</nest2></nest1></span>
     </ul>
   </div>
 
@@ -36,7 +37,7 @@
 
     <h2>Production</h2>
 
-    <p>For those who want to preview site changes on staging before going live, enter production deployment details here. Production deploys use the same generated static site content as staging, so choose a URL processing scheme that will work on either domain.</p>
+    <p>Your live site hosting.</p>
 
     <h3>Deployment summary</h3>
     <ul>

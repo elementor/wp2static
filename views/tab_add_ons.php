@@ -1,4 +1,4 @@
-<div class="add_ons" style="display:none;">
+<div id="add_ons" style="display:none;">
 
 <section class="wp2static-content wp2static-flex">
   <div class="content" style="max-width:30%">
