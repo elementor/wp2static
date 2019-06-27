@@ -413,8 +413,7 @@ Help keep me doing what I love: building and supporting this software.
 
  - [Buy a commercial license](https://wp2static.com)
  - [Back me on Patreon](https://www.patreon.com/leonstafford)
- - [Fund my PayPal](https://www.paypal.me/leonjstafford)
 
 Leon
 
-leon@wp2static.com
+[me@ljs.dev](mailto:me@ljs.dev)
