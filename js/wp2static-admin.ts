@@ -273,7 +273,8 @@ document.addEventListener("DOMContentLoaded", () => {
       wp2staticGlobals.exportCommenceTime = +new Date();
       wp2staticGlobals.startTimer();
 
-      validationErrors = getValidationErrors();
+      // TODO: reimplement validators validationErrors = getValidationErrors();
+      validationErrors = "";
 
       if (validationErrors !== "") {
         alert(validationErrors);
