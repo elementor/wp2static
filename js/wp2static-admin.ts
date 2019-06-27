@@ -447,7 +447,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // set the selected option in case calling this from outside the event handler
       adminPage.selectedDeploymentMethodProduction.value = selectedDeploymentMethod;
-      updateStagingSummary();
+      updateProductionSummary();
     }
 
     function updateStagingSummary() {
@@ -457,6 +457,15 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("baseUrl-" + wp2staticGlobals.currentDeploymentMethod)! as HTMLInputElement;
 
       adminPage.stagingSummaryDeployUrl.textContent = currentBaseUrl.value;
+    }
+
+    function updateProductionSummary() {
+      adminPage.productionSummaryDeployMethod.textContent = wp2staticGlobals.currentDeploymentMethodProduction;
+
+      const currentBaseUrlProduction: HTMLInputElement | null =
+        document.getElementById("baseUrl-" + wp2staticGlobals.currentDeploymentMethodProduction)! as HTMLInputElement;
+
+      adminPage.productionSummaryDeployUrl.textContent = currentBaseUrlProduction.value;
     }
 
     function offlineUsageChangeHandler(checkbox: HTMLElement) {
@@ -481,18 +490,18 @@ document.addEventListener("DOMContentLoaded", () => {
       settingsBlock.style.display = "block";
     }
 
-    function renderSettingsBlockProduction(selectedDeploymentMethod: string) {
+    function renderSettingsBlockProduction(selectedDeploymentMethodProduction: string) {
       Array.prototype.forEach.call(
-        adminPage.settingsBlocks,
+        adminPage.settingsBlocksProduction,
         (element, index) => {
             element.style.display = "none";
         },
       );
 
-      const settingsBlock: HTMLElement =
-        document.getElementById(selectedDeploymentMethod + "_settings_block_production")!;
+      const settingsBlockProduction: HTMLElement =
+        document.getElementById(selectedDeploymentMethodProduction + "_settings_block_production")!;
 
-      settingsBlock.style.display = "block";
+      settingsBlockProduction.style.display = "block";
     }
 
     function notifyMe() {
@@ -553,6 +562,15 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
       },
     );
 
+    adminPage.selectedDeploymentMethodProduction.addEventListener(
+      "change",
+      (event: any) => {
+        renderSettingsBlockProduction((event.currentTarget as HTMLInputElement).value);
+        setDeploymentMethodProduction((event.currentTarget as HTMLInputElement).value);
+        clearProgressAndResults();
+      },
+    );
+
     function changeTab(targetTab: string) {
       const tabsContentMapping: any = {
         add_ons: "Add-ons",
@@ -573,7 +591,7 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
         adminPage.navigationTabs,
         (element, index) => {
           if (element.textContent === targetTab) {
-            element.classList.remove("nav-tab-active");
+            element.classList.add("nav-tab-active");
             element.blur();
           } else {
             element.classList.remove("nav-tab-active");

@@ -23,10 +23,10 @@
       __DIR__ . '/zip_settings_block_production.php',
   );
 
-$deployment_option_templates = apply_filters(
-    'wp2static_load_deploy_option_template_production',
-    $deployment_option_templates
-);
+  $deployment_option_templates = apply_filters(
+      'wp2static_load_deploy_option_template_production',
+      $deployment_option_templates
+  );
 
   foreach ( $deployment_option_templates as $deployment_option_template ) {
       require_once $deployment_option_template;

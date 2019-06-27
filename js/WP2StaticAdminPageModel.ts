@@ -38,8 +38,11 @@ export class WP2StaticAdminPageModel {
   public sendSupportRequestEmail: HTMLInputElement;
   public sendSupportRequestIncludeLog: HTMLInputElement;
   public settingsBlocks: NodeListOf<Element>;
+  public settingsBlocksProduction: NodeListOf<Element>;
   public stagingSummaryDeployMethod: HTMLElement;
   public stagingSummaryDeployUrl: HTMLElement;
+  public productionSummaryDeployMethod: HTMLElement;
+  public productionSummaryDeployUrl: HTMLElement;
   public startExportButton: HTMLElement;
   public targetFolder: HTMLInputElement;
   public vendorNotices: NodeListOf<Element>;
@@ -84,8 +87,11 @@ export class WP2StaticAdminPageModel {
     this.sendSupportRequestEmail = document.getElementById("supportRequestEmail")! as HTMLInputElement;
     this.sendSupportRequestIncludeLog = document.getElementById("supportRequestIncludeLog")! as HTMLInputElement;
     this.settingsBlocks = document.querySelectorAll('[id$="_settings_block"]')!;
+    this.settingsBlocksProduction = document.querySelectorAll('[id$="_settings_block_production"]')!;
     this.stagingSummaryDeployMethod = document.getElementById("stagingSummaryDeployMethod")!;
     this.stagingSummaryDeployUrl = document.getElementById("stagingSummaryDeployUrl")!;
+    this.productionSummaryDeployMethod = document.getElementById("stagingSummaryDeployMethodProduction")!;
+    this.productionSummaryDeployUrl = document.getElementById("stagingSummaryDeployUrlProduction")!;
     this.startExportButton = document.getElementById("startExportButton")!;
     this.targetFolder = document.getElementById("targetFolder")! as HTMLInputElement;
     this.vendorNotices =

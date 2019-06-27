@@ -40,8 +40,8 @@
 
     <h3>Deployment summary</h3>
     <ul>
-       <li><b>Deployment Method</b> S3</li>
-       <li><b>Destination URL</b> https://www.mywebsite.com</li>
+       <li><b>Deployment Method</b> <span id="stagingSummaryDeployMethodProduction">not set</span></li>
+       <li><b>Destination URL</b> <span id="stagingSummaryDeployUrlProduction">not set</span></li>
     </ul>
   </div>
 </section>
