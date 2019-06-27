@@ -1,7 +1,7 @@
 declare var wp2staticString: any;
 declare var ajaxurl: string;
-import { WP2StaticAJAX } from "./WP2StaticAJAX";
 import { WP2StaticAdminPageModel } from "./WP2StaticAdminPageModel";
+import { WP2StaticAJAX } from "./WP2StaticAJAX";
 import { WP2StaticGlobals } from "./WP2StaticGlobals";
 
 interface FormProcessor {
@@ -78,7 +78,7 @@ const nonLocalhostDomainRE = /^[^\s.]+\.\S{2,}$/;
 document.addEventListener("DOMContentLoaded", () => {
     const adminPage = new WP2StaticAdminPageModel();
     function generateFileListSuccessCallback(event: any) {
-      const fileListCount: number = <number>event.target.response;
+      const fileListCount: number = event.target.response as number;
 
       if (!fileListCount) {
         adminPage.pulsateCSS.style.display = "none";
@@ -243,7 +243,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function ajaxErrorHandler() {
       wp2staticGlobals.stopTimer();
 
-      const failedDeployMessage = 'Failed during ' + wp2staticGlobals.statusText;
+      const failedDeployMessage = `Failed during ${wp2staticGlobals.statusText}`;
 
       adminPage.currentAction.innerHTML = failedDeployMessage;
       adminPage.pulsateCSS.style.display = "none";
@@ -342,7 +342,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function validateRepoField(repoField: any) {
       const repositoryField: HTMLInputElement =
-        <HTMLInputElement>document.getElementById("#" + repoField.field + "")!;
+        document.getElementById("#" + repoField.field + "")! as HTMLInputElement;
       const repo: string = String(repositoryField.value);
 
       if (repo !== "") {
@@ -355,7 +355,8 @@ document.addEventListener("DOMContentLoaded", () => {
     function validateEmptyFields(requiredFields: any) {
       Object.keys(requiredFields).forEach(
         (key, index) => {
-          const requiredField: HTMLInputElement = <HTMLInputElement>document.getElementById("#" + key)!;
+          const requiredField: HTMLInputElement =
+            document.getElementById("#" + key)! as HTMLInputElement;
           if (requiredField.value === "") {
             validationErrors += requiredFields[key] + "\n";
           }
@@ -758,7 +759,8 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
     */
 
     // guard against selected option for add-on not currently activated
-    const deployBaseUrl: HTMLInputElement | null = <HTMLInputElement>document.getElementById("#baseUrl-" + wp2staticGlobals.currentDeploymentMethod)!;
+    const deployBaseUrl: HTMLInputElement | null =
+      document.getElementById("#baseUrl-" + wp2staticGlobals.currentDeploymentMethod)! as HTMLInputElement;
     if (deployBaseUrl === null) {
       wp2staticGlobals.currentDeploymentMethod = "folder";
     }

@@ -42,9 +42,9 @@ export class WP2StaticAdminPageModel {
   public vendorNotices: NodeListOf<Element>;
 
   constructor() {
-    this.allowOfflineUsage = <HTMLInputElement>document.getElementById("allowOfflineUsage")!;
-    this.baseUrl = <HTMLInputElement>document.getElementById("baseUrl")!;
-    this.baseUrlZip = <HTMLInputElement>document.getElementById("baseUrl-zip")!;
+    this.allowOfflineUsage = document.getElementById("allowOfflineUsage")! as HTMLInputElement;
+    this.baseUrl = document.getElementById("baseUrl")! as HTMLInputElement;
+    this.baseUrlZip = document.getElementById("baseUrl-zip")! as HTMLInputElement;
     this.cancelExportButton = document.getElementById("cancelExportButton")!;
     this.createZip = document.getElementById("createZip")!;
     this.currentAction = document.getElementById("current_action")!;
@@ -55,32 +55,32 @@ export class WP2StaticAdminPageModel {
     this.detectionOptionsInputs = document.querySelectorAll('#detectionOptionsTable input[type="checkbox"]')!;
     this.downloadZIP = document.getElementById("downloadZIP")!;
     this.exportDuration = document.getElementById("exportDuration")!;
-    this.formProcessorDescription = <HTMLInputElement>document.getElementById("form_processor_description")!;
-    this.formProcessorEndpoint = <HTMLInputElement>document.getElementById("form_processor_endpoint")!;
-    this.formProcessorSelect = <HTMLSelectElement>document.getElementById("form_processor_select")!;
-    this.formProcessorWebsite = <HTMLInputElement>document.getElementById("form_processor_website")!;
+    this.formProcessorDescription = document.getElementById("form_processor_description")! as HTMLInputElement;
+    this.formProcessorEndpoint = document.getElementById("form_processor_endpoint")! as HTMLInputElement;
+    this.formProcessorSelect = document.getElementById("form_processor_select")! as HTMLSelectElement;
+    this.formProcessorWebsite = document.getElementById("form_processor_website")! as HTMLInputElement;
     this.generalOptions = document.getElementById("general-options")!;
     this.goToDeployTabButton = document.getElementById("GoToDeployTabButton")!;
     this.goToMyStaticSite = document.getElementById("goToMyStaticSite")!;
-    this.hiddenAJAXAction = <HTMLInputElement>document.getElementById("hiddenAJAXAction")!;
-    this.hiddenActionField = <HTMLInputElement>document.getElementById("hiddenActionField")!;
+    this.hiddenAJAXAction = document.getElementById("hiddenAJAXAction")! as HTMLInputElement;
+    this.hiddenActionField = document.getElementById("hiddenActionField")! as HTMLInputElement;
     this.initialCrawlListCount = document.getElementById("initial_crawl_list_count")!;
     this.initialCrawlListLoader = document.getElementById("initial_crawl_list_loader")!;
     this.navigationTabs = document.querySelectorAll(".nav-tab")!;
-    this.optionsForm = <HTMLFormElement>document.getElementById("general-options")!;
+    this.optionsForm = document.getElementById("general-options")! as HTMLFormElement;
     this.previewInitialCrawlListButton = document.getElementById("preview_initial_crawl_list_button")!;
     this.progress = document.getElementById("progress")!;
     this.pulsateCSS = document.getElementById("pulsate-css")!;
     this.resetDefaultSettingsButton = document.getElementById("resetDefaultSettingsButton")!;
     this.saveSettingsButton = document.getElementById("saveSettingsButton")!;
-    this.selectedDeploymentMethod = <HTMLSelectElement>document.getElementById("selected_deployment_method")!;
-    this.sendSupportRequestButton = <HTMLInputElement>document.getElementById("send_support_request")!;
-    this.sendSupportRequestContent = <HTMLInputElement>document.getElementById("supportRequestContent")!;
-    this.sendSupportRequestEmail = <HTMLInputElement>document.getElementById("supportRequestEmail")!;
-    this.sendSupportRequestIncludeLog = <HTMLInputElement>document.getElementById("supportRequestIncludeLog")!;
+    this.selectedDeploymentMethod = document.getElementById("selected_deployment_method")! as HTMLSelectElement;
+    this.sendSupportRequestButton = document.getElementById("send_support_request")! as HTMLInputElement;
+    this.sendSupportRequestContent = document.getElementById("supportRequestContent")! as HTMLInputElement;
+    this.sendSupportRequestEmail = document.getElementById("supportRequestEmail")! as HTMLInputElement;
+    this.sendSupportRequestIncludeLog = document.getElementById("supportRequestIncludeLog")! as HTMLInputElement;
     this.settingsBlocks = document.querySelectorAll('[id="_settings_block"]')!;
     this.startExportButton = document.getElementById("startExportButton")!;
-    this.targetFolder = <HTMLInputElement>document.getElementById("targetFolder")!;
+    this.targetFolder = document.getElementById("targetFolder")! as HTMLInputElement;
     this.vendorNotices =
       document.querySelectorAll(".update-nag, .updated, .error, .is-dismissible, .elementor-message")!;
 

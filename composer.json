@@ -76,7 +76,6 @@
         "test": [
             "@lint",
             "@tslint",
-            "@ts2js",
             "@buildjs",
             "@phpcs",
             "@phpstan",
