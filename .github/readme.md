@@ -375,9 +375,11 @@ In trying to make development/contributing easier, we'll keep requirements to a 
 
 ### Installing from source
 
- - clone `develop` branch
+ - `git clone -b git@github.com:WP2Static/wp2static.git static-html-output-plugin`
+ - `cd static-html-output-plugin`
  - `npm i`
  - `composer install`
+ - `composer buildjs`
 
 ### Running tests
 
