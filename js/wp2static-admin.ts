@@ -17,7 +17,6 @@ interface FormProcessor {
 // within this entrypoint, access directly. From other classes, this., from
 // browser WP2Static.wp2staticGlobals
 export const wp2staticGlobals = new WP2StaticGlobals();
-export const wp2staticAJAX = new WP2StaticAJAX( wp2staticGlobals );
 
 const formProcessors: FormProcessor[] = [
   {
@@ -83,6 +82,9 @@ const localhostDomainRE = /^localhost[:?\d]*(?:[^:?\d]\S*)?$/;
 const nonLocalhostDomainRE = /^[^\s.]+\.\S{2,}$/;
 document.addEventListener("DOMContentLoaded", () => {
     const adminPage = new WP2StaticAdminPageModel();
+    wp2staticGlobals.adminPage = adminPage;
+    const wp2staticAJAX = new WP2StaticAJAX( wp2staticGlobals );
+
     function generateFileListSuccessCallback(event: any) {
       const fileListCount: number = event.target.response as number;
 

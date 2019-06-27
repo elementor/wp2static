@@ -1,6 +1,8 @@
+import { WP2StaticAdminPageModel } from "./WP2StaticAdminPageModel";
+
 export class WP2StaticGlobals {
 
-  public aProperty: string = "default value";
+  public adminPage: WP2StaticAdminPageModel = new WP2StaticAdminPageModel();
   public exportCommenceTime: number = 0;
   public exportCompleteTime: number = 0;
   public timerIntervalID: number = 0;
@@ -32,14 +34,6 @@ export class WP2StaticGlobals {
   };
   public statusText: string = "";
 
-  public getAll() {
-    return { something : this.aProperty };
-  }
-
-  public changeProperty( newProp: string ) {
-    this.aProperty = newProp;
-  }
-
   public startTimer() {
     this.timerIntervalID = window.setInterval(this.updateTimer, 1000);
   }
@@ -52,9 +46,10 @@ export class WP2StaticGlobals {
     this.exportCompleteTime = +new Date();
     const runningTime = this.exportCompleteTime - this.exportCommenceTime;
 
-    $("#export_timer").html(
-      "<b>Export duration: </b>" + this.millisToMinutesAndSeconds(runningTime),
-    );
+    const exportTimer: HTMLElement =
+      document.getElementById("export_timer")! as HTMLElement;
+
+    exportTimer.innerHTML = `<b>Export duration: </b> ${this.millisToMinutesAndSeconds(runningTime)}`;
   }
 
   public millisToMinutesAndSeconds( millis: number ) {
