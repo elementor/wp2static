@@ -270,6 +270,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     function startExport() {
+      // set hidden baseUrl to staging current deploy method's Destination URL
+      updateBaseUrl();
       wp2staticGlobals.exportCommenceTime = +new Date();
 
       // TODO: reimplement validators validationErrors = getValidationErrors();
@@ -448,6 +450,13 @@ document.addEventListener("DOMContentLoaded", () => {
       // set the selected option in case calling this from outside the event handler
       adminPage.selectedDeploymentMethodProduction.value = selectedDeploymentMethod;
       updateProductionSummary();
+    }
+
+    function updateBaseUrl() {
+      const currentBaseUrlRenameMe: HTMLInputElement | null =
+        document.getElementById("baseUrl-" + wp2staticGlobals.currentDeploymentMethod)! as HTMLInputElement;
+
+      adminPage.baseUrl.value = currentBaseUrlRenameMe.value;
     }
 
     function updateStagingSummary() {
@@ -706,7 +715,7 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
         event.preventDefault();
         clearProgressAndResults();
         adminPage.startExportButton.setAttribute("disabled", "");
-        adminPage.cancelExportButton.style.display = "block";
+        adminPage.cancelExportButton.style.display = "inline";
         adminPage.resetDefaultSettingsButton.setAttribute("disabled", "");
         adminPage.saveSettingsButton.setAttribute("disabled", "");
         startExport();

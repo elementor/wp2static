@@ -27,12 +27,12 @@ export class WP2StaticProcessExports {
         const zipURL = `${this.wp2staticGlobals.siteInfo.uploads_url}
 wp2static-exported-site.zip?cacheBuster=${Date.now()}`;
         adminPage.downloadZIP.setAttribute("href", zipURL);
-        adminPage.downloadZIP.style.display = "block";
+        adminPage.downloadZIP.style.display = "inline";
       } else {
         // for other methods, show the Go to my static site link
         const baseUrl = String(adminPage.baseUrl.value);
         adminPage.goToMyStaticSite.setAttribute("href", baseUrl);
-        adminPage.goToMyStaticSite.style.display = "block";
+        adminPage.goToMyStaticSite.style.display = "inline";
       }
 
       // all complete
