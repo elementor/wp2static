@@ -167,6 +167,7 @@ $tpl = new \WP2Static\TemplateHelper();
 
         </div> <!-- end wrap wp2static -->
 
+<div id="vueApp">
         <div id="wp2static-footer">
 
               <div class="inside">
@@ -174,24 +175,28 @@ $tpl = new \WP2Static\TemplateHelper();
                 <div class="submit">
                     <!-- NOTE: removing extra nonce here, check why it was being used.. -->
                     <?php // wp_nonce_field( $view['onceAction'] ); ?>
-                  <button id="generateStaticSiteButton" class="wp2static-btn blue" disabled>
+                  <button :disabled="progress" v-on:click="generateStaticSite" class="wp2static-btn blue">
                     <?php echo __( 'Generate', 'static-html-output-plugin' ); ?>
                   </button>
-                  <button id="startExportButton" class="wp2static-btn blue" disabled>
+                  <button :disabled="progress" v-on:click="startExport" class="wp2static-btn blue">
                     <?php echo __( 'Deploy to Staging', 'static-html-output-plugin' ); ?>
                   </button>
-                  <button id="deployToProductionButton" class="wp2static-btn blue" disabled>
+                  <button :disabled="progress" id="deployToProductionButton" class="wp2static-btn blue">
                     <?php echo __( 'Deploy to Production', 'static-html-output-plugin' ); ?>
                   </button>
-                  <button id="saveSettingsButton" class="wp2static-btn" disabled>
+                  <button :disabled="progress" id="saveSettingsButton" class="wp2static-btn">
                     <?php echo __( 'Save Current Options', 'static-html-output-plugin' ); ?>
                   </button>
-                  <button id="resetDefaultSettingsButton" class="wp2static-btn" disabled>
+                  <button :disabled="progress" id="resetDefaultSettingsButton" class="wp2static-btn">
                     <?php echo __( 'Reset to Default Settings', 'static-html-output-plugin' ); ?>
                   </button>
-                  <button style="display:none;" id="cancelExportButton" class="wp2static-btn">
+                  <button v-if="progress" id="cancelExportButton" class="wp2static-btn">
                     <?php echo __( 'Cancel Export', 'static-html-output-plugin' ); ?>
-                    </button>
+                  </button>
+
+                  <p v-show="progress">
+                        some text should change
+                    </p>
 
                   <!-- TODO: set action to grab ZIP download URL from button vs anchor -->
                   <button id="downloadZIP" class="wp2static-btn btn-call-to-action">
@@ -209,7 +214,6 @@ $tpl = new \WP2Static\TemplateHelper();
             </div> <!-- end inside -->
 
 
-<div id="vueApp">
                 <div id="pbar-container">
                     <div id="pbar-fill">
 
@@ -227,6 +231,6 @@ $tpl = new \WP2Static\TemplateHelper();
                     </div>
                 </div>
 
-</div><!-- end vueApp -->
         </div><!-- end wp2static-footer -->
+</div><!-- end vueApp -->
 

@@ -95,6 +95,69 @@ document.addEventListener("DOMContentLoaded", () => {
     const vueApp = new Vue({
        data: wp2staticGlobals.vueData,
        el: "#vueApp",
+       methods: {
+         generateStaticSite: (event: any) => {
+           clearProgressAndResults()
+           // set hidden baseUrl to staging current deploy method's Destination URL
+           updateBaseUrl()
+           wp2staticGlobals.exportCommenceTime = +new Date()
+
+           // TODO: reimplement validators validationErrors = getValidationErrors()
+           validationErrors = ""
+
+           if (validationErrors !== "") {
+             alert(validationErrors)
+             vueApp.$data.progress = false
+
+             return false
+           }
+
+           vueApp.$data.currentAction = "Generating Static Site Files..."
+
+           // reset export targets to avoid having left-overs from a failed run
+           wp2staticGlobals.exportTargets = []
+
+           sendWP2StaticAJAX(
+             "prepare_for_export",
+             startExportSuccessCallback,
+             ajaxErrorHandler,
+           )
+         },
+         startExport: (event: any) => {
+           clearProgressAndResults()
+           // set hidden baseUrl to staging current deploy method's Destination URL
+           updateBaseUrl()
+           wp2staticGlobals.exportCommenceTime = +new Date()
+
+           // TODO: reimplement validators validationErrors = getValidationErrors()
+           validationErrors = ""
+
+           if (validationErrors !== "") {
+             alert(validationErrors)
+
+             vueApp.$data.progress = false
+
+             return false
+           }
+
+           vueApp.$data.currentAction = "Starting export..."
+
+           // reset export targets to avoid having left-overs from a failed run
+           wp2staticGlobals.exportTargets = []
+
+           if (wp2staticGlobals.currentDeploymentMethod === "zip") {
+             adminPage.createZip.setAttribute("checked", "")
+           }
+
+           wp2staticGlobals.exportTargets.push(wp2staticGlobals.currentDeploymentMethod)
+
+           sendWP2StaticAJAX(
+             "prepare_for_export",
+             startExportSuccessCallback,
+             ajaxErrorHandler,
+           )
+         },
+       },
     })
 
     const wp2staticAJAX = new WP2StaticAJAX( wp2staticGlobals )
@@ -112,13 +175,8 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         adminPage.initialCrawlListLoader.style.display = "none"
         adminPage.previewInitialCrawlListButton.style.display = "inline"
-        adminPage.resetDefaultSettingsButton.removeAttribute("disabled")
-        adminPage.saveSettingsButton.removeAttribute("disabled")
-        adminPage.startExportButton.removeAttribute("disabled")
-        adminPage.generateStaticSiteButton.removeAttribute("disabled")
 
         wp2staticGlobals.vueData.progress = false
-
         wp2staticGlobals.vueData.currentAction = `${fileListCount} URLs were detected for
  initial crawl list. Adjust detection via the URL Detection tab.`
 
@@ -135,11 +193,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       wp2staticGlobals.vueData.currentAction = failedDeployMessage
       wp2staticGlobals.vueData.progress = false
-      adminPage.cancelExportButton.style.display = "none"
-      adminPage.resetDefaultSettingsButton.removeAttribute("disabled")
-      adminPage.saveSettingsButton.removeAttribute("disabled")
-      adminPage.startExportButton.setAttribute("disabled", "")
-      adminPage.generateStaticSiteButton.setAttribute("disabled", "")
       adminPage.initialCrawlListLoader.style.display = "none"
     }
 
@@ -252,11 +305,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       wp2staticGlobals.vueData.progress = false
       wp2staticGlobals.vueData.currentAction = failedDeployMessage
-      adminPage.cancelExportButton.style.display = "none"
-      adminPage.resetDefaultSettingsButton.removeAttribute("disabled")
-      adminPage.saveSettingsButton.removeAttribute("disabled")
-      adminPage.startExportButton.removeAttribute("disabled")
-      adminPage.generateStaticSiteButton.removeAttribute("disabled")
     }
 
     function startExportSuccessCallback(event: any) {
@@ -266,78 +314,6 @@ document.addEventListener("DOMContentLoaded", () => {
       ]
 
       wp2staticAJAX.doAJAXExport( initialSteps )
-    }
-
-    function generateStaticSite() {
-      // set hidden baseUrl to staging current deploy method's Destination URL
-      updateBaseUrl()
-      wp2staticGlobals.exportCommenceTime = +new Date()
-
-      // TODO: reimplement validators validationErrors = getValidationErrors()
-      validationErrors = ""
-
-      if (validationErrors !== "") {
-        alert(validationErrors)
-
-        wp2staticGlobals.vueData.progress = false
-        adminPage.cancelExportButton.style.display = "none"
-        adminPage.resetDefaultSettingsButton.removeAttribute("disabled")
-        adminPage.saveSettingsButton.removeAttribute("disabled")
-        adminPage.startExportButton.removeAttribute("disabled")
-        adminPage.generateStaticSiteButton.removeAttribute("disabled")
-
-        return false
-      }
-
-      wp2staticGlobals.vueData.currentAction = "Generating Static Site Files..."
-
-      // reset export targets to avoid having left-overs from a failed run
-      wp2staticGlobals.exportTargets = []
-
-      sendWP2StaticAJAX(
-        "prepare_for_export",
-        startExportSuccessCallback,
-        ajaxErrorHandler,
-      )
-    }
-
-    function startExport() {
-      // set hidden baseUrl to staging current deploy method's Destination URL
-      updateBaseUrl()
-      wp2staticGlobals.exportCommenceTime = +new Date()
-
-      // TODO: reimplement validators validationErrors = getValidationErrors()
-      validationErrors = ""
-
-      if (validationErrors !== "") {
-        alert(validationErrors)
-
-        wp2staticGlobals.vueData.progress = false
-        adminPage.cancelExportButton.style.display = "none"
-        adminPage.resetDefaultSettingsButton.removeAttribute("disabled")
-        adminPage.saveSettingsButton.removeAttribute("disabled")
-        adminPage.startExportButton.removeAttribute("disabled")
-        adminPage.generateStaticSiteButton.removeAttribute("disabled")
-
-        return false
-      }
-
-      wp2staticGlobals.vueData.currentAction = "Starting export..."
-
-      // reset export targets to avoid having left-overs from a failed run
-      wp2staticGlobals.exportTargets = []
-
-      if (wp2staticGlobals.currentDeploymentMethod === "zip") {
-        adminPage.createZip.setAttribute("checked", "")
-      }
-
-      wp2staticGlobals.exportTargets.push(wp2staticGlobals.currentDeploymentMethod)
-
-      sendWP2StaticAJAX(
-        "prepare_for_export",
-        startExportSuccessCallback,
-        ajaxErrorHandler,
-      )
     }
 
     function clearProgressAndResults() {
@@ -739,34 +715,6 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
         request.onload = sendSupportSuccessCallback
         request.onerror = sendSupportFailCallback
         request.send(JSON.stringify(postData))
-      },
-    )
-
-    adminPage.generateStaticSiteButton.addEventListener(
-      "click",
-      (event: any) => {
-        event.preventDefault()
-        clearProgressAndResults()
-        adminPage.generateStaticSiteButton.setAttribute("disabled", "")
-        adminPage.startExportButton.setAttribute("disabled", "")
-        adminPage.cancelExportButton.style.display = "inline"
-        adminPage.resetDefaultSettingsButton.setAttribute("disabled", "")
-        adminPage.saveSettingsButton.setAttribute("disabled", "")
-        generateStaticSite()
-      },
-    )
-
-    adminPage.startExportButton.addEventListener(
-      "click",
-      (event: any) => {
-        event.preventDefault()
-        clearProgressAndResults()
-        adminPage.generateStaticSiteButton.setAttribute("disabled", "")
-        adminPage.startExportButton.setAttribute("disabled", "")
-        adminPage.cancelExportButton.style.display = "inline"
-        adminPage.resetDefaultSettingsButton.setAttribute("disabled", "")
-        adminPage.saveSettingsButton.setAttribute("disabled", "")
-        startExport()
       },
     )
 

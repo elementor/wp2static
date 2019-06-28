@@ -40,8 +40,6 @@ export class WP2StaticAdminPageModel {
   public stagingSummaryDeployUrl: HTMLElement
   public productionSummaryDeployMethod: HTMLElement
   public productionSummaryDeployUrl: HTMLElement
-  public generateStaticSiteButton: HTMLElement
-  public startExportButton: HTMLElement
   public targetFolder: HTMLInputElement
   public vendorNotices: NodeListOf<Element>
 
@@ -87,8 +85,6 @@ export class WP2StaticAdminPageModel {
     this.stagingSummaryDeployUrl = document.getElementById("stagingSummaryDeployUrl")!
     this.productionSummaryDeployMethod = document.getElementById("stagingSummaryDeployMethodProduction")!
     this.productionSummaryDeployUrl = document.getElementById("stagingSummaryDeployUrlProduction")!
-    this.startExportButton = document.getElementById("startExportButton")!
-    this.generateStaticSiteButton = document.getElementById("generateStaticSiteButton")!
     this.targetFolder = document.getElementById("targetFolder")! as HTMLInputElement
     this.vendorNotices =
       document.querySelectorAll(".update-nag, .updated, .error, .is-dismissible, .elementor-message")!
