@@ -5,6 +5,7 @@
             "options": [120]
         },
         "new-parens": true,
+        "semicolon": [true, "never"],
         "no-arg": true,
         "no-bitwise": true,
         "no-conditional-assignment": true,

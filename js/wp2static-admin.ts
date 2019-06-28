@@ -1,23 +1,23 @@
-declare var wp2staticString: any;
-declare var ajaxurl: string;
-import { WP2StaticAdminPageModel } from "./WP2StaticAdminPageModel";
-import { WP2StaticAJAX } from "./WP2StaticAJAX";
-import { WP2StaticGlobals } from "./WP2StaticGlobals";
+declare var wp2staticString: any
+declare var ajaxurl: string
 import Vue from "vue"
+import { WP2StaticAdminPageModel } from "./WP2StaticAdminPageModel"
+import { WP2StaticAJAX } from "./WP2StaticAJAX"
+import { WP2StaticGlobals } from "./WP2StaticGlobals"
 
 interface FormProcessor {
-    id: string;
-    name: string;
-    placeholder: string;
-    website: string;
-    description: string;
+    id: string
+    name: string
+    placeholder: string
+    website: string
+    description: string
 }
 
 // NOTE: passing around a globals object to allow shared instance and access
 // from browser
 // within this entrypoint, access directly. From other classes, this., from
 // browser WP2Static.wp2staticGlobals
-export const wp2staticGlobals = new WP2StaticGlobals();
+export const wp2staticGlobals = new WP2StaticGlobals()
 
 const formProcessors: FormProcessor[] = [
   {
@@ -56,331 +56,331 @@ const formProcessors: FormProcessor[] = [
     placeholder: "https://mycustomendpoint.com/SOMEPATH",
     website: "https://docs.wp2static.com",
   },
-];
+]
 
-let validationErrors = "";
+let validationErrors = ""
 
-wp2staticGlobals.siteInfo = JSON.parse(wp2staticString.siteInfo);
+wp2staticGlobals.siteInfo = JSON.parse(wp2staticString.siteInfo)
 
 if (!wp2staticString.currentDeploymentMethod) {
-  wp2staticGlobals.currentDeploymentMethod = "folder";
+  wp2staticGlobals.currentDeploymentMethod = "folder"
 } else {
-  wp2staticGlobals.currentDeploymentMethod = wp2staticString.currentDeploymentMethod;
+  wp2staticGlobals.currentDeploymentMethod = wp2staticString.currentDeploymentMethod
 }
 
 if (!wp2staticString.currentDeploymentMethodProduction) {
-  wp2staticGlobals.currentDeploymentMethodProduction = "folder";
+  wp2staticGlobals.currentDeploymentMethodProduction = "folder"
 } else {
-  wp2staticGlobals.currentDeploymentMethodProduction = wp2staticString.currentDeploymentMethodProduction;
+  wp2staticGlobals.currentDeploymentMethodProduction = wp2staticString.currentDeploymentMethodProduction
 }
 
 // TODO: get the log out of the archive, along with it's meta infos
-const logFileUrl = wp2staticGlobals.siteInfo.uploads_url + "wp2static-working-files/EXPORT-LOG.txt";
-const selectedFormProcessor = "";
-const exportAction = "";
-const protocolAndDomainRE = /^(?:\w+:)?\/\/(\S+)$/;
-const localhostDomainRE = /^localhost[:?\d]*(?:[^:?\d]\S*)?$/;
-const nonLocalhostDomainRE = /^[^\s.]+\.\S{2,}$/;
+const logFileUrl = wp2staticGlobals.siteInfo.uploads_url + "wp2static-working-files/EXPORT-LOG.txt"
+const selectedFormProcessor = ""
+const exportAction = ""
+const protocolAndDomainRE = /^(?:\w+:)?\/\/(\S+)$/
+const localhostDomainRE = /^localhost[:?\d]*(?:[^:?\d]\S*)?$/
+const nonLocalhostDomainRE = /^[^\s.]+\.\S{2,}$/
 document.addEventListener("DOMContentLoaded", () => {
 
-    let app = new Vue({
-      el: '#app',
+    const app = new Vue({
       data: {
-        message: 'Hello Vue!'
-      }
+        message: "Hello Vue!",
+      },
+      el: "#app",
     })
 
-    const adminPage = new WP2StaticAdminPageModel();
-    wp2staticGlobals.adminPage = adminPage;
-    const wp2staticAJAX = new WP2StaticAJAX( wp2staticGlobals );
+    const adminPage = new WP2StaticAdminPageModel()
+    wp2staticGlobals.adminPage = adminPage
+    const wp2staticAJAX = new WP2StaticAJAX( wp2staticGlobals )
 
     function generateFileListSuccessCallback(event: any) {
-      const fileListCount: number = event.target.response as number;
+      const fileListCount: number = event.target.response as number
 
       if (!fileListCount) {
-        adminPage.pulsateCSS.style.display = "none";
+        adminPage.pulsateCSS.style.display = "none"
         adminPage.currentAction.innerHTML = `Failed to generate initial file list.
- Please <a href="https://docs.wp2static.com" target="_blank">contact support</a>`;
+ Please <a href="https://docs.wp2static.com" target="_blank">contact support</a>`
       } else {
-        adminPage.initialCrawlListLoader.style.display = "none";
-        adminPage.previewInitialCrawlListButton.style.display = "inline";
-        adminPage.pulsateCSS.style.display = "none";
-        adminPage.resetDefaultSettingsButton.removeAttribute("disabled");
-        adminPage.saveSettingsButton.removeAttribute("disabled");
-        adminPage.startExportButton.removeAttribute("disabled");
-        adminPage.generateStaticSiteButton.removeAttribute("disabled");
+        adminPage.initialCrawlListLoader.style.display = "none"
+        adminPage.previewInitialCrawlListButton.style.display = "inline"
+        adminPage.pulsateCSS.style.display = "none"
+        adminPage.resetDefaultSettingsButton.removeAttribute("disabled")
+        adminPage.saveSettingsButton.removeAttribute("disabled")
+        adminPage.startExportButton.removeAttribute("disabled")
+        adminPage.generateStaticSiteButton.removeAttribute("disabled")
         adminPage.currentAction.innerHTML = `${fileListCount} URLs were detected for
- initial crawl list. Adjust detection via the URL Detection tab.`;
+ initial crawl list. Adjust detection via the URL Detection tab.`
         adminPage.initialCrawlListCount.textContent = `${fileListCount} URLs were
  detected on your site that will be used to initiate the crawl.
- Other URLs will be discovered while crawling.`;
+ Other URLs will be discovered while crawling.`
       }
     }
 
     function generateFileListFailCallback(event: any) {
       const failedDeployMessage = `Failed to generate Initial Crawl List.
  Please check your permissions to the WordPress upload directory or check your
- Export Log in case of more info.`;
+ Export Log in case of more info.`
 
-      adminPage.currentAction.innerHTML = failedDeployMessage;
-      adminPage.pulsateCSS.style.display = "none";
-      adminPage.cancelExportButton.style.display = "none";
-      adminPage.resetDefaultSettingsButton.removeAttribute("disabled");
-      adminPage.saveSettingsButton.removeAttribute("disabled");
-      adminPage.startExportButton.setAttribute("disabled", "");
-      adminPage.generateStaticSiteButton.setAttribute("disabled", "");
-      adminPage.initialCrawlListLoader.style.display = "none";
+      adminPage.currentAction.innerHTML = failedDeployMessage
+      adminPage.pulsateCSS.style.display = "none"
+      adminPage.cancelExportButton.style.display = "none"
+      adminPage.resetDefaultSettingsButton.removeAttribute("disabled")
+      adminPage.saveSettingsButton.removeAttribute("disabled")
+      adminPage.startExportButton.setAttribute("disabled", "")
+      adminPage.generateStaticSiteButton.setAttribute("disabled", "")
+      adminPage.initialCrawlListLoader.style.display = "none"
     }
 
     function prepareInitialFileList() {
-      wp2staticGlobals.statusText = "Analyzing site... this may take a few minutes (but it's worth it!)";
-      adminPage.currentAction.innerHTML = wp2staticGlobals.statusText;
+      wp2staticGlobals.statusText = "Analyzing site... this may take a few minutes (but it's worth it!)"
+      adminPage.currentAction.innerHTML = wp2staticGlobals.statusText
 
       sendWP2StaticAJAX(
         "generate_filelist_preview",
         generateFileListSuccessCallback,
         generateFileListFailCallback,
-      );
+      )
     }
 
     function sendWP2StaticAJAX(ajaxAction: string, successCallback: any, failCallback: any) {
-      adminPage.hiddenActionField.value = "wp_static_html_output_ajax";
-      adminPage.hiddenAJAXAction.value = ajaxAction;
-      adminPage.progress.style.display = "block";
-      adminPage.pulsateCSS.style.display = "block";
+      adminPage.hiddenActionField.value = "wp_static_html_output_ajax"
+      adminPage.hiddenAJAXAction.value = ajaxAction
+      adminPage.progress.style.display = "block"
+      adminPage.pulsateCSS.style.display = "block"
 
       const data = new URLSearchParams(
       // https://github.com/Microsoft/TypeScript/issues/30584
       // @ts-ignore
         new FormData(adminPage.optionsForm),
-      ).toString();
+      ).toString()
 
-      const request = new XMLHttpRequest();
-      request.open("POST", ajaxurl, true);
-      request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-      request.onload = successCallback;
-      request.onerror = failCallback;
-      request.send(data);
+      const request = new XMLHttpRequest()
+      request.open("POST", ajaxurl, true)
+      request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
+      request.onload = successCallback
+      request.onerror = failCallback
+      request.send(data)
     }
 
     function saveOptionsSuccessCallback(event: any) {
-      adminPage.progress.style.display = "none";
+      adminPage.progress.style.display = "none"
 
-      location.reload();
+      location.reload()
     }
 
     function saveOptionsFailCallback(event: any) {
-      adminPage.progress.style.display = "none";
+      adminPage.progress.style.display = "none"
 
-      location.reload();
+      location.reload()
     }
 
     function saveOptions() {
-      adminPage.currentAction.innerHTML = "Saving options";
+      adminPage.currentAction.innerHTML = "Saving options"
       sendWP2StaticAJAX(
         "save_options",
         saveOptionsSuccessCallback,
         saveOptionsFailCallback,
-      );
+      )
     }
 
 
     function deleteCrawlCacheSuccessCallback(event: any) {
       if (!event.target.response) {
-        adminPage.pulsateCSS.style.display = "none";
-        adminPage.currentAction.innerHTML = "Failed to delete Crawl Cache.";
+        adminPage.pulsateCSS.style.display = "none"
+        adminPage.currentAction.innerHTML = "Failed to delete Crawl Cache."
       } else {
-        adminPage.currentAction.innerHTML = "Crawl Cache successfully deleted.";
-        adminPage.pulsateCSS.style.display = "none";
+        adminPage.currentAction.innerHTML = "Crawl Cache successfully deleted."
+        adminPage.pulsateCSS.style.display = "none"
       }
     }
 
     function deleteCrawlCacheFailCallback(event: any) {
-      adminPage.pulsateCSS.style.display = "none";
-      adminPage.currentAction.innerHTML = "Failed to delete Crawl Cache.";
+      adminPage.pulsateCSS.style.display = "none"
+      adminPage.currentAction.innerHTML = "Failed to delete Crawl Cache."
     }
 
     adminPage.detectEverythingButton.addEventListener(
       "click",
       (event: any) => {
-        event.preventDefault();
-        const inputs = adminPage.detectionOptionsInputs;
+        event.preventDefault()
+        const inputs = adminPage.detectionOptionsInputs
 
         for ( const input of inputs ) {
-            input.setAttribute("checked", "");
+            input.setAttribute("checked", "")
         }
       },
-    );
+    )
 
     adminPage.detectNothingButton.addEventListener(
       "click",
       (event: any) => {
-        event.preventDefault();
-        const inputs = adminPage.detectionOptionsInputs;
+        event.preventDefault()
+        const inputs = adminPage.detectionOptionsInputs
 
         for ( const input of inputs ) {
-            input.removeAttribute("checked");
+            input.removeAttribute("checked")
         }
       },
-    );
+    )
 
     adminPage.deleteCrawlCache.addEventListener(
       "click",
       (event: any) => {
-        event.preventDefault();
-        adminPage.currentAction.innerHTML = "Deleting Crawl Cache...";
+        event.preventDefault()
+        adminPage.currentAction.innerHTML = "Deleting Crawl Cache..."
 
         sendWP2StaticAJAX(
           "delete_crawl_cache",
           deleteCrawlCacheSuccessCallback,
           deleteCrawlCacheFailCallback,
-        );
+        )
       },
-    );
+    )
 
     function ajaxErrorHandler() {
-      const failedDeployMessage = `Failed during ${wp2staticGlobals.statusText}`;
+      const failedDeployMessage = `Failed during ${wp2staticGlobals.statusText}`
 
-      adminPage.currentAction.innerHTML = failedDeployMessage;
-      adminPage.pulsateCSS.style.display = "none";
-      adminPage.cancelExportButton.style.display = "none";
-      adminPage.resetDefaultSettingsButton.removeAttribute("disabled");
-      adminPage.saveSettingsButton.removeAttribute("disabled");
-      adminPage.startExportButton.removeAttribute("disabled");
-      adminPage.generateStaticSiteButton.removeAttribute("disabled");
+      adminPage.currentAction.innerHTML = failedDeployMessage
+      adminPage.pulsateCSS.style.display = "none"
+      adminPage.cancelExportButton.style.display = "none"
+      adminPage.resetDefaultSettingsButton.removeAttribute("disabled")
+      adminPage.saveSettingsButton.removeAttribute("disabled")
+      adminPage.startExportButton.removeAttribute("disabled")
+      adminPage.generateStaticSiteButton.removeAttribute("disabled")
     }
 
     function startExportSuccessCallback(event: any) {
       const initialSteps = [
         "crawl_site",
         "post_process_archive_dir",
-      ];
+      ]
 
-      wp2staticAJAX.doAJAXExport( initialSteps );
+      wp2staticAJAX.doAJAXExport( initialSteps )
     }
 
     function generateStaticSite() {
       // set hidden baseUrl to staging current deploy method's Destination URL
-      updateBaseUrl();
-      wp2staticGlobals.exportCommenceTime = +new Date();
+      updateBaseUrl()
+      wp2staticGlobals.exportCommenceTime = +new Date()
 
-      // TODO: reimplement validators validationErrors = getValidationErrors();
-      validationErrors = "";
+      // TODO: reimplement validators validationErrors = getValidationErrors()
+      validationErrors = ""
 
       if (validationErrors !== "") {
-        alert(validationErrors);
+        alert(validationErrors)
 
-        adminPage.progress.style.display = "none";
-        adminPage.cancelExportButton.style.display = "none";
-        adminPage.resetDefaultSettingsButton.removeAttribute("disabled");
-        adminPage.saveSettingsButton.removeAttribute("disabled");
-        adminPage.startExportButton.removeAttribute("disabled");
-        adminPage.generateStaticSiteButton.removeAttribute("disabled");
+        adminPage.progress.style.display = "none"
+        adminPage.cancelExportButton.style.display = "none"
+        adminPage.resetDefaultSettingsButton.removeAttribute("disabled")
+        adminPage.saveSettingsButton.removeAttribute("disabled")
+        adminPage.startExportButton.removeAttribute("disabled")
+        adminPage.generateStaticSiteButton.removeAttribute("disabled")
 
-        return false;
+        return false
       }
 
-      adminPage.currentAction.innerHTML = "Generating Static Site Files...";
+      adminPage.currentAction.innerHTML = "Generating Static Site Files..."
 
       // reset export targets to avoid having left-overs from a failed run
-      wp2staticGlobals.exportTargets = [];
+      wp2staticGlobals.exportTargets = []
 
       sendWP2StaticAJAX(
         "prepare_for_export",
         startExportSuccessCallback,
         ajaxErrorHandler,
-      );
+      )
     }
 
     function startExport() {
       // set hidden baseUrl to staging current deploy method's Destination URL
-      updateBaseUrl();
-      wp2staticGlobals.exportCommenceTime = +new Date();
+      updateBaseUrl()
+      wp2staticGlobals.exportCommenceTime = +new Date()
 
-      // TODO: reimplement validators validationErrors = getValidationErrors();
-      validationErrors = "";
+      // TODO: reimplement validators validationErrors = getValidationErrors()
+      validationErrors = ""
 
       if (validationErrors !== "") {
-        alert(validationErrors);
+        alert(validationErrors)
 
-        adminPage.progress.style.display = "none";
-        adminPage.cancelExportButton.style.display = "none";
-        adminPage.resetDefaultSettingsButton.removeAttribute("disabled");
-        adminPage.saveSettingsButton.removeAttribute("disabled");
-        adminPage.startExportButton.removeAttribute("disabled");
-        adminPage.generateStaticSiteButton.removeAttribute("disabled");
+        adminPage.progress.style.display = "none"
+        adminPage.cancelExportButton.style.display = "none"
+        adminPage.resetDefaultSettingsButton.removeAttribute("disabled")
+        adminPage.saveSettingsButton.removeAttribute("disabled")
+        adminPage.startExportButton.removeAttribute("disabled")
+        adminPage.generateStaticSiteButton.removeAttribute("disabled")
 
-        return false;
+        return false
       }
 
-      adminPage.currentAction.innerHTML = "Starting export...";
+      adminPage.currentAction.innerHTML = "Starting export..."
 
       // reset export targets to avoid having left-overs from a failed run
-      wp2staticGlobals.exportTargets = [];
+      wp2staticGlobals.exportTargets = []
 
       if (wp2staticGlobals.currentDeploymentMethod === "zip") {
-        adminPage.createZip.setAttribute("checked", "");
+        adminPage.createZip.setAttribute("checked", "")
       }
 
-      wp2staticGlobals.exportTargets.push(wp2staticGlobals.currentDeploymentMethod);
+      wp2staticGlobals.exportTargets.push(wp2staticGlobals.currentDeploymentMethod)
 
       sendWP2StaticAJAX(
         "prepare_for_export",
         startExportSuccessCallback,
         ajaxErrorHandler,
-      );
+      )
     }
 
     function clearProgressAndResults() {
-      adminPage.downloadZIP.style.display = "none";
-      adminPage.goToMyStaticSite.style.display = "none";
-      adminPage.exportDuration.style.display = "none";
+      adminPage.downloadZIP.style.display = "none"
+      adminPage.goToMyStaticSite.style.display = "none"
+      adminPage.exportDuration.style.display = "none"
     }
 
     function getValidationErrors() {
       // check for when targetFolder is showing (plugin reset state)
       if ((adminPage.targetFolder.style.display === "block") &&
             (adminPage.targetFolder.value === "")) {
-        validationErrors += "Target folder may not be empty. Please adjust your settings.";
+        validationErrors += "Target folder may not be empty. Please adjust your settings."
       }
 
       if ((adminPage.baseUrl.value === undefined ||
             adminPage.baseUrl.value === "") &&
             ! adminPage.allowOfflineUsage.getAttribute("checked")) {
-        validationErrors += "Please set the Base URL field to the address you will host your static site.\n";
+        validationErrors += "Please set the Base URL field to the address you will host your static site.\n"
       }
 
       if (!isUrl(String(adminPage.baseUrl.value)) && ! adminPage.allowOfflineUsage.getAttribute("checked")) {
         // TODO: testing / URL as base
         if (adminPage.baseUrl.value !== "/") {
-          validationErrors += "Please set the Base URL field to a valid URL, ie http://mystaticsite.com.\n";
+          validationErrors += "Please set the Base URL field to a valid URL, ie http://mystaticsite.com.\n"
         }
       }
 
       const requiredFields =
-            wp2staticGlobals.deployOptions[wp2staticGlobals.currentDeploymentMethod].requiredFields;
+            wp2staticGlobals.deployOptions[wp2staticGlobals.currentDeploymentMethod].requiredFields
 
       if (requiredFields) {
-        validateEmptyFields(requiredFields);
+        validateEmptyFields(requiredFields)
       }
 
-      const repoField = wp2staticGlobals.deployOptions[wp2staticGlobals.currentDeploymentMethod].repoField;
+      const repoField = wp2staticGlobals.deployOptions[wp2staticGlobals.currentDeploymentMethod].repoField
 
       if (repoField) {
-        validateRepoField(repoField);
+        validateRepoField(repoField)
       }
 
-      return validationErrors;
+      return validationErrors
     }
 
     function validateRepoField(repoField: any) {
       const repositoryField: HTMLInputElement =
-        document.getElementById(repoField.field + "")! as HTMLInputElement;
-      const repo: string = String(repositoryField.value);
+        document.getElementById(repoField.field + "")! as HTMLInputElement
+      const repo: string = String(repositoryField.value)
 
       if (repo !== "") {
         if (repo.split("/").length !== 2) {
-          validationErrors += repoField.message;
+          validationErrors += repoField.message
         }
       }
     }
@@ -389,123 +389,123 @@ document.addEventListener("DOMContentLoaded", () => {
       Object.keys(requiredFields).forEach(
         (key, index) => {
           const requiredField: HTMLInputElement =
-            document.getElementById(key)! as HTMLInputElement;
+            document.getElementById(key)! as HTMLInputElement
           if (requiredField.value === "") {
-            validationErrors += requiredFields[key] + "\n";
+            validationErrors += requiredFields[key] + "\n"
           }
         },
-      );
+      )
     }
 
     function isUrl(url: string) {
-      const match = url.match(protocolAndDomainRE);
+      const match = url.match(protocolAndDomainRE)
 
       if (! match) {
-        return false;
+        return false
       }
 
-      const everythingAfterProtocol = match[1];
+      const everythingAfterProtocol = match[1]
 
       if (!everythingAfterProtocol) {
-        return false;
+        return false
       }
 
       if (localhostDomainRE.test(everythingAfterProtocol) ||
             nonLocalhostDomainRE.test(everythingAfterProtocol)) {
-        return true;
+        return true
       }
 
-      return false;
+      return false
     }
 
     function hideOtherVendorMessages() {
       Array.prototype.forEach.call(
         adminPage.vendorNotices,
         (element, index) => {
-            element.style.display = "none";
+            element.style.display = "none"
             // TODO: ensure any wp2static notices are not mistakenly
             // wp2static-notice
         },
-      );
+      )
     }
 
     function setFormProcessor(fp: any) {
       if (fp in formProcessors) {
 
-        const formProcessor: FormProcessor = formProcessors[fp];
+        const formProcessor: FormProcessor = formProcessors[fp]
 
-        adminPage.formProcessorDescription.textContent = formProcessor.description;
+        adminPage.formProcessorDescription.textContent = formProcessor.description
 
-        const website = formProcessor.website;
+        const website = formProcessor.website
 
-        const websiteLink: HTMLAnchorElement  = document.createElement("a");
-        websiteLink.setAttribute("href", website);
-        websiteLink.innerHTML = "Visit " + formProcessor.name;
+        const websiteLink: HTMLAnchorElement  = document.createElement("a")
+        websiteLink.setAttribute("href", website)
+        websiteLink.innerHTML = "Visit " + formProcessor.name
 
-        adminPage.formProcessorWebsite.innerHTML = website;
-        adminPage.formProcessorEndpoint.setAttribute("placeholder", formProcessor.placeholder);
+        adminPage.formProcessorWebsite.innerHTML = website
+        adminPage.formProcessorEndpoint.setAttribute("placeholder", formProcessor.placeholder)
       } else {
-        adminPage.formProcessorDescription.textContent = "";
-        adminPage.formProcessorWebsite.innerHTML = "";
-        adminPage.formProcessorEndpoint.setAttribute("placeholder", "Form endpoint");
+        adminPage.formProcessorDescription.textContent = ""
+        adminPage.formProcessorWebsite.innerHTML = ""
+        adminPage.formProcessorEndpoint.setAttribute("placeholder", "Form endpoint")
       }
     }
 
     function populateFormProcessorOptions(fps: FormProcessor[]) {
       fps.forEach( (formProcessor) => {
         adminPage.formProcessorSelect.options[adminPage.formProcessorSelect.options.length] =
-          new Option(formProcessor.name, formProcessor.id);
-      });
+          new Option(formProcessor.name, formProcessor.id)
+      })
     }
 
     function setDeploymentMethod(selectedDeploymentMethod: string) {
-      adminPage.downloadZIP.style.display = "none";
-      wp2staticGlobals.currentDeploymentMethod = selectedDeploymentMethod;
+      adminPage.downloadZIP.style.display = "none"
+      wp2staticGlobals.currentDeploymentMethod = selectedDeploymentMethod
 
       // set the selected option in case calling this from outside the event handler
-      adminPage.selectedDeploymentMethod.value = selectedDeploymentMethod;
-      updateStagingSummary();
+      adminPage.selectedDeploymentMethod.value = selectedDeploymentMethod
+      updateStagingSummary()
     }
 
     function setDeploymentMethodProduction(selectedDeploymentMethod: string) {
-      adminPage.downloadZIP.style.display = "none";
-      wp2staticGlobals.currentDeploymentMethodProduction = selectedDeploymentMethod;
+      adminPage.downloadZIP.style.display = "none"
+      wp2staticGlobals.currentDeploymentMethodProduction = selectedDeploymentMethod
 
       // set the selected option in case calling this from outside the event handler
-      adminPage.selectedDeploymentMethodProduction.value = selectedDeploymentMethod;
-      updateProductionSummary();
+      adminPage.selectedDeploymentMethodProduction.value = selectedDeploymentMethod
+      updateProductionSummary()
     }
 
     function updateBaseUrl() {
       const currentBaseUrlRenameMe: HTMLInputElement | null =
-        document.getElementById("baseUrl-" + wp2staticGlobals.currentDeploymentMethod)! as HTMLInputElement;
+        document.getElementById("baseUrl-" + wp2staticGlobals.currentDeploymentMethod)! as HTMLInputElement
 
-      adminPage.baseUrl.value = currentBaseUrlRenameMe.value;
+      adminPage.baseUrl.value = currentBaseUrlRenameMe.value
     }
 
     function updateStagingSummary() {
-      adminPage.stagingSummaryDeployMethod.textContent = wp2staticGlobals.currentDeploymentMethod;
+      adminPage.stagingSummaryDeployMethod.textContent = wp2staticGlobals.currentDeploymentMethod
 
       const currentBaseUrl: HTMLInputElement | null =
-        document.getElementById("baseUrl-" + wp2staticGlobals.currentDeploymentMethod)! as HTMLInputElement;
+        document.getElementById("baseUrl-" + wp2staticGlobals.currentDeploymentMethod)! as HTMLInputElement
 
-      adminPage.stagingSummaryDeployUrl.textContent = currentBaseUrl.value;
+      adminPage.stagingSummaryDeployUrl.textContent = currentBaseUrl.value
     }
 
     function updateProductionSummary() {
-      adminPage.productionSummaryDeployMethod.textContent = wp2staticGlobals.currentDeploymentMethodProduction;
+      adminPage.productionSummaryDeployMethod.textContent = wp2staticGlobals.currentDeploymentMethodProduction
 
       const currentBaseUrlProduction: HTMLInputElement | null =
-        document.getElementById("baseUrl-" + wp2staticGlobals.currentDeploymentMethodProduction)! as HTMLInputElement;
+        document.getElementById("baseUrl-" + wp2staticGlobals.currentDeploymentMethodProduction)! as HTMLInputElement
 
-      adminPage.productionSummaryDeployUrl.textContent = currentBaseUrlProduction.value;
+      adminPage.productionSummaryDeployUrl.textContent = currentBaseUrlProduction.value
     }
 
     function offlineUsageChangeHandler(checkbox: HTMLElement) {
       if (checkbox.getAttribute("checked")) {
-        adminPage.baseUrlZip.setAttribute("disabled", "");
+        adminPage.baseUrlZip.setAttribute("disabled", "")
       } else {
-        adminPage.baseUrlZip.removeAttribute("disabled");
+        adminPage.baseUrlZip.removeAttribute("disabled")
       }
     }
 
@@ -513,39 +513,39 @@ document.addEventListener("DOMContentLoaded", () => {
       Array.prototype.forEach.call(
         adminPage.settingsBlocks,
         (element, index) => {
-            element.style.display = "none";
+            element.style.display = "none"
         },
-      );
+      )
 
       const settingsBlock: HTMLElement =
-        document.getElementById(selectedDeploymentMethod + "_settings_block")!;
+        document.getElementById(selectedDeploymentMethod + "_settings_block")!
 
-      settingsBlock.style.display = "block";
+      settingsBlock.style.display = "block"
     }
 
     function renderSettingsBlockProduction(selectedDeploymentMethodProduction: string) {
       Array.prototype.forEach.call(
         adminPage.settingsBlocksProduction,
         (element, index) => {
-            element.style.display = "none";
+            element.style.display = "none"
         },
-      );
+      )
 
       const settingsBlockProduction: HTMLElement =
-        document.getElementById(selectedDeploymentMethodProduction + "_settings_block_production")!;
+        document.getElementById(selectedDeploymentMethodProduction + "_settings_block_production")!
 
-      settingsBlockProduction.style.display = "block";
+      settingsBlockProduction.style.display = "block"
     }
 
     function notifyMe() {
       if (!Notification) {
-        alert("All exports are complete!.");
-        return;
+        alert("All exports are complete!.")
+        return
       }
 
       if (window.location.protocol === "https:") {
         if (Notification.permission !== "granted") {
-          Notification.requestPermission();
+          Notification.requestPermission()
         } else {
           const notification = new Notification(
             "WP Static HTML Export",
@@ -554,20 +554,20 @@ document.addEventListener("DOMContentLoaded", () => {
               icon: `https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/
 Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
             },
-          );
+          )
 
           notification.onclick = () => {
-            parent.focus();
-            window.focus();
-            notification.close();
-          };
+            parent.focus()
+            window.focus()
+            notification.close()
+          }
         }
       }
     }
 
     if (Notification.permission !== "granted") {
       if (window.location.protocol === "https:") {
-        Notification.requestPermission();
+        Notification.requestPermission()
       }
     }
 
@@ -575,34 +575,34 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
     adminPage.allowOfflineUsage.addEventListener(
       "change",
       (event: any) => {
-        offlineUsageChangeHandler(event.currentTarget);
+        offlineUsageChangeHandler(event.currentTarget)
       },
-    );
+    )
 
     adminPage.formProcessorSelect.addEventListener(
       "change",
       (event: any) => {
-        setFormProcessor((event.currentTarget as HTMLInputElement).value);
+        setFormProcessor((event.currentTarget as HTMLInputElement).value)
       },
-    );
+    )
 
     adminPage.selectedDeploymentMethod.addEventListener(
       "change",
       (event: any) => {
-        renderSettingsBlock((event.currentTarget as HTMLInputElement).value);
-        setDeploymentMethod((event.currentTarget as HTMLInputElement).value);
-        clearProgressAndResults();
+        renderSettingsBlock((event.currentTarget as HTMLInputElement).value)
+        setDeploymentMethod((event.currentTarget as HTMLInputElement).value)
+        clearProgressAndResults()
       },
-    );
+    )
 
     adminPage.selectedDeploymentMethodProduction.addEventListener(
       "change",
       (event: any) => {
-        renderSettingsBlockProduction((event.currentTarget as HTMLInputElement).value);
-        setDeploymentMethodProduction((event.currentTarget as HTMLInputElement).value);
-        clearProgressAndResults();
+        renderSettingsBlockProduction((event.currentTarget as HTMLInputElement).value)
+        setDeploymentMethodProduction((event.currentTarget as HTMLInputElement).value)
+        clearProgressAndResults()
       },
-    );
+    )
 
     function changeTab(targetTab: string) {
       const tabsContentMapping: any = {
@@ -618,50 +618,50 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
         staging_deploy: "Staging",
         url_detection: "URL Detection",
         workflow_tab: "Workflow",
-      };
+      }
 
       Array.prototype.forEach.call(
         adminPage.navigationTabs,
         (element, index) => {
           if (element.textContent === targetTab) {
-            element.classList.add("nav-tab-active");
-            element.blur();
+            element.classList.add("nav-tab-active")
+            element.blur()
           } else {
-            element.classList.remove("nav-tab-active");
+            element.classList.remove("nav-tab-active")
           }
         },
-      );
+      )
 
       // hide/show the tab content
       for (const key in tabsContentMapping) {
         if (tabsContentMapping.hasOwnProperty(key)) {
           if (tabsContentMapping[key] === targetTab) {
-            const tabContent = document.getElementById(key)!;
-            tabContent.style.display = "block";
-            document.body.scrollTop = 0;
-            document.documentElement.scrollTop = 0;
+            const tabContent = document.getElementById(key)!
+            tabContent.style.display = "block"
+            document.body.scrollTop = 0
+            document.documentElement.scrollTop = 0
           } else {
-            const tabContent = document.getElementById(key)!;
-            tabContent.style.display = "none";
+            const tabContent = document.getElementById(key)!
+            tabContent.style.display = "none"
           }
         }
       }
 
       // render staging / production deploy options
       if (targetTab === "Staging") {
-        renderSettingsBlock(wp2staticGlobals.currentDeploymentMethod);
+        renderSettingsBlock(wp2staticGlobals.currentDeploymentMethod)
       } else if (targetTab === "Production") {
-        renderSettingsBlockProduction(wp2staticGlobals.currentDeploymentMethodProduction);
+        renderSettingsBlockProduction(wp2staticGlobals.currentDeploymentMethodProduction)
       }
     }
 
     adminPage.goToDeployTabButton.addEventListener(
       "click",
       (event: any) => {
-        event.preventDefault();
-        changeTab("Deployment");
+        event.preventDefault()
+        changeTab("Deployment")
       },
-    );
+    )
 
     Array.prototype.forEach.call(
       adminPage.navigationTabs,
@@ -669,40 +669,40 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
         element.addEventListener(
           "click",
           (event: any) => {
-            event.preventDefault();
-            changeTab(event.currentTarget.textContent);
+            event.preventDefault()
+            changeTab(event.currentTarget.textContent)
           },
-        );
+        )
       },
-    );
+    )
 
     // prevent submitting main form outside expected use
     adminPage.generalOptions.addEventListener(
       "submit",
       (event: any) => {
-        event.preventDefault();
+        event.preventDefault()
       },
-    );
+    )
 
     adminPage.sendSupportRequestButton.addEventListener(
       "click",
       (event: any) => {
-        event.preventDefault();
+        event.preventDefault()
 
-        const supportRequest = adminPage.sendSupportRequestContent.value;
+        const supportRequest = adminPage.sendSupportRequestContent.value
 
         if (adminPage.sendSupportRequestIncludeLog.getAttribute("checked")) {
           /*
           $.get(
             logFileUrl,
             (data) => {
-              supportRequest += "#### EXPORT LOG ###";
-              supportRequest += data;
+              supportRequest += "#### EXPORT LOG ###"
+              supportRequest += data
 
               data = {
                 email: $("#supportRequestEmail").val(),
                 supportRequest,
-              };
+              }
 
               $.ajax(
                 {
@@ -713,145 +713,145 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
                   success: sendSupportSuccessCallback,
                   url: "https://hooks.zapier.com/hooks/catch/4977245/jqj3l4/",
                 },
-              );
+              )
             },
-          );
+          )
           */
         }
 
         const postData = {
           email: adminPage.sendSupportRequestEmail.value,
           supportRequest,
-        };
+        }
 
-        const request = new XMLHttpRequest();
-        request.open("POST", "https://hooks.zapier.com/hooks/catch/4977245/jqj3l4/", true);
-        request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-        request.onload = sendSupportSuccessCallback;
-        request.onerror = sendSupportFailCallback;
-        request.send(JSON.stringify(postData));
+        const request = new XMLHttpRequest()
+        request.open("POST", "https://hooks.zapier.com/hooks/catch/4977245/jqj3l4/", true)
+        request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
+        request.onload = sendSupportSuccessCallback
+        request.onerror = sendSupportFailCallback
+        request.send(JSON.stringify(postData))
       },
-    );
+    )
 
     adminPage.generateStaticSiteButton.addEventListener(
       "click",
       (event: any) => {
-        event.preventDefault();
-        clearProgressAndResults();
-        adminPage.generateStaticSiteButton.setAttribute("disabled", "");
-        adminPage.startExportButton.setAttribute("disabled", "");
-        adminPage.cancelExportButton.style.display = "inline";
-        adminPage.resetDefaultSettingsButton.setAttribute("disabled", "");
-        adminPage.saveSettingsButton.setAttribute("disabled", "");
-        generateStaticSite();
+        event.preventDefault()
+        clearProgressAndResults()
+        adminPage.generateStaticSiteButton.setAttribute("disabled", "")
+        adminPage.startExportButton.setAttribute("disabled", "")
+        adminPage.cancelExportButton.style.display = "inline"
+        adminPage.resetDefaultSettingsButton.setAttribute("disabled", "")
+        adminPage.saveSettingsButton.setAttribute("disabled", "")
+        generateStaticSite()
       },
-    );
+    )
 
     adminPage.startExportButton.addEventListener(
       "click",
       (event: any) => {
-        event.preventDefault();
-        clearProgressAndResults();
-        adminPage.generateStaticSiteButton.setAttribute("disabled", "");
-        adminPage.startExportButton.setAttribute("disabled", "");
-        adminPage.cancelExportButton.style.display = "inline";
-        adminPage.resetDefaultSettingsButton.setAttribute("disabled", "");
-        adminPage.saveSettingsButton.setAttribute("disabled", "");
-        startExport();
+        event.preventDefault()
+        clearProgressAndResults()
+        adminPage.generateStaticSiteButton.setAttribute("disabled", "")
+        adminPage.startExportButton.setAttribute("disabled", "")
+        adminPage.cancelExportButton.style.display = "inline"
+        adminPage.resetDefaultSettingsButton.setAttribute("disabled", "")
+        adminPage.saveSettingsButton.setAttribute("disabled", "")
+        startExport()
       },
-    );
+    )
 
     adminPage.cancelExportButton.addEventListener(
       "click",
       (event: any) => {
-        event.preventDefault();
-        const reallyCancel = confirm("Stop current export and reload page?");
+        event.preventDefault()
+        const reallyCancel = confirm("Stop current export and reload page?")
         if (reallyCancel) {
-          window.location.href = window.location.href;
+          window.location.href = window.location.href
         }
       },
-    );
+    )
 
     function sendSupportSuccessCallback(event: any) {
-      alert("Successful support request sent");
+      alert("Successful support request sent")
     }
 
     function sendSupportFailCallback(event: any) {
-      alert("Failed to send support request. Please try again or contact help@wp2static.com.");
+      alert("Failed to send support request. Please try again or contact help@wp2static.com.")
     }
 
     function resetDefaultSettingsSuccessCallback(event: any) {
-      alert("Settings have been reset to default, the page will now be reloaded.");
-      window.location.reload(true);
+      alert("Settings have been reset to default, the page will now be reloaded.")
+      window.location.reload(true)
     }
 
     function resetDefaultSettingsFailCallback(event: any) {
-      alert("Error encountered in trying to reset settings. Please try refreshing the page.");
+      alert("Error encountered in trying to reset settings. Please try refreshing the page.")
     }
 
     adminPage.resetDefaultSettingsButton.addEventListener(
       "click",
       (event: any) => {
-        event.preventDefault();
+        event.preventDefault()
 
         sendWP2StaticAJAX(
           "reset_default_settings",
           resetDefaultSettingsSuccessCallback,
           resetDefaultSettingsFailCallback,
-        );
+        )
       },
-    );
+    )
 
     adminPage.saveSettingsButton.addEventListener(
       "click",
       (event: any) => {
-        event.preventDefault();
-        saveOptions();
+        event.preventDefault()
+        saveOptions()
       },
-    );
+    )
 
     function deleteDeployCacheSuccessCallback(event: any) {
       if (event.target.response === "SUCCESS") {
-        alert("Deploy cache cleared");
+        alert("Deploy cache cleared")
       } else {
-        alert("FAIL: Unable to delete deploy cache");
+        alert("FAIL: Unable to delete deploy cache")
       }
 
-      adminPage.pulsateCSS.style.display = "none";
+      adminPage.pulsateCSS.style.display = "none"
     }
 
     function deleteDeployCacheFailCallback(event: any) {
-      alert("FAIL: Unable to delete deploy cache");
+      alert("FAIL: Unable to delete deploy cache")
 
-      adminPage.pulsateCSS.style.display = "none";
+      adminPage.pulsateCSS.style.display = "none"
     }
 
     adminPage.deleteDeployCache.addEventListener(
       "click",
       (event: any) => {
-        event.preventDefault();
-        const button = event.currentTarget;
+        event.preventDefault()
+        const button = event.currentTarget
         sendWP2StaticAJAX(
           "delete_deploy_cache",
           deleteDeployCacheSuccessCallback,
           deleteDeployCacheFailCallback,
-        );
+        )
       },
-    );
+    )
 
     function testDeploymentSuccessCallback(event: any) {
       if (event.target.response === "SUCCESS") {
-        alert("Connection/Upload Test Successful");
+        alert("Connection/Upload Test Successful")
       } else {
-        alert("FAIL: Unable to complete test upload to " + wp2staticGlobals.currentDeploymentMethod);
+        alert("FAIL: Unable to complete test upload to " + wp2staticGlobals.currentDeploymentMethod)
       }
 
-      adminPage.pulsateCSS.style.display = "none";
+      adminPage.pulsateCSS.style.display = "none"
     }
 
     function testDeploymentFailCallback(event: any) {
-      alert("FAIL: Unable to complete test upload to " + wp2staticGlobals.currentDeploymentMethod);
-      adminPage.pulsateCSS.style.display = "none";
+      alert("FAIL: Unable to complete test upload to " + wp2staticGlobals.currentDeploymentMethod)
+      adminPage.pulsateCSS.style.display = "none"
     }
 
     /* TODO: reimplement handlers for all test_deploy method buttons
@@ -860,45 +860,45 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
       "click",
       '[id$="-test-button"]',
       (event: any) => {
-        event.preventDefault();
+        event.preventDefault()
 
         sendWP2StaticAJAX(
           "test_" + wp2staticGlobals.currentDeploymentMethod,
           testDeploymentSuccessCallback,
           testDeploymentFailCallback,
-        );
+        )
       },
-    );
+    )
     */
 
     // guard against selected option for add-on not currently activated
     const deployBaseUrl: HTMLInputElement | null =
-      document.getElementById("baseUrl-" + wp2staticGlobals.currentDeploymentMethod)! as HTMLInputElement;
+      document.getElementById("baseUrl-" + wp2staticGlobals.currentDeploymentMethod)! as HTMLInputElement
     if (deployBaseUrl === null) {
-      wp2staticGlobals.currentDeploymentMethod = "folder";
+      wp2staticGlobals.currentDeploymentMethod = "folder"
     }
 
-    populateFormProcessorOptions(formProcessors);
+    populateFormProcessorOptions(formProcessors)
 
-    setFormProcessor(selectedFormProcessor);
+    setFormProcessor(selectedFormProcessor)
 
     // call change handler on page load, to set correct state
-    const offlineUsageCheckbox: any = document.getElementById("allowOfflineUsage");
+    const offlineUsageCheckbox: any = document.getElementById("allowOfflineUsage")
     if ( offlineUsageCheckbox ) {
-      offlineUsageChangeHandler(offlineUsageCheckbox);
+      offlineUsageChangeHandler(offlineUsageCheckbox)
     }
 
     // set and show the previous selected deployment method
-    renderSettingsBlock(wp2staticGlobals.currentDeploymentMethod);
-    renderSettingsBlockProduction(wp2staticGlobals.currentDeploymentMethodProduction);
+    renderSettingsBlock(wp2staticGlobals.currentDeploymentMethod)
+    renderSettingsBlockProduction(wp2staticGlobals.currentDeploymentMethodProduction)
 
     // set the select to the current deployment type
-    setDeploymentMethod(wp2staticGlobals.currentDeploymentMethod);
-    setDeploymentMethodProduction(wp2staticGlobals.currentDeploymentMethodProduction);
+    setDeploymentMethod(wp2staticGlobals.currentDeploymentMethod)
+    setDeploymentMethodProduction(wp2staticGlobals.currentDeploymentMethodProduction)
 
     // hide all but WP2Static messages
-    hideOtherVendorMessages();
+    hideOtherVendorMessages()
 
-    prepareInitialFileList();
+    prepareInitialFileList()
   },
-);
+)
