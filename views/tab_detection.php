@@ -129,6 +129,29 @@
     ];
     ?>
 
+<!--
+TODO: define as template, producing as below
+
+<table id="detectionOptionsTable">
+    <tr>
+        <td>
+            <label for='detectPages'>
+            <b>Pages</b>
+            </label>
+        </td>
+        <td>
+            <fieldset>
+                <label for='detectPages'>
+                    <input name='detectPages' id='detectPages' value='1' type='checkbox'  />
+                    <span>All published Pages. Use the date range option below to further filter.</span>
+                </label>
+            </fieldset>
+        </td>
+    </tr>
+
+-->
+
+
   <table id="detectionOptionsTable">
         <?php foreach ( $detection_options_table as $detection_option ) : ?>
           <tr>
