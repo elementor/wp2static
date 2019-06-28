@@ -1,4 +1,4 @@
-<div id="add_ons" style="display:none;">
+<div id="add_ons"  v-show="currentTab == 'add_ons'">
 
 <section class="wp2static-content wp2static-flex">
   <div class="content" style="max-width:30%">

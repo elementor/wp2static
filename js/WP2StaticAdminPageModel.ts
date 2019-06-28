@@ -7,7 +7,6 @@ export class WP2StaticAdminPageModel {
   public createZip: HTMLElement
   public deleteCrawlCache: HTMLElement
   public deleteDeployCache: HTMLElement
-  public detectEverythingButton: HTMLElement
   public detectNothingButton: HTMLElement
   public detectionOptionsInputs: NodeListOf<Element>
   public downloadZIP: HTMLElement
@@ -51,7 +50,6 @@ export class WP2StaticAdminPageModel {
     this.createZip = document.getElementById("createZip")!
     this.deleteCrawlCache = document.getElementById("deleteCrawlCache")!
     this.deleteDeployCache = document.getElementById("delete_deploy_cache_button")!
-    this.detectEverythingButton = document.getElementById("detectEverythingButton")!
     this.detectNothingButton = document.getElementById("detectNothingButton")!
     this.detectionOptionsInputs = document.querySelectorAll('#detectionOptionsTable input[type="checkbox"]')!
     this.downloadZIP = document.getElementById("downloadZIP")!

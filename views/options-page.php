@@ -12,6 +12,7 @@ $tpl = new \WP2Static\TemplateHelper();
 ?>
 
 
+<div id="vueApp">
     <div class="wrap wp2static">
        <?php if ( PHP_VERSION < 7.2 ) : ?>
 
@@ -69,28 +70,16 @@ $tpl = new \WP2Static\TemplateHelper();
         <?php endif; ?>
 
       <nav class="nav-tab-wrapper">
-        <?php $tab_names = [
-                'Workflow',
-                'URL Detection',
-                'Crawling',
-                'Processing',
-                'Forms',
-                'Staging',
-                'Production',
-                'Caching',
-                'Automation',
-                'Advanced Options',
-                'Add-ons',
-                'Help',
-            ];
-        ?>
 
-        <?php foreach ( $tab_names as $tab_name ) : ?>
-            <?php $active_tab = $tab_name === 'Workflow' ? ' nav-tab-active' : ''; ?>
+        <a
+            v-for="tab in tabs"
+            v-bind:key="tab.id"
+            v-on:click.prevent="changeTab2"
+            :tabid="tab.id"
+            class="nav-tab"
+            href="#"
+        >{{ tab.name }}</a>
 
-            <a href="#" class="nav-tab<?php echo $active_tab; ?>"><?php echo $tab_name; ?></a>
-
-        <?php endforeach; ?>
       </nav>
 
 
@@ -165,9 +154,7 @@ $tpl = new \WP2Static\TemplateHelper();
         </span>
       </form>
 
-        </div> <!-- end wrap wp2static -->
 
-<div id="vueApp">
         <div id="wp2static-footer">
 
               <div class="inside">
@@ -228,5 +215,6 @@ $tpl = new \WP2Static\TemplateHelper();
                 </div>
 
         </div><!-- end wp2static-footer -->
+    </div> <!-- end wrap wp2static -->
 </div><!-- end vueApp -->
 

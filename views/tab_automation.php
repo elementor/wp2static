@@ -1,4 +1,4 @@
-<div id="automation_settings" style="display:none;">
+<div id="automation_settings" v-show="currentTab == 'automation_settings'">
 
 <section class="wp2static-content wp2static-flex">
   <div class="content" style="max-width:30%">

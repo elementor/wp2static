@@ -1,4 +1,4 @@
-<div id="advanced_settings" style="display:none;">
+<div id="advanced_settings" v-show="currentTab == 'advanced_settings'">
 
 <section class="wp2static-content wp2static-flex">
   <div class="content" style="max-width:30%">

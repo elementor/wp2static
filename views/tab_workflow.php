@@ -1,4 +1,4 @@
-<div id="workflow_tab">
+<div id="workflow_tab" v-show="currentTab == 'workflow_tab'">
 
 <section class="wp2static-content wp2static-flex">
   <div class="content" style="max-width:33%">

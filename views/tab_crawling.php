@@ -1,4 +1,4 @@
-<div id="crawl_settings" style="display:none;">
+<div id="crawl_settings" v-show="currentTab == 'crawl_settings'">
 
 
 <section class="wp2static-content wp2static-flex">

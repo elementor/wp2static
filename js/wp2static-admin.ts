@@ -81,21 +81,47 @@ const exportAction = ""
 const protocolAndDomainRE = /^(?:\w+:)?\/\/(\S+)$/
 const localhostDomainRE = /^localhost[:?\d]*(?:[^:?\d]\S*)?$/
 const nonLocalhostDomainRE = /^[^\s.]+\.\S{2,}$/
+
 document.addEventListener("DOMContentLoaded", () => {
-
-
     const adminPage = new WP2StaticAdminPageModel()
     wp2staticGlobals.adminPage = adminPage
 
     wp2staticGlobals.vueData = {
       currentAction: "Starting export...",
+      currentDeploymentMethod: "folder",
+      currentDeploymentMethodProduction: "folder",
+      currentTab: "workflow_tab",
       progress: true,
+      tabs: [
+        { id: "workflow_tab", name: "Workflow" },
+        { id: "url_detection", name: "URL Detection" },
+        { id: "crawl_settings", name: "Crawling" },
+        { id: "processing_settings", name: "Processing" },
+        { id: "form_settings", name: "Forms" },
+        { id: "staging_deploy", name: "Staging" },
+        { id: "production_deploy", name: "Production" },
+        { id: "caching_settings", name: "Caching" },
+        { id: "automation_settings", name: "Automation" },
+        { id: "advanced_settings", name: "Advanced Options" },
+        { id: "add_ons", name: "Add-ons" },
+        { id: "help_troubleshooting", name: "Help" },
+      ],
     }
 
     const vueApp = new Vue({
        data: wp2staticGlobals.vueData,
        el: "#vueApp",
        methods: {
+         changeTab2: (event: any) => {
+          changeTab(event.currentTarget.getAttribute("tabid"))
+         },
+         detectEverything: (event: any) => {
+           const inputs = adminPage.detectionOptionsInputs
+
+           for ( const input of inputs ) {
+               input.setAttribute("checked", "")
+           }
+         },
          generateStaticSite: (event: any) => {
            clearProgressAndResults()
            // set hidden baseUrl to staging current deploy method's Destination URL
@@ -261,18 +287,6 @@ document.addEventListener("DOMContentLoaded", () => {
       wp2staticGlobals.vueData.progress = false
       wp2staticGlobals.vueData.currentAction = "Failed to delete Crawl Cache."
     }
-
-    adminPage.detectEverythingButton.addEventListener(
-      "click",
-      (event: any) => {
-        event.preventDefault()
-        const inputs = adminPage.detectionOptionsInputs
-
-        for ( const input of inputs ) {
-            input.setAttribute("checked", "")
-        }
-      },
-    )
 
     adminPage.detectNothingButton.addEventListener(
       "click",
@@ -443,24 +457,6 @@ document.addEventListener("DOMContentLoaded", () => {
       })
     }
 
-    function setDeploymentMethod(selectedDeploymentMethod: string) {
-      adminPage.downloadZIP.style.display = "none"
-      wp2staticGlobals.currentDeploymentMethod = selectedDeploymentMethod
-
-      // set the selected option in case calling this from outside the event handler
-      adminPage.selectedDeploymentMethod.value = selectedDeploymentMethod
-      updateStagingSummary()
-    }
-
-    function setDeploymentMethodProduction(selectedDeploymentMethod: string) {
-      adminPage.downloadZIP.style.display = "none"
-      wp2staticGlobals.currentDeploymentMethodProduction = selectedDeploymentMethod
-
-      // set the selected option in case calling this from outside the event handler
-      adminPage.selectedDeploymentMethodProduction.value = selectedDeploymentMethod
-      updateProductionSummary()
-    }
-
     function updateBaseUrl() {
       const currentBaseUrlRenameMe: HTMLInputElement | null =
         document.getElementById("baseUrl-" + wp2staticGlobals.currentDeploymentMethod)! as HTMLInputElement
@@ -492,34 +488,6 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         adminPage.baseUrlZip.removeAttribute("disabled")
       }
-    }
-
-    function renderSettingsBlock(selectedDeploymentMethod: string) {
-      Array.prototype.forEach.call(
-        adminPage.settingsBlocks,
-        (element, index) => {
-            element.style.display = "none"
-        },
-      )
-
-      const settingsBlock: HTMLElement =
-        document.getElementById(selectedDeploymentMethod + "_settings_block")!
-
-      settingsBlock.style.display = "block"
-    }
-
-    function renderSettingsBlockProduction(selectedDeploymentMethodProduction: string) {
-      Array.prototype.forEach.call(
-        adminPage.settingsBlocksProduction,
-        (element, index) => {
-            element.style.display = "none"
-        },
-      )
-
-      const settingsBlockProduction: HTMLElement =
-        document.getElementById(selectedDeploymentMethodProduction + "_settings_block_production")!
-
-      settingsBlockProduction.style.display = "block"
     }
 
     function notifyMe() {
@@ -571,73 +539,11 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
       },
     )
 
-    adminPage.selectedDeploymentMethod.addEventListener(
-      "change",
-      (event: any) => {
-        renderSettingsBlock((event.currentTarget as HTMLInputElement).value)
-        setDeploymentMethod((event.currentTarget as HTMLInputElement).value)
-        clearProgressAndResults()
-      },
-    )
-
-    adminPage.selectedDeploymentMethodProduction.addEventListener(
-      "change",
-      (event: any) => {
-        renderSettingsBlockProduction((event.currentTarget as HTMLInputElement).value)
-        setDeploymentMethodProduction((event.currentTarget as HTMLInputElement).value)
-        clearProgressAndResults()
-      },
-    )
-
     function changeTab(targetTab: string) {
-      const tabsContentMapping: any = {
-        add_ons: "Add-ons",
-        advanced_settings: "Advanced Options",
-        automation_settings: "Automation",
-        caching_settings: "Caching",
-        crawl_settings: "Crawling",
-        form_settings: "Forms",
-        help_troubleshooting: "Help",
-        processing_settings: "Processing",
-        production_deploy: "Production",
-        staging_deploy: "Staging",
-        url_detection: "URL Detection",
-        workflow_tab: "Workflow",
-      }
+      wp2staticGlobals.vueData.currentTab = targetTab
 
-      Array.prototype.forEach.call(
-        adminPage.navigationTabs,
-        (element, index) => {
-          if (element.textContent === targetTab) {
-            element.classList.add("nav-tab-active")
-            element.blur()
-          } else {
-            element.classList.remove("nav-tab-active")
-          }
-        },
-      )
-
-      // hide/show the tab content
-      for (const key in tabsContentMapping) {
-        if (tabsContentMapping.hasOwnProperty(key)) {
-          if (tabsContentMapping[key] === targetTab) {
-            const tabContent = document.getElementById(key)!
-            tabContent.style.display = "block"
-            document.body.scrollTop = 0
-            document.documentElement.scrollTop = 0
-          } else {
-            const tabContent = document.getElementById(key)!
-            tabContent.style.display = "none"
-          }
-        }
-      }
-
-      // render staging / production deploy options
-      if (targetTab === "Staging") {
-        renderSettingsBlock(wp2staticGlobals.currentDeploymentMethod)
-      } else if (targetTab === "Production") {
-        renderSettingsBlockProduction(wp2staticGlobals.currentDeploymentMethodProduction)
-      }
+      document.body.scrollTop = 0
+      document.documentElement.scrollTop = 0
     }
 
     adminPage.goToDeployTabButton.addEventListener(
@@ -645,19 +551,6 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
       (event: any) => {
         event.preventDefault()
         changeTab("Deployment")
-      },
-    )
-
-    Array.prototype.forEach.call(
-      adminPage.navigationTabs,
-      (element, index) => {
-        element.addEventListener(
-          "click",
-          (event: any) => {
-            event.preventDefault()
-            changeTab(event.currentTarget.textContent)
-          },
-        )
       },
     )
 
@@ -844,14 +737,6 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
     if ( offlineUsageCheckbox ) {
       offlineUsageChangeHandler(offlineUsageCheckbox)
     }
-
-    // set and show the previous selected deployment method
-    renderSettingsBlock(wp2staticGlobals.currentDeploymentMethod)
-    renderSettingsBlockProduction(wp2staticGlobals.currentDeploymentMethodProduction)
-
-    // set the select to the current deployment type
-    setDeploymentMethod(wp2staticGlobals.currentDeploymentMethod)
-    setDeploymentMethodProduction(wp2staticGlobals.currentDeploymentMethodProduction)
 
     // hide all but WP2Static messages
     hideOtherVendorMessages()

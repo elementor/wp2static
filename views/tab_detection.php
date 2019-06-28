@@ -1,4 +1,4 @@
-<div id="url_detection" style="display:none;">
+<div id="url_detection" v-show="currentTab == 'url_detection'">
 
 <section class="wp2static-content">
   <h2><?php echo __( 'Initial crawl list', 'static-html-output-plugin' ); ?></h2>
@@ -18,7 +18,7 @@
   <div class="content" style="max-width:30%">
     <h2><?php echo __( 'Control Detected URLs', 'static-html-output-plugin' ); ?></h2>
 
-    <button id="detectEverythingButton" class="wp2static-btn">Select all</button>
+    <button v-on:click.prevent="detectEverything" class="wp2static-btn">Select all</button>
     <button id="detectNothingButton" class="wp2static-btn">Select none</button>
   </div>
   

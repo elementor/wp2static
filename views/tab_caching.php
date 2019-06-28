@@ -1,4 +1,4 @@
-<div id="caching_settings" style="display:none;">
+<div id="caching_settings" v-show="currentTab == 'caching_settings'">
 
 <section class="wp2static-content wp2static-flex">
   <div class="content" style="max-width:30%">
