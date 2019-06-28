@@ -4,7 +4,8 @@ var webpack = require('webpack');
 module.exports = {
     entry: './js/wp2static-admin.ts',
     resolve: {
-        extensions: [".webpack.js", ".web.js", ".js", ".ts"]
+        extensions: [".webpack.js", ".web.js", ".js", ".ts"],
+        alias: { vue: 'vue/dist/vue.esm.js' }
     },
     output: {
         //publicPath: "/admin/",

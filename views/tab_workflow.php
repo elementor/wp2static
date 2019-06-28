@@ -1,5 +1,9 @@
 <div id="workflow_tab">
 
+<div id="app">
+  {{ message }}
+</div>
+
 <section class="wp2static-content wp2static-flex">
   <div class="content" style="max-width:33%">
     <img src="<?php echo plugins_url( '/../assets/dev-server.svg', __FILE__ ); ?>" style="max-width:250px" alt="Add-on">

@@ -3,6 +3,7 @@ declare var ajaxurl: string;
 import { WP2StaticAdminPageModel } from "./WP2StaticAdminPageModel";
 import { WP2StaticAJAX } from "./WP2StaticAJAX";
 import { WP2StaticGlobals } from "./WP2StaticGlobals";
+import Vue from "vue"
 
 interface FormProcessor {
     id: string;
@@ -81,6 +82,14 @@ const protocolAndDomainRE = /^(?:\w+:)?\/\/(\S+)$/;
 const localhostDomainRE = /^localhost[:?\d]*(?:[^:?\d]\S*)?$/;
 const nonLocalhostDomainRE = /^[^\s.]+\.\S{2,}$/;
 document.addEventListener("DOMContentLoaded", () => {
+
+    let app = new Vue({
+      el: '#app',
+      data: {
+        message: 'Hello Vue!'
+      }
+    })
+
     const adminPage = new WP2StaticAdminPageModel();
     wp2staticGlobals.adminPage = adminPage;
     const wp2staticAJAX = new WP2StaticAJAX( wp2staticGlobals );
