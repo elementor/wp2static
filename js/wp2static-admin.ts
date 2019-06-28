@@ -544,6 +544,9 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
 
       document.body.scrollTop = 0
       document.documentElement.scrollTop = 0
+      if (document.activeElement instanceof HTMLElement) {
+          document.activeElement.blur()
+      }
     }
 
     adminPage.goToDeployTabButton.addEventListener(

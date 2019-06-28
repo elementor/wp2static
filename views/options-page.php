@@ -77,6 +77,7 @@ $tpl = new \WP2Static\TemplateHelper();
             v-on:click.prevent="changeTab2"
             :tabid="tab.id"
             class="nav-tab"
+            v-bind:class="{ 'nav-tab-active': tab.id === currentTab }"
             href="#"
         >{{ tab.name }}</a>
 
