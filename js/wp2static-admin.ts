@@ -116,6 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
           changeTab(event.currentTarget.getAttribute("tabid"))
          },
          detectEverything: (event: any) => {
+            console.log('setting everything')
            const inputs = adminPage.detectionOptionsInputs
 
            for ( const input of inputs ) {

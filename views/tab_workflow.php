@@ -26,8 +26,8 @@
 
     <h3>Deployment summary</h3>
     <ul>
-       <li><b>Deployment Method</b> <span id="stagingSummaryDeployMethod">not set</span></li>
-       <li><b>Destination URL</b> <span id="stagingSummaryDeployUrl">not set</span></li>
+       <li><b>Deployment Method</b> {{ currentDeploymentMethod }}</li>
+       <li><b>Destination URL</b> {{ baseUrl }}</span></li>
     </ul>
   </div>
 
@@ -40,8 +40,8 @@
 
     <h3>Deployment summary</h3>
     <ul>
-       <li><b>Deployment Method</b> <span id="stagingSummaryDeployMethodProduction">not set</span></li>
-       <li><b>Destination URL</b> <span id="stagingSummaryDeployUrlProduction">not set</span></li>
+       <li><b>Deployment Method</b> {{ currentDeploymentMethodProduction }}</li>
+       <li><b>Destination URL</b> {{ baseUrlProduction }}</li>
     </ul>
   </div>
 </section>
