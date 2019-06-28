@@ -49,7 +49,7 @@ export class WP2StaticAJAX {
           this.wp2staticGlobals.statusText = exportAction
         }
 
-        this.adminPage.currentAction.innerHTML = this.wp2staticGlobals.statusText
+        this.wp2staticGlobals.vueData.currentAction = this.wp2staticGlobals.statusText
 
         this.adminPage.hiddenActionField.value = "wp_static_html_output_ajax"
         this.adminPage.hiddenAJAXAction.value = exportAction
@@ -91,8 +91,8 @@ export class WP2StaticAJAX {
               '", <button id="downloadExportLogButton">Download export log</button>'
 
       this.adminPage.cancelExportButton.style.display = "none"
-      this.adminPage.currentAction.innerHTML = failedDeployMessage
-      this.wp2staticGlobals.vueData.progress = false;
+      this.wp2staticGlobals.vueData.currentAction = failedDeployMessage
+      this.wp2staticGlobals.vueData.progress = false
       this.adminPage.resetDefaultSettingsButton.removeAttribute("disabled")
       this.adminPage.saveSettingsButton.removeAttribute("disabled")
       this.adminPage.startExportButton.removeAttribute("disabled")

@@ -43,11 +43,11 @@ wp2static-exported-site.zip?cacheBuster=${Date.now()}`
       // clear export commence time for next run
       this.wp2staticGlobals.exportCommenceTime = 0
 
-      adminPage.currentAction.textContent = `Process completed in
+      this.wp2staticGlobals.vueData.currentAction = `Process completed in
 ${this.wp2staticGlobals.millisToMinutesAndSeconds(this.wp2staticGlobals.exportDuration)} (mins:ss)`
 
       adminPage.cancelExportButton.style.display = "none"
-      this.wp2staticGlobals.vueData.progress = false;
+      this.wp2staticGlobals.vueData.progress = false
       adminPage.resetDefaultSettingsButton.removeAttribute("disabled")
       adminPage.saveSettingsButton.removeAttribute("disabled")
       adminPage.startExportButton.removeAttribute("disabled")

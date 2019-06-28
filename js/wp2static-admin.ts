@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const fileListCount: number = event.target.response as number
 
       if (!fileListCount) {
-        wp2staticGlobals.vueData.progress = false;
+        wp2staticGlobals.vueData.progress = false
 
         wp2staticGlobals.vueData.currentAction = `Failed to generate initial file list.
  Please <a href="https://docs.wp2static.com" target="_blank">contact support</a>`
@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
         adminPage.startExportButton.removeAttribute("disabled")
         adminPage.generateStaticSiteButton.removeAttribute("disabled")
 
-        wp2staticGlobals.vueData.progress = false;
+        wp2staticGlobals.vueData.progress = false
 
         wp2staticGlobals.vueData.currentAction = `${fileListCount} URLs were detected for
  initial crawl list. Adjust detection via the URL Detection tab.`
@@ -133,8 +133,8 @@ document.addEventListener("DOMContentLoaded", () => {
  Please check your permissions to the WordPress upload directory or check your
  Export Log in case of more info.`
 
-      adminPage.currentAction.innerHTML = failedDeployMessage
-      wp2staticGlobals.vueData.progress = false;
+      wp2staticGlobals.vueData.currentAction = failedDeployMessage
+      wp2staticGlobals.vueData.progress = false
       adminPage.cancelExportButton.style.display = "none"
       adminPage.resetDefaultSettingsButton.removeAttribute("disabled")
       adminPage.saveSettingsButton.removeAttribute("disabled")
@@ -156,7 +156,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function sendWP2StaticAJAX(ajaxAction: string, successCallback: any, failCallback: any) {
       adminPage.hiddenActionField.value = "wp_static_html_output_ajax"
       adminPage.hiddenAJAXAction.value = ajaxAction
-      wp2staticGlobals.vueData.progress = true;
+      wp2staticGlobals.vueData.progress = true
 
       const data = new URLSearchParams(
       // https://github.com/Microsoft/TypeScript/issues/30584
@@ -173,19 +173,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function saveOptionsSuccessCallback(event: any) {
-      wp2staticGlobals.vueData.progress = false;
+      wp2staticGlobals.vueData.progress = false
 
       location.reload()
     }
 
     function saveOptionsFailCallback(event: any) {
-      wp2staticGlobals.vueData.progress = false;
+      wp2staticGlobals.vueData.progress = false
 
       location.reload()
     }
 
     function saveOptions() {
-      adminPage.currentAction.innerHTML = "Saving options"
+      wp2staticGlobals.vueData.currentAction = "Saving options"
       sendWP2StaticAJAX(
         "save_options",
         saveOptionsSuccessCallback,
@@ -195,18 +195,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     function deleteCrawlCacheSuccessCallback(event: any) {
-      wp2staticGlobals.vueData.progress = false;
+      wp2staticGlobals.vueData.progress = false
 
       if (!event.target.response) {
-        adminPage.currentAction.innerHTML = "Failed to delete Crawl Cache."
+        wp2staticGlobals.vueData.currentAction = "Failed to delete Crawl Cache."
       } else {
-        adminPage.currentAction.innerHTML = "Crawl Cache successfully deleted."
+        wp2staticGlobals.vueData.currentAction = "Crawl Cache successfully deleted."
       }
     }
 
     function deleteCrawlCacheFailCallback(event: any) {
-      wp2staticGlobals.vueData.progress = false;
-      adminPage.currentAction.innerHTML = "Failed to delete Crawl Cache."
+      wp2staticGlobals.vueData.progress = false
+      wp2staticGlobals.vueData.currentAction = "Failed to delete Crawl Cache."
     }
 
     adminPage.detectEverythingButton.addEventListener(
@@ -237,7 +237,7 @@ document.addEventListener("DOMContentLoaded", () => {
       "click",
       (event: any) => {
         event.preventDefault()
-        adminPage.currentAction.innerHTML = "Deleting Crawl Cache..."
+        wp2staticGlobals.vueData.currentAction = "Deleting Crawl Cache..."
 
         sendWP2StaticAJAX(
           "delete_crawl_cache",
@@ -250,8 +250,8 @@ document.addEventListener("DOMContentLoaded", () => {
     function ajaxErrorHandler() {
       const failedDeployMessage = `Failed during ${wp2staticGlobals.statusText}`
 
-      wp2staticGlobals.vueData.progress = false;
-      adminPage.currentAction.innerHTML = failedDeployMessage
+      wp2staticGlobals.vueData.progress = false
+      wp2staticGlobals.vueData.currentAction = failedDeployMessage
       adminPage.cancelExportButton.style.display = "none"
       adminPage.resetDefaultSettingsButton.removeAttribute("disabled")
       adminPage.saveSettingsButton.removeAttribute("disabled")
@@ -279,7 +279,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (validationErrors !== "") {
         alert(validationErrors)
 
-        wp2staticGlobals.vueData.progress = false;
+        wp2staticGlobals.vueData.progress = false
         adminPage.cancelExportButton.style.display = "none"
         adminPage.resetDefaultSettingsButton.removeAttribute("disabled")
         adminPage.saveSettingsButton.removeAttribute("disabled")
@@ -289,7 +289,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return false
       }
 
-      adminPage.currentAction.innerHTML = "Generating Static Site Files..."
+      wp2staticGlobals.vueData.currentAction = "Generating Static Site Files..."
 
       // reset export targets to avoid having left-overs from a failed run
       wp2staticGlobals.exportTargets = []
@@ -312,7 +312,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (validationErrors !== "") {
         alert(validationErrors)
 
-        wp2staticGlobals.vueData.progress = false;
+        wp2staticGlobals.vueData.progress = false
         adminPage.cancelExportButton.style.display = "none"
         adminPage.resetDefaultSettingsButton.removeAttribute("disabled")
         adminPage.saveSettingsButton.removeAttribute("disabled")
@@ -322,7 +322,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return false
       }
 
-      adminPage.currentAction.innerHTML = "Starting export..."
+      wp2staticGlobals.vueData.currentAction = "Starting export..."
 
       // reset export targets to avoid having left-overs from a failed run
       wp2staticGlobals.exportTargets = []
@@ -826,13 +826,13 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
         alert("FAIL: Unable to delete deploy cache")
       }
 
-      wp2staticGlobals.vueData.progress = false;
+      wp2staticGlobals.vueData.progress = false
     }
 
     function deleteDeployCacheFailCallback(event: any) {
       alert("FAIL: Unable to delete deploy cache")
 
-      wp2staticGlobals.vueData.progress = false;
+      wp2staticGlobals.vueData.progress = false
     }
 
     adminPage.deleteDeployCache.addEventListener(
@@ -855,12 +855,12 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
         alert("FAIL: Unable to complete test upload to " + wp2staticGlobals.currentDeploymentMethod)
       }
 
-      wp2staticGlobals.vueData.progress = false;
+      wp2staticGlobals.vueData.progress = false
     }
 
     function testDeploymentFailCallback(event: any) {
       alert("FAIL: Unable to complete test upload to " + wp2staticGlobals.currentDeploymentMethod)
-      wp2staticGlobals.vueData.progress = false;
+      wp2staticGlobals.vueData.progress = false
     }
 
     /* TODO: reimplement handlers for all test_deploy method buttons

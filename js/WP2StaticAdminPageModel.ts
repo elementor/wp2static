@@ -5,7 +5,6 @@ export class WP2StaticAdminPageModel {
   public baseUrlZip: HTMLInputElement
   public cancelExportButton: HTMLElement
   public createZip: HTMLElement
-  public currentAction: HTMLElement
   public deleteCrawlCache: HTMLElement
   public deleteDeployCache: HTMLElement
   public detectEverythingButton: HTMLElement
@@ -52,7 +51,6 @@ export class WP2StaticAdminPageModel {
     this.baseUrlZip = document.getElementById("baseUrl-zip")! as HTMLInputElement
     this.cancelExportButton = document.getElementById("cancelExportButton")!
     this.createZip = document.getElementById("createZip")!
-    this.currentAction = document.getElementById("current_action")!
     this.deleteCrawlCache = document.getElementById("deleteCrawlCache")!
     this.deleteDeployCache = document.getElementById("delete_deploy_cache_button")!
     this.detectEverythingButton = document.getElementById("detectEverythingButton")!
