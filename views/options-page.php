@@ -194,10 +194,6 @@ $tpl = new \WP2Static\TemplateHelper();
                     <?php echo __( 'Cancel Export', 'static-html-output-plugin' ); ?>
                   </button>
 
-                  <p v-show="progress">
-                        some text should change
-                    </p>
-
                   <!-- TODO: set action to grab ZIP download URL from button vs anchor -->
                   <button id="downloadZIP" class="wp2static-btn btn-call-to-action">
                     <?php echo __( 'Download ZIP', 'static-html-output-plugin' ); ?>
