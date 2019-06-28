@@ -89,12 +89,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     wp2staticGlobals.vueData = {
       currentAction: "Starting export...",
+      progress: true,
     }
 
     const vueApp = new Vue({
        data: wp2staticGlobals.vueData,
        el: "#vueApp",
-     })
+    })
 
     const wp2staticAJAX = new WP2StaticAJAX( wp2staticGlobals )
 
@@ -102,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const fileListCount: number = event.target.response as number
 
       if (!fileListCount) {
-        adminPage.pulsateCSS.style.display = "none"
+        wp2staticGlobals.vueData.progress = false;
 
         wp2staticGlobals.vueData.currentAction = `Failed to generate initial file list.
  Please <a href="https://docs.wp2static.com" target="_blank">contact support</a>`
@@ -111,11 +112,12 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         adminPage.initialCrawlListLoader.style.display = "none"
         adminPage.previewInitialCrawlListButton.style.display = "inline"
-        adminPage.pulsateCSS.style.display = "none"
         adminPage.resetDefaultSettingsButton.removeAttribute("disabled")
         adminPage.saveSettingsButton.removeAttribute("disabled")
         adminPage.startExportButton.removeAttribute("disabled")
         adminPage.generateStaticSiteButton.removeAttribute("disabled")
+
+        wp2staticGlobals.vueData.progress = false;
 
         wp2staticGlobals.vueData.currentAction = `${fileListCount} URLs were detected for
  initial crawl list. Adjust detection via the URL Detection tab.`
@@ -132,7 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
  Export Log in case of more info.`
 
       adminPage.currentAction.innerHTML = failedDeployMessage
-      adminPage.pulsateCSS.style.display = "none"
+      wp2staticGlobals.vueData.progress = false;
       adminPage.cancelExportButton.style.display = "none"
       adminPage.resetDefaultSettingsButton.removeAttribute("disabled")
       adminPage.saveSettingsButton.removeAttribute("disabled")
@@ -154,8 +156,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function sendWP2StaticAJAX(ajaxAction: string, successCallback: any, failCallback: any) {
       adminPage.hiddenActionField.value = "wp_static_html_output_ajax"
       adminPage.hiddenAJAXAction.value = ajaxAction
-      adminPage.progress.style.display = "block"
-      adminPage.pulsateCSS.style.display = "block"
+      wp2staticGlobals.vueData.progress = true;
 
       const data = new URLSearchParams(
       // https://github.com/Microsoft/TypeScript/issues/30584
@@ -172,13 +173,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function saveOptionsSuccessCallback(event: any) {
-      adminPage.progress.style.display = "none"
+      wp2staticGlobals.vueData.progress = false;
 
       location.reload()
     }
 
     function saveOptionsFailCallback(event: any) {
-      adminPage.progress.style.display = "none"
+      wp2staticGlobals.vueData.progress = false;
 
       location.reload()
     }
@@ -194,17 +195,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     function deleteCrawlCacheSuccessCallback(event: any) {
+      wp2staticGlobals.vueData.progress = false;
+
       if (!event.target.response) {
-        adminPage.pulsateCSS.style.display = "none"
         adminPage.currentAction.innerHTML = "Failed to delete Crawl Cache."
       } else {
         adminPage.currentAction.innerHTML = "Crawl Cache successfully deleted."
-        adminPage.pulsateCSS.style.display = "none"
       }
     }
 
     function deleteCrawlCacheFailCallback(event: any) {
-      adminPage.pulsateCSS.style.display = "none"
+      wp2staticGlobals.vueData.progress = false;
       adminPage.currentAction.innerHTML = "Failed to delete Crawl Cache."
     }
 
@@ -249,8 +250,8 @@ document.addEventListener("DOMContentLoaded", () => {
     function ajaxErrorHandler() {
       const failedDeployMessage = `Failed during ${wp2staticGlobals.statusText}`
 
+      wp2staticGlobals.vueData.progress = false;
       adminPage.currentAction.innerHTML = failedDeployMessage
-      adminPage.pulsateCSS.style.display = "none"
       adminPage.cancelExportButton.style.display = "none"
       adminPage.resetDefaultSettingsButton.removeAttribute("disabled")
       adminPage.saveSettingsButton.removeAttribute("disabled")
@@ -278,7 +279,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (validationErrors !== "") {
         alert(validationErrors)
 
-        adminPage.progress.style.display = "none"
+        wp2staticGlobals.vueData.progress = false;
         adminPage.cancelExportButton.style.display = "none"
         adminPage.resetDefaultSettingsButton.removeAttribute("disabled")
         adminPage.saveSettingsButton.removeAttribute("disabled")
@@ -311,7 +312,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (validationErrors !== "") {
         alert(validationErrors)
 
-        adminPage.progress.style.display = "none"
+        wp2staticGlobals.vueData.progress = false;
         adminPage.cancelExportButton.style.display = "none"
         adminPage.resetDefaultSettingsButton.removeAttribute("disabled")
         adminPage.saveSettingsButton.removeAttribute("disabled")
@@ -825,13 +826,13 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
         alert("FAIL: Unable to delete deploy cache")
       }
 
-      adminPage.pulsateCSS.style.display = "none"
+      wp2staticGlobals.vueData.progress = false;
     }
 
     function deleteDeployCacheFailCallback(event: any) {
       alert("FAIL: Unable to delete deploy cache")
 
-      adminPage.pulsateCSS.style.display = "none"
+      wp2staticGlobals.vueData.progress = false;
     }
 
     adminPage.deleteDeployCache.addEventListener(
@@ -854,12 +855,12 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
         alert("FAIL: Unable to complete test upload to " + wp2staticGlobals.currentDeploymentMethod)
       }
 
-      adminPage.pulsateCSS.style.display = "none"
+      wp2staticGlobals.vueData.progress = false;
     }
 
     function testDeploymentFailCallback(event: any) {
       alert("FAIL: Unable to complete test upload to " + wp2staticGlobals.currentDeploymentMethod)
-      adminPage.pulsateCSS.style.display = "none"
+      wp2staticGlobals.vueData.progress = false;
     }
 
     /* TODO: reimplement handlers for all test_deploy method buttons

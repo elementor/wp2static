@@ -27,8 +27,6 @@ export class WP2StaticAdminPageModel {
   public navigationTabs: NodeListOf<Element>
   public optionsForm: HTMLFormElement
   public previewInitialCrawlListButton: HTMLElement
-  public progress: HTMLElement
-  public pulsateCSS: HTMLElement
   public resetDefaultSettingsButton: HTMLElement
   public saveSettingsButton: HTMLElement
   public selectedDeploymentMethod: HTMLSelectElement
@@ -76,8 +74,6 @@ export class WP2StaticAdminPageModel {
     this.navigationTabs = document.querySelectorAll(".nav-tab")!
     this.optionsForm = document.getElementById("general-options")! as HTMLFormElement
     this.previewInitialCrawlListButton = document.getElementById("preview_initial_crawl_list_button")!
-    this.progress = document.getElementById("progress")!
-    this.pulsateCSS = document.getElementById("pulsate-css")!
     this.resetDefaultSettingsButton = document.getElementById("resetDefaultSettingsButton")!
     this.saveSettingsButton = document.getElementById("saveSettingsButton")!
     this.selectedDeploymentMethod = document.getElementById("selected_deployment_method")! as HTMLSelectElement

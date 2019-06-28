@@ -11,7 +11,6 @@ $tpl = new \WP2Static\TemplateHelper();
 
 ?>
 
-<div id="vueApp">
 
     <div class="wrap wp2static">
        <?php if ( PHP_VERSION < 7.2 ) : ?>
@@ -210,6 +209,7 @@ $tpl = new \WP2Static\TemplateHelper();
             </div> <!-- end inside -->
 
 
+<div id="vueApp">
                 <div id="pbar-container">
                     <div id="pbar-fill">
 
@@ -217,7 +217,7 @@ $tpl = new \WP2Static\TemplateHelper();
 
                     <div id="progress-container">
                       <div id="progress">
-                        <div id="pulsate-css"></div>
+                        <div v-if="progress" id="pulsate-css"></div>
                         <div id="current_action">
                             {{ currentAction }}
                         </div>
@@ -227,6 +227,6 @@ $tpl = new \WP2Static\TemplateHelper();
                     </div>
                 </div>
 
+</div><!-- end vueApp -->
         </div><!-- end wp2static-footer -->
 
-    </div><!-- end vueApp -->

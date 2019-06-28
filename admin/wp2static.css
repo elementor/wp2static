@@ -194,10 +194,6 @@ div.postbox div.inside {
     width: 100%;
 }
 
-#progress {
-    display: none;
-}
-
 #progress-container {
   min-height: 40px;
   position: absolute;

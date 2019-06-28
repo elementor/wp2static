@@ -92,7 +92,7 @@ export class WP2StaticAJAX {
 
       this.adminPage.cancelExportButton.style.display = "none"
       this.adminPage.currentAction.innerHTML = failedDeployMessage
-      this.adminPage.pulsateCSS.style.display = "none"
+      this.wp2staticGlobals.vueData.progress = false;
       this.adminPage.resetDefaultSettingsButton.removeAttribute("disabled")
       this.adminPage.saveSettingsButton.removeAttribute("disabled")
       this.adminPage.startExportButton.removeAttribute("disabled")

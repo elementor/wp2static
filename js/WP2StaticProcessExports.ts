@@ -47,7 +47,7 @@ wp2static-exported-site.zip?cacheBuster=${Date.now()}`
 ${this.wp2staticGlobals.millisToMinutesAndSeconds(this.wp2staticGlobals.exportDuration)} (mins:ss)`
 
       adminPage.cancelExportButton.style.display = "none"
-      adminPage.pulsateCSS.style.display = "none"
+      this.wp2staticGlobals.vueData.progress = false;
       adminPage.resetDefaultSettingsButton.removeAttribute("disabled")
       adminPage.saveSettingsButton.removeAttribute("disabled")
       adminPage.startExportButton.removeAttribute("disabled")
