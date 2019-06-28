@@ -64,7 +64,7 @@
     <pre>
       <code>wp-content/themes/twentyseventeen/,contents/ui/mytheme/</code>
       <code>wp-includes/,inc/</code>
-    </code></pre>
+    </pre>
 
     <p>The plugin does its best to sort rewrite rules in order needed, to process the longest items first.</p>
 

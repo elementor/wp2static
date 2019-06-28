@@ -2,6 +2,7 @@ import { WP2StaticAdminPageModel } from "./WP2StaticAdminPageModel"
 
 export class WP2StaticGlobals {
 
+  public vueData: any
   public adminPage: WP2StaticAdminPageModel = new WP2StaticAdminPageModel()
   public exportCommenceTime: number = 0
   public exportCompleteTime: number = 0

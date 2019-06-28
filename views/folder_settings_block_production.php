@@ -6,7 +6,7 @@
   </div>
 
   <div class="content">
-    <?php $tpl->displayTextfield( $this, 'baseUrl-folder', 'http://mystaticsite.com', '', '' ); ?>
+    <?php $tpl->displayTextfield( $this, 'baseUrl-folderProduction', 'http://mystaticsite.com', '', '' ); ?>
 
     <p><em><?php echo __( "Set this to the URL you intend to host your static exported site on, ie http://mystaticsite.com. Do not set this to the same URL as the WordPress site you're currently using (the address in your browser above). This plugin will rewrite all URLs in the exported static html from your current WordPress URL to what you set here. Supports http, https and protocol relative URLs.", 'static-html-output-plugin' ); ?></em></p>
   </div>
@@ -34,7 +34,7 @@
   <div class="content">
     <p>This will check the folder exists, else try to create it, along with a test file and directory inside it. It will also create the <code>.wp2static_safety</code> file within.</p>
 
-    <button id="folder-test-button" type="button" class="wp2static-btn btn-sm">Test Folder is Writable</button>
+    <button id="folder-test-buttonProduction" type="button" class="wp2static-btn btn-sm">Test Folder is Writable</button>
   </div>
 </section>
 

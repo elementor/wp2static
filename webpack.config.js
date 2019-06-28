@@ -8,7 +8,6 @@ module.exports = {
         alias: { vue: 'vue/dist/vue.esm.js' }
     },
     output: {
-        //publicPath: "/admin/",
         path: path.resolve(__dirname, 'admin'),
         filename: 'wp2static-admin.js',
         library: 'WP2Static'
@@ -22,5 +21,5 @@ module.exports = {
         ]
     },
     devtool: 'source-map',
-    mode: 'none'
+    mode: 'development' // change when building
 };

@@ -7,7 +7,7 @@
     Generating initial file list
   </div>
 
-  <p><em id="initial_crawl_list_count"></p>
+  <p id="initial_crawl_list_count"></p>
  
   <p>
     <a id="preview_initial_crawl_list_button" style="display:none;" href="<?php echo $view['site_info']['uploads_url']; ?>wp2static-working-files/INITIAL-CRAWL-LIST.txt" class="wp2static-btn" target="_blank">Preview initial crawl list</a>
@@ -30,12 +30,6 @@
     <?php
 
     $detection_options_table = [
-        [
-            false,
-            'detectHomepage',
-            'Homepage',
-            'On by default, this will always include the <code>/</code> URL or site root.',
-        ],
         [
             'checkbox',
             'detectPages',
@@ -156,7 +150,7 @@
                 ?>
               </td>
 
-          <tr>
+          </tr>
         <?php endforeach; ?>
   </table>
 
@@ -183,7 +177,7 @@
       <code>/my_pricelist.pdf</code>
     </pre>
 
-    <textarea class="wp2static-textarea" name="additionalUrls" id="additionalUrls" rows="5" cols="10"><?php echo $this->options->additionalUrls ? $this->options->additionalUrls : ''; ?></textarea>
+    <textarea class="wp2static-textarea" name="excludeURLs" id="excludeURLs" rows="5" cols="10"><?php echo $this->options->excludeURLs ? $this->options->excludeURLs : ''; ?></textarea>
 
     <p><em>Save options to reload the page and see the effect of your detection options</em></p>
   </div>

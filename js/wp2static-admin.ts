@@ -83,15 +83,19 @@ const localhostDomainRE = /^localhost[:?\d]*(?:[^:?\d]\S*)?$/
 const nonLocalhostDomainRE = /^[^\s.]+\.\S{2,}$/
 document.addEventListener("DOMContentLoaded", () => {
 
-    const app = new Vue({
-      data: {
-        message: "Hello Vue!",
-      },
-      el: "#app",
-    })
 
     const adminPage = new WP2StaticAdminPageModel()
     wp2staticGlobals.adminPage = adminPage
+
+    wp2staticGlobals.vueData = {
+      currentAction: "Starting export...",
+    }
+
+    const vueApp = new Vue({
+       data: wp2staticGlobals.vueData,
+       el: "#vueApp",
+     })
+
     const wp2staticAJAX = new WP2StaticAJAX( wp2staticGlobals )
 
     function generateFileListSuccessCallback(event: any) {
@@ -99,8 +103,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (!fileListCount) {
         adminPage.pulsateCSS.style.display = "none"
-        adminPage.currentAction.innerHTML = `Failed to generate initial file list.
+
+        wp2staticGlobals.vueData.currentAction = `Failed to generate initial file list.
  Please <a href="https://docs.wp2static.com" target="_blank">contact support</a>`
+
+
       } else {
         adminPage.initialCrawlListLoader.style.display = "none"
         adminPage.previewInitialCrawlListButton.style.display = "inline"
@@ -109,8 +116,10 @@ document.addEventListener("DOMContentLoaded", () => {
         adminPage.saveSettingsButton.removeAttribute("disabled")
         adminPage.startExportButton.removeAttribute("disabled")
         adminPage.generateStaticSiteButton.removeAttribute("disabled")
-        adminPage.currentAction.innerHTML = `${fileListCount} URLs were detected for
+
+        wp2staticGlobals.vueData.currentAction = `${fileListCount} URLs were detected for
  initial crawl list. Adjust detection via the URL Detection tab.`
+
         adminPage.initialCrawlListCount.textContent = `${fileListCount} URLs were
  detected on your site that will be used to initiate the crawl.
  Other URLs will be discovered while crawling.`
@@ -133,8 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function prepareInitialFileList() {
-      wp2staticGlobals.statusText = "Analyzing site... this may take a few minutes (but it's worth it!)"
-      adminPage.currentAction.innerHTML = wp2staticGlobals.statusText
+      wp2staticGlobals.vueData.currentAction = "Analyzing site... this may take a few minutes (but it's worth it!)"
 
       sendWP2StaticAJAX(
         "generate_filelist_preview",

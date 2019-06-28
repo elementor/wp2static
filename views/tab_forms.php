@@ -21,7 +21,6 @@
         <option value=''>Choose where to submit your forms to</option>
     </select>
 
-  <div class="content">
     <p id="form_processor_description">Form processor description will appear here</p>
 
     <p id="form_processor_website"></p>

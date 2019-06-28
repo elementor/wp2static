@@ -45,7 +45,7 @@
     <h2><?php echo __( 'Custom crawling port', 'static-html-output-plugin' ); ?></h2>
   </div>
   <div class="content">
-    <?php $tpl->displayTextfield( $this, 'basicAuthPassword', 'Basic Auth password', '', 'password' ); ?>
+    <?php $tpl->displayTextfield( $this, 'crawlPort', 'Custom crawling port', '', 'password' ); ?>
   </div>
 </section>
 
@@ -56,26 +56,6 @@
   <div class="content">
     <?php $tpl->displayTextfield( $this, 'crawlUserAgent', 'Custom crawling user-agent', '' ); ?>
     <p><em>Override the request HTTP header User-Agent (defaults to WP2Static.com).</em></p>
-  </div>
-</section>
-
-<section class="wp2static-content wp2static-flex">
-  <div class="content" style="max-width:30%">
-    <h2><?php echo __( 'Exclude certain URLs', 'static-html-output-plugin' ); ?></h2>
-  </div>
-
-  <div class="content">
-    <p>Where the plugin has detected too many files and you want to exclude certain URLs from being crawled, please specify these URLs here.</p>
-
-    <p><em>You can enter this as a partial string or full path</em></p>
-
-    <pre>
-      <code><?php echo $this->site_info['site__url']; ?>/wp-content/themes/twentyseventeen/banana.jpg</code>
-      <code>/my_pricelist.pdf</code>
-      <code>.js</code>
-    </pre>
-
-    <textarea class="wp2static-textarea" name="excludeURLs" id="excludeURLs" rows="5" cols="10"><?php echo $this->options->excludeURLs ? $this->options->excludeURLs : ''; ?></textarea>
   </div>
 </section>
 
