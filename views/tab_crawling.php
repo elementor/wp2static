@@ -1,26 +1,21 @@
 <div id="crawl_settings" v-show="currentTab == 'crawl_settings'">
 
 
-<section class="wp2static-content wp2static-flex">
-  <div class="content" style="max-width:30%">
-    <h2><?php echo __( 'Include Discovered Assets', 'static-html-output-plugin' ); ?></h2>
-  </div>
-  <div class="content">
-    <?php $tpl->displayCheckbox( $this, 'includeDiscoveredAssets', 'Include Discovered Assets' ); ?>
+<section-with-checkbox 
+    :id="fieldData.displayDashboardWidget.id"
+    :title="fieldData.displayDashboardWidget.title"
+    :description="fieldData.displayDashboardWidget.description"
+    :hint="fieldData.displayDashboardWidget.hint"
+    :checked="options.displayDashboardWidget"
+></section-with-checkbox>
 
-    <p>As we crawl the site, force-include any static assets found within the page (images, fonts, css, etc). Must have a supported file extension to be included.</p>
-  </div>
-</section>
-
-<section class="wp2static-content wp2static-flex">
-  <div class="content" style="max-width:30%">
-    <h2><?php echo __( 'Use basic authentication', 'static-html-output-plugin' ); ?></h2>
-  </div>
-
-  <div class="content">
-    <?php $tpl->displayCheckbox( $this, 'useBasicAuth', 'My WP site requires Basic Auth to access' ); ?>
-  </div>
-</section>
+<section-with-checkbox 
+    :id="fieldData.useBasicAuth.id"
+    :title="fieldData.useBasicAuth.title"
+    :description="fieldData.useBasicAuth.description"
+    :hint="fieldData.useBasicAuth.hint"
+    :checked="options.useBasicAuth"
+></section-with-checkbox>
 
 <section class="wp2static-content wp2static-flex no-tb-bs pd-top0">
   <div class="content" style="max-width:30%">

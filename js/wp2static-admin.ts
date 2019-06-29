@@ -3,6 +3,7 @@ declare var ajaxurl: string
 import Vue from "vue"
 import { WP2StaticAdminPageModel } from "./WP2StaticAdminPageModel"
 import { WP2StaticAJAX } from "./WP2StaticAJAX"
+import { WP2StaticFieldData } from "./WP2StaticFieldData"
 import { WP2StaticGlobals } from "./WP2StaticGlobals"
 
 interface FormProcessor {
@@ -18,6 +19,7 @@ interface FormProcessor {
 // within this entrypoint, access directly. From other classes, this., from
 // browser WP2Static.wp2staticGlobals
 export const wp2staticGlobals = new WP2StaticGlobals()
+const fieldData = new WP2StaticFieldData()
 
 const formProcessors: FormProcessor[] = [
   {
@@ -189,7 +191,10 @@ document.addEventListener("DOMContentLoaded", () => {
             title: "WP-INC JS",
         },
       ],
+      fieldData,
+      options: JSON.parse(wp2staticString.options),
       progress: true,
+      siteInfo: JSON.parse(wp2staticString.siteInfo),
       tabs: [
         { id: "workflow_tab", name: "Workflow" },
         { id: "url_detection", name: "URL Detection" },
@@ -206,7 +211,57 @@ document.addEventListener("DOMContentLoaded", () => {
       ],
     }
 
+    const SectionWithCheckbox: any = {
+      data: () => {
+        return {
+          count: 0,
+        }
+      },
+      methods: {
+        checkboxChanged: (id: string) => {
+          const element: HTMLInputElement =
+            document.getElementById(id)! as HTMLInputElement
+
+          const checked: boolean = element.checked
+
+          wp2staticGlobals.vueData.options[id] = checked
+        },
+      },
+      props: [
+        "checked",
+        "description",
+        "hint",
+        "id",
+        "title",
+      ],
+      template: `
+<section class="wp2static-content wp2static-flex">
+  <div class="content" style="max-width:30%">
+    <h2>{{ title }}</h2>
+  </div>
+
+  <div class="content">
+    <p>{{ description }}</p>
+
+    <fieldset>
+      <label :for='id'>
+        <input
+          :name='id'
+          :id='id'
+          value='1'
+          type='checkbox'
+          :checked='checked'
+          v-on:change="checkboxChanged(id)"
+          />
+        <span>{{ hint }}</span>
+      </label>
+    </fieldset>
+  </div>
+</section>`,
+    }
+
     const DetectionCheckbox: any = {
+      // TODO: kill unused data
       data: () => {
         return {
           count: 0,
@@ -255,12 +310,12 @@ document.addEventListener("DOMContentLoaded", () => {
             </fieldset>
         </td>
     </tr>`,
-
     }
 
     const vueApp = new Vue({
       components: {
         DetectionCheckbox,
+        SectionWithCheckbox,
       },
       data: wp2staticGlobals.vueData,
       el: "#vueApp",

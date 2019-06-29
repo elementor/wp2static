@@ -482,7 +482,10 @@ class Controller {
             false
         );
 
-        $options = $plugin->options;
+        $options = json_encode(
+            $plugin->options->wp2static_options,
+            JSON_FORCE_OBJECT | JSON_UNESCAPED_SLASHES
+        );
 
         $site_info = json_encode(
             SiteInfo::getAllInfo(),
@@ -501,14 +504,18 @@ class Controller {
 
         $data = array(
             'someString' => __( 'Some string to translate', 'plugin-domain' ),
-            'options' => $plugin->options,
+            'options' => $options,
             'siteInfo' => $site_info,
             'onceAction' => self::HOOK . '-options',
-            '' => self::HOOK . '-options',
             'currentDeploymentMethod' => $current_deployment_method,
             'currentDeploymentMethodProduction' =>
                 $current_deployment_method_production,
         );
+
+        // TODO: check which are only needed in JS and rm from func
+        $data['uploads_writable'] = SiteInfo::isUploadsWritable();
+        $data['curl_supported'] = SiteInfo::hasCURLSupport();
+        $data['permalinks_defined'] = SiteInfo::permalinksAreDefined();
 
         wp_localize_script( 'wp2static_admin_js', 'wp2staticString', $data );
         wp_enqueue_script( 'wp2static_admin_js' );
@@ -516,14 +523,8 @@ class Controller {
 
     public function renderOptionsPage() : void {
         $view = [];
-        $view['options'] = $this->options;
-        $view['site_info'] = SiteInfo::getAllInfo();
+        // TODO: kill all vars in PHP templates
         $view['onceAction'] = self::HOOK . '-options';
-
-        // TODO: check which are only needed in JS and rm from func
-        $view['uploads_writable'] = SiteInfo::isUploadsWritable();
-        $view['curl_supported'] = SiteInfo::hasCURLSupport();
-        $view['permalinks_defined'] = SiteInfo::permalinksAreDefined();
 
         require_once WP2STATIC_PATH . 'views/options-page.php';
     }

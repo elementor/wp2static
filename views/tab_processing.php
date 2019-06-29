@@ -1,40 +1,28 @@
 <div id="processing_settings" v-show="currentTab == 'processing_settings'">
 
-<section class="wp2static-content wp2static-flex">
-  <div class="content" style="max-width:30%">
-    <h2><?php echo __( 'Use document-relative URLs', 'static-html-output-plugin' ); ?></h2>
-  </div>
-  
-  <div class="content">
-    <?php $tpl->displayCheckbox( $this, 'useDocumentRelativeURLs', 'Use document-relative URLs' ); ?>
+<section-with-checkbox 
+    :id="fieldData.useDocumentRelativeURLs.id"
+    :title="fieldData.useDocumentRelativeURLs.title"
+    :description="fieldData.useDocumentRelativeURLs.description"
+    :hint="fieldData.useDocumentRelativeURLs.hint"
+    :checked="options.useDocumentRelativeURLs"
+></section-with-checkbox>
 
-    <p>URLs in the exported site will be rewritten as <a href="https://www.w3schools.com/tags/tag_base.asp" target="_blank">relative URLs</a>. ie, <code>http://mydomain.com/some_dir/some_file.jpg</code> will become <code>some_dir/some_file.jpg</code></p>
-  </div>
-</section>
+<section-with-checkbox 
+    :id="fieldData.useSiteRootRelativeURLs.id"
+    :title="fieldData.useSiteRootRelativeURLs.title"
+    :description="fieldData.useSiteRootRelativeURLs.description"
+    :hint="fieldData.useSiteRootRelativeURLs.hint"
+    :checked="options.useSiteRootRelativeURLs"
+></section-with-checkbox>
 
-<section class="wp2static-content wp2static-flex">
-  <div class="content" style="max-width:30%">
-    <h2><?php echo __( 'Use site-root relative URLs', 'static-html-output-plugin' ); ?></h2>
-  </div>
-  
-  <div class="content">
-    <?php $tpl->displayCheckbox( $this, 'useSiteRootRelativeURLs', 'Use site root-relative URLs' ); ?>
-
-    <p>URLs in the exported site will be rewritten as site root-relative. ie, <code>http://mydomain.com/some_dir/some_file.jpg</code> will become <code>/some_dir/some_file.jpg</code></p>
-  </div>
-</section>
-
-<section class="wp2static-content wp2static-flex">
-  <div class="content" style="max-width:30%">
-    <h2><?php echo __( 'Allow offline usage', 'static-html-output-plugin' ); ?></h2>
-  </div>
-  
-  <div class="content">
-    <?php $tpl->displayCheckbox( $this, 'allowOfflineUsage', "Check this if you're going to run your site locally, ie on a USB drive given to a client." ); ?>
-
-    <p>Destination URL will be ignored. Must combine with Document-Relative URLs option. <code>index.html</code> will be appended to all directory paths</p>
-  </div>
-</section>
+<section-with-checkbox 
+    :id="fieldData.allowOfflineUsage.id"
+    :title="fieldData.allowOfflineUsage.title"
+    :description="fieldData.allowOfflineUsage.description"
+    :hint="fieldData.allowOfflineUsage.hint"
+    :checked="options.allowOfflineUsage"
+></section-with-checkbox>
 
 <section class="wp2static-content wp2static-flex">
   <div class="content" style="max-width:30%">

@@ -26,17 +26,13 @@
    </div>
 </section>
 
-<section class="wp2static-content wp2static-flex">
-  <div class="content" style="max-width:30%">
-    <h2><?php echo __( 'Show deploy widget on WP dashboard', 'static-html-output-plugin' ); ?></h2>
-  </div>
-
-  <div class="content">
-    <p>Show a widget on your WordPress dashboard for quickly triggering a manual deploy and showing recent deploy information.</p>
-
-    <?php $tpl->displayCheckbox( $this, 'displayDashboardWidget', 'Enable WP2Static dashboard widget' . $to ); ?>
-   </div>
-</section>
+<section-with-checkbox 
+    :id="fieldData.displayDashboardWidget.id"
+    :title="fieldData.displayDashboardWidget.title"
+    :description="fieldData.displayDashboardWidget.description"
+    :hint="fieldData.displayDashboardWidget.hint"
+    :checked="options.displayDashboardWidget"
+></section-with-checkbox>
 
 
 <section class="wp2static-content wp2static-flex">

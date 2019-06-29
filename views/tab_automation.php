@@ -12,20 +12,15 @@
    </div>
 </section>
 
-<section class="wp2static-content wp2static-flex">
-  <div class="content" style="max-width:30%">
-    <h2><?php echo __( 'Email upon completion', 'static-html-output-plugin' ); ?></h2>
-  </div>
 
-  <div class="content">
-    <?php
-      $current_user = wp_get_current_user();
-      $to = $current_user->user_email;
-      $tpl->displayCheckbox( $this, 'completionEmail', 'Will send to: ' . $to ); ?>
+<section-with-checkbox 
+    :id="fieldData.completionEmail.id"
+    :title="fieldData.completionEmail.title"
+    :description="fieldData.completionEmail.description"
+    :hint="fieldData.completionEmail.hint"
+    :checked="options.completionEmail"
+></section-with-checkbox>
 
-    <p>Be alerted when your deployment process is complete.</p>
-   </div>
-</section>
 
 <section class="wp2static-content wp2static-flex">
   <div class="content" style="max-width:30%">
