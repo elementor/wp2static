@@ -87,11 +87,6 @@ $tpl = new \WP2Static\TemplateHelper();
       <!-- main form containing options that get sent -->
       <form id="general-options" method="post" action="#" v-on:submit.prevent>
 
-        <!-- placeholder input fields to allow select menu deployment options to use existing behaviour -->
-        <div class="hiddenExportOptions" style="display:none;">
-            <?php $tpl->displayCheckbox( $this, 'createZip', 'Create a ZIP file of your statically exported site, ready for you to manually deploy. Download link will appear in the Export Log below' ); ?>
-        </div>
-
         <?php
 
         function generateDeploymentMethodOptions() {
