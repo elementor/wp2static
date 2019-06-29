@@ -91,6 +91,104 @@ document.addEventListener("DOMContentLoaded", () => {
       currentDeploymentMethod: "folder",
       currentDeploymentMethodProduction: "folder",
       currentTab: "workflow_tab",
+      detectionCheckboxes: [
+        {
+            checked: false,
+            description: "All published Pages. Use the date range option below to further filter.",
+            id: "detectPages",
+            title: "Pages",
+        },
+        {
+            checked: false,
+            description: "All published Posts. Use the date range option below to further filter.",
+            id: "detectPosts",
+            title: "Posts",
+        },
+        {
+            checked: true,
+            description: "Include URLs for all Custom Post Types.",
+            id: "detectCustomPostTypes",
+            title: "Custom Post Types",
+        },
+        {
+            checked: false,
+            description: "RSS/Atom feeds, such as <code>mydomain.com/some-post/feed/</code>.",
+            id: "detectFeedURLs",
+            title: "Feed URLs",
+        },
+        {
+            checked: false,
+            description: "Vendor cache dirs, as used by Autoptimize and certain themes to store images and assets.",
+            id: "detectVendorCacheDirs",
+            title: "Vendor cache",
+        },
+        {
+            checked: false,
+            description: "The additional URLs for attachments, such as images. Usually not needed.",
+            id: "detectAttachments",
+            title: "Attachment URLs",
+        },
+        {
+            checked: false,
+            description: "All Archive pages, such as Post Categories and Date Archives, etc.",
+            id: "detectArchives",
+            title: "Archive URLs",
+        },
+        {
+            checked: false,
+            description: "Get all paginated URLs for Posts.",
+            id: "detectPostPagination",
+            title: "Posts Pagination",
+        },
+        {
+            checked: false,
+            description: "Get all paginated URLs for Categories.",
+            id: "detectCategoryPagination",
+            title: "Category Pagination",
+        },
+        {
+            checked: false,
+            description: "Get all URLs for Comments.",
+            id: "detectComments",
+            title: "Comment URLs",
+        },
+        {
+            checked: false,
+            description: "Get all paginated URLs for Comments.",
+            id: "detectCommentPagination",
+            title: "Comments Pagination",
+        },
+        {
+            checked: false,
+            description: "Get all URLs within Parent Theme dir.",
+            id: "detectParentTheme",
+            title: "Parent Theme URLs",
+        },
+        {
+            checked: false,
+            description: "Get all URLs within Child Theme dir.",
+            id: "detectChildTheme",
+            title: "Child Theme URLs",
+        },
+        {
+            checked: false,
+            description: "Get all public URLs for WP uploads dir.",
+            id: "detectUploads",
+            title: "Uploads URLs",
+        },
+        {
+            checked: false,
+            description: "Detect all assets from within all plugin directories.",
+            id: "detectPluginAssets",
+            title: "Plugin Assets",
+        },
+        {
+            checked: false,
+            description: "Get all public URLs for wp-includes assets.",
+            id: "detectWPIncludesAssets",
+            title: "WP-INC JS",
+        },
+      ],
       progress: true,
       tabs: [
         { id: "workflow_tab", name: "Workflow" },
@@ -106,118 +204,14 @@ document.addEventListener("DOMContentLoaded", () => {
         { id: "add_ons", name: "Add-ons" },
         { id: "help_troubleshooting", name: "Help" },
       ],
-      detectionCheckboxes: [
-        {
-            id: 'detectPages',
-            title: 'Pages',
-            description: 'All published Pages. Use the date range option below to further filter.',
-            checked: false,
-        },
-        {
-            id: 'detectPosts',
-            title: 'Posts',
-            description: 'All published Posts. Use the date range option below to further filter.',
-            checked: false,
-        },
-        {
-            id: 'detectCustomPostTypes',
-            title: 'Custom Post Types',
-            description: 'Include URLs for all Custom Post Types.',
-            checked: true,
-        },
-        {
-            id: 'detectFeedURLs',
-            title: 'Feed URLs',
-            description: 'RSS/Atom feeds, such as <code>mydomain.com/some-post/feed/</code>.',
-            checked: false,
-        },
-        {
-            id: 'detectVendorCacheDirs',
-            title: 'Vendor cache',
-            description: 'Vendor cache dirs, as used by Autoptimize and certain themes to store images and assets.',
-            checked: false,
-        },
-        {
-            id: 'detectAttachments',
-            title: 'Attachment URLs',
-            description: 'The additional URLs for attachments, such as images. Usually not needed.',
-            checked: false,
-        },
-        {
-            id: 'detectArchives',
-            title: 'Archive URLs',
-            description: 'All Archive pages, such as Post Categories and Date Archives, etc.',
-            checked: false,
-        },
-        {
-            id: 'detectPostPagination',
-            title: 'Posts Pagination',
-            description: 'Get all paginated URLs for Posts.',
-            checked: false,
-        },
-        {
-            id: 'detectCategoryPagination',
-            title: 'Category Pagination',
-            description: 'Get all paginated URLs for Categories.',
-            checked: false,
-        },
-        {
-            id: 'detectComments',
-            title: 'Comment URLs',
-            description: 'Get all URLs for Comments.',
-            checked: false,
-        },
-        {
-            id: 'detectCommentPagination',
-            title: 'Comments Pagination',
-            description: 'Get all paginated URLs for Comments.',
-            checked: false,
-        },
-        {
-            id: 'detectParentTheme',
-            title: 'Parent Theme URLs',
-            description: 'Get all URLs within Parent Theme dir.',
-            checked: false,
-        },
-        {
-            id: 'detectChildTheme',
-            title: 'Child Theme URLs',
-            description: 'Get all URLs within Child Theme dir.',
-            checked: false,
-        },
-        {
-            id: 'detectUploads',
-            title: 'Uploads URLs',
-            description: 'Get all public URLs for WP uploads dir.',
-            checked: false,
-        },
-        {
-            id: 'detectPluginAssets',
-            title: 'Plugin Assets',
-            description: 'Detect all assets from within all plugin directories.',
-            checked: false,
-        },
-        {
-            id: 'detectWPIncludesAssets',
-            title: 'WP-INC JS',
-            description: 'Get all public URLs for wp-includes assets.',
-            checked: false,
-        },
-      ],
     }
 
     const DetectionCheckbox: any = {
       data: () => {
         return {
-          count: 0
+          count: 0,
         }
       },
-      props: [
-        'id',
-        'title',
-        'description',
-        'checked',
-      ],
       methods: {
         detectionCheckboxChanged: (id: string) => {
           const element: HTMLInputElement =
@@ -226,12 +220,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
           const checkbox =
             wp2staticGlobals.vueData.detectionCheckboxes.filter(
-              obj => obj.id ===  id
-          );
+              (obj: any) => obj.id ===  id,
+          )
 
           checkbox[0].checked = checked
         },
       },
+      props: [
+        "checked",
+        "description",
+        "id",
+        "title",
+      ],
       template: `
     <tr>
         <td>
@@ -242,18 +242,25 @@ document.addEventListener("DOMContentLoaded", () => {
         <td>
             <fieldset>
                 <label :for='id'>
-                    <input :name='id' :id='id' value='1' type='checkbox' :checked='checked' v-on:change="detectionCheckboxChanged(id)" />
+                    <input
+                      :checked='checked'
+                      :id='id'
+                      :name='id'
+                      type='checkbox'
+                      v-on:change="detectionCheckboxChanged(id)"
+                      value='1'
+                    />
                     <span>{{ description }}</span>
                 </label>
             </fieldset>
         </td>
-    </tr>`
+    </tr>`,
 
     }
 
     const vueApp = new Vue({
       components: {
-        'DetectionCheckbox': DetectionCheckbox,
+        DetectionCheckbox,
       },
       data: wp2staticGlobals.vueData,
       el: "#vueApp",
