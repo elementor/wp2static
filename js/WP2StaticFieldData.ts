@@ -28,6 +28,14 @@ export class WP2StaticFieldData {
       id: "includeDiscoveredAssets",
       title: "Include Discovered Assets",
     },
+    redeployOnPostUpdates: {
+      description: `With Crawl and Deploy Caches enabled, only the files
+ changed since your last deployment need processing. Choose which actions
+ in WordPress will trigger a staging redeployment:`,
+      hint: "When a post is created/updated",
+      id: "redeployOnPostUpdates",
+      title: "Re-deploy when site changes",
+    },
     removeConditionalHeadComments: {
       description: `Mostly obsolete, previously used for detecting versions of
  Internet Explorer and serving different CSS or JS.`,
