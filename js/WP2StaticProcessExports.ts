@@ -48,8 +48,6 @@ ${this.wp2staticGlobals.millisToMinutesAndSeconds(this.wp2staticGlobals.exportDu
 
       this.wp2staticGlobals.vueData.progress = false
       adminPage.goToMyStaticSite.focus()
-
-      // TODO: reconnect notifyMe()
     }
   }
 }

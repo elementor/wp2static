@@ -41,7 +41,7 @@ $add_ons = array(
     </div>
     <div class="bottom">
       <div class="left">
-        <a href="#" id="GoToDeployTabButton" class="wp2static-btn blue" target="_blank">
+        <a href="#" v-on:click.prevent="changeTab('staging_deploy')" class="wp2static-btn blue" target="_blank">
           <i class="dashicon dashicon-yes"></i> Settings
         </a>
       </div>

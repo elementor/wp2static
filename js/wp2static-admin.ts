@@ -265,8 +265,17 @@ document.addEventListener("DOMContentLoaded", () => {
       data: wp2staticGlobals.vueData,
       el: "#vueApp",
       methods: {
+        changeTab: (targetTab: string) => {
+          wp2staticGlobals.vueData.currentTab = targetTab
+
+          document.body.scrollTop = 0
+          document.documentElement.scrollTop = 0
+          if (document.activeElement instanceof HTMLElement) {
+              document.activeElement.blur()
+          }
+        },
         changeTab2: (event: any) => {
-         changeTab(event.currentTarget.getAttribute("tabid"))
+          vueApp.changeTab(event.currentTarget.getAttribute("tabid"))
         },
         detectEverything: (event: any) => {
           for ( const checkbox of wp2staticGlobals.vueData.detectionCheckboxes ) {
@@ -389,13 +398,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function sendWP2StaticAJAX(ajaxAction: string, successCallback: any, failCallback: any) {
+      // TODO:  bind these
       adminPage.hiddenActionField.value = "wp_static_html_output_ajax"
       adminPage.hiddenAJAXAction.value = ajaxAction
       wp2staticGlobals.vueData.progress = true
 
+      const optionsForm = document.getElementById("general-options")! as HTMLFormElement
+
       const data = new URLSearchParams(
       // https://github.com/Microsoft/TypeScript/issues/30584
       // @ts-ignore
+        //new FormData(optionsForm),
         new FormData(adminPage.optionsForm),
       ).toString()
 
@@ -634,40 +647,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    function notifyMe() {
-      if (!Notification) {
-        alert("All exports are complete!.")
-        return
-      }
-
-      if (window.location.protocol === "https:") {
-        if (Notification.permission !== "granted") {
-          Notification.requestPermission()
-        } else {
-          const notification = new Notification(
-            "WP Static HTML Export",
-            {
-              body: "Exports have finished!",
-              icon: `https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/
-Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
-            },
-          )
-
-          notification.onclick = () => {
-            parent.focus()
-            window.focus()
-            notification.close()
-          }
-        }
-      }
-    }
-
-    if (Notification.permission !== "granted") {
-      if (window.location.protocol === "https:") {
-        Notification.requestPermission()
-      }
-    }
-
     // disable zip base url field when offline usage is checked
     adminPage.allowOfflineUsage.addEventListener(
       "change",
@@ -680,32 +659,6 @@ Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png`,
       "change",
       (event: any) => {
         setFormProcessor((event.currentTarget as HTMLInputElement).value)
-      },
-    )
-
-    function changeTab(targetTab: string) {
-      wp2staticGlobals.vueData.currentTab = targetTab
-
-      document.body.scrollTop = 0
-      document.documentElement.scrollTop = 0
-      if (document.activeElement instanceof HTMLElement) {
-          document.activeElement.blur()
-      }
-    }
-
-    adminPage.goToDeployTabButton.addEventListener(
-      "click",
-      (event: any) => {
-        event.preventDefault()
-        changeTab("Deployment")
-      },
-    )
-
-    // prevent submitting main form outside expected use
-    adminPage.generalOptions.addEventListener(
-      "submit",
-      (event: any) => {
-        event.preventDefault()
       },
     )
 
