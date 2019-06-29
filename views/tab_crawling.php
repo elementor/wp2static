@@ -2,11 +2,11 @@
 
 
 <section-with-checkbox 
-    :id="fieldData.displayDashboardWidget.id"
-    :title="fieldData.displayDashboardWidget.title"
-    :description="fieldData.displayDashboardWidget.description"
-    :hint="fieldData.displayDashboardWidget.hint"
-    :checked="options.displayDashboardWidget"
+    :id="fieldData.includeDiscoveredAssets.id"
+    :title="fieldData.includeDiscoveredAssets.title"
+    :description="fieldData.includeDiscoveredAssets.description"
+    :hint="fieldData.includeDiscoveredAssets.hint"
+    :checked="options.includeDiscoveredAssets"
 ></section-with-checkbox>
 
 <section-with-checkbox 

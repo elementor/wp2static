@@ -87,9 +87,13 @@
   </div>
 
   <div class="content">
-    <?php $tpl->displayCheckbox( $this, 'removeConditionalHeadComments', 'Remove conditional comments within HEAD', 'checked' ); ?>
 
-    <p>Mostly obsolete, previously used for detecting versions of Internet Explorer and serving different CSS or JS.</p>
+    <field-set-with-checkbox 
+        :id="fieldData.removeConditionalHeadComments.id"
+        :description="fieldData.removeConditionalHeadComments.description"
+        :hint="fieldData.removeConditionalHeadComments.hint"
+        :checked="options.removeConditionalHeadComments"
+    ></field-set-with-checkbox>
 
     <?php $tpl->displayCheckbox( $this, 'removeWPMeta', 'Remove WP Meta tags' ); ?>
 

@@ -22,7 +22,7 @@ export class WP2StaticProcessExports {
     } else {
       // if zip was selected, call to get zip name and enable the button with the link to download
       if (this.wp2staticGlobals.currentDeploymentMethod === "zip") {
-        const zipURL = `${this.wp2staticGlobals.siteInfo.uploads_url}
+        const zipURL = `${this.wp2staticGlobals.vueData.siteInfo.uploads_url}
 wp2static-exported-site.zip?cacheBuster=${Date.now()}`
         adminPage.downloadZIP.setAttribute("href", zipURL)
         adminPage.downloadZIP.style.display = "inline"

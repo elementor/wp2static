@@ -1,85 +1,19 @@
 declare var wp2staticString: any
 declare var ajaxurl: string
 import Vue from "vue"
+import { DetectionCheckbox } from "./components/DetectionCheckbox"
+import { FieldSetWithCheckbox } from "./components/FieldSetWithCheckbox"
+import { SectionWithCheckbox } from "./components/SectionWithCheckbox"
 import { WP2StaticAdminPageModel } from "./WP2StaticAdminPageModel"
 import { WP2StaticAJAX } from "./WP2StaticAJAX"
-import { WP2StaticFieldData } from "./WP2StaticFieldData"
 import { WP2StaticGlobals } from "./WP2StaticGlobals"
+import { WP2StaticViewData } from "./WP2StaticViewData"
 
-interface FormProcessor {
-    id: string
-    name: string
-    placeholder: string
-    website: string
-    description: string
-}
-
-// NOTE: passing around a globals object to allow shared instance and access
-// from browser
-// within this entrypoint, access directly. From other classes, this., from
-// browser WP2Static.wp2staticGlobals
+// allow Add-Ons to write to WP2Static.wp2staticGlobals
 export const wp2staticGlobals = new WP2StaticGlobals()
-const fieldData = new WP2StaticFieldData()
-
-const formProcessors: FormProcessor[] = [
-  {
-    description: "Basin does stuff",
-    id: "basin",
-    name: "Basin",
-    placeholder: "https://usebasin.com/f/",
-    website: "https://usebasin.com",
-  },
-  {
-    description: `FormSpree is very simple to start with, just set your
- endpoint, including your email address and start sending.`,
-    id: "formspree",
-    name: "Formspree",
-    placeholder: "https://formspree.io/myemail@domain.com",
-    website: "https://formspree.io",
-  },
-  {
-    description: "Zapier does stuff",
-    id: "zapier",
-    name: "Zapier",
-    placeholder: "https://hooks.zapier.com/hooks/catch/4977245/jqj3l4/",
-    website: "https://zapier.com",
-  },
-  {
-    description: "Formkeep does stuff",
-    id: "formkeep",
-    name: "FormKeep",
-    placeholder: "https://formkeep.com/f/5dd8de73ce2c",
-    website: "https://formkeep.com",
-  },
-  {
-    description: "Use any custom endpoint",
-    id: "custom",
-    name: "Custom endpoint",
-    placeholder: "https://mycustomendpoint.com/SOMEPATH",
-    website: "https://docs.wp2static.com",
-  },
-]
 
 let validationErrors = ""
 
-wp2staticGlobals.siteInfo = JSON.parse(wp2staticString.siteInfo)
-
-if (!wp2staticString.currentDeploymentMethod) {
-  wp2staticGlobals.currentDeploymentMethod = "folder"
-} else {
-  wp2staticGlobals.currentDeploymentMethod = wp2staticString.currentDeploymentMethod
-}
-
-if (!wp2staticString.currentDeploymentMethodProduction) {
-  wp2staticGlobals.currentDeploymentMethodProduction = "folder"
-} else {
-  wp2staticGlobals.currentDeploymentMethodProduction = wp2staticString.currentDeploymentMethodProduction
-}
-
-// TODO: get the log out of the archive, along with it's meta infos
-const logFileUrl = wp2staticGlobals.siteInfo.uploads_url + "wp2static-working-files/EXPORT-LOG.txt"
-const selectedFormProcessor = ""
-const exportAction = ""
 const protocolAndDomainRE = /^(?:\w+:)?\/\/(\S+)$/
 const localhostDomainRE = /^localhost[:?\d]*(?:[^:?\d]\S*)?$/
 const nonLocalhostDomainRE = /^[^\s.]+\.\S{2,}$/
@@ -88,234 +22,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const adminPage = new WP2StaticAdminPageModel()
     wp2staticGlobals.adminPage = adminPage
 
-    wp2staticGlobals.vueData = {
-      currentAction: "Starting export...",
-      currentDeploymentMethod: "folder",
-      currentDeploymentMethodProduction: "folder",
-      currentTab: "workflow_tab",
-      detectionCheckboxes: [
-        {
-            checked: false,
-            description: "All published Pages. Use the date range option below to further filter.",
-            id: "detectPages",
-            title: "Pages",
-        },
-        {
-            checked: false,
-            description: "All published Posts. Use the date range option below to further filter.",
-            id: "detectPosts",
-            title: "Posts",
-        },
-        {
-            checked: true,
-            description: "Include URLs for all Custom Post Types.",
-            id: "detectCustomPostTypes",
-            title: "Custom Post Types",
-        },
-        {
-            checked: false,
-            description: "RSS/Atom feeds, such as <code>mydomain.com/some-post/feed/</code>.",
-            id: "detectFeedURLs",
-            title: "Feed URLs",
-        },
-        {
-            checked: false,
-            description: "Vendor cache dirs, as used by Autoptimize and certain themes to store images and assets.",
-            id: "detectVendorCacheDirs",
-            title: "Vendor cache",
-        },
-        {
-            checked: false,
-            description: "The additional URLs for attachments, such as images. Usually not needed.",
-            id: "detectAttachments",
-            title: "Attachment URLs",
-        },
-        {
-            checked: false,
-            description: "All Archive pages, such as Post Categories and Date Archives, etc.",
-            id: "detectArchives",
-            title: "Archive URLs",
-        },
-        {
-            checked: false,
-            description: "Get all paginated URLs for Posts.",
-            id: "detectPostPagination",
-            title: "Posts Pagination",
-        },
-        {
-            checked: false,
-            description: "Get all paginated URLs for Categories.",
-            id: "detectCategoryPagination",
-            title: "Category Pagination",
-        },
-        {
-            checked: false,
-            description: "Get all URLs for Comments.",
-            id: "detectComments",
-            title: "Comment URLs",
-        },
-        {
-            checked: false,
-            description: "Get all paginated URLs for Comments.",
-            id: "detectCommentPagination",
-            title: "Comments Pagination",
-        },
-        {
-            checked: false,
-            description: "Get all URLs within Parent Theme dir.",
-            id: "detectParentTheme",
-            title: "Parent Theme URLs",
-        },
-        {
-            checked: false,
-            description: "Get all URLs within Child Theme dir.",
-            id: "detectChildTheme",
-            title: "Child Theme URLs",
-        },
-        {
-            checked: false,
-            description: "Get all public URLs for WP uploads dir.",
-            id: "detectUploads",
-            title: "Uploads URLs",
-        },
-        {
-            checked: false,
-            description: "Detect all assets from within all plugin directories.",
-            id: "detectPluginAssets",
-            title: "Plugin Assets",
-        },
-        {
-            checked: false,
-            description: "Get all public URLs for wp-includes assets.",
-            id: "detectWPIncludesAssets",
-            title: "WP-INC JS",
-        },
-      ],
-      fieldData,
-      options: JSON.parse(wp2staticString.options),
-      progress: true,
-      siteInfo: JSON.parse(wp2staticString.siteInfo),
-      tabs: [
-        { id: "workflow_tab", name: "Workflow" },
-        { id: "url_detection", name: "URL Detection" },
-        { id: "crawl_settings", name: "Crawling" },
-        { id: "processing_settings", name: "Processing" },
-        { id: "form_settings", name: "Forms" },
-        { id: "staging_deploy", name: "Staging" },
-        { id: "production_deploy", name: "Production" },
-        { id: "caching_settings", name: "Caching" },
-        { id: "automation_settings", name: "Automation" },
-        { id: "advanced_settings", name: "Advanced Options" },
-        { id: "add_ons", name: "Add-ons" },
-        { id: "help_troubleshooting", name: "Help" },
-      ],
-    }
+    wp2staticGlobals.vueData = new WP2StaticViewData()
+    wp2staticGlobals.vueData.options = JSON.parse(wp2staticString.options)
+    wp2staticGlobals.vueData.siteInfo = JSON.parse(wp2staticString.siteInfo)
 
-    const SectionWithCheckbox: any = {
-      data: () => {
-        return {
-          count: 0,
-        }
-      },
-      methods: {
-        checkboxChanged: (id: string) => {
-          const element: HTMLInputElement =
-            document.getElementById(id)! as HTMLInputElement
-
-          const checked: boolean = element.checked
-
-          wp2staticGlobals.vueData.options[id] = checked
-        },
-      },
-      props: [
-        "checked",
-        "description",
-        "hint",
-        "id",
-        "title",
-      ],
-      template: `
-<section class="wp2static-content wp2static-flex">
-  <div class="content" style="max-width:30%">
-    <h2>{{ title }}</h2>
-  </div>
-
-  <div class="content">
-    <p>{{ description }}</p>
-
-    <fieldset>
-      <label :for='id'>
-        <input
-          :name='id'
-          :id='id'
-          value='1'
-          type='checkbox'
-          :checked='checked'
-          v-on:change="checkboxChanged(id)"
-          />
-        <span>{{ hint }}</span>
-      </label>
-    </fieldset>
-  </div>
-</section>`,
-    }
-
-    const DetectionCheckbox: any = {
-      // TODO: kill unused data
-      data: () => {
-        return {
-          count: 0,
-        }
-      },
-      methods: {
-        detectionCheckboxChanged: (id: string) => {
-          const element: HTMLInputElement =
-            document.getElementById(id)! as HTMLInputElement
-          const checked: boolean = element.checked
-
-          const checkbox =
-            wp2staticGlobals.vueData.detectionCheckboxes.filter(
-              (obj: any) => obj.id ===  id,
-          )
-
-          checkbox[0].checked = checked
-        },
-      },
-      props: [
-        "checked",
-        "description",
-        "id",
-        "title",
-      ],
-      template: `
-    <tr>
-        <td>
-            <label :for='id'>
-            <b>{{ title }}</b>
-            </label>
-        </td>
-        <td>
-            <fieldset>
-                <label :for='id'>
-                    <input
-                      :checked='checked'
-                      :id='id'
-                      :name='id'
-                      type='checkbox'
-                      v-on:change="detectionCheckboxChanged(id)"
-                      value='1'
-                    />
-                    <span>{{ description }}</span>
-                </label>
-            </fieldset>
-        </td>
-    </tr>`,
-    }
+    const detectionCheckbox: DetectionCheckbox = new DetectionCheckbox(wp2staticGlobals)
+    const fieldSetWithCheckbox: FieldSetWithCheckbox = new FieldSetWithCheckbox(wp2staticGlobals)
+    const sectionWithCheckbox: SectionWithCheckbox = new SectionWithCheckbox(wp2staticGlobals)
 
     const vueApp = new Vue({
       components: {
-        DetectionCheckbox,
-        SectionWithCheckbox,
+        DetectionCheckbox: detectionCheckbox.getComponent(),
+        FieldSetWithCheckbox: fieldSetWithCheckbox.getComponent(),
+        SectionWithCheckbox: sectionWithCheckbox.getComponent(),
       },
       data: wp2staticGlobals.vueData,
       el: "#vueApp",
@@ -367,9 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         },
         generateStaticSite: (event: any) => {
-          clearProgressAndResults()
           // set hidden baseUrl to staging current deploy method's Destination URL
-          updateBaseUrl()
           wp2staticGlobals.exportCommenceTime = +new Date()
 
           // TODO: reimplement validators validationErrors = getValidationErrors()
@@ -401,12 +118,14 @@ document.addEventListener("DOMContentLoaded", () => {
           )
         },
         saveOptions: (event: any) => {
-          saveOptions()
+          sendWP2StaticAJAX(
+            "save_options",
+            saveOptionsSuccessCallback,
+            saveOptionsFailCallback,
+          )
         },
         startExport: (event: any) => {
-          clearProgressAndResults()
           // set hidden baseUrl to staging current deploy method's Destination URL
-          updateBaseUrl()
           wp2staticGlobals.exportCommenceTime = +new Date()
 
           // TODO: reimplement validators validationErrors = getValidationErrors()
@@ -521,15 +240,6 @@ document.addEventListener("DOMContentLoaded", () => {
       location.reload()
     }
 
-    function saveOptions() {
-      wp2staticGlobals.vueData.currentAction = "Saving options"
-      sendWP2StaticAJAX(
-        "save_options",
-        saveOptionsSuccessCallback,
-        saveOptionsFailCallback,
-      )
-    }
-
     function deleteCrawlCacheSuccessCallback(event: any) {
       wp2staticGlobals.vueData.progress = false
 
@@ -559,12 +269,6 @@ document.addEventListener("DOMContentLoaded", () => {
       ]
 
       wp2staticAJAX.doAJAXExport( initialSteps )
-    }
-
-    function clearProgressAndResults() {
-      adminPage.downloadZIP.style.display = "none"
-      adminPage.goToMyStaticSite.style.display = "none"
-      adminPage.exportDuration.style.display = "none"
     }
 
     function getValidationErrors() {
@@ -659,82 +363,7 @@ document.addEventListener("DOMContentLoaded", () => {
       )
     }
 
-    function setFormProcessor(fp: any) {
-      if (fp in formProcessors) {
-
-        const formProcessor: FormProcessor = formProcessors[fp]
-
-        adminPage.formProcessorDescription.textContent = formProcessor.description
-
-        const website = formProcessor.website
-
-        const websiteLink: HTMLAnchorElement  = document.createElement("a")
-        websiteLink.setAttribute("href", website)
-        websiteLink.innerHTML = "Visit " + formProcessor.name
-
-        adminPage.formProcessorWebsite.innerHTML = website
-        adminPage.formProcessorEndpoint.setAttribute("placeholder", formProcessor.placeholder)
-      } else {
-        adminPage.formProcessorDescription.textContent = ""
-        adminPage.formProcessorWebsite.innerHTML = ""
-        adminPage.formProcessorEndpoint.setAttribute("placeholder", "Form endpoint")
-      }
-    }
-
-    function populateFormProcessorOptions(fps: FormProcessor[]) {
-      fps.forEach( (formProcessor) => {
-        adminPage.formProcessorSelect.options[adminPage.formProcessorSelect.options.length] =
-          new Option(formProcessor.name, formProcessor.id)
-      })
-    }
-
-    function updateBaseUrl() {
-      const currentBaseUrlRenameMe: HTMLInputElement | null =
-        document.getElementById("baseUrl-" + wp2staticGlobals.currentDeploymentMethod)! as HTMLInputElement
-
-      adminPage.baseUrl.value = currentBaseUrlRenameMe.value
-    }
-
-    function updateStagingSummary() {
-      adminPage.stagingSummaryDeployMethod.textContent = wp2staticGlobals.currentDeploymentMethod
-
-      const currentBaseUrl: HTMLInputElement | null =
-        document.getElementById("baseUrl-" + wp2staticGlobals.currentDeploymentMethod)! as HTMLInputElement
-
-      adminPage.stagingSummaryDeployUrl.textContent = currentBaseUrl.value
-    }
-
-    function updateProductionSummary() {
-      adminPage.productionSummaryDeployMethod.textContent = wp2staticGlobals.currentDeploymentMethodProduction
-
-      const currentBaseUrlProduction: HTMLInputElement | null =
-        document.getElementById("baseUrl-" + wp2staticGlobals.currentDeploymentMethodProduction)! as HTMLInputElement
-
-      adminPage.productionSummaryDeployUrl.textContent = currentBaseUrlProduction.value
-    }
-
-    function offlineUsageChangeHandler(checkbox: HTMLElement) {
-      if (checkbox.getAttribute("checked")) {
-        adminPage.baseUrlZip.setAttribute("disabled", "")
-      } else {
-        adminPage.baseUrlZip.removeAttribute("disabled")
-      }
-    }
-
-    // disable zip base url field when offline usage is checked
-    adminPage.allowOfflineUsage.addEventListener(
-      "change",
-      (event: any) => {
-        offlineUsageChangeHandler(event.currentTarget)
-      },
-    )
-
-    adminPage.formProcessorSelect.addEventListener(
-      "change",
-      (event: any) => {
-        setFormProcessor((event.currentTarget as HTMLInputElement).value)
-      },
-    )
+    // TODO: disable zip base url field when offline usage is checked
 
     adminPage.sendSupportRequestButton.addEventListener(
       "click",
@@ -833,39 +462,11 @@ document.addEventListener("DOMContentLoaded", () => {
       wp2staticGlobals.vueData.progress = false
     }
 
-    /* TODO: reimplement handlers for all test_deploy method buttons
-       need one within each add-on's JS code
-    $(".wrap").on(
-      "click",
-      '[id$="-test-button"]',
-      (event: any) => {
-        event.preventDefault()
+    // TODO: reimplement handlers for all test_deploy method buttons
+    //   need one within each add-on's JS code
 
-        sendWP2StaticAJAX(
-          "test_" + wp2staticGlobals.currentDeploymentMethod,
-          testDeploymentSuccessCallback,
-          testDeploymentFailCallback,
-        )
-      },
-    )
-    */
-
-    // guard against selected option for add-on not currently activated
-    const deployBaseUrl: HTMLInputElement | null =
-      document.getElementById("baseUrl-" + wp2staticGlobals.currentDeploymentMethod)! as HTMLInputElement
-    if (deployBaseUrl === null) {
-      wp2staticGlobals.currentDeploymentMethod = "folder"
-    }
-
-    populateFormProcessorOptions(formProcessors)
-
-    setFormProcessor(selectedFormProcessor)
-
-    // call change handler on page load, to set correct state
-    const offlineUsageCheckbox: any = document.getElementById("allowOfflineUsage")
-    if ( offlineUsageCheckbox ) {
-      offlineUsageChangeHandler(offlineUsageCheckbox)
-    }
+    // TODO: set both destinationUrl and destinationUrlProduction and show in summary
+    // bind to "baseUrl-" + wp2staticGlobals.currentDeploymentMethod
 
     // hide all but WP2Static messages
     hideOtherVendorMessages()

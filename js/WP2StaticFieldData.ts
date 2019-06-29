@@ -28,6 +28,12 @@ export class WP2StaticFieldData {
       id: "includeDiscoveredAssets",
       title: "Include Discovered Assets",
     },
+    removeConditionalHeadComments: {
+      description: `Mostly obsolete, previously used for detecting versions of
+ Internet Explorer and serving different CSS or JS.`,
+      hint: "Remove conditional comments within HEAD",
+      id: "removeConditionalHeadComments",
+    },
     useBasicAuth: {
       description: "",
       hint: "My WP site requires Basic Auth to access",
