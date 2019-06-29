@@ -16,8 +16,6 @@ export class WP2StaticProcessExports {
 
     if (this.wp2staticGlobals.exportTargets.length > 0) {
       const target: string = String(this.wp2staticGlobals.exportTargets.shift())
-
-
       const exportSteps = this.wp2staticGlobals.deployOptions[target].exportSteps
 
       wp2staticAJAX.doAJAXExport( exportSteps )

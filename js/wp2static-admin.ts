@@ -265,6 +265,12 @@ document.addEventListener("DOMContentLoaded", () => {
       data: wp2staticGlobals.vueData,
       el: "#vueApp",
       methods: {
+        cancelExport: (event: any) => {
+          const reallyCancel = confirm("Stop current export and reload page?")
+          if (reallyCancel) {
+            window.location.href = window.location.href
+          }
+        },
         changeTab: (targetTab: string) => {
           wp2staticGlobals.vueData.currentTab = targetTab
 
@@ -276,6 +282,24 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         changeTab2: (event: any) => {
           vueApp.changeTab(event.currentTarget.getAttribute("tabid"))
+        },
+        deleteCrawlCache: (event: any) => {
+          wp2staticGlobals.vueData.currentAction = "Deleting Crawl Cache..."
+
+          sendWP2StaticAJAX(
+            "delete_crawl_cache",
+            deleteCrawlCacheSuccessCallback,
+            deleteCrawlCacheFailCallback,
+          )
+        },
+        deleteDeployCache: (event: any) => {
+          wp2staticGlobals.vueData.currentAction = "Deleting Deploy Cache..."
+
+          sendWP2StaticAJAX(
+            "delete_deploy_cache",
+            deleteDeployCacheSuccessCallback,
+            deleteDeployCacheFailCallback,
+          )
         },
         detectEverything: (event: any) => {
           for ( const checkbox of wp2staticGlobals.vueData.detectionCheckboxes ) {
@@ -313,6 +337,16 @@ document.addEventListener("DOMContentLoaded", () => {
             startExportSuccessCallback,
             ajaxErrorHandler,
           )
+        },
+        resetDefaults: (event: any) => {
+          sendWP2StaticAJAX(
+            "reset_default_settings",
+            resetDefaultSettingsSuccessCallback,
+            resetDefaultSettingsFailCallback,
+          )
+        },
+        saveOptions: (event: any) => {
+          saveOptions()
         },
         startExport: (event: any) => {
           clearProgressAndResults()
@@ -406,9 +440,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const optionsForm = document.getElementById("general-options")! as HTMLFormElement
 
       const data = new URLSearchParams(
-      // https://github.com/Microsoft/TypeScript/issues/30584
-      // @ts-ignore
-        //new FormData(optionsForm),
+        // https://github.com/Microsoft/TypeScript/issues/30584
+        // @ts-ignore
+        // new FormData(optionsForm),
         new FormData(adminPage.optionsForm),
       ).toString()
 
@@ -441,7 +475,6 @@ document.addEventListener("DOMContentLoaded", () => {
       )
     }
 
-
     function deleteCrawlCacheSuccessCallback(event: any) {
       wp2staticGlobals.vueData.progress = false
 
@@ -456,20 +489,6 @@ document.addEventListener("DOMContentLoaded", () => {
       wp2staticGlobals.vueData.progress = false
       wp2staticGlobals.vueData.currentAction = "Failed to delete Crawl Cache."
     }
-
-    adminPage.deleteCrawlCache.addEventListener(
-      "click",
-      (event: any) => {
-        event.preventDefault()
-        wp2staticGlobals.vueData.currentAction = "Deleting Crawl Cache..."
-
-        sendWP2StaticAJAX(
-          "delete_crawl_cache",
-          deleteCrawlCacheSuccessCallback,
-          deleteCrawlCacheFailCallback,
-        )
-      },
-    )
 
     function ajaxErrorHandler() {
       const failedDeployMessage = `Failed during ${wp2staticGlobals.statusText}`
@@ -711,17 +730,6 @@ document.addEventListener("DOMContentLoaded", () => {
       },
     )
 
-    adminPage.cancelExportButton.addEventListener(
-      "click",
-      (event: any) => {
-        event.preventDefault()
-        const reallyCancel = confirm("Stop current export and reload page?")
-        if (reallyCancel) {
-          window.location.href = window.location.href
-        }
-      },
-    )
-
     function sendSupportSuccessCallback(event: any) {
       alert("Successful support request sent")
     }
@@ -739,27 +747,6 @@ document.addEventListener("DOMContentLoaded", () => {
       alert("Error encountered in trying to reset settings. Please try refreshing the page.")
     }
 
-    adminPage.resetDefaultSettingsButton.addEventListener(
-      "click",
-      (event: any) => {
-        event.preventDefault()
-
-        sendWP2StaticAJAX(
-          "reset_default_settings",
-          resetDefaultSettingsSuccessCallback,
-          resetDefaultSettingsFailCallback,
-        )
-      },
-    )
-
-    adminPage.saveSettingsButton.addEventListener(
-      "click",
-      (event: any) => {
-        event.preventDefault()
-        saveOptions()
-      },
-    )
-
     function deleteDeployCacheSuccessCallback(event: any) {
       if (event.target.response === "SUCCESS") {
         alert("Deploy cache cleared")
@@ -775,19 +762,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       wp2staticGlobals.vueData.progress = false
     }
-
-    adminPage.deleteDeployCache.addEventListener(
-      "click",
-      (event: any) => {
-        event.preventDefault()
-        const button = event.currentTarget
-        sendWP2StaticAJAX(
-          "delete_deploy_cache",
-          deleteDeployCacheSuccessCallback,
-          deleteDeployCacheFailCallback,
-        )
-      },
-    )
 
     function testDeploymentSuccessCallback(event: any) {
       if (event.target.response === "SUCCESS") {

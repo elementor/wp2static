@@ -48,7 +48,7 @@
 
         <?php $tpl->displayCheckbox( $this, 'dontUseCrawlCaching', 'Disregard cache and crawl everything' ); ?>
 
-      <button id="deleteCrawlCache" class="wp2static-btn btn-sm mg-top10">Delete Crawl Cache</button>
+      <button v-on:click.prevent="deleteCrawlCache" class="wp2static-btn btn-sm mg-top10">Delete Crawl Cache</button>
   </div>
 </section>
 
@@ -58,7 +58,7 @@
   </div>
 
   <div class="content">
-    <button id="delete_deploy_cache_button" type="button" class="btn-primary button">Delete deploy cache</button>
+    <button v-on:click.prevent="deleteDeployCache"  type="button" class="btn-primary button">Delete deploy cache</button>
 
     <p>When deploying, WP2Static will check each file to see if it's changed since the last deployment. It will skip unchanged files based on this information. If you want to force an uncached deployment, click this button and any caches will be emptied, requiring a full deploy on the next run.</p>
   </div>

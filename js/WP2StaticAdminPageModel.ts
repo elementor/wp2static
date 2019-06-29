@@ -3,19 +3,13 @@ export class WP2StaticAdminPageModel {
   public allowOfflineUsage: HTMLInputElement
   public baseUrl: HTMLInputElement
   public baseUrlZip: HTMLInputElement
-  public cancelExportButton: HTMLElement
   public createZip: HTMLElement
-  public deleteCrawlCache: HTMLElement
-  public deleteDeployCache: HTMLElement
-  public detectNothingButton: HTMLElement
-  public detectionOptionsInputs: NodeListOf<Element>
   public downloadZIP: HTMLElement
   public exportDuration: HTMLElement
   public formProcessorDescription: HTMLInputElement
   public formProcessorEndpoint: HTMLInputElement
   public formProcessorSelect: HTMLSelectElement
   public formProcessorWebsite: HTMLInputElement
-  public generalOptions: HTMLElement
   public goToDeployTabButton: HTMLElement
   public goToMyStaticSite: HTMLElement
   public hiddenAJAXAction: HTMLInputElement
@@ -25,8 +19,6 @@ export class WP2StaticAdminPageModel {
   public navigationTabs: NodeListOf<Element>
   public optionsForm: HTMLFormElement
   public previewInitialCrawlListButton: HTMLElement
-  public resetDefaultSettingsButton: HTMLElement
-  public saveSettingsButton: HTMLElement
   public selectedDeploymentMethod: HTMLSelectElement
   public selectedDeploymentMethodProduction: HTMLSelectElement
   public sendSupportRequestButton: HTMLElement
@@ -46,19 +38,13 @@ export class WP2StaticAdminPageModel {
     this.allowOfflineUsage = document.getElementById("allowOfflineUsage")! as HTMLInputElement
     this.baseUrl = document.getElementById("baseUrl")! as HTMLInputElement
     this.baseUrlZip = document.getElementById("baseUrl-zip")! as HTMLInputElement
-    this.cancelExportButton = document.getElementById("cancelExportButton")!
     this.createZip = document.getElementById("createZip")!
-    this.deleteCrawlCache = document.getElementById("deleteCrawlCache")!
-    this.deleteDeployCache = document.getElementById("delete_deploy_cache_button")!
-    this.detectNothingButton = document.getElementById("detectNothingButton")!
-    this.detectionOptionsInputs = document.querySelectorAll('#detectionOptionsTable input[type="checkbox"]')!
     this.downloadZIP = document.getElementById("downloadZIP")!
     this.exportDuration = document.getElementById("exportDuration")!
     this.formProcessorDescription = document.getElementById("form_processor_description")! as HTMLInputElement
     this.formProcessorEndpoint = document.getElementById("form_processor_endpoint")! as HTMLInputElement
     this.formProcessorSelect = document.getElementById("form_processor_select")! as HTMLSelectElement
     this.formProcessorWebsite = document.getElementById("form_processor_website")! as HTMLInputElement
-    this.generalOptions = document.getElementById("general-options")!
     this.goToDeployTabButton = document.getElementById("GoToDeployTabButton")!
     this.goToMyStaticSite = document.getElementById("goToMyStaticSite")!
     this.hiddenAJAXAction = document.getElementById("hiddenAJAXAction")! as HTMLInputElement
@@ -68,8 +54,6 @@ export class WP2StaticAdminPageModel {
     this.navigationTabs = document.querySelectorAll(".nav-tab")!
     this.optionsForm = document.getElementById("general-options")! as HTMLFormElement
     this.previewInitialCrawlListButton = document.getElementById("preview_initial_crawl_list_button")!
-    this.resetDefaultSettingsButton = document.getElementById("resetDefaultSettingsButton")!
-    this.saveSettingsButton = document.getElementById("saveSettingsButton")!
     this.selectedDeploymentMethod = document.getElementById("selected_deployment_method")! as HTMLSelectElement
     this.selectedDeploymentMethodProduction =
       document.getElementById("selected_deployment_method_production")! as HTMLSelectElement

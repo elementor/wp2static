@@ -172,13 +172,13 @@ $tpl = new \WP2Static\TemplateHelper();
                   <button :disabled="progress" id="deployToProductionButton" class="wp2static-btn blue">
                     <?php echo __( 'Deploy to Production', 'static-html-output-plugin' ); ?>
                   </button>
-                  <button :disabled="progress" id="saveSettingsButton" class="wp2static-btn">
+                  <button :disabled="progress" v-on:click="saveOptions" class="wp2static-btn">
                     <?php echo __( 'Save Current Options', 'static-html-output-plugin' ); ?>
                   </button>
-                  <button :disabled="progress" id="resetDefaultSettingsButton" class="wp2static-btn">
+                  <button :disabled="progress" v-on:click="resetDefaults" class="wp2static-btn">
                     <?php echo __( 'Reset to Default Settings', 'static-html-output-plugin' ); ?>
                   </button>
-                  <button v-if="progress" id="cancelExportButton" class="wp2static-btn">
+                  <button v-if="progress" v-on:click="cancelExport" class="wp2static-btn orange">
                     <?php echo __( 'Cancel Export', 'static-html-output-plugin' ); ?>
                   </button>
 

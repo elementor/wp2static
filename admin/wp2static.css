@@ -116,6 +116,15 @@ button {
   background: #2976f5;
 }
 
+.wp2static-btn.orange {
+  background: #F5B958;
+  color: #fff;
+}
+
+.wp2static-btn.orange:hover {
+  background: #E7A73F;
+}
+
 .wp2static-btn.pink {
   background: #e56285;
   color: #fff;
@@ -250,15 +259,6 @@ div.postbox div.inside {
 
 .btn-call-to-action:hover, .btn-call-to-action:focus {
   background-color: #32B741 !important;
-}
-
-#cancelExportButton {
-  background-color: #F5B958;
-  color: #fff;
-}
-
-#cancelExportButton:hover, #cancelExportButton:focus {
-  background-color: #E7A73F;
 }
 
 p.submit{
