@@ -106,85 +106,233 @@ document.addEventListener("DOMContentLoaded", () => {
         { id: "add_ons", name: "Add-ons" },
         { id: "help_troubleshooting", name: "Help" },
       ],
+      detectionCheckboxes: [
+        {
+            id: 'detectPages',
+            title: 'Pages',
+            description: 'All published Pages. Use the date range option below to further filter.',
+            checked: false,
+        },
+        {
+            id: 'detectPosts',
+            title: 'Posts',
+            description: 'All published Posts. Use the date range option below to further filter.',
+            checked: false,
+        },
+        {
+            id: 'detectCustomPostTypes',
+            title: 'Custom Post Types',
+            description: 'Include URLs for all Custom Post Types.',
+            checked: true,
+        },
+        {
+            id: 'detectFeedURLs',
+            title: 'Feed URLs',
+            description: 'RSS/Atom feeds, such as <code>mydomain.com/some-post/feed/</code>.',
+            checked: false,
+        },
+        {
+            id: 'detectVendorCacheDirs',
+            title: 'Vendor cache',
+            description: 'Vendor cache dirs, as used by Autoptimize and certain themes to store images and assets.',
+            checked: false,
+        },
+        {
+            id: 'detectAttachments',
+            title: 'Attachment URLs',
+            description: 'The additional URLs for attachments, such as images. Usually not needed.',
+            checked: false,
+        },
+        {
+            id: 'detectArchives',
+            title: 'Archive URLs',
+            description: 'All Archive pages, such as Post Categories and Date Archives, etc.',
+            checked: false,
+        },
+        {
+            id: 'detectPostPagination',
+            title: 'Posts Pagination',
+            description: 'Get all paginated URLs for Posts.',
+            checked: false,
+        },
+        {
+            id: 'detectCategoryPagination',
+            title: 'Category Pagination',
+            description: 'Get all paginated URLs for Categories.',
+            checked: false,
+        },
+        {
+            id: 'detectComments',
+            title: 'Comment URLs',
+            description: 'Get all URLs for Comments.',
+            checked: false,
+        },
+        {
+            id: 'detectCommentPagination',
+            title: 'Comments Pagination',
+            description: 'Get all paginated URLs for Comments.',
+            checked: false,
+        },
+        {
+            id: 'detectParentTheme',
+            title: 'Parent Theme URLs',
+            description: 'Get all URLs within Parent Theme dir.',
+            checked: false,
+        },
+        {
+            id: 'detectChildTheme',
+            title: 'Child Theme URLs',
+            description: 'Get all URLs within Child Theme dir.',
+            checked: false,
+        },
+        {
+            id: 'detectUploads',
+            title: 'Uploads URLs',
+            description: 'Get all public URLs for WP uploads dir.',
+            checked: false,
+        },
+        {
+            id: 'detectPluginAssets',
+            title: 'Plugin Assets',
+            description: 'Detect all assets from within all plugin directories.',
+            checked: false,
+        },
+        {
+            id: 'detectWPIncludesAssets',
+            title: 'WP-INC JS',
+            description: 'Get all public URLs for wp-includes assets.',
+            checked: false,
+        },
+      ],
+    }
+
+    const DetectionCheckbox: any = {
+      data: () => {
+        return {
+          count: 0
+        }
+      },
+      props: [
+        'id',
+        'title',
+        'description',
+        'checked',
+      ],
+      methods: {
+        detectionCheckboxChanged: (id: string) => {
+          const element: HTMLInputElement =
+            document.getElementById(id)! as HTMLInputElement
+          const checked: boolean = element.checked
+
+          const checkbox =
+            wp2staticGlobals.vueData.detectionCheckboxes.filter(
+              obj => obj.id ===  id
+          );
+
+          checkbox[0].checked = checked
+        },
+      },
+      template: `
+    <tr>
+        <td>
+            <label :for='id'>
+            <b>{{ title }}</b>
+            </label>
+        </td>
+        <td>
+            <fieldset>
+                <label :for='id'>
+                    <input :name='id' :id='id' value='1' type='checkbox' :checked='checked' v-on:change="detectionCheckboxChanged(id)" />
+                    <span>{{ description }}</span>
+                </label>
+            </fieldset>
+        </td>
+    </tr>`
+
     }
 
     const vueApp = new Vue({
-       data: wp2staticGlobals.vueData,
-       el: "#vueApp",
-       methods: {
-         changeTab2: (event: any) => {
-          changeTab(event.currentTarget.getAttribute("tabid"))
-         },
-         detectEverything: (event: any) => {
-            console.log('setting everything')
-           const inputs = adminPage.detectionOptionsInputs
+      components: {
+        'DetectionCheckbox': DetectionCheckbox,
+      },
+      data: wp2staticGlobals.vueData,
+      el: "#vueApp",
+      methods: {
+        changeTab2: (event: any) => {
+         changeTab(event.currentTarget.getAttribute("tabid"))
+        },
+        detectEverything: (event: any) => {
+          for ( const checkbox of wp2staticGlobals.vueData.detectionCheckboxes ) {
+              checkbox.checked = true
+          }
+        },
+        detectNothing: (event: any) => {
+          for ( const checkbox of wp2staticGlobals.vueData.detectionCheckboxes ) {
+              checkbox.checked = false
+          }
+        },
+        generateStaticSite: (event: any) => {
+          clearProgressAndResults()
+          // set hidden baseUrl to staging current deploy method's Destination URL
+          updateBaseUrl()
+          wp2staticGlobals.exportCommenceTime = +new Date()
 
-           for ( const input of inputs ) {
-               input.setAttribute("checked", "")
-           }
-         },
-         generateStaticSite: (event: any) => {
-           clearProgressAndResults()
-           // set hidden baseUrl to staging current deploy method's Destination URL
-           updateBaseUrl()
-           wp2staticGlobals.exportCommenceTime = +new Date()
+          // TODO: reimplement validators validationErrors = getValidationErrors()
+          validationErrors = ""
 
-           // TODO: reimplement validators validationErrors = getValidationErrors()
-           validationErrors = ""
+          if (validationErrors !== "") {
+            alert(validationErrors)
+            vueApp.$data.progress = false
 
-           if (validationErrors !== "") {
-             alert(validationErrors)
-             vueApp.$data.progress = false
+            return false
+          }
 
-             return false
-           }
+          vueApp.$data.currentAction = "Generating Static Site Files..."
 
-           vueApp.$data.currentAction = "Generating Static Site Files..."
+          // reset export targets to avoid having left-overs from a failed run
+          wp2staticGlobals.exportTargets = []
 
-           // reset export targets to avoid having left-overs from a failed run
-           wp2staticGlobals.exportTargets = []
+          sendWP2StaticAJAX(
+            "prepare_for_export",
+            startExportSuccessCallback,
+            ajaxErrorHandler,
+          )
+        },
+        startExport: (event: any) => {
+          clearProgressAndResults()
+          // set hidden baseUrl to staging current deploy method's Destination URL
+          updateBaseUrl()
+          wp2staticGlobals.exportCommenceTime = +new Date()
 
-           sendWP2StaticAJAX(
-             "prepare_for_export",
-             startExportSuccessCallback,
-             ajaxErrorHandler,
-           )
-         },
-         startExport: (event: any) => {
-           clearProgressAndResults()
-           // set hidden baseUrl to staging current deploy method's Destination URL
-           updateBaseUrl()
-           wp2staticGlobals.exportCommenceTime = +new Date()
+          // TODO: reimplement validators validationErrors = getValidationErrors()
+          validationErrors = ""
 
-           // TODO: reimplement validators validationErrors = getValidationErrors()
-           validationErrors = ""
+          if (validationErrors !== "") {
+            alert(validationErrors)
 
-           if (validationErrors !== "") {
-             alert(validationErrors)
+            vueApp.$data.progress = false
 
-             vueApp.$data.progress = false
+            return false
+          }
 
-             return false
-           }
+          vueApp.$data.currentAction = "Starting export..."
 
-           vueApp.$data.currentAction = "Starting export..."
+          // reset export targets to avoid having left-overs from a failed run
+          wp2staticGlobals.exportTargets = []
 
-           // reset export targets to avoid having left-overs from a failed run
-           wp2staticGlobals.exportTargets = []
+          if (wp2staticGlobals.currentDeploymentMethod === "zip") {
+            adminPage.createZip.setAttribute("checked", "")
+          }
 
-           if (wp2staticGlobals.currentDeploymentMethod === "zip") {
-             adminPage.createZip.setAttribute("checked", "")
-           }
+          wp2staticGlobals.exportTargets.push(wp2staticGlobals.currentDeploymentMethod)
 
-           wp2staticGlobals.exportTargets.push(wp2staticGlobals.currentDeploymentMethod)
-
-           sendWP2StaticAJAX(
-             "prepare_for_export",
-             startExportSuccessCallback,
-             ajaxErrorHandler,
-           )
-         },
-       },
+          sendWP2StaticAJAX(
+            "prepare_for_export",
+            startExportSuccessCallback,
+            ajaxErrorHandler,
+          )
+        },
+      },
     })
 
     const wp2staticAJAX = new WP2StaticAJAX( wp2staticGlobals )
@@ -288,18 +436,6 @@ document.addEventListener("DOMContentLoaded", () => {
       wp2staticGlobals.vueData.progress = false
       wp2staticGlobals.vueData.currentAction = "Failed to delete Crawl Cache."
     }
-
-    adminPage.detectNothingButton.addEventListener(
-      "click",
-      (event: any) => {
-        event.preventDefault()
-        const inputs = adminPage.detectionOptionsInputs
-
-        for ( const input of inputs ) {
-            input.removeAttribute("checked")
-        }
-      },
-    )
 
     adminPage.deleteCrawlCache.addEventListener(
       "click",

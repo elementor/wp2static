@@ -19,7 +19,7 @@
     <h2><?php echo __( 'Control Detected URLs', 'static-html-output-plugin' ); ?></h2>
 
     <button v-on:click.prevent="detectEverything" class="wp2static-btn">Select all</button>
-    <button id="detectNothingButton" class="wp2static-btn">Select none</button>
+    <button v-on:click.prevent="detectNothing" class="wp2static-btn">Select none</button>
   </div>
   
   <div class="content">
@@ -27,154 +27,17 @@
 
     <p>Detecting less will result in faster crawling, but if you end up with missing URLs in your exported site, enable more options.</p>
 
-    <?php
-
-    $detection_options_table = [
-        [
-            'checkbox',
-            'detectPages',
-            'Pages',
-            'All published Pages. Use the date range option below to further filter.',
-        ],
-        [
-            'checkbox',
-            'detectPosts',
-            'Posts',
-            'All published Posts. Use the date range option below to further filter.',
-        ],
-        [
-            'checkbox',
-            'detectCustomPostTypes',
-            'Custom Post Types',
-            'Include URLs for all Custom Post Types.',
-        ],
-        [
-            'checkbox',
-            'detectFeedURLs',
-            'Feed URLs',
-            'RSS/Atom feeds, such as <code>mydomain.com/some-post/feed/</code>.',
-        ],
-        [
-            'checkbox',
-            'detectVendorCacheDirs',
-            'Vendor cache',
-            'Vendor cache dirs, as used by Autoptimize and certain themes to store images and assets.',
-        ],
-        [
-            'checkbox',
-            'detectAttachments',
-            'Attachment URLs',
-            'The additional URLs for attachments, such as images. Usually not needed.',
-        ],
-        [
-            'checkbox',
-            'detectArchives',
-            'Archive URLs',
-            'All Archive pages, such as Post Categories and Date Archives, etc.',
-        ],
-        [
-            'checkbox',
-            'detectPostPagination',
-            'Posts Pagination',
-            'Get all paginated URLs for Posts.',
-        ],
-        [
-            'checkbox',
-            'detectCategoryPagination',
-            'Category Pagination',
-            'Get all paginated URLs for Categories.',
-        ],
-        [
-            'checkbox',
-            'detectComments',
-            'Comment URLs',
-            'Get all URLs for Comments.',
-        ],
-        [
-            'checkbox',
-            'detectCommentPagination',
-            'Comments Pagination',
-            'Get all paginated URLs for Comments.',
-        ],
-        [
-            'checkbox',
-            'detectParentTheme',
-            'Parent Theme URLs',
-            'Get all URLs within Parent Theme dir.',
-        ],
-        [
-            'checkbox',
-            'detectChildTheme',
-            'Child Theme URLs',
-            'Get all URLs within Child Theme dir.',
-        ],
-        [
-            'checkbox',
-            'detectUploads',
-            'Uploads URLs',
-            'Get all public URLs for WP uploads dir.',
-        ],
-        [
-            'checkbox',
-            'detectPluginAssets',
-            'Plugin Assets',
-            'Detect all assets from within all plugin directories.',
-        ],
-        [
-            'checkbox',
-            'detectWPIncludesAssets',
-            'WP-INC JS',
-            'Get all public URLs for wp-includes assets.',
-        ],
-    ];
-    ?>
-
-<!--
-TODO: define as template, producing as below
-
-<table id="detectionOptionsTable">
-    <tr>
-        <td>
-            <label for='detectPages'>
-            <b>Pages</b>
-            </label>
-        </td>
-        <td>
-            <fieldset>
-                <label for='detectPages'>
-                    <input name='detectPages' id='detectPages' value='1' type='checkbox'  />
-                    <span>All published Pages. Use the date range option below to further filter.</span>
-                </label>
-            </fieldset>
-        </td>
-    </tr>
-
--->
-
-
   <table id="detectionOptionsTable">
-        <?php foreach ( $detection_options_table as $detection_option ) : ?>
-          <tr>
-              <td>
-                  <label for='<?php echo $detection_option[1]; ?>'>
-                      <b><?php echo $detection_option[2]; ?></b>
-                  </label>
-              </td>
-              <td>
-              <?php
 
-                if ( $detection_option[0] ) {
-                    $tpl->displayCheckbox( $this, $detection_option[1], $detection_option[3] );
+        <detection-checkbox 
+            v-for="checkbox in detectionCheckboxes"
+            v-bind:key="checkbox.id" 
+            :id="checkbox.id"
+            :title="checkbox.title"
+            :description="checkbox.description"
+            :checked="checkbox.checked"
+        > </detection-checkbox>
 
-                } else {
-                    echo '&nbsp;';
-                }
-
-                ?>
-              </td>
-
-          </tr>
-        <?php endforeach; ?>
   </table>
 
   <p><i>Save options to reload the page and see the effect of your detection options</i></p>
