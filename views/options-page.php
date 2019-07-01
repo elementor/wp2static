@@ -14,9 +14,8 @@ $tpl = new \WP2Static\TemplateHelper();
 
 <div id="vueApp">
     <div class="wrap wp2static">
-       <?php if ( PHP_VERSION < 7.2 ) : ?>
 
-       <div class="notice notice-error inline wp2static-notice">
+       <div v-if="siteInfo.phpOutOfDate" class="notice notice-error inline wp2static-notice">
           <h2 class="title">Outdated PHP version detected</h2>
           <p>The current officially supported PHP versions can be found on <a href="http://php.net/supported-versions.php" target="_blank">PHP.net</a></p>
 
@@ -27,47 +26,32 @@ $tpl = new \WP2Static\TemplateHelper();
           <p>Your current PHP version is: <?php echo PHP_VERSION; ?></p>
         </div>
 
-        <?php endif; ?>
 
-
-        <?php if ( ! $view['uploads_writable'] ) : ?>
-
-       <div class="notice notice-error inline wp2static-notice">
+       <div v-if="!siteInfo.uploadsWritable" class="notice notice-error inline wp2static-notice">
           <h2 class="title">Your uploads directory is not writable</h2>
-          <p>Please ensure that <code><?php echo $view['site_info']->uploads_path; ?></code>
-                is writable by your webserver. 
-        </p>
+          <p>Please ensure that <code>{{ siteInfo.uploads_path }}</code>
+                is writable by your webserver.</p>
         </div>
 
-        <?php endif; ?>
 
-        <?php if ( ! $view['curl_supported'] ) : ?>
-
-       <div class="notice notice-error inline wp2static-notice">
+       <div v-if="!siteInfo.curlSupported" class="notice notice-error inline wp2static-notice">
           <h2 class="title">You need the cURL extension enabled on your web server</h2>
             <p> This is a library that allows the plugin to better export your static site out to services like GitHub, S3, Dropbox, BunnyCDN, etc. It's usually an easy fix to get this working. You can try Googling "How to enable cURL extension for PHP", along with the name of the environment you are using to run your WordPress site. This may be something like DigitalOcean, GoDaddy or LAMP, MAMP, WAMP for your webserver on your local computer. If you're still having trouble, the developer of this plugin is easger to help you get up and running. Please ask for help on our <a href="https://forum.wp2static.com">forum</a>.</p>
         </div>
 
-        <?php endif; ?>
 
-        <?php if ( ! class_exists( 'DOMDocument' ) ) : ?>
-
-       <div class="notice notice-error inline wp2static-notice">
+       <div v-if="!siteInfo.domDocumentAvailable" class="notice notice-error inline wp2static-notice">
           <h2 class="title">You're missing a required PHP library (DOMDocument)</h2>
             <p> This is a library that is used to parse the HTML documents when WP2Static crawls your site. It's usually an easy fix to get this working. You can try Googling "DOMDocument missing", along with the name of the environment you are using to run your WordPress site. This may be something like DigitalOcean, GoDaddy or LAMP, MAMP, WAMP for your webserver on your local computer. If you're still having trouble, the developer of this plugin is easger to help you get up and running. Please ask for help on our <a href="https://forum.wp2static.com">forum</a>.</p>
         </div>
 
-        <?php endif; ?>
 
-        <?php if ( ! $view['permalinks_defined'] ) : ?>
-
-       <div class="notice notice-error inline wp2static-notice">
+       <div v-if="!siteInfo.permalinksDefined" class="notice notice-error inline wp2static-notice">
           <h2 class="title">You need to set your WordPress Pemalinks</h2>
 
             <p>Due to the nature of how static sites work, you'll need to have some kind of permalinks structure defined in your <a href="<?php echo admin_url( 'options-permalink.php' ); ?>">Permalink Settings</a> within WordPress. To learn more on how to do this, please see WordPress's official guide to the <a href="https://codex.wordpress.org/Settings_Permalinks_Screen">Settings Permalinks Screen</a>.</p>
         </div>
 
-        <?php endif; ?>
 
       <nav class="nav-tab-wrapper">
 

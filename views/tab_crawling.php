@@ -1,16 +1,15 @@
 <div id="crawl_settings" v-show="currentTab == 'crawl_settings'">
 
-
-<section-with-checkbox 
-    :id="fieldData.includeDiscoveredAssets.id"
+<section-with-checkbox
+    id="includeDiscoveredAssets"
     :title="fieldData.includeDiscoveredAssets.title"
     :description="fieldData.includeDiscoveredAssets.description"
     :hint="fieldData.includeDiscoveredAssets.hint"
     :checked="options.includeDiscoveredAssets"
 ></section-with-checkbox>
 
-<section-with-checkbox 
-    :id="fieldData.useBasicAuth.id"
+<section-with-checkbox
+    id="useBasicAuth"
     :title="fieldData.useBasicAuth.title"
     :description="fieldData.useBasicAuth.description"
     :hint="fieldData.useBasicAuth.hint"

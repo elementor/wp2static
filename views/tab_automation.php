@@ -1,7 +1,7 @@
 <div id="automation_settings" v-show="currentTab == 'automation_settings'">
 
     <section-with-checkbox
-        :id="fieldData.redeployOnPostUpdates.id"
+        id="redeployOnPostUpdates"
         :title="fieldData.redeployOnPostUpdates.title"
         :description="fieldData.redeployOnPostUpdates.description"
         :hint="fieldData.redeployOnPostUpdates.hint"
@@ -9,7 +9,7 @@
     </section-with-checkbox>
 
     <section-with-checkbox
-        :id="fieldData.completionEmail.id"
+        id="completionEmail"
         :title="fieldData.completionEmail.title"
         :description="fieldData.completionEmail.description"
         :hint="fieldData.completionEmail.hint"

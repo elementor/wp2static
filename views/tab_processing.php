@@ -1,23 +1,23 @@
 <div id="processing_settings" v-show="currentTab == 'processing_settings'">
 
-<section-with-checkbox 
-    :id="fieldData.useDocumentRelativeURLs.id"
+<section-with-checkbox
+    id="useDocumentRelativeURLs"
     :title="fieldData.useDocumentRelativeURLs.title"
     :description="fieldData.useDocumentRelativeURLs.description"
     :hint="fieldData.useDocumentRelativeURLs.hint"
     :checked="options.useDocumentRelativeURLs"
 ></section-with-checkbox>
 
-<section-with-checkbox 
-    :id="fieldData.useSiteRootRelativeURLs.id"
+<section-with-checkbox
+    id="useSiteRootRelativeURLs"
     :title="fieldData.useSiteRootRelativeURLs.title"
     :description="fieldData.useSiteRootRelativeURLs.description"
     :hint="fieldData.useSiteRootRelativeURLs.hint"
     :checked="options.useSiteRootRelativeURLs"
 ></section-with-checkbox>
 
-<section-with-checkbox 
-    :id="fieldData.allowOfflineUsage.id"
+<section-with-checkbox
+    id="allowOfflineUsage"
     :title="fieldData.allowOfflineUsage.title"
     :description="fieldData.allowOfflineUsage.description"
     :hint="fieldData.allowOfflineUsage.hint"
@@ -28,7 +28,7 @@
   <div class="content" style="max-width:30%">
     <h2><?php echo __( 'Base HREF', 'static-html-output-plugin' ); ?></h2>
   </div>
-  
+
   <div class="content">
     <?php $tpl->displayTextfield( $this, 'baseHREF', 'Base HREF', '', '' ); ?>
 
@@ -88,28 +88,41 @@
 
   <div class="content">
 
-    <field-set-with-checkbox 
-        :id="fieldData.removeConditionalHeadComments.id"
+    <field-set-with-checkbox
+        id="removeConditionalHeadComments"
         :description="fieldData.removeConditionalHeadComments.description"
         :hint="fieldData.removeConditionalHeadComments.hint"
         :checked="options.removeConditionalHeadComments"
     ></field-set-with-checkbox>
 
-    <?php $tpl->displayCheckbox( $this, 'removeWPMeta', 'Remove WP Meta tags' ); ?>
+    <field-set-with-checkbox
+        id="removeWPMeta"
+        :description="fieldData.removeWPMeta.description"
+        :hint="fieldData.removeWPMeta.hint"
+        :checked="options.removeWPMeta"
+    ></field-set-with-checkbox>
 
-    <p>The <code>&lt;meta&gt; name="generator" content="WordPress 4.9.8" /&gt;</code> type tags.</p>
+    <field-set-with-checkbox
+        id="removeWPLinks"
+        :description="fieldData.removeWPLinks.description"
+        :hint="fieldData.removeWPLinks.hint"
+        :checked="options.removeWPLinks"
+    ></field-set-with-checkbox>
 
-    <?php $tpl->displayCheckbox( $this, 'removeWPLinks', 'Remove WP &lt;link&gt; tags' ); ?>
+    <field-set-with-checkbox
+        id="removeHTMLComments"
+        :description="fieldData.removeHTMLComments.description"
+        :hint="fieldData.removeHTMLComments.hint"
+        :checked="options.removeHTMLComments"
+    ></field-set-with-checkbox>
 
-    <p>ie, <code>&lt;link& rel="EditURI"...</code> type tags that usually aren't needed.</p>
+    <field-set-with-checkbox
+        id="removeCanonical"
+        :description="fieldData.removeCanonical.description"
+        :hint="fieldData.removeCanonical.hint"
+        :checked="options.removeCanonical"
+    ></field-set-with-checkbox>
 
-    <?php $tpl->displayCheckbox( $this, 'removeHTMLComments', 'Remove HTML comments' ); ?>
-
-    <p>ie, <code>&lt;!-- / Yoast SEO plugin. --&gt;</code> type comments that are ridiculously wasting bytes</p>
-
-    <?php $tpl->displayCheckbox( $this, 'removeCanonical', 'Remove Canonical tags from pages (best left unchecked)' ); ?>
-
-    <p>Search engines use the canonical tag to identify how to index a page.  i.e domain.com/page/ and domain.com/page/index.html are 2 different URLs that represent the same page. This could trigger a duplicate content penalty.  The canonical tag tells the search engine that they are same page and they should be indexed as domain.com/page/</p>    
   </div>
 </section>
 
@@ -119,9 +132,14 @@
   </div>
 
   <div class="content">
-    <?php $tpl->displayCheckbox( $this, 'parse_css', 'Parse CSS files' ); ?>
 
-    <p>This will result in better exports, but will consume more memory on the server. Try disabling this if you're unable to complete your export and suspect it's running out of memory.</p>
+    <field-set-with-checkbox
+        id="parse_css"
+        :description="fieldData.parse_css.description"
+        :hint="fieldData.parse_css.hint"
+        :checked="options.parse_css"
+    ></field-set-with-checkbox>
+
   </div>
 </section>
 
@@ -132,17 +150,28 @@
   </div>
 
   <div class="content">
-    <?php $tpl->displayCheckbox( $this, 'createEmptyFavicon', 'Insert empty icon rel to prevent favicon requests', 'checked' ); ?>
 
-    <p>If you don't have a favicon for your site, block extra requests taking up speed</p>
+    <field-set-with-checkbox
+        id="createEmptyFavicon"
+        :description="fieldData.createEmptyFavicon.description"
+        :hint="fieldData.createEmptyFavicon.hint"
+        :checked="options.createEmptyFavicon"
+    ></field-set-with-checkbox>
 
-    <?php $tpl->displayCheckbox( $this, 'forceHTTPS', 'Force rewriting any http links to https', 'checked' ); ?>
+    <field-set-with-checkbox
+        id="forceHTTPS"
+        :description="fieldData.forceHTTPS.description"
+        :hint="fieldData.forceHTTPS.hint"
+        :checked="options.forceHTTPS"
+    ></field-set-with-checkbox>
 
-    <p>If you are left with a few remaining http protocol links in your exported site and are unable to fix in the original WordPress site, this option will force rewrite any links in the exported pages that start with http to https. Warning, this is a brute force approach and may alter texts on the page that should not be rewritten.</p>
+    <field-set-with-checkbox
+        id="forceRewriteSiteURLs"
+        :description="fieldData.forceRewriteSiteURLs.description"
+        :hint="fieldData.forceRewriteSiteURLs.hint"
+        :checked="options.forceRewriteSiteURLs"
+    ></field-set-with-checkbox>
 
-    <?php $tpl->displayCheckbox( $this, 'forceRewriteSiteURLs', 'Force rewriting any left-over Site URLs to your Destination URL', 'checked' ); ?>
-
-    <p>This is a last-resort method to rewrite any Site URLs that weren't able to be intelligently rewritten. This can be the case when the Site URL is within a custom HTML tag that WP2Static doesn't know how to handle, or within some inline CSS or JavaScript sections, for example.</p>
   </div>
 </section>
 

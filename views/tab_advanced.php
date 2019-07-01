@@ -7,7 +7,7 @@
 
   <div class="content">
     <select name="deployBatchSize" id="deployBatchSize">
-  
+
         <?php
         // TODO: shift this into helper function for select
         $increments = array( 1, 5, 10, 25, 50, 100, 500, 1000, 999999 );
@@ -26,8 +26,8 @@
    </div>
 </section>
 
-<section-with-checkbox 
-    :id="fieldData.displayDashboardWidget.id"
+<section-with-checkbox
+    id="displayDashboardWidget"
     :title="fieldData.displayDashboardWidget.title"
     :description="fieldData.displayDashboardWidget.description"
     :hint="fieldData.displayDashboardWidget.hint"

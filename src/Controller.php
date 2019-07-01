@@ -487,8 +487,15 @@ class Controller {
             JSON_FORCE_OBJECT | JSON_UNESCAPED_SLASHES
         );
 
+        $site_info = SiteInfo::getAllInfo();
+        $site_info['phpOutOfDate'] = PHP_VERSION < 7.2;
+        $site_info['uploadsWritable'] = SiteInfo::isUploadsWritable();
+        $site_info['curlSupported'] = SiteInfo::hasCURLSupport();
+        $site_info['permalinksDefined'] = SiteInfo::permalinksAreDefined();
+        $site_info['domDocumentAvailable'] = class_exists( 'DOMDocument' );
+
         $site_info = json_encode(
-            SiteInfo::getAllInfo(),
+            $site_info,
             JSON_FORCE_OBJECT | JSON_UNESCAPED_SLASHES
         );
 
@@ -511,11 +518,6 @@ class Controller {
             'currentDeploymentMethodProduction' =>
                 $current_deployment_method_production,
         );
-
-        // TODO: check which are only needed in JS and rm from func
-        $data['uploads_writable'] = SiteInfo::isUploadsWritable();
-        $data['curl_supported'] = SiteInfo::hasCURLSupport();
-        $data['permalinks_defined'] = SiteInfo::permalinksAreDefined();
 
         wp_localize_script( 'wp2static_admin_js', 'wp2staticString', $data );
         wp_enqueue_script( 'wp2static_admin_js' );
