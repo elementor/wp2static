@@ -13,7 +13,7 @@
        <li>Publicly accessible</li>
        <li>Local DNS resolution</li>
        <li>PHP max_execution_time</li>
-       <li>Writable uploads dir</li>
+       <li>Writable uploads dir <span v-if="siteInfo.uploadsWritable" class="dashicons dashicons-yes" style="color: #3ad23a;"></span></li>
     </ul>
 
   </div>

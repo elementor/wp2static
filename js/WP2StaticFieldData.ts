@@ -25,12 +25,13 @@ export class WP2StaticFieldData {
       hint: "Enable WP2Static dashboard widget",
       title: "Show deploy widget on WP dashboard",
     },
-    includeDiscoveredAssets: {
-      description: `As we crawl the site, force-include any static assets
- found within the page (images, fonts, css, etc). Must have a supported file
- extension to be included.`,
-      hint: "Include Discovered Assets",
-      title: "Include Discovered Assets",
+    forceHTTPS: {
+      description: `If you are left with a few remaining http protocol links
+ in your exported site and are unable to fix in the original WordPress site,
+ this option will force rewrite any links in the exported pages that start
+ with http to https. Warning, this is a brute force approach and may alter
+ texts on the page that should not be rewritten.`,
+      hint: "Force rewriting any http links to https",
     },
     forceRewriteSiteURLs: {
       description: `This is a last-resort method to rewrite any Site URLs that
@@ -39,19 +40,18 @@ export class WP2StaticFieldData {
  handle, or within some inline CSS or JavaScript sections, for example.`,
       hint: "Force rewriting any left-over Site URLs to your Destination URL",
     },
+    includeDiscoveredAssets: {
+      description: `As we crawl the site, force-include any static assets
+ found within the page (images, fonts, css, etc). Must have a supported file
+ extension to be included.`,
+      hint: "Include Discovered Assets",
+      title: "Include Discovered Assets",
+    },
     parse_css: {
       description: `This will result in better exports, but will consume
  more memory on the server. Try disabling this if you're unable to complete
  your export and suspect it's running out of memory.`,
       hint: "Parse CSS files",
-    },
-    forceHTTPS: {
-      description: `If you are left with a few remaining http protocol links
- in your exported site and are unable to fix in the original WordPress site,
- this option will force rewrite any links in the exported pages that start
- with http to https. Warning, this is a brute force approach and may alter
- texts on the page that should not be rewritten.`,
-      hint: "Force rewriting any http links to https",
     },
     redeployOnPostUpdates: {
       description: `With Crawl and Deploy Caches enabled, only the files
@@ -63,7 +63,7 @@ export class WP2StaticFieldData {
     removeCanonical: {
       description: `Search engines use the canonical tag to identify how to index a page.
  i.e domain.com/page/ and domain.com/page/index.html are 2 different URLs that represent the same page.
- This could trigger a duplicate content penalty. 
+ This could trigger a duplicate content penalty.
  The canonical tag tells the search engine that they are same page and they should be indexed
  as domain.com/page/`,
       hint: "Remove Canonical tags from pages (best left unchecked)",
@@ -78,14 +78,14 @@ export class WP2StaticFieldData {
  that are ridiculously wasting bytes`,
       hint: "Remove HTML comments",
     },
+    removeWPLinks: {
+      description: `ie, <code>&lt;link& rel="EditURI"...</code> type tags that usually aren't needed.`,
+      hint: "Remove WP &lt;link&gt; tags",
+    },
     removeWPMeta: {
       description: `The <code>&lt;meta&gt; name="generator"
  content="WordPress 4.9.8" /&gt;</code> type tags.`,
       hint: "Remove WP Meta tags",
-    },
-    removeWPLinks: {
-      description: `ie, <code>&lt;link& rel="EditURI"...</code> type tags that usually aren't needed.`,
-      hint: "Remove WP &lt;link&gt; tags",
     },
     useBasicAuth: {
       description: "",
