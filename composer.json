@@ -69,6 +69,7 @@
         "phpcbf": "vendor/bin/phpcbf --standard=./tools/phpcs.xml --ignore=*/js/*,*/tests/*,*/admin/*,*/coverage/*,*.js,*/node_modules/*,*/vendor/*,*/views/*.php ./",
         "phpunit": "vendor/bin/phpunit ./tests/unit/",
         "coverage": "vendor/bin/phpunit tests/unit --coverage-html coverage --whitelist src/",
+        "jest": "node_modules/tslint/bin/jest.js",
         "lint": "vendor/bin/parallel-lint --exclude vendor .",
         "tslint": "node_modules/tslint/bin/tslint js/*.ts",
         "tslintfix": "node_modules/tslint/bin/tslint --fix js/*.ts",
