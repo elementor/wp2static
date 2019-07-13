@@ -142,7 +142,7 @@ $tpl = new \WP2Static\TemplateHelper();
                 <div class="submit">
                     <!-- NOTE: removing extra nonce here, check why it was being used.. -->
                     <?php // wp_nonce_field( $view['onceAction'] ); ?>
-                  <button :disabled="progress" v-on:click="generateStaticSite" class="wp2static-btn blue">
+                  <button :disabled="progress" v-on:click="generateStaticSite" class="wp2static-btn blue" id="wp2staticGenerateButton">
                     <?php echo __( 'Generate', 'static-html-output-plugin' ); ?>
                   </button>
                   <button :disabled="progress" v-on:click="startExport" class="wp2static-btn blue">
