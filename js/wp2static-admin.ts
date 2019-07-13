@@ -206,18 +206,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function sendWP2StaticAJAX(ajaxAction: string, successCallback: any, failCallback: any) {
-      // TODO:  bind these
-      adminPage.hiddenActionField.value = "wp_static_html_output_ajax"
-      adminPage.hiddenAJAXAction.value = ajaxAction
+
       wp2staticGlobals.vueData.progress = true
 
       const optionsForm = document.getElementById("general-options")! as HTMLFormElement
+
+      let formData = new FormData(optionsForm)
+
+      formData.set('ajax_action', ajaxAction)
+
+      console.log(formData)
 
       const data = new URLSearchParams(
         // https://github.com/Microsoft/TypeScript/issues/30584
         // @ts-ignore
         // new FormData(optionsForm),
-        new FormData(adminPage.optionsForm),
+        formData,
       ).toString()
 
       const request = new XMLHttpRequest()

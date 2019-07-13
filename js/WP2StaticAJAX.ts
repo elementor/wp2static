@@ -51,13 +51,16 @@ export class WP2StaticAJAX {
 
         this.wp2staticGlobals.vueData.currentAction = this.wp2staticGlobals.statusText
 
-        this.adminPage.hiddenActionField.value = "wp_static_html_output_ajax"
-        this.adminPage.hiddenAJAXAction.value = exportAction
+        const optionsForm = document.getElementById("general-options")! as HTMLFormElement
+
+        let formData = new FormData(optionsForm)
+
+        formData.set('ajax_action', exportAction)
 
         const data = new URLSearchParams(
         // https://github.com/Microsoft/TypeScript/issues/30584
         // @ts-ignore
-          new FormData(this.adminPage.optionsForm),
+          formData,
         ).toString()
 
         const request = new XMLHttpRequest()

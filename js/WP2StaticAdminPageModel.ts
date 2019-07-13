@@ -12,8 +12,6 @@ export class WP2StaticAdminPageModel {
   public formProcessorWebsite: HTMLInputElement
   public goToDeployTabButton: HTMLElement
   public goToMyStaticSite: HTMLElement
-  public hiddenAJAXAction: HTMLInputElement
-  public hiddenActionField: HTMLInputElement
   public initialCrawlListCount: HTMLElement
   public initialCrawlListLoader: HTMLElement
   public navigationTabs: NodeListOf<Element>
@@ -47,8 +45,6 @@ export class WP2StaticAdminPageModel {
     this.formProcessorWebsite = document.getElementById("form_processor_website")! as HTMLInputElement
     this.goToDeployTabButton = document.getElementById("GoToDeployTabButton")!
     this.goToMyStaticSite = document.getElementById("goToMyStaticSite")!
-    this.hiddenAJAXAction = document.getElementById("hiddenAJAXAction")! as HTMLInputElement
-    this.hiddenActionField = document.getElementById("hiddenActionField")! as HTMLInputElement
     this.initialCrawlListCount = document.getElementById("initial_crawl_list_count")!
     this.initialCrawlListLoader = document.getElementById("initial_crawl_list_loader")!
     this.navigationTabs = document.querySelectorAll(".nav-tab")!
