@@ -60,6 +60,7 @@ $tpl = new \WP2Static\TemplateHelper();
             v-bind:key="tab.id"
             v-on:click.prevent="changeTab2"
             :tabid="tab.id"
+            :id="tab.id"
             class="nav-tab"
             v-bind:class="{ 'nav-tab-active': tab.id === currentTab }"
             href="#"
@@ -157,7 +158,12 @@ $tpl = new \WP2Static\TemplateHelper();
                   <button :disabled="progress" id="deployToProductionButton" class="wp2static-btn blue">
                     <?php echo __( 'Deploy to Production', 'static-html-output-plugin' ); ?>
                   </button>
-                  <button :disabled="progress" v-on:click="saveOptions" class="wp2static-btn">
+
+                  <button
+                    :disabled="progress"
+                    v-on:click="saveOptions"
+                    id="wp2staticSaveButton"
+                    class="wp2static-btn">
                     <?php echo __( 'Save Current Options', 'static-html-output-plugin' ); ?>
                   </button>
 

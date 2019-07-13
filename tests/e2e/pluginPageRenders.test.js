@@ -38,7 +38,6 @@ describe('Plugin page renders and filelist is generated', () => {
     await page.$eval('#wp2staticResetDefaultsButton', el => el.click());
 
     page.on("dialog", (dialog) => {
-      console.log("dialog");
       dialog.accept();
     });
 
@@ -52,8 +51,29 @@ describe('Plugin page renders and filelist is generated', () => {
     // check staging deploy method reset to folder
     const stagingDeployMethod = await page.evaluate(() => document.querySelector('#deploymentMethodStaging').innerText);
 
+    await expect(stagingDeployMethod).toMatch('Deployment Method folder');
+  });
+
+  it('Set staging deploy method to "zip" and saving persists', async () => {
+    await page.$eval('#staging_deploy', el => el.click());
+    await page.select('#selected_deployment_method', 'zip')
+
     // await page.screenshot({path: 'screenshot.png'}); // DEBUG
 
-    await expect(stagingDeployMethod).toMatch('Deployment Method folder');
+    await page.$eval('#wp2staticSaveButton', el => el.click());
+
+    await browser.newPage();
+
+    // wait for filelist preview to complete:
+    await page.waitForFunction(
+      `document.querySelector('#current_action').innerHTML.includes('URLs were detected')`
+    );
+
+    // check staging deploy method reset to folder
+    const stagingDeployMethod = await page.evaluate(() => document.querySelector('#deploymentMethodStaging').innerText);
+
+    // await page.screenshot({path: 'screenshot.png'}); // DEBUG
+
+    await expect(stagingDeployMethod).toMatch('Deployment Method zip');
   });
 });
