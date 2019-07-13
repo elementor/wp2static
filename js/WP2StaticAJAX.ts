@@ -53,9 +53,10 @@ export class WP2StaticAJAX {
 
         const optionsForm = document.getElementById("general-options")! as HTMLFormElement
 
-        let formData = new FormData(optionsForm)
+        const formData = new FormData(optionsForm)
 
-        formData.set('ajax_action', exportAction)
+        formData.set("ajax_action", exportAction)
+        formData.set("action", "wp_static_html_output_ajax")
 
         const data = new URLSearchParams(
         // https://github.com/Microsoft/TypeScript/issues/30584

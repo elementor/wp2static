@@ -55,6 +55,13 @@ class Controller {
     public static function init( string $bootstrap_file ) : Controller {
         $instance = self::getInstance();
 
+        $ajax_action = filter_input( INPUT_POST, 'ajax_action' );
+
+        // TODO: non-AJAX methods to use different signature
+        if ( $ajax_action === 'reset_default_settings' ) {
+            $instance->reset_default_settings();
+        }
+
         register_activation_hook(
             $bootstrap_file,
             array( $instance, 'activate' )
@@ -196,6 +203,8 @@ class Controller {
             ->setOption( 'static_export_settings', self::VERSION )
             // set default options
             ->setOption( 'rewriteWPPaths', '1' )
+            ->setOption( 'selected_deployment_option', 'folder' )
+            ->setOption( 'selected_deployment_option_production', 'folder' )
             ->setOption( 'removeConditionalHeadComments', '1' )
             ->setOption( 'removeWPMeta', '1' )
             ->setOption( 'dontUseCrawlCaching', '1' )
@@ -605,8 +614,6 @@ class Controller {
 
         $this->options = new Options( self::OPTIONS_KEY );
         $this->setDefaultOptions();
-
-        echo 'SUCCESS';
     }
 
     public function post_process_archive_dir() : void {

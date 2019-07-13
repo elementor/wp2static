@@ -173,7 +173,7 @@ $tpl = new \WP2Static\TemplateHelper();
                     <?php echo __( 'Reset to Default Settings', 'static-html-output-plugin' ); ?>
                   </button>
 
-                  <button v-if="progress" v-on:click="cancelExport" class="wp2static-btn orange">
+                  <button v-if="progress" v-on:click="cancelExport" class="wp2static-btn orange" id="wp2staticCancelButton">
                     <?php echo __( 'Cancel Export', 'static-html-output-plugin' ); ?>
                   </button>
 

@@ -6,7 +6,7 @@
   </div>
 
   <div class="content">
-    <select id="selected_deployment_method" name="selected_deployment_option">
+    <select id="selected_deployment_method" name="selected_deployment_option" v-model="currentDeploymentMethod">
         <?php generateDeploymentMethodOptions(); ?>
     </select>
    </div>

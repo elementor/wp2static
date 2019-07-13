@@ -1,6 +1,7 @@
+const querystring = require('querystring')
+
 describe('Plugin page renders and filelist is generated', () => {
   beforeAll(async () => {
-    // change timeout to 10 seconds
     jest.setTimeout(10000);
 
     await page.setViewport({
@@ -35,30 +36,20 @@ describe('Plugin page renders and filelist is generated', () => {
   });
 
   it('Resetting default settings sets staging deploy method to "folder"', async () => {
-    await page.$eval('#wp2staticResetDefaultsButton', el => el.click());
-
-    page.on("dialog", (dialog) => {
-      dialog.accept();
-    });
-
-    await browser.newPage();
-
-    // wait for filelist preview to complete:
-    await page.waitForFunction(
-      `document.querySelector('#current_action').innerHTML.includes('URLs were detected')`
-    );
+    const navigationPromise =  page.waitForNavigation({ waitUntil: 'load' })
+    await page.$eval('#wp2staticResetDefaultsButton', el => el.click())
+    await navigationPromise
 
     // check staging deploy method reset to folder
-    const stagingDeployMethod = await page.evaluate(() => document.querySelector('#deploymentMethodStaging').innerText);
+    const stagingDeployMethod2 =
+      await page.evaluate(() => document.querySelector('#deploymentMethodStaging').innerText);
 
-    await expect(stagingDeployMethod).toMatch('Deployment Method folder');
+    await expect(stagingDeployMethod2).toMatch('Deployment Method folder');
   });
 
   it('Set staging deploy method to "zip" and saving persists', async () => {
     await page.$eval('#staging_deploy', el => el.click());
     await page.select('#selected_deployment_method', 'zip')
-
-    // await page.screenshot({path: 'screenshot.png'}); // DEBUG
 
     await page.$eval('#wp2staticSaveButton', el => el.click());
 
@@ -69,10 +60,7 @@ describe('Plugin page renders and filelist is generated', () => {
       `document.querySelector('#current_action').innerHTML.includes('URLs were detected')`
     );
 
-    // check staging deploy method reset to folder
     const stagingDeployMethod = await page.evaluate(() => document.querySelector('#deploymentMethodStaging').innerText);
-
-    // await page.screenshot({path: 'screenshot.png'}); // DEBUG
 
     await expect(stagingDeployMethod).toMatch('Deployment Method zip');
   });

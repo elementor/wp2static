@@ -26,6 +26,12 @@ document.addEventListener("DOMContentLoaded", () => {
     wp2staticGlobals.vueData.options = JSON.parse(wp2staticString.options)
     wp2staticGlobals.vueData.siteInfo = JSON.parse(wp2staticString.siteInfo)
 
+    // map some values from server-side received options
+    // TODO: reduce transform with better naming of options
+    wp2staticGlobals.vueData.currentDeploymentMethod = wp2staticGlobals.vueData.options.selected_deployment_option
+    wp2staticGlobals.vueData.currentDeploymentMethodProduction =
+      wp2staticGlobals.vueData.options.selected_deployment_option_production
+
     const detectionCheckbox: DetectionCheckbox = new DetectionCheckbox(wp2staticGlobals)
     const fieldSetWithCheckbox: FieldSetWithCheckbox = new FieldSetWithCheckbox(wp2staticGlobals)
     const sectionWithCheckbox: SectionWithCheckbox = new SectionWithCheckbox(wp2staticGlobals)
@@ -40,10 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
       el: "#vueApp",
       methods: {
         cancelExport: (event: any) => {
-          const reallyCancel = confirm("Stop current export and reload page?")
-          if (reallyCancel) {
-            window.location.href = window.location.href
-          }
+          window.location.href = window.location.href
         },
         changeTab: (targetTab: string) => {
           wp2staticGlobals.vueData.currentTab = targetTab
@@ -111,11 +114,17 @@ document.addEventListener("DOMContentLoaded", () => {
           )
         },
         resetDefaults: (event: any) => {
-          sendWP2StaticAJAX(
-            "reset_default_settings",
-            resetDefaultSettingsSuccessCallback,
-            resetDefaultSettingsFailCallback,
-          )
+          // TODO: set form data
+
+          const form = document.getElementById("general-options")! as HTMLFormElement
+
+          const ajaxActionField = document.createElement("input")
+          ajaxActionField.type = "hidden"
+          ajaxActionField.name = "ajax_action"
+          ajaxActionField.value = "reset_default_settings"
+          form.appendChild(ajaxActionField)
+
+          form.submit()
         },
         saveOptions: (event: any) => {
           sendWP2StaticAJAX(
@@ -123,6 +132,9 @@ document.addEventListener("DOMContentLoaded", () => {
             saveOptionsSuccessCallback,
             saveOptionsFailCallback,
           )
+        },
+        stagingChangeMethod: (event: any) => {
+          wp2staticGlobals.vueData.currentDeploymentMethod = event.target.value
         },
         startExport: (event: any) => {
           // set hidden baseUrl to staging current deploy method's Destination URL
@@ -144,11 +156,11 @@ document.addEventListener("DOMContentLoaded", () => {
           // reset export targets to avoid having left-overs from a failed run
           wp2staticGlobals.exportTargets = []
 
-          if (wp2staticGlobals.currentDeploymentMethod === "zip") {
+          if (wp2staticGlobals.vueData.currentDeploymentMethod === "zip") {
             adminPage.createZip.setAttribute("checked", "")
           }
 
-          wp2staticGlobals.exportTargets.push(wp2staticGlobals.currentDeploymentMethod)
+          wp2staticGlobals.exportTargets.push(wp2staticGlobals.vueData.currentDeploymentMethod)
 
           sendWP2StaticAJAX(
             "prepare_for_export",
@@ -211,11 +223,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const optionsForm = document.getElementById("general-options")! as HTMLFormElement
 
-      let formData = new FormData(optionsForm)
+      const formData = new FormData(optionsForm)
 
-      formData.set('ajax_action', ajaxAction)
-
-      console.log(formData)
+      formData.set("ajax_action", ajaxAction)
+      formData.set("action", "wp_static_html_output_ajax")
 
       const data = new URLSearchParams(
         // https://github.com/Microsoft/TypeScript/issues/30584
@@ -296,13 +307,13 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const requiredFields =
-            wp2staticGlobals.deployOptions[wp2staticGlobals.currentDeploymentMethod].requiredFields
+            wp2staticGlobals.deployOptions[wp2staticGlobals.vueData.currentDeploymentMethod].requiredFields
 
       if (requiredFields) {
         validateEmptyFields(requiredFields)
       }
 
-      const repoField = wp2staticGlobals.deployOptions[wp2staticGlobals.currentDeploymentMethod].repoField
+      const repoField = wp2staticGlobals.deployOptions[wp2staticGlobals.vueData.currentDeploymentMethod].repoField
 
       if (repoField) {
         validateRepoField(repoField)
@@ -426,15 +437,6 @@ document.addEventListener("DOMContentLoaded", () => {
       alert("Failed to send support request. Please try again or contact help@wp2static.com.")
     }
 
-    function resetDefaultSettingsSuccessCallback(event: any) {
-      alert("Settings have been reset to default, the page will now be reloaded.")
-      window.location.reload(true)
-    }
-
-    function resetDefaultSettingsFailCallback(event: any) {
-      alert("Error encountered in trying to reset settings. Please try refreshing the page.")
-    }
-
     function deleteDeployCacheSuccessCallback(event: any) {
       if (event.target.response === "SUCCESS") {
         alert("Deploy cache cleared")
@@ -455,14 +457,14 @@ document.addEventListener("DOMContentLoaded", () => {
       if (event.target.response === "SUCCESS") {
         alert("Connection/Upload Test Successful")
       } else {
-        alert("FAIL: Unable to complete test upload to " + wp2staticGlobals.currentDeploymentMethod)
+        alert("FAIL: Unable to complete test upload to " + wp2staticGlobals.vueData.currentDeploymentMethod)
       }
 
       wp2staticGlobals.vueData.progress = false
     }
 
     function testDeploymentFailCallback(event: any) {
-      alert("FAIL: Unable to complete test upload to " + wp2staticGlobals.currentDeploymentMethod)
+      alert("FAIL: Unable to complete test upload to " + wp2staticGlobals.vueData.currentDeploymentMethod)
       wp2staticGlobals.vueData.progress = false
     }
 
@@ -470,7 +472,7 @@ document.addEventListener("DOMContentLoaded", () => {
     //   need one within each add-on's JS code
 
     // TODO: set both destinationUrl and destinationUrlProduction and show in summary
-    // bind to "baseUrl-" + wp2staticGlobals.currentDeploymentMethod
+    // bind to "baseUrl-" + wp2staticGlobals.vueData.currentDeploymentMethod
 
     // hide all but WP2Static messages
     hideOtherVendorMessages()
