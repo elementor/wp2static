@@ -2,6 +2,13 @@ describe('Plugin page renders and filelist is generated', () => {
   beforeAll(async () => {
     // change timeout to 10 seconds
     jest.setTimeout(10000);
+
+    await page.setViewport({
+      width: 1920,
+      height: 1080,
+      deviceScaleFactor: 1,
+    });
+
     await page.goto('http://localhost:81/wp-login.php');
     await page.type('#user_login', 'admin');
     await page.type('#user_pass', 'banana');
@@ -25,5 +32,28 @@ describe('Plugin page renders and filelist is generated', () => {
     const is_disabled = await page.evaluate(() => document.querySelector('#wp2staticGenerateButton[disabled]') !== null);
 
     await expect(is_disabled).toBeFalsy();
+  });
+
+  it('Resetting default settings sets staging deploy method to "folder"', async () => {
+    await page.$eval('#wp2staticResetDefaultsButton', el => el.click());
+
+    page.on("dialog", (dialog) => {
+      console.log("dialog");
+      dialog.accept();
+    });
+
+    await browser.newPage();
+
+    // wait for filelist preview to complete:
+    await page.waitForFunction(
+      `document.querySelector('#current_action').innerHTML.includes('URLs were detected')`
+    );
+
+    // check staging deploy method reset to folder
+    const stagingDeployMethod = await page.evaluate(() => document.querySelector('#deploymentMethodStaging').innerText);
+
+    // await page.screenshot({path: 'screenshot.png'}); // DEBUG
+
+    await expect(stagingDeployMethod).toMatch('Deployment Method folder');
   });
 });

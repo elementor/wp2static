@@ -26,7 +26,7 @@
 
     <h3>Deployment summary</h3>
     <ul>
-       <li><b>Deployment Method</b> {{ currentDeploymentMethod }}</li>
+       <li id="deploymentMethodStaging"><b>Deployment Method</b> {{ currentDeploymentMethod }}</li>
        <li><b>Destination URL</b> {{ baseUrl }}</li>
     </ul>
   </div>

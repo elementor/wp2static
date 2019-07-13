@@ -142,9 +142,15 @@ $tpl = new \WP2Static\TemplateHelper();
                 <div class="submit">
                     <!-- NOTE: removing extra nonce here, check why it was being used.. -->
                     <?php // wp_nonce_field( $view['onceAction'] ); ?>
-                  <button :disabled="progress" v-on:click="generateStaticSite" class="wp2static-btn blue" id="wp2staticGenerateButton">
+
+                  <button
+                    :disabled="progress"
+                    v-on:click="generateStaticSite"
+                    class="wp2static-btn blue"
+                    id="wp2staticGenerateButton">
                     <?php echo __( 'Generate', 'static-html-output-plugin' ); ?>
                   </button>
+
                   <button :disabled="progress" v-on:click="startExport" class="wp2static-btn blue">
                     <?php echo __( 'Deploy to Staging', 'static-html-output-plugin' ); ?>
                   </button>
@@ -154,9 +160,15 @@ $tpl = new \WP2Static\TemplateHelper();
                   <button :disabled="progress" v-on:click="saveOptions" class="wp2static-btn">
                     <?php echo __( 'Save Current Options', 'static-html-output-plugin' ); ?>
                   </button>
-                  <button :disabled="progress" v-on:click="resetDefaults" class="wp2static-btn">
+
+                  <button
+                    :disabled="progress"
+                    v-on:click="resetDefaults"
+                    class="wp2static-btn"
+                    id="wp2staticResetDefaultsButton">
                     <?php echo __( 'Reset to Default Settings', 'static-html-output-plugin' ); ?>
                   </button>
+
                   <button v-if="progress" v-on:click="cancelExport" class="wp2static-btn orange">
                     <?php echo __( 'Cancel Export', 'static-html-output-plugin' ); ?>
                   </button>
