@@ -77,9 +77,9 @@ jobs:
           command: |
             jest
           environment:
-            - WP2STATIC_E2E_TEST_URL="http://127.0.0.1"
-            - WP2STATIC_E2E_TEST_USER=admin
-            - WP2STATIC_E2E_TEST_PASS=banana
+            WP2STATIC_E2E_TEST_URL: "http://127.0.0.1"
+            WP2STATIC_E2E_TEST_USER: admin
+            WP2STATIC_E2E_TEST_PASS: banana
 
 workflows:
   version: 2
