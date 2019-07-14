@@ -14,6 +14,7 @@ jobs:
           command: |
             echo "memory_limit = 512M" | sudo -E tee --append /usr/local/etc/php/conf.d/docker-php-memory.ini
             sudo apt install -y mariadb-client wget curl
+            sudo docker-php-ext-install mysqli
       - run:
           name: Install node modules
           command: |
@@ -27,7 +28,6 @@ jobs:
           name: setup WordPress site for E2E tests
           command: |
               pwd # /home/circleci/project/
-              mkdir wordpress
 
               sudo cp /home/circleci/project/.circleci/apache.conf /etc/apache2/sites-available/wp2static.conf
               sudo a2ensite wp2static.conf
@@ -50,8 +50,6 @@ jobs:
               cp -r $CIRCLE_WORKING_DIRECTORY wordpress/wp-content/plugins/static-html-output-plugin
 
               ./wp-cli.phar plugin activate static-html-output-plugin --path=wordpress
-
-              curl http://127.0.0.1
 
 workflows:
   version: 2
