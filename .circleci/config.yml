@@ -2,26 +2,18 @@ version: 2
 jobs:
   code-quality-and-unit-tests:
     docker:
+      # Stretch
       - image: circleci/php:7.2-apache-node-browsers-legacy
-        environment:
-          - DB_HOST=127.0.0.1
-          - DB_PORT=3306
-          - DB_DATABASE=circleci
-          - DB_USERNAME=circleci
-          - DB_PASSWORD=circleci
-      - image: circleci/mysql:5.6.39-ram
+      - image: circleci/mariadb:latest
         environment:
           - MYSQL_ROOT_PASSWORD=circleci
-          - MYSQL_DATABASE=circleci
-          - MYSQL_USER=circleci
-          - MYSQL_PASSWORD=circleci
     steps:
       - checkout
       - run:
           name: Dependencies
           command: |
             echo "memory_limit = 512M" | sudo -E tee --append /usr/local/etc/php/conf.d/docker-php-memory.ini
-            sudo apt install -y mysql-client
+            sudo apt install -y mariadb-client
       - run:
           name: Install node modules
           command: |
