@@ -26,6 +26,7 @@ jobs:
       - run:
           name: setup WordPress site for E2E tests
           command: |
+              pwd
               mysql -u root -pcircleci -h 127.0.0.1 -e "create database wordpress"
 
               curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
