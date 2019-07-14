@@ -19,7 +19,7 @@ describe('Plugin page renders and filelist is generated', () => {
     await page.type('#user_pass', testServerPass);
     await page.click('#wp-submit');
 
-    await page.goto('http://localhost:81/wp-admin/admin.php?page=wp2static');
+    await page.goto(testServerUrl + '/wp-admin/admin.php?page=wp2static');
     await browser.newPage();
 
     // wait for filelist preview to complete:
