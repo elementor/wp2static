@@ -27,6 +27,8 @@ jobs:
           name: setup WordPress site for E2E tests
           command: |
               pwd # /home/circleci/project/
+              ls -la
+              ls -la tools
               mkdir wordpress
               echo 'hello wordpress' > wordpress/test.html
 
