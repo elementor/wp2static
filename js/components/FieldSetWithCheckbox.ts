@@ -18,7 +18,7 @@ export class FieldSetWithCheckbox {
 
           const checked: boolean = element.checked
 
-          this.wp2staticGlobals.vueData.options[id] = checked
+          this.wp2staticGlobals.vueData[id] = checked
         },
       },
       props: [

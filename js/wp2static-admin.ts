@@ -7,6 +7,7 @@ import { SectionWithCheckbox } from "./components/SectionWithCheckbox"
 import { WP2StaticAdminPageModel } from "./WP2StaticAdminPageModel"
 import { WP2StaticAJAX } from "./WP2StaticAJAX"
 import { WP2StaticGlobals } from "./WP2StaticGlobals"
+import { WP2StaticOptions } from "./WP2StaticOptions"
 import { WP2StaticViewData } from "./WP2StaticViewData"
 
 // allow Add-Ons to write to WP2Static.wp2staticGlobals
@@ -23,20 +24,19 @@ document.addEventListener("DOMContentLoaded", () => {
     wp2staticGlobals.adminPage = adminPage
 
     wp2staticGlobals.vueData = new WP2StaticViewData()
-    wp2staticGlobals.vueData.options = JSON.parse(wp2staticString.options)
     wp2staticGlobals.vueData.siteInfo = JSON.parse(wp2staticString.siteInfo)
 
-    // map some values from server-side received options
-    // TODO: reduce transform with better naming of options
-    wp2staticGlobals.vueData.currentDeploymentMethod = wp2staticGlobals.vueData.options.selected_deployment_option
-    wp2staticGlobals.vueData.currentDeploymentMethodProduction =
-      wp2staticGlobals.vueData.options.selected_deployment_option_production
+    // load options from DB which have been rendered into wp2staticString
+    const wp2staticOptions = new WP2StaticOptions(wp2staticString.options)
+
+    // merge DB options into vueData
+    Object.assign(wp2staticGlobals.vueData, wp2staticOptions)
 
     wp2staticGlobals.vueData.baseUrl =
-      wp2staticGlobals.vueData.options['baseUrl-' + wp2staticGlobals.vueData.currentDeploymentMethod]
+      wp2staticGlobals.vueData['baseUrl' + wp2staticGlobals.vueData.currentDeploymentMethod]
 
     wp2staticGlobals.vueData.baseUrlProduction =
-      wp2staticGlobals.vueData.options['baseUrlProduction-' + wp2staticGlobals.vueData.currentDeploymentMethodProduction]
+      wp2staticGlobals.vueData['baseUrlProduction' + wp2staticGlobals.vueData.currentDeploymentMethodProduction]
 
     const detectionCheckbox: DetectionCheckbox = new DetectionCheckbox(wp2staticGlobals)
     const fieldSetWithCheckbox: FieldSetWithCheckbox = new FieldSetWithCheckbox(wp2staticGlobals)
@@ -224,22 +224,25 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function sendWP2StaticAJAX(ajaxAction: string, successCallback: any, failCallback: any) {
-
       wp2staticGlobals.vueData.progress = true
 
       const optionsForm = document.getElementById("general-options")! as HTMLFormElement
-
       const formData = new FormData(optionsForm)
 
       formData.set("ajax_action", ajaxAction)
       formData.set("action", "wp_static_html_output_ajax")
 
-      const data = new URLSearchParams(
+      const searchParams = new URLSearchParams(
         // https://github.com/Microsoft/TypeScript/issues/30584
         // @ts-ignore
         // new FormData(optionsForm),
         formData,
-      ).toString()
+      )
+
+      // sort searchParams for easier debugging
+      searchParams.sort()
+
+      const data = searchParams.toString()
 
       const request = new XMLHttpRequest()
       request.open("POST", ajaxurl, true)
@@ -476,9 +479,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // TODO: reimplement handlers for all test_deploy method buttons
     //   need one within each add-on's JS code
-
-    // TODO: set both destinationUrl and destinationUrlProduction and show in summary
-    // bind to "baseUrl-" + wp2staticGlobals.vueData.currentDeploymentMethod
 
     // hide all but WP2Static messages
     hideOtherVendorMessages()

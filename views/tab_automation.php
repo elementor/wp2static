@@ -5,7 +5,7 @@
         :title="fieldData.redeployOnPostUpdates.title"
         :description="fieldData.redeployOnPostUpdates.description"
         :hint="fieldData.redeployOnPostUpdates.hint"
-        :checked="options.redeployOnPostUpdates">
+        :checked="redeployOnPostUpdates">
     </section-with-checkbox>
 
     <section-with-checkbox
@@ -13,7 +13,7 @@
         :title="fieldData.completionEmail.title"
         :description="fieldData.completionEmail.description"
         :hint="fieldData.completionEmail.hint"
-        :checked="options.completionEmail">
+        :checked="completionEmail">
     </section-with-checkbox>
 
     <section class="wp2static-content wp2static-flex">

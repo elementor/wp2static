@@ -31,7 +31,7 @@
     :title="fieldData.displayDashboardWidget.title"
     :description="fieldData.displayDashboardWidget.description"
     :hint="fieldData.displayDashboardWidget.hint"
-    :checked="options.displayDashboardWidget"
+    :checked="displayDashboardWidget"
 ></section-with-checkbox>
 
 

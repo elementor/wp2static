@@ -5,7 +5,7 @@
     :title="fieldData.includeDiscoveredAssets.title"
     :description="fieldData.includeDiscoveredAssets.description"
     :hint="fieldData.includeDiscoveredAssets.hint"
-    :checked="options.includeDiscoveredAssets"
+    :checked="includeDiscoveredAssets"
 ></section-with-checkbox>
 
 <section-with-checkbox
@@ -13,7 +13,7 @@
     :title="fieldData.useBasicAuth.title"
     :description="fieldData.useBasicAuth.description"
     :hint="fieldData.useBasicAuth.hint"
-    :checked="options.useBasicAuth"
+    :checked="useBasicAuth"
 ></section-with-checkbox>
 
 <section class="wp2static-content wp2static-flex no-tb-bs pd-top0">

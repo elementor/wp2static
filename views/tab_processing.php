@@ -5,7 +5,7 @@
     :title="fieldData.useDocumentRelativeURLs.title"
     :description="fieldData.useDocumentRelativeURLs.description"
     :hint="fieldData.useDocumentRelativeURLs.hint"
-    :checked="options.useDocumentRelativeURLs"
+    :checked="useDocumentRelativeURLs"
 ></section-with-checkbox>
 
 <section-with-checkbox
@@ -13,7 +13,7 @@
     :title="fieldData.useSiteRootRelativeURLs.title"
     :description="fieldData.useSiteRootRelativeURLs.description"
     :hint="fieldData.useSiteRootRelativeURLs.hint"
-    :checked="options.useSiteRootRelativeURLs"
+    :checked="useSiteRootRelativeURLs"
 ></section-with-checkbox>
 
 <section-with-checkbox
@@ -21,7 +21,7 @@
     :title="fieldData.allowOfflineUsage.title"
     :description="fieldData.allowOfflineUsage.description"
     :hint="fieldData.allowOfflineUsage.hint"
-    :checked="options.allowOfflineUsage"
+    :checked="allowOfflineUsage"
 ></section-with-checkbox>
 
 <section class="wp2static-content wp2static-flex">
@@ -92,35 +92,35 @@
         id="removeConditionalHeadComments"
         :description="fieldData.removeConditionalHeadComments.description"
         :hint="fieldData.removeConditionalHeadComments.hint"
-        :checked="options.removeConditionalHeadComments"
+        :checked="removeConditionalHeadComments"
     ></field-set-with-checkbox>
 
     <field-set-with-checkbox
         id="removeWPMeta"
         :description="fieldData.removeWPMeta.description"
         :hint="fieldData.removeWPMeta.hint"
-        :checked="options.removeWPMeta"
+        :checked="removeWPMeta"
     ></field-set-with-checkbox>
 
     <field-set-with-checkbox
         id="removeWPLinks"
         :description="fieldData.removeWPLinks.description"
         :hint="fieldData.removeWPLinks.hint"
-        :checked="options.removeWPLinks"
+        :checked="removeWPLinks"
     ></field-set-with-checkbox>
 
     <field-set-with-checkbox
         id="removeHTMLComments"
         :description="fieldData.removeHTMLComments.description"
         :hint="fieldData.removeHTMLComments.hint"
-        :checked="options.removeHTMLComments"
+        :checked="removeHTMLComments"
     ></field-set-with-checkbox>
 
     <field-set-with-checkbox
         id="removeCanonical"
         :description="fieldData.removeCanonical.description"
         :hint="fieldData.removeCanonical.hint"
-        :checked="options.removeCanonical"
+        :checked="removeCanonical"
     ></field-set-with-checkbox>
 
   </div>
@@ -137,7 +137,7 @@
         id="parse_css"
         :description="fieldData.parse_css.description"
         :hint="fieldData.parse_css.hint"
-        :checked="options.parse_css"
+        :checked="parse_css"
     ></field-set-with-checkbox>
 
   </div>
@@ -155,21 +155,21 @@
         id="createEmptyFavicon"
         :description="fieldData.createEmptyFavicon.description"
         :hint="fieldData.createEmptyFavicon.hint"
-        :checked="options.createEmptyFavicon"
+        :checked="createEmptyFavicon"
     ></field-set-with-checkbox>
 
     <field-set-with-checkbox
         id="forceHTTPS"
         :description="fieldData.forceHTTPS.description"
         :hint="fieldData.forceHTTPS.hint"
-        :checked="options.forceHTTPS"
+        :checked="forceHTTPS"
     ></field-set-with-checkbox>
 
     <field-set-with-checkbox
         id="forceRewriteSiteURLs"
         :description="fieldData.forceRewriteSiteURLs.description"
         :hint="fieldData.forceRewriteSiteURLs.hint"
-        :checked="options.forceRewriteSiteURLs"
+        :checked="forceRewriteSiteURLs"
     ></field-set-with-checkbox>
 
   </div>

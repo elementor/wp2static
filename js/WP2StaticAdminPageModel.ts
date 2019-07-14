@@ -17,8 +17,6 @@ export class WP2StaticAdminPageModel {
   public navigationTabs: NodeListOf<Element>
   public optionsForm: HTMLFormElement
   public previewInitialCrawlListButton: HTMLElement
-  public selectedDeploymentMethod: HTMLSelectElement
-  public selectedDeploymentMethodProduction: HTMLSelectElement
   public sendSupportRequestButton: HTMLElement
   public sendSupportRequestContent: HTMLInputElement
   public sendSupportRequestEmail: HTMLInputElement
@@ -35,7 +33,7 @@ export class WP2StaticAdminPageModel {
   constructor() {
     this.allowOfflineUsage = document.getElementById("allowOfflineUsage")! as HTMLInputElement
     this.baseUrl = document.getElementById("baseUrl")! as HTMLInputElement
-    this.baseUrlZip = document.getElementById("baseUrl-zip")! as HTMLInputElement
+    this.baseUrlZip = document.getElementById("baseUrlzip")! as HTMLInputElement
     this.createZip = document.getElementById("createZip")!
     this.downloadZIP = document.getElementById("downloadZIP")!
     this.exportDuration = document.getElementById("exportDuration")!
@@ -50,9 +48,6 @@ export class WP2StaticAdminPageModel {
     this.navigationTabs = document.querySelectorAll(".nav-tab")!
     this.optionsForm = document.getElementById("general-options")! as HTMLFormElement
     this.previewInitialCrawlListButton = document.getElementById("preview_initial_crawl_list_button")!
-    this.selectedDeploymentMethod = document.getElementById("selected_deployment_method")! as HTMLSelectElement
-    this.selectedDeploymentMethodProduction =
-      document.getElementById("selected_deployment_method_production")! as HTMLSelectElement
     this.sendSupportRequestButton = document.getElementById("send_support_request")! as HTMLInputElement
     this.sendSupportRequestContent = document.getElementById("supportRequestContent")! as HTMLInputElement
     this.sendSupportRequestEmail = document.getElementById("supportRequestEmail")! as HTMLInputElement

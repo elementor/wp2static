@@ -123,7 +123,7 @@ class CLI {
      * [--test]
      * : Validate the connection settings without deploying
      *
-     * [--selected_deployment_option]
+     * [--currentDeploymentMethod]
      * : Override the deployment option
      *
      * @param string[] $args CLI args
@@ -139,8 +139,8 @@ class CLI {
             $test = true;
         }
 
-        if ( ! empty( $assoc_args['selected_deployment_option'] ) ) {
-            switch ( $assoc_args['selected_deployment_option'] ) {
+        if ( ! empty( $assoc_args['currentDeploymentMethod'] ) ) {
+            switch ( $assoc_args['currentDeploymentMethod'] ) {
                 case 'zip':
                     break;
             }
@@ -181,7 +181,7 @@ class CLI {
      *
      * Get option
      *
-     *     wp wp2static options get selected_deployment_option
+     *     wp wp2static options get currentDeploymentMethod
      *
      * Set option
      *

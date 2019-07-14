@@ -5,8 +5,6 @@ export class WP2StaticViewData {
 
   public viewData: any = {
     currentAction: "Starting export...",
-    currentDeploymentMethod: "folder",
-    currentDeploymentMethodProduction: "folder",
     currentTab: "workflow_tab",
     // TODO: move detectionCheckboxes to fieldData, get :checked from options id lookup
     detectionCheckboxes: [

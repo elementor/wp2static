@@ -203,8 +203,8 @@ class Controller {
             ->setOption( 'static_export_settings', self::VERSION )
             // set default options
             ->setOption( 'rewriteWPPaths', '1' )
-            ->setOption( 'selected_deployment_option', 'folder' )
-            ->setOption( 'selected_deployment_option_production', 'folder' )
+            ->setOption( 'currentDeploymentMethod', 'folder' )
+            ->setOption( 'currentDeploymentMethodProduction', 'folder' )
             ->setOption( 'removeConditionalHeadComments', '1' )
             ->setOption( 'removeWPMeta', '1' )
             ->setOption( 'dontUseCrawlCaching', '1' )
@@ -508,24 +508,12 @@ class Controller {
             JSON_FORCE_OBJECT | JSON_UNESCAPED_SLASHES
         );
 
-        $current_deployment_method =
-            $plugin->options->selected_deployment_option ?
-            $plugin->options->selected_deployment_option :
-            'folder';
-
-        $current_deployment_method_production =
-            $plugin->options->selected_deployment_option_production ?
-            $plugin->options->selected_deployment_option_production :
-            'folder';
-
         $data = array(
+            // TODO: pass translatable strings
             'someString' => __( 'Some string to translate', 'plugin-domain' ),
             'options' => $options,
             'siteInfo' => $site_info,
             'onceAction' => self::HOOK . '-options',
-            'currentDeploymentMethod' => $current_deployment_method,
-            'currentDeploymentMethodProduction' =>
-                $current_deployment_method_production,
         );
 
         wp_localize_script( 'wp2static_admin_js', 'wp2staticString', $data );
@@ -600,16 +588,10 @@ class Controller {
         }
     }
 
-    /**
-     * Reset all plugin options to defaults
-     *
-     * @throws WP2StaticException
-     */
     public function reset_default_settings() : void {
         if ( ! delete_option( 'wp2static-options' ) ) {
             $err = 'Couldn\'t reset plugin to default settings';
             WsLog::l( $err );
-            throw new WP2StaticException( $err );
         }
 
         $this->options = new Options( self::OPTIONS_KEY );

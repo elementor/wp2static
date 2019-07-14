@@ -19,7 +19,7 @@ class Deployer {
               None of this expected to work currently
     */
     public function deploy( bool $test = false ) : void {
-        $method = $this->settings['selected_deployment_option'];
+        $method = $this->settings['currentDeploymentMethod'];
 
         if ( defined( 'WP_CLI' ) ) {
             WP_CLI::log( 'Deploying static site via: ' . $method );
@@ -30,7 +30,7 @@ class Deployer {
 
         $start_time = microtime( true );
 
-        // give the selected_deployment_option to Add-ons to determine if
+        // give the currentDeploymentMethod to Add-ons to determine if
         // they should do their deployment actions
         do_action(
             'wp2static_addon_trigger_deploy',

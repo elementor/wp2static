@@ -142,7 +142,7 @@ class ArchiveProcessor {
     }
 
     public function copyStaticSiteToPublicFolder() : void {
-        if ( $this->settings['selected_deployment_option'] !== 'folder' ) {
+        if ( $this->settings['currentDeploymentMethod'] !== 'folder' ) {
             return;
         }
 
@@ -227,7 +227,7 @@ class ArchiveProcessor {
 
     // TODO: migrate to add-on
     public function createNetlifySpecialFiles() : void {
-        if ( $this->settings['selected_deployment_option'] !== 'netlify' ) {
+        if ( $this->settings['currentDeploymentMethod'] !== 'netlify' ) {
             return;
         }
 
@@ -252,7 +252,7 @@ class ArchiveProcessor {
      * @throws WP2StaticException
      */
     public function create_zip() : void {
-        $deployer = $this->settings['selected_deployment_option'];
+        $deployer = $this->settings['currentDeploymentMethod'];
 
         if ( ! in_array( $deployer, array( 'zip', 'netlify' ) ) ) {
             return;

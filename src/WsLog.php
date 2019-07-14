@@ -2,6 +2,7 @@
 
 namespace WP2Static;
 
+// TODO: add option in UI to also write to PHP error_log
 class WsLog {
 
     public static function l( string $text ) : void {
