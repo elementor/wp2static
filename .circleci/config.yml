@@ -34,7 +34,9 @@ jobs:
               whoami
 
               sudo cp /home/circleci/project/.circleci/apache.conf /etc/apache2/sites-available/wp2static.conf
-              a2ensite wp2static.conf
+              echo '#1'
+              sudo a2ensite wp2static.conf
+              echo '#2'
               sudo service apache2 restart
 
               wget http://127.0.0.1/test.html
