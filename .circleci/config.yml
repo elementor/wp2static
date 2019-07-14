@@ -30,6 +30,9 @@ jobs:
               mkdir wordpress
               echo 'hello wordpress' > wordpress/test.html
 
+              ls -lah /etc/apache2/sites-available/
+              whoami
+
               sudo cp /home/circleci/project/.circleci/apache.conf /etc/apache2/sites-available/wp2static.conf
               a2ensite wp2static.conf
               sudo service apache2 restart
