@@ -7,9 +7,6 @@ jobs:
       - image: circleci/mariadb:latest
         environment:
           - MYSQL_ROOT_PASSWORD=circleci
-          - WP2STATIC_E2E_TEST_URL="http://127.0.0.1"
-          - WP2STATIC_E2E_TEST_USER=admin
-          - WP2STATIC_E2E_TEST_PASS=banana
 
     steps:
       - checkout
@@ -79,6 +76,10 @@ jobs:
           name: run E2E tests
           command: |
             jest
+          environment:
+            - WP2STATIC_E2E_TEST_URL="http://127.0.0.1"
+            - WP2STATIC_E2E_TEST_USER=admin
+            - WP2STATIC_E2E_TEST_PASS=banana
 
 workflows:
   version: 2
