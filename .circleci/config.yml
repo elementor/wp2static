@@ -3,12 +3,25 @@ jobs:
   code-quality-and-unit-tests:
     docker:
       - image: circleci/php:7.2-apache-node-browsers-legacy
+        environment:
+          - DB_HOST=127.0.0.1
+          - DB_PORT=3306
+          - DB_DATABASE=circleci
+          - DB_USERNAME=circleci
+          - DB_PASSWORD=circleci
+      - image: circleci/mysql:5.6.39-ram
+        environment:
+          - MYSQL_ROOT_PASSWORD=circleci
+          - MYSQL_DATABASE=circleci
+          - MYSQL_USER=circleci
+          - MYSQL_PASSWORD=circleci
     steps:
       - checkout
       - run:
           name: Dependencies
           command: |
             echo "memory_limit = 512M" | sudo -E tee --append /usr/local/etc/php/conf.d/docker-php-memory.ini
+            sudo apt install -y mysql-client
       - run:
           name: Install node modules
           command: |
@@ -21,16 +34,16 @@ jobs:
       - run:
           name: setup WordPress site for E2E tests
           command: |
-              mysql -u ubuntu -e "create database wordpress"
+              # mysql -u  -e "create database wordpress"
 
               curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
               chmod +x wp-cli.phar
 
               ./wp-cli.phar core download --allow-root --path=wordpress
 
-              ./wp-cli.phar core config --allow-root --dbname=wordpress --dbuser=ubuntu --dbhost=localhost --path=wordpress
+              ./wp-cli.phar core config --allow-root --dbname=circle --dbuser=circleci --dbhost=127.0.0.1 --path=wordpress
 
-              ./wp-cli.phar core install --allow-root --admin_name=admin --admin_password=admin --admin_email=admin@example.com --url=http://wppusher-plugin.dev:8080 --title=WP2Static CircleCI --path=wordpress
+              ./wp-cli.phar core install --allow-root --admin_name=admin --admin_password=admin --admin_email=admin@example.com --url=http://wp2staticcircleci --title=WP2Static CircleCI --path=wordpress
 
               # copy project files to plugin dir (TODO: build to zip and install)
               cp -r $CIRCLE_WORKING_DIRECTORY wordpress/wp-content/plugins/static-html-output-plugin
