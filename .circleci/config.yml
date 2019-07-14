@@ -40,16 +40,16 @@ jobs:
 
             ./wp-cli.phar core download --allow-root --path=wordpress
 
-            ./wp-cli.phar config create --debug --allow-root --dbname=wordpress --dbuser=root --dbpass=circleci --dbhost=127.0.0.1 --path=wordpress
+            ./wp-cli.phar config create --allow-root --dbname=wordpress --dbuser=root --dbpass=circleci --dbhost=127.0.0.1 --path=wordpress
 
             cat /home/circleci/project/wordpress/wp-config.php
 
-            ./wp-cli.phar core install --debug --allow-root --admin_name=admin --admin_password=admin --admin_email=admin@example.com --url=http://127.0.0.1 --title=WP2StaticCircleCI --path=wordpress
+            ./wp-cli.phar core install --allow-root --admin_user=admin --admin_password=admin --admin_email=admin@example.com --url=http://127.0.0.1 --title=WP2StaticCircleCI --path=wordpress
 
             # copy project files to plugin dir (TODO: build to zip and install)
             cp -r $CIRCLE_WORKING_DIRECTORY wordpress/wp-content/plugins/static-html-output-plugin
 
-            ./wp-cli.phar plugin activate static-html-output-plugin --path=wordpress
+            ./wp-cli.phar --debug plugin activate static-html-output-plugin --path=wordpress
       - run:
           name: install dependencies for Jest
           command: |
