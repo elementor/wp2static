@@ -13,7 +13,7 @@ jobs:
           name: Dependencies
           command: |
             echo "memory_limit = 512M" | sudo -E tee --append /usr/local/etc/php/conf.d/docker-php-memory.ini
-            sudo apt install -y mariadb-client wget
+            sudo apt install -y mariadb-client wget curl
       - run:
           name: Install node modules
           command: |
@@ -28,19 +28,10 @@ jobs:
           command: |
               pwd # /home/circleci/project/
               mkdir wordpress
-              echo 'hello wordpress' > wordpress/test.html
-
-              ls -lah /etc/apache2/sites-available/
-              whoami
 
               sudo cp /home/circleci/project/.circleci/apache.conf /etc/apache2/sites-available/wp2static.conf
-              echo '#1'
               sudo a2ensite wp2static.conf
-              echo '#2'
               sudo service apache2 restart
-
-              wget http://127.0.0.1/test.html
-              cat test.html
 
               mysql -u root -pcircleci -h 127.0.0.1 -e "create database wordpress"
 
@@ -58,6 +49,7 @@ jobs:
 
               ./wp-cli.phar plugin activate static-html-output-plugin --path=wordpress
 
+              curl http://127.0.0.1
 
 workflows:
   version: 2
