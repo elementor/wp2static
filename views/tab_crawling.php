@@ -59,14 +59,14 @@
   </div>
 
   <div class="content">
-    <select name="crawl_delay" id="crawl_delay">
+    <select name="crawlDelay" id="crawlDelay">
 
     <?php
       // TODO: shift this into helper function for select
       $delays = array( 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 2, 3, 4, 10 );
 
     foreach ( $delays as $delay ) : ?>
-              <option value="<?php echo $delay; ?>"<?php echo $this->options->crawl_delay == $delay ? ' selected' : ''; ?>><?php echo $delay; ?></option>
+              <option value="<?php echo $delay; ?>"<?php echo $this->options->crawlDelay == $delay ? ' selected' : ''; ?>><?php echo $delay; ?></option>
         <?php endforeach; ?>
     
     </select>

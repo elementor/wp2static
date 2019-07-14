@@ -46,12 +46,12 @@ class CSSProcessor {
                 }
 
                 if ( $this->isInternalLink( $original_link ) ) {
-                    if ( ! isset( $this->settings['rewrite_rules'] ) ) {
-                        $this->settings['rewrite_rules'] = '';
+                    if ( ! isset( $this->settings['rewriteRules'] ) ) {
+                        $this->settings['rewriteRules'] = '';
                     }
 
-                    // add base URL to rewrite_rules
-                    $this->settings['rewrite_rules'] .=
+                    // add base URL to rewriteRules
+                    $this->settings['rewriteRules'] .=
                         PHP_EOL .
                             $this->placeholder_url . ',' .
                             $this->settings['baseUrl'];
@@ -64,7 +64,7 @@ class CSSProcessor {
                         str_replace(
                             "\r",
                             '',
-                            $this->settings['rewrite_rules']
+                            $this->settings['rewriteRules']
                         )
                     );
 

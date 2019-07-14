@@ -210,7 +210,7 @@ class Controller {
             ->setOption( 'dontUseCrawlCaching', '1' )
             ->setOption( 'removeWPLinks', '1' )
             ->setOption( 'removeHTMLComments', '1' )
-            ->setOption( 'parse_css', '0' )
+            ->setOption( 'parseCSS', '0' )
             ->save();
         }
     }

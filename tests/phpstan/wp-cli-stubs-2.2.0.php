@@ -3967,9 +3967,9 @@ namespace {
          * Typically recommended to inform user of successful script conclusion.
          *
          * ```
-         * # wp rewrite flush expects 'rewrite_rules' option to be set after flush.
-         * flush_rewrite_rules( \WP_CLI\Utils\get_flag_value( $assoc_args, 'hard' ) );
-         * if ( ! get_option( 'rewrite_rules' ) ) {
+         * # wp rewrite flush expects 'rewriteRules' option to be set after flush.
+         * flush_rewriteRules( \WP_CLI\Utils\get_flag_value( $assoc_args, 'hard' ) );
+         * if ( ! get_option( 'rewriteRules' ) ) {
          *     WP_CLI::warning( "Rewrite rules are empty." );
          * } else {
          *     WP_CLI::success( 'Rewrite rules flushed.' );

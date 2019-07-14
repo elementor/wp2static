@@ -56,7 +56,7 @@
 
     <p>The plugin does its best to sort rewrite rules in order needed, to process the longest items first.</p>
 
-    <textarea class="wp2static-textarea" name="rewrite_rules" id="rewrite_rules" rows="5" cols="10"><?php echo $this->options->rewrite_rules ? $this->options->rewrite_rules : ''; ?></textarea>
+    <textarea class="wp2static-textarea" name="rewriteRules" id="rewriteRules" rows="5" cols="10"><?php echo $this->options->rewriteRules ? $this->options->rewriteRules : ''; ?></textarea>
   </div>
 </section>
 
@@ -77,7 +77,7 @@
       <code>wp-includes/,inc/</code>
     </pre>
 
-    <textarea class="widefat" name="rename_rules" id="rename_rules" rows="5" cols="10"><?php echo $this->options->rename_rules ? $this->options->rename_rules : ''; ?></textarea>
+    <textarea class="widefat" name="renameRules" id="renameRules" rows="5" cols="10"><?php echo $this->options->renameRules ? $this->options->renameRules : ''; ?></textarea>
   </div>
 </section>
 
@@ -134,10 +134,10 @@
   <div class="content">
 
     <field-set-with-checkbox
-        id="parse_css"
-        :description="fieldData.parse_css.description"
-        :hint="fieldData.parse_css.hint"
-        :checked="parse_css"
+        id="parseCSS"
+        :description="fieldData.parseCSS.description"
+        :hint="fieldData.parseCSS.hint"
+        :checked="parseCSS"
     ></field-set-with-checkbox>
 
   </div>

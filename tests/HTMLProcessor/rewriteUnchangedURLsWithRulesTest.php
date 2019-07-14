@@ -39,7 +39,7 @@ final class HTMLProcessorRewriteUnchangedURLsWithRulesTest extends TestCase {
         $processor->settings['baseUrl'] =
             $destination_protocol . 'somedomain.com';
 
-        $processor->settings['rewrite_rules'] = 
+        $processor->settings['rewriteRules'] = 
                 "category,cat\n".
                 "category/photo,cat/pics\n".
                 "wp-content/plugins,modules\n".

@@ -11,7 +11,7 @@ export class WP2StaticOptions {
   public completionEmail: string
   public crawlPort: number
   public crawlUserAgent: string
-  public crawl_delay: number
+  public crawlDelay: number
   public createEmptyFavicon: boolean
   public currentDeploymentMethod: string
   public currentDeploymentMethodProduction: string
@@ -40,15 +40,15 @@ export class WP2StaticOptions {
   public forceHTTPS: boolean
   public forceRewriteSiteURLs: boolean
   public includeDiscoveredAssets: boolean
-  public parse_css: boolean
+  public parseCSS: boolean
   public redeployOnPostUpdates: boolean
   public removeCanonical: boolean
   public removeConditionalHeadComments: boolean
   public removeHTMLComments: boolean
   public removeWPLinks: boolean
   public removeWPMeta: boolean
-  public rename_rules: string
-  public rewrite_rules: string
+  public renameRules: string
+  public rewriteRules: string
   public targetFolder: string
   public useActiveFTP: boolean
   public useBaseHref: string
@@ -68,7 +68,7 @@ export class WP2StaticOptions {
     this.basicAuthPassword = parsedOptions.basicAuthPassword
     this.basicAuthUser = parsedOptions.basicAuthUser
     this.completionEmail = parsedOptions.completionEmail
-    this.crawl_delay = parsedOptions.crawl_delay
+    this.crawlDelay = parsedOptions.crawlDelay
     this.crawlPort = parsedOptions.crawlPort
     this.crawlUserAgent = parsedOptions.crawlUserAgent
     this.createEmptyFavicon = parsedOptions.createEmptyFavicon
@@ -99,15 +99,15 @@ export class WP2StaticOptions {
     this.excludeURLs = parsedOptions.excludeURLs
     this.forceHTTPS = parsedOptions.forceHTTPS
     this.forceRewriteSiteURLs = parsedOptions.forceRewriteSiteURLs
-    this.parse_css = parsedOptions.parsedOptions
+    this.parseCSS = parsedOptions.parsedOptions
     this.redeployOnPostUpdates = parsedOptions.redeployOnPostUpdates
     this.removeConditionalHeadComments = parsedOptions.removeConditionalHeadComments
     this.removeHTMLComments = parsedOptions.removeHTMLComments
     this.removeCanonical = parsedOptions.removeCanonical
     this.removeWPLinks = parsedOptions.removeWPLinks
     this.removeWPMeta = parsedOptions.removeWPMeta
-    this.rewrite_rules = parsedOptions.rewrite_rules
-    this.rename_rules = parsedOptions.rename_rules
+    this.rewriteRules = parsedOptions.rewriteRules
+    this.renameRules = parsedOptions.renameRules
     this.targetFolder = parsedOptions.targetFolder
     this.useActiveFTP = parsedOptions.useActiveFTP
     this.useBaseHref = parsedOptions.useBaseHref

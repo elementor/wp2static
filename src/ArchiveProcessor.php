@@ -333,13 +333,13 @@ class ArchiveProcessor {
         by longest path (mitigating issues with user-input order PR#216)
     */
     public function renameArchiveDirectories() : void {
-        if ( ! isset( $this->settings['rename_rules'] ) ) {
+        if ( ! isset( $this->settings['renameRules'] ) ) {
             return;
         }
 
         $rename_rules = explode(
             "\n",
-            str_replace( "\r", '', $this->settings['rename_rules'] )
+            str_replace( "\r", '', $this->settings['renameRules'] )
         );
 
         $tmp_rules = array();

@@ -33,10 +33,10 @@ document.addEventListener("DOMContentLoaded", () => {
     Object.assign(wp2staticGlobals.vueData, wp2staticOptions)
 
     wp2staticGlobals.vueData.baseUrl =
-      wp2staticGlobals.vueData['baseUrl' + wp2staticGlobals.vueData.currentDeploymentMethod]
+      wp2staticGlobals.vueData["baseUrl" + wp2staticGlobals.vueData.currentDeploymentMethod]
 
     wp2staticGlobals.vueData.baseUrlProduction =
-      wp2staticGlobals.vueData['baseUrlProduction' + wp2staticGlobals.vueData.currentDeploymentMethodProduction]
+      wp2staticGlobals.vueData["baseUrlProduction" + wp2staticGlobals.vueData.currentDeploymentMethodProduction]
 
     const detectionCheckbox: DetectionCheckbox = new DetectionCheckbox(wp2staticGlobals)
     const fieldSetWithCheckbox: FieldSetWithCheckbox = new FieldSetWithCheckbox(wp2staticGlobals)

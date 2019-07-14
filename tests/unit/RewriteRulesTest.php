@@ -10,22 +10,22 @@ final class RewriteRulesTest extends TestCase{
      * @dataProvider generateProvider
      */
     public function testgenerate( $site_url, $destination_url, $expectation) {
-        $rewrite_rules =
+        $rewriteRules =
            RewriteRules::generate( $site_url, $destination_url );
 
         $this->assertEquals(
             $expectation,
-            $rewrite_rules
+            $rewriteRules
         );
     }
 
     public function testgetRulesReturnsEmptyArrayWhenEmptyArg() {
-        $rewrite_rules =
+        $rewriteRules =
            RewriteRules::getUserRewriteRules( '' );
 
         $this->assertEquals(
             [],
-            $rewrite_rules
+            $rewriteRules
         );
     }
 
@@ -66,12 +66,12 @@ final class RewriteRulesTest extends TestCase{
      * @dataProvider getUserRewriteRulesProvider
      */
     public function testgetUserRewriteRules( $user_rewrite_rules, $expectation) {
-        $rewrite_rules =
+        $rewriteRules =
            RewriteRules::getUserRewriteRules( $user_rewrite_rules );
 
         $this->assertEquals(
             $expectation,
-            $rewrite_rules
+            $rewriteRules
         );
     }
 

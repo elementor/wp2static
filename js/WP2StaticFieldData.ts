@@ -47,7 +47,7 @@ export class WP2StaticFieldData {
       hint: "Include Discovered Assets",
       title: "Include Discovered Assets",
     },
-    parse_css: {
+    parseCSS: {
       description: `This will result in better exports, but will consume
  more memory on the server. Try disabling this if you're unable to complete
  your export and suspect it's running out of memory.`,

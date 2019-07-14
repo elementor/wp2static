@@ -55,7 +55,7 @@ final class MetaProcessorTest extends TestCase{
                 'destination_url_patterns' => [
                     'https://google.com',
                 ],
-            ], // $rewrite_rules,
+            ], // $rewriteRules,
             true, // $includeDiscoveredAssets,
             true, // $includeDiscoveredAssets,
             $url_rewriter
