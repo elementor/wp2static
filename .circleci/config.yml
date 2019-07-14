@@ -7,6 +7,10 @@ jobs:
       - image: circleci/mariadb:latest
         environment:
           - MYSQL_ROOT_PASSWORD=circleci
+          - WP2STATIC_E2E_TEST_URL="http://localhost:81"
+          - WP2STATIC_E2E_TEST_USER=admin
+          - WP2STATIC_E2E_TEST_PASS=banana
+
     steps:
       - checkout
       - run:

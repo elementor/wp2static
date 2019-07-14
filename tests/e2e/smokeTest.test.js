@@ -10,9 +10,13 @@ describe('Plugin page renders and filelist is generated', () => {
       deviceScaleFactor: 1,
     });
 
-    await page.goto('http://localhost:81/wp-login.php');
-    await page.type('#user_login', 'admin');
-    await page.type('#user_pass', 'banana');
+    const testServerUrl = process.env.WP2STATIC_E2E_TEST_URL
+    const testServerUser = process.env.WP2STATIC_E2E_TEST_USER
+    const testServerPass = process.env.WP2STATIC_E2E_TEST_PASS
+
+    await page.goto(testServerUrl + '/wp-login.php');
+    await page.type('#user_login', testServerUser);
+    await page.type('#user_pass', testServerPass);
     await page.click('#wp-submit');
 
     await page.goto('http://localhost:81/wp-admin/admin.php?page=wp2static');

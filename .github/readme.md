@@ -385,6 +385,16 @@ In trying to make development/contributing easier, we'll keep requirements to a 
 
  - `composer test`
 
+End to end tests, driven viu the UI via Puppeteer, Jest and Chromium can be run with:
+
+ - `jest` (assuming globally installed Jest via `npm i -g jest`)
+
+A new WP site for testing is created when running via CircleCI. For local testing, point to a test WordPress site with the following environment variables defined:
+
+ - `WP2STATIC_E2E_TEST_URL`
+ - `WP2STATIC_E2E_TEST_USER`
+ - `WP2STATIC_E2E_TEST_PASS`
+
 
 ### Localisation / translations
 
