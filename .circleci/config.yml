@@ -51,13 +51,13 @@ jobs:
 
             ./wp-cli.phar plugin activate static-html-output-plugin --path=wordpress
       - run:
-        name: install dependencies for Jest
-        command: |
-          sudo npm i -g jest
+          name: install dependencies for Jest
+          command: |
+            sudo npm i -g jest
       - run:
-        name: run E2E tests
-        command: |
-          jest
+          name: run E2E tests
+          command: |
+            jest
 
 workflows:
   version: 2
