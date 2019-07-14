@@ -33,7 +33,7 @@ jobs:
 
               ./wp-cli.phar core download --allow-root --path=wordpress
 
-              ./wp-cli.phar core config --allow-root --dbname=wordpress --dbuser=root --dbpass=circleci --dbhost=127.0.0.1 --path=wordpress
+              ./wp-cli.phar core config create --allow-root --dbname=wordpress --dbuser=root --dbpass=circleci --dbhost=127.0.0.1 --path=wordpress
 
               ./wp-cli.phar core install --allow-root --admin_name=admin --admin_password=admin --admin_email=admin@example.com --url=http://wp2staticcircleci --title=WP2Static CircleCI --path=wordpress
 
