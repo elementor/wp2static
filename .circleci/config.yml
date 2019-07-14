@@ -7,7 +7,7 @@ jobs:
       - image: circleci/mariadb:latest
         environment:
           - MYSQL_ROOT_PASSWORD=circleci
-          - WP2STATIC_E2E_TEST_URL="http://localhost:81"
+          - WP2STATIC_E2E_TEST_URL="http://127.0.0.1"
           - WP2STATIC_E2E_TEST_USER=admin
           - WP2STATIC_E2E_TEST_PASS=banana
 
@@ -61,7 +61,7 @@ jobs:
       - run:
           name: Install WordPress
           command: |
-            ./wp-cli.phar core install --allow-root --admin_user=admin --admin_password=admin --admin_email=admin@example.com --url=http://127.0.0.1 --title=WP2StaticCircleCI --path=wordpress
+            ./wp-cli.phar core install --allow-root --admin_user=admin --admin_password=banana --admin_email=admin@example.com --url=http://127.0.0.1 --title=WP2StaticCircleCI --path=wordpress
 
       - run:
           name: Build WP2Static zip
