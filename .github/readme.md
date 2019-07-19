@@ -1,6 +1,7 @@
 # WP2Static
 
 [![CircleCI](https://circleci.com/gh/WP2Static/wp2static.svg?style=svg)](https://circleci.com/gh/WP2Static/wp2static)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FWP2Static%2Fwp2static.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FWP2Static%2Fwp2static?ref=badge_shield)
 
 WP2Static is a WordPress plugin to generate a static copy of your site and deploy to GitHub Pages, S3, Netlify etc.
 Increase security, pageload speed and hosting options. Connect WordPress into your CI/CD workflow.
@@ -416,3 +417,6 @@ Help keep me doing what I love: building and supporting this software.
 Leon
 
 [me@ljs.dev](mailto:me@ljs.dev)
+
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FWP2Static%2Fwp2static.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FWP2Static%2Fwp2static?ref=badge_large)
