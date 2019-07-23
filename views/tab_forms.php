@@ -1,4 +1,4 @@
-<div id="form_settings" style="display:none;">
+<div id="form_settings" v-show="currentTab == 'form_settings'">
 
 <section class="wp2static-content wp2static-flex">
   <div class="content" style="max-width:30%">
@@ -21,7 +21,6 @@
         <option value=''>Choose where to submit your forms to</option>
     </select>
 
-  <div class="content">
     <p id="form_processor_description">Form processor description will appear here</p>
 
     <p id="form_processor_website"></p>

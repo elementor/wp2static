@@ -55,6 +55,13 @@ class Controller {
     public static function init( string $bootstrap_file ) : Controller {
         $instance = self::getInstance();
 
+        $ajax_action = filter_input( INPUT_POST, 'ajax_action' );
+
+        // TODO: non-AJAX methods to use different signature
+        if ( $ajax_action === 'reset_default_settings' ) {
+            $instance->reset_default_settings();
+        }
+
         register_activation_hook(
             $bootstrap_file,
             array( $instance, 'activate' )
@@ -196,12 +203,14 @@ class Controller {
             ->setOption( 'static_export_settings', self::VERSION )
             // set default options
             ->setOption( 'rewriteWPPaths', '1' )
+            ->setOption( 'currentDeploymentMethod', 'folder' )
+            ->setOption( 'currentDeploymentMethodProduction', 'folder' )
             ->setOption( 'removeConditionalHeadComments', '1' )
             ->setOption( 'removeWPMeta', '1' )
             ->setOption( 'dontUseCrawlCaching', '1' )
             ->setOption( 'removeWPLinks', '1' )
             ->setOption( 'removeHTMLComments', '1' )
-            ->setOption( 'parse_css', '0' )
+            ->setOption( 'parseCSS', '0' )
             ->save();
         }
     }
@@ -482,32 +491,29 @@ class Controller {
             false
         );
 
-        $options = $plugin->options;
-
-        $site_info = json_encode(
-            SiteInfo::getAllInfo(),
+        $options = json_encode(
+            $plugin->options->wp2static_options,
             JSON_FORCE_OBJECT | JSON_UNESCAPED_SLASHES
         );
 
-        $current_deployment_method =
-            $plugin->options->selected_deployment_option ?
-            $plugin->options->selected_deployment_option :
-            'folder';
+        $site_info = SiteInfo::getAllInfo();
+        $site_info['phpOutOfDate'] = PHP_VERSION < 7.2;
+        $site_info['uploadsWritable'] = SiteInfo::isUploadsWritable();
+        $site_info['curlSupported'] = SiteInfo::hasCURLSupport();
+        $site_info['permalinksDefined'] = SiteInfo::permalinksAreDefined();
+        $site_info['domDocumentAvailable'] = class_exists( 'DOMDocument' );
 
-        $current_deployment_method_production =
-            $plugin->options->selected_deployment_option_production ?
-            $plugin->options->selected_deployment_option_production :
-            'folder';
+        $site_info = json_encode(
+            $site_info,
+            JSON_FORCE_OBJECT | JSON_UNESCAPED_SLASHES
+        );
 
         $data = array(
+            // TODO: pass translatable strings
             'someString' => __( 'Some string to translate', 'plugin-domain' ),
-            'options' => $plugin->options,
+            'options' => $options,
             'siteInfo' => $site_info,
             'onceAction' => self::HOOK . '-options',
-            '' => self::HOOK . '-options',
-            'currentDeploymentMethod' => $current_deployment_method,
-            'currentDeploymentMethodProduction' =>
-                $current_deployment_method_production,
         );
 
         wp_localize_script( 'wp2static_admin_js', 'wp2staticString', $data );
@@ -516,14 +522,8 @@ class Controller {
 
     public function renderOptionsPage() : void {
         $view = [];
-        $view['options'] = $this->options;
-        $view['site_info'] = SiteInfo::getAllInfo();
+        // TODO: kill all vars in PHP templates
         $view['onceAction'] = self::HOOK . '-options';
-
-        // TODO: check which are only needed in JS and rm from func
-        $view['uploads_writable'] = SiteInfo::isUploadsWritable();
-        $view['curl_supported'] = SiteInfo::hasCURLSupport();
-        $view['permalinks_defined'] = SiteInfo::permalinksAreDefined();
 
         require_once WP2STATIC_PATH . 'views/options-page.php';
     }
@@ -588,22 +588,14 @@ class Controller {
         }
     }
 
-    /**
-     * Reset all plugin options to defaults
-     *
-     * @throws WP2StaticException
-     */
     public function reset_default_settings() : void {
         if ( ! delete_option( 'wp2static-options' ) ) {
             $err = 'Couldn\'t reset plugin to default settings';
             WsLog::l( $err );
-            throw new WP2StaticException( $err );
         }
 
         $this->options = new Options( self::OPTIONS_KEY );
         $this->setDefaultOptions();
-
-        echo 'SUCCESS';
     }
 
     public function post_process_archive_dir() : void {

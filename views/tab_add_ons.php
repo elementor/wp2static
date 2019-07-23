@@ -1,4 +1,4 @@
-<div id="add_ons" style="display:none;">
+<div id="add_ons"  v-show="currentTab == 'add_ons'">
 
 <section class="wp2static-content wp2static-flex">
   <div class="content" style="max-width:30%">
@@ -41,7 +41,7 @@ $add_ons = array(
     </div>
     <div class="bottom">
       <div class="left">
-        <a href="#" id="GoToDeployTabButton" class="wp2static-btn blue" target="_blank">
+        <a href="#" v-on:click.prevent="changeTab('staging_deploy')" class="wp2static-btn blue" target="_blank">
           <i class="dashicon dashicon-yes"></i> Settings
         </a>
       </div>

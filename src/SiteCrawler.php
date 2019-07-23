@@ -288,7 +288,7 @@ class SiteCrawler {
             $curl_content_type
         );
 
-        $user_rewrite_rules = $this->settings['rewrite_rules'];
+        $user_rewrite_rules = $this->settings['rewriteRules'];
 
         if ( ! $user_rewrite_rules ) {
             $user_rewrite_rules = '';
@@ -338,7 +338,7 @@ class SiteCrawler {
                 break;
 
             case 'css':
-                if ( isset( $this->settings['parse_css'] ) ) {
+                if ( isset( $this->settings['parseCSS'] ) ) {
                     $processor = new CSSProcessor();
 
                     $this->processed_file = $processor->processCSS(

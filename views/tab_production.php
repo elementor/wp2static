@@ -1,4 +1,4 @@
-<div id="production_deploy" style="display:none;">
+<div id="production_deploy" v-show="currentTab == 'production_deploy'">
 
 <section class="wp2static-content wp2static-flex">
   <div class="content" style="max-width:30%">
@@ -6,7 +6,7 @@
   </div>
 
   <div class="content">
-    <select id="selected_deployment_method_production" name="selected_deployment_option_production">
+    <select id="selected_deployment_method_production" v-model="currentDeploymentMethodProduction" name="currentDeploymentMethodProduction">
         <?php generateDeploymentMethodOptionsProduction(); ?>
     </select>
    </div>

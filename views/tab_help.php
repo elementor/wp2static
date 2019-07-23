@@ -1,4 +1,4 @@
-<div id="help_troubleshooting" style="display:none;">
+<div id="help_troubleshooting" v-show="currentTab == 'help_troubleshooting'">
 
 <section class="wp2static-content wp2static-flex">
   <div class="content">

@@ -1,4 +1,4 @@
-<div id="advanced_settings" style="display:none;">
+<div id="advanced_settings" v-show="currentTab == 'advanced_settings'">
 
 <section class="wp2static-content wp2static-flex">
   <div class="content" style="max-width:30%">
@@ -7,7 +7,7 @@
 
   <div class="content">
     <select name="deployBatchSize" id="deployBatchSize">
-  
+
         <?php
         // TODO: shift this into helper function for select
         $increments = array( 1, 5, 10, 25, 50, 100, 500, 1000, 999999 );
@@ -26,17 +26,13 @@
    </div>
 </section>
 
-<section class="wp2static-content wp2static-flex">
-  <div class="content" style="max-width:30%">
-    <h2><?php echo __( 'Show deploy widget on WP dashboard', 'static-html-output-plugin' ); ?></h2>
-  </div>
-
-  <div class="content">
-    <p>Show a widget on your WordPress dashboard for quickly triggering a manual deploy and showing recent deploy information.</p>
-
-    <?php $tpl->displayCheckbox( $this, 'displayDashboardWidget', 'Enable WP2Static dashboard widget' . $to ); ?>
-   </div>
-</section>
+<section-with-checkbox
+    id="displayDashboardWidget"
+    :title="fieldData.displayDashboardWidget.title"
+    :description="fieldData.displayDashboardWidget.description"
+    :hint="fieldData.displayDashboardWidget.hint"
+    :checked="displayDashboardWidget"
+></section-with-checkbox>
 
 
 <section class="wp2static-content wp2static-flex">

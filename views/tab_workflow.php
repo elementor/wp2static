@@ -1,4 +1,4 @@
-<div id="workflow_tab">
+<div id="workflow_tab" v-show="currentTab == 'workflow_tab'">
 
 <section class="wp2static-content wp2static-flex">
   <div class="content" style="max-width:33%">
@@ -10,10 +10,10 @@
 
     <h3>Health Checks</h3>
     <ul>
-       <li>Publicly accessible</li>
+       <li>Non-public dev server</li>
        <li>Local DNS resolution</li>
        <li>PHP max_execution_time</li>
-       <li>Writable uploads dir</li>
+       <li>Writable uploads dir <span v-if="siteInfo.uploadsWritable" class="dashicons dashicons-yes" style="color: #3ad23a;"></span></li>
     </ul>
 
   </div>
@@ -26,8 +26,8 @@
 
     <h3>Deployment summary</h3>
     <ul>
-       <li><b>Deployment Method</b> <span id="stagingSummaryDeployMethod">not set</span></li>
-       <li><b>Destination URL</b> <span id="stagingSummaryDeployUrl">not set</span></li>
+       <li id="deploymentMethodStaging"><b>Deployment Method</b> {{ currentDeploymentMethod }}</li>
+       <li><b>Destination URL</b> {{ baseUrl }}</li>
     </ul>
   </div>
 
@@ -40,8 +40,8 @@
 
     <h3>Deployment summary</h3>
     <ul>
-       <li><b>Deployment Method</b> <span id="stagingSummaryDeployMethodProduction">not set</span></li>
-       <li><b>Destination URL</b> <span id="stagingSummaryDeployUrlProduction">not set</span></li>
+       <li><b>Deployment Method</b> {{ currentDeploymentMethodProduction }}</li>
+       <li><b>Destination URL</b> {{ baseUrlProduction }}</li>
     </ul>
   </div>
 </section>

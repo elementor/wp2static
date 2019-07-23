@@ -53,7 +53,7 @@ final class ImgSrcSetProcessorTest extends TestCase{
                 'destination_url_patterns' => [
                     'https://google.com',
                 ],
-            ], // $rewrite_rules,
+            ], // $rewriteRules,
             true, // $includeDiscoveredAssets,
             $asset_downloader
         );
@@ -112,7 +112,7 @@ final class ImgSrcSetProcessorTest extends TestCase{
                 'destination_url_patterns' => [
                     'https://google.com',
                 ],
-            ], // $rewrite_rules,
+            ], // $rewriteRules,
             true, // $includeDiscoveredAssets,
             $asset_downloader
         );
