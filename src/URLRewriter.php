@@ -26,7 +26,7 @@ class URLRewriter {
         string $site_url,
         string $site_url_host,
         string $destination_url,
-        string $allow_offline_usage,
+        bool $allow_offline_usage,
         bool $use_document_relative_urls,
         bool $use_site_root_relative_urls,
         string $page_url,

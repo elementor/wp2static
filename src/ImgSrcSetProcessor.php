@@ -27,7 +27,7 @@ class ImgSrcSetProcessor {
         string $site_url_host,
         string $page_url,
         string $destination_url,
-        string $allow_offline_usage,
+        bool $allow_offline_usage,
         bool $use_document_relative_urls,
         bool $use_site_root_relative_urls,
         array $rewrite_rules,
