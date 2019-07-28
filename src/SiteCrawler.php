@@ -6,16 +6,22 @@ class SiteCrawler {
 
     private $allow_offline_usage;
     /**
+     * Archive directory.
+     *
      * @var string
      */
     private $archive_dir;
     private $asset_downloader;
     private $ch;
     /**
+     * Content type.
+     *
      * @var string
      */
     private $content_type;
     /**
+     * Array of Curl options.
+     *
      * @var array<int, mixed>
      */
     private $curl_options;
@@ -25,6 +31,8 @@ class SiteCrawler {
     private $include_discovered_assets;
     private $page_url;
     /**
+     * The processed file.
+     *
      * @var string
      */
     private $processed_file;
