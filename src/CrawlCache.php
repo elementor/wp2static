@@ -12,7 +12,6 @@ class CrawlCache {
         $charset_collate = $wpdb->get_charset_collate();
 
         $sql = "CREATE TABLE $table_name (
-            id INT UNSIGNED NOT NULL AUTO_INCREMENT,
             hashed_url CHAR(32) NOT NULL,
             time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
             PRIMARY KEY  (hashed_url)
@@ -37,7 +36,7 @@ class CrawlCache {
     }
 
     // TODO: enable date filter as option/alternate method
-    public static function getUrl( string $url ) : int {
+    public static function getUrl( string $url ) : string {
         global $wpdb;
 
         $hashed_url = md5( $url );
@@ -45,14 +44,14 @@ class CrawlCache {
         $table_name = $wpdb->prefix . 'wp2static_crawl_cache';
 
         $sql = $wpdb->prepare(
-            "SELECT id FROM $table_name WHERE" .
+            "SELECT hashed_url FROM $table_name WHERE" .
             ' hashed_url = %s LIMIT 1',
             $hashed_url
         );
 
         $id = $wpdb->get_var( $sql );
 
-        return (int) $id;
+        return (string) $id;
     }
 
     public static function rmUrl( string $url ) : void {
