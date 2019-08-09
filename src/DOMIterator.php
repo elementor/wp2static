@@ -82,7 +82,7 @@ class DOMIterator {
         // PERF: 70% of function time
         // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
         libxml_use_internal_errors( true );
-        $xml_doc->loadHTML( $html_document );
+        $xml_doc->loadHTML( mb_convert_encoding( $html_document, 'HTML-ENTITIES', 'UTF-8' ) );
         libxml_use_internal_errors( false );
 
         // start the full iterator here, along with copy of dom
