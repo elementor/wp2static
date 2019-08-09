@@ -8,6 +8,7 @@ class FileWriter {
     public $content;
     public $file_type;
     public $content_type;
+    public $backup_locale_ctype;
 
     public function __construct(
         string $url,
@@ -19,9 +20,13 @@ class FileWriter {
         $this->content = $content;
         $this->file_type = $file_type;
         $this->content_type = $content_type;
+        $this->backup_locale_ctype = setlocale(LC_CTYPE, 0);
     }
 
     public function saveFile( string $archive_dir ) : void {
+        // Fix pathinfo failing with non-latin characters
+        setlocale(LC_CTYPE, 'en_US.UTF-8');
+
         $url_info = parse_url( $this->url );
 
         if ( ! is_array( $url_info ) ) {
@@ -87,6 +92,9 @@ class FileWriter {
         } else {
             WsLog::l( 'NOT SAVING EMTPY FILE ' . $this->url );
         }
+
+        // Reset locale to ensure normal operations for the rest of WordPress' functionality
+        setlocale(LC_CTYPE, $this->backup_locale_ctype);
     }
 }
 
