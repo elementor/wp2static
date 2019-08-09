@@ -31,14 +31,16 @@ class CrawlQueue {
 
         $table_name = $wpdb->prefix . 'wp2static_urls';
 
-        $query = "INSERT INTO $table_name (url) VALUES ";
-
+        $placeholders = [];
+        $values = [];
         foreach ( $urls as $url ) {
-            $query .= "('$url'),";
+            $placeholders[] = "(%s)";
+            $values[] = rawurldecode($url);
         }
 
-        $query = rtrim( $query, ',' );
+        $queryString = 'INSERT INTO ' . $table_name . ' (url) VALUES ' . implode(', ', $placeholders);
 
+        $query = $wpdb->prepare( $queryString, $values );
         $wpdb->query( $query );
     }
 
