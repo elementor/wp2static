@@ -1,15 +1,13 @@
 # WP2Static
 
-[![CircleCI](https://circleci.com/gh/WP2Static/wp2static.svg?style=svg)](https://circleci.com/gh/WP2Static/wp2static)
-
 WP2Static is a WordPress plugin to generate a static copy of your site and deploy to GitHub Pages, S3, Netlify etc.
 Increase security, pageload speed and hosting options. Connect WordPress into your CI/CD workflow.
 
+__Note: GitHub repo is a read-only mirror. Our main repos and information on contributing are hosted at [https://code.wp2static.com](https://code.wp2static.com).__
+
 ## Static Site Generator for WordPress
 
-Watch Leon Stafford's [talk from WordCamp Brisbane 2018](http://www.youtube.com/watch?v=HPc4JjBvkrU)
-
-[![WordPress as a Static Site Generator](/.github/youtube-thumbnail.jpg)](http://www.youtube.com/watch?v=HPc4JjBvkrU)
+Watch the developer's [talk from WordCamp Brisbane 2018](http://www.youtube.com/watch?v=HPc4JjBvkrU)
 
 
 ## Table of contents
@@ -33,9 +31,7 @@ Watch Leon Stafford's [talk from WordCamp Brisbane 2018](http://www.youtube.com/
  - [Marketing site](https://wp2static.com)
  - [Documentation](https://docs.wp2static.com)
  - [Forum](https://forum.wp2static.com)
- - [Slack](https://join.slack.com/t/wp2static/shared_invite/enQtNDQ4MDM4MjkwNjEwLTVmN2I2MmU4ODI2MWRkNzM4ZGU3YWU4ZGVhMzgwZTc1MDE2OGNmYTFhOGMwM2U0ZTVlYTljYmM2Yjk2ODJlOTk)
  - [Twitter](https://twitter.com/wp2static)
- - [CircleCI](https://circleci.com/gh/leonstafford/wp2static) *master* [![CircleCI](https://circleci.com/gh/leonstafford/wp2static/tree/master.svg?style=svg)](https://circleci.com/gh/leonstafford/wp2static/tree/master) *develop* [![CircleCI](https://circleci.com/gh/leonstafford/wp2static/tree/develop.svg?style=svg)](https://circleci.com/gh/leonstafford/wp2static/tree/develop)
 
 ## Opinionated software
 
