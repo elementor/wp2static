@@ -18,7 +18,7 @@ class CSSProcessor {
     public function processCSS(
         string $css_document,
         string $page_url
-    ) : bool {
+    ) : string {
         $protocol = $this->getTargetSiteProtocol( $this->settings['baseUrl'] );
 
         $this->placeholder_url = $protocol . 'PLACEHOLDER.wpsho/';
@@ -106,7 +106,7 @@ class CSSProcessor {
             }
         }
 
-        return true;
+        return $this->css_doc->render();
     }
 
     public function isInternalLink(
@@ -123,10 +123,6 @@ class CSSProcessor {
         );
 
         return $is_internal_link;
-    }
-
-    public function getCSS() : string {
-        return $this->css_doc->render();
     }
 
     /**

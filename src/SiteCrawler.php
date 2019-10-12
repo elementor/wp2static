@@ -13,6 +13,11 @@ class SiteCrawler {
     private $archive_dir;
     private $asset_downloader;
     private $ch;
+    /**
+     * Content type.
+     *
+     * @var string
+     */
     private $content_type;
     /**
      * Array of Curl options.
@@ -360,10 +365,6 @@ class SiteCrawler {
                         $output,
                         $page_url
                     );
-
-                    if ( $this->processed_file ) {
-                        $this->processed_file = $processor->getCSS();
-                    }
                 } else {
                     $this->processed_file = str_replace(
                         $this->rewrite_rules['site_url_patterns'],
