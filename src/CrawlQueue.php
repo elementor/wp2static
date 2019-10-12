@@ -35,14 +35,14 @@ class CrawlQueue {
         $values = [];
 
         foreach ( $urls as $url ) {
-            $placeholders[] = "(%s)";
-            $values[] = rawurldecode($url);
+            $placeholders[] = '(%s)';
+            $values[] = rawurldecode( $url );
         }
 
-        $queryString =
+        $query_string =
             'INSERT INTO ' . $table_name . ' (url) VALUES ' .
-            implode(', ', $placeholders);
-        $query = $wpdb->prepare( $queryString, $values );
+            implode( ', ', $placeholders );
+        $query = $wpdb->prepare( $query_string, $values );
 
         $wpdb->query( $query );
     }
