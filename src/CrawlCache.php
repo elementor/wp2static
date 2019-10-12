@@ -36,7 +36,7 @@ class CrawlCache {
     }
 
     // TODO: enable date filter as option/alternate method
-    public static function getUrl( string $url ) : int {
+    public static function getUrl( string $url ) : string {
         global $wpdb;
 
         $hashed_url = md5( $url );
@@ -44,14 +44,14 @@ class CrawlCache {
         $table_name = $wpdb->prefix . 'wp2static_crawl_cache';
 
         $sql = $wpdb->prepare(
-            "SELECT id FROM $table_name WHERE" .
+            "SELECT hashed_url FROM $table_name WHERE" .
             ' hashed_url = %s LIMIT 1',
             $hashed_url
         );
 
-        $id = $wpdb->get_var( $sql );
+        $hashed_url = $wpdb->get_var( $sql );
 
-        return (int) $id;
+        return (string) $hashed_url;
     }
 
     public static function rmUrl( string $url ) : void {
