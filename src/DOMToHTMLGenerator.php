@@ -21,6 +21,36 @@ class DOMToHTMLGenerator {
             return '';
         }
 
+        // Allow themes to modify entities to preserve
+        $html_entities_to_preserve =
+            apply_filters(
+                'wp2static_html_entities_to_preserve',
+                array( '&lt;', '&gt;' )
+            );
+
+        // Strip entities down to just the "name"
+        $cleaned_entities_to_preserve =
+            preg_replace( '/^&(.*?);$/', '\1', $html_entities_to_preserve );
+
+        // Build up the regex from the entity "names"
+        $preserve_entities_rx =
+            sprintf(
+                '/&(%s);/',
+                implode( '|', $cleaned_entities_to_preserve )
+            );
+
+        // Replace entities with placeholders to preserve them
+        $processed_html =
+            preg_replace(
+                $preserve_entities_rx,
+                '{{wp2static-entity-placeholder:\1}}',
+                $processed_html
+            );
+
+        if ( ! is_string( $processed_html ) ) {
+            return '';
+        }
+
         // TODO: here is where we convertToSiteRelativeURLs, as this can be
         // bulk performed, just stripping the domain when rewriting
 
@@ -31,10 +61,6 @@ class DOMToHTMLGenerator {
         if ( $this->user_rewrite_rules ) {
             $rewrite_rules =
                 RewriteRules::getUserRewriteRules( $this->user_rewrite_rules );
-
-            if ( ! is_string( $processed_html ) ) {
-                return '';
-            }
 
             $processed_html = str_replace(
                 $rewrite_rules['from'],
