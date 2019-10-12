@@ -1,5 +1,5 @@
 includes:
-    - phar://phpstan.phar/conf/bleedingEdge.neon
+    - vendor/phpstan/phpstan/conf/bleedingEdge.neon
     - vendor/thecodingmachine/phpstan-strict-rules/phpstan-strict-rules.neon
     - vendor/szepeviktor/phpstan-wordpress/extension.neon
 parameters:
