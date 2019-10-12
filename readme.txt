@@ -51,7 +51,7 @@ Not compatible with WooCommerce or membership sites, but solutions like [Snipcar
  - Operations people at large corporations don't often like dealing with WordPress, this allows them to close the security holes and have more control over the hosting
  - Budget conscious people like free hosting (who doesn't?!?)
  - Government agencies who have strict security requirements, but have users who prefer to use WordPress
- * Thos who want to use it to archive an old WordPress website, keeping the content online, but not worrying about keeping WP up to date
+ * Those who want to use it to archive an old WordPress website, keeping the content online, but not worrying about keeping WP up to date
 
 This plugin produces a static HTML version of your wordpress install, incredibly useful for anyone who would like the publishing power of wordpress but whose webhost doesn't allow dynamic PHP driven sites - such as GitHub Pages. You can run your development site on a different domain or offline, and the plugin will change all relevant URLs when you publish your site. It's a simple but powerful plugin, and after hitting the publish button, the plugin will output a ZIP file of your entire site, ready to upload straight to it's new home.
 
