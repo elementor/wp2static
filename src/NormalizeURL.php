@@ -1,5 +1,4 @@
 <?php
-
 /*
     Make link absolute, using current page to determine full path
 

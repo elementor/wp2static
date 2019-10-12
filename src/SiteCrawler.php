@@ -5,16 +5,31 @@ namespace WP2Static;
 class SiteCrawler {
 
     private $allow_offline_usage;
+    /**
+     * Archive directory.
+     *
+     * @var string
+     */
     private $archive_dir;
     private $asset_downloader;
     private $ch;
     private $content_type;
+    /**
+     * Array of Curl options.
+     *
+     * @var array<int, mixed>
+     */
     private $curl_options;
     private $destination_url;
     private $extension;
     private $file_type;
     private $include_discovered_assets;
     private $page_url;
+    /**
+     * The processed crawled file, before saving.
+     *
+     * @var string
+     */
     private $processed_file;
     private $request;
     private $rewrite_rules;

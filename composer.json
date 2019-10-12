@@ -35,7 +35,7 @@
     "require-dev": {
         "phpstan/phpstan-shim": "^0.11.8",
         "thecodingmachine/phpstan-strict-rules": "*",
-        "giacocorsiglia/wordpress-stubs": "dev-master",
+        "szepeviktor/phpstan-wordpress": "^0.2.0",
         "squizlabs/php_codesniffer": "*",
         "phpunit/phpunit": "*",
         "dealerdirect/phpcodesniffer-composer-installer": "*",
@@ -83,6 +83,8 @@
             "@phpunit"
         ],
         "build": "/bin/sh tools/build_release.sh",
-        "generate-pot": "wp i18n make-pot . languages/static-html-output-plugin.pot"
+        "generate-pot": "wp i18n make-pot . languages/static-html-output-plugin.pot",
+        "post-install-cmd": "PHPStan\\WordPress\\Composer\\FixWpStubs::php73Polyfill",
+        "post-update-cmd": "PHPStan\\WordPress\\Composer\\FixWpStubs::php73Polyfill"
     }
 }

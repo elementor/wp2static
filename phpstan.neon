@@ -1,26 +1,10 @@
-# See options in https://github.com/phpstan/phpstan/blob/master/conf/config.neon
-services:
-    -
-        class: PHPStan\WordPress\IsWpErrorFunctionTypeSpecifyingExtension
-        tags:
-            - phpstan.typeSpecifier.functionTypeSpecifyingExtension
-    -
-        class: PHPStan\WordPress\WpThemeMagicPropertiesClassReflectionExtension
-        tags:
-            - phpstan.broker.propertiesClassReflectionExtension
-    -
-        class: PHPStan\WordPress\RedirectCanonicalDynamicFunctionReturnTypeExtension
-        tags:
-            - phpstan.broker.dynamicFunctionReturnTypeExtension
-    -
-        class: PHPStan\WordPress\EscSqlDynamicFunctionReturnTypeExtension
-        tags:
-            - phpstan.broker.dynamicFunctionReturnTypeExtension
 includes:
-#    - phar://phpstan.phar/conf/bleedingEdge.neon
+    - phar://phpstan.phar/conf/bleedingEdge.neon
     - vendor/thecodingmachine/phpstan-strict-rules/phpstan-strict-rules.neon
+    - vendor/szepeviktor/phpstan-wordpress/extension.neon
 parameters:
     level: max
+    inferPrivatePropertyTypeFromConstructor: true
     paths:
         - %currentWorkingDirectory%/src/
     autoload_files:
