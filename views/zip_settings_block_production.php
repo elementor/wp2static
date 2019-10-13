@@ -1,4 +1,7 @@
-<div id="zip_settings_block_production" style="display:none;">
+<div
+    id="zip_settings_block_production"
+    style="display:none;"
+    v-show="currentDeploymentMethodProduction == 'zip'">
 
 <?php if ( ! extension_loaded( 'zip' ) ) : ?>
 <section class="wp2static-content">

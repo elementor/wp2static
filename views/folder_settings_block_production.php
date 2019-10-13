@@ -1,4 +1,7 @@
-<div id="folder_settings_block_production">
+<div
+    id="folder_settings_block_production"
+    style="display:none;"
+    v-show="currentDeploymentMethodProduction == 'folder'">
 
 <section class="wp2static-content wp2static-flex">
   <div class="content" style="max-width:30%">
