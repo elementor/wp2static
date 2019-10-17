@@ -2,7 +2,7 @@
 Contributors: leonstafford
 Tags: security, performance, static
 Requires at least: 4.0
-Tested up to: 5.2
+Tested up to: 5.2.4
 Requires PHP: 7.2
 Stable tag: 7.0
 
