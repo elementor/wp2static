@@ -44,8 +44,6 @@ class URLRewriter {
         $this->rewrite_rules = $rewrite_rules;
         $this->include_discovered_assets = $include_discovered_assets;
         $this->asset_downloader = $asset_downloader;
-
-        error_log(print_r($rewrite_rules, true));
     }
 
     /**
