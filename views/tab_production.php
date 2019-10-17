@@ -13,8 +13,13 @@
 </section>
 
 <!-- legacy multi-export functionality relied on the baseUrl field being first in the settings block -->
-<input style="display:none;" type="text" id="baseUrlProduction" name="baseUrlProduction" value="<?php echo esc_attr( $this->baseUrl ); ?>" size="50" placeholder="http://mystaticsite.com" />
-
+<input
+    style="display:none;"
+    type="text"
+    id="baseUrlProduction"
+    name="baseUrlProduction"
+    v-model="baseUrlProduction"
+ />
 <?php
 
   // load up each deployment settings block

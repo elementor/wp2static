@@ -3,7 +3,6 @@ export class WP2StaticAdminPageModel {
   public allowOfflineUsage: HTMLInputElement
   public baseUrl: HTMLInputElement
   public baseUrlZip: HTMLInputElement
-  public createZip: HTMLElement
   public downloadZIP: HTMLElement
   public exportDuration: HTMLElement
   public formProcessorDescription: HTMLInputElement
@@ -34,7 +33,6 @@ export class WP2StaticAdminPageModel {
     this.allowOfflineUsage = document.getElementById("allowOfflineUsage")! as HTMLInputElement
     this.baseUrl = document.getElementById("baseUrl")! as HTMLInputElement
     this.baseUrlZip = document.getElementById("baseUrlzip")! as HTMLInputElement
-    this.createZip = document.getElementById("createZip")!
     this.downloadZIP = document.getElementById("downloadZIP")!
     this.exportDuration = document.getElementById("exportDuration")!
     this.formProcessorDescription = document.getElementById("form_processor_description")! as HTMLInputElement

@@ -162,10 +162,6 @@ document.addEventListener("DOMContentLoaded", () => {
           // reset export targets to avoid having left-overs from a failed run
           wp2staticGlobals.exportTargets = []
 
-          if (wp2staticGlobals.vueData.currentDeploymentMethod === "zip") {
-            adminPage.createZip.setAttribute("checked", "")
-          }
-
           wp2staticGlobals.exportTargets.push(wp2staticGlobals.vueData.currentDeploymentMethod)
 
           sendWP2StaticAJAX(

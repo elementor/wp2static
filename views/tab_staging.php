@@ -13,7 +13,13 @@
 </section>
 
 <!-- legacy multi-export functionality relied on the baseUrl field being first in the settings block -->
-<input style="display:none;" type="text" id="baseUrl" name="baseUrl" value="<?php echo esc_attr( $this->baseUrl ); ?>" size="50" placeholder="http://mystaticsite.com" />
+<input
+    style="display:none;"
+    type="text"
+    id="baseUrl"
+    name="baseUrl"
+    v-model="baseUrl"
+ />
 
 <?php
 

@@ -25,6 +25,7 @@ mkdir $TMP_DIR/static-html-output-plugin
 rm -Rf $EXEC_DIR/vendor/*
 # load prod deps and optimize loader
 composer install --no-dev --optimize-autoloader
+composer buildjs
 
 
 # cp all required sources to build dir
@@ -36,6 +37,7 @@ cp -r $EXEC_DIR/readme.txt $TMP_DIR/static-html-output-plugin/
 cp -r $EXEC_DIR/views $TMP_DIR/static-html-output-plugin/
 cp -r $EXEC_DIR/wp2static.php $TMP_DIR/static-html-output-plugin/
 cp -r $EXEC_DIR/admin $TMP_DIR/static-html-output-plugin/
+cp -r $EXEC_DIR/js $TMP_DIR/static-html-output-plugin/
 
 cd $TMP_DIR
 
