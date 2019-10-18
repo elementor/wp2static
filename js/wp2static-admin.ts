@@ -153,6 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
             alert(validationErrors)
 
             vueApp.$data.progress = false
+            vueApp.$data.workflowStatus = 'exportStarted'
 
             return false
           }

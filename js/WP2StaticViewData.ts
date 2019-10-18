@@ -91,6 +91,7 @@ export class WP2StaticViewData {
     fieldData: new WP2StaticFieldData(),
     formProcessorData: new WP2StaticFormProcessorData(),
     progress: true,
+    workflowStatus: '',
     tabs: [
       { id: "workflow_tab", name: "Workflow" },
       { id: "url_detection", name: "URL Detection" },

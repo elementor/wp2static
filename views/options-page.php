@@ -178,7 +178,11 @@ $tpl = new \WP2Static\TemplateHelper();
                   </button>
 
                   <!-- TODO: set action to grab ZIP download URL from button vs anchor -->
-                  <button id="downloadZIP" class="wp2static-btn btn-call-to-action">
+                  <button
+                    id="downloadZIP"
+                    v-if="progress == false && currentDeploymentMethod == 'zip' && workflowStatus == 'deploySuccess'"
+                    class="wp2static-btn btn-call-to-action"
+                    >
                     <?php echo __( 'Download ZIP', 'static-html-output-plugin' ); ?>
                   </button>
 
