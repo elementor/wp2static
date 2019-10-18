@@ -8,7 +8,7 @@ use WP_CLI;
 use WP_Post;
 
 class Controller {
-    const VERSION = '7.0-build0003';
+    const VERSION = '7.0-build0004';
     const OPTIONS_KEY = 'wp2static-options';
     const HOOK = 'wp2static';
 
