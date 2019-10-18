@@ -35,7 +35,6 @@
             :id="checkbox.id"
             :title="checkbox.title"
             :description="checkbox.description"
-            :checked="checkbox.checked"
         > </detection-checkbox>
 
   </table>

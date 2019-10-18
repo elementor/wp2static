@@ -24,10 +24,14 @@ export class DetectionCheckbox {
           )
 
           checkbox[0].checked = checked
+
+          this.wp2staticGlobals.vueData[id] = checked
+        },
+        getInitialState: (id: string) => {
+          return this.wp2staticGlobals.vueData[id]
         },
       },
       props: [
-        "checked",
         "description",
         "id",
         "title",
@@ -43,11 +47,11 @@ export class DetectionCheckbox {
               <fieldset>
                   <label :for='id'>
                       <input
-                        :checked='checked'
                         :id='id'
                         :name='id'
                         type='checkbox'
                         v-on:change="detectionCheckboxChanged(id)"
+                        :checked='getInitialState(id)'
                         value='1'
                       />
                       <span>{{ description }}</span>

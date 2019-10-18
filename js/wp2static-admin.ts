@@ -86,12 +86,12 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         detectEverything: (event: any) => {
           for ( const checkbox of wp2staticGlobals.vueData.detectionCheckboxes ) {
-              checkbox.checked = true
+              wp2staticGlobals.vueData[checkbox.id] = true
           }
         },
         detectNothing: (event: any) => {
           for ( const checkbox of wp2staticGlobals.vueData.detectionCheckboxes ) {
-              checkbox.checked = false
+              wp2staticGlobals.vueData[checkbox.id] = false
           }
         },
         generateStaticSite: (event: any) => {
