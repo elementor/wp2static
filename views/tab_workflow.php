@@ -10,10 +10,21 @@
 
     <h3>Health Checks</h3>
     <ul>
-       <li>Non-public dev server</li>
-       <li>Local DNS resolution</li>
-       <li>PHP max_execution_time</li>
-       <li>Writable uploads dir <span v-if="siteInfo.uploadsWritable" class="dashicons dashicons-yes" style="color: #3ad23a;"></span></li>
+       <li>
+            <b>Non-public dev server</b>
+            <span
+                v-if="!siteInfo.publiclyAccessible"
+                class="dashicons dashicons-clock"
+                style="color: #FE8F25;"
+            ></span>
+        </li>
+       <li><b>Local DNS resolution</b></li>
+       <li><b>PHP max_execution_time</b>
+         <span :style="siteInfo.maxExecutionTime == 0 ? 'color:#3ad23a;': 'color:red;'">
+            {{ siteInfo.maxExecutionTime }} {{ siteInfo.maxExecutionTime == 0 ? '(Unlimited)': 'secs' }}
+         </span>
+        </li>
+       <li><b>Writable uploads dir</b> <span v-if="siteInfo.uploadsWritable" class="dashicons dashicons-yes" style="color: #3ad23a;"></span></li>
     </ul>
 
   </div>
@@ -27,7 +38,7 @@
     <h3>Deployment summary</h3>
     <ul>
        <li id="deploymentMethodStaging"><b>Deployment Method</b> {{ currentDeploymentMethod }}</li>
-       <li><b>Destination URL</b> {{ baseUrl }}</li>
+       <li><b>Destination URL</b> <a :href="baseUrl" target="_blank">{{ baseUrl }}</a></li>
     </ul>
   </div>
 
@@ -41,7 +52,7 @@
     <h3>Deployment summary</h3>
     <ul>
        <li><b>Deployment Method</b> {{ currentDeploymentMethodProduction }}</li>
-       <li><b>Destination URL</b> {{ baseUrlProduction }}</li>
+       <li><b>Destination URL</b> <a :href="baseUrlProduction" target="_blank">{{ baseUrlProduction }}</a></li>
     </ul>
   </div>
 </section>

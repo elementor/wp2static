@@ -499,6 +499,7 @@ class Controller {
         $site_info = SiteInfo::getAllInfo();
         $site_info['phpOutOfDate'] = PHP_VERSION < 7.2;
         $site_info['uploadsWritable'] = SiteInfo::isUploadsWritable();
+        $site_info['maxExecutionTime'] = ini_get( 'max_execution_time' );
         $site_info['curlSupported'] = SiteInfo::hasCURLSupport();
         $site_info['permalinksDefined'] = SiteInfo::permalinksAreDefined();
         $site_info['domDocumentAvailable'] = class_exists( 'DOMDocument' );
