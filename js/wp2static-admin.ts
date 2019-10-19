@@ -226,8 +226,8 @@ document.addEventListener("DOMContentLoaded", () => {
         "GET",
         `https://api.downfor.cloud/httpcheck/${wp2staticGlobals.vueData.siteInfo.site_url}`,
         true)
-      request.onload = checkPubliclyAccessibleSuccessCallback
-      request.onerror = checkPubliclyAccessibleFailCallback
+      request.onload = checkPubliclyAccessibleCallback
+      request.onerror = checkPubliclyAccessibleCallback
       request.send()
     }
 
@@ -272,17 +272,7 @@ document.addEventListener("DOMContentLoaded", () => {
       location.reload()
     }
 
-    function checkPubliclyAccessibleSuccessCallback(event: any) {
-      if (/"isDown":false/.test(event.target.response)) {
-        wp2staticGlobals.vueData.publiclyAccessible = 'Public'
-      } else if (/"isDown":true/.test(event.target.response)) {
-        wp2staticGlobals.vueData.publiclyAccessible = 'Private'
-      } else {
-        wp2staticGlobals.vueData.publiclyAccessible = 'Unknown'
-      }
-    }
-
-    function checkPubliclyAccessibleFailCallback(event: any) {
+    function checkPubliclyAccessibleCallback(event: any) {
       if (/"isDown":false/.test(event.target.response)) {
         wp2staticGlobals.vueData.publiclyAccessible = 'Public'
       } else if (/"isDown":true/.test(event.target.response)) {
