@@ -2,7 +2,7 @@
 
 <section class="wp2static-content wp2static-flex">
   <div class="content" style="max-width:33%">
-    <img src="<?php echo plugins_url( '/../assets/dev-server.svg', __FILE__ ); ?>" style="max-width:250px" alt="Add-on">
+    <img src="<?php echo plugins_url( '/../assets/dev-server.svg', __FILE__ ); ?>" style="max-width:250px;min-height:200px;" alt="Add-on">
 
     <h2>Development</h2>
 
@@ -18,7 +18,7 @@
 
   </div>
   <div class="content" style="max-width:33%">
-    <img src="<?php echo plugins_url( '/../assets/staging-server.svg', __FILE__ ); ?>" style="max-width:250px" alt="Add-on">
+    <img src="<?php echo plugins_url( '/../assets/staging-server.svg', __FILE__ ); ?>" style="max-width:250px;min-height:200px;" alt="Add-on">
 
     <h2>Staging</h2>
 
@@ -32,7 +32,7 @@
   </div>
 
   <div class="content" style="max-width:33%">
-    <img src="<?php echo plugins_url( '/../assets/production-server.svg', __FILE__ ); ?>" style="max-width:250px" alt="Add-on">
+    <img src="<?php echo plugins_url( '/../assets/production-server.svg', __FILE__ ); ?>" style="max-width:250px;min-height:200px;" alt="Add-on">
 
     <h2>Production</h2>
 
