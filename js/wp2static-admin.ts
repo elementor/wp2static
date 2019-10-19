@@ -153,7 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
             alert(validationErrors)
 
             vueApp.$data.progress = false
-            vueApp.$data.workflowStatus = 'exportStarted'
+            vueApp.$data.workflowStatus = "exportStarted"
 
             return false
           }
@@ -175,6 +175,12 @@ document.addEventListener("DOMContentLoaded", () => {
     })
 
     const wp2staticAJAX = new WP2StaticAJAX( wp2staticGlobals )
+
+    function checkLocalDNSResolutionCallback(event: any) {
+      const dnsResolution: string = event.target.response as string
+
+      wp2staticGlobals.vueData.dnsResolution = dnsResolution
+    }
 
     function generateFileListSuccessCallback(event: any) {
       const fileListCount: number = event.target.response as number
@@ -208,6 +214,16 @@ document.addEventListener("DOMContentLoaded", () => {
       wp2staticGlobals.vueData.currentAction = failedDeployMessage
       wp2staticGlobals.vueData.progress = false
       adminPage.initialCrawlListLoader.style.display = "none"
+    }
+
+    function checkLocalDNSResolution() {
+      wp2staticGlobals.vueData.currentAction = "Checking site's local DNS resolution"
+
+      sendWP2StaticAJAX(
+        "check_local_dns_resolution",
+        checkLocalDNSResolutionCallback,
+        checkLocalDNSResolutionCallback,
+      )
     }
 
     function prepareInitialFileList() {
@@ -274,11 +290,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function checkPubliclyAccessibleCallback(event: any) {
       if (/"isDown":false/.test(event.target.response)) {
-        wp2staticGlobals.vueData.publiclyAccessible = 'Public'
+        wp2staticGlobals.vueData.publiclyAccessible = "Public"
       } else if (/"isDown":true/.test(event.target.response)) {
-        wp2staticGlobals.vueData.publiclyAccessible = 'Private'
+        wp2staticGlobals.vueData.publiclyAccessible = "Private"
       } else {
-        wp2staticGlobals.vueData.publiclyAccessible = 'Unknown'
+        wp2staticGlobals.vueData.publiclyAccessible = "Unknown"
       }
     }
 
@@ -504,5 +520,7 @@ document.addEventListener("DOMContentLoaded", () => {
     prepareInitialFileList()
 
     checkPublicAccessibility()
+
+    checkLocalDNSResolution()
   },
 )

@@ -5,7 +5,6 @@ export class WP2StaticViewData {
 
   public viewData: any = {
     currentAction: "Starting export...",
-    publiclyAccessible: '',
     currentTab: "workflow_tab",
     detectionCheckboxes: [
       {
@@ -89,11 +88,11 @@ export class WP2StaticViewData {
           title: "WP-INC JS",
       },
     ],
+    dnsResolution: "",
     fieldData: new WP2StaticFieldData(),
     formProcessorData: new WP2StaticFormProcessorData(),
     progress: true,
-    workflowStatus: '',
-    zipURL: '',
+    publiclyAccessible: "",
     tabs: [
       { id: "workflow_tab", name: "Workflow" },
       { id: "url_detection", name: "URL Detection" },
@@ -108,6 +107,8 @@ export class WP2StaticViewData {
       { id: "add_ons", name: "Add-ons" },
       { id: "help_troubleshooting", name: "Help" },
     ],
+    workflowStatus: "",
+    zipURL: "",
   }
 
   constructor() {

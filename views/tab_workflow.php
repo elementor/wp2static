@@ -51,7 +51,40 @@
             Unknown
          </span>
         </li>
-       <li><b>Local DNS resolution</b></li>
+       <li><b>Local DNS resolution</b>
+            <span
+                v-if="dnsResolution == ''"
+                class="dashicons dashicons-clock"
+                style="color: #FE8F25;"
+            ></span>
+         <span
+            v-if="dnsResolution == ''"
+            :style="dnsResolution == '' ? 'color:#FE8F25;': 'color:red;'">
+            {{ dnsResolution == '' ? 'Checking' : '' }}
+         </span>
+         <span
+             v-if="dnsResolution == 'No'"
+             class="dashicons dashicons-no"
+             style="color: red;"
+         >
+         </span>
+         <span
+            v-if="dnsResolution == 'Yes' || dnsResolution == 'No'"
+            :style="dnsResolution == 'Yes' ? 'color:#3ad23a;': 'color:red;'">
+            {{ dnsResolution }}
+         </span>
+         <span
+            v-if="dnsResolution == 'Unknown' || dnsResolution == 'no shell_exec'"
+             class="dashicons dashicons-warning"
+             style="color: gray;"
+         >
+         </span>
+         <span
+            v-if="dnsResolution == 'Unknown' || dnsResolution == 'no shell_exec'"
+            style="color:gray;">
+            {{ dnsResolution }}
+         </span>
+       </li>
        <li><b>PHP max_execution_time</b>
          <span :style="siteInfo.maxExecutionTime == 0 ? 'color:#3ad23a;': 'color:red;'">
             {{ siteInfo.maxExecutionTime }} {{ siteInfo.maxExecutionTime == 0 ? '(Unlimited)': 'secs' }}

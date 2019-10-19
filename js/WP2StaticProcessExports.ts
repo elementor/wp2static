@@ -44,7 +44,7 @@ wp2static-exported-site.zip?cacheBuster=${Date.now()}`
 ${this.wp2staticGlobals.millisToMinutesAndSeconds(this.wp2staticGlobals.exportDuration)} (mins:ss)`
 
       this.wp2staticGlobals.vueData.progress = false
-      this.wp2staticGlobals.vueData.workflowStatus = 'deploySuccess'
+      this.wp2staticGlobals.vueData.workflowStatus = "deploySuccess"
       adminPage.goToMyStaticSite.focus()
     }
   }

@@ -8,7 +8,7 @@ use WP_CLI;
 use WP_Post;
 
 class Controller {
-    const VERSION = '7.0-build0006';
+    const VERSION = '7.0-build0007';
     const OPTIONS_KEY = 'wp2static-options';
     const HOOK = 'wp2static';
 
@@ -448,6 +448,60 @@ class Controller {
 
         if ( is_string( $via_ui ) ) {
             echo $initial_file_list_count;
+        }
+    }
+
+    /**
+     * Check whether a PHP function is enabled
+     *
+     * @param string $function_name list of menu items
+     */
+    public function isEnabled( string $function_name ) : bool {
+        $disable_functions = ini_get( 'disable_functions' );
+
+        if ( ! is_string( $disable_functions ) ) {
+            return false;
+        }
+
+        $is_enabled =
+            is_callable( $function_name ) &&
+            false === stripos( $disable_functions, $function_name );
+
+        return $is_enabled;
+    }
+
+    /**
+     * Check whether site it publicly accessible
+     */
+    public function check_local_dns_resolution() : void {
+        if ( $this->isEnabled( 'shell_exec' ) ) {
+            $site_host = parse_url( $this->site_url, PHP_URL_HOST );
+
+            $output =
+                shell_exec( "/usr/sbin/traceroute $site_host" );
+
+            if ( ! is_string( $output ) ) {
+                echo 'Unknown';
+                return;
+            }
+
+            $hops_in_route = substr_count( $output, PHP_EOL );
+
+            $resolves_to_local_ip4 =
+                ( strpos( $output, '127.0.0.1' ) !== false );
+            $resolves_to_local_ip6 = ( strpos( $output, '::1' ) !== false );
+
+            $resolves_locally =
+                $resolves_to_local_ip4 || $resolves_to_local_ip6;
+
+            if ( $resolves_locally && $hops_in_route < 2 ) {
+                echo 'Yes';
+            } else {
+                echo 'No';
+            }
+        } else {
+            error_log( 'no shell_exec' );
+            echo 'Unknown';
         }
     }
 
