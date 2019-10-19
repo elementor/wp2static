@@ -13,10 +13,43 @@
        <li>
             <b>Non-public dev server</b>
             <span
-                v-if="!siteInfo.publiclyAccessible"
+                v-if="publiclyAccessible == ''"
                 class="dashicons dashicons-clock"
                 style="color: #FE8F25;"
             ></span>
+         <span
+            v-if="publiclyAccessible == ''"
+            :style="publiclyAccessible == '' ? 'color:#FE8F25;': 'color:red;'">
+            {{ publiclyAccessible == '' ? 'Checking' : '' }}
+         </span>
+         <span
+             v-if="publiclyAccessible == 'Private'"
+             class="dashicons dashicons-yes"
+             style="color: #3ad23a;"
+         >
+         </span>
+         <span
+             v-if="publiclyAccessible == 'Public'"
+             class="dashicons dashicons-no"
+             style="color: red;"
+         >
+         </span>
+         <span
+             v-if="publiclyAccessible == 'Unknown'"
+             class="dashicons dashicons-warning"
+             style="color: gray;"
+         >
+         </span>
+         <span
+            v-if="publiclyAccessible == 'Private' || publiclyAccessible == 'Public'"
+            :style="publiclyAccessible == 'Private' ? 'color:#3ad23a;': 'color:red;'">
+            {{ publiclyAccessible == 'Private' ? 'Private' : 'Public' }}
+         </span>
+         <span
+            v-if="publiclyAccessible == 'Unknown'"
+            style="color:gray;'">
+            Unknown
+         </span>
         </li>
        <li><b>Local DNS resolution</b></li>
        <li><b>PHP max_execution_time</b>

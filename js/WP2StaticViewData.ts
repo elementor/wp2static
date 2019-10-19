@@ -5,6 +5,7 @@ export class WP2StaticViewData {
 
   public viewData: any = {
     currentAction: "Starting export...",
+    publiclyAccessible: '',
     currentTab: "workflow_tab",
     detectionCheckboxes: [
       {

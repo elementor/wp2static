@@ -220,6 +220,17 @@ document.addEventListener("DOMContentLoaded", () => {
       )
     }
 
+    function checkPublicAccessibility() {
+      const request = new XMLHttpRequest()
+      request.open(
+        "GET",
+        `https://api.downfor.cloud/httpcheck/${wp2staticGlobals.vueData.siteInfo.site_url}`,
+        true)
+      request.onload = checkPubliclyAccessibleSuccessCallback
+      request.onerror = checkPubliclyAccessibleFailCallback
+      request.send()
+    }
+
     function sendWP2StaticAJAX(ajaxAction: string, successCallback: any, failCallback: any) {
       wp2staticGlobals.vueData.progress = true
 
@@ -259,6 +270,26 @@ document.addEventListener("DOMContentLoaded", () => {
       wp2staticGlobals.vueData.progress = false
 
       location.reload()
+    }
+
+    function checkPubliclyAccessibleSuccessCallback(event: any) {
+      if (/"isDown":false/.test(event.target.response)) {
+        wp2staticGlobals.vueData.publiclyAccessible = 'Public'
+      } else if (/"isDown":true/.test(event.target.response)) {
+        wp2staticGlobals.vueData.publiclyAccessible = 'Private'
+      } else {
+        wp2staticGlobals.vueData.publiclyAccessible = 'Unknown'
+      }
+    }
+
+    function checkPubliclyAccessibleFailCallback(event: any) {
+      if (/"isDown":false/.test(event.target.response)) {
+        wp2staticGlobals.vueData.publiclyAccessible = 'Public'
+      } else if (/"isDown":true/.test(event.target.response)) {
+        wp2staticGlobals.vueData.publiclyAccessible = 'Private'
+      } else {
+        wp2staticGlobals.vueData.publiclyAccessible = 'Unknown'
+      }
     }
 
     function deleteCrawlCacheSuccessCallback(event: any) {
@@ -481,5 +512,7 @@ document.addEventListener("DOMContentLoaded", () => {
     hideOtherVendorMessages()
 
     prepareInitialFileList()
+
+    checkPublicAccessibility()
   },
 )
