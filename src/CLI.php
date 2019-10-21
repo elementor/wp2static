@@ -185,11 +185,12 @@ class CLI {
      *
      * Set option
      *
-     *     wp wp2static options set baseUrl 'https://mystaticsite.com'
+     *     wp wp2static options set baseUrlzip 'https://mystaticsite.com'
+     *     wp wp2static options set currentDeploymentMethod 'zip'
      *
      * Unset option
      *
-     *     wp wp2static options unset baseUrl
+     *     wp wp2static options unset baseUrlzip
      *
      * @param string[] $args CLI args
      * @param string[] $assoc_args CLI args

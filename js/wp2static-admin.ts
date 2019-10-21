@@ -42,31 +42,31 @@ document.addEventListener("DOMContentLoaded", () => {
         FieldSetWithCheckbox: fieldSetWithCheckbox.getComponent(),
         SectionWithCheckbox: sectionWithCheckbox.getComponent(),
       },
+      computed: {
+        baseUrl: (): string => {
+          // return 'https://someurl.com'
+          const currentBaseURL: HTMLInputElement =
+            document.getElementById(
+              `baseUrl${wp2staticGlobals.vueData.currentDeploymentMethod}`,
+            ) as HTMLInputElement
+
+          return currentBaseURL.value
+        },
+        baseUrlProduction: (): string => {
+          // return 'https://someurl.com'
+          const currentBaseURLProduction: HTMLInputElement =
+            document.getElementById(
+              `baseUrlProduction${wp2staticGlobals.vueData.currentDeploymentMethod}`,
+            ) as HTMLInputElement
+
+          return currentBaseURLProduction.value
+        },
+      },
       data: wp2staticGlobals.vueData,
       el: "#vueApp",
-      beforeDestroy: function () {
-        this.$el.removeEventListener('change', this.onChange)
+      beforeDestroy() {
+        this.$el.removeEventListener("change", this.onChange)
         // document.removeEventListener('click', this.onClick)
-      },
-      computed: {
-        baseUrl: () : string => {
-          // return 'https://someurl.com'
-          const currentBaseURL : HTMLInputElement =
-            document.getElementById(
-              `baseUrl${wp2staticGlobals.vueData.currentDeploymentMethod}`
-            ) as HTMLInputElement
-
-           return currentBaseURL.value
-        },
-        baseUrlProduction: () : string => {
-          // return 'https://someurl.com'
-          const currentBaseURLProduction : HTMLInputElement =
-            document.getElementById(
-              `baseUrlProduction${wp2staticGlobals.vueData.currentDeploymentMethod}`
-            ) as HTMLInputElement
-
-           return currentBaseURLProduction.value
-        },
       },
       methods: {
         cancelExport: (event: any) => {

@@ -301,8 +301,6 @@ class SiteCrawler {
             );
         }
 
-        $base_url = $this->settings['baseUrl'];
-
         $file_type = $this->detectFileType(
             $page_url,
             $curl_content_type

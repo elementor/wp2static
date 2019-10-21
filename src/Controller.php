@@ -104,7 +104,14 @@ class Controller {
         $instance->site_url_host =
             parse_url( $instance->site_url, PHP_URL_HOST );
 
-        $instance->destination_url = $instance->settings['baseUrl'];
+        // TODO: switch between staging/prod as early as possible
+        $current_deployment_method =
+            $instance->settings['currentDeploymentMethod'];
+
+        $instance->destination_url =
+            $instance->options->getOption(
+                'baseUrl' . $current_deployment_method
+            );
 
         if ( ! is_string( $instance->destination_url ) ) {
             $err = 'Destination URL not defined';
@@ -693,7 +700,7 @@ class Controller {
             'WP HOME: ' . get_option( 'home' ),
             'WP ADDRESS: ' . get_bloginfo( 'wpurl' ),
             defined( 'WP_CLI' ) ? 'WP-CLI: YES' : 'WP-CLI: NO',
-            'STATIC EXPORT URL: ' . $this->settings['baseUrl'],
+            'STATIC EXPORT URL: ' . $this->destination_url,
             'PERMALINK STRUCTURE: ' . get_option( 'permalink_structure' ),
         );
 

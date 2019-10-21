@@ -1,5 +1,6 @@
 <?php
 
+// TODO: rewrite whole class: no baseUrl, no placeholder URLs, etc..
 namespace WP2Static;
 
 class CSSProcessor {
