@@ -32,12 +32,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // merge DB options into vueData
     Object.assign(wp2staticGlobals.vueData, wp2staticOptions)
 
-    wp2staticGlobals.vueData.baseUrl =
-      wp2staticGlobals.vueData["baseUrl" + wp2staticGlobals.vueData.currentDeploymentMethod]
-
-    wp2staticGlobals.vueData.baseUrlProduction =
-      wp2staticGlobals.vueData["baseUrlProduction" + wp2staticGlobals.vueData.currentDeploymentMethodProduction]
-
     const detectionCheckbox: DetectionCheckbox = new DetectionCheckbox(wp2staticGlobals)
     const fieldSetWithCheckbox: FieldSetWithCheckbox = new FieldSetWithCheckbox(wp2staticGlobals)
     const sectionWithCheckbox: SectionWithCheckbox = new SectionWithCheckbox(wp2staticGlobals)
@@ -50,6 +44,30 @@ document.addEventListener("DOMContentLoaded", () => {
       },
       data: wp2staticGlobals.vueData,
       el: "#vueApp",
+      beforeDestroy: function () {
+        this.$el.removeEventListener('change', this.onChange)
+        // document.removeEventListener('click', this.onClick)
+      },
+      computed: {
+        baseUrl: () : string => {
+          // return 'https://someurl.com'
+          const currentBaseURL : HTMLInputElement =
+            document.getElementById(
+              `baseUrl${wp2staticGlobals.vueData.currentDeploymentMethod}`
+            ) as HTMLInputElement
+
+           return currentBaseURL.value
+        },
+        baseUrlProduction: () : string => {
+          // return 'https://someurl.com'
+          const currentBaseURLProduction : HTMLInputElement =
+            document.getElementById(
+              `baseUrlProduction${wp2staticGlobals.vueData.currentDeploymentMethod}`
+            ) as HTMLInputElement
+
+           return currentBaseURLProduction.value
+        },
+      },
       methods: {
         cancelExport: (event: any) => {
           window.location.href = window.location.href
@@ -336,6 +354,7 @@ document.addEventListener("DOMContentLoaded", () => {
         validationErrors += "Target folder may not be empty. Please adjust your settings."
       }
 
+      // TODO: should be this.baseUrl now it's computed
       if ((adminPage.baseUrl.value === undefined ||
             adminPage.baseUrl.value === "") &&
             ! adminPage.allowOfflineUsage.getAttribute("checked")) {

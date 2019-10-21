@@ -12,17 +12,7 @@
    </div>
 </section>
 
-<!-- legacy multi-export functionality relied on the baseUrl field being first in the settings block -->
-<input
-    style="display:none;"
-    type="text"
-    id="baseUrl"
-    name="baseUrl"
-    v-model="baseUrl"
- />
-
 <?php
-
   // load up each deployment settings block
   $deployment_option_templates = array(
       __DIR__ . '/folder_settings_block.php',

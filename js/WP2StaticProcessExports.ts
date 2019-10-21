@@ -27,8 +27,7 @@ export class WP2StaticProcessExports {
 wp2static-exported-site.zip?cacheBuster=${Date.now()}`
       } else {
         // for other methods, show the Go to my static site link
-        const baseUrl = String(adminPage.baseUrl.value)
-        adminPage.goToMyStaticSite.setAttribute("href", baseUrl)
+        adminPage.goToMyStaticSite.setAttribute("href", this.wp2staticGlobals.vueData)
         adminPage.goToMyStaticSite.style.display = "inline"
       }
 

@@ -5,7 +5,6 @@ export class WP2StaticOptions {
   public baseHREF: string
   public baseUrlfolder: string
   public baseUrlzip: string
-  public baseUrl: string
   public basicAuthPassword: string
   public basicAuthUser: string
   public completionEmail: string
@@ -62,7 +61,6 @@ export class WP2StaticOptions {
     this.additionalUrls = parsedOptions.additionalUrls
     this.allowOfflineUsage = parsedOptions.allowOfflineUsage
     this.baseHREF = parsedOptions.baseHREF
-    this.baseUrl = parsedOptions.baseUrl
     this.baseUrlfolder = parsedOptions.baseUrlfolder
     this.baseUrlzip = parsedOptions.baseUrlzip
     this.basicAuthPassword = parsedOptions.basicAuthPassword
