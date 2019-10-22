@@ -3,7 +3,7 @@ export class WP2StaticFieldData {
   public fieldData: any = {
     allowOfflineUsage: {
       description: `Destination URL will be ignored. Must combine with
- Document-Relative URLs option. <code>index.html</code> will be appended to
+ Document-Relative URLs option. index.html will be appended to
  all directory paths`,
       hint: `Check this if you're going to run your site locally,
  ie on a USB drive given to a client.`,
@@ -74,17 +74,21 @@ export class WP2StaticFieldData {
       hint: "Remove conditional comments within HEAD",
     },
     removeHTMLComments: {
-      description: `ie, <code>&lt;!-- / Yoast SEO plugin. --&gt;</code> type comments
+      description: `ie, <!-- / Yoast SEO plugin. --> type comments
  that are ridiculously wasting bytes`,
       hint: "Remove HTML comments",
     },
+    removeRobotsNoIndex: {
+      description: `The <meta name="robots" content="noindex"> type tags.`,
+      hint: "Remove robots meta tags",
+    },
     removeWPLinks: {
-      description: `ie, <code>&lt;link& rel="EditURI"...</code> type tags that usually aren't needed.`,
-      hint: "Remove WP &lt;link&gt; tags",
+      description: `ie, <link rel="EditURI"... type tags that usually aren't needed.`,
+      hint: "Remove WP <link> tags",
     },
     removeWPMeta: {
-      description: `The <code>&lt;meta&gt; name="generator"
- content="WordPress 4.9.8" /&gt;</code> type tags.`,
+      description: `The <meta name="generator"
+ content="WordPress 4.9.8" /> type tags.`,
       hint: "Remove WP Meta tags",
     },
     useBasicAuth: {
@@ -95,15 +99,15 @@ export class WP2StaticFieldData {
     useDocumentRelativeURLs: {
       description: `URLs in the exported site will be rewritten as
  <a href="https://www.w3schools.com/tags/tag_base.asp" target="_blank">relative URLs</a>.
- ie, <code>http://mydomain.com/some_dir/some_file.jpg</code> will become
- <code>some_dir/some_file.jpg</code>`,
+ ie, http://mydomain.com/some_dir/some_file.jpg will become
+ some_dir/some_file.jpg`,
       hint: "Use document-relative URLs",
       title: "Use document-relative URLs",
     },
     useSiteRootRelativeURLs: {
       description: `URLs in the exported site will be rewritten as site
- root-relative. ie, <code>http://mydomain.com/some_dir/some_file.jpg</code>
- will become <code>/some_dir/some_file.jpg</code>`,
+ root-relative. ie, http://mydomain.com/some_dir/some_file.jpg
+ will become /some_dir/some_file.jpg`,
       hint: "Use site root-relative URLs",
       title: "Use site-root relative URLs",
     },

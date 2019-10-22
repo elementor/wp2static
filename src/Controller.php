@@ -20,6 +20,7 @@ class Controller {
     public $rewrite_rules;
     public $version;
     public $exporter;
+    private $remove_robots_noindex;
     private $remove_wp_meta;
     private $remove_conditional_head_comments;
     private $remove_wp_links;
@@ -81,6 +82,8 @@ class Controller {
 
         $instance->settings = $instance->options->getSettings( true );
         $instance->site_url = SiteInfo::getUrl( 'site' );
+        $instance->remove_robots_noindex =
+            $instance->settings['removeRobotsNoIndex'];
         $instance->remove_wp_meta = $instance->settings['removeWPMeta'];
         $instance->remove_conditional_head_comments =
             $instance->settings['removeConditionalHeadComments'];
@@ -389,6 +392,7 @@ class Controller {
 
         $site_crawler = new SiteCrawler(
             (bool) $this->settings['allowOfflineUsage'],
+            (bool) $this->remove_robots_noindex,
             (bool) $this->remove_wp_meta,
             (bool) $this->remove_conditional_head_comments,
             (bool) $this->remove_wp_links,

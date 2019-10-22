@@ -44,6 +44,7 @@ class SiteCrawler {
     private $url;
     private $use_document_relative_urls;
     private $use_site_root_relative_urls;
+    private $remove_robots_noindex;
     private $remove_wp_meta;
     private $remove_conditional_head_comments;
     private $remove_wp_links;
@@ -59,6 +60,7 @@ class SiteCrawler {
      */
     public function __construct(
         bool $allow_offline_usage,
+        bool $remove_robots_noindex,
         bool $remove_wp_meta,
         bool $remove_conditional_head_comments,
         bool $remove_wp_links,
@@ -79,6 +81,7 @@ class SiteCrawler {
         $this->rewrite_rules = $rewrite_rules;
         $this->settings = $settings;
         $this->asset_downloader = $asset_downloader;
+        $this->remove_robots_noindex = $remove_robots_noindex;
         $this->remove_wp_meta = $remove_wp_meta;
         $this->remove_conditional_head_comments =
             $remove_conditional_head_comments;
@@ -330,6 +333,7 @@ class SiteCrawler {
                     (bool) $this->allow_offline_usage,
                     (bool) $this->use_document_relative_urls,
                     (bool) $this->use_site_root_relative_urls,
+                    (bool) $this->remove_robots_noindex,
                     (bool) $this->remove_wp_meta,
                     (bool) $this->remove_conditional_head_comments,
                     (bool) $this->remove_wp_links,

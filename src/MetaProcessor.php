@@ -12,6 +12,7 @@ class MetaProcessor {
     private $page_url;
     private $rewrite_rules;
     private $include_discovered_assets;
+    private $remove_robots_noindex;
     private $remove_wp_meta;
     private $url_rewriter;
 
@@ -26,6 +27,7 @@ class MetaProcessor {
         string $page_url,
         array $rewrite_rules,
         bool $include_discovered_assets,
+        bool $remove_robots_noindex,
         bool $remove_wp_meta,
         URLRewriter $url_rewriter
     ) {
@@ -34,21 +36,24 @@ class MetaProcessor {
         $this->page_url = $page_url;
         $this->rewrite_rules = $rewrite_rules;
         $this->include_discovered_assets = $include_discovered_assets;
+        $this->remove_robots_noindex = $remove_robots_noindex;
         $this->remove_wp_meta = $remove_wp_meta;
         $this->url_rewriter = $url_rewriter;
     }
 
     public function processMeta( DOMElement $element ) : void {
-        // TODO: detect meta redirects here + build list for rewriting
-        if ( isset( $this->remove_wp_meta ) ) {
-            $meta_name = $element->getAttribute( 'name' );
+        $meta_name = $element->getAttribute( 'name' );
 
+        // TODO: detect meta redirects here + build list for rewriting
+        if ( $this->remove_wp_meta ) {
             if ( strpos( $meta_name, 'generator' ) !== false ) {
                 $element->parentNode->removeChild( $element );
 
                 return;
             }
+        }
 
+        if ( $this->remove_robots_noindex ) {
             if ( strpos( $meta_name, 'robots' ) !== false ) {
                 $content = $element->getAttribute( 'content' );
 

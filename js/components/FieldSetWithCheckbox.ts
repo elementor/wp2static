@@ -29,8 +29,6 @@ export class FieldSetWithCheckbox {
       ],
       template: `
     <div>
-      <p>{{ description }}</p>
-
       <fieldset>
         <label :for='id'>
           <input
@@ -44,6 +42,8 @@ export class FieldSetWithCheckbox {
           <span>{{ hint }}</span>
         </label>
       </fieldset>
+
+      <p>{{ description }}</p>
     </div>`,
     }
   }

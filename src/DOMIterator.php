@@ -16,6 +16,7 @@ class DOMIterator {
     private $site_url_host;
     private $use_document_relative_urls;
     private $use_site_root_relative_urls;
+    private $remove_robots_noindex;
     private $remove_wp_meta;
     private $remove_conditional_head_comments;
     private $remove_wp_links;
@@ -36,6 +37,7 @@ class DOMIterator {
         bool $allow_offline_usage,
         bool $use_document_relative_urls,
         bool $use_site_root_relative_urls,
+        bool $remove_robots_noindex,
         bool $remove_wp_meta,
         bool $remove_conditional_head_comments,
         bool $remove_wp_links,
@@ -53,6 +55,7 @@ class DOMIterator {
         $this->allow_offline_usage = $allow_offline_usage;
         $this->use_document_relative_urls = $use_document_relative_urls;
         $this->use_site_root_relative_urls = $use_site_root_relative_urls;
+        $this->remove_robots_noindex = $remove_robots_noindex;
         $this->remove_wp_meta = $remove_wp_meta;
         $this->remove_conditional_head_comments =
             $remove_conditional_head_comments;
@@ -114,6 +117,7 @@ class DOMIterator {
                         $this->page_url,
                         $this->rewrite_rules,
                         $this->include_discovered_assets,
+                        $this->remove_robots_noindex,
                         $this->remove_wp_meta,
                         $url_rewriter
                     );

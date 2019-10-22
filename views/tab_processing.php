@@ -123,6 +123,12 @@
         :checked="removeCanonical"
     ></field-set-with-checkbox>
 
+    <field-set-with-checkbox
+        id="removeRobotsNoIndex"
+        :description="fieldData.removeRobotsNoIndex.description"
+        :hint="fieldData.removeRobotsNoIndex.hint"
+        :checked="removeRobotsNoIndex"
+    ></field-set-with-checkbox>
   </div>
 </section>
 

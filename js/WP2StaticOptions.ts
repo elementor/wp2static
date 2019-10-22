@@ -45,6 +45,7 @@ export class WP2StaticOptions {
   public removeConditionalHeadComments: boolean
   public removeHTMLComments: boolean
   public removeWPLinks: boolean
+  public removeRobotsNoIndex: boolean
   public removeWPMeta: boolean
   public renameRules: string
   public rewriteRules: string
@@ -103,6 +104,7 @@ export class WP2StaticOptions {
     this.removeHTMLComments = parsedOptions.removeHTMLComments
     this.removeCanonical = parsedOptions.removeCanonical
     this.removeWPLinks = parsedOptions.removeWPLinks
+    this.removeRobotsNoIndex = parsedOptions.removeRobotsNoIndex
     this.removeWPMeta = parsedOptions.removeWPMeta
     this.rewriteRules = parsedOptions.rewriteRules
     this.renameRules = parsedOptions.renameRules
