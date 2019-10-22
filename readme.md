@@ -397,7 +397,7 @@ Our official [translation page](https://translate.wordpress.org/projects/wp-plug
 
 Please [raise an issue](https://github.com/leonstafford/wp2static/issues/new) here on GitHub or on the plugin's [support forum](https://forum.wp2static.com).
 
-There is also a [Slack group](https://join.slack.com/t/wp2static/shared_invite/enQtNDQ4MDM4MjkwNjEwLTVmN2I2MmU4ODI2MWRkNzM4ZGU3YWU4ZGVhMzgwZTc1MDE2OGNmYTFhOGMwM2U0ZTVlYTljYmM2Yjk2ODJlOTk), for quick discussions among the user community.
+Support email is [mailto:help@wp2static.com](help@wp2static.com)
 
 ## Notes
 
