@@ -392,6 +392,7 @@ class Controller {
 
         $site_crawler = new SiteCrawler(
             (bool) $this->settings['allowOfflineUsage'],
+            (bool) $this->settings['useDocumentRelativeURLs'],
             (bool) $this->remove_robots_noindex,
             (bool) $this->remove_wp_meta,
             (bool) $this->remove_conditional_head_comments,

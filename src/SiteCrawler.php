@@ -60,6 +60,7 @@ class SiteCrawler {
      */
     public function __construct(
         bool $allow_offline_usage,
+        bool $use_document_relative_urls,
         bool $remove_robots_noindex,
         bool $remove_wp_meta,
         bool $remove_conditional_head_comments,
@@ -75,6 +76,7 @@ class SiteCrawler {
         AssetDownloader $asset_downloader
     ) {
         $this->allow_offline_usage = $allow_offline_usage;
+        $this->use_document_relative_urls = $use_document_relative_urls;
         $this->site_url = $site_url;
         $this->site_url_host = $site_url_host;
         $this->destination_url = $destination_url;

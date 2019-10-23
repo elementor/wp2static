@@ -16,11 +16,17 @@ final class ConvertToDocumentRelativeURLTest extends TestCase{
      * @dataProvider documentRelativeURLConversionProvider
      */
     public function testaddsRelativePathToURL(
-        $url, $page_url, $site_url, $offline_mode, $expectation
+        $url,
+        $page_url,
+        $site_url,
+        $offline_mode,
+        $expectation
     ) {
         $converted_url = ConvertToDocumentRelativeURL::convert(
-            $url, $page_url, $site_url, $offline_mode
-        );
+            $url,
+            $page_url,
+            $site_url,
+            $offline_mode);
 
         $this->assertEquals(
             $expectation,
@@ -38,8 +44,7 @@ final class ConvertToDocumentRelativeURLTest extends TestCase{
             $url,
             $page_url,
             $site_url,
-            $offline_mode
-        );
+            $offline_mode);
 
         $this->assertEquals(
             $url,
@@ -57,17 +62,28 @@ final class ConvertToDocumentRelativeURLTest extends TestCase{
             $url,
             $page_url,
             $site_url,
-            $offline_mode
-        );
+            $offline_mode);
 
         $this->assertEquals(
             $url,
-            $converted_url
-        );
+            $converted_url);
     }
 
     public function documentRelativeURLConversionProvider() {
         return [
+           //  $url_within_page,
+           //  $url_of_page_being_processed,
+           //  $this->destination_url,
+           //  $this->allow_offline_usage
+           //  $expectation
+           'different domain destination URL with subdir nested asset' =>  [
+                'https://somedomain.com/mystaticsite/mytheme/' .
+                    'assets/link-to-an-image.jpg',
+                'https://myplaceholderdomain.com/some-post/',
+                'https://somedomain.com/mystaticsite/',
+                false,
+                '../mytheme/assets/link-to-an-image.jpg'
+            ],
            'destination URL with subdir nested asset' =>  [
                 'https://myplaceholderdomain.com/mystaticsite/mytheme/' .
                     'assets/link-to-an-image.jpg',

@@ -34,7 +34,9 @@
 
     <p>Setting this will tell the browser to resolve all URLs using the URL you set (<code>https://mydomain.com</code>, <code>/</code>, etc).</p>
 
-    <p><b>Note:</b>If you want to deploy your static site to work in a subdirectory of any domain, set your Destination URL to the same as your Site URL and choose Use Document Relative URLs.</p>
+    <p><b>Note:</b>NEEDS CLARIFICATION - WHAT DO THE TESTS SHOW ? If you want to deploy your static site to work in a subdirectory of any domain, set your Destination URL to the same as your Site URL and choose Use Document Relative URLs.</p>
+
+    <p><b>Note:</b>This setting is ignored if "Alow offline usage" setting is on.</p>
   </div>
 </section>
 

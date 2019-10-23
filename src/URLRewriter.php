@@ -168,9 +168,16 @@ class URLRewriter {
             $this->use_site_root_relative_urls
         );
 
+        // Page our rewriting target URL exists in, rewritten to target domain
+        $rewritting_page_url = str_replace(
+            $this->rewrite_rules['site_url_patterns'],
+            $this->rewrite_rules['destination_url_patterns'],
+            $this->page_url
+        );
+
         $url = $url_post_processor->postProcessElementURLStructure(
             $url,
-            $this->page_url
+            $rewritting_page_url
         );
 
         return $url;
