@@ -8,7 +8,7 @@ use WP_CLI;
 use WP_Post;
 
 class Controller {
-    const VERSION = '7.0-build0008';
+    const VERSION = '7.0-build0009';
     const OPTIONS_KEY = 'wp2static-options';
     const HOOK = 'wp2static';
 
@@ -78,9 +78,6 @@ class Controller {
         DeployQueue::createTable();
         DeployCache::createTable();
 
-        // capture URL hosts for use in detecting internal links
-        $instance->site_url_host =
-            parse_url( $instance->site_url, PHP_URL_HOST );
 
         // TODO: switch between staging/prod as early as possible
         $current_deployment_method =
@@ -97,12 +94,13 @@ class Controller {
             throw new WP2StaticException( $err );
         }
 
-        $instance->rewrite_rules = $instance->loadRewriteRules();
+        $instance->rewrite_rules =
+            RewriteRules::generate(
+                $instance->site_url,
+                $instance->destination_url
+            );
 
-        // override max_execution_time to unlimited
-        if ( ConfigHelper::set_max_execution_time() ) {
-            set_time_limit( 0 );
-        }
+        ConfigHelper::set_max_execution_time();
 
         add_action(
             'wp2static_headless_hook',
@@ -321,27 +319,6 @@ class Controller {
         }
     }
 
-    /**
-     * Load user rewrite rules
-     *
-     * @throws WP2StaticException
-     */
-    public function loadRewriteRules() : array {
-        // get user rewrite rules, use regular and escaped versions of them
-        $rewrite_rules =
-            RewriteRules::generate(
-                $this->site_url,
-                $this->destination_url
-            );
-
-        if ( ! $this->rewrite_rules ) {
-            $err = 'No URL rewrite rules defined';
-            WsLog::l( $err );
-            throw new WP2StaticException( $err );
-        }
-
-        return $rewrite_rules;
-    }
 
     public function crawl_site() : void {
         // TODO: check where all cURL handles being set, should
@@ -367,7 +344,7 @@ class Controller {
             $this->settings);
 
         $site_crawler = new SiteCrawler(
-            $this->site_info,,
+            $this->site_info,
             $this->rewrite_rules,
             $this->settings,
             $asset_downloader);
@@ -585,35 +562,19 @@ class Controller {
         }
     }
 
-    /**
-     * Create export dir
-     *
-     * @throws WP2StaticException
-     */
-    public function create_export_directory() : void {
-        $archive_path = SiteInfo::getPath( 'uploads' ) .
-                'wp2static-exported-site/';
-
-        if ( ! wp_mkdir_p( $archive_path ) ) {
-            $err = "Couldn't create archive directory:" . $archive_path;
-            WsLog::l( $err );
-            throw new WP2StaticException( $err );
-        }
-    }
-
     public function prepare_for_export() : void {
         $this->save_options();
-
         $exporter = new Exporter();
-
         $exporter->pre_export_cleanup();
 
-        $this->create_export_directory();
+        FilesHelper::create_export_directory(
+            SiteInfo::getPath( 'uploads' ) . 'wp2static-exported-site/');
 
-        EnvironmentalInfo::log(self::VERSION, $this->settings, $this->site_info);
-
+        EnvironmentalInfo::log(
+            self::VERSION,
+            $this->settings,
+            $this->site_info);
         $exporter->generateModifiedFileList();
-
         $via_ui = filter_input( INPUT_POST, 'ajax_action' );
 
         if ( is_string( $via_ui ) ) {
@@ -669,29 +630,12 @@ class Controller {
 
         $end_time = microtime();
 
-        $duration = $plugin->microtime_diff( $start_time, $end_time );
+        $duration = $Utils::microtime_diff( $start_time, $end_time );
 
         WsLog::l( "Generated static site archive in $duration seconds" );
 
         $deployer = new Deployer();
         $deployer->deploy();
-    }
-
-    public function microtime_diff(
-        string $start,
-        string $end = null
-    ) : float {
-        if ( ! $end ) {
-            $end = microtime();
-        }
-
-        list( $start_usec, $start_sec ) = explode( ' ', $start );
-        list( $end_usec, $end_sec ) = explode( ' ', $end );
-
-        $diff_sec = intval( $end_sec ) - intval( $start_sec );
-        $diff_usec = floatval( $end_usec ) - floatval( $start_usec );
-
-        return floatval( $diff_sec ) + $diff_usec;
     }
 
     public function invalidate_single_url_cache(

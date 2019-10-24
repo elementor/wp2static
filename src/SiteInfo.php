@@ -24,11 +24,15 @@ class SiteInfo {
      */
     public function __construct() {
         $upload_path_and_url = wp_upload_dir();
+        $site_url = trailingslashit( site_url() );
 
         self::$info = [
             // Core
             'site_path' => ABSPATH,
-            'site_url' => trailingslashit( site_url() ),
+            'site_url' => $site_url,
+
+            // host used for detecting internal links
+            'site_url_host' => parse_url( $site_url, PHP_URL_HOST ),
 
             /*
                 Note:  'home_path' => get_home_path(),

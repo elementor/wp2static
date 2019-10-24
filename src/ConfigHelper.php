@@ -8,14 +8,13 @@ class ConfigHelper {
     /*
      * Checks we can adjust the max_execution_time ini option
      *
-     * @return bool URL can set max execution time
      */
-    public static function set_max_execution_time() : bool {
+    public static function set_max_execution_time() : void {
         if (
             ! function_exists( 'set_time_limit' ) ||
             ! function_exists( 'ini_get' )
         ) {
-            return false;
+            return;
         }
 
         $current_max_execution_time  = ini_get( 'max_execution_time' );
@@ -24,6 +23,8 @@ class ConfigHelper {
         set_time_limit( $proposed_max_execution_time );
         $current_max_execution_time = ini_get( 'max_execution_time' );
 
-        return $proposed_max_execution_time == $current_max_execution_time;
+        if ( $proposed_max_execution_time == $current_max_execution_time ) {
+            set_time_limit( 0 );
+        }
     }
 }

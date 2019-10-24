@@ -527,5 +527,19 @@ class FilesHelper {
 
         return $cleaned_urls;
     }
+
+    /**
+     * Create export dir
+     *
+     * @param string $archive_path export directory
+     * @throws WP2StaticException
+     */
+    public static function create_export_directory( $archive_path ) : void {
+        if ( ! wp_mkdir_p( $archive_path ) ) {
+            $err = "Couldn't create archive directory:" . $archive_path;
+            WsLog::l( $err );
+            throw new WP2StaticException( $err );
+        }
+    }
 }
 

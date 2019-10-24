@@ -31,6 +31,12 @@ class RewriteRules {
         $rewrite_rules['destination_url_patterns'] =
             self::generatePatterns( $destination_url );
 
+        if ( ! $rewrite_rules ) {
+            $err = 'No URL rewrite rules defined';
+            WsLog::l( $err );
+            throw new WP2StaticException( $err );
+        }
+
         return $rewrite_rules;
     }
 
