@@ -26,13 +26,11 @@ class SiteInfo {
         $upload_path_and_url = wp_upload_dir();
         $site_url = trailingslashit( site_url() );
 
+        // properties which should not change during plugin execution
         self::$info = [
             // Core
             'site_path' => ABSPATH,
             'site_url' => $site_url,
-
-            // host used for detecting internal links
-            'site_url_host' => parse_url( $site_url, PHP_URL_HOST ),
 
             /*
                 Note:  'home_path' => get_home_path(),
@@ -148,6 +146,23 @@ class SiteInfo {
 
         return strlen( get_option( 'permalink_structure' ) );
     }
+
+    public static function getPermalinks() : string {
+        if ( self::$instance === null ) {
+             self::$instance = new SiteInfo();
+        }
+
+        return get_option( 'permalink_structure' );
+    }
+
+    public static function getSiteURLHost() : int {
+        if ( self::$instance === null ) {
+             self::$instance = new SiteInfo();
+        }
+
+        return parse_url( self::$info['site_url'], PHP_URL_HOST );
+    }
+
 
     public function debug() : void {
         var_export( self::$info );

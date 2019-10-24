@@ -13,8 +13,8 @@ class EnvironmentalInfo {
      */
     public static function log(
         string $plugin_version,
-        Options $options,
-        SiteInfo $site_info
+        array $settings,
+        array $options
     ) : string {
         // TODO: remove WP calls already done in SiteInfo
         $info = array(
@@ -25,12 +25,12 @@ class EnvironmentalInfo {
             'PHP MEMORY LIMIT: ' . ini_get( 'memory_limit' ),
             'WP VERSION: ' . get_bloginfo( 'version' ),
             'WP URL: ' . get_bloginfo( 'url' ),
-            'WP SITEURL: ' . get_option( 'siteurl' ),
+            'WP SITEURL: ' . SiteInfo::getUrl('site'),
             'WP HOME: ' . get_option( 'home' ),
             'WP ADDRESS: ' . get_bloginfo( 'wpurl' ),
             defined( 'WP_CLI' ) ? 'WP-CLI: YES' : 'WP-CLI: NO',
-            'STATIC EXPORT URL: ' . $site_info->destination_url,
-            'PERMALINK STRUCTURE: ' . get_option( 'permalink_structure' ),
+            'STATIC EXPORT URL: ' . $settings['destination_url'],
+            'PERMALINK STRUCTURE: ' . SiteInfo::getPermalinks(),
         );
 
         if ( isset( $_SERVER['SERVER_SOFTWARE'] ) ) {
@@ -53,8 +53,6 @@ class EnvironmentalInfo {
             $theme->get( 'Version' );
 
         $info[] = 'WP2STATIC OPTIONS: ';
-
-        $options = $this->options->getAllOptions( false );
 
         foreach ( $options as $key[] => $value ) {
             $info[] = "{$value['Option name']}: {$value['Value']}";

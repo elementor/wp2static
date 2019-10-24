@@ -13,8 +13,6 @@ class Controller {
     const HOOK = 'wp2static';
 
     public $options;
-    public $settings;
-    public $rewrite_rules;
 
     /**
      * Main controller of WP2Static
@@ -68,7 +66,10 @@ class Controller {
             add_filter( 'menu_order', array( $instance, 'set_menu_order' ) );
         }
 
-        $instance->settings = $instance->options->getSettings( true );
+        // load Settings once into singleton
+        ExportSettings::loadSettingsFromDBOptions(
+            $instance->options->getSettings( true ));
+
         $instance->site_url = SiteInfo::getUrl( 'site' );
 
         // create DB table for crawl caching
@@ -78,27 +79,13 @@ class Controller {
         DeployQueue::createTable();
         DeployCache::createTable();
 
-
         // TODO: switch between staging/prod as early as possible
-        $current_deployment_method =
-            $instance->settings['currentDeploymentMethod'];
-
-        $instance->destination_url =
+        // ENV should be set within ExportSettings
+        ExportSettings::setDestinationURL(
             $instance->options->getOption(
-                'baseUrl' . $current_deployment_method
-            );
+                'baseUrl' . ExportSettings::get('currentDeploymentMethod')));
 
-        if ( ! is_string( $instance->destination_url ) ) {
-            $err = 'Destination URL not defined';
-            WsLog::l( $err );
-            throw new WP2StaticException( $err );
-        }
-
-        $instance->rewrite_rules =
-            RewriteRules::generate(
-                $instance->site_url,
-                $instance->destination_url
-            );
+        ExportSettings::loadRewriteRules();
 
         ConfigHelper::set_max_execution_time();
 
@@ -319,35 +306,12 @@ class Controller {
         }
     }
 
-
     public function crawl_site() : void {
-        // TODO: check where all cURL handles being set, should
-        // just be in SiteCrawler?
-
         $ch = curl_init();
-        $site_url = SiteInfo::getUrl( 'site' );
 
-        // add filter to allow user to specify extra downloadable extensions
-        $crawlable_filetypes = [];
-        $crawlable_filetypes['img'] = 1;
-        $crawlable_filetypes['jpeg'] = 1;
-        $crawlable_filetypes['jpg'] = 1;
-        $crawlable_filetypes['png'] = 1;
-        $crawlable_filetypes['webp'] = 1;
-        $crawlable_filetypes['gif'] = 1;
-        $crawlable_filetypes['svg'] = 1;
+        $asset_downloader = new AssetDownloader( $ch );
 
-        $asset_downloader = new AssetDownloader(
-            $ch,
-            $this->site_info,
-            $crawlable_filetypes,
-            $this->settings);
-
-        $site_crawler = new SiteCrawler(
-            $this->site_info,
-            $this->rewrite_rules,
-            $this->settings,
-            $asset_downloader);
+        $site_crawler = new SiteCrawler( $asset_downloader );
 
         $site_crawler->crawl();
     }
@@ -573,7 +537,8 @@ class Controller {
         EnvironmentalInfo::log(
             self::VERSION,
             $this->settings,
-            $this->site_info);
+            $this->options->getAllOptions( false ));
+
         $exporter->generateModifiedFileList();
         $via_ui = filter_input( INPUT_POST, 'ajax_action' );
 
