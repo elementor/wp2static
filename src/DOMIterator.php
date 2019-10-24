@@ -111,10 +111,22 @@ class DOMIterator {
         foreach ( $elements as $element ) {
             switch ( $element->tagName ) {
                 case 'meta':
+                    /*
+                        Refactoring:
+
+                            element processor requires:
+
+                             - siteInfo (why?)
+                             - rewriteRules
+                             - settings (for bool flags)
+
+                            can rm URLRewriter injection
+
+                    */
                     $meta_processor = new MetaProcessor(
-                        $this->site_url,
-                        $this->site_url_host,
-                        $this->page_url,
+                        $this->site_url, // siteInfo
+                        $this->site_url_host, // siteInfo
+                        $this->page_url, // siteInfo
                         $this->rewrite_rules,
                         $this->include_discovered_assets,
                         $this->remove_robots_noindex,

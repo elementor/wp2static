@@ -14,19 +14,7 @@ class Controller {
 
     public $options;
     public $settings;
-    public $site_url;
-    public $site_url_host;
-    public $destination_url;
     public $rewrite_rules;
-    public $version;
-    public $exporter;
-    private $remove_robots_noindex;
-    private $remove_wp_meta;
-    private $remove_conditional_head_comments;
-    private $remove_wp_links;
-    private $remove_canonical_links;
-    private $create_empty_favicon;
-    private $remove_html_comments;
 
     /**
      * Main controller of WP2Static
@@ -82,19 +70,6 @@ class Controller {
 
         $instance->settings = $instance->options->getSettings( true );
         $instance->site_url = SiteInfo::getUrl( 'site' );
-        $instance->remove_robots_noindex =
-            $instance->settings['removeRobotsNoIndex'];
-        $instance->remove_wp_meta = $instance->settings['removeWPMeta'];
-        $instance->remove_conditional_head_comments =
-            $instance->settings['removeConditionalHeadComments'];
-        $instance->remove_wp_links =
-            $instance->settings['removeWPLinks'];
-        $instance->remove_canonical_links =
-            $instance->settings['removeCanonical'];
-        $instance->create_empty_favicon =
-            $instance->settings['createEmptyFavicon'];
-        $instance->remove_html_comments =
-            $instance->settings['removeHTMLComments'];
 
         // create DB table for crawl caching
         CrawlCache::createTable();
@@ -122,10 +97,10 @@ class Controller {
             throw new WP2StaticException( $err );
         }
 
-        $instance->loadRewriteRules();
+        $instance->rewrite_rules = $instance->loadRewriteRules();
 
         // override max_execution_time to unlimited
-        if ( $instance->set_max_execution_time() ) {
+        if ( ConfigHelper::set_max_execution_time() ) {
             set_time_limit( 0 );
         }
 
@@ -351,9 +326,9 @@ class Controller {
      *
      * @throws WP2StaticException
      */
-    public function loadRewriteRules() : void {
+    public function loadRewriteRules() : array {
         // get user rewrite rules, use regular and escaped versions of them
-        $this->rewrite_rules =
+        $rewrite_rules =
             RewriteRules::generate(
                 $this->site_url,
                 $this->destination_url
@@ -364,6 +339,8 @@ class Controller {
             WsLog::l( $err );
             throw new WP2StaticException( $err );
         }
+
+        return $rewrite_rules;
     }
 
     public function crawl_site() : void {
@@ -385,28 +362,15 @@ class Controller {
 
         $asset_downloader = new AssetDownloader(
             $ch,
-            $site_url,
+            $this->site_info,
             $crawlable_filetypes,
-            $this->settings
-        );
+            $this->settings);
 
         $site_crawler = new SiteCrawler(
-            (bool) $this->settings['allowOfflineUsage'],
-            (bool) $this->settings['useDocumentRelativeURLs'],
-            (bool) $this->remove_robots_noindex,
-            (bool) $this->remove_wp_meta,
-            (bool) $this->remove_conditional_head_comments,
-            (bool) $this->remove_wp_links,
-            (bool) $this->remove_canonical_links,
-            (bool) $this->create_empty_favicon,
-            (bool) $this->remove_html_comments,
-            $this->site_url,
-            $this->site_url_host,
-            $this->destination_url,
+            $this->site_info,,
             $this->rewrite_rules,
             $this->settings,
-            $asset_downloader
-        );
+            $asset_downloader);
 
         $site_crawler->crawl();
     }
@@ -553,7 +517,7 @@ class Controller {
                 'static-html-output-plugin/' . // TODO: rm hardcoding slug
                 'admin/wp2static-admin.js',
             array( 'jquery' ),
-            $plugin->version,
+            self::VERSION,
             false
         );
 
@@ -569,6 +533,8 @@ class Controller {
         $site_info['curlSupported'] = SiteInfo::hasCURLSupport();
         $site_info['permalinksDefined'] = SiteInfo::permalinksAreDefined();
         $site_info['domDocumentAvailable'] = class_exists( 'DOMDocument' );
+
+        $plugin->site_info = $site_info;
 
         $site_info = json_encode(
             $site_info,
@@ -638,15 +604,15 @@ class Controller {
     public function prepare_for_export() : void {
         $this->save_options();
 
-        $this->exporter = new Exporter();
+        $exporter = new Exporter();
 
-        $this->exporter->pre_export_cleanup();
+        $exporter->pre_export_cleanup();
 
         $this->create_export_directory();
 
-        $this->logEnvironmentalInfo();
+        EnvironmentalInfo::log(self::VERSION, $this->settings, $this->site_info);
 
-        $this->exporter->generateModifiedFileList();
+        $exporter->generateModifiedFileList();
 
         $via_ui = filter_input( INPUT_POST, 'ajax_action' );
 
@@ -690,64 +656,6 @@ class Controller {
         if ( is_string( $via_ui ) ) {
             echo 'SUCCESS';
         }
-    }
-
-    public function logEnvironmentalInfo() : void {
-        $info = array(
-            'EXPORT START: ' . date( 'Y-m-d h:i:s' ),
-            'PLUGIN VERSION: ' . $this::VERSION,
-            'PHP VERSION: ' . phpversion(),
-            'OS VERSION: ' . php_uname(),
-            'PHP MEMORY LIMIT: ' . ini_get( 'memory_limit' ),
-            'WP VERSION: ' . get_bloginfo( 'version' ),
-            'WP URL: ' . get_bloginfo( 'url' ),
-            'WP SITEURL: ' . get_option( 'siteurl' ),
-            'WP HOME: ' . get_option( 'home' ),
-            'WP ADDRESS: ' . get_bloginfo( 'wpurl' ),
-            defined( 'WP_CLI' ) ? 'WP-CLI: YES' : 'WP-CLI: NO',
-            'STATIC EXPORT URL: ' . $this->destination_url,
-            'PERMALINK STRUCTURE: ' . get_option( 'permalink_structure' ),
-        );
-
-        if ( isset( $_SERVER['SERVER_SOFTWARE'] ) ) {
-            $info[] = 'SERVER SOFTWARE: ' . $_SERVER['SERVER_SOFTWARE'];
-        }
-
-        $info[] = 'ACTIVE PLUGINS: ';
-
-        $active_plugins = get_option( 'active_plugins' );
-
-        foreach ( $active_plugins as $active_plugin ) {
-            $info[] = $active_plugin;
-        }
-
-        $info[] = 'ACTIVE THEME: ';
-
-        $theme = wp_get_theme();
-
-        $info[] = $theme->get( 'Name' ) . ' is version ' .
-            $theme->get( 'Version' );
-
-        $info[] = 'WP2STATIC OPTIONS: ';
-
-        $options = $this->options->getAllOptions( false );
-
-        foreach ( $options as $key[] => $value ) {
-            $info[] = "{$value['Option name']}: {$value['Value']}";
-        }
-
-        $info[] = 'SITE URL PATTERNS: ' .
-            $this->rewrite_rules['site_url_patterns'];
-
-        $info[] = 'DESTINATION URL PATTERNS: ' .
-            $this->rewrite_rules['destination_url_patterns'];
-
-        $extensions = get_loaded_extensions();
-
-        $info[] = 'INSTALLED EXTENSIONS: ' .
-            join( PHP_EOL, $extensions );
-
-        WsLog::lines( $info );
     }
 
     public function wp2static_headless() : void {
@@ -825,22 +733,5 @@ class Controller {
         echo '<p>Publish whole site as static HTML</p>';
         echo "<button class='button button-primary'>Publish whole site" .
             '</button>';
-    }
-
-    public function set_max_execution_time() : bool {
-        if (
-            ! function_exists( 'set_time_limit' ) ||
-            ! function_exists( 'ini_get' )
-        ) {
-            return false;
-        }
-
-        $current_max_execution_time  = ini_get( 'max_execution_time' );
-        $proposed_max_execution_time =
-            ( $current_max_execution_time == 30 ) ? 31 : 30;
-        set_time_limit( $proposed_max_execution_time );
-        $current_max_execution_time = ini_get( 'max_execution_time' );
-
-        return $proposed_max_execution_time == $current_max_execution_time;
     }
 }

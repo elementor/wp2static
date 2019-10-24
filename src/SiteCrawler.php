@@ -4,13 +4,6 @@ namespace WP2Static;
 
 class SiteCrawler {
 
-    private $allow_offline_usage;
-    /**
-     * Archive directory.
-     *
-     * @var string
-     */
-    private $archive_dir;
     private $asset_downloader;
     private $ch;
     /**
@@ -28,7 +21,6 @@ class SiteCrawler {
     private $destination_url;
     private $extension;
     private $file_type;
-    private $include_discovered_assets;
     private $page_url;
     /**
      * The processed crawled file, before saving.
@@ -39,18 +31,12 @@ class SiteCrawler {
     private $request;
     private $rewrite_rules;
     private $settings;
-    private $site_url;
-    private $site_url_host;
-    private $url;
-    private $use_document_relative_urls;
-    private $use_site_root_relative_urls;
-    private $remove_robots_noindex;
-    private $remove_wp_meta;
-    private $remove_conditional_head_comments;
-    private $remove_wp_links;
-    private $remove_canonical_links;
-    private $create_empty_favicon;
-    private $remove_html_comments;
+    /**
+     * The processed crawled file, before saving.
+     *
+     * @var SiteInfo
+     */
+    private $site_info;
 
     /**
      *  SiteCrawler constructor
@@ -59,38 +45,15 @@ class SiteCrawler {
      * @param mixed[] $settings all plugin settings
      */
     public function __construct(
-        bool $allow_offline_usage,
-        bool $use_document_relative_urls,
-        bool $remove_robots_noindex,
-        bool $remove_wp_meta,
-        bool $remove_conditional_head_comments,
-        bool $remove_wp_links,
-        bool $remove_canonical_links,
-        bool $create_empty_favicon,
-        bool $remove_html_comments,
-        string $site_url,
-        string $site_url_host,
-        string $destination_url,
+        array $site_info,
         array $rewrite_rules,
         array $settings,
         AssetDownloader $asset_downloader
     ) {
-        $this->allow_offline_usage = $allow_offline_usage;
-        $this->use_document_relative_urls = $use_document_relative_urls;
-        $this->site_url = $site_url;
-        $this->site_url_host = $site_url_host;
-        $this->destination_url = $destination_url;
+        $this->site_info = $site_info;
         $this->rewrite_rules = $rewrite_rules;
         $this->settings = $settings;
         $this->asset_downloader = $asset_downloader;
-        $this->remove_robots_noindex = $remove_robots_noindex;
-        $this->remove_wp_meta = $remove_wp_meta;
-        $this->remove_conditional_head_comments =
-            $remove_conditional_head_comments;
-        $this->remove_wp_links = $remove_wp_links;
-        $this->remove_canonical_links = $remove_canonical_links;
-        $this->create_empty_favicon = $create_empty_favicon;
-        $this->remove_html_comments = $remove_html_comments;
 
         /*
            Implement crawl-caching, to greatly speed up the process
@@ -111,10 +74,6 @@ class SiteCrawler {
         $this->file_type = '';
         $this->content_type = '';
         $this->extension = '';
-        $this->archive_dir = '';
-        $this->rewrite_rules = $rewrite_rules;
-        $this->site_url_host = $site_url_host;
-        $this->destination_url = $destination_url;
         $this->ch = curl_init();
         $this->request = new Request();
 
@@ -149,9 +108,6 @@ class SiteCrawler {
             WsLog::l( $err );
             throw new WP2StaticException( $err );
         }
-
-        $this->archive_dir = SiteInfo::getPath( 'uploads' ) .
-            'wp2static-exported-site/';
 
         $exclusions = array( 'wp-json' );
 
@@ -332,18 +288,7 @@ class SiteCrawler {
                     $this->site_url_host,
                     $this->page_url,
                     $this->destination_url,
-                    (bool) $this->allow_offline_usage,
-                    (bool) $this->use_document_relative_urls,
-                    (bool) $this->use_site_root_relative_urls,
-                    (bool) $this->remove_robots_noindex,
-                    (bool) $this->remove_wp_meta,
-                    (bool) $this->remove_conditional_head_comments,
-                    (bool) $this->remove_wp_links,
-                    (bool) $this->remove_canonical_links,
-                    (bool) $this->create_empty_favicon,
-                    (bool) $this->remove_html_comments,
                     $this->rewrite_rules,
-                    (bool) $this->include_discovered_assets,
                     $this->asset_downloader
                 );
 
@@ -424,7 +369,8 @@ class SiteCrawler {
         );
 
         // TODO: better validate save success
-        $file_writer->saveFile( $this->archive_dir );
+        $file_writer->saveFile(
+            SiteInfo::getPath( 'uploads' ) . 'wp2static-exported-site/');
 
         if ( ! isset( $this->settings['dontUseCrawlCaching'] ) ) {
             CrawlCache::addUrl( $url );
