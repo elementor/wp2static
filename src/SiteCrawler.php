@@ -18,7 +18,6 @@ class SiteCrawler {
      * @var array<int, mixed>
      */
     private $curl_options;
-    private $destination_url;
     private $extension;
     private $file_type;
     private $page_url;
@@ -31,28 +30,14 @@ class SiteCrawler {
     private $request;
     private $rewrite_rules;
     private $settings;
-    /**
-     * The processed crawled file, before saving.
-     *
-     * @var SiteInfo
-     */
-    private $site_info;
 
     /**
      *  SiteCrawler constructor
      *
-     * @param mixed[] $rewrite_rules rewrite rules
-     * @param mixed[] $settings all plugin settings
      */
     public function __construct(
-        array $site_info,
-        array $rewrite_rules,
-        array $settings,
         AssetDownloader $asset_downloader
     ) {
-        $this->site_info = $site_info;
-        $this->rewrite_rules = $rewrite_rules;
-        $this->settings = $settings;
         $this->asset_downloader = $asset_downloader;
 
         /*
@@ -79,19 +64,20 @@ class SiteCrawler {
 
         $this->curl_options = [];
 
-        if ( isset( $this->settings['crawlPort'] ) ) {
-            $this->curl_options[ CURLOPT_PORT ] = $this->settings['crawlPort'];
+        if ( ExportSettings::get( 'crawlPort' ) ) {
+            $this->curl_options[ CURLOPT_PORT ] =
+                ExportSettings::get( 'crawlPort' );
         }
 
-        if ( isset( $this->settings['crawlUserAgent'] ) ) {
+        if ( ExportSettings::get( 'crawlUserAgent' ) ) {
             $this->curl_options[ CURLOPT_USERAGENT ] =
-                $this->settings['crawlUserAgent'];
+                ExportSettings::get( 'crawlUserAgent' );
         }
 
-        if ( isset( $this->settings['useBasicAuth'] ) ) {
+        if ( ExportSettings::get( 'useBasicAuth' ) ) {
             $this->curl_options[ CURLOPT_USERPWD ] =
-                $this->settings['basicAuthUser'] . ':' .
-                $this->settings['basicAuthPassword'];
+                ExportSettings::get( 'basicAuthUser' ) . ':' .
+                ExportSettings::get( 'basicAuthPassword' );
         }
     }
 
@@ -114,7 +100,7 @@ class SiteCrawler {
         foreach ( $urls_to_crawl as $url ) {
             $page_url = SiteInfo::getUrl( 'site' ) . ltrim( $url, '/' );
 
-            if ( ! isset( $this->settings['dontUseCrawlCaching'] ) ) {
+            if ( ExportSettings::get( 'dontUseCrawlCaching' ) ) {
                 if ( CrawlCache::getUrl( $url ) ) {
                     continue;
                 }
@@ -267,42 +253,17 @@ class SiteCrawler {
             $curl_content_type
         );
 
-        $user_rewrite_rules = $this->settings['rewriteRules'];
-
-        if ( ! $user_rewrite_rules ) {
-            $user_rewrite_rules = '';
-        }
-
         switch ( $file_type ) {
             case 'html':
-                $processor = new HTMLProcessor(
-                    $this->rewrite_rules,
-                    $this->site_url_host,
-                    $this->destination_url,
-                    $user_rewrite_rules,
-                    $this->ch
-                );
-
                 $dom_iterator = new DOMIterator(
-                    $this->site_url,
-                    $this->site_url_host,
                     $this->page_url,
-                    $this->destination_url,
-                    $this->rewrite_rules,
                     $this->asset_downloader
                 );
 
-                $xml_doc = $dom_iterator->processHTML(
-                    $output,
-                    $page_url
-                );
+                $xml_doc = $dom_iterator->processHTML( $output );
 
                 $dom_to_html = new DOMToHTMLGenerator();
-                $this->processed_file = $dom_to_html->getHTML(
-                    $xml_doc,
-                    isset( $this->settings['forceHTTPS'] ),
-                    isset( $this->settings['forceRewriteSiteURLs'] )
-                );
+                $this->processed_file = $dom_to_html->getHTML( $xml_doc );
 
                 break;
 

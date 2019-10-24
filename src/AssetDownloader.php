@@ -5,27 +5,14 @@ namespace WP2Static;
 class AssetDownloader {
 
     private $ch;
-    private $settings;
-    private $site_url;
-    private $crawlable_filetypes;
 
     /**
      * Create AssetDownloader
      *
      * @param resource $ch cURL handle
-     * @param mixed[] $crawlable_filetypes list of filetypes we'll download
-     * @param mixed[] $settings all plugin settings
      */
-    public function __construct(
-        $ch,
-        string $site_url,
-        array $crawlable_filetypes,
-        array $settings
-    ) {
+    public function __construct( $ch ) {
         $this->ch = $ch;
-        $this->site_url = $site_url;
-        $this->crawlable_filetypes = $crawlable_filetypes;
-        $this->settings = $settings;
     }
 
     /*
@@ -40,9 +27,9 @@ class AssetDownloader {
         // faster skip cached files without querying DB
 
         // check if supported filetype for crawling
-        if ( isset( $this->crawlable_filetypes[ $extension ] ) ) {
+        if ( isset( ExportSettings::get('crawlable_filetypes')[ $extension ] ) ) {
             // skip if in Crawl Cache already
-            if ( ! isset( $this->settings['dontUseCrawlCaching'] ) ) {
+            if ( ! ExportSettings::get('dontUseCrawlCaching' ) ) {
                 if ( CrawlCache::getUrl( $url ) ) {
                     return;
                 }
@@ -50,7 +37,7 @@ class AssetDownloader {
 
             // get url without Site URL
             $save_path = str_replace(
-                $this->site_url,
+                SiteInfo::getUrl('site_url'),
                 '',
                 $url
             );
@@ -61,20 +48,20 @@ class AssetDownloader {
 
             $curl_options = [];
 
-            if ( isset( $this->settings['crawlPort'] ) ) {
+            if ( ExportSettings::get( 'crawlPort') ) {
                 $curl_options[ CURLOPT_PORT ] =
-                    $this->settings['crawlPort'];
+                    ExportSettings::get('crawlPort');
             }
 
-            if ( isset( $this->settings['crawlUserAgent'] ) ) {
+            if ( ExportSettings::get( 'crawlUserAgent' ) ) {
                 $curl_options[ CURLOPT_USERAGENT ] =
-                    $this->settings['crawlUserAgent'];
+                    ExportSettings::get('crawlUserAgent');
             }
 
-            if ( isset( $this->settings['useBasicAuth'] ) ) {
+            if ( ExportSettings::get( 'useBasicAuth' ) ) {
                 $curl_options[ CURLOPT_USERPWD ] =
-                    $this->settings['basicAuthUser'] . ':' .
-                    $this->settings['basicAuthPassword'];
+                    ExportSettings::get( 'basicAuthUser' ) . ':' .
+                    ExportSettings::get( 'basicAuthPassword' );
             }
 
             $request = new Request();

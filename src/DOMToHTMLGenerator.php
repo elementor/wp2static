@@ -10,11 +10,7 @@ class DOMToHTMLGenerator {
     private $rewrite_rules;
     private $settings;
 
-    public function getHTML(
-        DOMDocument $xml_doc,
-        bool $force_https = false,
-        bool $force_rewrite = false
-    ) : string {
+    public function getHTML( DOMDocument $xml_doc ) : string {
         $processed_html = $xml_doc->saveHtml();
 
         if ( ! is_string( $processed_html ) ) {
@@ -73,7 +69,7 @@ class DOMToHTMLGenerator {
             return '';
         }
 
-        if ( $force_https ) {
+        if ( ExportSettings::get( 'forceHTTPS' ) ) {
             $processed_html = str_replace(
                 'http://',
                 'https://',
@@ -85,7 +81,7 @@ class DOMToHTMLGenerator {
             return '';
         }
 
-        if ( $force_rewrite ) {
+        if ( ExportSettings::get( 'forceRewriteSiteURLs' ) ) {
             $processed_html = str_replace(
                 $this->rewrite_rules['site_url_patterns'],
                 $this->rewrite_rules['destination_url_patterns'],

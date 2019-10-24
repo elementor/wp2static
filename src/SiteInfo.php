@@ -155,7 +155,7 @@ class SiteInfo {
         return get_option( 'permalink_structure' );
     }
 
-    public static function getSiteURLHost() : int {
+    public static function getSiteURLHost() : string {
         if ( self::$instance === null ) {
              self::$instance = new SiteInfo();
         }

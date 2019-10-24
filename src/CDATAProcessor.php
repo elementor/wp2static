@@ -14,16 +14,14 @@ class CDATAProcessor {
      */
     public function processCDATA(
         DOMNode $node,
-        DOMDocument $xml_doc,
-        array $rewrite_rules
+        DOMDocument $xml_doc
     ) : void {
         $node_text = $node->textContent;
 
         $node_text = str_replace(
-            $rewrite_rules['site_url_patterns'],
-            $rewrite_rules['destination_url_patterns'],
-            $node_text
-        );
+            ExportSettings::get('rewrite_rules')['site_url_patterns'],
+            ExportSettings::get('rewrite_rules')['destination_url_patterns'],
+            $node_text);
 
         $new_node =
             $xml_doc->createTextNode( $node_text );

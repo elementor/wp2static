@@ -349,8 +349,7 @@ class Controller {
         $initial_file_list_count =
             FilesHelper::buildInitialFileList(
                 true,
-                SiteInfo::getPath( 'uploads' ),
-                $this->settings
+                SiteInfo::getPath( 'uploads' )
             );
 
         if ( $initial_file_list_count < 1 ) {
@@ -536,7 +535,6 @@ class Controller {
 
         EnvironmentalInfo::log(
             self::VERSION,
-            $this->settings,
             $this->options->getAllOptions( false ));
 
         $exporter->generateModifiedFileList();

@@ -192,12 +192,10 @@ class FilesHelper {
     /**
      * Build the initial file list to crawl
      *
-     * @param mixed[] $settings all settings
      */
     public static function buildInitialFileList(
         bool $via_cli = false,
-        string $uploads_path,
-        array $settings
+        string $uploads_path
         ) : string {
         $arrays_to_merge = [];
 
@@ -222,59 +220,59 @@ class FilesHelper {
          - sitemaps
 
         */
-        if ( isset( $settings['detectAttachments'] ) ) {
+        if ( ExportSettings::get('detectAttachments') ) {
             $arrays_to_merge[] = DetectAttachmentURLs::detect();
         }
 
-        if ( isset( $settings['detectPosts'] ) ) {
+        if ( ExportSettings::get('detectPosts') ) {
             $permalink_structure = get_option( 'permalink_structure' );
             $arrays_to_merge[] = DetectPostURLs::detect( $permalink_structure );
         }
 
-        if ( isset( $settings['detectPages'] ) ) {
+        if ( ExportSettings::get('detectPages') ) {
             $arrays_to_merge[] = DetectPageURLs::detect();
         }
 
-        if ( isset( $settings['detectCustomPostTypes'] ) ) {
+        if ( ExportSettings::get('detectCustomPostTypes') ) {
             $arrays_to_merge[] = DetectCustomPostTypeURLs::detect();
         }
 
-        if ( isset( $settings['detectUploads'] ) ) {
+        if ( ExportSettings::get('detectUploads') ) {
             $arrays_to_merge[] =
                 self::getListOfLocalFilesByDir( $uploads_path );
         }
 
-        if ( isset( $settings['detectParentTheme'] ) ) {
+        if ( ExportSettings::get('detectParentTheme') ) {
             $arrays_to_merge[] = DetectThemeAssets::detect( 'parent' );
         }
 
-        if ( isset( $settings['detectChildTheme'] ) ) {
+        if ( ExportSettings::get('detectChildTheme') ) {
             $arrays_to_merge[] = DetectThemeAssets::detect( 'child' );
         }
 
-        if ( isset( $settings['detectPluginAssets'] ) ) {
+        if ( ExportSettings::get('detectPluginAssets') ) {
             $arrays_to_merge[] = DetectPluginAssets::detect();
         }
 
-        if ( isset( $settings['detectWPIncludesAssets'] ) ) {
+        if ( ExportSettings::get('detectWPIncludesAssets') ) {
             $arrays_to_merge[] = DetectWPIncludesAssets::detect();
         }
 
-        if ( isset( $settings['detectVendorCacheDirs'] ) ) {
+        if ( ExportSettings::get('detectVendorCacheDirs') ) {
             $arrays_to_merge[] =
                 DetectVendorFiles::detect( SiteInfo::getURL( 'site' ) );
         }
 
-        if ( isset( $settings['detectPostPagination'] ) ) {
+        if ( ExportSettings::get('detectPostPagination') ) {
             $arrays_to_merge[] = DetectPostsPaginationURLs::detect();
         }
 
-        if ( isset( $settings['detectArchives'] ) ) {
+        if ( ExportSettings::get('detectArchives') ) {
             $arrays_to_merge[] =
                 DetectArchiveURLs::detect( SiteInfo::getUrl( 'site' ) );
         }
 
-        if ( isset( $settings['detectCategoryPagination'] ) ) {
+        if ( ExportSettings::get('detectCategoryPagination') ) {
             $arrays_to_merge[] =
                 DetectCategoryPaginationURLs::detect(
                     SiteInfo::getUrl( 'site' )

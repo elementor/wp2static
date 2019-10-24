@@ -45,18 +45,20 @@ class ExportSettings {
      * Get setting via name
      *
      * @throws WP2StaticException
+     * @returns mixed export setting value
      */
-    public static function get( string $name ) : string {
+    public static function get( string $name )  {
         if ( self::$instance === null ) {
              self::$instance = new ExportSettings();
         }
 
         $key = $name;
 
-        if ( ! array_key_exists( $key, self::$settings ) ) {
-            $err = 'Attempted to access missing ExportSetting';
-            WsLog::l( $err );
-            throw new WP2StaticException( $err );
+        if (
+             ! array_key_exists( $key, self::$settings ) ||
+             ! self::$settings[ $key ]
+        ) {
+            return '';
         }
 
         return self::$settings[ $key ];
@@ -83,6 +85,9 @@ class ExportSettings {
 
     /**
      * Load rewrite rules (depends on destination_url)
+     *
+     * Note: these differ than self::$settings['rewriteRules'] 
+     * which are the user-defined rewrite rules
      *
      * @throws WP2StaticException
      */

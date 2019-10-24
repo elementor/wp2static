@@ -13,9 +13,8 @@ class EnvironmentalInfo {
      */
     public static function log(
         string $plugin_version,
-        array $settings,
         array $options
-    ) : string {
+    ) : void {
         // TODO: remove WP calls already done in SiteInfo
         $info = array(
             'EXPORT START: ' . date( 'Y-m-d h:i:s' ),
@@ -29,7 +28,7 @@ class EnvironmentalInfo {
             'WP HOME: ' . get_option( 'home' ),
             'WP ADDRESS: ' . get_bloginfo( 'wpurl' ),
             defined( 'WP_CLI' ) ? 'WP-CLI: YES' : 'WP-CLI: NO',
-            'STATIC EXPORT URL: ' . $settings['destination_url'],
+            'STATIC EXPORT URL: ' . ExportSettings::get('destination_url'),
             'PERMALINK STRUCTURE: ' . SiteInfo::getPermalinks(),
         );
 
@@ -59,10 +58,10 @@ class EnvironmentalInfo {
         }
 
         $info[] = 'SITE URL PATTERNS: ' .
-            $this->rewrite_rules['site_url_patterns'];
+            ExportSettings::get('rewrite_rules')['site_url_patterns'];
 
         $info[] = 'DESTINATION URL PATTERNS: ' .
-            $this->rewrite_rules['destination_url_patterns'];
+            ExportSettings::get('rewrite_rules')['destination_url_patterns'];
 
         $extensions = get_loaded_extensions();
 
