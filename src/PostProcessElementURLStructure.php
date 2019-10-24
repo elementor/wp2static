@@ -56,5 +56,7 @@ class PostProcessElementURLStructure {
                 $this->destination_url
             );
         }
+
+        return '';
     }
 }

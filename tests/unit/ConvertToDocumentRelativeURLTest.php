@@ -72,14 +72,35 @@ final class ConvertToDocumentRelativeURLTest extends TestCase{
     public function documentRelativeURLConversionProvider() {
         return [
            //  $url_within_page,
-           //  $url_of_page_being_processed,
-           //  $this->destination_url,
+           //  $url_of_page_being_processed (post rewriting)
+           //  $this->destination_url (export destination root url)
            //  $this->allow_offline_usage
            //  $expectation
-           'different domain destination URL with subdir nested asset' =>  [
+           'homepage linking to itself destination no trailing slash' =>  [
+                'https://somedomain.com',
+                'https://somedomain.com/',
+                'https://somedomain.com',
+                false,
+                '/'
+            ],
+           'homepage linking to itself no trailing slash' =>  [
+                'https://somedomain.com',
+                'https://somedomain.com/',
+                'https://somedomain.com/',
+                false,
+                '/'
+            ],
+           'homepage linking to itself' =>  [
+                'https://somedomain.com/',
+                'https://somedomain.com/',
+                'https://somedomain.com/',
+                false,
+                '/'
+            ],
+           'destination URL with subdir nested asset' =>  [
                 'https://somedomain.com/mystaticsite/mytheme/' .
                     'assets/link-to-an-image.jpg',
-                'https://myplaceholderdomain.com/some-post/',
+                'https://somedomain.com/some-post/',
                 'https://somedomain.com/mystaticsite/',
                 false,
                 '../mytheme/assets/link-to-an-image.jpg'

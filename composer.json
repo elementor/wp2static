@@ -41,7 +41,8 @@
         "dealerdirect/phpcodesniffer-composer-installer": "*",
         "wp-coding-standards/wpcs": "*",
         "jakub-onderka/php-parallel-lint": "*",
-        "10up/wp_mock": "^0.4.2"
+        "10up/wp_mock": "^0.4.2",
+        "wa72/url": "^0.7.1"
     },
     "autoload": {
         "psr-4": {

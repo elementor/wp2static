@@ -15,11 +15,9 @@ class ConvertToDocumentRelativeURL {
         string $destination_url,
         bool $offline_mode = false
     ) : string {
-        error_log( 'doing doc rel stuff' );
-        error_log( $url_within_page );
-        error_log( $url_of_page_being_processed );
-        error_log( $destination_url );
-        error_log( $offline_mode );
+        error_log($url_within_page);
+        error_log($url_of_page_being_processed);
+        error_log($destination_url);
 
         $current_page_path_to_root = '';
 
@@ -29,9 +27,6 @@ class ConvertToDocumentRelativeURL {
             return $url_within_page;
         }
 
-        error_log( '$current_page_path' );
-        error_log( $current_page_path );
-
         $number_of_segments_in_path = explode( '/', $current_page_path );
         $num_dots_to_root = count( $number_of_segments_in_path ) - 2;
 
@@ -40,10 +35,6 @@ class ConvertToDocumentRelativeURL {
             '',
             $url_of_page_being_processed
         );
-
-        error_log( '$page_url_without_domain' );
-        error_log( $page_url_without_domain );
-
 
         if ( $page_url_without_domain === '' ) {
             $err = 'Warning: empty $page_url_without_domain encountered ' .
@@ -67,7 +58,6 @@ class ConvertToDocumentRelativeURL {
             strpos( $url_within_page, $page_url_without_domain ) !== false &&
             $page_url_without_domain !== '/'
         ) {
-            error_log('loop1');
             $rewritten_url = str_replace(
                 $page_url_without_domain,
                 '',
@@ -82,8 +72,6 @@ class ConvertToDocumentRelativeURL {
             );
 
             $offline_url = $rewritten_url;
-
-            error_log($offline_url);
         } else {
             /*
                 For target URLs not below the current page's hierarchy
@@ -147,10 +135,7 @@ class ConvertToDocumentRelativeURL {
                 $offline_url = str_replace( '//', '/', $offline_url );
             }
         }
-        error_log( $offline_url );
 
-
-        die();
         return $offline_url;
     }
 }
