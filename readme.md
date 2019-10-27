@@ -4,6 +4,18 @@ WP2Static detects and crawls all HTML, CSS, JS, images and other resources in th
 
 It allows you to deploy the generated static site to a staging or production environment.
 
+WP2Static detects resources in a WordPress site by querying its database, installed plugins, themes and the filesystem for known resource paths. An initial list of URLs to crawl is generated from these detected URLs. The user has control over WP2Static's detection levels.
+
+As WP2Static crawls your site, it can discover URLs to any resources not already detected.
+
+The expecxted output of the crawling phase is a self-contained static website.
+
+Rules determine how to process each URL as the site is crawled.
+
+Unless a URL is skipped due to caching or a particular rule, the content at the URL (HTML, CSS, image, etc) is inspected and if qualifies, is included in the generated static site.
+
+
+
 __Note: GitHub repo is a read-only mirror. Our main repos and information on contributing are hosted at [https://code.wp2static.com](https://code.wp2static.com).__
 
 ## Static Site Generator for WordPress
