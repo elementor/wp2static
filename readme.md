@@ -1,7 +1,8 @@
 # WP2Static
 
-WP2Static is a WordPress plugin to generate a static copy of your site and deploy to GitHub Pages, S3, Netlify etc.
-Increase security, pageload speed and hosting options. Connect WordPress into your CI/CD workflow.
+WP2Static detects and crawls all HTML, CSS, JS, images and other resources in the WordPress site it is installed in, generating a self-contained static website, with URLs and other post-processing filters applied.
+
+It allows you to deploy the generated static site to a staging or production environment.
 
 __Note: GitHub repo is a read-only mirror. Our main repos and information on contributing are hosted at [https://code.wp2static.com](https://code.wp2static.com).__
 

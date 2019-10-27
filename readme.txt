@@ -10,7 +10,9 @@ Security & Performance via static website publishing. One plugin to solve WordPr
 
 == Description ==
 
-Security & Performance via static website publishing. One plugin to solve WordPress's biggest problems.
+WP2Static detects and crawls all HTML, CSS, JS, images and other resources in the WordPress site it is installed in, generating a self-contained static website, with URLs and other post-processing filters applied.
+
+It allows you to deploy the generated static site to a staging or production environment.
 
 Keep using WordPress for what it's best at - managing content, but remove the security and performance headaches by publishing the site as static HTML.
 
