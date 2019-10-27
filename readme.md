@@ -1,5 +1,9 @@
 # WP2Static
 
+A WordPress plugin for static site generation and deployment.
+
+## Functional description
+
 WP2Static detects and crawls all HTML, CSS, JS, images and other resources in the WordPress site it is installed in, generating a self-contained static website, with URLs and other post-processing filters applied.
 
 It allows you to deploy the generated static site to a staging or production environment.
