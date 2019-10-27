@@ -18,6 +18,9 @@ Rules determine how to process each URL as the site is crawled.
 
 Unless a URL is skipped due to caching or a particular rule, the content at the URL (HTML, CSS, image, etc) is inspected and if qualifies, is included in the generated static site.
 
+WP2Static can automatically deploy the generated static site to local or remote locations, with functionality provided by add-on plugins.
+
+Developers can extend WP2Static's fuctionality through WordPress actions/filters or by using WP2Static's WP-CLI commands.
 
 
 __Note: GitHub repo is a read-only mirror. Our main repos and information on contributing are hosted at [https://code.wp2static.com](https://code.wp2static.com).__
