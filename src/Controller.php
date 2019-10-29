@@ -44,7 +44,6 @@ class Controller {
 
         $ajax_action = filter_input( INPUT_POST, 'ajax_action' );
 
-        // TODO: non-AJAX methods to use different signature
         if ( $ajax_action === 'reset_default_settings' ) {
             $instance->reset_default_settings();
         }
@@ -81,9 +80,11 @@ class Controller {
 
         // TODO: switch between staging/prod as early as possible
         // ENV should be set within ExportSettings
-        ExportSettings::setDestinationURL(
-            $instance->options->getOption(
-                'baseUrl' . ExportSettings::get('currentDeploymentMethod')));
+        // ExportSettings::setDestinationURL(
+        //     $instance->options->getOption(
+        //         'baseUrl' . ExportSettings::get('currentDeploymentMethod')));
+
+        ExportSettings::setDestinationURL( 'https://example.com' );
 
         ExportSettings::loadRewriteRules();
 

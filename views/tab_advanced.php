@@ -1,5 +1,20 @@
 <div id="advanced_settings" v-show="currentTab == 'advanced_settings'">
+  <button
+    :disabled="progress"
+    v-on:click="saveOptions"
+    id="wp2staticSaveButton"
+    class="wp2static-btn">
+    <?php echo __( 'Save Current Options', 'static-html-output-plugin' ); ?>
+  </button>
 
+
+  <button
+    :disabled="progress"
+    v-on:click="resetDefaults"
+    class="wp2static-btn"
+    id="wp2staticResetDefaultsButton">
+    <?php echo __( 'Reset to Default Settings', 'static-html-output-plugin' ); ?>
+                  </button>
 <section class="wp2static-content wp2static-flex">
   <div class="content" style="max-width:30%">
     <h2><?php echo __( 'Deployment Batch Size', 'static-html-output-plugin' ); ?></h2>

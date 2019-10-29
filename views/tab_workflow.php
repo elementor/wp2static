@@ -2,9 +2,7 @@
 
 <section class="wp2static-content wp2static-flex">
   <div class="content" style="max-width:33%">
-    <img src="<?php echo plugins_url( '/../assets/dev-server.svg', __FILE__ ); ?>" style="max-width:250px;min-height:200px;" alt="Add-on">
-
-    <h2>Development</h2>
+    <h2>WP2Static</h2>
 
     <p>Run WP2Static on your local computer or private web server. It's WordPress as usual, but without the security concerns. WP2Static generates a static HTML copy of this site, ready for deployment to super-fast static hosting.</p>
 
@@ -94,32 +92,95 @@
     </ul>
 
   </div>
+
+
+
   <div class="content" style="max-width:33%">
-    <img src="<?php echo plugins_url( '/../assets/staging-server.svg', __FILE__ ); ?>" style="max-width:250px;min-height:200px;" alt="Add-on">
+    <div id="progress-container">
+      <div id="progress">
+        <div v-if="progress" id="pulsate-css"></div>
+        <div id="current_action">
+            {{ currentAction }}
+        </div>
+      </div>
 
-    <h2>Staging</h2>
+      <p id="exportDuration" style="display:block;"></p>
+    </div>
 
-    <p>Automatically deploy any changes to your WordPress site here. If you don't want to stage before production use your production environment details here.</p>
+  <button v-if="progress" v-on:click="cancelExport" class="wp2static-btn orange" id="wp2staticCancelButton">
+    <?php echo __( 'Cancel Export', 'static-html-output-plugin' ); ?>
+  </button>
 
-    <h3>Deployment summary</h3>
+  <!-- TODO: set action to grab ZIP download URL from button vs anchor -->
+  <a :href="zipURL" target="_blank">
+  <button
+    id="downloadZIP"
+    v-if="progress == false && currentDeploymentMethod == 'zip' && workflowStatus == 'deploySuccess'"
+    class="wp2static-btn btn-call-to-action"
+    >
+    <?php echo __( 'Download ZIP', 'static-html-output-plugin' ); ?>
+  </button>
+  </a>
+
+  <a href="#" class="wp2static-btn btn-call-to-action" target="_blank" id="goToMyStaticSite" style="display:none;">
+    <?php echo __( 'Open Deployed Site', 'static-html-output-plugin' ); ?>
+  </a>
+
+  <div id="export_timer"></div>
+  </div>
+</section>
+
+<section class="wp2static-content wp2static-flex">
+  <div class="content" style="max-width:33%">
+    <h2>URL Detection</h2>
+
+    <p>WP2Static detects resources in a WordPress site by querying its database, installed plugins, themes and the filesystem for known URLs.</p>
+
+    <h3>Detect URLs</h3>
     <ul>
-       <li id="deploymentMethodStaging"><b>Deployment Method</b> {{ currentDeploymentMethod }}</li>
-       <li><b>Destination URL</b> <a :href="baseUrl" target="_blank">{{ baseUrl }}</a></li>
+       <li><b>PHP max_execution_time</b>
+         <span :style="siteInfo.maxExecutionTime == 0 ? 'color:#3ad23a;': 'color:red;'">
+            {{ siteInfo.maxExecutionTime }} {{ siteInfo.maxExecutionTime == 0 ? '(Unlimited)': 'secs' }}
+         </span>
+        </li>
+       <li><b>Writable uploads dir</b> <span v-if="siteInfo.uploadsWritable" class="dashicons dashicons-yes" style="color: #3ad23a;"></span></li>
     </ul>
+
+  </div>
+  <div class="content" style="max-width:33%">
+    <h2>Crawl</h2>
+
+    <p>Detect and crawl all HTML, JS, CSS, images, etc and save into a self-contained static website.</p>
+
+    <h3>Crawl settings</h3>
+    <ul>
+       <li id="includeDiscoveredAssets"><b>Discover unknown URLs</b> {{ includeDiscoveredAssets ? 'Yes' : 'No' }}</li>
+       <li><b>Crawl URL</b> <a :href="baseUrl" target="_blank">{{ siteInfo.site_url }}</a></li>
+    </ul>
+
+    <button
+      :disabled="progress"
+      v-on:click="generateStaticSite"
+      class="wp2static-btn blue"
+      id="wp2staticGenerateButton">
+      <?php echo __( 'Crawl site', 'static-html-output-plugin' ); ?>
+    </button>
   </div>
 
   <div class="content" style="max-width:33%">
-    <img src="<?php echo plugins_url( '/../assets/production-server.svg', __FILE__ ); ?>" style="max-width:250px;min-height:200px;" alt="Add-on">
-
-    <h2>Production</h2>
+    <h2>Deploy</h2>
 
     <p>For those who want to preview site changes on staging before going live, enter production deployment details here. Production deploys use the same generated static site content as staging, so choose a URL processing scheme that will work on either domain.</p>
 
     <h3>Deployment summary</h3>
     <ul>
-       <li><b>Deployment Method</b> {{ currentDeploymentMethodProduction }}</li>
-       <li><b>Destination URL</b> <a :href="baseUrlProduction" target="_blank">{{ baseUrlProduction }}</a></li>
+       <li><b>Deployment method</b> {{ currentDeploymentMethod }}</li>
+       <li><b>Destination URL</b> <a :href="baseUrl" target="_blank">{{ baseUrl }}</a></li>
     </ul>
+
+    <button :disabled="progress" v-on:click="startExport" class="wp2static-btn blue">
+      <?php echo __( 'Deploy', 'static-html-output-plugin' ); ?>
+    </button>
   </div>
 </section>
 

@@ -18,7 +18,7 @@ button {
 
 .wp2static-content {
   background: #fff;
-  padding: 3.5em 3em 4em;
+  padding: 0.5em 2em 1em;
   box-shadow: 0 0 0 1px rgba(213, 213, 213, 0.5), 0 1px 2px #eee;
 }
 
@@ -199,14 +199,6 @@ div.postbox div.inside {
     width: 100%;
 }
 
-#progress-container {
-  min-height: 40px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 99999;
-  width: 100%;
-}
 
 .error-help-text {
   display: none;
@@ -264,23 +256,6 @@ p.submit{
 #netlify_test_results {
   line-height: 28px;
   margin-left: 10px;
-}
-
-/* 86% when full sidebar, needs to grow otherwise */
-#wp2static-footer {
-  background: rgba(255, 255, 255, 0.9);
-  width: 100%;
-  position: fixed;
-  bottom: 0;
-  border-top: 1px solid #ddd;
-  min-height: 110px;
-  margin-left: -20px;
-  padding-left: 30px;
-
-}
-
-.wrap.wp2static {
-  padding-bottom: 100px;
 }
 
 #wpfooter {
