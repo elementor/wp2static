@@ -281,6 +281,57 @@ class CLI {
             );
         }
     }
+
+    /**
+     * WordPress Site operations
+     *
+     * ## OPTIONS
+     *
+     * <detect_urls>
+     *
+     * Detect WordPress URLs to crawl, based on saved options
+     *
+     * <list_urls>
+     *
+     * List all URLs in the CrawlQueue
+     *
+     * <crawl>
+     *
+     * Crawls site, creating or updating the static site
+     *
+     */
+    public function wordpress_site(
+        array $args,
+        array $assoc_args
+    ) : void {
+        $action = isset( $args[0] ) ? $args[0] : null;
+        $option_name = isset( $args[1] ) ? $args[1] : null;
+        $value = isset( $args[2] ) ? $args[2] : null;
+
+        WP_CLI::line( "action: $action" );
+
+        // also validate expected $action vs any
+        if ( empty( $action ) ) {
+            WP_CLI::error(
+                'Missing required argument: <detect_urls|list_urls|crawl>');
+        }
+
+        $site = new WordPressSite();
+
+        if ( $action === 'list_urls' ) {
+            $urls = $site->getURLs();
+
+            foreach( $urls as $url ) {
+                WP_CLI::line( $url );
+            }
+        }
+
+        if ( $action === 'crawl' ) {
+            WP_CLI::line( 'WIP Crawling site' );
+            $crawler = new Crawler();
+            $crawler->crawlSite( $site );
+        }
+    }
 }
 
 

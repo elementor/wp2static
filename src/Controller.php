@@ -13,13 +13,14 @@ class Controller {
     const HOOK = 'wp2static';
 
     public $options;
+    public $bootstrap_file;
 
     /**
      * Main controller of WP2Static
      *
      * @var \WP2Static\Controller Instance.
      */
-    protected static $instance = null;
+    protected static $plugin_instance = null;
 
     protected function __construct() {}
 
@@ -29,47 +30,31 @@ class Controller {
      * @return \WP2Static\Controller Instance of self.
      */
     public static function getInstance() : Controller {
-        if ( null === self::$instance ) {
-            self::$instance = new self();
-            self::$instance->options = new Options(
-                self::OPTIONS_KEY
-            );
+        if ( null === self::$plugin_instance ) {
+            self::$plugin_instance = new self();
         }
 
-        return self::$instance;
+        return self::$plugin_instance;
     }
 
     public static function init( string $bootstrap_file ) : Controller {
-        $instance = self::getInstance();
+        $plugin_instance = self::getInstance();
+        $plugin_instance->bootstrap_file = $bootstrap_file;
 
-        $ajax_action = filter_input( INPUT_POST, 'ajax_action' );
+        $xhr_router = new XHRRouter( $plugin_instance );
+        $xhr_router->registerXHRRoutes();
 
-        if ( $ajax_action === 'reset_default_settings' ) {
-            $instance->reset_default_settings();
-        }
+        $wordpress_admin = new WordPressAdmin( $plugin_instance );
+        $wordpress_admin->registerHooks();
 
-        register_activation_hook(
-            $bootstrap_file,
-            array( $instance, 'activate' )
-        );
-
-        if ( is_admin() ) {
-            add_action(
-                'admin_menu',
-                array(
-                    $instance,
-                    'registerOptionsPage',
-                )
-            );
-            add_filter( 'custom_menu_order', '__return_true' );
-            add_filter( 'menu_order', array( $instance, 'set_menu_order' ) );
-        }
+        $wordpress_admin->addAdminUIElements();
 
         // load Settings once into singleton
+        $plugin_instance->options = new Options( self::OPTIONS_KEY);
         ExportSettings::loadSettingsFromDBOptions(
-            $instance->options->getSettings( true ));
-
-        $instance->site_url = SiteInfo::getUrl( 'site' );
+            $plugin_instance->options->getSettings( true ));
+        ExportSettings::setDestinationURL( 'https://example.com' );
+        ExportSettings::loadRewriteRules();
 
         // create DB table for crawl caching
         CrawlCache::createTable();
@@ -78,69 +63,9 @@ class Controller {
         DeployQueue::createTable();
         DeployCache::createTable();
 
-        // TODO: switch between staging/prod as early as possible
-        // ENV should be set within ExportSettings
-        // ExportSettings::setDestinationURL(
-        //     $instance->options->getOption(
-        //         'baseUrl' . ExportSettings::get('currentDeploymentMethod')));
-
-        ExportSettings::setDestinationURL( 'https://example.com' );
-
-        ExportSettings::loadRewriteRules();
-
         ConfigHelper::set_max_execution_time();
 
-        add_action(
-            'wp2static_headless_hook',
-            [ 'WP2Static\Controller', 'wp2static_headless' ],
-            10,
-            0
-        );
-
-        /*
-         * Register actions for when we should invalidate cache for
-         * a URL(s) or whole site
-         *
-         */
-        $single_url_invalidation_events = [
-            'save_post',
-            'deleted_post',
-        ];
-
-        $full_site_invalidation_events = [
-            'switch_theme',
-        ];
-
-        foreach ( $single_url_invalidation_events as $invalidation_events ) {
-            add_action(
-                $invalidation_events,
-                [ 'WP2Static\Controller', 'invalidate_single_url_cache' ],
-                0
-            );
-        }
-
-        if ( isset( $instance->settings['redeployOnPostUpdates'] ) ) {
-            add_action(
-                'save_post',
-                [ 'WP2Static\Controller', 'wp2static_headless' ],
-                0
-            );
-        }
-
-        if ( isset( $instance->settings['displayDashboardWidget'] ) ) {
-            add_action(
-                'wp_dashboard_setup',
-                [ 'WP2Static\Controller', 'wp2static_add_dashboard_widgets' ],
-                0
-            );
-        }
-
-        add_action(
-            'admin_enqueue_scripts',
-            [ 'WP2Static\Controller', 'load_wp2static_admin_js' ]
-        );
-
-        return $instance;
+        return $plugin_instance;
     }
 
     /**
@@ -222,7 +147,7 @@ class Controller {
             __( 'WP2Static', 'static-html-output-plugin' ),
             'manage_options',
             self::HOOK,
-            array( self::$instance, 'renderOptionsPage' ),
+            array( self::$plugin_instance, 'renderOptionsPage' ),
             'dashicons-shield-alt'
         );
 
