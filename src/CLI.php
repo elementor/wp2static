@@ -295,6 +295,11 @@ class CLI {
      *
      * List all URLs in the CrawlQueue
      *
+     * <clear_detected_urls>
+     *
+     * Remove all URLs from the CrawlQueue
+     *
+     *
      * <crawl>
      *
      * Crawls site, creating or updating the static site
@@ -313,7 +318,8 @@ class CLI {
         // also validate expected $action vs any
         if ( empty( $action ) ) {
             WP_CLI::error(
-                'Missing required argument: <detect_urls|list_urls|crawl>');
+                'Missing required argument: ' .
+                '<detect_urls|list_urls|clear_detected_urls|crawl>');
         }
 
         $site = new WordPressSite();
@@ -323,6 +329,20 @@ class CLI {
 
             foreach( $urls as $url ) {
                 WP_CLI::line( $url );
+            }
+        }
+
+        if ( $action === 'detect_urls' ) {
+            $detected_count = $site->detectURLs();
+
+            WP_CLI::line( "$detected_count URLs detected." );
+        }
+
+        if ( $action === 'clear_detected_urls' ) {
+            if ( $site->clearDetectedURLs() ) {
+                WP_CLI::line( 'Cleared detected URLs' );
+            } else {
+                WP_CLI::line( 'Failed to clear detected URLs' );
             }
         }
 
