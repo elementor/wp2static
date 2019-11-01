@@ -12,11 +12,8 @@ export class WP2StaticAdminPageModel {
   public formProcessorWebsite: HTMLInputElement
   public goToDeployTabButton: HTMLElement
   public goToMyStaticSite: HTMLElement
-  public initialCrawlListCount: HTMLElement
-  public initialCrawlListLoader: HTMLElement
   public navigationTabs: NodeListOf<Element>
   public optionsForm: HTMLFormElement
-  public previewInitialCrawlListButton: HTMLElement
   public sendSupportRequestButton: HTMLElement
   public sendSupportRequestContent: HTMLInputElement
   public sendSupportRequestEmail: HTMLInputElement
@@ -43,11 +40,8 @@ export class WP2StaticAdminPageModel {
     this.formProcessorWebsite = document.getElementById("form_processor_website")! as HTMLInputElement
     this.goToDeployTabButton = document.getElementById("GoToDeployTabButton")!
     this.goToMyStaticSite = document.getElementById("goToMyStaticSite")!
-    this.initialCrawlListCount = document.getElementById("initial_crawl_list_count")!
-    this.initialCrawlListLoader = document.getElementById("initial_crawl_list_loader")!
     this.navigationTabs = document.querySelectorAll(".nav-tab")!
     this.optionsForm = document.getElementById("general-options")! as HTMLFormElement
-    this.previewInitialCrawlListButton = document.getElementById("preview_initial_crawl_list_button")!
     this.sendSupportRequestButton = document.getElementById("send_support_request")! as HTMLInputElement
     this.sendSupportRequestContent = document.getElementById("supportRequestContent")! as HTMLInputElement
     this.sendSupportRequestEmail = document.getElementById("supportRequestEmail")! as HTMLInputElement

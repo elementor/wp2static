@@ -7,6 +7,7 @@ export class WP2StaticGlobals {
   public exportCommenceTime: number = 0
   public exportCompleteTime: number = 0
   public timerIntervalID: number = 0
+  public detectedURLsCount: number = 0
   public exportDuration: number = 0
   public statusDescriptions: any = {
     crawl_site: "Crawling initial file list",

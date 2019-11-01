@@ -211,16 +211,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
       } else {
-        adminPage.initialCrawlListLoader.style.display = "none"
-        adminPage.previewInitialCrawlListButton.style.display = "inline"
-
         wp2staticGlobals.vueData.progress = false
         wp2staticGlobals.vueData.currentAction = `${fileListCount} URLs were detected for
  initial crawl list. Adjust detection via the URL Detection tab.`
 
-        adminPage.initialCrawlListCount.textContent = `${fileListCount} URLs were
- detected on your site that will be used to initiate the crawl.
- Other URLs will be discovered while crawling.`
+        wp2staticGlobals.vueData.detectedURLsCount = `${fileListCount}`
       }
     }
 
@@ -231,7 +226,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       wp2staticGlobals.vueData.currentAction = failedDeployMessage
       wp2staticGlobals.vueData.progress = false
-      adminPage.initialCrawlListLoader.style.display = "none"
     }
 
     function checkLocalDNSResolution() {
@@ -248,7 +242,7 @@ document.addEventListener("DOMContentLoaded", () => {
       wp2staticGlobals.vueData.currentAction = "Analyzing site... this may take a few minutes (but it's worth it!)"
 
       sendWP2StaticAJAX(
-        "generate_filelist_preview",
+        "detectURLs",
         generateFileListSuccessCallback,
         generateFileListFailCallback,
       )

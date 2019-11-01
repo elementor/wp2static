@@ -264,21 +264,17 @@ class Controller {
     }
 
     /**
-     * Generate initial crawl list and echo number of files to UI
+     * Detect URLs within WordPress site and echo number of files to UI
      *
      * @throws WP2StaticException
      */
-    public function generate_filelist_preview() : void {
-        CrawlQueue::truncate();
-        DeployQueue::truncate();
+    public function detectURLs() : void {
+        // TODO: move DeployQueue truncation somewhere...
+        // DeployQueue::truncate();
 
-        $initial_file_list_count =
-            FilesHelper::buildInitialFileList(
-                true,
-                SiteInfo::getPath( 'uploads' )
-            );
+        $detected_url_count = WordPressSite::detectURLs();
 
-        if ( $initial_file_list_count < 1 ) {
+        if ( $detected_url_count < 1 ) {
             $err = 'Initial file list unable to be generated';
             http_response_code( 500 );
             echo $err;
@@ -289,7 +285,7 @@ class Controller {
         $via_ui = filter_input( INPUT_POST, 'ajax_action' );
 
         if ( is_string( $via_ui ) ) {
-            echo $initial_file_list_count;
+            echo $detected_url_count;
         }
     }
 

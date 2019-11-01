@@ -1,28 +1,11 @@
 <div id="url_detection" v-show="currentTab == 'url_detection'">
 
-<section class="wp2static-content">
-  <h2><?php echo __( 'Initial crawl list', 'static-html-output-plugin' ); ?></h2>
-  <p>Before it starts to export your site, the plugin first generates a list of all WordPress URLs it thinks it should include. It takes these from what it knows about your posts, pages, tags, archives and media.</p>
-  <div id="initial_crawl_list_loader" class="spinner is-active" style="float:none;width:auto;height:auto;padding:10px 0 10px 50px;background-position:20px 0;">
-    Generating initial file list
-  </div>
-
-  <p id="initial_crawl_list_count"></p>
- 
-  <p>
-    <a id="preview_initial_crawl_list_button" style="display:none;" href="<?php echo $view['site_info']['uploads_url']; ?>wp2static-working-files/INITIAL-CRAWL-LIST.txt" class="wp2static-btn" target="_blank">Preview initial crawl list</a>
-  </p>
-</section>
-
 <section class="wp2static-content wp2static-flex">
-  <div class="content" style="max-width:30%">
+  <div class="content" style="max-width:66%">
     <h2><?php echo __( 'Control Detected URLs', 'static-html-output-plugin' ); ?></h2>
 
     <button v-on:click.prevent="detectEverything" class="wp2static-btn">Select all</button>
     <button v-on:click.prevent="detectNothing" class="wp2static-btn">Select none</button>
-  </div>
-  
-  <div class="content">
     <p>Control which URLs from this WordPress site we want to use for our initial crawl list.</p>
 
     <p>Detecting less will result in faster crawling, but if you end up with missing URLs in your exported site, enable more options.</p>
@@ -38,8 +21,18 @@
         > </detection-checkbox>
 
   </table>
+  </div>
+  
+  <div class="content">
+    <p>Showing % n % URLs out of % y% (show all | show n)<p>
+
+    <textarea style="width:100%;">Show first 50 URLs here by default</textarea>
+
 
   <p><i>Save options to reload the page and see the effect of your detection options</i></p>
+
+
+
   </div>
 </section>
 

@@ -138,10 +138,8 @@
 
     <h3>Detect URLs</h3>
     <ul>
-       <li><b>PHP max_execution_time</b>
-         <span :style="siteInfo.maxExecutionTime == 0 ? 'color:#3ad23a;': 'color:red;'">
-            {{ siteInfo.maxExecutionTime }} {{ siteInfo.maxExecutionTime == 0 ? '(Unlimited)': 'secs' }}
-         </span>
+       <li><b>Detected URLs</b>
+            {{ detectedURLsCount }}
         </li>
        <li><b>Writable uploads dir</b> <span v-if="siteInfo.uploadsWritable" class="dashicons dashicons-yes" style="color: #3ad23a;"></span></li>
     </ul>
