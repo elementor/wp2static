@@ -89,6 +89,7 @@ export class WP2StaticViewData {
       },
     ],
     dnsResolution: "",
+    detectedURLsCount: "",
     fieldData: new WP2StaticFieldData(),
     formProcessorData: new WP2StaticFormProcessorData(),
     progress: true,

@@ -137,6 +137,17 @@ document.addEventListener("DOMContentLoaded", () => {
             ajaxErrorHandler,
           )
         },
+        detectURLs: (event: any) => {
+          wp2staticGlobals.vueData.currentAction = "Analyzing site... this may take a few minutes (but it's worth it!)"
+
+          wp2staticGlobals.vueData.detectedURLsCount = "Detecting..."
+
+          sendWP2StaticAJAX(
+            "detectURLs",
+            generateFileListSuccessCallback,
+            generateFileListFailCallback,
+          )
+        },
         resetDefaults: (event: any) => {
           // TODO: set form data
 
@@ -215,6 +226,7 @@ document.addEventListener("DOMContentLoaded", () => {
         wp2staticGlobals.vueData.currentAction = `${fileListCount} URLs were detected for
  initial crawl list. Adjust detection via the URL Detection tab.`
 
+        console.log('updating filelist count')
         wp2staticGlobals.vueData.detectedURLsCount = `${fileListCount}`
       }
     }
@@ -235,16 +247,6 @@ document.addEventListener("DOMContentLoaded", () => {
         "check_local_dns_resolution",
         checkLocalDNSResolutionCallback,
         checkLocalDNSResolutionCallback,
-      )
-    }
-
-    function prepareInitialFileList() {
-      wp2staticGlobals.vueData.currentAction = "Analyzing site... this may take a few minutes (but it's worth it!)"
-
-      sendWP2StaticAJAX(
-        "detectURLs",
-        generateFileListSuccessCallback,
-        generateFileListFailCallback,
       )
     }
 
@@ -530,7 +532,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // hide all but WP2Static messages
     hideOtherVendorMessages()
 
-    prepareInitialFileList()
+    vueApp.detectURLs()
 
     checkPublicAccessibility()
 

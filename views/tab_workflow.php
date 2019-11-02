@@ -136,13 +136,6 @@
 
     <p>WP2Static detects resources in a WordPress site by querying its database, installed plugins, themes and the filesystem for known URLs.</p>
 
-    <h3>Detect URLs</h3>
-    <ul>
-       <li><b>Detected URLs</b>
-            {{ detectedURLsCount }}
-        </li>
-       <li><b>Writable uploads dir</b> <span v-if="siteInfo.uploadsWritable" class="dashicons dashicons-yes" style="color: #3ad23a;"></span></li>
-    </ul>
 
   </div>
   <div class="content" style="max-width:33%">
@@ -150,12 +143,53 @@
 
     <p>Detect and crawl all HTML, JS, CSS, images, etc and save into a self-contained static website.</p>
 
-    <h3>Crawl settings</h3>
+  </div>
+
+  <div class="content" style="max-width:33%">
+    <h2>Deploy</h2>
+
+    <p>Deploy your generated static site to remote servers, git repositories or create a compressed archive to suit your release process.</p>
+
+  </div>
+</section>
+
+<section class="wp2static-content wp2static-flex">
+  <div class="content" style="max-width:33%">
     <ul>
-       <li id="includeDiscoveredAssets"><b>Discover unknown URLs</b> {{ includeDiscoveredAssets ? 'Yes' : 'No' }}</li>
+       <li><b>Detected URLs</b>
+            {{ detectedURLsCount }}
+        </li>
+    </ul>
+
+  </div>
+
+  <div class="content" style="max-width:33%">
+    <ul>
        <li><b>Crawl URL</b> <a :href="baseUrl" target="_blank">{{ siteInfo.site_url }}</a></li>
     </ul>
 
+  </div>
+
+  <div class="content" style="max-width:33%">
+    <ul>
+       <li><b>Deployment method</b> {{ currentDeploymentMethod }}</li>
+       <li><b>Destination URL</b> <a :href="baseUrl" target="_blank">{{ baseUrl }}</a></li>
+    </ul>
+  </div>
+</section>
+
+<section class="wp2static-content wp2static-flex">
+  <div class="content" style="max-width:33%">
+    <button
+      :disabled="progress"
+      v-on:click="detectURLs"
+      class="wp2static-btn blue"
+      id="wp2staticDetectURLsButton">
+      <?php echo __( 'Detect URLs', 'static-html-output-plugin' ); ?>
+    </button>
+  </div>
+
+  <div class="content" style="max-width:33%">
     <button
       :disabled="progress"
       v-on:click="generateStaticSite"
@@ -166,21 +200,11 @@
   </div>
 
   <div class="content" style="max-width:33%">
-    <h2>Deploy</h2>
-
-    <p>For those who want to preview site changes on staging before going live, enter production deployment details here. Production deploys use the same generated static site content as staging, so choose a URL processing scheme that will work on either domain.</p>
-
-    <h3>Deployment summary</h3>
-    <ul>
-       <li><b>Deployment method</b> {{ currentDeploymentMethod }}</li>
-       <li><b>Destination URL</b> <a :href="baseUrl" target="_blank">{{ baseUrl }}</a></li>
-    </ul>
-
-    <button :disabled="progress" v-on:click="startExport" class="wp2static-btn blue">
+    <button
+        :disabled="progress"
+        v-on:click="startExport"
+        class="wp2static-btn blue">
       <?php echo __( 'Deploy', 'static-html-output-plugin' ); ?>
     </button>
   </div>
-</section>
-
-
 </div> <!-- end workflow settings -->
