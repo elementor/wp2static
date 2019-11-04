@@ -52,15 +52,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
           return currentBaseURL.value
         },
-        baseUrlProduction: (): string => {
-          // return 'https://someurl.com'
-          const currentBaseURLProduction: HTMLInputElement =
-            document.getElementById(
-              `baseUrlProduction${wp2staticGlobals.vueData.currentDeploymentMethod}`,
-            ) as HTMLInputElement
-
-          return currentBaseURLProduction.value
-        },
       },
       data: wp2staticGlobals.vueData,
       el: "#vueApp",

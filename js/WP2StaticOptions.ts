@@ -13,7 +13,6 @@ export class WP2StaticOptions {
   public crawlDelay: number
   public createEmptyFavicon: boolean
   public currentDeploymentMethod: string
-  public currentDeploymentMethodProduction: string
   public delayBetweenAPICalls: number
   public deployBatchSize: number
   public detectArchives: boolean
@@ -72,7 +71,6 @@ export class WP2StaticOptions {
     this.crawlUserAgent = parsedOptions.crawlUserAgent
     this.createEmptyFavicon = parsedOptions.createEmptyFavicon
     this.currentDeploymentMethod = parsedOptions.currentDeploymentMethod
-    this.currentDeploymentMethodProduction = parsedOptions.currentDeploymentMethodProduction
     this.delayBetweenAPICalls = parsedOptions.delayBetweenAPICalls
     this.detectArchives = parsedOptions.detectArchives
     this.detectAttachments = parsedOptions.detectAttachments

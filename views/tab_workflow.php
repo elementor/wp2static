@@ -93,8 +93,6 @@
 
   </div>
 
-
-
   <div class="content" style="max-width:33%">
     <div id="progress-container">
       <div id="progress">
@@ -127,6 +125,11 @@
   </a>
 
   <div id="export_timer"></div>
+
+    <p>1-click detect/crawl/deploy button goes here</p>
+
+    <p>automation and caching options here?</p>
+
   </div>
 </section>
 

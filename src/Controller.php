@@ -100,7 +100,6 @@ class Controller {
             // set default options
             ->setOption( 'rewriteWPPaths', '1' )
             ->setOption( 'currentDeploymentMethod', 'folder' )
-            ->setOption( 'currentDeploymentMethodProduction', 'folder' )
             ->setOption( 'removeConditionalHeadComments', '1' )
             ->setOption( 'removeWPMeta', '1' )
             ->setOption( 'dontUseCrawlCaching', '1' )
