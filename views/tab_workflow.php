@@ -195,7 +195,7 @@
   <div class="content" style="max-width:33%">
     <button
       :disabled="progress"
-      v-on:click="generateStaticSite"
+      v-on:click="crawlSite"
       class="wp2static-btn blue"
       id="wp2staticGenerateButton">
       <?php echo __( 'Crawl site', 'static-html-output-plugin' ); ?>

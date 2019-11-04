@@ -128,6 +128,32 @@ document.addEventListener("DOMContentLoaded", () => {
             ajaxErrorHandler,
           )
         },
+        // NOTE: this replaces the generateStaticSite method above
+        crawlSite: (event: any) => {
+          // set hidden baseUrl to staging current deploy method's Destination URL
+          wp2staticGlobals.exportCommenceTime = +new Date()
+
+          // TODO: reimplement validators validationErrors = getValidationErrors()
+          validationErrors = ""
+
+          if (validationErrors !== "") {
+            alert(validationErrors)
+            vueApp.$data.progress = false
+
+            return false
+          }
+
+          vueApp.$data.currentAction = "Crawling site..."
+
+          // reset export targets to avoid having left-overs from a failed run
+          wp2staticGlobals.exportTargets = []
+
+          sendWP2StaticAJAX(
+            "crawlSite",
+            startExportSuccessCallback,
+            ajaxErrorHandler,
+          )
+        },
         detectURLs: (event: any) => {
           wp2staticGlobals.vueData.currentAction = "Analyzing site... this may take a few minutes (but it's worth it!)"
 

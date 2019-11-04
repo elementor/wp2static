@@ -31,8 +31,12 @@ class StaticSite {
         // Crawler has already processed links, etc
         $full_path = "$this->path/$path";
 
+        $directory = dirname( $full_path );
+
         // mkdir recursively
-        mkdir( dirname( $full_path ), 0755, true );
+        if ( ! is_dir( $directory ) ) {
+            mkdir( $directory, 0755, true );
+        }
 
         file_put_contents( $full_path, $contents );
     }

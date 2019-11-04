@@ -241,6 +241,17 @@ class Controller {
         $site_crawler->crawl();
     }
 
+    public function crawlSite() : void {
+        $crawler = new Crawler();
+
+        $wordpress_site = new WordPressSite();
+
+        $static_site = new StaticSite('/tmp/teststaticsite');
+
+        $crawler->crawlSite($wordpress_site, $static_site);
+
+    }
+
     public function test_folder() : void {
         $archive_processor = new ArchiveProcessor();
 

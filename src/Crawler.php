@@ -26,34 +26,37 @@ class Crawler {
     public function crawlSite(
         WordPressSite $wordpress_site, StaticSite $static_site
     ) {
+        // TODO: use some Iterable or other performance optimisation here
+        //       to help reduce resources for large URL sites
         foreach( $wordpress_site->getURLs() as $url ) {
             // if not already cached
-            $crawled_url = $this->crawlURL($url);
+            $crawled_contents = $this->crawlURL( $url );
 
-            if ( $crawled_url ) {
-                list( $path, $contents ) = $crawled_url;
+            $path_in_static_site = str_replace(
+                SiteInfo::getUrl( 'site'),
+                '',
+                $url);
 
-                $static_site->add( $path, $contents );
+            // do some magic here - naive: if URL ends in /, save to /index.html
+            // TODO: will need love for example, XML files
+            if ( mb_substr( $path_in_static_site, -1 ) === '/' ) {
+                $path_in_static_site .= 'index.html';
+            }
+
+            if ( $crawled_contents ) {
+                $static_site->add( $path_in_static_site, $crawled_contents );
             }
         }
     }
 
     /**
-     * Crawls a URL 
+     * Crawls a string of full URL within WordPressSite
      *
      */
-    public function crawlURL( URL $url ) {
-    
-        foreach( $wordpress_site->getURLs() as $url ) {
-            // if not already cached
-            $crawled_url = $this->crawlURL($url);
+    public function crawlURL( string $url ) : string {
+        $crawled_contents = 'test contents';
 
-            if ( $crawled_url ) {
-                list( $path, $contents ) = $crawled_url;
-
-                $static_site->add( $path, $contents );
-            }
-        }
+        return $crawled_contents;
     }
 }
 
