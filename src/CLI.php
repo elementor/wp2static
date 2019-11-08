@@ -319,13 +319,13 @@ class CLI {
         if ( empty( $action ) ) {
             WP_CLI::error(
                 'Missing required argument: ' .
-                '<detect_urls|list_urls|clear_detected_urls|crawl>');
+                '<detect_urls|list_urls|clear_detected_urls|clear_crawl_cache|crawl|post_process>');
         }
 
-        $site = new WordPressSite();
+        $wordpress_site = new WordPressSite();
 
         if ( $action === 'list_urls' ) {
-            $urls = $site->getURLs();
+            $urls = $wordpress_site->getURLs();
 
             foreach( $urls as $url ) {
                 WP_CLI::line( $url );
@@ -333,37 +333,97 @@ class CLI {
         }
 
         if ( $action === 'detect_urls' ) {
-            $detected_count = $site->detectURLs();
+            $detected_count = $wordpress_site->detectURLs();
 
             WP_CLI::line( "$detected_count URLs detected." );
         }
 
         if ( $action === 'clear_detected_urls' ) {
-            if ( $site->clearDetectedURLs() ) {
+            if ( $wordpress_site->clearDetectedURLs() ) {
                 WP_CLI::line( 'Cleared detected URLs' );
             } else {
                 WP_CLI::line( 'Failed to clear detected URLs' );
             }
         }
 
+        if ( $action === 'clear_crawl_cache' ) {
+            if ( $wordpress_site->clearCrawlCache() ) {
+                WP_CLI::line( 'Cleared CrawlCache URLs' );
+            } else {
+                WP_CLI::line( 'Failed to clear CrawlCache URLs' );
+            }
+        }
+
         if ( $action === 'crawl' ) {
-            WP_CLI::line( 'WIP Crawling site' );
             $crawler = new Crawler();
-            $crawler->crawlSite( $site );
+            $static_site_dir =
+                SiteInfo::getPath( 'uploads') . 'wp2static-exported-site';
+            $static_site = new StaticSite( $static_site_dir );
+            $crawler->crawlSite( $wordpress_site, $static_site );
+        }
+
+        if ( $action === 'post_process' ) {
+            $post_processor = new PostProcessor();
+
+            $static_site_dir =
+                SiteInfo::getPath( 'uploads') . 'wp2static-exported-site';
+            $static_site = new StaticSite( $static_site_dir );
+
+            $processed_site_dir =
+                SiteInfo::getPath( 'uploads') . 'wp2static-processed-site';
+            $processed_site = new ProcessedSite( $processed_site_dir );
+
+
+            $post_processor->processStaticSite( $static_site, $processed_site);
+        }
+    }
+
+    public function processed_site(
+        array $args,
+        array $assoc_args
+    ) : void {
+        $action = isset( $args[0] ) ? $args[0] : null;
+        $option_name = isset( $args[1] ) ? $args[1] : null;
+        $value = isset( $args[2] ) ? $args[2] : null;
+
+        // also validate expected $action vs any
+        if ( empty( $action ) ) {
+            WP_CLI::error(
+                'Missing required argument: ' .
+                '<delete>');
+        }
+
+        $processed_site_dir =
+            SiteInfo::getPath( 'uploads') . 'wp2static-processed-site';
+        $processed_site = new ProcessedSite( $processed_site_dir );
+
+        if ( $action === 'delete' ) {
+            $processed_site->delete();
+        }
+    }
+
+    public function static_site(
+        array $args,
+        array $assoc_args
+    ) : void {
+        $action = isset( $args[0] ) ? $args[0] : null;
+        $option_name = isset( $args[1] ) ? $args[1] : null;
+        $value = isset( $args[2] ) ? $args[2] : null;
+
+        // also validate expected $action vs any
+        if ( empty( $action ) ) {
+            WP_CLI::error(
+                'Missing required argument: ' .
+                '<delete>');
+        }
+
+        $static_site_dir =
+            SiteInfo::getPath( 'uploads') . 'wp2static-exported-site';
+        $static_site = new StaticSite( $static_site_dir );
+
+        if ( $action === 'delete' ) {
+            $static_site->delete();
         }
     }
 }
 
-
-/*
-TODO:
-
-WP_CLI\Utils\launch_editor_for_input() – Launch system’s $EDITOR f
-r the user to edit some text.
-
-use that for inputting things like additional URLs, Netlify _redirects, etc
-
-TODO: use WP error for things like permalinks. Run on every command?
-no, just diagnostics
-
-*/

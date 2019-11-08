@@ -53,12 +53,27 @@ class StaticSite {
         }
 
         if ( ! mkdir( $path ) ) {
-            $err = "Couldn't create archive directory:" . $path;
+            $err = "Couldn't create StaticSite directory:" . $path;
             WsLog::l( $err );
             throw new WP2StaticException( $err );
         }
 
         return $path;
+    }
+
+    /**
+     * Delete StaticSite files
+     *
+     */
+    public function delete() {
+        error_log('deleting static site files');
+
+        if ( is_dir( $this->path ) ) {
+            FilesHelper::delete_dir_with_files( $this->path );
+
+            error_log('truncating CrawlCache');
+            CrawlCache::clear();
+        }
     }
 }
 

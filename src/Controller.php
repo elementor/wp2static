@@ -8,7 +8,7 @@ use WP_CLI;
 use WP_Post;
 
 class Controller {
-    const VERSION = '7.0-build0009';
+    const WP2STATIC_VERSION = '7.0-build0009';
     const OPTIONS_KEY = 'wp2static-options';
     const HOOK = 'wp2static';
 
@@ -95,8 +95,8 @@ class Controller {
     public function setDefaultOptions() : void {
         if ( null === $this->options->getOption( 'version' ) ) {
             $this->options
-            ->setOption( 'version', self::VERSION )
-            ->setOption( 'static_export_settings', self::VERSION )
+            ->setOption( 'version', self::WP2STATIC_VERSION )
+            ->setOption( 'static_export_settings', self::WP2STATIC_VERSION )
             // set default options
             ->setOption( 'rewriteWPPaths', '1' )
             ->setOption( 'currentDeploymentMethod', 'folder' )
@@ -166,7 +166,7 @@ class Controller {
             self::HOOK . '-admin',
             $plugins_url . 'admin/wp2static.css?cache-buster=wp2static',
             array(),
-            $this::VERSION
+            $this::WP2STATIC_VERSION
         );
     }
 
@@ -389,7 +389,7 @@ class Controller {
                 'static-html-output-plugin/' . // TODO: rm hardcoding slug
                 'admin/wp2static-admin.js',
             array( 'jquery' ),
-            self::VERSION,
+            self::WP2STATIC_VERSION,
             false
         );
 
@@ -466,7 +466,7 @@ class Controller {
             SiteInfo::getPath( 'uploads' ) . 'wp2static-exported-site/');
 
         EnvironmentalInfo::log(
-            self::VERSION,
+            self::WP2STATIC_VERSION,
             $this->options->getAllOptions( false ));
 
         $exporter->generateModifiedFileList();

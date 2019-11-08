@@ -5,6 +5,24 @@ namespace WP2Static;
 use PHPUnit\Framework\TestCase;
 
 final class URLTest extends TestCase{
+    public function testFailsToCreateFromNonAbsoluteURLWithoutParentPage() {
+        $url = 'mylink.jpg';
+
+        $this->expectException( WP2StaticException::class );
+
+        $new_url = new URL( $url );
+    }
+
+    public function testCreatesFromAbsoluteURL() {
+        $url = 'https://somedomain.com/mylink.jpg';
+
+        $new_url = new URL( $url );
+
+        $this->assertEquals(
+            'https://somedomain.com/mylink.jpg',
+            $new_url->get()
+        );
+    }
 
     public function testCreatesWithAbsoluteFromRelative() {
         $url = 'mylink.jpg';

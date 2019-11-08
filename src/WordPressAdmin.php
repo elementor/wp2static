@@ -38,8 +38,13 @@ class WordPressAdmin {
             'wp2static_headless_hook',
             [ 'WP2Static\Controller', 'wp2static_headless' ],
             10,
-            0
-        );
+            0);
+
+        add_action(
+            'wp2static_process_html',
+            [ 'WP2Static\SimpleRewriter', 'rewrite' ],
+            10,
+            1);
 
         /*
          * Register actions for when we should invalidate cache for

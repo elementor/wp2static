@@ -68,4 +68,23 @@ class CrawlCache {
             ]
         );
     }
+
+    /**
+     *  Clear CrawlCache via truncate or deletion
+     *
+     */
+    public static function clear() : void {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'wp2static_crawl_cache';
+
+        $wpdb->query( "TRUNCATE TABLE $table_name" );
+
+        // $total_urls = self::getTotalCrawlCacheURLs();
+
+        // if ( $total_urls > 0 ) {
+        //     // TODO: simulate lack of permissios to truncate
+        //     error_log('failed to truncate CrawlQueue: try deleting instead');
+        // }
+    }
 }

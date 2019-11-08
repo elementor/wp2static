@@ -67,11 +67,37 @@ class CrawlQueue {
         return $urls;
     }
 
+    /**
+     *  Get total crawlable URLs
+     *
+     *  @return int Total crawlable URLs
+     */
+    public static function getTotalCrawlableURLs() : int {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'wp2static_urls';
+
+        $total_urls = $wpdb->get_var("SELECT COUNT(*) FROM $table_name");
+
+        return $total_urls;
+    }
+
+    /**
+     *  Clear CrawlQueue via truncate or deletion
+     *
+     */
     public static function truncate() : void {
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'wp2static_urls';
 
         $wpdb->query( "TRUNCATE TABLE $table_name" );
+
+        $total_urls = self::getTotalCrawlableURLs();
+
+        if ( $total_urls > 0 ) {
+            // TODO: simulate lack of permissios to truncate
+            error_log('failed to truncate CrawlQueue: try deleting instead');
+        }
     }
 }
