@@ -120,12 +120,6 @@ class CLI {
      * Deploy the generated static site.
      * ## OPTIONS
      *
-     * [--test]
-     * : Validate the connection settings without deploying
-     *
-     * [--currentDeploymentMethod]
-     * : Override the deployment option
-     *
      * @param string[] $args CLI args
      * @param string[] $assoc_args CLI args
      */
@@ -133,22 +127,11 @@ class CLI {
         array $args,
         array $assoc_args
     ) : void {
-        $test = false;
+        $processed_site_dir =
+            SiteInfo::getPath( 'uploads') . 'wp2static-processed-site';
+        $processed_site = new ProcessedSite( $processed_site_dir );
 
-        if ( ! empty( $assoc_args['test'] ) ) {
-            $test = true;
-        }
-
-        if ( ! empty( $assoc_args['currentDeploymentMethod'] ) ) {
-            switch ( $assoc_args['currentDeploymentMethod'] ) {
-                case 'zip':
-                    break;
-            }
-        }
-
-        $deployer = new Deployer();
-
-        $deployer->deploy( $test );
+        do_action('wp2static_deploy', $processed_site->path);
     }
 
     /**
