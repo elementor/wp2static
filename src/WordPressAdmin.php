@@ -11,27 +11,22 @@ namespace WP2Static;
 
 class WordPressAdmin {
 
-    private $plugin_instance;
-
     /**
      * WordPressAdmin constructor
-     *
-     * @param Controller $plugin_instance plugin instance
      */
-    public function __construct(Controller $plugin_instance) {
-        $this->plugin_instance = $plugin_instance;
-    }
+    public function __construct() {
 
+    }
 
     /**
      * Register hooks for WordPress and WP2Static actions 
      *
+     * @param string $bootstrap_file main plugin filepath
      */
-    public function registerHooks() {
+    public static function registerHooks(string $bootstrap_file) {
         register_activation_hook(
-            $this->plugin_instance->bootstrap_file,
-            // array( $instance, 'activate' )
-            [ 'WP2Static\Controller', 'wp2static_headless' ]
+            $bootstrap_file,
+            [ 'WP2Static\Controller', 'activate' ]
         );
 
         add_action(
@@ -94,17 +89,14 @@ class WordPressAdmin {
      * Add WP2Static elements to WordPress Admin UI 
      *
      */
-    public function addAdminUIElements() {
+    public static function addAdminUIElements() {
         if ( is_admin() ) {
             add_action(
                 'admin_menu',
-                array(
-                    $this->plugin_instance,
-                    'registerOptionsPage',
-                )
+                [ 'WP2Static\Controller', 'registerOptionsPage' ]
             );
             add_filter( 'custom_menu_order', '__return_true' );
-            add_filter( 'menu_order', array( $this->plugin_instance, 'set_menu_order' ) );
+            add_filter( 'menu_order', [ 'WP2Static\Controller', 'set_menu_order' ] );
         }
     }
 }

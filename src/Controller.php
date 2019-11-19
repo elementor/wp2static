@@ -39,15 +39,12 @@ class Controller {
 
     public static function init( string $bootstrap_file ) : Controller {
         $plugin_instance = self::getInstance();
-        $plugin_instance->bootstrap_file = $bootstrap_file;
 
         $xhr_router = new XHRRouter( $plugin_instance );
         $xhr_router->registerXHRRoutes();
 
-        $wordpress_admin = new WordPressAdmin( $plugin_instance );
-        $wordpress_admin->registerHooks();
-
-        $wordpress_admin->addAdminUIElements();
+        WordPressAdmin::registerHooks( $bootstrap_file );
+        WordPressAdmin::addAdminUIElements();
 
         // load Settings once into singleton
         $plugin_instance->options = new Options( self::OPTIONS_KEY);
@@ -93,8 +90,8 @@ class Controller {
     }
 
     public function setDefaultOptions() : void {
-        if ( null === $this->options->getOption( 'version' ) ) {
-            $this->options
+        if ( null === self::$plugin_instance->options->getOption( 'version' ) ) {
+            self::$plugin_instance->options
             ->setOption( 'version', self::WP2STATIC_VERSION )
             ->setOption( 'static_export_settings', self::WP2STATIC_VERSION )
             // set default options
@@ -110,11 +107,11 @@ class Controller {
         }
     }
 
-    public function activate_for_single_site() : void {
-        $this->setDefaultOptions();
+    public static function activate_for_single_site() : void {
+        self::setDefaultOptions();
     }
 
-    public function activate( bool $network_wide = null ) : void {
+    public static function activate( bool $network_wide = null ) : void {
         if ( $network_wide ) {
             global $wpdb;
 
@@ -130,12 +127,12 @@ class Controller {
 
             foreach ( $site_ids as $site_id ) {
                 switch_to_blog( $site_id );
-                $this->activate_for_single_site();
+                self::activate_for_single_site();
             }
 
             restore_current_blog();
         } else {
-            $this->activate_for_single_site();
+            self::activate_for_single_site();
         }
     }
 
@@ -146,16 +143,13 @@ class Controller {
             __( 'WP2Static', 'static-html-output-plugin' ),
             'manage_options',
             self::HOOK,
-            array( self::$plugin_instance, 'renderOptionsPage' ),
+            [ self::$plugin_instance, 'renderOptionsPage' ],
             'dashicons-shield-alt'
         );
 
         add_action(
             'admin_print_styles-' . $page,
-            array(
-                $this,
-                'enqueueAdminStyles',
-            )
+            [ self::$plugin_instance, 'enqueueAdminStyles' ]
         );
     }
 
