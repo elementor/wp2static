@@ -45,7 +45,7 @@ class PostProcessor {
 
             // add file to ProcessedSite, then process it
             // this allows external processors to have their way with it
-            $processed_site->add( $filename, $save_path ); 
+            $processed_site->add( $filename, $save_path );
 
             $file_processor = new FileProcessor();
 

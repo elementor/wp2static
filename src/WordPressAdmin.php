@@ -41,6 +41,24 @@ class WordPressAdmin {
             10,
             1);
 
+        add_action(
+            'wp2static_process_css',
+            [ 'WP2Static\SimpleRewriter', 'rewrite' ],
+            10,
+            1);
+
+        add_action(
+            'wp2static_process_js',
+            [ 'WP2Static\SimpleRewriter', 'rewrite' ],
+            10,
+            1);
+
+        add_action(
+            'wp2static_process_xml',
+            [ 'WP2Static\SimpleRewriter', 'rewrite' ],
+            10,
+            1);
+
         /*
          * Register actions for when we should invalidate cache for
          * a URL(s) or whole site

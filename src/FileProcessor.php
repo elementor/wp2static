@@ -30,7 +30,15 @@ class FileProcessor {
             case 'html':
                 do_action('wp2static_process_html', $filename);
                 break;
-
+            case 'css':
+                do_action('wp2static_process_css', $filename);
+                break;
+            case 'js':
+                do_action('wp2static_process_css', $filename);
+                break;
+            case 'xml':
+                do_action('wp2static_process_css', $filename);
+                break;
         }
     }
 }

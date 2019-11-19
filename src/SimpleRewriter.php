@@ -34,12 +34,19 @@ class SimpleRewriter {
 
         $file_contents = file_get_contents( $filename );
 
-        // error_log( $wordpress_site_url );
-        // error_log( $destination_url );die();
-
         $rewritten_contents = str_replace(
-            $wordpress_site_url,
-            $destination_url,
+            [
+                $wordpress_site_url,
+                addcslashes( $wordpress_site_url, '/' ),
+                URLHelper::getProtocolRelativeURL( $wordpress_site_url ),
+                addcslashes( URLHelper::getProtocolRelativeURL( $wordpress_site_url ), '/' ),
+            ],
+            [
+                $destination_url,
+                addcslashes( $destination_url, '/' ),
+                URLHelper::getProtocolRelativeURL( $destination_url ),
+                addcslashes( URLHelper::getProtocolRelativeURL( $destination_url ), '/' ),
+            ],
             $file_contents);
 
         file_put_contents( $filename, $rewritten_contents );
