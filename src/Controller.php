@@ -554,17 +554,57 @@ class Controller {
         CrawlCache::rmUrl( $url );
     }
 
+    public function wp2static_enqueue_dashboard_scripts( $hook ) {
+        if ( $hook !== 'index.php' ) return;
+       
+        error_log('enqueuing dashboard script'); 
+
+        wp_enqueue_script(
+            'wp2static_dashboard_script',
+            plugin_dir_url( __FILE__ ) . '../js/wp2static-dashboard.js',
+            [],
+            '1.0');
+    }
+
     public function wp2static_add_dashboard_widgets() : void {
         wp_add_dashboard_widget(
-            'wp2static__dashboard_widget',
+            'wp2static_dashboard_widget',
             'WP2Static',
-            [ 'WP2Static\Controller', 'wp2static_dashboard_widget_function' ]
-        );
+            [ 'WP2Static\Controller', 'wp2static_dashboard_widget_function' ]);
+
+        global $wp_meta_boxes;
+        $normal_dashboard = $wp_meta_boxes['dashboard']['normal']['core'];
+        $example_widget_backup = array( 'wp2static_dashboard_widget' => $normal_dashboard['wp2static_dashboard_widget'] );
+        unset( $normal_dashboard['wp2static_dashboard_widget'] );
+        $sorted_dashboard = array_merge( $example_widget_backup, $normal_dashboard );
+        $wp_meta_boxes['dashboard']['normal']['core'] = $sorted_dashboard;
+
     }
 
     public function wp2static_dashboard_widget_function() : void {
-        echo '<p>Publish whole site as static HTML</p>';
-        echo "<button class='button button-primary'>Publish whole site" .
-            '</button>';
+        $admin_url = get_admin_url(null, 'admin.php?page=wp2static');
+        $ajax_nonce = wp_create_nonce( 'wpstatichtmloutput' );
+
+        echo "<a href='${admin_url}'><span class='dashicons dashicons-admin-generic'></span>Configure</a>";
+        echo "<p><input name='wp2static-auto-deploy' type='checkbox' />Auto-deploy on site changes</p>";
+
+        echo "<input id='wp2static_dashboard_nonce' type='hidden' name='nonce' value='$ajax_nonce' />";
+        echo "<button id='wp2static_dashboard_deploy' class='button button-primary'>Detect, Crawl and Deploy</button>";
+        $deploy_history_view = <<<ENDHISTORY
+<hr />
+<table>
+ <tr>
+    <td>3 mins ago</td><td> deployed </td><td>1,002 URLs</td><td> to </td><td>https://somesite.com</td>
+ </tr>
+ <tr>
+    <td>15 mins ago</td><td> deployed </td><td>3,412 URLs</td><td> to </td><td>https://somesite.com</td>
+ </tr>
+</table>
+<hr />
+<a href="#">View all deploy history</a>
+ENDHISTORY;
+    echo $deploy_history_view;
+        
     }
 }
+
