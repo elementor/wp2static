@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "i": "^0.3.6",
-    "npm": "^6.9.2"
+    "npm": "^6.13.4"
   },
   "jest": {
     "preset": "jest-puppeteer",
