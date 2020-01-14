@@ -20,9 +20,6 @@
   },
   "homepage": "https://github.com/leonstafford/wp2static#readme",
   "devDependencies": {
-    "jest": "^24.8.0",
-    "jest-puppeteer": "^4.2.0",
-    "puppeteer": "^1.18.1",
     "ts-loader": "^6.0.4",
     "tslint": "^5.18.0",
     "typescript": "^3.5.2",
