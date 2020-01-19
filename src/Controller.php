@@ -39,15 +39,12 @@ class Controller {
 
     public static function init( string $bootstrap_file ) : Controller {
         $plugin_instance = self::getInstance();
-        $plugin_instance->bootstrap_file = $bootstrap_file;
 
         $xhr_router = new XHRRouter( $plugin_instance );
         $xhr_router->registerXHRRoutes();
 
-        $wordpress_admin = new WordPressAdmin( $plugin_instance );
-        $wordpress_admin->registerHooks();
-
-        $wordpress_admin->addAdminUIElements();
+        WordPressAdmin::registerHooks( $bootstrap_file );
+        WordPressAdmin::addAdminUIElements();
 
         // load Settings once into singleton
         $plugin_instance->options = new Options( self::OPTIONS_KEY);
@@ -93,8 +90,8 @@ class Controller {
     }
 
     public function setDefaultOptions() : void {
-        if ( null === $this->options->getOption( 'version' ) ) {
-            $this->options
+        if ( null === self::$plugin_instance->options->getOption( 'version' ) ) {
+            self::$plugin_instance->options
             ->setOption( 'version', self::WP2STATIC_VERSION )
             ->setOption( 'static_export_settings', self::WP2STATIC_VERSION )
             // set default options
@@ -110,11 +107,11 @@ class Controller {
         }
     }
 
-    public function activate_for_single_site() : void {
-        $this->setDefaultOptions();
+    public static function activate_for_single_site() : void {
+        self::setDefaultOptions();
     }
 
-    public function activate( bool $network_wide = null ) : void {
+    public static function activate( bool $network_wide = null ) : void {
         if ( $network_wide ) {
             global $wpdb;
 
@@ -130,12 +127,12 @@ class Controller {
 
             foreach ( $site_ids as $site_id ) {
                 switch_to_blog( $site_id );
-                $this->activate_for_single_site();
+                self::activate_for_single_site();
             }
 
             restore_current_blog();
         } else {
-            $this->activate_for_single_site();
+            self::activate_for_single_site();
         }
     }
 
@@ -146,16 +143,13 @@ class Controller {
             __( 'WP2Static', 'static-html-output-plugin' ),
             'manage_options',
             self::HOOK,
-            array( self::$plugin_instance, 'renderOptionsPage' ),
+            [ self::$plugin_instance, 'renderOptionsPage' ],
             'dashicons-shield-alt'
         );
 
         add_action(
             'admin_print_styles-' . $page,
-            array(
-                $this,
-                'enqueueAdminStyles',
-            )
+            [ self::$plugin_instance, 'enqueueAdminStyles' ]
         );
     }
 
@@ -560,17 +554,57 @@ class Controller {
         CrawlCache::rmUrl( $url );
     }
 
+    public function wp2static_enqueue_dashboard_scripts( $hook ) {
+        if ( $hook !== 'index.php' ) return;
+       
+        error_log('enqueuing dashboard script'); 
+
+        wp_enqueue_script(
+            'wp2static_dashboard_script',
+            plugin_dir_url( __FILE__ ) . '../js/wp2static-dashboard.js',
+            [],
+            '1.0');
+    }
+
     public function wp2static_add_dashboard_widgets() : void {
         wp_add_dashboard_widget(
-            'wp2static__dashboard_widget',
+            'wp2static_dashboard_widget',
             'WP2Static',
-            [ 'WP2Static\Controller', 'wp2static_dashboard_widget_function' ]
-        );
+            [ 'WP2Static\Controller', 'wp2static_dashboard_widget_function' ]);
+
+        global $wp_meta_boxes;
+        $normal_dashboard = $wp_meta_boxes['dashboard']['normal']['core'];
+        $example_widget_backup = array( 'wp2static_dashboard_widget' => $normal_dashboard['wp2static_dashboard_widget'] );
+        unset( $normal_dashboard['wp2static_dashboard_widget'] );
+        $sorted_dashboard = array_merge( $example_widget_backup, $normal_dashboard );
+        $wp_meta_boxes['dashboard']['normal']['core'] = $sorted_dashboard;
+
     }
 
     public function wp2static_dashboard_widget_function() : void {
-        echo '<p>Publish whole site as static HTML</p>';
-        echo "<button class='button button-primary'>Publish whole site" .
-            '</button>';
+        $admin_url = get_admin_url(null, 'admin.php?page=wp2static');
+        $ajax_nonce = wp_create_nonce( 'wpstatichtmloutput' );
+
+        echo "<a href='${admin_url}'><span class='dashicons dashicons-admin-generic'></span>Configure</a>";
+        echo "<p><input name='wp2static-auto-deploy' type='checkbox' />Auto-deploy on site changes</p>";
+
+        echo "<input id='wp2static_dashboard_nonce' type='hidden' name='nonce' value='$ajax_nonce' />";
+        echo "<button id='wp2static_dashboard_deploy' class='button button-primary'>Detect, Crawl and Deploy</button>";
+        $deploy_history_view = <<<ENDHISTORY
+<hr />
+<table>
+ <tr>
+    <td>3 mins ago</td><td> deployed </td><td>1,002 URLs</td><td> to </td><td>https://somesite.com</td>
+ </tr>
+ <tr>
+    <td>15 mins ago</td><td> deployed </td><td>3,412 URLs</td><td> to </td><td>https://somesite.com</td>
+ </tr>
+</table>
+<hr />
+<a href="#">View all deploy history</a>
+ENDHISTORY;
+    echo $deploy_history_view;
+        
     }
 }
+

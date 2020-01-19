@@ -65,8 +65,14 @@ add_action(
     'wp_static_html_output_ajax');
 
 function wp_static_html_output_ajax() {
-    check_ajax_referer( 'wpstatichtmloutput', 'nonce' );
+    $nonce_check = check_ajax_referer( 'wpstatichtmloutput', 'nonce' );
+    error_log('nonce check');
+    error_log($nonce_check);
+
     $instance_method = filter_input( INPUT_POST, 'ajax_action' );
+
+    error_log('$instance_method');
+    error_log($instance_method);
 
     if ( '' !== $instance_method && is_string( $instance_method ) ) {
         $plugin_instance = WP2Static\Controller::getInstance();
