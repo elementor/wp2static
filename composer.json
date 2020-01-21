@@ -66,25 +66,18 @@
     },
     "scripts": {
         "phpstan": "vendor/bin/phpstan analyse",
-        "phpcs": "vendor/bin/phpcs --standard=./tools/phpcs.xml --ignore=*/js/*,*/tests/*,*/admin/*,**/coverage/*,*.js,*/node_modules/*,*/vendor/*,*/views/*.php ./",
-        "phpcbf": "vendor/bin/phpcbf --standard=./tools/phpcs.xml --ignore=*/js/*,*/tests/*,*/admin/*,*/coverage/*,*.js,*/node_modules/*,*/vendor/*,*/views/*.php ./",
+        "phpcs": "vendor/bin/phpcs --standard=./tools/phpcs.xml --ignore=*/tests/*,*/admin/*,**/coverage/*,*.js,*/vendor/*,*/views/*.php ./",
+        "phpcbf": "vendor/bin/phpcbf --standard=./tools/phpcs.xml --ignore=*/js/*,*/tests/*,*/admin/*,*/coverage/*,*.js,*/vendor/*,*/views/*.php ./",
         "phpunit": "vendor/bin/phpunit ./tests/unit/",
         "coverage": "vendor/bin/phpunit tests/unit --coverage-html coverage --whitelist src/",
-        "jest": "node_modules/tslint/bin/jest.js",
         "lint": "vendor/bin/parallel-lint --exclude vendor .",
-        "tslint": "node_modules/tslint/bin/tslint js/*.ts",
-        "tslintfix": "node_modules/tslint/bin/tslint --fix js/*.ts",
-        "buildjs": "node_modules/webpack/bin/webpack.js",
         "test": [
             "@lint",
-            "@tslint",
-            "@buildjs",
             "@phpcs",
             "@phpstan",
             "@phpunit"
         ],
         "build": "/bin/sh tools/build_release.sh",
-        "generate-pot": "wp i18n make-pot . languages/static-html-output-plugin.pot",
         "post-install-cmd": "sh ./tools/composer-post-install.sh"
     }
 }
