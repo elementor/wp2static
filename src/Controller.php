@@ -459,7 +459,11 @@ class Controller {
 
     public function renderCachesPage() : void {
         $view = [];
-        $view['something'] = 'something';
+        $view['exportedSiteFileCount'] = iterator_count(
+            new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator(SiteInfo::getPath( 'uploads' ) . 'wp2static-exported-site/', \FilesystemIterator::SKIP_DOTS)
+            )
+        );
 
         require_once WP2STATIC_PATH . 'views/caches-page.php';
     }
