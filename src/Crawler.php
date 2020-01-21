@@ -54,7 +54,7 @@ class Crawler {
             $url = new URL( SiteInfo::getURL('site') . $url );
 
             // if not already cached
-            if ( ExportSettings::get( 'dontUseCrawlCaching' ) ) {
+            if ( ! ExportSettings::get( 'dontUseCrawlCaching' ) ) {
                 if ( CrawlCache::getUrl( $url->get() ) ) {
                     continue;
                 }
@@ -77,7 +77,7 @@ class Crawler {
                 $static_site->add( $path_in_static_site, $crawled_contents );
             }
 
-            if ( ! isset( $this->settings['dontUseCrawlCaching'] ) ) {
+            if ( ! ExportSettings::get( 'dontUseCrawlCaching' ) ) {
                 CrawlCache::addUrl( $url->get() );
             }
         }
