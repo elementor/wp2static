@@ -137,32 +137,48 @@ class Controller {
     }
 
     public function registerOptionsPage() : void {
-        $plugins_url = plugin_dir_url( dirname( __FILE__ ) );
-        $page = add_menu_page(
+        add_menu_page(
             __( 'WP2Static', 'static-html-output-plugin' ),
             __( 'WP2Static', 'static-html-output-plugin' ),
             'manage_options',
             self::HOOK,
             [ self::$plugin_instance, 'renderOptionsPage' ],
-            'dashicons-shield-alt'
-        );
+            'dashicons-shield-alt');
 
-        add_action(
-            'admin_print_styles-' . $page,
-            [ self::$plugin_instance, 'enqueueAdminStyles' ]
-        );
+        add_submenu_page(
+            self::HOOK,
+            'WP2Static Options',
+            'Options',
+            'manage_options',
+            'wp2static',
+            [ self::$plugin_instance, 'renderOptionsPage' ]);
+
+        add_submenu_page(
+            self::HOOK,
+            'WP2Static Jobs',
+            'Jobs',
+            'manage_options',
+            'wp2static-jobs',
+            [ self::$plugin_instance, 'renderJobsPage' ]);
+
+        add_submenu_page(
+            self::HOOK,
+            'WP2Static Caches',
+            'Caches',
+            'manage_options',
+            'wp2static-caches',
+            [ self::$plugin_instance, 'renderCachesPage' ]);
+
+        add_submenu_page(
+            self::HOOK,
+            'WP2Static Diagnostics',
+            'Diagnostics',
+            'manage_options',
+            'wp2static-diagnostics',
+            [ self::$plugin_instance, 'renderDiagnosticsPage' ]);
+
     }
 
-    public function enqueueAdminStyles() : void {
-        $plugins_url = plugin_dir_url( dirname( __FILE__ ) );
-
-        wp_enqueue_style(
-            self::HOOK . '-admin',
-            $plugins_url . 'admin/wp2static.css?cache-buster=wp2static',
-            array(),
-            $this::WP2STATIC_VERSION
-        );
-    }
 
     // NOTE: wrapper for UI to echo success response
     public function finalize_deployment() : void {
@@ -315,7 +331,7 @@ class Controller {
     /**
      * Check whether site it publicly accessible
      */
-    public function check_local_dns_resolution() : void {
+    public function check_local_dns_resolution() : string {
         if ( $this->isEnabled( 'shell_exec' ) ) {
             $site_host = parse_url( $this->site_url, PHP_URL_HOST );
 
@@ -323,8 +339,7 @@ class Controller {
                 shell_exec( "/usr/sbin/traceroute $site_host" );
 
             if ( ! is_string( $output ) ) {
-                echo 'Unknown';
-                return;
+                return 'Unknown';
             }
 
             $hops_in_route = substr_count( $output, PHP_EOL );
@@ -337,13 +352,13 @@ class Controller {
                 $resolves_to_local_ip4 || $resolves_to_local_ip6;
 
             if ( $resolves_locally && $hops_in_route < 2 ) {
-                echo 'Yes';
+                return 'Yes';
             } else {
-                echo 'No';
+                return 'No';
             }
         } else {
             error_log( 'no shell_exec' );
-            echo 'Unknown';
+            return 'Unknown';
         }
     }
 
@@ -425,6 +440,28 @@ class Controller {
         $view['onceAction'] = self::HOOK . '-options';
 
         require_once WP2STATIC_PATH . 'views/options-page.php';
+    }
+
+    public function renderDiagnosticsPage() : void {
+        $view = [];
+        // TODO: kill all vars in PHP templates
+        $view['publiclyAccessible'] = self::check_local_dns_resolution();
+
+        require_once WP2STATIC_PATH . 'views/diagnostics-page.php';
+    }
+
+    public function renderJobsPage() : void {
+        $view = [];
+        $view['something'] = 'something';
+
+        require_once WP2STATIC_PATH . 'views/jobs-page.php';
+    }
+
+    public function renderCachesPage() : void {
+        $view = [];
+        $view['something'] = 'something';
+
+        require_once WP2STATIC_PATH . 'views/caches-page.php';
     }
 
     public function userIsAllowed() : bool {
