@@ -457,13 +457,59 @@ class Controller {
         require_once WP2STATIC_PATH . 'views/jobs-page.php';
     }
 
+
     public function renderCachesPage() : void {
         $view = [];
+
+        // performance check vs map 
+        $diskSpace = 0;
+
+        $exportedSiteDir = SiteInfo::getPath( 'uploads' ) . 'wp2static-exported-site/';
+        if (is_dir($exportedSiteDir)) {
+            $files = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator(
+                    $exportedSiteDir));
+
+            foreach ($files as $file) {
+                $diskSpace += $file->getSize();
+            }
+        }
+
+        $view['exportedSiteDiskSpace'] = sprintf("%4.2f MB", $diskSpace / 1048576);
+        // end check
+
         $view['exportedSiteFileCount'] = iterator_count(
             new \RecursiveIteratorIterator(
-                new \RecursiveDirectoryIterator(SiteInfo::getPath( 'uploads' ) . 'wp2static-exported-site/', \FilesystemIterator::SKIP_DOTS)
+                new \RecursiveDirectoryIterator($exportedSiteDir, \FilesystemIterator::SKIP_DOTS)
             )
         );
+
+        // performance check vs map 
+        $diskSpace = 0;
+        $processedSiteDir = SiteInfo::getPath( 'uploads' ) . 'wp2static-processed-site/';
+
+        if (is_dir($processedSiteDir)) {
+            $files = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator(
+                    $processedSiteDir));
+
+            foreach ($files as $file) {
+                $diskSpace += $file->getSize();
+            }
+        }
+
+
+        $view['processedSiteDiskSpace'] = sprintf("%4.2f MB", $diskSpace / 1048576);
+        // end check
+
+        $view['processedSiteFileCount'] = iterator_count(
+            new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($processedSiteDir, \FilesystemIterator::SKIP_DOTS)
+            )
+        );
+
+        $view['crawlCacheTotalURLs'] = CrawlCache::getTotal();
+        $view['deployCacheTotalURLs'] = DeployCache::getTotal();
 
         require_once WP2STATIC_PATH . 'views/caches-page.php';
     }

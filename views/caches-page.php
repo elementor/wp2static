@@ -16,7 +16,7 @@
     <tbody>
         <tr>
             <td>Crawl cache</td>
-            <td>?? URLs in database</td>
+            <td><?php echo $view['crawlCacheTotalURLs']; ?> URLs in database</td>
             <td>
                 <a href="#"><button class="button btn-danger">Show URLs</button></a>
                 <a href="#"><button class="button btn-danger">Delete Crawl Cache</button></a>
@@ -24,7 +24,7 @@
         </tr>
         <tr>
             <td>Generated Static Site</td>
-            <td><?php echo $view['exportedSiteFileCount']; ?> files, using ?? MB<br>in path /var/www/html/wp-content/uploads/wp2static-exported-site</td>
+            <td><?php echo $view['exportedSiteFileCount']; ?> files, using <?php echo $view['exportedSiteDiskSpace']; ?><br>in path /var/www/html/wp-content/uploads/wp2static-exported-site</td>
             <td>
                 <a href="#"><button class="button btn-danger">Download ZIP</button></a>
                 <a href="#"><button class="button btn-danger">Delete Files</button></a>
@@ -32,7 +32,7 @@
         </tr>
         <tr>
             <td>Post-processed Static Site</td>
-            <td>?? files, using ?? MB<br> in path /var/www/html/wp-content/uploads/wp2static-processed-site</td>
+            <td><?php echo $view['processedSiteFileCount']; ?> files, using <?php echo $view['processedSiteDiskSpace']; ?><br> in path /var/www/html/wp-content/uploads/wp2static-processed-site</td>
             <td>
                 <a href="#"><button class="button btn-danger">Download ZIP</button></a>
                 <a href="#"><button class="button btn-danger">Delete Files</button></a>
@@ -40,7 +40,7 @@
         </tr>
         <tr>
             <td>Deploy cache</td>
-            <td>?? URLs in database</td>
+            <td><?php echo $view['deployCacheTotalURLs']; ?> URLs in database</td>
             <td>
                 <a href="#"><button class="button btn-danger">Show URLs</button></a>
                 <a href="#"><button class="button btn-danger">Delete Deploy Cache</button></a>

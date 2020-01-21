@@ -78,4 +78,18 @@ class DeployCache {
 
         $wpdb->query( "TRUNCATE TABLE $table_name" );
     }
+
+    /**
+     *  Count URLs in Deploy Cache
+     *
+     */
+    public static function getTotal() : int {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'wp2static_deploy_cache';
+
+        $total = $wpdb->get_var( "SELECT count(*) FROM $table_name" );
+
+        return $total;
+    }
 }

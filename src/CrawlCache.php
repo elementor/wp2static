@@ -87,4 +87,18 @@ class CrawlCache {
         //     error_log('failed to truncate CrawlQueue: try deleting instead');
         // }
     }
+
+    /**
+     *  Count URLs in Crawl Cache
+     *
+     */
+    public static function getTotal() : int {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'wp2static_crawl_cache';
+
+        $total = $wpdb->get_var( "SELECT count(*) FROM $table_name" );
+
+        return $total;
+    }
 }
