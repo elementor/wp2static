@@ -265,6 +265,65 @@ class CLI {
         }
     }
 
+    public function showWizardMenu($level = 0) {
+        switch($level) {
+            default:
+            case 0:
+                WP_CLI::line( "Enter the number of the task you want to perform:" );
+                WP_CLI::line( "" );
+                WP_CLI::line( "0) Quick-start: generate static site with sane defaults" );
+                WP_CLI::line( "1) another valid option" );
+                WP_CLI::line( "" );
+            break;
+        }
+
+    }
+
+    public function wp2static_test_called_func() {
+        WP_CLI::line( "Called function based on user selection!" );
+    }
+
+    public function wp2static_test_called_func_2() {
+        WP_CLI::line( "Called function 2 based on user selection!" );
+    }
+
+    public function routeWizardSelection($level, $selection) {
+        $selection_map = [
+            0 => [
+                0 => 'wp2static_test_called_func',
+                1 => 'wp2static_test_called_func_2',
+            ],
+        ];
+
+        if ( ! is_callable( [ $this, $selection_map[$level][$selection] ] ) ) {
+            WP_CLI::line('Tried to call missing function');
+            $this->showWizardWaitForSelection($level);
+        } else {
+            call_user_func( [ $this, $selection_map[$level][$selection] ] );
+        }
+    }
+
+    public function showWizardWaitForSelection($level) {
+        $this-> showWizardMenu($level);
+
+        $userval = trim( fgets( STDIN ) );
+
+        $this->routeWizardSelection( $level, $userval );
+    }
+
+    public function wizard(
+        array $args,
+        array $assoc_args
+    ) : void {
+
+        WP_CLI::line( "Welcome to WP2Static! Use this interactive wizard or run commands directly, as per the docs: https://wp2static.com" );
+
+        // check if plugin has been setup
+
+        $level = 0;
+        $this-> showWizardWaitForSelection($level);
+    }
+
     /**
      * WordPress Site operations
      *
