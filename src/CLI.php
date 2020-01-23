@@ -276,6 +276,8 @@ class CLI {
                 WP_CLI::line( "2) Jobs - view/manage" );
                 WP_CLI::line( "3) Caches - view/manage" );
                 WP_CLI::line( "4) Diagnostics" );
+                WP_CLI::line( "--------------" );
+                WP_CLI::line( "q) Exit to shell" );
                 WP_CLI::line( "" );
             break;
             case 1:
@@ -286,6 +288,7 @@ class CLI {
                 WP_CLI::line( "2) Reset to default options" );
                 WP_CLI::line( "--------------" );
                 WP_CLI::line( "b) Back to main menu" );
+                WP_CLI::line( "q) Exit to shell" );
                 WP_CLI::line( "" );
             break;
             case 2:
@@ -299,6 +302,7 @@ class CLI {
                 WP_CLI::line( "5) Deploy" );
                 WP_CLI::line( "--------------" );
                 WP_CLI::line( "b) Back to main menu" );
+                WP_CLI::line( "q) Exit to shell" );
                 WP_CLI::line( "" );
             break;
             case 3:
@@ -315,6 +319,7 @@ class CLI {
                 WP_CLI::line( "8) Delete Deploy Cache URLs" );
                 WP_CLI::line( "--------------" );
                 WP_CLI::line( "b) Back to main menu" );
+                WP_CLI::line( "q) Exit to shell" );
                 WP_CLI::line( "" );
             break;
             case 4:
@@ -325,10 +330,27 @@ class CLI {
                 WP_CLI::line( "2) Save diagnostics to file" );
                 WP_CLI::line( "--------------" );
                 WP_CLI::line( "b) Back to main menu" );
+                WP_CLI::line( "q) Exit to shell" );
                 WP_CLI::line( "" );
             break;
         }
 
+    }
+
+    public function wp2static_cli_exit_to_shell() {
+        WP_CLI::line( PHP_EOL . "### Exiting to shell, goodbye! ###" . PHP_EOL );
+
+        WP_CLI::halt(0);
+    }
+
+    public function wp2static_cli_caches_truncate_crawl_queue() {
+        WP_CLI::line( PHP_EOL . "### Deleting Crawl Queue ###" . PHP_EOL );
+
+        CrawlQueue::truncate();
+
+        WP_CLI::line( PHP_EOL . "Crawl Queue Deleted!" . PHP_EOL );
+
+        $this-> showWizardWaitForSelection(3);
     }
 
     public function wp2static_cli_quick_start() {
@@ -338,7 +360,8 @@ class CLI {
         $this->wordpress_site(['crawl'], []);
         $this->wordpress_site(['post_process'], []);
 
-        # print exported dir location
+        # TODO: print exported dir location
+        $this-> showWizardWaitForSelection(0);
     }
 
     public function wp2static_cli_options_menu() {
@@ -381,23 +404,29 @@ class CLI {
                 2 => 'wp2static_cli_jobs_menu',
                 3 => 'wp2static_cli_caches_menu',
                 4 => 'wp2static_cli_diagnostics_menu',
+                'q' => 'wp2static_cli_exit_to_shell',
             ],
             1 => [
                 0 => 'wp2static_cli_options_launch_wizard',
                 1 => 'wp2static_cli_options_list',
                 'b' => 'wizard',
+                'q' => 'wp2static_cli_exit_to_shell',
             ],
             2 => [
                 0 => 'wp2static_cli_jobs_launch_wizard',
                 'b' => 'wizard',
+                'q' => 'wp2static_cli_exit_to_shell',
             ],
             3 => [
                 0 => 'wp2static_cli_caches_launch_wizard',
+                2 => 'wp2static_cli_caches_truncate_crawl_queue',
                 'b' => 'wizard',
+                'q' => 'wp2static_cli_exit_to_shell',
             ],
             4 => [
                 0 => 'wp2static_cli_diagnostics_launch_wizard',
                 'b' => 'wizard',
+                'q' => 'wp2static_cli_exit_to_shell',
             ],
         ];
 
