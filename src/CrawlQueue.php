@@ -100,4 +100,18 @@ class CrawlQueue {
             error_log('failed to truncate CrawlQueue: try deleting instead');
         }
     }
+
+    /**
+     *  Count URLs in Crawl Queue
+     *
+     */
+    public static function getTotal() : int {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'wp2static_urls';
+
+        $total = $wpdb->get_var( "SELECT count(*) FROM $table_name" );
+
+        return $total;
+    }
 }

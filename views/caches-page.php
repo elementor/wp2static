@@ -15,6 +15,14 @@
     </thead>
     <tbody>
         <tr>
+            <td>Detected URLs</td>
+            <td><?php echo $view['crawlQueueTotalURLs']; ?> URLs in database</td>
+            <td>
+                <a href="#"><button class="button btn-danger">Show URLs</button></a>
+                <a href="#"><button class="button btn-danger">Delete Detected URLs</button></a>
+            </td>
+        </tr>
+        <tr>
             <td>Crawl cache</td>
             <td><?php echo $view['crawlCacheTotalURLs']; ?> URLs in database</td>
             <td>

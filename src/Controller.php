@@ -508,6 +508,7 @@ class Controller {
             )
         );
 
+        $view['crawlQueueTotalURLs'] = CrawlQueue::getTotal();
         $view['crawlCacheTotalURLs'] = CrawlCache::getTotal();
         $view['deployCacheTotalURLs'] = DeployCache::getTotal();
 

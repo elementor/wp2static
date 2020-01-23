@@ -269,18 +269,104 @@ class CLI {
         switch($level) {
             default:
             case 0:
-                WP_CLI::line( "Enter the number of the task you want to perform:" );
+                WP_CLI::line( "Enter the number of the desired menu item:" );
                 WP_CLI::line( "" );
-                WP_CLI::line( "0) Quick-start: generate static site with sane defaults" );
-                WP_CLI::line( "1) another valid option" );
+                WP_CLI::line( "0) Quick-start: generate static site with current options" );
+                WP_CLI::line( "1) Options - view/manage WP2Static options" );
+                WP_CLI::line( "2) Jobs - view/manage" );
+                WP_CLI::line( "3) Caches - view/manage" );
+                WP_CLI::line( "4) Diagnostics" );
+                WP_CLI::line( "" );
+            break;
+            case 1:
+                WP_CLI::line( "Enter the number of the desired menu item:" );
+                WP_CLI::line( "" );
+                WP_CLI::line( "0) Guided options configuration" );
+                WP_CLI::line( "1) Show currently set options" );
+                WP_CLI::line( "2) Reset to default options" );
+                WP_CLI::line( "--------------" );
+                WP_CLI::line( "b) Back to main menu" );
+                WP_CLI::line( "" );
+            break;
+            case 2:
+                WP_CLI::line( "Enter the number of the desired menu item:" );
+                WP_CLI::line( "" );
+                WP_CLI::line( "0) Show latest jobs" );
+                WP_CLI::line( "1) Cancel running job" );
+                WP_CLI::line( "2) Detect URLs" );
+                WP_CLI::line( "3) Crawl Site" );
+                WP_CLI::line( "4) Post-process site" );
+                WP_CLI::line( "5) Deploy" );
+                WP_CLI::line( "--------------" );
+                WP_CLI::line( "b) Back to main menu" );
+                WP_CLI::line( "" );
+            break;
+            case 3:
+                WP_CLI::line( "Enter the number of the desired menu item:" );
+                WP_CLI::line( "" );
+                WP_CLI::line( "0) Show all cache statistics" );
+                WP_CLI::line( "1) Show Detected URLs" );
+                WP_CLI::line( "2) Delete Detected URLs" );
+                WP_CLI::line( "3) Show Crawl Cache URLs" );
+                WP_CLI::line( "4) Delete Crawl Cache URLs" );
+                WP_CLI::line( "5) Delete Generated Static Site files" );
+                WP_CLI::line( "6) Delete Post-processed Static Site files" );
+                WP_CLI::line( "7) Show Deploy Cache URLs" );
+                WP_CLI::line( "8) Delete Deploy Cache URLs" );
+                WP_CLI::line( "--------------" );
+                WP_CLI::line( "b) Back to main menu" );
+                WP_CLI::line( "" );
+            break;
+            case 4:
+                WP_CLI::line( "Enter the number of the desired menu item:" );
+                WP_CLI::line( "" );
+                WP_CLI::line( "0) Show diagnostics" );
+                WP_CLI::line( "1) Email diagnostics" );
+                WP_CLI::line( "2) Save diagnostics to file" );
+                WP_CLI::line( "--------------" );
+                WP_CLI::line( "b) Back to main menu" );
                 WP_CLI::line( "" );
             break;
         }
 
     }
 
-    public function wp2static_test_called_func() {
-        WP_CLI::line( "Called function based on user selection!" );
+    public function wp2static_cli_quick_start() {
+        WP_CLI::line( "### Quick-start: generate static site with current options###" );
+
+        $this->wordpress_site(['detect_urls'], []);
+        $this->wordpress_site(['crawl'], []);
+        $this->wordpress_site(['post_process'], []);
+
+        # print exported dir location
+    }
+
+    public function wp2static_cli_options_menu() {
+        WP_CLI::line( "### Options - view/manage WP2Static options ###" );
+        WP_CLI::line( "" );
+
+        $this-> showWizardWaitForSelection(1);
+    }
+
+    public function wp2static_cli_jobs_menu() {
+        WP_CLI::line( "### Options - view/manage WP2Static jobs ###" );
+        WP_CLI::line( "" );
+
+        $this-> showWizardWaitForSelection(2);
+    }
+
+    public function wp2static_cli_caches_menu() {
+        WP_CLI::line( "### Options - view/manage WP2Static caches ###" );
+        WP_CLI::line( "" );
+
+        $this-> showWizardWaitForSelection(3);
+    }
+
+    public function wp2static_cli_diagnostics_menu() {
+        WP_CLI::line( "### Options - diagnostics  ###" );
+        WP_CLI::line( "" );
+
+        $this-> showWizardWaitForSelection(4);
     }
 
     public function wp2static_test_called_func_2() {
@@ -290,8 +376,28 @@ class CLI {
     public function routeWizardSelection($level, $selection) {
         $selection_map = [
             0 => [
-                0 => 'wp2static_test_called_func',
-                1 => 'wp2static_test_called_func_2',
+                0 => 'wp2static_cli_quick_start',
+                1 => 'wp2static_cli_options_menu',
+                2 => 'wp2static_cli_jobs_menu',
+                3 => 'wp2static_cli_caches_menu',
+                4 => 'wp2static_cli_diagnostics_menu',
+            ],
+            1 => [
+                0 => 'wp2static_cli_options_launch_wizard',
+                1 => 'wp2static_cli_options_list',
+                'b' => 'wizard',
+            ],
+            2 => [
+                0 => 'wp2static_cli_jobs_launch_wizard',
+                'b' => 'wizard',
+            ],
+            3 => [
+                0 => 'wp2static_cli_caches_launch_wizard',
+                'b' => 'wizard',
+            ],
+            4 => [
+                0 => 'wp2static_cli_diagnostics_launch_wizard',
+                'b' => 'wizard',
             ],
         ];
 
@@ -312,8 +418,8 @@ class CLI {
     }
 
     public function wizard(
-        array $args,
-        array $assoc_args
+        array $args = [],
+        array $assoc_args = []
     ) : void {
 
         WP_CLI::line( "Welcome to WP2Static! Use this interactive wizard or run commands directly, as per the docs: https://wp2static.com" );
