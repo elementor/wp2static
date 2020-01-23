@@ -365,8 +365,7 @@ class CLI {
     }
 
     public function wp2static_cli_options_menu() {
-        WP_CLI::line( "### Options - view/manage WP2Static options ###" );
-        WP_CLI::line( "" );
+        WP_CLI::line( PHP_EOL . "### Options - view/manage WP2Static options ###" . PHP_EOL);
 
         $this-> showWizardWaitForSelection(1);
     }
@@ -394,6 +393,14 @@ class CLI {
 
     public function wp2static_test_called_func_2() {
         WP_CLI::line( "Called function 2 based on user selection!" );
+    }
+
+    public function wp2static_cli_options_list() {
+        WP_CLI::line( PHP_EOL . "### Showing all options ###" . PHP_EOL );
+
+        $this->options(['list'], []);
+
+        $this-> showWizardWaitForSelection(1);
     }
 
     public function routeWizardSelection($level, $selection) {
