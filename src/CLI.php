@@ -333,14 +333,182 @@ class CLI {
                 WP_CLI::line( "q) Exit to shell" );
                 WP_CLI::line( "" );
             break;
+            // options wizard
+            case 8:
+                WP_CLI::line( PHP_EOL . "Detection level" );
+                WP_CLI::line( "===============" . PHP_EOL );
+                WP_CLI::line( "Affects which WordPress URLs are going " .
+                    "to be crawled when generating your static site" . PHP_EOL );
+                WP_CLI::line( "0) Homepage only" );
+                WP_CLI::line( "1) Most common URLs (Post, Pages, Archives, etc)" );
+                WP_CLI::line( "2) Maximum URL detection" );
+                WP_CLI::line( "3) Custom (let me choose exactly what's detected)" );
+                WP_CLI::line( "--------------" );
+                WP_CLI::line( "b) Back to Options menu" );
+                WP_CLI::line( "q) Exit to shell" );
+                WP_CLI::line( "" );
+            break;
         }
 
+    }
+
+    public function routeWizardSelection($level, $selection) {
+        $selection_map = [
+            0 => [
+                0 => 'wp2static_cli_quick_start',
+                1 => 'wp2static_cli_options_menu',
+                2 => 'wp2static_cli_jobs_menu',
+                3 => 'wp2static_cli_caches_menu',
+                4 => 'wp2static_cli_diagnostics_menu',
+                'q' => 'wp2static_cli_exit_to_shell',
+            ],
+            1 => [
+                0 => 'wp2static_cli_options_launch_wizard',
+                1 => 'wp2static_cli_options_list',
+                'b' => 'wizard',
+                'q' => 'wp2static_cli_exit_to_shell',
+            ],
+            2 => [
+                0 => 'wp2static_cli_jobs_launch_wizard',
+                'b' => 'wizard',
+                'q' => 'wp2static_cli_exit_to_shell',
+            ],
+            3 => [
+                0 => 'wp2static_cli_caches_launch_wizard',
+                2 => 'wp2static_cli_caches_truncate_crawl_queue',
+                'b' => 'wizard',
+                'q' => 'wp2static_cli_exit_to_shell',
+            ],
+            4 => [
+                0 => 'wp2static_cli_diagnostics_launch_wizard',
+                'b' => 'wizard',
+                'q' => 'wp2static_cli_exit_to_shell',
+            ],
+            8 => [
+                0 => 'wp2static_cli_options_set_detect_homepage_only',
+                1 => 'wp2static_cli_options_set_detect_common',
+                2 => 'wp2static_cli_options_set_detect_maximum',
+                3 => 'wp2static_cli_options_set_detect_wizard',
+                'b' => 'wp2static_cli_options_menu',
+                'q' => 'wp2static_cli_exit_to_shell',
+            ],
+        ];
+
+        if ( ! is_callable( [ $this, $selection_map[$level][$selection] ] ) ) {
+            WP_CLI::line('Tried to call missing function');
+            $this->showWizardWaitForSelection($level);
+        } else {
+            call_user_func( [ $this, $selection_map[$level][$selection] ] );
+        }
     }
 
     public function wp2static_cli_exit_to_shell() {
         WP_CLI::line( PHP_EOL . "### Exiting to shell, goodbye! ###" . PHP_EOL );
 
         WP_CLI::halt(0);
+    }
+
+    public function wp2static_cli_options_set_detect_common() {
+        WP_CLI::line( PHP_EOL . "### Setting Common URL detection  ###" . PHP_EOL );
+
+        $plugin = Controller::getInstance();
+
+        $detections = [
+            'detectArchives',
+            'detectAttachments',
+            'detectCategoryPagination',
+            'detectChildTheme',
+            'detectCustomPostTypes',
+            'detectHomepage',
+            'detectPages',
+            'detectParentTheme',
+            'detectPostPagination',
+            'detectPosts',
+            'detectUploads',
+        ];
+
+        foreach( $detections as $detection ) {
+            $plugin->options->setOption( $detection, 1 );
+        }
+
+        $plugin->options->save();
+
+        WP_CLI::line( PHP_EOL . "Common URL detection set!" . PHP_EOL );
+
+        $this-> showWizardWaitForSelection(8);
+    }
+
+    public function wp2static_cli_options_set_detect_homepage_only() {
+        WP_CLI::line( PHP_EOL . "### Setting Homepage only URL detection  ###" . PHP_EOL );
+
+        $plugin = Controller::getInstance();
+
+        $detections = [
+            'detectArchives',
+            'detectAttachments',
+            'detectCategoryPagination',
+            'detectChildTheme',
+            'detectCommentPagination',
+            'detectComments',
+            'detectCustomPostTypes',
+            'detectFeedURLs',
+            'detectPages',
+            'detectParentTheme',
+            'detectPluginAssets',
+            'detectPostPagination',
+            'detectPosts',
+            'detectUploads',
+            'detectVendorCacheDirs',
+            'detectWPIncludesAssets',
+        ];
+
+        foreach( $detections as $detection ) {
+            $plugin->options->setOption( $detection, 0 );
+        }
+
+        $plugin->options->setOption( 'detectHomepage', 1 );
+
+        $plugin->options->save();
+
+        WP_CLI::line( PHP_EOL . "Homepage only URL detection set!" . PHP_EOL );
+
+        $this-> showWizardWaitForSelection(8);
+    }
+
+    public function wp2static_cli_options_set_detect_maximum() {
+        WP_CLI::line( PHP_EOL . "### Setting maximum URL detection  ###" . PHP_EOL );
+
+        $plugin = Controller::getInstance();
+
+        $detections = [
+            'detectArchives',
+            'detectAttachments',
+            'detectCategoryPagination',
+            'detectChildTheme',
+            'detectCommentPagination',
+            'detectComments',
+            'detectCustomPostTypes',
+            'detectFeedURLs',
+            'detectHomepage',
+            'detectPages',
+            'detectParentTheme',
+            'detectPluginAssets',
+            'detectPostPagination',
+            'detectPosts',
+            'detectUploads',
+            'detectVendorCacheDirs',
+            'detectWPIncludesAssets',
+        ];
+
+        foreach( $detections as $detection ) {
+            $plugin->options->setOption( $detection, 1 );
+        }
+
+        $plugin->options->save();
+
+        WP_CLI::line( PHP_EOL . "Maximum URL detection set!" . PHP_EOL );
+
+        $this-> showWizardWaitForSelection(8);
     }
 
     public function wp2static_cli_caches_truncate_crawl_queue() {
@@ -356,16 +524,25 @@ class CLI {
     public function wp2static_cli_quick_start() {
         WP_CLI::line( "### Quick-start: generate static site with current options###" );
 
-        $this->wordpress_site(['detect_urls'], []);
-        $this->wordpress_site(['crawl'], []);
-        $this->wordpress_site(['post_process'], []);
+        $this->detect();
+        $this->crawl();
+        $this->post_process();
 
-        # TODO: print exported dir location
+        $processed_site_dir =
+            SiteInfo::getPath( 'uploads') . 'wp2static-processed-site';
+        WP_CLI::success( PHP_EOL . "Processed static site dir: $processed_site_dir"  . PHP_EOL );
+
         $this-> showWizardWaitForSelection(0);
     }
 
-    public function wp2static_cli_options_menu() {
+    public function wp2static_cli_options_launch_wizard() {
         WP_CLI::line( PHP_EOL . "### Options - view/manage WP2Static options ###" . PHP_EOL);
+
+        $this-> showWizardWaitForSelection(8);
+    }
+
+    public function wp2static_cli_options_menu() {
+        WP_CLI::line( PHP_EOL . "### Guided options configuration ###" . PHP_EOL);
 
         $this-> showWizardWaitForSelection(1);
     }
@@ -403,47 +580,6 @@ class CLI {
         $this-> showWizardWaitForSelection(1);
     }
 
-    public function routeWizardSelection($level, $selection) {
-        $selection_map = [
-            0 => [
-                0 => 'wp2static_cli_quick_start',
-                1 => 'wp2static_cli_options_menu',
-                2 => 'wp2static_cli_jobs_menu',
-                3 => 'wp2static_cli_caches_menu',
-                4 => 'wp2static_cli_diagnostics_menu',
-                'q' => 'wp2static_cli_exit_to_shell',
-            ],
-            1 => [
-                0 => 'wp2static_cli_options_launch_wizard',
-                1 => 'wp2static_cli_options_list',
-                'b' => 'wizard',
-                'q' => 'wp2static_cli_exit_to_shell',
-            ],
-            2 => [
-                0 => 'wp2static_cli_jobs_launch_wizard',
-                'b' => 'wizard',
-                'q' => 'wp2static_cli_exit_to_shell',
-            ],
-            3 => [
-                0 => 'wp2static_cli_caches_launch_wizard',
-                2 => 'wp2static_cli_caches_truncate_crawl_queue',
-                'b' => 'wizard',
-                'q' => 'wp2static_cli_exit_to_shell',
-            ],
-            4 => [
-                0 => 'wp2static_cli_diagnostics_launch_wizard',
-                'b' => 'wizard',
-                'q' => 'wp2static_cli_exit_to_shell',
-            ],
-        ];
-
-        if ( ! is_callable( [ $this, $selection_map[$level][$selection] ] ) ) {
-            WP_CLI::line('Tried to call missing function');
-            $this->showWizardWaitForSelection($level);
-        } else {
-            call_user_func( [ $this, $selection_map[$level][$selection] ] );
-        }
-    }
 
     public function showWizardWaitForSelection($level) {
         $this-> showWizardMenu($level);
@@ -466,14 +602,53 @@ class CLI {
         $this-> showWizardWaitForSelection($level);
     }
 
+    /*
+     * Crawls site, creating or updating the static site
+     *
+     */
+    public function crawl() : void {
+        $wordpress_site = new WordPressSite();
+        $crawler = new Crawler();
+        $static_site_dir =
+            SiteInfo::getPath( 'uploads') . 'wp2static-exported-site';
+        $static_site = new StaticSite( $static_site_dir );
+        $crawler->crawlSite( $wordpress_site, $static_site );
+    }
+
+    /*
+     * Detect WordPress URLs to crawl, based on saved options
+     *
+     */
+    public function detect() : void {
+        $wordpress_site = new WordPressSite();
+        $detected_count = $wordpress_site->detectURLs();
+
+        WP_CLI::log( "$detected_count URLs detected." );
+    }
+
+    /*
+     * Makes a copy of crawled static site with processing applied
+     *
+     */
+    public function post_process() : void {
+        $post_processor = new PostProcessor();
+
+        $static_site_dir =
+            SiteInfo::getPath( 'uploads') . 'wp2static-exported-site';
+        $static_site = new StaticSite( $static_site_dir );
+
+        $processed_site_dir =
+            SiteInfo::getPath( 'uploads') . 'wp2static-processed-site';
+        $processed_site = new ProcessedSite( $processed_site_dir );
+
+        $post_processor->processStaticSite( $static_site, $processed_site);
+    }
+
     /**
      * WordPress Site operations
      *
      * ## OPTIONS
      *
-     * <detect_urls>
-     *
-     * Detect WordPress URLs to crawl, based on saved options
      *
      * <list_urls>
      *
@@ -482,11 +657,6 @@ class CLI {
      * <clear_detected_urls>
      *
      * Remove all URLs from the CrawlQueue
-     *
-     *
-     * <crawl>
-     *
-     * Crawls site, creating or updating the static site
      *
      */
     public function wordpress_site(
@@ -503,7 +673,7 @@ class CLI {
         if ( empty( $action ) ) {
             WP_CLI::error(
                 'Missing required argument: ' .
-                '<detect_urls|list_urls|clear_detected_urls|clear_crawl_cache|crawl|post_process>');
+                '<detect_urls|list_urls|clear_detected_urls|clear_crawl_cache>');
         }
 
         $wordpress_site = new WordPressSite();
@@ -514,12 +684,6 @@ class CLI {
             foreach( $urls as $url ) {
                 WP_CLI::line( $url );
             }
-        }
-
-        if ( $action === 'detect_urls' ) {
-            $detected_count = $wordpress_site->detectURLs();
-
-            WP_CLI::line( "$detected_count URLs detected." );
         }
 
         if ( $action === 'clear_detected_urls' ) {
@@ -538,28 +702,6 @@ class CLI {
             }
         }
 
-        if ( $action === 'crawl' ) {
-            $crawler = new Crawler();
-            $static_site_dir =
-                SiteInfo::getPath( 'uploads') . 'wp2static-exported-site';
-            $static_site = new StaticSite( $static_site_dir );
-            $crawler->crawlSite( $wordpress_site, $static_site );
-        }
-
-        if ( $action === 'post_process' ) {
-            $post_processor = new PostProcessor();
-
-            $static_site_dir =
-                SiteInfo::getPath( 'uploads') . 'wp2static-exported-site';
-            $static_site = new StaticSite( $static_site_dir );
-
-            $processed_site_dir =
-                SiteInfo::getPath( 'uploads') . 'wp2static-processed-site';
-            $processed_site = new ProcessedSite( $processed_site_dir );
-
-
-            $post_processor->processStaticSite( $static_site, $processed_site);
-        }
     }
 
     public function processed_site(

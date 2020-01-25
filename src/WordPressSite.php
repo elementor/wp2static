@@ -111,14 +111,19 @@ class WordPressSite {
 
         $url_queue = FilesHelper::cleanDetectedURLs( $url_queue );
 
+        error_log(count( $url_queue ));
+
         $url_queue = apply_filters(
             'wp2static_modify_initial_crawl_list',
             $url_queue
         );
 
+        error_log(count( $url_queue ));
+
         $unique_urls = array_unique( $url_queue );
 
         // truncate before adding
+        // TODO: use inert unique instead here, allowing to skip heavy detection between runs without blowing away previously detected URLs...
         CrawlQueue::truncate();
 
         CrawlQueue::addUrls( $unique_urls );
