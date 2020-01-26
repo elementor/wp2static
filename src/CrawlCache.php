@@ -21,6 +21,26 @@ class CrawlCache {
         dbDelta( $sql );
     }
 
+    /**
+     *  Get all Crawl Cache URLs
+     *
+     *  @return string[] All URLs
+     */
+    public static function getHashes() : array {
+        global $wpdb;
+        $urls = [];
+
+        $table_name = $wpdb->prefix . 'wp2static_crawl_cache';
+
+        $rows = $wpdb->get_results( "SELECT hashed_url FROM $table_name" );
+
+        foreach ( $rows as $row ) {
+            $urls[] = $row->hashed_url;
+        }
+
+        return $urls;
+    }
+
     public static function addUrl( string $url ) : void {
         global $wpdb;
 
@@ -70,22 +90,22 @@ class CrawlCache {
     }
 
     /**
-     *  Clear CrawlCache via truncate or deletion
+     *  Clear CrawlCache via truncation
      *
      */
-    public static function clear() : void {
+    public static function truncate() : void {
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'wp2static_crawl_cache';
 
         $wpdb->query( "TRUNCATE TABLE $table_name" );
 
-        // $total_urls = self::getTotalCrawlCacheURLs();
+        $totalcrawl_cache = self::getTotal();
 
-        // if ( $total_urls > 0 ) {
-        //     // TODO: simulate lack of permissios to truncate
-        //     error_log('failed to truncate CrawlQueue: try deleting instead');
-        // }
+        if ( $totalcrawl_cache > 0 ) {
+            // TODO: simulate lack of permissios to truncate
+            error_log('failed to truncate CrawlCache: try deleting instead');
+        }
     }
 
     /**

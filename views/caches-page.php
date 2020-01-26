@@ -14,7 +14,7 @@
     </thead>
     <tbody>
         <tr>
-            <td>Detected URLs</td>
+            <td>Crawl Queue (Detected URLs)</td>
             <td><?php echo $view['crawlQueueTotalURLs']; ?> URLs in database</td>
             <td>
                 <a href="#"><button class="button btn-danger">Show URLs</button></a>

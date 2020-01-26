@@ -35,18 +35,6 @@ class WordPressSite {
     }
 
     /**
-     * Clear CrawlCache
-     *
-     * Removes all URLs from the CrawlCache
-     *
-     */
-    public static function clearCrawlCache() : bool {
-        CrawlCache::clear();
-
-        return true;
-    }
-
-    /**
      * Create  dir
      *
      * @param string $path static site directory

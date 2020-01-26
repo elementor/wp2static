@@ -46,19 +46,24 @@ class Crawler {
      *
      */
     public function crawlSite(string $static_site_path) {
+        $crawled = 0;
+        $cache_hits = 0;
         // TODO: use some Iterable or other performance optimisation here
         //       to help reduce resources for large URL sites
-        foreach( WordPressSite::getURLs() as $url ) {
+        foreach( CrawlQueue::getCrawlableURLs() as $url ) {
             $url = new URL( SiteInfo::getURL('site') . $url );
 
             // if not already cached
             if ( ! ExportSettings::get( 'dontUseCrawlCaching' ) ) {
                 if ( CrawlCache::getUrl( $url->get() ) ) {
+                    error_log('cache hit');
+                    $cache_hits++;
                     continue;
                 }
             }
 
             $crawled_contents = $this->crawlURL( $url );
+            $crawled++;
 
             $path_in_static_site = str_replace(
                 SiteInfo::getUrl( 'site'),
@@ -81,9 +86,14 @@ class Crawler {
         }
 
         error_log('finished crawling all detected URLs');
+        error_log(" Crawled: $crawled");
+        error_log(" Skipped (cache-hit): $cache_hits");
 
         $args = [
-            'staticSitePath' => $static_site_path];
+            'staticSitePath' => $static_site_path,
+            'crawled' => $crawled,
+            'cache_hits' => $cache_hits,
+        ];
 
         do_action( 'wp2static_crawling_complete', $args );
     }

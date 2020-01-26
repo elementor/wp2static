@@ -653,11 +653,71 @@ class CLI {
     }
 
     /*
+     * Crawl Queue
+     *
+     * <list>
+     *
+     * List all URLs in the CrawlCache
+     *
+     * <count>
+     *
+     * Show total number of URLs in CrawlCache 
+     *
+     * <delete>
+     *
+     * Empty all URLs from CrawlCache 
+     */
+    public function crawl_cache( array $args, array $assoc_args ) {
+        $action = isset( $args[0] ) ? $args[0] : null;
+        $option_name = isset( $args[1] ) ? $args[1] : null;
+        $value = isset( $args[2] ) ? $args[2] : null;
+
+        if ( $action === 'list' ) {
+            $urls = CrawlCache::getHashes();
+
+            foreach( $urls as $url ) {
+                WP_CLI::line( $url );
+            }
+        }
+
+        if ( $action === 'count' ) {
+            $urls = CrawlCache::getHashes();
+
+            WP_CLI::line( count( $urls ) );
+        }
+
+        if ( $action === 'delete' ) {
+
+            if ( ! isset( $assoc_args['force'] ) ) {
+                WP_CLI::line( PHP_EOL . "no --force given. Please type 'yes' to confirm deletion of CrawlCache" . PHP_EOL );
+                
+                $userval = trim( fgets( STDIN ) );
+
+                if ( $userval !== 'yes' ) {
+                    WP_CLI::error( 'Failed to delete Crawl Queue' ); 
+                }
+            }
+
+            CrawlCache::truncate();
+
+            WP_CLI::success( 'Deleted Crawl Queue' ); 
+        }
+    }
+
+    /*
+     * Crawl Queue
+     *
      * <list>
      *
      * List all URLs in the CrawlQueue
      *
-     * <clear_detected_urls>
+     * <count>
+     *
+     * Show total number of URLs in CrawlQueue 
+     *
+     * <delete>
+     *
+     * Empty all URLs from CrawlQueue 
      */
     public function crawl_queue( array $args, array $assoc_args ) {
         $action = isset( $args[0] ) ? $args[0] : null;
