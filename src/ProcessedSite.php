@@ -10,35 +10,8 @@ namespace WP2Static;
 
 class ProcessedSite {
 
-    public $path;
-
-    /**
-     * ProcessedSite constructor
-     *
-     * @param string $path path to static site directory
-     */
-    public function __construct(string $path) {
-        $this->path = $this->create_directory( $path );
-    }
-
-    /**
-     * Create  dir
-     *
-     * @param string $path processed site directory
-     * @throws WP2StaticException
-     */
-    private function create_directory( $path ) : string {
-        if ( is_dir( $path ) ) {
-            return $path;
-        }
-
-        if ( ! mkdir( $path ) ) {
-            $err = "Couldn't create ProcessedSite directory:" . $path;
-            WsLog::l( $err );
-            throw new WP2StaticException( $err );
-        }
-
-        return $path;
+    public static function getPath() {
+        return SiteInfo::getPath( 'uploads') . 'wp2static-processed-site';
     }
 
     /**
@@ -46,7 +19,7 @@ class ProcessedSite {
      *
      */
     public function add( string $static_file, string $save_path ) {
-        $full_path = "$this->path/$save_path";
+        $full_path = self::getPath() . "/$save_path";
 
         $directory = dirname( $full_path );
 
@@ -64,8 +37,8 @@ class ProcessedSite {
     public function delete() {
         error_log('deleting processed site files');
 
-        if ( is_dir( $this->path ) ) {
-            FilesHelper::delete_dir_with_files( $this->path );
+        if ( is_dir( self::getPath() ) ) {
+            FilesHelper::delete_dir_with_files( self::getPath() );
         }
     }
 }

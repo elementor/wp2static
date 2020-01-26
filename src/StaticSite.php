@@ -45,7 +45,7 @@ class StaticSite {
             FilesHelper::delete_dir_with_files( self::getPath() );
 
             error_log('truncating CrawlCache');
-            CrawlCache::clear();
+            CrawlCache::truncate();
         }
     }
 }

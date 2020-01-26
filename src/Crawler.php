@@ -45,9 +45,21 @@ class Crawler {
      * Crawls URLs in WordPressSite, saving them to StaticSite 
      *
      */
-    public function crawlSite(string $static_site_path) {
+    public function crawlSite( string $static_site_path, bool $progress = false ) {
         $crawled = 0;
         $cache_hits = 0;
+
+
+        if ( $progress ) {
+            $crawl_queue_total = CrawlQueue::getTotal();
+
+            $progress_indicator =
+                \WP_CLI\Utils\make_progress_bar(
+                    'Crawling site',
+                    $crawl_queue_total);
+        }
+
+
         // TODO: use some Iterable or other performance optimisation here
         //       to help reduce resources for large URL sites
         foreach( CrawlQueue::getCrawlableURLs() as $url ) {
@@ -56,13 +68,22 @@ class Crawler {
             // if not already cached
             if ( ! ExportSettings::get( 'dontUseCrawlCaching' ) ) {
                 if ( CrawlCache::getUrl( $url->get() ) ) {
-                    error_log('cache hit');
                     $cache_hits++;
+
+                    if ( $progress ) {
+                        $progress_indicator->tick();
+                    }
+
                     continue;
                 }
             }
 
             $crawled_contents = $this->crawlURL( $url );
+
+            if ( $progress ) {
+                $progress_indicator->tick();
+            }
+
             $crawled++;
 
             $path_in_static_site = str_replace(
@@ -84,6 +105,8 @@ class Crawler {
                 CrawlCache::addUrl( $url->get() );
             }
         }
+
+        $progress_indicator->finish();
 
         error_log('finished crawling all detected URLs');
         error_log(" Crawled: $crawled");

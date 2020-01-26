@@ -619,13 +619,25 @@ class CLI {
         $this->showWizardWaitForSelection($level);
     }
 
-    /*
+    /**
      * Crawls site, creating or updating the static site
      *
+     * ## OPTIONS
+     *
+     * [--show-progress]
+     *
+     * Show progress indicator while crawling
+     *
      */
-    public function crawl() : void {
+    public function crawl( array $args, array $assoc_args ) : void {
+        $action = isset( $args[0] ) ? $args[0] : null;
+        $option_name = isset( $args[1] ) ? $args[1] : null;
+        $value = isset( $args[2] ) ? $args[2] : null;
+
+        $progress = isset( $assoc_args['show-progress'] );
+
         $crawler = new Crawler();
-        $crawler->crawlSite( StaticSite::getPath() );
+        $crawler->crawlSite( StaticSite::getPath(), $progress );
     }
 
     /*
@@ -689,18 +701,18 @@ class CLI {
         if ( $action === 'delete' ) {
 
             if ( ! isset( $assoc_args['force'] ) ) {
-                WP_CLI::line( PHP_EOL . "no --force given. Please type 'yes' to confirm deletion of CrawlCache" . PHP_EOL );
+                WP_CLI::line( PHP_EOL . "no --force given. Please type 'yes' to confirm deletion of Crawl Cache" . PHP_EOL );
                 
                 $userval = trim( fgets( STDIN ) );
 
                 if ( $userval !== 'yes' ) {
-                    WP_CLI::error( 'Failed to delete Crawl Queue' ); 
+                    WP_CLI::error( 'Failed to delete Crawl Cache' ); 
                 }
             }
 
             CrawlCache::truncate();
 
-            WP_CLI::success( 'Deleted Crawl Queue' ); 
+            WP_CLI::success( 'Deleted Crawl Cache' ); 
         }
     }
 
@@ -801,6 +813,22 @@ class CLI {
         }
     }
 
+    /*
+     * Processed Site
+     *
+     * <list>
+     *
+     * List all files in the Processed Site directory
+     *
+     * <count>
+     *
+     * Show total number of files in Processed Site directory 
+     *
+     * <delete>
+     *
+     * Delete all generated Processed Site files from server
+     *
+     */
     public function processed_site(
         array $args,
         array $assoc_args
@@ -816,15 +844,39 @@ class CLI {
                 '<delete>');
         }
 
-        $processed_site_dir =
-            SiteInfo::getPath( 'uploads') . 'wp2static-processed-site';
-        $processed_site = new ProcessedSite( $processed_site_dir );
-
         if ( $action === 'delete' ) {
-            $processed_site->delete();
+            if ( ! isset( $assoc_args['force'] ) ) {
+                WP_CLI::line( PHP_EOL . "no --force given. Please type 'yes' to confirm deletion of ProcessedSite file cache" . PHP_EOL );
+                
+                $userval = trim( fgets( STDIN ) );
+
+                if ( $userval !== 'yes' ) {
+                    WP_CLI::error( 'Failed to delete Processed Static Site file cache' ); 
+                }
+            }
+
+            ProcessedSite::delete();
         }
     }
 
+    /*
+     * Static Site
+     *
+     * <list>
+     *
+     * List all files in the Static Site directory
+     *
+     * <count>
+     *
+     * Show total number of files in Static Site directory 
+     *
+     * <delete>
+     *
+     * Delete all generated Static Site files from server
+     *
+     *   -- also deletes the CrawlCache
+     *
+     */
     public function static_site(
         array $args,
         array $assoc_args
@@ -841,7 +893,17 @@ class CLI {
         }
 
         if ( $action === 'delete' ) {
-            $static_site->delete();
+            if ( ! isset( $assoc_args['force'] ) ) {
+                WP_CLI::line( PHP_EOL . "no --force given. Please type 'yes' to confirm deletion of StaticSite file cache" . PHP_EOL );
+                
+                $userval = trim( fgets( STDIN ) );
+
+                if ( $userval !== 'yes' ) {
+                    WP_CLI::error( 'Failed to delete Static Site file cache' ); 
+                }
+            }
+
+            StaticSite::delete();
         }
     }
 }

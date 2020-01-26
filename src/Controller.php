@@ -248,15 +248,16 @@ class Controller {
         }
     }
 
-    public function crawl_site() : void {
-        $ch = curl_init();
+    // TODO: legacy, see about AssetDownloader
+    // public function crawl_site() : void {
+    //     $ch = curl_init();
 
-        $asset_downloader = new AssetDownloader( $ch );
+    //     $asset_downloader = new AssetDownloader( $ch );
 
-        $site_crawler = new SiteCrawler( $asset_downloader );
+    //     $site_crawler = new SiteCrawler( $asset_downloader );
 
-        $site_crawler->crawl();
-    }
+    //     $site_crawler->crawl();
+    // }
 
     public function crawlSite() : void {
         $crawler = new Crawler();
@@ -485,11 +486,16 @@ class Controller {
         $view['exportedSiteDiskSpace'] = sprintf("%4.2f MB", $diskSpace / 1048576);
         // end check
 
-        $view['exportedSiteFileCount'] = iterator_count(
-            new \RecursiveIteratorIterator(
-                new \RecursiveDirectoryIterator($exportedSiteDir, \FilesystemIterator::SKIP_DOTS)
-            )
-        );
+        if ( is_dir( $exportedSiteDir ) ) {
+            $view['exportedSiteFileCount'] = iterator_count(
+                new \RecursiveIteratorIterator(
+                    new \RecursiveDirectoryIterator($exportedSiteDir, \FilesystemIterator::SKIP_DOTS)
+                )
+            );
+        } else {
+            $view['exportedSiteFileCount'] = 0;
+        }
+
 
         // performance check vs map 
         $diskSpace = 0;
@@ -509,11 +515,15 @@ class Controller {
         $view['processedSiteDiskSpace'] = sprintf("%4.2f MB", $diskSpace / 1048576);
         // end check
 
-        $view['processedSiteFileCount'] = iterator_count(
-            new \RecursiveIteratorIterator(
-                new \RecursiveDirectoryIterator($processedSiteDir, \FilesystemIterator::SKIP_DOTS)
-            )
-        );
+        if ( is_dir( $processedSiteDir ) ) {
+            $view['processedSiteFileCount'] = iterator_count(
+                new \RecursiveIteratorIterator(
+                    new \RecursiveDirectoryIterator($processedSiteDir, \FilesystemIterator::SKIP_DOTS)
+                )
+            );
+        } else {
+            $view['processedSiteFileCount'] = 0;
+        }
 
         $view['crawlQueueTotalURLs'] = CrawlQueue::getTotal();
         $view['crawlCacheTotalURLs'] = CrawlCache::getTotal();

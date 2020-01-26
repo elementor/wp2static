@@ -19,9 +19,6 @@ class URLDetector {
      *
      */
     public static function detectURLs() : int {
-        error_log('detectURLs is called');
-        // load detection options
-
         // do detection 
         $arrays_to_merge = [];
 
@@ -51,7 +48,6 @@ class URLDetector {
         // }
 
         if ( ExportSettings::get('detectPosts') ) {
-            error_log('detect posts is on!');
             $permalink_structure = get_option( 'permalink_structure' );
             $arrays_to_merge[] = DetectPostURLs::detect( SiteInfo::getPermalinks() );
         }
