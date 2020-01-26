@@ -59,6 +59,7 @@ class Controller {
         ExportLog::createTable();
         DeployQueue::createTable();
         DeployCache::createTable();
+        JobQueue::createTable();
 
         ConfigHelper::set_max_execution_time();
 
@@ -452,7 +453,7 @@ class Controller {
 
     public function renderJobsPage() : void {
         $view = [];
-        $view['something'] = 'something';
+        $view['jobs'] = JobQueue::getJobs();
 
         require_once WP2STATIC_PATH . 'views/jobs-page.php';
     }

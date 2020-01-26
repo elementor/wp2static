@@ -530,6 +530,7 @@ class CLI {
 
         $processed_site_dir =
             SiteInfo::getPath( 'uploads') . 'wp2static-processed-site';
+
         WP_CLI::success( PHP_EOL . "Processed static site dir: $processed_site_dir"  . PHP_EOL );
 
         $this-> showWizardWaitForSelection(0);
