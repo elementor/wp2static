@@ -25,27 +25,33 @@ class JobQueue {
     }
 
     /**
-     * Add all Urls to queue
+     * Add Jon to queue
      *
-     * @param string[] $urls List of URLs to crawl
+     * @param string $job_type Type of job
+     * ie detect, crawl, post_process, deploy
      */
-    public static function addUrls( array $urls ) : void {
+    public static function addJob( $job_type ) : void {
         global $wpdb;
+
+        $valid_job_types = [
+            'detect',
+            'crawl',
+            'post_process',
+            'deploy',
+        ];
+
+        if ( ! isset($valid_job_types[$job_type]) ) {
+            error_log('Tried to add unsupported Job to queue');
+            return;
+        }
 
         $table_name = $wpdb->prefix . 'wp2static_jobs';
 
-        $placeholders = [];
-        $values = [];
+        // TODO: squash any of same job_types with 'waiting' status
+        // setting this one to be the one that runs next
 
-        foreach ( $urls as $url ) {
-            $placeholders[] = '(%s)';
-            $values[] = rawurldecode( $url );
-        }
-
-        $query_string =
-            'INSERT INTO ' . $table_name . ' (url) VALUES ' .
-            implode( ', ', $placeholders );
-        $query = $wpdb->prepare( $query_string, $values );
+        $query_string = "INSERT INTO $table_name (job_type, status) VALUES (%s, 'waiting');";
+        $query = $wpdb->prepare( $query_string, $job_type );
 
         $wpdb->query( $query );
     }

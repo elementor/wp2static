@@ -2,7 +2,6 @@
 
 <h3>Cache Management</h3>
 
-
 <hr>
 
 <table style="width:100%;text-align:center;">

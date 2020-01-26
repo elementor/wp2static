@@ -24,7 +24,7 @@ class ExportSettings {
      *
      */
     public function __construct() {
-        // add filter to allow user to specify extra downloadable extensions
+        // TODO: add filter to allow user to specify extra downloadable extensions
         $crawlable_filetypes = [];
         $crawlable_filetypes['img'] = 1;
         $crawlable_filetypes['jpeg'] = 1;

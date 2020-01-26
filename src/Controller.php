@@ -255,11 +255,11 @@ class Controller {
     public function crawlSite() : void {
         $crawler = new Crawler();
 
-        $wordpress_site = new WordPressSite();
-
         $static_site = new StaticSite('/tmp/teststaticsite');
 
-        $crawler->crawlSite($wordpress_site, $static_site);
+        // TODO: if WordPressSite methods are static and we only need detectURLs
+        // here, pass in iterable to URLs here?
+        $crawler->crawlSite($static_site);
 
     }
 

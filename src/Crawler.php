@@ -45,12 +45,10 @@ class Crawler {
      * Crawls URLs in WordPressSite, saving them to StaticSite 
      *
      */
-    public function crawlSite(
-        WordPressSite $wordpress_site, StaticSite $static_site
-    ) {
+    public function crawlSite(StaticSite $static_site) {
         // TODO: use some Iterable or other performance optimisation here
         //       to help reduce resources for large URL sites
-        foreach( $wordpress_site->getURLs() as $url ) {
+        foreach( WordPressSite::getURLs() as $url ) {
             $url = new URL( SiteInfo::getURL('site') . $url );
 
             // if not already cached
@@ -74,7 +72,7 @@ class Crawler {
             }
 
             if ( $crawled_contents ) {
-                $static_site->add( $path_in_static_site, $crawled_contents );
+                StaticSite::add( $path_in_static_site, $crawled_contents );
             }
 
             if ( ! ExportSettings::get( 'dontUseCrawlCaching' ) ) {

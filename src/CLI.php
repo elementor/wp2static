@@ -370,11 +370,13 @@ class CLI {
             ],
             2 => [
                 0 => 'wp2static_cli_jobs_launch_wizard',
+                2 => 'wp2static_cli_jobs_exec_detect',
                 'b' => 'wizard',
                 'q' => 'wp2static_cli_exit_to_shell',
             ],
             3 => [
                 0 => 'wp2static_cli_caches_launch_wizard',
+                1 => 'wp2static_cli_caches_list_detected_urls',
                 2 => 'wp2static_cli_caches_truncate_crawl_queue',
                 'b' => 'wizard',
                 'q' => 'wp2static_cli_exit_to_shell',
@@ -435,7 +437,7 @@ class CLI {
 
         WP_CLI::line( PHP_EOL . "Common URL detection set!" . PHP_EOL );
 
-        $this-> showWizardWaitForSelection(8);
+        $this->showWizardWaitForSelection(8);
     }
 
     public function wp2static_cli_options_set_detect_homepage_only() {
@@ -472,7 +474,7 @@ class CLI {
 
         WP_CLI::line( PHP_EOL . "Homepage only URL detection set!" . PHP_EOL );
 
-        $this-> showWizardWaitForSelection(8);
+        $this->showWizardWaitForSelection(8);
     }
 
     public function wp2static_cli_options_set_detect_maximum() {
@@ -508,7 +510,7 @@ class CLI {
 
         WP_CLI::line( PHP_EOL . "Maximum URL detection set!" . PHP_EOL );
 
-        $this-> showWizardWaitForSelection(8);
+        $this->showWizardWaitForSelection(8);
     }
 
     public function wp2static_cli_caches_truncate_crawl_queue() {
@@ -518,10 +520,24 @@ class CLI {
 
         WP_CLI::line( PHP_EOL . "Crawl Queue Deleted!" . PHP_EOL );
 
-        $this-> showWizardWaitForSelection(3);
+        $this->showWizardWaitForSelection(3);
+    }
+
+    public function wp2static_cli_clear_screen() {
+        echo "\e[H\e[J";
+    }
+
+    public function wp2static_cli_jobs_exec_detect() {
+
+        WP_CLI::line( "### Detect URLs ###" );
+
+        $this->detect();
+
+        $this->showWizardWaitForSelection(2);
     }
 
     public function wp2static_cli_quick_start() {
+        $this->wp2static_cli_clear_screen();
         WP_CLI::line( "### Quick-start: generate static site with current options###" );
 
         $this->detect();
@@ -533,40 +549,40 @@ class CLI {
 
         WP_CLI::success( PHP_EOL . "Processed static site dir: $processed_site_dir"  . PHP_EOL );
 
-        $this-> showWizardWaitForSelection(0);
+        $this->showWizardWaitForSelection(0);
     }
 
     public function wp2static_cli_options_launch_wizard() {
         WP_CLI::line( PHP_EOL . "### Options - view/manage WP2Static options ###" . PHP_EOL);
 
-        $this-> showWizardWaitForSelection(8);
+        $this->showWizardWaitForSelection(8);
     }
 
     public function wp2static_cli_options_menu() {
         WP_CLI::line( PHP_EOL . "### Guided options configuration ###" . PHP_EOL);
 
-        $this-> showWizardWaitForSelection(1);
+        $this->showWizardWaitForSelection(1);
     }
 
     public function wp2static_cli_jobs_menu() {
         WP_CLI::line( "### Options - view/manage WP2Static jobs ###" );
         WP_CLI::line( "" );
 
-        $this-> showWizardWaitForSelection(2);
+        $this->showWizardWaitForSelection(2);
     }
 
     public function wp2static_cli_caches_menu() {
         WP_CLI::line( "### Options - view/manage WP2Static caches ###" );
         WP_CLI::line( "" );
 
-        $this-> showWizardWaitForSelection(3);
+        $this->showWizardWaitForSelection(3);
     }
 
     public function wp2static_cli_diagnostics_menu() {
         WP_CLI::line( "### Options - diagnostics  ###" );
         WP_CLI::line( "" );
 
-        $this-> showWizardWaitForSelection(4);
+        $this->showWizardWaitForSelection(4);
     }
 
     public function wp2static_test_called_func_2() {
@@ -578,12 +594,12 @@ class CLI {
 
         $this->options(['list'], []);
 
-        $this-> showWizardWaitForSelection(1);
+        $this->showWizardWaitForSelection(1);
     }
 
 
     public function showWizardWaitForSelection($level) {
-        $this-> showWizardMenu($level);
+        $this->showWizardMenu($level);
 
         $userval = trim( fgets( STDIN ) );
 
@@ -600,7 +616,7 @@ class CLI {
         // check if plugin has been setup
 
         $level = 0;
-        $this-> showWizardWaitForSelection($level);
+        $this->showWizardWaitForSelection($level);
     }
 
     /*
@@ -613,7 +629,7 @@ class CLI {
         $static_site_dir =
             SiteInfo::getPath( 'uploads') . 'wp2static-exported-site';
         $static_site = new StaticSite( $static_site_dir );
-        $crawler->crawlSite( $wordpress_site, $static_site );
+        $crawler->crawlSite( $static_site );
     }
 
     /*
@@ -621,8 +637,7 @@ class CLI {
      *
      */
     public function detect() : void {
-        $wordpress_site = new WordPressSite();
-        $detected_count = $wordpress_site->detectURLs();
+        $detected_count = URLDetector::detectURLs();
 
         WP_CLI::log( "$detected_count URLs detected." );
     }
@@ -643,6 +658,59 @@ class CLI {
         $processed_site = new ProcessedSite( $processed_site_dir );
 
         $post_processor->processStaticSite( $static_site, $processed_site);
+    }
+
+    /*
+     * <list>
+     *
+     * List all URLs in the CrawlQueue
+     *
+     * <clear_detected_urls>
+     */
+    public function crawl_queue( array $args, array $assoc_args ) {
+        $action = isset( $args[0] ) ? $args[0] : null;
+        $option_name = isset( $args[1] ) ? $args[1] : null;
+        $value = isset( $args[2] ) ? $args[2] : null;
+
+        if ( $action === 'list' ) {
+            $urls = CrawlQueue::getCrawlableURLs();
+
+            foreach( $urls as $url ) {
+                WP_CLI::line( $url );
+            }
+        }
+
+        if ( $action === 'count' ) {
+            $urls = CrawlQueue::getCrawlableURLs();
+
+            WP_CLI::line( count( $urls ) );
+        }
+
+        if ( $action === 'delete' ) {
+
+            if ( ! isset( $assoc_args['force'] ) ) {
+                WP_CLI::line( PHP_EOL . "no --force given. Please type 'yes' to confirm deletion of CrawlQueue" . PHP_EOL );
+                
+                $userval = trim( fgets( STDIN ) );
+
+                if ( $userval !== 'yes' ) {
+                    WP_CLI::error( 'Failed to delete Crawl Queue' ); 
+                }
+            }
+
+            CrawlQueue::truncate();
+
+            WP_CLI::success( 'Deleted Crawl Queue' ); 
+        }
+    }
+
+    public function wp2static_cli_caches_list_detected_urls() {
+        $this->crawl_queue(['list'], []);
+
+        WP_CLI::line( PHP_EOL . "Run this command directly with:" . PHP_EOL );
+        WP_CLI::line( PHP_EOL . "wp wp2static crawl_queue list" . PHP_EOL );
+
+        $this->showWizardWaitForSelection(3);
     }
 
     /**
@@ -674,35 +742,11 @@ class CLI {
         if ( empty( $action ) ) {
             WP_CLI::error(
                 'Missing required argument: ' .
-                '<detect_urls|list_urls|clear_detected_urls|clear_crawl_cache>');
+                '<list_urls');
         }
-
-        $wordpress_site = new WordPressSite();
 
         if ( $action === 'list_urls' ) {
-            $urls = $wordpress_site->getURLs();
-
-            foreach( $urls as $url ) {
-                WP_CLI::line( $url );
-            }
         }
-
-        if ( $action === 'clear_detected_urls' ) {
-            if ( $wordpress_site->clearDetectedURLs() ) {
-                WP_CLI::line( 'Cleared detected URLs' );
-            } else {
-                WP_CLI::line( 'Failed to clear detected URLs' );
-            }
-        }
-
-        if ( $action === 'clear_crawl_cache' ) {
-            if ( $wordpress_site->clearCrawlCache() ) {
-                WP_CLI::line( 'Cleared CrawlCache URLs' );
-            } else {
-                WP_CLI::line( 'Failed to clear CrawlCache URLs' );
-            }
-        }
-
     }
 
     public function processed_site(
