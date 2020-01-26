@@ -1,5 +1,13 @@
 <?php
 
+/*
+    TODO: Holding this here for AssetDownloader reference, but now 
+            
+                use Crawler class
+
+*/
+
+
 namespace WP2Static;
 
 class SiteCrawler {

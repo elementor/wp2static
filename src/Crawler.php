@@ -45,7 +45,7 @@ class Crawler {
      * Crawls URLs in WordPressSite, saving them to StaticSite 
      *
      */
-    public function crawlSite(StaticSite $static_site) {
+    public function crawlSite(string $static_site_path) {
         // TODO: use some Iterable or other performance optimisation here
         //       to help reduce resources for large URL sites
         foreach( WordPressSite::getURLs() as $url ) {
@@ -83,7 +83,7 @@ class Crawler {
         error_log('finished crawling all detected URLs');
 
         $args = [
-            'staticSitePath' => $static_site->path];
+            'staticSitePath' => $static_site_path];
 
         do_action( 'wp2static_crawling_complete', $args );
     }

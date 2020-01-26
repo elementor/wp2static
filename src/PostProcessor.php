@@ -25,23 +25,23 @@ class PostProcessor {
      *
      * Iterates on each file, not directory
      *
-     * @param StaticSite $static_site Static site
+     * @param string $static_site_path Static site path
      * @param ProcessedSite $processed_site Processed site
      * @throws WP2StaticException
      */
     public function processStaticSite(
-        StaticSite $static_site,
+        $static_site_path,
         ProcessedSite $processed_site
     ) : void {
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator(
-                $static_site->path,
+                $static_site_path,
                 RecursiveDirectoryIterator::SKIP_DOTS
             )
         );
 
         foreach ( $iterator as $filename => $file_object ) {
-            $save_path = str_replace( $static_site->path, '', $filename );
+            $save_path = str_replace( $static_site_path, '', $filename );
 
             // add file to ProcessedSite, then process it
             // this allows external processors to have their way with it

@@ -624,12 +624,8 @@ class CLI {
      *
      */
     public function crawl() : void {
-        $wordpress_site = new WordPressSite();
         $crawler = new Crawler();
-        $static_site_dir =
-            SiteInfo::getPath( 'uploads') . 'wp2static-exported-site';
-        $static_site = new StaticSite( $static_site_dir );
-        $crawler->crawlSite( $static_site );
+        $crawler->crawlSite( StaticSite::getPath() );
     }
 
     /*
@@ -649,15 +645,11 @@ class CLI {
     public function post_process() : void {
         $post_processor = new PostProcessor();
 
-        $static_site_dir =
-            SiteInfo::getPath( 'uploads') . 'wp2static-exported-site';
-        $static_site = new StaticSite( $static_site_dir );
-
         $processed_site_dir =
             SiteInfo::getPath( 'uploads') . 'wp2static-processed-site';
         $processed_site = new ProcessedSite( $processed_site_dir );
 
-        $post_processor->processStaticSite( $static_site, $processed_site);
+        $post_processor->processStaticSite( StaticSite::getPath(), $processed_site);
     }
 
     /*
@@ -787,10 +779,6 @@ class CLI {
                 'Missing required argument: ' .
                 '<delete>');
         }
-
-        $static_site_dir =
-            SiteInfo::getPath( 'uploads') . 'wp2static-exported-site';
-        $static_site = new StaticSite( $static_site_dir );
 
         if ( $action === 'delete' ) {
             $static_site->delete();
