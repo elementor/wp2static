@@ -8,8 +8,7 @@ use WP_CLI;
 use WP_Post;
 
 class Controller {
-    const WP2STATIC_VERSION = '7.0-build0009';
-    const OPTIONS_KEY = 'wp2static-options';
+    const WP2STATIC_VERSION = '7.0-build-10';
     const HOOK = 'wp2static';
 
     public $options;
@@ -47,7 +46,13 @@ class Controller {
         WordPressAdmin::addAdminUIElements();
 
         // load Settings once into singleton
-        $plugin_instance->options = new Options( self::OPTIONS_KEY);
+        $plugin_instance->options = new Options( 'wp2static-options');
+        $plugin_instance->detection_options = new DetectionOptions( 'wp2static-detection-options');
+
+        // error_log(print_r($plugin_instance->detection_options->getAllOptions(), true));
+
+
+        // TODO: change ExportSettings to ExportOptions
         ExportSettings::loadSettingsFromDBOptions(
             $plugin_instance->options->getSettings( true ));
         ExportSettings::setDestinationURL( 'https://example.com' );
@@ -91,6 +96,7 @@ class Controller {
     }
 
     public function setDefaultOptions() : void {
+        // general options
         if ( null === self::$plugin_instance->options->getOption( 'version' ) ) {
             self::$plugin_instance->options
             ->setOption( 'version', self::WP2STATIC_VERSION )
@@ -566,7 +572,7 @@ class Controller {
             WsLog::l( $err );
         }
 
-        $this->options = new Options( self::OPTIONS_KEY );
+        $this->options = new Options( 'wp2static-options' );
         $this->setDefaultOptions();
     }
 
