@@ -26,12 +26,10 @@ class PostProcessor {
      * Iterates on each file, not directory
      *
      * @param string $static_site_path Static site path
-     * @param ProcessedSite $processed_site Processed site
      * @throws WP2StaticException
      */
     public function processStaticSite(
-        $static_site_path,
-        ProcessedSite $processed_site
+        $static_site_path
     ) : void {
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator(
@@ -43,13 +41,13 @@ class PostProcessor {
         foreach ( $iterator as $filename => $file_object ) {
             $save_path = str_replace( $static_site_path, '', $filename );
 
-            // add file to ProcessedSite, then process it
+            // copy file to ProcessedSite dir, then process it
             // this allows external processors to have their way with it
-            $processed_site->add( $filename, $save_path );
+            ProcessedSite::add( $filename, $save_path );
 
             $file_processor = new FileProcessor();
 
-            $file_processor->processFile( $processed_site->path . $save_path );
+            $file_processor->processFile( ProcessedSite::getPath() . $save_path );
         }
 
         error_log('TODO: FolderProcessor for renaming, etc');

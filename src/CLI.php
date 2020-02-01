@@ -127,11 +127,7 @@ class CLI {
         array $args,
         array $assoc_args
     ) : void {
-        $processed_site_dir =
-            SiteInfo::getPath( 'uploads') . 'wp2static-processed-site';
-        $processed_site = new ProcessedSite( $processed_site_dir );
-
-        do_action('wp2static_deploy', $processed_site->path);
+        do_action('wp2static_deploy', ProcessedSite::getPath());
     }
 
     /**

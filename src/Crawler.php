@@ -106,7 +106,9 @@ class Crawler {
             }
         }
 
-        $progress_indicator->finish();
+        if ( $progress ) {
+            $progress_indicator->finish();
+        }
 
         error_log('finished crawling all detected URLs');
         error_log(" Crawled: $crawled");

@@ -18,7 +18,7 @@ class ProcessedSite {
      * Add static file to ProcessedSite
      *
      */
-    public function add( string $static_file, string $save_path ) {
+    public static function add( string $static_file, string $save_path ) {
         $full_path = self::getPath() . "/$save_path";
 
         $directory = dirname( $full_path );
@@ -34,7 +34,7 @@ class ProcessedSite {
      * Delete processed site files
      *
      */
-    public function delete() {
+    public static function delete() {
         error_log('deleting processed site files');
 
         if ( is_dir( self::getPath() ) ) {
