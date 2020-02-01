@@ -46,7 +46,7 @@
     
       </select>
 
-        <?php $tpl->displayCheckbox( $this, 'dontUseCrawlCaching', 'Disregard cache and crawl everything' ); ?>
+        <?php displayCheckbox( $this, 'dontUseCrawlCaching', 'Disregard cache and crawl everything' ); ?>
 
       <button v-on:click.prevent="deleteCrawlCache" class="wp2static-btn btn-sm mg-top10">Delete Crawl Cache</button>
   </div>

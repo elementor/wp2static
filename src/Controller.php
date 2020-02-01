@@ -444,8 +444,20 @@ class Controller {
 
     public function renderOptionsPage() : void {
         $view = [];
-        // TODO: kill all vars in PHP templates
         $view['onceAction'] = self::HOOK . '-options';
+        $view['options_templates'] = [
+            __DIR__ . '/../views/core-detection-options.php',
+            __DIR__ . '/../views/core-crawling-options.php',
+            __DIR__ . '/../views/core-post-processing-options.php',
+            __DIR__ . '/../views/core-deployment-options.php',
+            __DIR__ . '/../views/tab_forms.php',
+            __DIR__ . '/../views/tab_advanced.php',
+            __DIR__ . '/../views/tab_caching.php',
+            __DIR__ . '/../views/tab_automation.php',
+        ];
+
+        $view = apply_filters( 'wp2static_render_options_page_vars', $view );
+
 
         require_once WP2STATIC_PATH . 'views/options-page.php';
     }

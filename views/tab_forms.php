@@ -25,7 +25,7 @@
 
     <p id="form_processor_website"></p>
 
-    <?php $tpl->displayTextfield( $this, 'form_processor_endpoint', 'Form Endpoint', '', '' ); ?>
+    <?php displayTextfield( $this, 'form_processor_endpoint', 'Form Endpoint', '', '' ); ?>
 
 
    </div>
@@ -39,11 +39,11 @@
   <div class="content">
     <p>The following forms are supported on your site. Choose those which you want to send to your Form Processor</p>
 
-    <?php $tpl->displayCheckbox( $this, 'process_form_wordpress', 'WordPress standard' . $to ); ?>
-    <?php $tpl->displayCheckbox( $this, 'process_form_contactform7', 'Contact Form 7' . $to ); ?>
-    <?php $tpl->displayCheckbox( $this, 'process_form_gravity', 'Gravity Forms' . $to ); ?>
-    <?php $tpl->displayCheckbox( $this, 'process_form_elementor', 'Elementor' . $to ); ?>
-    <?php $tpl->displayCheckbox( $this, 'process_form_ninja', 'Ninja Forms' . $to ); ?>
+    <?php displayCheckbox( $this, 'process_form_wordpress', 'WordPress standard' . $to ); ?>
+    <?php displayCheckbox( $this, 'process_form_contactform7', 'Contact Form 7' . $to ); ?>
+    <?php displayCheckbox( $this, 'process_form_gravity', 'Gravity Forms' . $to ); ?>
+    <?php displayCheckbox( $this, 'process_form_elementor', 'Elementor' . $to ); ?>
+    <?php displayCheckbox( $this, 'process_form_ninja', 'Ninja Forms' . $to ); ?>
    </div>
 </section>
 

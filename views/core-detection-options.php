@@ -1,3 +1,9 @@
+<a name="core-detection-options"></a>
+
+<hr>
+
+<h2>Detection Options</h2>
+
 <div id="url_detection" v-show="currentTab == 'url_detection'">
 
 <section class="wp2static-content wp2static-flex">

@@ -1,3 +1,9 @@
+<a name="core-post-processing-options"></a>
+
+<hr>
+
+<h2>Post-processing Options</h2>
+
 <div id="processing_settings" v-show="currentTab == 'processing_settings'">
 
 <section-with-checkbox
@@ -30,7 +36,7 @@
   </div>
 
   <div class="content">
-    <?php $tpl->displayTextfield( $this, 'baseHREF', 'Base HREF', '', '' ); ?>
+    <?php displayTextfield( $this, 'baseHREF', 'Base HREF', '', '' ); ?>
 
     <p>Setting this will tell the browser to resolve all URLs using the URL you set (<code>https://mydomain.com</code>, <code>/</code>, etc).</p>
 

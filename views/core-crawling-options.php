@@ -1,3 +1,9 @@
+<a name="core-crawling-options"></a>
+
+<hr>
+
+<h2>Crawling Options</h2>
+
 <div id="crawl_settings" v-show="currentTab == 'crawl_settings'">
 
 <section-with-checkbox
@@ -21,7 +27,7 @@
     <h2><?php echo __( 'Basic auth user', 'static-html-output-plugin' ); ?></h2>
   </div>
   <div class="content">
-    <?php $tpl->displayTextfield( $this, 'basicAuthUser', 'Basic Auth user', '', '' ); ?>
+    <?php displayTextfield( $this, 'basicAuthUser', 'Basic Auth user', '', '' ); ?>
   </div>
 </section>
 
@@ -30,7 +36,7 @@
     <h2><?php echo __( 'Basic auth password', 'static-html-output-plugin' ); ?></h2>
   </div>
   <div class="content">
-    <?php $tpl->displayTextfield( $this, 'basicAuthPassword', 'Basic Auth password', '', 'password' ); ?>
+    <?php displayTextfield( $this, 'basicAuthPassword', 'Basic Auth password', '', 'password' ); ?>
   </div>
 </section>
 
@@ -39,7 +45,7 @@
     <h2><?php echo __( 'Custom crawling port', 'static-html-output-plugin' ); ?></h2>
   </div>
   <div class="content">
-    <?php $tpl->displayTextfield( $this, 'crawlPort', 'Custom crawling port', '', 'password' ); ?>
+    <?php displayTextfield( $this, 'crawlPort', 'Custom crawling port', '', 'password' ); ?>
   </div>
 </section>
 
@@ -48,7 +54,7 @@
     <h2><?php echo __( 'Custom crawling user-agent', 'static-html-output-plugin' ); ?></h2>
   </div>
   <div class="content">
-    <?php $tpl->displayTextfield( $this, 'crawlUserAgent', 'Custom crawling user-agent', '' ); ?>
+    <?php displayTextfield( $this, 'crawlUserAgent', 'Custom crawling user-agent', '' ); ?>
     <p><em>Override the request HTTP header User-Agent (defaults to WP2Static.com).</em></p>
   </div>
 </section>

@@ -7,7 +7,14 @@
 
 $ajax_nonce = wp_create_nonce( 'wpstatichtmloutput' );
 
-$tpl = new \WP2Static\TemplateHelper();
+
+function displayTextfield($a = null, $b = null, $c = null, $d = null, $e = null) {
+ echo 'something';
+}
+
+function displayCheckbox($a = null, $b = null, $c = null) {
+ echo 'something';
+}
 
 ?>
 
@@ -15,36 +22,25 @@ $tpl = new \WP2Static\TemplateHelper();
 <!-- main form containing options that get sent -->
 <form id="general-options" method="post" action="#" v-on:submit.prevent>
 
-<?php
-
-function generateDeploymentMethodOptions() {
-    $options = array(
-        'folder' => array( 'Subdirectory on current server' ),
-        'zip' => array( 'ZIP archive (.zip)' ),
-    );
-
-    $options = apply_filters(
-        'wp2static_add_deployment_method_option_to_ui',
-        $options
-    );
-
-    foreach ( $options as $key => $value ) {
-        echo "<option value='$key'>$value[0]</option>";
-    }
-}
-
-?>
-
 <div class="wp2static-content-wrapper">
 
-<?php require_once __DIR__ . '/tab_detection.php'; ?>
-<?php require_once __DIR__ . '/tab_crawling.php'; ?>
-<?php require_once __DIR__ . '/tab_processing.php'; ?>
-<?php require_once __DIR__ . '/tab_forms.php'; ?>
-<?php require_once __DIR__ . '/tab_advanced.php'; ?>
-<?php require_once __DIR__ . '/tab_staging.php'; ?>
-<?php require_once __DIR__ . '/tab_caching.php'; ?>
-<?php require_once __DIR__ . '/tab_automation.php'; ?>
+<h2>Quick nav</h2>
+
+<ul>
+    <li><a href="#core-detection-options">Detection Options</a></li>
+    <li><a href="#core-crawling-options">Crawling Options</a></li>
+    <li><a href="#core-post-processing-options">Post-processing Options</a></li>
+    <li><a href="#core-deployment-options">Deployment Options</a></li>
+</ul>
+
+
+
+<?php
+// load core and add-on options templates
+foreach($view['options_templates'] as $options_template) {
+    require_once $options_template;
+}
+?>
 
 </div>
 
