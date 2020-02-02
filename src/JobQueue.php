@@ -25,7 +25,7 @@ class JobQueue {
     }
 
     /**
-     * Add Jon to queue
+     * Add Job to queue
      *
      * @param string $job_type Type of job
      * ie detect, crawl, post_process, deploy
