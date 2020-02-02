@@ -4,6 +4,8 @@
 
 <h2>Crawling Options</h2>
 
+<a href="#">back to top</a>
+
 <div id="crawl_settings" v-show="currentTab == 'crawl_settings'">
 
 <section-with-checkbox

@@ -30,6 +30,16 @@ class WordPressAdmin {
         );
 
         add_action(
+            'admin_post_wp2static_ui_save_options',
+            [ 'WP2Static\Controller', 'wp2static_ui_save_options' ],
+            10,
+            0);
+
+        add_action(
+            'admin_notices',
+            [ 'WP2Static\Controller', 'wp2static_ui_admin_notices' ]);
+
+        add_action(
             'wp2static_headless_hook',
             [ 'WP2Static\Controller', 'wp2static_headless' ],
             10,

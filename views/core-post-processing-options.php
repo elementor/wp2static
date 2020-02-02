@@ -4,6 +4,8 @@
 
 <h2>Post-processing Options</h2>
 
+<a href="#">back to top</a>
+
 <div id="processing_settings" v-show="currentTab == 'processing_settings'">
 
 <section-with-checkbox

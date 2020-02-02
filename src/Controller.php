@@ -444,7 +444,7 @@ class Controller {
 
     public function renderOptionsPage() : void {
         $view = [];
-        $view['onceAction'] = self::HOOK . '-options';
+        $view['nonce_action'] = self::HOOK . '-ui-options';
         $view['options_templates'] = [
             __DIR__ . '/../views/core-detection-options.php',
             __DIR__ . '/../views/core-crawling-options.php',
@@ -622,6 +622,47 @@ class Controller {
 
         if ( is_string( $via_ui ) ) {
             echo 'SUCCESS';
+        }
+    }
+
+    public function wp2static_ui_save_options() : void {
+        error_log('handling options page saving');
+
+        error_log(print_r($_POST, true));
+        do_action('wp2static_addon_ui_save_options');
+
+        check_admin_referer( self::HOOK . '-ui-options' );
+
+        wp_redirect(admin_url('admin.php?page=wp2static'));
+        exit; // required after wp_redirect
+    }
+
+    public function wp2static_ui_admin_notices() : void {
+        error_log('add admin notices');
+
+        // types notice-erorr, notice-warning, notice-info, notice-success
+
+        $notices = [
+            'errors' => [],
+            'successes' => [],
+            'warnings' => [],
+            'infos' => [],
+        ];
+
+        $notices = apply_filters( 'wp2static_add_ui_admin_notices', $notices );
+
+        error_log(print_r($notices, true));
+
+        foreach($notices['errors'] as $errors) {
+            echo '<div class="notice notice-error">';
+                echo '<p>something</p>';
+            echo '</div>';
+        }
+
+        foreach($notices['successes'] as $successes) {
+            echo '<div class="notice notice-success is-dismissible">';
+                echo '<p>some success</p>';
+            echo '</div>';
         }
     }
 

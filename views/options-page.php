@@ -18,11 +18,10 @@ function displayCheckbox($a = null, $b = null, $c = null) {
 
 ?>
 
-
-<!-- main form containing options that get sent -->
-<form id="general-options" method="post" action="#" v-on:submit.prevent>
-
-<div class="wp2static-content-wrapper">
+<form
+    name="wp2static-ui-options"
+    method="POST"
+    action="<?php echo esc_url( admin_url('admin-post.php') ); ?>">
 
 <h2>Quick nav</h2>
 
@@ -33,8 +32,6 @@ function displayCheckbox($a = null, $b = null, $c = null) {
     <li><a href="#core-deployment-options">Deployment Options</a></li>
 </ul>
 
-
-
 <?php
 // load core and add-on options templates
 foreach($view['options_templates'] as $options_template) {
@@ -42,12 +39,9 @@ foreach($view['options_templates'] as $options_template) {
 }
 ?>
 
-</div>
+<?php wp_nonce_field( $view['nonce_action'] ); ?>
+<input name="action" type="hidden" value="wp2static_ui_save_options" />
 
-<span class="submit" style="display:none;">
-    <?php wp_nonce_field( $view['onceAction'] ); ?>
-  <input id="basedir" type="hidden" name="basedir" value="" />
-  <input id="subdirectory" type="hidden" name="subdirectory" value="<?php echo $view['site_info']->subdirectory; ?>" />
-  <input id="hiddenNonceField" type="hidden" name="nonce" value="<?php echo $ajax_nonce; ?>" />
-</span>
+<button class="button btn-primary" type="submit">Save settings</button>
+
 </form>
