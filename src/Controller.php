@@ -47,10 +47,6 @@ class Controller {
 
         // load Settings once into singleton
         $plugin_instance->options = new Options( 'wp2static-options');
-        $plugin_instance->detection_options = new DetectionOptions( 'wp2static-detection-options');
-
-        // error_log(print_r($plugin_instance->detection_options->getAllOptions(), true));
-
 
         // TODO: change ExportSettings to ExportOptions
         ExportSettings::loadSettingsFromDBOptions(
@@ -455,6 +451,10 @@ class Controller {
             __DIR__ . '/../views/tab_caching.php',
             __DIR__ . '/../views/tab_automation.php',
         ];
+
+        $plugin = self::getInstance();
+        $view['detectionOptions'] =
+            $plugin->options->getAllOptions(false, 'detect');
 
         $view = apply_filters( 'wp2static_render_options_page_vars', $view );
 

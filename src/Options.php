@@ -206,7 +206,8 @@ class Options {
      * @return mixed[] all options
      */
     public function getAllOptions(
-        bool $reveal_sensitive_values = false
+        bool $reveal_sensitive_values = false,
+        string $filter = ''
     ) : array {
         $options_array = array();
 
@@ -225,9 +226,18 @@ class Options {
                 $value = $this->__get( $key );
             }
 
-            $options_array[] = array(
+            $options_array[] = [
                 'Option name' => $key,
                 'Value' => $value,
+            ];
+        }
+
+        if ( $filter !== '' ) {
+            $options_array = array_filter(
+                $options_array,
+                function($item) use ($filter) {
+                    return (strpos($item['Option name'], $filter) !== false);
+                }
             );
         }
 
