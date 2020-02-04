@@ -41,24 +41,10 @@ add_action(
     10,
     0);
 
-function plugins_have_been_loaded() {
-    load_plugin_textdomain(
-        'static-html-output-plugin',
-        false,
-        dirname( plugin_basename( __FILE__ ) ) . '/languages/'
-    );
-
-    return null;
-}
-
 add_filter(
     'plugin_action_links_' .
     plugin_basename( __FILE__ ),
     'plugin_action_links');
-
-add_action(
-    'plugins_loaded',
-    'plugins_have_been_loaded');
 
 add_action(
     'wp_ajax_wp_static_html_output_ajax',

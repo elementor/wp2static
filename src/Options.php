@@ -51,7 +51,6 @@ class Options {
         'targetFolder', // not needed anymore?
         'useActiveFTP', // move to FTP addon
         'useBaseHref',
-        'useBasicAuth',
         'useDocumentRelativeURLs',
         'useSiteRootRelativeURLs',
     ];

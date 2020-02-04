@@ -98,22 +98,6 @@ class WordPressAdmin {
                 0
             );
         }
-
-        add_action(
-            'wp_dashboard_setup',
-            [ 'WP2Static\Controller', 'wp2static_add_dashboard_widgets' ],
-            0
-        );
-
-        add_action(
-            'admin_enqueue_scripts',
-            [ 'WP2Static\Controller', 'load_wp2static_admin_js' ]
-        );
-
-        add_action(
-            'admin_enqueue_scripts',
-            [ 'WP2Static\Controller', 'wp2static_enqueue_dashboard_scripts' ]
-        );
     }
 
     /**
