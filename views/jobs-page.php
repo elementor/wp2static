@@ -18,7 +18,101 @@
 
 <hr>
 
+<h3>Automate static site generation</h3>
+
+<p>Use WP-Cron, regular CRON or other method to process WP2Static's job queue.</p>
+
+<label
+    for=""
+/>WP-Cron will process job queue every (n) minutes</label>
+
+<input
+    type="number"
+    id="processQueueInterval"
+    name="processQueueInterval"
+    value="5"
+/>
+
+<p><i>On these events:</i></p>
+
+<label
+    for=""
+/>Post Update</label>
+
+<input
+    type="checkbox"
+    id="autoJobTriggerPostUpdate"
+    name="autoJobTriggerPostUpdate"
+    value="1"
+/>
+
+<label
+    for=""
+/>Post Update</label>
+
+<input
+    type="checkbox"
+    id="autoJobTriggerPostUpdate"
+    name="autoJobTriggerPostUpdate"
+    value="1"
+/>
+
+<p><i>Schedule these types of jobs:</i></p>
+
+<label
+    for=""
+/>Detection</label>
+
+<input
+    type="checkbox"
+    id="autoJobScheduleDetection"
+    name="autoJobScheduleDetection"
+    value="1"
+/>
+
+<label
+    for=""
+/>Crawling</label>
+
+<input
+    type="checkbox"
+    id="autoJobScheduleCrawling"
+    name="autoJobScheduleCrawling"
+    value="1"
+/>
+
+<label
+    for=""
+/>Post-procesisng</label>
+
+<input
+    type="checkbox"
+    id="autoJobSchedulePostProcessing"
+    name="autoJobSchedulePostProcessing"
+    value="1"
+/>
+
+<label
+    for=""
+/>Deploy</label>
+
+<input
+    type="checkbox"
+    id="autoJobScheduleDeploy"
+    name="autoJobScheduleDeploy"
+    value="1"
+/>
+
+<br>
+<br>
+
+<button class="button btn-primary">Save job automation settings</button>
+
+<hr>
+
 <h3>Job Queue/History</h3>
+
+<p><i><a href="<?php echo admin_url('admin.php?page=wp2static-jobs'); ?>">Refresh page</a> to see latest status</i><p>
 
 <hr>
 
