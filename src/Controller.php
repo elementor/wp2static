@@ -39,9 +39,6 @@ class Controller {
     public static function init( string $bootstrap_file ) : Controller {
         $plugin_instance = self::getInstance();
 
-        $xhr_router = new XHRRouter( $plugin_instance );
-        $xhr_router->registerXHRRoutes();
-
         WordPressAdmin::registerHooks( $bootstrap_file );
         WordPressAdmin::addAdminUIElements();
 
@@ -91,21 +88,13 @@ class Controller {
         return $order;
     }
 
+    // TODO: adjust to add-on's seedOptions() style
     public function setDefaultOptions() : void {
-        // general options
         if ( null === self::$plugin_instance->options->getOption( 'version' ) ) {
             self::$plugin_instance->options
             ->setOption( 'version', self::WP2STATIC_VERSION )
             ->setOption( 'static_export_settings', self::WP2STATIC_VERSION )
             // set default options
-            ->setOption( 'rewriteWPPaths', '1' )
-            ->setOption( 'currentDeploymentMethod', 'folder' )
-            ->setOption( 'removeConditionalHeadComments', '1' )
-            ->setOption( 'removeWPMeta', '1' )
-            ->setOption( 'dontUseCrawlCaching', '1' )
-            ->setOption( 'removeWPLinks', '1' )
-            ->setOption( 'removeHTMLComments', '1' )
-            ->setOption( 'parseCSS', '0' )
             ->save();
         }
     }
