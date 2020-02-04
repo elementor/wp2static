@@ -266,27 +266,6 @@ class Controller {
 
     }
 
-    public function test_folder() : void {
-        $archive_processor = new ArchiveProcessor();
-
-        $target_folder = $this->settings['targetFolder'];
-
-        $has_safety_file =
-            $archive_processor->dir_has_safety_file( $target_folder );
-        $is_empty =
-            $archive_processor->dir_is_empty( $target_folder );
-
-        if ( $has_safety_file || $is_empty ) {
-            wp_die( 'SUCCESS', '', 200 );
-        }
-
-        wp_die(
-            'Not permitted to write to target directory',
-            '',
-            500
-        );
-    }
-
     /**
      * Detect URLs within WordPress site and echo number of files to UI
      *
@@ -452,9 +431,14 @@ class Controller {
                 $plugin->options->getAllOptions(false, 'basicAuthPassword')
             );
 
-
         $view['detectionOptions'] =
             $plugin->options->getAllOptions(false, 'detect');
+
+        $view['postProcessingOptions'] = 
+            array_merge(
+                $plugin->options->getAllOptions(false, 'basicAuthUser'),
+                $plugin->options->getAllOptions(false, 'basicAuthPassword')
+            );
 
         $view = apply_filters( 'wp2static_render_options_page_vars', $view );
 
@@ -605,7 +589,6 @@ class Controller {
         // NOTE: renameWP Directories also doing same server publish
         $processor->renameArchiveDirectories();
         $processor->removeWPCruft();
-        $processor->copyStaticSiteToPublicFolder();
         $processor->create_zip();
 
         $via_ui = filter_input( INPUT_POST, 'ajax_action' );

@@ -8,23 +8,10 @@ class Options {
     public $wp2static_options = [];
     public $wp2static_option_key = null;
     public $wp2static_options_keys = [
-        'additionalUrls', // move to advanced detection addon
-        'allowOfflineUsage', // move to offline zip addon
-        'baseHREF',
-        'baseUrl', // no longer needed
-        'baseUrlfolder', // no longer needed
-        'baseUrlzip', // no longer needed
-        'basicAuthPassword',
-        'basicAuthUser',
-        'completionEmail',
-        'crawlPort', // move to addon
-        'crawlUserAgent', // move to addon
-        'crawlDelay', // move to addon
-        'createEmptyFavicon', // move to HTML cleanup addon
-        'currentDeploymentMethod', // shouldn't be needed
-        'delayBetweenAPICalls', // move to deployer addons
-        'deployBatchSize',
-        'detectCategoryPagination',
+        // CONFIRMED CORE
+        // ## 1 ## detection
+        // set defaults, allow filter to override from other plugin 
+        'detectCategoryPagination', // questionable - move to addon
         'detectCustomPostTypes',
         // 'detectFeedURLs', // move to feed detection/processor addon
         'detectPages',
@@ -32,88 +19,37 @@ class Options {
         'detectPosts',
         'detectUploads',
         // 'detectWPIncludesAssets', moved to addon, enable by default?
-        'displayDashboardWidget', // move to addon
-        'dontUseCrawlCaching',
-        'excludeURLs', // move to advanced detection addon
+        // ## 2 ## crawling
+        'basicAuthPassword',
+        'basicAuthUser',
+        'includeDiscoveredAssets',
+        // ## 3 ## post-processing
+        'renameRules', // should be able to use just one of these?
+        'rewriteRules', // arb. code rewrite shld be supported by hooks already
+        // MOVE: advanced HTML Processor addon
+        'allowOfflineUsage', // move to advanced HTML Processor addon
+        'baseHREF',
+        'useBaseHref',
+        'useDocumentRelativeURLs',
+        'useSiteRootRelativeURLs',
+        'createEmptyFavicon', // move to HTML cleanup addon
         'forceHTTPS',
         'forceRewriteSiteURLs', // ?
-        'includeDiscoveredAssets',
-        'parseCSS', // move to advanced CSS parser addon
-        'redeployOnPostUpdates', // extend with more options
         'removeCanonical', // move to HTML cleanup addon
         'removeConditionalHeadComments', // move to HTML cleanup addon
         'removeHTMLComments', // move to HTML cleanup addon
         'removeWPLinks', // move to HTML cleanup addon
         'removeRobotsNoIndex', // move to HTML cleanup addon
         'removeWPMeta', // move to HTML cleanup addon
-        'renameRules', // move to addon
-        'rewriteRules', // move to addon
-        'targetFolder', // not needed anymore?
-        'useActiveFTP', // move to FTP addon
-        'useBaseHref',
-        'useDocumentRelativeURLs',
-        'useSiteRootRelativeURLs',
-    ];
-
-    public $whitelisted_keys = [
-        'additionalUrls',
-        'allowOfflineUsage',
-        'baseHREF',
-        'baseUrl',
-        'baseUrlfolder',
-        'baseUrlzip',
-        'basicAuthUser',
+        // MOVE: advanced CSS Processor addon
+        'parseCSS', // move to advanced CSS parser addon
+        // ## 4 ## deployment
         'completionEmail',
-        'crawlPort',
-        'crawlUserAgent',
-        'crawlDelay',
-        'createEmptyFavicon',
-        'currentDeploymentMethod',
-        'delayBetweenAPICalls',
+        'completionWebhook', // new
         'deployBatchSize',
-        'detectArchives',
-        'detectAttachments',
-        'detectCategoryPagination',
-        'detectChildTheme',
-        'detectCommentPagination',
-        'detectComments',
-        'detectCustomPostTypes',
-        'detectFeedURLs',
-        'detectHomepage',
-        'detectPages',
-        'detectParentTheme',
-        'detectPluginAssets',
-        'detectPostPagination',
-        'detectPosts',
-        'detectUploads',
-        'detectVendorCacheDirs',
-        'detectWPIncludesAssets',
-        'displayDashboardWidget',
-        'dontUseCrawlCaching',
-        'excludeURLs',
-        'forceHTTPS',
-        'forceRewriteSiteURLs',
-        'ghBranch',
-        'ghCommitMessage',
-        'ghPath',
-        'ghRepo',
-        'includeDiscoveredAssets',
-        'parseCSS',
-        'redeployOnPostUpdates',
-        'removeCanonical',
-        'removeConditionalHeadComments',
-        'removeHTMLComments',
-        'removeWPLinks',
-        'removeRobotsNoIndex',
-        'removeWPMeta',
-        'renameRules',
-        'rewriteRules',
-        'targetFolder',
-        'useActiveFTP',
-        'useBaseHref',
-        'useBasicAuth',
-        'useDocumentRelativeURLs',
-        'useSiteRootRelativeURLs',
+        'delayBetweenAPICalls', // move to deployer addons
+        // ## 5 ## MOVE To new JobsOptions
+        'redeployOnPostUpdates', // extend with more options
     ];
 
     public function __construct( string $option_key ) {
