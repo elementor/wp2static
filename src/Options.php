@@ -8,57 +8,48 @@ class Options {
     public $wp2static_options = [];
     public $wp2static_option_key = null;
     public $wp2static_options_keys = [
-        'additionalUrls',
-        'allowOfflineUsage',
+        'additionalUrls', // move to advanced detection addon
+        'allowOfflineUsage', // move to offline zip addon
         'baseHREF',
-        'baseUrl',
-        'baseUrlfolder',
-        'baseUrlzip',
+        'baseUrl', // no longer needed
+        'baseUrlfolder', // no longer needed
+        'baseUrlzip', // no longer needed
         'basicAuthPassword',
         'basicAuthUser',
         'completionEmail',
-        'crawlPort',
-        'crawlUserAgent',
-        'crawlDelay',
-        'createEmptyFavicon',
-        'currentDeploymentMethod',
-        'delayBetweenAPICalls',
+        'crawlPort', // move to addon
+        'crawlUserAgent', // move to addon
+        'crawlDelay', // move to addon
+        'createEmptyFavicon', // move to HTML cleanup addon
+        'currentDeploymentMethod', // shouldn't be needed
+        'delayBetweenAPICalls', // move to deployer addons
         'deployBatchSize',
-        'detectArchives',
-        'detectAttachments',
         'detectCategoryPagination',
-        'detectChildTheme',
-        'detectCommentPagination',
-        'detectComments',
         'detectCustomPostTypes',
-        'detectFeedURLs',
-        'detectHomepage',
+        // 'detectFeedURLs', // move to feed detection/processor addon
         'detectPages',
-        'detectParentTheme',
-        'detectPluginAssets',
         'detectPostPagination',
         'detectPosts',
         'detectUploads',
-        'detectVendorCacheDirs',
-        'detectWPIncludesAssets',
-        'displayDashboardWidget',
+        // 'detectWPIncludesAssets', moved to addon, enable by default?
+        'displayDashboardWidget', // move to addon
         'dontUseCrawlCaching',
-        'excludeURLs',
+        'excludeURLs', // move to advanced detection addon
         'forceHTTPS',
-        'forceRewriteSiteURLs',
+        'forceRewriteSiteURLs', // ?
         'includeDiscoveredAssets',
-        'parseCSS',
-        'redeployOnPostUpdates',
-        'removeCanonical',
-        'removeConditionalHeadComments',
-        'removeHTMLComments',
-        'removeWPLinks',
-        'removeRobotsNoIndex',
-        'removeWPMeta',
-        'renameRules',
-        'rewriteRules',
-        'targetFolder',
-        'useActiveFTP',
+        'parseCSS', // move to advanced CSS parser addon
+        'redeployOnPostUpdates', // extend with more options
+        'removeCanonical', // move to HTML cleanup addon
+        'removeConditionalHeadComments', // move to HTML cleanup addon
+        'removeHTMLComments', // move to HTML cleanup addon
+        'removeWPLinks', // move to HTML cleanup addon
+        'removeRobotsNoIndex', // move to HTML cleanup addon
+        'removeWPMeta', // move to HTML cleanup addon
+        'renameRules', // move to addon
+        'rewriteRules', // move to addon
+        'targetFolder', // not needed anymore?
+        'useActiveFTP', // move to FTP addon
         'useBaseHref',
         'useBasicAuth',
         'useDocumentRelativeURLs',

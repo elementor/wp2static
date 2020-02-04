@@ -24,15 +24,13 @@ class Crawler {
         $this->request = new Request();
         $this->curl_options = [];
 
-        if ( ExportSettings::get( 'crawlPort' ) ) {
-            $this->curl_options[ CURLOPT_PORT ] =
-                ExportSettings::get( 'crawlPort' );
-        }
+        $this->curl_options[ CURLOPT_PORT ] = apply_filters(
+            'wp2static_curl_port',
+            $this->curl_options[ CURLOPT_PORT ]);
 
-        if ( ExportSettings::get( 'crawlUserAgent' ) ) {
-            $this->curl_options[ CURLOPT_USERAGENT ] =
-                ExportSettings::get( 'crawlUserAgent' );
-        }
+        $this->curl_options[ CURLOPT_USERAGENT ] = apply_filters(
+            'wp2static_curl_user_agent',
+            'WP2Static.com');
 
         if ( ExportSettings::get( 'useBasicAuth' ) ) {
             $this->curl_options[ CURLOPT_USERPWD ] =

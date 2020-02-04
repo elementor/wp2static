@@ -95,6 +95,7 @@ class SiteCrawler {
      * @throws WP2StaticException
      */
     public function crawl() : void {
+        error_log('crawling with SiteCrawler');
         $urls_to_crawl = CrawlQueue::getCrawlableURLs();
 
         if ( ! $urls_to_crawl ) {
