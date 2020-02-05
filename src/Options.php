@@ -24,6 +24,52 @@ class Options {
         'basicAuthUser',
         'includeDiscoveredAssets',
         // ## 3 ## post-processing
+        // MOVE: advanced HTML Processor addon
+        'allowOfflineUsage', // move to advanced HTML Processor addon
+        'baseHREF',
+        'useBaseHref',
+        'useDocumentRelativeURLs',
+        'useSiteRootRelativeURLs',
+        'createEmptyFavicon', // move to HTML cleanup addon
+        'forceHTTPS',
+        'forceRewriteSiteURLs', // ?
+        'removeCanonical', // move to HTML cleanup addon
+        'removeConditionalHeadComments', // move to HTML cleanup addon
+        'removeHTMLComments', // move to HTML cleanup addon
+        'removeWPLinks', // move to HTML cleanup addon
+        'removeRobotsNoIndex', // move to HTML cleanup addon
+        'removeWPMeta', // move to HTML cleanup addon
+        // MOVE: advanced CSS Processor addon
+        'parseCSS', // move to advanced CSS parser addon
+        // MOVE: advanced Post-Processing addon
+        'renameRules', // should be able to use just one of these?
+        'rewriteRules', // arb. code rewrite shld be supported by hooks already
+        // ## 4 ## deployment
+        'completionEmail',
+        'completionWebhook', // new
+        'deployBatchSize',
+        'delayBetweenAPICalls', // move to deployer addons
+        // ## 5 ## MOVE To new JobsOptions
+        'redeployOnPostUpdates', // extend with more options
+    ];
+
+    public $whitelisted_keys = [
+        // CONFIRMED CORE
+        // ## 1 ## detection
+        // set defaults, allow filter to override from other plugin 
+        'detectCategoryPagination', // questionable - move to addon
+        'detectCustomPostTypes',
+        // 'detectFeedURLs', // move to feed detection/processor addon
+        'detectPages',
+        'detectPostPagination',
+        'detectPosts',
+        'detectUploads',
+        // 'detectWPIncludesAssets', moved to addon, enable by default?
+        // ## 2 ## crawling
+        'basicAuthPassword',
+        'basicAuthUser',
+        'includeDiscoveredAssets',
+        // ## 3 ## post-processing
         'renameRules', // should be able to use just one of these?
         'rewriteRules', // arb. code rewrite shld be supported by hooks already
         // MOVE: advanced HTML Processor addon

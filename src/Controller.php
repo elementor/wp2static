@@ -417,20 +417,14 @@ class Controller {
         $view['crawlingOptions'] = 
             array_merge(
                 $plugin->options->getAllOptions(false, 'basicAuthUser'),
-                $plugin->options->getAllOptions(false, 'basicAuthPassword')
+                $plugin->options->getAllOptions(false, 'basicAuthPassword'),
+                $plugin->options->getAllOptions(false, 'includeDiscoveredAssets')
             );
 
         $view['detectionOptions'] =
             $plugin->options->getAllOptions(false, 'detect');
 
-        $view['postProcessingOptions'] = 
-            array_merge(
-                $plugin->options->getAllOptions(false, 'basicAuthUser'),
-                $plugin->options->getAllOptions(false, 'basicAuthPassword')
-            );
-
         $view = apply_filters( 'wp2static_render_options_page_vars', $view );
-
 
         require_once WP2STATIC_PATH . 'views/options-page.php';
     }
@@ -438,7 +432,23 @@ class Controller {
     public function renderDiagnosticsPage() : void {
         $view = [];
         // TODO: kill all vars in PHP templates
-        $view['publiclyAccessible'] = self::check_local_dns_resolution();
+        $view['localDNSResolution'] = self::check_local_dns_resolution();
+
+        $plugin = self::getInstance();
+
+        $view['coreOptions'] = json_encode(
+            $plugin->options->wp2static_options,
+            JSON_FORCE_OBJECT | JSON_UNESCAPED_SLASHES
+        );
+
+        // TODO: move site info to diagnostics
+        $view['site_info'] = SiteInfo::getAllInfo();
+        $view['phpOutOfDate'] = PHP_VERSION < 7.2;
+        $view['uploadsWritable'] = SiteInfo::isUploadsWritable();
+        $view['maxExecutionTime'] = ini_get( 'max_execution_time' );
+        $view['curlSupported'] = SiteInfo::hasCURLSupport();
+        $view['permalinksDefined'] = SiteInfo::permalinksAreDefined();
+        $view['domDocumentAvailable'] = class_exists( 'DOMDocument' );
 
         require_once WP2STATIC_PATH . 'views/diagnostics-page.php';
     }
