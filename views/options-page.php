@@ -16,6 +16,7 @@ function displayCheckbox($a = null, $b = null, $c = null) {
 }
 
 ?>
+<h2>WP2Static > Options</h2>
 
 <form
     name="wp2static-ui-options"

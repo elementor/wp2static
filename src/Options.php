@@ -11,11 +11,9 @@ class Options {
         // CONFIRMED CORE
         // ## 1 ## detection
         // set defaults, allow filter to override from other plugin 
-        'detectCategoryPagination', // questionable - move to addon
         'detectCustomPostTypes',
         // 'detectFeedURLs', // move to feed detection/processor addon
         'detectPages',
-        'detectPostPagination',
         'detectPosts',
         'detectUploads',
         // 'detectWPIncludesAssets', moved to addon, enable by default?

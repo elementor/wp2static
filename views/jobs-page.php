@@ -1,37 +1,6 @@
 <h2>WP2Static > Jobs</h2>
 
-<h3>Manually enqueue new job</h3>
-
-<input name="add_job_detect" id="add_job_detect"  value="1" type="checkbox" />
-<label for="add_job_detect">Detect</label>
-
-<input name="add_job_crawl" id="add_job_crawl"  value="1" type="checkbox" />
-<label for="add_job_crawl">Crawl</label>
-
-<input name="add_job_post_process" id="add_job_post_process"  value="1" type="checkbox" />
-<label for="add_job_post_process">Post process</label>
-
-<input name="add_job_deploy" id="add_job_deploy"  value="1" type="checkbox" />
-<label for="add_job_deploy">Deploy</label>
-
-<button class="button">Enqueue job</button>
-
-<hr>
-
-<h3>Automate static site generation</h3>
-
-<p>Use WP-Cron, regular CRON or other method to process WP2Static's job queue.</p>
-
-<label
-    for=""
-/>WP-Cron will process job queue every (n) minutes</label>
-
-<input
-    type="number"
-    id="processQueueInterval"
-    name="processQueueInterval"
-    value="5"
-/>
+<h3>Automate job creation</h3>
 
 <p><i>On these events:</i></p>
 
@@ -109,6 +78,43 @@
 <button class="button btn-primary">Save job automation settings</button>
 
 <hr>
+
+
+<h3>Process jobs queue on schedule</h3>
+
+<p>Use WP-Cron, regular CRON or other method to process WP2Static's job queue.</p>
+
+<label
+    for=""
+/>WP-Cron will process job queue every (n) minutes</label>
+
+<input
+    type="number"
+    id="processQueueInterval"
+    name="processQueueInterval"
+    value="5"
+/>
+
+<hr>
+
+<h3>Manually enqueue new job</h3>
+
+<input name="add_job_detect" id="add_job_detect"  value="1" type="checkbox" />
+<label for="add_job_detect">Detect</label>
+
+<input name="add_job_crawl" id="add_job_crawl"  value="1" type="checkbox" />
+<label for="add_job_crawl">Crawl</label>
+
+<input name="add_job_post_process" id="add_job_post_process"  value="1" type="checkbox" />
+<label for="add_job_post_process">Post process</label>
+
+<input name="add_job_deploy" id="add_job_deploy"  value="1" type="checkbox" />
+<label for="add_job_deploy">Deploy</label>
+
+<button class="button">Enqueue job</button>
+
+<hr>
+
 
 <h3>Job Queue/History</h3>
 

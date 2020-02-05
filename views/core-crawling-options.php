@@ -4,8 +4,6 @@
 
 <h2>Crawling Options</h2>
 
-<a href="#">back to top</a>
-
 <br>
 
 <?php foreach ($view['crawlingOptions'] as $crawlingOption): ?>
