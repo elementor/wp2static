@@ -78,40 +78,27 @@ switch($view['localDNSReslution']) {
             </td>
             <td>Generating a static site can involve long-running processes. Set your PHP max_execution_time setting to unlimited or find a better webhost if you're prevented from doing so.</td>
         </tr>
+        <tr>
+            <td>PHP version</td>
+            <td>
+                <?php echo PHP_VERSION; ?>
+
+                <span
+                    class="dashicons <?php echo ! $view['phpOutOfDate'] ? 'dashicons-yes' : 'dashicons-no'; ?>"
+                    style="color: <?php echo ! $view['phpOutOfDate'] ? 'green' : 'red'; ?>;"
+                ></span>
+            </td>
+            <td>
+              <p>The current officially supported PHP versions can be found on <a href="http://php.net/supported-versions.php" target="_blank">PHP.net</a></p>
+
+              <p>As official security support drops for PHP 7.2 at the end of 2020, it is strongly recommended to upgraded your WordPress hosting environment to PHP 7.3 or above.<br><br>For help on upgrading your environment, please join our support community at <a href="https://wp2static.com/community/" target="_blank">https://wp2static.com/community/</a></p>
+            </td>
+        </tr>
     </tbody>
-</table> 
+</table>
 
 
 <b></b>
-
-
-   <li><b></b>
-     <span :style="siteInfo.maxExecutionTime == 0 ? 'color:#3ad23a;': 'color:red;'">
-        {{ siteInfo.maxExecutionTime }} {{ siteInfo.maxExecutionTime == 0 ? '(Unlimited)': 'secs' }}
-     </span>
-    </li>
-   <li><b>Writable uploads dir</b> <span v-if="siteInfo.uploadsWritable" class="dashicons dashicons-yes" style="color: #3ad23a;"></span></li>
-</ul>
-
-</div>
-
-   <div v-if="siteInfo.phpOutOfDate" class="notice notice-error inline wp2static-notice">
-      <h2 class="title">Outdated PHP version detected</h2>
-      <p>The current officially supported PHP versions can be found on <a href="http://php.net/supported-versions.php" target="_blank">PHP.net</a></p>
-
-      <p>Whilst the plugin tries to work on the most common PHP environments, it currently requires PHP 7.2 or higher.</p>
-
-      <p>As official security support drops for PHP 5.6 at the end of 2018, it is strongly recommended to upgraded your WordPress hosting environment to PHP 7.2 or above.<br><br>For help on upgrading your environment, please join our support community at <a href="https://wp2static.com/community/" target="_blank">https://wp2static.com/community/</a></p>
-
-      <p>Your current PHP version is: <?php echo PHP_VERSION; ?></p>
-    </div>
-
-
-   <div v-if="!siteInfo.uploadsWritable" class="notice notice-error inline wp2static-notice">
-      <h2 class="title">Your uploads directory is not writable</h2>
-      <p>Please ensure that <code>{{ siteInfo.uploads_path }}</code>
-            is writable by your webserver.</p>
-    </div>
 
 
    <div v-if="!siteInfo.curlSupported" class="notice notice-error inline wp2static-notice">
@@ -132,3 +119,50 @@ switch($view['localDNSReslution']) {
         <p>Due to the nature of how static sites work, you'll need to have some kind of permalinks structure defined in your <a href="<?php echo admin_url( 'options-permalink.php' ); ?>">Permalink Settings</a> within WordPress. To learn more on how to do this, please see WordPress's official guide to the <a href="https://codex.wordpress.org/Settings_Permalinks_Screen">Settings Permalinks Screen</a>.</p>
     </div>
 
+<h4>Loaded PHP extensions</h4>
+
+<table class="widefat striped">
+    <tbody>
+
+<?php
+natcasesort($view['extensions']);
+$ar_list = $view['extensions'];
+$rows = ceil(count($ar_list) / 5);
+$lists  = array_chunk($ar_list, $rows);
+
+foreach ( $lists as $column) {
+    echo '<tr>';
+    foreach ($column as $item) {
+        echo '<td>' . $item . '</td>';
+    }
+    echo '</tr>';
+}
+
+?>
+    </tbody>
+</table>
+
+<h4>WP2Static Core Options</h4>
+
+<table class="widefat striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        <?php
+        natcasesort($view['coreOptions']);
+
+        foreach ( $view['coreOptions'] as $name => $value) : ?>
+           <tr>
+           <td><?php echo $name;?></td>
+           <td><?php echo $value;?></td>
+           </tr>
+
+        <?php endforeach; ?>
+
+    </tbody>
+</table>

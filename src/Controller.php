@@ -436,19 +436,22 @@ class Controller {
 
         $plugin = self::getInstance();
 
-        $view['coreOptions'] = json_encode(
-            $plugin->options->wp2static_options,
-            JSON_FORCE_OBJECT | JSON_UNESCAPED_SLASHES
-        );
+        // $view['coreOptions'] = json_encode(
+        //     $plugin->options->wp2static_options,
+        //     JSON_FORCE_OBJECT | JSON_UNESCAPED_SLASHES
+        // );
+
+        $view['coreOptions'] = $plugin->options->wp2static_options;
 
         // TODO: move site info to diagnostics
         $view['site_info'] = SiteInfo::getAllInfo();
-        $view['phpOutOfDate'] = PHP_VERSION < 7.2;
+        $view['phpOutOfDate'] = PHP_VERSION < 7.3;
         $view['uploadsWritable'] = SiteInfo::isUploadsWritable();
         $view['maxExecutionTime'] = ini_get( 'max_execution_time' );
         $view['curlSupported'] = SiteInfo::hasCURLSupport();
         $view['permalinksDefined'] = SiteInfo::permalinksAreDefined();
         $view['domDocumentAvailable'] = class_exists( 'DOMDocument' );
+        $view['extensions'] = get_loaded_extensions();
 
         require_once WP2STATIC_PATH . 'views/diagnostics-page.php';
     }
