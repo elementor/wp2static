@@ -1,5 +1,3 @@
-<a name="core-post-processing-options"></a>
-
 <hr>
 
 <h2>Post-processing Options</h2>

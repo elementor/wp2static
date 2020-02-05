@@ -1,18 +1,13 @@
-<a name="core-detection-options"></a>
-
-<hr>
-
 <h2>Detection Options</h2>
-
 
 <h4>Control Detected URLs</h4>
 
-<p>Control which URLs from this WordPress site we want to crawl to generate our static site.</p>
+<p>WP2Static will crawl these URLs in your WordPress site to generate a static site.</p>
 
 <table class="striped widefat">
     <thead>
         <tr>
-            <th>URL Type</th>
+            <th style="width:50%;">URL Type</th>
             <th>Include in detection</th>
         </tr>
     </thead>
@@ -38,7 +33,7 @@ function formatDetectionOption( $string ) {
                 for="<?php echo $detectionOption['Option name']; ?>"
             ><?php echo formatDetectionOption( $detectionOption['Option name'] ); ?></label>
         </td>
-        <td style="text-align:center;">
+        <td>
             <input
                 id="<?php echo $detectionOption['Option name']; ?>"
                 name="<?php echo $detectionOption['Option name']; ?>"

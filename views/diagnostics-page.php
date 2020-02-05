@@ -1,4 +1,4 @@
-<h2>WP2Static > Diagnostics</h2>
+<br>
 
 <table class="widefat striped">
     <thead>

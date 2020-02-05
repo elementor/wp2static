@@ -1,5 +1,3 @@
-<h2>WP2Static > Caches</h2>
-
 <h3>Cache Management</h3>
 
 <hr>

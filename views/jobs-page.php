@@ -1,5 +1,3 @@
-<h2>WP2Static > Jobs</h2>
-
 <h3>Automate job creation</h3>
 
 <p><i>On these events:</i></p>
@@ -94,6 +92,11 @@
     name="processQueueInterval"
     value="5"
 />
+
+<br>
+<br>
+
+<button class="button btn-primary">Save job automation settings</button>
 
 <hr>
 
