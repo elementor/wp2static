@@ -62,10 +62,6 @@
 
 <h4>Crawl Caching</h4>
 
-<input name='dontUseCrawlCaching' id='dontUseCrawlCaching' type='checkbox' />
-<label for='dontUseCrawlCaching'>Disregard cache and crawl everything</label>
-
-<hr>
 <p>The following actions will trigger deletion of URLs from the Crawl Cache:<p>
 
 <table style="width:100%;">
@@ -94,14 +90,3 @@
         </tr>
     </tbody>
 </table>
-
-<hr>
-
-<h4>Deploy Caching</h4>
-
-<input name='dontUseDeployCaching' id='dontUseDeployCaching' type='checkbox' />
-<label for='dontUseDeployCaching'>Disregard cache and deploy everything</label>
-
-<p>When deploying, WP2Static will check each file to see if it's changed since the last deployment. It will skip unchanged files based on this information. If you want to force an uncached deployment, click this button and any caches will be emptied, requiring a full deploy on the next run.</p>
-<hr>
-
