@@ -2,7 +2,7 @@
 
 <h4>Control Detected URLs</h4>
 
-<p>WP2Static will crawl these URLs in your WordPress site to generate a static site.</p>
+<p>WP2Static will crawl these WordPress URLs to generate a static site.</p>
 
 <table class="striped widefat">
     <thead>

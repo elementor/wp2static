@@ -22,6 +22,7 @@ class Options {
         'basicAuthUser',
         'includeDiscoveredAssets',
         // ## 3 ## post-processing
+        'deploymentURL',
         // MOVE: advanced HTML Processor addon
         'allowOfflineUsage', // move to advanced HTML Processor addon
         'baseHREF',

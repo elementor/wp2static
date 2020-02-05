@@ -31,6 +31,6 @@ foreach($view['options_templates'] as $options_template) {
 <?php wp_nonce_field( $view['nonce_action'] ); ?>
 <input name="action" type="hidden" value="wp2static_ui_save_options" />
 
-<button class="button btn-primary" type="submit">Save settings</button>
+<button class="button btn-primary" type="submit">Save options</button>
 
 </form>
