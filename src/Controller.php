@@ -406,7 +406,6 @@ class Controller {
             __DIR__ . '/../views/core-crawling-options.php',
             __DIR__ . '/../views/core-post-processing-options.php',
             __DIR__ . '/../views/core-deployment-options.php',
-            __DIR__ . '/../views/tab_forms.php',
             __DIR__ . '/../views/tab_advanced.php',
             __DIR__ . '/../views/tab_caching.php',
             __DIR__ . '/../views/tab_automation.php',
