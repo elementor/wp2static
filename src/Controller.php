@@ -42,16 +42,8 @@ class Controller {
         WordPressAdmin::registerHooks( $bootstrap_file );
         WordPressAdmin::addAdminUIElements();
 
-        // load Settings once into singleton
-        $plugin_instance->options = new Options( 'wp2static-options');
-
-        // TODO: change ExportSettings to ExportOptions
-        ExportSettings::loadSettingsFromDBOptions(
-            $plugin_instance->options->getSettings( true ));
-        ExportSettings::setDestinationURL( 'https://example.com' );
-        ExportSettings::loadRewriteRules();
-
-        // create DB table for crawl caching
+        // prepare DB tables
+        CoreOptions::init();
         CrawlCache::createTable();
         CrawlQueue::createTable();
         ExportLog::createTable();
@@ -88,19 +80,8 @@ class Controller {
         return $order;
     }
 
-    // TODO: adjust to add-on's seedOptions() style
-    public function setDefaultOptions() : void {
-        if ( null === self::$plugin_instance->options->getOption( 'version' ) ) {
-            self::$plugin_instance->options
-            ->setOption( 'version', self::WP2STATIC_VERSION )
-            ->setOption( 'static_export_settings', self::WP2STATIC_VERSION )
-            // set default options
-            ->save();
-        }
-    }
-
     public static function activate_for_single_site() : void {
-        self::setDefaultOptions();
+        error_log('activated, does init fire and seed if needed?');
     }
 
     public static function activate( bool $network_wide = null ) : void {
@@ -410,15 +391,28 @@ class Controller {
 
         $plugin = self::getInstance();
 
-        $view['crawlingOptions'] = 
-            array_merge(
-                $plugin->options->getAllOptions(false, 'basicAuthUser'),
-                $plugin->options->getAllOptions(false, 'basicAuthPassword'),
-                $plugin->options->getAllOptions(false, 'includeDiscoveredAssets')
-            );
+        $view['crawlingOptions'] = [
+               'basicAuthUser' => CoreOptions::get('basicAuthUser'),
+               'basicAuthPassword' => CoreOptions::get('basicAuthPassword'),
+               'includeDiscoveredAssets' => CoreOptions::get('includeDiscoveredAssets'),
+        ];
 
-        $view['detectionOptions'] =
-            $plugin->options->getAllOptions(false, 'detect');
+        $view['detectionOptions'] = [
+            'detectCustomPostTypes' => CoreOptions::get('detectCustomPostTypes'),
+            'detectPages' => CoreOptions::get('detectPages'),
+            'detectPosts' => CoreOptions::get('detectPosts'),
+            'detectUploads' => CoreOptions::get('detectUploads'),
+        ];
+
+        $view['postProcessingOptions'] = [
+               'deploymentURL' => CoreOptions::get('deploymentURL'),
+        ];
+
+        $view['deploymentOptions'] = [
+               'completionEmail' => CoreOptions::get('completionEmail'),
+               'completionWebhook' => CoreOptions::get('completionWebhook'),
+               'completionWebhookMethod' => CoreOptions::get('completionWebhookMethod'),
+        ];
 
         $view = apply_filters( 'wp2static_render_options_page_vars', $view );
 
@@ -571,13 +565,7 @@ class Controller {
     }
 
     public function reset_default_settings() : void {
-        if ( ! delete_option( 'wp2static-options' ) ) {
-            $err = 'Couldn\'t reset plugin to default settings';
-            WsLog::l( $err );
-        }
-
-        $this->options = new Options( 'wp2static-options' );
-        $this->setDefaultOptions();
+        CoreOptions::seedOptions();
     }
 
     public function post_process_archive_dir() : void {

@@ -13,38 +13,73 @@
     </thead>
     <tbody>
 
-<?php
-
-function formatDetectionOption( $string ) {
-    $pieces = preg_split( '/(?=[A-Z])/', $string );
-    $word = implode( " ", $pieces );
-
-    return ucwords( str_replace( "detect", "", $word ) );
-}
-
-?>
-
-
-<?php foreach ($view['detectionOptions'] as $detectionOption): ?>
-
     <tr>
         <td>
             <label
-                for="<?php echo $detectionOption['Option name']; ?>"
-            ><?php echo formatDetectionOption( $detectionOption['Option name'] ); ?></label>
+                for="<?php echo $view['detectionOptions']['detectCustomPostTypes']->name; ?>"
+            ><?php echo $view['detectionOptions']['detectCustomPostTypes']->label; ?></label>
         </td>
         <td>
             <input
-                id="<?php echo $detectionOption['Option name']; ?>"
-                name="<?php echo $detectionOption['Option name']; ?>"
+                id="<?php echo $view['detectionOptions']['detectCustomPostTypes']->name; ?>"
+                name="<?php echo $view['detectionOptions']['detectCustomPostTypes']->name; ?>"
                 value="1"
                 type="checkbox"
-                <?php echo $detectionOption['Value'] === 1 ? 'checked' : ''; ?>
+                <?php echo (int) $view['detectionOptions']['detectCustomPostTypes']->value === 1 ? 'checked' : ''; ?>
             />
         </td>
     </tr>
 
-<?php endforeach; ?>
+    <tr>
+        <td>
+            <label
+                for="<?php echo $view['detectionOptions']['detectPages']->name; ?>"
+            ><?php echo $view['detectionOptions']['detectPages']->label; ?></label>
+        </td>
+        <td>
+            <input
+                id="<?php echo $view['detectionOptions']['detectPages']->name; ?>"
+                name="<?php echo $view['detectionOptions']['detectPages']->name; ?>"
+                value="1"
+                type="checkbox"
+                <?php echo (int) $view['detectionOptions']['detectPages']->value === 1 ? 'checked' : ''; ?>
+            />
+        </td>
+    </tr>
+
+    <tr>
+        <td>
+            <label
+                for="<?php echo $view['detectionOptions']['detectPosts']->name; ?>"
+            ><?php echo $view['detectionOptions']['detectPosts']->label; ?></label>
+        </td>
+        <td>
+            <input
+                id="<?php echo $view['detectionOptions']['detectPosts']->name; ?>"
+                name="<?php echo $view['detectionOptions']['detectPosts']->name; ?>"
+                value="1"
+                type="checkbox"
+                <?php echo (int) $view['detectionOptions']['detectPosts']->value === 1 ? 'checked' : ''; ?>
+            />
+        </td>
+    </tr>
+
+    <tr>
+        <td>
+            <label
+                for="<?php echo $view['detectionOptions']['detectUploads']->name; ?>"
+            ><?php echo $view['detectionOptions']['detectUploads']->label; ?></label>
+        </td>
+        <td>
+            <input
+                id="<?php echo $view['detectionOptions']['detectUploads']->name; ?>"
+                name="<?php echo $view['detectionOptions']['detectUploads']->name; ?>"
+                value="1"
+                type="checkbox"
+                <?php echo (int) $view['detectionOptions']['detectUploads']->value === 1 ? 'checked' : ''; ?>
+            />
+        </td>
+    </tr>
 
     </tbody>
 </table>

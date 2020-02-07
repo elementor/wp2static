@@ -11,10 +11,24 @@ class CoreOptions {
 
     private static $table_name = 'wp2static_core_options';
 
+    public static function init() : void {
+        self::createTable();
+
+        global $wpdb;
+
+        // check for required options, seed if non-existant
+        $detectPosts = self::get('detectPosts');
+
+        if ( ! isset( $detectPosts ) ) {
+            error_log('detectPosts not found, seeding coreOptions');
+            self::seedOptions();
+        }
+    }
+
     public static function createTable() : void {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . self::table_name;
+        $table_name = $wpdb->prefix . self::$table_name;
 
         $charset_collate = $wpdb->get_charset_collate();
 
@@ -27,8 +41,7 @@ class CoreOptions {
             PRIMARY KEY  (id)
         ) $charset_collate;";
 
-        // TODO: update all other refs to upgrade.php to use SiteInfo for safety
-        require_once SiteInfo::getPath('includes') . 'upgrade.php';
+        require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         dbDelta( $sql );
     }
 
@@ -39,7 +52,7 @@ class CoreOptions {
     public static function seedOptions() : void {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . self::table_name;
+        $table_name = $wpdb->prefix . self::$table_name;
 
         $queries = [];
 
@@ -91,14 +104,14 @@ class CoreOptions {
         $queries[] = $wpdb->prepare(
             $query_string,
             'includeDiscoveredAssets',
-            '',
+            '1',
             'Include Discovered Assets',
             'Include URLs discovered during crawling.');
 
         $queries[] = $wpdb->prepare(
             $query_string,
             'deploymentURL',
-            '',
+            'https://example.com',
             'Deployment URL',
             'URL your static site will be hosted at.');
 
@@ -118,9 +131,9 @@ class CoreOptions {
 
         $queries[] = $wpdb->prepare(
             $query_string,
-            'completionWebhookType',
+            'completionWebhookMethod',
             'POST',
-            'Completion Webhook Type',
+            'Completion Webhook Method',
             'How to send completion webhook payload (GET|POST).');
 
         foreach ( $queries as $query ) {
@@ -137,7 +150,7 @@ class CoreOptions {
     public static function getValue( string $name ) : string {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . self::table_name;
+        $table_name = $wpdb->prefix . self::$table_name;
 
         $sql = $wpdb->prepare(
             "SELECT value FROM $table_name WHERE" . ' name = %s LIMIT 1',
@@ -162,15 +175,15 @@ class CoreOptions {
     public static function get( string $name ) {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . self::table_name;
+        $table_name = $wpdb->prefix . self::$table_name;
 
         $sql = $wpdb->prepare(
-            "SELECT value, label, description FROM $table_name WHERE" . ' name = %s LIMIT 1',
+            "SELECT name, value, label, description FROM $table_name WHERE" . ' name = %s LIMIT 1',
             $name);
 
-        $option = $wpdb->get_var( $sql );
+        $option = $wpdb->get_results( $sql );
 
-        return $option;
+        return $option[0];
     }
 
     /**
@@ -181,7 +194,7 @@ class CoreOptions {
     public static function getAll( string $name ) {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . self::table_name;
+        $table_name = $wpdb->prefix . self::$table_name;
 
         $sql = $wpdb->prepare(
             "SELECT value, label, description FROM $table_name WHERE" . ' name = %s LIMIT 1',

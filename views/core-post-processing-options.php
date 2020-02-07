@@ -5,15 +5,15 @@
         <tr>
             <td style="width:50%;">
                 <label
-                    for="deploymentURL"
-                >Deployment URL</label>
+                    for="<?php echo $view['postProcessingOptions']['deploymentURL']->name; ?>"
+                ><?php echo $view['postProcessingOptions']['deploymentURL']->label; ?></label>
             </td>
             <td>
                 <input
-                    style="width:100%;"
-                    id="deploymentURL"
-                    name="deploymentURL"
-                    value="<?php echo $view['deploymentURL'] !== '' ? $view['deploymentURL'] : ''; ?>"
+                    id="<?php echo $view['postProcessingOptions']['deploymentURL']->name; ?>"
+                    name="<?php echo $view['postProcessingOptions']['deploymentURL']->name; ?>"
+                    type="text"
+                    value="<?php echo $view['postProcessingOptions']['deploymentURL']->value !== '' ? $view['postProcessingOptions']['deploymentURL']->value : ''; ?>"
                 />
             </td>
         </tr>

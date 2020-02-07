@@ -2,22 +2,55 @@
 
 <table class="widefat striped">
     <tbody>
-        <?php foreach ($view['crawlingOptions'] as $crawlingOption): ?>
+
         <tr>
             <td style="width:50%;">
                 <label
-                    for="<?php echo $crawlingOption['Option name']; ?>"
-                ><?php echo formatDetectionOption( $crawlingOption['Option name'] ); ?></label>
+                    for="<?php echo $view['crawlingOptions']['basicAuthUser']->name; ?>"
+                ><?php echo $view['crawlingOptions']['basicAuthUser']->label; ?></label>
             </td>
             <td>
                 <input
-                    style="width:100%;"
-                    id="<?php echo $crawlingOption['Option name']; ?>"
-                    name="<?php echo $crawlingOption['Option name']; ?>"
-                    value="<?php echo $crawlingOption['Value'] !== '' ? $crawlingOption['Value'] : ''; ?>"
+                    id="<?php echo $view['crawlingOptions']['basicAuthUser']->name; ?>"
+                    name="<?php echo $view['crawlingOptions']['basicAuthUser']->name; ?>"
+                    type="text"
+                    value="<?php echo $view['crawlingOptions']['basicAuthUser']->value !== '' ? $view['crawlingOptions']['basicAuthUser']->value : ''; ?>"
                 />
             </td>
         </tr>
-        <?php endforeach; ?>
+
+        <tr>
+            <td style="width:50%;">
+                <label
+                    for="<?php echo $view['crawlingOptions']['basicAuthPassword']->name; ?>"
+                ><?php echo $view['crawlingOptions']['basicAuthPassword']->label; ?></label>
+            </td>
+            <td>
+                <input
+                    id="<?php echo $view['crawlingOptions']['basicAuthPassword']->name; ?>"
+                    name="<?php echo $view['crawlingOptions']['basicAuthPassword']->name; ?>"
+                    type="password"
+                    value="<?php echo $view['crawlingOptions']['basicAuthPassword']->value !== '' ? $view['crawlingOptions']['basicAuthPassword']->value : ''; ?>"
+                />
+            </td>
+        </tr>
+
+        <tr>
+            <td style="width:50%;">
+                <label
+                    for="<?php echo $view['crawlingOptions']['includeDiscoveredAssets']->name; ?>"
+                ><?php echo $view['crawlingOptions']['includeDiscoveredAssets']->label; ?></label>
+            </td>
+            <td>
+                <input
+                    id="<?php echo $view['crawlingOptions']['includeDiscoveredAssets']->name; ?>"
+                    name="<?php echo $view['crawlingOptions']['includeDiscoveredAssets']->name; ?>"
+                    value="1"
+                    type="checkbox"
+                    <?php echo (int) $view['crawlingOptions']['includeDiscoveredAssets']->value === 1 ? 'checked' : ''; ?>
+                />
+            </td>
+        </tr>
+
     </tbody>
 </table>
