@@ -204,5 +204,82 @@ class CoreOptions {
 
         return $option;
     }
+
+    /**
+     * Save all options POST'ed via UI
+     *
+     */
+    public static function savePosted() : void {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . self::$table_name;
+
+        $wpdb->update(
+            $table_name,
+            ['value' => esc_url_raw($_POST['deploymentURL'])],
+            ['name' => 'deploymentURL']
+        );
+
+        $wpdb->update(
+            $table_name,
+            ['value' => (int) $_POST['detectCustomPostTypes']],
+            ['name' => 'detectCustomPostTypes']
+        );
+
+        $wpdb->update(
+            $table_name,
+            ['value' => (int) $_POST['detectPosts']],
+            ['name' => 'detectPosts']
+        );
+
+        $wpdb->update(
+            $table_name,
+            ['value' => (int) $_POST['detectPages']],
+            ['name' => 'detectPages']
+        );
+
+        $wpdb->update(
+            $table_name,
+            ['value' => (int) $_POST['detectUploads']],
+            ['name' => 'detectUploads']
+        );
+
+        $wpdb->update(
+            $table_name,
+            ['value' => sanitize_text_field($_POST['basicAuthUser'])],
+            ['name' => 'basicAuthUser']
+        );
+
+        // TODO: encrypt/decrypt basic auth pwd
+        $wpdb->update(
+            $table_name,
+            ['value' => sanitize_text_field($_POST['basicAuthPassword'])],
+            ['name' => 'basicAuthPassword']
+        );
+
+        $wpdb->update(
+            $table_name,
+            ['value' => (int) $_POST['includeDiscoveredAssets']],
+            ['name' => 'includeDiscoveredAssets']
+        );
+
+        $wpdb->update(
+            $table_name,
+            ['value' => sanitize_email($_POST['completionEmail'])],
+            ['name' => 'completionEmail']
+        );
+
+        $wpdb->update(
+            $table_name,
+            ['value' => esc_url_raw($_POST['completionWebhook'])],
+            ['name' => 'completionWebhook']
+        );
+
+        $wpdb->update(
+            $table_name,
+            ['value' => sanitize_text_field($_POST['completionWebhookMethod'])],
+            ['name' => 'completionWebhookMethod']
+        );
+    }
 }
 

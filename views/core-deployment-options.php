@@ -11,6 +11,7 @@
             <td>
                 <input
                     style="width:100%;"
+                    type="email"
                     id="<?php echo $view['deploymentOptions']['completionEmail']->name; ?>"
                     name="<?php echo $view['deploymentOptions']['completionEmail']->name; ?>"
                     value="<?php echo $view['deploymentOptions']['completionEmail']->value !== '' ? $view['deploymentOptions']['completionEmail']->value : ''; ?>"
@@ -26,6 +27,7 @@
             <td>
                 <input
                     style="width:80%;"
+                    type="url"
                     id="completionWebhook"
                     name="completionWebhook"
                     value="<?php echo $view['deploymentOptions']['completionWebhook']->value !== '' ? $view['deploymentOptions']['completionWebhook']->value : ''; ?>"
@@ -37,11 +39,11 @@
                     >
                     <option
                         value="POST"
-                        <?php echo $view['deploymentOptions']['completionWebhookMethod']->value === 'POST' ? 'checked' : ''; ?>
+                        <?php echo $view['deploymentOptions']['completionWebhookMethod']->value === 'POST' ? 'selected' : ''; ?>
                         >POST</option>
                     <option
                         value="GET"
-                        <?php echo $view['deploymentOptions']['completionWebhookMethod']->value === 'GET' ? 'checked' : ''; ?>
+                        <?php echo $view['deploymentOptions']['completionWebhookMethod']->value === 'GET' ? 'selected' : ''; ?>
                         >GET</option>
                 </select>
             </td>

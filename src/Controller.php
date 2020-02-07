@@ -595,9 +595,8 @@ class Controller {
     }
 
     public function wp2static_ui_save_options() : void {
-        error_log('handling options page saving');
+        CoreOptions::savePosted();
 
-        error_log(print_r($_POST, true));
         do_action('wp2static_addon_ui_save_options');
 
         check_admin_referer( self::HOOK . '-ui-options' );
