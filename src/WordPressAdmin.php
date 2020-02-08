@@ -42,6 +42,12 @@ class WordPressAdmin {
             0);
 
         add_action(
+            'admin_post_wp2static_manually_enqueue_jobs',
+            [ 'WP2Static\Controller', 'wp2static_manually_enqueue_jobs' ],
+            10,
+            0);
+
+        add_action(
             'admin_notices',
             [ 'WP2Static\Controller', 'wp2static_ui_admin_notices' ]);
 

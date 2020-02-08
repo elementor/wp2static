@@ -144,8 +144,22 @@
 
 <p><i>If WP-Cron is not expected to be triggered by site visitors, you can also call `wp-cron.php` directly, run the WP-CLI command `wp wp2static process_job_queue` or call the hook `wp2static_process_queue` from within your own theme or plugin.</i></p>
 
-<button class="button btn-primary">Save Job Automation Settings</button>
-<button class="button">Manually Enqueue Jobs Now</button>
+    <button class="button btn-primary">Save Job Automation Settings</button>
+    <?php wp_nonce_field( $view['nonce_action'] ); ?>
+    <input name="action" type="hidden" value="wp2static_ui_save_job_options" />
+</form>
+
+<br>
+<form
+    name="wp2static-manually-enqueue-jobs"
+    method="POST"
+    action="<?php echo esc_url( admin_url('admin-post.php') ); ?>">
+
+    <?php wp_nonce_field( 'wp2static-manually-enqueue-jobs' ); ?>
+    <input name="action" type="hidden" value="wp2static_manually_enqueue_jobs" />
+
+    <button class="button">Manually Enqueue Jobs Now</button>
+</form>
 
 <hr>
 
@@ -179,6 +193,3 @@
     </tbody>
 </table>
 
-    <?php wp_nonce_field( $view['nonce_action'] ); ?>
-    <input name="action" type="hidden" value="wp2static_ui_save_job_options" />
-</form>

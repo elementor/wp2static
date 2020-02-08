@@ -628,11 +628,32 @@ class Controller {
         exit;
     }
 
+    public function wp2static_manually_enqueue_jobs() : void {
+        check_admin_referer( self::HOOK . '-manually-enqueue-jobs' );
+
+        // TODO: consider using a transient based notifications system to
+        // persist through wp_redirect calls
+        // ie, https://github.com/wpscholar/wp-transient-admin-notices/blob/master/TransientAdminNotices.php
+
+        // check each of these in order we want to enqueue
+        $job_types = [
+            'autoJobQueueDetection' => 'detect',
+            'autoJobQueueCrawling' => 'crawl',
+            'autoJobQueuePostProcessing' => 'post_process',
+            'autoJobQueueDeployment' => 'deploy',
+        ];
+
+        foreach ( $job_types as $key => $job_type ) {
+            if ( (int) CoreOptions::getValue( $key ) === 1 ) {
+                JobQueue::addJob( $job_type );
+            }
+        }
+
+        wp_redirect(admin_url('admin.php?page=wp2static-jobs'));
+        exit;
+    }
+
     public function wp2static_ui_admin_notices() : void {
-        error_log('add admin notices');
-
-        // types notice-erorr, notice-warning, notice-info, notice-success
-
         $notices = [
             'errors' => [],
             'successes' => [],
@@ -641,8 +662,6 @@ class Controller {
         ];
 
         $notices = apply_filters( 'wp2static_add_ui_admin_notices', $notices );
-
-        error_log(print_r($notices, true));
 
         foreach($notices['errors'] as $errors) {
             echo '<div class="notice notice-error">';

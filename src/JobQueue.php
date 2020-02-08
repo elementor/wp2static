@@ -33,18 +33,6 @@ class JobQueue {
     public static function addJob( $job_type ) : void {
         global $wpdb;
 
-        $valid_job_types = [
-            'detect',
-            'crawl',
-            'post_process',
-            'deploy',
-        ];
-
-        if ( ! isset($valid_job_types[$job_type]) ) {
-            error_log('Tried to add unsupported Job to queue');
-            return;
-        }
-
         $table_name = $wpdb->prefix . 'wp2static_jobs';
 
         // TODO: squash any of same job_types with 'waiting' status
