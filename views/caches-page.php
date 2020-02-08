@@ -1,12 +1,11 @@
-<h3>Cache Management</h3>
 
-<hr>
+<p><i><a href="<?php echo admin_url('admin.php?page=wp2static-caches'); ?>">Refresh page</a> to see latest status</i><p>
 
-<table style="width:100%;text-align:center;">
+<table class="widefat striped">
     <thead>
         <tr>
-            <th>Type</th>
-            <th>Statistics <i>(refresh page to update)</i></th> 
+            <th>Cache Type</th>
+            <th>Statistics</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -16,7 +15,8 @@
             <td><?php echo $view['crawlQueueTotalURLs']; ?> URLs in database</td>
             <td>
                 <a href="#"><button class="button btn-danger">Show URLs</button></a>
-                <a href="#"><button class="button btn-danger">Delete Detected URLs</button></a>
+                <a href="#"><button class="button btn-danger">Download List</button></a>
+                <a href="#"><button class="button btn-danger">Clear Crawl Queue</button></a>
             </td>
         </tr>
         <tr>
@@ -24,22 +24,34 @@
             <td><?php echo $view['crawlCacheTotalURLs']; ?> URLs in database</td>
             <td>
                 <a href="#"><button class="button btn-danger">Show URLs</button></a>
-                <a href="#"><button class="button btn-danger">Delete Crawl Cache</button></a>
+                <a href="#"><button class="button btn-danger">Download List</button></a>
+                <a href="#"><button class="button btn-danger">Clear Crawl Cache</button></a>
             </td>
         </tr>
         <tr>
             <td>Generated Static Site</td>
-            <td><?php echo $view['exportedSiteFileCount']; ?> files, using <?php echo $view['exportedSiteDiskSpace']; ?><br>in path /var/www/html/wp-content/uploads/wp2static-exported-site</td>
+            <td><?php echo $view['exportedSiteFileCount']; ?> files, using <?php echo $view['exportedSiteDiskSpace']; ?>
+                <br>
+
+                <a href="file://<?php echo $view['uploads_path']; ?>wp2static-exported-site" />Path</a>
+
+            </td>
             <td>
                 <a href="#"><button class="button btn-danger">Download ZIP</button></a>
+                <a href="#"><button class="button btn-danger">Download List</button></a>
                 <a href="#"><button class="button btn-danger">Delete Files</button></a>
             </td>
         </tr>
         <tr>
             <td>Post-processed Static Site</td>
-            <td><?php echo $view['processedSiteFileCount']; ?> files, using <?php echo $view['processedSiteDiskSpace']; ?><br> in path /var/www/html/wp-content/uploads/wp2static-processed-site</td>
+            <td><?php echo $view['processedSiteFileCount']; ?> files, using <?php echo $view['processedSiteDiskSpace']; ?>
+                <br>
+
+                <a href="file://<?php echo $view['uploads_path']; ?>wp2static-processed-site" />Path</a>
+            </td>
             <td>
                 <a href="#"><button class="button btn-danger">Download ZIP</button></a>
+                <a href="#"><button class="button btn-danger">Download List</button></a>
                 <a href="#"><button class="button btn-danger">Delete Files</button></a>
             </td>
         </tr>
@@ -48,43 +60,10 @@
             <td><?php echo $view['deployCacheTotalURLs']; ?> URLs in database</td>
             <td>
                 <a href="#"><button class="button btn-danger">Show URLs</button></a>
-                <a href="#"><button class="button btn-danger">Delete Deploy Cache</button></a>
+                <a href="#"><button class="button btn-danger">Download List</button></a>
+                <a href="#"><button class="button btn-danger">Clear Deploy Cache</button></a>
             </td>
         </tr>
     </tbody>
 </table>
 
-<hr>
-
-<h3>Cache Options</h3>
-
-<h4>Crawl Caching</h4>
-
-<p>The following actions will trigger deletion of URLs from the Crawl Cache:<p>
-
-<table style="width:100%;">
-    <thead>
-        <tr>
-            <th>Entity</th>
-            <th>Actions</th>
-            <th>Cache Deletion</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>Post/Page/Custom Post</td>
-            <td>Adding/updating/deleting</td>
-            <td>that post/page and related taxonomy URLs</td>
-        </tr>
-        <tr>
-            <td>Theme</td>
-            <td>Switching active</td>
-            <td>deletes all Crawl Cache</td>
-        </tr>
-        <tr>
-            <td>Plugin</td>
-            <td>activation/deactivation</td>
-            <td>deletes all Crawl Cache</td>
-        </tr>
-    </tbody>
-</table>

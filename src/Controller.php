@@ -514,6 +514,7 @@ class Controller {
 
     public function renderCachesPage() : void {
         $view = [];
+        $view['uploads_path'] = SiteInfo::getPath('uploads');
 
         // performance check vs map 
         $diskSpace = 0;
