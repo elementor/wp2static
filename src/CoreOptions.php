@@ -379,11 +379,13 @@ class CoreOptions {
                     ['name' => 'queueJobOnPostDelete']
                 );
 
+                $processQueueInterval = (int) $_POST['processQueueInterval'];
                 $wpdb->update(
                     $table_name,
-                    ['value' => (int) $_POST['processQueueInterval']],
+                    ['value' => $processQueueInterval],
                     ['name' => 'processQueueInterval']
                 );
+                WPCron::setRecurringEvent($processQueueInterval);
 
                 $wpdb->update(
                     $table_name,
@@ -408,27 +410,6 @@ class CoreOptions {
                     ['value' => (int) $_POST['autoJobQueueDeployment']],
                     ['name' => 'autoJobQueueDeployment']
                 );
-
-                // TODO: logic to update the cron schedule
-
-                // if processQueueInterval 0
-                    // remove scheduled task
-                // else
-                    // set scheduled task to one of our custom schedules 
-                    // (see: wp2static_custom_cron_schedules)
-
-                // TODO: the unschedule task should also be called in plugin deactivation
-
-                if ( ! wp_next_scheduled( 'wp2static_process_queue' ) ) {
-                    error_log('scheduling task');
-                    // TODO: add custom schedules for n minutes
-                    // see: https://developer.wordpress.org/reference/hooks/cron_schedules/ https://developer.wordpress.org/reference/functions/wp_get_schedules/
-
-
-                    $result = wp_schedule_event( time(), '1min', 'wp2static_process_queue' );
-
-                    error_log(PHP_EOL . 'scheduled task? ' . $result . PHP_EOL);
-                }
 
 
                 break;

@@ -56,20 +56,6 @@ class Controller {
         return $plugin_instance;
     }
 
-    public static function wp2static_custom_cron_schedules( $schedules ) {
-        $schedules[ '1min' ] = [
-            'interval' => 1 * MINUTE_IN_SECONDS,
-            'display' => 'Every minute',
-        ];
-
-        $schedules[ '5mins' ] = [
-            'interval' => 5 * MINUTE_IN_SECONDS,
-            'display' => 'Every 5 minutes',
-        ];
-
-        return $schedules;
-    }
-
     /**
      * Adjusts position of dashboard menu icons
      *
@@ -92,6 +78,21 @@ class Controller {
         );
 
         return $order;
+    }
+
+    public static function uninstall() : void {
+        error_log('uninstalled for single site');
+
+        WPCron::clearRecurringEvent();
+
+        // TODO: test with built zip in clean WP install 
+        // CoreOptions::deleteTable();
+        // CrawlCache::deleteTable();
+        // CrawlQueue::deleteTable();
+        // ExportLog::deleteTable();
+        // DeployQueue::deleteTable();
+        // DeployCache::deleteTable();
+        // JobQueue::deleteTable();
     }
 
     public static function activate_for_single_site() : void {
