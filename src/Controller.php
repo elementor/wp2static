@@ -95,8 +95,39 @@ class Controller {
         // JobQueue::deleteTable();
     }
 
+    public static function deactivate_for_single_site() : void {
+        error_log('deactivated for single site');
+
+        WPCron::clearRecurringEvent();
+    }
+
+    public static function deactivate( bool $network_wide = null ) : void {
+        if ( $network_wide ) {
+            global $wpdb;
+
+            $query = 'SELECT blog_id FROM %s WHERE site_id = %d;';
+
+            $site_ids = $wpdb->get_col(
+                sprintf(
+                    $query,
+                    $wpdb->blogs,
+                    $wpdb->siteid
+                )
+            );
+
+            foreach ( $site_ids as $site_id ) {
+                switch_to_blog( $site_id );
+                self::deactivate_for_single_site();
+            }
+
+            restore_current_blog();
+        } else {
+            self::deactivate_for_single_site();
+        }
+    }
+
     public static function activate_for_single_site() : void {
-        error_log('activated, does init fire and seed if needed?');
+        error_log('activated for single site');
     }
 
     public static function activate( bool $network_wide = null ) : void {

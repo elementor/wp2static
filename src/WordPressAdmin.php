@@ -34,6 +34,11 @@ class WordPressAdmin {
             [ 'WP2Static\Controller', 'uninstall' ]
         );
 
+        register_deactivation_hook(
+            $bootstrap_file,
+            [ 'WP2Static\Controller', 'deactivate' ]
+        );
+
         add_filter(
             'cron_schedules',
             [ 'WP2Static\WPCron', 'wp2static_custom_cron_schedules' ]
