@@ -91,9 +91,17 @@ class WordPressAdmin {
             );
         }
 
-        if ( ExportSettings::get('redeployOnPostUpdates') ) {
+        if ( CoreOptions::getValue('queueJobOnPostSave') ) {
             add_action(
                 'save_post',
+                [ 'WP2Static\Controller', 'wp2static_headless' ],
+                0
+            );
+        }
+
+        if ( CoreOptions::getValue('queueJobOnPostDeletion') ) {
+            add_action(
+                'delete_post',
                 [ 'WP2Static\Controller', 'wp2static_headless' ],
                 0
             );

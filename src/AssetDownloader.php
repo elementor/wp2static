@@ -27,9 +27,9 @@ class AssetDownloader {
         // faster skip cached files without querying DB
 
         // check if supported filetype for crawling
-        if ( isset( ExportSettings::get('crawlable_filetypes')[ $extension ] ) ) {
+        if ( isset( CoreOptions::getValue('crawlable_filetypes')[ $extension ] ) ) {
             // skip if in Crawl Cache already
-            if ( ! ExportSettings::get('dontUseCrawlCaching' ) ) {
+            if ( ! CoreOptions::getValue('dontUseCrawlCaching' ) ) {
                 if ( CrawlCache::getUrl( $url ) ) {
                     return;
                 }
@@ -48,20 +48,20 @@ class AssetDownloader {
 
             $curl_options = [];
 
-            if ( ExportSettings::get( 'crawlPort') ) {
+            if ( CoreOptions::getValue( 'crawlPort') ) {
                 $curl_options[ CURLOPT_PORT ] =
-                    ExportSettings::get('crawlPort');
+                    CoreOptions::getValue('crawlPort');
             }
 
-            if ( ExportSettings::get( 'crawlUserAgent' ) ) {
+            if ( CoreOptions::getValue( 'crawlUserAgent' ) ) {
                 $curl_options[ CURLOPT_USERAGENT ] =
-                    ExportSettings::get('crawlUserAgent');
+                    CoreOptions::getValue('crawlUserAgent');
             }
 
-            if ( ExportSettings::get( 'useBasicAuth' ) ) {
+            if ( CoreOptions::getValue( 'useBasicAuth' ) ) {
                 $curl_options[ CURLOPT_USERPWD ] =
-                    ExportSettings::get( 'basicAuthUser' ) . ':' .
-                    ExportSettings::get( 'basicAuthPassword' );
+                    CoreOptions::getValue( 'basicAuthUser' ) . ':' .
+                    CoreOptions::getValue( 'basicAuthPassword' );
             }
 
             $request = new Request();

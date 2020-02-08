@@ -389,8 +389,6 @@ class Controller {
             __DIR__ . '/../views/core-deployment-options.php',
         ];
 
-        $plugin = self::getInstance();
-
         $view['crawlingOptions'] = [
                'basicAuthUser' => CoreOptions::get('basicAuthUser'),
                'basicAuthPassword' => CoreOptions::get('basicAuthPassword'),
@@ -431,6 +429,7 @@ class Controller {
         //     JSON_FORCE_OBJECT | JSON_UNESCAPED_SLASHES
         // );
 
+        // TODO: change to CoreOptions
         $view['coreOptions'] = $plugin->options->wp2static_options;
 
         // TODO: move site info to diagnostics
@@ -449,6 +448,18 @@ class Controller {
     public function renderJobsPage() : void {
         $view = [];
         $view['jobs'] = JobQueue::getJobs();
+
+        $view['jobOptions'] = [
+               'queueJobOnPostSave' => CoreOptions::get('queueJobOnPostSave'),
+               'queueJobOnPostDelete' => CoreOptions::get('queueJobOnPostDelete'),
+               'processQueueInterval' => CoreOptions::get('processQueueInterval'),
+               'autoJobQueueDetection' => CoreOptions::get('autoJobQueueDetection'),
+               'autoJobQueueCrawling' => CoreOptions::get('autoJobQueueCrawling'),
+               'autoJobQueuePostProcessing' => CoreOptions::get('autoJobQueuePostProcessing'),
+               'autoJobQueueDeployment' => CoreOptions::get('autoJobQueueDeployment'),
+        ];
+
+        $view = apply_filters( 'wp2static_render_jobs_page_vars', $view );
 
         require_once WP2STATIC_PATH . 'views/jobs-page.php';
     }

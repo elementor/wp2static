@@ -221,59 +221,59 @@ class FilesHelper {
          - sitemaps
 
         */
-        if ( ExportSettings::get('detectAttachments') ) {
+        if ( CoreOptions::getValue('detectAttachments') ) {
             $arrays_to_merge[] = DetectAttachmentURLs::detect();
         }
 
-        if ( ExportSettings::get('detectPosts') ) {
+        if ( CoreOptions::getValue('detectPosts') ) {
             $permalink_structure = get_option( 'permalink_structure' );
             $arrays_to_merge[] = DetectPostURLs::detect( $permalink_structure );
         }
 
-        if ( ExportSettings::get('detectPages') ) {
+        if ( CoreOptions::getValue('detectPages') ) {
             $arrays_to_merge[] = DetectPageURLs::detect();
         }
 
-        if ( ExportSettings::get('detectCustomPostTypes') ) {
+        if ( CoreOptions::getValue('detectCustomPostTypes') ) {
             $arrays_to_merge[] = DetectCustomPostTypeURLs::detect();
         }
 
-        if ( ExportSettings::get('detectUploads') ) {
+        if ( CoreOptions::getValue('detectUploads') ) {
             $arrays_to_merge[] =
                 self::getListOfLocalFilesByDir( $uploads_path );
         }
 
-        if ( ExportSettings::get('detectParentTheme') ) {
+        if ( CoreOptions::getValue('detectParentTheme') ) {
             $arrays_to_merge[] = DetectThemeAssets::detect( 'parent' );
         }
 
-        if ( ExportSettings::get('detectChildTheme') ) {
+        if ( CoreOptions::getValue('detectChildTheme') ) {
             $arrays_to_merge[] = DetectThemeAssets::detect( 'child' );
         }
 
-        if ( ExportSettings::get('detectPluginAssets') ) {
+        if ( CoreOptions::getValue('detectPluginAssets') ) {
             $arrays_to_merge[] = DetectPluginAssets::detect();
         }
 
-        if ( ExportSettings::get('detectWPIncludesAssets') ) {
+        if ( CoreOptions::getValue('detectWPIncludesAssets') ) {
             $arrays_to_merge[] = DetectWPIncludesAssets::detect();
         }
 
-        if ( ExportSettings::get('detectVendorCacheDirs') ) {
+        if ( CoreOptions::getValue('detectVendorCacheDirs') ) {
             $arrays_to_merge[] =
                 DetectVendorFiles::detect( SiteInfo::getURL( 'site' ) );
         }
 
-        if ( ExportSettings::get('detectPostPagination') ) {
+        if ( CoreOptions::getValue('detectPostPagination') ) {
             $arrays_to_merge[] = DetectPostsPaginationURLs::detect();
         }
 
-        if ( ExportSettings::get('detectArchives') ) {
+        if ( CoreOptions::getValue('detectArchives') ) {
             $arrays_to_merge[] =
                 DetectArchiveURLs::detect( SiteInfo::getUrl( 'site' ) );
         }
 
-        if ( ExportSettings::get('detectCategoryPagination') ) {
+        if ( CoreOptions::getValue('detectCategoryPagination') ) {
             $arrays_to_merge[] =
                 DetectCategoryPaginationURLs::detect(
                     SiteInfo::getUrl( 'site' )

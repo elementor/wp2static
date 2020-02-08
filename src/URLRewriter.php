@@ -109,7 +109,7 @@ class URLRewriter {
         $query_string_remover = new RemoveQueryStringFromInternalLink();
         $url = $query_string_remover->removeQueryStringFromInternalLink( $url );
 
-        if ( ExportSettings::get( 'includeDiscoveredAssets' ) ) {
+        if ( CoreOptions::getValue( 'includeDiscoveredAssets' ) ) {
             // check url has extension at all
             $extension = pathinfo( $url, PATHINFO_EXTENSION );
 
@@ -126,8 +126,8 @@ class URLRewriter {
 
         // after normalizing, we need to rewrite to Destination URL
         $url = str_replace(
-            ExportSettings::get('rewrite_rules')['site_url_patterns'],
-            ExportSettings::get('rewrite_rules')['destination_url_patterns'],
+            CoreOptions::getValue('rewrite_rules')['site_url_patterns'],
+            CoreOptions::getValue('rewrite_rules')['destination_url_patterns'],
             $url
         );
 

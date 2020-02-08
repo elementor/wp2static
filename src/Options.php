@@ -49,7 +49,7 @@ class Options {
         'deployBatchSize',
         'delayBetweenAPICalls', // move to deployer addons
         // ## 5 ## MOVE To new JobsOptions
-        'redeployOnPostUpdates', // extend with more options
+        'queueJobOnPostSave', // extend with more options
     ];
 
     public $whitelisted_keys = [
@@ -94,7 +94,7 @@ class Options {
         'deployBatchSize',
         'delayBetweenAPICalls', // move to deployer addons
         // ## 5 ## MOVE To new JobsOptions
-        'redeployOnPostUpdates', // extend with more options
+        'queueJobOnPostSave', // extend with more options
     ];
 
     public function __construct( string $option_key ) {

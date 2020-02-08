@@ -72,20 +72,20 @@ class SiteCrawler {
 
         $this->curl_options = [];
 
-        if ( ExportSettings::get( 'crawlPort' ) ) {
+        if ( CoreOptions::getValue( 'crawlPort' ) ) {
             $this->curl_options[ CURLOPT_PORT ] =
-                ExportSettings::get( 'crawlPort' );
+                CoreOptions::getValue( 'crawlPort' );
         }
 
-        if ( ExportSettings::get( 'crawlUserAgent' ) ) {
+        if ( CoreOptions::getValue( 'crawlUserAgent' ) ) {
             $this->curl_options[ CURLOPT_USERAGENT ] =
-                ExportSettings::get( 'crawlUserAgent' );
+                CoreOptions::getValue( 'crawlUserAgent' );
         }
 
-        if ( ExportSettings::get( 'useBasicAuth' ) ) {
+        if ( CoreOptions::getValue( 'useBasicAuth' ) ) {
             $this->curl_options[ CURLOPT_USERPWD ] =
-                ExportSettings::get( 'basicAuthUser' ) . ':' .
-                ExportSettings::get( 'basicAuthPassword' );
+                CoreOptions::getValue( 'basicAuthUser' ) . ':' .
+                CoreOptions::getValue( 'basicAuthPassword' );
         }
     }
 
@@ -109,7 +109,7 @@ class SiteCrawler {
         foreach ( $urls_to_crawl as $url ) {
             $page_url = SiteInfo::getUrl( 'site' ) . ltrim( $url, '/' );
 
-            if ( ExportSettings::get( 'dontUseCrawlCaching' ) ) {
+            if ( CoreOptions::getValue( 'dontUseCrawlCaching' ) ) {
                 if ( CrawlCache::getUrl( $url ) ) {
                     continue;
                 }

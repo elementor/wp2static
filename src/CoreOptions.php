@@ -88,12 +88,60 @@ class CoreOptions {
 
         $queries[] = $wpdb->prepare(
             $query_string,
+            'queueJobOnPostSave',
+            '1',
+            'Post save',
+            'Queues a new job every time a Post or Page is saved.');
+
+        $queries[] = $wpdb->prepare(
+            $query_string,
+            'queueJobOnPostDelete',
+            '1',
+            'Post delete',
+            'Queues a new job every time a Post or Page is deleted.');
+
+        $queries[] = $wpdb->prepare(
+            $query_string,
+            'processQueueInterval',
+            '5',
+            'Interval to process queue with WP-Cron',
+            'WP-Cron will attempt to process job queue at this interval (minutes)');
+
+        $queries[] = $wpdb->prepare(
+            $query_string,
+            'autoJobQueueDetection',
+            '1',
+            'Detect URLs',
+            '');
+
+        $queries[] = $wpdb->prepare(
+            $query_string,
+            'autoJobQueueCrawling',
+            '1',
+            'Crawl Site',
+            '');
+
+        $queries[] = $wpdb->prepare(
+            $query_string,
+            'autoJobQueuePostProcessing',
+            '1',
+            'Post-process',
+            '');
+
+        $queries[] = $wpdb->prepare(
+            $query_string,
+            'autoJobQueueDeployment',
+            '1',
+            'Deploy',
+            '');
+
+        $queries[] = $wpdb->prepare(
+            $query_string,
             'basicAuthUser',
             '',
             'Basic Auth User',
             'Username for basic authentication.');
 
-        // TODO: needs to be encrypted
         $queries[] = $wpdb->prepare(
             $query_string,
             'basicAuthPassword',
@@ -159,9 +207,7 @@ class CoreOptions {
         $option_value = $wpdb->get_var( $sql );
 
         if ( ! is_string( $option_value ) ) {
-            $err = 'Failed to retrieve core option value';
-            WsLog::l( $err );
-            throw new WP2StaticException( $err );
+            return '';
         }
 
         return $option_value;
@@ -183,6 +229,12 @@ class CoreOptions {
 
         $option = $wpdb->get_results( $sql );
 
+        // decrypt password fields
+        if ($option[0]->name === 'basicAuthPassword') {
+            $option[0]->value =
+                self::encrypt_decrypt('decrypt', $option[0]->value);
+        }
+
         return $option[0];
     }
 
@@ -203,6 +255,37 @@ class CoreOptions {
         $options = $wpdb->get_results( $sql );
 
         return $option;
+    }
+
+    /*
+     * Naive encypting/decrypting
+     *
+     */
+    public static function encrypt_decrypt($action, $string) {
+        $output = false;
+        $encrypt_method = "AES-256-CBC";
+
+        $secret_key =
+            defined( 'AUTH_KEY' ) ?
+            constant( 'AUTH_KEY' ) :
+            'LC>_cVZv34+W.P&_8d|ejfr]d31h)J?z5n(LB6iY=;P@?5/qzJSyB3qctr,.D$[L';
+
+        $secret_iv =
+            defined( 'AUTH_SALT' ) ?
+            constant( 'AUTH_SALT' ) :
+            'ec64SSHB{8|AA_ThIIlm:PD(Z!qga!/Dwll 4|i.?UkC§NNO}z?{Qr/q.KpH55K9';
+
+        $key = hash('sha256', $secret_key);
+        $variate = substr(hash('sha256', $secret_iv), 0, 16);
+
+        if ( $action == 'encrypt' ) {
+            $output = openssl_encrypt($string, $encrypt_method, $key, 0, $variate);
+            $output = base64_encode($output);
+        } else if( $action == 'decrypt' ) {
+            $output = openssl_decrypt(base64_decode($string), $encrypt_method, $key, 0, $variate);
+        }
+
+        return $output;
     }
 
     /**
@@ -246,6 +329,48 @@ class CoreOptions {
 
         $wpdb->update(
             $table_name,
+            ['value' => (int) $_POST['queueJobOnPostSave']],
+            ['name' => 'queueJobOnPostSave']
+        );
+
+        $wpdb->update(
+            $table_name,
+            ['value' => (int) $_POST['queueJobOnPostDelete']],
+            ['name' => 'queueJobOnPostDelete']
+        );
+
+        $wpdb->update(
+            $table_name,
+            ['value' => (int) $_POST['processQueueInterval']],
+            ['name' => 'processQueueInterval']
+        );
+
+        $wpdb->update(
+            $table_name,
+            ['value' => (int) $_POST['autoJobQueueDetection']],
+            ['name' => 'autoJobQueueDetection']
+        );
+
+        $wpdb->update(
+            $table_name,
+            ['value' => (int) $_POST['autoJobQueueCrawling']],
+            ['name' => 'autoJobQueueCrawling']
+        );
+
+        $wpdb->update(
+            $table_name,
+            ['value' => (int) $_POST['autoJobQueuePostProcessing']],
+            ['name' => 'autoJobQueuePostProcessing']
+        );
+
+        $wpdb->update(
+            $table_name,
+            ['value' => (int) $_POST['autoJobQueueDeployment']],
+            ['name' => 'autoJobQueueDeployment']
+        );
+
+        $wpdb->update(
+            $table_name,
             ['value' => sanitize_text_field($_POST['basicAuthUser'])],
             ['name' => 'basicAuthUser']
         );
@@ -253,7 +378,7 @@ class CoreOptions {
         // TODO: encrypt/decrypt basic auth pwd
         $wpdb->update(
             $table_name,
-            ['value' => sanitize_text_field($_POST['basicAuthPassword'])],
+            ['value' => self::encrypt_decrypt('encrypt', sanitize_text_field($_POST['basicAuthPassword']))],
             ['name' => 'basicAuthPassword']
         );
 

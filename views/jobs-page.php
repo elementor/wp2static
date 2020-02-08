@@ -1,123 +1,148 @@
-<h3>Automate job creation</h3>
-
-<p><i>On these events:</i></p>
-
-<label
-    for=""
-/>Post Update</label>
-
-<input
-    type="checkbox"
-    id="autoJobTriggerPostUpdate"
-    name="autoJobTriggerPostUpdate"
-    value="1"
-/>
-
-<label
-    for=""
-/>Post Update</label>
-
-<input
-    type="checkbox"
-    id="autoJobTriggerPostUpdate"
-    name="autoJobTriggerPostUpdate"
-    value="1"
-/>
-
-<p><i>Schedule these types of jobs:</i></p>
-
-<label
-    for=""
-/>Detection</label>
-
-<input
-    type="checkbox"
-    id="autoJobScheduleDetection"
-    name="autoJobScheduleDetection"
-    value="1"
-/>
-
-<label
-    for=""
-/>Crawling</label>
-
-<input
-    type="checkbox"
-    id="autoJobScheduleCrawling"
-    name="autoJobScheduleCrawling"
-    value="1"
-/>
-
-<label
-    for=""
-/>Post-procesisng</label>
-
-<input
-    type="checkbox"
-    id="autoJobSchedulePostProcessing"
-    name="autoJobSchedulePostProcessing"
-    value="1"
-/>
-
-<label
-    for=""
-/>Deploy</label>
-
-<input
-    type="checkbox"
-    id="autoJobScheduleDeploy"
-    name="autoJobScheduleDeploy"
-    value="1"
-/>
-
-<br>
 <br>
 
-<button class="button btn-primary">Save job automation settings</button>
+<table class="widefat striped">
+    <thead>
+        <tr>
+            <td style="width:33%;">
+                Events to queue new jobs
+            </td>
+            <td>
+                &nbsp;
+            </td>
+            <td>
+                Enabled?
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="width:33%;">
+                <label
+                    for="<?php echo $view['jobOptions']['queueJobOnPostSave']->name; ?>"
+                /><b><?php echo $view['jobOptions']['queueJobOnPostSave']->label; ?></b></label>
+            </td>
+            <td>
+                <?php echo $view['jobOptions']['queueJobOnPostSave']->description; ?>
+            </td>
+            <td>
+                <input
+                    type="checkbox"
+                    id="<?php echo $view['jobOptions']['queueJobOnPostSave']->name; ?>"
+                    name="<?php echo $view['jobOptions']['queueJobOnPostSave']->name; ?>"
+                    value="1"
+                    <?php echo (int) $view['jobOptions']['queueJobOnPostSave']->value === 1 ? 'checked' : ''; ?>
+                />
+            </td>
+        </tr>
+        <tr>
+            <td style="width:33%;">
+                <label
+                    for="<?php echo $view['jobOptions']['queueJobOnPostDelete']->name; ?>"
+                /><b><?php echo $view['jobOptions']['queueJobOnPostDelete']->label; ?></b></label>
+            </td>
+            <td>
+                <?php echo $view['jobOptions']['queueJobOnPostDelete']->description; ?>
+            </td>
+            <td>
+                <input
+                    type="checkbox"
+                    id="<?php echo $view['jobOptions']['queueJobOnPostDelete']->name; ?>"
+                    name="<?php echo $view['jobOptions']['queueJobOnPostDelete']->name; ?>"
+                    value="1"
+                    <?php echo (int) $view['jobOptions']['queueJobOnPostDelete']->value === 1 ? 'checked' : ''; ?>
+                />
+            </td>
+        </tr>
+    </tbody>
+</table>
 
-<hr>
 
+<h4>Jobs that will be added to queue</h4>
 
-<h3>Process jobs queue on schedule</h3>
+<table class="widefat striped">
+    <thead>
+        <tr>
+            <td style="text-align:center;">
+                Detect URLs
+            </td>
+            <td style="text-align:center;">
+                Crawl Site
+            </td>
+            <td style="text-align:center;">
+                Post-process
+            </td>
+            <td style="text-align:center;">
+                Deploy
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr style="text-align:center;">
+            <td>
+                <input
+                    type="checkbox"
+                    id="<?php echo $view['jobOptions']['autoJobQueueDetection']->name; ?>"
+                    name="<?php echo $view['jobOptions']['autoJobQueueDetection']->name; ?>"
+                    value="1"
+                    <?php echo (int) $view['jobOptions']['autoJobQueueDetection']->value === 1 ? 'checked' : ''; ?>
+                />
+            </td>
 
-<p>Use WP-Cron, regular CRON or other method to process WP2Static's job queue.</p>
+            <td>
+                <input
+                    type="checkbox"
+                    id="<?php echo $view['jobOptions']['autoJobQueueCrawling']->name; ?>"
+                    name="<?php echo $view['jobOptions']['autoJobQueueCrawling']->name; ?>"
+                    value="1"
+                    <?php echo (int) $view['jobOptions']['autoJobQueueCrawling']->value === 1 ? 'checked' : ''; ?>
+                />
+            </td>
+
+            <td>
+                <input
+                    type="checkbox"
+                    id="<?php echo $view['jobOptions']['autoJobQueuePostProcessing']->name; ?>"
+                    name="<?php echo $view['jobOptions']['autoJobQueuePostProcessing']->name; ?>"
+                    value="1"
+                    <?php echo (int) $view['jobOptions']['autoJobQueuePostProcessing']->value === 1 ? 'checked' : ''; ?>
+                />
+            </td>
+
+            <td>
+                <input
+                    type="checkbox"
+                    id="<?php echo $view['jobOptions']['autoJobQueueDeployment']->name; ?>"
+                    name="<?php echo $view['jobOptions']['autoJobQueueDeployment']->name; ?>"
+                    value="1"
+                    <?php echo (int) $view['jobOptions']['autoJobQueueDeployment']->value === 1 ? 'checked' : ''; ?>
+                />
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<br>
 
 <label
     for=""
-/>WP-Cron will process job queue every (n) minutes</label>
+/>WP-Cron will attempt to process job queue at this interval (minutes)</label>
 
 <input
     type="number"
     id="processQueueInterval"
     name="processQueueInterval"
-    value="5"
+    min="0"
+    required
+    step="1"
+    value="<?php echo (int) $view['jobOptions']['processQueueInterval']->value; ?>"
 />
 
-<br>
-<br>
+<p><i>If WP-Cron is not expected to be triggered by site visitors, you can also call `wp-cron.php` directly, run the WP-CLI command `wp wp2static process_job_queue` or call the hook `wp2static_process_queue` from within your own theme or plugin.</i></p>
 
-<button class="button btn-primary">Save job automation settings</button>
-
-<hr>
-
-<h3>Manually enqueue new job</h3>
-
-<input name="add_job_detect" id="add_job_detect"  value="1" type="checkbox" />
-<label for="add_job_detect">Detect</label>
-
-<input name="add_job_crawl" id="add_job_crawl"  value="1" type="checkbox" />
-<label for="add_job_crawl">Crawl</label>
-
-<input name="add_job_post_process" id="add_job_post_process"  value="1" type="checkbox" />
-<label for="add_job_post_process">Post process</label>
-
-<input name="add_job_deploy" id="add_job_deploy"  value="1" type="checkbox" />
-<label for="add_job_deploy">Deploy</label>
-
-<button class="button">Enqueue job</button>
+<button class="button btn-primary">Save Job Automation Settings</button>
+<button class="button">Manually Enqueue Jobs Now</button>
 
 <hr>
-
 
 <h3>Job Queue/History</h3>
 
@@ -125,7 +150,7 @@
 
 <hr>
 
-<table style="width:100%;text-align:center;">
+<table class="widefat striped">
     <thead>
         <tr>
             <th>Date</th>
@@ -142,6 +167,7 @@
             <td><?php echo $job->job_type; ?></td>
             <td><?php echo $job->status; ?></td>
             <td><?php echo $job->duration; ?></td>
+            <!-- TODO: status is 'waiting' => Delete;'in progress' => 'Cancel', etc -->
             <td><a href="#">Cancel</a></td>
         </tr>
         <?php endforeach; ?>

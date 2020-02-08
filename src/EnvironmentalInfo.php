@@ -28,7 +28,7 @@ class EnvironmentalInfo {
             'WP HOME: ' . get_option( 'home' ),
             'WP ADDRESS: ' . get_bloginfo( 'wpurl' ),
             defined( 'WP_CLI' ) ? 'WP-CLI: YES' : 'WP-CLI: NO',
-            'STATIC EXPORT URL: ' . ExportSettings::get('destination_url'),
+            'STATIC EXPORT URL: ' . CoreOptions::getValue('destination_url'),
             'PERMALINK STRUCTURE: ' . SiteInfo::getPermalinks(),
         );
 
@@ -58,10 +58,10 @@ class EnvironmentalInfo {
         }
 
         $info[] = 'SITE URL PATTERNS: ' .
-            ExportSettings::get('rewrite_rules')['site_url_patterns'];
+            CoreOptions::getValue('rewrite_rules')['site_url_patterns'];
 
         $info[] = 'DESTINATION URL PATTERNS: ' .
-            ExportSettings::get('rewrite_rules')['destination_url_patterns'];
+            CoreOptions::getValue('rewrite_rules')['destination_url_patterns'];
 
         $extensions = get_loaded_extensions();
 

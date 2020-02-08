@@ -32,10 +32,10 @@ class Crawler {
             'wp2static_curl_user_agent',
             'WP2Static.com');
 
-        if ( ExportSettings::get( 'useBasicAuth' ) ) {
+        if ( CoreOptions::getValue( 'useBasicAuth' ) ) {
             $this->curl_options[ CURLOPT_USERPWD ] =
-                ExportSettings::get( 'basicAuthUser' ) . ':' .
-                ExportSettings::get( 'basicAuthPassword' );
+                CoreOptions::getValue( 'basicAuthUser' ) . ':' .
+                CoreOptions::getValue( 'basicAuthPassword' );
         }
     }
 
@@ -64,7 +64,7 @@ class Crawler {
             $url = new URL( SiteInfo::getURL('site') . $url );
 
             // if not already cached
-            if ( ! ExportSettings::get( 'dontUseCrawlCaching' ) ) {
+            if ( ! CoreOptions::getValue( 'dontUseCrawlCaching' ) ) {
                 if ( CrawlCache::getUrl( $url->get() ) ) {
                     $cache_hits++;
 
@@ -99,7 +99,7 @@ class Crawler {
                 StaticSite::add( $path_in_static_site, $crawled_contents );
             }
 
-            if ( ! ExportSettings::get( 'dontUseCrawlCaching' ) ) {
+            if ( ! CoreOptions::getValue( 'dontUseCrawlCaching' ) ) {
                 CrawlCache::addUrl( $url->get() );
             }
         }
