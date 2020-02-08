@@ -127,15 +127,15 @@ class WordPressAdmin {
         if ( CoreOptions::getValue('queueJobOnPostSave') ) {
             add_action(
                 'save_post',
-                [ 'WP2Static\Controller', 'wp2static_headless' ],
+                [ 'WP2Static\Controller', 'wp2static_save_post_handler' ],
                 0
             );
         }
 
-        if ( CoreOptions::getValue('queueJobOnPostDeletion') ) {
+        if ( CoreOptions::getValue('queueJobOnPostDelete') ) {
             add_action(
-                'delete_post',
-                [ 'WP2Static\Controller', 'wp2static_headless' ],
+                'trashed_post',
+                [ 'WP2Static\Controller', 'wp2static_trashed_post_handler' ],
                 0
             );
         }

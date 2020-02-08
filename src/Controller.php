@@ -674,6 +674,41 @@ class Controller {
         exit;
     }
 
+    public function wp2static_save_post_handler( $post_id ) : void {
+        if ( get_post_status( $post_id ) !== 'publish') {
+            error_log(PHP_EOL . 'skipping non published post');
+            return;
+        }
+        
+        self::wp2static_enqueue_jobs( $post_id );
+    }
+
+    public function wp2static_trashed_post_handler( $post_id ) : void {
+        self::wp2static_enqueue_jobs( $post_id );
+    }
+
+    public function wp2static_enqueue_jobs( $post_id ) : void {
+        if ( wp_is_post_revision( $post_id ) ) {
+            error_log(PHP_EOL . 'TODO: handle post is a revision..');
+        }
+
+        // check each of these in order we want to enqueue
+        $job_types = [
+            'autoJobQueueDetection' => 'detect',
+            'autoJobQueueCrawling' => 'crawl',
+            'autoJobQueuePostProcessing' => 'post_process',
+            'autoJobQueueDeployment' => 'deploy',
+        ];
+
+        foreach ( $job_types as $key => $job_type ) {
+            if ( (int) CoreOptions::getValue( $key ) === 1 ) {
+                JobQueue::addJob( $job_type );
+            }
+        }
+
+        error_log('enqueued jobs from somewhere');
+    }
+
     public function wp2static_manually_enqueue_jobs() : void {
         check_admin_referer( self::HOOK . '-manually-enqueue-jobs' );
 
