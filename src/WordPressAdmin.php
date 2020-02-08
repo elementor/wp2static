@@ -36,6 +36,12 @@ class WordPressAdmin {
             0);
 
         add_action(
+            'admin_post_wp2static_ui_save_job_options',
+            [ 'WP2Static\Controller', 'wp2static_ui_save_job_options' ],
+            10,
+            0);
+
+        add_action(
             'admin_notices',
             [ 'WP2Static\Controller', 'wp2static_ui_admin_notices' ]);
 

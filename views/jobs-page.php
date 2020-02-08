@@ -1,3 +1,8 @@
+<form
+    name="wp2static-job-options"
+    method="POST"
+    action="<?php echo esc_url( admin_url('admin-post.php') ); ?>">
+
 <br>
 
 <table class="widefat striped">
@@ -174,3 +179,6 @@
     </tbody>
 </table>
 
+    <?php wp_nonce_field( $view['nonce_action'] ); ?>
+    <input name="action" type="hidden" value="wp2static_ui_save_job_options" />
+</form>

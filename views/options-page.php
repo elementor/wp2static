@@ -5,8 +5,6 @@
  * Copyright (c) 2011 Leon Stafford
  */
 
-$ajax_nonce = wp_create_nonce( 'wpstatichtmloutput' );
-
 function displayTextfield($a = null, $b = null, $c = null, $d = null, $e = null) {
  echo 'something';
 }

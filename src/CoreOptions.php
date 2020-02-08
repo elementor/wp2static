@@ -292,119 +292,125 @@ class CoreOptions {
      * Save all options POST'ed via UI
      *
      */
-    public static function savePosted() : void {
+    public static function savePosted( $screen = 'core') : void {
         global $wpdb;
 
         $table_name = $wpdb->prefix . self::$table_name;
 
-        $wpdb->update(
-            $table_name,
-            ['value' => esc_url_raw($_POST['deploymentURL'])],
-            ['name' => 'deploymentURL']
-        );
+        switch ( $screen ) {
+            case 'core':
+                $wpdb->update(
+                    $table_name,
+                    ['value' => esc_url_raw($_POST['deploymentURL'])],
+                    ['name' => 'deploymentURL']
+                );
 
-        $wpdb->update(
-            $table_name,
-            ['value' => (int) $_POST['detectCustomPostTypes']],
-            ['name' => 'detectCustomPostTypes']
-        );
+                $wpdb->update(
+                    $table_name,
+                    ['value' => (int) $_POST['detectCustomPostTypes']],
+                    ['name' => 'detectCustomPostTypes']
+                );
 
-        $wpdb->update(
-            $table_name,
-            ['value' => (int) $_POST['detectPosts']],
-            ['name' => 'detectPosts']
-        );
+                $wpdb->update(
+                    $table_name,
+                    ['value' => (int) $_POST['detectPosts']],
+                    ['name' => 'detectPosts']
+                );
 
-        $wpdb->update(
-            $table_name,
-            ['value' => (int) $_POST['detectPages']],
-            ['name' => 'detectPages']
-        );
+                $wpdb->update(
+                    $table_name,
+                    ['value' => (int) $_POST['detectPages']],
+                    ['name' => 'detectPages']
+                );
 
-        $wpdb->update(
-            $table_name,
-            ['value' => (int) $_POST['detectUploads']],
-            ['name' => 'detectUploads']
-        );
+                $wpdb->update(
+                    $table_name,
+                    ['value' => (int) $_POST['detectUploads']],
+                    ['name' => 'detectUploads']
+                );
 
-        $wpdb->update(
-            $table_name,
-            ['value' => (int) $_POST['queueJobOnPostSave']],
-            ['name' => 'queueJobOnPostSave']
-        );
+                $wpdb->update(
+                    $table_name,
+                    ['value' => sanitize_text_field($_POST['basicAuthUser'])],
+                    ['name' => 'basicAuthUser']
+                );
 
-        $wpdb->update(
-            $table_name,
-            ['value' => (int) $_POST['queueJobOnPostDelete']],
-            ['name' => 'queueJobOnPostDelete']
-        );
+                $wpdb->update(
+                    $table_name,
+                    ['value' => self::encrypt_decrypt('encrypt', sanitize_text_field($_POST['basicAuthPassword']))],
+                    ['name' => 'basicAuthPassword']
+                );
 
-        $wpdb->update(
-            $table_name,
-            ['value' => (int) $_POST['processQueueInterval']],
-            ['name' => 'processQueueInterval']
-        );
+                $wpdb->update(
+                    $table_name,
+                    ['value' => (int) $_POST['includeDiscoveredAssets']],
+                    ['name' => 'includeDiscoveredAssets']
+                );
 
-        $wpdb->update(
-            $table_name,
-            ['value' => (int) $_POST['autoJobQueueDetection']],
-            ['name' => 'autoJobQueueDetection']
-        );
+                $wpdb->update(
+                    $table_name,
+                    ['value' => sanitize_email($_POST['completionEmail'])],
+                    ['name' => 'completionEmail']
+                );
 
-        $wpdb->update(
-            $table_name,
-            ['value' => (int) $_POST['autoJobQueueCrawling']],
-            ['name' => 'autoJobQueueCrawling']
-        );
+                $wpdb->update(
+                    $table_name,
+                    ['value' => esc_url_raw($_POST['completionWebhook'])],
+                    ['name' => 'completionWebhook']
+                );
 
-        $wpdb->update(
-            $table_name,
-            ['value' => (int) $_POST['autoJobQueuePostProcessing']],
-            ['name' => 'autoJobQueuePostProcessing']
-        );
+                $wpdb->update(
+                    $table_name,
+                    ['value' => sanitize_text_field($_POST['completionWebhookMethod'])],
+                    ['name' => 'completionWebhookMethod']
+                );
 
-        $wpdb->update(
-            $table_name,
-            ['value' => (int) $_POST['autoJobQueueDeployment']],
-            ['name' => 'autoJobQueueDeployment']
-        );
+                break;
+            case 'jobs':
+                $wpdb->update(
+                    $table_name,
+                    ['value' => (int) $_POST['queueJobOnPostSave']],
+                    ['name' => 'queueJobOnPostSave']
+                );
 
-        $wpdb->update(
-            $table_name,
-            ['value' => sanitize_text_field($_POST['basicAuthUser'])],
-            ['name' => 'basicAuthUser']
-        );
+                $wpdb->update(
+                    $table_name,
+                    ['value' => (int) $_POST['queueJobOnPostDelete']],
+                    ['name' => 'queueJobOnPostDelete']
+                );
 
-        // TODO: encrypt/decrypt basic auth pwd
-        $wpdb->update(
-            $table_name,
-            ['value' => self::encrypt_decrypt('encrypt', sanitize_text_field($_POST['basicAuthPassword']))],
-            ['name' => 'basicAuthPassword']
-        );
+                $wpdb->update(
+                    $table_name,
+                    ['value' => (int) $_POST['processQueueInterval']],
+                    ['name' => 'processQueueInterval']
+                );
 
-        $wpdb->update(
-            $table_name,
-            ['value' => (int) $_POST['includeDiscoveredAssets']],
-            ['name' => 'includeDiscoveredAssets']
-        );
+                $wpdb->update(
+                    $table_name,
+                    ['value' => (int) $_POST['autoJobQueueDetection']],
+                    ['name' => 'autoJobQueueDetection']
+                );
 
-        $wpdb->update(
-            $table_name,
-            ['value' => sanitize_email($_POST['completionEmail'])],
-            ['name' => 'completionEmail']
-        );
+                $wpdb->update(
+                    $table_name,
+                    ['value' => (int) $_POST['autoJobQueueCrawling']],
+                    ['name' => 'autoJobQueueCrawling']
+                );
 
-        $wpdb->update(
-            $table_name,
-            ['value' => esc_url_raw($_POST['completionWebhook'])],
-            ['name' => 'completionWebhook']
-        );
+                $wpdb->update(
+                    $table_name,
+                    ['value' => (int) $_POST['autoJobQueuePostProcessing']],
+                    ['name' => 'autoJobQueuePostProcessing']
+                );
 
-        $wpdb->update(
-            $table_name,
-            ['value' => sanitize_text_field($_POST['completionWebhookMethod'])],
-            ['name' => 'completionWebhookMethod']
-        );
+                $wpdb->update(
+                    $table_name,
+                    ['value' => (int) $_POST['autoJobQueueDeployment']],
+                    ['name' => 'autoJobQueueDeployment']
+                );
+
+                break;
+        }
     }
 }
 

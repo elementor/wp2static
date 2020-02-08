@@ -447,6 +447,7 @@ class Controller {
 
     public function renderJobsPage() : void {
         $view = [];
+        $view['nonce_action'] = self::HOOK . '-ui-job-options';
         $view['jobs'] = JobQueue::getJobs();
 
         $view['jobOptions'] = [
@@ -606,14 +607,25 @@ class Controller {
     }
 
     public function wp2static_ui_save_options() : void {
-        CoreOptions::savePosted();
+        CoreOptions::savePosted('core');
 
         do_action('wp2static_addon_ui_save_options');
 
         check_admin_referer( self::HOOK . '-ui-options' );
 
         wp_redirect(admin_url('admin.php?page=wp2static'));
-        exit; // required after wp_redirect
+        exit;
+    }
+
+    public function wp2static_ui_save_job_options() : void {
+        CoreOptions::savePosted('jobs');
+
+        do_action('wp2static_addon_ui_save_job_options');
+
+        check_admin_referer( self::HOOK . '-ui-job-options' );
+
+        wp_redirect(admin_url('admin.php?page=wp2static-jobs'));
+        exit;
     }
 
     public function wp2static_ui_admin_notices() : void {
