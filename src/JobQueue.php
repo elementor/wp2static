@@ -65,11 +65,43 @@ class JobQueue {
     }
 
     /**
-     *  Get total crawlable URLs
+     *  Get all waiting jobs
      *
-     *  @return int Total crawlable URLs
+     *  @return string[] All waiting jobs
      */
-    public static function getTotalJobableURLs() : int {
+    public static function getProcessableJobs() : array {
+        global $wpdb;
+        $jobs = [];
+
+        $table_name = $wpdb->prefix . 'wp2static_jobs';
+
+        $rows = $wpdb->get_results( "SELECT * FROM $table_name WHERE status = 'waiting' ORDER BY created_at DESC" );
+
+        foreach ( $rows as $row ) {
+            $jobs[] = $row;
+        }
+
+        return $jobs;
+    }
+
+    public static function setStatus( $id, $status ) : void {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'wp2static_jobs';
+
+        $wpdb->update(
+            $table_name,
+            ['status' => $status],
+            ['id' => $id]
+        );
+    }
+
+    /**
+     *  Get total count of jobs
+     *
+     *  @return int Total jobs
+     */
+    public static function getTotalJobs() : int {
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'wp2static_jobs';
@@ -90,7 +122,7 @@ class JobQueue {
 
         $wpdb->query( "TRUNCATE TABLE $table_name" );
 
-        $total_jobs = self::getTotalJobableURLs();
+        $total_jobs = self::getTotalJobs();
 
         if ( $total_jobs > 0 ) {
             // TODO: simulate lack of permissios to truncate

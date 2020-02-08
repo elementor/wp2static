@@ -130,17 +130,26 @@
 
 <label
     for=""
-/>WP-Cron will attempt to process job queue at this interval (minutes)</label>
+/>WP-Cron will attempt to process job queue at this interval</label>
 
-<input
-    type="number"
-    id="processQueueInterval"
-    name="processQueueInterval"
-    min="0"
-    required
-    step="1"
+<select
+    id="<?php echo $view['jobOptions']['processQueueInterval']->name; ?>"
+    name="<?php echo $view['jobOptions']['processQueueInterval']->name; ?>"
     value="<?php echo (int) $view['jobOptions']['processQueueInterval']->value; ?>"
 />
+    <option
+        <?php echo (int) $view['jobOptions']['processQueueInterval']->value === 0 ? 'selected' : ''; ?>
+        value="0">disable (never)</option>
+    <option
+        <?php echo (int) $view['jobOptions']['processQueueInterval']->value === 60 ? 'selected' : ''; ?>
+        value="60">every minute</option>
+    <option
+        <?php echo (int) $view['jobOptions']['processQueueInterval']->value === 300 ? 'selected' : ''; ?>
+        value="300">every 5 minutes</option>
+    <option
+        <?php echo (int) $view['jobOptions']['processQueueInterval']->value === 600 ? 'selected' : ''; ?>
+        value="600">every 10 minutes</option>
+</select>
 
 <p><i>If WP-Cron is not expected to be triggered by site visitors, you can also call `wp-cron.php` directly, run the WP-CLI command `wp wp2static process_job_queue` or call the hook `wp2static_process_queue` from within your own theme or plugin.</i></p>
 

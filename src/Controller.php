@@ -56,6 +56,20 @@ class Controller {
         return $plugin_instance;
     }
 
+    public static function wp2static_custom_cron_schedules( $schedules ) {
+        $schedules[ '1min' ] = [
+            'interval' => 1 * MINUTE_IN_SECONDS,
+            'display' => 'Every minute',
+        ];
+
+        $schedules[ '5mins' ] = [
+            'interval' => 5 * MINUTE_IN_SECONDS,
+            'display' => 'Every 5 minutes',
+        ];
+
+        return $schedules;
+    }
+
     /**
      * Adjusts position of dashboard menu icons
      *
@@ -651,6 +665,19 @@ class Controller {
 
         wp_redirect(admin_url('admin.php?page=wp2static-jobs'));
         exit;
+    }
+
+    public function wp2static_process_queue() : void {
+        // NOTE: usually won't show in same PHP error logs
+        error_log('processing queue');
+
+        $jobs = JobQueue::getProcessableJobs();
+
+        // TODO: wip queue manipulation
+        foreach ($jobs as $job) {
+            JobQueue::setStatus($job->id, 'processing'); 
+        }
+
     }
 
     public function wp2static_ui_admin_notices() : void {

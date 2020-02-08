@@ -29,6 +29,11 @@ class WordPressAdmin {
             [ 'WP2Static\Controller', 'activate' ]
         );
 
+        add_filter(
+            'cron_schedules',
+            [ 'WP2Static\Controller', 'wp2static_custom_cron_schedules' ]
+        );
+
         add_action(
             'admin_post_wp2static_ui_save_options',
             [ 'WP2Static\Controller', 'wp2static_ui_save_options' ],
@@ -44,6 +49,12 @@ class WordPressAdmin {
         add_action(
             'admin_post_wp2static_manually_enqueue_jobs',
             [ 'WP2Static\Controller', 'wp2static_manually_enqueue_jobs' ],
+            10,
+            0);
+
+        add_action(
+            'wp2static_process_queue',
+            [ 'WP2Static\Controller', 'wp2static_process_queue' ],
             10,
             0);
 
