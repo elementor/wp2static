@@ -196,6 +196,14 @@ class Controller {
             'wp2static-diagnostics',
             [ self::$plugin_instance, 'renderDiagnosticsPage' ]);
 
+        add_submenu_page(
+            self::HOOK,
+            'WP2Static Logs',
+            'Logs',
+            'manage_options',
+            'wp2static-logs',
+            [ self::$plugin_instance, 'renderLogsPage' ]);
+
     }
 
 
@@ -491,6 +499,13 @@ class Controller {
         require_once WP2STATIC_PATH . 'views/diagnostics-page.php';
     }
 
+    public function renderLogsPage() : void {
+        $view = [];
+        $view['logs'] = WsLog::getAll();
+
+        require_once WP2STATIC_PATH . 'views/logs-page.php';
+    }
+
     public function renderJobsPage() : void {
         $view = [];
         $view['nonce_action'] = self::HOOK . '-ui-job-options';
@@ -746,10 +761,27 @@ class Controller {
         // NOTE: usually won't show in same PHP error logs
         error_log('processing queue');
 
+        // TODO: squash queue (skip any earlier jobs of same type still in 'waiting'
+        JobQueue::squashQueue();
+
+        if ( JobQueue::jobsInProgress() ) {
+            error_log('job in progress, not processing waiting queue');
+            return;
+        }
+
         $jobs = JobQueue::getProcessableJobs();
 
+
         // TODO: wip queue manipulation
+
+        // we have a bunch of job types, with statuses of 'waiting'
+
+        
+
         foreach ($jobs as $job) {
+
+
+
             JobQueue::setStatus($job->id, 'processing'); 
         }
 

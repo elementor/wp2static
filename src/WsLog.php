@@ -40,5 +40,20 @@ class WsLog {
 
         $wpdb->query( $query );
     }
+
+    public static function getAll() : array {
+        global $wpdb;
+        $logs = [];
+
+        $table_name = $wpdb->prefix . 'wp2static_export_log';
+
+        $rows = $wpdb->get_results( "SELECT time, log FROM $table_name ORDER BY time DESC" );
+
+        foreach ( $rows as $row ) {
+            $logs[] = $row;
+        }
+
+        return $logs;
+    }
 }
 

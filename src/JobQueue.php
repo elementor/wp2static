@@ -65,6 +65,25 @@ class JobQueue {
     }
 
     /**
+     *  Check for any jobs in progress 
+     *
+     *  @return bool All waiting jobs
+     */
+    public static function jobsInProgress() : bool {
+        global $wpdb;
+        $jobs = [];
+
+        $table_name = $wpdb->prefix . 'wp2static_jobs';
+
+        $jobs_in_progress = $wpdb->get_var("SELECT COUNT(*) FROM $table_name WHERE status = 'processing'");
+
+        error_log('total jobs in progress');
+        error_log($jobs_in_progress);
+
+        return $jobs_in_progress > 0;
+    }
+
+    /**
      *  Get all waiting jobs
      *
      *  @return string[] All waiting jobs
@@ -82,6 +101,52 @@ class JobQueue {
         }
 
         return $jobs;
+    }
+
+    /*
+        Skip processing jobs where a more recent job of same type exists
+
+    */
+    public static function squashQueue() : void {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'wp2static_jobs';
+
+        // TODO: loop for each job_type
+        $job_types = [
+            'detect',
+            'crawl',
+            'post_process',
+            'deploy',
+        ];
+
+        foreach( $job_types as $job_type ) {
+            // get all jobs for a type where status is 'waiting'
+            $waiting_jobs = $wpdb->get_results( "SELECT * FROM $table_name WHERE job_type = '$job_type' AND status = 'waiting' ORDER BY created_at DESC" );
+
+            // abort if less than 2 jobs of same type in waiting status
+            if ( $waiting_jobs < 2 ) {
+                WsLog::l('less than 2 jobs for this type, continuing');
+                WsLog::l(count($waiting_jobs));
+                continue;
+            }
+           
+            // select all  
+            $waiting_jobs = $wpdb->get_results( "SELECT * FROM $table_name WHERE job_type = '$job_type' AND status = 'waiting' ORDER BY created_at DESC" );
+
+            // remove latest one
+            array_shift( $waiting_jobs );
+
+            // set all but most recent one to 'skipped'
+            foreach( $waiting_jobs as $waiting_job ) {
+                $wpdb->update(
+                    $table_name,
+                    ['status' => 'skipped'],
+                    ['id' => $waiting_job->id]
+                );
+
+            }
+        }
     }
 
     public static function setStatus( $id, $status ) : void {
