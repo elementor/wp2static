@@ -515,6 +515,13 @@ class Controller {
     public function renderCachesPage() : void {
         $view = [];
         $view['uploads_path'] = SiteInfo::getPath('uploads');
+        $view['zip_path'] =
+            is_file(SiteInfo::getPath( 'uploads' ) . 'wp2static-processed-site.zip') ?
+                SiteInfo::getPath( 'uploads' ) . 'wp2static-processed-site.zip' : false;
+
+        $view['zip_url'] =
+            is_file(SiteInfo::getPath( 'uploads' ) . 'wp2static-processed-site.zip') ?
+                SiteInfo::getUrl( 'uploads' ) . 'wp2static-processed-site.zip' : '#';
 
         // performance check vs map 
         $diskSpace = 0;
