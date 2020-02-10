@@ -55,7 +55,7 @@ class JobQueue {
 
         $table_name = $wpdb->prefix . 'wp2static_jobs';
 
-        $rows = $wpdb->get_results( "SELECT * FROM $table_name ORDER BY created_at DESC" );
+        $rows = $wpdb->get_results( "SELECT * FROM $table_name ORDER BY id DESC" );
 
         foreach ( $rows as $row ) {
             $urls[] = $row;
@@ -94,7 +94,7 @@ class JobQueue {
 
         $table_name = $wpdb->prefix . 'wp2static_jobs';
 
-        $rows = $wpdb->get_results( "SELECT * FROM $table_name WHERE status = 'waiting' ORDER BY created_at DESC" );
+        $rows = $wpdb->get_results( "SELECT * FROM $table_name WHERE status = 'waiting' ORDER BY id DESC" );
 
         foreach ( $rows as $row ) {
             $jobs[] = $row;

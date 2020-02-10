@@ -764,25 +764,23 @@ class Controller {
         // TODO: squash queue (skip any earlier jobs of same type still in 'waiting'
         JobQueue::squashQueue();
 
+        // check we're already processing
         if ( JobQueue::jobsInProgress() ) {
             error_log('job in progress, not processing waiting queue');
             return;
         }
 
+        // get all with status 'waiting'
         $jobs = JobQueue::getProcessableJobs();
 
+        // we should have at most 4 jobs to process here
 
-        // TODO: wip queue manipulation
-
-        // we have a bunch of job types, with statuses of 'waiting'
-
-        
+        // process in order of oldest to newest
 
         foreach ($jobs as $job) {
+            WsLog::l(print_r($job, true));
 
-
-
-            JobQueue::setStatus($job->id, 'processing'); 
+            // JobQueue::setStatus($job->id, 'processing'); 
         }
 
     }
