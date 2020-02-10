@@ -190,59 +190,6 @@ class Controller {
         //     $site_crawler->crawl();
     }
 
-    /**
-     * Check whether a PHP function is enabled
-     *
-     * @param string $function_name list of menu items
-     */
-    public function isEnabled( string $function_name ) : bool {
-        $disable_functions = ini_get( 'disable_functions' );
-
-        if ( ! is_string( $disable_functions ) ) {
-            return false;
-        }
-
-        $is_enabled =
-            is_callable( $function_name ) &&
-            false === stripos( $disable_functions, $function_name );
-
-        return $is_enabled;
-    }
-
-    /**
-     * Check whether site it publicly accessible
-     */
-    public function check_local_dns_resolution() : string {
-        if ( $this->isEnabled( 'shell_exec' ) ) {
-            $site_host = parse_url( $this->site_url, PHP_URL_HOST );
-
-            $output =
-                shell_exec( "/usr/sbin/traceroute $site_host" );
-
-            if ( ! is_string( $output ) ) {
-                return 'Unknown';
-            }
-
-            $hops_in_route = substr_count( $output, PHP_EOL );
-
-            $resolves_to_local_ip4 =
-                ( strpos( $output, '127.0.0.1' ) !== false );
-            $resolves_to_local_ip6 = ( strpos( $output, '::1' ) !== false );
-
-            $resolves_locally =
-                $resolves_to_local_ip4 || $resolves_to_local_ip6;
-
-            if ( $resolves_locally && $hops_in_route < 2 ) {
-                return 'Yes';
-            } else {
-                return 'No';
-            }
-        } else {
-            WsLog::l( "no shell_exec available for local DNS checking");
-            return 'Unknown';
-        }
-    }
-
     // TODO: why is this here? Move to CrawlQueue if still needed
     public function delete_crawl_cache() : void {
         // we now have modified file list in DB
@@ -279,22 +226,6 @@ class Controller {
 
     public function reset_default_settings() : void {
         CoreOptions::seedOptions();
-    }
-
-    public function post_process_archive_dir() : void {
-        $processor = new ArchiveProcessor();
-
-        $processor->createNetlifySpecialFiles();
-        // NOTE: renameWP Directories also doing same server publish
-        $processor->renameArchiveDirectories();
-        $processor->removeWPCruft();
-        $processor->create_zip();
-
-        $via_ui = filter_input( INPUT_POST, 'ajax_action' );
-
-        if ( is_string( $via_ui ) ) {
-            echo 'SUCCESS';
-        }
     }
 
     public function delete_deploy_cache() : void {
@@ -432,29 +363,6 @@ class Controller {
             }
 
             JobQueue::setStatus($job->id, 'completed');
-        }
-    }
-
-    public function wp2static_ui_admin_notices() : void {
-        $notices = [
-            'errors' => [],
-            'successes' => [],
-            'warnings' => [],
-            'infos' => [],
-        ];
-
-        $notices = apply_filters( 'wp2static_add_ui_admin_notices', $notices );
-
-        foreach($notices['errors'] as $errors) {
-            echo '<div class="notice notice-error">';
-                echo '<p>something</p>';
-            echo '</div>';
-        }
-
-        foreach($notices['successes'] as $successes) {
-            echo '<div class="notice notice-success is-dismissible">';
-                echo '<p>some success</p>';
-            echo '</div>';
         }
     }
 

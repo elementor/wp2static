@@ -25,7 +25,6 @@ mkdir $TMP_DIR/static-html-output-plugin
 rm -Rf $EXEC_DIR/vendor/*
 # load prod deps and optimize loader
 composer install --no-dev --optimize-autoloader
-composer buildjs
 
 
 # cp all required sources to build dir

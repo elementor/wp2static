@@ -69,10 +69,6 @@ class WordPressAdmin {
             0);
 
         add_action(
-            'admin_notices',
-            [ 'WP2Static\Controller', 'wp2static_ui_admin_notices' ]);
-
-        add_action(
             'wp2static_headless_hook',
             [ 'WP2Static\Controller', 'wp2static_headless' ],
             10,

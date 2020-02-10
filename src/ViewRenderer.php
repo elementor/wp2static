@@ -44,7 +44,7 @@ class ViewRenderer {
 
     public static function renderDiagnosticsPage() : void {
         $view = [];
-        $view['localDNSResolution'] = self::check_local_dns_resolution();
+        $view['localDNSResolution'] = Diagnostics::check_local_dns_resolution();
         $view['coreOptions'] = CoreOptions::getAll();
         $view['site_info'] = SiteInfo::getAllInfo();
         $view['phpOutOfDate'] = PHP_VERSION < 7.3;

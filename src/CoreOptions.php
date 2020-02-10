@@ -243,18 +243,17 @@ class CoreOptions {
      *
      * @return mixed array of options
      */
-    public static function getAll( string $name ) {
+    public static function getAll() {
         global $wpdb;
 
         $table_name = $wpdb->prefix . self::$table_name;
 
         $sql = $wpdb->prepare(
-            "SELECT value, label, description FROM $table_name WHERE" . ' name = %s LIMIT 1',
-            $name);
+            "SELECT value, label, description FROM $table_name ORDER BY label");
 
         $options = $wpdb->get_results( $sql );
 
-        return $option;
+        return $options;
     }
 
     /*
