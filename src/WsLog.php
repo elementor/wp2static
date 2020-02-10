@@ -4,6 +4,23 @@ namespace WP2Static;
 
 // TODO: add option in UI to also write to PHP error_log
 class WsLog {
+    public static function createTable() : void {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'wp2static_export_log';
+
+        $charset_collate = $wpdb->get_charset_collate();
+
+        $sql = "CREATE TABLE $table_name (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            time TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            log TEXT NOT NULL,
+            PRIMARY KEY  (id)
+        ) $charset_collate;";
+
+        require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+        dbDelta( $sql );
+    }
 
     public static function l( string $text ) : void {
         global $wpdb;

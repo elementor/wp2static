@@ -46,7 +46,7 @@ class Controller {
         CoreOptions::init();
         CrawlCache::createTable();
         CrawlQueue::createTable();
-        ExportLog::createTable();
+        WsLog::createTable();
         DeployQueue::createTable();
         DeployCache::createTable();
         JobQueue::createTable();
@@ -89,7 +89,7 @@ class Controller {
         // CoreOptions::deleteTable();
         // CrawlCache::deleteTable();
         // CrawlQueue::deleteTable();
-        // ExportLog::deleteTable();
+        // WsLog::deleteTable();
         // DeployQueue::deleteTable();
         // DeployCache::deleteTable();
         // JobQueue::deleteTable();
