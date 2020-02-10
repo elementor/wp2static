@@ -776,11 +776,47 @@ class Controller {
         // we should have at most 4 jobs to process here
 
         // process in order of oldest to newest
-
         foreach ($jobs as $job) {
             WsLog::l(print_r($job, true));
 
-            // JobQueue::setStatus($job->id, 'processing'); 
+            JobQueue::setStatus($job->id, 'processing');
+
+            switch ( $job->job_type ) {
+                case 'detect':
+                    $detected_count = URLDetector::detectURLs();
+
+                    WsLog::l( "$detected_count URLs detected.");
+
+                    break;
+                case 'crawl':
+                    WsLog::l( "crawling...");
+
+                    $crawler = new Crawler();
+                    $crawler->crawlSite( StaticSite::getPath());
+
+                    break;
+                case 'post_process':
+                    WsLog::l( "post processing...");
+                    $post_processor = new PostProcessor();
+
+                    $processed_site_dir =
+                        SiteInfo::getPath( 'uploads') . 'wp2static-processed-site';
+                    $processed_site = new ProcessedSite( $processed_site_dir );
+
+                    $post_processor->processStaticSite( StaticSite::getPath(), $processed_site);
+
+                    break;
+                case 'deploy':
+                    WsLog::l( "deploying...");
+                    do_action('wp2static_deploy', ProcessedSite::getPath());
+
+                    break;
+                default:
+                    WsLog::l('Trying to process unknown job type');
+            }
+
+            JobQueue::setStatus($job->id, 'completed');
+
         }
 
     }
