@@ -43,7 +43,7 @@ class Diagnostics {
      *
      * @param string $function_name list of menu items
      */
-    public function isEnabled( string $function_name ) : bool {
+    public static function isEnabled( string $function_name ) : bool {
         $disable_functions = ini_get( 'disable_functions' );
 
         if ( ! is_string( $disable_functions ) ) {

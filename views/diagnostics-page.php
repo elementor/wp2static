@@ -26,7 +26,7 @@
 $dash_icon = 'dashicons-editor-help';
 $color = 'gray';
 
-switch($view['localDNSReslution']) {
+switch($view['localDNSResolution']) {
     case '':
         $dash_icon = 'dashicons-editor-help';
         $color = '#FE8F25';
@@ -45,7 +45,7 @@ switch($view['localDNSReslution']) {
 }
 
 ?>
-                <?php echo $view['localDNSReslution'] ? $view['localDNSReslution'] : 'Unknown'; ?>
+                <?php echo $view['localDNSResolution'] ? $view['localDNSResolution'] : 'Unknown'; ?>
 
                 <span
                     class="dashicons <?php echo $dash_icon; ?>"
@@ -65,6 +65,14 @@ switch($view['localDNSReslution']) {
                 ></span>
             </td>
             <td>Generating a static site can involve long-running processes. Set your PHP max_execution_time setting to unlimited or find a better webhost if you're prevented from doing so.</td>
+        </tr>
+        <tr>
+            <td>PHP memory_limit</td>
+            <td>
+                <?php echo $view['memoryLimit']; ?>
+
+            </td>
+            <td>WP2Static will use as much memory as is available to it during processing. Allocating more of your system RAM to PHP should improve performance.</td>
         </tr>
         <tr>
             <td>Uploads directory writable</td>

@@ -248,8 +248,10 @@ class CoreOptions {
 
         $table_name = $wpdb->prefix . self::$table_name;
 
+        // TODO: not using prepare args, rewrite (silenced error for now)
         $sql = $wpdb->prepare(
-            "SELECT value, label, description FROM $table_name ORDER BY label");
+            "SELECT %s, label, description FROM $table_name ORDER BY label",
+            'value');
 
         $options = $wpdb->get_results( $sql );
 

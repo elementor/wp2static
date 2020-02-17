@@ -43,7 +43,8 @@ class StaticSite {
 
         if ( is_dir( self::getPath() ) ) {
             FilesHelper::delete_dir_with_files( self::getPath() );
-
+            
+            // CrawlCache not useful without StaticSite files
             CrawlCache::truncate();
         }
     }
