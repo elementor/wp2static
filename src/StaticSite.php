@@ -18,7 +18,7 @@ class StaticSite {
     public static function add(string $path, string $contents) {
         // simple file save, Crawler holds logic for what/where to save
         // Crawler has already processed links, etc
-        $full_path = self::getPath() . "/$path";
+        $full_path = self::getPath() . "$path";
 
         $directory = dirname( $full_path );
 
@@ -39,12 +39,11 @@ class StaticSite {
      *
      */
     public static function delete() {
-        error_log('deleting static site files');
+        WsLog::l('Deleting static site files');
 
         if ( is_dir( self::getPath() ) ) {
             FilesHelper::delete_dir_with_files( self::getPath() );
 
-            error_log('truncating CrawlCache');
             CrawlCache::truncate();
         }
     }

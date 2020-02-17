@@ -148,6 +148,8 @@ class ViewRenderer {
         $view['crawlQueueTotalURLs'] = CrawlQueue::getTotal();
         $view['crawlCacheTotalURLs'] = CrawlCache::getTotal();
         $view['deployCacheTotalURLs'] = DeployCache::getTotal();
+        $view['uploads_path'] = SiteInfo::getPath( 'uploads' );
+        $view['nonce_action'] = 'wp2static-caches-page';
 
         require_once WP2STATIC_PATH . 'views/caches-page.php';
     }

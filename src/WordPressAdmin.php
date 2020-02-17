@@ -51,6 +51,36 @@ class WordPressAdmin {
             0);
 
         add_action(
+            'admin_post_wp2static_post_processed_site_delete',
+            [ 'WP2Static\Controller', 'wp2static_post_processed_site_delete' ],
+            10,
+            0);
+
+        add_action(
+            'admin_post_wp2static_crawl_queue_delete',
+            [ 'WP2Static\Controller', 'wp2static_crawl_queue_delete' ],
+            10,
+            0);
+
+        add_action(
+            'admin_post_wp2static_deploy_cache_delete',
+            [ 'WP2Static\Controller', 'wp2static_deploy_cache_delete' ],
+            10,
+            0);
+
+        add_action(
+            'admin_post_wp2static_crawl_cache_delete',
+            [ 'WP2Static\Controller', 'wp2static_crawl_cache_delete' ],
+            10,
+            0);
+
+        add_action(
+            'admin_post_wp2static_static_site_delete',
+            [ 'WP2Static\Controller', 'wp2static_static_site_delete' ],
+            10,
+            0);
+
+        add_action(
             'admin_post_wp2static_ui_save_job_options',
             [ 'WP2Static\Controller', 'wp2static_ui_save_job_options' ],
             10,

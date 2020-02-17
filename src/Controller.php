@@ -252,6 +252,51 @@ class Controller {
         exit;
     }
 
+    public static function wp2static_crawl_queue_delete() : void {
+        check_admin_referer( 'wp2static-caches-page' );
+
+        CrawlQueue::truncate();
+
+        wp_redirect(admin_url('admin.php?page=wp2static-caches'));
+        exit;
+    }
+
+    public static function wp2static_deploy_cache_delete() : void {
+        check_admin_referer( 'wp2static-caches-page' );
+
+        DeployCache::truncate();
+
+        wp_redirect(admin_url('admin.php?page=wp2static-caches'));
+        exit;
+    }
+
+    public static function wp2static_crawl_cache_delete() : void {
+        check_admin_referer( 'wp2static-caches-page' );
+
+        CrawlCache::truncate();
+
+        wp_redirect(admin_url('admin.php?page=wp2static-caches'));
+        exit;
+    }
+
+    public static function wp2static_post_processed_site_delete() : void {
+        check_admin_referer( 'wp2static-caches-page' );
+
+        ProcessedSite::delete();
+
+        wp_redirect(admin_url('admin.php?page=wp2static-caches'));
+        exit;
+    }
+
+    public static function wp2static_static_site_delete() : void {
+        check_admin_referer( 'wp2static-caches-page' );
+
+        StaticSite::delete();
+
+        wp_redirect(admin_url('admin.php?page=wp2static-caches'));
+        exit;
+    }
+
     public function wp2static_ui_save_job_options() : void {
         CoreOptions::savePosted('jobs');
 

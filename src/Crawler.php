@@ -24,10 +24,15 @@ class Crawler {
         $this->request = new Request();
         $this->curl_options = [];
 
-        $this->curl_options[ CURLOPT_PORT ] = apply_filters(
+        $portOverride = apply_filters(
             'wp2static_curl_port',
-            $this->curl_options[ CURLOPT_PORT ]);
+            null);
 
+        // TODO: apply this filter when option is saved
+        if ( $portOverride ) {
+            $this->curl_options[ CURLOPT_PORT ] = $portOverride;
+        }
+        
         $this->curl_options[ CURLOPT_USERAGENT ] = apply_filters(
             'wp2static_curl_user_agent',
             'WP2Static.com');
