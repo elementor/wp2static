@@ -176,6 +176,22 @@ class Controller {
                 $menu_slug,
                 $method);
         }
+
+        add_submenu_page(
+            null,
+            'WP2Static Crawl Queue',
+            'Crawl Queue',
+            'manage_options',
+            'wp2static-crawl-queue',
+            [ 'WP2Static\ViewRenderer', 'renderCrawlQueue' ]);
+
+        add_submenu_page(
+            null,
+            'WP2Static Crawl Cache',
+            'Crawl Cache',
+            'manage_options',
+            'wp2static-crawl-cache',
+            [ 'WP2Static\ViewRenderer', 'renderCrawlCache' ]);
     }
 
     public function crawlSite() : void {

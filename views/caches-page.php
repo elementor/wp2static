@@ -20,8 +20,8 @@ button.wp2static-button {
             <td>Crawl Queue (Detected URLs)</td>
             <td><?php echo $view['crawlQueueTotalURLs']; ?> URLs in database</td>
             <td>
-                <a href="#"><button class="wp2static-button button btn-danger">Show URLs</button></a>
-                <a href="#"><button class="wp2static-button button btn-danger">Download List</button></a>
+                <a href="<?php echo admin_url('admin.php?page=wp2static-crawl-queue'); ?>" target="_blank"><button class="wp2static-button button btn-danger">Show URLs</button></a>
+<!-- TODO: allow downloading zipped CSV of all lists  <a href="#"><button class="wp2static-button button btn-danger">Download List</button></a> -->
 
                 <form
                     name="wp2static-crawl-queue-delete"
@@ -40,8 +40,7 @@ button.wp2static-button {
             <td>Crawl cache</td>
             <td><?php echo $view['crawlCacheTotalURLs']; ?> URLs in database</td>
             <td>
-                <a href="#"><button class="wp2static-button button btn-danger">Show URLs</button></a>
-                <a href="#"><button class="wp2static-button button btn-danger">Download List</button></a>
+                <a href="<?php echo admin_url('admin.php?page=wp2static-crawl-cache'); ?>" target="_blank"><button class="wp2static-button button btn-danger">Show URLs</button></a>
 
                 <form
                     name="wp2static-crawl-cache-delete"
@@ -66,7 +65,6 @@ button.wp2static-button {
             </td>
             <td>
                 <a href="#"><button class="wp2static-button button btn-danger">Show Paths</button></a>
-                <a href="#"><button class="wp2static-button button btn-danger">Download List</button></a>
 
                 <form
                     name="wp2static-static-site-delete"
@@ -90,7 +88,6 @@ button.wp2static-button {
             </td>
             <td>
                 <a href="#"><button class="wp2static-button button btn-danger">Show Paths</button></a>
-                <a href="#"><button class="wp2static-button button btn-danger">Download List</button></a>
 
                 <form
                     name="wp2static-post-processed-site-delete"
@@ -110,7 +107,6 @@ button.wp2static-button {
             <td><?php echo $view['deployCacheTotalURLs']; ?> URLs in database</td>
             <td>
                 <a href="#"><button class="wp2static-button button btn-danger">Show URLs</button></a>
-                <a href="#"><button class="wp2static-button button btn-danger">Download List</button></a>
 
                 <form
                     name="wp2static-deploy-cache-delete"

@@ -66,6 +66,30 @@ class ViewRenderer {
         require_once WP2STATIC_PATH . 'views/logs-page.php';
     }
 
+    public static function renderCrawlQueue() : void {
+        if ( ! is_admin() ) {
+            http_response_code(403);
+            die('Forbidden');
+        }
+
+        $view = [];
+        $view['urls'] = CrawlQueue::getCrawlableURLs();
+
+        require_once WP2STATIC_PATH . 'views/crawl-queue-page.php';
+    }
+
+    public static function renderCrawlCache() : void {
+        if ( ! is_admin() ) {
+            http_response_code(403);
+            die('Forbidden');
+        }
+
+        $view = [];
+        $view['urls'] = CrawlCache::getURLs();
+
+        require_once WP2STATIC_PATH . 'views/crawl-cache-page.php';
+    }
+
     public static function renderJobsPage() : void {
         $view = [];
         $view['nonce_action'] = 'wp2static-ui-job-options';

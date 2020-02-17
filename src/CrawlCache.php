@@ -13,6 +13,7 @@ class CrawlCache {
 
         $sql = "CREATE TABLE $table_name (
             hashed_url CHAR(32) NOT NULL,
+            url VARCHAR(2083) NOT NULL,
             time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
             PRIMARY KEY  (hashed_url)
         ) $charset_collate;";
@@ -51,6 +52,7 @@ class CrawlCache {
             array(
                 'time' => current_time( 'mysql' ),
                 'hashed_url' => md5( $url ),
+                'url' => $url,
             )
         );
     }
@@ -72,6 +74,26 @@ class CrawlCache {
         $hashed_url = $wpdb->get_var( $sql );
 
         return (string) $hashed_url;
+    }
+
+    /**
+     *  Get all URLs in CrawlCache
+     *
+     *  @return string[] All crawlable URLs
+     */
+    public static function getURLs() : array {
+        global $wpdb;
+        $urls = [];
+
+        $table_name = $wpdb->prefix . 'wp2static_crawl_cache';
+
+        $rows = $wpdb->get_results( "SELECT url FROM $table_name" );
+
+        foreach ( $rows as $row ) {
+            $urls[] = $row->url;
+        }
+
+        return $urls;
     }
 
     public static function rmUrl( string $url ) : void {
