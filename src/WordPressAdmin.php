@@ -57,6 +57,12 @@ class WordPressAdmin {
             0);
 
         add_action(
+            'admin_post_wp2static_delete_jobs_queue',
+            [ 'WP2Static\Controller', 'wp2static_delete_jobs_queue' ],
+            10,
+            0);
+
+        add_action(
             'admin_post_wp2static_crawl_queue_delete',
             [ 'WP2Static\Controller', 'wp2static_crawl_queue_delete' ],
             10,

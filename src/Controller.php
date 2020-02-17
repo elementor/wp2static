@@ -261,6 +261,15 @@ class Controller {
         exit;
     }
 
+    public static function wp2static_delete_jobs_queue() : void {
+        check_admin_referer( 'wp2static-ui-job-options' );
+
+        JobQueue::truncate();
+
+        wp_redirect(admin_url('admin.php?page=wp2static-jobs'));
+        exit;
+    }
+
     public static function wp2static_deploy_cache_delete() : void {
         check_admin_referer( 'wp2static-caches-page' );
 
