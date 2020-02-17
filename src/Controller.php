@@ -263,7 +263,7 @@ class Controller {
         exit;
     }
 
-    public function wp2static_save_post_handler( $post_id ) : void {
+    public static function wp2static_save_post_handler( $post_id ) : void {
         if ( get_post_status( $post_id ) !== 'publish') {
             return;
         }
@@ -271,11 +271,11 @@ class Controller {
         self::wp2static_enqueue_jobs( $post_id );
     }
 
-    public function wp2static_trashed_post_handler( $post_id ) : void {
+    public static function wp2static_trashed_post_handler( $post_id ) : void {
         self::wp2static_enqueue_jobs( $post_id );
     }
 
-    public function wp2static_enqueue_jobs( $post_id ) : void {
+    public static function wp2static_enqueue_jobs( $post_id ) : void {
         // check each of these in order we want to enqueue
         $job_types = [
             'autoJobQueueDetection' => 'detect',
@@ -291,7 +291,7 @@ class Controller {
         }
     }
 
-    public function wp2static_manually_enqueue_jobs() : void {
+    public static function wp2static_manually_enqueue_jobs() : void {
         check_admin_referer( 'wp2static-manually-enqueue-jobs' );
 
         // TODO: consider using a transient based notifications system to
@@ -393,7 +393,7 @@ class Controller {
         WsLog::l( "Deployment complete");
     }
 
-    public function invalidate_single_url_cache(
+    public static function invalidate_single_url_cache(
         int $post_id = 0,
         WP_Post $post = null
     ) : void {
