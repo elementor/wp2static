@@ -60,7 +60,7 @@ class Controller {
      * @param string[] $menu_order list of menu items
      * @return string[] list of menu items
      */
-    public function set_menu_order( array $menu_order ) : array {
+    public static function set_menu_order( array $menu_order ) : array {
         $order = [];
         $file  = plugin_basename( __FILE__ );
 
@@ -144,7 +144,7 @@ class Controller {
         }
     }
 
-    public function registerOptionsPage() : void {
+    public static function registerOptionsPage() : void {
         add_menu_page(
             'WP2Static',
             'WP2Static',
