@@ -49,9 +49,6 @@
                 <a href="file://<?php echo $view['uploads_path']; ?>wp2static-processed-site" />Path</a>
             </td>
             <td>
-                <?php if ( $view['zip_path'] ) : ?>
-                    <a href="<?php echo $view['zip_url']; ?>"><button class="button btn-danger">Download ZIP</button></a>
-                <?php endif; ?>
                 <a href="#"><button class="button btn-danger">Download List</button></a>
                 <a href="#"><button class="button btn-danger">Delete Files</button></a>
             </td>

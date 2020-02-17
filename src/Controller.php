@@ -153,25 +153,28 @@ class Controller {
             [ 'WP2Static\ViewRenderer', 'renderOptionsPage' ],
             'dashicons-shield-alt');
 
+
         $submenu_pages = [
-            'options',
-            'jobs',
-            'caches',
-            'diagnostics',
-            'logs',
+            'options' => [ 'WP2Static\ViewRenderer', 'renderOptionsPage' ],
+            'jobs' => [ 'WP2Static\ViewRenderer', 'renderJobsPage' ],
+            'caches' => [ 'WP2Static\ViewRenderer', 'renderCachesPage' ],
+            'diagnostics' => [ 'WP2Static\ViewRenderer', 'renderDiagnosticsPage' ],
+            'logs' => [ 'WP2Static\ViewRenderer', 'renderLogsPage' ],
         ];
 
-        foreach ($submenu_pages as $page) {
+        $submenu_pages = apply_filters( 'wp2static_add_menu_items', $submenu_pages );
+
+        foreach ( $submenu_pages as $slug => $method ) {
             $menu_slug =
-                $page === 'options' ? 'wp2static' : 'wp2static-' . $page;
+                $slug === 'options' ? 'wp2static' : 'wp2static-' . $slug;
 
             add_submenu_page(
                 'wp2static',
-                'WP2Static ' . ucfirst($page),
-                ucfirst($page),
+                'WP2Static ' . ucfirst($slug),
+                ucfirst($slug),
                 'manage_options',
                 $menu_slug,
-                [ 'WP2Static\ViewRenderer', 'render' . ucfirst($page) . 'Page' ]);
+                $method);
         }
     }
 
