@@ -13,6 +13,7 @@ class DeployCache {
 
         $sql = "CREATE TABLE $table_name (
             path_hash CHAR(32) NOT NULL,
+            path VARCHAR(2083) NOT NULL,
             file_hash CHAR(32) NOT NULL,
             PRIMARY KEY  (path_hash)
         ) $charset_collate;";
@@ -37,10 +38,10 @@ class DeployCache {
 
         $file_hash = md5( $file_contents );
 
-        $sql = "INSERT INTO {$deploy_cache_table} (path_hash,file_hash)" .
-            ' VALUES (%s,%s) ON DUPLICATE KEY UPDATE file_hash = %s';
+        $sql = "INSERT INTO {$deploy_cache_table} (path_hash,path,file_hash)" .
+            ' VALUES (%s,%s,%s) ON DUPLICATE KEY UPDATE file_hash = %s';
 
-        $sql = $wpdb->prepare( $sql, $path_hash, $file_hash, $file_hash );
+        $sql = $wpdb->prepare( $sql, $path_hash, $local_path, $file_hash, $file_hash );
 
         $wpdb->query( $sql );
     }
@@ -91,5 +92,25 @@ class DeployCache {
         $total = $wpdb->get_var( "SELECT count(*) FROM $table_name" );
 
         return $total;
+    }
+
+    /**
+     *  Get all cached paths
+     *
+     *  @return string[] All cached paths
+     */
+    public static function getPaths() : array {
+        global $wpdb;
+        $urls = [];
+
+        $table_name = $wpdb->prefix . 'wp2static_deploy_cache';
+
+        $rows = $wpdb->get_results( "SELECT path FROM $table_name" );
+
+        foreach ( $rows as $row ) {
+            $urls[] = $row->url;
+        }
+
+        return $urls;
     }
 }

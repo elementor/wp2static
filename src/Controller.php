@@ -192,6 +192,14 @@ class Controller {
             'manage_options',
             'wp2static-crawl-cache',
             [ 'WP2Static\ViewRenderer', 'renderCrawlCache' ]);
+
+        add_submenu_page(
+            null,
+            'WP2Static Deploy Cache',
+            'Deploy Cache',
+            'manage_options',
+            'wp2static-deploy-cache',
+            [ 'WP2Static\ViewRenderer', 'renderDeployCache' ]);
     }
 
     public function crawlSite() : void {

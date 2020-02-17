@@ -106,7 +106,7 @@ button.wp2static-button {
             <td>Deploy cache</td>
             <td><?php echo $view['deployCacheTotalURLs']; ?> URLs in database</td>
             <td>
-                <a href="#"><button class="wp2static-button button btn-danger">Show URLs</button></a>
+                <a href="<?php echo admin_url('admin.php?page=wp2static-deploy-cache'); ?>" target="_blank"><button class="wp2static-button button btn-danger">Show URLs</button></a>
 
                 <form
                     name="wp2static-deploy-cache-delete"
