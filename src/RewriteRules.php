@@ -13,7 +13,7 @@ class RewriteRules {
         string $destination_url
     ) : array {
         /*
-         * Pseudo steps:
+         * TODO: reimplement all Pseudo steps:
          *
          * get plugin's rules
          * get user rules
@@ -30,12 +30,6 @@ class RewriteRules {
 
         $rewrite_rules['destination_url_patterns'] =
             self::generatePatterns( $destination_url );
-
-        if ( ! $rewrite_rules ) {
-            $err = 'No URL rewrite rules defined';
-            WsLog::l( $err );
-            throw new WP2StaticException( $err );
-        }
 
         return $rewrite_rules;
     }
@@ -58,7 +52,7 @@ class RewriteRules {
     }
 
     /**
-     * Get user-defined rewrite rules into plugin defaults
+     * TODO: reimplement with filters Get user-defined rewrite rules into plugin defaults
      *
      * @param string $user_rewrite_rules csv user-defined rewrite rules
      * @return mixed[] patterns including user-defined rewrite rules

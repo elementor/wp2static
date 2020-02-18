@@ -13,7 +13,7 @@ use RecursiveDirectoryIterator;
 
 class ProcessedSite {
 
-    public static function getPath() {
+    public static function getPath() : string {
         return SiteInfo::getPath( 'uploads') . 'wp2static-processed-site';
     }
 
@@ -21,7 +21,7 @@ class ProcessedSite {
      * Add static file to ProcessedSite
      *
      */
-    public static function add( string $static_file, string $save_path ) {
+    public static function add( string $static_file, string $save_path ) : void {
         $full_path = self::getPath() . "/$save_path";
 
         $directory = dirname( $full_path );
@@ -37,7 +37,7 @@ class ProcessedSite {
      * Delete processed site files
      *
      */
-    public static function delete() {
+    public static function delete() : void {
         WsLog::l('Deleting processed site files');
 
         if ( is_dir( self::getPath() ) ) {
@@ -52,8 +52,9 @@ class ProcessedSite {
      */
     public static function getPaths() : array {
         global $wpdb;
+        $processed_site_dir = self::getPath();
 
-        if ( ! is_dir( self::getPath() ) ) {
+        if ( ! is_dir( $processed_site_dir ) ) {
             return [];
         }
 
@@ -61,7 +62,7 @@ class ProcessedSite {
 
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator(
-                self::getPath(),
+                $processed_site_dir,
                 RecursiveDirectoryIterator::SKIP_DOTS
             )
         );
@@ -71,7 +72,9 @@ class ProcessedSite {
             if ( $base_name != '.' && $base_name != '..' ) {
                 $real_filepath = realpath( $filename );
 
-                $paths[] = str_replace( self::getPath(), '', $real_filepath );
+                if ( is_string( $real_filepath ) ) {
+                    $paths[] = str_replace( $processed_site_dir, '', $real_filepath );
+                }
             }
         }
 

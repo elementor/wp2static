@@ -155,12 +155,25 @@ class SiteInfo {
         return get_option( 'permalink_structure' );
     }
 
+    /**
+     * Get Site URL host
+     *
+     * @throws WP2StaticException
+     */
     public static function getSiteURLHost() : string {
         if ( self::$instance === null ) {
              self::$instance = new SiteInfo();
         }
 
-        return parse_url( self::$info['site_url'], PHP_URL_HOST );
+        $url_host = parse_url( self::$info['site_url'], PHP_URL_HOST );
+
+        if ( ! is_string( $url_host ) ) {
+            $err = 'Failed to get hostname from Site URL';
+            WsLog::l( $err );
+            throw new WP2StaticException( $err );
+        }
+
+        return $url_host;
     }
 
 

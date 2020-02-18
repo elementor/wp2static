@@ -24,15 +24,20 @@ class SimpleRewriter {
      * @param string $filename file to rewrite URLs in
      * @throws WP2StaticException
      */
-    public static function rewrite( $filename ) : void {
+    public static function rewrite( string $filename ) : void {
         $destination_url = apply_filters( 'wp2static_set_destination_url', '' ); 
 
         $wordpress_site_url =
             apply_filters(
                 'wp2static_set_wordpress_site_url',
-                SiteInfo::getUrl('site') ); 
+                SiteInfo::getUrl('site') );
 
         $file_contents = file_get_contents( $filename );
+
+        // TOOD: allow empty file saving here?
+        if ( ! $file_contents ) {
+            return;
+        }
 
         $rewritten_contents = str_replace(
             [

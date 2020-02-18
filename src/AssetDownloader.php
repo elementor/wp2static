@@ -26,6 +26,23 @@ class AssetDownloader {
         // TODO: add local cache per iteration of HTMLProcessor to
         // faster skip cached files without querying DB
 
+        /* TODO: copied these from ExportSettings
+
+            $crawlable_filetypes = [];
+            $crawlable_filetypes['img'] = 1;
+            $crawlable_filetypes['jpeg'] = 1;
+            $crawlable_filetypes['jpg'] = 1;
+            $crawlable_filetypes['png'] = 1;
+            $crawlable_filetypes['webp'] = 1;
+            $crawlable_filetypes['gif'] = 1;
+            $crawlable_filetypes['svg'] = 1;
+
+            // properties which should not change during plugin execution
+            self::$settings = [
+                'crawlable_filetypes' => $crawlable_filetypes,
+            ];
+        */
+
         // check if supported filetype for crawling
         if ( isset( CoreOptions::getValue('crawlable_filetypes')[ $extension ] ) ) {
             // skip if in Crawl Cache already

@@ -15,3 +15,4 @@ parameters:
         - '#^Constant WP2STATIC_PATH not found#'
     excludes_analyse:
         - %currentWorkingDirectory%/src/WPOverrides.php
+        - %currentWorkingDirectory%/src/SiteCrawler.php

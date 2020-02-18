@@ -4,22 +4,22 @@ namespace WP2Static;
 
 class SitePublisher {
 
-    private $settings;
     public $files_remaining;
     public $file_paths_and_hashes;
     public $previous_hashes_path;
 
     public function loadSettings() : void {
         $plugin = Controller::getInstance();
-        $this->settings = $plugin->options->getSettings( true );
+        // $this->settings = $plugin->options->getSettings( true );
     }
 
-    public function pauseBetweenAPICalls() : void {
-        if ( isset( $this->settings['delayBetweenAPICalls'] ) &&
-            $this->settings['delayBetweenAPICalls'] > 0 ) {
-            sleep( $this->settings['delayBetweenAPICalls'] );
-        }
-    }
+    // TODO: move into required deployment addons
+    // public function pauseBetweenAPICalls() : void {
+    //     if ( isset( $this->settings['delayBetweenAPICalls'] ) &&
+    //         $this->settings['delayBetweenAPICalls'] > 0 ) {
+    //         sleep( $this->settings['delayBetweenAPICalls'] );
+    //     }
+    // }
 
     public function clearFileList() : void {
         DeployQueue::truncate();

@@ -29,7 +29,7 @@ class PostProcessor {
      * @throws WP2StaticException
      */
     public function processStaticSite(
-        $static_site_path
+        string $static_site_path
     ) : void {
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator(
@@ -53,7 +53,7 @@ class PostProcessor {
         error_log('TODO: FolderProcessor for renaming, etc');
         error_log('finished processing StaticSite');
 
-        do_action( 'wp2static_post_process_complete', $processed_site->path );
+        do_action( 'wp2static_post_process_complete', ProcessedSite::getPath() );
     }
 }
 

@@ -30,7 +30,7 @@ class JobQueue {
      * @param string $job_type Type of job
      * ie detect, crawl, post_process, deploy
      */
-    public static function addJob( $job_type ) : void {
+    public static function addJob( string $job_type ) : void {
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'wp2static_jobs';
@@ -127,7 +127,7 @@ class JobQueue {
             // abort if less than 2 jobs of same type in waiting status
             if ( $waiting_jobs < 2 ) {
                 WsLog::l('less than 2 jobs for this type, continuing');
-                WsLog::l(count($waiting_jobs));
+                WsLog::l((string) count($waiting_jobs));
                 continue;
             }
            
@@ -149,7 +149,7 @@ class JobQueue {
         }
     }
 
-    public static function setStatus( $id, $status ) : void {
+    public static function setStatus( int $id, string $status ) : void {
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'wp2static_jobs';

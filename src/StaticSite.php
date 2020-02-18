@@ -18,7 +18,7 @@ class StaticSite {
      * Add crawled resource to static site
      *
      */
-    public static function add(string $path, string $contents) {
+    public static function add(string $path, string $contents) : void {
         // simple file save, Crawler holds logic for what/where to save
         // Crawler has already processed links, etc
         $full_path = self::getPath() . "$path";
@@ -33,7 +33,7 @@ class StaticSite {
         file_put_contents( $full_path, $contents );
     }
 
-    public static function getPath() {
+    public static function getPath() : string {
         return SiteInfo::getPath( 'uploads') . 'wp2static-exported-site';
     }
 
@@ -41,12 +41,12 @@ class StaticSite {
      * Delete StaticSite files
      *
      */
-    public static function delete() {
+    public static function delete() : void {
         WsLog::l('Deleting static site files');
 
         if ( is_dir( self::getPath() ) ) {
             FilesHelper::delete_dir_with_files( self::getPath() );
-            
+
             // CrawlCache not useful without StaticSite files
             CrawlCache::truncate();
         }
@@ -59,8 +59,9 @@ class StaticSite {
      */
     public static function getPaths() : array {
         global $wpdb;
+        $static_site_dir = self::getPath();
 
-        if ( ! is_dir( self::getPath() ) ) {
+        if ( ! is_dir( $static_site_dir ) ) {
             return [];
         }
 
@@ -68,7 +69,7 @@ class StaticSite {
 
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator(
-                self::getPath(),
+                $static_site_dir,
                 RecursiveDirectoryIterator::SKIP_DOTS
             )
         );
@@ -78,7 +79,9 @@ class StaticSite {
             if ( $base_name != '.' && $base_name != '..' ) {
                 $real_filepath = realpath( $filename );
 
-                $paths[] = str_replace( self::getPath(), '', $real_filepath );
+                if ( is_string( $real_filepath ) ) {
+                    $paths[] = str_replace( $static_site_dir, '', $real_filepath );
+                }
             }
         }
 

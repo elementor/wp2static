@@ -25,7 +25,7 @@ class FileProcessor {
      *
      * @param string $filename File in StaticSite
      */
-    public function processFile( $filename ) : void {
+    public function processFile( string $filename ) : void {
         switch( pathinfo( $filename, PATHINFO_EXTENSION ) ) {
             case 'html':
                 do_action('wp2static_process_html', $filename);

@@ -13,9 +13,8 @@ class URL {
     private $url;
 
     /**
-     * DOMIterator constructor
+     * URL constructor
      *
-     * @param string $rewrite_rules URL rewrite rules
      * @param string $parent_page_url URL optional parent page to make
      * absolute URL from
      */
@@ -40,16 +39,18 @@ class URL {
      * Return the URL as a string
      *
      */
-    public function get() {
+    public function get() : string {
         return $this->url;
     }
 
     /**
      * Rewrite host and scheme to destination URL's
      *
+     * mutates URL object in place
+     *
      * @param string $destination_url URL rewrite rules
      */
-    public function rewriteHostAndProtocol(string $destination_url) {
+    public function rewriteHostAndProtocol(string $destination_url) : void {
         $destination_url = new \Wa72\Url\Url( $destination_url );
 
         $this->url->setHost( $destination_url->getHost() );
