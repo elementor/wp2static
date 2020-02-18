@@ -18,8 +18,7 @@ class URLDetector {
      * Detect URLs within site
      *
      */
-    public static function detectURLs() : int {
-        // do detection 
+    public static function detectURLs() : string {
         $arrays_to_merge = [];
 
         // TODO: detect robots.txt, etc before adding
@@ -106,14 +105,10 @@ class URLDetector {
 
         $url_queue = FilesHelper::cleanDetectedURLs( $url_queue );
 
-        error_log(count( $url_queue ));
-
         $url_queue = apply_filters(
             'wp2static_modify_initial_crawl_list',
             $url_queue
         );
-
-        error_log(count( $url_queue ));
 
         $unique_urls = array_unique( $url_queue );
 
@@ -125,8 +120,6 @@ class URLDetector {
 
         // return total detected
         return (string) count( $unique_urls );
-        
-        return count($urls);
     }
 }
 

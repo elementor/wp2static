@@ -58,6 +58,12 @@ class WsLog {
         $wpdb->query( $query );
     }
 
+    /**
+     * Get all log lines
+     *
+     * @return mixed[] array of Log items
+     *
+     */
     public static function getAll() : array {
         global $wpdb;
         $logs = [];

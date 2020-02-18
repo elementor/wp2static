@@ -19,11 +19,11 @@ class WordPressAdmin {
     }
 
     /**
-     * Register hooks for WordPress and WP2Static actions 
+     * Register hooks for WordPress and WP2Static actions
      *
      * @param string $bootstrap_file main plugin filepath
      */
-    public static function registerHooks(string $bootstrap_file) {
+    public static function registerHooks(string $bootstrap_file) : void {
         register_activation_hook(
             $bootstrap_file,
             [ 'WP2Static\Controller', 'activate' ]
@@ -174,10 +174,10 @@ class WordPressAdmin {
     }
 
     /**
-     * Add WP2Static elements to WordPress Admin UI 
+     * Add WP2Static elements to WordPress Admin UI
      *
      */
-    public static function addAdminUIElements() {
+    public static function addAdminUIElements() : void {
         if ( is_admin() ) {
             add_action(
                 'admin_menu',

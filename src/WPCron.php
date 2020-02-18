@@ -19,7 +19,7 @@ class WPCron {
 
             wp_unschedule_event( $next_timestamp, 'wp2static_process_queue' );
             return;
-        } 
+        }
 
         // remove existing first
         if ( $next_timestamp ) {
@@ -48,10 +48,13 @@ class WPCron {
         return;
     }
 
-    /*
-        Register custom WP Cron schedule intervals
+    /**
+     * Register custom WP Cron schedule intervals
+     *
+     * @param mixed[] $schedules array of CRON schedules
+     * @return mixed[] array of CRON schedules
     */
-    public static function wp2static_custom_cron_schedules( $schedules ) {
+    public static function wp2static_custom_cron_schedules( array $schedules ) : array {
         $schedules[ '1min' ] = [
             'interval' => 1 * MINUTE_IN_SECONDS,
             'display' => 'Every minute',

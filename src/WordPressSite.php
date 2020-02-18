@@ -15,6 +15,7 @@ class WordPressSite {
      *
      * We don't store URLs within class, for performance
      *
+     * @return string[] list of URLs in CrawlQueue
      */
     public static function getURLs() : array {
         $urls = CrawlQueue::getCrawlableURLs();
@@ -40,7 +41,7 @@ class WordPressSite {
      * @param string $path static site directory
      * @throws WP2StaticException
      */
-    private function create_directory( $path ) : string {
+    private function create_directory( string $path ) : string {
         if ( is_dir( $path ) ) {
             return $path;
         }
