@@ -8,6 +8,9 @@
 
 namespace WP2Static;
 
+use RecursiveIteratorIterator;
+use RecursiveDirectoryIterator;
+
 class ProcessedSite {
 
     public static function getPath() {
@@ -40,6 +43,39 @@ class ProcessedSite {
         if ( is_dir( self::getPath() ) ) {
             FilesHelper::delete_dir_with_files( self::getPath() );
         }
+    }
+
+    /**
+     *  Get all paths in ProcessedSite
+     *
+     *  @return string[] ProcessedSite paths
+     */
+    public static function getPaths() : array {
+        global $wpdb;
+
+        if ( ! is_dir( self::getPath() ) ) {
+            return [];
+        }
+
+        $paths = [];
+
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator(
+                self::getPath(),
+                RecursiveDirectoryIterator::SKIP_DOTS
+            )
+        );
+
+        foreach ( $iterator as $filename => $file_object ) {
+            $base_name = basename( $filename );
+            if ( $base_name != '.' && $base_name != '..' ) {
+                $real_filepath = realpath( $filename );
+
+                $paths[] = str_replace( self::getPath(), '', $real_filepath );
+            }
+        }
+
+        return $paths;
     }
 }
 

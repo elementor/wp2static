@@ -3,13 +3,14 @@
 <table class="widefat striped">
     <thead>
         <tr>
-            <th>Path in Deploy Cache</th>
+            <th>Paths in Generated Static Site</th>
         </tr>
     </thead>
     <tbody>
+
         <?php if ( ! $view['paths'] ) : ?>
             <tr>
-                <td>Deploy cache is empty.</td>
+                <td>Generated static site directory is empty.</td>
             </tr>
         <?php endif; ?>
 

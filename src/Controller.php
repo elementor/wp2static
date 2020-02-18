@@ -200,6 +200,22 @@ class Controller {
             'manage_options',
             'wp2static-deploy-cache',
             [ 'WP2Static\ViewRenderer', 'renderDeployCache' ]);
+
+        add_submenu_page(
+            null,
+            'WP2Static Static Site',
+            'Static Site',
+            'manage_options',
+            'wp2static-static-site',
+            [ 'WP2Static\ViewRenderer', 'renderStaticSitePaths' ]);
+
+        add_submenu_page(
+            null,
+            'WP2Static Post Processed Site',
+            'Post Processed Site',
+            'manage_options',
+            'wp2static-post-processed-site',
+            [ 'WP2Static\ViewRenderer', 'renderPostProcessedSitePaths' ]);
     }
 
     public function crawlSite() : void {

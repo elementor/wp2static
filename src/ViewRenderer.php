@@ -90,6 +90,30 @@ class ViewRenderer {
         require_once WP2STATIC_PATH . 'views/crawl-cache-page.php';
     }
 
+    public static function renderPostProcessedSitePaths() : void {
+        if ( ! is_admin() ) {
+            http_response_code(403);
+            die('Forbidden');
+        }
+
+        $view = [];
+        $view['paths'] = ProcessedSite::getPaths();
+
+        require_once WP2STATIC_PATH . 'views/post-processed-site-paths-page.php';
+    }
+
+    public static function renderStaticSitePaths() : void {
+        if ( ! is_admin() ) {
+            http_response_code(403);
+            die('Forbidden');
+        }
+
+        $view = [];
+        $view['paths'] = StaticSite::getPaths();
+
+        require_once WP2STATIC_PATH . 'views/static-site-paths-page.php';
+    }
+
     public static function renderDeployCache() : void {
         if ( ! is_admin() ) {
             http_response_code(403);

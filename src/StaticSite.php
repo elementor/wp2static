@@ -9,6 +9,9 @@
 
 namespace WP2Static;
 
+use RecursiveIteratorIterator;
+use RecursiveDirectoryIterator;
+
 class StaticSite {
 
     /**
@@ -47,6 +50,39 @@ class StaticSite {
             // CrawlCache not useful without StaticSite files
             CrawlCache::truncate();
         }
+    }
+
+    /**
+     *  Get all paths in StaticSite
+     *
+     *  @return string[] StaticSite paths
+     */
+    public static function getPaths() : array {
+        global $wpdb;
+
+        if ( ! is_dir( self::getPath() ) ) {
+            return [];
+        }
+
+        $paths = [];
+
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator(
+                self::getPath(),
+                RecursiveDirectoryIterator::SKIP_DOTS
+            )
+        );
+
+        foreach ( $iterator as $filename => $file_object ) {
+            $base_name = basename( $filename );
+            if ( $base_name != '.' && $base_name != '..' ) {
+                $real_filepath = realpath( $filename );
+
+                $paths[] = str_replace( self::getPath(), '', $real_filepath );
+            }
+        }
+
+        return $paths;
     }
 }
 

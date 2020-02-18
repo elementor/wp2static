@@ -64,7 +64,7 @@ button.wp2static-button {
 
             </td>
             <td>
-                <a href="#"><button class="wp2static-button button btn-danger">Show Paths</button></a>
+                <a href="<?php echo admin_url('admin.php?page=wp2static-static-site'); ?>" target="_blank"><button class="wp2static-button button btn-danger">Show Paths</button></a>
 
                 <form
                     name="wp2static-static-site-delete"
@@ -87,7 +87,7 @@ button.wp2static-button {
                 <a href="file://<?php echo $view['uploads_path']; ?>wp2static-processed-site" />Path</a>
             </td>
             <td>
-                <a href="#"><button class="wp2static-button button btn-danger">Show Paths</button></a>
+                <a href="<?php echo admin_url('admin.php?page=wp2static-post-processed-site'); ?>" target="_blank"><button class="wp2static-button button btn-danger">Show Paths</button></a>
 
                 <form
                     name="wp2static-post-processed-site-delete"
