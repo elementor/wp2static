@@ -453,6 +453,7 @@ class Controller {
                 case 'deploy':
                     WsLog::l( "Starting deployment");
                     do_action('wp2static_deploy', ProcessedSite::getPath());
+                    do_action( 'wp2static_post_deploy_trigger' );
                     WsLog::l( "Deployment complete");
                     break;
                 default:
@@ -512,6 +513,35 @@ class Controller {
         );
 
         CrawlCache::rmUrl( $url );
+    }
+
+    public static function emailDeployNotification() : void {
+        error_log('EMAILING POST DEPLOYMENT');
+        WsLog::l( 'Sending deployment notification  email...' );
+
+        if ( empty( CoreOptions::getValue( 'completionEmail' ) ) ) {
+            return;
+        }
+
+        $current_user = wp_get_current_user();
+        $to = $current_user->user_email;
+        $subject = 'Static site deployment: ' .
+        $site_title = get_bloginfo( 'name' );
+        $body = 'Your WordPress site has been automatically deployed.';
+        $headers = array( 'Content-Type: text/html; charset=UTF-8' );
+
+        wp_mail( $to, $subject, $body, $headers );
+    }
+
+    public static function webhookDeployNotification() : void {
+        error_log('POST DEPLOYMENT WEBHOOK ');
+        WsLog::l( 'Sending deployment notification webhook...' );
+
+        if ( empty( CoreOptions::getValue( 'completionWebhook' ) ) ) {
+            return;
+        }
+
+        // TODO: TBC
     }
 }
 

@@ -51,6 +51,18 @@ class WordPressAdmin {
             0);
 
         add_action(
+            'wp2static_post_deploy_trigger',
+            [ 'WP2Static\Controller', 'emailDeployNotification' ],
+            10,
+            0);
+
+        add_action(
+            'wp2static_post_deploy_trigger',
+            [ 'WP2Static\Controller', 'webhookDeployNotification' ],
+            10,
+            0);
+
+        add_action(
             'admin_post_wp2static_post_processed_site_delete',
             [ 'WP2Static\Controller', 'wp2static_post_processed_site_delete' ],
             10,
