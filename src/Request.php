@@ -10,12 +10,13 @@ class Request {
     public $status_code;
 
     public function __construct() {
-        $this->default_options = array(
-            CURLOPT_USERAGENT => 'WP2Static.com',
+        $this->default_options = [
+            // TODO: allow overriding all cURL options
+            // CURLOPT_USERAGENT => 'WP2Static.com',
             CURLOPT_CONNECTTIMEOUT => 0,
             CURLOPT_TIMEOUT => 600,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        );
+        ];
     }
 
     /**
@@ -37,13 +38,11 @@ class Request {
      * GET with cURL handle and options
      *
      * @param resource $ch cURL resource
-     * @param mixed[] $curl_options cURL options
      * @return mixed[] response and cURL handle in array
      */
     public function getURL(
         string $url,
-        $ch,
-        array $curl_options = []
+        $ch
     ) : array {
         curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
         curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
@@ -53,20 +52,6 @@ class Request {
         curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
 
         $this->applyDefaultOptions( $ch );
-
-        if ( ! empty( $curl_options ) ) {
-            foreach ( $curl_options as $option => $value ) {
-                if ( ! is_int( $option ) ) {
-                    continue;
-                }
-
-                curl_setopt(
-                    $ch,
-                    $option,
-                    $value
-                );
-            }
-        }
 
         $response = [];
 
@@ -81,13 +66,11 @@ class Request {
      *
      * @param mixed[] $data payload
      * @param mixed[] $headers custom headers
-     * @param mixed[] $curl_options cURL options
      */
     public function postWithJSONPayloadCustomHeaders(
         string $url,
         array $data,
-        array $headers,
-        array $curl_options = []
+        array $headers
         ) : void {
         $ch = curl_init();
 
@@ -101,20 +84,6 @@ class Request {
         curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'POST' );
 
         $this->applyDefaultOptions( $ch );
-
-        if ( ! empty( $curl_options ) ) {
-            foreach ( $curl_options as $option => $value ) {
-                if ( ! is_int( $option ) ) {
-                    continue;
-                }
-
-                curl_setopt(
-                    $ch,
-                    $option,
-                    $value
-                );
-            }
-        }
 
         curl_setopt(
             $ch,
@@ -336,12 +305,10 @@ class Request {
      *  POST with options array
      *
      * @param mixed[] $data payload
-     * @param mixed[] $curl_options cURL options
      */
     public function postWithArray(
         string $url,
-        array $data,
-        array $curl_options = []
+        array $data
         ) : void {
         $ch = curl_init();
 
@@ -354,20 +321,6 @@ class Request {
         curl_setopt( $ch, CURLOPT_POST, 1 );
 
         $this->applyDefaultOptions( $ch );
-
-        if ( ! empty( $curl_options ) ) {
-            foreach ( $curl_options as $option => $value ) {
-                if ( ! is_int( $option ) ) {
-                    continue;
-                }
-
-                curl_setopt(
-                    $ch,
-                    $option,
-                    $value
-                );
-            }
-        }
 
         curl_setopt(
             $ch,

@@ -2,7 +2,7 @@
 /*
     Crawler
 
-    Crawls URLs in WordPressSite, saving them to StaticSite 
+    Crawls URLs in WordPressSite, saving them to StaticSite
 
 */
 
@@ -15,14 +15,12 @@ class Crawler {
     private $curl_options;
 
     /**
-     * StaticSite constructor
+     * Crawler constructor
      *
-     * @param string $path path to static site directory
      */
     public function __construct() {
         $this->ch = curl_init();
         $this->request = new Request();
-        $this->curl_options = [];
 
         $portOverride = apply_filters(
             'wp2static_curl_port',
@@ -30,28 +28,33 @@ class Crawler {
 
         // TODO: apply this filter when option is saved
         if ( $portOverride ) {
-            $this->curl_options[ CURLOPT_PORT ] = $portOverride;
+            curl_setopt( $this->ch, CURLOPT_PORT, $portOverride );
         }
-        
-        $this->curl_options[ CURLOPT_USERAGENT ] = apply_filters(
-            'wp2static_curl_user_agent',
-            'WP2Static.com');
+
+        curl_setopt(
+            $this->ch,
+            CURLOPT_USERAGENT,
+            apply_filters( 'wp2static_curl_user_agent', 'WP2Static.com' )
+            );
 
         if ( CoreOptions::getValue( 'useBasicAuth' ) ) {
-            $this->curl_options[ CURLOPT_USERPWD ] =
+            curl_setopt(
+                $this->ch,
+                CURLOPT_USERPWD,
                 CoreOptions::getValue( 'basicAuthUser' ) . ':' .
-                CoreOptions::getValue( 'basicAuthPassword' );
+                CoreOptions::getValue( 'basicAuthPassword' )
+            );
         }
     }
 
     /**
-     * Crawls URLs in WordPressSite, saving them to StaticSite 
+     * Crawls URLs in WordPressSite, saving them to StaticSite
      *
      */
-    public function crawlSite( string $static_site_path, bool $progress = false ) {
+    public function crawlSite( string $static_site_path, bool $progress = false ) : void {
         $crawled = 0;
         $cache_hits = 0;
-
+        $progress_indicator = false;
 
         if ( $progress ) {
             $crawl_queue_total = CrawlQueue::getTotal();
@@ -73,7 +76,7 @@ class Crawler {
                 if ( CrawlCache::getUrl( $url->get() ) ) {
                     $cache_hits++;
 
-                    if ( $progress ) {
+                    if ( $progress_indicator ) {
                         $progress_indicator->tick();
                     }
 
@@ -83,7 +86,7 @@ class Crawler {
 
             $crawled_contents = $this->crawlURL( $url );
 
-            if ( $progress ) {
+            if ( $progress_indicator ) {
                 $progress_indicator->tick();
             }
 
@@ -109,13 +112,13 @@ class Crawler {
             }
         }
 
-        if ( $progress ) {
+        if ( $progress_indicator ) {
             $progress_indicator->finish();
         }
 
-        error_log('finished crawling all detected URLs');
-        error_log(" Crawled: $crawled");
-        error_log(" Skipped (cache-hit): $cache_hits");
+        WsLog::l('Finished crawling all detected URLs');
+        WsLog::l("Crawled: $crawled");
+        WsLog::l("Skipped (cache-hit): $cache_hits");
 
         $args = [
             'staticSitePath' => $static_site_path,
@@ -131,10 +134,7 @@ class Crawler {
      *
      */
     public function crawlURL( URL $url ) : string {
-        $response = $this->request->getURL(
-            $url->get(),
-            $this->ch,
-            $this->curl_options);
+        $response = $this->request->getURL( $url->get(), $this->ch );
 
         $crawled_contents = $response['body'];
 
