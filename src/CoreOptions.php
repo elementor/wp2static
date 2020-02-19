@@ -258,9 +258,9 @@ class CoreOptions {
     /*
      * Naive encypting/decrypting
      *
+     * @throws WP2StaticException
      */
-    public static function encrypt_decrypt($action, $string) {
-        $output = false;
+    public static function encrypt_decrypt(string $action, string $string) : string {
         $encrypt_method = "AES-256-CBC";
 
         $secret_key =
@@ -276,21 +276,20 @@ class CoreOptions {
         $key = hash('sha256', $secret_key);
         $variate = substr(hash('sha256', $secret_iv), 0, 16);
 
-        if ( $action == 'encrypt' ) {
-            $output = openssl_encrypt($string, $encrypt_method, $key, 0, $variate);
-            $output = base64_encode($output);
-        } else if( $action == 'decrypt' ) {
-            $output = openssl_decrypt(base64_decode($string), $encrypt_method, $key, 0, $variate);
+        if ( $action == 'decrypt' ) {
+            return (string) openssl_decrypt((string) base64_decode($string), $encrypt_method, $key, 0, $variate);
         }
 
-        return $output;
+        $output = openssl_encrypt($string, $encrypt_method, $key, 0, $variate);
+
+        return (string) base64_encode((string) $output);
     }
 
     /**
      * Save all options POST'ed via UI
      *
      */
-    public static function savePosted( $screen = 'core') : void {
+    public static function savePosted( string $screen = 'core') : void {
         global $wpdb;
 
         $table_name = $wpdb->prefix . self::$table_name;
