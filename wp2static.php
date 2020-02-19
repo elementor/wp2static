@@ -39,26 +39,29 @@ add_action(
     'wp_static_html_output_server_side_export_hook',
     'wp_static_html_output_server_side_export',
     10,
-    0);
+    0
+);
 
 add_filter(
     'plugin_action_links_' .
     plugin_basename( __FILE__ ),
-    'plugin_action_links');
+    'plugin_action_links'
+);
 
 add_action(
     'wp_ajax_wp_static_html_output_ajax',
-    'wp_static_html_output_ajax');
+    'wp_static_html_output_ajax'
+);
 
 function wp_static_html_output_ajax() {
     $nonce_check = check_ajax_referer( 'wpstatichtmloutput', 'nonce' );
-    error_log('nonce check');
-    error_log($nonce_check);
+    error_log( 'nonce check' );
+    error_log( $nonce_check );
 
     $instance_method = filter_input( INPUT_POST, 'ajax_action' );
 
-    error_log('$instance_method');
-    error_log($instance_method);
+    error_log( '$instance_method' );
+    error_log( $instance_method );
 
     if ( '' !== $instance_method && is_string( $instance_method ) ) {
         $plugin_instance = WP2Static\Controller::getInstance();
@@ -85,6 +88,7 @@ if ( defined( 'WP_CLI' ) ) {
     WP_CLI::add_command( 'wp2static', 'WP2Static\CLI' );
     WP_CLI::add_command(
         'wp2static options',
-        [ 'WP2Static\CLI', 'options' ]);
+        array( 'WP2Static\CLI', 'options' )
+    );
 }
 

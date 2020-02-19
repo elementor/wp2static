@@ -14,12 +14,11 @@ use RecursiveDirectoryIterator;
 class ProcessedSite {
 
     public static function getPath() : string {
-        return SiteInfo::getPath( 'uploads') . 'wp2static-processed-site';
+        return SiteInfo::getPath( 'uploads' ) . 'wp2static-processed-site';
     }
 
     /**
      * Add static file to ProcessedSite
-     *
      */
     public static function add( string $static_file, string $save_path ) : void {
         $full_path = self::getPath() . "/$save_path";
@@ -35,10 +34,9 @@ class ProcessedSite {
 
     /**
      * Delete processed site files
-     *
      */
     public static function delete() : void {
-        WsLog::l('Deleting processed site files');
+        WsLog::l( 'Deleting processed site files' );
 
         if ( is_dir( self::getPath() ) ) {
             FilesHelper::delete_dir_with_files( self::getPath() );

@@ -23,7 +23,7 @@ class WordPressAdmin {
      *
      * @param string $bootstrap_file main plugin filepath
      */
-    public static function registerHooks(string $bootstrap_file) : void {
+    public static function registerHooks( string $bootstrap_file ) : void {
         register_activation_hook(
             $bootstrap_file,
             [ 'WP2Static\Controller', 'activate' ]
@@ -48,103 +48,120 @@ class WordPressAdmin {
             'admin_post_wp2static_ui_save_options',
             [ 'WP2Static\Controller', 'wp2static_ui_save_options' ],
             10,
-            0);
+            0
+        );
 
         add_action(
             'wp2static_post_deploy_trigger',
             [ 'WP2Static\Controller', 'emailDeployNotification' ],
             10,
-            0);
+            0
+        );
 
         add_action(
             'wp2static_post_deploy_trigger',
             [ 'WP2Static\Controller', 'webhookDeployNotification' ],
             10,
-            0);
+            0
+        );
 
         add_action(
             'admin_post_wp2static_post_processed_site_delete',
             [ 'WP2Static\Controller', 'wp2static_post_processed_site_delete' ],
             10,
-            0);
+            0
+        );
 
         add_action(
             'admin_post_wp2static_delete_jobs_queue',
             [ 'WP2Static\Controller', 'wp2static_delete_jobs_queue' ],
             10,
-            0);
+            0
+        );
 
         add_action(
             'admin_post_wp2static_crawl_queue_delete',
             [ 'WP2Static\Controller', 'wp2static_crawl_queue_delete' ],
             10,
-            0);
+            0
+        );
 
         add_action(
             'admin_post_wp2static_deploy_cache_delete',
             [ 'WP2Static\Controller', 'wp2static_deploy_cache_delete' ],
             10,
-            0);
+            0
+        );
 
         add_action(
             'admin_post_wp2static_crawl_cache_delete',
             [ 'WP2Static\Controller', 'wp2static_crawl_cache_delete' ],
             10,
-            0);
+            0
+        );
 
         add_action(
             'admin_post_wp2static_static_site_delete',
             [ 'WP2Static\Controller', 'wp2static_static_site_delete' ],
             10,
-            0);
+            0
+        );
 
         add_action(
             'admin_post_wp2static_ui_save_job_options',
             [ 'WP2Static\Controller', 'wp2static_ui_save_job_options' ],
             10,
-            0);
+            0
+        );
 
         add_action(
             'admin_post_wp2static_manually_enqueue_jobs',
             [ 'WP2Static\Controller', 'wp2static_manually_enqueue_jobs' ],
             10,
-            0);
+            0
+        );
 
         add_action(
             'wp2static_process_queue',
             [ 'WP2Static\Controller', 'wp2static_process_queue' ],
             10,
-            0);
+            0
+        );
 
         add_action(
             'wp2static_headless_hook',
             [ 'WP2Static\Controller', 'wp2static_headless' ],
             10,
-            0);
+            0
+        );
 
         add_action(
             'wp2static_process_html',
             [ 'WP2Static\SimpleRewriter', 'rewrite' ],
             10,
-            1);
+            1
+        );
 
         add_action(
             'wp2static_process_css',
             [ 'WP2Static\SimpleRewriter', 'rewrite' ],
             10,
-            1);
+            1
+        );
 
         add_action(
             'wp2static_process_js',
             [ 'WP2Static\SimpleRewriter', 'rewrite' ],
             10,
-            1);
+            1
+        );
 
         add_action(
             'wp2static_process_xml',
             [ 'WP2Static\SimpleRewriter', 'rewrite' ],
             10,
-            1);
+            1
+        );
 
         /*
          * Register actions for when we should invalidate cache for
@@ -168,7 +185,7 @@ class WordPressAdmin {
             );
         }
 
-        if ( CoreOptions::getValue('queueJobOnPostSave') ) {
+        if ( CoreOptions::getValue( 'queueJobOnPostSave' ) ) {
             add_action(
                 'save_post',
                 [ 'WP2Static\Controller', 'wp2static_save_post_handler' ],
@@ -176,7 +193,7 @@ class WordPressAdmin {
             );
         }
 
-        if ( CoreOptions::getValue('queueJobOnPostDelete') ) {
+        if ( CoreOptions::getValue( 'queueJobOnPostDelete' ) ) {
             add_action(
                 'trashed_post',
                 [ 'WP2Static\Controller', 'wp2static_trashed_post_handler' ],
@@ -187,7 +204,6 @@ class WordPressAdmin {
 
     /**
      * Add WP2Static elements to WordPress Admin UI
-     *
      */
     public static function addAdminUIElements() : void {
         if ( is_admin() ) {

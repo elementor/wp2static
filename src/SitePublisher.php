@@ -15,10 +15,10 @@ class SitePublisher {
 
     // TODO: move into required deployment addons
     // public function pauseBetweenAPICalls() : void {
-    //     if ( isset( $this->settings['delayBetweenAPICalls'] ) &&
-    //         $this->settings['delayBetweenAPICalls'] > 0 ) {
-    //         sleep( $this->settings['delayBetweenAPICalls'] );
-    //     }
+    // if ( isset( $this->settings['delayBetweenAPICalls'] ) &&
+    // $this->settings['delayBetweenAPICalls'] > 0 ) {
+    // sleep( $this->settings['delayBetweenAPICalls'] );
+    // }
     // }
 
     public function clearFileList() : void {

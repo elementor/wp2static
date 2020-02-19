@@ -16,7 +16,6 @@ class Crawler {
 
     /**
      * Crawler constructor
-     *
      */
     public function __construct() {
         $this->ch = curl_init();
@@ -24,7 +23,8 @@ class Crawler {
 
         $portOverride = apply_filters(
             'wp2static_curl_port',
-            null);
+            null
+        );
 
         // TODO: apply this filter when option is saved
         if ( $portOverride ) {
@@ -35,7 +35,7 @@ class Crawler {
             $this->ch,
             CURLOPT_USERAGENT,
             apply_filters( 'wp2static_curl_user_agent', 'WP2Static.com' )
-            );
+        );
 
         if ( CoreOptions::getValue( 'useBasicAuth' ) ) {
             curl_setopt(
@@ -49,7 +49,6 @@ class Crawler {
 
     /**
      * Crawls URLs in WordPressSite, saving them to StaticSite
-     *
      */
     public function crawlSite( string $static_site_path, bool $progress = false ) : void {
         $crawled = 0;
@@ -62,14 +61,14 @@ class Crawler {
             $progress_indicator =
                 \WP_CLI\Utils\make_progress_bar(
                     'Crawling site',
-                    $crawl_queue_total);
+                    $crawl_queue_total
+                );
         }
 
-
         // TODO: use some Iterable or other performance optimisation here
-        //       to help reduce resources for large URL sites
-        foreach( CrawlQueue::getCrawlableURLs() as $url ) {
-            $url = new URL( SiteInfo::getURL('site') . $url );
+        // to help reduce resources for large URL sites
+        foreach ( CrawlQueue::getCrawlableURLs() as $url ) {
+            $url = new URL( SiteInfo::getURL( 'site' ) . $url );
 
             // if not already cached
             if ( ! CoreOptions::getValue( 'dontUseCrawlCaching' ) ) {
@@ -93,9 +92,10 @@ class Crawler {
             $crawled++;
 
             $path_in_static_site = str_replace(
-                SiteInfo::getUrl( 'site'),
+                SiteInfo::getUrl( 'site' ),
                 '',
-                $url->get());
+                $url->get()
+            );
 
             // do some magic here - naive: if URL ends in /, save to /index.html
             // TODO: will need love for example, XML files
@@ -116,9 +116,9 @@ class Crawler {
             $progress_indicator->finish();
         }
 
-        WsLog::l('Finished crawling all detected URLs');
-        WsLog::l("Crawled: $crawled");
-        WsLog::l("Skipped (cache-hit): $cache_hits");
+        WsLog::l( 'Finished crawling all detected URLs' );
+        WsLog::l( "Crawled: $crawled" );
+        WsLog::l( "Skipped (cache-hit): $cache_hits" );
 
         $args = [
             'staticSitePath' => $static_site_path,
@@ -131,7 +131,6 @@ class Crawler {
 
     /**
      * Crawls a string of full URL within WordPressSite
-     *
      */
     public function crawlURL( URL $url ) : string {
         $response = $this->request->getURL( $url->get(), $this->ch );

@@ -27,7 +27,6 @@ class WordPressSite {
      * Clear detected URLs
      *
      * Reset the CrawlQueue
-     *
      */
     public static function clearDetectedURLs() : bool {
         CrawlQueue::truncate();

@@ -18,7 +18,7 @@ class URL {
      * @param string $parent_page_url URL optional parent page to make
      * absolute URL from
      */
-    public function __construct(string $url, string $parent_page_url = null) {
+    public function __construct( string $url, string $parent_page_url = null ) {
         $url = new \Wa72\Url\Url( $url );
 
         if ( $parent_page_url ) {
@@ -28,7 +28,8 @@ class URL {
             // test absolute URL
             if ( ! $url->getHost() ) {
                 throw new WP2StaticException(
-                    'Trying to create unsupported URL' );
+                    'Trying to create unsupported URL'
+                );
             }
 
             $this->url = $url;
@@ -37,7 +38,6 @@ class URL {
 
     /**
      * Return the URL as a string
-     *
      */
     public function get() : string {
         return $this->url;
@@ -50,7 +50,7 @@ class URL {
      *
      * @param string $destination_url URL rewrite rules
      */
-    public function rewriteHostAndProtocol(string $destination_url) : void {
+    public function rewriteHostAndProtocol( string $destination_url ) : void {
         $destination_url = new \Wa72\Url\Url( $destination_url );
 
         $this->url->setHost( $destination_url->getHost() );

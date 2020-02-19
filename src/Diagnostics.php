@@ -33,7 +33,7 @@ class Diagnostics {
                 return 'No';
             }
         } else {
-            WsLog::l( "no shell_exec available for local DNS checking");
+            WsLog::l( 'no shell_exec available for local DNS checking' );
             return 'Unknown';
         }
     }

@@ -1,8 +1,8 @@
 <?php
 
 /*
-    TODO: Holding this here for AssetDownloader reference, but now 
-            
+    TODO: Holding this here for AssetDownloader reference, but now
+
                 use Crawler class
 
 */
@@ -41,7 +41,6 @@ class SiteCrawler {
 
     /**
      *  SiteCrawler constructor
-     *
      */
     public function __construct(
         AssetDownloader $asset_downloader
@@ -95,7 +94,7 @@ class SiteCrawler {
      * @throws WP2StaticException
      */
     public function crawl() : void {
-        error_log('crawling with SiteCrawler');
+        error_log( 'crawling with SiteCrawler' );
         $urls_to_crawl = CrawlQueue::getCrawlableURLs();
 
         if ( ! $urls_to_crawl ) {
@@ -104,7 +103,7 @@ class SiteCrawler {
             throw new WP2StaticException( $err );
         }
 
-        $exclusions = array( 'wp-json' );
+        $exclusions = [ 'wp-json' ];
 
         foreach ( $urls_to_crawl as $url ) {
             $page_url = SiteInfo::getUrl( 'site' ) . ltrim( $url, '/' );
@@ -249,7 +248,7 @@ class SiteCrawler {
 
         $url = $this->getRelativeURLFromFullURL( $page_url );
 
-        $good_response_codes = array( '200', '201', '301', '302', '304' );
+        $good_response_codes = [ '200', '201', '301', '302', '304' ];
 
         if ( ! in_array( $status_code, $good_response_codes ) ) {
             WsLog::l(
@@ -340,7 +339,8 @@ class SiteCrawler {
 
         // TODO: better validate save success
         $file_writer->saveFile(
-            SiteInfo::getPath( 'uploads' ) . 'wp2static-exported-site/');
+            SiteInfo::getPath( 'uploads' ) . 'wp2static-exported-site/'
+        );
 
         if ( ! isset( $this->settings['dontUseCrawlCaching'] ) ) {
             CrawlCache::addUrl( $url );

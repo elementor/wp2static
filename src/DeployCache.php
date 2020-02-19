@@ -82,7 +82,6 @@ class DeployCache {
 
     /**
      *  Count URLs in Deploy Cache
-     *
      */
     public static function getTotal() : int {
         global $wpdb;

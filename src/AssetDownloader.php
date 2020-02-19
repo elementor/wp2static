@@ -26,7 +26,8 @@ class AssetDownloader {
         // TODO: add local cache per iteration of HTMLProcessor to
         // faster skip cached files without querying DB
 
-        /* TODO: copied these from ExportSettings
+        /*
+         TODO: copied these from ExportSettings
 
             $crawlable_filetypes = [];
             $crawlable_filetypes['img'] = 1;
@@ -44,9 +45,9 @@ class AssetDownloader {
         */
 
         // check if supported filetype for crawling
-        if ( isset( CoreOptions::getValue('crawlable_filetypes')[ $extension ] ) ) {
+        if ( isset( CoreOptions::getValue( 'crawlable_filetypes' )[ $extension ] ) ) {
             // skip if in Crawl Cache already
-            if ( ! CoreOptions::getValue('dontUseCrawlCaching' ) ) {
+            if ( ! CoreOptions::getValue( 'dontUseCrawlCaching' ) ) {
                 if ( CrawlCache::getUrl( $url ) ) {
                     return;
                 }
@@ -54,7 +55,7 @@ class AssetDownloader {
 
             // get url without Site URL
             $save_path = str_replace(
-                SiteInfo::getUrl('site_url'),
+                SiteInfo::getUrl( 'site_url' ),
                 '',
                 $url
             );
@@ -65,14 +66,14 @@ class AssetDownloader {
 
             $curl_options = [];
 
-            if ( CoreOptions::getValue( 'crawlPort') ) {
+            if ( CoreOptions::getValue( 'crawlPort' ) ) {
                 $curl_options[ CURLOPT_PORT ] =
-                    CoreOptions::getValue('crawlPort');
+                    CoreOptions::getValue( 'crawlPort' );
             }
 
             if ( CoreOptions::getValue( 'crawlUserAgent' ) ) {
                 $curl_options[ CURLOPT_USERAGENT ] =
-                    CoreOptions::getValue('crawlUserAgent');
+                    CoreOptions::getValue( 'crawlUserAgent' );
             }
 
             if ( CoreOptions::getValue( 'useBasicAuth' ) ) {
