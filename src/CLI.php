@@ -344,7 +344,7 @@ class CLI {
 
     }
 
-    public function routeWizardSelection($level, $selection) {
+    public function routeWizardSelection( int $level, $selection) : void {
         $selection_map = [
             0 => [
                 0 => 'wp2static_cli_quick_start',
@@ -396,13 +396,12 @@ class CLI {
         }
     }
 
-    public function wp2static_cli_exit_to_shell() {
+    public function wp2static_cli_exit_to_shell() : void {
         WP_CLI::line( PHP_EOL . "### Exiting to shell, goodbye! ###" . PHP_EOL );
-
         WP_CLI::halt(0);
     }
 
-    public function wp2static_cli_options_set_detect_common() {
+    public function wp2static_cli_options_set_detect_common() : void {
         WP_CLI::line( PHP_EOL . "### Setting Common URL detection  ###" . PHP_EOL );
 
         $plugin = Controller::getInstance();
@@ -432,7 +431,7 @@ class CLI {
         $this->showWizardWaitForSelection(8);
     }
 
-    public function wp2static_cli_options_set_detect_homepage_only() {
+    public function wp2static_cli_options_set_detect_homepage_only() : void {
         WP_CLI::line( PHP_EOL . "### Setting Homepage only URL detection  ###" . PHP_EOL );
 
         $plugin = Controller::getInstance();
@@ -461,7 +460,6 @@ class CLI {
         }
 
         $plugin->options->setOption( 'detectHomepage', 1 );
-
         $plugin->options->save();
 
         WP_CLI::line( PHP_EOL . "Homepage only URL detection set!" . PHP_EOL );
@@ -469,7 +467,7 @@ class CLI {
         $this->showWizardWaitForSelection(8);
     }
 
-    public function wp2static_cli_options_set_detect_maximum() {
+    public function wp2static_cli_options_set_detect_maximum() : void {
         WP_CLI::line( PHP_EOL . "### Setting maximum URL detection  ###" . PHP_EOL );
 
         $plugin = Controller::getInstance();
@@ -505,7 +503,7 @@ class CLI {
         $this->showWizardWaitForSelection(8);
     }
 
-    public function wp2static_cli_caches_truncate_crawl_queue() {
+    public function wp2static_cli_caches_truncate_crawl_queue() : void {
         WP_CLI::line( PHP_EOL . "### Deleting Crawl Queue ###" . PHP_EOL );
 
         CrawlQueue::truncate();
@@ -515,12 +513,11 @@ class CLI {
         $this->showWizardWaitForSelection(3);
     }
 
-    public function wp2static_cli_clear_screen() {
+    public function wp2static_cli_clear_screen() : void {
         echo "\e[H\e[J";
     }
 
-    public function wp2static_cli_jobs_exec_detect() {
-
+    public function wp2static_cli_jobs_exec_detect() : void {
         WP_CLI::line( "### Detect URLs ###" );
 
         $this->detect();
@@ -528,7 +525,7 @@ class CLI {
         $this->showWizardWaitForSelection(2);
     }
 
-    public function wp2static_cli_quick_start() {
+    public function wp2static_cli_quick_start() : void {
         $this->wp2static_cli_clear_screen();
         WP_CLI::line( "### Quick-start: generate static site with current options###" );
 
@@ -544,71 +541,70 @@ class CLI {
         $this->showWizardWaitForSelection(0);
     }
 
-    public function wp2static_cli_options_launch_wizard() {
+    public function wp2static_cli_options_launch_wizard() : void {
         WP_CLI::line( PHP_EOL . "### Options - view/manage WP2Static options ###" . PHP_EOL);
 
         $this->showWizardWaitForSelection(8);
     }
 
-    public function wp2static_cli_options_menu() {
+    public function wp2static_cli_options_menu() : void {
         WP_CLI::line( PHP_EOL . "### Guided options configuration ###" . PHP_EOL);
 
         $this->showWizardWaitForSelection(1);
     }
 
-    public function wp2static_cli_jobs_menu() {
+    public function wp2static_cli_jobs_menu() : void {
         WP_CLI::line( "### Options - view/manage WP2Static jobs ###" );
         WP_CLI::line( "" );
 
         $this->showWizardWaitForSelection(2);
     }
 
-    public function wp2static_cli_caches_menu() {
+    public function wp2static_cli_caches_menu() : void {
         WP_CLI::line( "### Options - view/manage WP2Static caches ###" );
         WP_CLI::line( "" );
 
         $this->showWizardWaitForSelection(3);
     }
 
-    public function wp2static_cli_diagnostics_menu() {
+    public function wp2static_cli_diagnostics_menu() : void {
         WP_CLI::line( "### Options - diagnostics  ###" );
         WP_CLI::line( "" );
 
         $this->showWizardWaitForSelection(4);
     }
 
-    public function wp2static_test_called_func_2() {
-        WP_CLI::line( "Called function 2 based on user selection!" );
-    }
-
-    public function wp2static_cli_options_list() {
+    /**
+     * List options
+     * TODO: very repetitive, tidy up
+     */
+    public function wp2static_cli_options_list() : void {
         WP_CLI::line( PHP_EOL . "### Showing all options ###" . PHP_EOL );
-
-        $this->options(['list'], []);
-
-        $this->showWizardWaitForSelection(1);
+        $this->options( ['list'], [] );
+        $this->showWizardWaitForSelection( 1 );
     }
 
-
-    public function showWizardWaitForSelection($level) {
+    /**
+     * Print main wizard menu and route user input
+     */
+    public function showWizardWaitForSelection( int $level ) : void {
         $this->showWizardMenu($level);
-
-        $userval = trim( fgets( STDIN ) );
-
+        $userval = trim( (string) fgets( STDIN ) );
         $this->routeWizardSelection( $level, $userval );
     }
 
-    public function wizard(
-        array $args = [],
-        array $assoc_args = []
-    ) : void {
-
+    /**
+     * Interactive CLI wizard
+     *
+     * @param string[] $args Arguments after command
+     * @param string[] $assoc_args Parameters after command
+     */
+    public function wizard( array $args = [], array $assoc_args = [] ) : void {
         WP_CLI::line( "Welcome to WP2Static! Use this interactive wizard or run commands directly, as per the docs: https://wp2static.com" );
 
-        // check if plugin has been setup
-
+        // TODO: check if plugin has been setup
         $level = 0;
-        $this->showWizardWaitForSelection($level);
+        $this->showWizardWaitForSelection( $level );
     }
 
     /**
@@ -620,6 +616,8 @@ class CLI {
      *
      * Show progress indicator while crawling
      *
+     * @param string[] $args Arguments after command
+     * @param string[] $assoc_args Parameters after command
      */
     public function crawl( array $args, array $assoc_args ) : void {
         $action = isset( $args[0] ) ? $args[0] : null;
@@ -628,11 +626,12 @@ class CLI {
 
         $progress = isset( $assoc_args['show-progress'] );
 
+        // TODO: move progress logic here from within Crawler class
         $crawler = new Crawler();
         $crawler->crawlSite( StaticSite::getPath(), $progress );
     }
 
-    /*
+    /**
      * Detect WordPress URLs to crawl, based on saved options
      *
      */
@@ -642,21 +641,16 @@ class CLI {
         WP_CLI::log( "$detected_count URLs detected." );
     }
 
-    /*
+    /**
      * Makes a copy of crawled static site with processing applied
      *
      */
     public function post_process() : void {
         $post_processor = new PostProcessor();
-
-        $processed_site_dir =
-            SiteInfo::getPath( 'uploads') . 'wp2static-processed-site';
-        $processed_site = new ProcessedSite( $processed_site_dir );
-
-        $post_processor->processStaticSite( StaticSite::getPath(), $processed_site);
+        $post_processor->processStaticSite( ProcessedSite::getPath() );
     }
 
-    /*
+    /**
      * Crawl Queue
      *
      * <list>
@@ -665,13 +659,16 @@ class CLI {
      *
      * <count>
      *
-     * Show total number of URLs in CrawlCache 
+     * Show total number of URLs in CrawlCache
      *
      * <delete>
      *
-     * Empty all URLs from CrawlCache 
+     * Empty all URLs from CrawlCache
+     *
+     * @param string[] $args Arguments after command
+     * @param string[] $assoc_args Parameters after command
      */
-    public function crawl_cache( array $args, array $assoc_args ) {
+    public function crawl_cache( array $args, array $assoc_args ) : void {
         $action = isset( $args[0] ) ? $args[0] : null;
         $option_name = isset( $args[1] ) ? $args[1] : null;
         $value = isset( $args[2] ) ? $args[2] : null;
@@ -687,15 +684,15 @@ class CLI {
         if ( $action === 'count' ) {
             $urls = CrawlCache::getHashes();
 
-            WP_CLI::line( count( $urls ) );
+            WP_CLI::line( (string) count( $urls ) );
         }
 
         if ( $action === 'delete' ) {
 
             if ( ! isset( $assoc_args['force'] ) ) {
                 WP_CLI::line( PHP_EOL . "no --force given. Please type 'yes' to confirm deletion of Crawl Cache" . PHP_EOL );
-                
-                $userval = trim( fgets( STDIN ) );
+
+                $userval = trim( (string) fgets( STDIN ) );
 
                 if ( $userval !== 'yes' ) {
                     WP_CLI::error( 'Failed to delete Crawl Cache' ); 
@@ -708,7 +705,7 @@ class CLI {
         }
     }
 
-    /*
+    /**
      * Crawl Queue
      *
      * <list>
@@ -721,9 +718,12 @@ class CLI {
      *
      * <delete>
      *
-     * Empty all URLs from CrawlQueue 
+     * Empty all URLs from CrawlQueue
+     *
+     * @param string[] $args Arguments after command
+     * @param string[] $assoc_args Parameters after command
      */
-    public function crawl_queue( array $args, array $assoc_args ) {
+    public function crawl_queue( array $args, array $assoc_args ) : void {
         $action = isset( $args[0] ) ? $args[0] : null;
         $option_name = isset( $args[1] ) ? $args[1] : null;
         $value = isset( $args[2] ) ? $args[2] : null;
@@ -739,28 +739,28 @@ class CLI {
         if ( $action === 'count' ) {
             $urls = CrawlQueue::getCrawlableURLs();
 
-            WP_CLI::line( count( $urls ) );
+            WP_CLI::line( (string) count( $urls ) );
         }
 
         if ( $action === 'delete' ) {
 
             if ( ! isset( $assoc_args['force'] ) ) {
                 WP_CLI::line( PHP_EOL . "no --force given. Please type 'yes' to confirm deletion of CrawlQueue" . PHP_EOL );
-                
-                $userval = trim( fgets( STDIN ) );
+
+                $userval = trim( (string) fgets( STDIN ) );
 
                 if ( $userval !== 'yes' ) {
-                    WP_CLI::error( 'Failed to delete Crawl Queue' ); 
+                    WP_CLI::error( 'Failed to delete Crawl Queue' );
                 }
             }
 
             CrawlQueue::truncate();
 
-            WP_CLI::success( 'Deleted Crawl Queue' ); 
+            WP_CLI::success( 'Deleted Crawl Queue' );
         }
     }
 
-    public function wp2static_cli_caches_list_detected_urls() {
+    public function wp2static_cli_caches_list_detected_urls() : void {
         $this->crawl_queue(['list'], []);
 
         WP_CLI::line( PHP_EOL . "Run this command directly with:" . PHP_EOL );
@@ -770,61 +770,16 @@ class CLI {
     }
 
     /**
-     * WordPress Site operations
-     *
-     * ## OPTIONS
-     *
-     *
-     * <list_urls>
-     *
-     * List all URLs in the CrawlQueue
-     *
-     * <clear_detected_urls>
-     *
-     * Remove all URLs from the CrawlQueue
-     *
-     */
-    public function wordpress_site(
-        array $args,
-        array $assoc_args
-    ) : void {
-        $action = isset( $args[0] ) ? $args[0] : null;
-        $option_name = isset( $args[1] ) ? $args[1] : null;
-        $value = isset( $args[2] ) ? $args[2] : null;
-
-        WP_CLI::line( "action: $action" );
-
-        // also validate expected $action vs any
-        if ( empty( $action ) ) {
-            WP_CLI::error(
-                'Missing required argument: ' .
-                '<list_urls');
-        }
-
-        if ( $action === 'list_urls' ) {
-        }
-    }
-
-    /*
      * Processed Site
-     *
-     * <list>
-     *
-     * List all files in the Processed Site directory
-     *
-     * <count>
-     *
-     * Show total number of files in Processed Site directory 
      *
      * <delete>
      *
      * Delete all generated Processed Site files from server
      *
+     * @param string[] $args Arguments after command
+     * @param string[] $assoc_args Parameters after command
      */
-    public function processed_site(
-        array $args,
-        array $assoc_args
-    ) : void {
+    public function processed_site( array $args, array $assoc_args ) : void {
         $action = isset( $args[0] ) ? $args[0] : null;
         $option_name = isset( $args[1] ) ? $args[1] : null;
         $value = isset( $args[2] ) ? $args[2] : null;
@@ -839,11 +794,11 @@ class CLI {
         if ( $action === 'delete' ) {
             if ( ! isset( $assoc_args['force'] ) ) {
                 WP_CLI::line( PHP_EOL . "no --force given. Please type 'yes' to confirm deletion of ProcessedSite file cache" . PHP_EOL );
-                
-                $userval = trim( fgets( STDIN ) );
+
+                $userval = trim( (string) fgets( STDIN ) );
 
                 if ( $userval !== 'yes' ) {
-                    WP_CLI::error( 'Failed to delete Processed Static Site file cache' ); 
+                    WP_CLI::error( 'Failed to delete Processed Static Site file cache' );
                 }
             }
 
@@ -851,16 +806,8 @@ class CLI {
         }
     }
 
-    /*
+    /**
      * Static Site
-     *
-     * <list>
-     *
-     * List all files in the Static Site directory
-     *
-     * <count>
-     *
-     * Show total number of files in Static Site directory 
      *
      * <delete>
      *
@@ -868,11 +815,10 @@ class CLI {
      *
      *   -- also deletes the CrawlCache
      *
+     * @param string[] $args Arguments after command
+     * @param string[] $assoc_args Parameters after command
      */
-    public function static_site(
-        array $args,
-        array $assoc_args
-    ) : void {
+    public function static_site( array $args, array $assoc_args ) : void {
         $action = isset( $args[0] ) ? $args[0] : null;
         $option_name = isset( $args[1] ) ? $args[1] : null;
         $value = isset( $args[2] ) ? $args[2] : null;
@@ -887,8 +833,8 @@ class CLI {
         if ( $action === 'delete' ) {
             if ( ! isset( $assoc_args['force'] ) ) {
                 WP_CLI::line( PHP_EOL . "no --force given. Please type 'yes' to confirm deletion of StaticSite file cache" . PHP_EOL );
-                
-                $userval = trim( fgets( STDIN ) );
+
+                $userval = trim( (string) fgets( STDIN ) );
 
                 if ( $userval !== 'yes' ) {
                     WP_CLI::error( 'Failed to delete Static Site file cache' ); 
