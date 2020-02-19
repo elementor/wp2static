@@ -22,30 +22,22 @@ class AssetDownloader {
      */
     public function downloadAsset( string $url, string $extension ) : void {
         // check if user wants to download discovered assets
-
         // TODO: add local cache per iteration of HTMLProcessor to
         // faster skip cached files without querying DB
+        $crawlable_filetypes = [];
+        $crawlable_filetypes['img'] = 1;
+        $crawlable_filetypes['jpeg'] = 1;
+        $crawlable_filetypes['jpg'] = 1;
+        $crawlable_filetypes['png'] = 1;
+        $crawlable_filetypes['webp'] = 1;
+        $crawlable_filetypes['gif'] = 1;
+        $crawlable_filetypes['svg'] = 1;
+        $crawlable_filetypes =
+            apply_filters( 'wp2static_crawlable_types', $crawlable_filetypes );
 
-        /*
-         TODO: copied these from ExportSettings
-
-            $crawlable_filetypes = [];
-            $crawlable_filetypes['img'] = 1;
-            $crawlable_filetypes['jpeg'] = 1;
-            $crawlable_filetypes['jpg'] = 1;
-            $crawlable_filetypes['png'] = 1;
-            $crawlable_filetypes['webp'] = 1;
-            $crawlable_filetypes['gif'] = 1;
-            $crawlable_filetypes['svg'] = 1;
-
-            // properties which should not change during plugin execution
-            self::$settings = [
-                'crawlable_filetypes' => $crawlable_filetypes,
-            ];
-        */
 
         // check if supported filetype for crawling
-        if ( isset( CoreOptions::getValue( 'crawlable_filetypes' )[ $extension ] ) ) {
+        if ( array_key_exists( $extension, $crawlable_filetypes ) ) {
             // skip if in Crawl Cache already
             if ( ! CoreOptions::getValue( 'dontUseCrawlCaching' ) ) {
                 if ( CrawlCache::getUrl( $url ) ) {
@@ -86,8 +78,7 @@ class AssetDownloader {
 
             $response = $request->getURL(
                 $url,
-                $this->ch,
-                $curl_options
+                $this->ch
             );
 
             if ( is_array( $response ) ) {

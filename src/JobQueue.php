@@ -86,7 +86,7 @@ class JobQueue {
     /**
      *  Get all waiting jobs
      *
-     *  @return string[] All waiting jobs
+     *  @return mixed[] All waiting jobs
      */
     public static function getProcessableJobs() : array {
         global $wpdb;

@@ -178,7 +178,7 @@ class Controller {
         }
 
         add_submenu_page(
-            null,
+            '',
             'WP2Static Crawl Queue',
             'Crawl Queue',
             'manage_options',
@@ -186,7 +186,7 @@ class Controller {
             [ 'WP2Static\ViewRenderer', 'renderCrawlQueue' ]);
 
         add_submenu_page(
-            null,
+            '',
             'WP2Static Crawl Cache',
             'Crawl Cache',
             'manage_options',
@@ -194,7 +194,7 @@ class Controller {
             [ 'WP2Static\ViewRenderer', 'renderCrawlCache' ]);
 
         add_submenu_page(
-            null,
+            '',
             'WP2Static Deploy Cache',
             'Deploy Cache',
             'manage_options',
@@ -202,7 +202,7 @@ class Controller {
             [ 'WP2Static\ViewRenderer', 'renderDeployCache' ]);
 
         add_submenu_page(
-            null,
+            '',
             'WP2Static Static Site',
             'Static Site',
             'manage_options',
@@ -210,7 +210,7 @@ class Controller {
             [ 'WP2Static\ViewRenderer', 'renderStaticSitePaths' ]);
 
         add_submenu_page(
-            null,
+            '',
             'WP2Static Post Processed Site',
             'Post Processed Site',
             'manage_options',
@@ -220,11 +220,10 @@ class Controller {
 
     public function crawlSite() : void {
         $crawler = new Crawler();
-        $static_site = new StaticSite('/tmp/teststaticsite');
 
         // TODO: if WordPressSite methods are static and we only need detectURLs
         // here, pass in iterable to URLs here?
-        $crawler->crawlSite($static_site);
+        $crawler->crawlSite( StaticSite::getPath() );
 
         // TOOD: legacy AssetDownloader implementation
         //     $ch = curl_init();
@@ -357,19 +356,19 @@ class Controller {
         exit;
     }
 
-    public static function wp2static_save_post_handler( $post_id ) : void {
+    public static function wp2static_save_post_handler( int $post_id ) : void {
         if ( get_post_status( $post_id ) !== 'publish') {
             return;
         }
 
-        self::wp2static_enqueue_jobs( $post_id );
+        self::wp2static_enqueue_jobs();
     }
 
-    public static function wp2static_trashed_post_handler( $post_id ) : void {
-        self::wp2static_enqueue_jobs( $post_id );
+    public static function wp2static_trashed_post_handler() : void {
+        self::wp2static_enqueue_jobs();
     }
 
-    public static function wp2static_enqueue_jobs( $post_id ) : void {
+    public static function wp2static_enqueue_jobs() : void {
         // check each of these in order we want to enqueue
         $job_types = [
             'autoJobQueueDetection' => 'detect',
@@ -446,8 +445,8 @@ class Controller {
                     $post_processor = new PostProcessor();
                     $processed_site_dir =
                         SiteInfo::getPath( 'uploads') . 'wp2static-processed-site';
-                    $processed_site = new ProcessedSite( $processed_site_dir );
-                    $post_processor->processStaticSite( StaticSite::getPath(), $processed_site);
+                    $processed_site = new ProcessedSite();
+                    $post_processor->processStaticSite( StaticSite::getPath());
                     WsLog::l( "Post-processing completed");
                     break;
                 case 'deploy':
@@ -479,8 +478,8 @@ class Controller {
         $post_processor = new PostProcessor();
         $processed_site_dir =
             SiteInfo::getPath( 'uploads') . 'wp2static-processed-site';
-        $processed_site = new ProcessedSite( $processed_site_dir );
-        $post_processor->processStaticSite( StaticSite::getPath(), $processed_site);
+        $processed_site = new ProcessedSite();
+        $post_processor->processStaticSite( StaticSite::getPath() );
         WsLog::l( "Post-processing completed");
 
         WsLog::l( "Starting deployment");
