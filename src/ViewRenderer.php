@@ -151,28 +151,28 @@ class ViewRenderer {
         $view = [];
 
         // performance check vs map
-        $diskSpace = 0;
+        $disk_space = 0;
 
-        $exportedSiteDir = SiteInfo::getPath( 'uploads' ) . 'wp2static-exported-site/';
-        if ( is_dir( $exportedSiteDir ) ) {
+        $exported_site_dir = SiteInfo::getPath( 'uploads' ) . 'wp2static-exported-site/';
+        if ( is_dir( $exported_site_dir ) ) {
             $files = new \RecursiveIteratorIterator(
                 new \RecursiveDirectoryIterator(
-                    $exportedSiteDir
+                    $exported_site_dir
                 )
             );
 
             foreach ( $files as $file ) {
-                $diskSpace += $file->getSize();
+                $disk_space += $file->getSize();
             }
         }
 
-        $view['exportedSiteDiskSpace'] = sprintf( '%4.2f MB', $diskSpace / 1048576 );
+        $view['exportedSiteDiskSpace'] = sprintf( '%4.2f MB', $disk_space / 1048576 );
         // end check
 
-        if ( is_dir( $exportedSiteDir ) ) {
+        if ( is_dir( $exported_site_dir ) ) {
             $view['exportedSiteFileCount'] = iterator_count(
                 new \RecursiveIteratorIterator(
-                    new \RecursiveDirectoryIterator( $exportedSiteDir, \FilesystemIterator::SKIP_DOTS )
+                    new \RecursiveDirectoryIterator( $exported_site_dir, \FilesystemIterator::SKIP_DOTS )
                 )
             );
         } else {
@@ -180,28 +180,28 @@ class ViewRenderer {
         }
 
         // performance check vs map
-        $diskSpace = 0;
-        $processedSiteDir = SiteInfo::getPath( 'uploads' ) . 'wp2static-processed-site/';
+        $disk_space = 0;
+        $processed_site_dir = SiteInfo::getPath( 'uploads' ) . 'wp2static-processed-site/';
 
-        if ( is_dir( $processedSiteDir ) ) {
+        if ( is_dir( $processed_site_dir ) ) {
             $files = new \RecursiveIteratorIterator(
                 new \RecursiveDirectoryIterator(
-                    $processedSiteDir
+                    $processed_site_dir
                 )
             );
 
             foreach ( $files as $file ) {
-                $diskSpace += $file->getSize();
+                $disk_space += $file->getSize();
             }
         }
 
-        $view['processedSiteDiskSpace'] = sprintf( '%4.2f MB', $diskSpace / 1048576 );
+        $view['processedSiteDiskSpace'] = sprintf( '%4.2f MB', $disk_space / 1048576 );
         // end check
 
-        if ( is_dir( $processedSiteDir ) ) {
+        if ( is_dir( $processed_site_dir ) ) {
             $view['processedSiteFileCount'] = iterator_count(
                 new \RecursiveIteratorIterator(
-                    new \RecursiveDirectoryIterator( $processedSiteDir, \FilesystemIterator::SKIP_DOTS )
+                    new \RecursiveDirectoryIterator( $processed_site_dir, \FilesystemIterator::SKIP_DOTS )
                 )
             );
         } else {

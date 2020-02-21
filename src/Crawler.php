@@ -21,14 +21,14 @@ class Crawler {
         $this->ch = curl_init();
         $this->request = new Request();
 
-        $portOverride = apply_filters(
+        $port_override = apply_filters(
             'wp2static_curl_port',
             null
         );
 
         // TODO: apply this filter when option is saved
-        if ( $portOverride ) {
-            curl_setopt( $this->ch, CURLOPT_PORT, $portOverride );
+        if ( $port_override ) {
+            curl_setopt( $this->ch, CURLOPT_PORT, $port_override );
         }
 
         curl_setopt(

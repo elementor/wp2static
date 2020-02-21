@@ -17,9 +17,9 @@ class CoreOptions {
         global $wpdb;
 
         // check for required options, seed if non-existant
-        $detectPosts = self::get( 'detectPosts' );
+        $detect_posts = self::get( 'detectPosts' );
 
-        if ( ! isset( $detectPosts ) ) {
+        if ( ! isset( $detect_posts ) ) {
             error_log( 'detectPosts not found, seeding coreOptions' );
             self::seedOptions();
         }
@@ -408,13 +408,13 @@ class CoreOptions {
                     [ 'name' => 'queueJobOnPostDelete' ]
                 );
 
-                $processQueueInterval = (int) $_POST['processQueueInterval'];
+                $process_queue_interval = (int) $_POST['processQueueInterval'];
                 $wpdb->update(
                     $table_name,
-                    [ 'value' => $processQueueInterval ],
+                    [ 'value' => $process_queue_interval ],
                     [ 'name' => 'processQueueInterval' ]
                 );
-                WPCron::setRecurringEvent( $processQueueInterval );
+                WPCron::setRecurringEvent( $process_queue_interval );
 
                 $wpdb->update(
                     $table_name,
