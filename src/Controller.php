@@ -425,8 +425,8 @@ class Controller {
 
         if ( JobQueue::jobsInProgress() ) {
             WsLog::l(
-                "Job in progress when attempting to process queue.
-                  No new jobs will be processed until current in progress is complete."
+                'Job in progress when attempting to process queue.
+                  No new jobs will be processed until current in progress is complete.'
             );
 
             return;

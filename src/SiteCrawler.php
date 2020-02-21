@@ -1,10 +1,7 @@
 <?php
-
 /*
     TODO: Holding this here for AssetDownloader reference, but now
-
-                use Crawler class
-
+    use Crawler class
 */
 
 

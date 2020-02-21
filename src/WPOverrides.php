@@ -97,12 +97,14 @@ class WPOverrides {
         }
 
         $author = '';
+
         if ( strpos( $permalink, '%author%' ) !== false ) {
             $authordata = get_userdata( $post->post_author );
-            $author     = $authordata->user_nicename;
+            $author = $authordata->user_nicename;
         }
 
-        $date           = explode( ' ', date( 'Y m d H i s', $unixtime ) );
+        $date = explode( ' ', gmdate( 'Y m d H i s', $unixtime ) );
+
         $rewritereplace =
         [
             $date[0],
@@ -117,10 +119,11 @@ class WPOverrides {
             $author,
             $post->post_name,
         ];
-        $permalink =
-            home_url(
-                str_replace( $rewritecode, $rewritereplace, $permalink )
-            );
+
+        $permalink = home_url(
+            str_replace( $rewritecode, $rewritereplace, $permalink )
+        );
+
         $permalink = user_trailingslashit( $permalink, 'single' );
 
         return apply_filters( 'post_link', $permalink, $post, false );

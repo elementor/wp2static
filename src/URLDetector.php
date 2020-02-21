@@ -112,7 +112,8 @@ class URLDetector {
         $unique_urls = array_unique( $url_queue );
 
         // truncate before adding
-        // TODO: use inert unique instead here, allowing to skip heavy detection between runs without blowing away previously detected URLs...
+        // TODO: use inert unique instead here, allowing to skip heavy
+        // detection between runs without blowing away previously detected URLs...
         CrawlQueue::truncate();
 
         CrawlQueue::addUrls( $unique_urls );

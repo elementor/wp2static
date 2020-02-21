@@ -45,7 +45,6 @@ class WPCron {
         }
 
         wp_unschedule_event( $next_timestamp, 'wp2static_process_queue' );
-        return;
     }
 
     /**
