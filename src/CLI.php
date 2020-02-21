@@ -607,7 +607,7 @@ class CLI {
      */
     public function post_process() : void {
         $post_processor = new PostProcessor();
-        $post_processor->processStaticSite( ProcessedSite::getPath() );
+        $post_processor->processStaticSite( StaticSite::getPath() );
     }
 
     /**

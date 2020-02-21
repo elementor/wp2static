@@ -49,7 +49,7 @@ class Controller {
         DeployCache::createTable();
         JobQueue::createTable();
 
-        ConfigHelper::set_max_execution_time();
+        Utils::set_max_execution_time();
 
         return $plugin_instance;
     }
