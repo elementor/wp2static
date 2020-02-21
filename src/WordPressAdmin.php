@@ -40,6 +40,7 @@ class WordPressAdmin {
         );
 
         add_filter(
+            // phpcs:ignore WordPress.WP.CronInterval -- namespaces not yet fully supported
             'cron_schedules',
             [ 'WP2Static\WPCron', 'wp2static_custom_cron_schedules' ]
         );
