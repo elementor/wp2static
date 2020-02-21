@@ -10,7 +10,6 @@
   -->
   <arg name="colors" />
   <arg name="tab-width" value="2" />
-  <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
   <!-- Custom line length validation -->
   <rule ref="Generic.Files.LineLength">
     <properties>
@@ -101,5 +100,7 @@
     <exclude name="WordPress.Security.ValidatedSanitizedInput" />
     <exclude name="WordPress.WhiteSpace.PrecisionAlignment" />
     <exclude name="WordPress.WP.AlternativeFunctions" />
+    <exclude name="Generic.Arrays.DisallowShortArraySyntax" />
   </rule>
+  <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
 </ruleset>
