@@ -49,8 +49,7 @@ class PostProcessor {
             $file_processor->processFile( ProcessedSite::getPath() . $save_path );
         }
 
-        error_log( 'TODO: FolderProcessor for renaming, etc' );
-        error_log( 'finished processing StaticSite' );
+        WsLog::l( 'Finished processing StaticSite' );
 
         do_action( 'wp2static_post_process_complete', ProcessedSite::getPath() );
     }
