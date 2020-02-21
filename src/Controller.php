@@ -293,7 +293,7 @@ class Controller {
 
         check_admin_referer( 'wp2static-ui-options' );
 
-        wp_redirect( admin_url( 'admin.php?page=wp2static' ) );
+        wp_safe_redirect( admin_url( 'admin.php?page=wp2static' ) );
         exit;
     }
 
@@ -302,7 +302,7 @@ class Controller {
 
         CrawlQueue::truncate();
 
-        wp_redirect( admin_url( 'admin.php?page=wp2static-caches' ) );
+        wp_safe_redirect( admin_url( 'admin.php?page=wp2static-caches' ) );
         exit;
     }
 
@@ -311,7 +311,7 @@ class Controller {
 
         JobQueue::truncate();
 
-        wp_redirect( admin_url( 'admin.php?page=wp2static-jobs' ) );
+        wp_safe_redirect( admin_url( 'admin.php?page=wp2static-jobs' ) );
         exit;
     }
 
@@ -320,7 +320,7 @@ class Controller {
 
         DeployCache::truncate();
 
-        wp_redirect( admin_url( 'admin.php?page=wp2static-caches' ) );
+        wp_safe_redirect( admin_url( 'admin.php?page=wp2static-caches' ) );
         exit;
     }
 
@@ -329,7 +329,7 @@ class Controller {
 
         CrawlCache::truncate();
 
-        wp_redirect( admin_url( 'admin.php?page=wp2static-caches' ) );
+        wp_safe_redirect( admin_url( 'admin.php?page=wp2static-caches' ) );
         exit;
     }
 
@@ -338,7 +338,7 @@ class Controller {
 
         ProcessedSite::delete();
 
-        wp_redirect( admin_url( 'admin.php?page=wp2static-caches' ) );
+        wp_safe_redirect( admin_url( 'admin.php?page=wp2static-caches' ) );
         exit;
     }
 
@@ -347,7 +347,7 @@ class Controller {
 
         StaticSite::delete();
 
-        wp_redirect( admin_url( 'admin.php?page=wp2static-caches' ) );
+        wp_safe_redirect( admin_url( 'admin.php?page=wp2static-caches' ) );
         exit;
     }
 
@@ -358,7 +358,7 @@ class Controller {
 
         check_admin_referer( 'wp2static-ui-job-options' );
 
-        wp_redirect( admin_url( 'admin.php?page=wp2static-jobs' ) );
+        wp_safe_redirect( admin_url( 'admin.php?page=wp2static-jobs' ) );
         exit;
     }
 
@@ -394,7 +394,7 @@ class Controller {
         check_admin_referer( 'wp2static-manually-enqueue-jobs' );
 
         // TODO: consider using a transient based notifications system to
-        // persist through wp_redirect calls
+        // persist through wp_safe_redirect calls
         // ie, https://github.com/wpscholar/wp-transient-admin-notices/blob/master/TransientAdminNotices.php
 
         // check each of these in order we want to enqueue
@@ -411,7 +411,7 @@ class Controller {
             }
         }
 
-        wp_redirect( admin_url( 'admin.php?page=wp2static-jobs' ) );
+        wp_safe_redirect( admin_url( 'admin.php?page=wp2static-jobs' ) );
         exit;
     }
 
@@ -424,7 +424,11 @@ class Controller {
         JobQueue::squashQueue();
 
         if ( JobQueue::jobsInProgress() ) {
-            WsLog::l( 'Job in progress when attempting to process queue. No new jobs will be processed until current in progress is complete.' );
+            WsLog::l(
+                "Job in progress when attempting to process queue.
+                  No new jobs will be processed until current in progress is complete."
+            );
+
             return;
         }
 
