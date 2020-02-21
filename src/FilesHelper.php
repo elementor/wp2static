@@ -168,7 +168,7 @@ class FilesHelper {
             'thumbs.db',
             'tinymce',
             'wp-static-html-output', // exclude earlier version exports
-            'wp2static-exported-site',
+            'wp2static-crawled-site',
             'wp2static-processed-site',
             'wp2static-addon',
             'LICENSE',

@@ -52,7 +52,7 @@ class AssetDownloader {
             );
 
             $filename = SiteInfo::getPath( 'uploads' ) .
-                'wp2static-exported-site/' .
+                'wp2static-crawled-site/' .
                 $save_path;
 
             $curl_options = [];

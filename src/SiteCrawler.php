@@ -336,7 +336,7 @@ class SiteCrawler {
 
         // TODO: better validate save success
         $file_writer->saveFile(
-            SiteInfo::getPath( 'uploads' ) . 'wp2static-exported-site/'
+            SiteInfo::getPath( 'uploads' ) . 'wp2static-crawled-site/'
         );
 
         if ( ! isset( $this->settings['dontUseCrawlCaching'] ) ) {

@@ -95,7 +95,7 @@ class SitePublisher {
         string $basename_in_target
     ) : void {
         $archive_path =
-            SiteInfo::getPath( 'uploads' ) . 'wp2static-exported-site';
+            SiteInfo::getPath( 'uploads' ) . 'wp2static-crawled-site';
 
         $dir_files = scandir( $dir );
 
@@ -144,7 +144,7 @@ class SitePublisher {
         $this->clearFileList();
 
         $this->createDeploymentList(
-            SiteInfo::getPath( 'uploads' ) . 'wp2static-exported-site/',
+            SiteInfo::getPath( 'uploads' ) . 'wp2static-crawled-site/',
             $basename_in_target
         );
 

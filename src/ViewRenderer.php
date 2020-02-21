@@ -153,7 +153,7 @@ class ViewRenderer {
         // performance check vs map
         $disk_space = 0;
 
-        $exported_site_dir = SiteInfo::getPath( 'uploads' ) . 'wp2static-exported-site/';
+        $exported_site_dir = SiteInfo::getPath( 'uploads' ) . 'wp2static-crawled-site/';
         if ( is_dir( $exported_site_dir ) ) {
             $files = new \RecursiveIteratorIterator(
                 new \RecursiveDirectoryIterator(
