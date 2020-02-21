@@ -542,13 +542,27 @@ class CLI {
     }
 
     /**
+     * Print multilines of input text via WP-CLI
+     */
+    public function multilinePrint( string $string ) : void {
+        $msg = trim( str_replace( [ "\r", "\n" ], '', $string ) );
+
+        $msg = preg_replace( '!\s+!', ' ', $msg );
+
+        WP_CLI::line( PHP_EOL . $msg . PHP_EOL );
+    }
+
+    /**
      * Interactive CLI wizard
      *
      * @param string[] $args Arguments after command
      * @param string[] $assoc_args Parameters after command
      */
     public function wizard( array $args = [], array $assoc_args = [] ) : void {
-        WP_CLI::line( 'Welcome to WP2Static! Use this interactive wizard or run commands directly, as per the docs: https://wp2static.com' );
+        $this->multilinePrint(
+            'Welcome to WP2Static! Use this interactive wizard
+             or run commands directly, as per the docs: https://wp2static.com'
+        );
 
         // TODO: check if plugin has been setup
         $level = 0;
@@ -636,7 +650,10 @@ class CLI {
         if ( $action === 'delete' ) {
 
             if ( ! isset( $assoc_args['force'] ) ) {
-                WP_CLI::line( PHP_EOL . "no --force given. Please type 'yes' to confirm deletion of Crawl Cache" . PHP_EOL );
+                $this->multilinePrint(
+                    "no --force given. Please type 'yes' to confirm
+                    deletion of Crawl Cache"
+                );
 
                 $userval = trim( (string) fgets( STDIN ) );
 
@@ -691,7 +708,10 @@ class CLI {
         if ( $action === 'delete' ) {
 
             if ( ! isset( $assoc_args['force'] ) ) {
-                WP_CLI::line( PHP_EOL . "no --force given. Please type 'yes' to confirm deletion of CrawlQueue" . PHP_EOL );
+                $this->multilinePrint(
+                    "no --force given. Please type 'yes' to confirm
+                    deletion of CrawlQueue"
+                );
 
                 $userval = trim( (string) fgets( STDIN ) );
 
@@ -740,7 +760,10 @@ class CLI {
 
         if ( $action === 'delete' ) {
             if ( ! isset( $assoc_args['force'] ) ) {
-                WP_CLI::line( PHP_EOL . "no --force given. Please type 'yes' to confirm deletion of ProcessedSite file cache" . PHP_EOL );
+                $this->multilinePrint(
+                    "no --force given. Please type 'yes' to confirm deletion
+                     of ProcessedSite file cache"
+                );
 
                 $userval = trim( (string) fgets( STDIN ) );
 
@@ -780,7 +803,10 @@ class CLI {
 
         if ( $action === 'delete' ) {
             if ( ! isset( $assoc_args['force'] ) ) {
-                WP_CLI::line( PHP_EOL . "no --force given. Please type 'yes' to confirm deletion of StaticSite file cache" . PHP_EOL );
+                $this->multilinePrint(
+                    "no --force given. Please type 'yes' to confirm deletion
+                     of StaticSite file cache"
+                );
 
                 $userval = trim( (string) fgets( STDIN ) );
 

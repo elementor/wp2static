@@ -172,7 +172,10 @@ class ViewRenderer {
         if ( is_dir( $exported_site_dir ) ) {
             $view['exportedSiteFileCount'] = iterator_count(
                 new \RecursiveIteratorIterator(
-                    new \RecursiveDirectoryIterator( $exported_site_dir, \FilesystemIterator::SKIP_DOTS )
+                    new \RecursiveDirectoryIterator(
+                        $exported_site_dir,
+                        \FilesystemIterator::SKIP_DOTS
+                    )
                 )
             );
         } else {
@@ -201,7 +204,10 @@ class ViewRenderer {
         if ( is_dir( $processed_site_dir ) ) {
             $view['processedSiteFileCount'] = iterator_count(
                 new \RecursiveIteratorIterator(
-                    new \RecursiveDirectoryIterator( $processed_site_dir, \FilesystemIterator::SKIP_DOTS )
+                    new \RecursiveDirectoryIterator(
+                        $processed_site_dir,
+                        \FilesystemIterator::SKIP_DOTS
+                    )
                 )
             );
         } else {

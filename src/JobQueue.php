@@ -75,7 +75,10 @@ class JobQueue {
 
         $table_name = $wpdb->prefix . 'wp2static_jobs';
 
-        $jobs_in_progress = $wpdb->get_var( "SELECT COUNT(*) FROM $table_name WHERE status = 'processing'" );
+        $jobs_in_progress = $wpdb->get_var(
+            "SELECT COUNT(*) FROM $table_name
+            WHERE status = 'processing'"
+        );
 
         error_log( 'total jobs in progress' );
         error_log( $jobs_in_progress );
@@ -94,7 +97,11 @@ class JobQueue {
 
         $table_name = $wpdb->prefix . 'wp2static_jobs';
 
-        $rows = $wpdb->get_results( "SELECT * FROM $table_name WHERE status = 'waiting' ORDER BY id ASC" );
+        $rows = $wpdb->get_results(
+            "SELECT * FROM $table_name
+            WHERE status = 'waiting'
+            ORDER BY id ASC"
+        );
 
         foreach ( $rows as $row ) {
             $jobs[] = $row;
@@ -122,7 +129,12 @@ class JobQueue {
 
         foreach ( $job_types as $job_type ) {
             // get all jobs for a type where status is 'waiting'
-            $waiting_jobs = $wpdb->get_results( "SELECT * FROM $table_name WHERE job_type = '$job_type' AND status = 'waiting' ORDER BY created_at DESC" );
+            $waiting_jobs = $wpdb->get_results(
+                "SELECT * FROM $table_name
+                WHERE job_type = '$job_type'
+                AND status = 'waiting'
+                ORDER BY created_at DESC"
+            );
 
             // abort if less than 2 jobs of same type in waiting status
             if ( $waiting_jobs < 2 ) {
@@ -132,7 +144,12 @@ class JobQueue {
             }
 
             // select all
-            $waiting_jobs = $wpdb->get_results( "SELECT * FROM $table_name WHERE job_type = '$job_type' AND status = 'waiting' ORDER BY created_at DESC" );
+            $waiting_jobs = $wpdb->get_results(
+                "SELECT * FROM $table_name
+                WHERE job_type = '$job_type'
+                AND status = 'waiting'
+                ORDER BY created_at DESC"
+            );
 
             // remove latest one
             array_shift( $waiting_jobs );
