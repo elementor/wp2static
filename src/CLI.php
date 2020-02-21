@@ -19,7 +19,7 @@ class CLI {
         $environmental_info = array(
             array(
                 'key' => 'PLUGIN VERSION',
-                'value' => Controller::VERSION,
+                'value' => WP2STATIC_VERSION,
             ),
             array(
                 'key' => 'PHP_VERSION',
@@ -96,27 +96,6 @@ class CLI {
     }
 
     /**
-     * Generate a static copy of your WordPress site.
-     */
-    public function generate() : void {
-        $start_time = microtime();
-
-        $plugin = Controller::getInstance();
-        $plugin->generate_filelist_preview();
-        $plugin->prepare_for_export();
-        $plugin->crawl_site();
-        $plugin->post_process_archive_dir();
-
-        $end_time = microtime();
-
-        $duration = $this->microtime_diff( $start_time, $end_time );
-
-        WP_CLI::success(
-            "Generated static site archive in $duration seconds"
-        );
-    }
-
-    /**
      * Deploy the generated static site.
      * ## OPTIONS
      *
@@ -188,76 +167,40 @@ class CLI {
         if ( $action === 'get' ) {
             if ( empty( $option_name ) ) {
                 WP_CLI::error( 'Missing required argument: <option-name>' );
+                return;
             }
 
-            if ( ! $plugin->options->optionExists( $option_name ) ) {
-                WP_CLI::error( 'Invalid option name' );
-            } else {
-                $option_value =
-                    $plugin->options->getOption( $option_name );
-
-                WP_CLI::line( $option_value );
-            }
+            WP_CLI::line( CoreOptions::getValue( $option_name ) );
         }
 
         if ( $action === 'set' ) {
             if ( empty( $option_name ) ) {
                 WP_CLI::error( 'Missing required argument: <option-name>' );
+                return;
             }
 
             if ( empty( $value ) ) {
                 WP_CLI::error( 'Missing required argument: <value>' );
+                return;
             }
 
-            if ( ! $plugin->options->optionExists( $option_name ) ) {
-                WP_CLI::error( 'Invalid option name' );
-            } else {
-                $plugin->options->setOption( $option_name, $value );
-                $plugin->options->save();
+            // TODO: assert expected result
+            CoreOptions::save( $option_name, $value );
 
-                $result = $plugin->options->getOption( $option_name );
-
-                if ( $result !== $value ) {
-                    WP_CLI::error( 'Option not able to be updated' );
-                }
-            }
-        }
-
-        if ( $action === 'unset' ) {
-            if ( empty( $option_name ) ) {
-                WP_CLI::error( 'Missing required argument: <option-name>' );
-            }
-
-            if ( ! $plugin->options->optionExists( $option_name ) ) {
-                WP_CLI::error( 'Invalid option name' );
-            }
-
-            $plugin->options->setOption( $option_name, '' );
-            $plugin->options->save();
-            $result = $plugin->options->getOption( $option_name );
-
-            if ( ! empty( $result ) ) {
-                WP_CLI::error( 'Option not able to be updated' );
-            }
         }
 
         if ( $action === 'list' ) {
-            if ( isset( $assoc_args['reveal-sensitive-values'] ) ) {
-                $reveal_sensitive_values = true;
-            }
-
-            $options =
-                $plugin->options->getAllOptions( $reveal_sensitive_values );
+            $options = CoreOptions::getAll();
 
             WP_CLI\Utils\format_items(
                 'table',
                 $options,
-                array( 'Option name', 'Value' )
+                [ 'name', 'value' ]
             );
         }
     }
 
-    public function showWizardMenu($level = 0) {
+    public function showWizardMenu( int $level = 0 ) : void {
         switch($level) {
             default:
             case 0:
@@ -343,7 +286,12 @@ class CLI {
         }
 
     }
-
+    /**
+     * Route wizard's user input to method
+     *
+     * @param mixed $selection Secondary menu selection
+     *
+     */
     public function routeWizardSelection( int $level, $selection) : void {
         $selection_map = [
             0 => [
@@ -388,11 +336,14 @@ class CLI {
             ],
         ];
 
-        if ( ! is_callable( [ $this, $selection_map[$level][$selection] ] ) ) {
+        $target_method = [ $this, $selection_map[$level][$selection] ];
+
+        if ( ! is_callable( $target_method ) ) {
             WP_CLI::line('Tried to call missing function');
             $this->showWizardWaitForSelection($level);
+            return;
         } else {
-            call_user_func( [ $this, $selection_map[$level][$selection] ] );
+            call_user_func( $target_method );
         }
     }
 
@@ -421,10 +372,8 @@ class CLI {
         ];
 
         foreach( $detections as $detection ) {
-            $plugin->options->setOption( $detection, 1 );
+            CoreOptions::save( $detection, 1 );
         }
-
-        $plugin->options->save();
 
         WP_CLI::line( PHP_EOL . "Common URL detection set!" . PHP_EOL );
 
@@ -456,11 +405,11 @@ class CLI {
         ];
 
         foreach( $detections as $detection ) {
-            $plugin->options->setOption( $detection, 0 );
+            CoreOptions::save( $detection, 0 );
         }
 
-        $plugin->options->setOption( 'detectHomepage', 1 );
-        $plugin->options->save();
+        // TODO: use filter, rm homepage option?
+        CoreOptions::save( $detection, 1 );
 
         WP_CLI::line( PHP_EOL . "Homepage only URL detection set!" . PHP_EOL );
 
@@ -493,10 +442,8 @@ class CLI {
         ];
 
         foreach( $detections as $detection ) {
-            $plugin->options->setOption( $detection, 1 );
+            CoreOptions::save( $detection, 1 );
         }
-
-        $plugin->options->save();
 
         WP_CLI::line( PHP_EOL . "Maximum URL detection set!" . PHP_EOL );
 
@@ -530,7 +477,7 @@ class CLI {
         WP_CLI::line( "### Quick-start: generate static site with current options###" );
 
         $this->detect();
-        $this->crawl();
+        $this->crawl( [], ['show-progress'] );
         $this->post_process();
 
         $processed_site_dir =

@@ -267,9 +267,23 @@ class CoreOptions {
 
         $table_name = $wpdb->prefix . self::$table_name;
 
-        $sql = "SELECT value, label, description FROM $table_name ORDER BY label";
+        $sql = "SELECT name, value, label, description FROM $table_name ORDER BY label";
 
         $options = $wpdb->get_results( $sql );
+
+        // convert array of stdObjects to array of arrays
+        // for easier presentation in WP-CLI
+        $options = array_map(
+            function ($obj) {
+                // hide sensitive values
+                if ( $obj->name === 'basicAuthPassword' ) {
+                    $obj->value = '***************';
+                }
+
+                return (array) $obj;
+            },
+            $options
+        );
 
         return $options;
     }
@@ -428,6 +442,24 @@ class CoreOptions {
 
                 break;
         }
+    }
+
+    /**
+     * Save individual option
+     *
+     * @param mixed $value Updated option value
+     */
+    public static function save( string $name, $value ) : void {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . self::$table_name;
+
+        // TODO: some validation on save types
+        $wpdb->update(
+            $table_name,
+            [ 'value' => $value ],
+            [ 'name' => $name ]
+        );
     }
 }
 
