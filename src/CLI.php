@@ -598,8 +598,6 @@ class CLI {
      */
     public function detect() : void {
         $detected_count = URLDetector::detectURLs();
-
-        WP_CLI::log( "$detected_count URLs detected." );
     }
 
     /**
