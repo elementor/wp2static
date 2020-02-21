@@ -55,7 +55,9 @@ class CoreOptions {
 
         $queries = [];
 
-        $query_string = "INSERT INTO $table_name (name, value, label, description) VALUES (%s, %s, %s, %s);";
+        $query_string =
+            "INSERT INTO $table_name (name, value, label, description)
+            VALUES (%s, %s, %s, %s);";
 
         $queries[] = $wpdb->prepare(
             $query_string,
@@ -310,7 +312,13 @@ class CoreOptions {
         $variate = substr( hash( 'sha256', $secret_iv ), 0, 16 );
 
         if ( $action == 'decrypt' ) {
-            return (string) openssl_decrypt( (string) base64_decode( $string ), $encrypt_method, $key, 0, $variate );
+            return (string) openssl_decrypt(
+                (string) base64_decode( $string ),
+                $encrypt_method,
+                $key,
+                0,
+                $variate
+            );
         }
 
         $output = openssl_encrypt( $string, $encrypt_method, $key, 0, $variate );
@@ -366,7 +374,13 @@ class CoreOptions {
 
                 $wpdb->update(
                     $table_name,
-                    [ 'value' => self::encrypt_decrypt( 'encrypt', sanitize_text_field( $_POST['basicAuthPassword'] ) ) ],
+                    [
+                        'value' =>
+                        self::encrypt_decrypt(
+                            'encrypt',
+                            sanitize_text_field( $_POST['basicAuthPassword'] )
+                        ),
+                    ],
                     [ 'name' => 'basicAuthPassword' ]
                 );
 
