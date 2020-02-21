@@ -16,9 +16,8 @@ class StaticSite {
 
     /**
      * Add crawled resource to static site
-     *
      */
-    public static function add(string $path, string $contents) : void {
+    public static function add( string $path, string $contents ) : void {
         // simple file save, Crawler holds logic for what/where to save
         // Crawler has already processed links, etc
         $full_path = self::getPath() . "$path";
@@ -34,15 +33,14 @@ class StaticSite {
     }
 
     public static function getPath() : string {
-        return SiteInfo::getPath( 'uploads') . 'wp2static-exported-site';
+        return SiteInfo::getPath( 'uploads' ) . 'wp2static-exported-site';
     }
 
     /**
      * Delete StaticSite files
-     *
      */
     public static function delete() : void {
-        WsLog::l('Deleting static site files');
+        WsLog::l( 'Deleting static site files' );
 
         if ( is_dir( self::getPath() ) ) {
             FilesHelper::delete_dir_with_files( self::getPath() );

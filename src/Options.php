@@ -10,7 +10,7 @@ class Options {
     public $wp2static_options_keys = [
         // CONFIRMED CORE
         // ## 1 ## detection
-        // set defaults, allow filter to override from other plugin 
+        // set defaults, allow filter to override from other plugin
         'detectCustomPostTypes',
         // 'detectFeedURLs', // move to feed detection/processor addon
         'detectPages',
@@ -55,7 +55,7 @@ class Options {
     public $whitelisted_keys = [
         // CONFIRMED CORE
         // ## 1 ## detection
-        // set defaults, allow filter to override from other plugin 
+        // set defaults, allow filter to override from other plugin
         'detectCategoryPagination', // questionable - move to addon
         'detectCustomPostTypes',
         // 'detectFeedURLs', // move to feed detection/processor addon
@@ -111,7 +111,7 @@ class Options {
         $options = get_option( $option_key );
 
         if ( false === $options ) {
-            $options = array();
+            $options = [];
         }
 
         $this->wp2static_options = $options;
@@ -180,7 +180,7 @@ class Options {
         bool $reveal_sensitive_values = false,
         string $filter = ''
     ) : array {
-        $options_array = array();
+        $options_array = [];
 
         $this->whitelisted_keys = apply_filters(
             'wp2static_whitelist_option_keys',
@@ -206,8 +206,8 @@ class Options {
         if ( $filter !== '' ) {
             $options_array = array_filter(
                 $options_array,
-                function($item) use ($filter) {
-                    return (strpos($item['Option name'], $filter) !== false);
+                function( $item ) use ( $filter ) {
+                    return ( strpos( $item['Option name'], $filter ) !== false );
                 }
             );
         }

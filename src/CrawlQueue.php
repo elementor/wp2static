@@ -77,14 +77,13 @@ class CrawlQueue {
 
         $table_name = $wpdb->prefix . 'wp2static_urls';
 
-        $total_urls = $wpdb->get_var("SELECT COUNT(*) FROM $table_name");
+        $total_urls = $wpdb->get_var( "SELECT COUNT(*) FROM $table_name" );
 
         return $total_urls;
     }
 
     /**
      *  Clear CrawlQueue via truncate or deletion
-     *
      */
     public static function truncate() : void {
         global $wpdb;
@@ -97,13 +96,12 @@ class CrawlQueue {
 
         if ( $total_urls > 0 ) {
             // TODO: simulate lack of permissios to truncate
-            error_log('failed to truncate CrawlQueue: try deleting instead');
+            error_log( 'failed to truncate CrawlQueue: try deleting instead' );
         }
     }
 
     /**
      *  Count URLs in Crawl Queue
-     *
      */
     public static function getTotal() : int {
         global $wpdb;

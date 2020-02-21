@@ -113,13 +113,13 @@ class DetectCategoryPaginationURLs {
         }
 
         // gets all category page links
-        $args = array(
+        $args = [
             'public'   => true,
-        );
+        ];
 
         $taxonomies = get_taxonomies( $args, 'objects' );
 
-        $category_links = array();
+        $category_links = [];
 
         foreach ( $taxonomies as $taxonomy ) {
             if ( ! property_exists( $taxonomy, 'name' ) ) {
@@ -128,9 +128,9 @@ class DetectCategoryPaginationURLs {
 
             $terms = get_terms(
                 $taxonomy->name,
-                array(
+                [
                     'hide_empty' => true,
-                )
+                ]
             );
 
             if ( ! is_iterable( $terms ) ) {
@@ -163,7 +163,7 @@ class DetectCategoryPaginationURLs {
             }
         }
 
-        $urls_to_include = array();
+        $urls_to_include = [];
         $pagination_base = $wp_rewrite->pagination_base;
         $default_posts_per_page = get_option( 'posts_per_page' );
 

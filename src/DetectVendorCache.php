@@ -23,7 +23,7 @@ class DetectVendorCache {
         string $prefix
         ) : array {
 
-        $files = array();
+        $files = [];
 
         $directory = $cache_dir;
 

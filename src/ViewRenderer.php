@@ -15,26 +15,26 @@ class ViewRenderer {
         ];
 
         $view['crawlingOptions'] = [
-               'basicAuthUser' => CoreOptions::get('basicAuthUser'),
-               'basicAuthPassword' => CoreOptions::get('basicAuthPassword'),
-               'includeDiscoveredAssets' => CoreOptions::get('includeDiscoveredAssets'),
+            'basicAuthUser' => CoreOptions::get( 'basicAuthUser' ),
+            'basicAuthPassword' => CoreOptions::get( 'basicAuthPassword' ),
+            'includeDiscoveredAssets' => CoreOptions::get( 'includeDiscoveredAssets' ),
         ];
 
         $view['detectionOptions'] = [
-            'detectCustomPostTypes' => CoreOptions::get('detectCustomPostTypes'),
-            'detectPages' => CoreOptions::get('detectPages'),
-            'detectPosts' => CoreOptions::get('detectPosts'),
-            'detectUploads' => CoreOptions::get('detectUploads'),
+            'detectCustomPostTypes' => CoreOptions::get( 'detectCustomPostTypes' ),
+            'detectPages' => CoreOptions::get( 'detectPages' ),
+            'detectPosts' => CoreOptions::get( 'detectPosts' ),
+            'detectUploads' => CoreOptions::get( 'detectUploads' ),
         ];
 
         $view['postProcessingOptions'] = [
-               'deploymentURL' => CoreOptions::get('deploymentURL'),
+            'deploymentURL' => CoreOptions::get( 'deploymentURL' ),
         ];
 
         $view['deploymentOptions'] = [
-               'completionEmail' => CoreOptions::get('completionEmail'),
-               'completionWebhook' => CoreOptions::get('completionWebhook'),
-               'completionWebhookMethod' => CoreOptions::get('completionWebhookMethod'),
+            'completionEmail' => CoreOptions::get( 'completionEmail' ),
+            'completionWebhook' => CoreOptions::get( 'completionWebhook' ),
+            'completionWebhookMethod' => CoreOptions::get( 'completionWebhookMethod' ),
         ];
 
         $view = apply_filters( 'wp2static_render_options_page_vars', $view );
@@ -45,7 +45,7 @@ class ViewRenderer {
     public static function renderDiagnosticsPage() : void {
         $view = [];
         $view['localDNSResolution'] = Diagnostics::check_local_dns_resolution();
-        $view['memoryLimit'] = ini_get('memory_limit');
+        $view['memoryLimit'] = ini_get( 'memory_limit' );
         $view['coreOptions'] = CoreOptions::getAll();
         $view['site_info'] = SiteInfo::getAllInfo();
         $view['phpOutOfDate'] = PHP_VERSION < 7.3;
@@ -68,8 +68,8 @@ class ViewRenderer {
 
     public static function renderCrawlQueue() : void {
         if ( ! is_admin() ) {
-            http_response_code(403);
-            die('Forbidden');
+            http_response_code( 403 );
+            die( 'Forbidden' );
         }
 
         $view = [];
@@ -80,8 +80,8 @@ class ViewRenderer {
 
     public static function renderCrawlCache() : void {
         if ( ! is_admin() ) {
-            http_response_code(403);
-            die('Forbidden');
+            http_response_code( 403 );
+            die( 'Forbidden' );
         }
 
         $view = [];
@@ -92,8 +92,8 @@ class ViewRenderer {
 
     public static function renderPostProcessedSitePaths() : void {
         if ( ! is_admin() ) {
-            http_response_code(403);
-            die('Forbidden');
+            http_response_code( 403 );
+            die( 'Forbidden' );
         }
 
         $view = [];
@@ -104,8 +104,8 @@ class ViewRenderer {
 
     public static function renderStaticSitePaths() : void {
         if ( ! is_admin() ) {
-            http_response_code(403);
-            die('Forbidden');
+            http_response_code( 403 );
+            die( 'Forbidden' );
         }
 
         $view = [];
@@ -116,8 +116,8 @@ class ViewRenderer {
 
     public static function renderDeployCache() : void {
         if ( ! is_admin() ) {
-            http_response_code(403);
-            die('Forbidden');
+            http_response_code( 403 );
+            die( 'Forbidden' );
         }
 
         $view = [];
@@ -132,13 +132,13 @@ class ViewRenderer {
         $view['jobs'] = JobQueue::getJobs();
 
         $view['jobOptions'] = [
-               'queueJobOnPostSave' => CoreOptions::get('queueJobOnPostSave'),
-               'queueJobOnPostDelete' => CoreOptions::get('queueJobOnPostDelete'),
-               'processQueueInterval' => CoreOptions::get('processQueueInterval'),
-               'autoJobQueueDetection' => CoreOptions::get('autoJobQueueDetection'),
-               'autoJobQueueCrawling' => CoreOptions::get('autoJobQueueCrawling'),
-               'autoJobQueuePostProcessing' => CoreOptions::get('autoJobQueuePostProcessing'),
-               'autoJobQueueDeployment' => CoreOptions::get('autoJobQueueDeployment'),
+            'queueJobOnPostSave' => CoreOptions::get( 'queueJobOnPostSave' ),
+            'queueJobOnPostDelete' => CoreOptions::get( 'queueJobOnPostDelete' ),
+            'processQueueInterval' => CoreOptions::get( 'processQueueInterval' ),
+            'autoJobQueueDetection' => CoreOptions::get( 'autoJobQueueDetection' ),
+            'autoJobQueueCrawling' => CoreOptions::get( 'autoJobQueueCrawling' ),
+            'autoJobQueuePostProcessing' => CoreOptions::get( 'autoJobQueuePostProcessing' ),
+            'autoJobQueueDeployment' => CoreOptions::get( 'autoJobQueueDeployment' ),
         ];
 
         $view = apply_filters( 'wp2static_render_jobs_page_vars', $view );
@@ -150,56 +150,58 @@ class ViewRenderer {
     public static function renderCachesPage() : void {
         $view = [];
 
-        // performance check vs map 
+        // performance check vs map
         $diskSpace = 0;
 
         $exportedSiteDir = SiteInfo::getPath( 'uploads' ) . 'wp2static-exported-site/';
-        if (is_dir($exportedSiteDir)) {
+        if ( is_dir( $exportedSiteDir ) ) {
             $files = new \RecursiveIteratorIterator(
                 new \RecursiveDirectoryIterator(
-                    $exportedSiteDir));
+                    $exportedSiteDir
+                )
+            );
 
-            foreach ($files as $file) {
+            foreach ( $files as $file ) {
                 $diskSpace += $file->getSize();
             }
         }
 
-        $view['exportedSiteDiskSpace'] = sprintf("%4.2f MB", $diskSpace / 1048576);
+        $view['exportedSiteDiskSpace'] = sprintf( '%4.2f MB', $diskSpace / 1048576 );
         // end check
 
         if ( is_dir( $exportedSiteDir ) ) {
             $view['exportedSiteFileCount'] = iterator_count(
                 new \RecursiveIteratorIterator(
-                    new \RecursiveDirectoryIterator($exportedSiteDir, \FilesystemIterator::SKIP_DOTS)
+                    new \RecursiveDirectoryIterator( $exportedSiteDir, \FilesystemIterator::SKIP_DOTS )
                 )
             );
         } else {
             $view['exportedSiteFileCount'] = 0;
         }
 
-
-        // performance check vs map 
+        // performance check vs map
         $diskSpace = 0;
         $processedSiteDir = SiteInfo::getPath( 'uploads' ) . 'wp2static-processed-site/';
 
-        if (is_dir($processedSiteDir)) {
+        if ( is_dir( $processedSiteDir ) ) {
             $files = new \RecursiveIteratorIterator(
                 new \RecursiveDirectoryIterator(
-                    $processedSiteDir));
+                    $processedSiteDir
+                )
+            );
 
-            foreach ($files as $file) {
+            foreach ( $files as $file ) {
                 $diskSpace += $file->getSize();
             }
         }
 
-
-        $view['processedSiteDiskSpace'] = sprintf("%4.2f MB", $diskSpace / 1048576);
+        $view['processedSiteDiskSpace'] = sprintf( '%4.2f MB', $diskSpace / 1048576 );
         // end check
 
         if ( is_dir( $processedSiteDir ) ) {
             $view['processedSiteFileCount'] = iterator_count(
                 new \RecursiveIteratorIterator(
-                    new \RecursiveDirectoryIterator($processedSiteDir, \FilesystemIterator::SKIP_DOTS)
+                    new \RecursiveDirectoryIterator( $processedSiteDir, \FilesystemIterator::SKIP_DOTS )
                 )
             );
         } else {

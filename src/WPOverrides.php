@@ -13,7 +13,7 @@ class WPOverrides {
      * TODO: Excluded from phpstan due to WP class dependencies; revisit
      */
     public static function get_permalink( $post, $permalink ) {
-        $rewritecode = array(
+        $rewritecode = [
             '%year%',
             '%monthnum%',
             '%day%',
@@ -25,7 +25,7 @@ class WPOverrides {
             '%category%',
             '%author%',
             '%pagename%',
-        );
+        ];
 
         $post   = get_post( $post );
         $sample = false;
@@ -41,7 +41,7 @@ class WPOverrides {
         } elseif (
             in_array(
                 $post->post_type,
-                get_post_types( array( '_builtin' => false ) )
+                get_post_types( [ '_builtin' => false ] )
             )
         ) {
             return get_post_permalink( $post, false, $sample );
@@ -57,9 +57,9 @@ class WPOverrides {
             if ( $cats ) {
                 $cats = wp_list_sort(
                     $cats,
-                    array(
+                    [
                         'term_id' => 'ASC',
-                    )
+                    ]
                 );
 
                 $category_object =
@@ -104,7 +104,7 @@ class WPOverrides {
 
         $date           = explode( ' ', date( 'Y m d H i s', $unixtime ) );
         $rewritereplace =
-        array(
+        [
             $date[0],
             $date[1],
             $date[2],
@@ -116,7 +116,7 @@ class WPOverrides {
             $category,
             $author,
             $post->post_name,
-        );
+        ];
         $permalink =
             home_url(
                 str_replace( $rewritecode, $rewritereplace, $permalink )

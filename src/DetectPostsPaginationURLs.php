@@ -41,7 +41,7 @@ class DetectPostsPaginationURLs {
         $pagination_base = $wp_rewrite->pagination_base;
         $default_posts_per_page = get_option( 'posts_per_page' );
 
-        $urls_to_include = array();
+        $urls_to_include = [];
 
         foreach ( $post_types as $post_type ) {
             $query = "

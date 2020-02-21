@@ -10,17 +10,17 @@ class DetectVendorFiles {
      * @return string[] list of URLs
      */
     public static function detect( string $wp_site_url ) : array {
-        $vendor_files = array();
+        $vendor_files = [];
 
         // Yoast
         if ( defined( 'WPSEO_VERSION' ) ) {
-            $yoast_sitemaps = array(
+            $yoast_sitemaps = [
                 '/sitemap_index.xml',
                 '/post-sitemap.xml',
                 '/page-sitemap.xml',
                 '/category-sitemap.xml',
                 '/author-sitemap.xml',
-            );
+            ];
 
             $vendor_files = array_merge( $vendor_files, $yoast_sitemaps );
         }
@@ -58,7 +58,7 @@ class DetectVendorFiles {
                 WHERE meta_key = '%s'
                 ";
 
-            $custom_permalinks = array();
+            $custom_permalinks = [];
 
             $posts = $wpdb->get_results(
                 sprintf(

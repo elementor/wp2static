@@ -29,9 +29,9 @@ class WsLog {
 
         $wpdb->insert(
             $table_name,
-            array(
+            [
                 'log' => $text,
-            )
+            ]
         );
     }
 
@@ -62,7 +62,6 @@ class WsLog {
      * Get all log lines
      *
      * @return mixed[] array of Log items
-     *
      */
     public static function getAll() : array {
         global $wpdb;

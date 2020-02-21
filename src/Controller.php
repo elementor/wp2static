@@ -70,22 +70,22 @@ class Controller {
             }
         }
 
-        $order = array(
+        $order = [
             'index.php',
             'wp2static',
-        );
+        ];
 
         return $order;
     }
 
     public static function uninstall() : void {
-        error_log('Uninstalled WP2Static for single site');
+        error_log( 'Uninstalled WP2Static for single site' );
 
         WPCron::clearRecurringEvent();
     }
 
     public static function deactivate_for_single_site() : void {
-        error_log('Deactivated WP2Static for single site');
+        error_log( 'Deactivated WP2Static for single site' );
 
         WPCron::clearRecurringEvent();
     }
@@ -116,7 +116,7 @@ class Controller {
     }
 
     public static function activate_for_single_site() : void {
-        WsLog::l( "Activated WP2Static for single site");
+        WsLog::l( 'Activated WP2Static for single site' );
     }
 
     public static function activate( bool $network_wide = null ) : void {
@@ -151,8 +151,8 @@ class Controller {
             'manage_options',
             'wp2static',
             [ 'WP2Static\ViewRenderer', 'renderOptionsPage' ],
-            'dashicons-shield-alt');
-
+            'dashicons-shield-alt'
+        );
 
         $submenu_pages = [
             'options' => [ 'WP2Static\ViewRenderer', 'renderOptionsPage' ],
@@ -170,11 +170,12 @@ class Controller {
 
             add_submenu_page(
                 'wp2static',
-                'WP2Static ' . ucfirst($slug),
-                ucfirst($slug),
+                'WP2Static ' . ucfirst( $slug ),
+                ucfirst( $slug ),
                 'manage_options',
                 $menu_slug,
-                $method);
+                $method
+            );
         }
 
         add_submenu_page(
@@ -183,7 +184,8 @@ class Controller {
             'Crawl Queue',
             'manage_options',
             'wp2static-crawl-queue',
-            [ 'WP2Static\ViewRenderer', 'renderCrawlQueue' ]);
+            [ 'WP2Static\ViewRenderer', 'renderCrawlQueue' ]
+        );
 
         add_submenu_page(
             '',
@@ -191,7 +193,8 @@ class Controller {
             'Crawl Cache',
             'manage_options',
             'wp2static-crawl-cache',
-            [ 'WP2Static\ViewRenderer', 'renderCrawlCache' ]);
+            [ 'WP2Static\ViewRenderer', 'renderCrawlCache' ]
+        );
 
         add_submenu_page(
             '',
@@ -199,7 +202,8 @@ class Controller {
             'Deploy Cache',
             'manage_options',
             'wp2static-deploy-cache',
-            [ 'WP2Static\ViewRenderer', 'renderDeployCache' ]);
+            [ 'WP2Static\ViewRenderer', 'renderDeployCache' ]
+        );
 
         add_submenu_page(
             '',
@@ -207,7 +211,8 @@ class Controller {
             'Static Site',
             'manage_options',
             'wp2static-static-site',
-            [ 'WP2Static\ViewRenderer', 'renderStaticSitePaths' ]);
+            [ 'WP2Static\ViewRenderer', 'renderStaticSitePaths' ]
+        );
 
         add_submenu_page(
             '',
@@ -215,7 +220,8 @@ class Controller {
             'Post Processed Site',
             'manage_options',
             'wp2static-post-processed-site',
-            [ 'WP2Static\ViewRenderer', 'renderPostProcessedSitePaths' ]);
+            [ 'WP2Static\ViewRenderer', 'renderPostProcessedSitePaths' ]
+        );
     }
 
     public function crawlSite() : void {
@@ -226,10 +232,10 @@ class Controller {
         $crawler->crawlSite( StaticSite::getPath() );
 
         // TOOD: legacy AssetDownloader implementation
-        //     $ch = curl_init();
-        //     $asset_downloader = new AssetDownloader( $ch );
-        //     $site_crawler = new SiteCrawler( $asset_downloader );
-        //     $site_crawler->crawl();
+        // $ch = curl_init();
+        // $asset_downloader = new AssetDownloader( $ch );
+        // $site_crawler = new SiteCrawler( $asset_downloader );
+        // $site_crawler->crawl();
     }
 
     // TODO: why is this here? Move to CrawlQueue if still needed
@@ -281,13 +287,13 @@ class Controller {
     }
 
     public function wp2static_ui_save_options() : void {
-        CoreOptions::savePosted('core');
+        CoreOptions::savePosted( 'core' );
 
-        do_action('wp2static_addon_ui_save_options');
+        do_action( 'wp2static_addon_ui_save_options' );
 
         check_admin_referer( 'wp2static-ui-options' );
 
-        wp_redirect(admin_url('admin.php?page=wp2static'));
+        wp_redirect( admin_url( 'admin.php?page=wp2static' ) );
         exit;
     }
 
@@ -296,7 +302,7 @@ class Controller {
 
         CrawlQueue::truncate();
 
-        wp_redirect(admin_url('admin.php?page=wp2static-caches'));
+        wp_redirect( admin_url( 'admin.php?page=wp2static-caches' ) );
         exit;
     }
 
@@ -305,7 +311,7 @@ class Controller {
 
         JobQueue::truncate();
 
-        wp_redirect(admin_url('admin.php?page=wp2static-jobs'));
+        wp_redirect( admin_url( 'admin.php?page=wp2static-jobs' ) );
         exit;
     }
 
@@ -314,7 +320,7 @@ class Controller {
 
         DeployCache::truncate();
 
-        wp_redirect(admin_url('admin.php?page=wp2static-caches'));
+        wp_redirect( admin_url( 'admin.php?page=wp2static-caches' ) );
         exit;
     }
 
@@ -323,7 +329,7 @@ class Controller {
 
         CrawlCache::truncate();
 
-        wp_redirect(admin_url('admin.php?page=wp2static-caches'));
+        wp_redirect( admin_url( 'admin.php?page=wp2static-caches' ) );
         exit;
     }
 
@@ -332,7 +338,7 @@ class Controller {
 
         ProcessedSite::delete();
 
-        wp_redirect(admin_url('admin.php?page=wp2static-caches'));
+        wp_redirect( admin_url( 'admin.php?page=wp2static-caches' ) );
         exit;
     }
 
@@ -341,23 +347,23 @@ class Controller {
 
         StaticSite::delete();
 
-        wp_redirect(admin_url('admin.php?page=wp2static-caches'));
+        wp_redirect( admin_url( 'admin.php?page=wp2static-caches' ) );
         exit;
     }
 
     public function wp2static_ui_save_job_options() : void {
-        CoreOptions::savePosted('jobs');
+        CoreOptions::savePosted( 'jobs' );
 
-        do_action('wp2static_addon_ui_save_job_options');
+        do_action( 'wp2static_addon_ui_save_job_options' );
 
         check_admin_referer( 'wp2static-ui-job-options' );
 
-        wp_redirect(admin_url('admin.php?page=wp2static-jobs'));
+        wp_redirect( admin_url( 'admin.php?page=wp2static-jobs' ) );
         exit;
     }
 
     public static function wp2static_save_post_handler( int $post_id ) : void {
-        if ( get_post_status( $post_id ) !== 'publish') {
+        if ( get_post_status( $post_id ) !== 'publish' ) {
             return;
         }
 
@@ -405,7 +411,7 @@ class Controller {
             }
         }
 
-        wp_redirect(admin_url('admin.php?page=wp2static-jobs'));
+        wp_redirect( admin_url( 'admin.php?page=wp2static-jobs' ) );
         exit;
     }
 
@@ -418,73 +424,73 @@ class Controller {
         JobQueue::squashQueue();
 
         if ( JobQueue::jobsInProgress() ) {
-            WsLog::l( "Job in progress when attempting to process queue. No new jobs will be processed until current in progress is complete.");
+            WsLog::l( 'Job in progress when attempting to process queue. No new jobs will be processed until current in progress is complete.' );
             return;
         }
 
         // get all with status 'waiting' in order of oldest to newest
         $jobs = JobQueue::getProcessableJobs();
 
-        foreach ($jobs as $job) {
-            JobQueue::setStatus($job->id, 'processing');
+        foreach ( $jobs as $job ) {
+            JobQueue::setStatus( $job->id, 'processing' );
 
             switch ( $job->job_type ) {
                 case 'detect':
-                    WsLog::l( "Starting URL detection");
+                    WsLog::l( 'Starting URL detection' );
                     $detected_count = URLDetector::detectURLs();
-                    WsLog::l( "URL detection completed ($detected_count URLs detected)");
+                    WsLog::l( "URL detection completed ($detected_count URLs detected)" );
                     break;
                 case 'crawl':
-                    WsLog::l( "Starting crawling");
+                    WsLog::l( 'Starting crawling' );
                     $crawler = new Crawler();
-                    $crawler->crawlSite( StaticSite::getPath());
-                    WsLog::l( "Crawling completed");
+                    $crawler->crawlSite( StaticSite::getPath() );
+                    WsLog::l( 'Crawling completed' );
                     break;
                 case 'post_process':
-                    WsLog::l( "Starting post-processing");
+                    WsLog::l( 'Starting post-processing' );
                     $post_processor = new PostProcessor();
                     $processed_site_dir =
-                        SiteInfo::getPath( 'uploads') . 'wp2static-processed-site';
+                        SiteInfo::getPath( 'uploads' ) . 'wp2static-processed-site';
                     $processed_site = new ProcessedSite();
-                    $post_processor->processStaticSite( StaticSite::getPath());
-                    WsLog::l( "Post-processing completed");
+                    $post_processor->processStaticSite( StaticSite::getPath() );
+                    WsLog::l( 'Post-processing completed' );
                     break;
                 case 'deploy':
-                    WsLog::l( "Starting deployment");
-                    do_action('wp2static_deploy', ProcessedSite::getPath());
+                    WsLog::l( 'Starting deployment' );
+                    do_action( 'wp2static_deploy', ProcessedSite::getPath() );
                     do_action( 'wp2static_post_deploy_trigger' );
-                    WsLog::l( "Deployment complete");
+                    WsLog::l( 'Deployment complete' );
                     break;
                 default:
-                    WsLog::l('Trying to process unknown job type');
+                    WsLog::l( 'Trying to process unknown job type' );
             }
 
-            JobQueue::setStatus($job->id, 'completed');
+            JobQueue::setStatus( $job->id, 'completed' );
         }
     }
 
     public function wp2static_headless() : void {
-        WsLog::l( "Running WP2Static\Controller::wp2static_headless()");
-        WsLog::l( "Starting URL detection");
+        WsLog::l( 'Running WP2Static\Controller::wp2static_headless()' );
+        WsLog::l( 'Starting URL detection' );
         $detected_count = URLDetector::detectURLs();
-        WsLog::l( "URL detection completed ($detected_count URLs detected)");
+        WsLog::l( "URL detection completed ($detected_count URLs detected)" );
 
-        WsLog::l( "Starting crawling");
+        WsLog::l( 'Starting crawling' );
         $crawler = new Crawler();
-        $crawler->crawlSite( StaticSite::getPath());
-        WsLog::l( "Crawling completed");
+        $crawler->crawlSite( StaticSite::getPath() );
+        WsLog::l( 'Crawling completed' );
 
-        WsLog::l( "Starting post-processing");
+        WsLog::l( 'Starting post-processing' );
         $post_processor = new PostProcessor();
         $processed_site_dir =
-            SiteInfo::getPath( 'uploads') . 'wp2static-processed-site';
+            SiteInfo::getPath( 'uploads' ) . 'wp2static-processed-site';
         $processed_site = new ProcessedSite();
         $post_processor->processStaticSite( StaticSite::getPath() );
-        WsLog::l( "Post-processing completed");
+        WsLog::l( 'Post-processing completed' );
 
-        WsLog::l( "Starting deployment");
-        do_action('wp2static_deploy', ProcessedSite::getPath());
-        WsLog::l( "Deployment complete");
+        WsLog::l( 'Starting deployment' );
+        do_action( 'wp2static_deploy', ProcessedSite::getPath() );
+        WsLog::l( 'Deployment complete' );
     }
 
     public static function invalidate_single_url_cache(
@@ -515,7 +521,7 @@ class Controller {
     }
 
     public static function emailDeployNotification() : void {
-        error_log('EMAILING POST DEPLOYMENT');
+        error_log( 'EMAILING POST DEPLOYMENT' );
         WsLog::l( 'Sending deployment notification  email...' );
 
         if ( empty( CoreOptions::getValue( 'completionEmail' ) ) ) {
@@ -527,13 +533,13 @@ class Controller {
         $subject = 'Static site deployment: ' .
         $site_title = get_bloginfo( 'name' );
         $body = 'Your WordPress site has been automatically deployed.';
-        $headers = array( 'Content-Type: text/html; charset=UTF-8' );
+        $headers = [ 'Content-Type: text/html; charset=UTF-8' ];
 
         wp_mail( $to, $subject, $body, $headers );
     }
 
     public static function webhookDeployNotification() : void {
-        error_log('POST DEPLOYMENT WEBHOOK ');
+        error_log( 'POST DEPLOYMENT WEBHOOK ' );
         WsLog::l( 'Sending deployment notification webhook...' );
 
         if ( empty( CoreOptions::getValue( 'completionWebhook' ) ) ) {

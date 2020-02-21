@@ -13,14 +13,14 @@ class URLHelper {
      */
     public static function getProtocolRelativeURL( string $url ) : string {
         $protocol_relative_url = str_replace(
-            array(
+            [
                 'https:',
                 'http:',
-            ),
-            array(
+            ],
+            [
                 '',
                 '',
-            ),
+            ],
             $url
         );
 

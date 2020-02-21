@@ -65,7 +65,7 @@ class JobQueue {
     }
 
     /**
-     *  Check for any jobs in progress 
+     *  Check for any jobs in progress
      *
      *  @return bool All waiting jobs
      */
@@ -75,10 +75,10 @@ class JobQueue {
 
         $table_name = $wpdb->prefix . 'wp2static_jobs';
 
-        $jobs_in_progress = $wpdb->get_var("SELECT COUNT(*) FROM $table_name WHERE status = 'processing'");
+        $jobs_in_progress = $wpdb->get_var( "SELECT COUNT(*) FROM $table_name WHERE status = 'processing'" );
 
-        error_log('total jobs in progress');
-        error_log($jobs_in_progress);
+        error_log( 'total jobs in progress' );
+        error_log( $jobs_in_progress );
 
         return $jobs_in_progress > 0;
     }
@@ -120,29 +120,29 @@ class JobQueue {
             'deploy',
         ];
 
-        foreach( $job_types as $job_type ) {
+        foreach ( $job_types as $job_type ) {
             // get all jobs for a type where status is 'waiting'
             $waiting_jobs = $wpdb->get_results( "SELECT * FROM $table_name WHERE job_type = '$job_type' AND status = 'waiting' ORDER BY created_at DESC" );
 
             // abort if less than 2 jobs of same type in waiting status
             if ( $waiting_jobs < 2 ) {
-                WsLog::l('less than 2 jobs for this type, continuing');
-                WsLog::l((string) count($waiting_jobs));
+                WsLog::l( 'less than 2 jobs for this type, continuing' );
+                WsLog::l( (string) count( $waiting_jobs ) );
                 continue;
             }
-           
-            // select all  
+
+            // select all
             $waiting_jobs = $wpdb->get_results( "SELECT * FROM $table_name WHERE job_type = '$job_type' AND status = 'waiting' ORDER BY created_at DESC" );
 
             // remove latest one
             array_shift( $waiting_jobs );
 
             // set all but most recent one to 'skipped'
-            foreach( $waiting_jobs as $waiting_job ) {
+            foreach ( $waiting_jobs as $waiting_job ) {
                 $wpdb->update(
                     $table_name,
-                    ['status' => 'skipped'],
-                    ['id' => $waiting_job->id]
+                    [ 'status' => 'skipped' ],
+                    [ 'id' => $waiting_job->id ]
                 );
 
             }
@@ -156,8 +156,8 @@ class JobQueue {
 
         $wpdb->update(
             $table_name,
-            ['status' => $status],
-            ['id' => $id]
+            [ 'status' => $status ],
+            [ 'id' => $id ]
         );
     }
 
@@ -171,14 +171,13 @@ class JobQueue {
 
         $table_name = $wpdb->prefix . 'wp2static_jobs';
 
-        $total_jobs = $wpdb->get_var("SELECT COUNT(*) FROM $table_name");
+        $total_jobs = $wpdb->get_var( "SELECT COUNT(*) FROM $table_name" );
 
         return $total_jobs;
     }
 
     /**
      *  Clear JobQueue via truncate or deletion
-     *
      */
     public static function truncate() : void {
         global $wpdb;
@@ -191,7 +190,7 @@ class JobQueue {
 
         if ( $total_jobs > 0 ) {
             // TODO: simulate lack of permissios to truncate
-            error_log('failed to truncate JobQueue: try deleting instead');
+            error_log( 'failed to truncate JobQueue: try deleting instead' );
         }
     }
 }

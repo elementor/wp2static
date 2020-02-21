@@ -43,10 +43,10 @@ class RewriteRules {
         $url = rtrim( $url, '/' );
         $url_with_cslashes = addcslashes( $url, '/' );
 
-        $patterns = array(
+        $patterns = [
             $url,
             $url_with_cslashes,
-        );
+        ];
 
         return $patterns;
     }
@@ -74,7 +74,7 @@ class RewriteRules {
         );
 
         // hold all values in transient array
-        $tmp_rules = array();
+        $tmp_rules = [];
 
         foreach ( $rewrite_rules as $rewrite_rule_line ) {
             if ( $rewrite_rule_line ) {

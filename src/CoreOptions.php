@@ -274,7 +274,7 @@ class CoreOptions {
         // convert array of stdObjects to array of arrays
         // for easier presentation in WP-CLI
         $options = array_map(
-            function ($obj) {
+            function ( $obj ) {
                 // hide sensitive values
                 if ( $obj->name === 'basicAuthPassword' ) {
                     $obj->value = '***************';

@@ -17,7 +17,7 @@ class DetectCommentPaginationURLs {
         $comments = get_comments();
 
         if ( ! is_iterable( $comments ) ) {
-            return array();
+            return [];
         }
 
         foreach ( $comments as $comment ) {

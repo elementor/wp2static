@@ -33,7 +33,7 @@ class FileWriter {
             return;
         }
 
-        $path_info = array();
+        $path_info = [];
 
         if ( ! array_key_exists( 'path', $url_info ) ) {
             return;

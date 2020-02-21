@@ -14,7 +14,7 @@ class DetectWPIncludesAssets {
      * @throw WP2StaticException
      */
     public static function detect() : array {
-        $files = array();
+        $files = [];
 
         $includes_path = SiteInfo::getPath( 'includes' );
         $includes_url = SiteInfo::getUrl( 'includes' );

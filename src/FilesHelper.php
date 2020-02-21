@@ -23,7 +23,7 @@ class FilesHelper {
                 throw new WP2StaticException( $err );
             }
 
-            $files = array_diff( $dir_files, array( '.', '..' ) );
+            $files = array_diff( $dir_files, [ '.', '..' ] );
 
             foreach ( $files as $file ) {
                 ( is_dir( "$dir/$file" ) ) ?
@@ -192,7 +192,6 @@ class FilesHelper {
 
     /**
      * Build the initial file list to crawl
-     *
      */
     public static function buildInitialFileList(
         bool $via_cli = false,
@@ -221,59 +220,59 @@ class FilesHelper {
          - sitemaps
 
         */
-        if ( CoreOptions::getValue('detectAttachments') ) {
+        if ( CoreOptions::getValue( 'detectAttachments' ) ) {
             $arrays_to_merge[] = DetectAttachmentURLs::detect();
         }
 
-        if ( CoreOptions::getValue('detectPosts') ) {
+        if ( CoreOptions::getValue( 'detectPosts' ) ) {
             $permalink_structure = get_option( 'permalink_structure' );
             $arrays_to_merge[] = DetectPostURLs::detect( $permalink_structure );
         }
 
-        if ( CoreOptions::getValue('detectPages') ) {
+        if ( CoreOptions::getValue( 'detectPages' ) ) {
             $arrays_to_merge[] = DetectPageURLs::detect();
         }
 
-        if ( CoreOptions::getValue('detectCustomPostTypes') ) {
+        if ( CoreOptions::getValue( 'detectCustomPostTypes' ) ) {
             $arrays_to_merge[] = DetectCustomPostTypeURLs::detect();
         }
 
-        if ( CoreOptions::getValue('detectUploads') ) {
+        if ( CoreOptions::getValue( 'detectUploads' ) ) {
             $arrays_to_merge[] =
                 self::getListOfLocalFilesByDir( $uploads_path );
         }
 
-        if ( CoreOptions::getValue('detectParentTheme') ) {
+        if ( CoreOptions::getValue( 'detectParentTheme' ) ) {
             $arrays_to_merge[] = DetectThemeAssets::detect( 'parent' );
         }
 
-        if ( CoreOptions::getValue('detectChildTheme') ) {
+        if ( CoreOptions::getValue( 'detectChildTheme' ) ) {
             $arrays_to_merge[] = DetectThemeAssets::detect( 'child' );
         }
 
-        if ( CoreOptions::getValue('detectPluginAssets') ) {
+        if ( CoreOptions::getValue( 'detectPluginAssets' ) ) {
             $arrays_to_merge[] = DetectPluginAssets::detect();
         }
 
-        if ( CoreOptions::getValue('detectWPIncludesAssets') ) {
+        if ( CoreOptions::getValue( 'detectWPIncludesAssets' ) ) {
             $arrays_to_merge[] = DetectWPIncludesAssets::detect();
         }
 
-        if ( CoreOptions::getValue('detectVendorCacheDirs') ) {
+        if ( CoreOptions::getValue( 'detectVendorCacheDirs' ) ) {
             $arrays_to_merge[] =
                 DetectVendorFiles::detect( SiteInfo::getURL( 'site' ) );
         }
 
-        if ( CoreOptions::getValue('detectPostPagination') ) {
+        if ( CoreOptions::getValue( 'detectPostPagination' ) ) {
             $arrays_to_merge[] = DetectPostsPaginationURLs::detect();
         }
 
-        if ( CoreOptions::getValue('detectArchives') ) {
+        if ( CoreOptions::getValue( 'detectArchives' ) ) {
             $arrays_to_merge[] =
                 DetectArchiveURLs::detect( SiteInfo::getUrl( 'site' ) );
         }
 
-        if ( CoreOptions::getValue('detectCategoryPagination') ) {
+        if ( CoreOptions::getValue( 'detectCategoryPagination' ) ) {
             $arrays_to_merge[] =
                 DetectCategoryPaginationURLs::detect(
                     SiteInfo::getUrl( 'site' )
@@ -408,9 +407,9 @@ class FilesHelper {
         }
 
         // gets all category page links
-        $args = array(
+        $args = [
             'public'   => true,
-        );
+        ];
 
         $taxonomies = get_taxonomies( $args, 'objects' );
 
@@ -423,9 +422,9 @@ class FilesHelper {
 
             $terms = get_terms(
                 $taxonomy->name,
-                array(
+                [
                     'hide_empty' => true,
-                )
+                ]
             );
 
             if ( ! is_iterable( $terms ) ) {

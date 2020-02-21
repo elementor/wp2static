@@ -12,8 +12,8 @@ class DetectAttachmentURLs {
     public static function detect() : array {
         global $wpdb;
 
-        $post_urls = array();
-        $unique_post_types = array();
+        $post_urls = [];
+        $unique_post_types = [];
 
         $query = "
             SELECT ID,post_type

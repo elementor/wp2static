@@ -12,7 +12,6 @@ class SimpleRewriter {
 
     /**
      * SimpleRewriter constructor
-     *
      */
     public function __construct() {
 
@@ -25,12 +24,13 @@ class SimpleRewriter {
      * @throws WP2StaticException
      */
     public static function rewrite( string $filename ) : void {
-        $destination_url = apply_filters( 'wp2static_set_destination_url', '' ); 
+        $destination_url = apply_filters( 'wp2static_set_destination_url', '' );
 
         $wordpress_site_url =
             apply_filters(
                 'wp2static_set_wordpress_site_url',
-                SiteInfo::getUrl('site') );
+                SiteInfo::getUrl( 'site' )
+            );
 
         $file_contents = file_get_contents( $filename );
 
@@ -52,7 +52,8 @@ class SimpleRewriter {
                 URLHelper::getProtocolRelativeURL( $destination_url ),
                 addcslashes( URLHelper::getProtocolRelativeURL( $destination_url ), '/' ),
             ],
-            $file_contents);
+            $file_contents
+        );
 
         file_put_contents( $filename, $rewritten_contents );
     }

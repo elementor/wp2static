@@ -35,7 +35,6 @@ class AssetDownloader {
         $crawlable_filetypes =
             apply_filters( 'wp2static_crawlable_types', $crawlable_filetypes );
 
-
         // check if supported filetype for crawling
         if ( array_key_exists( $extension, $crawlable_filetypes ) ) {
             // skip if in Crawl Cache already

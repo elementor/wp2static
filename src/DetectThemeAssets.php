@@ -13,7 +13,7 @@ class DetectThemeAssets {
      * @return string[] list of URLs
      */
     public static function detect( string $theme_type ) : array {
-        $files = array();
+        $files = [];
         $template_path = '';
         $template_url = '';
 

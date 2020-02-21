@@ -49,7 +49,7 @@ class FileCopier {
             return;
         }
 
-        $path_info = array();
+        $path_info = [];
 
         $local_file = $this->getLocalFileForURL();
 

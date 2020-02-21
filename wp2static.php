@@ -65,7 +65,7 @@ function wp_static_html_output_ajax() {
 
     if ( '' !== $instance_method && is_string( $instance_method ) ) {
         $plugin_instance = WP2Static\Controller::getInstance();
-        call_user_func( array( $plugin_instance, $instance_method ) );
+        call_user_func( [ $plugin_instance, $instance_method ] );
     }
 
     wp_die();
@@ -88,7 +88,7 @@ if ( defined( 'WP_CLI' ) ) {
     WP_CLI::add_command( 'wp2static', 'WP2Static\CLI' );
     WP_CLI::add_command(
         'wp2static options',
-        array( 'WP2Static\CLI', 'options' )
+        [ 'WP2Static\CLI', 'options' ]
     );
 }
 

@@ -15,7 +15,7 @@ class SiteInfo {
      *
      * @var array
      */
-    private static $info = array();
+    private static $info = [];
 
     /**
      * Set site info using trailingslashed paths/URLs.
