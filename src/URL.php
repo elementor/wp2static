@@ -17,6 +17,7 @@ class URL {
      *
      * @param string $parent_page_url URL optional parent page to make
      * absolute URL from
+     * @throws WP2StaticException
      */
     public function __construct( string $url, string $parent_page_url = null ) {
         $url = new \Wa72\Url\Url( $url );
@@ -45,8 +46,7 @@ class URL {
 
     /**
      * Rewrite host and scheme to destination URL's
-     *
-     * mutates URL object in place
+     *  - mutates URL object in place
      *
      * @param string $destination_url URL rewrite rules
      */

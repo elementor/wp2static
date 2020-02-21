@@ -49,11 +49,11 @@ class CrawlCache {
 
         $wpdb->insert(
             $table_name,
-            array(
+            [
                 'time' => current_time( 'mysql' ),
                 'hashed_url' => md5( $url ),
                 'url' => $url,
-            )
+            ]
         );
     }
 
@@ -113,7 +113,6 @@ class CrawlCache {
 
     /**
      *  Clear CrawlCache via truncation
-     *
      */
     public static function truncate() : void {
         global $wpdb;
@@ -125,14 +124,12 @@ class CrawlCache {
         $totalcrawl_cache = self::getTotal();
 
         if ( $totalcrawl_cache > 0 ) {
-            // TODO: simulate lack of permissios to truncate
-            error_log('failed to truncate CrawlCache: try deleting instead');
+            WsLog::l( 'Failed to truncate CrawlCache: try deleting instead' );
         }
     }
 
     /**
      *  Count URLs in Crawl Cache
-     *
      */
     public static function getTotal() : int {
         global $wpdb;
