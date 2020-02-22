@@ -3,13 +3,13 @@
 <table class="widefat striped">
     <thead>
         <tr>
-            <th>Path in Deploy Cache</th>
+            <th>Path in Deploy Queue</th>
         </tr>
     </thead>
     <tbody>
         <?php if ( ! $view['paths'] ) : ?>
             <tr>
-                <td>Deploy Cache is empty.</td>
+                <td>Deploy Queue is empty.</td>
             </tr>
         <?php endif; ?>
 

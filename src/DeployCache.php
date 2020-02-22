@@ -46,6 +46,11 @@ class DeployCache {
         $wpdb->query( $sql );
     }
 
+    /**
+     * Checks if file can skip deployment 
+     *  - uses hash of file and path's hash
+     *
+     */
     public static function fileisCached( string $local_path ) : bool {
         global $wpdb;
 
@@ -81,7 +86,7 @@ class DeployCache {
     }
 
     /**
-     *  Count URLs in Deploy Cache
+     *  Count Paths in Deploy Cache
      */
     public static function getTotal() : int {
         global $wpdb;
@@ -107,7 +112,7 @@ class DeployCache {
         $rows = $wpdb->get_results( "SELECT path FROM $table_name" );
 
         foreach ( $rows as $row ) {
-            $urls[] = $row->url;
+            $urls[] = $row->path;
         }
 
         return $urls;

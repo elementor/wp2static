@@ -816,5 +816,63 @@ class CLI {
             StaticSite::delete();
         }
     }
+
+    /**
+     * Deploy Cache
+     *
+     * <list>
+     *
+     * List all URLs in the DeployCache
+     *
+     * <count>
+     *
+     * Show total number of URLs in DeployCache
+     *
+     * <delete>
+     *
+     * Empty all URLs from DeployCache
+     *
+     * @param string[] $args Arguments after command
+     * @param string[] $assoc_args Parameters after command
+     */
+    public function deploy_cache( array $args, array $assoc_args ) : void {
+        $action = isset( $args[0] ) ? $args[0] : null;
+        $option_name = isset( $args[1] ) ? $args[1] : null;
+        $value = isset( $args[2] ) ? $args[2] : null;
+
+        if ( $action === 'list' ) {
+            $paths = DeployCache::getPaths();
+
+            foreach ( $paths as $url ) {
+                WP_CLI::line( $url );
+            }
+        }
+
+        if ( $action === 'count' ) {
+            $urls = DeployCache::getHashes();
+
+            WP_CLI::line( (string) count( $urls ) );
+        }
+
+        if ( $action === 'delete' ) {
+
+            if ( ! isset( $assoc_args['force'] ) ) {
+                $this->multilinePrint(
+                    "no --force given. Please type 'yes' to confirm
+                    deletion of Deploy Cache"
+                );
+
+                $userval = trim( (string) fgets( STDIN ) );
+
+                if ( $userval !== 'yes' ) {
+                    WP_CLI::error( 'Failed to delete Deploy Cache' );
+                }
+            }
+
+            DeployCache::truncate();
+
+            WP_CLI::success( 'Deleted Deploy Cache' );
+        }
+    }
 }
 

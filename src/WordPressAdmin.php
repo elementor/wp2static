@@ -95,6 +95,13 @@ class WordPressAdmin {
         );
 
         add_action(
+            'admin_post_wp2static_deploy_queue_delete',
+            [ 'WP2Static\Controller', 'wp2static_deploy_queue_delete' ],
+            10,
+            0
+        );
+
+        add_action(
             'admin_post_wp2static_crawl_cache_delete',
             [ 'WP2Static\Controller', 'wp2static_crawl_cache_delete' ],
             10,

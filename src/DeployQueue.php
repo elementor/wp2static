@@ -81,4 +81,37 @@ class DeployQueue {
             ]
         );
     }
+
+    /**
+     *  Count Paths in Deploy Queue
+     */
+    public static function getTotal() : int {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'wp2static_deploy_queue';
+
+        $total = $wpdb->get_var( "SELECT count(*) FROM $table_name" );
+
+        return $total;
+    }
+
+    /**
+     *  Get all queued paths
+     *
+     *  @return string[] All queued paths
+     */
+    public static function getPaths() : array {
+        global $wpdb;
+        $urls = [];
+
+        $table_name = $wpdb->prefix . 'wp2static_deploy_queue';
+
+        $rows = $wpdb->get_results( "SELECT local_path FROM $table_name" );
+
+        foreach ( $rows as $row ) {
+            $urls[] = $row->url;
+        }
+
+        return $urls;
+    }
 }

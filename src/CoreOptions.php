@@ -275,6 +275,7 @@ class CoreOptions {
 
         // convert array of stdObjects to array of arrays
         // for easier presentation in WP-CLI
+        // TODO: perform in view
         $options = array_map(
             function ( $obj ) {
                 // hide sensitive values
