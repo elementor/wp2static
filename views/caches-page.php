@@ -103,28 +103,6 @@ button.wp2static-button {
             </td>
         </tr>
 
-<!-- TODO: needed?
-
-        <tr>
-            <td>Deploy queue</td>
-            <td><?php echo $view['deployQueueTotalPaths']; ?> Paths in database</td>
-            <td>
-                <a href="<?php echo admin_url('admin.php?page=wp2static-deploy-queue'); ?>" target="_blank"><button class="wp2static-button button btn-danger">Show Paths</button></a>
-
-                <form
-                    name="wp2static-deploy-queue-delete"
-                    method="POST"
-                    action="<?php echo esc_url( admin_url('admin-post.php') ); ?>">
-
-                <?php wp_nonce_field( $view['nonce_action'] ); ?>
-                <input name="action" type="hidden" value="wp2static_deploy_queue_delete" />
-
-                <button class="wp2static-button button btn-danger">Delete Deploy Queue</button>
-
-                </form>
-            </td>
-        </tr>
--->
         <tr>
             <td>Deploy cache</td>
             <td><?php echo $view['deployCacheTotalPaths']; ?> Paths in database</td>

@@ -47,9 +47,8 @@ class DeployCache {
     }
 
     /**
-     * Checks if file can skip deployment 
+     * Checks if file can skip deployment
      *  - uses hash of file and path's hash
-     *
      */
     public static function fileisCached( string $local_path ) : bool {
         global $wpdb;

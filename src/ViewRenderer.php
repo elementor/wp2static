@@ -126,18 +126,6 @@ class ViewRenderer {
         require_once WP2STATIC_PATH . 'views/deploy-cache-page.php';
     }
 
-    public static function renderDeployQueue() : void {
-        if ( ! is_admin() ) {
-            http_response_code( 403 );
-            die( 'Forbidden' );
-        }
-
-        $view = [];
-        $view['paths'] = DeployQueue::getPaths();
-
-        require_once WP2STATIC_PATH . 'views/deploy-queue-page.php';
-    }
-
     public static function renderJobsPage() : void {
         $view = [];
         $view['nonce_action'] = 'wp2static-ui-job-options';
@@ -229,7 +217,6 @@ class ViewRenderer {
         $view['crawlQueueTotalURLs'] = CrawlQueue::getTotal();
         $view['crawlCacheTotalURLs'] = CrawlCache::getTotal();
         $view['deployCacheTotalPaths'] = DeployCache::getTotal();
-        $view['deployQueueTotalPaths'] = DeployQueue::getTotal();
         $view['uploads_path'] = SiteInfo::getPath( 'uploads' );
         $view['nonce_action'] = 'wp2static-caches-page';
 

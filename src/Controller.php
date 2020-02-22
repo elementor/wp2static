@@ -45,7 +45,6 @@ class Controller {
         CrawlCache::createTable();
         CrawlQueue::createTable();
         WsLog::createTable();
-        DeployQueue::createTable();
         DeployCache::createTable();
         JobQueue::createTable();
 
@@ -207,15 +206,6 @@ class Controller {
 
         add_submenu_page(
             '',
-            'WP2Static Deploy Queue',
-            'Deploy Queue',
-            'manage_options',
-            'wp2static-deploy-queue',
-            [ 'WP2Static\ViewRenderer', 'renderDeployQueue' ]
-        );
-
-        add_submenu_page(
-            '',
             'WP2Static Static Site',
             'Static Site',
             'manage_options',
@@ -330,15 +320,6 @@ class Controller {
         DeployCache::truncate();
 
         wp_safe_redirect( admin_url( 'admin.php?page=wp2static-caches' ) );
-        exit;
-    }
-
-    public static function wp2static_deploy_queue_delete() : void {
-        check_admin_referer( 'wp2static-queues-page' );
-
-        DeployQueue::truncate();
-
-        wp_safe_redirect( admin_url( 'admin.php?page=wp2static-queues' ) );
         exit;
     }
 

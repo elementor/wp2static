@@ -849,9 +849,7 @@ class CLI {
         }
 
         if ( $action === 'count' ) {
-            $urls = DeployCache::getHashes();
-
-            WP_CLI::line( (string) count( $urls ) );
+            WP_CLI::line( (string) DeployCache::getTotal() );
         }
 
         if ( $action === 'delete' ) {
