@@ -200,154 +200,6 @@ class CLI {
         }
     }
 
-    public function showWizardMenu( int $level = 0 ) : void {
-        switch ( $level ) {
-            default:
-            case 0:
-                WP_CLI::line( 'Enter the number of the desired menu item:' );
-                WP_CLI::line( '' );
-                WP_CLI::line( '0) Quick-start: generate static site with current options' );
-                WP_CLI::line( '1) Options - view/manage WP2Static options' );
-                WP_CLI::line( '2) Jobs - view/manage' );
-                WP_CLI::line( '3) Caches - view/manage' );
-                WP_CLI::line( '4) Diagnostics' );
-                WP_CLI::line( '--------------' );
-                WP_CLI::line( 'q) Exit to shell' );
-                WP_CLI::line( '' );
-                break;
-            case 1:
-                WP_CLI::line( 'Enter the number of the desired menu item:' );
-                WP_CLI::line( '' );
-                WP_CLI::line( '0) Guided options configuration' );
-                WP_CLI::line( '1) Show currently set options' );
-                WP_CLI::line( '2) Reset to default options' );
-                WP_CLI::line( '--------------' );
-                WP_CLI::line( 'b) Back to main menu' );
-                WP_CLI::line( 'q) Exit to shell' );
-                WP_CLI::line( '' );
-                break;
-            case 2:
-                WP_CLI::line( 'Enter the number of the desired menu item:' );
-                WP_CLI::line( '' );
-                WP_CLI::line( '0) Show latest jobs' );
-                WP_CLI::line( '1) Cancel running job' );
-                WP_CLI::line( '2) Detect URLs' );
-                WP_CLI::line( '3) Crawl Site' );
-                WP_CLI::line( '4) Post-process site' );
-                WP_CLI::line( '5) Deploy' );
-                WP_CLI::line( '--------------' );
-                WP_CLI::line( 'b) Back to main menu' );
-                WP_CLI::line( 'q) Exit to shell' );
-                WP_CLI::line( '' );
-                break;
-            case 3:
-                WP_CLI::line( 'Enter the number of the desired menu item:' );
-                WP_CLI::line( '' );
-                WP_CLI::line( '0) Show all cache statistics' );
-                WP_CLI::line( '1) Show Detected URLs' );
-                WP_CLI::line( '2) Delete Detected URLs' );
-                WP_CLI::line( '3) Show Crawl Cache URLs' );
-                WP_CLI::line( '4) Delete Crawl Cache URLs' );
-                WP_CLI::line( '5) Delete Generated Static Site files' );
-                WP_CLI::line( '6) Delete Post-processed Static Site files' );
-                WP_CLI::line( '7) Show Deploy Cache URLs' );
-                WP_CLI::line( '8) Delete Deploy Cache URLs' );
-                WP_CLI::line( '--------------' );
-                WP_CLI::line( 'b) Back to main menu' );
-                WP_CLI::line( 'q) Exit to shell' );
-                WP_CLI::line( '' );
-                break;
-            case 4:
-                WP_CLI::line( 'Enter the number of the desired menu item:' );
-                WP_CLI::line( '' );
-                WP_CLI::line( '0) Show diagnostics' );
-                WP_CLI::line( '1) Email diagnostics' );
-                WP_CLI::line( '2) Save diagnostics to file' );
-                WP_CLI::line( '--------------' );
-                WP_CLI::line( 'b) Back to main menu' );
-                WP_CLI::line( 'q) Exit to shell' );
-                WP_CLI::line( '' );
-                break;
-            // options wizard
-            case 8:
-                WP_CLI::line( PHP_EOL . 'Detection level' );
-                WP_CLI::line( '===============' . PHP_EOL );
-                WP_CLI::line(
-                    'Affects which WordPress URLs are going ' .
-                    'to be crawled when generating your static site' . PHP_EOL
-                );
-                WP_CLI::line( '0) Homepage only' );
-                WP_CLI::line( '1) Most common URLs (Post, Pages, Archives, etc)' );
-                WP_CLI::line( '2) Maximum URL detection' );
-                WP_CLI::line( "3) Custom (let me choose exactly what's detected)" );
-                WP_CLI::line( '--------------' );
-                WP_CLI::line( 'b) Back to Options menu' );
-                WP_CLI::line( 'q) Exit to shell' );
-                WP_CLI::line( '' );
-                break;
-        }
-
-    }
-    /**
-     * Route wizard's user input to method
-     *
-     * @param mixed $selection Secondary menu selection
-     */
-    public function routeWizardSelection( int $level, $selection ) : void {
-        $selection_map = [
-            0 => [
-                0 => 'wp2static_cli_quick_start',
-                1 => 'wp2static_cli_options_menu',
-                2 => 'wp2static_cli_jobs_menu',
-                3 => 'wp2static_cli_caches_menu',
-                4 => 'wp2static_cli_diagnostics_menu',
-                'q' => 'wp2static_cli_exit_to_shell',
-            ],
-            1 => [
-                0 => 'wp2static_cli_options_launch_wizard',
-                1 => 'wp2static_cli_options_list',
-                'b' => 'wizard',
-                'q' => 'wp2static_cli_exit_to_shell',
-            ],
-            2 => [
-                0 => 'wp2static_cli_jobs_launch_wizard',
-                2 => 'wp2static_cli_jobs_exec_detect',
-                'b' => 'wizard',
-                'q' => 'wp2static_cli_exit_to_shell',
-            ],
-            3 => [
-                0 => 'wp2static_cli_caches_launch_wizard',
-                1 => 'wp2static_cli_caches_list_detected_urls',
-                2 => 'wp2static_cli_caches_truncate_crawl_queue',
-                'b' => 'wizard',
-                'q' => 'wp2static_cli_exit_to_shell',
-            ],
-            4 => [
-                0 => 'wp2static_cli_diagnostics_launch_wizard',
-                'b' => 'wizard',
-                'q' => 'wp2static_cli_exit_to_shell',
-            ],
-            8 => [
-                0 => 'wp2static_cli_options_set_detect_homepage_only',
-                1 => 'wp2static_cli_options_set_detect_common',
-                2 => 'wp2static_cli_options_set_detect_maximum',
-                3 => 'wp2static_cli_options_set_detect_wizard',
-                'b' => 'wp2static_cli_options_menu',
-                'q' => 'wp2static_cli_exit_to_shell',
-            ],
-        ];
-
-        $target_method = [ $this, $selection_map[ $level ][ $selection ] ];
-
-        if ( ! is_callable( $target_method ) ) {
-            WP_CLI::line( 'Tried to call missing function' );
-            $this->showWizardWaitForSelection( $level );
-            return;
-        } else {
-            call_user_func( $target_method );
-        }
-    }
-
     public function wp2static_cli_exit_to_shell() : void {
         WP_CLI::line( PHP_EOL . '### Exiting to shell, goodbye! ###' . PHP_EOL );
         WP_CLI::halt( 0 );
@@ -473,55 +325,6 @@ class CLI {
         $this->showWizardWaitForSelection( 2 );
     }
 
-    public function wp2static_cli_quick_start() : void {
-        $this->wp2static_cli_clear_screen();
-        WP_CLI::line( '### Quick-start: generate static site with current options###' );
-
-        $this->detect();
-        $this->crawl( [], [ 'show-progress' ] );
-        $this->post_process();
-
-        $processed_site_dir =
-            SiteInfo::getPath( 'uploads' ) . 'wp2static-processed-site';
-
-        WP_CLI::success( PHP_EOL . "Processed static site dir: $processed_site_dir" . PHP_EOL );
-
-        $this->showWizardWaitForSelection( 0 );
-    }
-
-    public function wp2static_cli_options_launch_wizard() : void {
-        WP_CLI::line( PHP_EOL . '### Options - view/manage WP2Static options ###' . PHP_EOL );
-
-        $this->showWizardWaitForSelection( 8 );
-    }
-
-    public function wp2static_cli_options_menu() : void {
-        WP_CLI::line( PHP_EOL . '### Guided options configuration ###' . PHP_EOL );
-
-        $this->showWizardWaitForSelection( 1 );
-    }
-
-    public function wp2static_cli_jobs_menu() : void {
-        WP_CLI::line( '### Options - view/manage WP2Static jobs ###' );
-        WP_CLI::line( '' );
-
-        $this->showWizardWaitForSelection( 2 );
-    }
-
-    public function wp2static_cli_caches_menu() : void {
-        WP_CLI::line( '### Options - view/manage WP2Static caches ###' );
-        WP_CLI::line( '' );
-
-        $this->showWizardWaitForSelection( 3 );
-    }
-
-    public function wp2static_cli_diagnostics_menu() : void {
-        WP_CLI::line( '### Options - diagnostics  ###' );
-        WP_CLI::line( '' );
-
-        $this->showWizardWaitForSelection( 4 );
-    }
-
     /**
      * List options
      * TODO: very repetitive, tidy up
@@ -530,15 +333,6 @@ class CLI {
         WP_CLI::line( PHP_EOL . '### Showing all options ###' . PHP_EOL );
         $this->options( [ 'list' ], [] );
         $this->showWizardWaitForSelection( 1 );
-    }
-
-    /**
-     * Print main wizard menu and route user input
-     */
-    public function showWizardWaitForSelection( int $level ) : void {
-        $this->showWizardMenu( $level );
-        $userval = trim( (string) fgets( STDIN ) );
-        $this->routeWizardSelection( $level, $userval );
     }
 
     /**
@@ -553,30 +347,7 @@ class CLI {
     }
 
     /**
-     * Interactive CLI wizard
-     *
-     * @param string[] $args Arguments after command
-     * @param string[] $assoc_args Parameters after command
-     */
-    public function wizard( array $args = [], array $assoc_args = [] ) : void {
-        $this->multilinePrint(
-            'Welcome to WP2Static! Use this interactive wizard
-             or run commands directly, as per the docs: https://wp2static.com'
-        );
-
-        // TODO: check if plugin has been setup
-        $level = 0;
-        $this->showWizardWaitForSelection( $level );
-    }
-
-    /**
      * Crawls site, creating or updating the static site
-     *
-     * ## OPTIONS
-     *
-     * [--show-progress]
-     *
-     * Show progress indicator while crawling
      *
      * @param string[] $args Arguments after command
      * @param string[] $assoc_args Parameters after command
@@ -586,11 +357,8 @@ class CLI {
         $option_name = isset( $args[1] ) ? $args[1] : null;
         $value = isset( $args[2] ) ? $args[2] : null;
 
-        $progress = isset( $assoc_args['show-progress'] );
-
-        // TODO: move progress logic here from within Crawler class
         $crawler = new Crawler();
-        $crawler->crawlSite( StaticSite::getPath(), $progress );
+        $crawler->crawlSite( StaticSite::getPath() );
     }
 
     /**
