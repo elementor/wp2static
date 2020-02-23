@@ -341,6 +341,15 @@ class Controller {
         exit;
     }
 
+    public static function wp2static_log_delete() : void {
+        check_admin_referer( 'wp2static-log-page' );
+
+        WsLog::truncate();
+
+        wp_safe_redirect( admin_url( 'admin.php?page=wp2static-logs' ) );
+        exit;
+    }
+
     public static function wp2static_static_site_delete() : void {
         check_admin_referer( 'wp2static-caches-page' );
 

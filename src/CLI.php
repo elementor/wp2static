@@ -229,8 +229,6 @@ class CLI {
         }
 
         WP_CLI::line( PHP_EOL . 'Common URL detection set!' . PHP_EOL );
-
-        $this->showWizardWaitForSelection( 8 );
     }
 
     public function wp2static_cli_options_set_detect_homepage_only() : void {
@@ -265,8 +263,6 @@ class CLI {
         CoreOptions::save( $detection, 1 );
 
         WP_CLI::line( PHP_EOL . 'Homepage only URL detection set!' . PHP_EOL );
-
-        $this->showWizardWaitForSelection( 8 );
     }
 
     public function wp2static_cli_options_set_detect_maximum() : void {
@@ -299,40 +295,10 @@ class CLI {
         }
 
         WP_CLI::line( PHP_EOL . 'Maximum URL detection set!' . PHP_EOL );
-
-        $this->showWizardWaitForSelection( 8 );
-    }
-
-    public function wp2static_cli_caches_truncate_crawl_queue() : void {
-        WP_CLI::line( PHP_EOL . '### Deleting Crawl Queue ###' . PHP_EOL );
-
-        CrawlQueue::truncate();
-
-        WP_CLI::line( PHP_EOL . 'Crawl Queue Deleted!' . PHP_EOL );
-
-        $this->showWizardWaitForSelection( 3 );
     }
 
     public function wp2static_cli_clear_screen() : void {
         echo "\e[H\e[J";
-    }
-
-    public function wp2static_cli_jobs_exec_detect() : void {
-        WP_CLI::line( '### Detect URLs ###' );
-
-        $this->detect();
-
-        $this->showWizardWaitForSelection( 2 );
-    }
-
-    /**
-     * List options
-     * TODO: very repetitive, tidy up
-     */
-    public function wp2static_cli_options_list() : void {
-        WP_CLI::line( PHP_EOL . '### Showing all options ###' . PHP_EOL );
-        $this->options( [ 'list' ], [] );
-        $this->showWizardWaitForSelection( 1 );
     }
 
     /**
@@ -490,15 +456,6 @@ class CLI {
 
             WP_CLI::success( 'Deleted Crawl Queue' );
         }
-    }
-
-    public function wp2static_cli_caches_list_detected_urls() : void {
-        $this->crawl_queue( [ 'list' ], [] );
-
-        WP_CLI::line( PHP_EOL . 'Run this command directly with:' . PHP_EOL );
-        WP_CLI::line( PHP_EOL . 'wp wp2static crawl_queue list' . PHP_EOL );
-
-        $this->showWizardWaitForSelection( 3 );
     }
 
     /**

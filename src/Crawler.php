@@ -50,20 +50,11 @@ class Crawler {
     /**
      * Crawls URLs in WordPressSite, saving them to StaticSite
      */
-    public function crawlSite( string $static_site_path, bool $progress = false ) : void {
+    public function crawlSite( string $static_site_path ) : void {
         $crawled = 0;
         $cache_hits = 0;
-        $progress_indicator = false;
 
-        if ( $progress ) {
-            $crawl_queue_total = CrawlQueue::getTotal();
-
-            $progress_indicator =
-                \WP_CLI\Utils\make_progress_bar(
-                    'Crawling site',
-                    $crawl_queue_total
-                );
-        }
+        \WP2Static\WsLog::l( 'Starting to crawl detected URLs.' );
 
         // TODO: use some Iterable or other performance optimisation here
         // to help reduce resources for large URL sites
@@ -75,19 +66,11 @@ class Crawler {
                 if ( CrawlCache::getUrl( $url->get() ) ) {
                     $cache_hits++;
 
-                    if ( $progress_indicator ) {
-                        $progress_indicator->tick();
-                    }
-
                     continue;
                 }
             }
 
             $crawled_contents = $this->crawlURL( $url );
-
-            if ( $progress_indicator ) {
-                $progress_indicator->tick();
-            }
 
             $crawled++;
 
@@ -112,13 +95,9 @@ class Crawler {
             }
         }
 
-        if ( $progress_indicator ) {
-            $progress_indicator->finish();
-        }
-
-        WsLog::l( 'Finished crawling all detected URLs' );
-        WsLog::l( "Crawled: $crawled" );
-        WsLog::l( "Skipped (cache-hit): $cache_hits" );
+        \WP2Static\WsLog::l(
+            "Crawling complete. $crawled crawled, $cache_hits skipped (cached)."
+        );
 
         $args = [
             'staticSitePath' => $static_site_path,

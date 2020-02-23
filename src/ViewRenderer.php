@@ -61,6 +61,7 @@ class ViewRenderer {
 
     public static function renderLogsPage() : void {
         $view = [];
+        $view['nonce_action'] = 'wp2static-log-page';
         $view['logs'] = WsLog::getAll();
 
         require_once WP2STATIC_PATH . 'views/logs-page.php';

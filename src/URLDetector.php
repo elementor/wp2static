@@ -18,6 +18,8 @@ class URLDetector {
      * Detect URLs within site
      */
     public static function detectURLs() : string {
+        \WP2Static\WsLog::l( 'Starting to detect WordPress site URLs.' );
+
         $arrays_to_merge = [];
 
         // TODO: detect robots.txt, etc before adding
@@ -118,8 +120,13 @@ class URLDetector {
 
         CrawlQueue::addUrls( $unique_urls );
 
-        // return total detected
-        return (string) count( $unique_urls );
+        $total_detected = (string) count( $unique_urls );
+
+        \WP2Static\WsLog::l(
+            "Detection complete. $total_detected URLs added to Crawl Queue."
+        );
+
+        return $total_detected;
     }
 }
 

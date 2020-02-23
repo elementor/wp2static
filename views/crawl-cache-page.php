@@ -9,7 +9,7 @@
     <tbody>
         <?php if ( ! $view['urls'] ) : ?>
             <tr>
-                <td>Crawl cache is empty.</td>
+                <td colspan="2">Crawl cache is empty.</td>
             </tr>
         <?php endif; ?>
 

@@ -30,6 +30,10 @@ class PostProcessor {
     public function processStaticSite(
         string $static_site_path
     ) : void {
+        \WP2Static\WsLog::l(
+            'Processing crawled site.'
+        );
+
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator(
                 $static_site_path,
@@ -49,7 +53,7 @@ class PostProcessor {
             $file_processor->processFile( ProcessedSite::getPath() . $save_path );
         }
 
-        WsLog::l( 'Finished processing StaticSite' );
+        WsLog::l( 'Finished processing crawled site.' );
 
         do_action( 'wp2static_post_process_complete', ProcessedSite::getPath() );
     }

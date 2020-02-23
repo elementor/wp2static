@@ -7,7 +7,7 @@ class WsLog {
     public static function createTable() : void {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'wp2static_export_log';
+        $table_name = $wpdb->prefix . 'wp2static_log';
 
         $charset_collate = $wpdb->get_charset_collate();
 
@@ -25,7 +25,7 @@ class WsLog {
     public static function l( string $text ) : void {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'wp2static_export_log';
+        $table_name = $wpdb->prefix . 'wp2static_log';
 
         $wpdb->insert(
             $table_name,
@@ -43,7 +43,7 @@ class WsLog {
     public static function lines( array $lines ) : void {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'wp2static_export_log';
+        $table_name = $wpdb->prefix . 'wp2static_log';
 
         $current_time = current_time( 'mysql' );
 
@@ -67,7 +67,7 @@ class WsLog {
         global $wpdb;
         $logs = [];
 
-        $table_name = $wpdb->prefix . 'wp2static_export_log';
+        $table_name = $wpdb->prefix . 'wp2static_log';
 
         $rows = $wpdb->get_results( "SELECT time, log FROM $table_name ORDER BY id DESC" );
 
@@ -76,6 +76,17 @@ class WsLog {
         }
 
         return $logs;
+    }
+
+    /**
+     *  Clear Log via truncation
+     */
+    public static function truncate() : void {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'wp2static_log';
+
+        $wpdb->query( "TRUNCATE TABLE $table_name" );
     }
 }
 

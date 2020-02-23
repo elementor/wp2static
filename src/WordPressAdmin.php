@@ -74,6 +74,13 @@ class WordPressAdmin {
         );
 
         add_action(
+            'admin_post_wp2static_log_delete',
+            [ 'WP2Static\Controller', 'wp2static_log_delete' ],
+            10,
+            0
+        );
+
+        add_action(
             'admin_post_wp2static_delete_jobs_queue',
             [ 'WP2Static\Controller', 'wp2static_delete_jobs_queue' ],
             10,

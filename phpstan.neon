@@ -14,8 +14,6 @@ parameters:
     ignoreErrors:
         - '#^Constant WP2STATIC_PATH not found#'
         - '#[a-zA-Z0-9\\_]+superglobal[a-zA-Z0-9\\_]+#'
-        - '#^Call to method [a-zA-Z0-9\\_]+\(\) on an unknown class WP_CLI\\Utils\\WP_CLI\\NoOp\.#'
-        - '#^Call to method [a-zA-Z0-9\\_]+\(\) on an unknown class cli\\progress\\Bar\.#'
     excludes_analyse:
         - %currentWorkingDirectory%/src/WPOverrides.php
         - %currentWorkingDirectory%/src/SiteCrawler.php
