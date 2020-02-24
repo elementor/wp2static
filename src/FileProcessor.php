@@ -27,15 +27,16 @@ class FileProcessor {
         switch ( pathinfo( $filename, PATHINFO_EXTENSION ) ) {
             case 'html':
                 do_action( 'wp2static_process_html', $filename );
+                do_action( 'wp2static_process_html_complete', $filename );
                 break;
             case 'css':
                 do_action( 'wp2static_process_css', $filename );
                 break;
             case 'js':
-                do_action( 'wp2static_process_css', $filename );
+                do_action( 'wp2static_process_js', $filename );
                 break;
             case 'xml':
-                do_action( 'wp2static_process_css', $filename );
+                do_action( 'wp2static_process_xml', $filename );
                 break;
         }
     }
