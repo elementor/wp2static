@@ -9,7 +9,13 @@ namespace WP2Static;
 
 class URL {
 
+    /**
+     * @var \Wa72\Url\Url
+     */
     private $parent_page_url;
+    /**
+     * @var \Wa72\Url\Url
+     */
     private $url;
 
     /**

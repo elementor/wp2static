@@ -8,12 +8,15 @@ namespace WP2Static;
 */
 class SiteInfo {
 
+    /**
+     * @var SiteInfo
+     */
     private static $instance = null;
 
     /**
      * Site info.
      *
-     * @var array
+     * @var mixed[]
      */
     private static $info = [];
 

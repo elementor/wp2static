@@ -4,9 +4,21 @@ namespace WP2Static;
 
 class Request {
 
+    /**
+     * @var string | bool
+     */
     public $body;
+    /**
+     * @var mixed[]
+     */
     public $default_options;
+    /**
+     * @var mixed[]
+     */
     public $headers;
+    /**
+     * @var int
+     */
     public $status_code;
 
     public function __construct() {

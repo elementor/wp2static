@@ -9,6 +9,9 @@ namespace WP2Static;
 */
 class CoreOptions {
 
+    /**
+     * @var string
+     */
     private static $table_name = 'wp2static_core_options';
 
     public static function init() : void {

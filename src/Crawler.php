@@ -10,8 +10,17 @@ namespace WP2Static;
 
 class Crawler {
 
+    /**
+     * @var resource | bool
+     */
     private $ch;
+    /**
+     * @var Request
+     */
     private $request;
+    /**
+     * @var mixed[]
+     */
     private $curl_options;
 
     /**
@@ -112,7 +121,13 @@ class Crawler {
      * Crawls a string of full URL within WordPressSite
      */
     public function crawlURL( URL $url ) : string {
-        $response = $this->request->getURL( $url->get(), $this->ch );
+        $handle = $this->ch;
+
+        if ( ! is_resource( $handle ) ) {
+            return '';
+        }
+
+        $response = $this->request->getURL( $url->get(), $handle );
 
         $crawled_contents = $response['body'];
 

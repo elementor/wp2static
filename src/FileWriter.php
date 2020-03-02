@@ -4,10 +4,25 @@ namespace WP2Static;
 
 class FileWriter {
 
+    /**
+     * @var string | bool
+     */
     public $backup_locale_ctype;
+    /**
+     * @var string
+     */
     public $content;
+    /**
+     * @var string
+     */
     public $content_type;
+    /**
+     * @var string
+     */
     public $file_type;
+    /**
+     * @var string
+     */
     public $url;
 
     public function __construct(
@@ -47,7 +62,7 @@ class FileWriter {
         }
 
         $directory_in_archive =
-            isset( $path_info['dirname'] ) ? $path_info['dirname'] : '';
+            $path_info['dirname'] ? $path_info['dirname'] : '';
 
         $file_dir = $archive_dir . ltrim( $directory_in_archive, '/' );
 
@@ -94,7 +109,7 @@ class FileWriter {
         }
 
         // Reset locale to ensure normal WordPress operations
-        setlocale( LC_CTYPE, $this->backup_locale_ctype );
+        setlocale( LC_CTYPE, (string) $this->backup_locale_ctype );
     }
 }
 
