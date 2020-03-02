@@ -21,27 +21,22 @@
         {
             "type": "pear",
             "url": "https://pear.php.net"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/leonstafford/wordpress-stubs.git"
         }
     ],
     "require": {
         "php": ">=7.2",
-        "pear/net_url2": "^2.1.2"
+        "wa72/url": "^0.7.1"
     },
     "require-dev": {
-        "phpstan/phpstan": "^0.11.16",
+        "phpstan/phpstan": "*",
         "thecodingmachine/phpstan-strict-rules": "*",
-        "szepeviktor/phpstan-wordpress": "^0.2.0",
+        "szepeviktor/phpstan-wordpress": "*",
         "squizlabs/php_codesniffer": "*",
         "phpunit/phpunit": "*",
         "dealerdirect/phpcodesniffer-composer-installer": "*",
         "wp-coding-standards/wpcs": "*",
         "jakub-onderka/php-parallel-lint": "*",
-        "10up/wp_mock": "^0.4.2",
-        "wa72/url": "^0.7.1"
+        "10up/wp_mock": "^0.4.2"
     },
     "autoload": {
         "psr-4": {
