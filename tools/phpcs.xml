@@ -47,6 +47,7 @@
   <rule ref="WordPress">
     <exclude name="Generic.CodeAnalysis.ForLoopWithTestFunctionCall.NotAllowed" />
     <exclude name="Generic.Commenting.DocComment.ShortNotCapital" />
+    <exclude name="Generic.Commenting.DocComment.MissingShort" />
     <exclude name="Generic.Formatting.MultipleStatementAlignment.NotSameWarning" />
     <exclude name="Generic.Functions.OpeningFunctionBraceKernighanRitchie.BraceOnNewLine" />
     <exclude name="Generic.PHP.NoSilencedErrors.Discouraged" />
