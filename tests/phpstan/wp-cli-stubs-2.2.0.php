@@ -888,7 +888,7 @@ namespace WP_CLI {
         public function error($error)
         {
         }
-        public function feedback($string)
+        public function feedback($string, ...$args)
         {
         }
     }
