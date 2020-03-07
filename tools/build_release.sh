@@ -33,6 +33,7 @@ cp -r $EXEC_DIR/assets $TMP_DIR/static-html-output-plugin/
 cp -r $EXEC_DIR/vendor $TMP_DIR/static-html-output-plugin/
 cp -r $EXEC_DIR/readme.txt $TMP_DIR/static-html-output-plugin/
 cp -r $EXEC_DIR/views $TMP_DIR/static-html-output-plugin/
+cp -r $EXEC_DIR/uninstall.php $TMP_DIR/static-html-output-plugin/
 cp -r $EXEC_DIR/wp2static.php $TMP_DIR/static-html-output-plugin/
 cp -r $EXEC_DIR/admin $TMP_DIR/static-html-output-plugin/
 cp -r $EXEC_DIR/js $TMP_DIR/static-html-output-plugin/
