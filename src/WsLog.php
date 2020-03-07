@@ -13,7 +13,7 @@ class WsLog {
 
         $sql = "CREATE TABLE $table_name (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
-            time TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
             log TEXT NOT NULL,
             PRIMARY KEY  (id)
         ) $charset_collate;";

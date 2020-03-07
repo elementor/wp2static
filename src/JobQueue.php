@@ -13,7 +13,7 @@ class JobQueue {
 
         $sql = "CREATE TABLE $table_name (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
-            created_at TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
             job_type VARCHAR(30) NOT NULL,
             status VARCHAR(30) NOT NULL,
             duration SMALLINT(6) UNSIGNED NULL,
