@@ -53,6 +53,9 @@ class Controller {
 
         Utils::set_max_execution_time();
 
+        // cleanup any version 6.x files/DB options
+        V6Cleanup::cleanup();
+
         return $plugin_instance;
     }
 
