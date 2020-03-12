@@ -184,8 +184,6 @@
             <th>Date</th>
             <th>Job</th>
             <th>Status</th>
-            <th>Duration</th>
-            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -194,9 +192,6 @@
             <td><?php echo $job->created_at; ?></td>
             <td><?php echo $job->job_type; ?></td>
             <td><?php echo $job->status; ?></td>
-            <td><?php echo $job->duration; ?></td>
-            <!-- TODO: status is 'waiting' => Delete;'in progress' => 'Cancel', etc -->
-            <td><a href="#">Cancel</a></td>
         </tr>
         <?php endforeach; ?>
     </tbody>
