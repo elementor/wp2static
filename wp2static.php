@@ -4,9 +4,9 @@
  * Plugin URI:  https://wp2static.com
  * Description: Security & Performance via static website publishing.
  *              One plugin to solve WordPress's biggest problems.
- * Version:     7.0-alpha-002
- * Author:      Leon Stafford
- * Author URI:  https://ljs.dev
+ * Version:     7.0-alpha-003
+ * Author:      WP2Static
+ * Author URI:  https://wp2static.com
  * Text Domain: static-html-output-plugin
  *
  * @package     WP_Static_HTML_Output
