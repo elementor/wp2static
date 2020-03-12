@@ -2,8 +2,7 @@
 /**
  * Plugin Name: WP2Static
  * Plugin URI:  https://wp2static.com
- * Description: Security & Performance via static website publishing.
- *              One plugin to solve WordPress's biggest problems.
+ * Description: Static site generator functionality for WordPress.
  * Version:     7.0-alpha-003
  * Author:      WP2Static
  * Author URI:  https://wp2static.com
