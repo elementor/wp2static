@@ -176,7 +176,8 @@ class Controller {
             add_submenu_page(
                 'wp2static',
                 'WP2Static ' . ucfirst( $slug ),
-                ucfirst( $slug ),
+                // TODO: expand filter to pass title
+                $slug === 'sftp' ? 'sFTP' : ucfirst( $slug ),
                 'manage_options',
                 $menu_slug,
                 $method
