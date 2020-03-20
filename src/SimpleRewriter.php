@@ -26,13 +26,13 @@ class SimpleRewriter {
     public static function rewrite( string $filename ) : void {
         $destination_url = apply_filters(
             'wp2static_set_destination_url',
-            trailingslashit( CoreOptions::getValue( 'deploymentURL' ) )
+            untrailingslashit( CoreOptions::getValue( 'deploymentURL' ) )
         );
 
         $wordpress_site_url =
             apply_filters(
                 'wp2static_set_wordpress_site_url',
-                SiteInfo::getUrl( 'site' )
+                untrailingslashit( SiteInfo::getUrl( 'site' ) )
             );
 
         $file_contents = file_get_contents( $filename );
@@ -42,19 +42,23 @@ class SimpleRewriter {
             return;
         }
 
+        $search_patterns = [
+            $wordpress_site_url,
+            addcslashes( $wordpress_site_url, '/' ),
+            URLHelper::getProtocolRelativeURL( $wordpress_site_url ),
+            addcslashes( URLHelper::getProtocolRelativeURL( $wordpress_site_url ), '/' ),
+        ];
+
+        $replace_patterns = [
+            $destination_url,
+            addcslashes( $destination_url, '/' ),
+            URLHelper::getProtocolRelativeURL( $destination_url ),
+            addcslashes( URLHelper::getProtocolRelativeURL( $destination_url ), '/' ),
+        ];
+
         $rewritten_contents = str_replace(
-            [
-                $wordpress_site_url,
-                addcslashes( $wordpress_site_url, '/' ),
-                URLHelper::getProtocolRelativeURL( $wordpress_site_url ),
-                addcslashes( URLHelper::getProtocolRelativeURL( $wordpress_site_url ), '/' ),
-            ],
-            [
-                $destination_url,
-                addcslashes( $destination_url, '/' ),
-                URLHelper::getProtocolRelativeURL( $destination_url ),
-                addcslashes( URLHelper::getProtocolRelativeURL( $destination_url ), '/' ),
-            ],
+            $search_patterns,
+            $replace_patterns,
             $file_contents
         );
 
