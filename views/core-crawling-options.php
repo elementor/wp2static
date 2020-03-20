@@ -35,22 +35,5 @@
             </td>
         </tr>
 
-        <tr>
-            <td style="width:50%;">
-                <label
-                    for="<?php echo $view['crawlingOptions']['includeDiscoveredAssets']->name; ?>"
-                ><?php echo $view['crawlingOptions']['includeDiscoveredAssets']->label; ?></label>
-            </td>
-            <td>
-                <input
-                    id="<?php echo $view['crawlingOptions']['includeDiscoveredAssets']->name; ?>"
-                    name="<?php echo $view['crawlingOptions']['includeDiscoveredAssets']->name; ?>"
-                    value="1"
-                    type="checkbox"
-                    <?php echo (int) $view['crawlingOptions']['includeDiscoveredAssets']->value === 1 ? 'checked' : ''; ?>
-                />
-            </td>
-        </tr>
-
     </tbody>
 </table>

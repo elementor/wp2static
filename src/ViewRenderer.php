@@ -16,8 +16,7 @@ class ViewRenderer {
 
         $view['crawlingOptions'] = [
             'basicAuthUser' => CoreOptions::get( 'basicAuthUser' ),
-            'basicAuthPassword' => CoreOptions::get( 'basicAuthPassword' ),
-            'includeDiscoveredAssets' => CoreOptions::get( 'includeDiscoveredAssets' ),
+            'basicAuthPassword' => CoreOptions::get( 'basicAuthPassword' )
         ];
 
         $view['detectionOptions'] = [

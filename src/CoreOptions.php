@@ -168,14 +168,6 @@ class CoreOptions {
 
         $queries[] = $wpdb->prepare(
             $query_string,
-            'includeDiscoveredAssets',
-            '1',
-            'Include Discovered Assets',
-            'Include URLs discovered during crawling.'
-        );
-
-        $queries[] = $wpdb->prepare(
-            $query_string,
             'deploymentURL',
             'https://example.com',
             'Deployment URL',
@@ -386,12 +378,6 @@ class CoreOptions {
                         ),
                     ],
                     [ 'name' => 'basicAuthPassword' ]
-                );
-
-                $wpdb->update(
-                    $table_name,
-                    [ 'value' => (int) $_POST['includeDiscoveredAssets'] ],
-                    [ 'name' => 'includeDiscoveredAssets' ]
                 );
 
                 $wpdb->update(

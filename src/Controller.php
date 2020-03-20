@@ -236,12 +236,6 @@ class Controller {
         // TODO: if WordPressSite methods are static and we only need detectURLs
         // here, pass in iterable to URLs here?
         $crawler->crawlSite( StaticSite::getPath() );
-
-        // TOOD: legacy AssetDownloader implementation
-        // $ch = curl_init();
-        // $asset_downloader = new AssetDownloader( $ch );
-        // $site_crawler = new SiteCrawler( $asset_downloader );
-        // $site_crawler->crawl();
     }
 
     // TODO: why is this here? Move to CrawlQueue if still needed
@@ -292,7 +286,7 @@ class Controller {
         }
     }
 
-    public function wp2static_ui_save_options() : void {
+    public static function wp2static_ui_save_options() : void {
         CoreOptions::savePosted( 'core' );
 
         do_action( 'wp2static_addon_ui_save_options' );
