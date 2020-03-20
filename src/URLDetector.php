@@ -107,6 +107,12 @@ class URLDetector {
             $arrays_to_merge[] = DetectArchiveURLs::detect( SiteInfo::getUrl( 'site' ) );
         }
 
+        $detect_categories = apply_filters( 'wp2static_detect_categories', 1 );
+
+        if ( $detect_categories ) {
+            $arrays_to_merge[] = DetectCategoryURLs::detect( SiteInfo::getUrl( 'site' ) );
+        }
+
         $detect_category_pagination = apply_filters( 'wp2static_detect_category_pagination', 1 );
 
         if ( $detect_category_pagination ) {

@@ -7,36 +7,19 @@ class ViewRenderer {
     public static function renderOptionsPage() : void {
         $view = [];
         $view['nonce_action'] = 'wp2static-ui-options';
-        $view['options_templates'] = [
-            __DIR__ . '/../views/core-detection-options.php',
-            __DIR__ . '/../views/core-crawling-options.php',
-            __DIR__ . '/../views/core-post-processing-options.php',
-            __DIR__ . '/../views/core-deployment-options.php',
-        ];
 
-        $view['crawlingOptions'] = [
+        $view['coreOptions'] = [
             'basicAuthUser' => CoreOptions::get( 'basicAuthUser' ),
-            'basicAuthPassword' => CoreOptions::get( 'basicAuthPassword' )
-        ];
-
-        $view['detectionOptions'] = [
+            'basicAuthPassword' => CoreOptions::get( 'basicAuthPassword' ),
             'detectCustomPostTypes' => CoreOptions::get( 'detectCustomPostTypes' ),
             'detectPages' => CoreOptions::get( 'detectPages' ),
             'detectPosts' => CoreOptions::get( 'detectPosts' ),
             'detectUploads' => CoreOptions::get( 'detectUploads' ),
-        ];
-
-        $view['postProcessingOptions'] = [
             'deploymentURL' => CoreOptions::get( 'deploymentURL' ),
-        ];
-
-        $view['deploymentOptions'] = [
             'completionEmail' => CoreOptions::get( 'completionEmail' ),
             'completionWebhook' => CoreOptions::get( 'completionWebhook' ),
             'completionWebhookMethod' => CoreOptions::get( 'completionWebhookMethod' ),
         ];
-
-        $view = apply_filters( 'wp2static_render_options_page_vars', $view );
 
         require_once WP2STATIC_PATH . 'views/options-page.php';
     }

@@ -32,6 +32,7 @@ class DetectArchiveURLs {
         );
 
         foreach ( $posts as $post ) {
+
             switch ( $post->post_type ) {
                 case 'page':
                     break;
