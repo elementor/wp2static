@@ -24,7 +24,10 @@ class SimpleRewriter {
      * @throws WP2StaticException
      */
     public static function rewrite( string $filename ) : void {
-        $destination_url = apply_filters( 'wp2static_set_destination_url', '' );
+        $destination_url = apply_filters(
+            'wp2static_set_destination_url',
+            trailingslashit( CoreOptions::getValue( 'deploymentURL' ) )
+        );
 
         $wordpress_site_url =
             apply_filters(
@@ -34,7 +37,7 @@ class SimpleRewriter {
 
         $file_contents = file_get_contents( $filename );
 
-        // TOOD: allow empty file saving here?
+        // TODO: allow empty file saving here? Exception for style.css
         if ( ! $file_contents ) {
             return;
         }
