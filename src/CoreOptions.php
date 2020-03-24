@@ -221,8 +221,12 @@ class CoreOptions {
 
         $option_value = $wpdb->get_var( $sql );
 
-        if ( ! is_string( $option_value ) ) {
+        if ( ! $option_value || ! is_string( $option_value ) ) {
             return '';
+        }
+
+        if ( $name === 'basicAuthPassword' ) {
+            return self::encrypt_decrypt( 'decrypt', $option_value );
         }
 
         return $option_value;
