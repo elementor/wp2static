@@ -46,12 +46,14 @@ class Crawler {
             apply_filters( 'wp2static_curl_user_agent', 'WP2Static.com' )
         );
 
-        if ( CoreOptions::getValue( 'useBasicAuth' ) ) {
+        $auth_user = CoreOptions::getValue( 'basicAuthUser' );
+        $auth_password = CoreOptions::getValue( 'basicAuthPassword' );
+
+        if ( $auth_user || $auth_password ) {
             curl_setopt(
                 $this->ch,
                 CURLOPT_USERPWD,
-                CoreOptions::getValue( 'basicAuthUser' ) . ':' .
-                CoreOptions::getValue( 'basicAuthPassword' )
+                $auth_user . ':' . $auth_password
             );
         }
     }
