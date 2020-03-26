@@ -173,11 +173,22 @@ class Controller {
             $menu_slug =
                 $slug === 'options' ? 'wp2static' : 'wp2static-' . $slug;
 
+            $title = ucfirst( $slug );
+
+            // TODO: expand fn to avoid core knowing about specific add-ons
+            switch ( $slug ) {
+                case 'sftp':
+                    $title = 'sFTP';
+                    break;
+                case 'cloudflare-workers':
+                    $title = 'Cloudflare Workers';
+                    break;
+            }
+
             add_submenu_page(
                 'wp2static',
                 'WP2Static ' . ucfirst( $slug ),
-                // TODO: expand filter to pass title
-                $slug === 'sftp' ? 'sFTP' : ucfirst( $slug ),
+                $title,
                 'manage_options',
                 $menu_slug,
                 $method
