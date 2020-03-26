@@ -26,9 +26,29 @@ class DetectPluginAssets {
                 )
             );
 
+            $active_plugins = get_option( 'active_plugins' );
+
+            $active_plugin_dirs = array_map(
+                function ( $active_plugin ) {
+                    return explode( '/', $active_plugin )[0];
+                },
+                $active_plugins
+            );
+
             foreach ( $iterator as $filename => $file_object ) {
                 $path_crawlable =
                     FilesHelper::filePathLooksCrawlable( $filename );
+
+                if ( ! $path_crawlable ) {
+                    continue;
+                }
+
+                $matches_active_plugin_dir =
+                    ( str_replace( $active_plugin_dirs, '', $filename ) !== $filename );
+
+                if ( ! $matches_active_plugin_dir ) {
+                    continue;
+                }
 
                 // Standardise all paths to use / (Windows support)
                 $filename = str_replace( '\\', '/', $filename );
@@ -47,13 +67,11 @@ class DetectPluginAssets {
                         $detected_filename
                     );
 
-                if ( $path_crawlable ) {
-                    if ( is_string( $detected_filename ) ) {
-                        array_push(
-                            $files,
-                            $detected_filename
-                        );
-                    }
+                if ( is_string( $detected_filename ) ) {
+                    array_push(
+                        $files,
+                        $detected_filename
+                    );
                 }
             }
         }
