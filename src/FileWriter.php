@@ -74,7 +74,7 @@ class FileWriter {
         }
 
         if ( ! is_dir( $file_dir ) ) {
-            if ( ! mkdir( $file_dir ) ) {
+            if ( ! wp_mkdir_p( $file_dir ) ) {
                 WsLog::l( 'Couldn\t make directory: ' . $file_dir );
             }
         }

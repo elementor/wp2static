@@ -26,7 +26,7 @@ class ProcessedSite {
         $directory = dirname( $full_path );
 
         if ( ! is_dir( $directory ) ) {
-            if ( ! mkdir( $directory ) ) {
+            if ( ! wp_mkdir_p( $directory ) ) {
                 WsLog::l( 'Couldn\t make directory: ' . $directory );
             }
         }
