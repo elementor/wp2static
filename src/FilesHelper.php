@@ -422,16 +422,35 @@ class FilesHelper {
     }
 
     /**
-     * Create export dir
+     * Make dir with permissions or set permissions on existing
      *
-     * @param string $archive_path export directory
+     * Attempts modes in order: 0775, 0755, 0777 to help when
+     * using via UI and WP-CLI 
+     *
      * @throws WP2StaticException
      */
-    public static function create_export_directory( string $archive_path ) : void {
-        if ( ! wp_mkdir_p( $archive_path ) ) {
-            $err = "Couldn't create archive directory:" . $archive_path;
-            WsLog::l( $err );
-            throw new WP2StaticException( $err );
+    public static function mkdir_with_permisssions( string $dir ) : void {
+        // mkdir recursively
+        if ( ! is_dir( $dir ) ) {
+            if ( ! mkdir( $dir, 0775, true ) ) {
+                if ( ! mkdir( $dir, 0755, true ) ) {
+                    if ( ! mkdir( $dir, 0777, true ) ) {
+                        $err = 'Unable to create dir: ' . $dir;
+                        WsLog::l( $err );
+                        throw new WP2StaticException( $err );
+                    }
+                }
+            }
+        } else {
+            if ( ! chmod( $dir, 0775 ) ) {
+                if ( ! chmod( $dir, 0755 ) ) {
+                    if ( ! chmod( $dir, 0777 ) ) {
+                        $err = 'Unable to set directory mode: ' . $dir;
+                        WsLog::l( $err );
+                        throw new WP2StaticException( $err );
+                    }
+                }
+            }
         }
     }
 }

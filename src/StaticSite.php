@@ -24,10 +24,7 @@ class StaticSite {
 
         $directory = dirname( $full_path );
 
-        // mkdir recursively
-        if ( ! is_dir( $directory ) ) {
-            mkdir( $directory, 0755, true );
-        }
+        FilesHelper::mkdir_with_permisssions( $directory );
 
         file_put_contents( $full_path, $contents );
     }

@@ -371,7 +371,7 @@ class Controller {
         exit;
     }
 
-    public function wp2static_ui_save_job_options() : void {
+    public static function wp2static_ui_save_job_options() : void {
         CoreOptions::savePosted( 'jobs' );
 
         do_action( 'wp2static_addon_ui_save_job_options' );
@@ -439,7 +439,7 @@ class Controller {
         Should only process at most 4 jobs here (1 per type), with
         earlier jobs of the same type having been "squashed" first
     */
-    public function wp2static_process_queue() : void {
+    public static function wp2static_process_queue() : void {
         // skip any earlier jobs of same type still in 'waiting' status
         JobQueue::squashQueue();
 

@@ -25,9 +25,7 @@ class ProcessedSite {
 
         $directory = dirname( $full_path );
 
-        if ( ! is_dir( $directory ) ) {
-            mkdir( $directory, 0755, true );
-        }
+        FilesHelper::mkdir_with_permisssions( $directory );
 
         copy( $static_file, $full_path );
     }

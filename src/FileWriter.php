@@ -77,6 +77,9 @@ class FileWriter {
             wp_mkdir_p( $file_dir );
         }
 
+        // ease permissions to help WP-CLI user write to UI created dirs
+        chmod( $file_dir, 0775 );
+
         $file_extension = '';
 
         if ( isset( $path_info['extension'] ) ) {

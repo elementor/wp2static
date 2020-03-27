@@ -80,9 +80,6 @@ class JobQueue {
             WHERE status = 'processing'"
         );
 
-        error_log( 'total jobs in progress' );
-        error_log( $jobs_in_progress );
-
         return $jobs_in_progress > 0;
     }
 
