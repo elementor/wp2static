@@ -483,7 +483,6 @@ class Controller {
                     WsLog::l( 'Starting deployment' );
                     do_action( 'wp2static_deploy', ProcessedSite::getPath() );
                     do_action( 'wp2static_post_deploy_trigger' );
-                    WsLog::l( 'Deployment complete' );
                     break;
                 default:
                     WsLog::l( 'Trying to process unknown job type' );
@@ -514,7 +513,7 @@ class Controller {
 
         WsLog::l( 'Starting deployment' );
         do_action( 'wp2static_deploy', ProcessedSite::getPath() );
-        WsLog::l( 'Deployment complete' );
+        do_action( 'wp2static_post_deploy_trigger' );
     }
 
     public static function invalidate_single_url_cache(
