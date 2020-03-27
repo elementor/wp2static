@@ -25,7 +25,11 @@ class ProcessedSite {
 
         $directory = dirname( $full_path );
 
-        FilesHelper::mkdir_with_permisssions( $directory );
+        if ( ! is_dir( $directory ) ) {
+            if ( ! mkdir( $directory ) ) {
+                WsLog::l( 'Couldn\t make directory: ' . $directory );
+            }
+        }
 
         copy( $static_file, $full_path );
     }

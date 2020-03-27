@@ -344,25 +344,25 @@ class CoreOptions {
 
                 $wpdb->update(
                     $table_name,
-                    [ 'value' => isset( $_POST['detectCustomPostTypes'] ) ?  1 : 0 ],
+                    [ 'value' => isset( $_POST['detectCustomPostTypes'] ) ? 1 : 0 ],
                     [ 'name' => 'detectCustomPostTypes' ]
                 );
 
                 $wpdb->update(
                     $table_name,
-                    [ 'value' => isset( $_POST['detectPosts'] ) ?  1 : 0 ],
+                    [ 'value' => isset( $_POST['detectPosts'] ) ? 1 : 0 ],
                     [ 'name' => 'detectPosts' ]
                 );
 
                 $wpdb->update(
                     $table_name,
-                    [ 'value' => isset( $_POST['detectPages'] ) ?  1 : 0 ],
+                    [ 'value' => isset( $_POST['detectPages'] ) ? 1 : 0 ],
                     [ 'name' => 'detectPages' ]
                 );
 
                 $wpdb->update(
                     $table_name,
-                    [ 'value' => isset( $_POST['detectUploads'] ) ?  1 : 0 ],
+                    [ 'value' => isset( $_POST['detectUploads'] ) ? 1 : 0 ],
                     [ 'name' => 'detectUploads' ]
                 );
 
@@ -406,13 +406,13 @@ class CoreOptions {
             case 'jobs':
                 $wpdb->update(
                     $table_name,
-                    [ 'value' => isset( $_POST['queueJobOnPostSave'] ) ?  1 : 0 ],
+                    [ 'value' => isset( $_POST['queueJobOnPostSave'] ) ? 1 : 0 ],
                     [ 'name' => 'queueJobOnPostSave' ]
                 );
 
                 $wpdb->update(
                     $table_name,
-                    [ 'value' => isset( $_POST['queueJobOnPostDelete'] ) ?  1 : 0 ],
+                    [ 'value' => isset( $_POST['queueJobOnPostDelete'] ) ? 1 : 0 ],
                     [ 'name' => 'queueJobOnPostDelete' ]
                 );
 
@@ -432,25 +432,25 @@ class CoreOptions {
 
                 $wpdb->update(
                     $table_name,
-                    [ 'value' => isset( $_POST['autoJobQueueDetection'] ) ?  1 : 0 ],
+                    [ 'value' => isset( $_POST['autoJobQueueDetection'] ) ? 1 : 0 ],
                     [ 'name' => 'autoJobQueueDetection' ]
                 );
 
                 $wpdb->update(
                     $table_name,
-                    [ 'value' => isset( $_POST['autoJobQueueCrawling'] ) ?  1 : 0 ],
+                    [ 'value' => isset( $_POST['autoJobQueueCrawling'] ) ? 1 : 0 ],
                     [ 'name' => 'autoJobQueueCrawling' ]
                 );
 
                 $wpdb->update(
                     $table_name,
-                    [ 'value' => isset( $_POST['autoJobQueuePostProcessing'] ) ?  1 : 0 ],
+                    [ 'value' => isset( $_POST['autoJobQueuePostProcessing'] ) ? 1 : 0 ],
                     [ 'name' => 'autoJobQueuePostProcessing' ]
                 );
 
                 $wpdb->update(
                     $table_name,
-                    [ 'value' => isset( $_POST['autoJobQueueDeployment'] ) ?  1 : 0 ],
+                    [ 'value' => isset( $_POST['autoJobQueueDeployment'] ) ? 1 : 0 ],
                     [ 'name' => 'autoJobQueueDeployment' ]
                 );
 

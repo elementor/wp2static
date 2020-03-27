@@ -73,12 +73,11 @@ class FileWriter {
             $path_info['filename'] = 'index';
         }
 
-        if ( ! file_exists( $file_dir ) ) {
-            wp_mkdir_p( $file_dir );
+        if ( ! is_dir( $file_dir ) ) {
+            if ( ! mkdir( $file_dir ) ) {
+                WsLog::l( 'Couldn\t make directory: ' . $file_dir );
+            }
         }
-
-        // ease permissions to help WP-CLI user write to UI created dirs
-        chmod( $file_dir, 0775 );
 
         $file_extension = '';
 
@@ -106,7 +105,6 @@ class FileWriter {
 
         if ( $file_contents ) {
             file_put_contents( $filename, $file_contents );
-            chmod( $filename, 0664 );
         } else {
             WsLog::l( 'NOT SAVING EMTPY FILE ' . $this->url );
         }
