@@ -545,7 +545,6 @@ class Controller {
     }
 
     public static function emailDeployNotification() : void {
-        error_log( 'EMAILING POST DEPLOYMENT' );
         WsLog::l( 'Sending deployment notification  email...' );
 
         if ( empty( CoreOptions::getValue( 'completionEmail' ) ) ) {
@@ -563,14 +562,12 @@ class Controller {
     }
 
     public static function webhookDeployNotification() : void {
-        error_log( 'POST DEPLOYMENT WEBHOOK ' );
+        error_log( 'TBD: POST DEPLOYMENT WEBHOOK ' );
         WsLog::l( 'Sending deployment notification webhook...' );
 
         if ( empty( CoreOptions::getValue( 'completionWebhook' ) ) ) {
             return;
         }
-
-        // TODO: TBC
     }
 }
 
