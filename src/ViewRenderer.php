@@ -26,7 +26,6 @@ class ViewRenderer {
 
     public static function renderDiagnosticsPage() : void {
         $view = [];
-        $view['localDNSResolution'] = Diagnostics::check_local_dns_resolution();
         $view['memoryLimit'] = ini_get( 'memory_limit' );
         $view['coreOptions'] = CoreOptions::getAll();
         $view['site_info'] = SiteInfo::getAllInfo();

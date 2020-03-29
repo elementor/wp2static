@@ -10,51 +10,6 @@
     </thead>
     <tbody>
         <tr>
-            <td>Non-public dev server</td>
-            <td>
-                <p>Use our non-tracking service to check if your site is protected from public access.</p>
-
-                <button class="button btn-primary">Check</button>
-            </td>
-            <td>WP2Static should be running on a non-production development server, protected from public access.</td>
-        </tr>
-        <tr>
-            <td>Local DNS resolution</td>
-            <td>
-<?php
-
-$dash_icon = 'dashicons-editor-help';
-$color = 'gray';
-
-switch($view['localDNSResolution']) {
-    case '':
-        $dash_icon = 'dashicons-editor-help';
-        $color = '#FE8F25';
-
-        break;
-    case 'Private':
-        $dash_icon = 'dashicons-yes';
-        $color = '#3ad23a';
-
-        break;
-    case 'Public':
-        $dash_icon = 'dashicons-no';
-        $color = 'red';
-
-        break;
-}
-
-?>
-                <?php echo $view['localDNSResolution'] ? $view['localDNSResolution'] : 'Unknown'; ?>
-
-                <span
-                    class="dashicons <?php echo $dash_icon; ?>"
-                    style="color: <?php echo $color; ?>;"
-                ></span>
-            </td>
-            <td>Crawling your site will be faster if WP2Static doesn't have to go the long route when fetching URLs. Ensure your WordPress site's URL resolves locally.</td>
-        </tr>
-        <tr>
             <td>PHP max_execution_time</td>
             <td>
                 <?php echo $view['maxExecutionTime'] == 0 ? 'Unlimited' : $view['maxExecutionTime'] . ' secs'; ?>
