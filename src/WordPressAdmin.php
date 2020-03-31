@@ -189,7 +189,8 @@ class WordPressAdmin {
             add_action(
                 $invalidation_events,
                 [ 'WP2Static\Controller', 'invalidate_single_url_cache' ],
-                0
+                10,
+                2
             );
         }
 
