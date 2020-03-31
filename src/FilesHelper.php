@@ -103,6 +103,8 @@ class FilesHelper {
             '__MACOSX',
             'backwpup',
             'bower.json',
+            '.htaccess',
+            'wc-logs',
             'bower_components',
             'composer.json',
             'current-export',
