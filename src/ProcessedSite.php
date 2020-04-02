@@ -78,6 +78,8 @@ class ProcessedSite {
             }
         }
 
+        sort( $paths );
+
         return $paths;
     }
 }

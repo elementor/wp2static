@@ -69,40 +69,37 @@ class Crawler {
 
         // TODO: use some Iterable or other performance optimisation here
         // to help reduce resources for large URL sites
-        foreach ( CrawlQueue::getCrawlableURLs() as $url ) {
-            $url = new URL( SiteInfo::getURL( 'site' ) . $url );
+        foreach ( CrawlQueue::getCrawlablePaths() as $root_relative_path ) {
+            $absolute_uri = new URL( SiteInfo::getURL( 'site' ) . $root_relative_path );
 
-            // if not already cached
+            // TODO: change this to filter, allow add-ons/CLI param to ignore cache
             if ( ! CoreOptions::getValue( 'dontUseCrawlCaching' ) ) {
-                if ( CrawlCache::getUrl( $url->get() ) ) {
+                // if not already cached
+                if ( CrawlCache::getUrl( $root_relative_path ) ) {
                     $cache_hits++;
 
                     continue;
                 }
             }
 
-            $crawled_contents = $this->crawlURL( $url );
+            $crawled_contents = $this->crawlURL( $absolute_uri );
 
             $crawled++;
 
-            $path_in_static_site = str_replace(
-                SiteInfo::getUrl( 'site' ),
-                '',
-                $url->get()
-            );
-
-            // do some magic here - naive: if URL ends in /, save to /index.html
-            // TODO: will need love for example, XML files
-            if ( mb_substr( $path_in_static_site, -1 ) === '/' ) {
-                $path_in_static_site .= 'index.html';
-            }
-
             if ( $crawled_contents ) {
-                StaticSite::add( $path_in_static_site, $crawled_contents );
+                // do some magic here - naive: if URL ends in /, save to /index.html
+                // TODO: will need love for example, XML files
+                // check content type, serve .xml/rss, etc instead
+                if ( mb_substr( $root_relative_path, -1 ) === '/' ) {
+                    StaticSite::add( $root_relative_path . 'index.html', $crawled_contents );
+                } else {
+                    StaticSite::add( $root_relative_path, $crawled_contents );
+                }
             }
 
+            // TODO: change this to filter, allow add-ons/CLI param to ignore cache
             if ( ! CoreOptions::getValue( 'dontUseCrawlCaching' ) ) {
-                CrawlCache::addUrl( $url->get() );
+                CrawlCache::addUrl( $root_relative_path );
             }
         }
 

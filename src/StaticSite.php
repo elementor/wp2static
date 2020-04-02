@@ -84,6 +84,8 @@ class StaticSite {
             }
         }
 
+        sort( $paths );
+
         return $paths;
     }
 }

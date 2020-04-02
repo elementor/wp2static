@@ -87,7 +87,7 @@ class CrawlCache {
 
         $table_name = $wpdb->prefix . 'wp2static_crawl_cache';
 
-        $rows = $wpdb->get_results( "SELECT url FROM $table_name" );
+        $rows = $wpdb->get_results( "SELECT url FROM $table_name ORDER BY url" );
 
         foreach ( $rows as $row ) {
             $urls[] = $row->url;

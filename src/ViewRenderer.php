@@ -55,7 +55,7 @@ class ViewRenderer {
         }
 
         $view = [];
-        $view['urls'] = CrawlQueue::getCrawlableURLs();
+        $view['urls'] = CrawlQueue::getCrawlablePaths();
 
         require_once WP2STATIC_PATH . 'views/crawl-queue-page.php';
     }

@@ -114,6 +114,8 @@ class DeployCache {
             $urls[] = $row->path;
         }
 
+        sort( $urls );
+
         return $urls;
     }
 }

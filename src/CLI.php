@@ -424,7 +424,7 @@ class CLI {
         $value = isset( $args[2] ) ? $args[2] : null;
 
         if ( $action === 'list' ) {
-            $urls = CrawlQueue::getCrawlableURLs();
+            $urls = CrawlQueue::getCrawlablePaths();
 
             foreach ( $urls as $url ) {
                 WP_CLI::line( $url );
@@ -432,7 +432,7 @@ class CLI {
         }
 
         if ( $action === 'count' ) {
-            $urls = CrawlQueue::getCrawlableURLs();
+            $urls = CrawlQueue::getCrawlablePaths();
 
             WP_CLI::line( (string) count( $urls ) );
         }
