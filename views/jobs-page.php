@@ -151,7 +151,7 @@
         value="10">every 10 minutes</option>
 </select>
 
-<p><i>If WP-Cron is not expected to be triggered by site visitors, you can also call `wp-cron.php` directly, run the WP-CLI command `wp wp2static process_job_queue` or call the hook `wp2static_process_queue` from within your own theme or plugin.</i></p>
+<p><i>If WP-Cron is not expected to be triggered by site visitors, you can also call `wp-cron.php` directly, run the WP-CLI command `wp wp2static process_queue` or call the hook `wp2static_process_queue` from within your own theme or plugin.</i></p>
 
     <button class="button btn-primary">Save Job Automation Settings</button>
     <?php wp_nonce_field( $view['nonce_action'] ); ?>
