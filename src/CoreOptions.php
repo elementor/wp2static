@@ -309,19 +309,21 @@ class CoreOptions {
             'ec64SSHB{8|AA_ThIIlm:PD(Z!qga!/Dwll 4|i.?UkC§NNO}z?{Qr/q.KpH55K9';
 
         $key = hash( 'sha256', $secret_key );
-        $variate = substr( hash( 'sha256', $secret_iv ), 0, 16 );
+        $variate = substr( hash( 'sha256', $secret_iv ), 0, 32 );
+        $hex_key = (string) hex2bin( $key );
+        $hex_iv = (string) hex2bin( $variate );
 
         if ( $action == 'decrypt' ) {
             return (string) openssl_decrypt(
                 (string) base64_decode( $string ),
                 $encrypt_method,
-                $key,
+                $hex_key,
                 0,
-                $variate
+                $hex_iv
             );
         }
 
-        $output = openssl_encrypt( $string, $encrypt_method, $key, 0, $variate );
+        $output = openssl_encrypt( $string, $encrypt_method, $hex_key, 0, $hex_iv );
 
         return (string) base64_encode( (string) $output );
     }
