@@ -342,6 +342,24 @@ class CLI {
         $post_processor->processStaticSite( StaticSite::getPath() );
     }
 
+
+    /**
+     * Process any jobs in the queue.
+     */
+    public function process_queue() : void {
+        $job_count = JobQueue::getWaitingJobs();
+
+        if ( $job_count === 0 ) {
+            WP_CLI::success( 'No jobs in queue' );
+        } else {
+            WP_CLI::line( ' Processing ' . $job_count . ' job' . ( $job_count > 1 ? 's' : '' ) );
+
+            Controller::wp2static_process_queue();
+
+            WP_CLI::success( 'Done processing queue' );
+        }
+    }
+
     /**
      * Crawl Queue
      *

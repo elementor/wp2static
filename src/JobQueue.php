@@ -191,6 +191,21 @@ class JobQueue {
     }
 
     /**
+     *  Get count of waiting jobs
+     *
+     *  @return int Waiting jobs
+     */
+    public static function getWaitingJobs() : int {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'wp2static_jobs';
+
+        $total_jobs = $wpdb->get_var( "SELECT COUNT(*) FROM $table_name WHERE status = 'waiting'" );
+
+        return $total_jobs;
+    }
+
+    /**
      *  Clear JobQueue via truncate or deletion
      */
     public static function truncate() : void {
