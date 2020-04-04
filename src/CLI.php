@@ -614,5 +614,22 @@ class CLI {
             WP_CLI::success( 'Deleted Deploy Cache' );
         }
     }
+
+    /**
+     * Full Workflow
+     *
+     * Executes all core workflows: detect, crawl, post_process & deploy
+     *
+     * @param string[] $args Arguments after command
+     * @param string[] $assoc_args Parameters after command
+     */
+    public function full_workflow( array $args, array $assoc_args ) : void {
+        $action = isset( $args[0] ) ? $args[0] : null;
+
+        $this->detect();
+        $this->crawl();
+        $this->post_process();
+        $this->deploy();
+    }
 }
 
