@@ -200,11 +200,6 @@ class CLI {
         }
     }
 
-    public function wp2static_cli_exit_to_shell() : void {
-        WP_CLI::line( PHP_EOL . '### Exiting to shell, goodbye! ###' . PHP_EOL );
-        WP_CLI::halt( 0 );
-    }
-
     public function wp2static_cli_options_set_detect_common() : void {
         WP_CLI::line( PHP_EOL . '### Setting Common URL detection  ###' . PHP_EOL );
 
@@ -295,10 +290,6 @@ class CLI {
         }
 
         WP_CLI::line( PHP_EOL . 'Maximum URL detection set!' . PHP_EOL );
-    }
-
-    public function wp2static_cli_clear_screen() : void {
-        echo "\e[H\e[J";
     }
 
     /**
@@ -627,9 +618,40 @@ class CLI {
         $action = isset( $args[0] ) ? $args[0] : null;
 
         $this->detect();
-        $this->crawl();
+        $this->crawl([], []);
         $this->post_process();
-        $this->deploy();
+        $this->deploy([], []);
+    }
+
+    /**
+     * delete_all_cache
+     *
+     * Deletes all caches
+     *
+     * @param string[] $args Arguments after command
+     * @param string[] $assoc_args Parameters after command
+     */
+    public function delete_all_cache( array $args, array $assoc_args ) : void {
+        $action = isset( $args[0] ) ? $args[0] : null;
+
+        if ( ! isset( $assoc_args['force'] ) ) {
+            $this->multilinePrint(
+                "no --force given. Please type 'yes' to confirm
+                deletion of Crawl Cache"
+            );
+
+            $userval = trim( (string) fgets( STDIN ) );
+
+            if ( $userval !== 'yes' ) {
+                WP_CLI::error( 'Failed to delete Crawl Cache' );
+            }
+        }
+
+        CrawlQueue::truncate();
+        CrawlCache::truncate();
+        StaticSite::delete();
+        ProcessedSite::delete();
+        DeployCache::truncate();
     }
 }
 
