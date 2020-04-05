@@ -58,7 +58,7 @@ class CrawlQueue {
 
         $table_name = $wpdb->prefix . 'wp2static_urls';
 
-        $rows = $wpdb->get_results( "SELECT url FROM $table_name" );
+        $rows = $wpdb->get_results( "SELECT url FROM $table_name ORDER by url ASC" );
 
         foreach ( $rows as $row ) {
             $urls[] = $row->url;
@@ -86,6 +86,8 @@ class CrawlQueue {
      *  Clear CrawlQueue via truncate or deletion
      */
     public static function truncate() : void {
+        WsLog::l( 'Deleting CrawlQueue (Detected URLs)' );
+
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'wp2static_urls';

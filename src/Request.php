@@ -69,6 +69,7 @@ class Request {
 
         $response['body'] = curl_exec( $ch );
         $response['ch'] = $ch;
+        $response['code'] = curl_getinfo( $ch, CURLINFO_RESPONSE_CODE );
 
         return $response;
     }

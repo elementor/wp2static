@@ -125,3 +125,16 @@ button.wp2static-button {
     </tbody>
 </table>
 
+<br>
+
+<form
+    name="wp2static-delete-all-caches"
+    method="POST"
+    action="<?php echo esc_url( admin_url('admin-post.php') ); ?>">
+
+<?php wp_nonce_field( $view['nonce_action'] ); ?>
+<input name="action" type="hidden" value="wp2static_delete_all_caches" />
+
+<button class="wp2static-button button btn-danger">Delete all caches</button>
+
+</form>

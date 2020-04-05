@@ -81,8 +81,22 @@ class WordPressAdmin {
         );
 
         add_action(
+            'admin_post_wp2static_delete_all_caches',
+            [ 'WP2Static\Controller', 'wp2static_delete_all_caches' ],
+            10,
+            0
+        );
+
+        add_action(
             'admin_post_wp2static_delete_jobs_queue',
             [ 'WP2Static\Controller', 'wp2static_delete_jobs_queue' ],
+            10,
+            0
+        );
+
+        add_action(
+            'admin_post_wp2static_process_jobs_queue',
+            [ 'WP2Static\Controller', 'wp2static_process_jobs_queue' ],
             10,
             0
         );

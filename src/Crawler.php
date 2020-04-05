@@ -67,10 +67,12 @@ class Crawler {
 
         \WP2Static\WsLog::l( 'Starting to crawl detected URLs.' );
 
+        $site_path = rtrim( SiteInfo::getURL( 'site' ), '/' );
+
         // TODO: use some Iterable or other performance optimisation here
         // to help reduce resources for large URL sites
         foreach ( CrawlQueue::getCrawlablePaths() as $root_relative_path ) {
-            $absolute_uri = new URL( SiteInfo::getURL( 'site' ) . $root_relative_path );
+            $absolute_uri = new URL( $site_path . $root_relative_path );
 
             // TODO: change this to filter, allow add-ons/CLI param to ignore cache
             if ( ! CoreOptions::getValue( 'dontUseCrawlCaching' ) ) {
@@ -129,6 +131,11 @@ class Crawler {
         $response = $this->request->getURL( $url->get(), $handle );
 
         $crawled_contents = $response['body'];
+
+        if ( $response['code'] === 404 ) {
+            error_log('404 for URL ' . $url->get());
+            $crawled_contents = '';
+        }
 
         return $crawled_contents;
     }

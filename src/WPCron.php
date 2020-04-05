@@ -28,12 +28,12 @@ class WPCron {
 
         $interval = $interval . 'min' . ( $interval > 1 ? 's' : '' );
 
-        error_log( PHP_EOL . $interval . PHP_EOL );
+        WsLog::l( 'Setting auto queue processing interval to ' . $interval );
 
         $result = wp_schedule_event( time(), $interval, 'wp2static_process_queue' );
 
         if ( ! $result ) {
-            error_log( 'Unable to schedule WP Cron recurring event' );
+            WsLog::l( 'Unable to schedule WP Cron recurring event' );
         }
     }
 

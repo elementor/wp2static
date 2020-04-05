@@ -326,6 +326,30 @@ class Controller {
         exit;
     }
 
+    public static function wp2static_delete_all_caches() : void {
+        check_admin_referer( 'wp2static-caches-page' );
+
+        CrawlQueue::truncate();
+        CrawlCache::truncate();
+        StaticSite::delete();
+        ProcessedSite::delete();
+        DeployCache::truncate();
+
+        wp_safe_redirect( admin_url( 'admin.php?page=wp2static-caches' ) );
+        exit;
+    }
+
+    public static function wp2static_process_jobs_queue() : void {
+        check_admin_referer( 'wp2static-ui-job-options' );
+
+        WsLog::l( 'Manually processing JobQueue' );
+
+        self::wp2static_process_queue();
+
+        wp_safe_redirect( admin_url( 'admin.php?page=wp2static-jobs' ) );
+        exit;
+    }
+
     public static function wp2static_deploy_cache_delete() : void {
         check_admin_referer( 'wp2static-caches-page' );
 

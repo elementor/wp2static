@@ -210,3 +210,21 @@
 <button class="wp2static-button button btn-danger">Delete all Jobs from Queue</button>
 
 </form>
+
+<!-- TODO: consider manual queue processing, needs further testing, unstable execution so far
+
+<br>
+
+<form
+    name="wp2static-process-jobs-queue"
+    method="POST"
+    action="<?php echo esc_url( admin_url('admin-post.php') ); ?>">
+
+<?php wp_nonce_field( $view['nonce_action'] ); ?>
+<input name="action" type="hidden" value="wp2static_process_jobs_queue" />
+
+<button class="wp2static-button button btn-danger">Manually process Job Queue</button>
+
+</form>
+
+-->

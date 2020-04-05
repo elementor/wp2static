@@ -647,11 +647,7 @@ class CLI {
             }
         }
 
-        CrawlQueue::truncate();
-        CrawlCache::truncate();
-        StaticSite::delete();
-        ProcessedSite::delete();
-        DeployCache::truncate();
+        Controller::wp2static_delete_all_caches();
     }
 }
 

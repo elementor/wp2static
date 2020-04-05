@@ -87,6 +87,8 @@ class WsLog {
         $table_name = $wpdb->prefix . 'wp2static_log';
 
         $wpdb->query( "TRUNCATE TABLE $table_name" );
+
+        WsLog::l( 'Deleted all Logs' );
     }
 }
 

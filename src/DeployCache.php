@@ -29,8 +29,12 @@ class DeployCache {
 
         $deploy_cache_table = $wpdb->prefix . 'wp2static_deploy_cache';
 
-        $path_hash = md5( $local_path );
-        $file_contents = file_get_contents( $local_path );
+        $post_processed_dir = ProcessedSite::getPath();
+
+        $deployed_file = $post_processed_dir . $local_path;
+
+        $path_hash = md5( $deployed_file );
+        $file_contents = file_get_contents( $deployed_file );
 
         if ( ! $file_contents ) {
             return;
@@ -53,8 +57,12 @@ class DeployCache {
     public static function fileisCached( string $local_path ) : bool {
         global $wpdb;
 
-        $path_hash = md5( $local_path );
-        $file_contents = file_get_contents( $local_path );
+        $post_processed_dir = ProcessedSite::getPath();
+
+        $deployed_file = $post_processed_dir . $local_path;
+
+        $path_hash = md5( $deployed_file );
+        $file_contents = file_get_contents( $deployed_file );
 
         if ( ! $file_contents ) {
             return false;
@@ -77,6 +85,8 @@ class DeployCache {
     }
 
     public static function truncate() : void {
+        WsLog::l( 'Deleting DeployCache' );
+
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'wp2static_deploy_cache';

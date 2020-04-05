@@ -31,6 +31,8 @@ class JobQueue {
      * ie detect, crawl, post_process, deploy
      */
     public static function addJob( string $job_type ) : void {
+        WsLog::l( 'Adding job: ' . $job_type );
+
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'wp2static_jobs';
@@ -209,6 +211,8 @@ class JobQueue {
      *  Clear JobQueue via truncate or deletion
      */
     public static function truncate() : void {
+        WsLog::l( 'Deleting all jobs from JobQueue' );
+
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'wp2static_jobs';
