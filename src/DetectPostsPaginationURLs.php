@@ -81,7 +81,7 @@ class DetectPostsPaginationURLs {
 
             for ( $page = 1; $page <= $total_pages; $page++ ) {
                 $pagination_url =
-                    "/{$plural_form}/{$pagination_base}/{$page}";
+                    "/{$plural_form}/{$pagination_base}/{$page}/";
 
                 $urls_to_include[] = str_replace(
                     '/posts/',

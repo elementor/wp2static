@@ -104,6 +104,7 @@ class DetectArchiveURLs {
                 for ( $x = 0; $x <= $i; $x++ ) {
                     $full_url .= $path_segments[ $x ] . '/';
                 }
+
                 $post_urls[] = $full_url;
             }
         }
