@@ -21,3 +21,6 @@ foreach ( $tables_to_drop as $table ) {
 
     $wpdb->query( "DROP TABLE IF EXISTS $table_name" );
 }
+
+// TODO: delete crawl_cache, processed_site and zip if exist
+

@@ -88,7 +88,7 @@ class WsLog {
 
         $wpdb->query( "TRUNCATE TABLE $table_name" );
 
-        WsLog::l( 'Deleted all Logs' );
+        self::l( 'Deleted all Logs' );
     }
 }
 

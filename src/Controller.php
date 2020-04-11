@@ -43,18 +43,7 @@ class Controller {
         WordPressAdmin::registerHooks( $bootstrap_file );
         WordPressAdmin::addAdminUIElements();
 
-        // prepare DB tables
-        CoreOptions::init();
-        CrawlCache::createTable();
-        CrawlQueue::createTable();
-        WsLog::createTable();
-        DeployCache::createTable();
-        JobQueue::createTable();
-
         Utils::set_max_execution_time();
-
-        // cleanup any version 6.x files/DB options
-        V6Cleanup::cleanup();
 
         return $plugin_instance;
     }
@@ -121,7 +110,16 @@ class Controller {
     }
 
     public static function activate_for_single_site() : void {
-        WsLog::l( 'Activated WP2Static for single site' );
+        // prepare DB tables
+        CoreOptions::init();
+        CrawlCache::createTable();
+        CrawlQueue::createTable();
+        WsLog::createTable();
+        DeployCache::createTable();
+        JobQueue::createTable();
+
+        // cleanup any version 6.x files/DB options
+        V6Cleanup::cleanup();
     }
 
     public static function activate( bool $network_wide = null ) : void {

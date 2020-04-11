@@ -618,9 +618,9 @@ class CLI {
         $action = isset( $args[0] ) ? $args[0] : null;
 
         $this->detect();
-        $this->crawl([], []);
+        $this->crawl( [], [] );
         $this->post_process();
-        $this->deploy([], []);
+        $this->deploy( [], [] );
     }
 
     /**

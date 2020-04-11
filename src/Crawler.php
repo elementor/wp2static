@@ -133,7 +133,7 @@ class Crawler {
         $crawled_contents = $response['body'];
 
         if ( $response['code'] === 404 ) {
-            error_log('404 for URL ' . $url->get());
+            WsLog::l( '404 for URL ' . $url->get() );
             $crawled_contents = '';
         }
 
