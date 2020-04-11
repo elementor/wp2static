@@ -115,6 +115,8 @@ class CrawlCache {
      *  Clear CrawlCache via truncation
      */
     public static function truncate() : void {
+        WsLog::l( 'Deleting CrawlCache' );
+
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'wp2static_crawl_cache';

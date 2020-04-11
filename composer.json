@@ -17,12 +17,6 @@
         "docs": "https://wp2static.com/documentation",
         "source": "https://github.com/WP2Static/wp2static"
     },
-    "repositories": [
-        {
-            "type": "pear",
-            "url": "https://pear.php.net"
-        }
-    ],
     "require": {
         "php": ">=7.2",
         "wa72/url": "^0.7.1"

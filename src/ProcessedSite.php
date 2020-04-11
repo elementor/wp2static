@@ -38,7 +38,7 @@ class ProcessedSite {
      * Delete processed site files
      */
     public static function delete() : void {
-        WsLog::l( 'Deleting processed site files' );
+        WsLog::l( 'Deleting ProcessedSite files' );
 
         if ( is_dir( self::getPath() ) ) {
             FilesHelper::delete_dir_with_files( self::getPath() );

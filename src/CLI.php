@@ -647,7 +647,7 @@ class CLI {
             }
         }
 
-        Controller::wp2static_delete_all_caches();
+        Controller::delete_all_caches();
     }
 }
 
