@@ -190,6 +190,10 @@ class SiteInfo {
      *  @return mixed[]
      */
     public static function getAllInfo() : array {
+        if ( self::$instance === null ) {
+             self::$instance = new SiteInfo();
+        }
+
         return self::$info;
     }
 }
