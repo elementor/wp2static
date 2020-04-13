@@ -13,7 +13,9 @@
 
 define( 'WP2STATIC_PATH', plugin_dir_path( __FILE__ ) );
 
-require WP2STATIC_PATH . 'vendor/autoload.php';
+if ( file_exists( WP2STATIC_PATH . 'vendor/autoload.php' ) ) {
+  require_once WP2STATIC_PATH . 'vendor/autoload.php';
+}
 
 WP2Static\Controller::init( __FILE__ );
 
