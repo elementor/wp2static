@@ -37,7 +37,7 @@ button.wp2static-button {
             </td>
         </tr>
         <tr>
-            <td>Crawl cache</td>
+            <td>Crawl Cache</td>
             <td><?php echo $view['crawlCacheTotalURLs']; ?> URLs in database</td>
             <td>
                 <a href="<?php echo admin_url('admin.php?page=wp2static-crawl-cache'); ?>" target="_blank"><button class="wp2static-button button btn-danger">Show URLs</button></a>
@@ -104,7 +104,7 @@ button.wp2static-button {
         </tr>
 
         <tr>
-            <td>Deploy cache</td>
+            <td>Deploy Cache</td>
             <td><?php echo $view['deployCacheTotalPaths']; ?> Paths in database</td>
             <td>
                 <a href="<?php echo admin_url('admin.php?page=wp2static-deploy-cache'); ?>" target="_blank"><button class="wp2static-button button btn-danger">Show Paths</button></a>
