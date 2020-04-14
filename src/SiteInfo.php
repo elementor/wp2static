@@ -96,7 +96,7 @@ class SiteInfo {
         }
 
         // Standardise all paths to use / (Windows support)
-        $path = str_replace( '\\', '/', self::$info[ $key ] );
+        $path = wp_normalize_path( self::$info[ $key ] );
 
         return $path;
     }
