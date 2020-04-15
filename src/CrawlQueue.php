@@ -97,8 +97,7 @@ class CrawlQueue {
         $total_urls = self::getTotalCrawlableURLs();
 
         if ( $total_urls > 0 ) {
-            // TODO: simulate lack of permissios to truncate
-            error_log( 'failed to truncate CrawlQueue: try deleting instead' );
+            WsLog::l( 'failed to truncate CrawlQueue: try deleting instead' );
         }
     }
 

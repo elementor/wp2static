@@ -16,7 +16,7 @@ class DetectThemeAssets {
         $files = [];
         $template_path = '';
         $template_url = '';
-        $site_path = SiteInfo::getPath('site');
+        $site_path = SiteInfo::getPath( 'site' );
 
         if ( $theme_type === 'parent' ) {
             $template_path = SiteInfo::getPath( 'parent_theme' );

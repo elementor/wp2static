@@ -107,6 +107,8 @@ class CLI {
         array $assoc_args
     ) : void {
         do_action( 'wp2static_deploy', ProcessedSite::getPath() );
+
+        do_action( 'wp2static_post_deploy_trigger' );
     }
 
     /**

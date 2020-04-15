@@ -72,15 +72,7 @@ class Controller {
         return $order;
     }
 
-    public static function uninstall() : void {
-        error_log( 'Uninstalled WP2Static for single site' );
-
-        WPCron::clearRecurringEvent();
-    }
-
     public static function deactivate_for_single_site() : void {
-        error_log( 'Deactivated WP2Static for single site' );
-
         WPCron::clearRecurringEvent();
     }
 
@@ -287,12 +279,6 @@ class Controller {
 
     public function delete_deploy_cache() : void {
         DeployCache::truncate();
-
-        $via_ui = filter_input( INPUT_POST, 'ajax_action' );
-
-        if ( is_string( $via_ui ) ) {
-            echo 'SUCCESS';
-        }
     }
 
     public static function wp2static_ui_save_options() : void {
@@ -570,29 +556,52 @@ class Controller {
     }
 
     public static function emailDeployNotification() : void {
-        WsLog::l( 'Sending deployment notification  email...' );
-
         if ( empty( CoreOptions::getValue( 'completionEmail' ) ) ) {
             return;
         }
 
-        $current_user = wp_get_current_user();
-        $to = $current_user->user_email;
-        $subject = 'Static site deployment: ' .
-        $site_title = get_bloginfo( 'name' );
-        $body = 'Your WordPress site has been automatically deployed.';
-        $headers = [ 'Content-Type: text/html; charset=UTF-8' ];
+        WsLog::l( 'Sending deployment notification email...' );
 
-        wp_mail( $to, $subject, $body, $headers );
+        $to = CoreOptions::getValue( 'completionEmail' );
+        $subject = 'WP2Static deployment complete on site: ' .
+            $site_title = get_bloginfo( 'name' );
+        $body = 'WP2Static deployment complete!';
+        $headers = [];
+
+        if ( wp_mail( $to, $subject, $body, $headers ) ) {
+            WsLog::l( 'Deployment notification email sent without error.' );
+        } else {
+            WsLog::l( 'Failed to send deployment notificaiton email.' );
+        }
     }
 
     public static function webhookDeployNotification() : void {
-        error_log( 'TBD: POST DEPLOYMENT WEBHOOK ' );
-        WsLog::l( 'Sending deployment notification webhook...' );
+        $webhook_url = CoreOptions::getValue( 'completionWebhook' );
 
-        if ( empty( CoreOptions::getValue( 'completionWebhook' ) ) ) {
+        if ( empty( $webhook_url ) ) {
             return;
         }
+
+        WsLog::l( 'Sending deployment notification webhook...' );
+
+        $http_method = CoreOptions::getValue( 'completionWebhookMethod' );
+
+        $body = $http_method === 'POST' ? 'WP2Static deployment complete!' :
+            [ 'message' => 'WP2Static deployment complete!' ];
+
+        $webhook_response = wp_remote_request(
+            $webhook_url,
+            [
+                'method' => CoreOptions::getValue( 'completionWebhookMethod' ),
+                'timeout' => 30,
+                'user-agent' => 'WP2Static.com',
+                'body' => $body,
+            ]
+        );
+
+        WsLog::l(
+            'Webhook response code: ' . wp_remote_retrieve_response_code( $webhook_response )
+        );
     }
 }
 

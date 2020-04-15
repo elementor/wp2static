@@ -28,6 +28,10 @@ class DetectCategoryURLs {
                 continue;
             }
 
+            if ( gettype( $taxonomy ) !== 'WP_Taxonomy' ) {
+                continue;
+            }
+
             $terms = get_terms(
                 $taxonomy->name,
                 [
@@ -40,7 +44,7 @@ class DetectCategoryURLs {
             }
 
             foreach ( $terms as $term ) {
-                if ( is_string( $term ) ) {
+                if ( gettype( $term ) !== 'WP_Term' ) {
                     continue;
                 }
 

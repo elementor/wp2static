@@ -47,11 +47,6 @@ add_filter(
     'plugin_action_links'
 );
 
-add_action(
-    'wp_ajax_wp_static_html_output_ajax',
-    'wp_static_html_output_ajax'
-);
-
 function wp_static_html_output_deregister_scripts() {
     wp_deregister_script( 'wp-embed' );
     wp_deregister_script( 'comment-reply' );

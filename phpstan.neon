@@ -13,6 +13,8 @@ parameters:
     ignoreErrors:
         - '#^Constant WP2STATIC_PATH not found#'
         - '#[a-zA-Z0-9\\_]+superglobal[a-zA-Z0-9\\_]+#'
+        - '#^Cannot access property \$name on string|WP_Taxonomy#'
+
     excludes_analyse:
         - %currentWorkingDirectory%/src/WPOverrides.php
         - %currentWorkingDirectory%/src/SiteCrawler.php

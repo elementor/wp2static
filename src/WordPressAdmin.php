@@ -29,11 +29,6 @@ class WordPressAdmin {
             [ 'WP2Static\Controller', 'activate' ]
         );
 
-        register_uninstall_hook(
-            $bootstrap_file,
-            [ 'WP2Static\Controller', 'uninstall' ]
-        );
-
         register_deactivation_hook(
             $bootstrap_file,
             [ 'WP2Static\Controller', 'deactivate' ]

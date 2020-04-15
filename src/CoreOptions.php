@@ -20,10 +20,10 @@ class CoreOptions {
         global $wpdb;
 
         // check for required options, seed if non-existant
-        $detect_posts = self::get( 'detectPosts' );
+        $deployment_url = self::get( 'deploymentURL' );
 
-        if ( ! isset( $detect_posts ) ) {
-            error_log( 'detectPosts not found, seeding coreOptions' );
+        if ( ! isset( $deployment_url ) ) {
+            WsLog::l( 'Deployment URL option not found, seeding coreOptions' );
             self::seedOptions();
         }
     }

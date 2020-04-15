@@ -222,8 +222,7 @@ class JobQueue {
         $total_jobs = self::getTotalJobs();
 
         if ( $total_jobs > 0 ) {
-            // TODO: simulate lack of permissios to truncate
-            error_log( 'failed to truncate JobQueue: try deleting instead' );
+            WsLog::l( 'failed to truncate JobQueue: try deleting instead' );
         }
     }
 }

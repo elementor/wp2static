@@ -128,9 +128,13 @@
 
 <br>
 
+<b>Process Queue Interval</b>
+
+<br>
+
 <label
     for=""
-/>WP-Cron will attempt to process job queue at this interval</label>
+/>WP-Cron will attempt to process the Job Queue at this interval:</label>
 
 <select
     id="<?php echo $view['jobOptions']['processQueueInterval']->name; ?>"

@@ -258,9 +258,8 @@ class Request {
         $this->body = curl_exec( $ch );
         $this->status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
 
-        // TODO: DRY this up, include in Debug Log
         if ( curl_errno( $ch ) ) {
-            error_log( 'cURL error: ' . curl_error( $ch ) );
+            WsLog::l( 'cURL error: ' . curl_error( $ch ) );
         }
 
         curl_close( $ch );

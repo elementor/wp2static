@@ -138,7 +138,7 @@ class DetectCategoryPaginationURLs {
             }
 
             foreach ( $terms as $term ) {
-                if ( is_string( $term ) ) {
+                if ( gettype( $term ) !== 'WP_Term' ) {
                     continue;
                 }
 
