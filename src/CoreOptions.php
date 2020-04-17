@@ -406,17 +406,48 @@ class CoreOptions {
 
                 break;
             case 'jobs':
+                $queue_on_post_save = isset( $_POST['queueJobOnPostSave'] ) ? 1 : 0;
+                $queue_on_post_delete = isset( $_POST['queueJobOnPostDelete'] ) ? 1 : 0;
+
                 $wpdb->update(
                     $table_name,
-                    [ 'value' => isset( $_POST['queueJobOnPostSave'] ) ? 1 : 0 ],
+                    [ 'value' => $queue_on_post_save ],
                     [ 'name' => 'queueJobOnPostSave' ]
                 );
 
                 $wpdb->update(
                     $table_name,
-                    [ 'value' => isset( $_POST['queueJobOnPostDelete'] ) ? 1 : 0 ],
+                    [ 'value' => $queue_on_post_delete ],
                     [ 'name' => 'queueJobOnPostDelete' ]
                 );
+
+                if ( $queue_on_post_save ) {
+                    add_action(
+                        'save_post',
+                        [ 'WP2Static\Controller', 'wp2static_save_post_handler' ],
+                        0
+                    );
+                } else {
+                    remove_action(
+                        'save_post',
+                        [ 'WP2Static\Controller', 'wp2static_save_post_handler' ],
+                        0
+                    );
+                }
+
+                if ( $queue_on_post_delete ) {
+                    add_action(
+                        'trashed_post',
+                        [ 'WP2Static\Controller', 'wp2static_trashed_post_handler' ],
+                        0
+                    );
+                } else {
+                    remove_action(
+                        'trashed_post',
+                        [ 'WP2Static\Controller', 'wp2static_trashed_post_handler' ],
+                        0
+                    );
+                }
 
                 $process_queue_interval =
                     isset( $_POST['processQueueInterval'] ) ?
@@ -428,8 +459,6 @@ class CoreOptions {
                     [ 'name' => 'processQueueInterval' ]
                 );
 
-                // TODO: this looks like odd value passed in
-                // TODO: this WPCron method prints output in error_log
                 WPCron::setRecurringEvent( $process_queue_interval );
 
                 $wpdb->update(

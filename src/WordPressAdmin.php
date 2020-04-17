@@ -202,22 +202,6 @@ class WordPressAdmin {
                 2
             );
         }
-
-        if ( CoreOptions::getValue( 'queueJobOnPostSave' ) ) {
-            add_action(
-                'save_post',
-                [ 'WP2Static\Controller', 'wp2static_save_post_handler' ],
-                0
-            );
-        }
-
-        if ( CoreOptions::getValue( 'queueJobOnPostDelete' ) ) {
-            add_action(
-                'trashed_post',
-                [ 'WP2Static\Controller', 'wp2static_trashed_post_handler' ],
-                0
-            );
-        }
     }
 
     /**
