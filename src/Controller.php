@@ -103,10 +103,10 @@ class Controller {
 
     public static function activate_for_single_site() : void {
         // prepare DB tables
+        WsLog::createTable();
         CoreOptions::init();
         CrawlCache::createTable();
         CrawlQueue::createTable();
-        WsLog::createTable();
         DeployCache::createTable();
         JobQueue::createTable();
 
