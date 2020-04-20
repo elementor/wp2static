@@ -172,7 +172,17 @@ class CLI {
                 return;
             }
 
-            WP_CLI::line( CoreOptions::getValue( $option_name ) );
+            // decrypt basicAuthPassword
+            if ( $option_name === 'basicAuthPassword' ) {
+                $option_value = CoreOptions::encrypt_decrypt(
+                    'decrypt',
+                    CoreOptions::getValue( $option_name )
+                );
+            } else {
+                $option_value = CoreOptions::getValue( $option_name );
+            }
+
+            WP_CLI::line( $option_value );
         }
 
         if ( $action === 'set' ) {
@@ -184,6 +194,14 @@ class CLI {
             if ( empty( $value ) ) {
                 WP_CLI::error( 'Missing required argument: <value>' );
                 return;
+            }
+
+            // encrypt basic auth pwd
+            if ( $option_name === 'basicAuthPassword' ) {
+                $value = CoreOptions::encrypt_decrypt(
+                    'encrypt',
+                    $value
+                );
             }
 
             // TODO: assert expected result
