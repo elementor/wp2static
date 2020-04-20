@@ -82,17 +82,19 @@ class WPCron {
         $auth_user = CoreOptions::getValue( 'basicAuthUser' );
         $auth_password = CoreOptions::getValue( 'basicAuthPassword' );
 
-        if ( $auth_user || $auth_password ) {
-            $headers = [
-                'Authorization' =>
-                    sprintf( 'Basic %s', base64_encode( $auth_user . ':' . $auth_password ) ),
-            ];
-
-            $cron_request['args']['headers'] =
-                isset( $cron_request['args']['headers'] ) ?
-                    array_merge( $cron_request['args']['headers'], $headers ) :
-                    $headers;
+        if ( ! $auth_user || ! $auth_password ) {
+            return $cron_request;
         }
+
+        $headers = [
+            'Authorization' =>
+                sprintf( 'Basic %s', base64_encode( $auth_user . ':' . $auth_password ) ),
+        ];
+
+        $cron_request['args']['headers'] =
+            isset( $cron_request['args']['headers'] ) ?
+                array_merge( $cron_request['args']['headers'], $headers ) :
+                $headers;
 
         return $cron_request;
     }
