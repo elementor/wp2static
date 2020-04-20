@@ -34,6 +34,14 @@ class PostProcessor {
             'Processing crawled site.'
         );
 
+        if ( ! is_dir( $static_site_path ) ) {
+            \WP2Static\WsLog::l(
+                'No static site directory to process.'
+            );
+
+            return;
+        }
+
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator(
                 $static_site_path,
