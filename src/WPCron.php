@@ -72,5 +72,28 @@ class WPCron {
         return $schedules;
     }
 
+    /**
+     * Override WP-Cron to use WP2Static's http basic auth creds if set
+     *
+     * @param mixed[] $cron_request WP-Cron request
+     * @return mixed[] WP-Cron request
+     */
+    public static function wp2static_cron_with_http_basic_auth( array $cron_request ) : array {
+        $auth_user = CoreOptions::getValue( 'basicAuthUser' );
+        $auth_password = CoreOptions::getValue( 'basicAuthPassword' );
 
+        if ( $auth_user || $auth_password ) {
+            $headers = [
+                'Authorization' =>
+                    sprintf( 'Basic %s', base64_encode( $auth_user . ':' . $auth_password ) ),
+            ];
+
+            $cron_request['args']['headers'] =
+                isset( $cron_request['args']['headers'] ) ?
+                    array_merge( $cron_request['args']['headers'], $headers ) :
+                    $headers;
+        }
+
+        return $cron_request;
+    }
 }

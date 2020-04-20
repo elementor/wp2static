@@ -40,6 +40,11 @@ class WordPressAdmin {
             [ 'WP2Static\WPCron', 'wp2static_custom_cron_schedules' ]
         );
 
+        add_filter(
+            'cron_request',
+            [ 'WP2Static\WPCron', 'wp2static_cron_with_http_basic_auth' ]
+        );
+
         add_action(
             'admin_post_wp2static_ui_save_options',
             [ 'WP2Static\Controller', 'wp2static_ui_save_options' ],
