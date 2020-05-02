@@ -74,17 +74,23 @@ class Crawler {
         foreach ( CrawlQueue::getCrawlablePaths() as $root_relative_path ) {
             $absolute_uri = new URL( $site_path . $root_relative_path );
 
+            $crawled_contents = $this->crawlURL( $absolute_uri );
+
+            if ( ! is_null( $crawled_contents ) ) {
+                $page_hash = md5( $crawled_contents );
+            } else {
+                $page_hash = 'd41d8cd98f00b204e9800998ecf8427e';
+            }
+
             // TODO: change this to filter, allow add-ons/CLI param to ignore cache
             if ( ! CoreOptions::getValue( 'dontUseCrawlCaching' ) ) {
                 // if not already cached
-                if ( CrawlCache::getUrl( $root_relative_path ) ) {
+                if ( CrawlCache::getUrl( $root_relative_path, $page_hash ) ) {
                     $cache_hits++;
 
                     continue;
                 }
             }
-
-            $crawled_contents = $this->crawlURL( $absolute_uri );
 
             $crawled++;
 
@@ -100,8 +106,8 @@ class Crawler {
             }
 
             // TODO: change this to filter, allow add-ons/CLI param to ignore cache
-            if ( ! CoreOptions::getValue( 'dontUseCrawlCaching' ) ) {
-                CrawlCache::addUrl( $root_relative_path );
+            if ( ! CoreOptions::getValue( 'dontUseCrawlCaching' ) && $crawled_contents ) {
+                CrawlCache::addUrl( $root_relative_path, $page_hash );
             }
         }
 
@@ -121,11 +127,11 @@ class Crawler {
     /**
      * Crawls a string of full URL within WordPressSite
      */
-    public function crawlURL( URL $url ) : string {
+    public function crawlURL( URL $url ) : ?string {
         $handle = $this->ch;
 
         if ( ! is_resource( $handle ) ) {
-            return '';
+            return null;
         }
 
         $response = $this->request->getURL( $url->get(), $handle );
@@ -133,11 +139,13 @@ class Crawler {
         $crawled_contents = $response['body'];
 
         if ( $response['code'] === 404 ) {
-            WsLog::l( '404 for URL ' . $url->get() );
-            $crawled_contents = '';
+            $site_path = rtrim( SiteInfo::getURL( 'site' ), '/' );
+            $url_slug = str_replace( $site_path, '', $url->get() );
+            WsLog::l( '404 for URL ' . $url_slug );
+            CrawlCache::rmUrl( $url_slug );
+            $crawled_contents = null;
         }
 
         return $crawled_contents;
     }
 }
-
