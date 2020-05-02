@@ -2,9 +2,7 @@
 
 A WordPress plugin for static site generation and deployment.
 
-__Note: GitHub repo is a read-only mirror. Our main repos and information on contributing are hosted at [https://code.wp2static.com](https://code.wp2static.com).__
-
-Official homepage: [https://wp2static.com](https://wp2static.com)
+Official homepage/docs: [https://wp2static.com](https://wp2static.com)
 
 __Note: This is for Version 7+ of WP2Static. A fork from V6 is being maintained at [https://github.com/WP2Static/wp2static-v6](https://github.com/WP2Static/wp2static-v6).__
 
