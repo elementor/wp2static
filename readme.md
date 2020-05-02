@@ -6,6 +6,8 @@ __Note: GitHub repo is a read-only mirror. Our main repos and information on con
 
 Official homepage: [https://wp2static.com](https://wp2static.com)
 
+__Note: This is for Version 7+ of WP2Static. A fork from V6 is being maintained at [https://github.com/WP2Static/wp2static-v6](https://github.com/WP2Static/wp2static-v6).__
+
 ## Open Source over profits
 
 [Leon Stafford](https://ljs.dev) maintains WP2Static primarily as an open source project. [Lifetime licenses](https://wp2static.com/download) are sold, offering the convenience of pre-built plugin installers. Source code for this core repository and all addons shall always remain publicly available.
