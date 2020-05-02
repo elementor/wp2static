@@ -14,6 +14,7 @@ class CrawlCache {
         $sql = "CREATE TABLE $table_name (
             hashed_url CHAR(32) NOT NULL,
             url VARCHAR(2083) NOT NULL,
+            page_hash CHAR(32) NOT NULL,
             time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
             PRIMARY KEY  (hashed_url)
         ) $charset_collate;";
@@ -42,23 +43,19 @@ class CrawlCache {
         return $urls;
     }
 
-    public static function addUrl( string $url ) : void {
+    public static function addUrl( string $url, string $page_hash ) : void {
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'wp2static_crawl_cache';
-
-        $wpdb->insert(
-            $table_name,
-            [
-                'time' => current_time( 'mysql' ),
-                'hashed_url' => md5( $url ),
-                'url' => $url,
-            ]
-        );
+        $sql = "insert into {$table_name} (time, hashed_url, url, page_hash)
+                VALUES (%s, %s, %s, %s) ON DUPLICATE KEY
+                UPDATE time = %s, page_hash = %s";
+        $sql = $wpdb->prepare($sql, current_time('mysql'), md5($url), $url, $page_hash, current_time('mysql'), $page_hash);
+        $wpdb->query($sql);
     }
 
     // TODO: enable date filter as option/alternate method
-    public static function getUrl( string $url ) : string {
+    public static function getUrl( string $url, string $page_hash ) : string {
         global $wpdb;
 
         $hashed_url = md5( $url );
@@ -67,8 +64,8 @@ class CrawlCache {
 
         $sql = $wpdb->prepare(
             "SELECT hashed_url FROM $table_name WHERE" .
-            ' hashed_url = %s LIMIT 1',
-            $hashed_url
+            ' hashed_url = %s and page_hash = %s  LIMIT 1',
+            array($hashed_url, $page_hash)
         );
 
         $hashed_url = $wpdb->get_var( $sql );
@@ -83,14 +80,14 @@ class CrawlCache {
      */
     public static function getURLs() : array {
         global $wpdb;
-        $urls = [];
+        $urls = array();
 
         $table_name = $wpdb->prefix . 'wp2static_crawl_cache';
 
-        $rows = $wpdb->get_results( "SELECT url FROM $table_name ORDER BY url" );
+        $rows = $wpdb->get_results( "SELECT url, page_hash FROM $table_name ORDER BY url" );
 
         foreach ( $rows as $row ) {
-            $urls[] = $row->url;
+            $urls[$row->url] = $row->page_hash;
         }
 
         return $urls;
@@ -109,6 +106,7 @@ class CrawlCache {
                 'hashed_url' => md5( $url ),
             ]
         );
+        WsLog::l( "Removed {$url} from Crawl Cache" );
     }
 
     /**
