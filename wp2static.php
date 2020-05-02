@@ -27,20 +27,6 @@ function plugin_action_links( $links ) {
     return $links;
 }
 
-function wp_static_html_output_server_side_export() {
-    $plugin = WP2Static\Controller::getInstance();
-    $plugin->doExportWithoutGUI();
-    wp_die();
-    return null;
-}
-
-add_action(
-    'wp_static_html_output_server_side_export_hook',
-    'wp_static_html_output_server_side_export',
-    10,
-    0
-);
-
 add_filter(
     'plugin_action_links_' .
     plugin_basename( __FILE__ ),
