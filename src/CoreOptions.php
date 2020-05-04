@@ -421,34 +421,6 @@ class CoreOptions {
                     [ 'name' => 'queueJobOnPostDelete' ]
                 );
 
-                if ( $queue_on_post_save ) {
-                    add_action(
-                        'save_post',
-                        [ 'WP2Static\Controller', 'wp2static_save_post_handler' ],
-                        0
-                    );
-                } else {
-                    remove_action(
-                        'save_post',
-                        [ 'WP2Static\Controller', 'wp2static_save_post_handler' ],
-                        0
-                    );
-                }
-
-                if ( $queue_on_post_delete ) {
-                    add_action(
-                        'trashed_post',
-                        [ 'WP2Static\Controller', 'wp2static_trashed_post_handler' ],
-                        0
-                    );
-                } else {
-                    remove_action(
-                        'trashed_post',
-                        [ 'WP2Static\Controller', 'wp2static_trashed_post_handler' ],
-                        0
-                    );
-                }
-
                 $process_queue_interval =
                     isset( $_POST['processQueueInterval'] ) ?
                      $_POST['processQueueInterval'] : 0;
