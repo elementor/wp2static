@@ -395,15 +395,16 @@ class Controller {
     }
 
     public static function wp2static_save_post_handler( int $post_id ) : void {
-        if ( get_post_status( $post_id ) !== 'publish' ) {
-            return;
+        if ( CoreOptions::getValue( 'queueJobOnPostSave' ) &&
+             get_post_status( $post_id ) === 'publish' ) {
+            self::wp2static_enqueue_jobs();
         }
-
-        self::wp2static_enqueue_jobs();
     }
 
     public static function wp2static_trashed_post_handler() : void {
-        self::wp2static_enqueue_jobs();
+        if ( CoreOptions::getValue( 'queueJobOnPostDelete' ) ) {
+            self::wp2static_enqueue_jobs();
+        }
     }
 
     public static function wp2static_enqueue_jobs() : void {
