@@ -185,6 +185,18 @@ class WordPressAdmin {
             1
         );
 
+        add_action(
+            'save_post',
+            [ 'WP2Static\Controller', 'wp2static_save_post_handler' ],
+            0
+        );
+
+        add_action(
+            'trashed_post',
+            [ 'WP2Static\Controller', 'wp2static_trashed_post_handler' ],
+            0
+        );
+
         /*
          * Register actions for when we should invalidate cache for
          * a URL(s) or whole site
