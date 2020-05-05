@@ -173,6 +173,9 @@ class Controller {
                 case 'cloudflare-workers':
                     $title = 'Cloudflare Workers';
                     break;
+                case 'bunnycdn':
+                    $title = 'BunnyCDN';
+                    break;
             }
 
             add_submenu_page(
