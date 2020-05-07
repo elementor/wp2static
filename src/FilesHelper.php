@@ -128,7 +128,11 @@ class FilesHelper {
             'wpallimport',
         ];
 
-        $filenames_to_ignore = apply_filters( 'wp2static_filenames_to_ignore', $filenames_to_ignore );
+        $filenames_to_ignore =
+            apply_filters(
+                'wp2static_filenames_to_ignore',
+                $filenames_to_ignore
+            );
 
         $matches = 0;
 
