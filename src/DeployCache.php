@@ -4,6 +4,8 @@ namespace WP2Static;
 
 class DeployCache {
 
+    const DEFAULT_NAMESPACE = 'default';
+
     public static function createTable() : void {
         global $wpdb;
 
@@ -15,6 +17,7 @@ class DeployCache {
             path_hash CHAR(32) NOT NULL,
             path VARCHAR(2083) NOT NULL,
             file_hash CHAR(32) NOT NULL,
+            namespace VARCHAR(128) NOT NULL,
             PRIMARY KEY  (path_hash)
         ) $charset_collate;";
 
@@ -23,7 +26,8 @@ class DeployCache {
     }
 
     public static function addFile(
-        string $local_path
+        string $local_path,
+        string $namespace = self::DEFAULT_NAMESPACE
     ) : void {
         global $wpdb;
 
@@ -42,10 +46,10 @@ class DeployCache {
 
         $file_hash = md5( $file_contents );
 
-        $sql = "INSERT INTO {$deploy_cache_table} (path_hash,path,file_hash)" .
-            ' VALUES (%s,%s,%s) ON DUPLICATE KEY UPDATE file_hash = %s';
+        $sql = "INSERT INTO {$deploy_cache_table} (path_hash,path,file_hash,namespace)" .
+            ' VALUES (%s,%s,%s,%s) ON DUPLICATE KEY UPDATE file_hash = %s';
 
-        $sql = $wpdb->prepare( $sql, $path_hash, $local_path, $file_hash, $file_hash );
+        $sql = $wpdb->prepare( $sql, $path_hash, $local_path, $file_hash, $namespace, $file_hash );
 
         $wpdb->query( $sql );
     }
@@ -54,7 +58,10 @@ class DeployCache {
      * Checks if file can skip deployment
      *  - uses hash of file and path's hash
      */
-    public static function fileisCached( string $local_path ) : bool {
+    public static function fileisCached(
+        string $local_path,
+        string $namespace = self::DEFAULT_NAMESPACE
+    ) : bool {
         global $wpdb;
 
         $post_processed_dir = ProcessedSite::getPath();
@@ -74,9 +81,10 @@ class DeployCache {
 
         $sql = $wpdb->prepare(
             "SELECT path_hash FROM $table_name WHERE" .
-            ' path_hash = %s AND file_hash = %s LIMIT 1',
+            ' path_hash = %s AND file_hash = %s AND namespace = %s LIMIT 1',
             $path_hash,
-            $file_hash
+            $file_hash,
+            $namespace
         );
 
         $hash = $wpdb->get_var( $sql );
@@ -97,12 +105,16 @@ class DeployCache {
     /**
      *  Count Paths in Deploy Cache
      */
-    public static function getTotal() : int {
+    public static function getTotal(
+        string $namespace = self::DEFAULT_NAMESPACE
+    ) : int {
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'wp2static_deploy_cache';
 
-        $total = $wpdb->get_var( "SELECT count(*) FROM $table_name" );
+        $sql = "SELECT count(*) FROM $table_name WHERE namespace = %s";
+        $sql = $wpdb->prepare($sql, $namespace);
+        $total = $wpdb->get_var( $sql );
 
         return $total;
     }
@@ -112,13 +124,17 @@ class DeployCache {
      *
      *  @return string[] All cached paths
      */
-    public static function getPaths() : array {
+    public static function getPaths(
+        string $namespace = self::DEFAULT_NAMESPACE
+    ) : array {
         global $wpdb;
         $urls = [];
 
         $table_name = $wpdb->prefix . 'wp2static_deploy_cache';
 
-        $rows = $wpdb->get_results( "SELECT path FROM $table_name" );
+        $sql = "SELECT path FROM $table_name WHERE namespace = %s";
+        $sql = $wpdb->prepare($sql, $namespace);
+        $rows = $wpdb->get_results( $sql );
 
         foreach ( $rows as $row ) {
             $urls[] = $row->path;
