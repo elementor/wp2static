@@ -109,6 +109,7 @@ class Controller {
         CrawlQueue::createTable();
         DeployCache::createTable();
         JobQueue::createTable();
+        Addons::createTable();
 
         // cleanup any version 6.x files/DB options
         V6Cleanup::cleanup();
@@ -155,6 +156,7 @@ class Controller {
             'caches' => [ 'WP2Static\ViewRenderer', 'renderCachesPage' ],
             'diagnostics' => [ 'WP2Static\ViewRenderer', 'renderDiagnosticsPage' ],
             'logs' => [ 'WP2Static\ViewRenderer', 'renderLogsPage' ],
+            'addons' => [ 'WP2Static\ViewRenderer', 'renderAddonsPage' ],
         ];
 
         $submenu_pages = apply_filters( 'wp2static_add_menu_items', $submenu_pages );

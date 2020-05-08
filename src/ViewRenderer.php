@@ -48,6 +48,14 @@ class ViewRenderer {
         require_once WP2STATIC_PATH . 'views/logs-page.php';
     }
 
+    public static function renderAddonsPage() : void {
+        $view = [];
+        $view['nonce_action'] = 'wp2static-addons-page';
+        $view['addons'] = Addons::getAll();
+
+        require_once WP2STATIC_PATH . 'views/addons-page.php';
+    }
+
     public static function renderCrawlQueue() : void {
         if ( ! is_admin() ) {
             http_response_code( 403 );
