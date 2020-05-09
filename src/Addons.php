@@ -62,7 +62,7 @@ class Addons {
     }
 
     /**
-     *  Clear Addons via truncation
+     *  Deregister Addons
      */
     public static function truncate() : void {
         global $wpdb;
@@ -71,7 +71,7 @@ class Addons {
 
         $wpdb->query( "TRUNCATE TABLE $table_name" );
 
-        self::l( 'Deleted all Addons' );
+        WsLog::l( 'Deregistered all Addons' );
     }
 }
 
