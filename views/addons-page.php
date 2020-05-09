@@ -36,7 +36,10 @@
                 <td>
                     <a href="<?php echo $addon->documentation_url; ?>"><span class="dashicons dashicons-book-alt"></span></a>
                 </td>
-                <td><a href="#"><span class="dashicons dashicons-admin-generic"></span></a></td>
+                <td>
+                    <a href="<?php echo esc_url( admin_url("admin.php?page={$addon->slug}") ); ?>"><span class="dashicons dashicons-admin-generic"></span></a>
+                </td>
+
             </tr>
         <?php endforeach; ?>
     </tbody>
