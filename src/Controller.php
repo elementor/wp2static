@@ -159,26 +159,11 @@ class Controller {
             'addons' => [ 'WP2Static\ViewRenderer', 'renderAddonsPage' ],
         ];
 
-        $submenu_pages = apply_filters( 'wp2static_add_menu_items', $submenu_pages );
-
         foreach ( $submenu_pages as $slug => $method ) {
             $menu_slug =
                 $slug === 'options' ? 'wp2static' : 'wp2static-' . $slug;
 
             $title = ucfirst( $slug );
-
-            // TODO: expand fn to avoid core knowing about specific add-ons
-            switch ( $slug ) {
-                case 'sftp':
-                    $title = 'sFTP';
-                    break;
-                case 'cloudflare-workers':
-                    $title = 'Cloudflare Workers';
-                    break;
-                case 'bunnycdn':
-                    $title = 'BunnyCDN';
-                    break;
-            }
 
             add_submenu_page(
                 'wp2static',
