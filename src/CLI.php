@@ -670,6 +670,16 @@ class CLI {
         Controller::delete_all_caches();
     }
 
+    /**
+     * Addons
+     *
+     * <list>
+     *
+     * List all registered Add-ons
+     *
+     * @param string[] $args Arguments after command
+     * @param string[] $assoc_args Parameters after command
+     */
     public function addons( array $args, array $assoc_args ) : void {
         $action = isset( $args[0] ) ? $args[0] : null;
         $option_name = isset( $args[1] ) ? $args[1] : null;
