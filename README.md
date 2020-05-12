@@ -4,7 +4,7 @@ A WordPress plugin for static site generation and deployment.
 
 Official homepage/docs: [https://wp2static.com](https://wp2static.com)
 
-__Note: This is for Version 7+ of WP2Static. A fork from V6 is being maintained at [https://github.com/WP2Static/wp2static-v6](https://github.com/WP2Static/wp2static-v6).__
+__Note: This is for WP2Static, a new approach to what was originally called "WP Static HTML Output Plugin", which is now being maintained as [Static HTML Output](https://github.com/WP2Static/static-html-output-plugin).__
 
 [![CircleCI](https://circleci.com/gh/WP2Static/wp2static.svg?style=svg)](https://circleci.com/gh/WP2Static/wp2static)
 
