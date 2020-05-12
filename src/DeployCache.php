@@ -18,7 +18,7 @@ class DeployCache {
             path VARCHAR(2083) NOT NULL,
             file_hash CHAR(32) NOT NULL,
             namespace VARCHAR(128) NOT NULL,
-            PRIMARY KEY  (path_hash)
+            PRIMARY KEY  (path_hash, namespace)
         ) $charset_collate;";
 
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
