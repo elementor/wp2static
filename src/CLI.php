@@ -669,5 +669,43 @@ class CLI {
 
         Controller::delete_all_caches();
     }
+
+    /**
+     * Addons
+     *
+     * <list>
+     *
+     * List all registered Add-ons
+     *
+     * @param string[] $args Arguments after command
+     * @param string[] $assoc_args Parameters after command
+     */
+    public function addons( array $args, array $assoc_args ) : void {
+        $action = isset( $args[0] ) ? $args[0] : null;
+        $option_name = isset( $args[1] ) ? $args[1] : null;
+        $value = isset( $args[2] ) ? $args[2] : null;
+
+        if ( $action === 'list' ) {
+            $addons = Addons::getAll();
+
+            $pretty_addons = [];
+
+            foreach ( $addons as $addon ) {
+                $pretty_addons[] = [
+                    'Enabled' => $addon->enabled,
+                    'Slug' => $addon->slug,
+                    'Name' => $addon->name,
+                    'Description' => $addon->description,
+                    'Docs' => $addon->docs_url,
+                ];
+            }
+
+            WP_CLI\Utils\format_items(
+                'table',
+                $pretty_addons,
+                [ 'Enabled', 'Slug', 'Name', 'Description', 'Docs' ]
+            );
+        }
+    }
 }
 

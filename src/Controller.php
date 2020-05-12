@@ -67,6 +67,7 @@ class Controller {
         $order = [
             'index.php',
             'wp2static',
+            'statichtmloutput',
         ];
 
         return $order;
@@ -109,9 +110,7 @@ class Controller {
         CrawlQueue::createTable();
         DeployCache::createTable();
         JobQueue::createTable();
-
-        // cleanup any version 6.x files/DB options
-        V6Cleanup::cleanup();
+        Addons::createTable();
     }
 
     public static function activate( bool $network_wide = null ) : void {
@@ -155,9 +154,8 @@ class Controller {
             'caches' => [ 'WP2Static\ViewRenderer', 'renderCachesPage' ],
             'diagnostics' => [ 'WP2Static\ViewRenderer', 'renderDiagnosticsPage' ],
             'logs' => [ 'WP2Static\ViewRenderer', 'renderLogsPage' ],
+            'addons' => [ 'WP2Static\ViewRenderer', 'renderAddonsPage' ],
         ];
-
-        $submenu_pages = apply_filters( 'wp2static_add_menu_items', $submenu_pages );
 
         foreach ( $submenu_pages as $slug => $method ) {
             $menu_slug =
@@ -165,19 +163,7 @@ class Controller {
 
             $title = ucfirst( $slug );
 
-            // TODO: expand fn to avoid core knowing about specific add-ons
-            switch ( $slug ) {
-                case 'sftp':
-                    $title = 'sFTP';
-                    break;
-                case 'cloudflare-workers':
-                    $title = 'Cloudflare Workers';
-                    break;
-                case 'bunnycdn':
-                    $title = 'BunnyCDN';
-                    break;
-            }
-
+            // @phpstan-ignore-next-line
             add_submenu_page(
                 'wp2static',
                 'WP2Static ' . ucfirst( $slug ),

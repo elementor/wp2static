@@ -53,6 +53,13 @@ class WordPressAdmin {
         );
 
         add_action(
+            'wp2static_register_addon',
+            [ 'WP2Static\Addons', 'registerAddon' ],
+            10,
+            5
+        );
+
+        add_action(
             'wp2static_post_deploy_trigger',
             [ 'WP2Static\Controller', 'emailDeployNotification' ],
             10,
