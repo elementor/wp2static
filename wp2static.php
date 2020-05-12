@@ -33,12 +33,12 @@ add_filter(
     'plugin_action_links'
 );
 
-function wp_static_html_output_deregister_scripts() {
+function wp2static_deregister_scripts() {
     wp_deregister_script( 'wp-embed' );
     wp_deregister_script( 'comment-reply' );
 }
 
-add_action( 'wp_footer', 'wp_static_html_output_deregister_scripts' );
+add_action( 'wp_footer', 'wp2static_deregister_scripts' );
 
 // TODO: move into own plugin for WP cleanup, don't belong in core
 remove_action( 'wp_head', 'wlwmanifest_link' );

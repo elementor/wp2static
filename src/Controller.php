@@ -67,6 +67,7 @@ class Controller {
         $order = [
             'index.php',
             'wp2static',
+            'statichtmloutput',
         ];
 
         return $order;
@@ -110,9 +111,6 @@ class Controller {
         DeployCache::createTable();
         JobQueue::createTable();
         Addons::createTable();
-
-        // cleanup any version 6.x files/DB options
-        V6Cleanup::cleanup();
     }
 
     public static function activate( bool $network_wide = null ) : void {
