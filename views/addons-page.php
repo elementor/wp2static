@@ -34,7 +34,7 @@
                 </td>
                 <td><?php echo $addon->type; ?></td>
                 <td>
-                    <a href="<?php echo $addon->documentation_url; ?>"><span class="dashicons dashicons-book-alt"></span></a>
+                    <a href="<?php echo $addon->docs_url; ?>"><span class="dashicons dashicons-book-alt"></span></a>
                 </td>
                 <td>
                     <a href="<?php echo esc_url( admin_url("admin.php?page={$addon->slug}") ); ?>"><span class="dashicons dashicons-admin-generic"></span></a>
