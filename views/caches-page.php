@@ -116,7 +116,7 @@ button.wp2static-button {
                 <?php $namespaces = array_keys($view['deployCacheTotalPathsByNamespace']); ?>
                 <td><?php echo $view['deployCacheTotalPathsByNamespace'][$namespaces[0]]; ?> Paths in database for <code><?php echo $namespaces[0]; ?></code></td>
                 <td>
-                    <a href="<?php echo admin_url('admin.php?page=wp2static-deploy-cache&namespace=' . urlencode($namespaces[0])); ?>" target="_blank"><button class="wp2static-button button">Show Paths</button></a>
+                    <a href="<?php echo admin_url('admin.php?page=wp2static-deploy-cache&deploy_namespace=' . urlencode($namespaces[0])); ?>" target="_blank"><button class="wp2static-button button">Show Paths</button></a>
                     <form
                         name="wp2static-deploy-cache-delete"
                         method="POST"
@@ -124,7 +124,7 @@ button.wp2static-button {
 
                     <?php wp_nonce_field( $view['nonce_action'] ); ?>
                     <input name="action" type="hidden" value="wp2static_deploy_cache_delete" />
-                    <input name="namespace" type="hidden" value="<?php echo $namespaces[0]; ?>" />
+                    <input name="deploy_namespace" type="hidden" value="<?php echo $namespaces[0]; ?>" />
 
                     <button class="wp2static-button button btn-danger">Delete Deploy Cache</button>
 
@@ -135,7 +135,7 @@ button.wp2static-button {
                     <tr>
                     <td><?php echo $view['deployCacheTotalPathsByNamespace'][$namespaces[$i]]; ?> Paths in database for <code><?php echo $namespaces[$i]; ?></code></td>
                     <td>
-                        <a href="<?php echo admin_url('admin.php?page=wp2static-deploy-cache&namespace=' . urlencode($namespaces[$i])); ?>" target="_blank"><button class="wp2static-button button">Show Paths</button></a>
+                        <a href="<?php echo admin_url('admin.php?page=wp2static-deploy-cache&deploy_namespace=' . urlencode($namespaces[$i])); ?>" target="_blank"><button class="wp2static-button button">Show Paths</button></a>
                         <form
                             name="wp2static-deploy-cache-delete"
                             method="POST"
@@ -143,7 +143,7 @@ button.wp2static-button {
 
                         <?php wp_nonce_field( $view['nonce_action'] ); ?>
                         <input name="action" type="hidden" value="wp2static_deploy_cache_delete" />
-                        <input name="namespace" type="hidden" value="<?php echo $namespaces[$i]; ?>" />
+                        <input name="deploy_namespace" type="hidden" value="<?php echo $namespaces[$i]; ?>" />
 
                         <button class="wp2static-button button btn-danger">Delete Deploy Cache</button>
 
