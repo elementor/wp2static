@@ -115,7 +115,6 @@ class CrawlCache {
                 'hashed_url' => md5( $url ),
             ]
         );
-        WsLog::l( "Removed {$url} from Crawl Cache" );
     }
 
     /**
