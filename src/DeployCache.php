@@ -125,6 +125,23 @@ class DeployCache {
         return $total;
     }
 
+    public static function getTotalsByNamespace() : array {
+        global $wpdb;
+        $counts = [];
+
+        $table_name = $wpdb->prefix . 'wp2static_deploy_cache';
+
+        $sql = "SELECT namespace, COUNT(*) AS count FROM $table_name GROUP BY namespace";
+        $rows = $wpdb->get_results($sql);
+
+        foreach ( $rows as $row ) {
+            $counts[$row->namespace] = $row->count;
+        }
+
+        return $counts;
+    }
+
+
     /**
      *  Get all cached paths
      *

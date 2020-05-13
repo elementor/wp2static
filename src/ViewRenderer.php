@@ -213,6 +213,12 @@ class ViewRenderer {
         $view['crawlQueueTotalURLs'] = CrawlQueue::getTotal();
         $view['crawlCacheTotalURLs'] = CrawlCache::getTotal();
         $view['deployCacheTotalPaths'] = DeployCache::getTotal();
+
+        if ( apply_filters('wp2static_deploy_cache_totals_by_namespace', false) ) {
+            $view['deployCacheTotalPathsByNamespace']
+                = DeployCache::getTotalsByNamespace();
+        }
+
         $view['uploads_path'] = SiteInfo::getPath( 'uploads' );
         $view['nonce_action'] = 'wp2static-caches-page';
 
