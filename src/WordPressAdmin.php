@@ -46,6 +46,20 @@ class WordPressAdmin {
         );
 
         add_action(
+            'wp_ajax_wp2static_run',
+            [ 'WP2Static\Controller', 'wp2static_run' ],
+            10,
+            0
+        );
+
+        add_action(
+            'wp_ajax_wp2static_poll_log',
+            [ 'WP2Static\Controller', 'wp2static_poll_log' ],
+            10,
+            0
+        );
+
+        add_action(
             'admin_post_wp2static_ui_save_options',
             [ 'WP2Static\Controller', 'wp2static_ui_save_options' ],
             10,

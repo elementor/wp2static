@@ -144,11 +144,12 @@ class Controller {
             'WP2Static',
             'manage_options',
             'wp2static',
-            [ 'WP2Static\ViewRenderer', 'renderOptionsPage' ],
+            [ 'WP2Static\ViewRenderer', 'renderRunPage' ],
             'dashicons-shield-alt'
         );
 
         $submenu_pages = [
+            'run' => [ 'WP2Static\ViewRenderer', 'renderRunPage' ],
             'options' => [ 'WP2Static\ViewRenderer', 'renderOptionsPage' ],
             'jobs' => [ 'WP2Static\ViewRenderer', 'renderJobsPage' ],
             'caches' => [ 'WP2Static\ViewRenderer', 'renderCachesPage' ],
@@ -159,7 +160,7 @@ class Controller {
 
         foreach ( $submenu_pages as $slug => $method ) {
             $menu_slug =
-                $slug === 'options' ? 'wp2static' : 'wp2static-' . $slug;
+                $slug === 'run' ? 'wp2static' : 'wp2static-' . $slug;
 
             $title = ucfirst( $slug );
 
@@ -531,7 +532,7 @@ class Controller {
         }
     }
 
-    public function wp2static_headless() : void {
+    public static function wp2static_headless() : void {
         WsLog::l( 'Running WP2Static\Controller::wp2static_headless()' );
         WsLog::l( 'Starting URL detection' );
         $detected_count = URLDetector::detectURLs();
@@ -629,6 +630,29 @@ class Controller {
         WsLog::l(
             'Webhook response code: ' . wp_remote_retrieve_response_code( $webhook_response )
         );
+    }
+
+    public static function wp2static_run() : void {
+        check_ajax_referer( 'wp2static-run-page', 'security' );
+
+        WsLog::l( 'Running full workflow from UI' );
+
+        self::wp2static_headless();
+
+        wp_die();
+    }
+
+    /**
+     * Give logs to UI
+     */
+    public static function wp2static_poll_log() : void {
+        check_ajax_referer( 'wp2static-run-page', 'security' );
+
+        $logs = WsLog::poll();
+
+        echo $logs;
+
+        wp_die();
     }
 }
 

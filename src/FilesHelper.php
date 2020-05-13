@@ -119,6 +119,7 @@ class FilesHelper {
             'wp-static-html-output', // exclude earlier version exports
             'wp2static-crawled-site',
             'wp2static-processed-site',
+            'plugins/wp2static',
             'wp2static-addon',
             'LICENSE',
             'README',

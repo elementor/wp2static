@@ -136,6 +136,12 @@ class ViewRenderer {
         require_once WP2STATIC_PATH . 'views/jobs-page.php';
     }
 
+    public static function renderRunPage() : void {
+        $view = [];
+
+        require_once WP2STATIC_PATH . 'views/run-page.php';
+    }
+
 
     public static function renderCachesPage() : void {
         $view = [];
