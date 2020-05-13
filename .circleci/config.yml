@@ -1,0 +1,19 @@
+version: 2
+jobs:
+  test:
+    docker:
+    - image: circleci/php:7.3.9-stretch
+    steps:
+    - run: sudo rm /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+    - checkout
+    - run: composer validate --strict
+    - run: composer install --no-interaction --no-suggest
+    - run: composer test
+#    - run: vendor/bin/parallel-lint --no-progress bootstrap.php src/
+#    - run: vendor/bin/phpcs --standard=PSR12NeutronRuleset --exclude=PEAR.Commenting.ClassComment,PEAR.Commenting.FileComment,Generic.Files.LineLength bootstrap.php src/
+#    - run: vendor/bin/phpstan analyze --no-progress
+workflows:
+  version: 2
+  workflow:
+    jobs:
+    - test

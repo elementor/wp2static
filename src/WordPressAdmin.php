@@ -46,10 +46,31 @@ class WordPressAdmin {
         );
 
         add_action(
+            'wp_ajax_wp2static_run',
+            [ 'WP2Static\Controller', 'wp2static_run' ],
+            10,
+            0
+        );
+
+        add_action(
+            'wp_ajax_wp2static_poll_log',
+            [ 'WP2Static\Controller', 'wp2static_poll_log' ],
+            10,
+            0
+        );
+
+        add_action(
             'admin_post_wp2static_ui_save_options',
             [ 'WP2Static\Controller', 'wp2static_ui_save_options' ],
             10,
             0
+        );
+
+        add_action(
+            'wp2static_register_addon',
+            [ 'WP2Static\Addons', 'registerAddon' ],
+            10,
+            5
         );
 
         add_action(
@@ -139,6 +160,13 @@ class WordPressAdmin {
         add_action(
             'admin_post_wp2static_manually_enqueue_jobs',
             [ 'WP2Static\Controller', 'wp2static_manually_enqueue_jobs' ],
+            10,
+            0
+        );
+
+        add_action(
+            'admin_post_wp2static_toggle_addon',
+            [ 'WP2Static\Controller', 'wp2static_toggle_addon' ],
             10,
             0
         );

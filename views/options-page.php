@@ -142,29 +142,26 @@ function displayCheckbox($a = null, $b = null, $c = null) {
             </td>
         </tr>
 
-    </tbody>
-</table>
-<h2>Post-processing Options</h2>
-
-<table class="widefat striped">
-    <tbody>
         <tr>
-            <td style="width:50%;">
+            <td>
                 <label
-                    for="<?php echo $view['coreOptions']['deploymentURL']->name; ?>"
-                ><?php echo $view['coreOptions']['deploymentURL']->label; ?></label>
+                    for="<?php echo $view['coreOptions']['useCrawlCaching']->name; ?>"
+                ><?php echo $view['coreOptions']['useCrawlCaching']->label; ?></label>
             </td>
             <td>
                 <input
-                    id="<?php echo $view['coreOptions']['deploymentURL']->name; ?>"
-                    name="<?php echo $view['coreOptions']['deploymentURL']->name; ?>"
-                    type="text"
-                    value="<?php echo $view['coreOptions']['deploymentURL']->value !== '' ? $view['coreOptions']['deploymentURL']->value : ''; ?>"
+                    id="<?php echo $view['coreOptions']['useCrawlCaching']->name; ?>"
+                    name="<?php echo $view['coreOptions']['useCrawlCaching']->name; ?>"
+                    value="1"
+                    type="checkbox"
+                    <?php echo (int) $view['coreOptions']['useCrawlCaching']->value === 1 ? 'checked' : ''; ?>
                 />
             </td>
         </tr>
+
     </tbody>
 </table>
+
 <h2>Deployment Options</h2>
 
 <table class="widefat striped">
