@@ -91,7 +91,7 @@ class Addons {
             return 'no-enabled-deployment-addons';
         }
 
-        return $deployment_addon_slug;
+        return $deployment_addon_slug->slug;
     }
 }
 
