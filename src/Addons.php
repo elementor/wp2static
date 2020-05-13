@@ -73,5 +73,28 @@ class Addons {
 
         WsLog::l( 'Deregistered all Addons' );
     }
+
+    /**
+     * Get enabled deployer
+     *
+     * "There can be only one!"
+     */
+    public static function getDeployer() : string {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'wp2static_addons';
+
+        $deployment_addon_slug =
+            $wpdb->get_row( "SELECT slug FROM $table_name WHERE enabled = 1" );
+
+        if ( ! $deployment_addon_slug ) {
+            return 'no-enabled-deployment-addons';
+        }
+
+        error_log('enabled deployer');
+        error_log($deployment_addon_slug);
+
+        return $deployment_addon_slug;
+    }
 }
 
