@@ -21,11 +21,19 @@
         <?php foreach( $view['addons'] as $addon ) : ?>
             <tr>
                 <td>
-                    <?php if ( $addon->enabled ) : ?>
-                        <a href="#"><button>Enabled</button></a?>
-                    <?php else: ?>
-                        <a href="#"><button>Disabled</button></a?>
-                    <?php endif; ?>
+                    <form
+                        name="wp2static-crawl-queue-delete"
+                        method="POST"
+                        action="<?php echo esc_url( admin_url('admin-post.php') ); ?>">
+
+                    <?php wp_nonce_field( $view['nonce_action'] ); ?>
+                    <input name="action" type="hidden" value="wp2static_toggle_addon" />
+                    <input name="addon_slug" type="hidden" value="<?php echo $addon->slug; ?>" />
+
+                    <button><?php echo $addon->enabled ? 'Enabled' : 'Disabled'; ?></button>
+
+                    </form>
+
                 </td>
                 <td>
                     <?php echo $addon->name; ?>

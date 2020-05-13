@@ -151,6 +151,13 @@ class WordPressAdmin {
         );
 
         add_action(
+            'admin_post_wp2static_toggle_addon',
+            [ 'WP2Static\Controller', 'wp2static_toggle_addon' ],
+            10,
+            0
+        );
+
+        add_action(
             'wp2static_process_queue',
             [ 'WP2Static\Controller', 'wp2static_process_queue' ],
             10,

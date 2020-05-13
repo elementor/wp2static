@@ -412,6 +412,39 @@ class Controller {
         }
     }
 
+    public static function wp2static_toggle_addon() : void {
+        check_admin_referer( 'wp2static-addons-page' );
+
+        $addon_slug = sanitize_text_field( $_POST['addon_slug'] );
+
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'wp2static_addons';
+
+        // get target addon's current state
+        $addon =
+            $wpdb->get_row( "SELECT enabled, type FROM $table_name WHERE slug = '$addon_slug'" );
+
+        // if deploy type, disable others when enabling this one
+        if ( $addon->type === 'deploy' ) {
+            $wpdb->update(
+                $table_name,
+                [ 'enabled' => 0 ],
+                [ 'enabled' => 1 ]
+            );
+        }
+
+        // toggle the target addon's state
+        $wpdb->update(
+            $table_name,
+            [ 'enabled' => ! $addon->enabled ],
+            [ 'slug' => $addon_slug ]
+        );
+
+        wp_safe_redirect( admin_url( 'admin.php?page=wp2static-addons' ) );
+        exit;
+    }
+
     public static function wp2static_manually_enqueue_jobs() : void {
         check_admin_referer( 'wp2static-manually-enqueue-jobs' );
 
