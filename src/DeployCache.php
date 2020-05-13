@@ -98,14 +98,18 @@ class DeployCache {
         return (bool) $hash;
     }
 
-    public static function truncate() : void {
+    public static function truncate(
+        string $namespace = self::DEFAULT_NAMESPACE
+    ) : void {
         WsLog::l( 'Deleting DeployCache' );
 
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'wp2static_deploy_cache';
 
-        $wpdb->query( "TRUNCATE TABLE $table_name" );
+        $sql = "DELETE FROM $table_name WHERE namespace = %s";
+        $sql = $wpdb->prepare($sql, $namespace);
+        $wpdb->query( $sql );
     }
 
     /**
