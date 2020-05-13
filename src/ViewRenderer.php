@@ -111,7 +111,10 @@ class ViewRenderer {
         }
 
         $view = [];
-        $view['paths'] = DeployCache::getPaths();
+        $view['paths']
+            = isset($_GET['deploy_namespace'])
+            ? DeployCache::getPaths($_GET['deploy_namespace'])
+            : DeployCache::getPaths();
 
         require_once WP2STATIC_PATH . 'views/deploy-cache-page.php';
     }
