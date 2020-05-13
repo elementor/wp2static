@@ -91,9 +91,6 @@ class Addons {
             return 'no-enabled-deployment-addons';
         }
 
-        error_log('enabled deployer');
-        error_log($deployment_addon_slug);
-
         return $deployment_addon_slug;
     }
 }

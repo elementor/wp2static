@@ -483,7 +483,11 @@ class Controller {
                     break;
                 case 'deploy':
                     WsLog::l( 'Starting deployment' );
-                    do_action( 'wp2static_deploy', ProcessedSite::getPath(), Addons::getDeployer() );
+                    do_action(
+                        'wp2static_deploy',
+                        ProcessedSite::getPath(),
+                        Addons::getDeployer()
+                    );
                     do_action( 'wp2static_post_deploy_trigger', Addons::getDeployer() );
                     break;
                 default:
