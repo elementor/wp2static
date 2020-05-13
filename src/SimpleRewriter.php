@@ -26,7 +26,7 @@ class SimpleRewriter {
     public static function rewrite( string $filename ) : void {
         $destination_url = apply_filters(
             'wp2static_set_destination_url',
-            untrailingslashit( CoreOptions::getValue( 'deploymentURL' ) )
+            '/'
         );
 
         $wordpress_site_url =
@@ -43,14 +43,18 @@ class SimpleRewriter {
         }
 
         $search_patterns = [
+            trailingslashit( $wordpress_site_url ),
             $wordpress_site_url,
             addcslashes( $wordpress_site_url, '/' ),
+            addcslashes( trailingslashit( $wordpress_site_url ), '/' ),
             URLHelper::getProtocolRelativeURL( $wordpress_site_url ),
             addcslashes( URLHelper::getProtocolRelativeURL( $wordpress_site_url ), '/' ),
         ];
 
         $replace_patterns = [
             $destination_url,
+            $destination_url,
+            addcslashes( $destination_url, '/' ),
             addcslashes( $destination_url, '/' ),
             URLHelper::getProtocolRelativeURL( $destination_url ),
             addcslashes( URLHelper::getProtocolRelativeURL( $destination_url ), '/' ),
