@@ -168,6 +168,14 @@ class CoreOptions {
 
         $queries[] = $wpdb->prepare(
             $query_string,
+            'useCrawlCaching',
+            '1',
+            'Use CrawlCache',
+            'Skip crawling unchanged URLs.'
+        );
+
+        $queries[] = $wpdb->prepare(
+            $query_string,
             'completionEmail',
             '',
             'Completion Email',
@@ -370,6 +378,12 @@ class CoreOptions {
                         ),
                     ],
                     [ 'name' => 'basicAuthPassword' ]
+                );
+
+                $wpdb->update(
+                    $table_name,
+                    [ 'value' => isset( $_POST['useCrawlCaching'] ) ? 1 : 0 ],
+                    [ 'name' => 'useCrawlCaching' ]
                 );
 
                 $wpdb->update(

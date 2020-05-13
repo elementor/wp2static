@@ -9,15 +9,16 @@ class ViewRenderer {
         $view['nonce_action'] = 'wp2static-ui-options';
 
         $view['coreOptions'] = [
-            'basicAuthUser' => CoreOptions::get( 'basicAuthUser' ),
             'basicAuthPassword' => CoreOptions::get( 'basicAuthPassword' ),
+            'basicAuthUser' => CoreOptions::get( 'basicAuthUser' ),
+            'completionEmail' => CoreOptions::get( 'completionEmail' ),
+            'completionWebhook' => CoreOptions::get( 'completionWebhook' ),
+            'completionWebhookMethod' => CoreOptions::get( 'completionWebhookMethod' ),
             'detectCustomPostTypes' => CoreOptions::get( 'detectCustomPostTypes' ),
             'detectPages' => CoreOptions::get( 'detectPages' ),
             'detectPosts' => CoreOptions::get( 'detectPosts' ),
             'detectUploads' => CoreOptions::get( 'detectUploads' ),
-            'completionEmail' => CoreOptions::get( 'completionEmail' ),
-            'completionWebhook' => CoreOptions::get( 'completionWebhook' ),
-            'completionWebhookMethod' => CoreOptions::get( 'completionWebhookMethod' ),
+            'useCrawlCaching' => CoreOptions::get( 'useCrawlCaching' ),
         ];
 
         require_once WP2STATIC_PATH . 'views/options-page.php';

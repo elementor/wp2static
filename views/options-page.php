@@ -142,6 +142,23 @@ function displayCheckbox($a = null, $b = null, $c = null) {
             </td>
         </tr>
 
+        <tr>
+            <td>
+                <label
+                    for="<?php echo $view['coreOptions']['useCrawlCaching']->name; ?>"
+                ><?php echo $view['coreOptions']['useCrawlCaching']->label; ?></label>
+            </td>
+            <td>
+                <input
+                    id="<?php echo $view['coreOptions']['useCrawlCaching']->name; ?>"
+                    name="<?php echo $view['coreOptions']['useCrawlCaching']->name; ?>"
+                    value="1"
+                    type="checkbox"
+                    <?php echo (int) $view['coreOptions']['useCrawlCaching']->value === 1 ? 'checked' : ''; ?>
+                />
+            </td>
+        </tr>
+
     </tbody>
 </table>
 
