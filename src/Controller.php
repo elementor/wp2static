@@ -278,7 +278,7 @@ class Controller {
 
         check_admin_referer( 'wp2static-ui-options' );
 
-        wp_safe_redirect( admin_url( 'admin.php?page=wp2static' ) );
+        wp_safe_redirect( admin_url( 'admin.php?page=wp2static-options' ) );
         exit;
     }
 

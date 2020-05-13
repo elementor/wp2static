@@ -74,6 +74,8 @@ class Crawler {
             CoreOptions::getValue( 'useCrawlCaching' )
         );
 
+        \WP2Static\WsLog::l( ( $use_crawl_cache ? 'Using' : 'Not using' ) . ' CrawlCache.' );
+
         // TODO: use some Iterable or other performance optimisation here
         // to help reduce resources for large URL sites
         foreach ( CrawlQueue::getCrawlablePaths() as $root_relative_path ) {
