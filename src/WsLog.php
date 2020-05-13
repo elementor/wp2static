@@ -79,6 +79,24 @@ class WsLog {
     }
 
     /**
+     * Poll latest log lines
+     */
+    public static function poll() : string {
+        global $wpdb;
+        $logs = '';
+
+        $table_name = $wpdb->prefix . 'wp2static_log';
+
+        $rows = $wpdb->get_results( "SELECT time, log FROM $table_name ORDER BY id DESC" );
+
+        foreach ( $rows as $row ) {
+            $logs .= $row->time . ': ' . $row->log . PHP_EOL;
+        }
+
+        return $logs;
+    }
+
+    /**
      *  Clear Log via truncation
      */
     public static function truncate() : void {

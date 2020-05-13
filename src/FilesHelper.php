@@ -119,6 +119,7 @@ class FilesHelper {
             'wp-static-html-output', // exclude earlier version exports
             'wp2static-crawled-site',
             'wp2static-processed-site',
+            'plugins/wp2static',
             'wp2static-addon',
             'LICENSE',
             'README',
@@ -128,7 +129,11 @@ class FilesHelper {
             'wpallimport',
         ];
 
-        $filenames_to_ignore = apply_filters( 'wp2static_filenames_to_ignore', $filenames_to_ignore );
+        $filenames_to_ignore =
+            apply_filters(
+                'wp2static_filenames_to_ignore',
+                $filenames_to_ignore
+            );
 
         $matches = 0;
 

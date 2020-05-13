@@ -9,16 +9,16 @@ class ViewRenderer {
         $view['nonce_action'] = 'wp2static-ui-options';
 
         $view['coreOptions'] = [
-            'basicAuthUser' => CoreOptions::get( 'basicAuthUser' ),
             'basicAuthPassword' => CoreOptions::get( 'basicAuthPassword' ),
+            'basicAuthUser' => CoreOptions::get( 'basicAuthUser' ),
+            'completionEmail' => CoreOptions::get( 'completionEmail' ),
+            'completionWebhook' => CoreOptions::get( 'completionWebhook' ),
+            'completionWebhookMethod' => CoreOptions::get( 'completionWebhookMethod' ),
             'detectCustomPostTypes' => CoreOptions::get( 'detectCustomPostTypes' ),
             'detectPages' => CoreOptions::get( 'detectPages' ),
             'detectPosts' => CoreOptions::get( 'detectPosts' ),
             'detectUploads' => CoreOptions::get( 'detectUploads' ),
-            'deploymentURL' => CoreOptions::get( 'deploymentURL' ),
-            'completionEmail' => CoreOptions::get( 'completionEmail' ),
-            'completionWebhook' => CoreOptions::get( 'completionWebhook' ),
-            'completionWebhookMethod' => CoreOptions::get( 'completionWebhookMethod' ),
+            'useCrawlCaching' => CoreOptions::get( 'useCrawlCaching' ),
         ];
 
         require_once WP2STATIC_PATH . 'views/options-page.php';
@@ -46,6 +46,14 @@ class ViewRenderer {
         $view['logs'] = WsLog::getAll();
 
         require_once WP2STATIC_PATH . 'views/logs-page.php';
+    }
+
+    public static function renderAddonsPage() : void {
+        $view = [];
+        $view['nonce_action'] = 'wp2static-addons-page';
+        $view['addons'] = Addons::getAll();
+
+        require_once WP2STATIC_PATH . 'views/addons-page.php';
     }
 
     public static function renderCrawlQueue() : void {
@@ -126,6 +134,12 @@ class ViewRenderer {
         $view = apply_filters( 'wp2static_render_jobs_page_vars', $view );
 
         require_once WP2STATIC_PATH . 'views/jobs-page.php';
+    }
+
+    public static function renderRunPage() : void {
+        $view = [];
+
+        require_once WP2STATIC_PATH . 'views/run-page.php';
     }
 
 

@@ -69,6 +69,13 @@ class Crawler {
 
         $site_path = rtrim( SiteInfo::getURL( 'site' ), '/' );
 
+        $use_crawl_cache = apply_filters(
+            'wp2static_use_crawl_cache',
+            CoreOptions::getValue( 'useCrawlCaching' )
+        );
+
+        \WP2Static\WsLog::l( ( $use_crawl_cache ? 'Using' : 'Not using' ) . ' CrawlCache.' );
+
         // TODO: use some Iterable or other performance optimisation here
         // to help reduce resources for large URL sites
         foreach ( CrawlQueue::getCrawlablePaths() as $root_relative_path ) {
@@ -82,8 +89,7 @@ class Crawler {
                 $page_hash = 'd41d8cd98f00b204e9800998ecf8427e';
             }
 
-            // TODO: change this to filter, allow add-ons/CLI param to ignore cache
-            if ( ! CoreOptions::getValue( 'dontUseCrawlCaching' ) ) {
+            if ( $use_crawl_cache ) {
                 // if not already cached
                 if ( CrawlCache::getUrl( $root_relative_path, $page_hash ) ) {
                     $cache_hits++;
@@ -105,10 +111,13 @@ class Crawler {
                 }
             }
 
-            // TODO: change this to filter, allow add-ons/CLI param to ignore cache
-            if ( ! CoreOptions::getValue( 'dontUseCrawlCaching' ) && $crawled_contents ) {
-                CrawlCache::addUrl( $root_relative_path, $page_hash );
-            }
+            /*
+                URLs will be added to CrawlCache, regardless of whether
+                useCrawlCaching option is enabled. This is to ensure that when
+                a user does decide to use the CrawlCache, they aren't comparing
+                to a stale cache.
+            */
+            CrawlCache::addUrl( $root_relative_path, $page_hash );
         }
 
         \WP2Static\WsLog::l(

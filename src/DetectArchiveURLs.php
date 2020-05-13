@@ -7,108 +7,62 @@ class DetectArchiveURLs {
     /**
      * Detect Archive URLs
      *
-     * @return string[] list of URLs
+     * Get list of archive URLs
+     * ie
+     *      /2020/04/
+     *      /2020/05/
+     *      /2020/
+     *
+     * @return string[] list of archive URLs
      */
     public static function detect( string $wp_site_url ) : array {
         global $wpdb;
 
-        $post_urls = [];
-        $unique_post_types = [];
+        $archive_urls = [];
 
-        $query = "
-            SELECT ID,post_type
-            FROM %s
-            WHERE post_status = '%s'
-            AND post_type NOT IN ('%s','%s')";
+        $archive_urls_with_markup = '';
 
-        $posts = $wpdb->get_results(
-            sprintf(
-                $query,
-                $wpdb->posts,
-                'publish',
-                'revision',
-                'nav_menu_item'
-            )
+        $yearly_archives = wp_get_archives(
+            [
+                'type'            => 'yearly',
+                'echo'            => 0,
+            ]
         );
 
-        foreach ( $posts as $post ) {
+        $archive_urls_with_markup .=
+            is_string( $yearly_archives ) ? $yearly_archives : '';
 
-            switch ( $post->post_type ) {
-                case 'page':
-                    break;
-                case 'post':
-                    $permalink_structure = get_option( 'permalink_structure' );
-                    $permalink = WPOverrides::get_permalink(
-                        $post->ID,
-                        $permalink_structure
-                    );
-                    break;
-                case 'attachment':
-                    break;
-                default:
-                    $permalink = get_post_permalink( $post->ID );
-                    break;
-            }
+        $monthly_archives = wp_get_archives(
+            [
+                'type'            => 'monthly',
+                'echo'            => 0,
+            ]
+        );
 
-            if ( ! isset( $permalink ) || ! is_string( $permalink ) ) {
-                continue;
-            }
+        $archive_urls_with_markup .=
+            is_string( $monthly_archives ) ? $monthly_archives : '';
 
-            if ( strpos( $permalink, '?post_type' ) !== false ) {
-                continue;
-            }
+        $daily_archives = wp_get_archives(
+            [
+                'type'            => 'daily',
+                'echo'            => 0,
+            ]
+        );
 
-            $post_urls[] = $permalink;
+        $archive_urls_with_markup .=
+            is_string( $daily_archives ) ? $daily_archives : '';
 
-            /*
-                Get the post's URL and each sub-chunk of the path as a URL
+        $url_matching_regex = '#\bhttps?://[^,\s()<>]+(?:\([\w\d]+\)|([^,[:punct:]\s]|/))#';
+        preg_match_all( $url_matching_regex, $archive_urls_with_markup, $matches );
 
-                  ie http://domain.com/2018/01/01/my-post/ to yield:
-
-                    http://domain.com/2018/01/01/my-post/
-                    http://domain.com/2018/01/01/
-                    http://domain.com/2018/01/
-                    http://domain.com/2018/
-            */
-
-            $parsed_link = parse_url( $permalink );
-            // rely on WP's site URL vs reconstructing from parsed
-            // subdomain, ie http://domain.com/mywpinstall/
-            $link_host = $wp_site_url;
-
-            if (
-                ! $parsed_link || ! array_key_exists( 'path', $parsed_link )
-            ) {
-                continue;
-            }
-
-            $link_path = $parsed_link['path'];
-
-            if ( ! is_string( $link_path ) ) {
-                continue;
-            }
-
-            // NOTE: Windows filepath support
-            $path_segments = explode( '/', $link_path );
-
-            // remove first and last empty elements
-            array_shift( $path_segments );
-            array_pop( $path_segments );
-
-            $number_of_segments = count( $path_segments );
-
-            // build each URL
-            for ( $i = 0; $i < $number_of_segments; $i++ ) {
-                $full_url = $link_host;
-
-                for ( $x = 0; $x <= $i; $x++ ) {
-                    $full_url .= $path_segments[ $x ] . '/';
-                }
-
-                $post_urls[] = $full_url;
-            }
+        foreach ( $matches[0] as $url ) {
+            $archive_urls[] = str_replace(
+                $wp_site_url,
+                '/',
+                $url
+            );
         }
 
-        return $post_urls;
+        return $archive_urls;
     }
 }

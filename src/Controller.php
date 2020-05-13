@@ -67,6 +67,7 @@ class Controller {
         $order = [
             'index.php',
             'wp2static',
+            'statichtmloutput',
         ];
 
         return $order;
@@ -109,9 +110,7 @@ class Controller {
         CrawlQueue::createTable();
         DeployCache::createTable();
         JobQueue::createTable();
-
-        // cleanup any version 6.x files/DB options
-        V6Cleanup::cleanup();
+        Addons::createTable();
     }
 
     public static function activate( bool $network_wide = null ) : void {
@@ -145,39 +144,27 @@ class Controller {
             'WP2Static',
             'manage_options',
             'wp2static',
-            [ 'WP2Static\ViewRenderer', 'renderOptionsPage' ],
+            [ 'WP2Static\ViewRenderer', 'renderRunPage' ],
             'dashicons-shield-alt'
         );
 
         $submenu_pages = [
+            'run' => [ 'WP2Static\ViewRenderer', 'renderRunPage' ],
             'options' => [ 'WP2Static\ViewRenderer', 'renderOptionsPage' ],
             'jobs' => [ 'WP2Static\ViewRenderer', 'renderJobsPage' ],
             'caches' => [ 'WP2Static\ViewRenderer', 'renderCachesPage' ],
             'diagnostics' => [ 'WP2Static\ViewRenderer', 'renderDiagnosticsPage' ],
             'logs' => [ 'WP2Static\ViewRenderer', 'renderLogsPage' ],
+            'addons' => [ 'WP2Static\ViewRenderer', 'renderAddonsPage' ],
         ];
-
-        $submenu_pages = apply_filters( 'wp2static_add_menu_items', $submenu_pages );
 
         foreach ( $submenu_pages as $slug => $method ) {
             $menu_slug =
-                $slug === 'options' ? 'wp2static' : 'wp2static-' . $slug;
+                $slug === 'run' ? 'wp2static' : 'wp2static-' . $slug;
 
             $title = ucfirst( $slug );
 
-            // TODO: expand fn to avoid core knowing about specific add-ons
-            switch ( $slug ) {
-                case 'sftp':
-                    $title = 'sFTP';
-                    break;
-                case 'cloudflare-workers':
-                    $title = 'Cloudflare Workers';
-                    break;
-                case 'bunnycdn':
-                    $title = 'BunnyCDN';
-                    break;
-            }
-
+            // @phpstan-ignore-next-line
             add_submenu_page(
                 'wp2static',
                 'WP2Static ' . ucfirst( $slug ),
@@ -291,7 +278,7 @@ class Controller {
 
         check_admin_referer( 'wp2static-ui-options' );
 
-        wp_safe_redirect( admin_url( 'admin.php?page=wp2static' ) );
+        wp_safe_redirect( admin_url( 'admin.php?page=wp2static-options' ) );
         exit;
     }
 
@@ -426,6 +413,39 @@ class Controller {
         }
     }
 
+    public static function wp2static_toggle_addon() : void {
+        check_admin_referer( 'wp2static-addons-page' );
+
+        $addon_slug = sanitize_text_field( $_POST['addon_slug'] );
+
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'wp2static_addons';
+
+        // get target addon's current state
+        $addon =
+            $wpdb->get_row( "SELECT enabled, type FROM $table_name WHERE slug = '$addon_slug'" );
+
+        // if deploy type, disable others when enabling this one
+        if ( $addon->type === 'deploy' ) {
+            $wpdb->update(
+                $table_name,
+                [ 'enabled' => 0 ],
+                [ 'enabled' => 1 ]
+            );
+        }
+
+        // toggle the target addon's state
+        $wpdb->update(
+            $table_name,
+            [ 'enabled' => ! $addon->enabled ],
+            [ 'slug' => $addon_slug ]
+        );
+
+        wp_safe_redirect( admin_url( 'admin.php?page=wp2static-addons' ) );
+        exit;
+    }
+
     public static function wp2static_manually_enqueue_jobs() : void {
         check_admin_referer( 'wp2static-manually-enqueue-jobs' );
 
@@ -496,9 +516,18 @@ class Controller {
                     WsLog::l( 'Post-processing completed' );
                     break;
                 case 'deploy':
-                    WsLog::l( 'Starting deployment' );
-                    do_action( 'wp2static_deploy', ProcessedSite::getPath() );
-                    do_action( 'wp2static_post_deploy_trigger' );
+                    if ( Addons::getDeployer() === 'no-enabled-deployment-addons' ) {
+                        WsLog::l( 'No deployment add-ons are enabled, skipping deployment.' );
+                    } else {
+                        WsLog::l( 'Starting deployment' );
+                        do_action(
+                            'wp2static_deploy',
+                            ProcessedSite::getPath(),
+                            Addons::getDeployer()
+                        );
+                        do_action( 'wp2static_post_deploy_trigger', Addons::getDeployer() );
+                    }
+
                     break;
                 default:
                     WsLog::l( 'Trying to process unknown job type' );
@@ -508,7 +537,7 @@ class Controller {
         }
     }
 
-    public function wp2static_headless() : void {
+    public static function wp2static_headless() : void {
         WsLog::l( 'Running WP2Static\Controller::wp2static_headless()' );
         WsLog::l( 'Starting URL detection' );
         $detected_count = URLDetector::detectURLs();
@@ -527,9 +556,13 @@ class Controller {
         $post_processor->processStaticSite( StaticSite::getPath() );
         WsLog::l( 'Post-processing completed' );
 
-        WsLog::l( 'Starting deployment' );
-        do_action( 'wp2static_deploy', ProcessedSite::getPath() );
-        do_action( 'wp2static_post_deploy_trigger' );
+        if ( Addons::getDeployer() === 'no-enabled-deployment-addons' ) {
+            WsLog::l( 'No deployment add-ons are enabled, skipping deployment.' );
+        } else {
+            WsLog::l( 'Starting deployment' );
+            do_action( 'wp2static_deploy', ProcessedSite::getPath(), Addons::getDeployer() );
+            do_action( 'wp2static_post_deploy_trigger', Addons::getDeployer() );
+        }
     }
 
     public static function invalidate_single_url_cache(
@@ -606,6 +639,29 @@ class Controller {
         WsLog::l(
             'Webhook response code: ' . wp_remote_retrieve_response_code( $webhook_response )
         );
+    }
+
+    public static function wp2static_run() : void {
+        check_ajax_referer( 'wp2static-run-page', 'security' );
+
+        WsLog::l( 'Running full workflow from UI' );
+
+        self::wp2static_headless();
+
+        wp_die();
+    }
+
+    /**
+     * Give logs to UI
+     */
+    public static function wp2static_poll_log() : void {
+        check_ajax_referer( 'wp2static-run-page', 'security' );
+
+        $logs = WsLog::poll();
+
+        echo $logs;
+
+        wp_die();
     }
 }
 

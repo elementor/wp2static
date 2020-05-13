@@ -106,9 +106,13 @@ class CLI {
         array $args,
         array $assoc_args
     ) : void {
-        do_action( 'wp2static_deploy', ProcessedSite::getPath() );
-
-        do_action( 'wp2static_post_deploy_trigger' );
+        if ( Addons::getDeployer() === 'no-enabled-deployment-addons' ) {
+            WP_CLI::line( 'No deployment add-ons are enabled, skipping deployment.' );
+        } else {
+            WsLog::l( 'Starting deployment' );
+            do_action( 'wp2static_deploy', ProcessedSite::getPath(), Addons::getDeployer() );
+            do_action( 'wp2static_post_deploy_trigger', Addons::getDeployer() );
+        }
     }
 
     /**
@@ -668,6 +672,44 @@ class CLI {
         }
 
         Controller::delete_all_caches();
+    }
+
+    /**
+     * Addons
+     *
+     * <list>
+     *
+     * List all registered Add-ons
+     *
+     * @param string[] $args Arguments after command
+     * @param string[] $assoc_args Parameters after command
+     */
+    public function addons( array $args, array $assoc_args ) : void {
+        $action = isset( $args[0] ) ? $args[0] : null;
+        $option_name = isset( $args[1] ) ? $args[1] : null;
+        $value = isset( $args[2] ) ? $args[2] : null;
+
+        if ( $action === 'list' ) {
+            $addons = Addons::getAll();
+
+            $pretty_addons = [];
+
+            foreach ( $addons as $addon ) {
+                $pretty_addons[] = [
+                    'Enabled' => $addon->enabled,
+                    'Slug' => $addon->slug,
+                    'Name' => $addon->name,
+                    'Description' => $addon->description,
+                    'Docs' => $addon->docs_url,
+                ];
+            }
+
+            WP_CLI\Utils\format_items(
+                'table',
+                $pretty_addons,
+                [ 'Enabled', 'Slug', 'Name', 'Description', 'Docs' ]
+            );
+        }
     }
 }
 

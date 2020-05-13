@@ -20,10 +20,10 @@ class CoreOptions {
         global $wpdb;
 
         // check for required options, seed if non-existant
-        $deployment_url = self::get( 'deploymentURL' );
+        $completion_email = self::get( 'completionEmail' );
 
-        if ( ! isset( $deployment_url ) ) {
-            WsLog::l( 'Deployment URL option not found, seeding coreOptions' );
+        if ( ! isset( $completion_email ) ) {
+            WsLog::l( 'Required option not found, seeding coreOptions' );
             self::seedOptions();
         }
     }
@@ -168,10 +168,10 @@ class CoreOptions {
 
         $queries[] = $wpdb->prepare(
             $query_string,
-            'deploymentURL',
-            'https://example.com',
-            'Deployment URL',
-            'URL your static site will be hosted at.'
+            'useCrawlCaching',
+            '1',
+            'Use CrawlCache',
+            'Skip crawling unchanged URLs.'
         );
 
         $queries[] = $wpdb->prepare(
@@ -340,12 +340,6 @@ class CoreOptions {
             case 'core':
                 $wpdb->update(
                     $table_name,
-                    [ 'value' => esc_url_raw( $_POST['deploymentURL'] ) ],
-                    [ 'name' => 'deploymentURL' ]
-                );
-
-                $wpdb->update(
-                    $table_name,
                     [ 'value' => isset( $_POST['detectCustomPostTypes'] ) ? 1 : 0 ],
                     [ 'name' => 'detectCustomPostTypes' ]
                 );
@@ -384,6 +378,12 @@ class CoreOptions {
                         ),
                     ],
                     [ 'name' => 'basicAuthPassword' ]
+                );
+
+                $wpdb->update(
+                    $table_name,
+                    [ 'value' => isset( $_POST['useCrawlCaching'] ) ? 1 : 0 ],
+                    [ 'name' => 'useCrawlCaching' ]
                 );
 
                 $wpdb->update(
