@@ -30,12 +30,12 @@ class PostProcessor {
     public function processStaticSite(
         string $static_site_path
     ) : void {
-        \WP2Static\WsLog::l(
+        WsLog::l(
             'Processing crawled site.'
         );
 
         if ( ! is_dir( $static_site_path ) ) {
-            \WP2Static\WsLog::l(
+            WsLog::l(
                 'No static site directory to process.'
             );
 

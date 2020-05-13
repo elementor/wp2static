@@ -65,7 +65,7 @@ class Crawler {
         $crawled = 0;
         $cache_hits = 0;
 
-        \WP2Static\WsLog::l( 'Starting to crawl detected URLs.' );
+        WsLog::l( 'Starting to crawl detected URLs.' );
 
         $site_path = rtrim( SiteInfo::getURL( 'site' ), '/' );
 
@@ -74,7 +74,7 @@ class Crawler {
             CoreOptions::getValue( 'useCrawlCaching' )
         );
 
-        \WP2Static\WsLog::l( ( $use_crawl_cache ? 'Using' : 'Not using' ) . ' CrawlCache.' );
+        WsLog::l( ( $use_crawl_cache ? 'Using' : 'Not using' ) . ' CrawlCache.' );
 
         // TODO: use some Iterable or other performance optimisation here
         // to help reduce resources for large URL sites
@@ -120,7 +120,7 @@ class Crawler {
             CrawlCache::addUrl( $root_relative_path, $page_hash );
         }
 
-        \WP2Static\WsLog::l(
+        WsLog::l(
             "Crawling complete. $crawled crawled, $cache_hits skipped (cached)."
         );
 

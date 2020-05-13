@@ -18,7 +18,7 @@ class URLDetector {
      * Detect URLs within site
      */
     public static function detectURLs() : string {
-        \WP2Static\WsLog::l( 'Starting to detect WordPress site URLs.' );
+        WsLog::l( 'Starting to detect WordPress site URLs.' );
 
         $arrays_to_merge = [];
 
@@ -139,7 +139,7 @@ class URLDetector {
 
         $total_detected = (string) count( $unique_urls );
 
-        \WP2Static\WsLog::l(
+        WsLog::l(
             "Detection complete. $total_detected URLs added to Crawl Queue."
         );
 
