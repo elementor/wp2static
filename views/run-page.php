@@ -16,23 +16,46 @@ jQuery(document).ready(function($){
         security: '<?php echo $run_nonce; ?>',
     };
 
+    function responseErrorHandler( jqXHR, textStatus, errorThrown ) {
+        $("#wp2static-spinner").removeClass("is-active");
+        $("#wp2static-run" ).prop('disabled', false);
+
+        console.log(errorThrown);
+        console.log(jqXHR.responseText);
+
+        alert(`${jqXHR.status} error code returned from server.
+Please check your server's error logs or try increasing your max_execution_time limit in PHP if this consistently fails after the same duration.
+More information of the error may be logged in your browser's console.`);
+    }
+
+    function pollLogs() {
+        $.post(ajaxurl, log_data, function(response) {
+            $('#wp2static-run-log').val(response);
+            $("#wp2static-poll-logs" ).prop('disabled', false);
+        });
+    }
+
     $( "#wp2static-run" ).click(function() {
         $("#wp2static-spinner").addClass("is-active");
+        $("#wp2static-run" ).prop('disabled', true);
 
-        $.post(ajaxurl, run_data, function(response) {
-            $("#wp2static-spinner").removeClass("is-active");
-
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: run_data,
+            success: function() {
+                $("#wp2static-spinner").removeClass("is-active");
+                $("#wp2static-run" ).prop('disabled', false);
+                pollLogs();
+            },
+            error: responseErrorHandler
         });
 
     });
 
     $( "#wp2static-poll-logs" ).click(function() {
-        $.post(ajaxurl, log_data, function(response) {
-            console.log(response);
-
-            $('#wp2static-run-log').val(response);
-        });
-
+        $("#wp2static-poll-logs" ).prop('disabled', true);
+        pollLogs();
     });
 });
 </script>
