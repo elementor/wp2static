@@ -516,13 +516,18 @@ class Controller {
                     WsLog::l( 'Post-processing completed' );
                     break;
                 case 'deploy':
-                    WsLog::l( 'Starting deployment' );
-                    do_action(
-                        'wp2static_deploy',
-                        ProcessedSite::getPath(),
-                        Addons::getDeployer()
-                    );
-                    do_action( 'wp2static_post_deploy_trigger', Addons::getDeployer() );
+                    if ( Addons::getDeployer() === 'no-enabled-deployment-addons' ) {
+                        WsLog::l( 'No deployment add-ons are enabled, skipping deployment.' );
+                    } else {
+                        WsLog::l( 'Starting deployment' );
+                        do_action(
+                            'wp2static_deploy',
+                            ProcessedSite::getPath(),
+                            Addons::getDeployer()
+                        );
+                        do_action( 'wp2static_post_deploy_trigger', Addons::getDeployer() );
+                    }
+
                     break;
                 default:
                     WsLog::l( 'Trying to process unknown job type' );
@@ -551,9 +556,13 @@ class Controller {
         $post_processor->processStaticSite( StaticSite::getPath() );
         WsLog::l( 'Post-processing completed' );
 
-        WsLog::l( 'Starting deployment' );
-        do_action( 'wp2static_deploy', ProcessedSite::getPath(), Addons::getDeployer() );
-        do_action( 'wp2static_post_deploy_trigger', Addons::getDeployer() );
+        if ( Addons::getDeployer() === 'no-enabled-deployment-addons' ) {
+            WsLog::l( 'No deployment add-ons are enabled, skipping deployment.' );
+        } else {
+            WsLog::l( 'Starting deployment' );
+            do_action( 'wp2static_deploy', ProcessedSite::getPath(), Addons::getDeployer() );
+            do_action( 'wp2static_post_deploy_trigger', Addons::getDeployer() );
+        }
     }
 
     public static function invalidate_single_url_cache(

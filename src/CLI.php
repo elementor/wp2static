@@ -106,9 +106,13 @@ class CLI {
         array $args,
         array $assoc_args
     ) : void {
-        do_action( 'wp2static_deploy', ProcessedSite::getPath(), Addons::getDeployer() );
-
-        do_action( 'wp2static_post_deploy_trigger', Addons::getDeployer() );
+        if ( Addons::getDeployer() === 'no-enabled-deployment-addons' ) {
+            WP_CLI::line( 'No deployment add-ons are enabled, skipping deployment.' );
+        } else {
+            WsLog::l( 'Starting deployment' );
+            do_action( 'wp2static_deploy', ProcessedSite::getPath(), Addons::getDeployer() );
+            do_action( 'wp2static_post_deploy_trigger', Addons::getDeployer() );
+        }
     }
 
     /**
