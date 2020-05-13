@@ -47,9 +47,15 @@ class DeployCache {
         $file_hash = md5( $file_contents );
 
         $sql = "INSERT INTO {$deploy_cache_table} (path_hash,path,file_hash,namespace)" .
-            ' VALUES (%s,%s,%s,%s) ON DUPLICATE KEY UPDATE file_hash = %s';
+            ' VALUES (%s,%s,%s,%s) ON DUPLICATE KEY UPDATE file_hash = %s, namespace = %s';
 
-        $sql = $wpdb->prepare( $sql, $path_hash, $local_path, $file_hash, $namespace, $file_hash );
+        $sql = $wpdb->prepare(
+          // Insert values
+          $sql, $path_hash, $local_path, $file_hash, $namespace,
+
+          // Duplicate key values
+          $file_hash, $namespace
+        );
 
         $wpdb->query( $sql );
     }
