@@ -118,6 +118,12 @@ class Crawler {
                 to a stale cache.
             */
             CrawlCache::addUrl( $root_relative_path, $page_hash );
+
+            // incrementally log crawl progress
+            if ( $crawled % 300 === 0 ) {
+                $notice = "Crawling progress: $crawled crawled, $cache_hits skipped (cached).";
+                WsLog::l( $notice );
+            }
         }
 
         WsLog::l(

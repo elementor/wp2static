@@ -43,6 +43,7 @@ More information of the error may be logged in your browser's console.`);
             url: ajaxurl,
             type: 'POST',
             data: run_data,
+            timeout: 0,
             success: function() {
                 $("#wp2static-spinner").removeClass("is-active");
                 $("#wp2static-run" ).prop('disabled', false);
@@ -62,16 +63,16 @@ More information of the error may be logged in your browser's console.`);
 
 <br>
 
-<button id="wp2static-run">Generate static site</button>
+<button class="button button-primary" id="wp2static-run">Generate static site</button>
 
 <div id="wp2static-spinner" class="spinner" style="padding:2px;float:none;"></div>
 
 <br>
 <br>
 
-<button id="wp2static-poll-logs">Refresh logs</button>
+<button class="button" id="wp2static-poll-logs">Refresh logs</button>
 <br>
 <br>
 <textarea id="wp2static-run-log" rows=30 style="width:99%;">
-Logs will appear here
+Logs will appear here on completion or click "Refresh logs" to check progress
 </textarea>
