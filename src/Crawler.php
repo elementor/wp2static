@@ -28,6 +28,15 @@ class Crawler {
      */
     public function __construct() {
         $this->ch = curl_init();
+        curl_setopt( $this->ch, CURLOPT_RETURNTRANSFER, 1 );
+        curl_setopt( $this->ch, CURLOPT_SSL_VERIFYHOST, 0 );
+        curl_setopt( $this->ch, CURLOPT_SSL_VERIFYPEER, 0 );
+        curl_setopt( $this->ch, CURLOPT_HEADER, 0 );
+        curl_setopt( $this->ch, CURLOPT_FOLLOWLOCATION, 1 );
+        curl_setopt( $this->ch, CURLOPT_CONNECTTIMEOUT, 0 );
+        curl_setopt( $this->ch, CURLOPT_TIMEOUT, 600 );
+        curl_setopt( $this->ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1 );
+
         $this->request = new Request();
 
         $port_override = apply_filters(
@@ -35,7 +44,6 @@ class Crawler {
             null
         );
 
-        // TODO: apply this filter when option is saved
         if ( $port_override ) {
             curl_setopt( $this->ch, CURLOPT_PORT, $port_override );
         }
@@ -47,9 +55,15 @@ class Crawler {
         );
 
         $auth_user = CoreOptions::getValue( 'basicAuthUser' );
+
+        // quick return to avoid extra options fetch
+        if ( ! $auth_user ) {
+            return;
+        }
+
         $auth_password = CoreOptions::getValue( 'basicAuthPassword' );
 
-        if ( $auth_user || $auth_password ) {
+        if ( $auth_user && $auth_password ) {
             curl_setopt(
                 $this->ch,
                 CURLOPT_USERPWD,
@@ -80,8 +94,9 @@ class Crawler {
         // to help reduce resources for large URL sites
         foreach ( CrawlQueue::getCrawlablePaths() as $root_relative_path ) {
             $absolute_uri = new URL( $site_path . $root_relative_path );
+            $url = $absolute_uri->get();
 
-            $crawled_contents = $this->crawlURL( $absolute_uri );
+            $crawled_contents = $this->crawlURL( $url );
 
             if ( ! is_null( $crawled_contents ) ) {
                 $page_hash = md5( $crawled_contents );
@@ -142,20 +157,20 @@ class Crawler {
     /**
      * Crawls a string of full URL within WordPressSite
      */
-    public function crawlURL( URL $url ) : ?string {
+    public function crawlURL( string $url ) : ?string {
         $handle = $this->ch;
 
         if ( ! is_resource( $handle ) ) {
             return null;
         }
 
-        $response = $this->request->getURL( $url->get(), $handle );
+        $response = $this->request->getURL( $url, $handle );
 
         $crawled_contents = $response['body'];
 
         if ( $response['code'] === 404 ) {
             $site_path = rtrim( SiteInfo::getURL( 'site' ), '/' );
-            $url_slug = str_replace( $site_path, '', $url->get() );
+            $url_slug = str_replace( $site_path, '', $url );
             WsLog::l( '404 for URL ' . $url_slug );
             CrawlCache::rmUrl( $url_slug );
             $crawled_contents = null;
