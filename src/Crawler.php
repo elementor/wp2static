@@ -126,13 +126,9 @@ class Crawler {
                 }
             }
 
-            /*
-                URLs will be added to CrawlCache, regardless of whether
-                useCrawlCaching option is enabled. This is to ensure that when
-                a user does decide to use the CrawlCache, they aren't comparing
-                to a stale cache.
-            */
-            CrawlCache::addUrl( $root_relative_path, $page_hash );
+            if ( $use_crawl_cache ) {
+                CrawlCache::addUrl( $root_relative_path, $page_hash );
+            }
 
             // incrementally log crawl progress
             if ( $crawled % 300 === 0 ) {
