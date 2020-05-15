@@ -3,7 +3,7 @@ Contributors: leonstafford
 Tags: security, performance, static
 Requires at least: 4.0
 Tested up to: 5.4
-Requires PHP: 7.2
+Requires PHP: 7.3
 Stable tag: 7.0-alpha-007
 
 Static site generator functionality for WordPress.

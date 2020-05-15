@@ -54,7 +54,7 @@
             <td>
               <p>The current officially supported PHP versions can be found on <a href="http://php.net/supported-versions.php" target="_blank">PHP.net</a></p>
 
-              <p>As official security support drops for PHP 7.2 at the end of 2020, it is strongly recommended to upgraded your WordPress hosting environment to PHP 7.3 or above.<br><br>For help on upgrading your environment, please join our support community at <a href="https://wp2static.com/community/" target="_blank">https://wp2static.com/community/</a></p>
+              <p>WP2Static now requires a minimum of PHP 7.3 and recommends PHP 7.4 for better performance. If your hosting provider doesn't provide PHP 7.4 or at least PHP 7.3, find a better one!</p>
             </td>
         </tr>
         <tr>
