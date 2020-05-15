@@ -18,6 +18,7 @@ class ViewRenderer {
             'detectPages' => CoreOptions::get( 'detectPages' ),
             'detectPosts' => CoreOptions::get( 'detectPosts' ),
             'detectUploads' => CoreOptions::get( 'detectUploads' ),
+            'deploymentURL' => CoreOptions::get( 'deploymentURL' ),
             'useCrawlCaching' => CoreOptions::get( 'useCrawlCaching' ),
         ];
 

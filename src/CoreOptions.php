@@ -160,6 +160,14 @@ class CoreOptions {
 
         $queries[] = $wpdb->prepare(
             $query_string,
+            'deploymentURL',
+            'https://example.com',
+            'Deployment URL',
+            'URL your static site will be hosted at.'
+        );
+
+        $queries[] = $wpdb->prepare(
+            $query_string,
             'basicAuthPassword',
             '',
             'Basic Auth Password',
@@ -227,6 +235,15 @@ class CoreOptions {
 
         if ( $name === 'basicAuthPassword' ) {
             return self::encrypt_decrypt( 'decrypt', $option_value );
+        }
+
+        // default deploymentURL is '/', else remove trailing slash
+        if ( $name === 'deploymentURL' ) {
+            if ( $option_value === '/' ) {
+                return $option_value;
+            }
+
+            return untrailingslashit( $option_value );
         }
 
         return $option_value;
@@ -360,6 +377,12 @@ class CoreOptions {
                     $table_name,
                     [ 'value' => isset( $_POST['detectUploads'] ) ? 1 : 0 ],
                     [ 'name' => 'detectUploads' ]
+                );
+
+                $wpdb->update(
+                    $table_name,
+                    [ 'value' => esc_url_raw( $_POST['deploymentURL'] ) ],
+                    [ 'name' => 'deploymentURL' ]
                 );
 
                 $wpdb->update(

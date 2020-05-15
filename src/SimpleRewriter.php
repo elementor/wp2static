@@ -26,7 +26,7 @@ class SimpleRewriter {
     public static function rewrite( string $filename ) : void {
         $destination_url = apply_filters(
             'wp2static_set_destination_url',
-            '/'
+            CoreOptions::getValue( 'deploymentURL' )
         );
 
         $wordpress_site_url =

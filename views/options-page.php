@@ -162,6 +162,28 @@ function displayCheckbox($a = null, $b = null, $c = null) {
     </tbody>
 </table>
 
+<h2>Post-processing Options</h2>
+
+<table class="widefat striped">
+    <tbody>
+        <tr>
+            <td style="width:50%;">
+                <label
+                    for="<?php echo $view['coreOptions']['deploymentURL']->name; ?>"
+                ><?php echo $view['coreOptions']['deploymentURL']->label; ?></label>
+            </td>
+            <td>
+                <input
+                    id="<?php echo $view['coreOptions']['deploymentURL']->name; ?>"
+                    name="<?php echo $view['coreOptions']['deploymentURL']->name; ?>"
+                    type="text"
+                    value="<?php echo $view['coreOptions']['deploymentURL']->value !== '' ? $view['coreOptions']['deploymentURL']->value : ''; ?>"
+                />
+            </td>
+        </tr>
+    </tbody>
+</table>
+
 <h2>Deployment Options</h2>
 
 <table class="widefat striped">
