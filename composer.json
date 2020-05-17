@@ -60,6 +60,7 @@
         "coverage": "vendor/bin/phpunit tests/unit --coverage-html coverage --whitelist src/",
         "lint": "vendor/bin/parallel-lint --exclude vendor .",
         "test": [
+            "composer validate --strict",
             "@lint",
             "@phpcs",
             "@phpstan",
