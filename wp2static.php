@@ -53,9 +53,6 @@ remove_action( 'wp_print_styles', 'print_emoji_styles' );
 
 if ( defined( 'WP_CLI' ) ) {
     WP_CLI::add_command( 'wp2static', 'WP2Static\CLI' );
-    WP_CLI::add_command(
-        'wp2static options',
-        [ 'WP2Static\CLI', 'options' ]
-    );
+    WP_CLI::add_command( 'wp2static options', [ 'WP2Static\CLI', 'options' ] );
 }
 
