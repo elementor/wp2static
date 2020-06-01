@@ -8,6 +8,8 @@
 
 namespace WP2Static;
 
+define( 'WP2STATIC_REDIRECT_CODES', [301, 302, 303, 307, 308] );
+
 class Crawler {
 
     /**
@@ -36,6 +38,7 @@ class Crawler {
         curl_setopt( $this->ch, CURLOPT_CONNECTTIMEOUT, 0 );
         curl_setopt( $this->ch, CURLOPT_TIMEOUT, 600 );
         curl_setopt( $this->ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1 );
+        curl_setopt( $this->ch, CURLOPT_MAXREDIRS, 1);
 
         $this->request = new Request();
 
@@ -82,6 +85,10 @@ class Crawler {
         WsLog::l( 'Starting to crawl detected URLs.' );
 
         $site_path = rtrim( SiteInfo::getURL( 'site' ), '/' );
+        $site_host = parse_url( $site_path, PHP_URL_HOST );
+        $site_port = parse_url( $site_path, PHP_URL_PORT );
+        $site_host = $site_port ? $site_host . ":$site_port" : $site_host;
+        $site_urls = [ "http://$site_host", "https://$site_host" ];
 
         $use_crawl_cache = apply_filters(
             'wp2static_use_crawl_cache',
@@ -96,12 +103,17 @@ class Crawler {
             $absolute_uri = new URL( $site_path . $root_relative_path );
             $url = $absolute_uri->get();
 
-            $crawled_contents = $this->crawlURL( $url );
+            $response = $this->crawlURL( $url );
+            $crawled_contents = $response['body'];
 
-            if ( ! is_null( $crawled_contents ) ) {
+            if ( $response['effective_url'] ) {
+                $response['effective_url'] = str_replace( $site_urls, '',
+                                                          $response['effective_url'] );
+                $page_hash = md5( $response['code'] . $response['effective_url'] );
+            } else if ( ! is_null( $crawled_contents ) ) {
                 $page_hash = md5( $crawled_contents );
             } else {
-                $page_hash = 'd41d8cd98f00b204e9800998ecf8427e';
+                $page_hash = md5( $response['code'] );
             }
 
             if ( $use_crawl_cache ) {
@@ -126,9 +138,8 @@ class Crawler {
                 }
             }
 
-            if ( $use_crawl_cache ) {
-                CrawlCache::addUrl( $root_relative_path, $page_hash );
-            }
+            CrawlCache::addUrl( $root_relative_path, $page_hash, $response['code'],
+                                $response['effective_url'] );
 
             // incrementally log crawl progress
             if ( $crawled % 300 === 0 ) {
@@ -153,7 +164,7 @@ class Crawler {
     /**
      * Crawls a string of full URL within WordPressSite
      */
-    public function crawlURL( string $url ) : ?string {
+    public function crawlURL( string $url ) : ?array {
         $handle = $this->ch;
 
         if ( ! is_resource( $handle ) ) {
@@ -169,9 +180,11 @@ class Crawler {
             $url_slug = str_replace( $site_path, '', $url );
             WsLog::l( '404 for URL ' . $url_slug );
             CrawlCache::rmUrl( $url_slug );
-            $crawled_contents = null;
+            $response['body'] = null;
+        } else if ( in_array( $response['code'], WP2STATIC_REDIRECT_CODES ) ) {
+            $response['body'] = null;
         }
 
-        return $crawled_contents;
+        return $response;
     }
 }

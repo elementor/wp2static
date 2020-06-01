@@ -16,6 +16,8 @@ class CrawlCache {
             url VARCHAR(2083) NOT NULL,
             page_hash CHAR(32) NOT NULL,
             time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+            status SMALLINT DEFAULT 200 NOT NULL,
+            redirect_to VARCHAR(2083) NULL,
             PRIMARY KEY  (hashed_url)
         ) $charset_collate;";
 
@@ -43,21 +45,26 @@ class CrawlCache {
         return $urls;
     }
 
-    public static function addUrl( string $url, string $page_hash ) : void {
+    public static function addUrl( string $url, string $page_hash, int $status,
+                                   ?string $redirect_to ) : void {
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'wp2static_crawl_cache';
-        $sql = "insert into {$table_name} (time, hashed_url, url, page_hash)
-                VALUES (%s, %s, %s, %s) ON DUPLICATE KEY
-                UPDATE time = %s, page_hash = %s";
+        $sql = "insert into {$table_name} (time, hashed_url, url, page_hash, status, redirect_to)
+                VALUES (%s, %s, %s, %s, %s, %s) ON DUPLICATE KEY
+                UPDATE time = %s, page_hash = %s, status = %s, redirect_to = %s";
         $sql = $wpdb->prepare(
             $sql,
             current_time( 'mysql' ),
             md5( $url ),
             $url,
             $page_hash,
+            $status,
+            $redirect_to,
             current_time( 'mysql' ),
-            $page_hash
+            $page_hash,
+            $status,
+            $redirect_to,
         );
 
         $wpdb->query( $sql );
