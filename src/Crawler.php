@@ -105,11 +105,11 @@ class Crawler {
 
             $response = $this->crawlURL( $url );
             $crawled_contents = $response['body'];
+            $redirect_to = null;
 
-            if ( $response['effective_url'] ) {
-                $response['effective_url'] = str_replace( $site_urls, '',
-                                                          $response['effective_url'] );
-                $page_hash = md5( $response['code'] . $response['effective_url'] );
+            if ( in_array( $response['code'], WP2STATIC_REDIRECT_CODES ) ) {
+                $redirect_to = str_replace( $site_urls, '', $response['effective_url'] );
+                $page_hash = md5( $response['code'] . $redirect_to );
             } else if ( ! is_null( $crawled_contents ) ) {
                 $page_hash = md5( $crawled_contents );
             } else {
@@ -139,7 +139,7 @@ class Crawler {
             }
 
             CrawlCache::addUrl( $root_relative_path, $page_hash, $response['code'],
-                                $response['effective_url'] );
+                                $redirect_to );
 
             // incrementally log crawl progress
             if ( $crawled % 300 === 0 ) {
