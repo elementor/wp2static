@@ -164,10 +164,10 @@ class CrawlCache {
         $rows = $wpdb->get_results( "SELECT url, redirect_to FROM $table_name WHERE 0 < LENGTH(redirect_to)" );
 
         foreach ( $rows as $row ) {
-            array_push($redirs, [
+            $redirs[$row->url] = [
                 'url' => $row->url,
                 'redirect_to' => $row->redirect_to,
-            ]);
+            ];
         }
 
         return $redirs;
