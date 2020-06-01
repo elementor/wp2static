@@ -41,6 +41,11 @@ class WordPressAdmin {
         );
 
         add_filter(
+            'wp2static_list_redirects',
+            [ 'WP2Static\CrawlCache', 'wp2static_list_redirects']
+        );
+
+        add_filter(
             'cron_request',
             [ 'WP2Static\WPCron', 'wp2static_cron_with_http_basic_auth' ]
         );
