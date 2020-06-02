@@ -113,8 +113,8 @@ class ViewRenderer {
 
         $view = [];
         $view['paths']
-            = isset($_GET['deploy_namespace'])
-            ? DeployCache::getPaths($_GET['deploy_namespace'])
+            = isset( $_GET['deploy_namespace'] )
+            ? DeployCache::getPaths( $_GET['deploy_namespace'] )
             : DeployCache::getPaths();
 
         require_once WP2STATIC_PATH . 'views/deploy-cache-page.php';
@@ -218,7 +218,7 @@ class ViewRenderer {
         $view['crawlCacheTotalURLs'] = CrawlCache::getTotal();
         $view['deployCacheTotalPaths'] = DeployCache::getTotal();
 
-        if ( apply_filters('wp2static_deploy_cache_totals_by_namespace', false) ) {
+        if ( apply_filters( 'wp2static_deploy_cache_totals_by_namespace', false ) ) {
             $view['deployCacheTotalPathsByNamespace']
                 = DeployCache::getTotalsByNamespace();
         }

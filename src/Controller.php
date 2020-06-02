@@ -331,8 +331,8 @@ class Controller {
     public static function wp2static_deploy_cache_delete() : void {
         check_admin_referer( 'wp2static-caches-page' );
 
-        if ( isset($_POST['deploy_namespace']) ) {
-            DeployCache::truncate($_POST['deploy_namespace']);
+        if ( isset( $_POST['deploy_namespace'] ) ) {
+            DeployCache::truncate( $_POST['deploy_namespace'] );
         } else {
             DeployCache::truncate();
         }

@@ -51,10 +51,14 @@ class DeployCache {
 
         $sql = $wpdb->prepare(
           // Insert values
-          $sql, $path_hash, $local_path, $file_hash, $namespace,
-
-          // Duplicate key values
-          $file_hash, $namespace
+            $sql,
+            $path_hash,
+            $local_path,
+            $file_hash,
+            $namespace,
+            // Duplicate key values
+            $file_hash,
+            $namespace
         );
 
         $wpdb->query( $sql );
@@ -108,7 +112,7 @@ class DeployCache {
         $table_name = $wpdb->prefix . 'wp2static_deploy_cache';
 
         $sql = "DELETE FROM $table_name WHERE namespace = %s";
-        $sql = $wpdb->prepare($sql, $namespace);
+        $sql = $wpdb->prepare( $sql, $namespace );
         $wpdb->query( $sql );
     }
 
@@ -123,12 +127,15 @@ class DeployCache {
         $table_name = $wpdb->prefix . 'wp2static_deploy_cache';
 
         $sql = "SELECT count(*) FROM $table_name WHERE namespace = %s";
-        $sql = $wpdb->prepare($sql, $namespace);
+        $sql = $wpdb->prepare( $sql, $namespace );
         $total = $wpdb->get_var( $sql );
 
         return $total;
     }
 
+    /**
+     *  @return mixed[] namespace totals
+     */
     public static function getTotalsByNamespace() : array {
         global $wpdb;
         $counts = [];
@@ -136,10 +143,10 @@ class DeployCache {
         $table_name = $wpdb->prefix . 'wp2static_deploy_cache';
 
         $sql = "SELECT namespace, COUNT(*) AS count FROM $table_name GROUP BY namespace";
-        $rows = $wpdb->get_results($sql);
+        $rows = $wpdb->get_results( $sql );
 
         foreach ( $rows as $row ) {
-            $counts[$row->namespace] = $row->count;
+            $counts[ $row->namespace ] = $row->count;
         }
 
         return $counts;
@@ -160,7 +167,7 @@ class DeployCache {
         $table_name = $wpdb->prefix . 'wp2static_deploy_cache';
 
         $sql = "SELECT path FROM $table_name WHERE namespace = %s";
-        $sql = $wpdb->prepare($sql, $namespace);
+        $sql = $wpdb->prepare( $sql, $namespace );
         $rows = $wpdb->get_results( $sql );
 
         foreach ( $rows as $row ) {
