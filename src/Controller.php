@@ -331,7 +331,11 @@ class Controller {
     public static function wp2static_deploy_cache_delete() : void {
         check_admin_referer( 'wp2static-caches-page' );
 
-        DeployCache::truncate();
+        if ( isset($_POST['deploy_namespace']) ) {
+            DeployCache::truncate($_POST['deploy_namespace']);
+        } else {
+            DeployCache::truncate();
+        }
 
         wp_safe_redirect( admin_url( 'admin.php?page=wp2static-caches' ) );
         exit;

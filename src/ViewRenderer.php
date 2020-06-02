@@ -112,7 +112,10 @@ class ViewRenderer {
         }
 
         $view = [];
-        $view['paths'] = DeployCache::getPaths();
+        $view['paths']
+            = isset($_GET['deploy_namespace'])
+            ? DeployCache::getPaths($_GET['deploy_namespace'])
+            : DeployCache::getPaths();
 
         require_once WP2STATIC_PATH . 'views/deploy-cache-page.php';
     }
@@ -214,6 +217,12 @@ class ViewRenderer {
         $view['crawlQueueTotalURLs'] = CrawlQueue::getTotal();
         $view['crawlCacheTotalURLs'] = CrawlCache::getTotal();
         $view['deployCacheTotalPaths'] = DeployCache::getTotal();
+
+        if ( apply_filters('wp2static_deploy_cache_totals_by_namespace', false) ) {
+            $view['deployCacheTotalPathsByNamespace']
+                = DeployCache::getTotalsByNamespace();
+        }
+
         $view['uploads_path'] = SiteInfo::getPath( 'uploads' );
         $view['nonce_action'] = 'wp2static-caches-page';
 
