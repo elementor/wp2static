@@ -42,7 +42,7 @@ class WordPressAdmin {
 
         add_filter(
             'wp2static_list_redirects',
-            [ 'WP2Static\CrawlCache', 'wp2static_list_redirects']
+            [ 'WP2Static\CrawlCache', 'wp2static_list_redirects' ]
         );
 
         add_filter(

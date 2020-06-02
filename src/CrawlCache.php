@@ -156,15 +156,21 @@ class CrawlCache {
         return $total;
     }
 
-    public static function wp2static_list_redirects( array $redirs ) {
+    /**
+     * @param mixed[] $redirs
+     * @return mixed[] redirects
+     */
+    public static function wp2static_list_redirects( array $redirs ) : array {
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'wp2static_crawl_cache';
 
-        $rows = $wpdb->get_results( "SELECT url, redirect_to FROM $table_name WHERE 0 < LENGTH(redirect_to)" );
+        $rows = $wpdb->get_results(
+            "SELECT url, redirect_to FROM $table_name WHERE 0 < LENGTH(redirect_to)"
+        );
 
         foreach ( $rows as $row ) {
-            $redirs[$row->url] = [
+            $redirs[ $row->url ] = [
                 'url' => $row->url,
                 'redirect_to' => $row->redirect_to,
             ];

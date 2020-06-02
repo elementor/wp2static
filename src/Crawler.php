@@ -8,7 +8,7 @@
 
 namespace WP2Static;
 
-define( 'WP2STATIC_REDIRECT_CODES', [301, 302, 303, 307, 308] );
+define( 'WP2STATIC_REDIRECT_CODES', [ 301, 302, 303, 307, 308 ] );
 
 class Crawler {
 
@@ -38,7 +38,7 @@ class Crawler {
         curl_setopt( $this->ch, CURLOPT_CONNECTTIMEOUT, 0 );
         curl_setopt( $this->ch, CURLOPT_TIMEOUT, 600 );
         curl_setopt( $this->ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1 );
-        curl_setopt( $this->ch, CURLOPT_MAXREDIRS, 1);
+        curl_setopt( $this->ch, CURLOPT_MAXREDIRS, 1 );
 
         $this->request = new Request();
 
@@ -104,13 +104,18 @@ class Crawler {
             $url = $absolute_uri->get();
 
             $response = $this->crawlURL( $url );
+
+            if ( ! $response ) {
+                continue;
+            }
+
             $crawled_contents = $response['body'];
             $redirect_to = null;
 
             if ( in_array( $response['code'], WP2STATIC_REDIRECT_CODES ) ) {
-                $redirect_to = str_replace( $site_urls, '', $response['effective_url'] );
+                $redirect_to = (string) str_replace( $site_urls, '', $response['effective_url'] );
                 $page_hash = md5( $response['code'] . $redirect_to );
-            } else if ( ! is_null( $crawled_contents ) ) {
+            } elseif ( ! is_null( $crawled_contents ) ) {
                 $page_hash = md5( $crawled_contents );
             } else {
                 $page_hash = md5( $response['code'] );
@@ -138,8 +143,12 @@ class Crawler {
                 }
             }
 
-            CrawlCache::addUrl( $root_relative_path, $page_hash, $response['code'],
-                                $redirect_to );
+            CrawlCache::addUrl(
+                $root_relative_path,
+                $page_hash,
+                $response['code'],
+                $redirect_to
+            );
 
             // incrementally log crawl progress
             if ( $crawled % 300 === 0 ) {
@@ -163,6 +172,8 @@ class Crawler {
 
     /**
      * Crawls a string of full URL within WordPressSite
+     *
+     * @return mixed[]|null response object
      */
     public function crawlURL( string $url ) : ?array {
         $handle = $this->ch;
@@ -181,7 +192,7 @@ class Crawler {
             WsLog::l( '404 for URL ' . $url_slug );
             CrawlCache::rmUrl( $url_slug );
             $response['body'] = null;
-        } else if ( in_array( $response['code'], WP2STATIC_REDIRECT_CODES ) ) {
+        } elseif ( in_array( $response['code'], WP2STATIC_REDIRECT_CODES ) ) {
             $response['body'] = null;
         }
 
