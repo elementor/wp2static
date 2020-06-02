@@ -64,7 +64,7 @@ class Request {
             'body' => curl_exec( $ch ),
             'ch' => $ch,
             'code' => curl_getinfo( $ch, CURLINFO_RESPONSE_CODE ),
-
+            'effective_url' => curl_getinfo( $ch, CURLINFO_EFFECTIVE_URL ),
         ];
 
         return $response;
