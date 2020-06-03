@@ -27,7 +27,8 @@ class DeployCache {
 
     public static function addFile(
         string $local_path,
-        string $namespace = self::DEFAULT_NAMESPACE
+        string $namespace = self::DEFAULT_NAMESPACE,
+        ?string $file_hash = null
     ) : void {
         global $wpdb;
 
@@ -38,13 +39,16 @@ class DeployCache {
         $deployed_file = $post_processed_dir . $local_path;
 
         $path_hash = md5( $deployed_file );
-        $file_contents = file_get_contents( $deployed_file );
 
-        if ( ! $file_contents ) {
-            return;
+        if ( ! $file_hash ) {
+            $file_contents = file_get_contents( $deployed_file );
+
+            if ( ! $file_contents ) {
+                return;
+            }
+
+            $file_hash = md5( $file_contents );
         }
-
-        $file_hash = md5( $file_contents );
 
         $sql = "INSERT INTO {$deploy_cache_table} (path_hash,path,file_hash,namespace)" .
             ' VALUES (%s,%s,%s,%s) ON DUPLICATE KEY UPDATE file_hash = %s, namespace = %s';
@@ -70,7 +74,8 @@ class DeployCache {
      */
     public static function fileisCached(
         string $local_path,
-        string $namespace = self::DEFAULT_NAMESPACE
+        string $namespace = self::DEFAULT_NAMESPACE,
+        ?string $file_hash = null
     ) : bool {
         global $wpdb;
 
@@ -79,13 +84,16 @@ class DeployCache {
         $deployed_file = $post_processed_dir . $local_path;
 
         $path_hash = md5( $deployed_file );
-        $file_contents = file_get_contents( $deployed_file );
 
-        if ( ! $file_contents ) {
-            return false;
+        if ( ! $file_hash ) {
+            $file_contents = file_get_contents( $deployed_file );
+
+            if ( ! $file_contents ) {
+                return false;
+            }
+
+            $file_hash = md5( $file_contents );
         }
-
-        $file_hash = md5( $file_contents );
 
         $table_name = $wpdb->prefix . 'wp2static_deploy_cache';
 
