@@ -40,7 +40,7 @@ class CrawlQueue {
         }
 
         $query_string =
-            'INSERT INTO ' . $table_name . ' (url) VALUES ' .
+            'INSERT IGNORE INTO ' . $table_name . ' (url) VALUES ' .
             implode( ', ', $placeholders );
         $query = $wpdb->prepare( $query_string, $values );
 
