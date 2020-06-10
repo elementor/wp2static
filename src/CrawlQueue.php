@@ -13,7 +13,7 @@ class CrawlQueue {
 
         $sql = "CREATE TABLE $table_name (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
-            url VARCHAR(2083) NOT NULL,
+            url VARCHAR(2083) NOT NULL UNIQUE,
             PRIMARY KEY  (id)
         ) $charset_collate;";
 
