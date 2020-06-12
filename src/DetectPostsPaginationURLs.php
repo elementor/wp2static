@@ -80,14 +80,12 @@ class DetectPostsPaginationURLs {
             $total_pages = ceil( $count / $default_posts_per_page );
 
             for ( $page = 1; $page <= $total_pages; $page++ ) {
-                $pagination_url =
-                    "/{$plural_form}/{$pagination_base}/{$page}/";
-
-                $urls_to_include[] = str_replace(
-                    '/posts/',
-                    '/',
-                    $pagination_url
-                );
+                if ( $post_type === 'post' ) {
+                    $urls_to_include[] = "/blog/{$pagination_base}/{$page}/";
+                } else if ( $post_type !== 'page' ) {
+                    $urls_to_include[] =
+                        "/{$plural_form}/{$pagination_base}/{$page}/";
+                }
             }
         }
 
