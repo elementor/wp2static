@@ -14,6 +14,7 @@ class CrawlQueue {
         $sql = "CREATE TABLE $table_name (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
             url VARCHAR(2083) NOT NULL,
+            hashed_url CHAR(32) NOT NULL UNIQUE,
             PRIMARY KEY  (id)
         ) $charset_collate;";
 
@@ -35,12 +36,12 @@ class CrawlQueue {
         $values = [];
 
         foreach ( $urls as $url ) {
-            $placeholders[] = '(%s)';
-            $values[] = rawurldecode( $url );
+            $placeholders[] = '(%s, %s)';
+            array_push($values, md5($url), rawurldecode( $url ));
         }
 
         $query_string =
-            'INSERT INTO ' . $table_name . ' (url) VALUES ' .
+            'INSERT IGNORE INTO ' . $table_name . ' (hashed_url, url) VALUES ' .
             implode( ', ', $placeholders );
         $query = $wpdb->prepare( $query_string, $values );
 

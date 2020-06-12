@@ -130,10 +130,8 @@ class URLDetector {
 
         $unique_urls = array_unique( $url_queue );
 
-        // truncate before adding
-        // TODO: use inert unique instead here, allowing to skip heavy
-        // detection between runs without blowing away previously detected URLs...
-        CrawlQueue::truncate();
+        // No longer truncate before adding
+        // addUrls is now doing INSERT IGNORE based on URL hash to be additive and not error on duplicate
 
         CrawlQueue::addUrls( $unique_urls );
 
