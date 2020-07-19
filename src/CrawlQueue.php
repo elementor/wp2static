@@ -37,7 +37,7 @@ class CrawlQueue {
 
         foreach ( $urls as $url ) {
             $placeholders[] = '(%s, %s)';
-            array_push($values, md5($url), rawurldecode( $url ));
+            array_push( $values, md5( $url ), rawurldecode( $url ) );
         }
 
         $query_string =

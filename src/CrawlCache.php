@@ -64,7 +64,7 @@ class CrawlCache {
             current_time( 'mysql' ),
             $page_hash,
             $status,
-            $redirect_to,
+            $redirect_to
         );
 
         $wpdb->query( $sql );
