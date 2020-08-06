@@ -352,11 +352,16 @@ class Controller {
         check_admin_referer( 'wp2static-caches-page' );
 
         if ( isset( $_POST['deploy_namespace'] ) ) {
-            wp_safe_redirect( admin_url('admin.php?page=wp2static-deploy-cache&deploy_namespace=' . urlencode($_POST['deploy_namespace'])) );
+            wp_safe_redirect(
+                admin_url(
+                    'admin.php?page=wp2static-deploy-cache&deploy_namespace=' .
+                    urlencode( $_POST['deploy_namespace'] )
+                )
+            );
         } else {
             wp_safe_redirect( admin_url( 'admin.php?page=wp2static-deploy-cache' ) );
         }
-        
+
         exit;
     }
 
