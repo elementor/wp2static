@@ -100,6 +100,13 @@ class WordPressAdmin {
         );
 
         add_action(
+            'admin_post_wp2static_post_processed_site_show',
+            [ 'WP2Static\Controller', 'wp2static_post_processed_site_show' ],
+            10,
+            0
+        );
+
+        add_action(
             'admin_post_wp2static_log_delete',
             [ 'WP2Static\Controller', 'wp2static_log_delete' ],
             10,
@@ -135,8 +142,22 @@ class WordPressAdmin {
         );
 
         add_action(
+            'admin_post_wp2static_crawl_queue_show',
+            [ 'WP2Static\Controller', 'wp2static_crawl_queue_show' ],
+            10,
+            0
+        );
+
+        add_action(
             'admin_post_wp2static_deploy_cache_delete',
             [ 'WP2Static\Controller', 'wp2static_deploy_cache_delete' ],
+            10,
+            0
+        );
+
+        add_action(
+            'admin_post_wp2static_deploy_cache_show',
+            [ 'WP2Static\Controller', 'wp2static_deploy_cache_show' ],
             10,
             0
         );
@@ -149,8 +170,22 @@ class WordPressAdmin {
         );
 
         add_action(
+            'admin_post_wp2static_crawl_cache_show',
+            [ 'WP2Static\Controller', 'wp2static_crawl_cache_show' ],
+            10,
+            0
+        );
+
+        add_action(
             'admin_post_wp2static_static_site_delete',
             [ 'WP2Static\Controller', 'wp2static_static_site_delete' ],
+            10,
+            0
+        );
+
+        add_action(
+            'admin_post_wp2static_static_site_show',
+            [ 'WP2Static\Controller', 'wp2static_static_site_show' ],
             10,
             0
         );

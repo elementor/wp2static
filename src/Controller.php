@@ -291,6 +291,13 @@ class Controller {
         exit;
     }
 
+    public static function wp2static_crawl_queue_show() : void {
+        check_admin_referer( 'wp2static-caches-page' );
+
+        wp_safe_redirect( admin_url( 'admin.php?page=wp2static-crawl-queue' ) );
+        exit;
+    }
+
     public static function wp2static_delete_jobs_queue() : void {
         check_admin_referer( 'wp2static-ui-job-options' );
 
@@ -341,6 +348,18 @@ class Controller {
         exit;
     }
 
+    public static function wp2static_deploy_cache_show() : void {
+        check_admin_referer( 'wp2static-caches-page' );
+
+        if ( isset( $_POST['deploy_namespace'] ) ) {
+            wp_safe_redirect( admin_url('admin.php?page=wp2static-deploy-cache&deploy_namespace=' . urlencode($_POST['deploy_namespace'])) );
+        } else {
+            wp_safe_redirect( admin_url( 'admin.php?page=wp2static-deploy-cache' ) );
+        }
+        
+        exit;
+    }
+
     public static function wp2static_crawl_cache_delete() : void {
         check_admin_referer( 'wp2static-caches-page' );
 
@@ -350,12 +369,26 @@ class Controller {
         exit;
     }
 
+    public static function wp2static_crawl_cache_show() : void {
+        check_admin_referer( 'wp2static-caches-page' );
+
+        wp_safe_redirect( admin_url( 'admin.php?page=wp2static-crawl-cache' ) );
+        exit;
+    }
+
     public static function wp2static_post_processed_site_delete() : void {
         check_admin_referer( 'wp2static-caches-page' );
 
         ProcessedSite::delete();
 
         wp_safe_redirect( admin_url( 'admin.php?page=wp2static-caches' ) );
+        exit;
+    }
+
+    public static function wp2static_post_processed_site_show() : void {
+        check_admin_referer( 'wp2static-caches-page' );
+
+        wp_safe_redirect( admin_url( 'admin.php?page=wp2static-post-processed-site' ) );
         exit;
     }
 
@@ -374,6 +407,13 @@ class Controller {
         StaticSite::delete();
 
         wp_safe_redirect( admin_url( 'admin.php?page=wp2static-caches' ) );
+        exit;
+    }
+
+    public static function wp2static_static_site_show() : void {
+        check_admin_referer( 'wp2static-caches-page' );
+
+        wp_safe_redirect( admin_url( 'admin.php?page=wp2static-static-site' ) );
         exit;
     }
 
