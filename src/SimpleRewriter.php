@@ -43,21 +43,21 @@ class SimpleRewriter {
         }
 
         $search_patterns = [
-          trailingslashit( $wordpress_site_url ),
-          $wordpress_site_url,
-          addcslashes( $wordpress_site_url, '/' ),
-          addcslashes( trailingslashit( $wordpress_site_url ), '/' ),
-          URLHelper::getProtocolRelativeURL( $wordpress_site_url ),
-          addcslashes( URLHelper::getProtocolRelativeURL( $wordpress_site_url ), '/' ),
+            trailingslashit( $wordpress_site_url ),
+            $wordpress_site_url,
+            addcslashes( $wordpress_site_url, '/' ),
+            addcslashes( trailingslashit( $wordpress_site_url ), '/' ),
+            URLHelper::getProtocolRelativeURL( $wordpress_site_url ),
+            addcslashes( URLHelper::getProtocolRelativeURL( $wordpress_site_url ), '/' ),
         ];
 
         $replace_patterns = [
-          trailingslashit( $destination_url ),
-          $destination_url,
-          addcslashes( $destination_url, '/' ),
-          addcslashes( trailingslashit( $destination_url ), '/' ),
-          URLHelper::getProtocolRelativeURL( $destination_url ),
-          addcslashes( URLHelper::getProtocolRelativeURL( $destination_url ), '/' ),
+            trailingslashit( $destination_url ),
+            $destination_url,
+            addcslashes( $destination_url, '/' ),
+            addcslashes( trailingslashit( $destination_url ), '/' ),
+            URLHelper::getProtocolRelativeURL( $destination_url ),
+            addcslashes( URLHelper::getProtocolRelativeURL( $destination_url ), '/' ),
         ];
 
         $rewritten_contents = str_replace(
