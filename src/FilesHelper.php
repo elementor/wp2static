@@ -72,108 +72,108 @@ class FilesHelper {
     }
 
     public static function filePathLooksCrawlable( string $file_name ) : bool {
-      $filenames_to_ignore = [
-          '__MACOSX',
-          '.babelrc', // Added
-          '.gitignore', // Added
-          '.gitkeep', // Added
-          '.htaccess',
-          '.php',
-          '.travis.yml', // Added
-          'backwpup',
-          'bower_components',
-          'bower.json',
-          'composer.json',
-          'composer.lock', // Removed preceding period
-          'config.rb', // Added
-          'current-export',
-          'Dockerfile', // Added
-          'gulpfile.js',
-          'latest-export',
-          'LICENSE',
-          'Makefile', // Added
-          'node_modules',
-          'package.json',
-          'pb_backupbuddy',
-          'plugins/wp2static',
-          'previous-export',
-          'README',
-          'static-html-output-plugin',
-          'thumbs.db',
-          'tinymce',
-          'wc-logs',
-          'wpallexport',
-          'wpallimport',
-          'wp-static-html-output', // exclude earlier version exports
-          'wp2static-addon',
-          'wp2static-crawled-site',
-          'wp2static-processed-site',
-          'wp2static-working-files',
-          'yarn-error.log', // Added
-          'yarn.lock', // Added
-      ];
+        $filenames_to_ignore = [
+            '__MACOSX',
+            '.babelrc', // Added
+            '.gitignore', // Added
+            '.gitkeep', // Added
+            '.htaccess',
+            '.php',
+            '.travis.yml', // Added
+            'backwpup',
+            'bower_components',
+            'bower.json',
+            'composer.json',
+            'composer.lock', // Removed preceding period
+            'config.rb', // Added
+            'current-export',
+            'Dockerfile', // Added
+            'gulpfile.js',
+            'latest-export',
+            'LICENSE',
+            'Makefile', // Added
+            'node_modules',
+            'package.json',
+            'pb_backupbuddy',
+            'plugins/wp2static',
+            'previous-export',
+            'README',
+            'static-html-output-plugin',
+            'thumbs.db',
+            'tinymce',
+            'wc-logs',
+            'wpallexport',
+            'wpallimport',
+            'wp-static-html-output', // exclude earlier version exports
+            'wp2static-addon',
+            'wp2static-crawled-site',
+            'wp2static-processed-site',
+            'wp2static-working-files',
+            'yarn-error.log', // Added
+            'yarn.lock', // Added
+        ];
 
-      $filenames_to_ignore =
-          apply_filters(
-              'wp2static_filenames_to_ignore',
-              $filenames_to_ignore
-          );
+        $filenames_to_ignore =
+            apply_filters(
+                'wp2static_filenames_to_ignore',
+                $filenames_to_ignore
+            );
 
-      $filename_matches = 0;
+        $filename_matches = 0;
 
-      str_replace( $filenames_to_ignore, '', $file_name, $filename_matches );
+        str_replace( $filenames_to_ignore, '', $file_name, $filename_matches );
 
-      $file_extensions_to_ignore = [
-          '.bat', //Added
-          '.crt',
-          '.DS_Store',
-          '.git',
-          '.idea',
-          '.ini',
-          '.less',
-          '.map',
-          '.md',
-          '.mo',
-          '.php',
-          '.PHP',
-          '.phtml',
-          '.po',
-          '.pot',
-          '.scss',
-          '.sh',
-          '.sql',
-          '.SQL',
-          '.tar.gz',
-          '.tpl',
-          '.txt',
-          '.yarn',
-          '.zip',
-      ];
+        $file_extensions_to_ignore = [
+            '.bat', //Added
+            '.crt',
+            '.DS_Store',
+            '.git',
+            '.idea',
+            '.ini',
+            '.less',
+            '.map',
+            '.md',
+            '.mo',
+            '.php',
+            '.PHP',
+            '.phtml',
+            '.po',
+            '.pot',
+            '.scss',
+            '.sh',
+            '.sql',
+            '.SQL',
+            '.tar.gz',
+            '.tpl',
+            '.txt',
+            '.yarn',
+            '.zip',
+        ];
 
-      $file_extensions_to_ignore =
-          apply_filters(
-              'wp2static_file_extensions_to_ignore',
-              $file_extensions_to_ignore
-          );
+        $file_extensions_to_ignore =
+            apply_filters(
+                'wp2static_file_extensions_to_ignore',
+                $file_extensions_to_ignore
+            );
 
-      $file_extension_matches = 0;
+        $file_extension_matches = 0;
 
-      $file_extension_regex_patterns =
-          array_map(
-              function( $file_extension ) {
-                  return "/${file_extension}$/";
-              },
-              $file_extensions_to_ignore
-          );
+        $file_extension_regex_patterns =
+            array_map(
+                function( $file_extension ) {
+                    return "/${file_extension}$/";
+                },
+                $file_extensions_to_ignore
+            );
 
-      preg_replace( $file_extension_regex_patterns, '', $file_name, -1,  $file_extension_matches);
+        preg_replace( $file_extension_regex_patterns, '', $file_name, -1,  $file_extension_matches);
 
-      if (  $filename_matches + $file_extension_matches > 0 ) {
-          return false;
-      }
+        if (  $filename_matches + $file_extension_matches > 0 ) {
+            return false;
+        }
 
-      return true;
-  }
+        return true;
+    }
 
     /**
      * Clean all detected URLs before use
