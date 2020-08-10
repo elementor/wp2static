@@ -74,24 +74,24 @@ class FilesHelper {
     public static function filePathLooksCrawlable( string $file_name ) : bool {
         $filenames_to_ignore = [
             '__MACOSX',
-            '.babelrc', // Added
-            '.gitignore', // Added
-            '.gitkeep', // Added
+            '.babelrc',
+            '.gitignore',
+            '.gitkeep',
             '.htaccess',
             '.php',
-            '.travis.yml', // Added
+            '.travis.yml',
             'backwpup',
             'bower_components',
             'bower.json',
             'composer.json',
-            'composer.lock', // Removed preceding period
-            'config.rb', // Added
+            'composer.lock',
+            'config.rb',
             'current-export',
-            'Dockerfile', // Added
+            'Dockerfile',
             'gulpfile.js',
             'latest-export',
             'LICENSE',
-            'Makefile', // Added
+            'Makefile',
             'node_modules',
             'package.json',
             'pb_backupbuddy',
@@ -109,8 +109,8 @@ class FilesHelper {
             'wp2static-crawled-site',
             'wp2static-processed-site',
             'wp2static-working-files',
-            'yarn-error.log', // Added
-            'yarn.lock', // Added
+            'yarn-error.log',
+            'yarn.lock',
         ];
 
         $filenames_to_ignore =
@@ -124,7 +124,7 @@ class FilesHelper {
         str_replace( $filenames_to_ignore, '', $file_name, $filename_matches );
 
         $file_extensions_to_ignore = [
-            '.bat', //Added
+            '.bat',
             '.crt',
             '.DS_Store',
             '.git',
