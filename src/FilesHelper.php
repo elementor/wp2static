@@ -166,9 +166,9 @@ class FilesHelper {
                 $file_extensions_to_ignore
             );
 
-        preg_replace( $file_extension_regex_patterns, '', $file_name, -1,  $file_extension_matches);
+        preg_replace( $file_extension_regex_patterns, '', $file_name, -1, $file_extension_matches );
 
-        if (  $filename_matches + $file_extension_matches > 0 ) {
+        if ( $filename_matches + $file_extension_matches > 0 ) {
             return false;
         }
 
