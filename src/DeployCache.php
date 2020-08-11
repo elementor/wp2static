@@ -174,15 +174,9 @@ class DeployCache {
 
         $table_name = $wpdb->prefix . 'wp2static_deploy_cache';
 
-        $sql = "SELECT path FROM $table_name WHERE namespace = %s";
+        $sql = "SELECT path FROM $table_name WHERE namespace = %s ORDER BY path";
         $sql = $wpdb->prepare( $sql, $namespace );
-        $rows = $wpdb->get_results( $sql );
-
-        foreach ( $rows as $row ) {
-            $urls[] = $row->path;
-        }
-
-        sort( $urls );
+        $urls = $wpdb->get_col( $sql );
 
         return $urls;
     }
