@@ -31,21 +31,26 @@ class CrawlQueue {
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'wp2static_urls';
+        $url_count = count( $urls );
 
-        $placeholders = [];
-        $values = [];
+        while ( $url_count ) {
+            $chunk = array_slice( $urls, 0, 100 );
+            $urls = array_slice( $urls, 100 );
+            $url_count = count( $urls );
+            $placeholders = array_fill( 0, count( $chunk ), '(%s, %s)' );
+            $values = [];
 
-        foreach ( $urls as $url ) {
-            $placeholders[] = '(%s, %s)';
-            array_push( $values, md5( $url ), rawurldecode( $url ) );
+            foreach ( $chunk as $url ) {
+                array_push( $values, md5( $url ), rawurldecode( $url ) );
+            }
+
+            $query_string =
+                'INSERT IGNORE INTO ' . $table_name . ' (hashed_url, url) VALUES ' .
+                implode( ', ', $placeholders );
+            $query = $wpdb->prepare( $query_string, $values );
+
+            $wpdb->query( $query );
         }
-
-        $query_string =
-            'INSERT IGNORE INTO ' . $table_name . ' (hashed_url, url) VALUES ' .
-            implode( ', ', $placeholders );
-        $query = $wpdb->prepare( $query_string, $values );
-
-        $wpdb->query( $query );
     }
 
     /**
