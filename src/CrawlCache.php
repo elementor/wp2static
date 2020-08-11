@@ -36,11 +36,7 @@ class CrawlCache {
 
         $table_name = $wpdb->prefix . 'wp2static_crawl_cache';
 
-        $rows = $wpdb->get_results( "SELECT hashed_url FROM $table_name" );
-
-        foreach ( $rows as $row ) {
-            $urls[] = $row->hashed_url;
-        }
+        $urls = $wpdb->get_col( "SELECT hashed_url FROM $table_name" );
 
         return $urls;
     }

@@ -59,11 +59,7 @@ class CrawlQueue {
 
         $table_name = $wpdb->prefix . 'wp2static_urls';
 
-        $rows = $wpdb->get_results( "SELECT url FROM $table_name ORDER by url ASC" );
-
-        foreach ( $rows as $row ) {
-            $urls[] = $row->url;
-        }
+        $urls = $wpdb->get_col( "SELECT url FROM $table_name ORDER by url ASC" );
 
         return $urls;
     }
