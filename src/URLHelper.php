@@ -11,8 +11,20 @@ class URLHelper {
      * @return string
      */
     public static function getCurrent() : string {
-        $scheme = $_SERVER['SERVER_PORT'] == 80 ? 'http' : 'https';
-        return $scheme . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        $scheme = $_SERVER['HTTPS'] === 'on' ? 'http' : 'https';
+        $url = $scheme . '://' . $_SERVER['HTTP_HOST'];
+        
+        // Only include port number if needed
+        if (
+            $_SERVER['SERVER_PORT'] == '80' && $scheme != 'http' ||
+            $_SERVER['SERVER_PORT'] == '443' && $scheme != 'https'
+        ) {
+            $url .= ':' . $_SERVER['SERVER_PORT'];
+        }
+
+        $url .= $_SERVER['REQUEST_URI'];
+
+        return $url;
     }
 
     /**
