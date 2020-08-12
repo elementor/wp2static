@@ -1,0 +1,46 @@
+# This is a basic workflow to help you get started with Actions
+name: CI - PHP
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on: [push, pull_request]
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  test:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php: [7.3.9]
+
+    name: PHP-${{ matrix.php }} 
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Cache PHP dependencies
+      uses: actions/cache@v1
+      with:
+        path: vendor
+        key: ${{ runner.OS }}-build-${{ hashFiles('**/composer.lock') }}
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php }}
+        extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick
+        coverage: none
+
+    - name: Validate Composer
+      run: composer validate --strict
+
+    - name: Install PHP dependencies
+      run: composer install --no-interaction --no-suggest
+
+    - name: Run our Linter and PHPStan
+      run: composer test

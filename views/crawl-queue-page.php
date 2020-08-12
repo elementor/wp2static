@@ -1,4 +1,5 @@
-<br>
+<div class="wrap">
+    <br>
 
 <form id="posts-filter" method="GET">
     <input type="hidden" name="page" value="<?php echo $_GET['page']; ?>" />
