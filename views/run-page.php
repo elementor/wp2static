@@ -61,18 +61,20 @@ More information of the error may be logged in your browser's console.`);
 });
 </script>
 
-<br>
+<div class="wrap">
+    <br>
 
-<button class="button button-primary" id="wp2static-run">Generate static site</button>
+    <button class="button button-primary" id="wp2static-run">Generate static site</button>
 
-<div id="wp2static-spinner" class="spinner" style="padding:2px;float:none;"></div>
+    <div id="wp2static-spinner" class="spinner" style="padding:2px;float:none;"></div>
 
-<br>
-<br>
+    <br>
+    <br>
 
-<button class="button" id="wp2static-poll-logs">Refresh logs</button>
-<br>
-<br>
-<textarea id="wp2static-run-log" rows=30 style="width:99%;">
-Logs will appear here on completion or click "Refresh logs" to check progress
-</textarea>
+    <button class="button" id="wp2static-poll-logs">Refresh logs</button>
+    <br>
+    <br>
+    <textarea id="wp2static-run-log" rows=30 style="width:99%;">
+    Logs will appear here on completion or click "Refresh logs" to check progress
+    </textarea>
+</div>
