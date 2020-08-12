@@ -50,10 +50,10 @@ class WsLog {
         $query = "INSERT INTO $table_name (log) VALUES " .
             implode(
                 ',',
-                array_fill( 0, count($lines), '(%s)' )
+                array_fill( 0, count( $lines ), '(%s)' )
             );
 
-        $wpdb->query( $wpdb->prepare($query, $lines) );
+        $wpdb->query( $wpdb->prepare( $query, $lines ) );
     }
 
     /**
@@ -77,15 +77,16 @@ class WsLog {
      */
     public static function poll() : string {
         global $wpdb;
-        $logs = '';
 
         $table_name = $wpdb->prefix . 'wp2static_log';
 
-        $rows = $wpdb->get_results( "SELECT time, log FROM $table_name ORDER BY id DESC" );
+        $logs = $wpdb->get_col(
+            "SELECT CONCAT_WS(': ', time, log)
+            FROM $table_name
+            ORDER BY id DESC"
+        );
 
-        foreach ( $rows as $row ) {
-            $logs .= $row->time . ': ' . $row->log . PHP_EOL;
-        }
+        $logs = implode( PHP_EOL, $logs );
 
         return $logs;
     }
