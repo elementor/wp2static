@@ -67,11 +67,7 @@ class WsLog {
 
         $table_name = $wpdb->prefix . 'wp2static_log';
 
-        $rows = $wpdb->get_results( "SELECT time, log FROM $table_name ORDER BY id DESC" );
-
-        foreach ( $rows as $row ) {
-            $logs[] = $row;
-        }
+        $logs = $wpdb->get_results( "SELECT time, log FROM $table_name ORDER BY id DESC" );
 
         return $logs;
     }
