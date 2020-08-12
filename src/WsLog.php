@@ -47,15 +47,13 @@ class WsLog {
 
         $current_time = current_time( 'mysql' );
 
-        $query = "INSERT INTO $table_name (log) VALUES ";
+        $query = "INSERT INTO $table_name (log) VALUES " .
+            implode(
+                ',',
+                array_fill( 0, count( $lines ), '(%s)' )
+            );
 
-        foreach ( $lines as $line ) {
-            $query .= "('$line'),";
-        }
-
-        $query = rtrim( $query, ',' );
-
-        $wpdb->query( $query );
+        $wpdb->query( $wpdb->prepare( $query, $lines ) );
     }
 
     /**
@@ -69,11 +67,7 @@ class WsLog {
 
         $table_name = $wpdb->prefix . 'wp2static_log';
 
-        $rows = $wpdb->get_results( "SELECT time, log FROM $table_name ORDER BY id DESC" );
-
-        foreach ( $rows as $row ) {
-            $logs[] = $row;
-        }
+        $logs = $wpdb->get_results( "SELECT time, log FROM $table_name ORDER BY id DESC" );
 
         return $logs;
     }
@@ -83,15 +77,16 @@ class WsLog {
      */
     public static function poll() : string {
         global $wpdb;
-        $logs = '';
 
         $table_name = $wpdb->prefix . 'wp2static_log';
 
-        $rows = $wpdb->get_results( "SELECT time, log FROM $table_name ORDER BY id DESC" );
+        $logs = $wpdb->get_col(
+            "SELECT CONCAT_WS(': ', time, log)
+            FROM $table_name
+            ORDER BY id DESC"
+        );
 
-        foreach ( $rows as $row ) {
-            $logs .= $row->time . ': ' . $row->log . PHP_EOL;
-        }
+        $logs = implode( PHP_EOL, $logs );
 
         return $logs;
     }
