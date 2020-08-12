@@ -143,20 +143,10 @@ select.wp2static-select {
 
                         </form>
                     </td>
-                </tr>
-
-                <?php
-                $deploy_cache_rows
-                    = isset($view['deployCacheTotalPathsByNamespace'])
-                    ? count($view['deployCacheTotalPathsByNamespace'])
-                    : 1
-                ;
-                ?>
-                <tr>
-                    <td rowspan="<?php echo $deploy_cache_rows; ?>">Deploy Cache</td>
-                    <?php if ( isset($view['deployCacheTotalPathsByNamespace']) ) : ?>
-                        <?php $namespaces = array_keys($view['deployCacheTotalPathsByNamespace']); ?>
-                        <td><?php echo $view['deployCacheTotalPathsByNamespace'][$namespaces[0]]; ?> Paths in database for <code><?php echo $namespaces[0]; ?></code></td>
+                    <?php for ( $i = 1; $i < $deploy_cache_rows; $i++ ) : ?>
+                        </tr>
+                        <tr>
+                        <td><?php echo $view['deployCacheTotalPathsByNamespace'][$namespaces[$i]]; ?> Paths in database for <code><?php echo $namespaces[$i]; ?></code></td>
                         <td>
                             <form
                                 name="wp2static-deploy-cache-delete"
@@ -169,7 +159,7 @@ select.wp2static-select {
                                     <option value="wp2static_deploy_cache_show">Show Paths</option>
                                     <option value="wp2static_deploy_cache_delete">Delete Deploy Cache</option>
                                 </select>
-                                
+
                                 <input name="deploy_namespace" type="hidden" value="<?php echo $namespaces[$i]; ?>" />
 
                                 <button class="button btn-danger">Go</button>
@@ -194,10 +184,10 @@ select.wp2static-select {
 
                             <button class="button btn-danger">Go</button>
 
-                            </form>
-                        </td>
-                    <?php endif; ?>
-                </tr>
+                        </form>
+                    </td>
+                <?php endif; ?>
+            </tr>
             </tbody>
         </table>
 
