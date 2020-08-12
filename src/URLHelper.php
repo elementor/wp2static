@@ -13,12 +13,9 @@ class URLHelper {
     public static function getCurrent() : string {
         $scheme = $_SERVER['HTTPS'] === 'on' ? 'http' : 'https';
         $url = $scheme . '://' . $_SERVER['HTTP_HOST'];
-        
+
         // Only include port number if needed
-        if (
-            $_SERVER['SERVER_PORT'] == '80' && $scheme != 'http' ||
-            $_SERVER['SERVER_PORT'] == '443' && $scheme != 'https'
-        ) {
+        if ( ! in_array( $_SERVER['SERVER_PORT'], [ 80, 443 ] ) ) {
             $url .= ':' . $_SERVER['SERVER_PORT'];
         }
 
