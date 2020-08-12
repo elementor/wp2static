@@ -73,60 +73,44 @@ class FilesHelper {
 
     public static function filePathLooksCrawlable( string $file_name ) : bool {
         $filenames_to_ignore = [
-            '.DS_Store',
-            '.PHP',
-            '.SQL',
-            '.crt',
-            '.git',
-            '.idea',
-            '.ini',
-            '.less',
-            '.map',
-            '.md',
-            '.mo',
-            '.mo',
-            '.php',
-            '.php',
-            '.phtml',
-            '.po',
-            '.po',
-            '.pot',
-            '.scss',
-            '.sh',
-            '.sh',
-            '.sql',
-            '.tar.gz',
-            '.tpl',
-            '.txt',
-            '.yarn',
-            '.zip',
             '__MACOSX',
-            'backwpup',
-            'bower.json',
+            '.babelrc',
+            '.gitignore',
+            '.gitkeep',
             '.htaccess',
-            'wc-logs',
+            '.php',
+            '.travis.yml',
+            'backwpup',
             'bower_components',
+            'bower.json',
             'composer.json',
+            'composer.lock',
+            'config.rb',
             'current-export',
+            'Dockerfile',
             'gulpfile.js',
             'latest-export',
+            'LICENSE',
+            'Makefile',
             'node_modules',
             'package.json',
             'pb_backupbuddy',
-            'previous-export',
-            'thumbs.db',
-            'tinymce',
-            'wp-static-html-output', // exclude earlier version exports
-            'wp2static-crawled-site',
-            'wp2static-processed-site',
             'plugins/wp2static',
-            'wp2static-addon',
-            'LICENSE',
+            'previous-export',
             'README',
             'static-html-output-plugin',
-            'wp2static-working-files',
+            'thumbs.db',
+            'tinymce',
+            'wc-logs',
             'wpallexport',
             'wpallimport',
+            'wp-static-html-output', // exclude earlier version exports
+            'wp2static-addon',
+            'wp2static-crawled-site',
+            'wp2static-processed-site',
+            'wp2static-working-files',
+            'yarn-error.log',
+            'yarn.lock',
         ];
 
         $filenames_to_ignore =
@@ -135,11 +119,56 @@ class FilesHelper {
                 $filenames_to_ignore
             );
 
-        $matches = 0;
+        $filename_matches = 0;
 
-        str_replace( $filenames_to_ignore, '', $file_name, $matches );
+        str_replace( $filenames_to_ignore, '', $file_name, $filename_matches );
 
-        if ( $matches > 0 ) {
+        $file_extensions_to_ignore = [
+            '.bat',
+            '.crt',
+            '.DS_Store',
+            '.git',
+            '.idea',
+            '.ini',
+            '.less',
+            '.map',
+            '.md',
+            '.mo',
+            '.php',
+            '.PHP',
+            '.phtml',
+            '.po',
+            '.pot',
+            '.scss',
+            '.sh',
+            '.sql',
+            '.SQL',
+            '.tar.gz',
+            '.tpl',
+            '.txt',
+            '.yarn',
+            '.zip',
+        ];
+
+        $file_extensions_to_ignore =
+            apply_filters(
+                'wp2static_file_extensions_to_ignore',
+                $file_extensions_to_ignore
+            );
+
+        $file_extension_matches = 0;
+
+        $file_extension_regex_patterns =
+            array_map(
+                function( $file_extension ) {
+                    return "/${file_extension}$/";
+                },
+                $file_extensions_to_ignore
+            );
+
+        preg_replace( $file_extension_regex_patterns, '', $file_name, -1, $file_extension_matches );
+
+        if ( $filename_matches + $file_extension_matches > 0 ) {
             return false;
         }
 

@@ -52,10 +52,10 @@ class SimpleRewriter {
         ];
 
         $replace_patterns = [
-            $destination_url,
+            trailingslashit( $destination_url ),
             $destination_url,
             addcslashes( $destination_url, '/' ),
-            addcslashes( $destination_url, '/' ),
+            addcslashes( trailingslashit( $destination_url ), '/' ),
             URLHelper::getProtocolRelativeURL( $destination_url ),
             addcslashes( URLHelper::getProtocolRelativeURL( $destination_url ), '/' ),
         ];
