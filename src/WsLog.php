@@ -33,6 +33,13 @@ class WsLog {
                 'log' => $text,
             ]
         );
+
+        if ( defined( 'WP_CLI' ) ) {
+            $date = current_time( 'c' );
+            \WP_CLI::log(
+                \WP_CLI::colorize( "%W[$date] %n$text" )
+            );
+        }
     }
 
     /**
