@@ -47,15 +47,13 @@ class WsLog {
 
         $current_time = current_time( 'mysql' );
 
-        $query = "INSERT INTO $table_name (log) VALUES ";
+        $query = "INSERT INTO $table_name (log) VALUES " .
+            implode(
+                ',',
+                array_fill( 0, count($lines), '(%s)' )
+            );
 
-        foreach ( $lines as $line ) {
-            $query .= "('$line'),";
-        }
-
-        $query = rtrim( $query, ',' );
-
-        $wpdb->query( $query );
+        $wpdb->query( $wpdb->prepare($query, $lines) );
     }
 
     /**
