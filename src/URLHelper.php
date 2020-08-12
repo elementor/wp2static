@@ -6,6 +6,48 @@ use Exception;
 
 class URLHelper {
     /*
+     * Returns the current full URL including querystring
+     *
+     * @return string
+     */
+    public static function getCurrent() : string {
+        $scheme = $_SERVER['SERVER_PORT'] == 80 ? 'http' : 'https';
+        return $scheme . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+    }
+
+    /**
+     * Returns a URL with given querystring modifications
+     *
+     * @param array<string> $changes  List of querystring params to set
+     * @param string $url             A complete URL. Leave empty to use current URL
+     * @return string                 The new URL
+     */
+    public static function modifyUrl( array $changes, string $url = '' ) : string {
+        // If $url wasn't passed in, use the current url
+        if ( $url === '' ) {
+            $url = self::getCurrent();
+        }
+
+        // Parse the url into pieces
+        $url_array = (array) parse_url( $url );
+
+        // The original URL had a query string, modify it.
+        if ( array_key_exists( 'query', $url_array ) ) {
+            parse_str( $url_array['query'], $query_array );
+            foreach ( $changes as $key => $value ) {
+                $query_array[ $key ] = $value;
+            }
+        } else {
+            // The original URL didn't have a query string, add it.
+            $query_array = $changes;
+        }
+
+        return $url_array['scheme'] . '://' .
+            $url_array['host'] . $url_array['path'] . '?' .
+            http_build_query( $query_array );
+    }
+
+    /*
      * Takes either an http or https URL and returns a // protocol-relative URL
      *
      * @param string URL either http or https

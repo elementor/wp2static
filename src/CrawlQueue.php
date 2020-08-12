@@ -64,9 +64,35 @@ class CrawlQueue {
 
         $table_name = $wpdb->prefix . 'wp2static_urls';
 
-        $urls = $wpdb->get_col( "SELECT url FROM $table_name ORDER by url ASC" );
+        $rows = $wpdb->get_results( "SELECT id, url FROM $table_name ORDER by url ASC" );
+
+        foreach ( $rows as $row ) {
+            $urls[ $row->id ] = $row->url;
+        }
 
         return $urls;
+    }
+
+    /**
+     * Remove multiple URLs at once
+     *
+     * @param array<string> $ids
+     * @return void
+     */
+    public static function rmUrlsById( array $ids ) : void {
+        global $wpdb;
+
+        $ids = array_map(
+            function ( string $id ) {
+                return absint( $id );
+            },
+            $ids
+        );
+        $ids = implode( ',', array_map( 'absint', $ids ) );
+
+        $table_name = $wpdb->prefix . 'wp2static_urls';
+
+        $wpdb->query( "DELETE FROM $table_name WHERE ID IN($ids)" );
     }
 
     /**

@@ -63,8 +63,42 @@ class ViewRenderer {
             die( 'Forbidden' );
         }
 
+        if ( ! empty( $_GET['action'] ) && ! empty( $_GET['id'] ) && is_array( $_GET['id'] ) ) {
+            switch ( $_GET['action'] ) {
+                case 'remove':
+                    CrawlQueue::rmUrlsById( $_GET['id'] );
+                    break;
+            }
+        }
+
+        $urls = CrawlQueue::getCrawlablePaths();
+        // Apply search
+        if ( ! empty( $_GET['s'] ) ) {
+            $s = $_GET['s'];
+            $urls = array_filter(
+                $urls,
+                function ( $url ) use ( $s ) {
+                    return stripos( $url, $s ) !== false;
+                }
+            );
+        }
+
+        $page_rows = 200;
         $view = [];
-        $view['urls'] = CrawlQueue::getCrawlablePaths();
+        // Pagination vars
+        $view['total_count'] = count( $urls );
+        $view['page'] = isset( $_GET['paged'] ) ? max( 1, intval( $_GET['paged'] ) ) : 1;
+        $view['pages'] = intval( ceil( $view['total_count'] / $page_rows ) );
+        $view['page_rows'] = $page_rows;
+        // URLs to display
+        // Because array_slice doesn't preserve integer keys, we need to split
+        // the array into keys and values, array_slice each then recombine
+        $keys = array_keys( $urls );
+        $values = array_values( $urls );
+        $view['urls'] = array_combine(
+            array_slice( $keys, ( $view['page'] - 1 ) * $page_rows, $page_rows ),
+            array_slice( $values, ( $view['page'] - 1 ) * $page_rows, $page_rows )
+        );
 
         require_once WP2STATIC_PATH . 'views/crawl-queue-page.php';
     }
