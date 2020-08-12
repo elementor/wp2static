@@ -119,6 +119,7 @@ function displayCheckbox($a = null, $b = null, $c = null) {
                 </td>
                 <td>
                     <input
+                        class="widefat"
                         id="<?php echo $view['coreOptions']['basicAuthUser']->name; ?>"
                         name="<?php echo $view['coreOptions']['basicAuthUser']->name; ?>"
                         type="text"
@@ -135,6 +136,7 @@ function displayCheckbox($a = null, $b = null, $c = null) {
                 </td>
                 <td>
                     <input
+                        class="widefat"
                         id="<?php echo $view['coreOptions']['basicAuthPassword']->name; ?>"
                         name="<?php echo $view['coreOptions']['basicAuthPassword']->name; ?>"
                         type="password"
@@ -175,6 +177,7 @@ function displayCheckbox($a = null, $b = null, $c = null) {
                 </td>
                 <td>
                     <input
+                        class="widefat"
                         id="<?php echo $view['coreOptions']['deploymentURL']->name; ?>"
                         name="<?php echo $view['coreOptions']['deploymentURL']->name; ?>"
                         type="text"
@@ -197,7 +200,7 @@ function displayCheckbox($a = null, $b = null, $c = null) {
                 </td>
                 <td>
                     <input
-                        style="width:100%;"
+                        class="widefat"
                         type="email"
                         id="<?php echo $view['coreOptions']['completionEmail']->name; ?>"
                         name="<?php echo $view['coreOptions']['completionEmail']->name; ?>"
