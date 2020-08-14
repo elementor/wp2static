@@ -81,6 +81,7 @@ class Crawler {
     public function crawlSite( string $static_site_path ) : void {
         $crawled = 0;
         $cache_hits = 0;
+        $crawl_start_time = Controller::db_now();
 
         WsLog::l( 'Starting to crawl detected URLs.' );
 
@@ -90,6 +91,7 @@ class Crawler {
         $site_host = $site_port ? $site_host . ":$site_port" : $site_host;
         $site_urls = [ "http://$site_host", "https://$site_host" ];
 
+        $chunk_size = 20;
         $use_crawl_cache = apply_filters(
             'wp2static_use_crawl_cache',
             CoreOptions::getValue( 'useCrawlCaching' )
@@ -97,64 +99,71 @@ class Crawler {
 
         WsLog::l( ( $use_crawl_cache ? 'Using' : 'Not using' ) . ' CrawlCache.' );
 
-        // TODO: use some Iterable or other performance optimisation here
-        // to help reduce resources for large URL sites
-        foreach ( CrawlQueue::getCrawlablePaths() as $root_relative_path ) {
-            $absolute_uri = new URL( $site_path . $root_relative_path );
-            $url = $absolute_uri->get();
+        $chunk = CrawlQueue::getChunk( $crawl_start_time, $chunk_size );
+        while ( ! empty( $chunk ) ) {
+            foreach ( $chunk as $root_relative_path ) {
+                $absolute_uri = new URL( $site_path . $root_relative_path );
+                $url = $absolute_uri->get();
 
-            $response = $this->crawlURL( $url );
+                $response = $this->crawlURL( $url );
 
-            if ( ! $response ) {
-                continue;
-            }
-
-            $crawled_contents = $response['body'];
-            $redirect_to = null;
-
-            if ( in_array( $response['code'], WP2STATIC_REDIRECT_CODES ) ) {
-                $redirect_to = (string) str_replace( $site_urls, '', $response['effective_url'] );
-                $page_hash = md5( $response['code'] . $redirect_to );
-            } elseif ( ! is_null( $crawled_contents ) ) {
-                $page_hash = md5( $crawled_contents );
-            } else {
-                $page_hash = md5( $response['code'] );
-            }
-
-            if ( $use_crawl_cache ) {
-                // if not already cached
-                if ( CrawlCache::getUrl( $root_relative_path, $page_hash ) ) {
-                    $cache_hits++;
-
+                if ( ! $response ) {
                     continue;
                 }
-            }
 
-            $crawled++;
+                $crawled_contents = $response['body'];
+                $redirect_to = null;
 
-            if ( $crawled_contents ) {
-                // do some magic here - naive: if URL ends in /, save to /index.html
-                // TODO: will need love for example, XML files
-                // check content type, serve .xml/rss, etc instead
-                if ( mb_substr( $root_relative_path, -1 ) === '/' ) {
-                    StaticSite::add( $root_relative_path . 'index.html', $crawled_contents );
+                if ( in_array( $response['code'], WP2STATIC_REDIRECT_CODES ) ) {
+                    $redirect_to = (string) str_replace(
+                        $site_urls,
+                        '',
+                        $response['effective_url']
+                    );
+                    $page_hash = md5( $response['code'] . $redirect_to );
+                } elseif ( ! is_null( $crawled_contents ) ) {
+                    $page_hash = md5( $crawled_contents );
                 } else {
-                    StaticSite::add( $root_relative_path, $crawled_contents );
+                    $page_hash = md5( $response['code'] );
+                }
+
+                if ( $use_crawl_cache ) {
+                    // if not already cached
+                    if ( CrawlCache::getUrl( $root_relative_path, $page_hash ) ) {
+                        $cache_hits++;
+                        continue;
+                    }
+                }
+
+                $crawled++;
+
+                if ( $crawled_contents ) {
+                    // do some magic here - naive: if URL ends in /, save to /index.html
+                    // TODO: will need love for example, XML files
+                    // check content type, serve .xml/rss, etc instead
+                    if ( mb_substr( $root_relative_path, -1 ) === '/' ) {
+                        StaticSite::add( $root_relative_path . 'index.html', $crawled_contents );
+                    } else {
+                        StaticSite::add( $root_relative_path, $crawled_contents );
+                    }
+                }
+
+                CrawlCache::addUrl(
+                    $root_relative_path,
+                    $page_hash,
+                    $response['code'],
+                    $redirect_to
+                );
+
+                // incrementally log crawl progress
+                if ( $crawled % 300 === 0 ) {
+                    $notice = "Crawling progress: $crawled crawled, $cache_hits skipped (cached).";
+                    WsLog::l( $notice );
                 }
             }
 
-            CrawlCache::addUrl(
-                $root_relative_path,
-                $page_hash,
-                $response['code'],
-                $redirect_to
-            );
-
-            // incrementally log crawl progress
-            if ( $crawled % 300 === 0 ) {
-                $notice = "Crawling progress: $crawled crawled, $cache_hits skipped (cached).";
-                WsLog::l( $notice );
-            }
+            CrawlQueue::updateCrawledTimes( $chunk );
+            $chunk = CrawlQueue::getChunk( $crawl_start_time, $chunk_size );
         }
 
         WsLog::l(

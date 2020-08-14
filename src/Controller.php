@@ -747,4 +747,10 @@ class Controller {
 
         wp_die();
     }
+
+    public static function db_now() : string {
+        global $wpdb;
+
+        return $wpdb->get_col( 'SELECT NOW()' )[0];
+    }
 }
