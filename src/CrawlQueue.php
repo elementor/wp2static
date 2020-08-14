@@ -14,12 +14,18 @@ class CrawlQueue {
         $sql = "CREATE TABLE $table_name (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
             url VARCHAR(2083) NOT NULL,
-            hashed_url CHAR(32) NOT NULL UNIQUE,
+            hashed_url CHAR(32) NOT NULL,
             PRIMARY KEY  (id)
         ) $charset_collate;";
 
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         dbDelta( $sql );
+
+        \WP2Static\Controller::ensure_index(
+            $table_name,
+            'hashed_url',
+            "CREATE UNIQUE INDEX hashed_url ON $table_name (hashed_url)"
+        );
     }
 
     /**
