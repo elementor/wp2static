@@ -149,6 +149,30 @@ class CrawlQueue {
     }
 
     /**
+     * Get a chunk of URLs to crawl with null crawled_time.
+     *
+     * @param int $size Max number of URLs to return.
+     * @return array<string> Array of URLs.
+     */
+    public static function getChunkNulls( int $size ) : array {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'wp2static_urls';
+
+        $rows = $wpdb->get_results(
+            "SELECT id, url FROM $table_name
+             WHERE crawled_time IS NULL
+             LIMIT $size"
+        );
+
+        $urls = [];
+        foreach ( $rows as $row ) {
+            $urls[ $row->id ] = $row->url;
+        }
+        return $urls;
+    }
+
+    /**
      * Remove multiple URLs at once
      *
      * @param array<string> $ids

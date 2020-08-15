@@ -95,7 +95,7 @@ class Crawler {
         if ( $chunk_size < 1 ) {
             $chunk_size = PHP_INT_MAX;
         }
-        WsLog::l( "Crawling with a chunk size of $chunk_size");
+        WsLog::l( "Crawling with a chunk size of $chunk_size" );
 
         $use_crawl_cache = apply_filters(
             'wp2static_use_crawl_cache',
@@ -104,7 +104,14 @@ class Crawler {
 
         WsLog::l( ( $use_crawl_cache ? 'Using' : 'Not using' ) . ' CrawlCache.' );
 
-        $chunk = CrawlQueue::getChunk( $crawl_start_time, $chunk_size );
+        $crawl_only_changed = CoreOptions::getValue( 'crawlOnlyChangedURLs' );
+        if ( $crawl_only_changed ) {
+            WsLog::l( 'Crawling only changed URLs.' );
+            $chunk = CrawlQueue::getChunkNulls( $chunk_size );
+        } else {
+            WsLog::l( 'Crawling all URLs.' );
+            $chunk = CrawlQueue::getChunk( $crawl_start_time, $chunk_size );
+        }
         while ( ! empty( $chunk ) ) {
             foreach ( $chunk as $root_relative_path ) {
                 $absolute_uri = new URL( $site_path . $root_relative_path );
@@ -168,7 +175,12 @@ class Crawler {
             }
 
             CrawlQueue::updateCrawledTimes( $chunk );
-            $chunk = CrawlQueue::getChunk( $crawl_start_time, $chunk_size );
+
+            if ( $crawl_only_changed ) {
+                $chunk = CrawlQueue::getChunkNulls( $chunk_size );
+            } else {
+                $chunk = CrawlQueue::getChunk( $crawl_start_time, $chunk_size );
+            }
         }
 
         WsLog::l(
