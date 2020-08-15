@@ -184,9 +184,9 @@ class CoreOptions {
 
         $queries[] = $wpdb->prepare(
             $query_string,
-            'crawlOnlyChangedUrls',
-            '1',
-            'Crawl only changed URLs.',
+            'crawlOnlyChangedURLs',
+            '0',
+            'Crawl Only Changed URLs',
             ''
         );
 
@@ -427,8 +427,8 @@ class CoreOptions {
 
                 $wpdb->update(
                     $table_name,
-                    [ 'value' => isset( $_POST['crawlOnlyChangedUrls'] ) ? 1 : 0 ],
-                    [ 'name' => 'crawlOnlyChangedUrls' ]
+                    [ 'value' => isset( $_POST['crawlOnlyChangedURLs'] ) ? 1 : 0 ],
+                    [ 'name' => 'crawlOnlyChangedURLs' ]
                 );
 
                 $wpdb->update(

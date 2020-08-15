@@ -165,16 +165,16 @@ function displayCheckbox($a = null, $b = null, $c = null) {
             <tr>
                 <td>
                     <label
-                        for="<?php echo $view['coreOptions']['crawlOnlyChangedUrls']->name; ?>"
-                    ><?php echo $view['coreOptions']['crawlOnlyChangedUrls']->label; ?></label>
+                        for="<?php echo $view['coreOptions']['crawlOnlyChangedURLs']->name; ?>"
+                    ><?php echo $view['coreOptions']['crawlOnlyChangedURLs']->label; ?></label>
                 </td>
                 <td>
                     <input
-                        id="<?php echo $view['coreOptions']['crawlOnlyChangedUrls']->name; ?>"
-                        name="<?php echo $view['coreOptions']['crawlOnlyChangedUrls']->name; ?>"
+                        id="<?php echo $view['coreOptions']['crawlOnlyChangedURLs']->name; ?>"
+                        name="<?php echo $view['coreOptions']['crawlOnlyChangedURLs']->name; ?>"
                         value="1"
                         type="checkbox"
-                        <?php echo (int) $view['coreOptions']['crawlOnlyChangedUrls']->value === 1 ? 'checked' : ''; ?>
+                        <?php echo (int) $view['coreOptions']['crawlOnlyChangedURLs']->value === 1 ? 'checked' : ''; ?>
                     />
                 </td>
             </tr>

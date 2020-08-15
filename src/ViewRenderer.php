@@ -20,7 +20,7 @@ class ViewRenderer {
             'detectUploads' => CoreOptions::get( 'detectUploads' ),
             'deploymentURL' => CoreOptions::get( 'deploymentURL' ),
             'crawlChunkSize' => CoreOptions::get( 'crawlChunkSize' ),
-            'crawlOnlyChangedUrls' => CoreOptions::get( 'crawlOnlyChangedUrls' ),
+            'crawlOnlyChangedURLs' => CoreOptions::get( 'crawlOnlyChangedURLs' ),
             'useCrawlCaching' => CoreOptions::get( 'useCrawlCaching' ),
         ];
 
