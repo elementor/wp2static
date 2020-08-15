@@ -468,6 +468,14 @@ class Controller {
         exit;
     }
 
+    public static function wp2static_pre_post_update_handler( int $post_id ) : void {
+        $permalink = get_permalink( $post_id );
+        if ( $permalink ) {
+            $post_url = wp_make_link_relative( $permalink );
+            \WP2Static\CrawlQueue::clearCrawledTime( $post_url );
+        }
+    }
+
     public static function wp2static_save_post_handler( int $post_id ) : void {
         if ( CoreOptions::getValue( 'queueJobOnPostSave' ) &&
              get_post_status( $post_id ) === 'publish' ) {

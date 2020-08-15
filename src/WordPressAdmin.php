@@ -254,6 +254,12 @@ class WordPressAdmin {
         );
 
         add_action(
+            'pre_post_update',
+            [ 'WP2Static\Controller', 'wp2static_pre_post_update_handler' ],
+            0
+        );
+
+        add_action(
             'save_post',
             [ 'WP2Static\Controller', 'wp2static_save_post_handler' ],
             0
@@ -303,4 +309,3 @@ class WordPressAdmin {
         }
     }
 }
-

@@ -66,6 +66,22 @@ class CrawlQueue {
     }
 
     /**
+     * Set crawled_time to NULL for the URL.
+     *
+     * @param string $url The URL.
+     */
+    public static function clearCrawledTime( string $url ) : void {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'wp2static_urls';
+        $query = $wpdb->prepare(
+            "UPDATE $table_name SET crawled_time = NULL WHERE url = %s",
+            $url
+        );
+        $wpdb->query( $query );
+    }
+
+    /**
      * Set crawled_time to NOW() for each URL.
      *
      * @param string[] $urls List of URLs.
