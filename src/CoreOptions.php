@@ -176,6 +176,14 @@ class CoreOptions {
 
         $queries[] = $wpdb->prepare(
             $query_string,
+            'crawlOnlyChangedUrls',
+            '1',
+            'Crawl only changed URLs.',
+            ''
+        );
+
+        $queries[] = $wpdb->prepare(
+            $query_string,
             'useCrawlCaching',
             '1',
             'Use CrawlCache',
@@ -401,6 +409,12 @@ class CoreOptions {
                         ),
                     ],
                     [ 'name' => 'basicAuthPassword' ]
+                );
+
+                $wpdb->update(
+                    $table_name,
+                    [ 'value' => isset( $_POST['crawlOnlyChangedUrls'] ) ? 1 : 0 ],
+                    [ 'name' => 'crawlOnlyChangedUrls' ]
                 );
 
                 $wpdb->update(

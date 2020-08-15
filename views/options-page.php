@@ -148,6 +148,23 @@ function displayCheckbox($a = null, $b = null, $c = null) {
             <tr>
                 <td>
                     <label
+                        for="<?php echo $view['coreOptions']['crawlOnlyChangedUrls']->name; ?>"
+                    ><?php echo $view['coreOptions']['crawlOnlyChangedUrls']->label; ?></label>
+                </td>
+                <td>
+                    <input
+                        id="<?php echo $view['coreOptions']['crawlOnlyChangedUrls']->name; ?>"
+                        name="<?php echo $view['coreOptions']['crawlOnlyChangedUrls']->name; ?>"
+                        value="1"
+                        type="checkbox"
+                        <?php echo (int) $view['coreOptions']['crawlOnlyChangedUrls']->value === 1 ? 'checked' : ''; ?>
+                    />
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <label
                         for="<?php echo $view['coreOptions']['useCrawlCaching']->name; ?>"
                     ><?php echo $view['coreOptions']['useCrawlCaching']->label; ?></label>
                 </td>
