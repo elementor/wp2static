@@ -176,6 +176,14 @@ class CoreOptions {
 
         $queries[] = $wpdb->prepare(
             $query_string,
+            'crawlChunkSize',
+            '20',
+            'Crawl Chunk Size',
+            'The number of URLs to crawl in one chunk.'
+        );
+
+        $queries[] = $wpdb->prepare(
+            $query_string,
             'crawlOnlyChangedUrls',
             '1',
             'Crawl only changed URLs.',
@@ -409,6 +417,12 @@ class CoreOptions {
                         ),
                     ],
                     [ 'name' => 'basicAuthPassword' ]
+                );
+
+                $wpdb->update(
+                    $table_name,
+                    [ 'value' => sanitize_text_field( $_POST['crawlChunkSize'] ) ],
+                    [ 'name' => 'crawlChunkSize' ]
                 );
 
                 $wpdb->update(

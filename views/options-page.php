@@ -146,6 +146,23 @@ function displayCheckbox($a = null, $b = null, $c = null) {
             </tr>
 
             <tr>
+                <td style="width:50%;">
+                    <label
+                        for="<?php echo $view['coreOptions']['crawlChunkSize']->name; ?>"
+                    ><?php echo $view['coreOptions']['crawlChunkSize']->label; ?></label>
+                </td>
+                <td>
+                    <input
+                        class="widefat"
+                        id="<?php echo $view['coreOptions']['crawlChunkSize']->name; ?>"
+                        name="<?php echo $view['coreOptions']['crawlChunkSize']->name; ?>"
+                        type="text"
+                        value="<?php echo $view['coreOptions']['crawlChunkSize']->value !== '' ? $view['coreOptions']['crawlChunkSize']->value : ''; ?>"
+                    />
+                </td>
+            </tr>
+
+            <tr>
                 <td>
                     <label
                         for="<?php echo $view['coreOptions']['crawlOnlyChangedUrls']->name; ?>"

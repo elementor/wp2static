@@ -91,7 +91,12 @@ class Crawler {
         $site_host = $site_port ? $site_host . ":$site_port" : $site_host;
         $site_urls = [ "http://$site_host", "https://$site_host" ];
 
-        $chunk_size = 20;
+        $chunk_size = intval( CoreOptions::getValue( 'crawlChunkSize' ) );
+        if ( $chunk_size < 1 ) {
+            $chunk_size = PHP_INT_MAX;
+        }
+        WsLog::l( "Crawling with a chunk size of $chunk_size");
+
         $use_crawl_cache = apply_filters(
             'wp2static_use_crawl_cache',
             CoreOptions::getValue( 'useCrawlCaching' )
