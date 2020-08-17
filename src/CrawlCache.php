@@ -88,7 +88,13 @@ class CrawlCache {
     /**
      *  Get all URLs in CrawlCache
      *
-     *  @return string[] All crawlable URLs
+     *  @return object[] {
+     *      All crawlable URLs
+     *
+     *      @type string   $hashed_url           MD5 hashed URL
+     *      @type string   $url                  URL in plain text
+     *      @type string   $page_hash            MD5 hashed page
+     *  }
      */
     public static function getURLs() : array {
         global $wpdb;
@@ -96,7 +102,13 @@ class CrawlCache {
 
         $table_name = $wpdb->prefix . 'wp2static_crawl_cache';
 
-        $rows = $wpdb->get_results( "SELECT hashed_url, url, page_hash FROM $table_name ORDER BY url" );
+        $rows = $wpdb->get_results(
+            "
+            SELECT hashed_url, url, page_hash
+            FROM $table_name
+            ORDER BY url
+            "
+        );
 
         foreach ( $rows as $row ) {
             $urls[ $row->hashed_url ] = $row;
@@ -123,7 +135,7 @@ class CrawlCache {
     /**
      * Remove multiple URLs at once
      *
-     * @param array<string> $ids
+     * @param array<string> $hashes
      * @return void
      */
     public static function rmUrlsByHash( array $hashes ) : void {

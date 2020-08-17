@@ -114,7 +114,7 @@ class ViewRenderer {
             $urls = array_filter(
                 $urls,
                 function ( $url ) use ( $s ) {
-                    return stripos( $url->url, $s ) !== false;
+                    return stripos( isset( $url->url ) ? $url->url : '', $s ) !== false;
                 }
             );
         }
