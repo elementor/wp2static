@@ -1,25 +1,63 @@
 <div class="wrap">
     <br>
 
-    <table class="widefat striped">
-        <thead>
-            <tr>
-                <th>Paths in Post-processed Static Site</th>
-            </tr>
-        </thead>
-        <tbody>
+    <form id="posts-filter" method="GET">
+        <input type="hidden" name="page" value="<?php echo esc_attr($_GET['page']); ?>" />
+        <input type="hidden" name="paged" value="<?php echo $view['paginator']->page(); ?>" />
 
-            <?php if ( ! $view['paths'] ) : ?>
-                <tr>
-                    <td>Post-processed site directory is empty.</td>
-                </tr>
-            <?php endif; ?>
+        <p class="search-box">
+            <label class="screen-reader-text" for="post-search-input">Search Crawl Queue URLs:</label>
+            <input type="search" id="post-search-input" name="s" value="<?php echo esc_attr( @$_GET['s'] ); ?>">
+            <input type="submit" id="search-submit" class="button" value="Search URLs">
+        </p>
 
-            <?php foreach( $view['paths'] as $path ) : ?>
+        <div class="tablenav top">
+            <div class="alignleft actions bulkactions">
+                <label for="bulk-action-selector-top" class="screen-reader-text">Select bulk action</label>
+                <select name="action" id="bulk-action-selector-top">
+                    <option value="-1">Bulk Actions</option>
+                </select>
+                <input type="submit" id="doaction" class="button action" value="Apply">
+            </div>
+        
+            <?php $view['paginator']->render(); ?>
+            <br class="clear">
+        </div>
+
+        <table class="wp-list-table widefat striped">
+            <thead>
                 <tr>
-                    <td><?php echo $path; ?></td>
+                    <td id="cb" class="manage-column column-cb check-column">
+                        <label class="screen-reader-text" for="cb-select-all-1">Select All</label>
+                        <input id="cb-select-all-1" type="checkbox">
+                    </td>
+                    <th>Post-processed site directory is empty.</th>
                 </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <?php if ( ! $view['paginator']->totalRecords() ) : ?>
+                    <tr>
+                        <th>&nbsp;</th>
+                        <td>Post-processed site directory is empty.</td>
+                    </tr>
+                <?php endif; ?>
+
+                <?php foreach( $view['paginator']->records() as $id => $path ) : ?>
+                    <tr>
+                        <th scope="row" class="check-column">
+                            <label class="screen-reader-text" for="cb-select-<?php echo $id; ?>">
+                                Select <?php echo $path; ?>
+                            </label>
+                            <input id="cb-select-<?php echo $id; ?>" type="checkbox" name="id[]" value="<?php echo $id; ?>">
+                            <div class="locked-indicator">
+                                <span class="locked-indicator-icon" aria-hidden="true"></span>
+                                <span class="screen-reader-text"><?php echo $path; ?></span>
+                            </div>
+                        </th>
+                        <td><?php echo $path; ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </form>
 </div>

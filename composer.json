@@ -30,7 +30,8 @@
         "dealerdirect/phpcodesniffer-composer-installer": "*",
         "wp-coding-standards/wpcs": "*",
         "phpcompatibility/php-compatibility": "*",
-        "php-parallel-lint/php-parallel-lint": "*"
+        "php-parallel-lint/php-parallel-lint": "*",
+        "10up/wp_mock": "^0.4.2"
     },
     "autoload": {
         "psr-4": {
@@ -65,7 +66,8 @@
             "@lint",
             "@phpcs",
             "@phpcs72",
-            "@phpstan"
+            "@phpstan",
+            "@phpunit"
         ],
         "build": "/bin/sh tools/build_release.sh",
         "post-install-cmd": "sh ./tools/composer-post-install.sh"

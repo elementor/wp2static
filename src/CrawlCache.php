@@ -96,10 +96,10 @@ class CrawlCache {
 
         $table_name = $wpdb->prefix . 'wp2static_crawl_cache';
 
-        $rows = $wpdb->get_results( "SELECT url, page_hash FROM $table_name ORDER BY url" );
+        $rows = $wpdb->get_results( "SELECT hashed_url, url, page_hash FROM $table_name ORDER BY url" );
 
         foreach ( $rows as $row ) {
-            $urls[ $row->url ] = $row->page_hash;
+            $urls[ $row->hashed_url ] = $row;
         }
 
         return $urls;
@@ -118,6 +118,28 @@ class CrawlCache {
                 'hashed_url' => md5( $url ),
             ]
         );
+    }
+
+    /**
+     * Remove multiple URLs at once
+     *
+     * @param array<string> $ids
+     * @return void
+     */
+    public static function rmUrlsByHash( array $hashes ) : void {
+        global $wpdb;
+
+        $hashes = array_map(
+            function ( string $hash ) {
+                return '"' . esc_attr( $hash ) . '"';
+            },
+            $hashes
+        );
+        $hashes = implode( ',', $hashes );
+
+        $table_name = $wpdb->prefix . 'wp2static_crawl_cache';
+
+        $wpdb->query( "DELETE FROM $table_name WHERE hashed_url IN($hashes)" );
     }
 
     /**
