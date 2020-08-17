@@ -20,10 +20,6 @@ class Crawler {
      * @var Request
      */
     private $request;
-    /**
-     * @var mixed[]
-     */
-    private $curl_options;
 
     /**
      * Crawler constructor
