@@ -16,16 +16,7 @@ class CoreOptions {
 
     public static function init() : void {
         self::createTable();
-
-        global $wpdb;
-
-        // check for required options, seed if non-existant
-        $completion_email = self::get( 'completionEmail' );
-
-        if ( ! isset( $completion_email ) ) {
-            WsLog::l( 'Required option not found, seeding coreOptions' );
-            self::seedOptions();
-        }
+        self::seedOptions();
     }
 
     public static function createTable() : void {
@@ -46,6 +37,12 @@ class CoreOptions {
 
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         dbDelta( $sql );
+
+        \WP2Static\Controller::ensure_index(
+            $table_name,
+            'name',
+            "CREATE UNIQUE INDEX name ON $table_name (name)"
+        );
     }
 
     /**
@@ -59,7 +56,7 @@ class CoreOptions {
         $queries = [];
 
         $query_string =
-            "INSERT INTO $table_name (name, value, label, description)
+            "INSERT IGNORE INTO $table_name (name, value, label, description)
             VALUES (%s, %s, %s, %s);";
 
         $queries[] = $wpdb->prepare(

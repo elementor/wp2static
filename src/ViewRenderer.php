@@ -5,6 +5,8 @@ namespace WP2Static;
 class ViewRenderer {
 
     public static function renderOptionsPage() : void {
+        \WP2Static\CoreOptions::init();
+
         $view = [];
         $view['nonce_action'] = 'wp2static-ui-options';
 

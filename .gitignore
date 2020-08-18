@@ -3,4 +3,5 @@
 node_modules/
 coverage/
 admin/*.js*
+.phpunit.result.cache
 
