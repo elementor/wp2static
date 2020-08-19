@@ -18,7 +18,9 @@ class DeployCache {
         // dbDelta isn't adding it correctly
         $id_row = $wpdb->get_row( "SHOW COLUMNS FROM $table_name WHERE Field = 'id'" );
         if ( ! $id_row ) {
-            $wpdb->query("DROP TABLE IF EXISTS $table_name;");
+            $wpdb->query(
+                "DROP TABLE IF EXISTS $table_name;"
+            );
         }
 
         $sql = "CREATE TABLE $table_name (

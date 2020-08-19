@@ -16,7 +16,9 @@ class CrawlCache {
         // dbDelta isn't adding it correctly
         $id_row = $wpdb->get_row( "SHOW COLUMNS FROM $table_name WHERE Field = 'id'" );
         if ( ! $id_row ) {
-            $wpdb->query("DROP TABLE IF EXISTS $table_name;");
+            $wpdb->query(
+                "DROP TABLE IF EXISTS $table_name;"
+            );
         }
 
         $sql = "CREATE TABLE $table_name (
@@ -146,17 +148,17 @@ class CrawlCache {
     /**
      * Remove multiple URLs at once
      *
-     * @param array<string> $hashes
+     * @param array<int> $ids
      * @return void
      */
-    public static function rmUrlsById( array $hashes ) : void {
+    public static function rmUrlsById( array $ids ) : void {
         global $wpdb;
 
         $ids = implode( ',', array_map( 'absint', $ids ) );
 
         $table_name = $wpdb->prefix . 'wp2static_crawl_cache';
 
-        $wpdb->query( "DELETE FROM $table_name WHERE ID IN($hashes)" );
+        $wpdb->query( "DELETE FROM $table_name WHERE ID IN($ids)" );
     }
 
     /**
