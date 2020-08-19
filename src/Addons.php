@@ -62,6 +62,26 @@ class Addons {
     }
 
     /**
+     * Get enabled Addons of a given type
+     *
+     * @param string $type Type of addon to return
+     * @return mixed[] array of Addon objects
+     */
+    public static function getType( string $type ) : array {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'wp2static_addons';
+
+        $query = $wpdb->prepare(
+            "SELECT * FROM $table_name WHERE type = %s AND enabled = 1 ORDER BY slug",
+            $type
+        );
+        $addons = $wpdb->get_results( $query );
+
+        return $addons;
+    }
+
+    /**
      *  Deregister Addons
      */
     public static function truncate() : void {
@@ -80,18 +100,12 @@ class Addons {
      * "There can be only one!"
      */
     public static function getDeployer() : string {
-        global $wpdb;
+        $addons = self::getType( 'deploy' );
 
-        $table_name = $wpdb->prefix . 'wp2static_addons';
-
-        $deployment_addon_slug =
-            $wpdb->get_row( "SELECT slug FROM $table_name WHERE enabled = 1 AND type = 'deploy'" );
-
-        if ( ! $deployment_addon_slug ) {
+        if ( empty( $addons ) ) {
             return 'no-enabled-deployment-addons';
         }
 
-        return $deployment_addon_slug->slug;
+        return $addons[0]->slug;
     }
 }
-
