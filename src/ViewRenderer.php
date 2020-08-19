@@ -103,7 +103,7 @@ class ViewRenderer {
         if ( ! empty( $_GET['action'] ) && ! empty( $_GET['id'] ) && is_array( $_GET['id'] ) ) {
             switch ( $_GET['action'] ) {
                 case 'remove':
-                    CrawlCache::rmUrlsByHash( $_GET['id'] );
+                    CrawlCache::rmUrlsById( $_GET['id'] );
                     break;
             }
         }
