@@ -88,12 +88,6 @@ class CrawlQueue {
     public static function rmUrlsById( array $ids ) : void {
         global $wpdb;
 
-        $ids = array_map(
-            function ( string $id ) {
-                return absint( $id );
-            },
-            $ids
-        );
         $ids = implode( ',', array_map( 'absint', $ids ) );
 
         $table_name = $wpdb->prefix . 'wp2static_urls';

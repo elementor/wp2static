@@ -11,14 +11,26 @@ class CrawlCache {
 
         $charset_collate = $wpdb->get_charset_collate();
 
+        // @todo We can remove this eventually
+        // If the ID column is missing, just remove the table and start again because
+        // dbDelta isn't adding it correctly
+        $id_row = $wpdb->get_row( "SHOW COLUMNS FROM $table_name WHERE Field = 'id'" );
+        if ( ! $id_row ) {
+            $wpdb->query(
+                "DROP TABLE IF EXISTS $table_name;"
+            );
+        }
+
         $sql = "CREATE TABLE $table_name (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
             hashed_url CHAR(32) NOT NULL,
             url VARCHAR(2083) NOT NULL,
             page_hash CHAR(32) NOT NULL,
             time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
             status SMALLINT DEFAULT 200 NOT NULL,
             redirect_to VARCHAR(2083) NULL,
-            PRIMARY KEY  (hashed_url)
+            PRIMARY KEY  (id),
+            UNIQUE KEY hashed_url_idx (hashed_url)
         ) $charset_collate;";
 
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
@@ -88,7 +100,14 @@ class CrawlCache {
     /**
      *  Get all URLs in CrawlCache
      *
-     *  @return string[] All crawlable URLs
+     *  @return object[] {
+     *      All crawlable URLs
+     *
+     *      @type int      $id                   ID
+     *      @type string   $hashed_url           MD5 hashed URL
+     *      @type string   $url                  URL in plain text
+     *      @type string   $page_hash            MD5 hashed page
+     *  }
      */
     public static function getURLs() : array {
         global $wpdb;
@@ -96,10 +115,16 @@ class CrawlCache {
 
         $table_name = $wpdb->prefix . 'wp2static_crawl_cache';
 
-        $rows = $wpdb->get_results( "SELECT url, page_hash FROM $table_name ORDER BY url" );
+        $rows = $wpdb->get_results(
+            "
+            SELECT id, hashed_url, url, page_hash
+            FROM $table_name
+            ORDER BY url
+            "
+        );
 
         foreach ( $rows as $row ) {
-            $urls[ $row->url ] = $row->page_hash;
+            $urls[ $row->id ] = $row;
         }
 
         return $urls;
@@ -118,6 +143,22 @@ class CrawlCache {
                 'hashed_url' => md5( $url ),
             ]
         );
+    }
+
+    /**
+     * Remove multiple URLs at once
+     *
+     * @param array<int> $ids
+     * @return void
+     */
+    public static function rmUrlsById( array $ids ) : void {
+        global $wpdb;
+
+        $ids = implode( ',', array_map( 'absint', $ids ) );
+
+        $table_name = $wpdb->prefix . 'wp2static_crawl_cache';
+
+        $wpdb->query( "DELETE FROM $table_name WHERE ID IN($ids)" );
     }
 
     /**

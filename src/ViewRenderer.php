@@ -85,22 +85,11 @@ class ViewRenderer {
             );
         }
 
-        $page_rows = 200;
-        $view = [];
-        // Pagination vars
-        $view['total_count'] = count( $urls );
-        $view['page'] = isset( $_GET['paged'] ) ? max( 1, intval( $_GET['paged'] ) ) : 1;
-        $view['pages'] = intval( ceil( $view['total_count'] / $page_rows ) );
-        $view['page_rows'] = $page_rows;
-        // URLs to display
-        // Because array_slice doesn't preserve integer keys, we need to split
-        // the array into keys and values, array_slice each then recombine
-        $keys = array_keys( $urls );
-        $values = array_values( $urls );
-        $view['urls'] = array_combine(
-            array_slice( $keys, ( $view['page'] - 1 ) * $page_rows, $page_rows ),
-            array_slice( $values, ( $view['page'] - 1 ) * $page_rows, $page_rows )
-        );
+        $page_size = 200;
+        $page = isset( $_GET['paged'] ) ? max( 1, intval( $_GET['paged'] ) ) : 1;
+        $view = [
+            'paginator' => new Paginator( $urls, $page_size, $page ),
+        ];
 
         require_once WP2STATIC_PATH . 'views/crawl-queue-page.php';
     }
@@ -111,8 +100,32 @@ class ViewRenderer {
             die( 'Forbidden' );
         }
 
-        $view = [];
-        $view['urls'] = CrawlCache::getURLs();
+        if ( ! empty( $_GET['action'] ) && ! empty( $_GET['id'] ) && is_array( $_GET['id'] ) ) {
+            switch ( $_GET['action'] ) {
+                case 'remove':
+                    CrawlCache::rmUrlsById( $_GET['id'] );
+                    break;
+            }
+        }
+
+        $urls = CrawlCache::getURLs();
+
+        // Apply search
+        if ( ! empty( $_GET['s'] ) ) {
+            $s = $_GET['s'];
+            $urls = array_filter(
+                $urls,
+                function ( $url ) use ( $s ) {
+                    return stripos( isset( $url->url ) ? $url->url : '', $s ) !== false;
+                }
+            );
+        }
+
+        $page_size = 200;
+        $page = isset( $_GET['paged'] ) ? max( 1, intval( $_GET['paged'] ) ) : 1;
+        $view = [
+            'paginator' => new Paginator( $urls, $page_size, $page ),
+        ];
 
         require_once WP2STATIC_PATH . 'views/crawl-cache-page.php';
     }
@@ -123,8 +136,24 @@ class ViewRenderer {
             die( 'Forbidden' );
         }
 
-        $view = [];
-        $view['paths'] = ProcessedSite::getPaths();
+        $paths = ProcessedSite::getPaths();
+
+        // Apply search
+        if ( ! empty( $_GET['s'] ) ) {
+            $s = $_GET['s'];
+            $paths = array_filter(
+                $paths,
+                function ( $path ) use ( $s ) {
+                    return stripos( $path, $s ) !== false;
+                }
+            );
+        }
+
+        $page_size = 200;
+        $page = isset( $_GET['paged'] ) ? max( 1, intval( $_GET['paged'] ) ) : 1;
+        $view = [
+            'paginator' => new Paginator( $paths, $page_size, $page ),
+        ];
 
         require_once WP2STATIC_PATH . 'views/post-processed-site-paths-page.php';
     }
@@ -135,8 +164,24 @@ class ViewRenderer {
             die( 'Forbidden' );
         }
 
-        $view = [];
-        $view['paths'] = StaticSite::getPaths();
+        $paths = StaticSite::getPaths();
+
+        // Apply search
+        if ( ! empty( $_GET['s'] ) ) {
+            $s = $_GET['s'];
+            $paths = array_filter(
+                $paths,
+                function ( $path ) use ( $s ) {
+                    return stripos( $path, $s ) !== false;
+                }
+            );
+        }
+
+        $page_size = 200;
+        $page = isset( $_GET['paged'] ) ? max( 1, intval( $_GET['paged'] ) ) : 1;
+        $view = [
+            'paginator' => new Paginator( $paths, $page_size, $page ),
+        ];
 
         require_once WP2STATIC_PATH . 'views/static-site-paths-page.php';
     }
@@ -147,11 +192,26 @@ class ViewRenderer {
             die( 'Forbidden' );
         }
 
-        $view = [];
-        $view['paths']
-            = isset( $_GET['deploy_namespace'] )
+        $paths = isset( $_GET['deploy_namespace'] )
             ? DeployCache::getPaths( $_GET['deploy_namespace'] )
             : DeployCache::getPaths();
+
+        // Apply search
+        if ( ! empty( $_GET['s'] ) ) {
+            $s = $_GET['s'];
+            $paths = array_filter(
+                $paths,
+                function ( $path ) use ( $s ) {
+                    return stripos( $path, $s ) !== false;
+                }
+            );
+        }
+
+        $page_size = 200;
+        $page = isset( $_GET['paged'] ) ? max( 1, intval( $_GET['paged'] ) ) : 1;
+        $view = [
+            'paginator' => new Paginator( $paths, $page_size, $page ),
+        ];
 
         require_once WP2STATIC_PATH . 'views/deploy-cache-page.php';
     }

@@ -13,12 +13,24 @@ class DeployCache {
 
         $charset_collate = $wpdb->get_charset_collate();
 
+        // @todo We can remove this eventually
+        // If the ID column is missing, just remove the table and start again because
+        // dbDelta isn't adding it correctly
+        $id_row = $wpdb->get_row( "SHOW COLUMNS FROM $table_name WHERE Field = 'id'" );
+        if ( ! $id_row ) {
+            $wpdb->query(
+                "DROP TABLE IF EXISTS $table_name;"
+            );
+        }
+
         $sql = "CREATE TABLE $table_name (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
             path_hash CHAR(32) NOT NULL,
             path VARCHAR(2083) NOT NULL,
             file_hash CHAR(32) NOT NULL,
             namespace VARCHAR(128) NOT NULL,
-            PRIMARY KEY  (path_hash, namespace)
+            PRIMARY KEY  (id),
+            UNIQUE KEY path_hash_ns_idx (path_hash, namespace)
         ) $charset_collate;";
 
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
