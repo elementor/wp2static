@@ -39,11 +39,6 @@ cd $TMP_DIR
 find . -type d -exec chmod 755 {} \;
 find . -type f -exec chmod 644 {} \;
 
-# strip comments and whitespace from each PHP file
-if [ -z "$2" ]; then
-  find .  ! -name 'wp2static.php' -name \*.php -exec $EXEC_DIR/tools/compress_php_file {} \;
-fi
-
 zip -r -9 ./$1.zip ./static-html-output-plugin
 
 cd -
