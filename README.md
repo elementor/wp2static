@@ -6,7 +6,7 @@ Official homepage/docs: [https://wp2static.com](https://wp2static.com)
 
 __Note: This is for WP2Static, a new approach to what was originally called "WP Static HTML Output Plugin", which is now being maintained as [Static HTML Output](https://github.com/WP2Static/static-html-output-plugin).__
 
-[![CircleCI](https://circleci.com/gh/WP2Static/wp2static.svg?style=svg)](https://circleci.com/gh/WP2Static/wp2static)
+![codequality](https://github.com/wp2static/wp2static/workflows/codequality/badge.svg)
 
 ## Open Source over profits
 
