@@ -85,7 +85,7 @@ class Addons {
         $table_name = $wpdb->prefix . 'wp2static_addons';
 
         $deployment_addon_slug =
-            $wpdb->get_row( "SELECT slug FROM $table_name WHERE enabled = 1" );
+            $wpdb->get_row( "SELECT slug FROM $table_name WHERE enabled = 1 AND type = 'deploy'" );
 
         if ( ! $deployment_addon_slug ) {
             return 'no-enabled-deployment-addons';
