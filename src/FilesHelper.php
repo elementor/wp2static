@@ -71,6 +71,9 @@ class FilesHelper {
         return $files;
     }
 
+    /**
+     * Ensure a given filepath has an allowed filename and extension.
+     */
     public static function filePathLooksCrawlable( string $file_name ) : bool {
         $filenames_to_ignore = [
             '__MACOSX',
