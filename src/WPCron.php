@@ -9,7 +9,7 @@ namespace WP2Static;
 class WPCron {
 
     public static function setRecurringEvent( int $interval ) : void {
-        $next_timestamp = wp_next_scheduled( 'wp2staticProcessQueue' );
+        $next_timestamp = wp_next_scheduled( 'wp2static_process_queue' );
 
         if ( $interval === 0 ) {
 
@@ -17,20 +17,20 @@ class WPCron {
                 return;
             }
 
-            wp_unschedule_event( $next_timestamp, 'wp2staticProcessQueue' );
+            wp_unschedule_event( $next_timestamp, 'wp2static_process_queue' );
             return;
         }
 
         // remove existing first
         if ( $next_timestamp ) {
-            wp_unschedule_event( $next_timestamp, 'wp2staticProcessQueue' );
+            wp_unschedule_event( $next_timestamp, 'wp2static_process_queue' );
         }
 
         $interval = $interval . 'min' . ( $interval > 1 ? 's' : '' );
 
         WsLog::l( 'Setting auto queue processing interval to ' . $interval );
 
-        $result = wp_schedule_event( time(), $interval, 'wp2staticProcessQueue' );
+        $result = wp_schedule_event( time(), $interval, 'wp2static_process_queue' );
 
         if ( ! $result ) {
             WsLog::l( 'Unable to schedule WP Cron recurring event' );
@@ -38,13 +38,13 @@ class WPCron {
     }
 
     public static function clearRecurringEvent() : void {
-        $next_timestamp = wp_next_scheduled( 'wp2staticProcessQueue' );
+        $next_timestamp = wp_next_scheduled( 'wp2static_process_queue' );
 
         if ( ! $next_timestamp ) {
             return;
         }
 
-        wp_unschedule_event( $next_timestamp, 'wp2staticProcessQueue' );
+        wp_unschedule_event( $next_timestamp, 'wp2static_process_queue' );
     }
 
     /**

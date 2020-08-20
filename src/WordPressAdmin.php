@@ -51,21 +51,21 @@ class WordPressAdmin {
         );
 
         add_action(
-            'wp_ajax_wp2staticRun',
+            'wp_ajax_wp2static_run',
             [ 'WP2Static\Controller', 'wp2staticRun' ],
             10,
             0
         );
 
         add_action(
-            'wp_ajax_wp2staticPollLog',
+            'wp_ajax_wp2static_poll_log',
             [ 'WP2Static\Controller', 'wp2staticPollLog' ],
             10,
             0
         );
 
         add_action(
-            'admin_post_wp2staticUISaveOptions',
+            'admin_post_wp2static_ui_save_options',
             [ 'WP2Static\Controller', 'wp2staticUISaveOptions' ],
             10,
             0
@@ -93,35 +93,35 @@ class WordPressAdmin {
         );
 
         add_action(
-            'admin_post_wp2staticPostProcessedSiteDelete',
+            'admin_post_wp2static_post_processed_site_delete',
             [ 'WP2Static\Controller', 'wp2staticPostProcessedSiteDelete' ],
             10,
             0
         );
 
         add_action(
-            'admin_post_wp2staticPostProcessedSiteShow',
+            'admin_post_wp2static_post_processed_site_show',
             [ 'WP2Static\Controller', 'wp2staticPostProcessedSiteShow' ],
             10,
             0
         );
 
         add_action(
-            'admin_post_wp2staticLogDelete',
+            'admin_post_wp2static_log_delete',
             [ 'WP2Static\Controller', 'wp2staticLogDelete' ],
             10,
             0
         );
 
         add_action(
-            'admin_post_wp2staticDeleteAllCaches',
+            'admin_post_wp2static_delete_all_caches',
             [ 'WP2Static\Controller', 'wp2staticDeleteAllCaches' ],
             10,
             0
         );
 
         add_action(
-            'admin_post_wp2staticDeleteJobsQueue',
+            'admin_post_wp2static_delete_jobs_queue',
             [ 'WP2Static\Controller', 'wp2staticDeleteJobsQueue' ],
             10,
             0
@@ -135,91 +135,91 @@ class WordPressAdmin {
         );
 
         add_action(
-            'admin_post_wp2staticCrawlQueueDelete',
+            'admin_post_wp2static_crawl_queue_delete',
             [ 'WP2Static\Controller', 'wp2staticCrawlQueueDelete' ],
             10,
             0
         );
 
         add_action(
-            'admin_post_wp2staticCrawlQueueShow',
+            'admin_post_wp2static_crawl_queue_show',
             [ 'WP2Static\Controller', 'wp2staticCrawlQueueShow' ],
             10,
             0
         );
 
         add_action(
-            'admin_post_wp2staticDeployCacheDelete',
+            'admin_post_wp2static_deploy_cache_delete',
             [ 'WP2Static\Controller', 'wp2staticDeployCacheDelete' ],
             10,
             0
         );
 
         add_action(
-            'admin_post_wp2staticDeployCacheShow',
+            'admin_post_wp2static_deploy_cache_show',
             [ 'WP2Static\Controller', 'wp2staticDeployCacheShow' ],
             10,
             0
         );
 
         add_action(
-            'admin_post_wp2staticCrawlCacheDelete',
+            'admin_post_wp2static_crawl_cache_delete',
             [ 'WP2Static\Controller', 'wp2staticCrawlCacheDelete' ],
             10,
             0
         );
 
         add_action(
-            'admin_post_wp2staticCrawlCacheShow',
+            'admin_post_wp2static_crawl_cache_show',
             [ 'WP2Static\Controller', 'wp2staticCrawlCacheShow' ],
             10,
             0
         );
 
         add_action(
-            'admin_post_wp2staticStaticSiteDelete',
+            'admin_post_wp2static_static_site_delete',
             [ 'WP2Static\Controller', 'wp2staticStaticSiteDelete' ],
             10,
             0
         );
 
         add_action(
-            'admin_post_wp2staticStaticSiteShow',
+            'admin_post_wp2static_static_site_show',
             [ 'WP2Static\Controller', 'wp2staticStaticSiteShow' ],
             10,
             0
         );
 
         add_action(
-            'admin_post_wp2staticUISaveJobOptions',
+            'admin_post_wp2static_ui_save_job_options',
             [ 'WP2Static\Controller', 'wp2staticUISaveJobOptions' ],
             10,
             0
         );
 
         add_action(
-            'admin_post_wp2staticManuallyEnqueueJobs',
+            'admin_post_wp2static_manually_enqueue_jobs',
             [ 'WP2Static\Controller', 'wp2staticManuallyEnqueueJobs' ],
             10,
             0
         );
 
         add_action(
-            'admin_post_wp2staticToggleAddon',
+            'admin_post_wp2static_toggle_addon',
             [ 'WP2Static\Controller', 'wp2staticToggleAddon' ],
             10,
             0
         );
 
         add_action(
-            'wp2staticProcessQueue',
+            'wp2static_process_queue',
             [ 'WP2Static\Controller', 'wp2staticProcessQueue' ],
             10,
             0
         );
 
         add_action(
-            'wp2staticHeadless_hook',
+            'wp2static_headless_hook',
             [ 'WP2Static\Controller', 'wp2staticHeadless' ],
             10,
             0
