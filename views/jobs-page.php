@@ -156,11 +156,11 @@
             value="10">every 10 minutes</option>
     </select>
 
-    <p><i>If WP-Cron is not expected to be triggered by site visitors, you can also call `wp-cron.php` directly, run the WP-CLI command `wp wp2static process_queue` or call the hook `wp2static_process_queue` from within your own theme or plugin.</i></p>
+    <p><i>If WP-Cron is not expected to be triggered by site visitors, you can also call `wp-cron.php` directly, run the WP-CLI command `wp wp2static process_queue` or call the hook `wp2staticProcessQueue` from within your own theme or plugin.</i></p>
 
         <button class="button btn-primary">Save Job Automation Settings</button>
         <?php wp_nonce_field( $view['nonce_action'] ); ?>
-        <input name="action" type="hidden" value="wp2static_ui_save_job_options" />
+        <input name="action" type="hidden" value="wp2staticUISaveJobOptions" />
     </form>
 
     <br>
@@ -170,7 +170,7 @@
         action="<?php echo esc_url( admin_url('admin-post.php') ); ?>">
 
         <?php wp_nonce_field( 'wp2static-manually-enqueue-jobs' ); ?>
-        <input name="action" type="hidden" value="wp2static_manually_enqueue_jobs" />
+        <input name="action" type="hidden" value="wp2staticManuallyEnqueueJobs" />
 
         <button class="button">Manually Enqueue Jobs Now</button>
     </form>
@@ -210,7 +210,7 @@
         action="<?php echo esc_url( admin_url('admin-post.php') ); ?>">
 
     <?php wp_nonce_field( $view['nonce_action'] ); ?>
-    <input name="action" type="hidden" value="wp2static_delete_jobs_queue" />
+    <input name="action" type="hidden" value="wp2staticDeleteJobsQueue" />
 
     <button class="wp2static-button button btn-danger">Delete all Jobs from Queue</button>
 
@@ -226,7 +226,7 @@
         action="<?php echo esc_url( admin_url('admin-post.php') ); ?>">
 
     <?php wp_nonce_field( $view['nonce_action'] ); ?>
-    <input name="action" type="hidden" value="wp2static_process_jobs_queue" />
+    <input name="action" type="hidden" value="wp2staticProcessJobsQueue" />
 
     <button class="wp2static-button button btn-danger">Manually process Job Queue</button>
 

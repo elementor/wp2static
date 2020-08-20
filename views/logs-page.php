@@ -34,7 +34,7 @@
             action="<?php echo esc_url( admin_url('admin-post.php') ); ?>">
 
         <?php wp_nonce_field( $view['nonce_action'] ); ?>
-        <input name="action" type="hidden" value="wp2static_log_delete" />
+        <input name="action" type="hidden" value="wp2staticLogDelete" />
 
         <button class="wp2static-button button btn-danger">Delete Log</button>
 

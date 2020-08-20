@@ -368,7 +368,7 @@ class CLI {
         } else {
             WP_CLI::line( ' Processing ' . $job_count . ' job' . ( $job_count > 1 ? 's' : '' ) );
 
-            Controller::wp2static_process_queue();
+            Controller::wp2staticProcessQueue();
 
             WP_CLI::success( 'Done processing queue' );
         }
@@ -671,7 +671,7 @@ class CLI {
             }
         }
 
-        Controller::delete_all_caches();
+        Controller::deleteAllCaches();
     }
 
     /**

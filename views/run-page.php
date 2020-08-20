@@ -5,13 +5,13 @@ var latest_log_row = 0;
 
 jQuery(document).ready(function($){
     var run_data = {
-        action: 'wp2static_run',
+        action: 'wp2staticRun',
         security: '<?php echo $run_nonce; ?>',
     };
 
     var log_data = {
         dataType: 'text',
-        action: 'wp2static_poll_log',
+        action: 'wp2staticPollLog',
         startRow: latest_log_row,
         security: '<?php echo $run_nonce; ?>',
     };

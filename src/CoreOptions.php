@@ -38,7 +38,7 @@ class CoreOptions {
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         dbDelta( $sql );
 
-        \WP2Static\Controller::ensure_index(
+        \WP2Static\Controller::ensureIndex(
             $table_name,
             'name',
             "CREATE UNIQUE INDEX name ON $table_name (name)"
