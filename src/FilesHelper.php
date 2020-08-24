@@ -36,9 +36,9 @@ class FilesHelper {
     }
 
     /**
-     * Get public URLs for all files in a local directory
+     * Get public URLs for all files in a local directory.
      *
-     * @return string[] list of URLs
+     * @return string[] list of relative, urlencoded URLs
      */
     public static function getListOfLocalFilesByDir( string $dir ) : array {
         $files = [];
@@ -73,6 +73,9 @@ class FilesHelper {
 
     /**
      * Ensure a given filepath has an allowed filename and extension.
+     *
+     * @return bool  True if the given file does not have a blacklisted filename
+     *               or extension.
      */
     public static function filePathLooksCrawlable( string $file_name ) : bool {
         $filenames_to_ignore = [
@@ -179,10 +182,11 @@ class FilesHelper {
     }
 
     /**
-     * Clean all detected URLs before use
+     * Clean all detected URLs before use. Accepts relative and absolute URLs
+     * both with and without starting or trailing slashes.
      *
-     * @param string[] $urls list of URLs
-     * @return string[] list of URLs
+     * @param string[] $urls list of absolute or relative URLs
+     * @return string[] list of relative URLs
      * @throws WP2StaticException
      */
     public static function cleanDetectedURLs( array $urls ) : array {
@@ -235,4 +239,3 @@ class FilesHelper {
         return $cleaned_urls;
     }
 }
-
