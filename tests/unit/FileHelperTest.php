@@ -2,6 +2,8 @@
 
 namespace WP2Static;
 
+use Mockery;
+use org\bovigo\vfs\vfsStream;
 use WP_Mock;
 use WP_Mock\Tools\TestCase;
 
@@ -15,10 +17,107 @@ final class FileHelperTest extends TestCase {
     }
 
     /**
+     * Test delete_dir_with_files method
+     *
+     * @return void
+     */
+    public function testDeleteDirWithFiles() {
+        // Set up a virual folder structure
+        $structure = [
+            'folder_1' => [
+                'file_1.txt' => 'file_1.txt',
+                'file_2.txt' => 'file_2.txt',
+            ],
+            'folder_2' => [
+                'file_3.txt' => 'file_3.txt',
+                'file_4.txt' => 'file_4.txt',
+                'folder_3' => [
+                    'file_5.txt' => 'file_5.txt',
+                    'file_6.txt' => 'file_6.txt',
+                    
+                ],
+            ],
+        ];
+        $vfs = vfsStream::setup('root');
+        vfsStream::create($structure, $vfs);
+        $filepath = vfsStream::url('root/folder_1');
+
+        // Check vfsStream set up the directories correctly
+        $expected = true;
+        $actual = is_dir( $filepath );
+        $this->assertEquals( $expected, $actual );
+
+        // folder_1 should now be gone
+        FilesHelper::delete_dir_with_files($filepath);
+        $expected = false;
+        $actual = is_dir( $filepath );
+        $this->assertEquals( $expected, $actual );
+
+        // Delete a nested folder
+        $filepath = vfsStream::url('root/folder_2/folder_3');
+        FilesHelper::delete_dir_with_files($filepath);
+        // And confirm the top level one still exists
+        $filepath = vfsStream::url('root/folder_2');
+        $expected = true;
+        $actual = is_dir( $filepath );
+        $this->assertEquals( $expected, $actual );
+    }
+
+    /**
+     * Test getListOfLocalFilesByDir method
+     *
+     * @return void
+     */
+    public function testGetListOfLocalFilesByDir() {
+        // Set up a virual folder structure
+        $structure = [
+            'folder_1' => [
+                'file_1.jpg' => 'file_1.jpg',
+                'file_2.jpg' => 'file_2.jpg',
+            ],
+            'folder_2' => [
+                'file_3.jpg' => 'file_3.jpg',
+                'file_4.jpg' => 'file_4.jpg',
+                'folder_3' => [
+                    'file_5.jpg' => 'file_5.jpg',
+                    'file_6.jpg' => 'file_6.jpg',
+                    
+                ],
+            ],
+        ];
+        $vfs = vfsStream::setup('root');
+        vfsStream::create($structure, $vfs);
+        // Set virtual WP root directory to /root/ for this test
+        $mock = Mockery::mock('overload:\WP2Static\SiteInfo');
+        $mock->shouldreceive('getPath')->andReturn(vfsStream::url('root') . "/");
+
+
+        // Top level folder
+        $filepath = vfsStream::url('root/folder_1');
+        $expected = ['/folder_1/file_1.jpg', '/folder_1/file_2.jpg'];
+        $actual = FilesHelper::getListOfLocalFilesByDir( $filepath );
+        $this->assertEquals( $expected, $actual );
+
+        // Nested folder
+        $filepath = vfsStream::url('root/folder_2/folder_3');
+        $expected = ['/folder_2/folder_3/file_5.jpg', '/folder_2/folder_3/file_6.jpg'];
+        $actual = FilesHelper::getListOfLocalFilesByDir( $filepath );
+        $this->assertEquals( $expected, $actual );
+
+        // Folder with subfolder
+        $filepath = vfsStream::url('root/folder_2');
+        $expected = [
+            '/folder_2/file_3.jpg',
+            '/folder_2/file_4.jpg',
+            '/folder_2/folder_3/file_5.jpg',
+            '/folder_2/folder_3/file_6.jpg'
+        ];
+        $actual = FilesHelper::getListOfLocalFilesByDir( $filepath );
+        $this->assertEquals( $expected, $actual );
+    }
+
+    /**
      * Test filePathLooksCrawlable method
-     * 
-     * @todo Add tests for wp2static_file_extensions_to_ignore and
-     *  wp2static_filenames_to_ignore filters.
      *
      * @return void
      */
@@ -39,6 +138,12 @@ final class FileHelperTest extends TestCase {
         $this->assertEquals( $expected, $actual );
     }
 
+    /**
+     * Test filePathLooksCrawlable method's wp2static_file_extensions_to_ignore
+     * filter.
+     *
+     * @return void
+     */
     public function testFilePathLooksCrawlableExtensionFilter() {
         // txt extensions should be disallowed
         $expected = false;
@@ -85,6 +190,12 @@ final class FileHelperTest extends TestCase {
         $this->assertEquals( $expected, $actual );
     }
 
+    /**
+     * Test filePathLooksCrawlable method's wp2static_filenames_to_ignore
+     * filter.
+     *
+     * @return void
+     */
     public function testFilePathLooksCrawlableFilenameFilter() {
         // thumbs.db filenames are currently disallowed
         $expected = false;
