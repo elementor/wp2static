@@ -24,40 +24,63 @@ final class FileHelperTest extends TestCase {
     public function testDeleteDirWithFiles() {
         // Set up a virual folder structure
         $structure = [
-            'folder_1' => [
-                'file_1.txt' => 'file_1.txt',
-                'file_2.txt' => 'file_2.txt',
+            // Latin characters
+            'top_level_latin_folder' => [
+                'no_file_extension' => 'no_file_extension',
+                'example_of_an_extremely_long_latin_file_name_with_some_numbers_at_the_end_0123456789.fileextension' => 'example_of_an_extremely_long_latin_file_name_with_some_numbers_at_the_end_0123456789.fileextension',
             ],
-            'folder_2' => [
-                'file_3.txt' => 'file_3.txt',
-                'file_4.txt' => 'file_4.txt',
-                'folder_3' => [
-                    'file_5.txt' => 'file_5.txt',
-                    'file_6.txt' => 'file_6.txt',
+            // UTF-8 characters
+            'top_level_ùnicodë_folder' => [
+                'unicodÉ-file.jpg' => 'unicodÉ-file.jpg',
+                'sêcond_level_fÒlder' => [
+                    'ÚÑÌÇÕÐË.pdf' => 'ÚÑÌÇÕÐË.pdf',
+                    'second-unicøde-file.sql' => 'second-unicøde-file.sql',
                     
+                ],
+            ],
+            // Spaces
+            'top level folder with spaces' => [
+                'only a subfolder' => [
+                    'example file.php' => 'example file.php',
                 ],
             ],
         ];
         $vfs = vfsStream::setup('root');
         vfsStream::create($structure, $vfs);
-        $filepath = vfsStream::url('root/folder_1');
 
-        // Check vfsStream set up the directories correctly
+        // Check vfsStream set up the top level directories correctly.
+        // We don't *really* need to do this as it should be covered in
+        // vfsStream's tests but it gives peace of mind and will confirm
+        // our below tests are actually doing something.
+        foreach ( array_keys( $structure ) as $folder ) {
+            $filepath = vfsStream::url("root/$folder");
+            $expected = true;
+            $actual = is_dir( $filepath );
+            $this->assertEquals( $expected, $actual );
+        }
+
+        // Delete the unicode subfolder
+        $filepath = vfsStream::url('root/top_level_ùnicodë_folder/sêcond_level_fÒlder');
+        FilesHelper::delete_dir_with_files($filepath);
+        // Confirm it's gone
+        $expected = false;
+        $actual = is_dir( $filepath );
+        $this->assertEquals( $expected, $actual );
+        // And confirm its parent still exists
+        $filepath = vfsStream::url('root/top_level_ùnicodë_folder');
         $expected = true;
         $actual = is_dir( $filepath );
         $this->assertEquals( $expected, $actual );
 
-        // folder_1 should now be gone
+        // Delete a subfolder with spaces in the filename
+        $filepath = vfsStream::url('root/top level folder with spaces/only a subfolder');
         FilesHelper::delete_dir_with_files($filepath);
+        // Confirm it's gone
         $expected = false;
         $actual = is_dir( $filepath );
         $this->assertEquals( $expected, $actual );
-
-        // Delete a nested folder
-        $filepath = vfsStream::url('root/folder_2/folder_3');
-        FilesHelper::delete_dir_with_files($filepath);
-        // And confirm the top level one still exists
-        $filepath = vfsStream::url('root/folder_2');
+        // And confirm its parent still exists
+        $filepath = vfsStream::url('root/top level folder with spaces');
         $expected = true;
         $actual = is_dir( $filepath );
         $this->assertEquals( $expected, $actual );
@@ -71,17 +94,24 @@ final class FileHelperTest extends TestCase {
     public function testGetListOfLocalFilesByDir() {
         // Set up a virual folder structure
         $structure = [
-            'folder_1' => [
-                'file_1.jpg' => 'file_1.jpg',
-                'file_2.jpg' => 'file_2.jpg',
+            // Latin characters
+            'top_level_latin_folder' => [
+                'no_file_extension' => 'no_file_extension',
+                'example_of_an_extremely_long_latin_file_name_with_some_numbers_at_the_end_0123456789.fileextension' => 'example_of_an_extremely_long_latin_file_name_with_some_numbers_at_the_end_0123456789.fileextension',
             ],
-            'folder_2' => [
-                'file_3.jpg' => 'file_3.jpg',
-                'file_4.jpg' => 'file_4.jpg',
-                'folder_3' => [
-                    'file_5.jpg' => 'file_5.jpg',
-                    'file_6.jpg' => 'file_6.jpg',
+            // UTF-8 characters
+            'top_level_ùnicodë_folder' => [
+                'unicodÉ-file.jpg' => 'unicodÉ-file.jpg',
+                'sêcond_level_fÒlder' => [
+                    'ÚÑÌÇÕÐË.pdf' => 'ÚÑÌÇÕÐË.pdf',
+                    'second-unicøde-file.php' => 'second-unicøde-file.php',
                     
+                ],
+            ],
+            // Spaces
+            'top level folder with spaces' => [
+                'only a subfolder' => [
+                    'example file.pdf' => 'example file.pdf',
                 ],
             ],
         ];
@@ -93,24 +123,28 @@ final class FileHelperTest extends TestCase {
 
 
         // Top level folder
-        $filepath = vfsStream::url('root/folder_1');
-        $expected = ['/folder_1/file_1.jpg', '/folder_1/file_2.jpg'];
+        $filepath = vfsStream::url('root/top_level_latin_folder');
+        $expected = [
+            '/top_level_latin_folder/no_file_extension',
+            '/top_level_latin_folder/example_of_an_extremely_long_latin_file_name_with_some_numbers_at_the_end_0123456789.fileextension',
+        ];
         $actual = FilesHelper::getListOfLocalFilesByDir( $filepath );
         $this->assertEquals( $expected, $actual );
 
         // Nested folder
-        $filepath = vfsStream::url('root/folder_2/folder_3');
-        $expected = ['/folder_2/folder_3/file_5.jpg', '/folder_2/folder_3/file_6.jpg'];
+        // This is actually two tests in one. One of the files in this folder
+        // has a 'php' extension which is disallowed and shouldn't be returned.
+        $filepath = vfsStream::url('root/top_level_ùnicodë_folder/sêcond_level_fÒlder');
+        $expected = [
+            '/top_level_%C3%B9nicod%C3%AB_folder/s%C3%AAcond_level_f%C3%92lder/ÚÑÌÇÕÐË.pdf',
+        ];
         $actual = FilesHelper::getListOfLocalFilesByDir( $filepath );
         $this->assertEquals( $expected, $actual );
 
         // Folder with subfolder
-        $filepath = vfsStream::url('root/folder_2');
+        $filepath = vfsStream::url('root/top level folder with spaces');
         $expected = [
-            '/folder_2/file_3.jpg',
-            '/folder_2/file_4.jpg',
-            '/folder_2/folder_3/file_5.jpg',
-            '/folder_2/folder_3/file_6.jpg'
+            '/top%20level%20folder%20with%20spaces/only a subfolder/example file.pdf'
         ];
         $actual = FilesHelper::getListOfLocalFilesByDir( $filepath );
         $this->assertEquals( $expected, $actual );
@@ -150,7 +184,7 @@ final class FileHelperTest extends TestCase {
         $actual = FilesHelper::filePathLooksCrawlable( "/path/to/foo.txt" );
         $this->assertEquals( $expected, $actual );
 
-        // Here we're changing which fil eextensions are no longer allowed.
+        // Here we're changing which file extensions are no longer allowed.
         \WP_Mock::onFilter( 'wp2static_file_extensions_to_ignore' )
             ->with([
                 '.bat',
