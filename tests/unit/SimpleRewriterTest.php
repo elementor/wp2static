@@ -97,6 +97,11 @@ final class SimpleRewriterTest extends TestCase {
         $actual = SimpleRewriter::rewriteFileContents( 'https://foo.com//bar/baz' );
         $this->assertEquals( $expected, $actual );
 
+        // Protocol relative URLs are being rewritten
+        $expected = '//bar.com/bar/baz';
+        $actual = SimpleRewriter::rewriteFileContents( '//foo.com/bar/baz' );
+        $this->assertEquals( $expected, $actual );
+
     }
 
     /**

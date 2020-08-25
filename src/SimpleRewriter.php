@@ -19,6 +19,10 @@ class SimpleRewriter {
     public static function rewrite( string $filename ) : void {
         $file_contents = file_get_contents( $filename );
 
+        if ( $file_contents === false ) {
+            $file_contents = '';
+        }
+
         $rewritten_contents = self::rewriteFileContents( $file_contents );
 
         file_put_contents( $filename, $rewritten_contents );
@@ -48,7 +52,6 @@ class SimpleRewriter {
         );
 
         $search_patterns = [
-            trailingslashit( $wordpress_site_url ),
             addcslashes( $wordpress_site_url, '/' ),
             addcslashes( trailingslashit( $wordpress_site_url ), '/' ),
             URLHelper::getProtocolRelativeURL( $wordpress_site_url ),
@@ -56,7 +59,6 @@ class SimpleRewriter {
         ];
 
         $replace_patterns = [
-            trailingslashit( $destination_url ),
             addcslashes( $destination_url, '/' ),
             addcslashes( trailingslashit( $destination_url ), '/' ),
             URLHelper::getProtocolRelativeURL( $destination_url ),
