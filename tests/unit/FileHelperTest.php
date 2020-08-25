@@ -64,13 +64,8 @@ final class FileHelperTest extends TestCase {
         }
 
         // Delete the unicode subfolder
-<<<<<<< HEAD
         $filepath = vfsStream::url( 'root/top_level_ùnicodë_folder/sêcond_level_fÒlder' );
         FilesHelper::delete_dir_with_files( $filepath );
-=======
-        $filepath = vfsStream::url('root/top_level_ùnicodë_folder/sêcond_level_fÒlder');
-        FilesHelper::deleteDirWithFiles($filepath);
->>>>>>> upstream/master
         // Confirm it's gone
         $expected = false;
         $actual = is_dir( $filepath );
@@ -82,13 +77,8 @@ final class FileHelperTest extends TestCase {
         $this->assertEquals( $expected, $actual );
 
         // Delete a subfolder with spaces in the filename
-<<<<<<< HEAD
         $filepath = vfsStream::url( 'root/top level folder with spaces/only a subfolder' );
         FilesHelper::delete_dir_with_files( $filepath );
-=======
-        $filepath = vfsStream::url('root/top level folder with spaces/only a subfolder');
-        FilesHelper::deleteDirWithFiles($filepath);
->>>>>>> upstream/master
         // Confirm it's gone
         $expected = false;
         $actual = is_dir( $filepath );
