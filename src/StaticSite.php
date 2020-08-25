@@ -44,7 +44,7 @@ class StaticSite {
         WsLog::l( 'Deleting StaticSite files' );
 
         if ( is_dir( self::getPath() ) ) {
-            FilesHelper::delete_dir_with_files( self::getPath() );
+            FilesHelper::deleteDirWithFiles( self::getPath() );
 
             // CrawlCache not useful without StaticSite files
             CrawlCache::truncate();
