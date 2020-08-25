@@ -15,8 +15,8 @@ class DetectAuthorsURLs {
         $authors_urls = [];
         $users = get_users();
 
-        foreach ($users as $author) {
-            $author_link = get_author_posts_url($author->ID);
+        foreach ($users as $author){
+            $author_link = get_author_posts_url( $author->ID );
 
             if ( ! is_string( $author_link ) ) {
                 continue;
