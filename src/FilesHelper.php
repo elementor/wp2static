@@ -13,7 +13,7 @@ class FilesHelper {
      *
      * @throws WP2StaticException
      */
-    public static function delete_dir_with_files( string $dir ) : void {
+    public static function deleteDirWithFiles( string $dir ) : void {
         if ( is_dir( $dir ) ) {
             $dir_files = scandir( $dir );
 
@@ -27,7 +27,7 @@ class FilesHelper {
 
             foreach ( $files as $file ) {
                 ( is_dir( "$dir/$file" ) ) ?
-                self::delete_dir_with_files( "$dir/$file" ) :
+                self::deleteDirWithFiles( "$dir/$file" ) :
                 unlink( "$dir/$file" );
             }
 
