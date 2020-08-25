@@ -31,7 +31,8 @@
         "wp-coding-standards/wpcs": "*",
         "phpcompatibility/php-compatibility": "*",
         "php-parallel-lint/php-parallel-lint": "*",
-        "10up/wp_mock": "^0.4.2"
+        "10up/wp_mock": "^0.4.2",
+        "mikey179/vfsstream": "^1.6"
     },
     "autoload": {
         "psr-4": {
