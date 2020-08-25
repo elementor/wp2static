@@ -7,11 +7,36 @@ use org\bovigo\vfs\vfsStream;
 use WP_Mock;
 use WP_Mock\Tools\TestCase;
 
+/**
+ * @runTestsInSeparateProcesses
+ * @preserveGlobalState disabled
+ */
 final class SimpleRewriterTest extends TestCase {
 
     public function setUp() : void
     {
         WP_Mock::setUp();
+    }
+
+    public function tearDown() : void
+    {
+        WP_Mock::tearDown();
+        Mockery::close();
+    }
+
+    /**
+     * Test deleteDirWithFiles method
+     *
+     * @return void
+     */
+    public function testRewrite() {
+        // Set up a virual file to rewriting
+        $structure = [
+            'my-file.html' => 'my-file.html',
+        ];
+        $vfs = vfsStream::setup( 'root' );
+        vfsStream::create( $structure, $vfs );
+        $filepath = vfsStream::url( 'root/my-file.html' );
 
         // Mock the methods and functions used by SimpleRewriter
         Mockery::mock( 'overload:\WP2Static\CoreOptions' )
@@ -31,26 +56,6 @@ final class SimpleRewriterTest extends TestCase {
                 'return_arg' => 0,
             ]
         );
-    }
-
-    public function tearDown() : void
-    {
-        WP_Mock::tearDown();
-    }
-
-    /**
-     * Test deleteDirWithFiles method
-     *
-     * @return void
-     */
-    public function testRewrite() {
-        // Set up a virual file to rewriting
-        $structure = [
-            'my-file.html' => 'my-file.html',
-        ];
-        $vfs = vfsStream::setup( 'root' );
-        vfsStream::create( $structure, $vfs );
-        $filepath = vfsStream::url( 'root/my-file.html' );
 
         // We're performing a rewrite and updating the file correctly
         file_put_contents( $filepath, 'https://foo.com' );
@@ -66,6 +71,25 @@ final class SimpleRewriterTest extends TestCase {
      * @return void
      */
     public function testRewriteFileContents() {
+        // Mock the methods and functions used by SimpleRewriter
+        Mockery::mock( 'overload:\WP2Static\CoreOptions' )
+            ->shouldreceive( 'getValue' )
+            ->withArgs( [ 'deploymentURL' ] )
+            ->andReturn( 'https://bar.com' );
+        Mockery::mock( 'overload:\WP2Static\SiteInfo' )
+            ->shouldreceive( 'getUrl' )
+            ->withArgs( [ 'site' ] )
+            ->andReturn( 'https://foo.com' );
+        Mockery::mock( 'overload:\WP2Static\URLHelper' )
+            ->shouldreceive( 'getProtocolRelativeURL' )
+            ->andReturnUsing( [ $this, 'getProtocolRelativeURL' ] );
+        WP_Mock::userFunction(
+            'trailingslashit',
+            [
+                'return_arg' => 0,
+            ]
+        );
+
         $expected = 'a file with no change needed';
         $actual = SimpleRewriter::rewriteFileContents( 'a file with no change needed' );
         $this->assertEquals( $expected, $actual );
