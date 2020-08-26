@@ -64,8 +64,8 @@ final class SimpleRewriterTest extends TestCase {
     public function rewriteFileContentsProvider() {
         return [
             'no changes needed' => [
-                'a file with no change needed',
-                'a file with no change needed',
+                'a file with no change needed https://baz.com',
+                'a file with no change needed https://baz.com',
             ],
             'WP to Destination URL (without trailing slash)' => [
                 'https://foo.com',
@@ -98,6 +98,44 @@ final class SimpleRewriterTest extends TestCase {
      * @dataProvider rewriteFileContentsProvider
      */
     public function testRewriteFileContents( $raw_html, $expected ) {
+        $actual = SimpleRewriter::rewriteFileContents( $raw_html );
+        $this->assertEquals( $expected, $actual );
+
+        // Do a cslashed version of this test also
+        $actual = SimpleRewriter::rewriteFileContents( addcslashes( $raw_html, '/' ) );
+        $this->assertEquals( addcslashes( $expected, '/' ), $actual );
+    }
+
+    /**
+     * @dataProvider rewriteFileContentsProvider
+     */
+    public function testRewriteFileContentsDestinationUrlFilter( $raw_html, $expected ) {
+        // Test a deployment URL on a subdirectory
+        \WP_Mock::onFilter( 'wp2static_set_destination_url' )
+            ->with('https://bar.com')
+            ->reply('https://bar.com/somepath');
+
+        $expected = str_replace('bar.com', 'bar.com/somepath', $expected);
+
+        $actual = SimpleRewriter::rewriteFileContents( $raw_html );
+        $this->assertEquals( $expected, $actual );
+
+        // Do a cslashed version of this test also
+        $actual = SimpleRewriter::rewriteFileContents( addcslashes( $raw_html, '/' ) );
+        $this->assertEquals( addcslashes( $expected, '/' ), $actual );
+    }
+
+    /**
+     * @dataProvider rewriteFileContentsProvider
+     */
+    public function testRewriteFileContentsSiteUrlFilter( $raw_html, $expected ) {
+        // Test a deployment URL on a subdirectory
+        \WP_Mock::onFilter( 'wp2static_set_wordpress_site_url' )
+            ->with('https://foo.com')
+            ->reply('https://foo.com/somepath/');
+
+        $raw_html = str_replace('foo.com', 'foo.com/somepath', $raw_html);
+
         $actual = SimpleRewriter::rewriteFileContents( $raw_html );
         $this->assertEquals( $expected, $actual );
 
