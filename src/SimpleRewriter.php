@@ -48,19 +48,17 @@ class SimpleRewriter {
 
         $wordpress_site_url = apply_filters(
             'wp2static_set_wordpress_site_url',
-            trailingslashit( SiteInfo::getUrl( 'site' ) )
+            untrailingslashit( SiteInfo::getUrl( 'site' ) )
         );
 
+        $wordpress_site_url = untrailingslashit( $wordpress_site_url );
+        $destination_url = untrailingslashit( $destination_url );
+
         $search_patterns = [
-            addcslashes( $wordpress_site_url, '/' ),
-            addcslashes( trailingslashit( $wordpress_site_url ), '/' ),
             URLHelper::getProtocolRelativeURL( $wordpress_site_url ),
             addcslashes( URLHelper::getProtocolRelativeURL( $wordpress_site_url ), '/' ),
         ];
-
         $replace_patterns = [
-            addcslashes( $destination_url, '/' ),
-            addcslashes( trailingslashit( $destination_url ), '/' ),
             URLHelper::getProtocolRelativeURL( $destination_url ),
             addcslashes( URLHelper::getProtocolRelativeURL( $destination_url ), '/' ),
         ];

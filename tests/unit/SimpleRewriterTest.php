@@ -25,16 +25,10 @@ final class SimpleRewriterTest extends TestCase {
         Mockery::mock( 'overload:\WP2Static\SiteInfo' )
             ->shouldreceive( 'getUrl' )
             ->withArgs( [ 'site' ] )
-            ->andReturn( 'https://foo.com' );
+            ->andReturn( 'https://foo.com/' );
         Mockery::mock( 'overload:\WP2Static\URLHelper' )
             ->shouldreceive( 'getProtocolRelativeURL' )
             ->andReturnUsing( [ $this, 'getProtocolRelativeURL' ] );
-        WP_Mock::userFunction(
-            'trailingslashit',
-            [
-                'return_arg' => 0,
-            ]
-        );
     }
 
     public function tearDown() : void
@@ -45,6 +39,8 @@ final class SimpleRewriterTest extends TestCase {
 
     /**
      * Test deleteDirWithFiles method
+     *
+     * @todo Add test for rewriting a file that doesn't exist
      *
      * @return void
      */
@@ -65,48 +61,49 @@ final class SimpleRewriterTest extends TestCase {
         $this->assertEquals( $expected, $actual );
     }
 
+    public function rewriteFileContentsProvider() {
+        return [
+            'no changes needed' => [
+                'a file with no change needed',
+                'a file with no change needed',
+            ],
+            'WP to Destination URL (without trailing slash)' => [
+                'https://foo.com',
+                'https://bar.com',
+            ],
+            'WP to Destination URL (with trailing slash)' => [
+                'https://foo.com/',
+                'https://bar.com/',
+            ],
+            'multiple URLs' => [
+                'multiple https://foo.com occurances https://foo.com present',
+                'multiple https://bar.com occurances https://bar.com present',
+            ],
+            'URL with params' => [
+                'https://foo.com/bar/baz',
+                'https://bar.com/bar/baz',
+            ],
+            'URLs are not being cleaned correctly. Is this OK?' => [
+                'https://foo.com//bar/baz',
+                'https://bar.com//bar/baz',
+            ],
+            'Protocol relative URLs' => [
+                '//foo.com/bar/baz',
+                '//bar.com/bar/baz',
+            ],
+        ];
+    }
+
     /**
-     * Test deleteDirWithFiles method
-     *
-     * @return void
+     * @dataProvider rewriteFileContentsProvider
      */
-    public function testRewriteFileContents() {
-        $expected = 'a file with no change needed';
-        $actual = SimpleRewriter::rewriteFileContents( 'a file with no change needed' );
+    public function testRewriteFileContents( $raw_html, $expected ) {
+        $actual = SimpleRewriter::rewriteFileContents( $raw_html );
         $this->assertEquals( $expected, $actual );
 
-        // We're rewriting WP to Destination URL correctly (without trailing slash)
-        $expected = 'https://bar.com';
-        $actual = SimpleRewriter::rewriteFileContents( 'https://foo.com' );
-        $this->assertEquals( $expected, $actual );
-
-        // We're rewriting WP to Destination URL correctly (with trailing slash)
-        $expected = 'https://bar.com/';
-        $actual = SimpleRewriter::rewriteFileContents( 'https://foo.com/' );
-        $this->assertEquals( $expected, $actual );
-
-        // Multiple URLs are being rewritten
-        $expected = 'multiple https://bar.com occurances https://bar.com present';
-        $actual = SimpleRewriter::rewriteFileContents(
-            'multiple https://foo.com occurances https://foo.com present'
-        );
-        $this->assertEquals( $expected, $actual );
-
-        // URLs with params are being rewritten
-        $expected = 'https://bar.com/bar/baz';
-        $actual = SimpleRewriter::rewriteFileContents( 'https://foo.com/bar/baz' );
-        $this->assertEquals( $expected, $actual );
-
-        // @todo URLs are not being cleaned correctly. Is this OK?
-        $expected = 'https://bar.com//bar/baz';
-        $actual = SimpleRewriter::rewriteFileContents( 'https://foo.com//bar/baz' );
-        $this->assertEquals( $expected, $actual );
-
-        // Protocol relative URLs are being rewritten
-        $expected = '//bar.com/bar/baz';
-        $actual = SimpleRewriter::rewriteFileContents( '//foo.com/bar/baz' );
-        $this->assertEquals( $expected, $actual );
-
+        // Do a cslashed version of this test also
+        $actual = SimpleRewriter::rewriteFileContents( addcslashes( $raw_html, '/' ) );
+        $this->assertEquals( addcslashes( $expected, '/' ), $actual );
     }
 
     /**
