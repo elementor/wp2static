@@ -55,10 +55,12 @@ class SimpleRewriter {
         $destination_url = untrailingslashit( $destination_url );
 
         $search_patterns = [
+            $wordpress_site_url,
             URLHelper::getProtocolRelativeURL( $wordpress_site_url ),
             addcslashes( URLHelper::getProtocolRelativeURL( $wordpress_site_url ), '/' ),
         ];
         $replace_patterns = [
+            $destination_url,
             URLHelper::getProtocolRelativeURL( $destination_url ),
             addcslashes( URLHelper::getProtocolRelativeURL( $destination_url ), '/' ),
         ];

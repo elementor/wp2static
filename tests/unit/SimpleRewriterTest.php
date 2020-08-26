@@ -18,14 +18,6 @@ final class SimpleRewriterTest extends TestCase {
         WP_Mock::setUp();
 
         // Mock the methods and functions used by SimpleRewriter
-        Mockery::mock( 'overload:\WP2Static\CoreOptions' )
-            ->shouldreceive( 'getValue' )
-            ->withArgs( [ 'deploymentURL' ] )
-            ->andReturn( 'https://bar.com' );
-        Mockery::mock( 'overload:\WP2Static\SiteInfo' )
-            ->shouldreceive( 'getUrl' )
-            ->withArgs( [ 'site' ] )
-            ->andReturn( 'https://foo.com/' );
         Mockery::mock( 'overload:\WP2Static\URLHelper' )
             ->shouldreceive( 'getProtocolRelativeURL' )
             ->andReturnUsing( [ $this, 'getProtocolRelativeURL' ] );
@@ -45,6 +37,16 @@ final class SimpleRewriterTest extends TestCase {
      * @return void
      */
     public function testRewrite() {
+        // Mock the methods and functions used by SimpleRewriter
+        Mockery::mock( 'overload:\WP2Static\CoreOptions' )
+            ->shouldreceive( 'getValue' )
+            ->withArgs( [ 'deploymentURL' ] )
+            ->andReturn( 'https://bar.com' );
+        Mockery::mock( 'overload:\WP2Static\SiteInfo' )
+            ->shouldreceive( 'getUrl' )
+            ->withArgs( [ 'site' ] )
+            ->andReturn( 'https://foo.com/' );
+        
         // Set up a virual file to rewriting
         $structure = [
             'my-file.html' => 'my-file.html',
@@ -98,6 +100,16 @@ final class SimpleRewriterTest extends TestCase {
      * @dataProvider rewriteFileContentsProvider
      */
     public function testRewriteFileContents( $raw_html, $expected ) {
+        // Mock the methods and functions used by SimpleRewriter
+        Mockery::mock( 'overload:\WP2Static\CoreOptions' )
+            ->shouldreceive( 'getValue' )
+            ->withArgs( [ 'deploymentURL' ] )
+            ->andReturn( 'https://bar.com' );
+        Mockery::mock( 'overload:\WP2Static\SiteInfo' )
+            ->shouldreceive( 'getUrl' )
+            ->withArgs( [ 'site' ] )
+            ->andReturn( 'https://foo.com/' );
+
         $actual = SimpleRewriter::rewriteFileContents( $raw_html );
         $this->assertEquals( $expected, $actual );
 
@@ -106,10 +118,58 @@ final class SimpleRewriterTest extends TestCase {
         $this->assertEquals( addcslashes( $expected, '/' ), $actual );
     }
 
+    public function testRewriteFileContentsHttpToHttps() {
+        // Mock the methods and functions used by SimpleRewriter
+        $deploymentMock = Mockery::mock( 'overload:\WP2Static\CoreOptions' )
+            ->shouldreceive( 'getValue' )
+            ->withArgs( [ 'deploymentURL' ] )
+            ->andReturn( 'https://bar.com' )
+            ->getMock();
+        $siteUrlMock = Mockery::mock( 'overload:\WP2Static\SiteInfo' )
+            ->shouldreceive( 'getUrl' )
+            ->withArgs( [ 'site' ] )
+            ->andReturn( 'http://foo.com/' )
+            ->getMock();
+
+        // http -> https
+        $expected = 'https://bar.com/somepath';
+        $actual = SimpleRewriter::rewriteFileContents( 'http://foo.com/somepath' );
+        $this->assertEquals( $expected, $actual );
+    }
+
+    public function testRewriteFileContentsHttpsToHttp() {
+        // Mock the methods and functions used by SimpleRewriter
+        $deploymentMock = Mockery::mock( 'overload:\WP2Static\CoreOptions' )
+            ->shouldreceive( 'getValue' )
+            ->withArgs( [ 'deploymentURL' ] )
+            ->andReturn( 'http://bar.com' )
+            ->getMock();
+        $siteUrlMock = Mockery::mock( 'overload:\WP2Static\SiteInfo' )
+            ->shouldreceive( 'getUrl' )
+            ->withArgs( [ 'site' ] )
+            ->andReturn( 'https://foo.com/' )
+            ->getMock();
+
+        // http -> https
+        $expected = 'http://bar.com/somepath';
+        $actual = SimpleRewriter::rewriteFileContents( 'https://foo.com/somepath' );
+        $this->assertEquals( $expected, $actual );
+    }
+
     /**
      * @dataProvider rewriteFileContentsProvider
      */
     public function testRewriteFileContentsDestinationUrlFilter( $raw_html, $expected ) {
+        // Mock the methods and functions used by SimpleRewriter
+        Mockery::mock( 'overload:\WP2Static\CoreOptions' )
+            ->shouldreceive( 'getValue' )
+            ->withArgs( [ 'deploymentURL' ] )
+            ->andReturn( 'https://bar.com' );
+        Mockery::mock( 'overload:\WP2Static\SiteInfo' )
+            ->shouldreceive( 'getUrl' )
+            ->withArgs( [ 'site' ] )
+            ->andReturn( 'https://foo.com/' );
+
         // Test a deployment URL on a subdirectory
         \WP_Mock::onFilter( 'wp2static_set_destination_url' )
             ->with( 'https://bar.com' )
@@ -129,6 +189,16 @@ final class SimpleRewriterTest extends TestCase {
      * @dataProvider rewriteFileContentsProvider
      */
     public function testRewriteFileContentsSiteUrlFilter( $raw_html, $expected ) {
+        // Mock the methods and functions used by SimpleRewriter
+        Mockery::mock( 'overload:\WP2Static\CoreOptions' )
+            ->shouldreceive( 'getValue' )
+            ->withArgs( [ 'deploymentURL' ] )
+            ->andReturn( 'https://bar.com' );
+        Mockery::mock( 'overload:\WP2Static\SiteInfo' )
+            ->shouldreceive( 'getUrl' )
+            ->withArgs( [ 'site' ] )
+            ->andReturn( 'https://foo.com/' );
+
         // Test a deployment URL on a subdirectory
         \WP_Mock::onFilter( 'wp2static_set_wordpress_site_url' )
             ->with( 'https://foo.com' )
