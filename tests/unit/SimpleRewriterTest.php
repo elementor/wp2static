@@ -112,10 +112,10 @@ final class SimpleRewriterTest extends TestCase {
     public function testRewriteFileContentsDestinationUrlFilter( $raw_html, $expected ) {
         // Test a deployment URL on a subdirectory
         \WP_Mock::onFilter( 'wp2static_set_destination_url' )
-            ->with('https://bar.com')
-            ->reply('https://bar.com/somepath');
+            ->with( 'https://bar.com' )
+            ->reply( 'https://bar.com/somepath' );
 
-        $expected = str_replace('bar.com', 'bar.com/somepath', $expected);
+        $expected = str_replace( 'bar.com', 'bar.com/somepath', $expected );
 
         $actual = SimpleRewriter::rewriteFileContents( $raw_html );
         $this->assertEquals( $expected, $actual );
@@ -131,10 +131,10 @@ final class SimpleRewriterTest extends TestCase {
     public function testRewriteFileContentsSiteUrlFilter( $raw_html, $expected ) {
         // Test a deployment URL on a subdirectory
         \WP_Mock::onFilter( 'wp2static_set_wordpress_site_url' )
-            ->with('https://foo.com')
-            ->reply('https://foo.com/somepath/');
+            ->with( 'https://foo.com' )
+            ->reply( 'https://foo.com/somepath/' );
 
-        $raw_html = str_replace('foo.com', 'foo.com/somepath', $raw_html);
+        $raw_html = str_replace( 'foo.com', 'foo.com/somepath', $raw_html );
 
         $actual = SimpleRewriter::rewriteFileContents( $raw_html );
         $this->assertEquals( $expected, $actual );
