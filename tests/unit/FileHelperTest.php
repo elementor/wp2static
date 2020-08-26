@@ -7,6 +7,10 @@ use org\bovigo\vfs\vfsStream;
 use WP_Mock;
 use WP_Mock\Tools\TestCase;
 
+/**
+ * @runTestsInSeparateProcesses
+ * @preserveGlobalState disabled
+ */
 final class FileHelperTest extends TestCase {
 
     public function setUp() : void
@@ -17,6 +21,7 @@ final class FileHelperTest extends TestCase {
     public function tearDown() : void
     {
         WP_Mock::tearDown();
+        Mockery::close();
     }
 
     /**
