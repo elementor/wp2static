@@ -46,7 +46,7 @@ final class SimpleRewriterTest extends TestCase {
             ->shouldreceive( 'getUrl' )
             ->withArgs( [ 'site' ] )
             ->andReturn( 'https://foo.com/' );
-        
+
         // Set up a virual file to rewriting
         $structure = [
             'my-file.html' => 'my-file.html',
@@ -120,12 +120,12 @@ final class SimpleRewriterTest extends TestCase {
 
     public function testRewriteFileContentsHttpToHttps() {
         // Mock the methods and functions used by SimpleRewriter
-        $deploymentMock = Mockery::mock( 'overload:\WP2Static\CoreOptions' )
+        Mockery::mock( 'overload:\WP2Static\CoreOptions' )
             ->shouldreceive( 'getValue' )
             ->withArgs( [ 'deploymentURL' ] )
             ->andReturn( 'https://bar.com' )
             ->getMock();
-        $siteUrlMock = Mockery::mock( 'overload:\WP2Static\SiteInfo' )
+        Mockery::mock( 'overload:\WP2Static\SiteInfo' )
             ->shouldreceive( 'getUrl' )
             ->withArgs( [ 'site' ] )
             ->andReturn( 'http://foo.com/' )
@@ -139,12 +139,12 @@ final class SimpleRewriterTest extends TestCase {
 
     public function testRewriteFileContentsHttpsToHttp() {
         // Mock the methods and functions used by SimpleRewriter
-        $deploymentMock = Mockery::mock( 'overload:\WP2Static\CoreOptions' )
+        Mockery::mock( 'overload:\WP2Static\CoreOptions' )
             ->shouldreceive( 'getValue' )
             ->withArgs( [ 'deploymentURL' ] )
             ->andReturn( 'http://bar.com' )
             ->getMock();
-        $siteUrlMock = Mockery::mock( 'overload:\WP2Static\SiteInfo' )
+        Mockery::mock( 'overload:\WP2Static\SiteInfo' )
             ->shouldreceive( 'getUrl' )
             ->withArgs( [ 'site' ] )
             ->andReturn( 'https://foo.com/' )
