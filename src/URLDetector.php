@@ -125,6 +125,12 @@ class URLDetector {
             $arrays_to_merge[] = DetectAuthorsURLs::detect( SiteInfo::getUrl( 'site' ) );
         }
 
+        $detect_authors_pagination = apply_filters( 'wp2static_detect_authors_pagination', 1 );
+
+        if ( $detect_authors_pagination ) {
+            $arrays_to_merge[] = DetectAuthorPaginationURLs::detect( SiteInfo::getUrl( 'site' ) );
+        }
+
         $url_queue = call_user_func_array( 'array_merge', $arrays_to_merge );
 
         $url_queue = FilesHelper::cleanDetectedURLs( $url_queue );
