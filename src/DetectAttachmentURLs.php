@@ -13,24 +13,16 @@ class DetectAttachmentURLs {
         global $wpdb;
 
         $post_urls = [];
-        $unique_post_types = [];
 
-        $query = "
-            SELECT ID,post_type
-            FROM %s
-            WHERE post_status = '%s'
-            AND post_type = 'attachment'";
-
-        $posts = $wpdb->get_results(
-            sprintf(
-                $query,
-                $wpdb->posts,
-                'publish'
-            )
+        $post_ids = $wpdb->get_col(
+            "SELECT ID
+            FROM {$wpdb->posts}
+            WHERE post_status = 'publish'
+            AND post_type = 'attachment'"
         );
 
-        foreach ( $posts as $post ) {
-            $permalink = get_attachment_link( $post->ID );
+        foreach ( $post_ids as $post_id ) {
+            $permalink = get_attachment_link( $post_id );
 
             if ( strpos( $permalink, '?post_type' ) !== false ) {
                 continue;
