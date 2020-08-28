@@ -9,11 +9,11 @@ class DetectCommentPaginationURLs {
      *
      * @return string[] list of URLs
      */
-    public static function detect( string $wp_site_url ) : array {
+    public static function detect() : array {
         global $wp_rewrite;
 
         $urls_to_include = [];
-        $comments_pagination_base = $wp_rewrite->comments_pagination_base;
+        // $comments_pagination_base = $wp_rewrite->comments_pagination_base;
         $comments = get_comments();
 
         if ( ! is_iterable( $comments ) ) {
@@ -28,11 +28,7 @@ class DetectCommentPaginationURLs {
                 continue;
             }
 
-            $urls_to_include[] = str_replace(
-                $wp_site_url,
-                '',
-                $comment_url
-            );
+            $urls_to_include[] = $comment_url;
         }
 
         return array_unique( $urls_to_include );
