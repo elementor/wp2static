@@ -12,17 +12,29 @@ final class DetectCategoryPaginationURLsTest extends TestCase {
     public function testDetect() {
         $site_url = 'https://foo.com/';
         $taxonomies = [
-            (object)['name' => 'category'],
-            (object)['name' => 'post_tag'],
+            (object) [ 'name' => 'category' ],
+            (object) [ 'name' => 'post_tag' ],
         ];
         $terms = [
             'category' => [
-                'category1' => (object)['name' => 'category1', 'count' => 1],
-                'category2' => (object)['name' => 'category2', 'count' => 3],
-                'category3' => (object)['name' => 'category3', 'count' => 4],
+                'category1' => (object) [
+                    'name' => 'category1',
+                    'count' => 1,
+                ],
+                'category2' => (object) [
+                    'name' => 'category2',
+                    'count' => 3,
+                ],
+                'category3' => (object) [
+                    'name' => 'category3',
+                    'count' => 4,
+                ],
             ],
             'post_tag' => [
-                'post_tag1' => (object)['name' => 'post_tag1', 'count' => 14],
+                'post_tag1' => (object) [
+                    'name' => 'post_tag1',
+                    'count' => 14,
+                ],
             ],
         ];
         $term_links = [
@@ -32,9 +44,10 @@ final class DetectCategoryPaginationURLsTest extends TestCase {
             'post_tag1' => "{$site_url}tags/foo/bar",
         ];
 
-        // Set the wordpress pagination base
+        // Set the WordPress pagination base
         global $wp_rewrite;
-        $wp_rewrite = (object)['pagination_base' => '/page'];
+        // @phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+        $wp_rewrite = (object) [ 'pagination_base' => '/page' ];
 
         // Set pagination to 3 posts per page
         \WP_Mock::userFunction(
@@ -52,7 +65,7 @@ final class DetectCategoryPaginationURLsTest extends TestCase {
                 'times' => 1,
                 'args' => [
                     [ 'public' => true ],
-                    'objects'
+                    'objects',
                 ],
                 'return' => $taxonomies,
             ]
@@ -65,20 +78,20 @@ final class DetectCategoryPaginationURLsTest extends TestCase {
                     'times' => 1,
                     'args' => [
                         $taxonomy->name,
-                        [ 'hide_empty' => true ]
+                        [ 'hide_empty' => true ],
                     ],
-                    'return' => $terms[$taxonomy->name],
+                    'return' => $terms[ $taxonomy->name ],
                 ]
             );
 
             // ...and the links for those terms
-            foreach ( $terms[$taxonomy->name] as $term ) {
+            foreach ( $terms[ $taxonomy->name ] as $term ) {
                 \WP_Mock::userFunction(
                     'get_term_link',
                     [
                         'times' => 1,
                         'args' => [ $term ],
-                        'return' => $term_links[$term->name],
+                        'return' => $term_links[ $term->name ],
                     ]
                 );
             }
