@@ -15,20 +15,11 @@ class DetectCustomPostTypeURLs {
         $post_urls = [];
         $unique_post_types = [];
 
-        $query = "
-            SELECT ID,post_type
-            FROM %s
-            WHERE post_status = '%s'
-            AND post_type NOT IN ('%s','%s')";
-
         $posts = $wpdb->get_results(
-            sprintf(
-                $query,
-                $wpdb->posts,
-                'publish',
-                'revision',
-                'nav_menu_item'
-            )
+            "SELECT ID,post_type
+            FROM {$wpdb->posts}
+            WHERE post_status = 'publish'
+            AND post_type NOT IN ('revision','nav_menu_item')"
         );
 
         foreach ( $posts as $post ) {

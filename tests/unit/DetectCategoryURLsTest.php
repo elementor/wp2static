@@ -6,7 +6,7 @@ use Mockery;
 use PHPUnit\Framework\TestCase;
 use WP_Mock;
 
-final class DetectCategoryPaginationURLsTest extends TestCase {
+final class DetectCategoryURLsTest extends TestCase {
 
 
     public function testDetect() {
@@ -43,11 +43,6 @@ final class DetectCategoryPaginationURLsTest extends TestCase {
             'category3' => "{$site_url}category/3",
             'post_tag1' => "{$site_url}tags/foo/bar",
         ];
-
-        // Set the WordPress pagination base
-        global $wp_rewrite;
-        // @phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-        $wp_rewrite = (object) [ 'pagination_base' => '/page' ];
 
         // Set pagination to 3 posts per page
         \WP_Mock::userFunction(
@@ -98,17 +93,12 @@ final class DetectCategoryPaginationURLsTest extends TestCase {
         }
 
         $expected = [
-            "{$site_url}category/1/page/1",
-            "{$site_url}category/2/page/1",
-            "{$site_url}category/3/page/1",
-            "{$site_url}category/3/page/2",
-            "{$site_url}tags/foo/bar/page/1",
-            "{$site_url}tags/foo/bar/page/2",
-            "{$site_url}tags/foo/bar/page/3",
-            "{$site_url}tags/foo/bar/page/4",
-            "{$site_url}tags/foo/bar/page/5",
+            "{$site_url}category/1",
+            "{$site_url}category/2",
+            "{$site_url}category/3",
+            "{$site_url}tags/foo/bar",
         ];
-        $actual = DetectCategoryPaginationURLs::detect();
+        $actual = DetectCategoryURLs::detect();
         $this->assertEquals( $expected, $actual );
     }
 }

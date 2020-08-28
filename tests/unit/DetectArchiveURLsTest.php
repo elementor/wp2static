@@ -66,20 +66,20 @@ final class DetectArchiveURLsTest extends TestCase {
         );
 
         $expected = [
-            '/archives/2020/',
-            '/archives/2019/',
-            '/archives/2018/',
-            '/archives/2017/',
-            '/archives/2020/08/',
-            '/archives/2020/07/',
-            '/archives/2020/06/',
-            '/archives/2020/05/',
-            '/archives/2020/08/20/',
-            '/archives/2020/08/17/',
-            '/archives/2020/08/16/',
-            '/archives/2020/08/15/',
+            "{$site_url}archives/2020/",
+            "{$site_url}archives/2019/",
+            "{$site_url}archives/2018/",
+            "{$site_url}archives/2017/",
+            "{$site_url}archives/2020/08/",
+            "{$site_url}archives/2020/07/",
+            "{$site_url}archives/2020/06/",
+            "{$site_url}archives/2020/05/",
+            "{$site_url}archives/2020/08/20/",
+            "{$site_url}archives/2020/08/17/",
+            "{$site_url}archives/2020/08/16/",
+            "{$site_url}archives/2020/08/15/",
         ];
-        $actual = DetectArchiveURLs::detect( $site_url );
+        $actual = DetectArchiveURLs::detect();
         $this->assertEquals( $expected, $actual );
     }
 }

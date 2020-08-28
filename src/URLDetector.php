@@ -104,25 +104,25 @@ class URLDetector {
         $detect_archives = apply_filters( 'wp2static_detect_archives', 1 );
 
         if ( $detect_archives ) {
-            $arrays_to_merge[] = DetectArchiveURLs::detect( SiteInfo::getUrl( 'site' ) );
+            $arrays_to_merge[] = DetectArchiveURLs::detect();
         }
 
         $detect_categories = apply_filters( 'wp2static_detect_categories', 1 );
 
         if ( $detect_categories ) {
-            $arrays_to_merge[] = DetectCategoryURLs::detect( SiteInfo::getUrl( 'site' ) );
+            $arrays_to_merge[] = DetectCategoryURLs::detect();
         }
 
         $detect_category_pagination = apply_filters( 'wp2static_detect_category_pagination', 1 );
 
         if ( $detect_category_pagination ) {
-            $arrays_to_merge[] = DetectCategoryPaginationURLs::detect( SiteInfo::getUrl( 'site' ) );
+            $arrays_to_merge[] = DetectCategoryPaginationURLs::detect();
         }
 
         $detect_authors = apply_filters( 'wp2static_detect_authors', 1 );
 
         if ( $detect_authors ) {
-            $arrays_to_merge[] = DetectAuthorsURLs::detect( SiteInfo::getUrl( 'site' ) );
+            $arrays_to_merge[] = DetectAuthorsURLs::detect();
         }
 
         $detect_authors_pagination = apply_filters( 'wp2static_detect_authors_pagination', 1 );

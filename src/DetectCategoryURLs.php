@@ -9,7 +9,7 @@ class DetectCategoryURLs {
      *
      * @return string[] list of URLs
      */
-    public static function detect( string $wp_site_url ) : array {
+    public static function detect() : array {
         global $wp_rewrite, $wpdb;
 
         $args = [ 'public' => true ];
@@ -34,13 +34,7 @@ class DetectCategoryURLs {
 
                 $permalink = trim( $term_link );
 
-                $term_url = str_replace(
-                    $wp_site_url,
-                    '',
-                    $permalink
-                );
-
-                $category_urls[] = "/$term_url";
+                $category_urls[] = $permalink;
             }
         }
 
