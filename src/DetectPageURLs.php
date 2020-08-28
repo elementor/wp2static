@@ -16,7 +16,7 @@ class DetectPageURLs {
 
         $page_ids = $wpdb->get_col(
             "SELECT ID
-            FROM %s
+            FROM {$wpdb->posts}
             WHERE post_status = 'publish'
             AND post_type = 'page'"
         );
