@@ -9,7 +9,7 @@ class DetectAttachmentURLs {
      *
      * @return string[] list of URLs
      */
-    public static function detect() : array {
+    public static function detect( string $wp_site_url ) : array {
         global $wpdb;
 
         $post_urls = [];
@@ -17,8 +17,7 @@ class DetectAttachmentURLs {
         $post_ids = $wpdb->get_col(
             "SELECT ID
             FROM {$wpdb->posts}
-            WHERE post_status = 'publish'
-            AND post_type = 'attachment'"
+            WHERE post_type = 'attachment'"
         );
 
         foreach ( $post_ids as $post_id ) {
@@ -28,7 +27,11 @@ class DetectAttachmentURLs {
                 continue;
             }
 
-            $post_urls[] = $permalink;
+            $post_urls[] = str_replace(
+                $wp_site_url,
+                '/',
+                $permalink
+            );
         }
 
         return $post_urls;

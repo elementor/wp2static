@@ -34,9 +34,9 @@ final class DetectAttachmentURLsTest extends TestCase {
         }
 
         $expected = [
-            "{$site_url}attachment-1/",
-            "{$site_url}attachment-2/",
-            "{$site_url}attachment-3/",
+            '/attachment-1/',
+            '/attachment-2/',
+            '/attachment-3/',
         ];
         $actual = DetectAttachmentURLs::detect( $site_url );
         $this->assertEquals( $expected, $actual );
