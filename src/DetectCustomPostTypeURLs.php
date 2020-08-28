@@ -13,20 +13,16 @@ class DetectCustomPostTypeURLs {
         global $wpdb;
 
         $post_urls = [];
-        $unique_post_types = [];
 
-        $posts = $wpdb->get_results(
-            "SELECT ID,post_type
+        $post_ids = $wpdb->get_col(
+            "SELECT ID
             FROM {$wpdb->posts}
             WHERE post_status = 'publish'
             AND post_type NOT IN ('revision','nav_menu_item')"
         );
 
-        foreach ( $posts as $post ) {
-            // capture all post types
-            $unique_post_types[] = $post->post_type;
-
-            $permalink = get_post_permalink( $post->ID );
+        foreach ( $post_ids as $post_id ) {
+            $permalink = get_post_permalink( $post_id );
 
             if ( ! is_string( $permalink ) ) {
                 continue;
