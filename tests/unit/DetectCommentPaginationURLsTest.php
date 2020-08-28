@@ -12,10 +12,10 @@ final class DetectCommentPaginationURLsTest extends TestCase {
     public function testDetect() {
         $site_url = 'https://foo.com/';
         $comments = [
-            (object)['comment_ID' => 1],
-            (object)['comment_ID' => 2],
-            (object)['comment_ID' => 3],
-            (object)['comment_ID' => 4],
+            (object) [ 'comment_ID' => 1 ],
+            (object) [ 'comment_ID' => 2 ],
+            (object) [ 'comment_ID' => 3 ],
+            (object) [ 'comment_ID' => 4 ],
         ];
         $comment_links = [
             // 2 comments on the same post
