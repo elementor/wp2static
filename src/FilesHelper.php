@@ -81,10 +81,12 @@ class FilesHelper {
         $filenames_to_ignore = [
             '__MACOSX',
             '.babelrc',
+            '.git',
             '.gitignore',
             '.gitkeep',
             '.htaccess',
             '.php',
+            '.svn',
             '.travis.yml',
             'backwpup',
             'bower_components',
@@ -105,6 +107,7 @@ class FilesHelper {
             'previous-export',
             'README',
             'static-html-output-plugin',
+            '/tests/',
             'thumbs.db',
             'tinymce',
             'wc-logs',
@@ -127,7 +130,12 @@ class FilesHelper {
 
         $filename_matches = 0;
 
-        str_replace( $filenames_to_ignore, '', $file_name, $filename_matches );
+        str_ireplace( $filenames_to_ignore, '', $file_name, $filename_matches );
+
+        // If we found matches we don't need to go any further
+        if ( $filename_matches ) {
+            return false;
+        }
 
         $file_extensions_to_ignore = [
             '.bat',
@@ -162,20 +170,17 @@ class FilesHelper {
                 $file_extensions_to_ignore
             );
 
-        $file_extension_matches = 0;
-
-        $file_extension_regex_patterns =
-            array_map(
-                function( $file_extension ) {
-                    return "/${file_extension}$/";
-                },
-                $file_extensions_to_ignore
-            );
-
-        preg_replace( $file_extension_regex_patterns, '', $file_name, -1, $file_extension_matches );
-
-        if ( $filename_matches + $file_extension_matches > 0 ) {
-            return false;
+        /*
+          Prepare the file extension list for regex:
+          - Add prepending (escaped) \ for a literal . at the start of
+            the file extension
+          - Add $ at the end to match end of string
+          - Add i modifier for case insensitivity
+        */
+        foreach ( $file_extensions_to_ignore as $extension ) {
+            if ( preg_match( "/\\{$extension}$/i", $file_name ) ) {
+                return false;
+            }
         }
 
         return true;
