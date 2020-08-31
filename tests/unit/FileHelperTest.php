@@ -176,9 +176,36 @@ final class FileHelperTest extends TestCase {
         $actual = FilesHelper::filePathLooksCrawlable( '/path/to/foo.txt' );
         $this->assertEquals( $expected, $actual );
 
+        // Default disallowed extension uppercase
+        $expected = false;
+        $actual = FilesHelper::filePathLooksCrawlable( '/path/to/FOO.TXT' );
+        $this->assertEquals( $expected, $actual );
+
+        // Default disallowed extension with . replaced with any other character
+        // This is to test bad regex
+        $expected = true;
+        $actual = FilesHelper::filePathLooksCrawlable( '/path/to/foohtxt' );
+        $this->assertEquals( $expected, $actual );
+
         // Default disallowed filename
         $expected = false;
         $actual = FilesHelper::filePathLooksCrawlable( '/path/to/thumbs.db' );
+        $this->assertEquals( $expected, $actual );
+
+        // Try a disallowed URL - .git filepaths
+        $expected = false;
+        $actual = FilesHelper::filePathLooksCrawlable(
+            // @phpcs:ignore Generic.Files.LineLength.TooLong
+            'http://foo.com/wp-content/plugins/my-plugin/.git/objects/0b/f00ad2a21d59fc587a605008d3c3a83bb81e51'
+        );
+        $this->assertEquals( $expected, $actual );
+
+        // Try a disallowed URL - .git filepaths uppercase
+        $expected = false;
+        $actual = FilesHelper::filePathLooksCrawlable(
+            // @phpcs:ignore Generic.Files.LineLength.TooLong
+            'http://foo.com/wp-content/plugins/my-plugin/.GIT/objects/0b/f00ad2a21d59fc587a605008d3c3a83bb81e51'
+        );
         $this->assertEquals( $expected, $actual );
     }
 
@@ -254,10 +281,12 @@ final class FileHelperTest extends TestCase {
                 [
                     '__MACOSX',
                     '.babelrc',
+                    '.git',
                     '.gitignore',
                     '.gitkeep',
                     '.htaccess',
                     '.php',
+                    '.svn',
                     '.travis.yml',
                     'backwpup',
                     'bower_components',
@@ -278,6 +307,7 @@ final class FileHelperTest extends TestCase {
                     'previous-export',
                     'README',
                     'static-html-output-plugin',
+                    '/tests/',
                     'thumbs.db',
                     'tinymce',
                     'wc-logs',
