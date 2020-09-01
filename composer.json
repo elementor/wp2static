@@ -57,7 +57,7 @@
     "scripts": {
         "phpstan": "php -d memory_limit=-1 ./vendor/bin/phpstan analyse",
         "phpcbf": "vendor/bin/phpcbf --standard=./tools/phpcs.xml --ignore=*/js/*,*/tests/phpstan/*,*/admin/*,*/coverage/*,*.js,*/vendor/*,*/views/*.php ./",
-        "phpcs":  "vendor/bin/phpcs  --standard=./tools/phpcs.xml --ignore=*/tests/phpstan/*,*/admin/*,**/coverage/*,*.js,*/vendor/*,*/views/*.php ./",
+        "phpcs":  "vendor/bin/phpcs  -s --standard=./tools/phpcs.xml --ignore=*/tests/phpstan/*,*/admin/*,**/coverage/*,*.js,*/vendor/*,*/views/*.php ./",
         "phpcompat": "vendor/bin/phpcs --standard=PHPCompatibility --runtime-set testVersion 7.3 --ignore=*/tests/*,*/admin/*,**/coverage/*,*.js,*/vendor/*,*/views/*.php ./",
         "phpunit": "vendor/bin/phpunit ./tests/unit/",
         "coverage": "vendor/bin/phpunit tests/unit --coverage-html coverage --whitelist src/",
