@@ -65,6 +65,12 @@ class URLDetector {
                 FilesHelper::getListOfLocalFilesByDir( SiteInfo::getPath( 'uploads' ) );
         }
 
+        $detect_sitemaps = apply_filters( 'wp2static_detect_sitemaps', 1 );
+
+        if ( $detect_sitemaps ) {
+            $arrays_to_merge[] = DetectSiemapsURLs::detect( SiteInfo::getURL( 'site' ) );
+        }
+
         $detect_parent_theme = apply_filters( 'wp2static_detect_parent_theme', 1 );
 
         if ( $detect_parent_theme ) {
