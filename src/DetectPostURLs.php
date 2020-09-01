@@ -14,27 +14,18 @@ class DetectPostURLs {
 
         $post_urls = [];
 
-        $query = "
-            SELECT ID
-            FROM %s
-            WHERE post_status = '%s'
-            AND post_type = 'post'";
-
-        $posts = $wpdb->get_results(
-            sprintf(
-                $query,
-                $wpdb->posts,
-                'publish'
-            )
+        $post_ids = $wpdb->get_col(
+            "SELECT ID
+            FROM {$wpdb->posts}
+            WHERE post_status = 'publish'
+            AND post_type = 'post'"
         );
 
-        foreach ( $posts as $post ) {
+        foreach ( $post_ids as $post_id ) {
             $permalink = WPOverrides::get_permalink(
-                $post->ID,
+                $post_id,
                 $permalink_structure
             );
-
-            $permalink = WPOverrides::get_permalink( $post->ID, $permalink );
 
             if ( ! $permalink ) {
                 continue;

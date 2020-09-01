@@ -14,22 +14,15 @@ class DetectPageURLs {
 
         $page_urls = [];
 
-        $query = "
-            SELECT ID
-            FROM %s
-            WHERE post_status = '%s'
-            AND post_type = 'page'";
-
-        $pages = $wpdb->get_results(
-            sprintf(
-                $query,
-                $wpdb->posts,
-                'publish'
-            )
+        $page_ids = $wpdb->get_col(
+            "SELECT ID
+            FROM {$wpdb->posts}
+            WHERE post_status = 'publish'
+            AND post_type = 'page'"
         );
 
-        foreach ( $pages as $page ) {
-            $permalink = get_page_link( $page->ID );
+        foreach ( $page_ids as $page_id ) {
+            $permalink = get_page_link( $page_id );
 
             if ( strpos( $permalink, '?post_type' ) !== false ) {
                 continue;

@@ -35,8 +35,12 @@ final class DetectAuthorsURLsTest extends TestCase {
             ]
         );
 
-        $expected = [ '/users/1', '/users/2', '/users/3' ];
-        $actual = DetectAuthorsURLs::detect( $site_url );
+        $expected = [
+            "{$site_url}users/1",
+            "{$site_url}users/2",
+            "{$site_url}users/3",
+        ];
+        $actual = DetectAuthorsURLs::detect();
         $this->assertEquals( $expected, $actual );
     }
 }
