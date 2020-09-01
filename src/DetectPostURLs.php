@@ -9,7 +9,7 @@ class DetectPostURLs {
      *
      * @return string[] list of URLs
      */
-    public static function detect( string $permalink_structure ) : array {
+    public static function detect() : array {
         global $wpdb;
 
         $post_urls = [];
@@ -22,10 +22,7 @@ class DetectPostURLs {
         );
 
         foreach ( $post_ids as $post_id ) {
-            $permalink = WPOverrides::get_permalink(
-                $post_id,
-                $permalink_structure
-            );
+            $permalink = get_permalink( $post_id );
 
             if ( ! $permalink ) {
                 continue;

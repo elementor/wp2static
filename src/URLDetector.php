@@ -48,8 +48,7 @@ class URLDetector {
         // }
 
         if ( CoreOptions::getValue( 'detectPosts' ) ) {
-            $permalink_structure = get_option( 'permalink_structure' );
-            $arrays_to_merge[] = DetectPostURLs::detect( SiteInfo::getPermalinks() );
+            $arrays_to_merge[] = DetectPostURLs::detect();
         }
 
         if ( CoreOptions::getValue( 'detectPages' ) ) {

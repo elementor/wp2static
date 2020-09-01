@@ -22,9 +22,30 @@ final class DetectPostURLsTest extends TestCase {
         $wpdb->posts = 'wp_posts';
 
         // Mock the methods and functions used by DetectPostURLs
-        Mockery::mock( 'overload:\WP2Static\WPOverrides' )
-            ->shouldreceive( 'get_permalink' )
-            ->andReturnUsing( [ $this, 'get_permalink' ] );
+        \WP_Mock::userFunction(
+            'get_permalink',
+            [
+                'times' => 1,
+                'args' => [ 1 ],
+                'return' => 'https://foo.com/2020/08/1',
+            ]
+        );
+        \WP_Mock::userFunction(
+            'get_permalink',
+            [
+                'times' => 1,
+                'args' => [ 2 ],
+                'return' => 'https://foo.com/2020/08/2',
+            ]
+        );
+        \WP_Mock::userFunction(
+            'get_permalink',
+            [
+                'times' => 1,
+                'args' => [ 3 ],
+                'return' => 'https://foo.com/2020/08/3',
+            ]
+        );
 
         $expected = [
             'https://foo.com/2020/08/1',
