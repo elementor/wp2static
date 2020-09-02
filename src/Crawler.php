@@ -95,7 +95,15 @@ class Crawler {
 
         // TODO: use some Iterable or other performance optimisation here
         // to help reduce resources for large URL sites
-        foreach ( CrawlQueue::getCrawlablePaths() as $root_relative_path ) {
+
+        /**
+         * When you call method that executes database query in for loop
+         * you are calling method and querying database for every loop iteration.
+         * To avoid that you need to assing the result to a variable.
+         */
+
+        $crawlable_paths = CrawlQueue::getCrawlablePaths();
+        foreach ( $crawlable_paths as $root_relative_path ) {
             $absolute_uri = new URL( $site_path . $root_relative_path );
             $url = $absolute_uri->get();
 
