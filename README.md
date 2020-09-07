@@ -18,5 +18,31 @@ WP2Static is an open source project, maintained by many generous developers over
 
 ## [Contributors](https://wp2static.com/contributors)
 
+If you want to do a contribution to project, please, follow next instructions:
+
+1. Fork project with button in top of WP2static github [home page](https://github.com/WP2Static/wp2static)
+2. Clone your project to your development computer (please, change <your-account> by your account name):
+<br/>``git clone https://github.com/<your-account>/wp2static.git``
+3. Make your new branch from **master** naming with:
+    1. If you want add new feature: feature-\<name of your feature>
+    2. If you want to fix a bug: bug-\<name of bug>
+    <br/>
+    ``git checkout -b feature-myfeature``
+4. Do your commits
+5. Push to your repository<br/>
+    ``git push origin feature-myfeature``
+6. Then go to your github wp2static site and do a pull request:<br/>
+In base repository choose _WP2Static/wp2static_ and choose _development_ branch.
+7. After Pull Request is approved you need to sync repositories.
+8. In your local development add **upstream** branch:<br/>
+``git remote add upstream https://github.com/WP2Static/wp2static``
+9. Fetch **upstream**<br/>
+``git fetch upstream``
+10. Checkout your local branch:
+``git checkout master``
+11. Merge **upstream** with your local:
+``git merge upstream/master``
+12. You can now make new branches.
+
 Read about WP2Static's [developers, contributors, supporters](https://wp2static.com/contributors).
 
