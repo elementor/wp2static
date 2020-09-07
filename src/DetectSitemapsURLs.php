@@ -12,6 +12,7 @@ class DetectSitemapsURLs {
      * Detect Authors URLs
      *
      * @return string[] list of URLs
+     * @throws WP2StaticException
      */
     public static function detect( string $wp_site_url ) : array {
 
