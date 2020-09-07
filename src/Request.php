@@ -350,7 +350,7 @@ class Request {
      * @todo someone can review this function? in my particular case the 404
      *       page returns first 301 and then a 404, but in other cases 301 could be true
      */
-    public function existUrl( $url ) {
+    public function existUrl( string $url ) : bool {
         $headers = get_headers( $url );
 
         if ( is_array( $headers ) && strpos( $headers[0], '200' ) !== false ) {
