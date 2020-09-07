@@ -22,6 +22,8 @@ class DetectSitemapsURLs {
         $robots_exits = $request->existUrl( $wp_site_url . 'robots.txt' );
 
         try {
+            $sitemaps = [];
+
             // if robots exits we parse looking for sitemaps
             if ( $robots_exits === true ) {
                 $parser->parseRecursive( $wp_site_url . 'robots.txt' );
@@ -64,7 +66,7 @@ class DetectSitemapsURLs {
             WsLog::l(
                 $e->getMessage()
             );
-            throw new WP2StaticException( $e->getMessage() );
+            throw new WP2StaticException( $e->getMessage(), 0, $e );
         }
 
         return $sitemaps_urls;
