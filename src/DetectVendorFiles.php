@@ -4,6 +4,7 @@ namespace WP2Static;
 
 /**
  * Class DetectVendorFiles
+ *
  * @package WP2Static
  */
 class DetectVendorFiles {
