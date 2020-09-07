@@ -341,5 +341,23 @@ class Request {
 
         curl_close( $ch );
     }
+
+    /***
+     * Test if url exists
+     *
+     * @param $url url to test
+     * @return boolean true if exist otherwise false
+     * @todo someone can review this function? in my particular case the 404
+     *       page returns first 301 and then a 404, but in other cases 301 could be true
+     */
+    public function existUrl( $url ) {
+        $headers = get_headers( $url );
+
+        if ( is_array( $headers ) && strpos( $headers[0], '200' ) !== false ) {
+            return true;
+        }
+
+        return false;
+    }
 }
 
