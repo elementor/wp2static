@@ -30,8 +30,8 @@ select.wp2static-select {
                         <?php wp_nonce_field( $view['nonce_action'] ); ?>
 
                         <select name="action" class="wp2static-select">
-                            <option value="wp2staticCrawlQueueShow">Show URLs</option>
-                            <option value="wp2staticCrawlQueueDelete">Delete Crawl Queue</option>
+                            <option value="wp2static_crawl_queue_show">Show URLs</option>
+                            <option value="wp2static_crawl_queue_delete">Delete Crawl Queue</option>
                         </select>
 
                         <button class="button btn-danger">Go</button>
@@ -51,8 +51,8 @@ select.wp2static-select {
                         <?php wp_nonce_field( $view['nonce_action'] ); ?>
 
                         <select name="action" class="wp2static-select">
-                            <option value="wp2staticCrawlCacheShow">Show URLs</option>
-                            <option value="wp2staticCrawlCacheDelete">Delete Crawl Cache</option>
+                            <option value="wp2static_crawl_cache_show">Show URLs</option>
+                            <option value="wp2static_crawl_cache_delete">Delete Crawl Cache</option>
                         </select>
 
                         <button class="button btn-danger">Go</button>
@@ -77,8 +77,8 @@ select.wp2static-select {
                         <?php wp_nonce_field( $view['nonce_action'] ); ?>
 
                         <select name="action" class="wp2static-select">
-                            <option value="wp2staticStaticSiteShow">Show Paths</option>
-                            <option value="wp2staticStaticSiteDelete">Delete Files</option>
+                            <option value="wp2static_static_site_show">Show Paths</option>
+                            <option value="wp2static_static_site_delete">Delete Files</option>
                         </select>
 
                         <button class="button btn-danger">Go</button>
@@ -102,8 +102,8 @@ select.wp2static-select {
                         <?php wp_nonce_field( $view['nonce_action'] ); ?>
 
                         <select name="action" class="wp2static-select">
-                            <option value="wp2staticPostProcessedSiteShow">Show Paths</option>
-                            <option value="wp2staticPostProcessedSiteDelete">Delete Files</option>
+                            <option value="wp2static_post_processed_site_show">Show Paths</option>
+                            <option value="wp2static_post_processed_site_delete">Delete Files</option>
                         </select>
 
                         <button class="button btn-danger">Go</button>
@@ -133,8 +133,8 @@ select.wp2static-select {
                             <?php wp_nonce_field( $view['nonce_action'] ); ?>
 
                             <select name="action" class="wp2static-select">
-                                <option value="wp2staticDeployCacheShow">Show Paths</option>
-                                <option value="wp2staticDeployCacheDelete">Delete Deploy Cache</option>
+                                <option value="wp2static_deploy_cache_show">Show Paths</option>
+                                <option value="wp2static_deploy_cache_delete">Delete Deploy Cache</option>
                             </select>
 
                             <input name="deploy_namespace" type="hidden" value="<?php echo $namespaces[0]; ?>" />
@@ -156,8 +156,8 @@ select.wp2static-select {
                                 <?php wp_nonce_field( $view['nonce_action'] ); ?>
 
                                 <select name="action" class="wp2static-select">
-                                    <option value="wp2staticDeployCacheShow">Show Paths</option>
-                                    <option value="wp2staticDeployCacheDelete">Delete Deploy Cache</option>
+                                    <option value="wp2static_deploy_cache_show">Show Paths</option>
+                                    <option value="wp2static_deploy_cache_delete">Delete Deploy Cache</option>
                                 </select>
 
                                 <input name="deploy_namespace" type="hidden" value="<?php echo $namespaces[$i]; ?>" />
@@ -178,8 +178,8 @@ select.wp2static-select {
                             <?php wp_nonce_field( $view['nonce_action'] ); ?>
 
                             <select name="action" class="wp2static-select">
-                                <option value="wp2staticDeployCacheShow">Show Paths</option>
-                                <option value="wp2staticDeployCacheDelete">Delete Deploy Cache</option>
+                                <option value="wp2static_deploy_cache_show">Show Paths</option>
+                                <option value="wp2static_deploy_cache_delete">Delete Deploy Cache</option>
                             </select>
 
                             <button class="button btn-danger">Go</button>
@@ -199,7 +199,7 @@ select.wp2static-select {
             action="<?php echo esc_url( admin_url('admin-post.php') ); ?>">
 
             <?php wp_nonce_field( $view['nonce_action'] ); ?>
-            <input name="action" type="hidden" value="wp2staticDeleteAllCaches" />
+            <input name="action" type="hidden" value="wp2static_delete_all_caches" />
 
             <button class="button btn-danger">Delete all caches</button>
 

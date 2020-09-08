@@ -160,7 +160,7 @@
 
         <button class="button btn-primary">Save Job Automation Settings</button>
         <?php wp_nonce_field( $view['nonce_action'] ); ?>
-        <input name="action" type="hidden" value="wp2staticUISaveJobOptions" />
+        <input name="action" type="hidden" value="wp2static_ui_save_job_options" />
     </form>
 
     <br>
@@ -170,7 +170,7 @@
         action="<?php echo esc_url( admin_url('admin-post.php') ); ?>">
 
         <?php wp_nonce_field( 'wp2static-manually-enqueue-jobs' ); ?>
-        <input name="action" type="hidden" value="wp2staticManuallyEnqueueJobs" />
+        <input name="action" type="hidden" value="wp2static_manually_enqueue_jobs" />
 
         <button class="button">Manually Enqueue Jobs Now</button>
     </form>
@@ -210,7 +210,7 @@
         action="<?php echo esc_url( admin_url('admin-post.php') ); ?>">
 
     <?php wp_nonce_field( $view['nonce_action'] ); ?>
-    <input name="action" type="hidden" value="wp2staticDeleteJobsQueue" />
+    <input name="action" type="hidden" value="wp2static_delete_jobs_queue" />
 
     <button class="wp2static-button button btn-danger">Delete all Jobs from Queue</button>
 
@@ -226,7 +226,7 @@
         action="<?php echo esc_url( admin_url('admin-post.php') ); ?>">
 
     <?php wp_nonce_field( $view['nonce_action'] ); ?>
-    <input name="action" type="hidden" value="wp2staticProcessJobsQueue" />
+    <input name="action" type="hidden" value="wp2static_process_jobs_queue" />
 
     <button class="wp2static-button button btn-danger">Manually process Job Queue</button>
 
