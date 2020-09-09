@@ -338,8 +338,7 @@ class CLI {
         $option_name = isset( $args[1] ) ? $args[1] : null;
         $value = isset( $args[2] ) ? $args[2] : null;
 
-        $crawler = new Crawler();
-        $crawler->crawlSite( StaticSite::getPath() );
+        Controller::wp2staticCrawl();
     }
 
     /**

@@ -71,6 +71,13 @@ class Crawler {
         }
     }
 
+    public static function wp2staticCrawl( string $static_site_path, string $crawler_slug ) : void {
+        if ( 'wp2static' === $crawler_slug ) {
+            $crawler = new Crawler();
+            $crawler->crawlSite( $static_site_path );
+        }
+    }
+
     /**
      * Crawls URLs in WordPressSite, saving them to StaticSite
      */

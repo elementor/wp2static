@@ -256,14 +256,6 @@ class Controller {
         );
     }
 
-    public function crawlSite() : void {
-        $crawler = new Crawler();
-
-        // TODO: if WordPressSite methods are static and we only need detectURLs
-        // here, pass in iterable to URLs here?
-        $crawler->crawlSite( StaticSite::getPath() );
-    }
-
     // TODO: why is this here? Move to CrawlQueue if still needed
     public function deleteCrawlCache() : void {
         // we now have modified file list in DB
@@ -585,10 +577,7 @@ class Controller {
                     WsLog::l( "URL detection completed ($detected_count URLs detected)" );
                     break;
                 case 'crawl':
-                    WsLog::l( 'Starting crawling' );
-                    $crawler = new Crawler();
-                    $crawler->crawlSite( StaticSite::getPath() );
-                    WsLog::l( 'Crawling completed' );
+                    self::wp2staticCrawl();
                     break;
                 case 'post_process':
                     WsLog::l( 'Starting post-processing' );
@@ -627,10 +616,7 @@ class Controller {
         $detected_count = URLDetector::detectURLs();
         WsLog::l( "URL detection completed ($detected_count URLs detected)" );
 
-        WsLog::l( 'Starting crawling' );
-        $crawler = new Crawler();
-        $crawler->crawlSite( StaticSite::getPath() );
-        WsLog::l( 'Crawling completed' );
+        self::wp2staticCrawl();
 
         WsLog::l( 'Starting post-processing' );
         $post_processor = new PostProcessor();
@@ -733,6 +719,18 @@ class Controller {
         self::wp2staticHeadless();
 
         wp_die();
+    }
+
+    public static function wp2staticCrawl() : void {
+        WsLog::l( 'Starting crawling' );
+        $crawlers = Addons::getType( 'crawl' );
+        $crawler_slug = empty( $crawlers ) ? 'wp2static' : $crawlers[0]->slug;
+        do_action(
+            'wp2static_crawl',
+            StaticSite::getPath(),
+            $crawler_slug
+        );
+        WsLog::l( 'Crawling completed' );
     }
 
     /**

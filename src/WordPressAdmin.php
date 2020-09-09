@@ -226,6 +226,13 @@ class WordPressAdmin {
         );
 
         add_action(
+            'wp2static_crawl',
+            [ 'WP2Static\Crawler', 'wp2staticCrawl' ],
+            10,
+            2
+        );
+
+        add_action(
             'wp2static_process_html',
             [ 'WP2Static\SimpleRewriter', 'rewrite' ],
             10,
