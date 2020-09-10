@@ -55,19 +55,27 @@ class Request {
     public function getURL(
         string $url,
         $ch
-    ) : array {
+    ) : ?array {
         curl_setopt( $ch, CURLOPT_URL, $url );
-        curl_setopt( $ch, CURLOPT_HEADER, 1);
+        curl_setopt( $ch, CURLOPT_HEADER, 1 );
 
         // $this->applyDefaultOptions( $ch );
 
-        $response = curl_exec($ch);
-        $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-        $header_text = substr($response, 0, $header_size);
+        $response = curl_exec( $ch );
+        if ( true === $response ) {
+            WsLog::l( 'Error: CURLOPT_RETURNTRANSFER not set.' );
+            return null;
+        } elseif ( false === $response ) {
+            WsLog::l( "Error while retrieving URL: $url" );
+            return null;
+        }
+
+        $header_size = curl_getinfo( $ch, CURLINFO_HEADER_SIZE );
+        $header_text = substr( $response, 0, $header_size );
         $headers = array_filter( explode( "\r\n", $header_text ) );
 
         $response = [
-            'body' => substr($response, $header_size),
+            'body' => substr( $response, $header_size ),
             'ch' => $ch,
             'code' => curl_getinfo( $ch, CURLINFO_RESPONSE_CODE ),
             'effective_url' => curl_getinfo( $ch, CURLINFO_EFFECTIVE_URL ),
