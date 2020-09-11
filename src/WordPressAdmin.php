@@ -254,6 +254,13 @@ class WordPressAdmin {
         );
 
         add_action(
+            'wp2static_process_robots_txt',
+            [ 'WP2Static\SimpleRewriter', 'rewrite' ],
+            10,
+            1
+        );
+
+        add_action(
             'wp2static_process_xml',
             [ 'WP2Static\SimpleRewriter', 'rewrite' ],
             10,

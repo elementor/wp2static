@@ -24,6 +24,10 @@ class FileProcessor {
      * @param string $filename File in StaticSite
      */
     public function processFile( string $filename ) : void {
+        if ( $filename === ProcessedSite::getPath() . '/robots.txt' ) {
+            do_action( 'wp2static_process_robots_txt', $filename );
+            return;
+        }
         switch ( pathinfo( $filename, PATHINFO_EXTENSION ) ) {
             case 'html':
                 do_action( 'wp2static_process_html', $filename );
