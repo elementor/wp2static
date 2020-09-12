@@ -28,10 +28,10 @@ class CoreOptions {
 
         $sql = "CREATE TABLE $table_name (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
-            name VARCHAR(255) NOT NULL,
-            value VARCHAR(255) NOT NULL,
-            label VARCHAR(255) NULL,
-            description VARCHAR(255) NULL,
+            name VARCHAR(249) NOT NULL,
+            value VARCHAR(249) NOT NULL,
+            label VARCHAR(249) NULL,
+            description VARCHAR(249) NULL,
             PRIMARY KEY  (id)
         ) $charset_collate;";
 
