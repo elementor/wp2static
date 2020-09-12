@@ -11,11 +11,11 @@ class Addons {
         $charset_collate = $wpdb->get_charset_collate();
 
         $sql = "CREATE TABLE $table_name (
-            slug VARCHAR(255) NOT NULL,
-            type VARCHAR(255) NOT NULL,
-            name VARCHAR(255) NOT NULL,
+            slug VARCHAR(249) NOT NULL,
+            type VARCHAR(249) NOT NULL,
+            name VARCHAR(249) NOT NULL,
             docs_url VARCHAR(2083) NOT NULL,
-            description VARCHAR(255) NOT NULL,
+            description VARCHAR(249) NOT NULL,
             enabled TINYINT(1) UNSIGNED DEFAULT 0 NOT NULL,
             PRIMARY KEY  (slug)
         ) $charset_collate;";
