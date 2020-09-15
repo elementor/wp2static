@@ -44,5 +44,35 @@ In base repository choose _WP2Static/wp2static_ and choose _development_ branch.
 ``git merge upstream/master``
 12. You can now make new branches.
 
+###Working example
+
+####Preparing Repository
+Fork project WP2static [home page](https://github.com/WP2Static/wp2static)
+
+``git clone https://github.com/ebavs/wp2static.git #clone repository (please,change ebavs by yours, this is only an example)``
+
+Then add WP2Static remote
+
+``git remote add upstream https://github.com/WP2Static/wp2static #add remote``
+
+####Working and Commiting
+
+``git checkout -b feature-newdocumentation #create new branch to do changes``
+
+``git commit -am "my new commits #send new changes``
+
+``git push origin feature-myfeature #push to your repository``
+
+Then **Pull Request** in WP2Static
+
+####Sync Repository
+
+``git fetch upstream #download commits from wp2static repo``
+
+``git checkout master #change to local master branch``
+
+``git merge upstream/master #merge with wpstatic master branch``
+
+
 Read about WP2Static's [developers, contributors, supporters](https://wp2static.com/contributors).
 
