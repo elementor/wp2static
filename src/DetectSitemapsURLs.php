@@ -19,7 +19,8 @@ class DetectSitemapsURLs {
         $sitemaps_urls = [];
         $parser = new SitemapParser( 'WP2StaticAgent', [ 'strict' => false ] );
         $request = new Request();
-        $robots_exits = $request->existUrl( $wp_site_url . 'robots.txt' );
+        $response = $request->getResponseCode( $wp_site_url . 'robots.txt' );
+        $robots_exits = $response === 200 ? true : false;
 
         try {
             $sitemaps = [];
@@ -40,7 +41,8 @@ class DetectSitemapsURLs {
             }
 
             foreach ( $sitemaps as $sitemap ) {
-                if ( $request->existUrl( $sitemap ) ) {
+                $response = $request->getResponseCode( $sitemap );
+                if ( $response === 200 ) {
                     $parser->parse( $sitemap );
 
                     $sitemaps_urls [] = '/' . str_replace(
