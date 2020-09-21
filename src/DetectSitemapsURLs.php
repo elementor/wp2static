@@ -17,7 +17,7 @@ class DetectSitemapsURLs {
     public static function detect( string $wp_site_url ) : array {
 
         $sitemaps_urls = [];
-        $parser = new SitemapParser( 'WP2StaticAgent', [ 'strict' => false ] );
+        $parser = new SitemapParser( 'WP2Static.com', [ 'strict' => false ] );
         $request = new Request();
         $response = $request->getResponseCode( $wp_site_url . 'robots.txt' );
         $robots_exits = $response === 200 ? true : false;
