@@ -356,5 +356,33 @@ class Request {
 
         curl_close( $ch );
     }
+
+    /***
+     * Get Response code with standard headers
+     *
+     * @param $url string url to get response code
+     * @return int response code
+     */
+    public function getResponseCode( string $url ) : int {
+        $ch = curl_init();
+
+        curl_setopt( $ch, CURLOPT_URL, $url );
+        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
+        curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
+        curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
+        curl_setopt( $ch, CURLOPT_HEADER, 1 );
+        curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
+        curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'GET' );
+
+        $this->applyDefaultOptions( $ch );
+
+        $this->body = curl_exec( $ch );
+        $status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
+        $this->status_code = $status_code;
+
+        curl_close( $ch );
+
+        return $status_code;
+    }
 }
 

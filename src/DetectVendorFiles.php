@@ -2,6 +2,11 @@
 
 namespace WP2Static;
 
+/**
+ * Class DetectVendorFiles
+ *
+ * @package WP2Static
+ */
 class DetectVendorFiles {
 
     /**
@@ -11,19 +16,6 @@ class DetectVendorFiles {
      */
     public static function detect( string $wp_site_url ) : array {
         $vendor_files = [];
-
-        // Yoast
-        if ( defined( 'WPSEO_VERSION' ) ) {
-            $yoast_sitemaps = [
-                '/sitemap_index.xml',
-                '/post-sitemap.xml',
-                '/page-sitemap.xml',
-                '/category-sitemap.xml',
-                '/author-sitemap.xml',
-            ];
-
-            $vendor_files = array_merge( $vendor_files, $yoast_sitemaps );
-        }
 
         // cache dir used by Autoptimize and other themes/plugins
         $vendor_cache_dir =
