@@ -8,7 +8,7 @@ use WP_CLI;
 use WP_Post;
 
 class Controller {
-    const WP2STATIC_VERSION = '7.1.0';
+    const WP2STATIC_VERSION = '7.1.1';
 
     /**
      * @var string
