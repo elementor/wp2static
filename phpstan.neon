@@ -11,7 +11,16 @@ parameters:
         - %currentWorkingDirectory%/tests/phpstan/bootstrap.php
         - %currentWorkingDirectory%/tests/phpstan/wp-cli-stubs-2.2.0.php
     ignoreErrors:
-        - '#^Constant WP2STATIC_PATH not found#'
-        - '#[a-zA-Z0-9\\_]+superglobal[a-zA-Z0-9\\_]+#'
+        # TODO I should really develop a tiny Request Handler.
+        # https://gist.github.com/nicolas-grekas/1028251#improving-native-php-interface
+        - message: '#^In method "WP2Static\\\S+::\S+", you should not use the \$_(GET|POST) superglobal#'
+          path: src/Controller.php
+          count: 5
+        - message: '#^In method "WP2Static\\\S+::\S+", you should not use the \$_(GET|POST) superglobal#'
+          path: src/CoreOptions.php
+          count: 19
+        - message: '#^In method "WP2Static\\\S+::\S+", you should not use the \$_(GET|POST) superglobal#'
+          path: src/ViewRenderer.php
+          count: 32
     excludes_analyse:
         - %currentWorkingDirectory%/src/SiteCrawler.php
