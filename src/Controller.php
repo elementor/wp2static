@@ -502,12 +502,15 @@ class Controller {
         $addon =
             $wpdb->get_row( "SELECT enabled, type FROM $table_name WHERE slug = '$addon_slug'" );
 
-        // if deploy type, disable others when enabling this one
+        // if deploy type, disable other deployers when enabling this one
         if ( $addon->type === 'deploy' ) {
             $wpdb->update(
                 $table_name,
                 [ 'enabled' => 0 ],
-                [ 'enabled' => 1 ]
+                [
+                    'enabled' => 1,
+                    'type' => 'deploy',
+                ]
             );
         }
 
