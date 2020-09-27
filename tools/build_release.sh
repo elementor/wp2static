@@ -20,12 +20,10 @@ mkdir -p $TMP_DIR
 rm -Rf $TMP_DIR/wp2static
 mkdir $TMP_DIR/wp2static
 
-
 # clear dev dependencies
 rm -Rf $EXEC_DIR/vendor/*
 # load prod deps and optimize loader
-composer install --no-dev --optimize-autoloader
-
+composer install --quiet --no-dev --optimize-autoloader
 
 # cp all required sources to build dir
 cp -r $EXEC_DIR/src $TMP_DIR/wp2static/
@@ -52,4 +50,4 @@ cd $EXEC_DIR
 # clear dev dependencies
 rm -Rf $EXEC_DIR/vendor/*
 # load prod deps
-composer install
+composer install --quiet
