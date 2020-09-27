@@ -71,7 +71,6 @@
             "@phpstan",
             "@phpunit"
         ],
-        "build": "/bin/sh tools/build_release.sh",
-        "post-install-cmd": "sh ./tools/composer-post-install.sh"
+        "build": "/bin/sh tools/build_release.sh"
     }
 }
