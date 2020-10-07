@@ -34,13 +34,13 @@ class DetectSitemapsURLs {
             // if no sitemaps I'm adding knowing sitemaps
             if ( count( $sitemaps ) === 0 ) {
                 $sitemaps = [
-                    $wp_site_url . 'sitemap.xml', // normal sitemap
-                    $wp_site_url . 'sitemap_index.xml', // yoast sitemap
-                    $wp_site_url . 'wp_sitemap.xml', // wp 5.5 sitemap
+                    $wp_site_url . 'sitemap.xml' => [], // normal sitemap
+                    $wp_site_url . 'sitemap_index.xml' => [], // yoast sitemap
+                    $wp_site_url . 'wp_sitemap.xml' => [], // wp 5.5 sitemap
                 ];
             }
 
-            foreach ( $sitemaps as $sitemap ) {
+            foreach ( $sitemaps as $sitemap => $useless ) {
                 $response = $request->getResponseCode( $sitemap );
                 if ( $response === 200 ) {
                     $parser->parse( $sitemap );
