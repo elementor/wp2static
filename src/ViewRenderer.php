@@ -2,6 +2,8 @@
 
 namespace WP2Static;
 
+use URLHelper;
+
 class ViewRenderer {
 
     public static function renderOptionsPage() : void {

@@ -26,256 +26,256 @@ class WordPressAdmin {
     public static function registerHooks( string $bootstrap_file ) : void {
         register_activation_hook(
             $bootstrap_file,
-            [ 'WP2Static\Controller', 'activate' ]
+            [ Controller::class, 'activate' ]
         );
 
         register_deactivation_hook(
             $bootstrap_file,
-            [ 'WP2Static\Controller', 'deactivate' ]
+            [ Controller::class, 'deactivate' ]
         );
 
         add_filter(
             // phpcs:ignore WordPress.WP.CronInterval -- namespaces not yet fully supported
             'cron_schedules',
-            [ 'WP2Static\WPCron', 'wp2static_custom_cron_schedules' ]
+            [ WPCron::class, 'wp2static_custom_cron_schedules' ]
         );
 
         add_filter(
             'wp2static_list_redirects',
-            [ 'WP2Static\CrawlCache', 'wp2static_list_redirects' ]
+            [ CrawlCache::class, 'wp2static_list_redirects' ]
         );
 
         add_filter(
             'cron_request',
-            [ 'WP2Static\WPCron', 'wp2static_cron_with_http_basic_auth' ]
+            [ WPCron::class, 'wp2static_cron_with_http_basic_auth' ]
         );
 
         add_action(
             'wp_ajax_wp2static_run',
-            [ 'WP2Static\Controller', 'wp2staticRun' ],
+            [ Controller::class, 'wp2staticRun' ],
             10,
             0
         );
 
         add_action(
             'wp_ajax_wp2static_poll_log',
-            [ 'WP2Static\Controller', 'wp2staticPollLog' ],
+            [ Controller::class, 'wp2staticPollLog' ],
             10,
             0
         );
 
         add_action(
             'admin_post_wp2static_ui_save_options',
-            [ 'WP2Static\Controller', 'wp2staticUISaveOptions' ],
+            [ Controller::class, 'wp2staticUISaveOptions' ],
             10,
             0
         );
 
         add_action(
             'wp2static_register_addon',
-            [ 'WP2Static\Addons', 'registerAddon' ],
+            [ Addons::class, 'registerAddon' ],
             10,
             5
         );
 
         add_action(
             'wp2static_post_deploy_trigger',
-            [ 'WP2Static\Controller', 'emailDeployNotification' ],
+            [ Controller::class, 'emailDeployNotification' ],
             10,
             0
         );
 
         add_action(
             'wp2static_post_deploy_trigger',
-            [ 'WP2Static\Controller', 'webhookDeployNotification' ],
+            [ Controller::class, 'webhookDeployNotification' ],
             10,
             0
         );
 
         add_action(
             'admin_post_wp2static_post_processed_site_delete',
-            [ 'WP2Static\Controller', 'wp2staticPostProcessedSiteDelete' ],
+            [ Controller::class, 'wp2staticPostProcessedSiteDelete' ],
             10,
             0
         );
 
         add_action(
             'admin_post_wp2static_post_processed_site_show',
-            [ 'WP2Static\Controller', 'wp2staticPostProcessedSiteShow' ],
+            [ Controller::class, 'wp2staticPostProcessedSiteShow' ],
             10,
             0
         );
 
         add_action(
             'admin_post_wp2static_log_delete',
-            [ 'WP2Static\Controller', 'wp2staticLogDelete' ],
+            [ Controller::class, 'wp2staticLogDelete' ],
             10,
             0
         );
 
         add_action(
             'admin_post_wp2static_delete_all_caches',
-            [ 'WP2Static\Controller', 'wp2staticDeleteAllCaches' ],
+            [ Controller::class, 'wp2staticDeleteAllCaches' ],
             10,
             0
         );
 
         add_action(
             'admin_post_wp2static_delete_jobs_queue',
-            [ 'WP2Static\Controller', 'wp2staticDeleteJobsQueue' ],
+            [ Controller::class, 'wp2staticDeleteJobsQueue' ],
             10,
             0
         );
 
         add_action(
             'admin_post_wp2staticProcessJobsQueue',
-            [ 'WP2Static\Controller', 'wp2staticProcessJobsQueue' ],
+            [ Controller::class, 'wp2staticProcessJobsQueue' ],
             10,
             0
         );
 
         add_action(
             'admin_post_wp2static_crawl_queue_delete',
-            [ 'WP2Static\Controller', 'wp2staticCrawlQueueDelete' ],
+            [ Controller::class, 'wp2staticCrawlQueueDelete' ],
             10,
             0
         );
 
         add_action(
             'admin_post_wp2static_crawl_queue_show',
-            [ 'WP2Static\Controller', 'wp2staticCrawlQueueShow' ],
+            [ Controller::class, 'wp2staticCrawlQueueShow' ],
             10,
             0
         );
 
         add_action(
             'admin_post_wp2static_deploy_cache_delete',
-            [ 'WP2Static\Controller', 'wp2staticDeployCacheDelete' ],
+            [ Controller::class, 'wp2staticDeployCacheDelete' ],
             10,
             0
         );
 
         add_action(
             'admin_post_wp2static_deploy_cache_show',
-            [ 'WP2Static\Controller', 'wp2staticDeployCacheShow' ],
+            [ Controller::class, 'wp2staticDeployCacheShow' ],
             10,
             0
         );
 
         add_action(
             'admin_post_wp2static_crawl_cache_delete',
-            [ 'WP2Static\Controller', 'wp2staticCrawlCacheDelete' ],
+            [ Controller::class, 'wp2staticCrawlCacheDelete' ],
             10,
             0
         );
 
         add_action(
             'admin_post_wp2static_crawl_cache_show',
-            [ 'WP2Static\Controller', 'wp2staticCrawlCacheShow' ],
+            [ Controller::class, 'wp2staticCrawlCacheShow' ],
             10,
             0
         );
 
         add_action(
             'admin_post_wp2static_static_site_delete',
-            [ 'WP2Static\Controller', 'wp2staticStaticSiteDelete' ],
+            [ Controller::class, 'wp2staticStaticSiteDelete' ],
             10,
             0
         );
 
         add_action(
             'admin_post_wp2static_static_site_show',
-            [ 'WP2Static\Controller', 'wp2staticStaticSiteShow' ],
+            [ Controller::class, 'wp2staticStaticSiteShow' ],
             10,
             0
         );
 
         add_action(
             'admin_post_wp2static_ui_save_job_options',
-            [ 'WP2Static\Controller', 'wp2staticUISaveJobOptions' ],
+            [ Controller::class, 'wp2staticUISaveJobOptions' ],
             10,
             0
         );
 
         add_action(
             'admin_post_wp2static_manually_enqueue_jobs',
-            [ 'WP2Static\Controller', 'wp2staticManuallyEnqueueJobs' ],
+            [ Controller::class, 'wp2staticManuallyEnqueueJobs' ],
             10,
             0
         );
 
         add_action(
             'admin_post_wp2static_toggle_addon',
-            [ 'WP2Static\Controller', 'wp2staticToggleAddon' ],
+            [ Controller::class, 'wp2staticToggleAddon' ],
             10,
             0
         );
 
         add_action(
             'wp2static_process_queue',
-            [ 'WP2Static\Controller', 'wp2staticProcessQueue' ],
+            [ Controller::class, 'wp2staticProcessQueue' ],
             10,
             0
         );
 
         add_action(
             'wp2static_headless_hook',
-            [ 'WP2Static\Controller', 'wp2staticHeadless' ],
+            [ Controller::class, 'wp2staticHeadless' ],
             10,
             0
         );
 
         add_action(
             'wp2static_crawl',
-            [ 'WP2Static\Crawler', 'wp2staticCrawl' ],
+            [ Crawler::class, 'wp2staticCrawl' ],
             10,
             2
         );
 
         add_action(
             'wp2static_process_html',
-            [ 'WP2Static\SimpleRewriter', 'rewrite' ],
+            [ SimpleRewriter::class, 'rewrite' ],
             10,
             1
         );
 
         add_action(
             'wp2static_process_css',
-            [ 'WP2Static\SimpleRewriter', 'rewrite' ],
+            [ SimpleRewriter::class, 'rewrite' ],
             10,
             1
         );
 
         add_action(
             'wp2static_process_js',
-            [ 'WP2Static\SimpleRewriter', 'rewrite' ],
+            [ SimpleRewriter::class, 'rewrite' ],
             10,
             1
         );
 
         add_action(
             'wp2static_process_robots_txt',
-            [ 'WP2Static\SimpleRewriter', 'rewrite' ],
+            [ SimpleRewriter::class, 'rewrite' ],
             10,
             1
         );
 
         add_action(
             'wp2static_process_xml',
-            [ 'WP2Static\SimpleRewriter', 'rewrite' ],
+            [ SimpleRewriter::class, 'rewrite' ],
             10,
             1
         );
 
         add_action(
             'save_post',
-            [ 'WP2Static\Controller', 'wp2staticSavePostHandler' ],
+            [ Controller::class, 'wp2staticSavePostHandler' ],
             0
         );
 
         add_action(
             'trashed_post',
-            [ 'WP2Static\Controller', 'wp2staticTrashedPostHandler' ],
+            [ Controller::class, 'wp2staticTrashedPostHandler' ],
             0
         );
 
@@ -296,7 +296,7 @@ class WordPressAdmin {
         foreach ( $single_url_invalidation_events as $invalidation_events ) {
             add_action(
                 $invalidation_events,
-                [ 'WP2Static\Controller', 'invalidateSingleURLCache' ],
+                [ Controller::class, 'invalidateSingleURLCache' ],
                 10,
                 2
             );
@@ -310,10 +310,10 @@ class WordPressAdmin {
         if ( is_admin() ) {
             add_action(
                 'admin_menu',
-                [ 'WP2Static\Controller', 'registerOptionsPage' ]
+                [ Controller::class, 'registerOptionsPage' ]
             );
             add_filter( 'custom_menu_order', '__return_true' );
-            add_filter( 'menu_order', [ 'WP2Static\Controller', 'setMenuOrder' ] );
+            add_filter( 'menu_order', [ Controller::class, 'setMenuOrder' ] );
         }
     }
 }

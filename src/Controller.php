@@ -15,6 +15,7 @@ class Controller {
 
     /**
      * Main controller of WP2Static
+     * TODO: can I use Controller::class here, too?
      *
      * @var \WP2Static\Controller Instance.
      */
@@ -177,19 +178,19 @@ class Controller {
             'WP2Static',
             'manage_options',
             'wp2static',
-            [ 'WP2Static\ViewRenderer', 'renderRunPage' ],
+            [ ViewRenderer::class, 'renderRunPage' ],
             'dashicons-shield-alt'
         );
 
         /** @var array<string, callable> $submenu_pages */
         $submenu_pages = [
-            'run' => [ 'WP2Static\ViewRenderer', 'renderRunPage' ],
-            'options' => [ 'WP2Static\ViewRenderer', 'renderOptionsPage' ],
-            'jobs' => [ 'WP2Static\ViewRenderer', 'renderJobsPage' ],
-            'caches' => [ 'WP2Static\ViewRenderer', 'renderCachesPage' ],
-            'diagnostics' => [ 'WP2Static\ViewRenderer', 'renderDiagnosticsPage' ],
-            'logs' => [ 'WP2Static\ViewRenderer', 'renderLogsPage' ],
-            'addons' => [ 'WP2Static\ViewRenderer', 'renderAddonsPage' ],
+            'run' => [ ViewRenderer::class, 'renderRunPage' ],
+            'options' => [ ViewRenderer::class, 'renderOptionsPage' ],
+            'jobs' => [ ViewRenderer::class, 'renderJobsPage' ],
+            'caches' => [ ViewRenderer::class, 'renderCachesPage' ],
+            'diagnostics' => [ ViewRenderer::class, 'renderDiagnosticsPage' ],
+            'logs' => [ ViewRenderer::class, 'renderLogsPage' ],
+            'addons' => [ ViewRenderer::class, 'renderAddonsPage' ],
         ];
 
         foreach ( $submenu_pages as $slug => $method ) {
@@ -214,7 +215,7 @@ class Controller {
             'Crawl Queue',
             'manage_options',
             'wp2static-crawl-queue',
-            [ 'ViewRenderer::class', 'renderCrawlQueue' ]
+            [ ViewRenderer::class, 'renderCrawlQueue' ]
         );
 
         add_submenu_page(
@@ -223,7 +224,7 @@ class Controller {
             'Crawl Cache',
             'manage_options',
             'wp2static-crawl-cache',
-            [ 'ViewRenderer::class', 'renderCrawlCache' ]
+            [ ViewRenderer::class, 'renderCrawlCache' ]
         );
 
         add_submenu_page(
@@ -232,7 +233,7 @@ class Controller {
             'Deploy Cache',
             'manage_options',
             'wp2static-deploy-cache',
-            [ 'ViewRenderer::class', 'renderDeployCache' ]
+            [ ViewRenderer::class, 'renderDeployCache' ]
         );
 
         add_submenu_page(
@@ -241,7 +242,7 @@ class Controller {
             'Static Site',
             'manage_options',
             'wp2static-static-site',
-            [ 'ViewRenderer::class', 'renderStaticSitePaths' ]
+            [ ViewRenderer::class, 'renderStaticSitePaths' ]
         );
 
         add_submenu_page(
@@ -250,7 +251,7 @@ class Controller {
             'Post Processed Site',
             'manage_options',
             'wp2static-post-processed-site',
-            [ 'ViewRenderer::class', 'renderPostProcessedSitePaths' ]
+            [ ViewRenderer::class, 'renderPostProcessedSitePaths' ]
         );
     }
 
