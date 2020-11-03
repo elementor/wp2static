@@ -181,6 +181,7 @@ class Controller {
             'dashicons-shield-alt'
         );
 
+        /** @var array<string, callable> $submenu_pages */
         $submenu_pages = [
             'run' => [ 'WP2Static\ViewRenderer', 'renderRunPage' ],
             'options' => [ 'WP2Static\ViewRenderer', 'renderOptionsPage' ],
@@ -197,7 +198,6 @@ class Controller {
 
             $title = ucfirst( $slug );
 
-            // @phpstan-ignore-next-line
             add_submenu_page(
                 'wp2static',
                 'WP2Static ' . ucfirst( $slug ),
