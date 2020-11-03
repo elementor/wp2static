@@ -1,3 +1,7 @@
+## WP2Static 7.1.3
+
+ - TBD
+
 ## WP2Static 7.1.2
 
  - update dependencies
