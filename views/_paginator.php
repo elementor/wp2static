@@ -1,3 +1,9 @@
+<?php
+
+use WP2Static\URLHelper;
+
+?>
+
 <h2 class="screen-reader-text">Crawl Queue list navigation</h2>
 <div class="tablenav-pages">
     <span class="displaying-num"><?php echo number_format($this->totalRecords()); ?> items</span>

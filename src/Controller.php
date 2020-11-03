@@ -15,7 +15,6 @@ class Controller {
 
     /**
      * Main controller of WP2Static
-     * TODO: can I use Controller::class here, too?
      *
      * @var \WP2Static\Controller Instance.
      */
@@ -164,7 +163,7 @@ class Controller {
         if ( 0 === $indexes ) {
             $result = $wpdb->query( $create_index_sql );
             if ( false === $result ) {
-                \WP2Static\WsLog::l( "Failed to create $index_name index on $table_name." );
+                WsLog::l( "Failed to create $index_name index on $table_name." );
             }
             return $result;
         } else {
@@ -614,7 +613,7 @@ class Controller {
     }
 
     public static function wp2staticHeadless() : void {
-        WsLog::l( 'Running WP2Static\Controller::wp2staticHeadless()' );
+        WsLog::l( 'Running WP2Static in Headless mode' );
         WsLog::l( 'Starting URL detection' );
         $detected_count = URLDetector::detectURLs();
         WsLog::l( "URL detection completed ($detected_count URLs detected)" );
