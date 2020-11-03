@@ -40,7 +40,7 @@ jobs:
       run: composer validate --strict
 
     - name: Install PHP dependencies
-      run: composer install --no-interaction --no-suggest
+      run: composer install --no-interaction
 
     - name: Run our Linter and PHPStan
       run: composer test
