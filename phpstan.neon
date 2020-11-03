@@ -9,6 +9,7 @@ parameters:
         - %currentWorkingDirectory%/src/
     scanFiles:
         - %currentWorkingDirectory%/tests/phpstan/bootstrap.php
+        # TODO Use https://github.com/php-stubs/wp-cli-stubs
         - %currentWorkingDirectory%/tests/phpstan/wp-cli-stubs-2.2.0.php
     ignoreErrors:
         # TODO I should really develop a tiny Request Handler.
@@ -22,5 +23,3 @@ parameters:
         - message: '#^In method "WP2Static\\\S+::\S+", you should not use the \$_(GET|POST) superglobal#'
           path: src/ViewRenderer.php
           count: 32
-    excludes_analyse:
-        - %currentWorkingDirectory%/src/SiteCrawler.php
