@@ -19,12 +19,12 @@ class DetectCategoryURLs {
         $category_urls = [];
 
         foreach ( $taxonomies as $taxonomy ) {
+            /** @var list<\WP_Term> $terms */
             $terms = get_terms(
                 $taxonomy->name,
                 [ 'hide_empty' => true ]
             );
 
-            // @phpstan-ignore-next-line
             foreach ( $terms as $term ) {
                 $term_link = get_term_link( $term );
 
