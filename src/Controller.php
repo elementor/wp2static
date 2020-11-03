@@ -214,7 +214,7 @@ class Controller {
             'Crawl Queue',
             'manage_options',
             'wp2static-crawl-queue',
-            [ 'WP2Static\ViewRenderer', 'renderCrawlQueue' ]
+            [ 'ViewRenderer::class', 'renderCrawlQueue' ]
         );
 
         add_submenu_page(
@@ -223,7 +223,7 @@ class Controller {
             'Crawl Cache',
             'manage_options',
             'wp2static-crawl-cache',
-            [ 'WP2Static\ViewRenderer', 'renderCrawlCache' ]
+            [ 'ViewRenderer::class', 'renderCrawlCache' ]
         );
 
         add_submenu_page(
@@ -232,7 +232,7 @@ class Controller {
             'Deploy Cache',
             'manage_options',
             'wp2static-deploy-cache',
-            [ 'WP2Static\ViewRenderer', 'renderDeployCache' ]
+            [ 'ViewRenderer::class', 'renderDeployCache' ]
         );
 
         add_submenu_page(
@@ -241,7 +241,7 @@ class Controller {
             'Static Site',
             'manage_options',
             'wp2static-static-site',
-            [ 'WP2Static\ViewRenderer', 'renderStaticSitePaths' ]
+            [ 'ViewRenderer::class', 'renderStaticSitePaths' ]
         );
 
         add_submenu_page(
@@ -250,7 +250,7 @@ class Controller {
             'Post Processed Site',
             'manage_options',
             'wp2static-post-processed-site',
-            [ 'WP2Static\ViewRenderer', 'renderPostProcessedSitePaths' ]
+            [ 'ViewRenderer::class', 'renderPostProcessedSitePaths' ]
         );
     }
 
