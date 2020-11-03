@@ -21,7 +21,7 @@ class CrawlQueue {
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         dbDelta( $sql );
 
-        \WP2Static\Controller::ensureIndex(
+        Controller::ensureIndex(
             $table_name,
             'hashed_url',
             "CREATE UNIQUE INDEX hashed_url ON $table_name (hashed_url)"

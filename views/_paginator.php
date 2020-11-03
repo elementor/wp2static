@@ -6,8 +6,8 @@
             <span class="tablenav-pages-navspan button disabled" aria-hidden="true">«</span>
             <span class="tablenav-pages-navspan button disabled" aria-hidden="true">‹</span>
         <?php else: ?>
-            <a class="first-page button" href="<?php echo URLHelper::modifyUrl(['paged' => 1]); ?>"><span class="screen-reader-text">First page</span><span aria-hidden="true">«</span></a>
-            <a class="prev-page button" href="<?php echo URLHelper::modifyUrl(['paged' => $this->page() - 1]); ?>"><span class="screen-reader-text">Previous page</span><span aria-hidden="true">‹</span></a>
+            <a class="first-page button" href="<?php echo modifyUrl(['paged' => 1]); ?>"><span class="screen-reader-text">First page</span><span aria-hidden="true">«</span></a>
+            <a class="prev-page button" href="<?php echo modifyUrl(['paged' => $this->page() - 1]); ?>"><span class="screen-reader-text">Previous page</span><span aria-hidden="true">‹</span></a>
         <?php endif; ?>
         <span class="paging-input">
             <label for="current-page-selector" class="screen-reader-text">Current Page</label>
@@ -20,8 +20,8 @@
             <span class="tablenav-pages-navspan button disabled" aria-hidden="true">›</span>
             <span class="tablenav-pages-navspan button disabled" aria-hidden="true">»</span>
         <?php else: ?>
-            <a class="next-page button" href="<?php echo URLHelper::modifyUrl(['paged' => $this->page() + 1]); ?>"><span class="screen-reader-text">Next page</span><span aria-hidden="true">›</span></a>
-            <a class="last-page button" href="<?php echo URLHelper::modifyUrl(['paged' => $this->lastPage()]); ?>"><span class="screen-reader-text">Last page</span><span aria-hidden="true">»</span></a>
+            <a class="next-page button" href="<?php echo modifyUrl(['paged' => $this->page() + 1]); ?>"><span class="screen-reader-text">Next page</span><span aria-hidden="true">›</span></a>
+            <a class="last-page button" href="<?php echo modifyUrl(['paged' => $this->lastPage()]); ?>"><span class="screen-reader-text">Last page</span><span aria-hidden="true">»</span></a>
         <?php endif; ?>
     </span>
 </div>

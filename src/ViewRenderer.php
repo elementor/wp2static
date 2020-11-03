@@ -7,7 +7,7 @@ use URLHelper;
 class ViewRenderer {
 
     public static function renderOptionsPage() : void {
-        \WP2Static\CoreOptions::init();
+        CoreOptions::init();
 
         $view = [];
         $view['nonce_action'] = 'wp2static-ui-options';
