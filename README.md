@@ -4,9 +4,11 @@ A WordPress plugin for static site generation and deployment.
 
 Official homepage/docs: [https://wp2static.com](https://wp2static.com)
 
-__Looking for the old version? It's been renamed and improved as [Static HTML Output](https://github.com/WP2Static/static-html-output-plugin).__
+__Looking for the older style plugin? It's been renamed and improved as [Static HTML Output](https://github.com/WP2Static/static-html-output-plugin).__
 
-![codequality](https://github.com/wp2static/wp2static/workflows/codequality/badge.svg)
+`develop` (bleeding edge): ![codequality](https://github.com/wp2static/wp2static/workflows/codequality/badge.svg?branch=develop)
+
+`master` (stable): ![codequality](https://github.com/wp2static/wp2static/workflows/codequality/badge.svg?branch=master)
 
 ## Open Source over profits
 
