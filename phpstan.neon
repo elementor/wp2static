@@ -7,6 +7,7 @@ parameters:
     inferPrivatePropertyTypeFromConstructor: true
     paths:
         - %currentWorkingDirectory%/src/
+        - %currentWorkingDirectory%/wp2static.php
     scanFiles:
         - %currentWorkingDirectory%/tests/phpstan/bootstrap.php
         # TODO Use https://github.com/php-stubs/wp-cli-stubs
@@ -23,3 +24,4 @@ parameters:
         - message: '#^In method "WP2Static\\\S+::\S+", you should not use the \$_(GET|POST) superglobal#'
           path: src/ViewRenderer.php
           count: 32
+        - '/^Parameter #2 \$callable of static method WP_CLI::add_command\(\) expects callable\(\): mixed, \S+ given\.$/'
