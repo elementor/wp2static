@@ -22,6 +22,19 @@ if ( file_exists( WP2STATIC_PATH . 'vendor/autoload.php' ) ) {
     require_once WP2STATIC_PATH . 'vendor/autoload.php';
 }
 
+function wp2static_print_composer_error() : void {
+    echo '<div class="notice notice-error"><p>' .
+        'Some error: use composer or download pre-compiled' .
+        '</p></div>';
+}
+
+if ( ! class_exists( 'WP2Static\Controller' ) ) {
+    add_action( 'admin_notices', 'wp2static_print_composer_error' );
+    throw new Exception(
+        'Some error: use composer or download pre-compiled'
+    );
+}
+
 WP2Static\Controller::init( __FILE__ );
 
 /**
