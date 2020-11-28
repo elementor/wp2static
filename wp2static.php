@@ -23,11 +23,15 @@ if ( file_exists( WP2STATIC_PATH . 'vendor/autoload.php' ) ) {
 }
 
 if ( ! class_exists( 'WP2Static\Controller' ) ) {
-    throw new Exception(
-        'Looks like you\'re trying to activate WP2Static from source' .
-        ' code, without compiling it first. For an easier to install version,' .
-        ' please consider donating and downloading from https://wp2static.com.'
-    );
+    if ( file_exists( WP2STATIC_PATH . 'src/WP2StaticException.php' ) ) {
+        require_once WP2STATIC_PATH . 'src/WP2StaticException.php';
+
+        throw new WP2Static\WP2StaticException(
+            'Looks like you\'re trying to activate WP2Static from source code' .
+            ', without compiling it first. Please see' .
+            ' https://wp2static.com/compiling-from-source for assistance.'
+        );
+    }
 }
 
 WP2Static\Controller::init( __FILE__ );
