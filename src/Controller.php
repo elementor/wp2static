@@ -590,18 +590,20 @@ class Controller {
                     WsLog::l( 'Post-processing completed' );
                     break;
                 case 'deploy':
-                    if ( Addons::getDeployer() === 'no-enabled-deployment-addons' ) {
+                    $deployer = Addons::getDeployer();
+
+                    if ( ! $deployer ) {
                         WsLog::l( 'No deployment add-ons are enabled, skipping deployment.' );
                     } else {
                         WsLog::l( 'Starting deployment' );
                         do_action(
                             'wp2static_deploy',
                             ProcessedSite::getPath(),
-                            Addons::getDeployer()
+                            $deployer
                         );
                     }
                     WsLog::l( 'Starting post-deployment actions' );
-                    do_action( 'wp2static_post_deploy_trigger', Addons::getDeployer() );
+                    do_action( 'wp2static_post_deploy_trigger', $deployer );
 
                     break;
                 default:
