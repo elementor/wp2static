@@ -233,7 +233,6 @@ class CLI {
 
         $detections = [
             'detectArchives',
-            'detectAttachments',
             'detectCategoryPagination',
             'detectChildTheme',
             'detectCustomPostTypes',
@@ -259,7 +258,6 @@ class CLI {
 
         $detections = [
             'detectArchives',
-            'detectAttachments',
             'detectCategoryPagination',
             'detectChildTheme',
             'detectCommentPagination',
@@ -293,7 +291,6 @@ class CLI {
 
         $detections = [
             'detectArchives',
-            'detectAttachments',
             'detectCategoryPagination',
             'detectChildTheme',
             'detectCommentPagination',

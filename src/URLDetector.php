@@ -43,9 +43,6 @@ class URLDetector {
          - sitemaps
 
         */
-        // if ( CoreOptions::getValue('detectAttachments') ) {
-        // $arrays_to_merge[] = DetectAttachmentURLs::detect();
-        // }
 
         if ( CoreOptions::getValue( 'detectPosts' ) ) {
             $arrays_to_merge[] = DetectPostURLs::detect();
