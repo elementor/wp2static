@@ -2,6 +2,7 @@
 
  - fix PHP version check to 7.3>=
  - fix errors during sitemap detection (thanks @fromcouch)
+ - fix errors during cache table initialisation
 
 ## WP2Static 7.1.2
 
