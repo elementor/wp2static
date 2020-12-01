@@ -25,27 +25,34 @@ class DetectSitemapsURLs {
         try {
             $sitemaps = [];
 
-            // if robots exits we parse looking for sitemaps
+            // if robots exists, parse for possible sitemaps
             if ( $robots_exits === true ) {
                 $parser->parseRecursive( $wp_site_url . 'robots.txt' );
                 $sitemaps = $parser->getSitemaps();
             }
 
-            // if no sitemaps I'm adding knowing sitemaps
+            // if no sitemaps add known sitemaps
             if ( count( $sitemaps ) === 0 ) {
                 $sitemaps = [
-                    $wp_site_url . 'sitemap.xml', // normal sitemap
-                    $wp_site_url . 'sitemap_index.xml', // yoast sitemap
-                    $wp_site_url . 'wp_sitemap.xml', // wp 5.5 sitemap
+                    // we're assigning empty arrays to match sitemaps library
+                    $wp_site_url . 'sitemap.xml' => [], // normal sitemap
+                    $wp_site_url . 'sitemap_index.xml' => [], // yoast sitemap
+                    $wp_site_url . 'wp_sitemap.xml' => [], // wp 5.5 sitemap
                 ];
             }
 
-            foreach ( $sitemaps as $sitemap ) {
+            // TODO: a more elegant mapping
+            foreach ( $sitemaps as $sitemap => $unused ) {
+                if ( ! is_string( $sitemap ) ) {
+                    continue;
+                }
+
                 $response = $request->getResponseCode( $sitemap );
+
                 if ( $response === 200 ) {
                     $parser->parse( $sitemap );
 
-                    $sitemaps_urls [] = '/' . str_replace(
+                    $sitemaps_urls[] = '/' . str_replace(
                         $wp_site_url,
                         '',
                         $sitemap
@@ -60,7 +67,7 @@ class DetectSitemapsURLs {
                             $url
                         );
 
-                        $sitemaps_urls [] = '/' . $sitemap_url;
+                        $sitemaps_urls[] = '/' . $sitemap_url;
                     }
                 }
             }
