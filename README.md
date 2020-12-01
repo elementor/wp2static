@@ -2,13 +2,13 @@
 
 A WordPress plugin for static site generation and deployment.
 
-Official homepage/docs: [https://wp2static.com](https://wp2static.com)
+`master` (stable): ![codequality](https://github.com/wp2static/wp2static/workflows/codequality/badge.svg?branch=master)
+`develop` (bleeding edge): ![codequality](https://github.com/wp2static/wp2static/workflows/codequality/badge.svg?branch=develop)
+[![Packagist](https://img.shields.io/packagist/v/leonstafford/wp2static.svg?color=239922&style=popout)](https://packagist.org/packages/leonstafford/wp2static)
+[![PHPStan](https://img.shields.io/badge/PHPStan-enabled-239922)](https://github.com/phpstan/phpstan)
 
 __Looking for the older style plugin? It's been renamed and improved as [Static HTML Output](https://github.com/WP2Static/static-html-output-plugin).__
 
-`develop` (bleeding edge): ![codequality](https://github.com/wp2static/wp2static/workflows/codequality/badge.svg?branch=develop)
-
-`master` (stable): ![codequality](https://github.com/wp2static/wp2static/workflows/codequality/badge.svg?branch=master)
 
 ## Open Source over profits
 
