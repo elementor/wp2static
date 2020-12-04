@@ -25,7 +25,3 @@ parameters:
           path: src/ViewRenderer.php
           count: 32
         - '/^Parameter #2 \$callable of static method WP_CLI::add_command\(\) expects callable\(\): mixed, \S+ given\.$/'
-        # PHP 8 specific ignores
-        - '/^Property WP2Static\\\Crawler::\$ch \(bool|resource\) does not accept CurlHandle\.$/'
-      
-
