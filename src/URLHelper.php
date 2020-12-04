@@ -5,13 +5,18 @@ namespace WP2Static;
 use Exception;
 
 class URLHelper {
+    public static function isSecure() : bool {
+        return ( ! empty( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] !== 'off' ) ||
+            $_SERVER['SERVER_PORT'] == 443;
+    }
+
     /*
      * Returns the current full URL including querystring
      *
      * @return string
      */
     public static function getCurrent() : string {
-        $scheme = $_SERVER['HTTPS'] === 'on' ? 'http' : 'https';
+        $scheme = self::isSecure() ? 'https' : 'http';
         $url = $scheme . '://' . $_SERVER['HTTP_HOST'];
 
         // Only include port number if needed

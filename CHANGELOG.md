@@ -1,6 +1,10 @@
-## WP2Static 7.1.3
+## WP2Static 7.1.5
 
- - TBD
+ - fix PHP version check to 7.3>=
+ - fix errors during sitemap detection (thanks @fromcouch)
+ - fix errors during cache table initialisation
+ - fix pagination URLs not using correct schema
+ - fix CLI command registration issue
 
 ## WP2Static 7.1.2
 

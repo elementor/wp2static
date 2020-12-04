@@ -106,12 +106,14 @@ class CLI {
         array $args,
         array $assoc_args
     ) : void {
-        if ( Addons::getDeployer() === 'no-enabled-deployment-addons' ) {
+        $deployer = Addons::getDeployer();
+
+        if ( ! $deployer ) {
             WP_CLI::line( 'No deployment add-ons are enabled, skipping deployment.' );
         } else {
             WsLog::l( 'Starting deployment' );
-            do_action( 'wp2static_deploy', ProcessedSite::getPath(), Addons::getDeployer() );
-            do_action( 'wp2static_post_deploy_trigger', Addons::getDeployer() );
+            do_action( 'wp2static_deploy', ProcessedSite::getPath(), $deployer );
+            do_action( 'wp2static_post_deploy_trigger', $deployer );
         }
     }
 
@@ -231,7 +233,6 @@ class CLI {
 
         $detections = [
             'detectArchives',
-            'detectAttachments',
             'detectCategoryPagination',
             'detectChildTheme',
             'detectCustomPostTypes',
@@ -257,7 +258,6 @@ class CLI {
 
         $detections = [
             'detectArchives',
-            'detectAttachments',
             'detectCategoryPagination',
             'detectChildTheme',
             'detectCommentPagination',
@@ -291,7 +291,6 @@ class CLI {
 
         $detections = [
             'detectArchives',
-            'detectAttachments',
             'detectCategoryPagination',
             'detectChildTheme',
             'detectCommentPagination',

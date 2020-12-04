@@ -98,12 +98,14 @@ class Addons {
      * Get enabled deployer
      *
      * "There can be only one!"
+     *
+     * @return string|bool deployment add-on slug or false
      */
-    public static function getDeployer() : string {
+    public static function getDeployer() {
         $addons = self::getType( 'deploy' );
 
         if ( empty( $addons ) ) {
-            return 'no-enabled-deployment-addons';
+            return false;
         }
 
         return $addons[0]->slug;

@@ -32,7 +32,7 @@ class ViewRenderer {
         $view['memoryLimit'] = ini_get( 'memory_limit' );
         $view['coreOptions'] = CoreOptions::getAll();
         $view['site_info'] = SiteInfo::getAllInfo();
-        $view['phpOutOfDate'] = PHP_VERSION < 7.4;
+        $view['phpOutOfDate'] = PHP_VERSION < 7.3;
         $view['uploadsWritable'] = SiteInfo::isUploadsWritable();
         $view['maxExecutionTime'] = ini_get( 'max_execution_time' );
         $view['curlSupported'] = SiteInfo::hasCURLSupport();

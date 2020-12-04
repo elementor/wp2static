@@ -11,14 +11,26 @@ class CrawlCache {
 
         $charset_collate = $wpdb->get_charset_collate();
 
-        // @todo We can remove this eventually
-        // If the ID column is missing, just remove the table and start again because
-        // dbDelta isn't adding it correctly
-        $id_row = $wpdb->get_row( "SHOW COLUMNS FROM $table_name WHERE Field = 'id'" );
-        if ( ! $id_row ) {
-            $wpdb->query(
-                "DROP TABLE IF EXISTS $table_name;"
+        $check_table_query =
+            $wpdb->prepare(
+                'SHOW TABLES LIKE %s',
+                $wpdb->esc_like( $table_name )
             );
+
+        // if table exists, check structure
+        if ( $wpdb->get_var( $check_table_query ) === $table_name ) {
+            // @todo We can remove this eventually
+            // If the ID column is missing, just remove the table and start
+            // again because dbDelta isn't adding it correctly
+            $id_row = $wpdb->get_row(
+                "SHOW COLUMNS FROM $table_name WHERE Field = 'id'"
+            );
+
+            if ( ! $id_row ) {
+                $wpdb->query(
+                    "DROP TABLE IF EXISTS $table_name;"
+                );
+            }
         }
 
         $sql = "CREATE TABLE $table_name (
