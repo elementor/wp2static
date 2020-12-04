@@ -1,3 +1,7 @@
+## WP2Static 7.1.6
+
+ - code quality improvements (thanks @szepeviktor)
+
 ## WP2Static 7.1.5
 
  - fix PHP version check to 7.3>=
