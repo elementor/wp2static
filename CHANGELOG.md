@@ -4,7 +4,7 @@
 
 ## WP2Static 7.1.5
 
- - fix PHP version check to 7.3>=
+ - fix PHP version check to >=7.3
  - fix errors during sitemap detection (thanks @fromcouch)
  - fix errors during cache table initialisation
  - fix pagination URLs not using correct schema
