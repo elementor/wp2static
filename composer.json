@@ -17,10 +17,16 @@
         "docs": "https://wp2static.com/documentation",
         "source": "https://github.com/WP2Static/wp2static"
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/leonstafford/sitemapparser"
+        }
+    ],
     "require": {
         "php": ">=7.3",
         "wa72/url": "^0.7.1",
-        "vipnytt/sitemapparser": "^1.0"
+        "vipnytt/sitemapparser": "dev-master"
     },
     "require-dev": {
         "phpstan/phpstan": "*",
