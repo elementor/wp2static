@@ -20,7 +20,7 @@ class DetectSitemapsURLs {
         $parser = new SitemapParser( 'WP2Static.com', [ 'strict' => false ] );
         $request = new Request();
         $response = $request->getResponseCode( $wp_site_url . 'robots.txt' );
-        $robots_exits = $response === 200 ? true : false;
+        $robots_exits = $response === 200;
 
         try {
             $sitemaps = [];
@@ -32,7 +32,7 @@ class DetectSitemapsURLs {
             }
 
             // if no sitemaps add known sitemaps
-            if ( count( $sitemaps ) === 0 ) {
+            if ( $sitemaps === [] ) {
                 $sitemaps = [
                     // we're assigning empty arrays to match sitemaps library
                     $wp_site_url . 'sitemap.xml' => [], // normal sitemap
@@ -42,7 +42,7 @@ class DetectSitemapsURLs {
             }
 
             // TODO: a more elegant mapping
-            foreach ( $sitemaps as $sitemap => $unused ) {
+            foreach ( array_keys( $sitemaps ) as $sitemap ) {
                 if ( ! is_string( $sitemap ) ) {
                     continue;
                 }
@@ -61,20 +61,16 @@ class DetectSitemapsURLs {
                     $extract_sitemaps = $parser->getSitemaps();
 
                     foreach ( $extract_sitemaps as $url => $tags ) {
-                        $sitemap_url = str_replace(
+                        $sitemaps_urls[] = '/' . str_replace(
                             $wp_site_url,
                             '',
                             $url
                         );
-
-                        $sitemaps_urls[] = '/' . $sitemap_url;
                     }
                 }
             }
         } catch ( SitemapParserException $e ) {
-            WsLog::l(
-                $e->getMessage()
-            );
+            WsLog::l( $e->getMessage() );
             throw new WP2StaticException( $e->getMessage(), 0, $e );
         }
 
