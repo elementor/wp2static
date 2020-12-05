@@ -8,67 +8,60 @@
 
 namespace WP2Static;
 
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Response;
+use Psr\Http\Message\ResponseInterface;
+
 define( 'WP2STATIC_REDIRECT_CODES', [ 301, 302, 303, 307, 308 ] );
 
 class Crawler {
 
     /**
-     * @var resource | bool
+     * @var Client
      */
-    private $ch;
+    private $client;
     /**
-     * @var Request
+     * @var string
      */
-    private $request;
+    private $site_path;
 
     /**
      * Crawler constructor
      */
     public function __construct() {
-        $this->ch = curl_init();
-        curl_setopt( $this->ch, CURLOPT_RETURNTRANSFER, 1 );
-        curl_setopt( $this->ch, CURLOPT_SSL_VERIFYHOST, 0 );
-        curl_setopt( $this->ch, CURLOPT_SSL_VERIFYPEER, 0 );
-        curl_setopt( $this->ch, CURLOPT_HEADER, 0 );
-        curl_setopt( $this->ch, CURLOPT_FOLLOWLOCATION, 1 );
-        curl_setopt( $this->ch, CURLOPT_CONNECTTIMEOUT, 0 );
-        curl_setopt( $this->ch, CURLOPT_TIMEOUT, 600 );
-        curl_setopt( $this->ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1 );
-        curl_setopt( $this->ch, CURLOPT_MAXREDIRS, 1 );
-
-        $this->request = new Request();
+        $this->site_path = rtrim( SiteInfo::getURL( 'site' ), '/' );
 
         $port_override = apply_filters(
             'wp2static_curl_port',
             null
         );
 
+        $base_uri = $this->site_path;
+
         if ( $port_override ) {
-            curl_setopt( $this->ch, CURLOPT_PORT, $port_override );
+            $base_uri = "{$base_uri}:{$port_override}";
         }
 
-        curl_setopt(
-            $this->ch,
-            CURLOPT_USERAGENT,
-            apply_filters( 'wp2static_curl_user_agent', 'WP2Static.com' )
+        $this->client = new Client(
+            [
+                'base_uri' => $base_uri,
+                'verify' => false,
+                'allow_redirects' => [
+                    'max' => 1,
+                    // required to get effective_url
+                    'track_redirects' => true,
+                ],
+                'connect_timeout'  => 0,
+                'timeout' => 600,
+                'headers' => [
+                    'User-Agent' => apply_filters(
+                        'wp2static_curl_user_agent',
+                        'WP2Static.com',
+                    ),
+                ],
+            ]
         );
-
-        $auth_user = CoreOptions::getValue( 'basicAuthUser' );
-
-        // quick return to avoid extra options fetch
-        if ( ! $auth_user ) {
-            return;
-        }
-
-        $auth_password = CoreOptions::getValue( 'basicAuthPassword' );
-
-        if ( $auth_user && $auth_password ) {
-            curl_setopt(
-                $this->ch,
-                CURLOPT_USERPWD,
-                $auth_user . ':' . $auth_password
-            );
-        }
     }
 
     public static function wp2staticCrawl( string $static_site_path, string $crawler_slug ) : void {
@@ -87,9 +80,8 @@ class Crawler {
 
         WsLog::l( 'Starting to crawl detected URLs.' );
 
-        $site_path = rtrim( SiteInfo::getURL( 'site' ), '/' );
-        $site_host = parse_url( $site_path, PHP_URL_HOST );
-        $site_port = parse_url( $site_path, PHP_URL_PORT );
+        $site_host = parse_url( $this->site_path, PHP_URL_HOST );
+        $site_port = parse_url( $this->site_path, PHP_URL_PORT );
         $site_host = $site_port ? $site_host . ":$site_port" : $site_host;
         $site_urls = [ "http://$site_host", "https://$site_host" ];
 
@@ -111,7 +103,7 @@ class Crawler {
 
         $crawlable_paths = CrawlQueue::getCrawlablePaths();
         foreach ( $crawlable_paths as $root_relative_path ) {
-            $absolute_uri = new URL( $site_path . $root_relative_path );
+            $absolute_uri = new URL( $this->site_path . $root_relative_path );
             $url = $absolute_uri->get();
 
             $response = $this->crawlURL( $url );
@@ -120,18 +112,43 @@ class Crawler {
                 continue;
             }
 
-            $crawled_contents = $response['body'];
+            $crawled_contents = (string) $response->getBody();
+            $status_code = $response->getStatusCode();
+
+            if ( $status_code === 404 ) {
+                WsLog::l( '404 for URL ' . $root_relative_path );
+                CrawlCache::rmUrl( $root_relative_path );
+                $crawled_contents = null;
+            } elseif ( in_array( $status_code, WP2STATIC_REDIRECT_CODES ) ) {
+                $crawled_contents = null;
+            }
+
             $redirect_to = null;
 
-            if ( in_array( $response['code'], WP2STATIC_REDIRECT_CODES ) ) {
-                $redirect_to = (string) str_replace( $site_urls, '', $response['effective_url'] );
-                $page_hash = md5( $response['code'] . $redirect_to );
+            if ( in_array( $status_code, WP2STATIC_REDIRECT_CODES ) ) {
+                $effective_url = $url;
+
+                // returns as string
+                $redirect_history =
+                    $response->getHeaderLine( 'X-Guzzle-Redirect-History' );
+
+                if ( $redirect_history ) {
+                    $redirects = explode( ', ', $redirect_history );
+                    $effective_url = end( $redirects );
+                }
+
+                $redirect_to =
+                    (string) str_replace( $site_urls, '', $effective_url );
+                $page_hash = md5( $status_code . $redirect_to );
             } elseif ( ! is_null( $crawled_contents ) ) {
                 $page_hash = md5( $crawled_contents );
             } else {
-                $page_hash = md5( $response['code'] );
+                $page_hash = md5( (string) $status_code );
             }
 
+            // TODO: as John mentioned, we're only skipping the saving,
+            // not crawling here. Let's look at improving that... or speeding
+            // up with async requests, at least
             if ( $use_crawl_cache ) {
                 // if not already cached
                 if ( CrawlCache::getUrl( $root_relative_path, $page_hash ) ) {
@@ -157,7 +174,7 @@ class Crawler {
             CrawlCache::addUrl(
                 $root_relative_path,
                 $page_hash,
-                $response['code'],
+                $status_code,
                 $redirect_to
             );
 
@@ -184,31 +201,24 @@ class Crawler {
     /**
      * Crawls a string of full URL within WordPressSite
      *
-     * @return mixed[]|null response object
+     * @return ResponseInterface|null response object
      */
-    public function crawlURL( string $url ) : ?array {
-        $handle = $this->ch;
+    public function crawlURL( string $url ) : ?ResponseInterface {
+        $headers = [];
 
-        if ( ! is_resource( $handle ) ) {
-            return null;
+        $auth_user = CoreOptions::getValue( 'basicAuthUser' );
+
+        if ( $auth_user ) {
+            $auth_password = CoreOptions::getValue( 'basicAuthPassword' );
+
+            if ( $auth_password ) {
+                $headers['auth'] = [ $auth_user, $auth_password ];
+            }
         }
 
-        $response = $this->request->getURL( $url, $handle );
-        if ( ! $response ) {
-            return null;
-        }
+        $request = new Request( 'GET', $url, $headers );
 
-        $crawled_contents = $response['body'];
-
-        if ( $response['code'] === 404 ) {
-            $site_path = rtrim( SiteInfo::getURL( 'site' ), '/' );
-            $url_slug = str_replace( $site_path, '', $url );
-            WsLog::l( '404 for URL ' . $url_slug );
-            CrawlCache::rmUrl( $url_slug );
-            $response['body'] = null;
-        } elseif ( in_array( $response['code'], WP2STATIC_REDIRECT_CODES ) ) {
-            $response['body'] = null;
-        }
+        $response = $this->client->send( $request );
 
         return $response;
     }
