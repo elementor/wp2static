@@ -47,6 +47,7 @@ class Crawler {
             [
                 'base_uri' => $base_uri,
                 'verify' => false,
+                'http_errors' => false,
                 'allow_redirects' => [
                     'max' => 1,
                     // required to get effective_url
