@@ -1,9 +1,12 @@
-## WP2Static 7.1.6
+## WP2Static 7.1.7
 
- - code quality improvements (thanks @szepeviktor)
  - use custom request options for sitemap crawling
  - move from cURL to Guzzle for requests
  - fix incompatibilities with PHP8
+
+## WP2Static 7.1.6
+
+ - code quality improvements (thanks @szepeviktor)
 
 ## WP2Static 7.1.5
 
