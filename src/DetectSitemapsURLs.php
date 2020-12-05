@@ -4,6 +4,9 @@ namespace WP2Static;
 
 use vipnytt\SitemapParser;
 use vipnytt\SitemapParser\Exceptions\SitemapParserException;
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Response;
 
 
 class DetectSitemapsURLs {
@@ -15,18 +18,65 @@ class DetectSitemapsURLs {
      * @throws WP2StaticException
      */
     public static function detect( string $wp_site_url ) : array {
-
         $sitemaps_urls = [];
         $parser = new SitemapParser( 'WP2Static.com', [ 'strict' => false ] );
-        $request = new Request();
-        $response = $request->getResponseCode( $wp_site_url . 'robots.txt' );
-        $robots_exits = $response === 200;
+
+        $site_path = rtrim( SiteInfo::getURL( 'site' ), '/' );
+
+        $port_override = apply_filters(
+            'wp2static_curl_port',
+            null
+        );
+
+        $base_uri = $site_path;
+
+        if ( $port_override ) {
+            $base_uri = "{$base_uri}:{$port_override}";
+        }
+
+        $client = new Client(
+            [
+                'base_uri' => $base_uri,
+                'verify' => false,
+                'allow_redirects' => [
+                    'max' => 1,
+                    // required to get effective_url
+                    'track_redirects' => true,
+                ],
+                'connect_timeout'  => 0,
+                'timeout' => 600,
+                'headers' => [
+                    'User-Agent' => apply_filters(
+                        'wp2static_curl_user_agent',
+                        'WP2Static.com',
+                    ),
+                ],
+            ]
+        );
+
+        $headers = [];
+
+        $auth_user = CoreOptions::getValue( 'basicAuthUser' );
+
+        if ( $auth_user ) {
+            $auth_password = CoreOptions::getValue( 'basicAuthPassword' );
+
+            if ( $auth_password ) {
+                $headers['auth'] = [ $auth_user, $auth_password ];
+            }
+        }
+
+        $request = new Request( 'GET', '/robots.txt', $headers );
+
+        $response = $client->send( $request );
+
+        $robots_exists = $response->getStatusCode() === 200;
 
         try {
             $sitemaps = [];
 
             // if robots exists, parse for possible sitemaps
-            if ( $robots_exits === true ) {
+            if ( $robots_exists ) {
                 $parser->parseRecursive( $wp_site_url . 'robots.txt' );
                 $sitemaps = $parser->getSitemaps();
             }
@@ -35,21 +85,24 @@ class DetectSitemapsURLs {
             if ( $sitemaps === [] ) {
                 $sitemaps = [
                     // we're assigning empty arrays to match sitemaps library
-                    $wp_site_url . 'sitemap.xml' => [], // normal sitemap
-                    $wp_site_url . 'sitemap_index.xml' => [], // yoast sitemap
-                    $wp_site_url . 'wp_sitemap.xml' => [], // wp 5.5 sitemap
+                    '/sitemap.xml' => [], // normal sitemap
+                    '/sitemap_index.xml' => [], // yoast sitemap
+                    '/wp_sitemap.xml' => [], // wp 5.5 sitemap
                 ];
             }
 
-            // TODO: a more elegant mapping
             foreach ( array_keys( $sitemaps ) as $sitemap ) {
                 if ( ! is_string( $sitemap ) ) {
                     continue;
                 }
 
-                $response = $request->getResponseCode( $sitemap );
+                $request = new Request( 'GET', $sitemap, $headers );
 
-                if ( $response === 200 ) {
+                $response = $client->send( $request );
+
+                $status_code = $response->getStatusCode();
+
+                if ( $status_code === 200 ) {
                     $parser->parse( $sitemap );
 
                     $sitemaps_urls[] = '/' . str_replace(
