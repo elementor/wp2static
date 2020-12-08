@@ -195,6 +195,11 @@ class SitemapParser {
 
         $sitemap_json = $this->generateXMLObject( $response );
 
+        if ( ! $sitemap_json instanceof SimpleXMLElement ) {
+            $this->parseString( $response );
+            return;
+        }
+
         $this->parseJson( self::XML_TAG_SITEMAP, $sitemap_json );
         $this->parseJson( self::XML_TAG_URL, $sitemap_json );
     }
@@ -330,7 +335,7 @@ class SitemapParser {
      * Generate the \SimpleXMLElement object if the XML is valid
      *
      * @param string $xml
-     * @return \SimpleXMLElement
+     * @return \SimpleXMLElement|bool
      * @throws WP2StaticException
      */
     protected function generateXMLObject( $xml ) {
@@ -346,7 +351,7 @@ class SitemapParser {
             libxml_use_internal_errors( true );
             return new SimpleXMLElement( (string) $xml, LIBXML_NOCDATA );
         } catch ( \Exception $e ) {
-            throw new WP2StaticException( $e );
+            return false;
         }
     }
 
