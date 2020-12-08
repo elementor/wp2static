@@ -2,8 +2,6 @@
 
 namespace WP2Static;
 
-use vipnytt\SitemapParser;
-use vipnytt\SitemapParser\Exceptions\SitemapParserException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
@@ -123,7 +121,7 @@ class DetectSitemapsURLs {
                     }
                 }
             }
-        } catch ( SitemapParserException $e ) {
+        } catch ( WP2StaticException $e ) {
             WsLog::l( $e->getMessage() );
             throw new WP2StaticException( $e->getMessage(), 0, $e );
         }

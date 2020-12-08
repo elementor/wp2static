@@ -2,14 +2,15 @@
 
 namespace WP2Static;
 
-trait UrlParser {
+trait URLParser {
 
     /**
      * URL encoder according to RFC 3986
      *
      * Originally forked from https://github.com/VIPnytt/SitemapParser
      *
-     * Returns a string containing the encoded URL with disallowed characters converted to their percentage encodings.
+     * Returns a string containing the encoded URL with disallowed characters
+     * converted to their percentage encodings.
      *
      * @link http://publicmind.in/blog/url-encoding/
      *
@@ -38,7 +39,11 @@ trait UrlParser {
             '=' => '!%3D!ui',
             '%' => '!%25!ui',
         ];
-        return preg_replace( array_values( $reserved ), array_keys( $reserved ), rawurlencode( $url ) );
+        return (string) preg_replace(
+            array_values( $reserved ),
+            array_keys( $reserved ),
+            rawurlencode( $url )
+        );
     }
 
     /**
@@ -51,6 +56,8 @@ trait UrlParser {
         return (
             filter_var( $url, FILTER_VALIDATE_URL ) &&
             ( $parsed = parse_url( $url ) ) !== false &&
+            isset( $parsed['host'] ) &&
+            isset( $parsed['scheme'] ) &&
             $this->urlValidateHost( $parsed['host'] ) &&
             $this->urlValidateScheme( $parsed['scheme'] )
         );
@@ -59,16 +66,22 @@ trait UrlParser {
     /**
      * Validate host name
      *
-     * @link http://stackoverflow.com/questions/1755144/how-to-validate-domain-name-in-php
+     * @link https://stackoverflow.com/q/1755144/1668057
      *
      * @param  string $host
      * @return bool
      */
     protected static function urlValidateHost( $host ) {
         return (
-            preg_match( '/^([a-z\d](-*[a-z\d])*)(\.([a-z\d](-*[a-z\d])*))*$/i', $host ) // valid chars check
-            && preg_match( '/^.{1,253}$/', $host ) // overall length check
-            && preg_match( '/^[^\.]{1,63}(\.[^\.]{1,63})*$/', $host ) // length of each label
+            // valid chars check
+            preg_match(
+                '/^([a-z\d](-*[a-z\d])*)(\.([a-z\d](-*[a-z\d])*))*$/i',
+                $host
+            )
+            // overall length check
+            && preg_match( '/^.{1,253}$/', $host )
+            // length of each label
+            && preg_match( '/^[^\.]{1,63}(\.[^\.]{1,63})*$/', $host )
         );
     }
 

@@ -16,17 +16,12 @@ use SimpleXMLElement;
  */
 class SitemapParser {
 
-    use UrlParser;
+    use URLParser;
 
     /**
      * Default User-Agent
      */
     const DEFAULT_USER_AGENT = 'WP2Static.com';
-
-    /**
-     * Default encoding
-     */
-    const ENCODING = 'UTF-8';
 
     /**
      * XML file extension
@@ -58,40 +53,40 @@ class SitemapParser {
      *
      * @var string
      */
-    protected $userAgent;
+    protected $user_agent;
 
     /**
      * Configuration options
      *
-     * @var array
+     * @var mixed[]
      */
     protected $config = [];
 
     /**
      * Sitemaps discovered
      *
-     * @var array
+     * @var mixed[]
      */
     protected $sitemaps = [];
 
     /**
      * URLs discovered
      *
-     * @var array
+     * @var mixed[]
      */
     protected $urls = [];
 
     /**
      * Sitemap URLs discovered but not yet parsed
      *
-     * @var array
+     * @var mixed[]
      */
     protected $queue = [];
 
     /**
      * Parsed URLs history
      *
-     * @var array
+     * @var mixed[]
      */
     protected $history = [];
 
@@ -100,21 +95,16 @@ class SitemapParser {
      *
      * @var null|string
      */
-    protected $currentURL;
+    protected $current_url;
 
     /**
      * Constructor
      *
-     * @param string $userAgent User-Agent to send with every HTTP(S) request
-     * @param array $config Configuration options
-     * @throws WP2StaticException
+     * @param string $user_agent User-Agent to send with every HTTP(S) request
+     * @param mixed[] $config Configuration options
      */
-    public function __construct( $userAgent = self::DEFAULT_USER_AGENT, array $config = [] ) {
-        mb_language( 'uni' );
-        if ( ! mb_internal_encoding( self::ENCODING ) ) {
-            throw new WP2StaticException( 'Unable to set internal character encoding to `' . self::ENCODING . '`' );
-        }
-        $this->userAgent = $userAgent;
+    public function __construct( $user_agent = self::DEFAULT_USER_AGENT, array $config = [] ) {
+        $this->user_agent = $user_agent;
         $this->config = $config;
     }
 
@@ -123,31 +113,33 @@ class SitemapParser {
      *
      * @param string $url
      * @return void
-     * @throws WP2StaticException
      */
     public function parseRecursive( $url ) {
         $this->addToQueue( [ $url ] );
-        while ( count( $todo = $this->getQueue() ) > 0 ) {
+
+        do {
+            $queue = $this->getQueue();
+            $queue_total = count( $queue );
+
+            if ( ! $queue_total ) {
+                return;
+            }
+
             $sitemaps = $this->sitemaps;
             $urls = $this->urls;
-            try {
-                $this->parse( $todo[0] );
-            } catch ( WP2StaticException $e ) {
-                // Keep crawling
-                continue;
-            }
+
             $this->sitemaps = array_merge_recursive( $sitemaps, $this->sitemaps );
             $this->urls = array_merge_recursive( $urls, $this->urls );
-        }
+        } while ( $queue_total > 0 );
     }
 
     /**
      * Add an array of URLs to the parser queue
      *
-     * @param array $urlArray
+     * @param mixed[] $url_array
      */
-    public function addToQueue( array $urlArray ) {
-        foreach ( $urlArray as $url ) {
+    public function addToQueue( array $url_array ) : void {
+        foreach ( $url_array as $url ) {
             $url = $this->urlEncode( $url );
             if ( $this->urlValidate( $url ) ) {
                 $this->queue[] = $url;
@@ -158,10 +150,17 @@ class SitemapParser {
     /**
      * Sitemap URLs discovered but not yet parsed
      *
-     * @return array
+     * @return mixed[]
      */
     public function getQueue() {
-        $this->queue = array_values( array_diff( array_unique( array_merge( $this->queue, array_keys( $this->sitemaps ) ) ), $this->history ) );
+        $this->queue = array_values(
+            array_diff(
+                array_unique(
+                    array_merge( $this->queue, array_keys( $this->sitemaps ) )
+                ),
+                $this->history
+            )
+        );
         return $this->queue;
     }
 
@@ -169,33 +168,35 @@ class SitemapParser {
      * Parse
      *
      * @param string $url URL to parse
-     * @param string|null $urlContent URL body content (provide to skip download)
+     * @param string|null $url_content URL body content (provide to skip download)
      * @return void
      * @throws WP2StaticException
      */
-    public function parse( $url, $urlContent = null ) {
+    public function parse( $url, $url_content = null ) {
         $this->clean();
-        $this->currentURL = $this->urlEncode( $url );
-        if ( ! $this->urlValidate( $this->currentURL ) ) {
+        $this->current_url = $this->urlEncode( $url );
+        if ( ! $this->urlValidate( $this->current_url ) ) {
             throw new WP2StaticException( 'Invalid URL' );
         }
-        $this->history[] = $this->currentURL;
-        $response = is_string( $urlContent ) ? $urlContent : $this->getContent();
-        if ( parse_url( $this->currentURL, PHP_URL_PATH ) === self::ROBOTSTXT_PATH ) {
+        $this->history[] = $this->current_url;
+        $response = is_string( $url_content ) ? $url_content : $this->getContent();
+        if ( parse_url( $this->current_url, PHP_URL_PATH ) === self::ROBOTSTXT_PATH ) {
             $this->parseRobotstxt( $response );
             return;
         }
         // Check if content is an gzip file
-        if ( mb_strpos( $response, "\x1f\x8b\x08", 0, 'US-ASCII' ) === 0 ) {
+        if ( strpos( $response, "\x1f\x8b\x08", 0 ) === 0 ) {
             $response = gzdecode( $response );
         }
-        $sitemapJson = $this->generateXMLObject( $response );
-        if ( $sitemapJson instanceof SimpleXMLElement === false ) {
-            $this->parseString( $response );
+
+        if ( ! is_string( $response ) ) {
             return;
         }
-        $this->parseJson( self::XML_TAG_SITEMAP, $sitemapJson );
-        $this->parseJson( self::XML_TAG_URL, $sitemapJson );
+
+        $sitemap_json = $this->generateXMLObject( $response );
+
+        $this->parseJson( self::XML_TAG_SITEMAP, $sitemap_json );
+        $this->parseJson( self::XML_TAG_URL, $sitemap_json );
     }
 
     /**
@@ -215,16 +216,19 @@ class SitemapParser {
      * @throws WP2StaticException
      */
     protected function getContent() {
-        $this->currentURL = $this->urlEncode( $this->currentURL );
-        if ( ! $this->urlValidate( $this->currentURL ) ) {
+        $this->current_url =
+            $this->urlEncode( (string) $this->current_url );
+
+        if ( ! $this->urlValidate( $this->current_url ) ) {
             throw new WP2StaticException( 'Invalid URL' );
         }
+
         try {
             if ( ! isset( $this->config['guzzle']['headers']['User-Agent'] ) ) {
-                $this->config['guzzle']['headers']['User-Agent'] = $this->userAgent;
+                $this->config['guzzle']['headers']['User-Agent'] = $this->user_agent;
             }
             $client = new GuzzleHttp\Client();
-            $res = $client->request( 'GET', $this->currentURL, $this->config['guzzle'] );
+            $res = $client->request( 'GET', $this->current_url, $this->config['guzzle'] );
             return $res->getBody()->getContents();
         } catch ( GuzzleHttp\Exception\TransferException $e ) {
             throw new WP2StaticException( 'Unable to fetch URL contents', 0, $e );
@@ -241,16 +245,29 @@ class SitemapParser {
      */
     protected function parseRobotstxt( $robotstxt ) {
         // Split lines into array
-        $lines = array_filter( array_map( 'trim', mb_split( '\r\n|\n|\r', $robotstxt ) ) );
+        $lines = array_filter(
+            array_map(
+                'trim',
+                (array) preg_split( '/\r\n|\n|\r/', $robotstxt )
+            )
+        );
+
         // Parse each line individually
         foreach ( $lines as $line ) {
             // Remove comments
-            $line = mb_split( '#', $line, 2 )[0];
+            $line = preg_split( '/#/', $line, 2 );
+
+            if ( ! $line ) {
+                continue;
+            }
+
+            $line = $line[0];
+
             // Split by directive and rule
-            $pair = array_map( 'trim', mb_split( ':', $line, 2 ) );
+            $pair = array_map( 'trim', (array) preg_split( '/:/', $line, 2 ) );
             // Check if the line contains a sitemap
             if (
-                mb_strtolower( $pair[0] ) !== self::XML_TAG_SITEMAP ||
+                strtolower( $pair[0] ) !== self::XML_TAG_SITEMAP ||
                 empty( $pair[1] )
             ) {
                 // Line does not contain any supported directive
@@ -268,7 +285,7 @@ class SitemapParser {
      * Validate URL arrays and add them to their corresponding arrays
      *
      * @param string $type sitemap|url
-     * @param array $array Tag array
+     * @param mixed[] $array Tag array
      * @return bool
      */
     protected function addArray( $type, array $array ) {
@@ -279,10 +296,14 @@ class SitemapParser {
         if ( $this->urlValidate( $array['loc'] ) ) {
             switch ( $type ) {
                 case self::XML_TAG_SITEMAP:
-                    $this->sitemaps[ $array['loc'] ] = $this->fixMissingTags( [ 'lastmod' ], $array );
+                    $this->sitemaps[ $array['loc'] ] =
+                        $this->fixMissingTags( [ 'lastmod' ], $array );
                     return true;
                 case self::XML_TAG_URL:
-                    $this->urls[ $array['loc'] ] = $this->fixMissingTags( [ 'lastmod', 'changefreq', 'priority' ], $array );
+                    $this->urls[ $array['loc'] ] = $this->fixMissingTags(
+                        [ 'lastmod', 'changefreq', 'priority' ],
+                        $array
+                    );
                     return true;
             }
         }
@@ -292,9 +313,9 @@ class SitemapParser {
     /**
      * Check for missing values and set them to null
      *
-     * @param array $tags Tags check if exists
-     * @param array $array Array to check
-     * @return array
+     * @param mixed[] $tags Tags check if exists
+     * @param mixed[] $array Array to check
+     * @return mixed[]
      */
     protected function fixMissingTags( array $tags, array $array ) {
         foreach ( $tags as $tag ) {
@@ -309,18 +330,23 @@ class SitemapParser {
      * Generate the \SimpleXMLElement object if the XML is valid
      *
      * @param string $xml
-     * @return \SimpleXMLElement|false
+     * @return \SimpleXMLElement
+     * @throws WP2StaticException
      */
     protected function generateXMLObject( $xml ) {
         // strip XML comments from files
         // if they occur at the beginning of the file it will invalidate the XML
         // this occurs with certain versions of Yoast
-        $xml = preg_replace( '/\s*\<\!\-\-((?!\-\-\>)[\s\S])*\-\-\>\s*/', '', (string) $xml );
+        $xml = preg_replace(
+            '/\s*\<\!\-\-((?!\-\-\>)[\s\S])*\-\-\>\s*/',
+            '',
+            (string) $xml
+        );
         try {
             libxml_use_internal_errors( true );
-            return new SimpleXMLElement( $xml, LIBXML_NOCDATA );
+            return new SimpleXMLElement( (string) $xml, LIBXML_NOCDATA );
         } catch ( \Exception $e ) {
-            return false;
+            throw new WP2StaticException( $e );
         }
     }
 
@@ -335,7 +361,7 @@ class SitemapParser {
             // Strings are not part of any documented sitemap standard
             return false;
         }
-        $array = array_filter( array_map( 'trim', mb_split( '\r\n|\n|\r', $string ) ) );
+        $array = array_filter( array_map( 'trim', (array) preg_split( '/\r\n|\n|\r/', $string ) ) );
         foreach ( $array as $line ) {
             if ( $this->isSitemapURL( $line ) ) {
                 $this->addArray( self::XML_TAG_SITEMAP, [ 'loc' => $line ] );
@@ -355,8 +381,14 @@ class SitemapParser {
     protected function isSitemapURL( $url ) {
         $path = parse_url( $this->urlEncode( $url ), PHP_URL_PATH );
         return $this->urlValidate( $url ) && (
-                mb_substr( $path, -mb_strlen( self::XML_EXTENSION ) - 1 ) == '.' . self::XML_EXTENSION ||
-                mb_substr( $path, -mb_strlen( self::XML_EXTENSION_COMPRESSED ) - 1 ) == '.' . self::XML_EXTENSION_COMPRESSED
+                substr(
+                    (string) $path,
+                    -strlen( self::XML_EXTENSION ) - 1
+                ) == '.' . self::XML_EXTENSION ||
+                substr(
+                    (string) $path,
+                    -strlen( self::XML_EXTENSION_COMPRESSED ) - 1
+                ) == '.' . self::XML_EXTENSION_COMPRESSED
             );
     }
 
@@ -380,7 +412,7 @@ class SitemapParser {
     /**
      * Sitemaps discovered
      *
-     * @return array
+     * @return mixed[]
      */
     public function getSitemaps() {
         return $this->sitemaps;
@@ -389,7 +421,7 @@ class SitemapParser {
     /**
      * URLs discovered
      *
-     * @return array
+     * @return mixed[]
      */
     public function getURLs() {
         return $this->urls;
