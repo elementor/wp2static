@@ -2,43 +2,43 @@
 
 namespace WP2Static;
 
-trait UrlParser
-{
+trait UrlParser {
+
     /**
      * URL encoder according to RFC 3986
      *
      * Originally forked from https://github.com/VIPnytt/SitemapParser
      *
      * Returns a string containing the encoded URL with disallowed characters converted to their percentage encodings.
+     *
      * @link http://publicmind.in/blog/url-encoding/
      *
      * @param string $url
      * @return string
      */
-    protected function urlEncode($url)
-    {
+    protected function urlEncode( $url ) {
         $reserved = [
-            ":" => '!%3A!ui',
-            "/" => '!%2F!ui',
-            "?" => '!%3F!ui',
-            "#" => '!%23!ui',
-            "[" => '!%5B!ui',
-            "]" => '!%5D!ui',
-            "@" => '!%40!ui',
-            "!" => '!%21!ui',
-            "$" => '!%24!ui',
-            "&" => '!%26!ui',
+            ':' => '!%3A!ui',
+            '/' => '!%2F!ui',
+            '?' => '!%3F!ui',
+            '#' => '!%23!ui',
+            '[' => '!%5B!ui',
+            ']' => '!%5D!ui',
+            '@' => '!%40!ui',
+            '!' => '!%21!ui',
+            '$' => '!%24!ui',
+            '&' => '!%26!ui',
             "'" => '!%27!ui',
-            "(" => '!%28!ui',
-            ")" => '!%29!ui',
-            "*" => '!%2A!ui',
-            "+" => '!%2B!ui',
-            "," => '!%2C!ui',
-            ";" => '!%3B!ui',
-            "=" => '!%3D!ui',
-            "%" => '!%25!ui'
+            '(' => '!%28!ui',
+            ')' => '!%29!ui',
+            '*' => '!%2A!ui',
+            '+' => '!%2B!ui',
+            ',' => '!%2C!ui',
+            ';' => '!%3B!ui',
+            '=' => '!%3D!ui',
+            '%' => '!%25!ui',
         ];
-        return preg_replace(array_values($reserved), array_keys($reserved), rawurlencode($url));
+        return preg_replace( array_values( $reserved ), array_keys( $reserved ), rawurlencode( $url ) );
     }
 
     /**
@@ -47,13 +47,12 @@ trait UrlParser
      * @param string $url
      * @return bool
      */
-    protected function urlValidate($url)
-    {
+    protected function urlValidate( $url ) {
         return (
-            filter_var($url, FILTER_VALIDATE_URL) &&
-            ($parsed = parse_url($url)) !== false &&
-            $this->urlValidateHost($parsed['host']) &&
-            $this->urlValidateScheme($parsed['scheme'])
+            filter_var( $url, FILTER_VALIDATE_URL ) &&
+            ( $parsed = parse_url( $url ) ) !== false &&
+            $this->urlValidateHost( $parsed['host'] ) &&
+            $this->urlValidateScheme( $parsed['scheme'] )
         );
     }
 
@@ -65,12 +64,11 @@ trait UrlParser
      * @param  string $host
      * @return bool
      */
-    protected static function urlValidateHost($host)
-    {
+    protected static function urlValidateHost( $host ) {
         return (
-            preg_match("/^([a-z\d](-*[a-z\d])*)(\.([a-z\d](-*[a-z\d])*))*$/i", $host) //valid chars check
-            && preg_match("/^.{1,253}$/", $host) //overall length check
-            && preg_match("/^[^\.]{1,63}(\.[^\.]{1,63})*$/", $host) //length of each label
+            preg_match( '/^([a-z\d](-*[a-z\d])*)(\.([a-z\d](-*[a-z\d])*))*$/i', $host ) // valid chars check
+            && preg_match( '/^.{1,253}$/', $host ) // overall length check
+            && preg_match( '/^[^\.]{1,63}(\.[^\.]{1,63})*$/', $host ) // length of each label
         );
     }
 
@@ -80,9 +78,10 @@ trait UrlParser
      * @param  string $scheme
      * @return bool
      */
-    protected static function urlValidateScheme($scheme)
-    {
-        return in_array($scheme, [
+    protected static function urlValidateScheme( $scheme ) {
+        return in_array(
+            $scheme,
+            [
                 'http',
                 'https',
             ]
