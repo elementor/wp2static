@@ -4,7 +4,6 @@ namespace WP2Static;
 
 use GuzzleHttp;
 use SimpleXMLElement;
-use UrlParser;
 
 /**
  * SitemapParser class
@@ -16,6 +15,8 @@ use UrlParser;
  */
 class SitemapParser
 {
+    use UrlParser;
+
     /**
      * Default User-Agent
      */
