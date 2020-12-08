@@ -350,6 +350,9 @@ class SitemapParser {
         try {
             libxml_use_internal_errors( true );
             return new SimpleXMLElement( (string) $xml, LIBXML_NOCDATA );
+            // TODO: ignoring until refactor as only generic exception
+            // thrown and abuses try/catch as conditional
+            // @phpstan-ignore-next-line
         } catch ( \Exception $e ) {
             return false;
         }

@@ -4,29 +4,28 @@ namespace WP2Static;
 
 use PHPUnit\Framework\TestCase;
 
-class SitemapIndexTest extends TestCase
-{
+class SitemapIndexTest extends TestCase {
+
     /**
      * @dataProvider generateDataForTest
      * @param string $url URL
      * @param string $body URL body content
      * @param array $result Test result to match
      */
-    public function testSitemapIndex($url, $body, $result)
-    {
-        $parser = new SitemapParser('SitemapParser');
-        $this->assertInstanceOf('WP2Static\SitemapParser', $parser);
-        $parser->parse($url, $body);
-        $this->assertEquals($result, $parser->getSitemaps());
-        $this->assertEquals([], $parser->getURLs());
+    public function testSitemapIndex( $url, $body, $result ) {
+        $parser = new SitemapParser( 'SitemapParser' );
+        $this->assertInstanceOf( 'WP2Static\SitemapParser', $parser );
+        $parser->parse( $url, $body );
+        $this->assertEquals( $result, $parser->getSitemaps() );
+        $this->assertEquals( [], $parser->getURLs() );
     }
 
     /**
      * Generate test data
+     *
      * @return array
      */
-    public function generateDataForTest()
-    {
+    public function generateDataForTest() {
         return [
             [
                 'http://www.example.com/sitemap.xml',
@@ -61,8 +60,8 @@ XMLSITEMAP
                         'loc' => 'http://www.example.com/sitemap4.xml.gz',
                         'lastmod' => '2006-08-01T16:21:15+00:00',
                     ],
-                ]
-            ]
+                ],
+            ],
         ];
     }
 }

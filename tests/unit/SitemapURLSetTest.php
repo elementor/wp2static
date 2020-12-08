@@ -4,29 +4,28 @@ namespace WP2Static;
 
 use PHPUnit\Framework\TestCase;
 
-class SitemapURLSetTest extends TestCase
-{
+class SitemapURLSetTest extends TestCase {
+
     /**
      * @dataProvider generateDataForTest
      * @param string $url URL
      * @param string $body URL body content
      * @param array $result Test result to match
      */
-    public function testURLSet($url, $body, $result)
-    {
-        $parser = new SitemapParser('SitemapParser');
-        $this->assertInstanceOf('WP2Static\SitemapParser', $parser);
-        $parser->parse($url, $body);
-        $this->assertEquals([], $parser->getSitemaps());
-        $this->assertEquals($result, $parser->getURLs());
+    public function testURLSet( $url, $body, $result ) {
+        $parser = new SitemapParser( 'SitemapParser' );
+        $this->assertInstanceOf( 'WP2Static\SitemapParser', $parser );
+        $parser->parse( $url, $body );
+        $this->assertEquals( [], $parser->getSitemaps() );
+        $this->assertEquals( $result, $parser->getURLs() );
     }
 
     /**
      * Generate test data
+     *
      * @return array
      */
-    public function generateDataForTest()
-    {
+    public function generateDataForTest() {
         return [
             [
                 'http://www.example.com/sitemap.xml',
@@ -81,7 +80,8 @@ XMLSITEMAP
                         'priority' => null,
                     ],
                     'http://www.example.com/catalog?item=74&desc=vacation_newfoundland' => [
-                        'loc' => 'http://www.example.com/catalog?item=74&desc=vacation_newfoundland',
+                        'loc' => 'http://www.example.com/catalog?' .
+                            'item=74&desc=vacation_newfoundland',
                         'lastmod' => '2004-12-23T18:00:15+00:00',
                         'priority' => '0.3',
                         'changefreq' => null,
@@ -92,8 +92,8 @@ XMLSITEMAP
                         'changefreq' => null,
                         'priority' => null,
                     ],
-                ]
-            ]
+                ],
+            ],
         ];
     }
 }

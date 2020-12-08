@@ -4,29 +4,28 @@ namespace WP2Static;
 
 use PHPUnit\Framework\TestCase;
 
-class SitemapRobotsTxtTest extends TestCase
-{
+class SitemapRobotsTxtTest extends TestCase {
+
     /**
      * @dataProvider generateDataForTest
      * @param string $url URL
      * @param string $body URL body content
      * @param array $result Test result to match
      */
-    public function testRobotsTxt($url, $body, $result)
-    {
-        $parser = new SitemapParser('SitemapParser');
-        $this->assertInstanceOf('WP2Static\SitemapParser', $parser);
-        $parser->parse($url, $body);
-        $this->assertEquals($result, $parser->getSitemaps());
-        $this->assertEquals([], $parser->getURLs());
+    public function testRobotsTxt( $url, $body, $result ) {
+        $parser = new SitemapParser( 'SitemapParser' );
+        $this->assertInstanceOf( 'WP2Static\SitemapParser', $parser );
+        $parser->parse( $url, $body );
+        $this->assertEquals( $result, $parser->getSitemaps() );
+        $this->assertEquals( [], $parser->getURLs() );
     }
 
     /**
      * Generate test data
+     *
      * @return array
      */
-    public function generateDataForTest()
-    {
+    public function generateDataForTest() {
         return [
             [
                 'http://www.example.com/robots.txt',
@@ -43,7 +42,7 @@ ROBOTSTXT
                         'lastmod' => null,
                     ],
                 ],
-            ]
+            ],
         ];
     }
 }
