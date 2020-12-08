@@ -1,9 +1,8 @@
 <?php
 
-namespace vipnytt\SitemapParser\Tests;
+namespace WP2Static;
 
 use PHPUnit\Framework\TestCase;
-use vipnytt\SitemapParser;
 
 class SitemapIndexTest extends TestCase
 {
@@ -16,7 +15,7 @@ class SitemapIndexTest extends TestCase
     public function testSitemapIndex($url, $body, $result)
     {
         $parser = new SitemapParser('SitemapParser');
-        $this->assertInstanceOf('vipnytt\SitemapParser', $parser);
+        $this->assertInstanceOf('WP2Static\SitemapParser', $parser);
         $parser->parse($url, $body);
         $this->assertEquals($result, $parser->getSitemaps());
         $this->assertEquals([], $parser->getURLs());

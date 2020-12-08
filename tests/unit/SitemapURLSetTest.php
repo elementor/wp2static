@@ -1,11 +1,10 @@
 <?php
 
-namespace vipnytt\SitemapParser\Tests;
+namespace WP2Static;
 
 use PHPUnit\Framework\TestCase;
-use vipnytt\SitemapParser;
 
-class URLSetTest extends TestCase
+class SitemapURLSetTest extends TestCase
 {
     /**
      * @dataProvider generateDataForTest
@@ -16,7 +15,7 @@ class URLSetTest extends TestCase
     public function testURLSet($url, $body, $result)
     {
         $parser = new SitemapParser('SitemapParser');
-        $this->assertInstanceOf('vipnytt\SitemapParser', $parser);
+        $this->assertInstanceOf('WP2Static\SitemapParser', $parser);
         $parser->parse($url, $body);
         $this->assertEquals([], $parser->getSitemaps());
         $this->assertEquals($result, $parser->getURLs());

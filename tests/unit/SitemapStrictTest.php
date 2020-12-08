@@ -1,11 +1,10 @@
 <?php
 
-namespace vipnytt\SitemapParser\Tests;
+namespace WP2Static;
 
 use PHPUnit\Framework\TestCase;
-use vipnytt\SitemapParser;
 
-class StrictTest extends TestCase
+class SitemapStrictTest extends TestCase
 {
     /**
      * @dataProvider generateDataForTest
@@ -15,7 +14,7 @@ class StrictTest extends TestCase
     public function testStrict($url, $body)
     {
         $parser = new SitemapParser('SitemapParser', []);
-        $this->assertInstanceOf('vipnytt\SitemapParser', $parser);
+        $this->assertInstanceOf('WP2Static\SitemapParser', $parser);
         $parser->parse($url, $body);
         $this->assertEquals([], $parser->getSitemaps());
         $this->assertEquals([], $parser->getURLs());

@@ -1,11 +1,10 @@
 <?php
 
-namespace vipnytt\SitemapParser\Tests;
+namespace WP2Static;
 
 use PHPUnit\Framework\TestCase;
-use vipnytt\SitemapParser;
 
-class InvalidURLTest extends TestCase
+class SitemapInvalidURLTest extends TestCase
 {
     /**
      * @dataProvider generateDataForTest
@@ -13,9 +12,9 @@ class InvalidURLTest extends TestCase
      */
     public function testInvalidURL($url)
     {
-        $this->expectException('\vipnytt\SitemapParser\Exceptions\SitemapParserException');
+        $this->expectException('WP2Static\WP2StaticException');
         $parser = new SitemapParser('SitemapParser');
-        $this->assertInstanceOf('vipnytt\SitemapParser', $parser);
+        $this->assertInstanceOf('WP2Static\SitemapParser', $parser);
         $parser->parse($url);
     }
 

@@ -1,11 +1,10 @@
 <?php
 
-namespace vipnytt\SitemapParser\Tests;
+namespace WP2Static;
 
 use PHPUnit\Framework\TestCase;
-use vipnytt\SitemapParser;
 
-class StripCommentsTest extends TestCase
+class SitemapStripCommentsTest extends TestCase
 {
     /**
      * @dataProvider generateDataForTest
@@ -15,7 +14,7 @@ class StripCommentsTest extends TestCase
     public function testStrict($url, $body)
     {
         $parser = new SitemapParser();
-        $this->assertInstanceOf('vipnytt\SitemapParser', $parser);
+        $this->assertInstanceOf('WP2Static\SitemapParser', $parser);
         $parser->parse($url, $body);
         $this->assertEquals([
             'https://www.bellinghambaymarathon.org/post-sitemap.xml' => [

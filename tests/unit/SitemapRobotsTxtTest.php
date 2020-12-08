@@ -1,11 +1,10 @@
 <?php
 
-namespace vipnytt\SitemapParser\Tests;
+namespace WP2Static;
 
 use PHPUnit\Framework\TestCase;
-use vipnytt\SitemapParser;
 
-class RobotsTxtTest extends TestCase
+class SitemapRobotsTxtTest extends TestCase
 {
     /**
      * @dataProvider generateDataForTest
@@ -16,7 +15,7 @@ class RobotsTxtTest extends TestCase
     public function testRobotsTxt($url, $body, $result)
     {
         $parser = new SitemapParser('SitemapParser');
-        $this->assertInstanceOf('vipnytt\SitemapParser', $parser);
+        $this->assertInstanceOf('WP2Static\SitemapParser', $parser);
         $parser->parse($url, $body);
         $this->assertEquals($result, $parser->getSitemaps());
         $this->assertEquals([], $parser->getURLs());
