@@ -21,7 +21,9 @@
         "php": ">=7.3",
         "wa72/url": "^0.7.1",
         "guzzlehttp/guzzle": "^7.2.0",
-        "vipnytt/sitemapparser": "^1.1.3"
+        "ext-mbstring": "*",
+        "ext-simplexml": "*",
+        "lib-libxml": "*"
     },
     "require-dev": {
         "phpstan/phpstan": "*",

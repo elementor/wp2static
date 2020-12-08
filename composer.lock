@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1f8791782e886f6550b8899ebc6e531c",
+    "content-hash": "40c88710a360f016acabf6c39db460c8",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -388,68 +388,6 @@
             "time": "2019-03-08T08:55:37+00:00"
         },
         {
-            "name": "vipnytt/sitemapparser",
-            "version": "1.1.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/VIPnytt/SitemapParser.git",
-                "reference": "85f2481873734f27c325fb91ab0a22030d2baf97"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/VIPnytt/SitemapParser/zipball/85f2481873734f27c325fb91ab0a22030d2baf97",
-                "reference": "85f2481873734f27c325fb91ab0a22030d2baf97",
-                "shasum": ""
-            },
-            "require": {
-                "ext-mbstring": "*",
-                "ext-simplexml": "*",
-                "guzzlehttp/guzzle": "^6.0 || ^7.0",
-                "lib-libxml": "*",
-                "php": "^5.6 || ^7.0"
-            },
-            "require-dev": {
-                "codeclimate/php-test-reporter": "^0",
-                "phpunit/phpunit": "^5.0 || ^6.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "vipnytt\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "VIP nytt",
-                    "email": "vipnytt@gmail.com",
-                    "role": "creator"
-                },
-                {
-                    "name": "Jan-Petter Gundersen",
-                    "email": "europe.jpg@gmail.com",
-                    "role": "developer"
-                }
-            ],
-            "description": "XML Sitemap parser class compliant with the Sitemaps.org protocol.",
-            "homepage": "https://github.com/VIPnytt/SitemapParser",
-            "keywords": [
-                "Sitemap",
-                "parser",
-                "robots.txt",
-                "sitemaps.org",
-                "xml"
-            ],
-            "support": {
-                "issues": "https://github.com/VIPnytt/SitemapParser/issues",
-                "source": "https://github.com/VIPnytt/SitemapParser/tree/1.1.3"
-            },
-            "time": "2020-10-03T17:44:28+00:00"
-        },
-        {
             "name": "wa72/url",
             "version": "v0.7.1",
             "source": {
@@ -595,22 +533,22 @@
         },
         {
             "name": "dealerdirect/phpcodesniffer-composer-installer",
-            "version": "v0.7.0",
+            "version": "v0.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Dealerdirect/phpcodesniffer-composer-installer.git",
-                "reference": "e8d808670b8f882188368faaf1144448c169c0b7"
+                "reference": "fe390591e0241955f22eb9ba327d137e501c771c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Dealerdirect/phpcodesniffer-composer-installer/zipball/e8d808670b8f882188368faaf1144448c169c0b7",
-                "reference": "e8d808670b8f882188368faaf1144448c169c0b7",
+                "url": "https://api.github.com/repos/Dealerdirect/phpcodesniffer-composer-installer/zipball/fe390591e0241955f22eb9ba327d137e501c771c",
+                "reference": "fe390591e0241955f22eb9ba327d137e501c771c",
                 "shasum": ""
             },
             "require": {
                 "composer-plugin-api": "^1.0 || ^2.0",
                 "php": ">=5.3",
-                "squizlabs/php_codesniffer": "^2 || ^3 || 4.0.x-dev"
+                "squizlabs/php_codesniffer": "^2.0 || ^3.0 || ^4.0"
             },
             "require-dev": {
                 "composer/composer": "*",
@@ -661,7 +599,7 @@
                 "issues": "https://github.com/dealerdirect/phpcodesniffer-composer-installer/issues",
                 "source": "https://github.com/dealerdirect/phpcodesniffer-composer-installer"
             },
-            "time": "2020-06-25T14:57:39+00:00"
+            "time": "2020-12-07T18:04:37+00:00"
         },
         {
             "name": "doctrine/instantiator",
@@ -1521,16 +1459,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.58",
+            "version": "0.12.59",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "2a4847df6047b30af28854ed9dc95304cdb56ae5"
+                "reference": "cf4107257c8ca2ad967efdd6a00f12b21acbb779"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/2a4847df6047b30af28854ed9dc95304cdb56ae5",
-                "reference": "2a4847df6047b30af28854ed9dc95304cdb56ae5",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/cf4107257c8ca2ad967efdd6a00f12b21acbb779",
+                "reference": "cf4107257c8ca2ad967efdd6a00f12b21acbb779",
                 "shasum": ""
             },
             "require": {
@@ -1561,7 +1499,7 @@
             "description": "PHPStan - PHP Static Analysis Tool",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan/issues",
-                "source": "https://github.com/phpstan/phpstan/tree/0.12.58"
+                "source": "https://github.com/phpstan/phpstan/tree/0.12.59"
             },
             "funding": [
                 {
@@ -1577,7 +1515,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-11-29T13:32:03+00:00"
+            "time": "2020-12-07T14:46:03+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -3458,7 +3396,10 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=7.3"
+        "php": ">=7.3",
+        "ext-mbstring": "*",
+        "ext-simplexml": "*",
+        "lib-libxml": "*"
     },
     "platform-dev": [],
     "plugin-api-version": "2.0.0"
