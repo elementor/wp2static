@@ -4,40 +4,41 @@ namespace WP2Static;
 
 use PHPUnit\Framework\TestCase;
 
-class SitemapRecursiveTest extends TestCase
-{
+class SitemapRecursiveTest extends TestCase {
+
     /**
      * @dataProvider generateDataForTest
      * @param string $url URL
      */
-    public function testRecursive($url)
-    {
-        $parser = new SitemapParser('SitemapParser');
-        $this->assertInstanceOf('WP2Static\SitemapParser', $parser);
-        $parser->parseRecursive($url);
-        $this->assertTrue(is_array($parser->getSitemaps()));
-        $this->assertTrue(is_array($parser->getURLs()));
-        $this->assertTrue(count($parser->getSitemaps()) > 1 || count($parser->getURLs()) > 100);
-        foreach ($parser->getSitemaps() as $url => $tags) {
-            $this->assertTrue(is_string($url));
-            $this->assertTrue(is_array($tags));
-            $this->assertTrue($url === $tags['loc']);
-            $this->assertNotFalse(filter_var($url, FILTER_VALIDATE_URL));
+    public function testRecursive( $url ) {
+        $parser = new SitemapParser( 'SitemapParser' );
+        $this->assertInstanceOf( 'WP2Static\SitemapParser', $parser );
+        $parser->parseRecursive( $url );
+        $this->assertTrue( is_array( $parser->getSitemaps() ) );
+        $this->assertTrue( is_array( $parser->getURLs() ) );
+        $this->assertTrue(
+            count( $parser->getSitemaps() ) > 1 || count( $parser->getURLs() ) > 100
+        );
+        foreach ( $parser->getSitemaps() as $url => $tags ) {
+            $this->assertTrue( is_string( $url ) );
+            $this->assertTrue( is_array( $tags ) );
+            $this->assertTrue( $url === $tags['loc'] );
+            $this->assertNotFalse( filter_var( $url, FILTER_VALIDATE_URL ) );
         }
-        foreach ($parser->getURLs() as $url => $tags) {
-            $this->assertTrue(is_string($url));
-            $this->assertTrue(is_array($tags));
-            $this->assertTrue($url === $tags['loc']);
-            $this->assertNotFalse(filter_var($url, FILTER_VALIDATE_URL));
+        foreach ( $parser->getURLs() as $url => $tags ) {
+            $this->assertTrue( is_string( $url ) );
+            $this->assertTrue( is_array( $tags ) );
+            $this->assertTrue( $url === $tags['loc'] );
+            $this->assertNotFalse( filter_var( $url, FILTER_VALIDATE_URL ) );
         }
     }
 
     /**
      * Generate test data
+     *
      * @return array
      */
-    public function generateDataForTest()
-    {
+    public function generateDataForTest() {
         return [
             [
                 'https://edenapartmentsqueenanne.com/sitemap_index.xml',
@@ -49,7 +50,7 @@ class SitemapRecursiveTest extends TestCase
                 'https://www.hallerpostapts.com/sitemap_index.xml',
                 'https://www.nongmoproject.org/sitemap.xml',
                 'https://www.xml-sitemaps.com/robots.txt',
-            ]
+            ],
         ];
     }
 }

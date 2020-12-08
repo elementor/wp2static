@@ -117,20 +117,20 @@ class SitemapParser {
     public function parseRecursive( $url ) {
         $this->addToQueue( [ $url ] );
 
-        do {
-            $queue = $this->getQueue();
-            $queue_total = count( $queue );
-
-            if ( ! $queue_total ) {
-                return;
-            }
-
+        // TODO: ignore until refactor, need to tear apart
+        // phpcs:ignore Squiz.PHP.DisallowSizeFunctionsInLoops.Found
+        while ( count( $todo = $this->getQueue() ) > 0 ) {
             $sitemaps = $this->sitemaps;
             $urls = $this->urls;
-
+            try {
+                $this->parse( $todo[0] );
+            } catch ( WP2StaticException $e ) {
+                // Keep crawling
+                continue;
+            }
             $this->sitemaps = array_merge_recursive( $sitemaps, $this->sitemaps );
             $this->urls = array_merge_recursive( $urls, $this->urls );
-        } while ( $queue_total > 0 );
+        }
     }
 
     /**
