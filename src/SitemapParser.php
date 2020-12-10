@@ -2,7 +2,7 @@
 
 namespace WP2Static;
 
-use GuzzleHttp;
+use WP2StaticGuzzleHttp;
 use SimpleXMLElement;
 
 /**
@@ -232,13 +232,13 @@ class SitemapParser {
             if ( ! isset( $this->config['guzzle']['headers']['User-Agent'] ) ) {
                 $this->config['guzzle']['headers']['User-Agent'] = $this->user_agent;
             }
-            $client = new GuzzleHttp\Client();
+            $client = new WP2StaticGuzzleHttp\Client();
             $res = $client->request( 'GET', $this->current_url, $this->config['guzzle'] );
             return $res->getBody()->getContents();
-        } catch ( GuzzleHttp\Exception\TransferException $e ) {
+        } catch ( WP2StaticGuzzleHttp\Exception\TransferException $e ) {
             throw new WP2StaticException( 'Unable to fetch URL contents', 0, $e );
-        } catch ( GuzzleHttp\Exception\GuzzleException $e ) {
-            throw new WP2StaticException( 'GuzzleHttp exception', 0, $e );
+        } catch ( WP2StaticGuzzleHttp\Exception\GuzzleException $e ) {
+            throw new WP2StaticException( 'WP2StaticGuzzleHttp exception', 0, $e );
         }
     }
 
