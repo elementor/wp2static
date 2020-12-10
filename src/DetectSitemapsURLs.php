@@ -3,8 +3,8 @@
 namespace WP2Static;
 
 use WP2StaticGuzzleHttp\Client;
-use WP2StaticGuzzleHttp\Psr7\Request;
-use WP2StaticGuzzleHttp\Psr7\Response;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Response;
 
 
 class DetectSitemapsURLs {
