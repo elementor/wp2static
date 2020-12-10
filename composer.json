@@ -20,7 +20,7 @@
     "require": {
         "php": ">=7.3",
         "wa72/url": "^0.7.1",
-        "guzzlehttp/guzzle": "^7.2.0",
+        "leonstafford/wp2staticguzzle": "^7.2.0",
         "ext-mbstring": "*",
         "ext-simplexml": "*",
         "lib-libxml": "*"
