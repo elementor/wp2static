@@ -151,37 +151,30 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/leonstafford/wp2staticpsr7.git",
-                "reference": "1d3886a391f28101057cf66b778db83f84680781"
+                "reference": "8d29127a50c3dc8687b826ea96ac7b010ba073b6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/leonstafford/wp2staticpsr7/zipball/1d3886a391f28101057cf66b778db83f84680781",
-                "reference": "1d3886a391f28101057cf66b778db83f84680781",
+                "url": "https://api.github.com/repos/leonstafford/wp2staticpsr7/zipball/8d29127a50c3dc8687b826ea96ac7b010ba073b6",
+                "reference": "8d29127a50c3dc8687b826ea96ac7b010ba073b6",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.2",
-                "psr/http-factory": "^1.0",
+                "php": ">=5.4.0",
                 "psr/http-message": "~1.0",
                 "ralouphie/getallheaders": "^2.0.5 || ^3.0.0"
             },
             "provide": {
-                "psr/http-factory-implementation": "1.0",
                 "psr/http-message-implementation": "1.0"
             },
             "require-dev": {
-                "http-interop/http-factory-tests": "dev-master",
-                "phpunit/phpunit": "^8.5"
+                "ext-zlib": "*",
+                "phpunit/phpunit": "~4.8.36 || ^5.7.27 || ^6.5.14 || ^7.5.20 || ^8.5.8 || ^9.3.10"
             },
             "suggest": {
                 "laminas/laminas-httphandlerrunner": "Emit PSR-7 responses"
             },
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.0-dev"
-                }
-            },
             "autoload": {
                 "psr-4": {
                     "WP2StaticGuzzleHttp\\Psr7\\": "src/"
@@ -203,11 +196,6 @@
                 {
                     "name": "Tobias Schultze",
                     "homepage": "https://github.com/Tobion"
-                },
-                {
-                    "name": "Márk Sági-Kazár",
-                    "email": "mark.sagikazar@gmail.com",
-                    "homepage": "https://sagikazarmark.hu"
                 }
             ],
             "description": "Safely namespaced guzzle psr7 for WP2Static",
@@ -225,7 +213,7 @@
                 "issues": "https://github.com/leonstafford/wp2staticpsr7/issues",
                 "source": "https://github.com/leonstafford/wp2staticpsr7/tree/1.7.0"
             },
-            "time": "2020-12-10T02:49:36+00:00"
+            "time": "2020-12-10T03:47:16+00:00"
         },
         {
             "name": "psr/http-client",
@@ -278,61 +266,6 @@
                 "source": "https://github.com/php-fig/http-client/tree/master"
             },
             "time": "2020-06-29T06:28:15+00:00"
-        },
-        {
-            "name": "psr/http-factory",
-            "version": "1.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-fig/http-factory.git",
-                "reference": "12ac7fcd07e5b077433f5f2bee95b3a771bf61be"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/http-factory/zipball/12ac7fcd07e5b077433f5f2bee95b3a771bf61be",
-                "reference": "12ac7fcd07e5b077433f5f2bee95b3a771bf61be",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.0.0",
-                "psr/http-message": "^1.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Psr\\Http\\Message\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "PHP-FIG",
-                    "homepage": "http://www.php-fig.org/"
-                }
-            ],
-            "description": "Common interfaces for PSR-7 HTTP message factories",
-            "keywords": [
-                "factory",
-                "http",
-                "message",
-                "psr",
-                "psr-17",
-                "psr-7",
-                "request",
-                "response"
-            ],
-            "support": {
-                "source": "https://github.com/php-fig/http-factory/tree/master"
-            },
-            "time": "2019-04-30T12:38:16+00:00"
         },
         {
             "name": "psr/http-message",
