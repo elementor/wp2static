@@ -36,7 +36,7 @@ class ViewRenderer {
         $view['uploadsWritable'] = SiteInfo::isUploadsWritable();
         $view['maxExecutionTime'] = ini_get( 'max_execution_time' );
         $view['curlSupported'] = SiteInfo::hasCURLSupport();
-        $view['permalinksDefined'] = SiteInfo::permalinksAreDefined();
+        $view['permalinksAreCompatible'] = SiteInfo::permalinksAreCompatible();
         $view['domDocumentAvailable'] = class_exists( 'DOMDocument' );
         $view['extensions'] = get_loaded_extensions();
 

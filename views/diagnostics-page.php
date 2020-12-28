@@ -75,17 +75,17 @@
                 </td>
             </tr>
             <tr>
-                <td>WordPress Permalinks Defined</td>
+                <td>WordPress Permalinks Compatible</td>
                 <td>
-                    <?php echo $view['permalinksDefined'] ? 'Yes' : 'No'; ?>
+                    <?php echo $view['permalinksAreCompatible'] ? 'Yes' : 'No'; ?>
 
                     <span
-                        class="dashicons <?php echo $view['permalinksDefined'] ? 'dashicons-yes' : 'dashicons-no'; ?>"
-                        style="color: <?php echo $view['permalinksDefined'] ? 'green' : 'red'; ?>;"
+                        class="dashicons <?php echo $view['permalinksAreCompatible'] ? 'dashicons-yes' : 'dashicons-no'; ?>"
+                        style="color: <?php echo $view['permalinksAreCompatible'] ? 'green' : 'red'; ?>;"
                     ></span>
                 </td>
                 <td>
-                    <p>Due to the nature of how static sites work, you'll need to have some kind of permalinks structure defined in your <a href="<?php echo admin_url( 'options-permalink.php' ); ?>">Permalink Settings</a> within WordPress. To learn more on how to do this, please see WordPress's official guide to the <a href="https://codex.wordpress.org/Settings_Permalinks_Screen">Settings Permalinks Screen</a>.</p>
+                    <p>Due to the nature of how static sites work, you'll need to have some kind of permalinks structure defined in your <a href="<?php echo admin_url( 'options-permalink.php' ); ?>">Permalink Settings</a> within WordPress. To learn more on how to do this, please see WordPress's official guide to the <a href="https://codex.wordpress.org/Settings_Permalinks_Screen">Settings Permalinks Screen</a>. The permalinks must end in a trailing slash (/).</p>
                 </td>
             </tr>
         </tbody>
