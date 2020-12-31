@@ -141,14 +141,13 @@ class SiteInfo {
         return file_exists( $uploads_dir ) && is_writeable( $uploads_dir );
     }
 
-    public static function permalinksAreCompatible() : bool {
+    // ??? 'permalink_structure' => get_option( 'permalink_structure' ),
+    public static function permalinksAreDefined() : int {
         if ( self::$instance === null ) {
              self::$instance = new SiteInfo();
         }
 
-        $structure = get_option( 'permalink_structure' );
-
-        return strlen( $structure ) && 0 === strcmp( $structure[-1], '/' );
+        return strlen( get_option( 'permalink_structure' ) );
     }
 
     public static function getPermalinks() : string {
