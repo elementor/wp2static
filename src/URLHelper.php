@@ -35,6 +35,7 @@ class URLHelper {
      * @param array<string> $changes  List of querystring params to set
      * @param string $url             A complete URL. Leave empty to use current URL
      * @return string                 The new URL
+     * @throws WP2StaticException
      */
     public static function modifyUrl( array $changes, string $url = '' ) : string {
         // If $url wasn't passed in, use the current url
@@ -54,6 +55,14 @@ class URLHelper {
         } else {
             // The original URL didn't have a query string, add it.
             $query_array = $changes;
+        }
+
+        if (
+            ! isset( $url_array['scheme'] ) ||
+            ! isset( $url_array['host'] ) ||
+            ! isset( $url_array['path'] )
+        ) {
+            throw new WP2StaticException( 'Unable to parse URL' );
         }
 
         return $url_array['scheme'] . '://' .
