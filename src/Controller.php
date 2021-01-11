@@ -529,7 +529,10 @@ class Controller {
             [ 'slug' => $addon_slug ]
         );
 
-        wp_safe_redirect( admin_url( 'admin.php?page=wp2static-addons' ) );
+        if ( ! defined( 'WP_CLI' ) ) {
+            wp_safe_redirect( admin_url( 'admin.php?page=wp2static-addons' ) );
+        }
+
         exit;
     }
 
