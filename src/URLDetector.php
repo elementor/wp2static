@@ -20,6 +20,10 @@ class URLDetector {
     public static function detectURLs() : string {
         WsLog::l( 'Starting to detect WordPress site URLs.' );
 
+        do_action(
+            'wp2static_detect'
+        );
+
         $arrays_to_merge = [];
 
         // TODO: detect robots.txt, etc before adding
