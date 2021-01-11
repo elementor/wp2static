@@ -681,11 +681,10 @@ class CLI {
      *
      * @param string[] $args Arguments after command
      * @param string[] $assoc_args Parameters after command
+     * @throws WP2StaticException
      */
     public function addons( array $args, array $assoc_args ) : void {
         $action = isset( $args[0] ) ? $args[0] : null;
-        $option_name = isset( $args[1] ) ? $args[1] : null;
-        $value = isset( $args[2] ) ? $args[2] : null;
 
         if ( $action === 'list' ) {
             $addons = Addons::getAll();
@@ -707,6 +706,19 @@ class CLI {
                 $pretty_addons,
                 [ 'Enabled', 'Slug', 'Name', 'Description', 'Docs' ]
             );
+        }
+
+        if ( $action === 'toggle' ) {
+            $addon_slug = isset( $args[1] ) ? $args[1] : null;
+
+            if ( ! $addon_slug ) {
+                throw new WP2StaticException(
+                    'No addon slug given for CLI toggling'
+                );
+
+            }
+
+            Controller::wp2staticToggleAddon( $addon_slug );
         }
     }
 }

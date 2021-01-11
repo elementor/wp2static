@@ -487,10 +487,20 @@ class Controller {
         }
     }
 
-    public static function wp2staticToggleAddon() : void {
-        check_admin_referer( 'wp2static-addons-page' );
+    public static function wp2staticToggleAddon( string $addon_slug = null ) : void {
+        if ( defined( 'WP_CLI' ) ) {
+            if ( ! $addon_slug ) {
+                throw new WP2StaticException(
+                    'No addon slug given for CLI toggling'
+                );
+            }
 
-        $addon_slug = sanitize_text_field( $_POST['addon_slug'] );
+            $addon_slug = sanitize_text_field( $addon_slug );
+        } else {
+            check_admin_referer( 'wp2static-addons-page' );
+
+            $addon_slug = sanitize_text_field( $_POST['addon_slug'] );
+        }
 
         global $wpdb;
 
