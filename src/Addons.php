@@ -11,7 +11,7 @@ class Addons {
         $charset_collate = $wpdb->get_charset_collate();
 
         $sql = "CREATE TABLE $table_name (
-            slug VARCHAR(249) NOT NULL,
+            slug VARCHAR(191) NOT NULL,
             type VARCHAR(249) NOT NULL,
             name VARCHAR(249) NOT NULL,
             docs_url VARCHAR(2083) NOT NULL,
