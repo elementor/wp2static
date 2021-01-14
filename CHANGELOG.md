@@ -4,6 +4,7 @@
  - move from cURL to Guzzle for requests
  - fix incompatibilities with PHP8
  - import SitemapParser as internal class
+ - fix MySQL issue preventing Add-on activations @john-shaffer, @TheLQ
 
 ## WP2Static 7.1.6
 
