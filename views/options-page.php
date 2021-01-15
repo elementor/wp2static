@@ -1,4 +1,6 @@
 <?php
+// phpcs:disable Generic.Files.LineLength.MaxExceeded                              
+// phpcs:disable Generic.Files.LineLength.TooLong                                  
 
 /**
  * @var mixed[] $view
@@ -10,7 +12,7 @@
     <form
         name="wp2static-ui-options"
         method="POST"
-        action="<?php echo esc_url( admin_url('admin-post.php') ); ?>">
+        action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 
     <h2>Detection Options</h2>
 

@@ -1,4 +1,7 @@
 <?php
+// phpcs:disable Generic.Files.LineLength.MaxExceeded                              
+// phpcs:disable Generic.Files.LineLength.TooLong                                  
+
 /**
  * @var mixed[] $view
  */
@@ -8,7 +11,7 @@
     <form
         name="wp2static-job-options"
         method="POST"
-        action="<?php echo esc_url( admin_url('admin-post.php') ); ?>">
+        action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 
     <br>
 
@@ -173,7 +176,7 @@
     <form
         name="wp2static-manually-enqueue-jobs"
         method="POST"
-        action="<?php echo esc_url( admin_url('admin-post.php') ); ?>">
+        action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 
         <?php wp_nonce_field( 'wp2static-manually-enqueue-jobs' ); ?>
         <input name="action" type="hidden" value="wp2static_manually_enqueue_jobs" />
@@ -185,7 +188,7 @@
 
     <h3>Job Queue/History</h3>
 
-    <p><i><a href="<?php echo admin_url('admin.php?page=wp2static-jobs'); ?>">Refresh page</a> to see latest status</i><p>
+    <p><i><a href="<?php echo admin_url( 'admin.php?page=wp2static-jobs' ); ?>">Refresh page</a> to see latest status</i><p>
 
     <hr>
 
@@ -198,7 +201,7 @@
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($view['jobs'] as $job): ?>
+            <?php foreach ( $view['jobs'] as $job ) : ?>
             <tr>
                 <td><?php echo $job->created_at; ?></td>
                 <td><?php echo $job->job_type; ?></td>
@@ -213,7 +216,7 @@
     <form
         name="wp2static-delete-jobs-queue"
         method="POST"
-        action="<?php echo esc_url( admin_url('admin-post.php') ); ?>">
+        action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 
     <?php wp_nonce_field( $view['nonce_action'] ); ?>
     <input name="action" type="hidden" value="wp2static_delete_jobs_queue" />
@@ -229,7 +232,7 @@
     <form
         name="wp2static-process-jobs-queue"
         method="POST"
-        action="<?php echo esc_url( admin_url('admin-post.php') ); ?>">
+        action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 
     <?php wp_nonce_field( $view['nonce_action'] ); ?>
     <input name="action" type="hidden" value="wp2static_process_jobs_queue" />

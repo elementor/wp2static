@@ -1,4 +1,9 @@
-<?php $run_nonce = wp_create_nonce( "wp2static-run-page" ); ?>
+<?php
+// phpcs:disable Generic.Files.LineLength.MaxExceeded                              
+// phpcs:disable Generic.Files.LineLength.TooLong                                  
+
+$run_nonce = wp_create_nonce( 'wp2static-run-page' );
+?>
 
 <script type="text/javascript">
 var latest_log_row = 0;

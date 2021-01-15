@@ -1,4 +1,7 @@
 <?php
+// phpcs:disable Generic.Files.LineLength.MaxExceeded                              
+// phpcs:disable Generic.Files.LineLength.TooLong                                  
+
 /**
  * @var mixed[] $view
  */
@@ -22,7 +25,7 @@
             <?php endif; ?>
 
 
-            <?php foreach( $view['logs'] as $log ) : ?>
+            <?php foreach ( $view['logs'] as $log ) : ?>
                 <tr>
                     <td><?php echo $log->time; ?></td>
                     <td><?php echo $log->log; ?></td>
@@ -37,7 +40,7 @@
         <form
             name="wp2static-log-delete"
             method="POST"
-            action="<?php echo esc_url( admin_url('admin-post.php') ); ?>">
+            action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 
         <?php wp_nonce_field( $view['nonce_action'] ); ?>
         <input name="action" type="hidden" value="wp2static_log_delete" />

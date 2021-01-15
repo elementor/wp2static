@@ -1,4 +1,7 @@
 <?php
+// phpcs:disable Generic.Files.LineLength.MaxExceeded                              
+// phpcs:disable Generic.Files.LineLength.TooLong                                  
+
 /**
  * @var mixed[] $view
  */
@@ -8,12 +11,12 @@
     <br>
 
     <form id="posts-filter" method="GET">
-        <input type="hidden" name="page" value="<?php echo esc_attr($_GET['page']); ?>" />
+        <input type="hidden" name="page" value="<?php echo esc_attr( $_GET['page'] ); ?>" />
         <input type="hidden" name="paged" value="<?php echo $view['paginator']->page(); ?>" />
 
         <p class="search-box">
             <label class="screen-reader-text" for="post-search-input">Search Crawl Queue URLs:</label>
-            <input type="search" id="post-search-input" name="s" value="<?php echo esc_attr( @$_GET['s'] ); ?>">
+            <input type="search" id="post-search-input" name="s" value="<?php echo esc_attr( $_GET['s'] ); ?>">
             <input type="submit" id="search-submit" class="button" value="Search URLs">
         </p>
 
@@ -49,13 +52,13 @@
                     </tr>
                 <?php endif; ?>
 
-                <?php foreach( $view['paginator']->records() as $id => $record ) : ?>
+                <?php foreach ( $view['paginator']->records() as $paginator_id => $record ) : ?>
                     <tr>
                         <th scope="row" class="check-column">
-                            <label class="screen-reader-text" for="cb-select-<?php echo $id; ?>">
+                            <label class="screen-reader-text" for="cb-select-<?php echo $paginator_id; ?>">
                                 Select <?php echo $record->url; ?>
                             </label>
-                            <input id="cb-select-<?php echo $id; ?>" type="checkbox" name="id[]" value="<?php echo $id; ?>">
+                            <input id="cb-select-<?php echo $paginator_id; ?>" type="checkbox" name="id[]" value="<?php echo $paginator_id; ?>">
                             <div class="locked-indicator">
                                 <span class="locked-indicator-icon" aria-hidden="true"></span>
                                 <span class="screen-reader-text"><?php echo $record->url; ?></span>

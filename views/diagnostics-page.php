@@ -1,4 +1,7 @@
 <?php
+// phpcs:disable Generic.Files.LineLength.MaxExceeded
+// phpcs:disable Generic.Files.LineLength.TooLong
+
 /**
  * @var mixed[] $view
  */
@@ -39,7 +42,7 @@
             <tr>
                 <td>Uploads directory writable</td>
                 <td>
-                    <?php echo $view['uploadsWritable']  ? 'Writable' : 'Non-writable'; ?>
+                    <?php echo $view['uploadsWritable'] ? 'Writable' : 'Non-writable'; ?>
 
                     <span
                         class="dashicons <?php echo $view['uploadsWritable'] ? 'dashicons-yes' : 'dashicons-no'; ?>"
@@ -104,14 +107,14 @@
         <tbody>
 
     <?php
-    natcasesort($view['extensions']);
+    natcasesort( $view['extensions'] );
     $ar_list = $view['extensions'];
-    $rows = (int) ceil(count($ar_list) / 5);
-    $lists  = array_chunk($ar_list, $rows);
+    $rows = (int) ceil( count( $ar_list ) / 5 );
+    $lists  = array_chunk( $ar_list, $rows );
 
-    foreach ( $lists as $column) {
+    foreach ( $lists as $column ) {
         echo '<tr>';
-        foreach ($column as $item) {
+        foreach ( $column as $item ) {
             echo '<td>' . $item . '</td>';
         }
         echo '</tr>';
@@ -132,11 +135,11 @@
         </thead>
         <tbody>
 
-            <?php foreach ( $view['coreOptions'] as $option) : ?>
+            <?php foreach ( $view['coreOptions'] as $option ) : ?>
 
             <tr>
-            <td><?php echo $option['label'];?></td>
-            <td><?php echo $option['value'];?></td>
+            <td><?php echo $option['label']; ?></td>
+            <td><?php echo $option['value']; ?></td>
             </tr>
 
             <?php endforeach; ?>
@@ -157,10 +160,10 @@
 
             <?php
             // TODO: sort site infos alpha
-            foreach ( $view['site_info'] as $name => $value) : ?>
+            foreach ( $view['site_info'] as $name => $value ) : ?>
             <tr>
-            <td><?php echo $name;?></td>
-            <td><?php echo $value;?></td>
+            <td><?php echo $name; ?></td>
+            <td><?php echo $value; ?></td>
             </tr>
 
             <?php endforeach; ?>

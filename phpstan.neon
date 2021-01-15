@@ -27,3 +27,4 @@ parameters:
           path: src/ViewRenderer.php
           count: 32
         - '/^Parameter #2 \$callable of static method WP_CLI::add_command\(\) expects callable\(\): mixed, \S+ given\.$/'
+
