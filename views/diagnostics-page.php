@@ -1,3 +1,9 @@
+<?php
+/**
+ * @var mixed[] $view
+ */
+?>
+
 <div class="wrap">
     <br>
 
@@ -100,7 +106,7 @@
     <?php
     natcasesort($view['extensions']);
     $ar_list = $view['extensions'];
-    $rows = ceil(count($ar_list) / 5);
+    $rows = (int) ceil(count($ar_list) / 5);
     $lists  = array_chunk($ar_list, $rows);
 
     foreach ( $lists as $column) {

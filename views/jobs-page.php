@@ -1,3 +1,9 @@
+<?php
+/**
+ * @var mixed[] $view
+ */
+?>
+
 <div class="wrap">
     <form
         name="wp2static-job-options"

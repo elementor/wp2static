@@ -32,7 +32,7 @@ class URLHelper {
     /**
      * Returns a URL with given querystring modifications
      *
-     * @param array<string> $changes  List of querystring params to set
+     * @param array<string|int> $changes  List of querystring params to set
      * @param string $url             A complete URL. Leave empty to use current URL
      * @return string                 The new URL
      * @throws WP2StaticException

@@ -1,3 +1,9 @@
+<?php
+/**
+ * @var mixed[] $view
+ */
+?>
+
 <style>
 select.wp2static-select {
     width: 165px;

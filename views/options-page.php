@@ -1,19 +1,11 @@
 <?php
+
 /**
- * @package WP2Static
- *
- * Copyright (c) 2011 Leon Stafford
+ * @var mixed[] $view
  */
 
-function displayTextfield($a = null, $b = null, $c = null, $d = null, $e = null) {
- echo 'something';
-}
-
-function displayCheckbox($a = null, $b = null, $c = null) {
- echo 'something';
-}
-
 ?>
+
 <div class="wrap">
     <form
         name="wp2static-ui-options"

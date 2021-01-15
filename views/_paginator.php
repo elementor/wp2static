@@ -1,6 +1,11 @@
 <?php
 
 use WP2Static\URLHelper;
+use WP2Static\Paginator;
+
+/**
+ * @var Paginator $this
+ */
 
 ?>
 

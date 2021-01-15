@@ -1,3 +1,9 @@
+<?php
+/**
+ * @var mixed[] $view
+ */
+?>
+
 <div class="wrap">
     <br>
 
