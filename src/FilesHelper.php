@@ -191,7 +191,7 @@ class FilesHelper {
      * both with and without starting or trailing slashes.
      *
      * @param string[] $urls list of absolute or relative URLs
-     * @return string[] list of relative URLs
+     * @return string[]|null[] list of relative URLs
      * @throws WP2StaticException
      */
     public static function cleanDetectedURLs( array $urls ) : array {
@@ -236,10 +236,20 @@ class FilesHelper {
 
                 $url = strtok( $url, '?' );
 
+                if ( ! $url ) {
+                    return;
+                }
+
                 return $url;
             },
             $urls
         );
+
+        if ( empty( $cleaned_urls ) ) {
+            $err = 'No valid URLs left after cleaning';
+            WsLog::l( $err );
+            return [];
+        }
 
         return $cleaned_urls;
     }
