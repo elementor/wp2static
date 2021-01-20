@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fdc48ad7e5daecd8ea48ec15db0f9105",
+    "content-hash": "86c859cbeb996c21c7393200b4aaf911",
     "packages": [
         {
             "name": "leonstafford/wp2staticguzzle",
