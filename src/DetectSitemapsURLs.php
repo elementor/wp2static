@@ -101,7 +101,7 @@ class DetectSitemapsURLs {
                 $status_code = $response->getStatusCode();
 
                 if ( $status_code === 200 ) {
-                    $parser->parse( $sitemap );
+                    $parser->parse( $wp_site_url . $sitemap );
 
                     $sitemaps_urls[] = '/' . str_replace(
                         $wp_site_url,
