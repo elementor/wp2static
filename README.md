@@ -49,6 +49,6 @@ Read about WP2Static's [developers, contributors, supporters](https://wp2static.
 
 ### Contributing
 
-[See `CONTRIBUTING.md`](./contributing)
+[See `CONTRIBUTING.md`](./CONTRIBUTING.md)
 
 
