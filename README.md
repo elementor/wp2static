@@ -2,15 +2,9 @@
 
 A WordPress plugin for static site generation and deployment.
 
-[![Latest Stable Version](https://poser.pugx.org/leonstafford/wp2static/v)](//packagist.org/packages/leonstafford/wp2static)
-![codequality](https://github.com/leonstafford/wp2static/workflows/codequality/badge.svg?branch=master)
-[![PHPStan](https://img.shields.io/badge/PHPStan-enabled-239922)](https://github.com/phpstan/phpstan)
-[![Packagist Downloads](https://poser.pugx.org/leonstafford/wp2static/downloads)](//packagist.org/packages/leonstafford/wp2static)
-[![License](https://poser.pugx.org/leonstafford/wp2static/license)](//packagist.org/packages/leonstafford/wp2static)
-
 ---
 
-### Support my continued work!
+### Support [Leon's](https://ljs.dev) continued work!
 
 Please join my creative journey, crafting software to solve real problems and doing it in a way that I hope to inspire others to follow.
 
@@ -29,23 +23,17 @@ I want you to be part of the journey with me, so please sponsor any amount you c
 
 ---
 
-## Open Source over profits
+## Installation options
 
-WP2Static is an open source project, maintained by many generous developers over the years, including, but not limited to these [contributors on GitHub](https://github.com/WP2Static/wp2static/graphs/contributors). Source code for this core repository and all addons shall always remain publicly available.
+ - from this source code `git clone https://github.com/leonstafford/wp2static.git` (run `composer install` afterwards)
+ - via [Composer](https://github.com/composer/composer) `composer require leonstafford/wp2static`
+ - get installer zip from [wp2static.com](https://wp2static.com/download/)
+ - [compile your own installer zip from source code](https://wp2static.com/compiling-from-source/)
+
 
 ## [Docs](https://wp2static.com)
 
 ## [Support Forum](https://staticword.press/c/wordpress-static-site-generators/wp2static/)
-
-## [Contributors](https://wp2static.com/contributors)
-
-Read about WP2Static's [developers, contributors, supporters](https://wp2static.com/contributors).
-
-## Versioning & branches
-
-`develop` branch is considered unstable with latest code changes (current build status: ![codequality](https://github.com/leonstafford/wp2static/workflows/codequality/badge.svg?branch=develop)). `develop` branch should always have a `-dev` WordPress plugin version, ie `7.1.1-dev`.
-
-`master` branch should always reflect a stable release, such as `7.1.1`, which should have a matching tag.
 
 ### Contributing
 

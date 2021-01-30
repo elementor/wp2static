@@ -1,3 +1,9 @@
+## Versioning & branches
+
+`develop` branch is considered unstable with latest code changes (current build status: ![codequality](https://github.com/leonstafford/wp2static/workflows/codequality/badge.svg?branch=develop)). `develop` branch should always have a `-dev` WordPress plugin version, ie `7.1.1-dev`.
+
+`master` branch should always reflect a stable release, such as `7.1.1`, which should have a matching tag.
+
 ## Beginner-friendly contributing
 
 Please don't be intimidated to contribute code to this project. I welcome code
