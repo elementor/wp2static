@@ -10,6 +10,7 @@ Please join my creative journey, crafting software to solve real problems and do
 
 #### Donation options
 
+ - [GitHub Sponsors](https://github.com/sponsors/leonstafford) (GitHub will match 1:1)
  - [Patreon](https://www.patreon.com/leonstafford)
  - [PayPal](https://paypal.me/ljsdotdev)
  - [DonorBox](https://donorbox.org/leonstafford)
