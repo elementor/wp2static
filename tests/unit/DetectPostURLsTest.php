@@ -18,7 +18,7 @@ final class DetectPostURLsTest extends TestCase {
         $wpdb = Mockery::mock( '\WPDB' );
         $wpdb->shouldReceive( 'get_col' )
             ->once()
-            ->andReturn( [ 1, 2, 3 ] );
+            ->andReturn( [ 1, 2, 3, 4, 5 ] );
         $wpdb->posts = 'wp_posts';
 
         // Mock the methods and functions used by DetectPostURLs
@@ -44,6 +44,22 @@ final class DetectPostURLsTest extends TestCase {
                 'times' => 1,
                 'args' => [ 3 ],
                 'return' => 'https://foo.com/2020/08/3',
+            ]
+        );
+        \WP_Mock::userFunction(
+            'get_permalink',
+            [
+                'times' => 1,
+                'args' => [ 4 ],
+                'return' => false,
+            ]
+        );
+        \WP_Mock::userFunction(
+            'get_permalink',
+            [
+                'times' => 1,
+                'args' => [ 5 ],
+                'return' => '?post_type',
             ]
         );
 
