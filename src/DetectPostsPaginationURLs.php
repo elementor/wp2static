@@ -84,7 +84,7 @@ class DetectPostsPaginationURLs {
             for ( $page = 1; $page <= $total_pages; $page++ ) {
                 if ( $post_type === 'post' ) {
                     // TODO: this 'blog' hardcoding doesn't look very robust!
-                    $urls_to_include[] = "/blog/{$pagination_base}/{$page}/";
+                    $urls_to_include[] = "/blog{$pagination_base}/{$page}/";
                 } elseif ( $post_type !== 'page' ) {
                     $urls_to_include[] =
                         "/{$plural_form}/{$pagination_base}/{$page}/";
