@@ -27,6 +27,18 @@ final class DetectAuthorsURLsTest extends TestCase {
                 ]
             );
         }
+
+        // create user missing author URL
+        $users[] = (object) [ 'ID' => 4 ];
+        \WP_Mock::userFunction(
+            'get_author_posts_url',
+            [
+                'times' => 1,
+                'args' => [ 4 ],
+                'return' => null,
+            ]
+        );
+
         \WP_Mock::userFunction(
             'get_users',
             [
