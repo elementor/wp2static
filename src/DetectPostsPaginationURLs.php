@@ -9,7 +9,7 @@ class DetectPostsPaginationURLs {
      *
      * @return string[] list of URLs
      */
-    public static function detect() : array {
+    public static function detect( string $wp_site_url ) : array {
         global $wpdb, $wp_rewrite;
 
         $post_urls = [];
@@ -44,11 +44,8 @@ class DetectPostsPaginationURLs {
         $urls_to_include = [];
 
         foreach ( $post_types as $post_type ) {
-            $query = "
-                SELECT COUNT(*)
-                FROM %s
-                WHERE post_status = '%s'
-                AND post_type = '%s'";
+            $query = "SELECT COUNT(*) FROM %s WHERE post_status = '%s'" .
+                " AND post_type = '%s'";
 
             $post_type_total = $wpdb->get_var(
                 sprintf(
@@ -82,12 +79,28 @@ class DetectPostsPaginationURLs {
             $total_pages = ceil( $post_type_total / $default_posts_per_page );
 
             for ( $page = 1; $page <= $total_pages; $page++ ) {
+                // TODO: skipping page pagination here, but is it covered elsewhere?
+                if ( $post_type === 'page' ) {
+                    continue;
+                }
+
                 if ( $post_type === 'post' ) {
-                    // TODO: this 'blog' hardcoding doesn't look very robust!
-                    $urls_to_include[] = "/blog{$pagination_base}/{$page}/";
-                } elseif ( $post_type !== 'page' ) {
+                    $post_archive_slug = '';
+
+                    $post_archive_link = get_post_type_archive_link( 'post' );
+
+                    if ( $post_archive_link ) {
+                        $post_archive_slug = '/' . str_replace(
+                            $wp_site_url,
+                            '',
+                            $post_archive_link
+                        );
+                    }
+
+                    $urls_to_include[] = "{$post_archive_slug}{$pagination_base}/{$page}/";
+                } else {
                     $urls_to_include[] =
-                        "/{$plural_form}/{$pagination_base}/{$page}/";
+                        "/{$plural_form}{$pagination_base}/{$page}/";
                 }
             }
         }

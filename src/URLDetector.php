@@ -104,7 +104,7 @@ class URLDetector {
         $detect_posts_pagination = apply_filters( 'wp2static_detect_posts_pagination', 1 );
 
         if ( $detect_posts_pagination ) {
-            $arrays_to_merge[] = DetectPostsPaginationURLs::detect();
+            $arrays_to_merge[] = DetectPostsPaginationURLs::detect( SiteInfo::getURL( 'site' ) );
         }
 
         $detect_archives = apply_filters( 'wp2static_detect_archives', 1 );
