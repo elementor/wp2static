@@ -45,12 +45,12 @@ class DetectPostsPaginationURLs {
 
         foreach ( $post_types as $post_type ) {
             $query = "
-                SELECT ID,post_type
+                SELECT COUNT(*)
                 FROM %s
                 WHERE post_status = '%s'
                 AND post_type = '%s'";
 
-            $count = $wpdb->get_results(
+            $post_type_total = $wpdb->get_var(
                 sprintf(
                     $query,
                     $wpdb->posts,
@@ -58,6 +58,10 @@ class DetectPostsPaginationURLs {
                     $post_type
                 )
             );
+
+            if ( ! $post_type_total ) {
+                continue;
+            }
 
             $post_type_obj = get_post_type_object( $post_type );
 
@@ -75,9 +79,7 @@ class DetectPostsPaginationURLs {
                 continue;
             }
 
-            $count = $wpdb->num_rows;
-
-            $total_pages = ceil( $count / $default_posts_per_page );
+            $total_pages = ceil( $post_type_total / $default_posts_per_page );
 
             for ( $page = 1; $page <= $total_pages; $page++ ) {
                 if ( $post_type === 'post' ) {
