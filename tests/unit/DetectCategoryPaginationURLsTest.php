@@ -29,6 +29,10 @@ final class DetectCategoryPaginationURLsTest extends TestCase {
                     'name' => 'category3',
                     'count' => 4,
                 ],
+                'category4' => (object) [
+                    'name' => 'category4',
+                    'count' => 7,
+                ],
             ],
             'post_tag' => [
                 'post_tag1' => (object) [
@@ -41,6 +45,8 @@ final class DetectCategoryPaginationURLsTest extends TestCase {
             'category1' => "{$site_url}category/1",
             'category2' => "{$site_url}category/2",
             'category3' => "{$site_url}category/3",
+            // empty term link should be skipped
+            'category4' => null,
             'post_tag1' => "{$site_url}tags/foo/bar",
         ];
 
