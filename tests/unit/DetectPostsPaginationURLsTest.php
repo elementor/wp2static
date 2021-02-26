@@ -64,45 +64,14 @@ final class DetectPostsPaginationURLsTest extends TestCase {
             ->once()
             ->andReturn( 15 );
 
-        // Mock the methods and functions used by DetectPostURLs
+        $post_type_object = (object) ['labels' => ['name' => 'Posts'] ];
+
         \WP_Mock::userFunction(
-            'get_permalink',
+            'get_post_type_object',
             [
                 'times' => 1,
-                'args' => [ 1 ],
-                'return' => 'https://foo.com/2020/08/1',
-            ]
-        );
-        \WP_Mock::userFunction(
-            'get_permalink',
-            [
-                'times' => 1,
-                'args' => [ 2 ],
-                'return' => 'https://foo.com/2020/08/2',
-            ]
-        );
-        \WP_Mock::userFunction(
-            'get_permalink',
-            [
-                'times' => 1,
-                'args' => [ 3 ],
-                'return' => 'https://foo.com/2020/08/3',
-            ]
-        );
-        \WP_Mock::userFunction(
-            'get_permalink',
-            [
-                'times' => 1,
-                'args' => [ 4 ],
-                'return' => false,
-            ]
-        );
-        \WP_Mock::userFunction(
-            'get_permalink',
-            [
-                'times' => 1,
-                'args' => [ 5 ],
-                'return' => '?post_type',
+                'args' => 'post',
+                'return' => $post_type_object,
             ]
         );
 
@@ -111,11 +80,7 @@ final class DetectPostsPaginationURLsTest extends TestCase {
             'https://foo.com/2020/08/2',
             'https://foo.com/2020/08/3',
         ];
-        $actual = DetectPostURLs::detect( '%year%/%month%/%day%' );
+        $actual = DetectPostsPaginationURLs::detect();
         $this->assertEquals( $expected, $actual );
-    }
-
-    public function get_permalink( int $post_id, string $permalink ) : string {
-        return "https://foo.com/2020/08/{$post_id}";
     }
 }
