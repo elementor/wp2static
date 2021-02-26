@@ -98,15 +98,15 @@ final class DetectCategoryPaginationURLsTest extends TestCase {
         }
 
         $expected = [
-            "{$site_url}category/1/page/1",
-            "{$site_url}category/2/page/1",
-            "{$site_url}category/3/page/1",
-            "{$site_url}category/3/page/2",
-            "{$site_url}tags/foo/bar/page/1",
-            "{$site_url}tags/foo/bar/page/2",
-            "{$site_url}tags/foo/bar/page/3",
-            "{$site_url}tags/foo/bar/page/4",
-            "{$site_url}tags/foo/bar/page/5",
+            "{$site_url}category/1/page/1/",
+            "{$site_url}category/2/page/1/",
+            "{$site_url}category/3/page/1/",
+            "{$site_url}category/3/page/2/",
+            "{$site_url}tags/foo/bar/page/1/",
+            "{$site_url}tags/foo/bar/page/2/",
+            "{$site_url}tags/foo/bar/page/3/",
+            "{$site_url}tags/foo/bar/page/4/",
+            "{$site_url}tags/foo/bar/page/5/",
         ];
         $actual = DetectCategoryPaginationURLs::detect();
         $this->assertEquals( $expected, $actual );
