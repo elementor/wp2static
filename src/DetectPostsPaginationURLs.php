@@ -87,14 +87,19 @@ class DetectPostsPaginationURLs {
                 if ( $post_type === 'post' ) {
                     $post_archive_slug = '';
 
-                    $post_archive_link = get_post_type_archive_link( 'post' );
+                    // check if a Posts page has been set in Settings > Reading
+                    if ( get_option( 'page_for_posts' ) !== '0' ) {
 
-                    if ( $post_archive_link ) {
-                        $post_archive_slug = '/' . str_replace(
-                            $wp_site_url,
-                            '',
-                            $post_archive_link
-                        );
+                        // get FQURL to Posts Page
+                        $post_archive_link = get_post_type_archive_link( 'post' );
+
+                        if ( $post_archive_link ) {
+                            $post_archive_slug = '/' . str_replace(
+                                $wp_site_url,
+                                '',
+                                trailingslashit( $post_archive_link )
+                            );
+                        }
                     }
 
                     $urls_to_include[] = "{$post_archive_slug}{$pagination_base}/{$page}/";

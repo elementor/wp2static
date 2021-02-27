@@ -9,7 +9,7 @@ use WP_Mock;
 final class DetectPostsPaginationURLsTest extends TestCase {
 
 
-    public function testDetect() {
+    public function testDetectWithoutPostsPage() {
         global $wpdb;
         // Set the WordPress pagination base
         global $wp_rewrite;
@@ -95,11 +95,11 @@ final class DetectPostsPaginationURLsTest extends TestCase {
         );
 
         \WP_Mock::userFunction(
-            'get_post_type_archive_link',
+            'get_option',
             [
                 'times' => 1,
-                'args' => 'post',
-                'return' => "{$site_url}blog",
+                'args' => 'page_for_posts',
+                'return' => '0',
             ]
         );
 
@@ -206,11 +206,11 @@ final class DetectPostsPaginationURLsTest extends TestCase {
         );
 
         $expected = [
-            '/blog/page/1/',
-            '/blog/page/2/',
-            '/blog/page/3/',
-            '/blog/page/4/',
-            '/blog/page/5/',
+            '/page/1/',
+            '/page/2/',
+            '/page/3/',
+            '/page/4/',
+            '/page/5/',
             '/attachments/page/1/',
             '/attachments/page/2/',
             '/attachments/page/3/',
@@ -223,6 +223,96 @@ final class DetectPostsPaginationURLsTest extends TestCase {
             '/mycustomtype/page/5/',
             '/mycustomtype/page/6/',
             '/mycustomtype/page/7/',
+        ];
+        $actual = DetectPostsPaginationURLs::detect( $site_url );
+        $this->assertEquals( $expected, $actual );
+    }
+
+    public function testDetectWithPostsPage() {
+        global $wpdb;
+        // Set the WordPress pagination base
+        global $wp_rewrite;
+        $site_url = 'https://foo.com/';
+
+        // @phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+        $wp_rewrite = (object) [ 'pagination_base' => '/page' ];
+
+        // Create 1 post object
+        // @phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+        $wpdb = Mockery::mock( '\WPDB' );
+        // set table name
+        $wpdb->posts = 'wp_posts';
+        $query_string = "
+            SELECT ID,post_type
+            FROM $wpdb->posts
+            WHERE post_status = 'publish'
+            AND post_type NOT IN ('revision','nav_menu_item')";
+
+        $posts = [
+            (object) [
+                'ID' => '1',
+                'post_type' => 'post',
+            ],
+        ];
+
+        $wpdb->shouldReceive( 'get_results' )
+            ->with( $query_string )
+            ->once()
+            ->andReturn( $posts );
+
+        // Set pagination to 3 posts per page
+        \WP_Mock::userFunction(
+            'get_option',
+            [
+                'times' => 1,
+                'args' => [ 'posts_per_page' ],
+                'return' => 3,
+            ]
+        );
+
+        $posts_query = "SELECT COUNT(*) FROM $wpdb->posts WHERE" .
+            " post_status = 'publish' AND post_type = 'post'";
+
+        $wpdb->shouldReceive( 'get_var' )
+            ->with( $posts_query )
+            ->once()
+            ->andReturn( 15 );
+
+        $post_type_object = (object) [ 'labels' => [ 'name' => 'Posts' ] ];
+
+        \WP_Mock::userFunction(
+            'get_post_type_object',
+            [
+                'times' => 1,
+                'args' => 'post',
+                'return' => $post_type_object,
+            ]
+        );
+
+        \WP_Mock::userFunction(
+            'get_option',
+            [
+                'times' => 1,
+                'args' => 'page_for_posts',
+                'return' => '10',
+            ]
+        );
+
+        \WP_Mock::userFunction(
+            'get_post_type_archive_link',
+            [
+                'times' => 1,
+                'args' => 'post',
+                'return' => $site_url . 'blog',
+            ]
+        );
+
+        $expected = [
+            '/blog/page/1/',
+            '/blog/page/2/',
+            '/blog/page/3/',
+            '/blog/page/4/',
+            '/blog/page/5/',
         ];
         $actual = DetectPostsPaginationURLs::detect( $site_url );
         $this->assertEquals( $expected, $actual );
