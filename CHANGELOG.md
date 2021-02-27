@@ -1,5 +1,6 @@
 ## WP2Static 7.1.7
 
+ - allow setting deploy webhook headers/body/user-agent via filter
  - fix PostsPaginationURL detection #758
  - use custom request options for sitemap crawling
  - move from cURL to Guzzle for requests
