@@ -16,7 +16,7 @@ final class DetectPostsPaginationURLsTest extends TestCase {
         $site_url = 'https://foo.com/';
 
         // @phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-        $wp_rewrite = (object) [ 'pagination_base' => '/page' ];
+        $wp_rewrite = (object) [ 'pagination_base' => 'page' ];
 
         // Create 3 post objects
         // @phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
@@ -235,7 +235,7 @@ final class DetectPostsPaginationURLsTest extends TestCase {
         $site_url = 'https://foo.com/';
 
         // @phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-        $wp_rewrite = (object) [ 'pagination_base' => '/page' ];
+        $wp_rewrite = (object) [ 'pagination_base' => 'page' ];
 
         // Create 1 post object
         // @phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
@@ -314,6 +314,8 @@ final class DetectPostsPaginationURLsTest extends TestCase {
             '/blog/page/4/',
             '/blog/page/5/',
         ];
+        # getting '/blog//page/1/'...
+
         $actual = DetectPostsPaginationURLs::detect( $site_url );
         $this->assertEquals( $expected, $actual );
     }

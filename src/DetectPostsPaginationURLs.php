@@ -94,7 +94,7 @@ class DetectPostsPaginationURLs {
                         $post_archive_link = get_post_type_archive_link( 'post' );
 
                         if ( $post_archive_link ) {
-                            $post_archive_slug = '/' . str_replace(
+                            $post_archive_slug = str_replace(
                                 $wp_site_url,
                                 '',
                                 trailingslashit( $post_archive_link )
@@ -102,10 +102,10 @@ class DetectPostsPaginationURLs {
                         }
                     }
 
-                    $urls_to_include[] = "{$post_archive_slug}{$pagination_base}/{$page}/";
+                    $urls_to_include[] = "/{$post_archive_slug}{$pagination_base}/{$page}/";
                 } else {
                     $urls_to_include[] =
-                        "/{$plural_form}{$pagination_base}/{$page}/";
+                        "/{$plural_form}/{$pagination_base}/{$page}/";
                 }
             }
         }
