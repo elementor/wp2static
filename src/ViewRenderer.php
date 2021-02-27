@@ -314,7 +314,7 @@ class ViewRenderer {
         $view['crawlCacheTotalURLs'] = CrawlCache::getTotal();
         $view['deployCacheTotalPaths'] = DeployCache::getTotal();
 
-        if ( apply_filters( 'wp2static_deploy_cache_totals_by_namespace', false ) ) {
+        if ( apply_filters( 'wp2static_deploy_cache_totals_by_namespace', true ) ) {
             $view['deployCacheTotalPathsByNamespace']
                 = DeployCache::getTotalsByNamespace();
         }
