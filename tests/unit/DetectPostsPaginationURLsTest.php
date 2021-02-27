@@ -314,7 +314,7 @@ final class DetectPostsPaginationURLsTest extends TestCase {
             '/blog/page/4/',
             '/blog/page/5/',
         ];
-        # getting '/blog//page/1/'...
+        // getting '/blog//page/1/'...
 
         $actual = DetectPostsPaginationURLs::detect( $site_url );
         $this->assertEquals( $expected, $actual );

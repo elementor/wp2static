@@ -1,5 +1,6 @@
 ## WP2Static 7.1.7
 
+ - fix PostsPaginationURL detection #758
  - use custom request options for sitemap crawling
  - move from cURL to Guzzle for requests
  - fix incompatibilities with PHP8
