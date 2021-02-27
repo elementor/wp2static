@@ -1,5 +1,6 @@
 ## WP2Static 7.1.7
 
+ - default to showing DeployCache paths across all namespaces #745
  - allow setting deploy webhook headers/body/user-agent via filter
  - fix PostsPaginationURL detection #758
  - use custom request options for sitemap crawling
