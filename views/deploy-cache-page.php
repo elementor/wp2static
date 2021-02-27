@@ -16,7 +16,7 @@
 
         <p class="search-box">
             <label class="screen-reader-text" for="post-search-input">Search Crawl Queue URLs:</label>
-            <input type="search" id="post-search-input" name="s" value="<?php echo esc_attr( $_GET['s'] ); ?>">
+            <input type="search" id="post-search-input" name="s" value="<?php echo esc_attr( $_GET['s'] ?? '' ); ?>">
             <input type="submit" id="search-submit" class="button" value="Search URLs">
         </p>
 
