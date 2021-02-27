@@ -725,8 +725,10 @@ class Controller {
             [
                 'method' => CoreOptions::getValue( 'completionWebhookMethod' ),
                 'timeout' => 30,
-                'user-agent' => 'WP2Static.com',
-                'body' => $body,
+                'user-agent' =>
+                    apply_filters( 'wp2static_deploy_webhook_user_agent', 'WP2Static.com' ),
+                'body' => apply_filters( 'wp2static_deploy_webhook_body', $body ),
+                'headers' => apply_filters( 'wp2static_deploy_webhook_headers', [] ),
             ]
         );
 
