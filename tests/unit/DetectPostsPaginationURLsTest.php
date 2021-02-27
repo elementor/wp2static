@@ -292,7 +292,7 @@ final class DetectPostsPaginationURLsTest extends TestCase {
         \WP_Mock::userFunction(
             'get_option',
             [
-                'times' => 1,
+                'times' => 5,
                 'args' => 'page_for_posts',
                 'return' => '10',
             ]
@@ -301,7 +301,7 @@ final class DetectPostsPaginationURLsTest extends TestCase {
         \WP_Mock::userFunction(
             'get_post_type_archive_link',
             [
-                'times' => 1,
+                'times' => 5,
                 'args' => 'post',
                 'return' => $site_url . 'blog',
             ]
