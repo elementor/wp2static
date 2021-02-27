@@ -604,7 +604,7 @@ class CLI {
         }
 
         if ( $action === 'count' ) {
-            WP_CLI::line( (string) DeployCache::getTotal() );
+            WP_CLI::line( (string) count( DeployCache::getTotal() ) );
         }
 
         if ( $action === 'delete' ) {

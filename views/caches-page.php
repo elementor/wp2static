@@ -123,15 +123,14 @@ select.wp2static-select {
 
             <?php
             $deploy_cache_rows
-                = isset( $view['deployCacheTotalPathsByNamespace'] )
-                ? count( $view['deployCacheTotalPathsByNamespace'] )
+                = isset( $view['deployCacheTotalPaths'] )
+                ? count( $view['deployCacheTotalPaths'] )
                 : 1;
             ?>
             <tr>
                 <td rowspan="<?php echo $deploy_cache_rows; ?>">Deploy Cache</td>
-                <?php if ( isset( $view['deployCacheTotalPathsByNamespace'] ) ) : ?>
-                    <?php $namespaces = array_keys( $view['deployCacheTotalPathsByNamespace'] ); ?>
-                    <td><?php echo $view['deployCacheTotalPathsByNamespace'][ $namespaces[0] ]; ?> Paths in database for <code><?php echo $namespaces[0]; ?></code></td>
+                    <?php $namespaces = array_keys( $view['deployCacheTotalPaths'] ); ?>
+                    <td><?php echo $view['deployCacheTotalPaths'][ $namespaces[0] ]; ?> Paths in database for <code><?php echo $namespaces[0]; ?></code></td>
                     <td>
                         <form
                             name="wp2static-post-processed-site-delete"
@@ -154,7 +153,7 @@ select.wp2static-select {
                     <?php for ( $i = 1; $i < $deploy_cache_rows; $i++ ) : ?>
                         </tr>
                         <tr>
-                        <td><?php echo $view['deployCacheTotalPathsByNamespace'][ $namespaces[ $i ] ]; ?> Paths in database for <code><?php echo $namespaces[ $i ]; ?></code></td>
+                        <td><?php echo $view['deployCacheTotalPaths'][ $namespaces[ $i ] ]; ?> Paths in database for <code><?php echo $namespaces[ $i ]; ?></code></td>
                         <td>
                             <form
                                 name="wp2static-deploy-cache-delete"
@@ -175,26 +174,6 @@ select.wp2static-select {
                             </form>
                         </td>
                     <?php endfor; ?>
-                <?php else : ?>
-                    <td><?php echo $view['deployCacheTotalPaths']; ?> Paths in database</td>
-                    <td>
-                        <form
-                            name="wp2static-deploy-cache-delete"
-                            method="POST"
-                            action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-
-                            <?php wp_nonce_field( $view['nonce_action'] ); ?>
-
-                            <select name="action" class="wp2static-select">
-                                <option value="wp2static_deploy_cache_show">Show Paths</option>
-                                <option value="wp2static_deploy_cache_delete">Delete Deploy Cache</option>
-                            </select>
-
-                            <button class="button btn-danger">Go</button>
-
-                        </form>
-                    </td>
-                <?php endif; ?>
             </tr>
             </tbody>
         </table>

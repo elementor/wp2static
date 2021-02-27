@@ -149,9 +149,9 @@ class DeployCache {
     }
 
     /**
-     *  Count Paths in Deploy Cache
+     *  Count Paths in Deploy Cache for default or specific namespace
      */
-    public static function getTotal(
+    public static function getTotalByNamespace(
         string $namespace = self::DEFAULT_NAMESPACE
     ) : int {
         global $wpdb;
@@ -166,9 +166,11 @@ class DeployCache {
     }
 
     /**
+     *  Count Paths in Deploy Cache across all namespaces
+     *
      *  @return mixed[] namespace totals
      */
-    public static function getTotalsByNamespace() : array {
+    public static function getTotal() : array {
         global $wpdb;
         $counts = [];
 
