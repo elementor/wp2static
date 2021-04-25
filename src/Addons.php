@@ -37,7 +37,7 @@ class Addons {
 
         $table_name = $wpdb->prefix . 'wp2static_addons';
 
-        $sql = "INSERT INTO {$table_name} (slug,type,name,docs_url,description)" .
+        $sql = "INSERT IGNORE INTO {$table_name} (slug,type,name,docs_url,description)" .
             ' VALUES (%s,%s,%s,%s,%s)';
 
         $sql = $wpdb->prepare( $sql, $slug, $type, $name, $docs_url, $description );
