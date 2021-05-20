@@ -60,7 +60,7 @@
         "php73": "vendor/bin/phpcs --standard=PHPCompatibility --runtime-set testVersion 7.3 --ignore=*/tests/*,*/admin/*,**/coverage/*,*.js,*/vendor/* ./",
         "php74": "vendor/bin/phpcs --standard=PHPCompatibility --runtime-set testVersion 7.4 --ignore=*/tests/*,*/admin/*,**/coverage/*,*.js,*/vendor/* ./",
         "phpunit": "vendor/bin/phpunit ./tests/unit/",
-        "coverage": "vendor/bin/phpunit tests/unit --coverage-html coverage --whitelist src/",
+        "coverage": "XDEBUG_MODE=coverage vendor/bin/phpunit tests/unit --coverage-html coverage --whitelist src/",
         "lint": "vendor/bin/parallel-lint --exclude vendor .",
         "test": [
             "composer validate --strict",
