@@ -49,7 +49,7 @@
                         style="color: <?php echo $view['uploadsWritable'] ? 'green' : 'red'; ?>;"
                     ></span>
                 </td>
-                <td>Generating a static site can involve long-running processes. Set your PHP max_execution_time setting to unlimited or find a better webhost if you're prevented from doing so.</td>
+                <td>By default WP2Static writes the generated static site under wp-content/uploads directory. Make sure WP2Static has the permission to do so.</td>
             </tr>
             <tr>
                 <td>PHP version</td>
