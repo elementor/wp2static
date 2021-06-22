@@ -63,7 +63,9 @@ add_filter(
  * on a statically exported site
  */
 function wp2static_deregister_scripts() : void {
+    wp_dequeue_script( 'wp-embed' );
     wp_deregister_script( 'wp-embed' );
+    wp_dequeue_script( 'comment-reply' );
     wp_deregister_script( 'comment-reply' );
 }
 
