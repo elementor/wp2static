@@ -748,7 +748,8 @@ class Controller {
     }
 
     public static function wp2staticCrawl() : void {
-        WsLog::l( 'Starting crawling' );
+        // TODO: temp toggle this to test OB generator, before moving into own addon
+        WsLog::l( 'Starting generation' );
         $crawlers = Addons::getType( 'crawl' );
         $crawler_slug = empty( $crawlers ) ? 'wp2static' : $crawlers[0]->slug;
         do_action(
@@ -756,7 +757,7 @@ class Controller {
             StaticSite::getPath(),
             $crawler_slug
         );
-        WsLog::l( 'Crawling completed' );
+        WsLog::l( 'Generation complete' );
     }
 
     /**

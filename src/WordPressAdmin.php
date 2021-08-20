@@ -227,7 +227,9 @@ class WordPressAdmin {
 
         add_action(
             'wp2static_crawl',
-            [ Crawler::class, 'wp2staticCrawl' ],
+            // TODO: temp toggle before addon
+            // [ Crawler::class, 'wp2staticCrawl' ],
+            [ Generator::class, 'wp2staticGenerate' ],
             10,
             2
         );
