@@ -150,6 +150,10 @@ class Generator {
      */
     public function generateURLOutput( string $url ) {
         ob_start();
+
+        $_SERVER['REQUEST_URI'] = '/author/admin/';
+        include get_home_path() . 'index.php';
+
         return ob_get_clean();
     }
 }
