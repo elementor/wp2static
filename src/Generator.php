@@ -151,8 +151,10 @@ class Generator {
     public function generateURLOutput( string $url ) {
         ob_start();
 
-        $_SERVER['REQUEST_URI'] = '/author/admin/';
-        include get_home_path() . 'index.php';
+        // $_SERVER['REQUEST_URI'] = '/author/admin/';
+        // include get_home_path() . 'index.php';
+        // echo shell_exec( "REQUEST_URI='$url' php index.php" );
+        echo shell_exec( "export HTTP_HOST='lokl.dev';export REQUEST_METHOD='HEAD';export SERVER_NAME='http://lokl.dev';export REQUEST_URI='$url';php index.php" );
 
         return ob_get_clean();
     }
