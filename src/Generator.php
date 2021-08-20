@@ -72,9 +72,12 @@ class Generator {
 
         $crawlable_paths = CrawlQueue::getCrawlablePaths();
         foreach ( $crawlable_paths as $root_relative_path ) {
-            $url = $root_relative_path;
 
-            $buffered_output = $this->generateURLOutput( $url );
+            // skip static paths                                                
+            // if is path on disk                                               
+            // just transfer it, mark as done and continue 
+
+            $buffered_output = $this->generateURLOutput( $root_relative_path );
 
             if ( ! is_string( $buffered_output ) ) {
                 continue;
