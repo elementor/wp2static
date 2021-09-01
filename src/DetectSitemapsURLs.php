@@ -94,6 +94,12 @@ class DetectSitemapsURLs {
                     continue;
                 }
 
+                $sitemap = '/' . str_replace(
+                    $wp_site_url,
+                    '',
+                    $sitemap
+                );
+
                 $request = new Request( 'GET', $sitemap, $headers );
 
                 $response = $client->send( $request );
@@ -102,12 +108,6 @@ class DetectSitemapsURLs {
 
                 if ( $status_code === 200 ) {
                     $parser->parse( $wp_site_url . $sitemap );
-
-                    $sitemaps_urls[] = '/' . str_replace(
-                        $wp_site_url,
-                        '',
-                        $sitemap
-                    );
 
                     $extract_sitemaps = $parser->getSitemaps();
 
