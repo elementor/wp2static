@@ -83,9 +83,9 @@ class DetectSitemapsURLs {
             if ( $sitemaps === [] ) {
                 $sitemaps = [
                     // we're assigning empty arrays to match sitemaps library
-                    '/sitemap.xml' => [], // normal sitemap
-                    '/sitemap_index.xml' => [], // yoast sitemap
-                    '/wp_sitemap.xml' => [], // wp 5.5 sitemap
+                    'sitemap.xml' => [], // normal sitemap
+                    'sitemap_index.xml' => [], // yoast sitemap
+                    'wp-sitemap.xml' => [], // default WordPress sitemap
                 ];
             }
 
@@ -107,6 +107,8 @@ class DetectSitemapsURLs {
                 $status_code = $response->getStatusCode();
 
                 if ( $status_code === 200 ) {
+                    $sitemap_urls[] = $sitemap;
+
                     $parser->parse( $wp_site_url . $sitemap );
 
                     $extract_sitemaps = $parser->getSitemaps();
