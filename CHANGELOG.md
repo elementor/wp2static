@@ -1,3 +1,7 @@
+## WP2Static 7.1.8
+
+ - TBC
+
 ## WP2Static 7.1.7
 
  - logging and fixes for Sitemap detection @palmiak, @john-shaffer  
