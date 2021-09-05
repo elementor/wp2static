@@ -281,6 +281,11 @@ class SitemapParser {
             $url = $this->urlEncode( $pair[1] );
             if ( $this->urlValidate( $url ) ) {
                 $this->addArray( self::XML_TAG_SITEMAP, [ 'loc' => $url ] );
+            } else {
+                WsLog::l(
+                    "Invalid sitemap URL in robots.txt: $url"
+                    . '\nEnsure that it is a valid absolute URL.'
+                );
             }
         }
         return true;
