@@ -85,7 +85,7 @@ class DetectSitemapsURLs {
                     // we're assigning empty arrays to match sitemaps library
                     '/sitemap.xml' => [], // normal sitemap
                     '/sitemap_index.xml' => [], // yoast sitemap
-                    '/wp_sitemap.xml' => [], // wp 5.5 sitemap
+                    '/wp-sitemap.xml' => [], // default WordPress sitemap
                 ];
             }
 
