@@ -53,9 +53,9 @@ class JobQueue {
     }
 
     /**
-     *  Get all crawlable URLs
+     *  Get all jobs
      *
-     *  @return string[] All crawlable URLs
+     *  @return string[] All jobs
      */
     public static function getJobs() : array {
         global $wpdb;
