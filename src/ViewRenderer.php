@@ -218,6 +218,7 @@ class ViewRenderer {
 
     public static function renderJobsPage() : void {
         JobQueue::markFailedJobs();
+        JobQueue::squashQueue();
 
         $view = [];
         $view['nonce_action'] = 'wp2static-ui-job-options';
