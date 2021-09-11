@@ -22,6 +22,12 @@ class JobQueue {
 
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         dbDelta( $sql );
+
+        Controller::ensureIndex(
+            $table_name,
+            'status',
+            "CREATE UNIQUE INDEX status ON $table_name (status)"
+        );
     }
 
     /**
