@@ -115,7 +115,7 @@ class DetectSitemapsURLs {
                 if ( $status_code === 200 ) {
                     $sitemap_urls[] = $sitemap;
 
-                    $parser->parse( $wp_site_url . $sitemap );
+                    $parser->parse( $base_uri . $sitemap );
 
                     $extract_sitemaps = $parser->getSitemaps();
 
