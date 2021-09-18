@@ -109,6 +109,14 @@ class CoreOptions {
 
         $queries[] = $wpdb->prepare(
             $query_string,
+            'processQueueImmediately',
+            '0',
+            'Process queue immediately after enqueueing jobs',
+            ''
+        );
+
+        $queries[] = $wpdb->prepare(
+            $query_string,
             'processQueueInterval',
             '0',
             'Interval to process queue with WP-Cron',
@@ -428,6 +436,7 @@ class CoreOptions {
             case 'jobs':
                 $queue_on_post_save = isset( $_POST['queueJobOnPostSave'] ) ? 1 : 0;
                 $queue_on_post_delete = isset( $_POST['queueJobOnPostDelete'] ) ? 1 : 0;
+                $process_queue_immediately = isset( $_POST['processQueueImmediately'] ) ? 1 : 0;
 
                 $wpdb->update(
                     $table_name,
@@ -439,6 +448,12 @@ class CoreOptions {
                     $table_name,
                     [ 'value' => $queue_on_post_delete ],
                     [ 'name' => 'queueJobOnPostDelete' ]
+                );
+
+                $wpdb->update(
+                    $table_name,
+                    [ 'value' => $process_queue_immediately ],
+                    [ 'name' => 'processQueueImmediately' ]
                 );
 
                 $process_queue_interval =

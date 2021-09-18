@@ -217,6 +217,7 @@ class ViewRenderer {
     }
 
     public static function renderJobsPage() : void {
+        CoreOptions::init();
         JobQueue::markFailedJobs();
         JobQueue::squashQueue();
 
@@ -227,6 +228,7 @@ class ViewRenderer {
         $view['jobOptions'] = [
             'queueJobOnPostSave' => CoreOptions::get( 'queueJobOnPostSave' ),
             'queueJobOnPostDelete' => CoreOptions::get( 'queueJobOnPostDelete' ),
+            'processQueueImmediately' => CoreOptions::get( 'processQueueImmediately' ),
             'processQueueInterval' => CoreOptions::get( 'processQueueInterval' ),
             'autoJobQueueDetection' => CoreOptions::get( 'autoJobQueueDetection' ),
             'autoJobQueueCrawling' => CoreOptions::get( 'autoJobQueueCrawling' ),

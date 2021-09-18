@@ -143,6 +143,19 @@
     <br>
 
     <label
+        for="<?php echo $view['jobOptions']['processQueueImmediately']->name; ?>"
+    /><?php echo $view['jobOptions']['processQueueImmediately']->label; ?>:</label>
+
+    <input
+        type="checkbox"
+        id="<?php echo $view['jobOptions']['processQueueImmediately']->name; ?>"
+        name="<?php echo $view['jobOptions']['processQueueImmediately']->name; ?>"
+        value="1"
+        <?php echo (int) $view['jobOptions']['processQueueImmediately']->value === 1 ? 'checked' : ''; ?>
+    />
+    <br>
+
+    <label
         for=""
     />WP-Cron will attempt to process the Job Queue at this interval:</label>
 

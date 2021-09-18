@@ -135,6 +135,13 @@ class WordPressAdmin {
         );
 
         add_action(
+            'admin_post_wp2static_process_queue',
+            [ self::class, 'adminPostProcessQueue' ],
+            10,
+            0
+        );
+
+        add_action(
             'admin_post_wp2static_crawl_queue_delete',
             [ Controller::class, 'wp2staticCrawlQueueDelete' ],
             10,
@@ -315,6 +322,29 @@ class WordPressAdmin {
             add_filter( 'custom_menu_order', '__return_true' );
             add_filter( 'menu_order', [ Controller::class, 'setMenuOrder' ] );
         }
+    }
+
+    /*
+     * Do security checks before calling Controller::wp2staticProcessQueue
+     */
+    public static function adminPostProcessQueue() : void {
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ( 'POST' !== $method ) {
+            $msg = "Invalid method in request to admin-post.php (wp2static_process_queue): $method";
+        }
+
+        $nonce = isset( $_POST['_wpnonce'] ) ? $_POST['_wpnonce'] : false;
+        $nonce_valid = $nonce && wp_verify_nonce( $nonce, 'wp2static_process_queue' );
+        if ( ! $nonce_valid ) {
+            $msg = 'Invalid nonce in request to admin-post.php (wpstatic_process_queue)';
+        }
+
+        if ( isset( $msg ) ) {
+            WsLog::l( $msg );
+            throw new \RuntimeException( $msg );
+        }
+
+        Controller::wp2staticProcessQueue();
     }
 }
 
