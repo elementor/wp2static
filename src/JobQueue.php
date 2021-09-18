@@ -231,4 +231,39 @@ class JobQueue {
             WsLog::l( 'failed to truncate JobQueue: try deleting instead' );
         }
     }
+
+    /**
+     *  Detect any 'processing' jobs that are not running and change status to 'failed'.
+     *
+     *  @throws \Throwable
+     */
+    public static function markFailedJobs() : void {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'wp2static_jobs';
+
+        $wpdb->query( 'START TRANSACTION' );
+
+        try {
+            $query = "SELECT IS_FREE_LOCK('wp2static_jobs_deploying') AS free";
+            $deploy_free = intval( $wpdb->get_row( $query )->free );
+
+            if ( $deploy_free ) {
+                $failed_jobs = $wpdb->query(
+                    "UPDATE $table_name
+                    SET status = 'failed'
+                    WHERE job_type = 'deploy' AND status = 'processing'"
+                );
+                if ( $failed_jobs ) {
+                    $s = $failed_jobs === 1 ? '' : 's';
+                    WsLog::l( "$failed_jobs processing deploy job$s marked as failed." );
+                }
+            }
+
+            $wpdb->query( 'COMMIT' );
+        } catch ( \Throwable $e ) {
+            $wpdb->query( 'ROLLBACK' );
+            throw $e;
+        }
+    }
 }

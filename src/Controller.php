@@ -566,6 +566,9 @@ class Controller {
         earlier jobs of the same type having been "squashed" first
     */
     public static function wp2staticProcessQueue() : void {
+        global $wpdb;
+
+        JobQueue::markFailedJobs();
         // skip any earlier jobs of same type still in 'waiting' status
         JobQueue::squashQueue();
 
@@ -609,11 +612,21 @@ class Controller {
                         WsLog::l( 'No deployment add-ons are enabled, skipping deployment.' );
                     } else {
                         WsLog::l( 'Starting deployment' );
-                        do_action(
-                            'wp2static_deploy',
-                            ProcessedSite::getPath(),
-                            $deployer
-                        );
+                        $query = "SELECT GET_LOCK('wp2static_jobs_deploying', 30) AS lck";
+                        $locked = intval( $wpdb->get_row( $query )->lck );
+                        if ( ! $locked ) {
+                            WsLog::l( 'Failed to acquire "wp2static_jobs_deploying" lock.' );
+                            return;
+                        }
+                        try {
+                            do_action(
+                                'wp2static_deploy',
+                                ProcessedSite::getPath(),
+                                $deployer
+                            );
+                        } finally {
+                            $wpdb->query( "DO RELEASE_LOCK('wp2static_jobs_deploying')" );
+                        }
                     }
                     WsLog::l( 'Starting post-deployment actions' );
                     do_action( 'wp2static_post_deploy_trigger', $deployer );
