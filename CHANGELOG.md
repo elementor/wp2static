@@ -1,12 +1,15 @@
 ## WP2Static 7.2.0-dev
 
- - TBC
+ - create an index on `wp2static_jobs.status` @john-shaffer
+ - accept self-signed certs during sitemap crawling @john-shaffer
+ - detect dead jobs and mark as failed @john-shaffer
+ - mark duplicated waiting jobs as skipped on jobs page @john-shaffer
 
 ## WP2Static 7.1.7
 
- - logging and fixes for Sitemap detection @palmiak, @john-shaffer  
+ - logging and fixes for Sitemap detection @palmiak, @john-shaffer
  - fix #793 properly dequeue + deregister scripts @mrwweb
- - fix diagnostics uploadsWritable description @yilinjuang 
+ - fix diagnostics uploadsWritable description @yilinjuang
  - fix #730 detect network-wide enabled plugins @stefanullinger
  - `INSERT IGNORE` to silence add-on duplicate insert warnings
  - add filters to deployment webhook:
@@ -46,8 +49,8 @@
 
  - update dependencies
  - add CHANGELOG
- - #682 only toggle other deploy addons, not other types when enabling a deployer 
- - rm redundant Composer workaround 
+ - #682 only toggle other deploy addons, not other types when enabling a deployer
+ - rm redundant Composer workaround
  - quieten build output
  - code quality improvements (thanks @szepeviktor!)
 
