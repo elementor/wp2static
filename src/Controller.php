@@ -585,58 +585,70 @@ class Controller {
         $jobs = JobQueue::getProcessableJobs();
 
         foreach ( $jobs as $job ) {
-            JobQueue::setStatus( $job->id, 'processing' );
+            $lock = 'wp2static_jobs.' . $job->job_type;
+            $query = "SELECT GET_LOCK('$lock', 30) AS lck";
+            $locked = intval( $wpdb->get_row( $query )->lck );
+            if ( ! $locked ) {
+                WsLog::l( "Failed to acquire \"$lock\" lock." );
+                return;
+            }
+            try {
+                JobQueue::setStatus( $job->id, 'processing' );
 
-            switch ( $job->job_type ) {
-                case 'detect':
-                    WsLog::l( 'Starting URL detection' );
-                    $detected_count = URLDetector::detectURLs();
-                    WsLog::l( "URL detection completed ($detected_count URLs detected)" );
-                    break;
-                case 'crawl':
-                    self::wp2staticCrawl();
-                    break;
-                case 'post_process':
-                    WsLog::l( 'Starting post-processing' );
-                    $post_processor = new PostProcessor();
-                    $processed_site_dir =
-                        SiteInfo::getPath( 'uploads' ) . 'wp2static-processed-site';
-                    $processed_site = new ProcessedSite();
-                    $post_processor->processStaticSite( StaticSite::getPath() );
-                    WsLog::l( 'Post-processing completed' );
-                    break;
-                case 'deploy':
-                    $deployer = Addons::getDeployer();
+                switch ( $job->job_type ) {
+                    case 'detect':
+                        WsLog::l( 'Starting URL detection' );
+                        $detected_count = URLDetector::detectURLs();
+                        WsLog::l( "URL detection completed ($detected_count URLs detected)" );
+                        break;
+                    case 'crawl':
+                        self::wp2staticCrawl();
+                        break;
+                    case 'post_process':
+                        WsLog::l( 'Starting post-processing' );
+                        $post_processor = new PostProcessor();
+                        $processed_site_dir =
+                            SiteInfo::getPath( 'uploads' ) . 'wp2static-processed-site';
+                        $processed_site = new ProcessedSite();
+                        $post_processor->processStaticSite( StaticSite::getPath() );
+                        WsLog::l( 'Post-processing completed' );
+                        break;
+                    case 'deploy':
+                        $deployer = Addons::getDeployer();
 
-                    if ( ! $deployer ) {
-                        WsLog::l( 'No deployment add-ons are enabled, skipping deployment.' );
-                    } else {
-                        WsLog::l( 'Starting deployment' );
-                        $query = "SELECT GET_LOCK('wp2static_jobs_deploying', 30) AS lck";
-                        $locked = intval( $wpdb->get_row( $query )->lck );
-                        if ( ! $locked ) {
-                            WsLog::l( 'Failed to acquire "wp2static_jobs_deploying" lock.' );
-                            return;
-                        }
-                        try {
+                        if ( ! $deployer ) {
+                            WsLog::l( 'No deployment add-ons are enabled, skipping deployment.' );
+                        } else {
+                            WsLog::l( 'Starting deployment' );
                             do_action(
                                 'wp2static_deploy',
                                 ProcessedSite::getPath(),
                                 $deployer
                             );
-                        } finally {
-                            $wpdb->query( "DO RELEASE_LOCK('wp2static_jobs_deploying')" );
                         }
-                    }
-                    WsLog::l( 'Starting post-deployment actions' );
-                    do_action( 'wp2static_post_deploy_trigger', $deployer );
+                        WsLog::l( 'Starting post-deployment actions' );
+                        do_action( 'wp2static_post_deploy_trigger', $deployer );
 
-                    break;
-                default:
-                    WsLog::l( 'Trying to process unknown job type' );
+                        break;
+                    default:
+                        WsLog::l( 'Trying to process unknown job type' );
+                }
+
+                JobQueue::setStatus( $job->id, 'completed' );
+            } catch ( \Throwable $e ) {
+                JobQueue::setStatus( $job->id, 'failed' );
+                // We don't want to crawl and deploy if the detect step fails.
+                // Skip all waiting jobs when one fails.
+                $table_name = $wpdb->prefix . 'wp2static_jobs';
+                $wpdb->query(
+                    "UPDATE $table_name
+                     SET status = 'skipped'
+                     WHERE status = 'waiting'"
+                );
+                throw $e;
+            } finally {
+                $wpdb->query( "DO RELEASE_LOCK('$lock')" );
             }
-
-            JobQueue::setStatus( $job->id, 'completed' );
         }
     }
 
