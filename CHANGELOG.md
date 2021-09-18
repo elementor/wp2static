@@ -1,4 +1,4 @@
-## WP2Static 7.1.8
+## WP2Static 7.2.0-dev
 
  - TBC
 
