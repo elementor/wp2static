@@ -4,6 +4,7 @@
  - accept self-signed certs during sitemap crawling @john-shaffer
  - detect dead jobs and mark as failed @john-shaffer
  - mark duplicated waiting jobs as skipped on jobs page @john-shaffer
+ - add an option to process the queue immediately #794 @john-shaffer
 
 ## WP2Static 7.1.7
 

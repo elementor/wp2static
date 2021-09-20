@@ -485,6 +485,10 @@ class Controller {
                 JobQueue::addJob( $job_type );
             }
         }
+
+        if ( CoreOptions::getValue( 'processQueueImmediately' ) ) {
+            self::wp2staticProcessQueueAdminPost();
+        }
     }
 
     public static function wp2staticToggleAddon( string $addon_slug = null ) : void {
@@ -649,6 +653,31 @@ class Controller {
             } finally {
                 $wpdb->query( "DO RELEASE_LOCK('$lock')" );
             }
+        }
+    }
+
+    /**
+     *  Make a non-blocking POST request to run wp2staticProcessQueue.
+     */
+    public static function wp2staticProcessQueueAdminPost() : void {
+        $url = admin_url( 'admin-post.php' ) . '?action=wp2static_process_queue';
+        $nonce = wp_create_nonce( 'wp2static_process_queue' );
+        $result = wp_remote_post(
+            $url,
+            [
+                'blocking' => false,
+                'body' => [ '_wpnonce' => $nonce ],
+                'cookies' => $_COOKIE,
+                'sslverify' => false,
+                'timeout' => 0.01,
+            ]
+        );
+
+        if ( is_wp_error( $result ) ) {
+            WsLog::l(
+                'Error in wp2staticProcessQueueAdminPost. Request to admin-post.php failed: ' .
+                json_encode( $result->errors )
+            );
         }
     }
 
