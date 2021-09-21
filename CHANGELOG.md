@@ -5,6 +5,8 @@
  - detect dead jobs and mark as failed @john-shaffer
  - mark duplicated waiting jobs as skipped on jobs page @john-shaffer
  - add an option to process the queue immediately #794 @john-shaffer
+ - add ability to rewrite hosts specified on a new advanced options page @john-shaffer
+  - as part of this, changed the host replacement function to use strtr instead of str_replace to avoid replacing things that we just replaced
 
 ## WP2Static 7.1.7
 

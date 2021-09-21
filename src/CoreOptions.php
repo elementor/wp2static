@@ -30,6 +30,7 @@ class CoreOptions {
             id mediumint(9) NOT NULL AUTO_INCREMENT,
             name VARCHAR(191) NOT NULL,
             value VARCHAR(249) NOT NULL,
+            blob_value BLOB,
             label VARCHAR(249) NULL,
             description VARCHAR(249) NULL,
             PRIMARY KEY  (id)
@@ -58,6 +59,10 @@ class CoreOptions {
         $query_string =
             "INSERT IGNORE INTO $table_name (name, value, label, description)
             VALUES (%s, %s, %s, %s);";
+
+        $blob_query_string =
+            "INSERT IGNORE INTO $table_name (name, value, label, description, blob_value)
+            VALUES (%s, %s, %s, %s, %s);";
 
         $queries[] = $wpdb->prepare(
             $query_string,
@@ -211,6 +216,17 @@ class CoreOptions {
             'How to send completion webhook payload (GET|POST).'
         );
 
+        // Advanced options
+
+        $queries[] = $wpdb->prepare(
+            $blob_query_string,
+            'hostsToRewrite',
+            '1',
+            'Hosts to Rewrite',
+            'Hosts to rewrite to the deployment URL.',
+            'localhost'
+        );
+
         foreach ( $queries as $query ) {
             $wpdb->query( $query );
         }
@@ -255,6 +271,47 @@ class CoreOptions {
     }
 
     /**
+     * Get option BLOB value
+     *
+     * @throws WP2StaticException
+     * @return string option BLOB value
+     */
+    public static function getBlobValue( string $name ) : string {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . self::$table_name;
+
+        $sql = $wpdb->prepare(
+            "SELECT blob_value FROM $table_name WHERE" . ' name = %s LIMIT 1',
+            $name
+        );
+
+        $option_value = $wpdb->get_var( $sql );
+
+        if ( ! is_string( $option_value ) ) {
+            return '';
+        }
+
+        return $option_value;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public static function getLineDelimitedBlobValue( string $name ) : array {
+        $vals = preg_split(
+            '/\r\n|\r|\n/',
+            self::getBlobValue( $name )
+        );
+
+        if ( ! $vals ) {
+            return [];
+        }
+
+        return $vals;
+    }
+
+    /**
      * Get option (value, description, label, etc)
      *
      * @return mixed option
@@ -265,7 +322,8 @@ class CoreOptions {
         $table_name = $wpdb->prefix . self::$table_name;
 
         $sql = $wpdb->prepare(
-            "SELECT name, value, label, description FROM $table_name WHERE" . ' name = %s LIMIT 1',
+            "SELECT name, value, label, description, blob_value
+             FROM $table_name WHERE" . ' name = %s LIMIT 1',
             $name
         );
 
@@ -492,6 +550,18 @@ class CoreOptions {
                     [ 'name' => 'autoJobQueueDeployment' ]
                 );
 
+                break;
+            case 'advanced':
+                $hosts_to_rewrite = preg_replace(
+                    '/^\s+|\s+$/m',
+                    '',
+                    $_POST['hostsToRewrite']
+                );
+                $wpdb->update(
+                    $table_name,
+                    [ 'blob_value' => $hosts_to_rewrite ],
+                    [ 'name' => 'hostsToRewrite' ]
+                );
                 break;
         }
     }

@@ -205,6 +205,13 @@ class WordPressAdmin {
         );
 
         add_action(
+            'admin_post_wp2static_ui_save_advanced_options',
+            [ Controller::class, 'wp2staticUISaveAdvancedOptions' ],
+            10,
+            0
+        );
+
+        add_action(
             'admin_post_wp2static_manually_enqueue_jobs',
             [ Controller::class, 'wp2staticManuallyEnqueueJobs' ],
             10,

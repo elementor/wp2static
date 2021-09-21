@@ -1,0 +1,50 @@
+<?php
+// phpcs:disable Generic.Files.LineLength.MaxExceeded
+// phpcs:disable Generic.Files.LineLength.TooLong
+/**
+ * @var mixed[] $view
+ */
+
+?>
+
+<div class="wrap">
+    <form
+        name="wp2static-ui-advanced-options"
+        method="POST"
+        action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+
+    <h1>Advanced Options<h1>
+
+    <h2>Post-processing Options</h2>
+
+    <table class="widefat striped">
+        <tbody>
+            <tr>
+                <td style="width:50%;">
+                    <label
+                        for="<?php echo $view['coreOptions']['hostsToRewrite']->name; ?>"
+                    ><b><?php echo $view['coreOptions']['hostsToRewrite']->label; ?></b></label>
+                    <br/><?php echo $view['coreOptions']['hostsToRewrite']->description; ?>
+                </td>
+                <td>
+                    <textarea
+                        class="widefat"
+                        cols=30 rows=10
+                        id="<?php echo $view['coreOptions']['hostsToRewrite']->name; ?>"
+                        name="<?php echo $view['coreOptions']['hostsToRewrite']->name; ?>"
+                        type="text"
+                        ><?php echo $view['coreOptions']['hostsToRewrite']->blob_value; ?></textarea>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p>
+
+    <?php wp_nonce_field( $view['nonce_action'] ); ?>
+    <input name="action" type="hidden" value="wp2static_ui_save_advanced_options" />
+
+    <button class="button btn-primary" type="submit">Save options</button>
+
+    </form>
+</div>

@@ -190,6 +190,7 @@ class Controller {
             'diagnostics' => [ ViewRenderer::class, 'renderDiagnosticsPage' ],
             'logs' => [ ViewRenderer::class, 'renderLogsPage' ],
             'addons' => [ ViewRenderer::class, 'renderAddonsPage' ],
+            'advanced' => [ ViewRenderer::class, 'renderAdvancedOptionsPage' ],
         ];
 
         foreach ( $submenu_pages as $slug => $method ) {
@@ -469,6 +470,17 @@ class Controller {
         if ( CoreOptions::getValue( 'queueJobOnPostDelete' ) ) {
             self::wp2staticEnqueueJobs();
         }
+    }
+
+    public static function wp2staticUISaveAdvancedOptions() : void {
+        CoreOptions::savePosted( 'advanced' );
+
+        do_action( 'wp2static_addon_ui_save_advanced_options' );
+
+        check_admin_referer( 'wp2static-ui-advanced-options' );
+
+        wp_safe_redirect( admin_url( 'admin.php?page=wp2static-advanced' ) );
+        exit;
     }
 
     public static function wp2staticEnqueueJobs() : void {

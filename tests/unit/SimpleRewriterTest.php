@@ -41,7 +41,10 @@ final class SimpleRewriterTest extends TestCase {
         Mockery::mock( 'overload:\WP2Static\CoreOptions' )
             ->shouldreceive( 'getValue' )
             ->withArgs( [ 'deploymentURL' ] )
-            ->andReturn( 'https://bar.com' );
+            ->andReturn( 'https://bar.com' )
+            ->shouldreceive( 'getLineDelimitedBlobValue' )
+            ->withArgs( [ 'hostsToRewrite' ] )
+            ->andReturn( [ 'localhost' ] );
         Mockery::mock( 'overload:\WP2Static\SiteInfo' )
             ->shouldreceive( 'getUrl' )
             ->withArgs( [ 'site' ] )
@@ -104,7 +107,10 @@ final class SimpleRewriterTest extends TestCase {
         Mockery::mock( 'overload:\WP2Static\CoreOptions' )
             ->shouldreceive( 'getValue' )
             ->withArgs( [ 'deploymentURL' ] )
-            ->andReturn( 'https://bar.com' );
+            ->andReturn( 'https://bar.com' )
+            ->shouldreceive( 'getLineDelimitedBlobValue' )
+            ->withArgs( [ 'hostsToRewrite' ] )
+            ->andReturn( [ 'localhost' ] );
         Mockery::mock( 'overload:\WP2Static\SiteInfo' )
             ->shouldreceive( 'getUrl' )
             ->withArgs( [ 'site' ] )
@@ -124,6 +130,9 @@ final class SimpleRewriterTest extends TestCase {
             ->shouldreceive( 'getValue' )
             ->withArgs( [ 'deploymentURL' ] )
             ->andReturn( 'https://bar.com' )
+            ->shouldreceive( 'getLineDelimitedBlobValue' )
+            ->withArgs( [ 'hostsToRewrite' ] )
+            ->andReturn( [ 'localhost' ] )
             ->getMock();
         Mockery::mock( 'overload:\WP2Static\SiteInfo' )
             ->shouldreceive( 'getUrl' )
@@ -143,6 +152,9 @@ final class SimpleRewriterTest extends TestCase {
             ->shouldreceive( 'getValue' )
             ->withArgs( [ 'deploymentURL' ] )
             ->andReturn( 'http://bar.com' )
+            ->shouldreceive( 'getLineDelimitedBlobValue' )
+            ->withArgs( [ 'hostsToRewrite' ] )
+            ->andReturn( [ 'localhost' ] )
             ->getMock();
         Mockery::mock( 'overload:\WP2Static\SiteInfo' )
             ->shouldreceive( 'getUrl' )
@@ -156,6 +168,28 @@ final class SimpleRewriterTest extends TestCase {
         $this->assertEquals( $expected, $actual );
     }
 
+    public function testRewriteFileContentsHostsToRewrite() {
+        // Mock the methods and functions used by SimpleRewriter
+        Mockery::mock( 'overload:\WP2Static\CoreOptions' )
+            ->shouldreceive( 'getValue' )
+            ->withArgs( [ 'deploymentURL' ] )
+            ->andReturn( 'http://bar.com' )
+            ->shouldreceive( 'getLineDelimitedBlobValue' )
+            ->withArgs( [ 'hostsToRewrite' ] )
+            ->andReturn( [ 'localhost' ] )
+            ->getMock();
+        Mockery::mock( 'overload:\WP2Static\SiteInfo' )
+            ->shouldreceive( 'getUrl' )
+            ->withArgs( [ 'site' ] )
+            ->andReturn( 'https://foo.com/' )
+            ->getMock();
+
+        // localhost -> bar.com
+        $expected = 'http://bar.com/somepath';
+        $actual = SimpleRewriter::rewriteFileContents( 'https://localhost/somepath' );
+        $this->assertEquals( $expected, $actual );
+    }
+
     /**
      * @dataProvider rewriteFileContentsProvider
      */
@@ -164,7 +198,10 @@ final class SimpleRewriterTest extends TestCase {
         Mockery::mock( 'overload:\WP2Static\CoreOptions' )
             ->shouldreceive( 'getValue' )
             ->withArgs( [ 'deploymentURL' ] )
-            ->andReturn( 'https://bar.com' );
+            ->andReturn( 'https://bar.com' )
+            ->shouldreceive( 'getLineDelimitedBlobValue' )
+            ->withArgs( [ 'hostsToRewrite' ] )
+            ->andReturn( [ 'localhost' ] );
         Mockery::mock( 'overload:\WP2Static\SiteInfo' )
             ->shouldreceive( 'getUrl' )
             ->withArgs( [ 'site' ] )
@@ -193,7 +230,10 @@ final class SimpleRewriterTest extends TestCase {
         Mockery::mock( 'overload:\WP2Static\CoreOptions' )
             ->shouldreceive( 'getValue' )
             ->withArgs( [ 'deploymentURL' ] )
-            ->andReturn( 'https://bar.com' );
+            ->andReturn( 'https://bar.com' )
+            ->shouldreceive( 'getLineDelimitedBlobValue' )
+            ->withArgs( [ 'hostsToRewrite' ] )
+            ->andReturn( [ 'localhost' ] );
         Mockery::mock( 'overload:\WP2Static\SiteInfo' )
             ->shouldreceive( 'getUrl' )
             ->withArgs( [ 'site' ] )
