@@ -219,6 +219,15 @@ class CoreOptions {
         // Advanced options
 
         $queries[] = $wpdb->prepare(
+            $query_string,
+            'skipURLRewrite',
+            '0',
+            'Skip URL Rewrite',
+            'Don\'t rewrite any URLs. This may give a slight speed-up when the'
+            . ' deployment URL is the same as WordPress\'s URL.'
+        );
+
+        $queries[] = $wpdb->prepare(
             $blob_query_string,
             'hostsToRewrite',
             '1',
@@ -552,6 +561,12 @@ class CoreOptions {
 
                 break;
             case 'advanced':
+                $wpdb->update(
+                    $table_name,
+                    [ 'value' => isset( $_POST['skipURLRewrite'] ) ? 1 : 0 ],
+                    [ 'name' => 'skipURLRewrite' ]
+                );
+
                 $hosts_to_rewrite = preg_replace(
                     '/^\s+|\s+$/m',
                     '',

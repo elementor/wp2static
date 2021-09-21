@@ -41,6 +41,10 @@ class SimpleRewriter {
             return '';
         }
 
+        if ( (int) CoreOptions::getValue( 'skipURLRewrite' ) === 1 ) {
+            return $file_contents;
+        }
+
         $destination_url = apply_filters(
             'wp2static_set_destination_url',
             CoreOptions::getValue( 'deploymentURL' )

@@ -35,6 +35,7 @@ class ViewRenderer {
 
         $view['coreOptions'] = [
             'hostsToRewrite' => CoreOptions::get( 'hostsToRewrite' ),
+            'skipURLRewrite' => CoreOptions::get( 'skipURLRewrite' ),
         ];
 
         require_once WP2STATIC_PATH . 'views/advanced-options-page.php';

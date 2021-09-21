@@ -22,6 +22,23 @@
             <tr>
                 <td style="width:50%;">
                     <label
+                        for="<?php echo $view['coreOptions']['skipURLRewrite']->name; ?>"
+                    ><b><?php echo $view['coreOptions']['skipURLRewrite']->label; ?></b></label>
+                    <br/><?php echo $view['coreOptions']['skipURLRewrite']->description; ?>
+                </td>
+                <td>
+                    <input
+                        id="<?php echo $view['coreOptions']['skipURLRewrite']->name; ?>"
+                        name="<?php echo $view['coreOptions']['skipURLRewrite']->name; ?>"
+                        value="1"
+                        type="checkbox"
+                        <?php echo (int) $view['coreOptions']['skipURLRewrite']->value === 1 ? 'checked' : ''; ?>
+                    />
+                </td>
+            </tr>
+            <tr>
+                <td style="width:50%;">
+                    <label
                         for="<?php echo $view['coreOptions']['hostsToRewrite']->name; ?>"
                     ><b><?php echo $view['coreOptions']['hostsToRewrite']->label; ?></b></label>
                     <br/><?php echo $view['coreOptions']['hostsToRewrite']->description; ?>
