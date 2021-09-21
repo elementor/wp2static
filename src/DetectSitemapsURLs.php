@@ -70,7 +70,7 @@ class DetectSitemapsURLs {
             }
         }
 
-        $request = new Request( 'GET', '/robots.txt', $headers );
+        $request = new Request( 'GET', $base_uri . '/robots.txt', $headers );
 
         $response = $client->send( $request );
 
@@ -81,7 +81,7 @@ class DetectSitemapsURLs {
 
             // if robots exists, parse for possible sitemaps
             if ( $robots_exists ) {
-                $parser->parseRecursive( $wp_site_url . 'robots.txt' );
+                $parser->parseRecursive( $base_uri . '/robots.txt' );
                 $sitemaps = $parser->getSitemaps();
             }
 
@@ -106,7 +106,7 @@ class DetectSitemapsURLs {
                     $sitemap
                 );
 
-                $request = new Request( 'GET', $sitemap, $headers );
+                $request = new Request( 'GET', $base_uri . $sitemap, $headers );
 
                 $response = $client->send( $request );
 
