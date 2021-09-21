@@ -190,6 +190,7 @@ class Controller {
             'diagnostics' => [ ViewRenderer::class, 'renderDiagnosticsPage' ],
             'logs' => [ ViewRenderer::class, 'renderLogsPage' ],
             'addons' => [ ViewRenderer::class, 'renderAddonsPage' ],
+            'advanced' => [ ViewRenderer::class, 'renderAdvancedOptionsPage' ],
         ];
 
         foreach ( $submenu_pages as $slug => $method ) {
@@ -471,6 +472,17 @@ class Controller {
         }
     }
 
+    public static function wp2staticUISaveAdvancedOptions() : void {
+        CoreOptions::savePosted( 'advanced' );
+
+        do_action( 'wp2static_addon_ui_save_advanced_options' );
+
+        check_admin_referer( 'wp2static-ui-advanced-options' );
+
+        wp_safe_redirect( admin_url( 'admin.php?page=wp2static-advanced' ) );
+        exit;
+    }
+
     public static function wp2staticEnqueueJobs() : void {
         // check each of these in order we want to enqueue
         $job_types = [
@@ -484,6 +496,10 @@ class Controller {
             if ( (int) CoreOptions::getValue( $key ) === 1 ) {
                 JobQueue::addJob( $job_type );
             }
+        }
+
+        if ( CoreOptions::getValue( 'processQueueImmediately' ) ) {
+            self::wp2staticProcessQueueAdminPost();
         }
     }
 
@@ -566,6 +582,9 @@ class Controller {
         earlier jobs of the same type having been "squashed" first
     */
     public static function wp2staticProcessQueue() : void {
+        global $wpdb;
+
+        JobQueue::markFailedJobs();
         // skip any earlier jobs of same type still in 'waiting' status
         JobQueue::squashQueue();
 
@@ -582,48 +601,95 @@ class Controller {
         $jobs = JobQueue::getProcessableJobs();
 
         foreach ( $jobs as $job ) {
-            JobQueue::setStatus( $job->id, 'processing' );
-
-            switch ( $job->job_type ) {
-                case 'detect':
-                    WsLog::l( 'Starting URL detection' );
-                    $detected_count = URLDetector::detectURLs();
-                    WsLog::l( "URL detection completed ($detected_count URLs detected)" );
-                    break;
-                case 'crawl':
-                    self::wp2staticCrawl();
-                    break;
-                case 'post_process':
-                    WsLog::l( 'Starting post-processing' );
-                    $post_processor = new PostProcessor();
-                    $processed_site_dir =
-                        SiteInfo::getPath( 'uploads' ) . 'wp2static-processed-site';
-                    $processed_site = new ProcessedSite();
-                    $post_processor->processStaticSite( StaticSite::getPath() );
-                    WsLog::l( 'Post-processing completed' );
-                    break;
-                case 'deploy':
-                    $deployer = Addons::getDeployer();
-
-                    if ( ! $deployer ) {
-                        WsLog::l( 'No deployment add-ons are enabled, skipping deployment.' );
-                    } else {
-                        WsLog::l( 'Starting deployment' );
-                        do_action(
-                            'wp2static_deploy',
-                            ProcessedSite::getPath(),
-                            $deployer
-                        );
-                    }
-                    WsLog::l( 'Starting post-deployment actions' );
-                    do_action( 'wp2static_post_deploy_trigger', $deployer );
-
-                    break;
-                default:
-                    WsLog::l( 'Trying to process unknown job type' );
+            $lock = 'wp2static_jobs.' . $job->job_type;
+            $query = "SELECT GET_LOCK('$lock', 30) AS lck";
+            $locked = intval( $wpdb->get_row( $query )->lck );
+            if ( ! $locked ) {
+                WsLog::l( "Failed to acquire \"$lock\" lock." );
+                return;
             }
+            try {
+                JobQueue::setStatus( $job->id, 'processing' );
 
-            JobQueue::setStatus( $job->id, 'completed' );
+                switch ( $job->job_type ) {
+                    case 'detect':
+                        WsLog::l( 'Starting URL detection' );
+                        $detected_count = URLDetector::detectURLs();
+                        WsLog::l( "URL detection completed ($detected_count URLs detected)" );
+                        break;
+                    case 'crawl':
+                        self::wp2staticCrawl();
+                        break;
+                    case 'post_process':
+                        WsLog::l( 'Starting post-processing' );
+                        $post_processor = new PostProcessor();
+                        $processed_site_dir =
+                            SiteInfo::getPath( 'uploads' ) . 'wp2static-processed-site';
+                        $processed_site = new ProcessedSite();
+                        $post_processor->processStaticSite( StaticSite::getPath() );
+                        WsLog::l( 'Post-processing completed' );
+                        break;
+                    case 'deploy':
+                        $deployer = Addons::getDeployer();
+
+                        if ( ! $deployer ) {
+                            WsLog::l( 'No deployment add-ons are enabled, skipping deployment.' );
+                        } else {
+                            WsLog::l( 'Starting deployment' );
+                            do_action(
+                                'wp2static_deploy',
+                                ProcessedSite::getPath(),
+                                $deployer
+                            );
+                        }
+                        WsLog::l( 'Starting post-deployment actions' );
+                        do_action( 'wp2static_post_deploy_trigger', $deployer );
+
+                        break;
+                    default:
+                        WsLog::l( 'Trying to process unknown job type' );
+                }
+
+                JobQueue::setStatus( $job->id, 'completed' );
+            } catch ( \Throwable $e ) {
+                JobQueue::setStatus( $job->id, 'failed' );
+                // We don't want to crawl and deploy if the detect step fails.
+                // Skip all waiting jobs when one fails.
+                $table_name = $wpdb->prefix . 'wp2static_jobs';
+                $wpdb->query(
+                    "UPDATE $table_name
+                     SET status = 'skipped'
+                     WHERE status = 'waiting'"
+                );
+                throw $e;
+            } finally {
+                $wpdb->query( "DO RELEASE_LOCK('$lock')" );
+            }
+        }
+    }
+
+    /**
+     *  Make a non-blocking POST request to run wp2staticProcessQueue.
+     */
+    public static function wp2staticProcessQueueAdminPost() : void {
+        $url = admin_url( 'admin-post.php' ) . '?action=wp2static_process_queue';
+        $nonce = wp_create_nonce( 'wp2static_process_queue' );
+        $result = wp_remote_post(
+            $url,
+            [
+                'blocking' => false,
+                'body' => [ '_wpnonce' => $nonce ],
+                'cookies' => $_COOKIE,
+                'sslverify' => false,
+                'timeout' => 0.01,
+            ]
+        );
+
+        if ( is_wp_error( $result ) ) {
+            WsLog::l(
+                'Error in wp2staticProcessQueueAdminPost. Request to admin-post.php failed: ' .
+                json_encode( $result->errors )
+            );
         }
     }
 

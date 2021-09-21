@@ -41,6 +41,10 @@ class SimpleRewriter {
             return '';
         }
 
+        if ( (int) CoreOptions::getValue( 'skipURLRewrite' ) === 1 ) {
+            return $file_contents;
+        }
+
         $destination_url = apply_filters(
             'wp2static_set_destination_url',
             CoreOptions::getValue( 'deploymentURL' )
@@ -53,22 +57,33 @@ class SimpleRewriter {
 
         $wordpress_site_url = untrailingslashit( $wordpress_site_url );
         $destination_url = untrailingslashit( $destination_url );
+        $destination_url_rel = URLHelper::getProtocolRelativeURL( $destination_url );
+        $destination_url_rel_c = addcslashes( $destination_url_rel, '/' );
 
-        $search_patterns = [
-            $wordpress_site_url,
-            URLHelper::getProtocolRelativeURL( $wordpress_site_url ),
-            addcslashes( URLHelper::getProtocolRelativeURL( $wordpress_site_url ), '/' ),
-        ];
-        $replace_patterns = [
-            $destination_url,
-            URLHelper::getProtocolRelativeURL( $destination_url ),
-            addcslashes( URLHelper::getProtocolRelativeURL( $destination_url ), '/' ),
+        $replacement_patterns = [
+            $wordpress_site_url => $destination_url,
+            URLHelper::getProtocolRelativeURL( $wordpress_site_url ) =>
+                URLHelper::getProtocolRelativeURL( $destination_url ),
+            addcslashes( URLHelper::getProtocolRelativeURL( $wordpress_site_url ), '/' ) =>
+                addcslashes( URLHelper::getProtocolRelativeURL( $destination_url ), '/' ),
         ];
 
-        $rewritten_contents = str_replace(
-            $search_patterns,
-            $replace_patterns,
-            $file_contents
+        $hosts = CoreOptions::getLineDelimitedBlobValue( 'hostsToRewrite' );
+
+        foreach ( $hosts as $host ) {
+            if ( $host ) {
+                $host_rel = URLHelper::getProtocolRelativeURL( 'http://' . $host );
+
+                $replacement_patterns[ 'http:' . $host_rel ] = $destination_url;
+                $replacement_patterns[ 'https:' . $host_rel ] = $destination_url;
+                $replacement_patterns[ $host_rel ] = $destination_url_rel;
+                $replacement_patterns[ addcslashes( $host_rel, '/' ) ] = $destination_url_rel_c;
+            }
+        }
+
+        $rewritten_contents = strtr(
+            $file_contents,
+            $replacement_patterns
         );
 
         return $rewritten_contents;
