@@ -27,6 +27,20 @@ class ViewRenderer {
         require_once WP2STATIC_PATH . 'views/options-page.php';
     }
 
+    public static function renderAdvancedOptionsPage() : void {
+        CoreOptions::init();
+
+        $view = [];
+        $view['nonce_action'] = 'wp2static-ui-advanced-options';
+
+        $view['coreOptions'] = [
+            'hostsToRewrite' => CoreOptions::get( 'hostsToRewrite' ),
+            'skipURLRewrite' => CoreOptions::get( 'skipURLRewrite' ),
+        ];
+
+        require_once WP2STATIC_PATH . 'views/advanced-options-page.php';
+    }
+
     public static function renderDiagnosticsPage() : void {
         $view = [];
         $view['memoryLimit'] = ini_get( 'memory_limit' );
