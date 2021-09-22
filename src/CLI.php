@@ -97,6 +97,14 @@ class CLI {
         return floatval( $diff_sec ) + $diff_usec;
     }
 
+    private function should_show_next() {
+      if ( !isset($this->assoc_args['next']) ) {
+        return true;
+      }
+
+      return $this->assoc_args['next'];
+    }
+
     /**
      * Deploy the generated static site.
      * ## OPTIONS
