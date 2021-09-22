@@ -97,6 +97,58 @@ class CLI {
         return floatval( $diff_sec ) + $diff_usec;
     }
 
+
+    /**
+     * Get info on plugin status.
+     *
+     * ## OPTIONS
+     *
+     * [--no-next]
+     *
+     * ## EXAMPLES
+     *
+     * List current plugin status and show next step
+     *
+     *     wp wp2static status
+     *
+     * List current plugin status but don't show next step
+     *
+     *     wp wp2static status --no-next
+     *
+     * @param string[] $args  Arguments after command
+     * @param string[] $assoc_args  Parameters after command
+     */
+    public function status(
+      array $args,
+      array $assoc_args
+    ) : void {
+      $this->assoc_args = $assoc_args;
+
+      $urls = CrawlQueue::getCrawlablePaths();
+      if ( $urls ) {
+        WP_CLI::line(
+          sprintf( '%d URLs queued for crawling', count($urls) )
+        );
+      } else {
+        WP_CLI::line('No URLs are queued for crawling.');
+        if ( $this->should_show_next() ) {
+          WP_CLI::line("\n\tYou chould run `wp wp2static detect`\n");
+        }
+      }
+
+      $urls = CrawlCache::getHashes();
+      if ( $urls ) {
+        WP_CLI::line(
+          sprintf( '%d URLs cached from crawling', count($urls) )
+        );
+      } else {
+        WP_CLI::line('No URLs in the crawl cache.');
+        if ( $this->should_show_next() ) {
+          WP_CLI::line("\n\tYou should run `wp wp2static crawl`\n");
+        }
+      }
+    }
+
     private function should_show_next() {
       if ( !isset($this->assoc_args['next']) ) {
         return true;
