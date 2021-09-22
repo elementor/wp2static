@@ -373,7 +373,7 @@ class CLI {
     }
 
     /**
-     * Crawl Queue
+     * Crawl Cache
      *
      * <list>
      *
