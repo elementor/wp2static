@@ -8,6 +8,8 @@ use WP_CLI;
  * Generate a static copy of your website & publish remotely
  */
 class CLI {
+    private $assoc_args = null;
+
     /**
      * Display system information and health check
      */
