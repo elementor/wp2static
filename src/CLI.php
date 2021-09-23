@@ -406,7 +406,7 @@ class CLI {
      * Detect WordPress URLs to crawl, based on saved options
      */
     public function detect() : void {
-        $detected_count = URLDetector::detectURLs();
+        $detected_count = URLDetector::enqueueURLs();
     }
 
     /**
