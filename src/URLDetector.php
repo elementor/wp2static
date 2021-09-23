@@ -14,6 +14,10 @@ namespace WP2Static;
 
 class URLDetector {
 
+    public static function countURLs() : int {
+        return count( static::detectURLs($quiet = true) );
+    }
+
     /**
      * Detect URLs within site
      */
