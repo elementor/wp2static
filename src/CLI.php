@@ -124,16 +124,28 @@ class CLI {
     ) : void {
       $this->assoc_args = $assoc_args;
 
-      $urls = CrawlQueue::getCrawlablePaths();
-      if ( $urls ) {
-        WP_CLI::line(
-          sprintf( '%d URLs queued for crawling', count($urls) )
-        );
-      } else {
+      $detected_url_count = URLDetector::countURLs();
+      // WP_CLI::line(sprintf('%d URLs detected', $detected_url_count));
+
+      $crawlable_urls = CrawlQueue::getCrawlablePaths();
+      if ( count($crawlable_urls) === 0 ) {
         WP_CLI::line('No URLs are queued for crawling.');
-        if ( $this->should_show_next() ) {
-          WP_CLI::line("\n\tYou chould run `wp wp2static detect`\n");
-        }
+        $this->hintDetectNext();
+        return;
+      } else if ( $detected_url_count > count($crawlable_urls) ) {
+        WP_CLI::line(
+          sprintf(
+            'There are more URLs detected (%d) than queued for crawling (%d).',
+            $detected_url_count,
+            count($crawlable_urls)
+          )
+        );
+        $this->hintDetectNext();
+        return;
+      } else {
+        WP_CLI::line(
+          sprintf( '%d URLs queued for crawling', count($crawlable_urls) )
+        );
       }
 
       $urls = CrawlCache::getHashes();
@@ -143,10 +155,20 @@ class CLI {
         );
       } else {
         WP_CLI::line('No URLs in the crawl cache.');
+        $this->hintCrawlNext();
+      }
+    }
+
+    private function hintDetectNext() {
+      if ( $this->should_show_next() ) {
+        WP_CLI::line("\n\tYou chould run `wp wp2static detect`\n");
+      }
+    }
+
+    private function hintCrawlNext() {
         if ( $this->should_show_next() ) {
           WP_CLI::line("\n\tYou should run `wp wp2static crawl`\n");
         }
-      }
     }
 
     private function should_show_next() {
