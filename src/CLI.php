@@ -418,10 +418,6 @@ class CLI {
      * @param string[] $assoc_args Parameters after command
      */
     public function crawl( array $args, array $assoc_args ) : void {
-        $action = isset( $args[0] ) ? $args[0] : null;
-        $option_name = isset( $args[1] ) ? $args[1] : null;
-        $value = isset( $args[2] ) ? $args[2] : null;
-
         Controller::wp2staticCrawl();
     }
 
@@ -477,8 +473,6 @@ class CLI {
      */
     public function crawl_cache( array $args, array $assoc_args ) : void {
         $action = isset( $args[0] ) ? $args[0] : null;
-        $option_name = isset( $args[1] ) ? $args[1] : null;
-        $value = isset( $args[2] ) ? $args[2] : null;
 
         if ( $action === 'list' ) {
             $urls = CrawlCache::getHashes();
@@ -535,8 +529,6 @@ class CLI {
      */
     public function crawl_queue( array $args, array $assoc_args ) : void {
         $action = isset( $args[0] ) ? $args[0] : null;
-        $option_name = isset( $args[1] ) ? $args[1] : null;
-        $value = isset( $args[2] ) ? $args[2] : null;
 
         if ( $action === 'list' ) {
             $urls = CrawlQueue::getCrawlablePaths();
@@ -585,8 +577,6 @@ class CLI {
      */
     public function processed_site( array $args, array $assoc_args ) : void {
         $action = isset( $args[0] ) ? $args[0] : null;
-        $option_name = isset( $args[1] ) ? $args[1] : null;
-        $value = isset( $args[2] ) ? $args[2] : null;
 
         // also validate expected $action vs any
         if ( empty( $action ) ) {
@@ -628,8 +618,6 @@ class CLI {
      */
     public function static_site( array $args, array $assoc_args ) : void {
         $action = isset( $args[0] ) ? $args[0] : null;
-        $option_name = isset( $args[1] ) ? $args[1] : null;
-        $value = isset( $args[2] ) ? $args[2] : null;
 
         // also validate expected $action vs any
         if ( empty( $action ) ) {
@@ -677,8 +665,6 @@ class CLI {
      */
     public function deploy_cache( array $args, array $assoc_args ) : void {
         $action = isset( $args[0] ) ? $args[0] : null;
-        $option_name = isset( $args[1] ) ? $args[1] : null;
-        $value = isset( $args[2] ) ? $args[2] : null;
 
         if ( $action === 'list' ) {
             $paths = DeployCache::getPaths();
@@ -722,8 +708,6 @@ class CLI {
      * @param string[] $assoc_args Parameters after command
      */
     public function full_workflow( array $args, array $assoc_args ) : void {
-        $action = isset( $args[0] ) ? $args[0] : null;
-
         $this->detect();
         $this->crawl( [], [] );
         $this->post_process();
@@ -739,8 +723,6 @@ class CLI {
      * @param string[] $assoc_args Parameters after command
      */
     public function delete_all_cache( array $args, array $assoc_args ) : void {
-        $action = isset( $args[0] ) ? $args[0] : null;
-
         if ( ! isset( $assoc_args['force'] ) ) {
             $this->multilinePrint(
                 "no --force given. Please type 'yes' to confirm
