@@ -124,6 +124,7 @@ class CLI {
     ) : void {
       $this->assoc_args = $assoc_args;
 
+      // TODO handle when count doesn't change but different URLs are present - maybe that's an edge case that it's not worth caring about...
       $detected_url_count = URLDetector::countURLs();
       // WP_CLI::line(sprintf('%d URLs detected', $detected_url_count));
 
