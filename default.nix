@@ -4,6 +4,7 @@ let
 in
 pkgs.mkShell {
   buildInputs = [
+    pkgs.mariadb
     pkgs.nginx
   ];
 }

@@ -1,3 +1,4 @@
 cache/
+/mariadb/data/
 *.pid
 *.swp
