@@ -10,4 +10,5 @@ You will need to set up [Nix](https://nixos.org/learn.html) and [direnv](https:/
 
  - NGINX on localhost:7000
  - MariaDB on localhost:7001
+ - PHP-FPM on localhost:7002
  - WordPress
