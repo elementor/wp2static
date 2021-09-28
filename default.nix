@@ -20,4 +20,8 @@ pkgs.mkShell {
     pkgs.wp-cli
     wordpress
   ];
+
+  shellHook = ''
+    export WORDPRESS_PATH="${wordpress}"
+  '';
 }
