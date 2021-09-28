@@ -16,7 +16,13 @@ class DetectSitemapsURLs {
      */
     public static function detect( string $wp_site_url ) : array {
         $sitemaps_urls = [];
-        $parser = new SitemapParser( 'WP2Static.com', [ 'strict' => false ] );
+        $parser = new SitemapParser(
+            'WP2Static.com',
+            [
+                'guzzle' => [ 'verify' => false ],
+                'strict' => false,
+            ]
+        );
 
         $site_path = rtrim( SiteInfo::getURL( 'site' ), '/' );
 
