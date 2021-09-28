@@ -30,11 +30,11 @@ class SiteInfo {
         $site_url = trailingslashit( site_url() );
 
         // properties which should not change during plugin execution
-        self::$info = [
+        $info = [
             // Core
             'site_path' => ABSPATH,
             'site_url' => $site_url,
-
+        
             /*
                 Note:  'home_path' => get_home_path(),
                 // errors trying to find it in WP2Static\get_home_path()...
@@ -42,28 +42,28 @@ class SiteInfo {
             'home_url' => trailingslashit( get_home_url() ),
             'includes_path' => trailingslashit( ABSPATH . WPINC ),
             'includes_url' => includes_url(),
-
+        
             /*
                 TODO: Q on subdir:
-
+        
                 Does it matter?
                 'subdirectory' => $this->isSiteInstalledInSubDirectory(),
-
+        
                 A: It shouldn't, but current mechanism for rewriting URLs
                 has some cases that require knowledge of it...
             */
-
+        
             // Content
             'content_path' => trailingslashit( WP_CONTENT_DIR ),
             'content_url' => trailingslashit( content_url() ),
             'uploads_path' =>
                 trailingslashit( $upload_path_and_url['basedir'] ),
             'uploads_url' => trailingslashit( $upload_path_and_url['baseurl'] ),
-
+        
             // Plugins
             'plugins_path' => trailingslashit( WP_PLUGIN_DIR ),
             'plugins_url' => trailingslashit( plugins_url() ),
-
+        
             // Themes
             'themes_root_path' => trailingslashit( get_theme_root() ),
             'themes_root_url' => trailingslashit( get_theme_root_uri() ),
@@ -74,6 +74,8 @@ class SiteInfo {
             'child_theme_url' =>
                 trailingslashit( get_stylesheet_directory_uri() ),
         ];
+        
+        self::$info = apply_filters( 'wp2static_siteinfo', $info );
     }
 
     /**
