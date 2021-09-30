@@ -191,9 +191,9 @@ class CLI {
      *  $value
      */
     private function parseArgs($args) {
-        $action = isset( $args[0] ) ? $args[0] : null;
+        $action      = isset( $args[0] ) ? $args[0] : null;
         $option_name = isset( $args[1] ) ? $args[1] : null;
-        $value = isset( $args[2] ) ? $args[2] : null;
+        $value       = isset( $args[2] ) ? $args[2] : null;
 
         return [$action, $option_name, $value];
     }
