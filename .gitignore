@@ -6,3 +6,4 @@ admin/*.js*
 .phpunit.result.cache
 
 /docs
+/.phpdoc
