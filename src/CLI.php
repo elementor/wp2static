@@ -491,7 +491,7 @@ class CLI {
      * Process any jobs in the queue.
      */
     public function process_queue() : void {
-        $job_count = JobQueue::getWaitingJobs();
+        $job_count = JobQueue::getWaitingJobsCount();
 
         if ( $job_count === 0 ) {
             WP_CLI::success( 'No jobs in queue' );
