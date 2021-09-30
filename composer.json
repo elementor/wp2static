@@ -62,6 +62,7 @@
         "phpunit": "vendor/bin/phpunit ./tests/unit/",
         "coverage": "XDEBUG_MODE=coverage vendor/bin/phpunit tests/unit --coverage-html coverage --whitelist src/",
         "lint": "vendor/bin/parallel-lint --exclude vendor .",
+        "docs": "phpdoc -d ./src -t ./docs",
         "test": [
             "composer validate --strict",
             "@lint",
