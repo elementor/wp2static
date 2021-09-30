@@ -5,3 +5,4 @@ coverage/
 admin/*.js*
 .phpunit.result.cache
 
+/docs
