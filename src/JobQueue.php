@@ -115,6 +115,11 @@ class JobQueue {
         return $jobs;
     }
 
+    /**
+     * Get count of jobs organized by type
+     *
+     * @return int[] keys are job type and values are count
+     */
     public static function getJobCountByType() : array {
         global $wpdb;
         $jobs = [];

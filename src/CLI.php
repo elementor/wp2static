@@ -136,7 +136,10 @@ class CLI {
       }
     }
 
-    protected function defaultStatus() {
+    /**
+     * Output default status
+     */
+    protected function defaultStatus() : void  {
       // TODO handle when count doesn't change but different URLs are present - maybe that's an edge case that it's not worth caring about...
       $detected_url_count = URLDetector::countURLs();
       // WP_CLI::line(sprintf('%d URLs detected', $detected_url_count));
@@ -173,19 +176,32 @@ class CLI {
       }
     }
 
-    private function hintDetectNext() {
+    /**
+     * Show next action hint for detect unless suppressed.
+     *
+     * @uses should_show_next() to know if should show next or not
+     */
+    private function hintDetectNext() : void {
       if ( $this->should_show_next() ) {
         WP_CLI::line("\n\tYou chould run `wp wp2static detect`\n");
       }
     }
 
-    private function hintCrawlNext() {
+    /**
+     * Show next action hint for crawl unless suppressed.
+     *
+     * @uses should_show_next() to know if should show next or not
+     */
+    private function hintCrawlNext() : void {
         if ( $this->should_show_next() ) {
           WP_CLI::line("\n\tYou should run `wp wp2static crawl`\n");
         }
     }
 
-    private function should_show_next() {
+    /**
+     * Check to see if display of next is enabled
+     */
+    private function should_show_next() : bool {
       if ( !isset($this->assoc_args['next']) ) {
         return true;
       }
@@ -198,10 +214,7 @@ class CLI {
      *
      * @param string[] $args CLI args
      *
-     * @return mixed[] string or null:
-     *  $action
-     *  $option_name
-     *  $value
+     * @return mixed[] string or null: `[ $action, $option_name, $value ]`
      */
     private function parseArgs($args) {
         $action      = isset( $args[0] ) ? $args[0] : null;
@@ -211,7 +224,10 @@ class CLI {
         return [$action, $option_name, $value];
     }
 
-    protected function jobStatus() {
+    /**
+     * Output job status details.
+     */
+    protected function jobStatus() : void {
         $job_count = JobQueue::getWaitingJobsCount();
         WP_CLI::line(sprintf('Waiting job count: %d', $job_count));
         WP_CLI::line(sprintf(
