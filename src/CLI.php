@@ -105,6 +105,10 @@ class CLI {
      *
      * [--no-next]
      *
+     * <jobs>
+     *
+     * Get status on jobs
+     *
      * ## EXAMPLES
      *
      * List current plugin status and show next step
@@ -122,8 +126,17 @@ class CLI {
       array $args,
       array $assoc_args
     ) : void {
+      list($action) = $this->parseArgs($args);
       $this->assoc_args = $assoc_args;
 
+      if ( $action === 'jobs' ) {
+          $this->jobStatus();
+      } else {
+          $this->defaultStatus();
+      }
+    }
+
+    protected function defaultStatus() {
       // TODO handle when count doesn't change but different URLs are present - maybe that's an edge case that it's not worth caring about...
       $detected_url_count = URLDetector::countURLs();
       // WP_CLI::line(sprintf('%d URLs detected', $detected_url_count));
