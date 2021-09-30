@@ -198,6 +198,26 @@ class CLI {
         return [$action, $option_name, $value];
     }
 
+    protected function jobStatus() {
+        $job_count = JobQueue::getWaitingJobsCount();
+        WP_CLI::line(sprintf('Waiting job count: %d', $job_count));
+        WP_CLI::line(sprintf(
+            'Total job count: %d',
+            JobQueue::getTotalJobs()
+        ));
+
+        $jobs_by_type = JobQueue::getJobCountByType();
+        $output_data = [];
+        $output_headers = [ 'type', 'count' ];
+        foreach ( $jobs_by_type as $type => $count ) {
+            $output_data[]= [
+                'type' => $type,
+                'count' => $count,
+            ];
+        }
+        WP_CLI\Utils\format_items('table', $output_data, $output_headers);
+    }
+
     /**
      * Deploy the generated static site.
      * ## OPTIONS
