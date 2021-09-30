@@ -198,12 +198,16 @@ class JobQueue {
         return $total_jobs;
     }
 
+    public static function getWaitingJobs() : int {
+        return static::getWaitingJobsCount();
+    }
+
     /**
      *  Get count of waiting jobs
      *
      *  @return int Waiting jobs
      */
-    public static function getWaitingJobs() : int {
+    public static function getWaitingJobsCount() : int {
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'wp2static_jobs';
