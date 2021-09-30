@@ -115,6 +115,21 @@ class JobQueue {
         return $jobs;
     }
 
+    public static function getJobCountByType() : array {
+        global $wpdb;
+        $jobs = [];
+
+        $table_name = $wpdb->prefix . 'wp2static_jobs';
+        $query = "SELECT job_type, count(*) FROM $table_name GROUP BY job_type";
+
+        $rows = $wpdb->get_results($query, 'ARRAY_N');
+        foreach ( $rows as $row ) {
+            $jobs[$row[0]] = $row[1];
+        }
+
+        return $jobs;
+    }
+
     /*
         Skip processing jobs where a more recent job of same type exists
 
