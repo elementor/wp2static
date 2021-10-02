@@ -174,6 +174,26 @@ class CLI {
         WP_CLI::line('No URLs in the crawl cache.');
         $this->hintCrawlNext();
       }
+
+      $processed_site_path = ProcessedSite::getPath();
+      if ( !is_dir($processed_site_path) ) {
+          WP_CLI::line('Processed site does not exist');
+          $this->hintProcessNext();
+      } else {
+        $processed_site_urls = ProcessedSite::getPaths();
+        WP_CLI::line(
+            sprintf(
+                '%d URLs in the processed site',
+                count($processed_site_urls)
+            )
+        );
+      }
+    }
+
+    private function hintProcessNext() {
+        if ( $this->should_show_next() ) {
+            WP_CLI::line("\n\nYou should run `wp wp2static post_process`");
+        }
     }
 
     /**
