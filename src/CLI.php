@@ -109,6 +109,10 @@ class CLI {
      *
      * Get status on jobs
      *
+     * <crawled-site>
+     *
+     * Get status on the crawled site
+     *
      * ## EXAMPLES
      *
      * List current plugin status and show next step
@@ -131,6 +135,8 @@ class CLI {
 
       if ( $action === 'jobs' ) {
           $this->jobStatus();
+      } else if ( $action === 'crawled-site' ) {
+          $this->crawledSiteStatus();
       } else {
           $this->defaultStatus();
       }
@@ -197,6 +203,43 @@ class CLI {
             )
         );
       }
+    }
+
+    private function crawledSiteStatus() {
+        $crawlable_urls = array_map(
+            '\WP2Static\Crawler::transformPath',
+            CrawlQueue::getCrawlablePaths(),
+        );
+        $crawled_urls = StaticSite::getPaths();
+
+        $queued_but_not_crawled_urls = array_diff($crawlable_urls, $crawled_urls);
+        $crawled_but_not_queued_urls = array_diff($crawled_urls, $crawlable_urls);
+
+        if ( count($queued_but_not_crawled_urls) > 0 ) {
+            $data = array_map(
+                function($url) { return [ 'url' => $url ]; },
+                $queued_but_not_crawled_urls
+            );
+            WP_CLI::line('You have URLs that are queued but not crawled:');
+            WP_CLI\Utils\format_items(
+                'table',
+                $data,
+                [ 'url' ]
+            );
+        }
+
+        if ( count($crawled_but_not_queued_urls) > 0 ) {
+            $data = array_map(
+                function($url) { return [ 'url' => $url ]; },
+                $crawled_but_not_queued_urls
+            );
+            WP_CLI::line('You have URLs that are crawled but not queued:');
+            WP_CLI\Utils\format_items(
+                'table',
+                $data,
+                [ 'url' ]
+            );
+        }
     }
 
     private function hintProcessNext() {
