@@ -203,7 +203,7 @@ class CLI {
      */
     private function hintDetectNext() : void {
       if ( $this->should_show_next() ) {
-        WP_CLI::line("\n\tYou chould run `wp wp2static detect`\n");
+        WP_CLI::line("\n\tYou chould run `wp wp2static detect` to add URLs to the crawl queue\n");
       }
     }
 
