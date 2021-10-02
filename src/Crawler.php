@@ -144,6 +144,7 @@ class Crawler {
             } elseif ( ! is_null( $crawled_contents ) ) {
                 $page_hash = md5( $crawled_contents );
             } else {
+                // TODO: Hashing the status code will generate many collisions - what are we trying to accomplish here?
                 $page_hash = md5( (string) $status_code );
             }
 
