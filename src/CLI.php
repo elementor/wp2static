@@ -165,13 +165,13 @@ class CLI {
         );
       }
 
-      $crawl_cache_urls = CrawlCache::getHashes();
-      if ( $crawl_cache_urls ) {
+      $crawled_urls = StaticSite::getPaths();
+      if ( $crawled_urls ) {
         WP_CLI::line(
-          sprintf( '%d URLs cached from crawling', count($crawl_cache_urls) )
+          sprintf( '%d URLs crawled', count($crawled_urls) )
         );
       } else {
-        WP_CLI::line('No URLs in the crawl cache.');
+        WP_CLI::line('No URLs crawled.');
         $this->hintCrawlNext();
       }
 
