@@ -57,7 +57,6 @@ class StaticSite {
      *  @return string[] StaticSite paths
      */
     public static function getPaths() : array {
-        global $wpdb;
         $static_site_dir = self::getPath();
 
         if ( ! is_dir( $static_site_dir ) ) {

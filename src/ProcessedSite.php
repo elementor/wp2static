@@ -51,7 +51,6 @@ class ProcessedSite {
      *  @return string[] ProcessedSite paths
      */
     public static function getPaths() : array {
-        global $wpdb;
         $processed_site_dir = self::getPath();
 
         if ( ! is_dir( $processed_site_dir ) ) {
