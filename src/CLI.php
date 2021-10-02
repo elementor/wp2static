@@ -152,7 +152,7 @@ class CLI {
       } else if ( $detected_url_count > count($crawlable_urls) ) {
         WP_CLI::line(
           sprintf(
-            'There are more URLs detected (%d) than queued for crawling (%d).',
+            'There are more URLs on the site (%d) than queued for crawling (%d).',
             $detected_url_count,
             count($crawlable_urls)
           )
