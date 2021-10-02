@@ -165,10 +165,10 @@ class CLI {
         );
       }
 
-      $urls = CrawlCache::getHashes();
-      if ( $urls ) {
+      $crawl_cache_urls = CrawlCache::getHashes();
+      if ( $crawl_cache_urls ) {
         WP_CLI::line(
-          sprintf( '%d URLs cached from crawling', count($urls) )
+          sprintf( '%d URLs cached from crawling', count($crawl_cache_urls) )
         );
       } else {
         WP_CLI::line('No URLs in the crawl cache.');
