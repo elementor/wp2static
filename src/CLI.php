@@ -170,6 +170,15 @@ class CLI {
         WP_CLI::line(
           sprintf( '%d URLs crawled', count($crawled_urls) )
         );
+        if ( count($crawled_urls) < count($crawlable_urls) ) {
+            WP_CLI::line(
+                sprintf(
+                    'There are more URLs queued for crawling (%d) than there are urls that have been crawled (%d)',
+                    count($crawlable_urls),
+                    count($crawled_urls)
+                )
+            );
+        }
       } else {
         WP_CLI::line('No URLs crawled.');
         $this->hintCrawlNext();
