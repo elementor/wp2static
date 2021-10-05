@@ -1,5 +1,7 @@
+/.cpcache/
 /cache/
 /mariadb/data/
 /wordpress/
+.nrepl-port
 *.pid
 *.swp

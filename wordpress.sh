@@ -4,7 +4,7 @@ rm -rf wordpress
 cp -r $WORDPRESS_PATH/share/wordpress .
 chmod +w -R wordpress
 
-while ! test -f "mariadb/data/mysql.sock"; do
+while ! test -S "mariadb/data/mysql.sock"; do
   sleep 1
 done
 

@@ -13,10 +13,12 @@ let
 in
 pkgs.mkShell {
   buildInputs = [
+    pkgs.clojure
     pkgs.mariadb
     pkgs.nginx
     pkgs.php
     pkgs.php74Packages.composer
+    pkgs.rlwrap
     pkgs.wp-cli
     wordpress
   ];
