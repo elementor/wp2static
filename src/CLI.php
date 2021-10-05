@@ -106,6 +106,7 @@ class CLI {
         array $args,
         array $assoc_args
     ) : void {
+        CoreOptions::init();
         $deployer = Addons::getDeployer();
 
         if ( ! $deployer ) {
@@ -169,6 +170,8 @@ class CLI {
         if ( empty( $action ) ) {
             WP_CLI::error( 'Missing required argument: <get|set|list>' );
         }
+
+        CoreOptions::init();
 
         $plugin = Controller::getInstance();
 
@@ -333,6 +336,7 @@ class CLI {
      * @param string[] $assoc_args Parameters after command
      */
     public function crawl( array $args, array $assoc_args ) : void {
+        CoreOptions::init();
         Controller::wp2staticCrawl();
     }
 
@@ -340,6 +344,7 @@ class CLI {
      * Detect WordPress URLs to crawl, based on saved options
      */
     public function detect() : void {
+        CoreOptions::init();
         $detected_count = URLDetector::detectURLs();
     }
 
@@ -347,6 +352,7 @@ class CLI {
      * Makes a copy of crawled static site with processing applied
      */
     public function post_process() : void {
+        CoreOptions::init();
         $post_processor = new PostProcessor();
         $post_processor->processStaticSite( StaticSite::getPath() );
     }
