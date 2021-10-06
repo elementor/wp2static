@@ -64,6 +64,10 @@ define( 'WP_CACHE_KEY_SALT', ')O~B@EKC(tfdgDg6R8@6;ePxJJkXMpZ&.u?X{j##:@7-,/*YKv
  */
 $table_prefix = 'wp_';
 
+if ( defined( 'WP_CLI' ) ) {
+    $_SERVER['HTTP_HOST'] = 'localhost:7000';
+}
+
 if ( 'on' === $_SERVER['HTTPS'] ) {
     define('WP_SITEURL', 'https://' . $_SERVER['HTTP_HOST'] . '/');
     define('WP_HOME', 'https://' . $_SERVER['HTTP_HOST'] . '/');
