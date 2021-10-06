@@ -4,13 +4,18 @@
             [wp2static-test.core :as core])
   (:use popen))
 
-(defrecord ShellProcess [open-f name process stop-f]
+(defrecord ShellProcess [after-join-f open-f join? name process stop-f]
   component/Lifecycle
   (start [this]
     (if process
       this
-      (assoc this :process
-        (core/log-process! name (open-f this)))))
+      (let [process (core/log-process! name (open-f this))
+            this (assoc this :process process)]
+        (if-not join?
+          this
+          (do
+            (join process)
+            (after-join-f this))))))
   (stop [this]
     (if-not process
       this
@@ -49,13 +54,18 @@
 
 (defn wordpress []
   (shell-process
-    {:name "WordPress Initializer"
-     :open-f (fn [_]
-               (let [process (popen ["bash" "wordpress.sh"])]
-                 (future
-                   (join process)
-                   (core/build-wp2static!))
-                 process))}))
+    {:after-join-f (fn [wordpress]
+                     (let [code (exit-code (:process wordpress))]
+                       (when-not (zero? code)
+                         (throw
+                           (ex-info
+                             (str "wordpress.sh exited with code " code)
+                             {:code code}))))
+                     (core/build-wp2static!)
+                     wordpress)
+     :name "WordPress Initializer"
+     :join? true
+     :open-f (fn [_] (popen ["bash" "wordpress.sh"]))}))
 
 (defn system-map []
   (component/system-map
