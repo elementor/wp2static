@@ -4,4 +4,9 @@
         com.stuartsierra/component {:mvn/version "1.0.0"}
         etaoin/etaoin {:mvn/version "0.4.6"}
         hashp/hashp {:mvn/version "0.2.1"}
-        popen/popen {:mvn/version "0.3.1"}}}
+        popen/popen {:mvn/version "0.3.1"}}
+ :aliases {:test {:extra-paths ["test"]
+                  :extra-deps {com.cognitect/test-runner
+                               {:git/url "https://github.com/cognitect-labs/test-runner.git"
+                                :sha "dd6da11611eeb87f08780a30ac8ea6012d4c05ce"}}
+                  :exec-fn wp2static-test.test/test}} }
