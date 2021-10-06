@@ -1,8 +1,7 @@
 let
-  nixpkgs = import <nixpkgs> {};
-  inherit (nixpkgs) stdenv fetchurl;
   sources = import ./nix/sources.nix { };
   pkgs = import sources.nixpkgs { };
+  inherit (pkgs) stdenv fetchurl;
   wordpress = pkgs.wordpress.overrideAttrs( oldAttrs: rec {
     version = "5.8.1";
     src = fetchurl {
