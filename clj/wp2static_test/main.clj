@@ -13,6 +13,22 @@
                {:args args
                 :result result})))))
 
+(defn build-wp2static! []
+  (let [fname (str "wp2static-" (System/currentTimeMillis))
+        zip-name (str fname ".zip")
+        plugins-dir "wordpress/wp-content/plugins"]
+    (try
+      (sh! "bash" "./tools/build_release.sh" fname
+        :dir (str (System/getenv "PWD") "/../wp2static"))
+      (sh! "mv" (str (System/getenv "HOME") "/Downloads/" zip-name) "."
+        :dir plugins-dir)
+      (sh! "rm" "-rf" "wp2static" :dir plugins-dir)
+      (sh! "unzip" zip-name :dir plugins-dir)
+      (sh! "rm" zip-name :dir plugins-dir)
+      (sh! "wp" "plugin" "activate" "wp2static" "--path=wordpress")
+      (finally
+        (sh/sh "rm" zip-name :dir plugins-dir)))))
+
 (defn log-exit-code! [name process]
   (log/info name "exited with code" (exit-code process)))
 
