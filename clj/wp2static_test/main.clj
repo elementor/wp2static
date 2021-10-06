@@ -56,16 +56,22 @@
     {:name "PHP_FPM"
      :open-f (fn [_] (popen ["php-fpm" "-c" "php" "-y" "php/php-7.4-fpm.conf"]))}))
 
+(defn wordpress []
+  (shell-process
+    {:name "WordPress Initializer"
+     :open-f (fn [_]
+               (let [process (popen ["bash" "wordpress.sh"])]
+                 (future
+                   (join process)
+                   (core/build-wp2static!))
+                 process))}))
+
 (defn system-map []
   (component/system-map
     :mariadb (mariadb)
     :nginx (component/using (nginx) [:wordpress])
     :php-fpm (component/using (php-fpm) [:mariadb])
-    :wordpress (component/using
-                 (shell-process
-                   {:name "WordPress Initializer"
-                    :open-f (fn [_] (popen ["bash" "wordpress.sh"]))})
-                 [:mariadb :php-fpm])))
+    :wordpress (component/using (wordpress) [:mariadb :php-fpm])))
 
 (defonce system (atom nil))
 
