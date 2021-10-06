@@ -18,7 +18,9 @@ pkgs.mkShell {
     pkgs.php
     pkgs.php74Packages.composer
     pkgs.rlwrap
+    pkgs.unzip
     pkgs.wp-cli
+    pkgs.zip
     wordpress
   ];
 
