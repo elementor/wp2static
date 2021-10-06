@@ -13,5 +13,5 @@
 
 (defmacro with-test-system [[name] & body]
   `(let [~name (main/start!)]
-     (core/clean-wp2static-files!)
+     (core/clean-wp2static-cache!)
      ~@body))
