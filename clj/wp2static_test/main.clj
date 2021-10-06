@@ -4,15 +4,6 @@
             [wp2static-test.core :as core])
   (:use popen))
 
-(defn start-mariadb! []
-  (popen ["bash" "mariadb.sh"]))
-
-(defn start-nginx! []
-  (popen ["bash" "nginx.sh"]))
-
-(defn start-php-fpm! []
-  (popen ["bash" "php-fpm.sh"]))
-
 (defrecord ShellProcess [open-f name process stop-f]
   component/Lifecycle
   (start [this]
