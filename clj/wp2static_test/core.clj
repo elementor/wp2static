@@ -11,6 +11,9 @@
                {:args args
                 :result result})))))
 
+(defn wp-cli! [& args]
+  (apply sh! "wp" (concat args ["--path=wordpress"])))
+
 (defn build-wp2static! []
   (let [fname (str "wp2static-" (System/currentTimeMillis))
         zip-name (str fname ".zip")
@@ -23,7 +26,7 @@
       (sh! "rm" "-rf" "wp2static" :dir plugins-dir)
       (sh! "unzip" zip-name :dir plugins-dir)
       (sh! "rm" zip-name :dir plugins-dir)
-      (sh! "wp" "plugin" "activate" "wp2static" "--path=wordpress")
+      (wp-cli! "plugin" "activate" "wp2static")
       (finally
         (sh/sh "rm" zip-name :dir plugins-dir)))))
 
