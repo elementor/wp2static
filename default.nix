@@ -24,6 +24,7 @@ pkgs.mkShell {
   ];
 
   shellHook = ''
+    cp "${pkgs.nginx}/conf/mime.types" nginx
     export WORDPRESS_PATH="${wordpress}"
   '';
 }

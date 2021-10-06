@@ -1,6 +1,7 @@
 /.cpcache/
 /cache/
 /mariadb/data/
+/nginx/mime.types
 /wordpress/
 .nrepl-port
 *.pid
