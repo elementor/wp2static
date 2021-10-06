@@ -1,5 +1,6 @@
 (ns wp2static-test.main
-  (:require [clojure.java.shell :as sh]
+  (:require hashp.core
+            [clojure.java.shell :as sh]
             [clojure.tools.logging.readable :as log]
             [com.stuartsierra.component :as component])
   (:use popen))
