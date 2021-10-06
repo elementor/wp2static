@@ -30,6 +30,11 @@
       (finally
         (sh/sh "rm" zip-name :dir plugins-dir)))))
 
+(defn clean-wp2static-files! []
+  (sh! "rm" "-rf"
+    "wordpress/wp-content/uploads/wp2static-crawled-site"
+    "wordpress/wp-content/uploads/wp2static-processed-site"))
+
 (defn log-exit-code! [name process]
   (log/info name "exited with code" (exit-code process)))
 
