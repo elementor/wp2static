@@ -1,8 +1,11 @@
 (ns wp2static-test.main
   (:require hashp.core
+            [clojure.java.shell :as sh]
             [com.stuartsierra.component :as component]
             [wp2static-test.core :as core])
   (:use popen))
+
+(def pwd (System/getenv "PWD"))
 
 (defrecord ShellProcess [after-join-f open-f join? name process stop-f]
   component/Lifecycle
@@ -38,11 +41,11 @@
   (shell-process
     {:name "NGINX"
      :open-f (fn [_] (popen ["nginx"
-                             "-p" (System/getenv "PWD")
+                             "-p" pwd
                              "-c" "nginx.conf"
                              "-e" "stderr"]))
      :stop-f (fn [_] (core/sh! "nginx"
-                       "-p" (System/getenv "PWD")
+                       "-p" pwd
                        "-c" "nginx.conf"
                        "-e" "stderr"
                        "-s" "stop"))}))
@@ -50,7 +53,15 @@
 (defn php-fpm []
   (shell-process
     {:name "PHP_FPM"
-     :open-f (fn [_] (popen ["php-fpm" "-c" "php" "-y" "php/php-7.4-fpm.conf"]))}))
+     :open-f (fn [_] (popen ["php-fpm"
+                             "-c" "php"
+                             "-g" (str pwd "/php/php-fpm.pid")
+                             "-y" "php/php-7.4-fpm.conf"]))
+     :stop-f (fn [_]
+               (when-let [pid (try
+                                (slurp "php/php-fpm.pid")
+                                (catch Exception _))]
+                 (sh/sh "kill" "-9" pid)))}))
 
 (defn wordpress []
   (shell-process
