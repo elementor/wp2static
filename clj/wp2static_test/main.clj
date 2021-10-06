@@ -85,3 +85,5 @@
   (swap! system #(do (when % (component/stop %))
                      (component/start (system-map)))))
 
+(.addShutdownHook (Runtime/getRuntime)
+  (Thread. stop!))
