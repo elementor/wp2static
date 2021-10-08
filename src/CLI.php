@@ -226,30 +226,29 @@ class CLI {
         $crawled_but_not_queued_urls = array_diff($crawled_urls, $crawlable_urls);
 
         if ( count($queued_but_not_crawled_urls) > 0 ) {
-            $data = array_map(
-                function($url) { return [ 'url' => $url ]; },
-                $queued_but_not_crawled_urls
-            );
             WP_CLI::line('You have URLs that are queued but not crawled:');
             WP_CLI\Utils\format_items(
                 'table',
-                $data,
+                $this->urlsToTableData($queued_but_not_crawled_urls),
                 [ 'url' ]
             );
         }
 
         if ( count($crawled_but_not_queued_urls) > 0 ) {
-            $data = array_map(
-                function($url) { return [ 'url' => $url ]; },
-                $crawled_but_not_queued_urls
-            );
             WP_CLI::line('You have URLs that are crawled but not queued:');
             WP_CLI\Utils\format_items(
                 'table',
-                $data,
+                $this->urlsToTableData($crawled_but_not_queued_urls),
                 [ 'url' ]
             );
         }
+    }
+
+    private function urlsToTableData(array $urls) {
+        return array_map(
+            function($url) { return [ 'url' => $url ]; },
+            $urls
+        );
     }
 
     private function hintProcessNext() {
