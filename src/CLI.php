@@ -1043,6 +1043,7 @@ class CLI {
 
             }
 
+            // TODO Output details on if addon was enabled or disabled
             Controller::wp2staticToggleAddon( $addon_slug );
         }
     }
