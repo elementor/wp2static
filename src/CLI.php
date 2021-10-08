@@ -156,7 +156,7 @@ class CLI {
         $this->hintDetectNext();
         return;
       } else if ( $detected_url_count > count($crawlable_urls) ) {
-        WP_CLI::line(
+        WP_CLI::warning(
           sprintf(
             'There are more URLs on the site (%d) than queued for crawling (%d).',
             $detected_url_count,
@@ -167,21 +167,27 @@ class CLI {
         return;
       } else {
         WP_CLI::line(
-          sprintf( '%d URLs queued for crawling', count($crawlable_urls) )
+            WP_CLI::colorize(
+                sprintf( '%%c%d URLs%%n %%mqueued for crawling%%n', count($crawlable_urls) )
+            )
         );
       }
 
       $crawled_urls = StaticSite::getPaths();
       if ( $crawled_urls ) {
         WP_CLI::line(
-          sprintf( '%d URLs crawled', count($crawled_urls) )
+            WP_CLI::colorize(
+                sprintf( '%%c%d URLs%%n %%mcrawled%%n', count($crawled_urls) )
+            )
         );
         if ( count($crawled_urls) < count($crawlable_urls) ) {
-            WP_CLI::line(
-                sprintf(
-                    'There are more URLs queued for crawling (%d) than there are urls that have been crawled (%d)',
-                    count($crawlable_urls),
-                    count($crawled_urls)
+            WP_CLI::warning(
+                WP_CLI::colorize(
+                    sprintf(
+                        '%%MThere are more URLs queued for crawling (%d) than there are urls that have been crawled (%d)%%n',
+                        count($crawlable_urls),
+                        count($crawled_urls)
+                    )
                 )
             );
         }
@@ -192,14 +198,18 @@ class CLI {
 
       $processed_site_path = ProcessedSite::getPath();
       if ( !is_dir($processed_site_path) ) {
-          WP_CLI::line('Processed site does not exist');
+          WP_CLI::line(
+              WP_CLI::colorize('%rProcessed site does not exist%n')
+          );
           $this->hintProcessNext();
       } else {
         $processed_site_urls = ProcessedSite::getPaths();
         WP_CLI::line(
-            sprintf(
-                '%d URLs in the processed site',
-                count($processed_site_urls)
+            WP_CLI::colorize(
+                sprintf(
+                    '%%c%d URLs%%n in the %%mprocessed site%%n',
+                    count($processed_site_urls)
+                )
             )
         );
       }
@@ -255,7 +265,9 @@ class CLI {
      */
     private function hintDetectNext() : void {
       if ( $this->should_show_next() ) {
-        WP_CLI::line("\n\tYou chould run `wp wp2static detect` to add URLs to the crawl queue\n");
+          WP_CLI::line(
+              WP_CLI::colorize("\n\tYou should run `%gwp wp2static detect%n` to add URLs to the crawl queue\n")
+          );
       }
     }
 
@@ -266,7 +278,9 @@ class CLI {
      */
     private function hintCrawlNext() : void {
         if ( $this->should_show_next() ) {
-          WP_CLI::line("\n\tYou should run `wp wp2static crawl`\n");
+            WP_CLI::line(
+                WP_CLI::colorize("\n\tYou should run `%gwp wp2static crawl%n`\n")
+            );
         }
     }
 
