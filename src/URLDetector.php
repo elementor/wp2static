@@ -15,14 +15,14 @@ namespace WP2Static;
 class URLDetector {
 
     public static function countURLs() : int {
-        return count( static::detectURLs($quiet = true) );
+        return count( static::detectURLs( $quiet = true ) );
     }
 
     /**
      * Detect URLs within site
      */
     public static function detectURLs( bool $quiet = false ) : array {
-        if ( !$quiet ) {
+        if ( ! $quiet ) {
             WsLog::l( 'Starting to detect WordPress site URLs.' );
         }
 
@@ -156,7 +156,7 @@ class URLDetector {
 
         $total_detected = (string) count( $unique_urls );
 
-        if ( !$quiet ) {
+        if ( ! $quiet ) {
             WsLog::l(
                 "Detection complete. $total_detected URLs added to Crawl Queue."
             );
@@ -174,7 +174,7 @@ class URLDetector {
 
         CrawlQueue::addUrls( $unique_urls );
 
-        return (string) count($unique_urls);
+        return (string) count( $unique_urls );
     }
 }
 

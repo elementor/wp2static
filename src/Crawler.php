@@ -164,7 +164,7 @@ class Crawler {
             $crawled++;
 
             if ( $crawled_contents ) {
-                $static_path = static::transformPath($root_relative_path);
+                $static_path = static::transformPath( $root_relative_path );
                 StaticSite::add( $root_relative_path, $crawled_contents );
             }
 

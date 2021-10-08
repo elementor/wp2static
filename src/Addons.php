@@ -50,7 +50,7 @@ class Addons {
      *
      * @return mixed[] array of Addon objects
      */
-    public static function getAll(string $type = 'all') : array {
+    public static function getAll( string $type = 'all' ) : array {
         global $wpdb;
         $addons = [];
 
@@ -60,12 +60,12 @@ class Addons {
         $query_params = [];
         if ( $type !== 'all' ) {
             $query_string .= ' WHERE type = %s';
-            $query_params[]= $type;
+            $query_params[] = $type;
         }
         $query_string .= ' ORDER BY type DESC';
 
         return $wpdb->get_results(
-            $wpdb->prepare($query_string, $query_params)
+            $wpdb->prepare( $query_string, $query_params )
         );
     }
 

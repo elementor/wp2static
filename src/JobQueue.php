@@ -127,9 +127,9 @@ class JobQueue {
         $table_name = $wpdb->prefix . 'wp2static_jobs';
         $query = "SELECT job_type, count(*) FROM $table_name GROUP BY job_type";
 
-        $rows = $wpdb->get_results($query, 'ARRAY_N');
+        $rows = $wpdb->get_results( $query, 'ARRAY_N' );
         foreach ( $rows as $row ) {
-            $jobs[$row[0]] = $row[1];
+            $jobs[ $row[0] ] = $row[1];
         }
 
         return $jobs;

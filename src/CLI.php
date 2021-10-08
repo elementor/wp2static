@@ -138,125 +138,125 @@ class CLI {
       array $args,
       array $assoc_args
     ) : void {
-      list($action) = $this->parseArgs($args);
-      $this->assoc_args = $assoc_args;
+        list($action) = $this->parseArgs( $args );
+        $this->assoc_args = $assoc_args;
 
-      if ( $action === 'jobs' ) {
-          $this->jobStatus();
-      } else if ( $action === 'crawled-site' ) {
-          $this->crawledSiteStatus();
-      } else if ( $action === 'processed-site' ) {
-          $this->processedSiteStatus();
-      } else if ( $action === 'deployers' ) {
-          $this->deployersStatus();
-      } else {
-          $this->defaultStatus();
-      }
+        if ( $action === 'jobs' ) {
+            $this->jobStatus();
+        } elseif ( $action === 'crawled-site' ) {
+            $this->crawledSiteStatus();
+        } elseif ( $action === 'processed-site' ) {
+            $this->processedSiteStatus();
+        } elseif ( $action === 'deployers' ) {
+            $this->deployersStatus();
+        } else {
+            $this->defaultStatus();
+        }
 
-      // separate output from next command
-      WP_CLI::line();
+        // separate output from next command
+        WP_CLI::line();
     }
 
     /**
      * Output default status
      */
-    protected function defaultStatus() : void  {
-      // TODO handle when count doesn't change but different URLs are present - maybe that's an edge case that it's not worth caring about...
-      $detected_url_count = URLDetector::countURLs();
-      // WP_CLI::line(sprintf('%d URLs detected', $detected_url_count));
+    protected function defaultStatus() : void {
+        // TODO handle when count doesn't change but different URLs are present - maybe that's an edge case that it's not worth caring about...
+        $detected_url_count = URLDetector::countURLs();
+        // WP_CLI::line(sprintf('%d URLs detected', $detected_url_count));
 
-      $crawlable_urls = CrawlQueue::getCrawlablePaths();
-      if ( count($crawlable_urls) === 0 ) {
-        WP_CLI::line('No URLs are queued for crawling.');
-        $this->hintDetectNext();
-        return;
-      } else if ( $detected_url_count > count($crawlable_urls) ) {
-        WP_CLI::warning(
-          sprintf(
-            'There are more URLs on the site (%d) than queued for crawling (%d).',
-            $detected_url_count,
-            count($crawlable_urls)
-          )
-        );
-        $this->hintDetectNext();
-        return;
-      } else {
-        WP_CLI::line(
-            WP_CLI::colorize(
-                sprintf( '%%c%d URLs%%n %%mqueued for crawling%%n', count($crawlable_urls) )
-            )
-        );
-      }
-
-      $crawled_urls = StaticSite::getPaths();
-      if ( $crawled_urls ) {
-        WP_CLI::line(
-            WP_CLI::colorize(
-                sprintf( '%%c%d URLs%%n %%mcrawled%%n', count($crawled_urls) )
-            )
-        );
-        if ( count($crawled_urls) < count($crawlable_urls) ) {
-            WP_CLI::line(
-                WP_CLI::colorize(
-                    sprintf(
-                        '%%MThere are more URLs queued for crawling (%d) than there are urls that have been crawled (%d)%%n',
-                        count($crawlable_urls),
-                        count($crawled_urls)
-                    )
+        $crawlable_urls = CrawlQueue::getCrawlablePaths();
+        if ( count( $crawlable_urls ) === 0 ) {
+            WP_CLI::line( 'No URLs are queued for crawling.' );
+            $this->hintDetectNext();
+            return;
+        } elseif ( $detected_url_count > count( $crawlable_urls ) ) {
+            WP_CLI::warning(
+                sprintf(
+                    'There are more URLs on the site (%d) than queued for crawling (%d).',
+                    $detected_url_count,
+                    count( $crawlable_urls )
                 )
             );
+            $this->hintDetectNext();
+            return;
+        } else {
+            WP_CLI::line(
+                WP_CLI::colorize(
+                    sprintf( '%%c%d URLs%%n %%mqueued for crawling%%n', count( $crawlable_urls ) )
+                )
+            );
+        }
 
-            if ( $this->should_show_next() ) {
+        $crawled_urls = StaticSite::getPaths();
+        if ( $crawled_urls ) {
+            WP_CLI::line(
+                WP_CLI::colorize(
+                    sprintf( '%%c%d URLs%%n %%mcrawled%%n', count( $crawled_urls ) )
+                )
+            );
+            if ( count( $crawled_urls ) < count( $crawlable_urls ) ) {
                 WP_CLI::line(
                     WP_CLI::colorize(
-                        "\n\tYou can run `%gwp wp2static status crawled-site%n` to see the list of path differences\n"
+                        sprintf(
+                            '%%MThere are more URLs queued for crawling (%d) than there are urls that have been crawled (%d)%%n',
+                            count( $crawlable_urls ),
+                            count( $crawled_urls )
+                        )
                     )
                 );
+
+                if ( $this->should_show_next() ) {
+                    WP_CLI::line(
+                        WP_CLI::colorize(
+                            "\n\tYou can run `%gwp wp2static status crawled-site%n` to see the list of path differences\n"
+                        )
+                    );
+                }
+                  $this->hintCrawlNext();
             }
+        } else {
+            WP_CLI::line( 'No URLs crawled.' );
             $this->hintCrawlNext();
         }
-      } else {
-        WP_CLI::line('No URLs crawled.');
-        $this->hintCrawlNext();
-      }
 
-      $processed_site_path = ProcessedSite::getPath();
-      if ( !is_dir($processed_site_path) ) {
-          WP_CLI::line(
-              WP_CLI::colorize('%rProcessed site does not exist%n')
-          );
-          $this->hintProcessNext();
-      } else {
-        $processed_site_urls = ProcessedSite::getPaths();
-        WP_CLI::line(
-            WP_CLI::colorize(
-                sprintf(
-                    '%%c%d URLs%%n in the %%mprocessed site%%n',
-                    count($processed_site_urls)
-                )
-            )
-        );
-        if ( count($processed_site_urls) < count($crawled_urls) ) {
+        $processed_site_path = ProcessedSite::getPath();
+        if ( ! is_dir( $processed_site_path ) ) {
+            WP_CLI::line(
+                WP_CLI::colorize( '%rProcessed site does not exist%n' )
+            );
+            $this->hintProcessNext();
+        } else {
+            $processed_site_urls = ProcessedSite::getPaths();
             WP_CLI::line(
                 WP_CLI::colorize(
                     sprintf(
-                        '%%MThere are more URLs crawled (%d) than there are urls that have been processed (%d)%%n',
-                        $crawled_urls,
-                        $processed_site_urls
+                        '%%c%d URLs%%n in the %%mprocessed site%%n',
+                        count( $processed_site_urls )
                     )
                 )
             );
-
-            if ( $this->should_show_next() ) {
+            if ( count( $processed_site_urls ) < count( $crawled_urls ) ) {
                 WP_CLI::line(
                     WP_CLI::colorize(
-                        "\n\tYou can run `%gwp wp2static status processed-site%n` to see the list of path differences\n"
+                        sprintf(
+                            '%%MThere are more URLs crawled (%d) than there are urls that have been processed (%d)%%n',
+                            $crawled_urls,
+                            $processed_site_urls
+                        )
                     )
                 );
+
+                if ( $this->should_show_next() ) {
+                    WP_CLI::line(
+                        WP_CLI::colorize(
+                            "\n\tYou can run `%gwp wp2static status processed-site%n` to see the list of path differences\n"
+                        )
+                    );
+                }
+                $this->hintProcessNext();
             }
-            $this->hintProcessNext();
         }
-      }
     }
 
     private function deployersStatus() {
@@ -270,23 +270,23 @@ class CLI {
         );
         $crawled_urls = StaticSite::getPaths();
 
-        $queued_but_not_crawled_urls = array_diff($crawlable_urls, $crawled_urls);
-        $crawled_but_not_queued_urls = array_diff($crawled_urls, $crawlable_urls);
+        $queued_but_not_crawled_urls = array_diff( $crawlable_urls, $crawled_urls );
+        $crawled_but_not_queued_urls = array_diff( $crawled_urls, $crawlable_urls );
 
-        if ( count($queued_but_not_crawled_urls) > 0 ) {
-            WP_CLI::line('You have URLs that are queued but not crawled:');
+        if ( count( $queued_but_not_crawled_urls ) > 0 ) {
+            WP_CLI::line( 'You have URLs that are queued but not crawled:' );
             WP_CLI\Utils\format_items(
                 'table',
-                $this->urlsToTableData($queued_but_not_crawled_urls),
+                $this->urlsToTableData( $queued_but_not_crawled_urls ),
                 [ 'url' ]
             );
         }
 
-        if ( count($crawled_but_not_queued_urls) > 0 ) {
-            WP_CLI::line('You have URLs that are crawled but not queued:');
+        if ( count( $crawled_but_not_queued_urls ) > 0 ) {
+            WP_CLI::line( 'You have URLs that are crawled but not queued:' );
             WP_CLI\Utils\format_items(
                 'table',
-                $this->urlsToTableData($crawled_but_not_queued_urls),
+                $this->urlsToTableData( $crawled_but_not_queued_urls ),
                 [ 'url' ]
             );
         }
@@ -296,35 +296,36 @@ class CLI {
         $crawled_urls = StaticSite::getPaths();
         $processed_site_urls = ProcessedSite::getPaths();
 
-        $crawled_but_not_processed_urls = array_diff($crawled_urls, $processed_site_urls);
-        $processed_but_not_crawled_urls = array_diff($processed_site_urls, $crawled_urls);
+        $crawled_but_not_processed_urls = array_diff( $crawled_urls, $processed_site_urls );
+        $processed_but_not_crawled_urls = array_diff( $processed_site_urls, $crawled_urls );
 
-        if ( count($crawled_but_not_processed_urls) > 0 ) {
-            WP_CLI::line('You have URLs that are crawled but not processed:');
+        if ( count( $crawled_but_not_processed_urls ) > 0 ) {
+            WP_CLI::line( 'You have URLs that are crawled but not processed:' );
             WP_CLI\Utils\format_items(
                 'table',
-                $this->urlsToTableData($crawled_but_not_processed_urls),
+                $this->urlsToTableData( $crawled_but_not_processed_urls ),
                 [ 'url' ]
             );
         }
 
-        if ( count($processed_but_not_crawled_urls) > 0 ) {
-            if ( count($crawled_but_not_processed_urls) > 0 ) {
+        if ( count( $processed_but_not_crawled_urls ) > 0 ) {
+            if ( count( $crawled_but_not_processed_urls ) > 0 ) {
                 WP_CLI::line();
             }
 
-            WP_CLI::line('You have URLs that are processed but not crawled:');
+            WP_CLI::line( 'You have URLs that are processed but not crawled:' );
             WP_CLI\Utils\format_items(
                 'table',
-                $this->urlsToTableData($processed_but_not_crawled_urls),
+                $this->urlsToTableData( $processed_but_not_crawled_urls ),
                 [ 'url' ]
             );
         }
     }
 
-    private function urlsToTableData(array $urls) {
+    private function urlsToTableData( array $urls ) {
         return array_map(
-            function($url) { return [ 'url' => $url ]; },
+            function( $url ) {
+                return [ 'url' => $url ]; },
             $urls
         );
     }
@@ -332,7 +333,7 @@ class CLI {
     private function hintProcessNext() {
         if ( $this->should_show_next() ) {
             WP_CLI::line(
-                WP_CLI::colorize("\n\tYou should run `%gwp wp2static post_process%n`")
+                WP_CLI::colorize( "\n\tYou should run `%gwp wp2static post_process%n`" )
             );
         }
     }
@@ -343,11 +344,11 @@ class CLI {
      * @uses should_show_next() to know if should show next or not
      */
     private function hintDetectNext() : void {
-      if ( $this->should_show_next() ) {
-          WP_CLI::line(
-              WP_CLI::colorize("\n\tYou should run `%gwp wp2static detect%n` to add URLs to the crawl queue\n")
-          );
-      }
+        if ( $this->should_show_next() ) {
+            WP_CLI::line(
+                WP_CLI::colorize( "\n\tYou should run `%gwp wp2static detect%n` to add URLs to the crawl queue\n" )
+            );
+        }
     }
 
     /**
@@ -358,7 +359,7 @@ class CLI {
     private function hintCrawlNext() : void {
         if ( $this->should_show_next() ) {
             WP_CLI::line(
-                WP_CLI::colorize("\n\tYou should run `%gwp wp2static crawl%n`\n")
+                WP_CLI::colorize( "\n\tYou should run `%gwp wp2static crawl%n`\n" )
             );
         }
     }
@@ -367,11 +368,11 @@ class CLI {
      * Check to see if display of next is enabled
      */
     private function should_show_next() : bool {
-      if ( !isset($this->assoc_args['next']) ) {
-        return true;
-      }
+        if ( ! isset( $this->assoc_args['next'] ) ) {
+            return true;
+        }
 
-      return $this->assoc_args['next'];
+        return $this->assoc_args['next'];
     }
 
     /**
@@ -381,12 +382,12 @@ class CLI {
      *
      * @return mixed[] string or null: `[ $action, $option_name, $value ]`
      */
-    private function parseArgs($args) {
+    private function parseArgs( $args ) {
         $action      = isset( $args[0] ) ? $args[0] : null;
         $option_name = isset( $args[1] ) ? $args[1] : null;
         $value       = isset( $args[2] ) ? $args[2] : null;
 
-        return [$action, $option_name, $value];
+        return [ $action, $option_name, $value ];
     }
 
     /**
@@ -394,22 +395,24 @@ class CLI {
      */
     protected function jobStatus() : void {
         $job_count = JobQueue::getWaitingJobsCount();
-        WP_CLI::line(sprintf('Waiting job count: %d', $job_count));
-        WP_CLI::line(sprintf(
-            'Total job count: %d',
-            JobQueue::getTotalJobs()
-        ));
+        WP_CLI::line( sprintf( 'Waiting job count: %d', $job_count ) );
+        WP_CLI::line(
+            sprintf(
+                'Total job count: %d',
+                JobQueue::getTotalJobs()
+            )
+        );
 
         $jobs_by_type = JobQueue::getJobCountByType();
         $output_data = [];
         $output_headers = [ 'type', 'count' ];
         foreach ( $jobs_by_type as $type => $count ) {
-            $output_data[]= [
+            $output_data[] = [
                 'type' => $type,
                 'count' => $count,
             ];
         }
-        WP_CLI\Utils\format_items('table', $output_data, $output_headers);
+        WP_CLI\Utils\format_items( 'table', $output_data, $output_headers );
     }
 
     /**
