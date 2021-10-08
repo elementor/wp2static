@@ -8,6 +8,9 @@ use WP_CLI;
  * Generate a static copy of your website & publish remotely
  */
 class CLI {
+    /**
+     * @var array<string>
+     */
     private $assoc_args = null;
 
     /**
@@ -245,8 +248,8 @@ class CLI {
                         sprintf(
                             '%%MThere are more URLs crawled (%d)'
                             . ' than there are urls that have been processed (%d)%%n',
-                            $crawled_urls,
-                            $processed_site_urls
+                            count( $crawled_urls ),
+                            count( $processed_site_urls )
                         )
                     )
                 );
@@ -264,11 +267,11 @@ class CLI {
         }
     }
 
-    private function deployersStatus() {
+    private function deployersStatus() : void {
 
     }
 
-    private function crawledSiteStatus() {
+    private function crawledSiteStatus() : void {
         $crawlable_urls = array_map(
             '\WP2Static\Crawler::transformPath',
             CrawlQueue::getCrawlablePaths(),
@@ -297,7 +300,7 @@ class CLI {
         }
     }
 
-    private function processedSiteStatus() {
+    private function processedSiteStatus() : void {
         $crawled_urls = StaticSite::getPaths();
         $processed_site_urls = ProcessedSite::getPaths();
 
@@ -327,7 +330,13 @@ class CLI {
         }
     }
 
-    private function urlsToTableData( array $urls ) {
+    /**
+     * Convert a list of URLs to a table for CLI output
+     *
+     * @param array<string> $urls List of URLs
+     * @return array<array<string>>
+     */
+    private function urlsToTableData( array $urls ) : array {
         return array_map(
             function( $url ) {
                 return [ 'url' => $url ]; },
@@ -335,7 +344,7 @@ class CLI {
         );
     }
 
-    private function hintProcessNext() {
+    private function hintProcessNext() : void {
         if ( $this->should_show_next() ) {
             WP_CLI::line(
                 WP_CLI::colorize( "\n\tYou should run `%gwp wp2static post_process%n`" )
@@ -380,7 +389,7 @@ class CLI {
             return true;
         }
 
-        return $this->assoc_args['next'];
+        return ! ! $this->assoc_args['next'];
     }
 
     /**

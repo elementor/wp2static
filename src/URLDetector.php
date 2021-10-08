@@ -20,6 +20,8 @@ class URLDetector {
 
     /**
      * Detect URLs within site
+     *
+     * @return array<string>
      */
     public static function detectURLs( bool $quiet = false ) : array {
         if ( ! $quiet ) {
