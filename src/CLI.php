@@ -113,6 +113,10 @@ class CLI {
      *
      * Get status on the crawled site
      *
+     * <processed-site>
+     *
+     * Get status on the processed site
+     *
      * ## EXAMPLES
      *
      * List current plugin status and show next step
@@ -137,6 +141,8 @@ class CLI {
           $this->jobStatus();
       } else if ( $action === 'crawled-site' ) {
           $this->crawledSiteStatus();
+      } else if ( $action === 'processed-site' ) {
+          $this->processedSiteStatus();
       } else {
           $this->defaultStatus();
       }
@@ -193,6 +199,15 @@ class CLI {
                     )
                 )
             );
+
+            if ( $this->should_show_next() ) {
+                WP_CLI::line(
+                    WP_CLI::colorize(
+                        "\n\tYou can run `%gwp wp2static status crawled-site%n` to see the list of path differences\n"
+                    )
+                );
+            }
+            $this->hintCrawlNext();
         }
       } else {
         WP_CLI::line('No URLs crawled.');
@@ -215,6 +230,26 @@ class CLI {
                 )
             )
         );
+        if ( count($processed_site_urls) < count($crawled_urls) ) {
+            WP_CLI::line(
+                WP_CLI::colorize(
+                    sprintf(
+                        '%%MThere are more URLs crawled (%d) than there are urls that have been processed (%d)%%n',
+                        $crawled_urls,
+                        $processed_site_urls
+                    )
+                )
+            );
+
+            if ( $this->should_show_next() ) {
+                WP_CLI::line(
+                    WP_CLI::colorize(
+                        "\n\tYou can run `%gwp wp2static status processed-site%n` to see the list of path differences\n"
+                    )
+                );
+            }
+            $this->hintProcessNext();
+        }
       }
     }
 
@@ -242,6 +277,36 @@ class CLI {
             WP_CLI\Utils\format_items(
                 'table',
                 $this->urlsToTableData($crawled_but_not_queued_urls),
+                [ 'url' ]
+            );
+        }
+    }
+
+    private function processedSiteStatus() {
+        $crawled_urls = StaticSite::getPaths();
+        $processed_site_urls = ProcessedSite::getPaths();
+
+        $crawled_but_not_processed_urls = array_diff($crawled_urls, $processed_site_urls);
+        $processed_but_not_crawled_urls = array_diff($processed_site_urls, $crawled_urls);
+
+        if ( count($crawled_but_not_processed_urls) > 0 ) {
+            WP_CLI::line('You have URLs that are crawled but not processed:');
+            WP_CLI\Utils\format_items(
+                'table',
+                $this->urlsToTableData($crawled_but_not_processed_urls),
+                [ 'url' ]
+            );
+        }
+
+        if ( count($processed_but_not_crawled_urls) > 0 ) {
+            if ( count($crawled_but_not_processed_urls) > 0 ) {
+                WP_CLI::line();
+            }
+
+            WP_CLI::line('You have URLs that are processed but not crawled:');
+            WP_CLI\Utils\format_items(
+                'table',
+                $this->urlsToTableData($processed_but_not_crawled_urls),
                 [ 'url' ]
             );
         }
