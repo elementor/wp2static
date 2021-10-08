@@ -268,7 +268,8 @@ class CLI {
         }
 
         if ( count($processed_site_urls) > 0 ) {
-            if ( Addons::getDeployer() )  {
+            $deployer_enabled = Addons::getDeployer();
+            if ( $deployer_enabled ) {
                 $this->hintDeployNext();
             } else {
                 $this->hintEnableDeployer();
