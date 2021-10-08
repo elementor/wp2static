@@ -117,6 +117,10 @@ class CLI {
      *
      * Get status on the processed site
      *
+     * <deployers>
+     *
+     * Get info on deployers
+     *
      * ## EXAMPLES
      *
      * List current plugin status and show next step
@@ -143,6 +147,8 @@ class CLI {
           $this->crawledSiteStatus();
       } else if ( $action === 'processed-site' ) {
           $this->processedSiteStatus();
+      } else if ( $action === 'deployers' ) {
+          $this->deployersStatus();
       } else {
           $this->defaultStatus();
       }
@@ -251,6 +257,10 @@ class CLI {
             $this->hintProcessNext();
         }
       }
+    }
+
+    private function deployersStatus() {
+
     }
 
     private function crawledSiteStatus() {
