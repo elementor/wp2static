@@ -267,7 +267,7 @@ class CLI {
             }
         }
 
-        if ( count($processed_site_urls) > 0 ) {
+        if ( count( $processed_site_urls ) > 0 ) {
             $deployer_enabled = Addons::getDeployer();
             if ( $deployer_enabled ) {
                 $this->hintDeployNext();
@@ -278,10 +278,10 @@ class CLI {
     }
 
     private function deployersStatus() : void {
-        $deployers = Addons::getAll('deploy');
+        $deployers = Addons::getAll( 'deploy' );
 
         $data = array_map(
-            function($_) {
+            function( $_ ) {
                 return [
                     'name'        => $_->name,
                     'slug'        => $_->slug,
@@ -298,7 +298,6 @@ class CLI {
             [ 'name', 'description', 'slug', 'enabled' ]
         );
 
-
         if ( Addons::getDeployer() ) {
             $this->hintDeployNext();
         } else {
@@ -311,7 +310,7 @@ class CLI {
             WP_CLI::line(
                 WP_CLI::colorize(
                     "\n\tYou can run `%gwp wp2static addons toggle <slug>%n`"
-                    . " to enable a deployer"
+                    . ' to enable a deployer'
                 )
             );
         }
@@ -322,7 +321,7 @@ class CLI {
             WP_CLI::line(
                 WP_CLI::colorize(
                     "\n\tYou can run `%gwp wp2static deploy%n`"
-                    . " to deploy your site"
+                    . ' to deploy your site'
                 )
             );
         }
