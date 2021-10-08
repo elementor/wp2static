@@ -140,6 +140,9 @@ class CLI {
       } else {
           $this->defaultStatus();
       }
+
+      // separate output from next command
+      WP_CLI::line();
     }
 
     /**
