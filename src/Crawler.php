@@ -144,14 +144,19 @@ class Crawler {
             } elseif ( ! is_null( $crawled_contents ) ) {
                 $page_hash = md5( $crawled_contents );
             } else {
-                // TODO: Hashing the status code will generate many collisions - what are we trying to accomplish here?
+                // TODO: Hashing the status code will generate many collisions
+                // - what are we trying to accomplish here?
                 $page_hash = md5( (string) $status_code );
             }
 
             // TODO: as John mentioned, we're only skipping the saving,
             // not crawling here. Let's look at improving that... or speeding
             // up with async requests, at least
-            // NOTE: What if we pre-computed the hash for all content on plugin install (via some kind of queued process) and then re-computed the hash every time a post was saved? That might help speed up the process. But we'd have to think about CSS or menu or included content changes...
+            // NOTE: What if we pre-computed the hash for all content on plugin
+            // install (via some kind of queued process) and then re-computed the
+            // hash every time a post was saved? That might help speed up the
+            // process. But we'd have to think about CSS or menu or included content
+            // changes...
             if ( $use_crawl_cache ) {
                 // if not already cached
                 if ( CrawlCache::getUrl( $root_relative_path, $page_hash ) ) {

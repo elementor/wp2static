@@ -161,7 +161,8 @@ class CLI {
      * Output default status
      */
     protected function defaultStatus() : void {
-        // TODO handle when count doesn't change but different URLs are present - maybe that's an edge case that it's not worth caring about...
+        // TODO handle when count doesn't change but different URLs are present
+        // - maybe that's an edge case that it's not worth caring about...
         $detected_url_count = URLDetector::countURLs();
         // WP_CLI::line(sprintf('%d URLs detected', $detected_url_count));
 
@@ -199,7 +200,8 @@ class CLI {
                 WP_CLI::line(
                     WP_CLI::colorize(
                         sprintf(
-                            '%%MThere are more URLs queued for crawling (%d) than there are urls that have been crawled (%d)%%n',
+                            '%%MThere are more URLs queued for crawling (%d)'
+                            . ' than there are urls that have been crawled (%d)%%n',
                             count( $crawlable_urls ),
                             count( $crawled_urls )
                         )
@@ -209,7 +211,8 @@ class CLI {
                 if ( $this->should_show_next() ) {
                     WP_CLI::line(
                         WP_CLI::colorize(
-                            "\n\tYou can run `%gwp wp2static status crawled-site%n` to see the list of path differences\n"
+                            "\n\tYou can run `%gwp wp2static status crawled-site%n`"
+                            . " to see the list of path differences\n"
                         )
                     );
                 }
@@ -240,7 +243,8 @@ class CLI {
                 WP_CLI::line(
                     WP_CLI::colorize(
                         sprintf(
-                            '%%MThere are more URLs crawled (%d) than there are urls that have been processed (%d)%%n',
+                            '%%MThere are more URLs crawled (%d)'
+                            . ' than there are urls that have been processed (%d)%%n',
                             $crawled_urls,
                             $processed_site_urls
                         )
@@ -250,7 +254,8 @@ class CLI {
                 if ( $this->should_show_next() ) {
                     WP_CLI::line(
                         WP_CLI::colorize(
-                            "\n\tYou can run `%gwp wp2static status processed-site%n` to see the list of path differences\n"
+                            "\n\tYou can run `%gwp wp2static status processed-site%n`"
+                            . " to see the list of path differences\n"
                         )
                     );
                 }
@@ -346,7 +351,10 @@ class CLI {
     private function hintDetectNext() : void {
         if ( $this->should_show_next() ) {
             WP_CLI::line(
-                WP_CLI::colorize( "\n\tYou should run `%gwp wp2static detect%n` to add URLs to the crawl queue\n" )
+                WP_CLI::colorize(
+                    "\n\tYou should run `%gwp wp2static detect%n`"
+                    . " to add URLs to the crawl queue\n"
+                )
             );
         }
     }
