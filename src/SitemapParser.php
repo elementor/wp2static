@@ -174,8 +174,9 @@ class SitemapParser {
      */
     public function parse( $url, $url_content = null ) {
         $check_url = $url;
+        $clean_url = preg_replace( '/(?<!:)\/\/+/', '/', $url );
         $this->clean();
-        if ( $clean_url = preg_replace( '/(?<!:)\/\/+/' , '/', $url ) ) {
+        if ( $clean_url ) {
             $check_url = $clean_url;
         }
         $this->current_url = $this->urlEncode( $check_url );
