@@ -175,7 +175,11 @@ class SitemapParser {
     public function parse( $url, $url_content = null ) {
         $this->clean();
         $replace_pattern = '/(?<!:)\/\/+/';
-        $this->current_url = $this->urlEncode( preg_replace( $replace_pattern, '/', $url ) ?: $url );
+        $check_url = $url;
+        if ( $clean_url = preg_replace( $replace_pattern, '/', $url ) ) {
+            $check_url = $clean_url;
+        }
+        $this->current_url = $this->urlEncode( $check_url );
         if ( ! $this->urlValidate( $this->current_url ) ) {
             throw new WP2StaticException( 'Invalid URL' );
         }
