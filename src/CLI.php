@@ -181,7 +181,7 @@ class CLI {
             )
         );
         if ( count($crawled_urls) < count($crawlable_urls) ) {
-            WP_CLI::warning(
+            WP_CLI::line(
                 WP_CLI::colorize(
                     sprintf(
                         '%%MThere are more URLs queued for crawling (%d) than there are urls that have been crawled (%d)%%n',
