@@ -227,6 +227,7 @@ class CLI {
         }
 
         $processed_site_path = ProcessedSite::getPath();
+        $processed_site_urls = [];
         if ( ! is_dir( $processed_site_path ) ) {
             WP_CLI::line(
                 WP_CLI::colorize( '%rProcessed site does not exist%n' )
@@ -265,10 +266,65 @@ class CLI {
                 $this->hintProcessNext();
             }
         }
+
+        if ( count($processed_site_urls) > 0 ) {
+            if ( Addons::getDeployer() )  {
+                $this->hintDeployNext();
+            } else {
+                $this->hintEnableDeployer();
+            }
+        }
     }
 
     private function deployersStatus() : void {
+        $deployers = Addons::getAll('deploy');
 
+        $data = array_map(
+            function($_) {
+                return [
+                    'name'        => $_->name,
+                    'slug'        => $_->slug,
+                    'description' => $_->description,
+                    'enabled'     => $_->enabled ? 'Yes' : 'No',
+                ];
+            },
+            $deployers
+        );
+
+        WP_CLI\Utils\format_items(
+            'table',
+            $data,
+            [ 'name', 'description', 'slug', 'enabled' ]
+        );
+
+
+        if ( Addons::getDeployer() ) {
+            $this->hintDeployNext();
+        } else {
+            $this->hintEnableDeployer();
+        }
+    }
+
+    private function hintEnableDeployer() : void {
+        if ( $this->should_show_next() ) {
+            WP_CLI::line(
+                WP_CLI::colorize(
+                    "\n\tYou can run `%gwp wp2static addons toggle <slug>%n`"
+                    . " to enable a deployer"
+                )
+            );
+        }
+    }
+
+    private function hintDeployNext() : void {
+        if ( $this->should_show_next() ) {
+            WP_CLI::line(
+                WP_CLI::colorize(
+                    "\n\tYou can run `%gwp wp2static deploy%n`"
+                    . " to deploy your site"
+                )
+            );
+        }
     }
 
     private function crawledSiteStatus() : void {
