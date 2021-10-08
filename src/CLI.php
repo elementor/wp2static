@@ -253,7 +253,9 @@ class CLI {
 
     private function hintProcessNext() {
         if ( $this->should_show_next() ) {
-            WP_CLI::line("\n\nYou should run `wp wp2static post_process`");
+            WP_CLI::line(
+                WP_CLI::colorize("\n\tYou should run `%gwp wp2static post_process%n`")
+            );
         }
     }
 
