@@ -2,6 +2,7 @@
  :deps {org.clojure/clojure {:mvn/version "1.10.3"}
         org.clojure/tools.logging {:mvn/version "1.1.0"}
         com.stuartsierra/component {:mvn/version "1.0.0"}
+        commons-codec/commons-codec {:mvn/version "1.15"}
         etaoin/etaoin {:mvn/version "0.4.6"}
         hashp/hashp {:mvn/version "0.2.1"}
         popen/popen {:mvn/version "0.3.1"}}
