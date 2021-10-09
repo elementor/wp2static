@@ -2,7 +2,8 @@
   (:require hashp.core
             [clojure.java.shell :as sh]
             [com.stuartsierra.component :as component]
-            [wp2static-test.core :as core])
+            [wp2static-test.core :as core]
+            [wp2static-test.mariadb-client :as mc])
   (:use popen))
 
 (def pwd (System/getenv "PWD"))
@@ -81,6 +82,15 @@
 (defn system-map []
   (component/system-map
     :mariadb (mariadb)
+    :mariadb-client (component/using
+                      (mc/mariadb-client
+                        {:dbname "wordpress"
+                         :dbhost "localhost"
+                         :dbtype "mariadb"
+                         :port 7001
+                         :password "8BVMm2jqDE6iADNyfaVCxoCzr3eBY6Ep"
+                         :user "wordpress"})
+                      [:mariadb])
     :nginx (component/using (nginx) [:wordpress])
     :php-fpm (component/using (php-fpm) [:mariadb])
     :wordpress (component/using (wordpress) [:mariadb :php-fpm])))
