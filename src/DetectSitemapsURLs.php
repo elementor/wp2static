@@ -39,7 +39,6 @@ class DetectSitemapsURLs {
 
         $client = new Client(
             [
-                'base_uri' => $base_uri,
                 'verify' => false,
                 'http_errors' => false,
                 'allow_redirects' => [
@@ -70,7 +69,7 @@ class DetectSitemapsURLs {
             }
         }
 
-        $request = new Request( 'GET', '/robots.txt', $headers );
+        $request = new Request( 'GET', $base_uri . '/robots.txt', $headers );
 
         $response = $client->send( $request );
 
@@ -106,7 +105,7 @@ class DetectSitemapsURLs {
                     $sitemap
                 );
 
-                $request = new Request( 'GET', $sitemap, $headers );
+                $request = new Request( 'GET', $base_uri . $sitemap, $headers );
 
                 $response = $client->send( $request );
 
