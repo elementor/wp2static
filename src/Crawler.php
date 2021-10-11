@@ -11,6 +11,7 @@ namespace WP2Static;
 use WP2StaticGuzzleHttp\Client;
 use WP2StaticGuzzleHttp\Psr7\Request;
 use WP2StaticGuzzleHttp\Psr7\Response;
+use WP2StaticGuzzleHttp\Exception\TooManyRedirectsException;
 use Psr\Http\Message\ResponseInterface;
 
 define( 'WP2STATIC_REDIRECT_CODES', [ 301, 302, 303, 307, 308 ] );
@@ -219,7 +220,14 @@ class Crawler {
 
         $request = new Request( 'GET', $url, $headers );
 
-        $response = $this->client->send( $request );
+        try {
+            $response = $this->client->send( $request );
+        } catch (TooManyRedirectsException $e) {
+            if ( defined('WP_CLI') ) {
+                \WP_CLI::warning("Too many redirects from $url");
+            }
+            throw $e;
+        }
 
         return $response;
     }
