@@ -203,6 +203,7 @@ class Crawler {
     /**
      * Crawls a string of full URL within WordPressSite
      *
+     * @throws TooManyRedirectsException
      * @return ResponseInterface|null response object
      */
     public function crawlURL( string $url ) : ?ResponseInterface {
@@ -222,9 +223,9 @@ class Crawler {
 
         try {
             $response = $this->client->send( $request );
-        } catch (TooManyRedirectsException $e) {
-            if ( defined('WP_CLI') ) {
-                \WP_CLI::warning("Too many redirects from $url");
+        } catch ( TooManyRedirectsException $e ) {
+            if ( defined( 'WP_CLI' ) ) {
+                \WP_CLI::warning( "Too many redirects from $url" );
             }
             throw $e;
         }
