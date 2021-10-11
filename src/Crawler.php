@@ -49,7 +49,7 @@ class Crawler {
                 'verify' => false,
                 'http_errors' => false,
                 'allow_redirects' => [
-                    'max' => 1,
+                    'max' => 2,
                     // required to get effective_url
                     'track_redirects' => true,
                 ],
