@@ -9,6 +9,7 @@
   - as part of this, changed the host replacement function to use strtr instead of str_replace to avoid replacing things that we just replaced
  - add advanced option to skip URL rewriting @john-shaffer
  - fix error when a sitemap path starts with // @jhatmaker, @john-shaffer
+ - move options labels and definitions out of the db and into code @john-shaffer
 
 ## WP2Static 7.1.7
 
