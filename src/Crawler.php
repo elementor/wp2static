@@ -203,11 +203,11 @@ class Crawler {
     /**
      * Crawls a string of full URL within WordPressSite
      *
-     * @throws TooManyRedirectsException
      * @return ResponseInterface|null response object
      */
     public function crawlURL( string $url ) : ?ResponseInterface {
         $headers = [];
+        $response = null;
 
         $auth_user = CoreOptions::getValue( 'basicAuthUser' );
 
@@ -224,10 +224,7 @@ class Crawler {
         try {
             $response = $this->client->send( $request );
         } catch ( TooManyRedirectsException $e ) {
-            if ( defined( 'WP_CLI' ) ) {
-                \WP_CLI::warning( "Too many redirects from $url" );
-            }
-            throw $e;
+            WsLog::l( "Too many redirects from $url" );
         }
 
         return $response;
