@@ -11,6 +11,7 @@ namespace WP2Static;
 use WP2StaticGuzzleHttp\Client;
 use WP2StaticGuzzleHttp\Psr7\Request;
 use WP2StaticGuzzleHttp\Psr7\Response;
+use WP2StaticGuzzleHttp\Exception\TooManyRedirectsException;
 use Psr\Http\Message\ResponseInterface;
 
 define( 'WP2STATIC_REDIRECT_CODES', [ 301, 302, 303, 307, 308 ] );
@@ -49,7 +50,7 @@ class Crawler {
                 'verify' => false,
                 'http_errors' => false,
                 'allow_redirects' => [
-                    'max' => 1,
+                    'max' => 2,
                     // required to get effective_url
                     'track_redirects' => true,
                 ],
@@ -206,6 +207,7 @@ class Crawler {
      */
     public function crawlURL( string $url ) : ?ResponseInterface {
         $headers = [];
+        $response = null;
 
         $auth_user = CoreOptions::getValue( 'basicAuthUser' );
 
@@ -219,7 +221,11 @@ class Crawler {
 
         $request = new Request( 'GET', $url, $headers );
 
-        $response = $this->client->send( $request );
+        try {
+            $response = $this->client->send( $request );
+        } catch ( TooManyRedirectsException $e ) {
+            WsLog::l( "Too many redirects from $url" );
+        }
 
         return $response;
     }
