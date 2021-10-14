@@ -1,5 +1,7 @@
 # WP2Static Integration Tests
 
+[![][tests-img]][tests-url]
+
 Tests for WP2Static's behavior with a real web server and database.
 
 ## Installation
@@ -22,3 +24,6 @@ You will need to have the wp2static repo at ../wp2static/. The zip will be built
  - MariaDB on mariadb/data/mysql.sock
  - PHP-FPM on php/fpm.sock
  - WordPress
+
+[tests-img]: https://github.com/WP2Static/wp2static-integration-tests/workflows/test/badge.svg
+[tests-url]: https://github.com/WP2Static/wp2static-integration-tests/actions
