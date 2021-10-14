@@ -2,7 +2,7 @@
 /.direnv/
 /cache/
 /mariadb/data/
-/result
+/result*
 /wordpress/
 .nrepl-port
 *.pid
