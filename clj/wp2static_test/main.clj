@@ -55,7 +55,7 @@
   (shell-process
     {:name "PHP_FPM"
      :open-f (fn [_] (popen ["php-fpm"
-                             "-c" "php"
+                             "-p" "."
                              "-g" (str pwd "/php/php-fpm.pid")
                              "-y" "php/php-7.4-fpm.conf"]))
      :stop-f (fn [_]
@@ -82,15 +82,6 @@
 (defn system-map []
   (component/system-map
     :mariadb (mariadb)
-    :mariadb-client (component/using
-                      (mc/mariadb-client
-                        {:dbname "wordpress"
-                         :dbhost "localhost"
-                         :dbtype "mariadb"
-                         :port 7001
-                         :password "8BVMm2jqDE6iADNyfaVCxoCzr3eBY6Ep"
-                         :user "wordpress"})
-                      [:mariadb])
     :nginx (component/using (nginx) [:wordpress])
     :php-fpm (component/using (php-fpm) [:mariadb])
     :wordpress (component/using (wordpress) [:mariadb :php-fpm])))

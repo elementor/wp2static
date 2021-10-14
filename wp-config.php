@@ -29,7 +29,7 @@ define( 'DB_USER', 'wordpress' );
 define( 'DB_PASSWORD', '8BVMm2jqDE6iADNyfaVCxoCzr3eBY6Ep' );
 
 /** MySQL hostname */
-define( 'DB_HOST', ':' . dirname( __FILE__) . '/../mariadb/data/mysql.sock' );
+define( 'DB_HOST', ':' . dirname( __FILE__, 2 ) . '/mariadb/data/mysql.sock' );
 
 /** Database Charset to use in creating database tables. */
 define( 'DB_CHARSET', 'utf8' );

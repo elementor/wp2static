@@ -1,0 +1,31 @@
+name: test
+
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+    branches:
+    - master
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/checkout@v2
+        with:
+          repository: leonstafford/wp2static
+          path: wp2static
+
+      - name: Build and cache Nix store
+        uses: rikhuijzer/cache-install@v1.0.8
+        with:
+          key: nix-${{ hashFiles('default.nix') }}
+          nix_file: 'default.nix'
+
+      - run: nix-shell --run "clojure -X:test"
+        timeout-minutes: 5
+        env:
+          NIX_PATH:
+          WP2STATIC_PATH: wp2static

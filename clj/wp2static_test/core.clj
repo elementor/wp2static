@@ -20,7 +20,8 @@
         plugins-dir "wordpress/wp-content/plugins"]
     (try
       (sh! "bash" "./tools/build_release.sh" fname
-        :dir (str (System/getenv "PWD") "/../wp2static"))
+        :dir (or (System/getenv "WP2STATIC_PATH")
+               (str (System/getenv "PWD") "/../wp2static")))
       (sh! "mv" (str (System/getenv "HOME") "/Downloads/" zip-name) "."
         :dir plugins-dir)
       (sh! "rm" "-rf" "wp2static" :dir plugins-dir)
