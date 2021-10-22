@@ -1,9 +1,0 @@
-/.cpcache/
-/.direnv/
-/cache/
-/mariadb/data/
-/result*
-/wordpress/
-.nrepl-port
-*.pid
-*.swp

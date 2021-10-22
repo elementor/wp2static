@@ -1,14 +1,17 @@
-name: test
+name: integration-tests
 
 on:
   push:
     branches:
       - master
+      - develop
+      - subfolder
     paths-ignore:
       - '**.md'
   pull_request:
     branches:
       - master
+      - develop
     paths-ignore:
       - '**.md'
 jobs:
@@ -18,12 +21,6 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
-
-      - name: Checkout WP2Static
-        uses: actions/checkout@v2
-        with:
-          repository: leonstafford/wp2static
-          path: wp2static
 
       - name: Cache Clojure dependencies
         uses: actions/cache@v2
@@ -52,9 +49,11 @@ jobs:
         if: steps.nix-cache.outputs.cache-hit == 'true'
 
       - run: nix-build
+        working-directory: integration-tests
 
       - run: nix-shell --run "clojure -X:test"
         timeout-minutes: 5
+        working-directory: integration-tests
         env:
           WP2STATIC_PATH: wp2static
 
