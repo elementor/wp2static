@@ -1,8 +1,12 @@
+/integration-tests/mariadb/data/
+/integration-tests/wordpress/
 /.direnv/
 /vendor/
 /vendor_prefixed/
+.cpcache/
 node_modules/
 coverage/
 admin/*.js*
+*.pid
 .phpunit.result.cache
 
