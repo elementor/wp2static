@@ -1,7 +1,9 @@
+#!/usr/bin/env bash
+
 set -e
 
 rm -rf wordpress
-cp -r $WORDPRESS_PATH/share/wordpress .
+cp -r "$WORDPRESS_PATH"/share/wordpress .
 chmod +w -R wordpress
 
 while ! test -S "mariadb/data/mysql.sock"; do
