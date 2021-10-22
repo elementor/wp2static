@@ -21,7 +21,7 @@
     (try
       (sh! "bash" "./tools/build_release.sh" fname
         :dir (or (System/getenv "WP2STATIC_PATH")
-               (str (System/getenv "PWD") "/../wp2static")))
+               (str (System/getenv "PWD") "/..")))
       (sh! "mv" (str (System/getenv "HOME") "/Downloads/" zip-name) "."
         :dir plugins-dir)
       (sh! "rm" "-rf" "wp2static" :dir plugins-dir)
