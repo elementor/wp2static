@@ -1,5 +1,6 @@
 /integration-tests/mariadb/data/
 /integration-tests/wordpress/
+/.direnv/
 /vendor/
 /vendor_prefixed/
 .cpcache/
