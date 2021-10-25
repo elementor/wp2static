@@ -9,4 +9,5 @@ coverage/
 admin/*.js*
 *.pid
 .phpunit.result.cache
-
+result
+result-*
