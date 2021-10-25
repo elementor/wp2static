@@ -16,7 +16,17 @@ on:
 jobs:
   test:
     timeout-minutes: 15
+
     runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ["7.4", "8.0"]
+        wordpress: [ { "version": "5.8.1", "sha256": "0al2z9jcxgdyq3177q1wk1gxl35j26qmqfvllk4aszd3mz291jlh" } ]
+
+    name: PHP ${{ matrix.php }}, WordPress ${{ matrix.wordpress.version }}
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -37,7 +47,7 @@ jobs:
         id: nix-cache
         uses: john-shaffer/cache@sudo-tar
         with:
-          key: nix-wp2static-integration-tests-${{ hashFiles('**.nix') }}
+          key: nix-wp2static-integration-tests-${{ matrix.php }}-${{ matrix.wordpress }}-${{ hashFiles('**.nix') }}
           restore-keys: nix-wp2static-integration-tests
           path: |
             ~/nix-db-dump
@@ -49,11 +59,18 @@ jobs:
 
       - run: nix-build
         working-directory: integration-tests
+        env:
+          PHP_VERSION: ${{ matrix.php }}
+          WORDPRESS_SHA256: ${{ matrix.wordpress.sha256 }}
+          WORDPRESS_VERSION: ${{ matrix.wordpress.version }}
 
       - run: nix-shell --run "clojure -X:test"
         timeout-minutes: 5
         working-directory: integration-tests
         env:
+          PHP_VERSION: ${{ matrix.php }}
+          WORDPRESS_SHA256: ${{ matrix.wordpress.sha256 }}
+          WORDPRESS_VERSION: ${{ matrix.wordpress.version }}
           WP2STATIC_PATH: ..
 
       - run: nix-store --dump-db > ~/nix-db-dump
