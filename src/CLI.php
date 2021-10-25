@@ -106,6 +106,7 @@ class CLI {
         array $args,
         array $assoc_args
     ) : void {
+        CoreOptions::init();
         $deployer = Addons::getDeployer();
 
         if ( ! $deployer ) {
@@ -169,6 +170,8 @@ class CLI {
         if ( empty( $action ) ) {
             WP_CLI::error( 'Missing required argument: <get|set|list>' );
         }
+
+        CoreOptions::init();
 
         $plugin = Controller::getInstance();
 
@@ -333,10 +336,7 @@ class CLI {
      * @param string[] $assoc_args Parameters after command
      */
     public function crawl( array $args, array $assoc_args ) : void {
-        $action = isset( $args[0] ) ? $args[0] : null;
-        $option_name = isset( $args[1] ) ? $args[1] : null;
-        $value = isset( $args[2] ) ? $args[2] : null;
-
+        CoreOptions::init();
         Controller::wp2staticCrawl();
     }
 
@@ -344,6 +344,7 @@ class CLI {
      * Detect WordPress URLs to crawl, based on saved options
      */
     public function detect() : void {
+        CoreOptions::init();
         $detected_count = URLDetector::detectURLs();
     }
 
@@ -351,6 +352,7 @@ class CLI {
      * Makes a copy of crawled static site with processing applied
      */
     public function post_process() : void {
+        CoreOptions::init();
         $post_processor = new PostProcessor();
         $post_processor->processStaticSite( StaticSite::getPath() );
     }
@@ -373,7 +375,7 @@ class CLI {
     }
 
     /**
-     * Crawl Queue
+     * Crawl Cache
      *
      * <list>
      *
@@ -392,8 +394,6 @@ class CLI {
      */
     public function crawl_cache( array $args, array $assoc_args ) : void {
         $action = isset( $args[0] ) ? $args[0] : null;
-        $option_name = isset( $args[1] ) ? $args[1] : null;
-        $value = isset( $args[2] ) ? $args[2] : null;
 
         if ( $action === 'list' ) {
             $urls = CrawlCache::getHashes();
@@ -450,8 +450,6 @@ class CLI {
      */
     public function crawl_queue( array $args, array $assoc_args ) : void {
         $action = isset( $args[0] ) ? $args[0] : null;
-        $option_name = isset( $args[1] ) ? $args[1] : null;
-        $value = isset( $args[2] ) ? $args[2] : null;
 
         if ( $action === 'list' ) {
             $urls = CrawlQueue::getCrawlablePaths();
@@ -500,8 +498,6 @@ class CLI {
      */
     public function processed_site( array $args, array $assoc_args ) : void {
         $action = isset( $args[0] ) ? $args[0] : null;
-        $option_name = isset( $args[1] ) ? $args[1] : null;
-        $value = isset( $args[2] ) ? $args[2] : null;
 
         // also validate expected $action vs any
         if ( empty( $action ) ) {
@@ -543,8 +539,6 @@ class CLI {
      */
     public function static_site( array $args, array $assoc_args ) : void {
         $action = isset( $args[0] ) ? $args[0] : null;
-        $option_name = isset( $args[1] ) ? $args[1] : null;
-        $value = isset( $args[2] ) ? $args[2] : null;
 
         // also validate expected $action vs any
         if ( empty( $action ) ) {
@@ -592,8 +586,6 @@ class CLI {
      */
     public function deploy_cache( array $args, array $assoc_args ) : void {
         $action = isset( $args[0] ) ? $args[0] : null;
-        $option_name = isset( $args[1] ) ? $args[1] : null;
-        $value = isset( $args[2] ) ? $args[2] : null;
 
         if ( $action === 'list' ) {
             $paths = DeployCache::getPaths();
@@ -637,8 +629,6 @@ class CLI {
      * @param string[] $assoc_args Parameters after command
      */
     public function full_workflow( array $args, array $assoc_args ) : void {
-        $action = isset( $args[0] ) ? $args[0] : null;
-
         $this->detect();
         $this->crawl( [], [] );
         $this->post_process();
@@ -654,8 +644,6 @@ class CLI {
      * @param string[] $assoc_args Parameters after command
      */
     public function delete_all_cache( array $args, array $assoc_args ) : void {
-        $action = isset( $args[0] ) ? $args[0] : null;
-
         if ( ! isset( $assoc_args['force'] ) ) {
             $this->multilinePrint(
                 "no --force given. Please type 'yes' to confirm

@@ -23,10 +23,15 @@ class JobQueue {
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         dbDelta( $sql );
 
+        // There was an improper unique index which we must be sure to remove
+        if ( 1 === $wpdb->query( "SHOW INDEX FROM $table_name WHERE KEY_NAME = 'status'" ) ) {
+            $wpdb->query( "DROP INDEX status ON $table_name" );
+        }
+
         Controller::ensureIndex(
             $table_name,
-            'status',
-            "CREATE UNIQUE INDEX status ON $table_name (status)"
+            'status2',
+            "CREATE INDEX status2 ON $table_name (status)"
         );
     }
 

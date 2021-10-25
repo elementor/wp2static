@@ -39,7 +39,6 @@ class DetectSitemapsURLs {
 
         $client = new Client(
             [
-                'base_uri' => $base_uri,
                 'verify' => false,
                 'http_errors' => false,
                 'allow_redirects' => [

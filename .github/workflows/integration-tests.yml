@@ -1,0 +1,60 @@
+name: integration-tests
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    branches:
+      - master
+      - develop
+    paths-ignore:
+      - '**.md'
+jobs:
+  test:
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Cache Clojure dependencies
+        uses: actions/cache@v2
+        with:
+          key: clj-wp2static-integration-tests-${{ hashFiles('**/deps.edn') }}
+          restore-keys: clj-wp2static-integration-tests
+          path: |
+            ~/.gitlibs
+            ~/.m2/repository
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v14
+
+      - name: Cache Nix store
+        id: nix-cache
+        uses: john-shaffer/cache@sudo-tar
+        with:
+          key: nix-wp2static-integration-tests-${{ hashFiles('**.nix') }}
+          restore-keys: nix-wp2static-integration-tests
+          path: |
+            ~/nix-db-dump
+            /nix/store
+            /nix/var/nix/profiles
+
+      - run: sudo /nix/var/nix/profiles/default/bin/nix-store --load-db < ~/nix-db-dump
+        if: steps.nix-cache.outputs.cache-hit == 'true'
+
+      - run: nix-build
+        working-directory: integration-tests
+
+      - run: nix-shell --run "clojure -X:test"
+        timeout-minutes: 5
+        working-directory: integration-tests
+        env:
+          WP2STATIC_PATH: ..
+
+      - run: nix-store --dump-db > ~/nix-db-dump
+        if: steps.nix-cache.outputs.cache-hit != 'true'
