@@ -18,7 +18,7 @@ class FilesHelper {
             $dir_files = scandir( $dir );
 
             if ( ! $dir_files ) {
-                $err = 'Trying to delete nonexistant dir: ' . $dir;
+                $err = 'Trying to delete nonexistent dir: ' . $dir;
                 WsLog::l( $err );
                 throw new WP2StaticException( $err );
             }
