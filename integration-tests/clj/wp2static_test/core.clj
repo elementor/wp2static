@@ -1,5 +1,6 @@
 (ns wp2static-test.core
   (:require [clojure.java.shell :as sh]
+            [clojure.string :as str]
             [clojure.tools.logging.readable :as log]
             [popen :refer :all]))
 
@@ -17,19 +18,28 @@
 (defn build-wp2static! []
   (let [fname (str "wp2static-" (System/currentTimeMillis))
         zip-name (str fname ".zip")
-        plugins-dir "wordpress/wp-content/plugins"]
-    (try
-      (sh! "bash" "./tools/build_release.sh" fname
-        :dir (or (System/getenv "WP2STATIC_PATH")
-               (str (System/getenv "PWD") "/..")))
-      (sh! "mv" (str (System/getenv "HOME") "/Downloads/" zip-name) "."
-        :dir plugins-dir)
-      (sh! "rm" "-rf" "wp2static" :dir plugins-dir)
-      (sh! "unzip" zip-name :dir plugins-dir)
-      (sh! "rm" zip-name :dir plugins-dir)
-      (wp-cli! "plugin" "activate" "wp2static")
-      (finally
-        (sh/sh "rm" zip-name :dir plugins-dir)))))
+        plugins-dir "wordpress/wp-content/plugins"
+        wp2static-path (->> (or (System/getenv "WP2STATIC_PATH")
+                              (str (System/getenv "PWD") "/.."))
+                         (sh! "readlink" "-f")
+                         :out
+                         str/trim)]
+    (if (System/getenv "WP2STATIC_SYMLINK")
+      (do
+        (sh! "composer" "install" "--no-dev" "--optimize-autoloader"
+          :dir wp2static-path)
+        (sh! "ln" "-s" wp2static-path :dir plugins-dir))
+      (try
+        (sh! "bash" "./tools/build_release.sh" fname
+          :dir wp2static-path)
+        (sh! "mv" (str (System/getenv "HOME") "/Downloads/" zip-name) "."
+          :dir plugins-dir)
+        (sh! "rm" "-rf" "wp2static" :dir plugins-dir)
+        (sh! "unzip" zip-name :dir plugins-dir)
+        (sh! "rm" zip-name :dir plugins-dir)
+        (finally
+          (sh/sh "rm" zip-name :dir plugins-dir))))
+    (wp-cli! "plugin" "activate" "wp2static")))
 
 (defn clean-wp2static-cache! []
   (wp-cli! "wp2static" "delete_all_cache" "--force"))

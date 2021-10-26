@@ -2,4 +2,4 @@
 
 set -e
 
-nix-shell --run "clojure -M:dev-server"
+WP2STATIC_SYMLINK=t nix-shell --run "clojure -M:dev-server"
