@@ -10,6 +10,8 @@
  - add advanced option to skip URL rewriting @john-shaffer
  - fix error when a sitemap path starts with // @jhatmaker, @john-shaffer
  - move options labels and definitions out of the db and into code @john-shaffer
+ - allow multiple redirects and report on redirects in wp-cli @bookwyrm, @jhatmaker
+
 
 ## WP2Static 7.1.7
 
