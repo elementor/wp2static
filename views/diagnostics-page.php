@@ -138,8 +138,8 @@
             <?php foreach ( $view['coreOptions'] as $option ) : ?>
 
             <tr>
-            <td><?php echo $option['label']; ?></td>
-            <td><?php echo $option['value']; ?></td>
+            <td><?php echo $option->label; ?></td>
+            <td><?php echo $option->value; ?></td>
             </tr>
 
             <?php endforeach; ?>
