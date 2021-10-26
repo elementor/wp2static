@@ -1,7 +1,7 @@
 (ns wp2static-test.core
   (:require [clojure.java.shell :as sh]
-            [clojure.tools.logging.readable :as log])
-  (:use popen))
+            [clojure.tools.logging.readable :as log]
+            [popen :refer :all]))
 
 (defn sh! [& args]
   (let [{:keys [exit] :as result} (apply sh/sh args)]

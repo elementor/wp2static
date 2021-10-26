@@ -1,8 +1,8 @@
 (ns wp2static-test.crawl-test
   (:require [clojure.string :as str]
+            [clojure.test :refer :all]
             [wp2static-test.core :as core]
-            [wp2static-test.test :as test])
-  (:use clojure.test))
+            [wp2static-test.test :as test]))
 
 (def robots-sitemap-slashes "User-agent: *
 Disallow: /wp-admin/

@@ -1,8 +1,8 @@
 (ns wp2static-test.post-process-test
   (:require [clojure.string :as str]
+            [clojure.test :refer :all]
             [wp2static-test.core :as core]
-            [wp2static-test.test :as test])
-  (:use clojure.test))
+            [wp2static-test.test :as test]))
 
 (defn get-file [path]
   (slurp (str "wordpress/wp-content/uploads/wp2static-processed-site/" path)))

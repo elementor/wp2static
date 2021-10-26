@@ -1,10 +1,8 @@
 (ns wp2static-test.main
-  (:require hashp.core
-            [clojure.java.shell :as sh]
+  (:require [clojure.java.shell :as sh]
             [com.stuartsierra.component :as component]
-            [wp2static-test.core :as core]
-            [wp2static-test.mariadb-client :as mc])
-  (:use popen))
+            [popen :refer :all]
+            [wp2static-test.core :as core]))
 
 (def pwd (System/getenv "PWD"))
 
