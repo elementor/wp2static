@@ -9,6 +9,6 @@ for PHP_VERSION in "7.4" "8.0"; do
         WORDPRESS_VERSION="${WP%=*}"
         WORDPRESS_SHA256="${WP#*=}"
         echo "PHP Version $PHP_VERSION, Wordpress Version $WORDPRESS_VERSION"
-        PHP_VERSION=$PHP_VERSION WORDPRESS_SHA256=$WORDPRESS_SHA256 WORDPRESS_VERSION=$WORDPRESS_VERSION nix-shell --pure --run "clojure -X:test"
+        PHP_VERSION=$PHP_VERSION WORDPRESS_SHA256=$WORDPRESS_SHA256 WORDPRESS_VERSION=$WORDPRESS_VERSION nix-shell --run "clojure -X:test"
     done
 done
