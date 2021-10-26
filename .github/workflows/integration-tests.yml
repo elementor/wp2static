@@ -35,7 +35,7 @@ jobs:
         uses: actions/cache@v2
         with:
           key: clj-wp2static-integration-tests-${{ hashFiles('**/deps.edn') }}
-          restore-keys: clj-wp2static-integration-tests
+          restore-keys: clj-wp2static-integration-tests-
           path: |
             ~/.gitlibs
             ~/.m2/repository
@@ -48,7 +48,10 @@ jobs:
         uses: john-shaffer/cache@sudo-tar
         with:
           key: nix-wp2static-integration-tests-${{ matrix.php }}-${{ matrix.wordpress }}-${{ hashFiles('**.nix') }}
-          restore-keys: nix-wp2static-integration-tests
+          restore-keys: |
+            nix-wp2static-integration-tests-${{ matrix.php }}-${{ matrix.wordpress }}-
+            nix-wp2static-integration-tests-${{ matrix.php }}-
+            nix-wp2static-integration-tests-
           path: |
             ~/nix-db-dump
             /nix/store
