@@ -11,4 +11,5 @@
         hashp/hashp {:mvn/version "0.2.1"}
         org.mariadb.jdbc/mariadb-java-client {:mvn/version "2.7.4"}
         popen/popen {:mvn/version "0.3.1"}}
- :aliases {:test {:exec-fn wp2static-test.test/test}}}
+ :aliases {:dev-server {:main-opts ["-m" "wp2static-test.main"]}
+           :test {:exec-fn wp2static-test.test/test}}}

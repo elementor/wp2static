@@ -100,3 +100,6 @@
   (Thread.
     (fn []
       (swap! system #(when % (component/stop %))))))
+
+(defn -main []
+  (start!))
