@@ -9,7 +9,7 @@ class ViewRenderer {
 
         $view = [
             'coreOptions' => CoreOptions::getAll(),
-            'nonce-action' => 'wp2static-ui-options',
+            'nonce_action' => 'wp2static-ui-options',
         ];
 
         require_once WP2STATIC_PATH . 'views/options-page.php';
@@ -20,7 +20,7 @@ class ViewRenderer {
 
         $view = [
             'coreOptions' => CoreOptions::getAll(),
-            'nonce-action' => 'wp2static-ui-advanced-options',
+            'nonce_action' => 'wp2static-ui-advanced-options',
         ];
 
         require_once WP2STATIC_PATH . 'views/advanced-options-page.php';
