@@ -78,49 +78,7 @@ class FilesHelper {
      *               or extension.
      */
     public static function filePathLooksCrawlable( string $file_name ) : bool {
-        $filenames_to_ignore = [
-            '__MACOSX',
-            '.babelrc',
-            '.git',
-            '.gitignore',
-            '.gitkeep',
-            '.htaccess',
-            '.php',
-            '.svn',
-            '.travis.yml',
-            'backwpup',
-            'bower_components',
-            'bower.json',
-            'composer.json',
-            'composer.lock',
-            'config.rb',
-            'current-export',
-            'Dockerfile',
-            'gulpfile.js',
-            'latest-export',
-            'LICENSE',
-            'Makefile',
-            'node_modules',
-            'package.json',
-            'pb_backupbuddy',
-            'plugins/wp2static',
-            'previous-export',
-            'README',
-            'static-html-output-plugin',
-            '/tests/',
-            'thumbs.db',
-            'tinymce',
-            'wc-logs',
-            'wpallexport',
-            'wpallimport',
-            'wp-static-html-output', // exclude earlier version exports
-            'wp2static-addon',
-            'wp2static-crawled-site',
-            'wp2static-processed-site',
-            'wp2static-working-files',
-            'yarn-error.log',
-            'yarn.lock',
-        ];
+        $filenames_to_ignore = CoreOptions::getLineDelimitedBlobValue( 'filenamesToIgnore' );
 
         $filenames_to_ignore =
             apply_filters(
