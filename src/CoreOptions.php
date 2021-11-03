@@ -197,6 +197,12 @@ class CoreOptions {
 
             // Advanced options
             self::makeOptionSpec(
+                'crawlConcurrency',
+                '1',
+                'Crawl Concurrency',
+                'The maximum number of files that will be crawled at the same time.'
+            ),
+            self::makeOptionSpec(
                 'skipURLRewrite',
                 '0',
                 'Skip URL Rewrite',
@@ -599,6 +605,13 @@ VALUES (%s, %s, %s);";
 
                 break;
             case 'advanced':
+                $crawl_concurrency = intval( $_POST['crawlConcurrency'] );
+                $wpdb->update(
+                    $table_name,
+                    [ 'value' => $crawl_concurrency < 1 ? 1 : $crawl_concurrency ],
+                    [ 'name' => 'crawlConcurrency' ]
+                );
+
                 $wpdb->update(
                     $table_name,
                     [ 'value' => isset( $_POST['skipURLRewrite'] ) ? 1 : 0 ],

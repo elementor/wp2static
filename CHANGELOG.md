@@ -14,6 +14,8 @@
  - [#829](https://github.com/leonstafford/wp2static/pull/829) Move options labels and definitions out of the db and into code. @john-shaffer
  - [#826](https://github.com/leonstafford/wp2static/pull/826) Allow multiple redirects and report on redirects in wp-cli. @bookwyrm, @jhatmaker
  - [28fc58e5](https://github.com/leonstafford/wp2static/commit/28fc58e5f7694129e5919530adcd6c57435391fb) Add warning-level log messages. @john-shaffer
+ - [#834](https://github.com/leonstafford/wp2static/pull/834) Implement concurrent crawling. @palmiak
+   - Deprecate Crawler::crawlURL.
 
 ## WP2Static 7.1.7 (2021-09-04)
 

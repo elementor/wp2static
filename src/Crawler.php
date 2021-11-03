@@ -11,8 +11,10 @@ namespace WP2Static;
 use WP2StaticGuzzleHttp\Client;
 use WP2StaticGuzzleHttp\Psr7\Request;
 use WP2StaticGuzzleHttp\Psr7\Response;
-use WP2StaticGuzzleHttp\Exception\TooManyRedirectsException;
 use Psr\Http\Message\ResponseInterface;
+use WP2StaticGuzzleHttp\Exception\RequestException;
+use WP2StaticGuzzleHttp\Exception\TooManyRedirectsException;
+use WP2StaticGuzzleHttp\Pool;
 
 define( 'WP2STATIC_REDIRECT_CODES', [ 301, 302, 303, 307, 308 ] );
 
@@ -26,6 +28,16 @@ class Crawler {
      * @var string
      */
     private $site_path;
+
+    /**
+     * @var integer
+     */
+    private $crawled = 0;
+
+    /**
+     * @var integer
+     */
+    private $cache_hits = 0;
 
     /**
      * Crawler constructor
@@ -77,9 +89,6 @@ class Crawler {
      * Crawls URLs in WordPressSite, saving them to StaticSite
      */
     public function crawlSite( string $static_site_path ) : void {
-        $crawled = 0;
-        $cache_hits = 0;
-
         WsLog::l( 'Starting to crawl detected URLs.' );
 
         $site_host = parse_url( $this->site_path, PHP_URL_HOST );
@@ -104,108 +113,153 @@ class Crawler {
          */
 
         $crawlable_paths = CrawlQueue::getCrawlablePaths();
+        $urls = [];
+
         foreach ( $crawlable_paths as $root_relative_path ) {
             $absolute_uri = new URL( $this->site_path . $root_relative_path );
-            $url = $absolute_uri->get();
+            $urls[] = [
+                'url' => $absolute_uri->get(),
+                'path' => $root_relative_path,
+            ];
+        }
 
-            $response = $this->crawlURL( $url );
+        $headers = [];
 
-            if ( ! $response ) {
-                continue;
-            }
+        $auth_user = CoreOptions::getValue( 'basicAuthUser' );
 
-            $crawled_contents = (string) $response->getBody();
-            $status_code = $response->getStatusCode();
+        if ( $auth_user ) {
+            $auth_password = CoreOptions::getValue( 'basicAuthPassword' );
 
-            if ( $status_code === 404 ) {
-                WsLog::l( '404 for URL ' . $root_relative_path );
-                CrawlCache::rmUrl( $root_relative_path );
-                $crawled_contents = null;
-            } elseif ( in_array( $status_code, WP2STATIC_REDIRECT_CODES ) ) {
-                $crawled_contents = null;
-            }
-
-            $redirect_to = null;
-
-            if ( in_array( $status_code, WP2STATIC_REDIRECT_CODES ) ) {
-                $effective_url = $url;
-
-                // returns as string
-                $redirect_history =
-                    $response->getHeaderLine( 'X-Guzzle-Redirect-History' );
-
-                if ( $redirect_history ) {
-                    $redirects = explode( ', ', $redirect_history );
-                    $effective_url = end( $redirects );
-                }
-
-                $redirect_to =
-                    (string) str_replace( $site_urls, '', $effective_url );
-                $page_hash = md5( $status_code . $redirect_to );
-            } elseif ( ! is_null( $crawled_contents ) ) {
-                $page_hash = md5( $crawled_contents );
-            } else {
-                $page_hash = md5( (string) $status_code );
-            }
-
-            // TODO: as John mentioned, we're only skipping the saving,
-            // not crawling here. Let's look at improving that... or speeding
-            // up with async requests, at least
-            if ( $use_crawl_cache ) {
-                // if not already cached
-                if ( CrawlCache::getUrl( $root_relative_path, $page_hash ) ) {
-                    $cache_hits++;
-
-                    continue;
-                }
-            }
-
-            $crawled++;
-
-            if ( $crawled_contents ) {
-                // do some magic here - naive: if URL ends in /, save to /index.html
-                // TODO: will need love for example, XML files
-                // check content type, serve .xml/rss, etc instead
-                if ( mb_substr( $root_relative_path, -1 ) === '/' ) {
-                    StaticSite::add( $root_relative_path . 'index.html', $crawled_contents );
-                } else {
-                    StaticSite::add( $root_relative_path, $crawled_contents );
-                }
-            }
-
-            CrawlCache::addUrl(
-                $root_relative_path,
-                $page_hash,
-                $status_code,
-                $redirect_to
-            );
-
-            // incrementally log crawl progress
-            if ( $crawled % 300 === 0 ) {
-                $notice = "Crawling progress: $crawled crawled, $cache_hits skipped (cached).";
-                WsLog::l( $notice );
+            if ( $auth_password ) {
+                $headers['auth'] = [ $auth_user, $auth_password ];
             }
         }
 
+        $requests = function ( $urls ) use ( $headers ) {
+            foreach ( $urls as $url ) {
+                yield new Request( 'GET', $url['url'], $headers );
+            }
+        };
+
+        $concurrency = intval( CoreOptions::getValue( 'crawlConcurrency' ) );
+        $concurrency = apply_filters( 'wp2static_crawl_concurrency', $concurrency );
+
+        $pool = new Pool(
+            $this->client,
+            $requests( $urls ),
+            [
+                'concurrency' => $concurrency,
+                'fulfilled' => function ( Response $response, $index ) use (
+                    $urls, $use_crawl_cache, $site_urls
+                ) {
+                    $root_relative_path = $urls[ $index ]['path'];
+                    $crawled_contents = (string) $response->getBody();
+                    $status_code = $response->getStatusCode();
+
+                    if ( $status_code === 404 ) {
+                        WsLog::l( '404 for URL ' . $root_relative_path );
+                        CrawlCache::rmUrl( $root_relative_path );
+                        $crawled_contents = null;
+                    } elseif ( in_array( $status_code, WP2STATIC_REDIRECT_CODES ) ) {
+                        $crawled_contents = null;
+                    }
+
+                    $redirect_to = null;
+
+                    if ( in_array( $status_code, WP2STATIC_REDIRECT_CODES ) ) {
+                        $effective_url = $urls[ $index ]['url'];
+
+                        // returns as string
+                        $redirect_history =
+                            $response->getHeaderLine( 'X-Guzzle-Redirect-History' );
+
+                        if ( $redirect_history ) {
+                            $redirects = explode( ', ', $redirect_history );
+                            $effective_url = end( $redirects );
+                        }
+
+                        $redirect_to =
+                            (string) str_replace( $site_urls, '', $effective_url );
+                        $page_hash = md5( $status_code . $redirect_to );
+                    } elseif ( ! is_null( $crawled_contents ) ) {
+                        $page_hash = md5( $crawled_contents );
+                    } else {
+                        $page_hash = md5( (string) $status_code );
+                    }
+
+                    if ( $use_crawl_cache ) {
+                        // if not already cached
+                        if ( CrawlCache::getUrl( $root_relative_path, $page_hash ) ) {
+                            $this->cache_hits++;
+                        }
+                    }
+
+                    $this->crawled++;
+
+                    if ( $crawled_contents ) {
+                        // do some magic here - naive: if URL ends in /, save to /index.html
+                        // TODO: will need love for example, XML files
+                        // check content type, serve .xml/rss, etc instead
+                        if ( mb_substr( $root_relative_path, -1 ) === '/' ) {
+                            StaticSite::add(
+                                $root_relative_path . 'index.html',
+                                $crawled_contents
+                            );
+                        } else {
+                            StaticSite::add( $root_relative_path, $crawled_contents );
+                        }
+                    }
+
+                    CrawlCache::addUrl(
+                        $root_relative_path,
+                        $page_hash,
+                        $status_code,
+                        $redirect_to
+                    );
+
+                    // incrementally log crawl progress
+                    if ( $this->crawled % 300 === 0 ) {
+                        $notice = "Crawling progress: $this->crawled crawled," .
+                                  " $this->cache_hits skipped (cached).";
+                        WsLog::l( $notice );
+                    }
+                },
+                'rejected' => function ( RequestException $reason, $index ) use ( $urls ) {
+                    $root_relative_path = $urls[ $index ]['path'];
+                    WsLog::l( 'Failed ' . $root_relative_path );
+                },
+            ]
+        );
+
+        // Initiate the transfers and create a promise
+        $promise = $pool->promise();
+
+        // Force the pool of requests to complete.
+        $promise->wait();
+
         WsLog::l(
-            "Crawling complete. $crawled crawled, $cache_hits skipped (cached)."
+            "Crawling complete. $this->crawled crawled, $this->cache_hits skipped (cached)."
         );
 
         $args = [
             'staticSitePath' => $static_site_path,
-            'crawled' => $crawled,
-            'cache_hits' => $cache_hits,
+            'crawled' => $this->crawled,
+            'cache_hits' => $this->cache_hits,
         ];
 
         do_action( 'wp2static_crawling_complete', $args );
     }
 
     /**
+     * @deprecated
+     *
      * Crawls a string of full URL within WordPressSite
      *
      * @return ResponseInterface|null response object
      */
     public function crawlURL( string $url ) : ?ResponseInterface {
+        WsLog::w( 'WP2Static Crawler::crawlURL is deprecated.' );
+
         $headers = [];
         $response = null;
 
