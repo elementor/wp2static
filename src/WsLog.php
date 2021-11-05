@@ -42,6 +42,26 @@ class WsLog {
         }
     }
 
+    public static function w( string $text ) : void {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'wp2static_log';
+
+        $wpdb->insert(
+            $table_name,
+            [
+                'log' => $text,
+            ]
+        );
+
+        if ( defined( 'WP_CLI' ) ) {
+            $date = current_time( 'c' );
+            \WP_CLI::warning(
+                \WP_CLI::colorize( "%W[$date] %n$text" )
+            );
+        }
+    }
+
     /**
      * Log multiple lines at once
      *
