@@ -1,7 +1,6 @@
 (ns wp2static-test.detect-test
   (:require [clojure.string :as str]
             [clojure.test :refer :all]
-            [wp2static-test.core :as core]
             [wp2static-test.test :as test]))
 
 (defn get-crawled-file [path]
@@ -18,8 +17,8 @@ Sitemap: http://localhost:7000//wp-sitemap.xml")
     (test/with-test-system [_]
       (try
         (spit "wordpress/robots.txt" robots-sitemap-slashes)
-        (core/wp-cli! "wp2static" "detect")
-        (core/wp-cli! "wp2static" "crawl")
+        (test/wp-cli! {} "wp2static" "detect")
+        (test/wp-cli! {} "wp2static" "crawl")
         (is (str/includes? (get-crawled-file "wp-sitemap-posts-post-1.xml") "http://localhost:7000/hello-world/"))
         (finally
-          (core/sh! "rm" "wordpress/robots.txt"))))))
+          (test/sh! {} "rm" "wordpress/robots.txt"))))))

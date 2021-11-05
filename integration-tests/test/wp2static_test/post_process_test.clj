@@ -1,7 +1,6 @@
 (ns wp2static-test.post-process-test
   (:require [clojure.string :as str]
             [clojure.test :refer :all]
-            [wp2static-test.core :as core]
             [wp2static-test.test :as test]))
 
 (defn get-processed-file [path]
@@ -9,9 +8,9 @@
 
 (deftest test-processed-site
   (test/with-test-system [_]
-    (core/wp-cli! "wp2static" "detect")
-    (core/wp-cli! "wp2static" "crawl")
-    (core/wp-cli! "wp2static" "post_process")
+    (test/wp-cli! {} "wp2static" "detect")
+    (test/wp-cli! {} "wp2static" "crawl")
+    (test/wp-cli! {} "wp2static" "post_process")
     (let [index (get-processed-file "index.html")]
       (is (str/includes? index "Welcome to WordPress"))
       (testing "Rewrites work"
