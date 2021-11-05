@@ -4,7 +4,7 @@
             [wp2static-test.core :as core]
             [wp2static-test.test :as test]))
 
-(defn get-file [path]
+(defn get-crawled-file [path]
   (slurp (str "wordpress/wp-content/uploads/wp2static-crawled-site/" path)))
 
 (def robots-sitemap-slashes "User-agent: *
@@ -20,6 +20,6 @@ Sitemap: http://localhost:7000//wp-sitemap.xml")
         (spit "wordpress/robots.txt" robots-sitemap-slashes)
         (core/wp-cli! "wp2static" "detect")
         (core/wp-cli! "wp2static" "crawl")
-        (is (str/includes? (get-file "wp-sitemap-posts-post-1.xml") "http://localhost:7000/hello-world/"))
+        (is (str/includes? (get-crawled-file "wp-sitemap-posts-post-1.xml") "http://localhost:7000/hello-world/"))
         (finally
           (core/sh! "rm" "wordpress/robots.txt"))))))
