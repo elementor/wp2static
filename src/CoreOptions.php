@@ -56,6 +56,7 @@ class CoreOptions {
      * @return array<string, ?string>
      */
     public static function makeOptionSpec(
+        string $type,
         string $name,
         string $default_value,
         string $label,
@@ -64,6 +65,7 @@ class CoreOptions {
         ?string $filter_name = null
     ) : array {
         return [
+            'type' => $type,
             'name' => $name,
             'default_value' => $default_value,
             'label' => $label,
@@ -83,96 +85,112 @@ class CoreOptions {
 
         $specs = [
             self::makeOptionSpec(
+                'boolean',
                 'detectCustomPostTypes',
                 '1',
                 'Detect Custom Post Types',
                 'Include Custom Post Types in URL Detection.'
             ),
             self::makeOptionSpec(
+                'boolean',
                 'detectPages',
                 '1',
                 'Detect Pages',
                 'Include Pages in URL Detection.'
             ),
             self::makeOptionSpec(
+                'boolean',
                 'detectPosts',
                 '1',
                 'Detect Posts',
                 'Include Posts in URL Detection.'
             ),
             self::makeOptionSpec(
+                'boolean',
                 'detectUploads',
                 '1',
                 'Detect Uploads',
                 'Include Uploads in URL Detection.'
             ),
             self::makeOptionSpec(
+                'boolean',
                 'queueJobOnPostSave',
                 '1',
                 'Post save',
                 'Queues a new job every time a Post or Page is saved.'
             ),
             self::makeOptionSpec(
+                'boolean',
                 'queueJobOnPostDelete',
                 '1',
                 'Post delete',
                 'Queues a new job every time a Post or Page is deleted.'
             ),
             self::makeOptionSpec(
+                'boolean',
                 'processQueueImmediately',
                 '0',
                 'Process queue immediately after enqueueing jobs',
                 ''
             ),
             self::makeOptionSpec(
+                'integer',
                 'processQueueInterval',
                 '0',
                 'Interval to process queue with WP-Cron',
                 'WP-Cron will attempt to process job queue at this interval (minutes)'
             ),
             self::makeOptionSpec(
+                'boolean',
                 'autoJobQueueDetection',
                 '1',
                 'Detect URLs',
                 ''
             ),
             self::makeOptionSpec(
+                'boolean',
                 'autoJobQueueCrawling',
                 '1',
                 'Crawl Site',
                 ''
             ),
             self::makeOptionSpec(
+                'boolean',
                 'autoJobQueuePostProcessing',
                 '1',
                 'Post-process',
                 ''
             ),
             self::makeOptionSpec(
+                'boolean',
                 'autoJobQueueDeployment',
                 '1',
                 'Deploy',
                 ''
             ),
             self::makeOptionSpec(
+                'string',
                 'basicAuthUser',
                 '',
                 'Basic Auth User',
                 'Username for basic authentication.'
             ),
             self::makeOptionSpec(
+                'string',
                 'deploymentURL',
                 'https://example.com',
                 'Deployment URL',
                 'URL your static site will be hosted at.'
             ),
             self::makeOptionSpec(
+                'encrypted_string',
                 'basicAuthPassword',
                 '',
                 'Basic Auth Password',
                 'Password for basic authentication.'
             ),
             self::makeOptionSpec(
+                'boolean',
                 'useCrawlCaching',
                 '1',
                 'Use CrawlCache',
@@ -181,18 +199,21 @@ class CoreOptions {
                 'wp2static_use_crawl_cache'
             ),
             self::makeOptionSpec(
+                'string',
                 'completionEmail',
                 '',
                 'Completion Email',
                 'Email to send deployment completion notification to.'
             ),
             self::makeOptionSpec(
+                'string',
                 'completionWebhook',
                 '',
                 'Completion Webhook',
                 'Webhook to send deployment completion notification to.'
             ),
             self::makeOptionSpec(
+                'string',
                 'completionWebhookMethod',
                 'POST',
                 'Completion Webhook Method',
@@ -201,12 +222,14 @@ class CoreOptions {
 
             // Advanced options
             self::makeOptionSpec(
+                'integer',
                 'crawlConcurrency',
                 '1',
                 'Crawl Concurrency',
                 'The maximum number of files that will be crawled at the same time.'
             ),
             self::makeOptionSpec(
+                'boolean',
                 'skipURLRewrite',
                 '0',
                 'Skip URL Rewrite',
@@ -214,6 +237,7 @@ class CoreOptions {
                 . ' deployment URL is the same as WordPress\'s URL.'
             ),
             self::makeOptionSpec(
+                'string',
                 'hostsToRewrite',
                 '1',
                 'Hosts to Rewrite',
@@ -282,7 +306,7 @@ VALUES (%s, %s, %s);";
             $option_value = (string) $opt_spec['default_value'];
         }
 
-        if ( $name === 'basicAuthPassword' ) {
+        if ( $opt_spec['type'] === 'encrypted_string' ) {
             $option_value = self::encrypt_decrypt( 'decrypt', $option_value );
         }
 
@@ -360,14 +384,13 @@ VALUES (%s, %s, %s);";
         );
 
         $option = $wpdb->get_row( $sql );
+        $opt_spec = self::optionSpecs() [ $name ];
 
         // decrypt password fields
-        if ( $option->name === 'basicAuthPassword' ) {
+        if ( $opt_spec['type'] === 'encrypted_string' ) {
             $option->value =
                 self::encrypt_decrypt( 'decrypt', $option->value );
         }
-
-        $opt_spec = self::optionSpecs() [ $name ];
 
         if ( $option ) {
             $option->unfiltered_value = $option->value;
@@ -404,24 +427,9 @@ VALUES (%s, %s, %s);";
 
         $options = $wpdb->get_results( $sql );
 
-        // convert array of stdObjects to array of arrays
-        // for easier presentation in WP-CLI
-        // TODO: perform in view
-        $options = array_map(
-            function ( $obj ) {
-                // hide sensitive values
-                if ( $obj->name === 'basicAuthPassword' ) {
-                    $obj->value = '***************';
-                }
-
-                return (array) $obj;
-            },
-            $options
-        );
-
         $options_map = [];
         foreach ( $options as $opt ) {
-            $options_map[ $opt['name'] ] = $opt;
+            $options_map[ $opt->name ] = (array) $opt;
         }
 
         $ret = [];
@@ -439,8 +447,14 @@ VALUES (%s, %s, %s);";
                 );
                 $ret[ $name ] = $opt;
             } else {
-                $opt['unfiltered_value'] = $opt['value'];
-                $opt['value'] = apply_filters( (string) $opt_spec['filter_name'], $opt['value'] );
+                $val = $opt['value'];
+
+                if ( $opt_spec['type'] === 'encrypted_string' ) {
+                    $val = self::encrypt_decrypt( 'decrypt', $val );
+                }
+
+                $opt['unfiltered_value'] = $val;
+                $opt['value'] = apply_filters( (string) $opt_spec['filter_name'], $val );
                 $ret[ $name ] = (object) array_merge( $opt_spec, $opt );
             }
         }

@@ -16,6 +16,7 @@
  - [28fc58e5](https://github.com/leonstafford/wp2static/commit/28fc58e5f7694129e5919530adcd6c57435391fb): Add warning-level log messages. @john-shaffer
  - [#834](https://github.com/leonstafford/wp2static/pull/834): Implement concurrent crawling. @palmiak
    - Deprecate Crawler::crawlURL.
+ - [#835](https://github.com/leonstafford/wp2static/pull/835): Add wp2static_option_* filters and option types
 
 ## WP2Static 7.1.7 (2021-09-04)
 
