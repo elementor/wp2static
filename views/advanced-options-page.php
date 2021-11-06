@@ -22,6 +22,22 @@
             <tr>
                 <td style="width:50%;">
                     <label
+                        for="<?php echo $view['coreOptions']['crawlConcurrency']->name; ?>"
+                    ><b><?php echo $view['coreOptions']['crawlConcurrency']->label; ?></b></label>
+                    <br/><?php echo $view['coreOptions']['crawlConcurrency']->description; ?>
+                </td>
+                <td>
+                    <input
+                        id="<?php echo $view['coreOptions']['crawlConcurrency']->name; ?>"
+                        name="<?php echo $view['coreOptions']['crawlConcurrency']->name; ?>"
+                        value="<?php echo (int) $view['coreOptions']['crawlConcurrency']->value; ?>"
+                        type="number"
+                    />
+                </td>
+            </tr>
+            <tr>
+                <td style="width:50%;">
+                    <label
                         for="<?php echo $view['coreOptions']['skipURLRewrite']->name; ?>"
                     ><b><?php echo $view['coreOptions']['skipURLRewrite']->label; ?></b></label>
                     <br/><?php echo $view['coreOptions']['skipURLRewrite']->description; ?>
