@@ -60,7 +60,8 @@ class CoreOptions {
         string $default_value,
         string $label,
         string $description,
-        ?string $default_blob_value = null
+        ?string $default_blob_value = null,
+        ?string $filter_name = null
     ) : array {
         return [
             'name' => $name,
@@ -68,6 +69,7 @@ class CoreOptions {
             'label' => $label,
             'description' => $description,
             'default_blob_value' => $default_blob_value,
+            'filter_name' => $filter_name ? $filter_name : "wp2static_option_$name",
         ];
     }
 
@@ -174,7 +176,9 @@ class CoreOptions {
                 'useCrawlCaching',
                 '1',
                 'Use CrawlCache',
-                'Skip crawling unchanged URLs.'
+                'Skip crawling unchanged URLs.',
+                null,
+                'wp2static_use_crawl_cache'
             ),
             self::makeOptionSpec(
                 'completionEmail',
@@ -258,6 +262,13 @@ VALUES (%s, %s, %s);";
     public static function getValue( string $name ) : string {
         global $wpdb;
 
+        $opt_spec = self::optionSpecs()[ $name ];
+
+        if ( ! $opt_spec ) {
+            WsLog::w( 'Attempt to getValue of unknown option $name' );
+            return '';
+        }
+
         $table_name = $wpdb->prefix . self::$table_name;
 
         $sql = $wpdb->prepare(
@@ -268,25 +279,21 @@ VALUES (%s, %s, %s);";
         $option_value = $wpdb->get_var( $sql );
 
         if ( ! $option_value || ! is_string( $option_value ) ) {
-            $os = self::optionSpecs()[ $name ];
-            if ( ! $os ) {
-                return '';
-            }
-            $option_value = (string) $os['default_value'];
+            $option_value = (string) $opt_spec['default_value'];
         }
 
         if ( $name === 'basicAuthPassword' ) {
-            return self::encrypt_decrypt( 'decrypt', $option_value );
+            $option_value = self::encrypt_decrypt( 'decrypt', $option_value );
         }
 
         // default deploymentURL is '/', else remove trailing slash
         if ( $name === 'deploymentURL' ) {
-            if ( $option_value === '/' ) {
-                return $option_value;
+            if ( $option_value !== '/' ) {
+                $option_value = untrailingslashit( $option_value );
             }
-
-            return untrailingslashit( $option_value );
         }
+
+        $option_value = apply_filters( (string) $opt_spec['filter_name'], $option_value );
 
         return $option_value;
     }
@@ -360,16 +367,27 @@ VALUES (%s, %s, %s);";
                 self::encrypt_decrypt( 'decrypt', $option->value );
         }
 
-        $os = self::optionSpecs() [ $name ];
+        $opt_spec = self::optionSpecs() [ $name ];
 
-        if ( ! $option && $os ) {
-            $opt = array_merge( $os ); // Make a copy so we don't modify $cached_option_specs
-            $opt['value'] = $os['default_value'];
-            $opt['blob_value'] = $os['default_blob_value'];
+        if ( $option ) {
+            $option->unfiltered_value = $option->value;
+            $option->value = apply_filters( (string) $opt_spec['filter_name'], $option->value );
+        } elseif ( $opt_spec ) {
+            $opt = array_merge( $opt_spec ); // Make a copy so we don't modify $cached_option_specs
+            $opt['unfiltered_value'] = $opt_spec['default_value'];
+            $opt['blob_value'] = $opt_spec['default_blob_value'];
+            if ( $opt_spec['filter_name'] ) {
+                $opt['value'] = apply_filters(
+                    $opt_spec['filter_name'],
+                    $opt_spec['default_value']
+                );
+            } else {
+                $opt['value'] = $opt_spec['default_value'];
+            }
             return $opt;
         }
 
-        return (object) array_merge( $os, (array) $option );
+        return (object) array_merge( $opt_spec, (array) $option );
     }
 
     /**
@@ -402,21 +420,28 @@ VALUES (%s, %s, %s);";
         );
 
         $options_map = [];
-        foreach ( $options as $o ) {
-            $options_map[ $o['name'] ] = $o;
+        foreach ( $options as $opt ) {
+            $options_map[ $opt['name'] ] = $opt;
         }
 
         $ret = [];
-        foreach ( self::optionSpecs() as $os ) {
-            $name = $os['name'];
+        foreach ( self::optionSpecs() as $opt_spec ) {
+            $name = $opt_spec['name'];
             $opt = $options_map[ $name ];
             if ( ! $opt ) {
-                $opt = array_merge( $os ); // Make a copy so we don't modify $cached_option_specs
-                $opt['value'] = $os['default_value'];
-                $opt['blob_value'] = $os['default_blob_value'];
+                 // Make a copy so we don't modify $cached_option_specs
+                $opt = array_merge( $opt_spec );
+                $opt['unfiltered_value'] = $opt_spec['default_value'];
+                $opt['blob_value'] = $opt_spec['default_blob_value'];
+                $opt['value'] = apply_filters(
+                    (string) $opt_spec['filter_name'],
+                    $opt_spec['default_value']
+                );
                 $ret[ $name ] = $opt;
             } else {
-                $ret[ $name ] = (object) array_merge( $os, $opt );
+                $opt['unfiltered_value'] = $opt['value'];
+                $opt['value'] = apply_filters( (string) $opt_spec['filter_name'], $opt['value'] );
+                $ret[ $name ] = (object) array_merge( $opt_spec, $opt );
             }
         }
 
