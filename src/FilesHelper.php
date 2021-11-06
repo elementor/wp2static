@@ -95,32 +95,9 @@ class FilesHelper {
             return false;
         }
 
-        $file_extensions_to_ignore = [
-            '.bat',
-            '.crt',
-            '.DS_Store',
-            '.git',
-            '.idea',
-            '.ini',
-            '.less',
-            '.map',
-            '.md',
-            '.mo',
-            '.php',
-            '.PHP',
-            '.phtml',
-            '.po',
-            '.pot',
-            '.scss',
-            '.sh',
-            '.sql',
-            '.SQL',
-            '.tar.gz',
-            '.tpl',
-            '.txt',
-            '.yarn',
-            '.zip',
-        ];
+        $file_extensions_to_ignore = CoreOptions::getLineDelimitedBlobValue(
+            'fileExtensionsToIgnore'
+        );
 
         $file_extensions_to_ignore =
             apply_filters(
