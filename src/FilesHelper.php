@@ -38,9 +38,16 @@ class FilesHelper {
     /**
      * Get public URLs for all files in a local directory.
      *
+     * @param string $dir
+     * @param array<string> $filenames_to_ignore
+     * @param array<string> $file_extensions_to_ignore
      * @return string[] list of relative, urlencoded URLs
      */
-    public static function getListOfLocalFilesByDir( string $dir ) : array {
+    public static function getListOfLocalFilesByDir(
+        string $dir,
+        array $filenames_to_ignore,
+        array $file_extensions_to_ignore
+    ) : array {
         $files = [];
 
         $site_path = SiteInfo::getPath( 'site' );
@@ -54,7 +61,11 @@ class FilesHelper {
             );
 
             foreach ( $iterator as $filename => $file_object ) {
-                $path_crawlable = self::filePathLooksCrawlable( $filename );
+                $path_crawlable = self::pathLooksCrawlable(
+                    $filename,
+                    $filenames_to_ignore,
+                    $file_extensions_to_ignore
+                );
 
                 if ( $path_crawlable ) {
                     if ( is_string( $site_path ) ) {
@@ -74,18 +85,17 @@ class FilesHelper {
     /**
      * Ensure a given filepath has an allowed filename and extension.
      *
+     * @param string $file_name
+     * @param array<string> $filenames_to_ignore
+     * @param array<string> $file_extensions_to_ignore
      * @return bool  True if the given file does not have a disallowed filename
      *               or extension.
      */
-    public static function filePathLooksCrawlable( string $file_name ) : bool {
-        $filenames_to_ignore = CoreOptions::getLineDelimitedBlobValue( 'filenamesToIgnore' );
-
-        $filenames_to_ignore =
-            apply_filters(
-                'wp2static_filenames_to_ignore',
-                $filenames_to_ignore
-            );
-
+    public static function pathLooksCrawlable(
+        string $file_name,
+        array $filenames_to_ignore,
+        array $file_extensions_to_ignore
+    ) : bool {
         $filename_matches = 0;
 
         str_ireplace( $filenames_to_ignore, '', $file_name, $filename_matches );
@@ -94,16 +104,6 @@ class FilesHelper {
         if ( $filename_matches ) {
             return false;
         }
-
-        $file_extensions_to_ignore = CoreOptions::getLineDelimitedBlobValue(
-            'fileExtensionsToIgnore'
-        );
-
-        $file_extensions_to_ignore =
-            apply_filters(
-                'wp2static_file_extensions_to_ignore',
-                $file_extensions_to_ignore
-            );
 
         /*
           Prepare the file extension list for regex:
@@ -119,6 +119,38 @@ class FilesHelper {
         }
 
         return true;
+    }
+
+    /**
+     * Ensure a given filepath has an allowed filename and extension.
+     *
+     * @return bool  True if the given file does not have a disallowed filename
+     *               or extension.
+     */
+    public static function filePathLooksCrawlable( string $file_name ) : bool {
+        $filenames_to_ignore = CoreOptions::getLineDelimitedBlobValue( 'filenamesToIgnore' );
+
+        $filenames_to_ignore =
+            apply_filters(
+                'wp2static_filenames_to_ignore',
+                $filenames_to_ignore
+            );
+
+        $file_extensions_to_ignore = CoreOptions::getLineDelimitedBlobValue(
+            'fileExtensionsToIgnore'
+        );
+
+        $file_extensions_to_ignore =
+            apply_filters(
+                'wp2static_file_extensions_to_ignore',
+                $file_extensions_to_ignore
+            );
+
+        return self::pathLooksCrawlable(
+            $file_name,
+            $filenames_to_ignore,
+            $file_extensions_to_ignore
+        );
     }
 
     /**

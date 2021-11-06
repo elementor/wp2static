@@ -424,6 +424,33 @@ VALUES (%s, %s, %s);";
     }
 
     /**
+     * Get option default BLOB value
+     *
+     * @throws WP2StaticException
+     * @return string option default BLOB value
+     */
+    public static function getDefaultBlobValue( string $name ) : string {
+        $val = self::optionSpecs()[ $name ]['default_blob_value'];
+        return $val ? $val : '';
+    }
+
+    /**
+     * @return array<string>
+     */
+    public static function getDefaultLineDelimitedBlobValue( string $name ) : array {
+        $vals = preg_split(
+            '/\r\n|\r|\n/',
+            self::getDefaultBlobValue( $name )
+        );
+
+        if ( ! $vals ) {
+            return [];
+        }
+
+        return $vals;
+    }
+
+    /**
      * Get option (value, description, label, etc)
      *
      * @return mixed option
