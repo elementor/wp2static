@@ -116,29 +116,29 @@ class CoreOptions {
                 'boolean',
                 'queueJobOnPostSave',
                 '1',
-                'Post save',
+                'Post Save',
                 'Queues a new job every time a Post or Page is saved.'
             ),
             self::makeOptionSpec(
                 'boolean',
                 'queueJobOnPostDelete',
                 '1',
-                'Post delete',
+                'Post Delete',
                 'Queues a new job every time a Post or Page is deleted.'
             ),
             self::makeOptionSpec(
                 'boolean',
                 'processQueueImmediately',
                 '0',
-                'Process queue immediately after enqueueing jobs',
-                ''
+                'Process Queue Immediately',
+                'Begin processing the queue as soon as a job is added, without waiting for WP-Cron.'
             ),
             self::makeOptionSpec(
                 'integer',
                 'processQueueInterval',
                 '0',
-                'Interval to process queue with WP-Cron',
-                'WP-Cron will attempt to process job queue at this interval (minutes)'
+                'Process Queue Interval',
+                'WP-Cron will attempt to process the job queue at this interval'
             ),
             self::makeOptionSpec(
                 'boolean',
@@ -158,7 +158,7 @@ class CoreOptions {
                 'boolean',
                 'autoJobQueuePostProcessing',
                 '1',
-                'Post-process',
+                'Post-Process',
                 ''
             ),
             self::makeOptionSpec(
@@ -183,7 +183,7 @@ class CoreOptions {
                 'URL your static site will be hosted at.'
             ),
             self::makeOptionSpec(
-                'encrypted_string',
+                'password',
                 'basicAuthPassword',
                 '',
                 'Basic Auth Password',
@@ -237,7 +237,7 @@ class CoreOptions {
                 . ' deployment URL is the same as WordPress\'s URL.'
             ),
             self::makeOptionSpec(
-                'string',
+                'multiline',
                 'hostsToRewrite',
                 '1',
                 'Hosts to Rewrite',
@@ -306,7 +306,7 @@ VALUES (%s, %s, %s);";
             $option_value = (string) $opt_spec['default_value'];
         }
 
-        if ( $opt_spec['type'] === 'encrypted_string' ) {
+        if ( $opt_spec['type'] === 'password' ) {
             $option_value = self::encrypt_decrypt( 'decrypt', $option_value );
         }
 
@@ -387,7 +387,7 @@ VALUES (%s, %s, %s);";
         $opt_spec = self::optionSpecs() [ $name ];
 
         // decrypt password fields
-        if ( $opt_spec['type'] === 'encrypted_string' ) {
+        if ( $opt_spec['type'] === 'password' ) {
             $option->value =
                 self::encrypt_decrypt( 'decrypt', $option->value );
         }
@@ -449,7 +449,7 @@ VALUES (%s, %s, %s);";
             } else {
                 $val = $opt['value'];
 
-                if ( $opt_spec['type'] === 'encrypted_string' ) {
+                if ( $opt_spec['type'] === 'password' ) {
                     $val = self::encrypt_decrypt( 'decrypt', $val );
                 }
 
