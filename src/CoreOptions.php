@@ -203,11 +203,91 @@ class CoreOptions {
                 'The maximum number of files that will be crawled at the same time.'
             ),
             self::makeOptionSpec(
-                'skipURLRewrite',
-                '0',
-                'Skip URL Rewrite',
-                'Don\'t rewrite any URLs. This may give a slight speed-up when the'
-                . ' deployment URL is the same as WordPress\'s URL.'
+                'fileExtensionsToIgnore',
+                '1',
+                'File Extensions to Ignore',
+                'Files with these extensions will be ignored while crawling.',
+                implode(
+                    "\n",
+                    [
+                        '.bat',
+                        '.crt',
+                        '.DS_Store',
+                        '.git',
+                        '.idea',
+                        '.ini',
+                        '.less',
+                        '.map',
+                        '.md',
+                        '.mo',
+                        '.php',
+                        '.PHP',
+                        '.phtml',
+                        '.po',
+                        '.pot',
+                        '.scss',
+                        '.sh',
+                        '.sql',
+                        '.SQL',
+                        '.tar.gz',
+                        '.tpl',
+                        '.txt',
+                        '.yarn',
+                        '.zip',
+                    ]
+                )
+            ),
+            self::makeOptionSpec(
+                'filenamesToIgnore',
+                '1',
+                'Directory and File Names to Ignore',
+                'Directories and files with these names will be ignored while crawling.',
+                implode(
+                    "\n",
+                    [
+                        '__MACOSX',
+                        '.babelrc',
+                        '.git',
+                        '.gitignore',
+                        '.gitkeep',
+                        '.htaccess',
+                        '.php',
+                        '.svn',
+                        '.travis.yml',
+                        'backwpup',
+                        'bower_components',
+                        'bower.json',
+                        'composer.json',
+                        'composer.lock',
+                        'config.rb',
+                        'current-export',
+                        'Dockerfile',
+                        'gulpfile.js',
+                        'latest-export',
+                        'LICENSE',
+                        'Makefile',
+                        'node_modules',
+                        'package.json',
+                        'pb_backupbuddy',
+                        'plugins/wp2static',
+                        'previous-export',
+                        'README',
+                        'static-html-output-plugin',
+                        '/tests/',
+                        'thumbs.db',
+                        'tinymce',
+                        'wc-logs',
+                        'wpallexport',
+                        'wpallimport',
+                        'wp-static-html-output', // exclude earlier version exports
+                        'wp2static-addon',
+                        'wp2static-crawled-site',
+                        'wp2static-processed-site',
+                        'wp2static-working-files',
+                        'yarn-error.log',
+                        'yarn.lock',
+                    ]
+                )
             ),
             self::makeOptionSpec(
                 'hostsToRewrite',
@@ -215,6 +295,13 @@ class CoreOptions {
                 'Hosts to Rewrite',
                 'Hosts to rewrite to the deployment URL.',
                 'localhost'
+            ),
+            self::makeOptionSpec(
+                'skipURLRewrite',
+                '0',
+                'Skip URL Rewrite',
+                'Don\'t rewrite any URLs. This may give a slight speed-up when the'
+                . ' deployment URL is the same as WordPress\'s URL.'
             ),
         ];
 
@@ -327,6 +414,33 @@ VALUES (%s, %s, %s);";
         $vals = preg_split(
             '/\r\n|\r|\n/',
             self::getBlobValue( $name )
+        );
+
+        if ( ! $vals ) {
+            return [];
+        }
+
+        return $vals;
+    }
+
+    /**
+     * Get option default BLOB value
+     *
+     * @throws WP2StaticException
+     * @return string option default BLOB value
+     */
+    public static function getDefaultBlobValue( string $name ) : string {
+        $val = self::optionSpecs()[ $name ]['default_blob_value'];
+        return $val ? $val : '';
+    }
+
+    /**
+     * @return array<string>
+     */
+    public static function getDefaultLineDelimitedBlobValue( string $name ) : array {
+        $vals = preg_split(
+            '/\r\n|\r|\n/',
+            self::getDefaultBlobValue( $name )
         );
 
         if ( ! $vals ) {
@@ -612,10 +726,26 @@ VALUES (%s, %s, %s);";
                     [ 'name' => 'crawlConcurrency' ]
                 );
 
+                $file_extensions_to_ignore = preg_replace(
+                    '/^\s+|\s+$/m',
+                    '',
+                    $_POST['fileExtensionsToIgnore']
+                );
                 $wpdb->update(
                     $table_name,
-                    [ 'value' => isset( $_POST['skipURLRewrite'] ) ? 1 : 0 ],
-                    [ 'name' => 'skipURLRewrite' ]
+                    [ 'blob_value' => $file_extensions_to_ignore ],
+                    [ 'name' => 'fileExtensionsToIgnore' ]
+                );
+
+                $filenames_to_ignore = preg_replace(
+                    '/^\s+|\s+$/m',
+                    '',
+                    $_POST['filenamesToIgnore']
+                );
+                $wpdb->update(
+                    $table_name,
+                    [ 'blob_value' => $filenames_to_ignore ],
+                    [ 'name' => 'filenamesToIgnore' ]
                 );
 
                 $hosts_to_rewrite = preg_replace(
@@ -627,6 +757,12 @@ VALUES (%s, %s, %s);";
                     $table_name,
                     [ 'blob_value' => $hosts_to_rewrite ],
                     [ 'name' => 'hostsToRewrite' ]
+                );
+
+                $wpdb->update(
+                    $table_name,
+                    [ 'value' => isset( $_POST['skipURLRewrite'] ) ? 1 : 0 ],
+                    [ 'name' => 'skipURLRewrite' ]
                 );
                 break;
         }

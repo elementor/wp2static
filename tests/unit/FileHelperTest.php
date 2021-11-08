@@ -101,7 +101,14 @@ final class FileHelperTest extends TestCase {
      * @return void
      */
     public function testGetListOfLocalFilesByDir() {
-        // Set up a virual folder structure
+        $filenames_to_ignore = CoreOptions::getDefaultLineDelimitedBlobValue(
+            'filenamesToIgnore'
+        );
+        $file_extensions_to_ignore = CoreOptions::getDefaultLineDelimitedBlobValue(
+            'fileExtensionsToIgnore'
+        );
+
+        // Set up a virtual folder structure
         $structure = [
             // Latin characters
             'top_level_latin_folder' => [
@@ -138,7 +145,11 @@ final class FileHelperTest extends TestCase {
             // phpcs:ignore Generic.Files.LineLength
             '/top_level_latin_folder/example_of_an_extremely_long_latin_file_name_with_some_numbers_at_the_end_0123456789.fileextension',
         ];
-        $actual = FilesHelper::getListOfLocalFilesByDir( $filepath );
+        $actual = FilesHelper::getListOfLocalFilesByDir(
+            $filepath,
+            $filenames_to_ignore,
+            $file_extensions_to_ignore
+        );
         $this->assertEquals( $expected, $actual );
 
         // Nested folder
@@ -148,7 +159,11 @@ final class FileHelperTest extends TestCase {
         $expected = [
             '/top_level_%C3%B9nicod%C3%AB_folder/s%C3%AAcond_level_f%C3%92lder/ÚÑÌÇÕÐË.pdf',
         ];
-        $actual = FilesHelper::getListOfLocalFilesByDir( $filepath );
+        $actual = FilesHelper::getListOfLocalFilesByDir(
+            $filepath,
+            $filenames_to_ignore,
+            $file_extensions_to_ignore
+        );
         $this->assertEquals( $expected, $actual );
 
         // Folder with subfolder
@@ -156,45 +171,67 @@ final class FileHelperTest extends TestCase {
         $expected = [
             '/top%20level%20folder%20with%20spaces/only a subfolder/example file.pdf',
         ];
-        $actual = FilesHelper::getListOfLocalFilesByDir( $filepath );
+        $actual = FilesHelper::getListOfLocalFilesByDir(
+            $filepath,
+            $filenames_to_ignore,
+            $file_extensions_to_ignore
+        );
+
         $this->assertEquals( $expected, $actual );
     }
 
     /**
-     * Test filePathLooksCrawlable method
+     * Test pathLooksCrawlable method
      *
      * @return void
      */
-    public function testFilePathLooksCrawlable() {
+    public function testPathLooksCrawlable() {
+        $filenames_to_ignore = CoreOptions::getDefaultLineDelimitedBlobValue(
+            'filenamesToIgnore'
+        );
+        $file_extensions_to_ignore = CoreOptions::getDefaultLineDelimitedBlobValue(
+            'fileExtensionsToIgnore'
+        );
+
+        $looks_crawlable = function( $file_name ) use (
+            &$filenames_to_ignore,
+            &$file_extensions_to_ignore
+        ) {
+            return FilesHelper::pathLooksCrawlable(
+                $file_name,
+                $filenames_to_ignore,
+                $file_extensions_to_ignore
+            );
+        };
         // Default accepted extension
         $expected = true;
-        $actual = FilesHelper::filePathLooksCrawlable( '/path/to/foo.jpg' );
+        $actual = $looks_crawlable( '/path/to/foo.jpg' );
         $this->assertEquals( $expected, $actual );
 
         // Default disallowed extension
         $expected = false;
-        $actual = FilesHelper::filePathLooksCrawlable( '/path/to/foo.txt' );
+        $actual = $looks_crawlable( '/path/to/foo.txt' );
         $this->assertEquals( $expected, $actual );
 
         // Default disallowed extension uppercase
         $expected = false;
-        $actual = FilesHelper::filePathLooksCrawlable( '/path/to/FOO.TXT' );
+        $actual = $looks_crawlable( '/path/to/FOO.TXT' );
         $this->assertEquals( $expected, $actual );
 
         // Default disallowed extension with . replaced with any other character
         // This is to test bad regex
         $expected = true;
-        $actual = FilesHelper::filePathLooksCrawlable( '/path/to/foohtxt' );
+        $actual = $looks_crawlable( '/path/to/foohtxt' );
         $this->assertEquals( $expected, $actual );
 
         // Default disallowed filename
         $expected = false;
-        $actual = FilesHelper::filePathLooksCrawlable( '/path/to/thumbs.db' );
+        $actual = $looks_crawlable( '/path/to/thumbs.db' );
         $this->assertEquals( $expected, $actual );
 
         // Try a disallowed URL - .git filepaths
         $expected = false;
-        $actual = FilesHelper::filePathLooksCrawlable(
+        $actual = $looks_crawlable(
             // @phpcs:ignore Generic.Files.LineLength.TooLong
             'http://foo.com/wp-content/plugins/my-plugin/.git/objects/0b/f00ad2a21d59fc587a605008d3c3a83bb81e51'
         );
@@ -202,7 +239,7 @@ final class FileHelperTest extends TestCase {
 
         // Try a disallowed URL - .git filepaths uppercase
         $expected = false;
-        $actual = FilesHelper::filePathLooksCrawlable(
+        $actual = $looks_crawlable(
             // @phpcs:ignore Generic.Files.LineLength.TooLong
             'http://foo.com/wp-content/plugins/my-plugin/.GIT/objects/0b/f00ad2a21d59fc587a605008d3c3a83bb81e51'
         );
@@ -210,127 +247,54 @@ final class FileHelperTest extends TestCase {
     }
 
     /**
-     * Test filePathLooksCrawlable method's wp2static_file_extensions_to_ignore
+     * Test pathLooksCrawlable method's $file_extensions_to_ignore argument
      * filter.
      *
      * @return void
      */
-    public function testFilePathLooksCrawlableExtensionFilter() {
-        // txt extensions should be disallowed
-        $expected = false;
-        $actual = FilesHelper::filePathLooksCrawlable( '/path/to/foo.txt' );
-        $this->assertEquals( $expected, $actual );
+    public function testPathLooksCrawlableExtension() {
+        $looks_crawlable = function( $file_name ) {
+            return FilesHelper::pathLooksCrawlable(
+                $file_name,
+                [],
+                [ '.unknown' ]
+            );
+        };
 
-        // Here we're changing which file extensions are no longer allowed.
-        \WP_Mock::onFilter( 'wp2static_file_extensions_to_ignore' )
-            ->with(
-                [
-                    '.bat',
-                    '.crt',
-                    '.DS_Store',
-                    '.git',
-                    '.idea',
-                    '.ini',
-                    '.less',
-                    '.map',
-                    '.md',
-                    '.mo',
-                    '.php',
-                    '.PHP',
-                    '.phtml',
-                    '.po',
-                    '.pot',
-                    '.scss',
-                    '.sh',
-                    '.sql',
-                    '.SQL',
-                    '.tar.gz',
-                    '.tpl',
-                    '.txt',
-                    '.yarn',
-                    '.zip',
-                ]
-            )
-            ->reply( [ '.unknown' ] );
         // We've disallowed .unknown - test it
         $expected = false;
-        $actual = FilesHelper::filePathLooksCrawlable( '/path/to/foo.unknown' );
+        $actual = $looks_crawlable( '/path/to/foo.unknown' );
         $this->assertEquals( $expected, $actual );
 
         // txt extensions should now be allowed - test it
         $expected = true;
-        $actual = FilesHelper::filePathLooksCrawlable( '/path/to/foo.txt' );
+        $actual = $looks_crawlable( '/path/to/foo.txt' );
         $this->assertEquals( $expected, $actual );
     }
 
     /**
-     * Test filePathLooksCrawlable method's wp2static_filenames_to_ignore
+     * Test pathLooksCrawlable method's $filenames_to_ignore argument
      * filter.
      *
      * @return void
      */
-    public function testFilePathLooksCrawlableFilenameFilter() {
-        // thumbs.db filenames are currently disallowed
-        $expected = false;
-        $actual = FilesHelper::filePathLooksCrawlable( '/path/to/thumbs.db' );
-        $this->assertEquals( $expected, $actual );
+    public function testPathLooksCrawlableFilenames() {
+        $looks_crawlable = function( $file_name ) {
+            return FilesHelper::pathLooksCrawlable(
+                $file_name,
+                [ 'yarn.lock' ],
+                []
+            );
+        };
 
-        // Here we're changing which fil eextensions are no longer allowed.
-        \WP_Mock::onFilter( 'wp2static_filenames_to_ignore' )
-            ->with(
-                [
-                    '__MACOSX',
-                    '.babelrc',
-                    '.git',
-                    '.gitignore',
-                    '.gitkeep',
-                    '.htaccess',
-                    '.php',
-                    '.svn',
-                    '.travis.yml',
-                    'backwpup',
-                    'bower_components',
-                    'bower.json',
-                    'composer.json',
-                    'composer.lock',
-                    'config.rb',
-                    'current-export',
-                    'Dockerfile',
-                    'gulpfile.js',
-                    'latest-export',
-                    'LICENSE',
-                    'Makefile',
-                    'node_modules',
-                    'package.json',
-                    'pb_backupbuddy',
-                    'plugins/wp2static',
-                    'previous-export',
-                    'README',
-                    'static-html-output-plugin',
-                    '/tests/',
-                    'thumbs.db',
-                    'tinymce',
-                    'wc-logs',
-                    'wpallexport',
-                    'wpallimport',
-                    'wp-static-html-output', // exclude earlier version exports
-                    'wp2static-addon',
-                    'wp2static-crawled-site',
-                    'wp2static-processed-site',
-                    'wp2static-working-files',
-                    'yarn-error.log',
-                    'yarn.lock',
-                ]
-            )
-            ->reply( [ 'yarn.lock' ] );
         // We've disallowed yarn.lock - test it
         $expected = false;
-        $actual = FilesHelper::filePathLooksCrawlable( '/path/to/yarn.lock' );
+        $actual = $looks_crawlable( '/path/to/yarn.lock' );
         $this->assertEquals( $expected, $actual );
 
         // thumbs.db filenames should now be allowed - test it
         $expected = true;
-        $actual = FilesHelper::filePathLooksCrawlable( '/path/to/thumbs.db' );
+        $actual = $looks_crawlable( '/path/to/thumbs.db' );
         $this->assertEquals( $expected, $actual );
     }
 
