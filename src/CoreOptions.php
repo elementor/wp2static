@@ -332,6 +332,7 @@ class CoreOptions {
                 'localhost'
             ),
             self::makeOptionSpec(
+                'boolean',
                 'skipURLRewrite',
                 '0',
                 'Skip URL Rewrite',
