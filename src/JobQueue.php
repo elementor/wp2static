@@ -252,7 +252,7 @@ class JobQueue {
 
         foreach ( $job_types as $type ) {
             try {
-                $lock = "wp2static_jobs.$type";
+                $lock = "{$wpdb->prefix}.wp2static_jobs.$type";
                 $query = "SELECT IS_FREE_LOCK('$lock') AS free";
                 $free = intval( $wpdb->get_row( $query )->free );
 
