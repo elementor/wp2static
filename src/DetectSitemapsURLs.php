@@ -19,7 +19,10 @@ class DetectSitemapsURLs {
         $parser = new SitemapParser(
             'WP2Static.com',
             [
-                'guzzle' => [ 'verify' => false ],
+                'guzzle' => [
+                    'http_errors' => false,
+                    'verify' => false,
+                ],
                 'strict' => false,
             ]
         );

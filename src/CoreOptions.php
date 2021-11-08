@@ -10,6 +10,11 @@ namespace WP2Static;
 class CoreOptions {
 
     /**
+     * @var ?array<string, array<string, ?string>>
+     */
+    private static $cached_option_specs = null;
+
+    /**
      * @var string
      */
     private static $table_name = 'wp2static_core_options';
@@ -31,19 +36,281 @@ class CoreOptions {
             name VARCHAR(191) NOT NULL,
             value VARCHAR(249) NOT NULL,
             blob_value BLOB,
-            label VARCHAR(249) NULL,
-            description VARCHAR(249) NULL,
             PRIMARY KEY  (id)
         ) $charset_collate;";
 
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         dbDelta( $sql );
 
+        $wpdb->query( "ALTER TABLE $table_name DROP COLUMN IF EXISTS description" );
+        $wpdb->query( "ALTER TABLE $table_name DROP COLUMN IF EXISTS label" );
+
         Controller::ensureIndex(
             $table_name,
             'name',
             "CREATE UNIQUE INDEX name ON $table_name (name)"
         );
+    }
+
+    /**
+     * @return array<string, ?string>
+     */
+    public static function makeOptionSpec(
+        string $name,
+        string $default_value,
+        string $label,
+        string $description,
+        ?string $default_blob_value = null
+    ) : array {
+        return [
+            'name' => $name,
+            'default_value' => $default_value,
+            'label' => $label,
+            'description' => $description,
+            'default_blob_value' => $default_blob_value,
+        ];
+    }
+
+    /**
+     * @return array<string, array<string, ?string>>
+     */
+    public static function optionSpecs() : array {
+        if ( self::$cached_option_specs ) {
+            return self::$cached_option_specs;
+        }
+
+        $specs = [
+            self::makeOptionSpec(
+                'detectCustomPostTypes',
+                '1',
+                'Detect Custom Post Types',
+                'Include Custom Post Types in URL Detection.'
+            ),
+            self::makeOptionSpec(
+                'detectPages',
+                '1',
+                'Detect Pages',
+                'Include Pages in URL Detection.'
+            ),
+            self::makeOptionSpec(
+                'detectPosts',
+                '1',
+                'Detect Posts',
+                'Include Posts in URL Detection.'
+            ),
+            self::makeOptionSpec(
+                'detectUploads',
+                '1',
+                'Detect Uploads',
+                'Include Uploads in URL Detection.'
+            ),
+            self::makeOptionSpec(
+                'queueJobOnPostSave',
+                '1',
+                'Post save',
+                'Queues a new job every time a Post or Page is saved.'
+            ),
+            self::makeOptionSpec(
+                'queueJobOnPostDelete',
+                '1',
+                'Post delete',
+                'Queues a new job every time a Post or Page is deleted.'
+            ),
+            self::makeOptionSpec(
+                'processQueueImmediately',
+                '0',
+                'Process queue immediately after enqueueing jobs',
+                ''
+            ),
+            self::makeOptionSpec(
+                'processQueueInterval',
+                '0',
+                'Interval to process queue with WP-Cron',
+                'WP-Cron will attempt to process job queue at this interval (minutes)'
+            ),
+            self::makeOptionSpec(
+                'autoJobQueueDetection',
+                '1',
+                'Detect URLs',
+                ''
+            ),
+            self::makeOptionSpec(
+                'autoJobQueueCrawling',
+                '1',
+                'Crawl Site',
+                ''
+            ),
+            self::makeOptionSpec(
+                'autoJobQueuePostProcessing',
+                '1',
+                'Post-process',
+                ''
+            ),
+            self::makeOptionSpec(
+                'autoJobQueueDeployment',
+                '1',
+                'Deploy',
+                ''
+            ),
+            self::makeOptionSpec(
+                'basicAuthUser',
+                '',
+                'Basic Auth User',
+                'Username for basic authentication.'
+            ),
+            self::makeOptionSpec(
+                'deploymentURL',
+                'https://example.com',
+                'Deployment URL',
+                'URL your static site will be hosted at.'
+            ),
+            self::makeOptionSpec(
+                'basicAuthPassword',
+                '',
+                'Basic Auth Password',
+                'Password for basic authentication.'
+            ),
+            self::makeOptionSpec(
+                'useCrawlCaching',
+                '1',
+                'Use CrawlCache',
+                'Skip crawling unchanged URLs.'
+            ),
+            self::makeOptionSpec(
+                'completionEmail',
+                '',
+                'Completion Email',
+                'Email to send deployment completion notification to.'
+            ),
+            self::makeOptionSpec(
+                'completionWebhook',
+                '',
+                'Completion Webhook',
+                'Webhook to send deployment completion notification to.'
+            ),
+            self::makeOptionSpec(
+                'completionWebhookMethod',
+                'POST',
+                'Completion Webhook Method',
+                'How to send completion webhook payload (GET|POST).'
+            ),
+
+            // Advanced options
+            self::makeOptionSpec(
+                'crawlConcurrency',
+                '1',
+                'Crawl Concurrency',
+                'The maximum number of files that will be crawled at the same time.'
+            ),
+            self::makeOptionSpec(
+                'fileExtensionsToIgnore',
+                '1',
+                'File Extensions to Ignore',
+                'Files with these extensions will be ignored while crawling.',
+                implode(
+                    "\n",
+                    [
+                        '.bat',
+                        '.crt',
+                        '.DS_Store',
+                        '.git',
+                        '.idea',
+                        '.ini',
+                        '.less',
+                        '.map',
+                        '.md',
+                        '.mo',
+                        '.php',
+                        '.PHP',
+                        '.phtml',
+                        '.po',
+                        '.pot',
+                        '.scss',
+                        '.sh',
+                        '.sql',
+                        '.SQL',
+                        '.tar.gz',
+                        '.tpl',
+                        '.txt',
+                        '.yarn',
+                        '.zip',
+                    ]
+                )
+            ),
+            self::makeOptionSpec(
+                'filenamesToIgnore',
+                '1',
+                'Directory and File Names to Ignore',
+                'Directories and files with these names will be ignored while crawling.',
+                implode(
+                    "\n",
+                    [
+                        '__MACOSX',
+                        '.babelrc',
+                        '.git',
+                        '.gitignore',
+                        '.gitkeep',
+                        '.htaccess',
+                        '.php',
+                        '.svn',
+                        '.travis.yml',
+                        'backwpup',
+                        'bower_components',
+                        'bower.json',
+                        'composer.json',
+                        'composer.lock',
+                        'config.rb',
+                        'current-export',
+                        'Dockerfile',
+                        'gulpfile.js',
+                        'latest-export',
+                        'LICENSE',
+                        'Makefile',
+                        'node_modules',
+                        'package.json',
+                        'pb_backupbuddy',
+                        'plugins/wp2static',
+                        'previous-export',
+                        'README',
+                        'static-html-output-plugin',
+                        '/tests/',
+                        'thumbs.db',
+                        'tinymce',
+                        'wc-logs',
+                        'wpallexport',
+                        'wpallimport',
+                        'wp-static-html-output', // exclude earlier version exports
+                        'wp2static-addon',
+                        'wp2static-crawled-site',
+                        'wp2static-processed-site',
+                        'wp2static-working-files',
+                        'yarn-error.log',
+                        'yarn.lock',
+                    ]
+                )
+            ),
+            self::makeOptionSpec(
+                'hostsToRewrite',
+                '1',
+                'Hosts to Rewrite',
+                'Hosts to rewrite to the deployment URL.',
+                'localhost'
+            ),
+            self::makeOptionSpec(
+                'skipURLRewrite',
+                '0',
+                'Skip URL Rewrite',
+                'Don\'t rewrite any URLs. This may give a slight speed-up when the'
+                . ' deployment URL is the same as WordPress\'s URL.'
+            ),
+        ];
+
+        $ret = [];
+        foreach ( $specs as $s ) {
+            $ret[ $s['name'] ] = $s;
+        }
+        self::$cached_option_specs = $ret;
+        return $ret;
     }
 
     /**
@@ -54,189 +321,17 @@ class CoreOptions {
 
         $table_name = $wpdb->prefix . self::$table_name;
 
-        $queries = [];
-
         $query_string =
-            "INSERT IGNORE INTO $table_name (name, value, label, description)
-            VALUES (%s, %s, %s, %s);";
+            "INSERT IGNORE INTO $table_name (name, value, blob_value)
+VALUES (%s, %s, %s);";
 
-        $blob_query_string =
-            "INSERT IGNORE INTO $table_name (name, value, label, description, blob_value)
-            VALUES (%s, %s, %s, %s, %s);";
-
-        $queries[] = $wpdb->prepare(
-            $query_string,
-            'detectCustomPostTypes',
-            '1',
-            'Detect Custom Post Types',
-            'Include Custom Post Types in URL Detection.'
-        );
-
-        $queries[] = $wpdb->prepare(
-            $query_string,
-            'detectPages',
-            '1',
-            'Detect Pages',
-            'Include Pages in URL Detection.'
-        );
-
-        $queries[] = $wpdb->prepare(
-            $query_string,
-            'detectPosts',
-            '1',
-            'Detect Posts',
-            'Include Posts in URL Detection.'
-        );
-
-        $queries[] = $wpdb->prepare(
-            $query_string,
-            'detectUploads',
-            '1',
-            'Detect Uploads',
-            'Include Uploads in URL Detection.'
-        );
-
-        $queries[] = $wpdb->prepare(
-            $query_string,
-            'queueJobOnPostSave',
-            '1',
-            'Post save',
-            'Queues a new job every time a Post or Page is saved.'
-        );
-
-        $queries[] = $wpdb->prepare(
-            $query_string,
-            'queueJobOnPostDelete',
-            '1',
-            'Post delete',
-            'Queues a new job every time a Post or Page is deleted.'
-        );
-
-        $queries[] = $wpdb->prepare(
-            $query_string,
-            'processQueueImmediately',
-            '0',
-            'Process queue immediately after enqueueing jobs',
-            ''
-        );
-
-        $queries[] = $wpdb->prepare(
-            $query_string,
-            'processQueueInterval',
-            '0',
-            'Interval to process queue with WP-Cron',
-            'WP-Cron will attempt to process job queue at this interval (minutes)'
-        );
-
-        $queries[] = $wpdb->prepare(
-            $query_string,
-            'autoJobQueueDetection',
-            '1',
-            'Detect URLs',
-            ''
-        );
-
-        $queries[] = $wpdb->prepare(
-            $query_string,
-            'autoJobQueueCrawling',
-            '1',
-            'Crawl Site',
-            ''
-        );
-
-        $queries[] = $wpdb->prepare(
-            $query_string,
-            'autoJobQueuePostProcessing',
-            '1',
-            'Post-process',
-            ''
-        );
-
-        $queries[] = $wpdb->prepare(
-            $query_string,
-            'autoJobQueueDeployment',
-            '1',
-            'Deploy',
-            ''
-        );
-
-        $queries[] = $wpdb->prepare(
-            $query_string,
-            'basicAuthUser',
-            '',
-            'Basic Auth User',
-            'Username for basic authentication.'
-        );
-
-        $queries[] = $wpdb->prepare(
-            $query_string,
-            'deploymentURL',
-            'https://example.com',
-            'Deployment URL',
-            'URL your static site will be hosted at.'
-        );
-
-        $queries[] = $wpdb->prepare(
-            $query_string,
-            'basicAuthPassword',
-            '',
-            'Basic Auth Password',
-            'Password for basic authentication.'
-        );
-
-        $queries[] = $wpdb->prepare(
-            $query_string,
-            'useCrawlCaching',
-            '1',
-            'Use CrawlCache',
-            'Skip crawling unchanged URLs.'
-        );
-
-        $queries[] = $wpdb->prepare(
-            $query_string,
-            'completionEmail',
-            '',
-            'Completion Email',
-            'Email to send deployment completion notification to.'
-        );
-
-        $queries[] = $wpdb->prepare(
-            $query_string,
-            'completionWebhook',
-            '',
-            'Completion Webhook',
-            'Webhook to send deployment completion notification to.'
-        );
-
-        $queries[] = $wpdb->prepare(
-            $query_string,
-            'completionWebhookMethod',
-            'POST',
-            'Completion Webhook Method',
-            'How to send completion webhook payload (GET|POST).'
-        );
-
-        // Advanced options
-
-        $queries[] = $wpdb->prepare(
-            $query_string,
-            'skipURLRewrite',
-            '0',
-            'Skip URL Rewrite',
-            'Don\'t rewrite any URLs. This may give a slight speed-up when the'
-            . ' deployment URL is the same as WordPress\'s URL.'
-        );
-
-        $queries[] = $wpdb->prepare(
-            $blob_query_string,
-            'hostsToRewrite',
-            '1',
-            'Hosts to Rewrite',
-            'Hosts to rewrite to the deployment URL.',
-            'localhost'
-        );
-
-        foreach ( $queries as $query ) {
+        foreach ( self::optionSpecs() as $os ) {
+            $query = $wpdb->prepare(
+                $query_string,
+                $os['name'],
+                $os['default_value'],
+                $os['default_blob_value']
+            );
             $wpdb->query( $query );
         }
     }
@@ -260,7 +355,11 @@ class CoreOptions {
         $option_value = $wpdb->get_var( $sql );
 
         if ( ! $option_value || ! is_string( $option_value ) ) {
-            return '';
+            $os = self::optionSpecs()[ $name ];
+            if ( ! $os ) {
+                return '';
+            }
+            $option_value = (string) $os['default_value'];
         }
 
         if ( $name === 'basicAuthPassword' ) {
@@ -298,7 +397,11 @@ class CoreOptions {
         $option_value = $wpdb->get_var( $sql );
 
         if ( ! is_string( $option_value ) ) {
-            return '';
+            $os = self::optionSpecs()[ $name ];
+            if ( ! $os ) {
+                return '';
+            }
+            $option_value = (string) $os['default_blob_value'];
         }
 
         return $option_value;
@@ -321,6 +424,33 @@ class CoreOptions {
     }
 
     /**
+     * Get option default BLOB value
+     *
+     * @throws WP2StaticException
+     * @return string option default BLOB value
+     */
+    public static function getDefaultBlobValue( string $name ) : string {
+        $val = self::optionSpecs()[ $name ]['default_blob_value'];
+        return $val ? $val : '';
+    }
+
+    /**
+     * @return array<string>
+     */
+    public static function getDefaultLineDelimitedBlobValue( string $name ) : array {
+        $vals = preg_split(
+            '/\r\n|\r|\n/',
+            self::getDefaultBlobValue( $name )
+        );
+
+        if ( ! $vals ) {
+            return [];
+        }
+
+        return $vals;
+    }
+
+    /**
      * Get option (value, description, label, etc)
      *
      * @return mixed option
@@ -331,33 +461,42 @@ class CoreOptions {
         $table_name = $wpdb->prefix . self::$table_name;
 
         $sql = $wpdb->prepare(
-            "SELECT name, value, label, description, blob_value
+            "SELECT name, value, blob_value
              FROM $table_name WHERE" . ' name = %s LIMIT 1',
             $name
         );
 
-        $option = $wpdb->get_results( $sql );
+        $option = $wpdb->get_row( $sql );
 
         // decrypt password fields
-        if ( $option[0]->name === 'basicAuthPassword' ) {
-            $option[0]->value =
-                self::encrypt_decrypt( 'decrypt', $option[0]->value );
+        if ( $option->name === 'basicAuthPassword' ) {
+            $option->value =
+                self::encrypt_decrypt( 'decrypt', $option->value );
         }
 
-        return $option[0];
+        $os = self::optionSpecs() [ $name ];
+
+        if ( ! $option && $os ) {
+            $opt = array_merge( $os ); // Make a copy so we don't modify $cached_option_specs
+            $opt['value'] = $os['default_value'];
+            $opt['blob_value'] = $os['default_blob_value'];
+            return $opt;
+        }
+
+        return (object) array_merge( $os, (array) $option );
     }
 
     /**
      * Get all options (value, description, label, etc)
      *
-     * @return mixed array of options
+     * @return array<string, mixed> array of option name to option object
      */
     public static function getAll() {
         global $wpdb;
 
         $table_name = $wpdb->prefix . self::$table_name;
 
-        $sql = "SELECT name, value, label, description FROM $table_name ORDER BY label";
+        $sql = "SELECT name, value, blob_value FROM $table_name";
 
         $options = $wpdb->get_results( $sql );
 
@@ -376,7 +515,26 @@ class CoreOptions {
             $options
         );
 
-        return $options;
+        $options_map = [];
+        foreach ( $options as $o ) {
+            $options_map[ $o['name'] ] = $o;
+        }
+
+        $ret = [];
+        foreach ( self::optionSpecs() as $os ) {
+            $name = $os['name'];
+            $opt = $options_map[ $name ];
+            if ( ! $opt ) {
+                $opt = array_merge( $os ); // Make a copy so we don't modify $cached_option_specs
+                $opt['value'] = $os['default_value'];
+                $opt['blob_value'] = $os['default_blob_value'];
+                $ret[ $name ] = $opt;
+            } else {
+                $ret[ $name ] = (object) array_merge( $os, $opt );
+            }
+        }
+
+        return $ret;
     }
 
     /*
@@ -561,10 +719,33 @@ class CoreOptions {
 
                 break;
             case 'advanced':
+                $crawl_concurrency = intval( $_POST['crawlConcurrency'] );
                 $wpdb->update(
                     $table_name,
-                    [ 'value' => isset( $_POST['skipURLRewrite'] ) ? 1 : 0 ],
-                    [ 'name' => 'skipURLRewrite' ]
+                    [ 'value' => $crawl_concurrency < 1 ? 1 : $crawl_concurrency ],
+                    [ 'name' => 'crawlConcurrency' ]
+                );
+
+                $file_extensions_to_ignore = preg_replace(
+                    '/^\s+|\s+$/m',
+                    '',
+                    $_POST['fileExtensionsToIgnore']
+                );
+                $wpdb->update(
+                    $table_name,
+                    [ 'blob_value' => $file_extensions_to_ignore ],
+                    [ 'name' => 'fileExtensionsToIgnore' ]
+                );
+
+                $filenames_to_ignore = preg_replace(
+                    '/^\s+|\s+$/m',
+                    '',
+                    $_POST['filenamesToIgnore']
+                );
+                $wpdb->update(
+                    $table_name,
+                    [ 'blob_value' => $filenames_to_ignore ],
+                    [ 'name' => 'filenamesToIgnore' ]
                 );
 
                 $hosts_to_rewrite = preg_replace(
@@ -576,6 +757,12 @@ class CoreOptions {
                     $table_name,
                     [ 'blob_value' => $hosts_to_rewrite ],
                     [ 'name' => 'hostsToRewrite' ]
+                );
+
+                $wpdb->update(
+                    $table_name,
+                    [ 'value' => isset( $_POST['skipURLRewrite'] ) ? 1 : 0 ],
+                    [ 'name' => 'skipURLRewrite' ]
                 );
                 break;
         }

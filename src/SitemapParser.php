@@ -125,6 +125,7 @@ class SitemapParser {
             try {
                 $this->parse( $todo[0] );
             } catch ( WP2StaticException $e ) {
+                WsLog::w( $e->getMessage() );
                 // Keep crawling
                 continue;
             }
@@ -180,6 +181,11 @@ class SitemapParser {
         }
         $this->history[] = $this->current_url;
         $response = is_string( $url_content ) ? $url_content : $this->getContent();
+
+        if ( ! $response ) {
+            return;
+        }
+
         if ( parse_url( $this->current_url, PHP_URL_PATH ) === self::ROBOTSTXT_PATH ) {
             $this->parseRobotstxt( $response );
             return;
@@ -217,7 +223,7 @@ class SitemapParser {
     /**
      * Request the body content of an URL
      *
-     * @return string Raw body content
+     * @return ?string Raw body content
      * @throws WP2StaticException
      */
     protected function getContent() {
@@ -234,7 +240,15 @@ class SitemapParser {
             }
             $client = new WP2StaticGuzzleHttp\Client();
             $res = $client->request( 'GET', $this->current_url, $this->config['guzzle'] );
-            return $res->getBody()->getContents();
+            if ( $res->getStatusCode() === 200 ) {
+                return $res->getBody()->getContents();
+            } else {
+                WsLog::w(
+                    'Got ' . $res->getStatusCode() .
+                    ' for sitemap url "' . $this->current_url . '", skipping.'
+                );
+                return null;
+            }
         } catch ( WP2StaticGuzzleHttp\Exception\TransferException $e ) {
             throw new WP2StaticException( 'Unable to fetch URL contents', 0, $e );
         } catch ( WP2StaticGuzzleHttp\Exception\GuzzleException $e ) {

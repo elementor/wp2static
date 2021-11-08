@@ -71,7 +71,7 @@ if ( defined( 'WP_CLI' ) ) {
     $_SERVER['HTTP_HOST'] = 'localhost:7000';
 }
 
-if ( 'on' === $_SERVER['HTTPS'] ) {
+if ( isset( $_SERVER['HTTPS'] ) && 'on' === $_SERVER['HTTPS'] ) {
     define( 'WP_SITEURL', 'https://' . $_SERVER['HTTP_HOST'] . '/' );
     define( 'WP_HOME', 'https://' . $_SERVER['HTTP_HOST'] . '/' );
 } else {

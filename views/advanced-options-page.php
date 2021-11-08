@@ -15,10 +15,69 @@
 
     <h1>Advanced Options<h1>
 
+    <h2>Detection Options</h2>
+
+    <table class="widefat striped">
+        <tbody>
+            <tr>
+                <td style="width:50%;">
+                    <label
+                        for="<?php echo $view['coreOptions']['filenamesToIgnore']->name; ?>"
+                    ><b><?php echo $view['coreOptions']['filenamesToIgnore']->label; ?></b></label>
+                    <br/><?php echo $view['coreOptions']['filenamesToIgnore']->description; ?>
+                </td>
+                <td>
+                    <textarea
+                        class="widefat"
+                        cols=30 rows=10
+                        id="<?php echo $view['coreOptions']['filenamesToIgnore']->name; ?>"
+                        name="<?php echo $view['coreOptions']['filenamesToIgnore']->name; ?>"
+                        type="text"
+                        ><?php echo $view['coreOptions']['filenamesToIgnore']->blob_value; ?></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td style="width:50%;">
+                    <label
+                        for="<?php echo $view['coreOptions']['fileExtensionsToIgnore']->name; ?>"
+                    ><b><?php echo $view['coreOptions']['fileExtensionsToIgnore']->label; ?></b></label>
+                    <br/><?php echo $view['coreOptions']['fileExtensionsToIgnore']->description; ?>
+                </td>
+                <td>
+                    <textarea
+                        class="widefat"
+                        cols=30 rows=10
+                        id="<?php echo $view['coreOptions']['fileExtensionsToIgnore']->name; ?>"
+                        name="<?php echo $view['coreOptions']['fileExtensionsToIgnore']->name; ?>"
+                        type="text"
+                        ><?php echo $view['coreOptions']['fileExtensionsToIgnore']->blob_value; ?></textarea>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p/>
+
     <h2>Post-processing Options</h2>
 
     <table class="widefat striped">
         <tbody>
+            <tr>
+                <td style="width:50%;">
+                    <label
+                        for="<?php echo $view['coreOptions']['crawlConcurrency']->name; ?>"
+                    ><b><?php echo $view['coreOptions']['crawlConcurrency']->label; ?></b></label>
+                    <br/><?php echo $view['coreOptions']['crawlConcurrency']->description; ?>
+                </td>
+                <td>
+                    <input
+                        id="<?php echo $view['coreOptions']['crawlConcurrency']->name; ?>"
+                        name="<?php echo $view['coreOptions']['crawlConcurrency']->name; ?>"
+                        value="<?php echo (int) $view['coreOptions']['crawlConcurrency']->value; ?>"
+                        type="number"
+                    />
+                </td>
+            </tr>
             <tr>
                 <td style="width:50%;">
                     <label
@@ -56,7 +115,7 @@
         </tbody>
     </table>
 
-    <p>
+    <p/>
 
     <?php wp_nonce_field( $view['nonce_action'] ); ?>
     <input name="action" type="hidden" value="wp2static_ui_save_advanced_options" />
