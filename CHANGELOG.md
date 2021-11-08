@@ -17,6 +17,7 @@
  - [#834](https://github.com/leonstafford/wp2static/pull/834): Implement concurrent crawling. @palmiak
    - Deprecate Crawler::crawlURL.
  - [#835](https://github.com/leonstafford/wp2static/pull/835): Add wp2static_option_* filters and option types
+ - [#833](https://github.com/leonstafford/wp2static/pull/833): Add advanced options for specifying directories, files, and file extensions to ignore @john-shaffer
 
 ## WP2Static 7.1.7 (2021-09-04)
 

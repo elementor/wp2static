@@ -22,7 +22,7 @@ parameters:
           count: 6
         - message: '#^In method "WP2Static\\\S+::\S+", you should not use the \$_(GET|POST) superglobal#'
           path: src/CoreOptions.php
-          count: 23
+          count: 25
         - message: '#^In method "WP2Static\\\S+::\S+", you should not use the \$_(GET|POST) superglobal#'
           path: src/ViewRenderer.php
           count: 32
