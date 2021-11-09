@@ -318,7 +318,7 @@ class CoreOptions {
                 )
             ),
             self::makeOptionSpec(
-                'multiline',
+                'array',
                 'hostsToRewrite',
                 '1',
                 'Hosts to Rewrite',

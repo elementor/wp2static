@@ -5,9 +5,9 @@ namespace WP2Static;
 class OptionRenderer {
 
     const INPUT_TYPE_FNS = [
+        'array' => 'optionInputArray',
         'boolean' => 'optionInputBoolean',
         'integer' => 'optionInputInteger',
-        'multiline' => 'optionInputMultiline',
         'password' => 'optionInputPassword',
         'string' => 'optionInputString',
     ];
@@ -28,6 +28,15 @@ class OptionRenderer {
      * @param array<string, mixed> $option
      * @return string
      */
+    public static function optionInputArray( array $option ) : string {
+        return '<textarea class="widefat" cols=30 rows=10 id="' . $option['name'] . '" name="' .
+               $option['name'] . '">' . $option['blob_value'] . '</textarea>';
+    }
+
+    /**
+     * @param array<string, mixed> $option
+     * @return string
+     */
     public static function optionInputBoolean( array $option ) : string {
         $checked = (int) $option['unfiltered_value'] === 1 ? ' checked' : '';
         return '<input id="' . $option['name'] . '" name="' . $option['name'] . '" value="1"' .
@@ -41,15 +50,6 @@ class OptionRenderer {
     public static function optionInputInteger( array $option ) : string {
         return '<input class="widefat" id="' . $option['name'] . '" name="' . $option['name'] .
                '" type="number" value="' . esc_html( $option['value'] ) . '">';
-    }
-
-    /**
-     * @param array<string, mixed> $option
-     * @return string
-     */
-    public static function optionInputMultiline( array $option ) : string {
-        return '<textarea class="widefat" cols=30 rows=10 id="' . $option['name'] . '" name="' .
-               $option['name'] . '">' . $option['blob_value'] . '</textarea>';
     }
 
     /**
