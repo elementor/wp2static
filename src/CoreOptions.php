@@ -229,6 +229,7 @@ class CoreOptions {
                 'The maximum number of files that will be crawled at the same time.'
             ),
             self::makeOptionSpec(
+                'array',
                 'fileExtensionsToIgnore',
                 '1',
                 'File Extensions to Ignore',
@@ -264,6 +265,7 @@ class CoreOptions {
                 )
             ),
             self::makeOptionSpec(
+                'array',
                 'filenamesToIgnore',
                 '1',
                 'Directory and File Names to Ignore',
@@ -324,6 +326,7 @@ class CoreOptions {
                 'localhost'
             ),
             self::makeOptionSpec(
+                'boolean',
                 'skipURLRewrite',
                 '0',
                 'Skip URL Rewrite',
