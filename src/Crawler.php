@@ -96,10 +96,7 @@ class Crawler {
         $site_host = $site_port ? $site_host . ":$site_port" : $site_host;
         $site_urls = [ "http://$site_host", "https://$site_host" ];
 
-        $use_crawl_cache = apply_filters(
-            'wp2static_use_crawl_cache',
-            CoreOptions::getValue( 'useCrawlCaching' )
-        );
+        $use_crawl_cache = CoreOptions::getValue( 'useCrawlCaching' );
 
         WsLog::l( ( $use_crawl_cache ? 'Using' : 'Not using' ) . ' CrawlCache.' );
 
@@ -142,7 +139,6 @@ class Crawler {
         };
 
         $concurrency = intval( CoreOptions::getValue( 'crawlConcurrency' ) );
-        $concurrency = apply_filters( 'wp2static_crawl_concurrency', $concurrency );
 
         $pool = new Pool(
             $this->client,

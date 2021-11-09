@@ -56,18 +56,22 @@ class CoreOptions {
      * @return array<string, ?string>
      */
     public static function makeOptionSpec(
+        string $type,
         string $name,
         string $default_value,
         string $label,
         string $description,
-        ?string $default_blob_value = null
+        ?string $default_blob_value = null,
+        ?string $filter_name = null
     ) : array {
         return [
+            'type' => $type,
             'name' => $name,
             'default_value' => $default_value,
             'label' => $label,
             'description' => $description,
             'default_blob_value' => $default_blob_value,
+            'filter_name' => $filter_name ? $filter_name : "wp2static_option_$name",
         ];
     }
 
@@ -81,114 +85,135 @@ class CoreOptions {
 
         $specs = [
             self::makeOptionSpec(
+                'boolean',
                 'detectCustomPostTypes',
                 '1',
                 'Detect Custom Post Types',
                 'Include Custom Post Types in URL Detection.'
             ),
             self::makeOptionSpec(
+                'boolean',
                 'detectPages',
                 '1',
                 'Detect Pages',
                 'Include Pages in URL Detection.'
             ),
             self::makeOptionSpec(
+                'boolean',
                 'detectPosts',
                 '1',
                 'Detect Posts',
                 'Include Posts in URL Detection.'
             ),
             self::makeOptionSpec(
+                'boolean',
                 'detectUploads',
                 '1',
                 'Detect Uploads',
                 'Include Uploads in URL Detection.'
             ),
             self::makeOptionSpec(
+                'boolean',
                 'queueJobOnPostSave',
                 '1',
-                'Post save',
+                'Post Save',
                 'Queues a new job every time a Post or Page is saved.'
             ),
             self::makeOptionSpec(
+                'boolean',
                 'queueJobOnPostDelete',
                 '1',
-                'Post delete',
+                'Post Delete',
                 'Queues a new job every time a Post or Page is deleted.'
             ),
             self::makeOptionSpec(
+                'boolean',
                 'processQueueImmediately',
                 '0',
-                'Process queue immediately after enqueueing jobs',
-                ''
+                'Process Queue Immediately',
+                'Begin processing the queue as soon as a job is added, without waiting for WP-Cron.'
             ),
             self::makeOptionSpec(
+                'integer',
                 'processQueueInterval',
                 '0',
-                'Interval to process queue with WP-Cron',
-                'WP-Cron will attempt to process job queue at this interval (minutes)'
+                'Process Queue Interval',
+                'WP-Cron will attempt to process the job queue at this interval'
             ),
             self::makeOptionSpec(
+                'boolean',
                 'autoJobQueueDetection',
                 '1',
                 'Detect URLs',
                 ''
             ),
             self::makeOptionSpec(
+                'boolean',
                 'autoJobQueueCrawling',
                 '1',
                 'Crawl Site',
                 ''
             ),
             self::makeOptionSpec(
+                'boolean',
                 'autoJobQueuePostProcessing',
                 '1',
-                'Post-process',
+                'Post-Process',
                 ''
             ),
             self::makeOptionSpec(
+                'boolean',
                 'autoJobQueueDeployment',
                 '1',
                 'Deploy',
                 ''
             ),
             self::makeOptionSpec(
+                'string',
                 'basicAuthUser',
                 '',
                 'Basic Auth User',
                 'Username for basic authentication.'
             ),
             self::makeOptionSpec(
+                'string',
                 'deploymentURL',
                 'https://example.com',
                 'Deployment URL',
                 'URL your static site will be hosted at.'
             ),
             self::makeOptionSpec(
+                'password',
                 'basicAuthPassword',
                 '',
                 'Basic Auth Password',
                 'Password for basic authentication.'
             ),
             self::makeOptionSpec(
+                'boolean',
                 'useCrawlCaching',
                 '1',
                 'Use CrawlCache',
-                'Skip crawling unchanged URLs.'
+                'Skip crawling unchanged URLs.',
+                null,
+                'wp2static_use_crawl_cache'
             ),
             self::makeOptionSpec(
+                'string',
                 'completionEmail',
                 '',
                 'Completion Email',
                 'Email to send deployment completion notification to.'
             ),
             self::makeOptionSpec(
+                'string',
                 'completionWebhook',
                 '',
                 'Completion Webhook',
                 'Webhook to send deployment completion notification to.'
             ),
             self::makeOptionSpec(
+                'string',
                 'completionWebhookMethod',
                 'POST',
                 'Completion Webhook Method',
@@ -197,12 +222,14 @@ class CoreOptions {
 
             // Advanced options
             self::makeOptionSpec(
+                'integer',
                 'crawlConcurrency',
                 '1',
                 'Crawl Concurrency',
                 'The maximum number of files that will be crawled at the same time.'
             ),
             self::makeOptionSpec(
+                'array',
                 'fileExtensionsToIgnore',
                 '1',
                 'File Extensions to Ignore',
@@ -238,6 +265,7 @@ class CoreOptions {
                 )
             ),
             self::makeOptionSpec(
+                'array',
                 'filenamesToIgnore',
                 '1',
                 'Directory and File Names to Ignore',
@@ -290,6 +318,7 @@ class CoreOptions {
                 )
             ),
             self::makeOptionSpec(
+                'multiline',
                 'hostsToRewrite',
                 '1',
                 'Hosts to Rewrite',
@@ -297,6 +326,7 @@ class CoreOptions {
                 'localhost'
             ),
             self::makeOptionSpec(
+                'boolean',
                 'skipURLRewrite',
                 '0',
                 'Skip URL Rewrite',
@@ -345,6 +375,13 @@ VALUES (%s, %s, %s);";
     public static function getValue( string $name ) : string {
         global $wpdb;
 
+        $opt_spec = self::optionSpecs()[ $name ];
+
+        if ( ! $opt_spec ) {
+            WsLog::w( 'Attempt to getValue of unknown option $name' );
+            return '';
+        }
+
         $table_name = $wpdb->prefix . self::$table_name;
 
         $sql = $wpdb->prepare(
@@ -355,25 +392,21 @@ VALUES (%s, %s, %s);";
         $option_value = $wpdb->get_var( $sql );
 
         if ( ! $option_value || ! is_string( $option_value ) ) {
-            $os = self::optionSpecs()[ $name ];
-            if ( ! $os ) {
-                return '';
-            }
-            $option_value = (string) $os['default_value'];
+            $option_value = (string) $opt_spec['default_value'];
         }
 
-        if ( $name === 'basicAuthPassword' ) {
-            return self::encrypt_decrypt( 'decrypt', $option_value );
+        if ( $opt_spec['type'] === 'password' ) {
+            $option_value = self::encrypt_decrypt( 'decrypt', $option_value );
         }
 
         // default deploymentURL is '/', else remove trailing slash
         if ( $name === 'deploymentURL' ) {
-            if ( $option_value === '/' ) {
-                return $option_value;
+            if ( $option_value !== '/' ) {
+                $option_value = untrailingslashit( $option_value );
             }
-
-            return untrailingslashit( $option_value );
         }
+
+        $option_value = apply_filters( (string) $opt_spec['filter_name'], $option_value );
 
         return $option_value;
     }
@@ -467,23 +500,33 @@ VALUES (%s, %s, %s);";
         );
 
         $option = $wpdb->get_row( $sql );
+        $opt_spec = self::optionSpecs() [ $name ];
 
         // decrypt password fields
-        if ( $option->name === 'basicAuthPassword' ) {
+        if ( $opt_spec['type'] === 'password' ) {
             $option->value =
                 self::encrypt_decrypt( 'decrypt', $option->value );
         }
 
-        $os = self::optionSpecs() [ $name ];
-
-        if ( ! $option && $os ) {
-            $opt = array_merge( $os ); // Make a copy so we don't modify $cached_option_specs
-            $opt['value'] = $os['default_value'];
-            $opt['blob_value'] = $os['default_blob_value'];
+        if ( $option ) {
+            $option->unfiltered_value = $option->value;
+            $option->value = apply_filters( (string) $opt_spec['filter_name'], $option->value );
+        } elseif ( $opt_spec ) {
+            $opt = array_merge( $opt_spec ); // Make a copy so we don't modify $cached_option_specs
+            $opt['unfiltered_value'] = $opt_spec['default_value'];
+            $opt['blob_value'] = $opt_spec['default_blob_value'];
+            if ( $opt_spec['filter_name'] ) {
+                $opt['value'] = apply_filters(
+                    $opt_spec['filter_name'],
+                    $opt_spec['default_value']
+                );
+            } else {
+                $opt['value'] = $opt_spec['default_value'];
+            }
             return $opt;
         }
 
-        return (object) array_merge( $os, (array) $option );
+        return (object) array_merge( $opt_spec, (array) $option );
     }
 
     /**
@@ -500,37 +543,35 @@ VALUES (%s, %s, %s);";
 
         $options = $wpdb->get_results( $sql );
 
-        // convert array of stdObjects to array of arrays
-        // for easier presentation in WP-CLI
-        // TODO: perform in view
-        $options = array_map(
-            function ( $obj ) {
-                // hide sensitive values
-                if ( $obj->name === 'basicAuthPassword' ) {
-                    $obj->value = '***************';
-                }
-
-                return (array) $obj;
-            },
-            $options
-        );
-
         $options_map = [];
-        foreach ( $options as $o ) {
-            $options_map[ $o['name'] ] = $o;
+        foreach ( $options as $opt ) {
+            $options_map[ $opt->name ] = (array) $opt;
         }
 
         $ret = [];
-        foreach ( self::optionSpecs() as $os ) {
-            $name = $os['name'];
+        foreach ( self::optionSpecs() as $opt_spec ) {
+            $name = $opt_spec['name'];
             $opt = $options_map[ $name ];
             if ( ! $opt ) {
-                $opt = array_merge( $os ); // Make a copy so we don't modify $cached_option_specs
-                $opt['value'] = $os['default_value'];
-                $opt['blob_value'] = $os['default_blob_value'];
+                 // Make a copy so we don't modify $cached_option_specs
+                $opt = array_merge( $opt_spec );
+                $opt['unfiltered_value'] = $opt_spec['default_value'];
+                $opt['blob_value'] = $opt_spec['default_blob_value'];
+                $opt['value'] = apply_filters(
+                    (string) $opt_spec['filter_name'],
+                    $opt_spec['default_value']
+                );
                 $ret[ $name ] = $opt;
             } else {
-                $ret[ $name ] = (object) array_merge( $os, $opt );
+                $val = $opt['value'];
+
+                if ( $opt_spec['type'] === 'password' ) {
+                    $val = self::encrypt_decrypt( 'decrypt', $val );
+                }
+
+                $opt['unfiltered_value'] = $val;
+                $opt['value'] = apply_filters( (string) $opt_spec['filter_name'], $val );
+                $ret[ $name ] = (object) array_merge( $opt_spec, $opt );
             }
         }
 
