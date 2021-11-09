@@ -23,7 +23,7 @@
         "guzzlehttp/psr7":"*"
     },
     "require": {
-        "php": ">=7.3",
+        "php": ">=7.4",
         "wa72/url": "^0.7.1",
         "leonstafford/wp2staticguzzle": "^7.2.0",
         "ext-mbstring": "*",
@@ -57,8 +57,9 @@
         "phpstan": "php -d memory_limit=-1 ./vendor/bin/phpstan analyse",
         "phpcbf": "vendor/bin/phpcbf --standard=./tools/phpcs.xml --ignore=*/js/*,*/tests/phpstan/*,*/admin/*,*/coverage/*,*.js,*/vendor/*,*/integration-tests/wordpress/* ./",
         "phpcs":  "vendor/bin/phpcs  -s --standard=./tools/phpcs.xml --ignore=*/tests/phpstan/*,*/admin/*,**/coverage/*,*.js,*/vendor/*,*/integration-tests/wordpress/* ./",
-        "php73": "vendor/bin/phpcs --standard=PHPCompatibility --runtime-set testVersion 7.3 --ignore=*/tests/*,*/admin/*,**/coverage/*,*.js,*/vendor/*,*/integration-tests/wordpress/* ./",
         "php74": "vendor/bin/phpcs --standard=PHPCompatibility --runtime-set testVersion 7.4 --ignore=*/tests/*,*/admin/*,**/coverage/*,*.js,*/vendor/*,*/integration-tests/wordpress/* ./",
+        "php80": "vendor/bin/phpcs --standard=PHPCompatibility --runtime-set testVersion 8.0 --ignore=*/tests/*,*/admin/*,**/coverage/*,*.js,*/vendor/*,*/integration-tests/wordpress/* ./",
+        "php81": "vendor/bin/phpcs --standard=PHPCompatibility --runtime-set testVersion 8.1 --ignore=*/tests/*,*/admin/*,**/coverage/*,*.js,*/vendor/*,*/integration-tests/wordpress/* ./",
         "phpunit": "vendor/bin/phpunit ./tests/unit/",
         "coverage": "XDEBUG_MODE=coverage vendor/bin/phpunit tests/unit --coverage-html coverage --whitelist src/",
         "lint": "vendor/bin/parallel-lint --exclude vendor .",
@@ -66,8 +67,9 @@
             "composer validate --strict",
             "@lint",
             "@phpcs",
-            "@php73",
             "@php74",
+            "@php80",
+            "@php81",
             "@phpstan",
             "@phpunit"
         ],

@@ -64,7 +64,7 @@
                 <td>
                 <p>The current officially supported PHP versions can be found on <a href="http://php.net/supported-versions.php" target="_blank">PHP.net</a></p>
 
-                <p>WP2Static now requires a minimum of PHP 7.3 and recommends PHP 7.4 for better performance. If your hosting provider doesn't provide PHP 7.4 or at least PHP 7.3, find a better one!</p>
+                <p>WP2Static now requires a minimum of PHP 7.4 and recommends PHP 8.0 for better performance. If your hosting provider doesn't provide PHP 8.0 or at least PHP 7.4, find a better one!</p>
                 </td>
             </tr>
             <tr>

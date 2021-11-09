@@ -266,7 +266,7 @@ class SitemapParser {
         // Split lines into array
         $lines = array_filter(
             array_map(
-                'trim',
+                fn ( $line ) => trim( (string) $line ),
                 (array) preg_split( '/\r\n|\n|\r/', $robotstxt )
             )
         );
@@ -283,7 +283,10 @@ class SitemapParser {
             $line = $line[0];
 
             // Split by directive and rule
-            $pair = array_map( 'trim', (array) preg_split( '/:/', $line, 2 ) );
+            $pair = array_map(
+                fn ( $line ) => trim( (string) $line ),
+                (array) preg_split( '/:/', $line, 2 )
+            );
             // Check if the line contains a sitemap
             if (
                 strtolower( $pair[0] ) !== self::XML_TAG_SITEMAP ||
@@ -388,7 +391,12 @@ class SitemapParser {
             // Strings are not part of any documented sitemap standard
             return false;
         }
-        $array = array_filter( array_map( 'trim', (array) preg_split( '/\r\n|\n|\r/', $string ) ) );
+        $array = array_filter(
+            array_map(
+                fn ( $line ) => trim( (string) $line ),
+                (array) preg_split( '/\r\n|\n|\r/', $string )
+            )
+        );
         foreach ( $array as $line ) {
             if ( $this->isSitemapURL( $line ) ) {
                 $this->addArray( self::XML_TAG_SITEMAP, [ 'loc' => $line ] );
