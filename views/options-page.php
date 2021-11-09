@@ -70,7 +70,7 @@ $row = function( $name ) use ( $options ) {
             <?php echo $row( 'completionEmail' ); ?>
             <tr>
                 <td style="width:50%;">
-                    <?php echo OptionRenderer::optionLabel( $options['completionWebhook'] ); ?>
+                    <?php echo OptionRenderer::optionLabel( (array) $options['completionWebhook'] ); ?>
                 </td>
                 <td>
                     <input
