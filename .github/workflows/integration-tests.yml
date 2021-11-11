@@ -76,5 +76,7 @@ jobs:
           WORDPRESS_VERSION: ${{ matrix.wordpress.version }}
           WP2STATIC_PATH: ..
 
-      - run: nix-store --dump-db > ~/nix-db-dump
+      - run: |
+          sudo nix-collect-garbage -d
+          nix-store --dump-db > ~/nix-db-dump
         if: steps.nix-cache.outputs.cache-hit != 'true'
