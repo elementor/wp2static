@@ -48,9 +48,13 @@ class FilesHelper {
         array $filenames_to_ignore,
         array $file_extensions_to_ignore
     ) : array {
-        $files = [];
-
         $site_path = SiteInfo::getPath( 'site' );
+
+        if ( ! is_string( $site_path ) ) {
+            return [];
+        }
+
+        $files = [];
 
         if ( is_dir( $dir ) ) {
             $iterator = new RecursiveIteratorIterator(
@@ -68,12 +72,10 @@ class FilesHelper {
                 );
 
                 if ( $path_crawlable ) {
-                    if ( is_string( $site_path ) ) {
-                        $url = str_replace( $site_path, '/', $filename );
+                    $url = str_replace( $site_path, '/', $filename );
 
-                        if ( is_string( $url ) ) {
-                            $files[] = $url;
-                        }
+                    if ( is_string( $url ) ) {
+                        $files[] = $url;
                     }
                 }
             }
