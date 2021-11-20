@@ -43,9 +43,16 @@ class DetectThemeAssets {
 
                 $detected_filename =
                     str_replace(
-                        $site_path,
-                        '/',
+                        $template_path,
+                        $template_url,
                         $filename
+                    );
+
+                $detected_filename =
+                    str_replace(
+                        get_home_url(),
+                        '/',
+                        $detected_filename
                     );
 
                 if ( $path_crawlable ) {

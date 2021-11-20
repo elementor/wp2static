@@ -82,6 +82,7 @@ class URLDetector {
             $arrays_to_merge[] =
                 FilesHelper::getListOfLocalFilesByDir(
                     SiteInfo::getPath( 'uploads' ),
+                    SiteInfo::getUrl( 'uploads' ),
                     $filenames_to_ignore,
                     $file_extensions_to_ignore
                 );

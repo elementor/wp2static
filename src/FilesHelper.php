@@ -39,21 +39,17 @@ class FilesHelper {
      * Get public URLs for all files in a local directory.
      *
      * @param string $dir
+     * @param string $base_url
      * @param array<string> $filenames_to_ignore
      * @param array<string> $file_extensions_to_ignore
      * @return string[] list of relative, urlencoded URLs
      */
     public static function getListOfLocalFilesByDir(
         string $dir,
+        string $base_url,
         array $filenames_to_ignore,
         array $file_extensions_to_ignore
     ) : array {
-        $site_path = SiteInfo::getPath( 'site' );
-
-        if ( ! is_string( $site_path ) ) {
-            return [];
-        }
-
         $files = [];
 
         if ( is_dir( $dir ) ) {
@@ -72,7 +68,19 @@ class FilesHelper {
                 );
 
                 if ( $path_crawlable ) {
-                    $url = str_replace( $site_path, '/', $filename );
+                    $url =
+                        str_replace(
+                            $dir,
+                            $base_url,
+                            $filename
+                        );
+
+                    $url =
+                        str_replace(
+                            get_home_url(),
+                            '/',
+                            $url
+                        );
 
                     if ( is_string( $url ) ) {
                         $files[] = $url;
