@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-set -e
+set -ouex
+
+cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 
 for PHP_VERSION in "7.4" "8.0"; do
     # shellcheck disable=SC2043

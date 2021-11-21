@@ -73,6 +73,7 @@
             "@phpstan",
             "@phpunit"
         ],
+        "test-integration": "integration-tests/test-matrix.sh",
         "build": "/bin/sh tools/build_release.sh"
     }
 }
