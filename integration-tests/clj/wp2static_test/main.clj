@@ -25,6 +25,26 @@
         ((or stop-f kill) process)
         (assoc this :process nil)))))
 
+(def plugins-dirs
+  ["bedrock/web/app/plugins"
+   "wordpress/wp-content/plugins"])
+
+(defrecord WP2Static [plugins-dirs started?]
+  component/Lifecycle
+  (start [this]
+    (if started?
+      this
+      (do
+        (core/build-wp2static! plugins-dirs)
+        (assoc this :started? true))))
+  (stop [this]
+    (if started?
+      (assoc this :started? nil)
+      this)))
+
+(defn wp2static []
+  (map->WP2Static {:plugins-dirs plugins-dirs}))
+
 (defn shell-process [m]
   (map->ShellProcess m))
 
@@ -62,6 +82,20 @@
                                 (catch Exception _))]
                  (sh/sh "kill" "-9" pid)))}))
 
+(defn bedrock []
+  (shell-process
+    {:after-join-f (fn [bedrock]
+                     (let [code (exit-code (:process bedrock))]
+                       (when-not (zero? code)
+                         (throw
+                           (ex-info
+                             (str "bedrock.sh exited with code " code)
+                             {:code code}))))
+                     bedrock)
+     :name "Bedrock Initializer"
+     :join? true
+     :open-f (fn [_] (popen ["bash" "bedrock.sh"]))}))
+
 (defn wordpress []
   (shell-process
     {:after-join-f (fn [wordpress]
@@ -71,7 +105,6 @@
                            (ex-info
                              (str "wordpress.sh exited with code " code)
                              {:code code}))))
-                     (core/build-wp2static!)
                      wordpress)
      :name "WordPress Initializer"
      :join? true
@@ -79,10 +112,12 @@
 
 (defn system-map []
   (component/system-map
+    :bedrock (component/using (bedrock) [:mariadb :php-fpm])
     :mariadb (mariadb)
     :nginx (component/using (nginx) [:wordpress])
     :php-fpm (component/using (php-fpm) [:mariadb])
-    :wordpress (component/using (wordpress) [:mariadb :php-fpm])))
+    :wordpress (component/using (wordpress) [:mariadb :php-fpm])
+    :wp2static (component/using (wp2static) [:bedrock :wordpress])))
 
 (defonce system (atom nil))
 

@@ -16,8 +16,9 @@ Optional:
 
 ## Test system
 
- - NGINX on localhost:7000
+ - NGINX on localhost:7000 and localhost:7001
  - MariaDB on mariadb/data/mysql.sock
  - PHP-FPM on php/fpm.sock
- - WordPress
+ - WordPress at localhost:7000
+ - Bedrock at localhost:7001
 
