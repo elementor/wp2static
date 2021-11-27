@@ -57,7 +57,7 @@ jobs:
             /nix/store
             /nix/var/nix/profiles
 
-      - run: sudo /nix/var/nix/profiles/default/bin/nix-store --load-db < ~/nix-db-dump
+      - run: sudo `command -v nix-store` --load-db < ~/nix-db-dump
         if: steps.nix-cache.outputs.cache-hit == 'true'
 
       - run: nix-build
@@ -77,6 +77,6 @@ jobs:
           WP2STATIC_PATH: ..
 
       - run: |
-          sudo nix-collect-garbage -d
+          sudo `command -v nix-collect-garbage` -d
           nix-store --dump-db > ~/nix-db-dump
         if: steps.nix-cache.outputs.cache-hit != 'true'
