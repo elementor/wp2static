@@ -29,7 +29,7 @@
     result))
 
 (defn wp-cli! [opts & args]
-  (apply sh! opts "wp" (concat args ["--path=wordpress"])))
+  (apply sh! opts "wp" (concat args [(str "--path=" (:path opts "wordpress"))])))
 
 (defn test [opts]
   ;; https://clojureverse.org/t/why-doesnt-my-program-exit/3754/8
@@ -42,3 +42,8 @@
   `(let [~name (main/start!)]
      (core/clean-wp2static-cache!)
      ~@body))
+
+(defmacro testing [[wp string] & body]
+  `(clojure.test/testing (str "[" (:name ~wp) "] " ~string)
+     ~@body))
+
