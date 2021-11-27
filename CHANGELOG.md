@@ -20,6 +20,7 @@
  - [#833](https://github.com/leonstafford/wp2static/pull/833): Add advanced options for specifying directories, files, and file extensions to ignore @john-shaffer
  - [#837](https://github.com/leonstafford/wp2static/pull/837): Require PHP 7.4 or later; bump dependencies @leonstafford
  - [#811](https://github.com/leonstafford/wp2static/issues/811): Optimize FilesHelper::getListOfLocalFilesByDir @bookwyrm
+ - [#805](https://github.com/leonstafford/wp2static/issues/805): Fix warning on cache page when there are no deployment namespaces @john-shaffer
 
 ## WP2Static 7.1.7 (2021-09-04)
 
