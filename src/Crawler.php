@@ -113,7 +113,9 @@ class Crawler {
         $urls = [];
 
         foreach ( $crawlable_paths as $root_relative_path ) {
-            $absolute_uri = new URL( $this->site_path . $root_relative_path );
+            $absolute_uri = new URL(
+                rtrim( SiteInfo::getURL( 'home' ), '/' ) . $root_relative_path
+            );
             $urls[] = [
                 'url' => $absolute_uri->get(),
                 'path' => $root_relative_path,
