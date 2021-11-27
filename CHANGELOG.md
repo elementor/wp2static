@@ -21,6 +21,9 @@
  - [#837](https://github.com/leonstafford/wp2static/pull/837): Require PHP 7.4 or later; bump dependencies @leonstafford
  - [#811](https://github.com/leonstafford/wp2static/issues/811): Optimize FilesHelper::getListOfLocalFilesByDir @bookwyrm
  - [#805](https://github.com/leonstafford/wp2static/issues/805): Fix warning on cache page when there are no deployment namespaces @john-shaffer
+ - [#840](https://github.com/leonstafford/wp2static/pull/840): Add preliminary support for [Bedrock](https://roots.io/bedrock/) by using home URL instead of site URL in several places. This is a potentially breaking change for anyone with `WP_HOME` differing from `WP_SITEURL`. @oriolarcas, @john-shaffer
+   - Use `wp2static_set_wordpress_home_url` filter in post-processing instead of `wp2static_set_wordpress_site_url`.
+   - Add integration tests for Bedrock.
 
 ## WP2Static 7.1.7 (2021-09-04)
 
