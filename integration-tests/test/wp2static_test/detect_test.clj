@@ -3,8 +3,16 @@
             [clojure.test :refer :all]
             [wp2static-test.test :as test]))
 
-(defn get-crawled-file [path]
-  (slurp (str "wordpress/wp-content/uploads/wp2static-crawled-site/" path)))
+(defn get-crawled-file [wp path]
+  (slurp (str (get-in wp [:paths :uploads]) "/wp2static-crawled-site/" path)))
+
+(defmacro with-robots-txt [wp s & body]
+  `(let [path# (str (get-in ~wp [:paths :doc-root]) "/robots.txt")]
+     (try
+       (spit path# ~s)
+       (do ~@body)
+       (finally
+         (test/sh! {} "rm" "-f" path#)))))
 
 (def robots-sitemap-404
   "User-agent: *
@@ -20,16 +28,21 @@ Sitemap: http://localhost:7000/does-not-exist.xml")
 <sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"><sitemap><loc>http://localhost:7000/does-not-exist.xml</loc></sitemap></sitemapindex>")
 
 (deftest test-robots-404
-  (testing "robots.txt sitemap URLs that return 404s are ignored"
-    (test/with-test-system [_]
-      (try
-        (spit "wordpress/robots.txt" robots-sitemap-404)
-        (spit "wordpress/wp-content/sitemap.xml" sitemap-with-404)
-        (is (zero? (:exit (test/wp-cli!
-                            {:expect-warnings {#".*Got 404 for sitemap.*" 1}}
-                            "wp2static" "detect"))))
-        (finally
-          (test/sh! {} "rm" "wordpress/robots.txt" "wordpress/wp-content/sitemap.xml"))))))
+  (test/with-test-system [system {}]
+    (doseq [wp (vals (:wordpresses system))
+            :let [wp-cli! #(apply test/wp-cli! {:path (get-in wp [:paths :cli])} %&)]]
+      (when (get-in wp [:features :sitemaps?])
+        (test/testing [wp "robots.txt sitemap URLs that return 404s are ignored"]
+          (with-robots-txt wp robots-sitemap-404
+            (let [sitemap-path (str (get-in wp [:paths :wp-content]) "/sitemap.xml")]
+              (try
+                (spit sitemap-path sitemap-with-404)
+                (is (zero? (:exit (test/wp-cli!
+                                    {:expect-warnings {#".*Got 404 for sitemap.*" 1}
+                                     :path (get-in wp [:paths :cli])}
+                                    "wp2static" "detect"))))
+                (finally
+                  (test/sh! {} "rm" "-f" sitemap-path))))))))))
 
 (def robots-sitemap-slashes
   "User-agent: *
@@ -39,12 +52,13 @@ Allow: /wp-admin/admin-ajax.php
 Sitemap: http://localhost:7000//wp-sitemap.xml")
 
 (deftest test-robots-sitemap-slashes
-  (testing "robots.txt sitemap URLs with double slashes are processed"
-    (test/with-test-system [_]
-      (try
-        (spit "wordpress/robots.txt" robots-sitemap-slashes)
-        (test/wp-cli! {} "wp2static" "detect")
-        (test/wp-cli! {} "wp2static" "crawl")
-        (is (str/includes? (get-crawled-file "wp-sitemap-posts-post-1.xml") "http://localhost:7000/hello-world/"))
-        (finally
-          (test/sh! {} "rm" "wordpress/robots.txt"))))))
+  (test/with-test-system [system {}]
+    (doseq [wp (vals (:wordpresses system))
+            :let [wp-cli! #(apply test/wp-cli! {:path (get-in wp [:paths :cli])} %&)]]
+      (when (get-in wp [:features :sitemaps?])
+        (test/testing [wp "robots.txt sitemap URLs with double slashes are processed"]
+          (with-robots-txt wp robots-sitemap-slashes
+            (wp-cli! "wp2static" "detect")
+            (wp-cli! "wp2static" "crawl")
+            (is (str/includes? (get-crawled-file wp "wp-sitemap-posts-post-1.xml")
+                  (str (get-in wp [:paths :home] "hello-world/"))))))))))

@@ -50,21 +50,21 @@ class SimpleRewriter {
             CoreOptions::getValue( 'deploymentURL' )
         );
 
-        $wordpress_site_url = apply_filters(
-            'wp2static_set_wordpress_site_url',
-            untrailingslashit( SiteInfo::getUrl( 'site' ) )
+        $wordpress_home_url = apply_filters(
+            'wp2static_set_wordpress_home_url',
+            untrailingslashit( SiteInfo::getUrl( 'home' ) )
         );
 
-        $wordpress_site_url = untrailingslashit( $wordpress_site_url );
+        $wordpress_home_url = untrailingslashit( $wordpress_home_url );
         $destination_url = untrailingslashit( $destination_url );
         $destination_url_rel = URLHelper::getProtocolRelativeURL( $destination_url );
         $destination_url_rel_c = addcslashes( $destination_url_rel, '/' );
 
         $replacement_patterns = [
-            $wordpress_site_url => $destination_url,
-            URLHelper::getProtocolRelativeURL( $wordpress_site_url ) =>
+            $wordpress_home_url => $destination_url,
+            URLHelper::getProtocolRelativeURL( $wordpress_home_url ) =>
                 URLHelper::getProtocolRelativeURL( $destination_url ),
-            addcslashes( URLHelper::getProtocolRelativeURL( $wordpress_site_url ), '/' ) =>
+            addcslashes( URLHelper::getProtocolRelativeURL( $wordpress_home_url ), '/' ) =>
                 addcslashes( URLHelper::getProtocolRelativeURL( $destination_url ), '/' ),
         ];
 

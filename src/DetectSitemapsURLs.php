@@ -14,7 +14,7 @@ class DetectSitemapsURLs {
      * @return string[] list of URLs
      * @throws WP2StaticException
      */
-    public static function detect( string $wp_site_url ) : array {
+    public static function detect() : array {
         $sitemaps_urls = [];
         $parser = new SitemapParser(
             'WP2Static.com',
@@ -27,14 +27,13 @@ class DetectSitemapsURLs {
             ]
         );
 
-        $site_path = rtrim( SiteInfo::getURL( 'site' ), '/' );
-
         $port_override = apply_filters(
             'wp2static_curl_port',
             null
         );
 
-        $base_uri = $site_path;
+        $wp_site_url = SiteInfo::getURL( 'home' );
+        $base_uri = rtrim( $wp_site_url, '/' );
 
         if ( $port_override ) {
             $base_uri = "{$base_uri}:{$port_override}";

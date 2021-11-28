@@ -92,9 +92,18 @@
                              (str "bedrock.sh exited with code " code)
                              {:code code}))))
                      bedrock)
-     :name "Bedrock Initializer"
+     :name "Bedrock"
      :join? true
-     :open-f (fn [_] (popen ["bash" "bedrock.sh"]))}))
+     :open-f (fn [_] (popen ["bash" "bedrock.sh"]))
+
+     :features {:sitemaps? false}
+     :paths {:cli "bedrock/web/wp"
+             :doc-root "bedrock/web"
+             :plugins "bedrock/web/app/plugins"
+             :site "/wp/"
+             :uploads "bedrock/web/app/uploads"
+             :wp-content "bedrock/web/wp/wp-content"}
+     :urls {:home "http://localhost:7001"}}))
 
 (defn wordpress []
   (shell-process
@@ -106,9 +115,18 @@
                              (str "wordpress.sh exited with code " code)
                              {:code code}))))
                      wordpress)
-     :name "WordPress Initializer"
+     :name "WordPress"
      :join? true
-     :open-f (fn [_] (popen ["bash" "wordpress.sh"]))}))
+     :open-f (fn [_] (popen ["bash" "wordpress.sh"]))
+
+     :features {:sitemaps? true}
+     :paths {:cli "wordpress"
+             :doc-root "wordpress"
+             :plugins "wordpress/wp-content/plugins"
+             :site "/"
+             :uploads "wordpress/wp-content/uploads"
+             :wp-content "wordpress/wp-content"}
+     :urls {:home "http://localhost:7000"}}))
 
 (defn system-map []
   (component/system-map
@@ -117,6 +135,7 @@
     :nginx (component/using (nginx) [:wordpress])
     :php-fpm (component/using (php-fpm) [:mariadb])
     :wordpress (component/using (wordpress) [:mariadb :php-fpm])
+    :wordpresses (component/using {} [:bedrock :wordpress])
     :wp2static (component/using (wp2static) [:bedrock :wordpress])))
 
 (defonce system (atom nil))
