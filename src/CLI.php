@@ -114,8 +114,9 @@ class CLI {
         } else {
             WsLog::l( 'Starting deployment' );
             do_action( 'wp2static_deploy', ProcessedSite::getPath(), $deployer );
-            do_action( 'wp2static_post_deploy_trigger', $deployer );
         }
+        WsLog::l( 'Starting post-deployment actions' );
+        do_action( 'wp2static_post_deploy_trigger', $deployer );
     }
 
     /**
