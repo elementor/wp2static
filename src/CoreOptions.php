@@ -42,16 +42,20 @@ class CoreOptions {
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         dbDelta( $sql );
 
-        $columns = array_keys( array_merge(...$wpdb->get_results(
-            sprintf("SELECT * FROM %s LIMIT 1", $table_name),
-            ARRAY_A
-        ) ) );
+        $columns = array_keys(
+            array_merge(
+                ...$wpdb->get_results(
+                    sprintf( 'SELECT * FROM %s LIMIT 1', $table_name ),
+                    ARRAY_A
+                )
+            )
+        );
 
         if ( in_array( 'description', $columns ) ) {
             $wpdb->query( "ALTER TABLE $table_name DROP COLUMN description" );
         }
         if ( in_array( 'label', $columns ) ) {
-            $wpdb->query("ALTER TABLE $table_name DROP COLUMN label");
+            $wpdb->query( "ALTER TABLE $table_name DROP COLUMN label" );
         }
 
         Controller::ensureIndex(
