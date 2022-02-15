@@ -589,7 +589,7 @@ class Controller {
         $jobs = JobQueue::getProcessableJobs();
 
         foreach ( $jobs as $job ) {
-            $lock = 'wp2static_jobs.' . $job->job_type;
+            $lock = $wpdb->prefix . '.wp2static_jobs.' . $job->job_type;
             $query = "SELECT GET_LOCK('$lock', 30) AS lck";
             $locked = intval( $wpdb->get_row( $query )->lck );
             if ( ! $locked ) {
