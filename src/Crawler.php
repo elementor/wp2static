@@ -182,16 +182,19 @@ class Crawler {
                         $page_hash = md5( (string) $status_code );
                     }
 
+                    $write_contents = true;
+
                     if ( $use_crawl_cache ) {
                         // if not already cached
                         if ( CrawlCache::getUrl( $root_relative_path, $page_hash ) ) {
                             $this->cache_hits++;
+                            $write_contents = false;
                         }
                     }
 
                     $this->crawled++;
 
-                    if ( $crawled_contents ) {
+                    if ( $crawled_contents && $write_contents) {
                         // do some magic here - naive: if URL ends in /, save to /index.html
                         // TODO: will need love for example, XML files
                         // check content type, serve .xml/rss, etc instead
