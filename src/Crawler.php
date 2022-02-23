@@ -157,6 +157,17 @@ class Crawler {
                         CrawlCache::rmUrl( $root_relative_path );
                         // Delete crawl queue to prevent crawling not found urls forever.
                         CrawlQueue::rmUrl( $root_relative_path );
+                        // Delete previously generated files under the directories both the crawled and the processed.
+                        $deleting_path_prefix =
+                            apply_filters('wp2static_deleting_path_prefix', SiteInfo::getPath('uploads'));
+                        array_map( function( $dir ) use ( $deleting_path_prefix, $root_relative_path ) {
+                            $prefix = trailingslashit($deleting_path_prefix);
+                            $suffix = ltrim($root_relative_path, '/');
+                            $full_path = $prefix . $dir . $suffix;
+                            if( is_link( $full_path ) ){
+                                unlink($full_path);
+                            }
+                        }, ['wp2static-crawled-site/', 'wp2static-processed-site/']);
                         $crawled_contents = null;
                         $is_cacheable = false;
                     } elseif ( in_array( $status_code, WP2STATIC_REDIRECT_CODES ) ) {
