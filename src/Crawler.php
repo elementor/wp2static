@@ -155,6 +155,8 @@ class Crawler {
                     if ( $status_code === 404 ) {
                         WsLog::l( '404 for URL ' . $root_relative_path );
                         CrawlCache::rmUrl( $root_relative_path );
+                        // Delete crawl queue to prevent crawling not found urls forever.
+                        CrawlQueue::rmUrl( $root_relative_path );
                         $crawled_contents = null;
                         $is_cacheable = false;
                     } elseif ( in_array( $status_code, WP2STATIC_REDIRECT_CODES ) ) {
