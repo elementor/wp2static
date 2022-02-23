@@ -145,8 +145,6 @@ class CrawlCache {
     public static function rmUrl( string $url ) : void {
         global $wpdb;
 
-        $hashed_url = md5( $url );
-
         $table_name = $wpdb->prefix . 'wp2static_crawl_cache';
 
         $wpdb->delete(
