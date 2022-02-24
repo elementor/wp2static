@@ -168,7 +168,7 @@ class Crawler {
                                 $prefix = trailingslashit( $deleting_path_prefix );
                                 $suffix = ltrim( $root_relative_path, '/' );
                                 $full_path = $prefix . $dir . $suffix;
-                                if ( is_link( $full_path ) ) {
+                                if ( file_exists( $full_path ) ) {
                                     unlink( $full_path );
                                 }
                             },
