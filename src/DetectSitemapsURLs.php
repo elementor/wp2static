@@ -16,13 +16,27 @@ class DetectSitemapsURLs {
      */
     public static function detect( string $wp_site_url ) : array {
         $sitemaps_urls = [];
+
+        $opts = [
+            'http_errors' => false,
+            'verify' => false,
+        ];
+
+        $auth_user = CoreOptions::getValue( 'basicAuthUser' );
+
+        if ( $auth_user ) {
+            $auth_password = CoreOptions::getValue( 'basicAuthPassword' );
+
+            if ( $auth_password ) {
+                WsLog::l( 'Using basic auth credentials to crawl' );
+                $opts['auth'] = [ $auth_user, $auth_password ];
+            }
+        }
+
         $parser = new SitemapParser(
             'WP2Static.com',
             [
-                'guzzle' => [
-                    'http_errors' => false,
-                    'verify' => false,
-                ],
+                'guzzle' => $opts,
                 'strict' => false,
             ]
         );

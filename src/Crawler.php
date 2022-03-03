@@ -56,26 +56,37 @@ class Crawler {
             $base_uri = "{$base_uri}:{$port_override}";
         }
 
-        $this->client = new Client(
-            [
-                'base_uri' => $base_uri,
-                'verify' => false,
-                'http_errors' => false,
-                'allow_redirects' => [
-                    'max' => 2,
-                    // required to get effective_url
-                    'track_redirects' => true,
-                ],
-                'connect_timeout'  => 0,
-                'timeout' => 600,
-                'headers' => [
-                    'User-Agent' => apply_filters(
-                        'wp2static_curl_user_agent',
-                        'WP2Static.com',
-                    ),
-                ],
-            ]
-        );
+        $opts = [
+            'base_uri' => $base_uri,
+            'verify' => false,
+            'http_errors' => false,
+            'allow_redirects' => [
+                'max' => 2,
+                // required to get effective_url
+                'track_redirects' => true,
+            ],
+            'connect_timeout'  => 0,
+            'timeout' => 600,
+            'headers' => [
+                'User-Agent' => apply_filters(
+                    'wp2static_curl_user_agent',
+                    'WP2Static.com',
+                ),
+            ],
+        ];
+
+        $auth_user = CoreOptions::getValue( 'basicAuthUser' );
+
+        if ( $auth_user ) {
+            $auth_password = CoreOptions::getValue( 'basicAuthPassword' );
+
+            if ( $auth_password ) {
+                WsLog::l( 'Using basic auth credentials to crawl' );
+                $opts['auth'] = [ $auth_user, $auth_password ];
+            }
+        }
+
+        $this->client = new Client( $opts );
     }
 
     public static function wp2staticCrawl( string $static_site_path, string $crawler_slug ) : void {
@@ -120,21 +131,9 @@ class Crawler {
             ];
         }
 
-        $headers = [];
-
-        $auth_user = CoreOptions::getValue( 'basicAuthUser' );
-
-        if ( $auth_user ) {
-            $auth_password = CoreOptions::getValue( 'basicAuthPassword' );
-
-            if ( $auth_password ) {
-                $headers['auth'] = [ $auth_user, $auth_password ];
-            }
-        }
-
-        $requests = function ( $urls ) use ( $headers ) {
+        $requests = function ( $urls ) {
             foreach ( $urls as $url ) {
-                yield new Request( 'GET', $url['url'], $headers );
+                yield new Request( 'GET', $url['url'] );
             }
         };
 
