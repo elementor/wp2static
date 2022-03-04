@@ -3,7 +3,7 @@
  * Plugin Name: WP2Static
  * Plugin URI:  https://wp2static.com
  * Description: Static site generator functionality for WordPress.
- * Version:     7.2.0-dev
+ * Version:     7.2.0-dev-np
  * Author:      WP2Static
  * Author URI:  https://wp2static.com
  * Text Domain: wp2static
