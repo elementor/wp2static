@@ -159,20 +159,15 @@ class Crawler {
                         CrawlQueue::rmUrl( $root_relative_path );
                         // Delete previously generated files under the directories,
                         // both the crawled and the processed.
-                        $deleting_path_prefix = apply_filters(
-                            'wp2static_deleting_path_prefix',
-                            SiteInfo::getPath( 'uploads' )
-                        );
                         array_map(
-                            function( $dir ) use ( $deleting_path_prefix, $root_relative_path ) {
-                                $prefix = trailingslashit( $deleting_path_prefix );
+                            function( $dir ) use ( $root_relative_path ) {
                                 $suffix = ltrim( $root_relative_path, '/' );
-                                $full_path = $prefix . $dir . $suffix;
+                                $full_path = trailingslashit( $dir ) . $suffix;
                                 if ( file_exists( $full_path ) && ! is_dir( $full_path ) ) {
                                     unlink( $full_path );
                                 }
                             },
-                            [ 'wp2static-crawled-site/', 'wp2static-processed-site/' ]
+                            [ StaticSite::getPath(), ProcessedSite::getPath() ]
                         );
                         $crawled_contents = null;
                         $is_cacheable = false;

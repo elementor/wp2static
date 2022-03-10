@@ -253,7 +253,7 @@ class ViewRenderer {
         // performance check vs map
         $disk_space = 0;
 
-        $exported_site_dir = SiteInfo::getPath( 'uploads' ) . 'wp2static-crawled-site/';
+        $exported_site_dir = StaticSite::getPath();
         if ( is_dir( $exported_site_dir ) ) {
             $files = new \RecursiveIteratorIterator(
                 new \RecursiveDirectoryIterator(
@@ -284,7 +284,7 @@ class ViewRenderer {
 
         // performance check vs map
         $disk_space = 0;
-        $processed_site_dir = SiteInfo::getPath( 'uploads' ) . 'wp2static-processed-site/';
+        $processed_site_dir = ProcessedSite::getPath();
 
         if ( is_dir( $processed_site_dir ) ) {
             $files = new \RecursiveIteratorIterator(
