@@ -24,6 +24,7 @@
  - [#843](https://github.com/leonstafford/wp2static/issues/843): Always fire post-deployment action from the CLI, matching the normal behavior @michaelfig
  - [#848](https://github.com/leonstafford/wp2static/issues/848): Fix error from IF EXISTS syntax when the db user can't see the schema. @utchy
  - [#849](https://github.com/leonstafford/wp2static/issues/849): Make job locking work with multisite. @utchy
+ - [#855](https://github.com/leonstafford/wp2static/issues/855): Allow setting options to empty values from the CLI. @john-shaffer
 
 ## WP2Static 7.1.7 (2021-09-04)
 

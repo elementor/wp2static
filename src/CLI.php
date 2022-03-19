@@ -201,13 +201,8 @@ class CLI {
                 return;
             }
 
-            if ( empty( $value ) ) {
-                WP_CLI::error( 'Missing required argument: <value>' );
-                return;
-            }
-
             // encrypt basic auth pwd
-            if ( $option_name === 'basicAuthPassword' ) {
+            if ( ! empty( $value ) && $option_name === 'basicAuthPassword' ) {
                 $value = CoreOptions::encrypt_decrypt(
                     'encrypt',
                     $value
