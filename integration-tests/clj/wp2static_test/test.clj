@@ -29,7 +29,7 @@
     result))
 
 (defn wp-cli! [opts & args]
-  (apply sh! opts "wp" (concat args ["--path=wordpress"])))
+  (apply sh! opts "wp" (concat args ["--path=wordpress"] (:sh-opts opts))))
 
 (defn test [opts]
   ;; https://clojureverse.org/t/why-doesnt-my-program-exit/3754/8
