@@ -4,9 +4,9 @@ set -ouex
 
 cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 
-for PHP_VERSION in "7.4" "8.0"; do
+for PHP_VERSION in "7.4" "8.0" "8.1"; do
     # shellcheck disable=SC2043
-    for WP in "5.8.2=1zzj8bhg9pxv2sfqssx7bc41ba4z6pm2hxpnddm7nk2pcr79xlm3"; do
+    for WP in "5.9.2=12wzqrh21sh6pgvs0ayabcv66psq9a8cfz3qk43r5kjn5bfz4rbp"; do
         WORDPRESS_VERSION="${WP%=*}"
         WORDPRESS_SHA256="${WP#*=}"
         echo "PHP Version $PHP_VERSION, Wordpress Version $WORDPRESS_VERSION"
