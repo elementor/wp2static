@@ -42,9 +42,6 @@ class SitemapDownloadTest extends TestCase {
                 'http://www.google.com/sitemap.xml',
             ],
             [
-                'http://php.net/sitemap.xml',
-            ],
-            [
                 'https://www.yahoo.com/news/sitemaps/news-sitemap_index_US_en-US.xml.gz',
             ],
         ];
