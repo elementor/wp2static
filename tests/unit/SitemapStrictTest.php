@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 class SitemapStrictTest extends TestCase {
 
     /**
+     * @group ExternalRequests
      * @dataProvider generateDataForTest
      * @param string $url URL
      * @param string $body URL body content
