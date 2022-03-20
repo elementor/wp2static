@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 class SitemapInvalidURLTest extends TestCase {
 
     /**
+     * @group ExternalRequests
      * @dataProvider generateDataForTest
      * @param string $url URL
      */

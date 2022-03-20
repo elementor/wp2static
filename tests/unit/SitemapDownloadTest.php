@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 class SitemapDownloadTest extends TestCase {
 
     /**
+     * @group ExternalRequests
      * @dataProvider generateDataForTest
      * @param string $url URL
      */
