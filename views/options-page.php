@@ -6,6 +6,16 @@
  * @var mixed[] $view
  */
 
+use WP2Static\OptionRenderer;
+
+$options = $view['coreOptions'];
+
+$row = function( $name ) use ( $options ) {
+    $opt = (array) $options[ $name ];
+    return '<tr><td style="width: 50%">' . OptionRenderer::optionLabel( $opt, true ) .
+            '</td><td>' . optionrenderer::optionInput( $opt ) . '</td></tr>';
+}
+
 ?>
 
 <div class="wrap">
@@ -28,75 +38,10 @@
             </tr>
         </thead>
         <tbody>
-
-        <tr>
-            <td>
-                <label
-                    for="<?php echo $view['coreOptions']['detectCustomPostTypes']->name; ?>"
-                ><?php echo $view['coreOptions']['detectCustomPostTypes']->label; ?></label>
-            </td>
-            <td>
-                <input
-                    id="<?php echo $view['coreOptions']['detectCustomPostTypes']->name; ?>"
-                    name="<?php echo $view['coreOptions']['detectCustomPostTypes']->name; ?>"
-                    value="1"
-                    type="checkbox"
-                    <?php echo (int) $view['coreOptions']['detectCustomPostTypes']->value === 1 ? 'checked' : ''; ?>
-                />
-            </td>
-        </tr>
-
-        <tr>
-            <td>
-                <label
-                    for="<?php echo $view['coreOptions']['detectPages']->name; ?>"
-                ><?php echo $view['coreOptions']['detectPages']->label; ?></label>
-            </td>
-            <td>
-                <input
-                    id="<?php echo $view['coreOptions']['detectPages']->name; ?>"
-                    name="<?php echo $view['coreOptions']['detectPages']->name; ?>"
-                    value="1"
-                    type="checkbox"
-                    <?php echo (int) $view['coreOptions']['detectPages']->value === 1 ? 'checked' : ''; ?>
-                />
-            </td>
-        </tr>
-
-        <tr>
-            <td>
-                <label
-                    for="<?php echo $view['coreOptions']['detectPosts']->name; ?>"
-                ><?php echo $view['coreOptions']['detectPosts']->label; ?></label>
-            </td>
-            <td>
-                <input
-                    id="<?php echo $view['coreOptions']['detectPosts']->name; ?>"
-                    name="<?php echo $view['coreOptions']['detectPosts']->name; ?>"
-                    value="1"
-                    type="checkbox"
-                    <?php echo (int) $view['coreOptions']['detectPosts']->value === 1 ? 'checked' : ''; ?>
-                />
-            </td>
-        </tr>
-
-        <tr>
-            <td>
-                <label
-                    for="<?php echo $view['coreOptions']['detectUploads']->name; ?>"
-                ><?php echo $view['coreOptions']['detectUploads']->label; ?></label>
-            </td>
-            <td>
-                <input
-                    id="<?php echo $view['coreOptions']['detectUploads']->name; ?>"
-                    name="<?php echo $view['coreOptions']['detectUploads']->name; ?>"
-                    value="1"
-                    type="checkbox"
-                    <?php echo (int) $view['coreOptions']['detectUploads']->value === 1 ? 'checked' : ''; ?>
-                />
-            </td>
-        </tr>
-
+            <?php echo $row( 'detectCustomPostTypes' ); ?>
+            <?php echo $row( 'detectPages' ); ?>
+            <?php echo $row( 'detectPosts' ); ?>
+            <?php echo $row( 'detectUploads' ); ?>
         </tbody>
     </table>
 
@@ -104,58 +49,9 @@
 
     <table class="widefat striped">
         <tbody>
-
-            <tr>
-                <td style="width:50%;">
-                    <label
-                        for="<?php echo $view['coreOptions']['basicAuthUser']->name; ?>"
-                    ><?php echo $view['coreOptions']['basicAuthUser']->label; ?></label>
-                </td>
-                <td>
-                    <input
-                        class="widefat"
-                        id="<?php echo $view['coreOptions']['basicAuthUser']->name; ?>"
-                        name="<?php echo $view['coreOptions']['basicAuthUser']->name; ?>"
-                        type="text"
-                        value="<?php echo $view['coreOptions']['basicAuthUser']->value !== '' ? $view['coreOptions']['basicAuthUser']->value : ''; ?>"
-                    />
-                </td>
-            </tr>
-
-            <tr>
-                <td style="width:50%;">
-                    <label
-                        for="<?php echo $view['coreOptions']['basicAuthPassword']->name; ?>"
-                    ><?php echo $view['coreOptions']['basicAuthPassword']->label; ?></label>
-                </td>
-                <td>
-                    <input
-                        class="widefat"
-                        id="<?php echo $view['coreOptions']['basicAuthPassword']->name; ?>"
-                        name="<?php echo $view['coreOptions']['basicAuthPassword']->name; ?>"
-                        type="password"
-                        value="<?php echo $view['coreOptions']['basicAuthPassword']->value !== '' ? $view['coreOptions']['basicAuthPassword']->value : ''; ?>"
-                    />
-                </td>
-            </tr>
-
-            <tr>
-                <td>
-                    <label
-                        for="<?php echo $view['coreOptions']['useCrawlCaching']->name; ?>"
-                    ><?php echo $view['coreOptions']['useCrawlCaching']->label; ?></label>
-                </td>
-                <td>
-                    <input
-                        id="<?php echo $view['coreOptions']['useCrawlCaching']->name; ?>"
-                        name="<?php echo $view['coreOptions']['useCrawlCaching']->name; ?>"
-                        value="1"
-                        type="checkbox"
-                        <?php echo (int) $view['coreOptions']['useCrawlCaching']->value === 1 ? 'checked' : ''; ?>
-                    />
-                </td>
-            </tr>
-
+            <?php echo $row( 'basicAuthUser' ); ?>
+            <?php echo $row( 'basicAuthPassword' ); ?>
+            <?php echo $row( 'useCrawlCaching' ); ?>
         </tbody>
     </table>
 
@@ -163,22 +59,7 @@
 
     <table class="widefat striped">
         <tbody>
-            <tr>
-                <td style="width:50%;">
-                    <label
-                        for="<?php echo $view['coreOptions']['deploymentURL']->name; ?>"
-                    ><?php echo $view['coreOptions']['deploymentURL']->label; ?></label>
-                </td>
-                <td>
-                    <input
-                        class="widefat"
-                        id="<?php echo $view['coreOptions']['deploymentURL']->name; ?>"
-                        name="<?php echo $view['coreOptions']['deploymentURL']->name; ?>"
-                        type="text"
-                        value="<?php echo $view['coreOptions']['deploymentURL']->value !== '' ? $view['coreOptions']['deploymentURL']->value : ''; ?>"
-                    />
-                </td>
-            </tr>
+            <?php echo $row( 'deploymentURL' ); ?>
         </tbody>
     </table>
 
@@ -186,27 +67,10 @@
 
     <table class="widefat striped">
         <tbody>
+            <?php echo $row( 'completionEmail' ); ?>
             <tr>
                 <td style="width:50%;">
-                    <label
-                        for="<?php echo $view['coreOptions']['completionEmail']->name; ?>"
-                    ><?php echo $view['coreOptions']['completionEmail']->label; ?></label>
-                </td>
-                <td>
-                    <input
-                        class="widefat"
-                        type="email"
-                        id="<?php echo $view['coreOptions']['completionEmail']->name; ?>"
-                        name="<?php echo $view['coreOptions']['completionEmail']->name; ?>"
-                        value="<?php echo $view['coreOptions']['completionEmail']->value !== '' ? $view['coreOptions']['completionEmail']->value : ''; ?>"
-                    />
-                </td>
-            </tr>
-            <tr>
-                <td style="width:50%;">
-                    <label
-                        for="<?php echo $view['coreOptions']['completionWebhook']->name; ?>"
-                    ><?php echo $view['coreOptions']['completionWebhook']->label; ?></label>
+                    <?php echo OptionRenderer::optionLabel( (array) $options['completionWebhook'] ); ?>
                 </td>
                 <td>
                     <input
@@ -214,20 +78,20 @@
                         type="url"
                         id="completionWebhook"
                         name="completionWebhook"
-                        value="<?php echo $view['coreOptions']['completionWebhook']->value !== '' ? $view['coreOptions']['completionWebhook']->value : ''; ?>"
+                        value="<?php echo $options['completionWebhook']->value !== '' ? $options['completionWebhook']->value : ''; ?>"
                     />
 
                     <select
-                        id="<?php echo $view['coreOptions']['completionWebhookMethod']->name; ?>"
-                        name="<?php echo $view['coreOptions']['completionWebhookMethod']->name; ?>"
+                        id="<?php echo $options['completionWebhookMethod']->name; ?>"
+                        name="<?php echo $options['completionWebhookMethod']->name; ?>"
                         >
                         <option
                             value="POST"
-                            <?php echo $view['coreOptions']['completionWebhookMethod']->value === 'POST' ? 'selected' : ''; ?>
+                            <?php echo $options['completionWebhookMethod']->value === 'POST' ? 'selected' : ''; ?>
                             >POST</option>
                         <option
                             value="GET"
-                            <?php echo $view['coreOptions']['completionWebhookMethod']->value === 'GET' ? 'selected' : ''; ?>
+                            <?php echo $options['completionWebhookMethod']->value === 'GET' ? 'selected' : ''; ?>
                             >GET</option>
                     </select>
                 </td>

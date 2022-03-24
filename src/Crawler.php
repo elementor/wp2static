@@ -12,6 +12,9 @@ use WP2StaticGuzzleHttp\Client;
 use WP2StaticGuzzleHttp\Psr7\Request;
 use WP2StaticGuzzleHttp\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
+use WP2StaticGuzzleHttp\Exception\RequestException;
+use WP2StaticGuzzleHttp\Exception\TooManyRedirectsException;
+use WP2StaticGuzzleHttp\Pool;
 
 define( 'WP2STATIC_REDIRECT_CODES', [ 301, 302, 303, 307, 308 ] );
 
@@ -25,6 +28,16 @@ class Crawler {
      * @var string
      */
     private $site_path;
+
+    /**
+     * @var integer
+     */
+    private $crawled = 0;
+
+    /**
+     * @var integer
+     */
+    private $cache_hits = 0;
 
     /**
      * Crawler constructor
@@ -43,26 +56,37 @@ class Crawler {
             $base_uri = "{$base_uri}:{$port_override}";
         }
 
-        $this->client = new Client(
-            [
-                'base_uri' => $base_uri,
-                'verify' => false,
-                'http_errors' => false,
-                'allow_redirects' => [
-                    'max' => 1,
-                    // required to get effective_url
-                    'track_redirects' => true,
-                ],
-                'connect_timeout'  => 0,
-                'timeout' => 600,
-                'headers' => [
-                    'User-Agent' => apply_filters(
-                        'wp2static_curl_user_agent',
-                        'WP2Static.com',
-                    ),
-                ],
-            ]
-        );
+        $opts = [
+            'base_uri' => $base_uri,
+            'verify' => false,
+            'http_errors' => false,
+            'allow_redirects' => [
+                'max' => 2,
+                // required to get effective_url
+                'track_redirects' => true,
+            ],
+            'connect_timeout'  => 0,
+            'timeout' => 600,
+            'headers' => [
+                'User-Agent' => apply_filters(
+                    'wp2static_curl_user_agent',
+                    'WP2Static.com',
+                ),
+            ],
+        ];
+
+        $auth_user = CoreOptions::getValue( 'basicAuthUser' );
+
+        if ( $auth_user ) {
+            $auth_password = CoreOptions::getValue( 'basicAuthPassword' );
+
+            if ( $auth_password ) {
+                WsLog::l( 'Using basic auth credentials to crawl' );
+                $opts['auth'] = [ $auth_user, $auth_password ];
+            }
+        }
+
+        $this->client = new Client( $opts );
     }
 
     public static function wp2staticCrawl( string $static_site_path, string $crawler_slug ) : void {
@@ -76,9 +100,6 @@ class Crawler {
      * Crawls URLs in WordPressSite, saving them to StaticSite
      */
     public function crawlSite( string $static_site_path ) : void {
-        $crawled = 0;
-        $cache_hits = 0;
-
         WsLog::l( 'Starting to crawl detected URLs.' );
 
         $site_host = parse_url( $this->site_path, PHP_URL_HOST );
@@ -86,10 +107,7 @@ class Crawler {
         $site_host = $site_port ? $site_host . ":$site_port" : $site_host;
         $site_urls = [ "http://$site_host", "https://$site_host" ];
 
-        $use_crawl_cache = apply_filters(
-            'wp2static_use_crawl_cache',
-            CoreOptions::getValue( 'useCrawlCaching' )
-        );
+        $use_crawl_cache = CoreOptions::getValue( 'useCrawlCaching' );
 
         WsLog::l( ( $use_crawl_cache ? 'Using' : 'Not using' ) . ' CrawlCache.' );
 
@@ -103,98 +121,137 @@ class Crawler {
          */
 
         $crawlable_paths = CrawlQueue::getCrawlablePaths();
+        $urls = [];
+
         foreach ( $crawlable_paths as $root_relative_path ) {
             $absolute_uri = new URL( $this->site_path . $root_relative_path );
-            $url = $absolute_uri->get();
-
-            $response = $this->crawlURL( $url );
-
-            if ( ! $response ) {
-                continue;
-            }
-
-            $crawled_contents = (string) $response->getBody();
-            $status_code = $response->getStatusCode();
-
-            if ( $status_code === 404 ) {
-                WsLog::l( '404 for URL ' . $root_relative_path );
-                CrawlCache::rmUrl( $root_relative_path );
-                $crawled_contents = null;
-            } elseif ( in_array( $status_code, WP2STATIC_REDIRECT_CODES ) ) {
-                $crawled_contents = null;
-            }
-
-            $redirect_to = null;
-
-            if ( in_array( $status_code, WP2STATIC_REDIRECT_CODES ) ) {
-                $effective_url = $url;
-
-                // returns as string
-                $redirect_history =
-                    $response->getHeaderLine( 'X-Guzzle-Redirect-History' );
-
-                if ( $redirect_history ) {
-                    $redirects = explode( ', ', $redirect_history );
-                    $effective_url = end( $redirects );
-                }
-
-                $redirect_to =
-                    (string) str_replace( $site_urls, '', $effective_url );
-                $page_hash = md5( $status_code . $redirect_to );
-            } elseif ( ! is_null( $crawled_contents ) ) {
-                $page_hash = md5( $crawled_contents );
-            } else {
-                // TODO: Hashing the status code will generate many collisions
-                // - what are we trying to accomplish here?
-                $page_hash = md5( (string) $status_code );
-            }
-
-            // TODO: as John mentioned, we're only skipping the saving,
-            // not crawling here. Let's look at improving that... or speeding
-            // up with async requests, at least
-            // NOTE: What if we pre-computed the hash for all content on plugin
-            // install (via some kind of queued process) and then re-computed the
-            // hash every time a post was saved? That might help speed up the
-            // process. But we'd have to think about CSS or menu or included content
-            // changes...
-            if ( $use_crawl_cache ) {
-                // if not already cached
-                if ( CrawlCache::getUrl( $root_relative_path, $page_hash ) ) {
-                    $cache_hits++;
-
-                    continue;
-                }
-            }
-
-            $crawled++;
-
-            if ( $crawled_contents ) {
-                $static_path = static::transformPath( $root_relative_path );
-                StaticSite::add( $root_relative_path, $crawled_contents );
-            }
-
-            CrawlCache::addUrl(
-                $root_relative_path,
-                $page_hash,
-                $status_code,
-                $redirect_to
-            );
-
-            // incrementally log crawl progress
-            if ( $crawled % 300 === 0 ) {
-                $notice = "Crawling progress: $crawled crawled, $cache_hits skipped (cached).";
-                WsLog::l( $notice );
-            }
+            $urls[] = [
+                'url' => $absolute_uri->get(),
+                'path' => $root_relative_path,
+            ];
         }
 
+        $requests = function ( $urls ) {
+            foreach ( $urls as $url ) {
+                yield new Request( 'GET', $url['url'] );
+            }
+        };
+
+        $concurrency = intval( CoreOptions::getValue( 'crawlConcurrency' ) );
+
+        $pool = new Pool(
+            $this->client,
+            $requests( $urls ),
+            [
+                'concurrency' => $concurrency,
+                'fulfilled' => function ( Response $response, $index ) use (
+                    $urls, $use_crawl_cache, $site_urls
+                ) {
+                    $root_relative_path = $urls[ $index ]['path'];
+                    $crawled_contents = (string) $response->getBody();
+                    $status_code = $response->getStatusCode();
+
+                    $is_cacheable = true;
+                    if ( $status_code === 404 ) {
+                        WsLog::l( '404 for URL ' . $root_relative_path );
+                        CrawlCache::rmUrl( $root_relative_path );
+                        // Delete crawl queue to prevent crawling not found urls forever.
+                        CrawlQueue::rmUrl( $root_relative_path );
+                        // Delete previously generated files under the directories,
+                        // both the crawled and the processed.
+                        array_map(
+                            function( $dir ) use ( $root_relative_path ) {
+                                $suffix = ltrim( $root_relative_path, '/' );
+                                $full_path = trailingslashit( $dir ) . $suffix;
+                                if ( file_exists( $full_path ) && ! is_dir( $full_path ) ) {
+                                    unlink( $full_path );
+                                }
+                            },
+                            [ StaticSite::getPath(), ProcessedSite::getPath() ]
+                        );
+                        $crawled_contents = null;
+                        $is_cacheable = false;
+                    } elseif ( in_array( $status_code, WP2STATIC_REDIRECT_CODES ) ) {
+                        $crawled_contents = null;
+                    }
+
+                    $redirect_to = null;
+
+                    if ( in_array( $status_code, WP2STATIC_REDIRECT_CODES ) ) {
+                        $effective_url = $urls[ $index ]['url'];
+
+                        // returns as string
+                        $redirect_history =
+                            $response->getHeaderLine( 'X-Guzzle-Redirect-History' );
+
+                        if ( $redirect_history ) {
+                            $redirects = explode( ', ', $redirect_history );
+                            $effective_url = end( $redirects );
+                        }
+
+                        $redirect_to =
+                            (string) str_replace( $site_urls, '', $effective_url );
+                        $page_hash = md5( $status_code . $redirect_to );
+                    } elseif ( ! is_null( $crawled_contents ) ) {
+                        $page_hash = md5( $crawled_contents );
+                    } else {
+                        $page_hash = md5( (string) $status_code );
+                    }
+
+                    $write_contents = true;
+
+                    if ( $use_crawl_cache ) {
+                        // if not already cached
+                        if ( CrawlCache::getUrl( $root_relative_path, $page_hash ) ) {
+                            $this->cache_hits++;
+                            $write_contents = false;
+                        }
+                    }
+
+                    $this->crawled++;
+
+                    if ( $crawled_contents && $write_contents ) {
+                        $static_path = static::transformPath( $root_relative_path );
+                        StaticSite::add( $root_relative_path, $crawled_contents );
+                    }
+
+                    if ( $is_cacheable ) {
+                        CrawlCache::addUrl(
+                            $root_relative_path,
+                            $page_hash,
+                            $status_code,
+                            $redirect_to
+                        );
+                    }
+
+                    // incrementally log crawl progress
+                    if ( $this->crawled % 300 === 0 ) {
+                        $notice = "Crawling progress: $this->crawled crawled," .
+                                  " $this->cache_hits skipped (cached).";
+                        WsLog::l( $notice );
+                    }
+                },
+                'rejected' => function ( RequestException $reason, $index ) use ( $urls ) {
+                    $root_relative_path = $urls[ $index ]['path'];
+                    WsLog::l( 'Failed ' . $root_relative_path );
+                },
+            ]
+        );
+
+        // Initiate the transfers and create a promise
+        $promise = $pool->promise();
+
+        // Force the pool of requests to complete.
+        $promise->wait();
+
         WsLog::l(
-            "Crawling complete. $crawled crawled, $cache_hits skipped (cached)."
+            "Crawling complete. $this->crawled crawled, $this->cache_hits skipped (cached)."
         );
 
         $args = [
             'staticSitePath' => $static_site_path,
-            'crawled' => $crawled,
-            'cache_hits' => $cache_hits,
+            'crawled' => $this->crawled,
+            'cache_hits' => $this->cache_hits,
         ];
 
         do_action( 'wp2static_crawling_complete', $args );
@@ -219,12 +276,17 @@ class Crawler {
     }
 
     /**
+     * @deprecated
+     *
      * Crawls a string of full URL within WordPressSite
      *
      * @return ResponseInterface|null response object
      */
     public function crawlURL( string $url ) : ?ResponseInterface {
+        WsLog::w( 'WP2Static Crawler::crawlURL is deprecated.' );
+
         $headers = [];
+        $response = null;
 
         $auth_user = CoreOptions::getValue( 'basicAuthUser' );
 
@@ -238,7 +300,11 @@ class Crawler {
 
         $request = new Request( 'GET', $url, $headers );
 
-        $response = $this->client->send( $request );
+        try {
+            $response = $this->client->send( $request );
+        } catch ( TooManyRedirectsException $e ) {
+            WsLog::l( "Too many redirects from $url" );
+        }
 
         return $response;
     }

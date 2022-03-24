@@ -22,7 +22,7 @@ jobs:
 
     strategy:
       matrix:
-        php: ["7.3", "7.4"]
+        php: ["7.4", "8.0", "8.1"]
 
     name: PHP-${{ matrix.php }} 
 
@@ -43,11 +43,30 @@ jobs:
         extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick
         coverage: none
 
-    - name: Validate Composer
+    - name: Validate Composer setup
       run: composer validate --strict
 
     - name: Install PHP dependencies
       run: composer install --no-interaction
 
-    - name: Run our Linter and PHPStan
-      run: composer run-script test
+    - name: Run parallel lint
+      run: composer run-script lint
+
+    - name: Test PHP Coding Standards
+      run: composer run-script phpcs
+
+    - name: Test code against PHP 7.4 standard
+      run: composer run-script php74
+
+    - name: Test code against PHP 8.0 standard
+      run: composer run-script php80
+
+    - name: Test code against PHP 8.1 standard
+      run: composer run-script php81
+
+    - name: Run PHPStan static analyser
+      run: composer run-script phpstan
+
+    - name: Run unit tests, ignoring external requests
+      run: composer run-script phpunit -- --exclude-group ExternalRequests
+

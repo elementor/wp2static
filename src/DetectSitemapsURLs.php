@@ -16,10 +16,27 @@ class DetectSitemapsURLs {
      */
     public static function detect( string $wp_site_url ) : array {
         $sitemaps_urls = [];
+
+        $opts = [
+            'http_errors' => false,
+            'verify' => false,
+        ];
+
+        $auth_user = CoreOptions::getValue( 'basicAuthUser' );
+
+        if ( $auth_user ) {
+            $auth_password = CoreOptions::getValue( 'basicAuthPassword' );
+
+            if ( $auth_password ) {
+                WsLog::l( 'Using basic auth credentials to crawl' );
+                $opts['auth'] = [ $auth_user, $auth_password ];
+            }
+        }
+
         $parser = new SitemapParser(
             'WP2Static.com',
             [
-                'guzzle' => [ 'verify' => false ],
+                'guzzle' => $opts,
                 'strict' => false,
             ]
         );
@@ -39,7 +56,6 @@ class DetectSitemapsURLs {
 
         $client = new Client(
             [
-                'base_uri' => $base_uri,
                 'verify' => false,
                 'http_errors' => false,
                 'allow_redirects' => [
@@ -70,7 +86,7 @@ class DetectSitemapsURLs {
             }
         }
 
-        $request = new Request( 'GET', '/robots.txt', $headers );
+        $request = new Request( 'GET', $base_uri . '/robots.txt', $headers );
 
         $response = $client->send( $request );
 
@@ -106,7 +122,7 @@ class DetectSitemapsURLs {
                     $sitemap
                 );
 
-                $request = new Request( 'GET', $sitemap, $headers );
+                $request = new Request( 'GET', $base_uri . $sitemap, $headers );
 
                 $response = $client->send( $request );
 

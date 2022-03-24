@@ -7,21 +7,9 @@ class ViewRenderer {
     public static function renderOptionsPage() : void {
         CoreOptions::init();
 
-        $view = [];
-        $view['nonce_action'] = 'wp2static-ui-options';
-
-        $view['coreOptions'] = [
-            'basicAuthPassword' => CoreOptions::get( 'basicAuthPassword' ),
-            'basicAuthUser' => CoreOptions::get( 'basicAuthUser' ),
-            'completionEmail' => CoreOptions::get( 'completionEmail' ),
-            'completionWebhook' => CoreOptions::get( 'completionWebhook' ),
-            'completionWebhookMethod' => CoreOptions::get( 'completionWebhookMethod' ),
-            'detectCustomPostTypes' => CoreOptions::get( 'detectCustomPostTypes' ),
-            'detectPages' => CoreOptions::get( 'detectPages' ),
-            'detectPosts' => CoreOptions::get( 'detectPosts' ),
-            'detectUploads' => CoreOptions::get( 'detectUploads' ),
-            'deploymentURL' => CoreOptions::get( 'deploymentURL' ),
-            'useCrawlCaching' => CoreOptions::get( 'useCrawlCaching' ),
+        $view = [
+            'coreOptions' => CoreOptions::getAll(),
+            'nonce_action' => 'wp2static-ui-options',
         ];
 
         require_once WP2STATIC_PATH . 'views/options-page.php';
@@ -30,12 +18,9 @@ class ViewRenderer {
     public static function renderAdvancedOptionsPage() : void {
         CoreOptions::init();
 
-        $view = [];
-        $view['nonce_action'] = 'wp2static-ui-advanced-options';
-
-        $view['coreOptions'] = [
-            'hostsToRewrite' => CoreOptions::get( 'hostsToRewrite' ),
-            'skipURLRewrite' => CoreOptions::get( 'skipURLRewrite' ),
+        $view = [
+            'coreOptions' => CoreOptions::getAll(),
+            'nonce_action' => 'wp2static-ui-advanced-options',
         ];
 
         require_once WP2STATIC_PATH . 'views/advanced-options-page.php';
@@ -44,9 +29,9 @@ class ViewRenderer {
     public static function renderDiagnosticsPage() : void {
         $view = [];
         $view['memoryLimit'] = ini_get( 'memory_limit' );
-        $view['coreOptions'] = CoreOptions::getAll();
+        $view['coreOptions'] = array_values( CoreOptions::getAll() );
         $view['site_info'] = SiteInfo::getAllInfo();
-        $view['phpOutOfDate'] = version_compare( PHP_VERSION, '7.3', '<' );
+        $view['phpOutOfDate'] = version_compare( PHP_VERSION, '7.4', '<' );
         $view['uploadsWritable'] = SiteInfo::isUploadsWritable();
         $view['maxExecutionTime'] = ini_get( 'max_execution_time' );
         $view['curlSupported'] = SiteInfo::hasCURLSupport();
@@ -268,7 +253,7 @@ class ViewRenderer {
         // performance check vs map
         $disk_space = 0;
 
-        $exported_site_dir = SiteInfo::getPath( 'uploads' ) . 'wp2static-crawled-site/';
+        $exported_site_dir = StaticSite::getPath();
         if ( is_dir( $exported_site_dir ) ) {
             $files = new \RecursiveIteratorIterator(
                 new \RecursiveDirectoryIterator(
@@ -299,7 +284,7 @@ class ViewRenderer {
 
         // performance check vs map
         $disk_space = 0;
-        $processed_site_dir = SiteInfo::getPath( 'uploads' ) . 'wp2static-processed-site/';
+        $processed_site_dir = ProcessedSite::getPath();
 
         if ( is_dir( $processed_site_dir ) ) {
             $files = new \RecursiveIteratorIterator(

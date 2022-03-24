@@ -559,19 +559,7 @@ class Controller {
         // persist through wp_safe_redirect calls
         // ie, https://github.com/wpscholar/wp-transient-admin-notices/blob/master/TransientAdminNotices.php
 
-        // check each of these in order we want to enqueue
-        $job_types = [
-            'autoJobQueueDetection' => 'detect',
-            'autoJobQueueCrawling' => 'crawl',
-            'autoJobQueuePostProcessing' => 'post_process',
-            'autoJobQueueDeployment' => 'deploy',
-        ];
-
-        foreach ( $job_types as $key => $job_type ) {
-            if ( (int) CoreOptions::getValue( $key ) === 1 ) {
-                JobQueue::addJob( $job_type );
-            }
-        }
+        self::wp2staticEnqueueJobs();
 
         wp_safe_redirect( admin_url( 'admin.php?page=wp2static-jobs' ) );
         exit;
@@ -601,7 +589,7 @@ class Controller {
         $jobs = JobQueue::getProcessableJobs();
 
         foreach ( $jobs as $job ) {
-            $lock = 'wp2static_jobs.' . $job->job_type;
+            $lock = $wpdb->prefix . '.wp2static_jobs.' . $job->job_type;
             $query = "SELECT GET_LOCK('$lock', 30) AS lck";
             $locked = intval( $wpdb->get_row( $query )->lck );
             if ( ! $locked ) {

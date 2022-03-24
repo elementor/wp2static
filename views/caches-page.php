@@ -130,7 +130,11 @@ select.wp2static-select {
             <tr>
                 <td rowspan="<?php echo $deploy_cache_rows; ?>">Deploy Cache</td>
                     <?php $namespaces = array_keys( $view['deployCacheTotalPaths'] ); ?>
-                    <td><?php echo $view['deployCacheTotalPaths'][ $namespaces[0] ]; ?> Paths in database for <code><?php echo $namespaces[0]; ?></code></td>
+                    <?php if ( $namespaces ) { ?>
+                        <td><?php echo $view['deployCacheTotalPaths'][ $namespaces[0] ]; ?> Paths in database for <code><?php echo $namespaces[0]; ?></code></td>
+                    <?php } else { ?>
+                        <td>0 paths in database</td>
+                    <?php } ?>
                     <td>
                         <form
                             name="wp2static-post-processed-site-delete"

@@ -1,0 +1,15 @@
+{:paths ["clj" "test"]
+ :deps {org.clojure/clojure {:mvn/version "1.10.3"}
+        org.clojure/tools.logging {:mvn/version "1.2.4"}
+        com.cognitect/test-runner {:git/url "https://github.com/cognitect-labs/test-runner.git"
+                                   :sha "cc75980b43011773162b485f46f939dc5fba91e4"}
+        com.github.seancorfield/honeysql {:mvn/version "2.2.868"}
+        com.github.seancorfield/next.jdbc {:mvn/version "1.2.772"}
+        com.stuartsierra/component {:mvn/version "1.1.0"}
+        commons-codec/commons-codec {:mvn/version "1.15"}
+        etaoin/etaoin {:mvn/version "0.4.6"}
+        hashp/hashp {:mvn/version "0.2.1"}
+        org.mariadb.jdbc/mariadb-java-client {:mvn/version "3.0.3"}
+        popen/popen {:mvn/version "0.3.1"}}
+ :aliases {:dev-server {:main-opts ["-m" "wp2static-test.main"]}
+           :test {:exec-fn wp2static-test.test/test}}}

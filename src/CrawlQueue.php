@@ -95,6 +95,19 @@ class CrawlQueue {
         $wpdb->query( "DELETE FROM $table_name WHERE ID IN($ids)" );
     }
 
+    public static function rmUrl( string $url ) : void {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'wp2static_urls';
+
+        $wpdb->delete(
+            $table_name,
+            [
+                'hashed_url' => md5( $url ),
+            ]
+        );
+    }
+
     /**
      *  Get total crawlable URLs
      *

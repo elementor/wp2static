@@ -48,7 +48,7 @@ final class DetectPostsPaginationURLsTest extends TestCase {
             ],
             (object) [
                 'ID' => '5',
-                'post_type' => 'nonexistant',
+                'post_type' => 'nonexistent',
             ],
             (object) [
                 'ID' => '6',
@@ -161,7 +161,7 @@ final class DetectPostsPaginationURLsTest extends TestCase {
         );
 
         $type_without_posts_query = "SELECT COUNT(*) FROM $wpdb->posts WHERE" .
-            " post_status = 'publish' AND post_type = 'nonexistant'";
+            " post_status = 'publish' AND post_type = 'nonexistent'";
 
         $wpdb->shouldReceive( 'get_var' )
             ->with( $type_without_posts_query )

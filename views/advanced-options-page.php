@@ -5,6 +5,16 @@
  * @var mixed[] $view
  */
 
+use WP2Static\OptionRenderer;
+
+$options = $view['coreOptions'];
+
+$row = function( $name ) use ( $options ) {
+    $opt = (array) $options[ $name ];
+    return '<tr><td style="width: 50%">' . OptionRenderer::optionLabel( $opt, true ) .
+            '</td><td>' . optionrenderer::optionInput( $opt ) . '</td></tr>';
+}
+
 ?>
 
 <div class="wrap">
@@ -15,48 +25,28 @@
 
     <h1>Advanced Options<h1>
 
+    <h2>Detection Options</h2>
+
+    <table class="widefat striped">
+        <tbody>
+            <?php echo $row( 'filenamesToIgnore' ); ?>
+            <?php echo $row( 'fileExtensionsToIgnore' ); ?>
+        </tbody>
+    </table>
+
+    <p/>
+
     <h2>Post-processing Options</h2>
 
     <table class="widefat striped">
         <tbody>
-            <tr>
-                <td style="width:50%;">
-                    <label
-                        for="<?php echo $view['coreOptions']['skipURLRewrite']->name; ?>"
-                    ><b><?php echo $view['coreOptions']['skipURLRewrite']->label; ?></b></label>
-                    <br/><?php echo $view['coreOptions']['skipURLRewrite']->description; ?>
-                </td>
-                <td>
-                    <input
-                        id="<?php echo $view['coreOptions']['skipURLRewrite']->name; ?>"
-                        name="<?php echo $view['coreOptions']['skipURLRewrite']->name; ?>"
-                        value="1"
-                        type="checkbox"
-                        <?php echo (int) $view['coreOptions']['skipURLRewrite']->value === 1 ? 'checked' : ''; ?>
-                    />
-                </td>
-            </tr>
-            <tr>
-                <td style="width:50%;">
-                    <label
-                        for="<?php echo $view['coreOptions']['hostsToRewrite']->name; ?>"
-                    ><b><?php echo $view['coreOptions']['hostsToRewrite']->label; ?></b></label>
-                    <br/><?php echo $view['coreOptions']['hostsToRewrite']->description; ?>
-                </td>
-                <td>
-                    <textarea
-                        class="widefat"
-                        cols=30 rows=10
-                        id="<?php echo $view['coreOptions']['hostsToRewrite']->name; ?>"
-                        name="<?php echo $view['coreOptions']['hostsToRewrite']->name; ?>"
-                        type="text"
-                        ><?php echo $view['coreOptions']['hostsToRewrite']->blob_value; ?></textarea>
-                </td>
-            </tr>
+            <?php echo $row( 'crawlConcurrency' ); ?>
+            <?php echo $row( 'skipURLRewrite' ); ?>
+            <?php echo $row( 'hostsToRewrite' ); ?>
         </tbody>
     </table>
 
-    <p>
+    <p/>
 
     <?php wp_nonce_field( $view['nonce_action'] ); ?>
     <input name="action" type="hidden" value="wp2static_ui_save_advanced_options" />

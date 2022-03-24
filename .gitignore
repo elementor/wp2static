@@ -1,7 +1,16 @@
+/integration-tests/bedrock/
+/integration-tests/mariadb/data/
+/integration-tests/wordpress/
 /vendor/
 /vendor_prefixed/
+.cpcache/
+.direnv/
 node_modules/
 coverage/
 admin/*.js*
+*.pid
+.envrc
+.nrepl-port
 .phpunit.result.cache
-
+result
+result-*

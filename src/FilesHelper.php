@@ -18,7 +18,7 @@ class FilesHelper {
             $dir_files = scandir( $dir );
 
             if ( ! $dir_files ) {
-                $err = 'Trying to delete nonexistant dir: ' . $dir;
+                $err = 'Trying to delete nonexistent dir: ' . $dir;
                 WsLog::l( $err );
                 throw new WP2StaticException( $err );
             }
@@ -38,12 +38,23 @@ class FilesHelper {
     /**
      * Get public URLs for all files in a local directory.
      *
+     * @param string $dir
+     * @param array<string> $filenames_to_ignore
+     * @param array<string> $file_extensions_to_ignore
      * @return string[] list of relative, urlencoded URLs
      */
-    public static function getListOfLocalFilesByDir( string $dir ) : array {
-        $files = [];
-
+    public static function getListOfLocalFilesByDir(
+        string $dir,
+        array $filenames_to_ignore,
+        array $file_extensions_to_ignore
+    ) : array {
         $site_path = SiteInfo::getPath( 'site' );
+
+        if ( ! is_string( $site_path ) ) {
+            return [];
+        }
+
+        $files = [];
 
         if ( is_dir( $dir ) ) {
             $iterator = new RecursiveIteratorIterator(
@@ -54,15 +65,17 @@ class FilesHelper {
             );
 
             foreach ( $iterator as $filename => $file_object ) {
-                $path_crawlable = self::filePathLooksCrawlable( $filename );
+                $path_crawlable = self::pathLooksCrawlable(
+                    $filename,
+                    $filenames_to_ignore,
+                    $file_extensions_to_ignore
+                );
 
                 if ( $path_crawlable ) {
-                    if ( is_string( $site_path ) ) {
-                        $url = str_replace( $site_path, '/', $filename );
+                    $url = str_replace( $site_path, '/', $filename );
 
-                        if ( is_string( $url ) ) {
-                            $files[] = $url;
-                        }
+                    if ( is_string( $url ) ) {
+                        $files[] = $url;
                     }
                 }
             }
@@ -74,60 +87,17 @@ class FilesHelper {
     /**
      * Ensure a given filepath has an allowed filename and extension.
      *
+     * @param string $file_name
+     * @param array<string> $filenames_to_ignore
+     * @param array<string> $file_extensions_to_ignore
      * @return bool  True if the given file does not have a disallowed filename
      *               or extension.
      */
-    public static function filePathLooksCrawlable( string $file_name ) : bool {
-        $filenames_to_ignore = [
-            '__MACOSX',
-            '.babelrc',
-            '.git',
-            '.gitignore',
-            '.gitkeep',
-            '.htaccess',
-            '.php',
-            '.svn',
-            '.travis.yml',
-            'backwpup',
-            'bower_components',
-            'bower.json',
-            'composer.json',
-            'composer.lock',
-            'config.rb',
-            'current-export',
-            'Dockerfile',
-            'gulpfile.js',
-            'latest-export',
-            'LICENSE',
-            'Makefile',
-            'node_modules',
-            'package.json',
-            'pb_backupbuddy',
-            'plugins/wp2static',
-            'previous-export',
-            'README',
-            'static-html-output-plugin',
-            '/tests/',
-            'thumbs.db',
-            'tinymce',
-            'wc-logs',
-            'wpallexport',
-            'wpallimport',
-            'wp-static-html-output', // exclude earlier version exports
-            'wp2static-addon',
-            'wp2static-crawled-site',
-            'wp2static-processed-site',
-            'wp2static-working-files',
-            'yarn-error.log',
-            'yarn.lock',
-        ];
-
-        $filenames_to_ignore =
-            apply_filters(
-                'wp2static_filenames_to_ignore',
-                $filenames_to_ignore
-            );
-
+    public static function pathLooksCrawlable(
+        string $file_name,
+        array $filenames_to_ignore,
+        array $file_extensions_to_ignore
+    ) : bool {
         $filename_matches = 0;
 
         str_ireplace( $filenames_to_ignore, '', $file_name, $filename_matches );
@@ -136,39 +106,6 @@ class FilesHelper {
         if ( $filename_matches ) {
             return false;
         }
-
-        $file_extensions_to_ignore = [
-            '.bat',
-            '.crt',
-            '.DS_Store',
-            '.git',
-            '.idea',
-            '.ini',
-            '.less',
-            '.map',
-            '.md',
-            '.mo',
-            '.php',
-            '.PHP',
-            '.phtml',
-            '.po',
-            '.pot',
-            '.scss',
-            '.sh',
-            '.sql',
-            '.SQL',
-            '.tar.gz',
-            '.tpl',
-            '.txt',
-            '.yarn',
-            '.zip',
-        ];
-
-        $file_extensions_to_ignore =
-            apply_filters(
-                'wp2static_file_extensions_to_ignore',
-                $file_extensions_to_ignore
-            );
 
         /*
           Prepare the file extension list for regex:
@@ -184,6 +121,38 @@ class FilesHelper {
         }
 
         return true;
+    }
+
+    /**
+     * Ensure a given filepath has an allowed filename and extension.
+     *
+     * @return bool  True if the given file does not have a disallowed filename
+     *               or extension.
+     */
+    public static function filePathLooksCrawlable( string $file_name ) : bool {
+        $filenames_to_ignore = CoreOptions::getLineDelimitedBlobValue( 'filenamesToIgnore' );
+
+        $filenames_to_ignore =
+            apply_filters(
+                'wp2static_filenames_to_ignore',
+                $filenames_to_ignore
+            );
+
+        $file_extensions_to_ignore = CoreOptions::getLineDelimitedBlobValue(
+            'fileExtensionsToIgnore'
+        );
+
+        $file_extensions_to_ignore =
+            apply_filters(
+                'wp2static_file_extensions_to_ignore',
+                $file_extensions_to_ignore
+            );
+
+        return self::pathLooksCrawlable(
+            $file_name,
+            $filenames_to_ignore,
+            $file_extensions_to_ignore
+        );
     }
 
     /**

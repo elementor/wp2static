@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 class SitemapDownloadTest extends TestCase {
 
     /**
+     * @group ExternalRequests
      * @dataProvider generateDataForTest
      * @param string $url URL
      */
@@ -40,9 +41,6 @@ class SitemapDownloadTest extends TestCase {
         return [
             [
                 'http://www.google.com/sitemap.xml',
-            ],
-            [
-                'http://php.net/sitemap.xml',
             ],
             [
                 'https://www.yahoo.com/news/sitemaps/news-sitemap_index_US_en-US.xml.gz',
