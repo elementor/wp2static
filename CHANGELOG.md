@@ -26,6 +26,7 @@
  - [#849](https://github.com/leonstafford/wp2static/issues/849): Make job locking work with multisite. @utchy
  - [#844](https://github.com/leonstafford/wp2static/issues/844): Fix crawling of basic auth sites. @thecodeassassin, @vladstanca
  - [#855](https://github.com/leonstafford/wp2static/issues/855): Allow setting options to empty values from the CLI. @john-shaffer
+ - [#850](https://github.com/leonstafford/wp2static/issues/850): Fix to write content to disk, even for cache hits when "Use CrawlCache" is ON. @utchy
 
 ## WP2Static 7.1.7 (2021-09-04)
 
