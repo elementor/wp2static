@@ -212,7 +212,7 @@ class Crawler {
 
                     if ( $crawled_contents && $write_contents ) {
                         $static_path = static::transformPath( $root_relative_path );
-                        StaticSite::add( $root_relative_path, $crawled_contents );
+                        StaticSite::add( $static_path, $crawled_contents );
                     }
 
                     if ( $is_cacheable ) {
