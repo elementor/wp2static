@@ -602,7 +602,7 @@ class Controller {
                 switch ( $job->job_type ) {
                     case 'detect':
                         WsLog::l( 'Starting URL detection' );
-                        $detected_count = URLDetector::detectURLs();
+                        $detected_count = count( URLDetector::detectURLs() );
                         WsLog::l( "URL detection completed ($detected_count URLs detected)" );
                         break;
                     case 'crawl':
@@ -684,7 +684,7 @@ class Controller {
     public static function wp2staticHeadless() : void {
         WsLog::l( 'Running WP2Static in Headless mode' );
         WsLog::l( 'Starting URL detection' );
-        $detected_count = URLDetector::detectURLs();
+        $detected_count = count( URLDetector::detectURLs() );
         WsLog::l( "URL detection completed ($detected_count URLs detected)" );
 
         self::wp2staticCrawl();

@@ -14,11 +14,19 @@ namespace WP2Static;
 
 class URLDetector {
 
+    public static function countURLs() : int {
+        return count( static::detectURLs( $quiet = true ) );
+    }
+
     /**
      * Detect URLs within site
+     *
+     * @return array<string>
      */
-    public static function detectURLs() : string {
-        WsLog::l( 'Starting to detect WordPress site URLs.' );
+    public static function detectURLs( bool $quiet = false ) : array {
+        if ( ! $quiet ) {
+            WsLog::l( 'Starting to detect WordPress site URLs.' );
+        }
 
         do_action(
             'wp2static_detect'
@@ -170,19 +178,27 @@ class URLDetector {
 
         $unique_urls = array_unique( $url_queue );
 
+        $total_detected = (string) count( $unique_urls );
+
+        if ( ! $quiet ) {
+            WsLog::l(
+                "Detection complete. $total_detected URLs added to Crawl Queue."
+            );
+        }
+
+        return $unique_urls;
+    }
+
+    public static function enqueueURLs() : string {
+        $unique_urls = static::detectURLs();
+
         // No longer truncate before adding
         // addUrls is now doing INSERT IGNORE based on URL hash to be
         // additive and not error on duplicate
 
         CrawlQueue::addUrls( $unique_urls );
 
-        $total_detected = (string) count( $unique_urls );
-
-        WsLog::l(
-            "Detection complete. $total_detected URLs added to Crawl Queue."
-        );
-
-        return $total_detected;
+        return (string) count( $unique_urls );
     }
 }
 

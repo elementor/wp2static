@@ -120,6 +120,26 @@ class JobQueue {
         return $jobs;
     }
 
+    /**
+     * Get count of jobs organized by type
+     *
+     * @return int[] keys are job type and values are count
+     */
+    public static function getJobCountByType() : array {
+        global $wpdb;
+        $jobs = [];
+
+        $table_name = $wpdb->prefix . 'wp2static_jobs';
+        $query = "SELECT job_type, count(*) FROM $table_name GROUP BY job_type";
+
+        $rows = $wpdb->get_results( $query, 'ARRAY_N' );
+        foreach ( $rows as $row ) {
+            $jobs[ $row[0] ] = $row[1];
+        }
+
+        return $jobs;
+    }
+
     /*
         Skip processing jobs where a more recent job of same type exists
 
@@ -203,12 +223,16 @@ class JobQueue {
         return $total_jobs;
     }
 
+    public static function getWaitingJobs() : int {
+        return static::getWaitingJobsCount();
+    }
+
     /**
      *  Get count of waiting jobs
      *
      *  @return int Waiting jobs
      */
-    public static function getWaitingJobs() : int {
+    public static function getWaitingJobsCount() : int {
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'wp2static_jobs';

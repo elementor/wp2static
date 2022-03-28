@@ -50,15 +50,23 @@ class Addons {
      *
      * @return mixed[] array of Addon objects
      */
-    public static function getAll() : array {
+    public static function getAll( string $type = 'all' ) : array {
         global $wpdb;
         $addons = [];
 
         $table_name = $wpdb->prefix . 'wp2static_addons';
 
-        $addons = $wpdb->get_results( "SELECT * FROM $table_name ORDER BY type DESC" );
+        $query_string = "SELECT * FROM $table_name";
+        $query_params = [];
+        if ( $type !== 'all' ) {
+            $query_string .= ' WHERE type = %s';
+            $query_params[] = $type;
+        }
+        $query_string .= ' ORDER BY type DESC';
 
-        return $addons;
+        return $wpdb->get_results(
+            $wpdb->prepare( $query_string, $query_params )
+        );
     }
 
     /**
