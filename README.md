@@ -2,6 +2,12 @@
 
 A WordPress plugin for static site generation and deployment.
 
+**Latest: WP2Static joins Strattic, the leading WordPress to headless and static site end to end publishing platform!**
+
+Strattic is generously keeping the WP2Static plugin available and maintained for open source users!
+
+[Read Announcement](https://www.strattic.com/wp2static-joins-strattic/)
+
 ## Installation options
 
  - from this source code `git clone https://github.com/leonstafford/wp2static.git` (run `composer install` afterwards)
