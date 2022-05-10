@@ -21,6 +21,10 @@ class DetectVendorFiles {
         $vendor_cache_dir =
             SiteInfo::getPath( 'content' ) . 'cache/';
 
+        // cache dir used by Elegant Themes
+        $et_cache_dir =
+            SiteInfo::getPath( 'content' ) . 'et-cache/';
+
         if ( is_dir( $vendor_cache_dir ) ) {
             $site_url = SiteInfo::getUrl( 'site' );
             $content_url = SiteInfo::getUrl( 'content' );
@@ -39,6 +43,26 @@ class DetectVendorFiles {
             );
 
             $vendor_files = array_merge( $vendor_files, $vendor_cache_urls );
+        }
+
+        if ( is_dir( $et_cache_dir ) ) {
+            $site_url = SiteInfo::getUrl( 'site' );
+            $content_url = SiteInfo::getUrl( 'content' );
+
+            // get difference between home and wp-contents URL
+            $prefix = str_replace(
+                $site_url,
+                '/',
+                $content_url
+            );
+
+            $et_cache_urls = DetectVendorCache::detect(
+                $et_cache_dir,
+                SiteInfo::getPath( 'content' ),
+                $prefix
+            );
+
+            $vendor_files = array_merge( $vendor_files, $et_cache_urls );
         }
 
         if ( class_exists( 'Custom_Permalinks' ) ) {
