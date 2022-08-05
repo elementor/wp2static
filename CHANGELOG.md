@@ -1,5 +1,6 @@
 ## Unreleased
 
+ - [#876](https://github.com/WP2Static/wp2static/pull/876): Fix #240: ignore SSL errors when fetching sitemap from local site with self-signed certificate. @timothylcooke
  - [d3977eab](d3977eab6be24c4985d998a7f4bf07409ef4a71b): Create an index on `wp2static_jobs.status`. @john-shaffer
  - [#785](https://github.com/leonstafford/wp2static/issues/785): Accept self-signed certs during sitemap crawling. @working-name, @john-shaffer
  - [#806](https://github.com/leonstafford/wp2static/pull/806): Detect dead jobs and mark as failed. @john-shaffer
