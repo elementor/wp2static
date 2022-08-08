@@ -238,7 +238,7 @@ class SitemapParser {
             if ( ! isset( $this->config['guzzle']['headers']['User-Agent'] ) ) {
                 $this->config['guzzle']['headers']['User-Agent'] = $this->user_agent;
             }
-            $client = new WP2StaticGuzzleHttp\Client();
+            $client = new WP2StaticGuzzleHttp\Client( [ 'verify' => false ] );
             $res = $client->request( 'GET', $this->current_url, $this->config['guzzle'] );
             if ( $res->getStatusCode() === 200 ) {
                 return $res->getBody()->getContents();
