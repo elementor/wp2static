@@ -29,6 +29,7 @@
  - [#855](https://github.com/leonstafford/wp2static/issues/855): Allow setting options to empty values from the CLI. @john-shaffer
  - [#850](https://github.com/leonstafford/wp2static/issues/850): Fix to write content to disk, even for cache hits when "Use CrawlCache" is ON. @utchy
  - [#877](https://github.com/leonstafford/wp2static/issues/877): Detect from web UI was not adding any URLs. @timothylcooke
+ - [#878](https://github.com/leonstafford/wp2static/issues/878): Fix deletion of old pages when crawl returns 404. @timothylcooke
 
 ## WP2Static 7.1.7 (2021-09-04)
 
