@@ -602,7 +602,7 @@ class Controller {
                 switch ( $job->job_type ) {
                     case 'detect':
                         WsLog::l( 'Starting URL detection' );
-                        $detected_count = count( URLDetector::detectURLs() );
+                        $detected_count = URLDetector::enqueueURLs();
                         WsLog::l( "URL detection completed ($detected_count URLs detected)" );
                         break;
                     case 'crawl':
