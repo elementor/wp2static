@@ -44,7 +44,7 @@
               (sh! "rm" "-f" zip-name :dir plugins-dir))))
         (finally
           (sh! "rm" "-f" zip-name :dir (str (System/getenv "HOME") "/Downloads/")))))
-    (bedrock-cli! "plugin" "activate" "wp2static")
+    ;(bedrock-cli! "plugin" "activate" "wp2static")
     (wp-cli! "plugin" "activate" "wp2static")))
 
 (defn clean-wp2static-cache! []

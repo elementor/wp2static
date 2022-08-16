@@ -112,12 +112,12 @@
 
 (defn system-map []
   (component/system-map
-    :bedrock (component/using (bedrock) [:mariadb :php-fpm])
+    ;:bedrock (component/using (bedrock) [:mariadb :php-fpm])
     :mariadb (mariadb)
     :nginx (component/using (nginx) [:wordpress])
     :php-fpm (component/using (php-fpm) [:mariadb])
     :wordpress (component/using (wordpress) [:mariadb :php-fpm])
-    :wp2static (component/using (wp2static) [:bedrock :wordpress])))
+    :wp2static (component/using (wp2static) [#_:bedrock :wordpress])))
 
 (defonce system (atom nil))
 
