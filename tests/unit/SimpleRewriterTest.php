@@ -54,6 +54,10 @@ final class SimpleRewriterTest extends TestCase {
             ->andReturn( 'https://bar.com' );
         Mockery::mock( 'overload:\WP2Static\SiteInfo' )
             ->shouldreceive( 'getUrl' )
+            ->withArgs( [ 'home' ] )
+            ->andReturn( 'https://foo.com/' );
+        Mockery::mock( 'overload:\WP2Static\SiteInfo' )
+            ->shouldreceive( 'getUrl' )
             ->withArgs( [ 'site' ] )
             ->andReturn( 'https://foo.com/' );
 
@@ -117,6 +121,10 @@ final class SimpleRewriterTest extends TestCase {
             ->andReturn( 'https://bar.com' );
         Mockery::mock( 'overload:\WP2Static\SiteInfo' )
             ->shouldreceive( 'getUrl' )
+            ->withArgs( [ 'home' ] )
+            ->andReturn( 'https://foo.com/' );
+        Mockery::mock( 'overload:\WP2Static\SiteInfo' )
+            ->shouldreceive( 'getUrl' )
             ->withArgs( [ 'site' ] )
             ->andReturn( 'https://foo.com/' );
 
@@ -137,6 +145,10 @@ final class SimpleRewriterTest extends TestCase {
             ->getMock();
         Mockery::mock( 'overload:\WP2Static\SiteInfo' )
             ->shouldreceive( 'getUrl' )
+            ->withArgs( [ 'home' ] )
+            ->andReturn( 'http://foo.com/' );
+        Mockery::mock( 'overload:\WP2Static\SiteInfo' )
+            ->shouldreceive( 'getUrl' )
             ->withArgs( [ 'site' ] )
             ->andReturn( 'http://foo.com/' )
             ->getMock();
@@ -154,6 +166,10 @@ final class SimpleRewriterTest extends TestCase {
             ->withArgs( [ 'deploymentURL' ] )
             ->andReturn( 'http://bar.com' )
             ->getMock();
+        Mockery::mock( 'overload:\WP2Static\SiteInfo' )
+            ->shouldreceive( 'getUrl' )
+            ->withArgs( [ 'home' ] )
+            ->andReturn( 'https://foo.com/' );
         Mockery::mock( 'overload:\WP2Static\SiteInfo' )
             ->shouldreceive( 'getUrl' )
             ->withArgs( [ 'site' ] )
@@ -197,6 +213,10 @@ final class SimpleRewriterTest extends TestCase {
             ->getMock();
         Mockery::mock( 'overload:\WP2Static\SiteInfo' )
             ->shouldreceive( 'getUrl' )
+            ->withArgs( [ 'home' ] )
+            ->andReturn( 'https://foo.com/' );
+        Mockery::mock( 'overload:\WP2Static\SiteInfo' )
+            ->shouldreceive( 'getUrl' )
             ->withArgs( [ 'site' ] )
             ->andReturn( 'https://foo.com/' )
             ->getMock();
@@ -216,6 +236,10 @@ final class SimpleRewriterTest extends TestCase {
             ->shouldreceive( 'getValue' )
             ->withArgs( [ 'deploymentURL' ] )
             ->andReturn( 'https://bar.com' );
+        Mockery::mock( 'overload:\WP2Static\SiteInfo' )
+            ->shouldreceive( 'getUrl' )
+            ->withArgs( [ 'home' ] )
+            ->andReturn( 'https://foo.com/' );
         Mockery::mock( 'overload:\WP2Static\SiteInfo' )
             ->shouldreceive( 'getUrl' )
             ->withArgs( [ 'site' ] )
@@ -245,6 +269,10 @@ final class SimpleRewriterTest extends TestCase {
             ->shouldreceive( 'getValue' )
             ->withArgs( [ 'deploymentURL' ] )
             ->andReturn( 'https://bar.com' );
+        Mockery::mock( 'overload:\WP2Static\SiteInfo' )
+            ->shouldreceive( 'getUrl' )
+            ->withArgs( [ 'home' ] )
+            ->andReturn( 'https://foo.com/' );
         Mockery::mock( 'overload:\WP2Static\SiteInfo' )
             ->shouldreceive( 'getUrl' )
             ->withArgs( [ 'site' ] )

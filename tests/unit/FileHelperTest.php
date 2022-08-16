@@ -147,6 +147,7 @@ final class FileHelperTest extends TestCase {
         ];
         $actual = FilesHelper::getListOfLocalFilesByDir(
             $filepath,
+            '/',
             $filenames_to_ignore,
             $file_extensions_to_ignore
         );
@@ -161,6 +162,7 @@ final class FileHelperTest extends TestCase {
         ];
         $actual = FilesHelper::getListOfLocalFilesByDir(
             $filepath,
+            '/',
             $filenames_to_ignore,
             $file_extensions_to_ignore
         );
@@ -173,6 +175,7 @@ final class FileHelperTest extends TestCase {
         ];
         $actual = FilesHelper::getListOfLocalFilesByDir(
             $filepath,
+            '/',
             $filenames_to_ignore,
             $file_extensions_to_ignore
         );
