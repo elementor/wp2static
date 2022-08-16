@@ -3,8 +3,11 @@
 /integration-tests/wordpress/
 /vendor/
 /vendor_prefixed/
+.calva/
+.clj-kondo/
 .cpcache/
 .direnv/
+.lsp/
 node_modules/
 coverage/
 admin/*.js*

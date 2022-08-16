@@ -26,7 +26,7 @@
         (assoc this :process nil)))))
 
 (def plugins-dirs
-  ["bedrock/web/app/plugins"
+  [#_"bedrock/web/app/plugins"
    "wordpress/wp-content/plugins"])
 
 (defrecord WP2Static [plugins-dirs started?]
