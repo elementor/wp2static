@@ -22,10 +22,10 @@ let
   composer = lib.getAttr phpVersion composerPackages;
   php = lib.getAttr phpVersion phpPackages;
   wordpress = ( pkgs.wordpress.overrideAttrs( oldAttrs: rec {
-      version = getEnv "WORDPRESS_VERSION" "5.9.2";
+      version = getEnv "WORDPRESS_VERSION" "6.0.1";
       src = fetchurl {
         url = "https://wordpress.org/wordpress-${version}.tar.gz";
-        sha256 = getEnv "WORDPRESS_SHA256" "12wzqrh21sh6pgvs0ayabcv66psq9a8cfz3qk43r5kjn5bfz4rbp";
+        sha256 = getEnv "WORDPRESS_SHA256" "f678596804aa89d7cdc9280862938464eab25aeaebfefa91ae175e15aa3ef054";
       };
     })
   );
