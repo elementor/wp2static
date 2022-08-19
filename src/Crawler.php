@@ -161,7 +161,8 @@ class Crawler {
                         // both the crawled and the processed.
                         array_map(
                             function( $dir ) use ( $root_relative_path ) {
-                                $suffix = ltrim( $root_relative_path, '/' );
+                                $transformed_path = self::transformPath( $root_relative_path );
+                                $suffix = ltrim( $transformed_path, '/' );
                                 $full_path = trailingslashit( $dir ) . $suffix;
                                 if ( file_exists( $full_path ) && ! is_dir( $full_path ) ) {
                                     unlink( $full_path );
