@@ -17,52 +17,32 @@ class DetectVendorFiles {
     public static function detect( string $wp_site_url ) : array {
         $vendor_files = [];
 
-        // cache dir used by Autoptimize and other themes/plugins
-        $vendor_cache_dir =
-            SiteInfo::getPath( 'content' ) . 'cache/';
+        $content_path = SiteInfo::getPath( 'content' );
+        $site_url = SiteInfo::getUrl( 'site' );
+        $content_url = SiteInfo::getUrl( 'content' );
 
-        // cache dir used by Elegant Themes
-        $et_cache_dir =
-            SiteInfo::getPath( 'content' ) . 'et-cache/';
+        $vendor_cache_dirs = [
+            $content_path . 'cache/', // cache dir used by Autoptimize and other themes/plugins
+            $content_path . 'et-cache/', // cache dir used by Elegant Themes
+        ];
 
-        if ( is_dir( $vendor_cache_dir ) ) {
-            $site_url = SiteInfo::getUrl( 'site' );
-            $content_url = SiteInfo::getUrl( 'content' );
+        foreach ( $vendor_cache_dirs as $vendor_cache_dir ) {
+            if ( is_dir( $vendor_cache_dir ) ) {
+                // get difference between home and wp-contents URL
+                $prefix = str_replace(
+                    $site_url,
+                    '/',
+                    $content_url
+                );
 
-            // get difference between home and wp-contents URL
-            $prefix = str_replace(
-                $site_url,
-                '/',
-                $content_url
-            );
+                $vendor_cache_urls = DetectVendorCache::detect(
+                    $vendor_cache_dir,
+                    $content_path,
+                    $prefix
+                );
 
-            $vendor_cache_urls = DetectVendorCache::detect(
-                $vendor_cache_dir,
-                SiteInfo::getPath( 'content' ),
-                $prefix
-            );
-
-            $vendor_files = array_merge( $vendor_files, $vendor_cache_urls );
-        }
-
-        if ( is_dir( $et_cache_dir ) ) {
-            $site_url = SiteInfo::getUrl( 'site' );
-            $content_url = SiteInfo::getUrl( 'content' );
-
-            // get difference between home and wp-contents URL
-            $prefix = str_replace(
-                $site_url,
-                '/',
-                $content_url
-            );
-
-            $et_cache_urls = DetectVendorCache::detect(
-                $et_cache_dir,
-                SiteInfo::getPath( 'content' ),
-                $prefix
-            );
-
-            $vendor_files = array_merge( $vendor_files, $et_cache_urls );
+                $vendor_files = array_merge( $vendor_files, $vendor_cache_urls );
+            }
         }
 
         if ( class_exists( 'Custom_Permalinks' ) ) {
