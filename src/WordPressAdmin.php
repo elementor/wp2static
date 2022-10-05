@@ -282,6 +282,13 @@ class WordPressAdmin {
         );
 
         add_action(
+            'wp2static_process_xsl',
+            [ SimpleRewriter::class, 'rewrite' ],
+            10,
+            1
+        );
+
+        add_action(
             'save_post',
             [ Controller::class, 'wp2staticSavePostHandler' ],
             0
