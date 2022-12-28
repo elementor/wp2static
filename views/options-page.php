@@ -104,7 +104,7 @@ $row = function( $name ) use ( $options ) {
 
     <br>
 
-    <?php wp_nonce_field( $view['nonce_action'] ); ?>
+    <?php wp_nonce_field( strval( $view['nonce_action'] ) ); ?>
     <input name="action" type="hidden" value="wp2static_ui_save_options" />
 
     <button class="button btn-primary" type="submit">Save options</button>
