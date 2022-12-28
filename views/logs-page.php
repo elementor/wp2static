@@ -5,6 +5,11 @@
 /**
  * @var mixed[] $view
  */
+
+/**
+ * @var string[] $logs
+ */
+$logs = $view['logs'];
 ?>
 
 <div class="wrap">
@@ -18,14 +23,14 @@
             </tr>
         </thead>
         <tbody>
-            <?php if ( ! $view['logs'] ) : ?>
+            <?php if ( ! $logs ) : ?>
                 <tr>
                     <td colspan="2">Logs are empty.</td>
                 </tr>
             <?php endif; ?>
 
 
-            <?php foreach ( $view['logs'] as $log ) : ?>
+            <?php foreach ( $logs as $log ) : ?>
                 <tr>
                     <td><?php echo $log->time; ?></td>
                     <td><?php echo $log->log; ?></td>

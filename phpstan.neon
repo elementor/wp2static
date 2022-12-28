@@ -35,4 +35,10 @@ parameters:
         - message: "#^Cannot access property \\$name on mixed\\.$#"
           path: views/options-page.php
           count: 2
+        - message: "#^Cannot access property \\$time on string\\.$#"
+          path: views/logs-page.php
+          count: 1
+        - message: "#^Cannot access property \\$log on string\\.$#"
+          path: views/logs-page.php
+          count: 1
         - '/^Parameter #2 \$callable of static method WP_CLI::add_command\(\) expects callable\(\): mixed, \S+ given\.$/'
