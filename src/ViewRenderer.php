@@ -224,7 +224,7 @@ class ViewRenderer {
 
         $page_size = 200;
         $page = isset( $_GET['paged'] ) ? max( 1, intval( $_GET['paged'] ) ) : 1;
-        $paginator = new Paginator( $urls, $page_size, $page );
+        $paginator = new Paginator( $paths, $page_size, $page );
         $view = [
             'paginatorPage' => $paginator->page(),
             'paginatorRender' => $paginator->render(),
