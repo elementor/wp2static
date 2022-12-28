@@ -5,14 +5,29 @@
 /**
  * @var mixed[] $view
  */
+
+/**
+ * @var int $paginator_index
+ */
+$paginator_index = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_NUMBER_INT );
+
+/**
+ * @var int $paginator_page
+ */
+$paginator_page = $view['paginatorPage'];
+
+/**
+ * @var string $search_term
+ */
+$search_term = filter_input( INPUT_GET, 's', FILTER_SANITIZE_URL ) ?? '';
 ?>
 
 <div class="wrap">
     <br>
 
     <form id="posts-filter" method="GET">
-        <input type="hidden" name="page" value="<?php echo esc_attr( $_GET['page'] ); ?>" />
-        <input type="hidden" name="paged" value="<?php echo $view['paginator']->page(); ?>" />
+        <input type="hidden" name="page" value="<?php echo $paginator_index; ?>" />
+        <input type="hidden" name="paged" value="<?php echo $paginator_page; ?>" />
 
         <p class="search-box">
             <label class="screen-reader-text" for="post-search-input">Search Crawl Queue URLs:</label>
@@ -20,7 +35,7 @@
                 type="search"
                 id="post-search-input"
                 name="s"
-                value="<?php echo $_GET['s'] ?? ''; ?>"
+                value="<?php echo esc_attr( $search_term ); ?>"
             >
             <input type="submit" id="search-submit" class="button" value="Search URLs">
         </p>
@@ -35,7 +50,11 @@
                 <input type="submit" id="doaction" class="button action" value="Apply">
             </div>
         
-            <?php $view['paginator']->render(); ?>
+            <?php
+            // outputs paginator template
+            /** @phpstan-ignore-next-line */
+             $view['paginatorRender'];
+            ?>
             <br class="clear">
         </div>
 
@@ -50,14 +69,14 @@
                 </tr>
             </thead>
             <tbody>
-                <?php if ( ! $view['paginator']->totalRecords() ) : ?>
+                <?php if ( ! $view['paginatorTotalRecords'] ) : ?>
                     <tr>
                         <th>&nbsp;</th>
                         <td>Crawl queue is empty.</td>
                     </tr>
                 <?php endif; ?>
 
-                <?php foreach ( $view['paginator']->records() as $paginator_id => $url ) : ?>
+                <?php foreach ( $view['paginatorRecords'] as $paginator_id => $url ) : ?>
                     <tr>
                         <th scope="row" class="check-column">
                             <label class="screen-reader-text" for="cb-select-<?php echo $paginator_id; ?>">
