@@ -5,13 +5,18 @@
 /**
  * @var mixed[] $view
  */
+
+/**
+ * @var int $page
+ */
+$page = filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT);
 ?>
 
 <div class="wrap">
     <br>
 
     <form id="posts-filter" method="GET">
-        <input type="hidden" name="page" value="<?php echo esc_attr( $_GET['page'] ); ?>" />
+        <input type="hidden" name="page" value="<?php echo $page; ?>" />
         <input type="hidden" name="paged" value="<?php echo $view['paginator']->page(); ?>" />
 
         <p class="search-box">
