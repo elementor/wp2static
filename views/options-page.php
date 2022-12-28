@@ -8,6 +8,9 @@
 
 use WP2Static\OptionRenderer;
 
+/**
+ * @var array<string, mixed> $options
+ */
 $options = $view['coreOptions'];
 
 $row = function( $name ) use ( $options ) {
