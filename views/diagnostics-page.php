@@ -116,7 +116,7 @@
         echo '<td>No extensions loaded.</td>';
         echo '</tr>';
     } else {
-        $lists  = array_chunk( $ar_list, $rows );
+        $lists = array_chunk( $ar_list, $rows );
 
         foreach ( $lists as $column ) {
             echo '<tr>';
