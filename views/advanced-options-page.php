@@ -7,6 +7,9 @@
 
 use WP2Static\OptionRenderer;
 
+/**
+ * @var array<string, mixed> $options
+ */
 $options = $view['coreOptions'];
 
 $row = function( $name ) use ( $options ) {
@@ -48,7 +51,7 @@ $row = function( $name ) use ( $options ) {
 
     <p/>
 
-    <?php wp_nonce_field( $view['nonce_action'] ); ?>
+    <?php wp_nonce_field( strval( $view['nonce_action'] ) ); ?>
     <input name="action" type="hidden" value="wp2static_ui_save_advanced_options" />
 
     <button class="button btn-primary" type="submit">Save options</button>
