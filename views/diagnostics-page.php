@@ -110,14 +110,22 @@
     natcasesort( $view['extensions'] );
     $ar_list = $view['extensions'];
     $rows = (int) ceil( count( $ar_list ) / 5 );
-    $lists  = array_chunk( $ar_list, $rows );
 
-    foreach ( $lists as $column ) {
+    if ( $rows < 1 ) {
         echo '<tr>';
-        foreach ( $column as $item ) {
-            echo '<td>' . $item . '</td>';
-        }
+        echo '<td>No extensions loaded.</td>';
         echo '</tr>';
+    } else {
+        $lists  = array_chunk( $ar_list, $rows );
+
+        foreach ( $lists as $column ) {
+            echo '<tr>';
+            foreach ( $column as $item ) {
+                $loaded_extension = strval( $item );
+                echo "<td>$loaded_extension</td>";
+            }
+            echo '</tr>';
+        }
     }
 
     ?>
