@@ -64,22 +64,25 @@ class ViewRenderer {
             die( 'Forbidden' );
         }
 
-        if ( ! empty( $_GET['action'] ) && ! empty( $_GET['id'] ) && is_array( $_GET['id'] ) ) {
-            switch ( $_GET['action'] ) {
-                case 'remove':
-                    CrawlQueue::rmUrlsById( $_GET['id'] );
-                    break;
-            }
+        $action = filter_input( INPUT_GET, 'action' );
+        /**
+         * @var string[] $url_id
+         */
+        $url_id = filter_input( INPUT_GET, 'id' );
+
+        if ( $action === 'remove' && is_array( $url_id ) ) {
+            CrawlQueue::rmUrlsById( $url_id );
         }
 
         $urls = CrawlQueue::getCrawlablePaths();
         // Apply search
-        if ( ! empty( $_GET['s'] ) ) {
-            $s = $_GET['s'];
+
+        $search_term = strval( filter_input( INPUT_GET, 's' ) );
+        if ( $search_term !== '' ) {
             $urls = array_filter(
                 $urls,
-                function ( $url ) use ( $s ) {
-                    return stripos( $url, $s ) !== false;
+                function ( $url ) use ( $search_term ) {
+                    return stripos( $url, $search_term ) !== false;
                 }
             );
         }
@@ -89,7 +92,6 @@ class ViewRenderer {
         $paginator = new Paginator( $urls, $page_size, $page );
         $view = [
             'paginatorPage' => $paginator->page(),
-            'paginatorRender' => $paginator->render(),
             'paginatorTotalRecords' => $paginator->totalRecords(),
             'paginatorRecords' => $paginator->records(),
         ];

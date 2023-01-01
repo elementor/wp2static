@@ -80,10 +80,6 @@ class Paginator {
         return $this->records;
     }
 
-    public function render() : void {
-        require __DIR__ . '/../views/_paginator.php';
-    }
-
     /**
      * Extract only the records for our current page.q
      * Because array_slice doesn't preserve integer keys, we need to split
