@@ -76,7 +76,6 @@ class ViewRenderer {
 
         $urls = CrawlQueue::getCrawlablePaths();
         // Apply search
-
         $search_term = strval( filter_input( INPUT_GET, 's' ) );
         if ( $search_term !== '' ) {
             $urls = array_filter(
@@ -118,14 +117,13 @@ class ViewRenderer {
         }
 
         $urls = CrawlCache::getURLs();
-
         // Apply search
-        if ( ! empty( $_GET['s'] ) ) {
-            $s = $_GET['s'];
+        $search_term = strval( filter_input( INPUT_GET, 's' ) );
+        if ( $search_term !== '' ) {
             $urls = array_filter(
                 $urls,
-                function ( $url ) use ( $s ) {
-                    return stripos( isset( $url->url ) ? $url->url : '', $s ) !== false;
+                function ( $url ) use ( $search_term ) {
+                    return stripos( $url, $search_term ) !== false;
                 }
             );
         }

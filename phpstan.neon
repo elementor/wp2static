@@ -25,7 +25,7 @@ parameters:
           count: 25
         - message: '#^In method "WP2Static\\\S+::\S+", you should not use the \$_(GET|POST) superglobal#'
           path: src/ViewRenderer.php
-          count: 20
+          count: 18
         - message: "#^Cannot access property \\$value on mixed\\.$#"
           path: views/options-page.php
           count: 4

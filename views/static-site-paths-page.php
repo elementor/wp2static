@@ -9,9 +9,9 @@ use WP2Static\URLHelper;
  */
 
 /**
- * @var int $paginator_index
+ * @var string $paginator_index
  */
-$paginator_index = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_NUMBER_INT );
+$paginator_index = filter_input( INPUT_GET, 'page' );
 
 /**
  * @var int $paginator_page
@@ -36,7 +36,7 @@ $paginator_first_page = $view['paginatorFirstPage'];
 /**
  * @var int $paginator_last_page
  */
-$paginator_last__page = $view['paginatorLastPage'];
+$paginator_last_page = $view['paginatorLastPage'];
 
 ?>
 
