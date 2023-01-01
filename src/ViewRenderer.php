@@ -291,6 +291,9 @@ class ViewRenderer {
             );
 
             foreach ( $files as $file ) {
+                /**
+                 * @var \SplFileInfo $file
+                 */
                 $disk_space += $file->getSize();
             }
         }
@@ -323,6 +326,9 @@ class ViewRenderer {
             );
 
             foreach ( $files as $file ) {
+                /**
+                 * @var \SplFileInfo $file
+                 */
                 $disk_space += $file->getSize();
             }
         }
