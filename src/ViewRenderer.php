@@ -123,7 +123,7 @@ class ViewRenderer {
             $urls = array_filter(
                 $urls,
                 function ( $url ) use ( $search_term ) {
-                    return stripos( $url, $search_term ) !== false;
+                    return stripos( $url->url ?? '', $search_term ) !== false;
                 }
             );
         }
