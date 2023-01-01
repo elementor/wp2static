@@ -151,12 +151,12 @@ class ViewRenderer {
         $paths = ProcessedSite::getPaths();
 
         // Apply search
-        if ( ! empty( $_GET['s'] ) ) {
-            $s = $_GET['s'];
+        $search_term = strval( filter_input( INPUT_GET, 's' ) );
+        if ( $search_term !== '' ) {
             $paths = array_filter(
                 $paths,
-                function ( $path ) use ( $s ) {
-                    return stripos( $path, $s ) !== false;
+                function ( $path ) use ( $search_term ) {
+                    return stripos( $path, $search_term ) !== false;
                 }
             );
         }
@@ -184,12 +184,12 @@ class ViewRenderer {
         $paths = StaticSite::getPaths();
 
         // Apply search
-        if ( ! empty( $_GET['s'] ) ) {
-            $s = $_GET['s'];
+        $search_term = strval( filter_input( INPUT_GET, 's' ) );
+        if ( $search_term !== '' ) {
             $paths = array_filter(
                 $paths,
-                function ( $path ) use ( $s ) {
-                    return stripos( $path, $s ) !== false;
+                function ( $path ) use ( $search_term ) {
+                    return stripos( $path, $search_term ) !== false;
                 }
             );
         }
@@ -214,17 +214,18 @@ class ViewRenderer {
             die( 'Forbidden' );
         }
 
-        $paths = isset( $_GET['deploy_namespace'] )
-            ? DeployCache::getPaths( $_GET['deploy_namespace'] )
+        $deploy_namespace = strval( filter_input( INPUT_GET, 'deploy_namespace' ) );
+        $paths = $deploy_namespace !== ''
+            ? DeployCache::getPaths( $deploy_namespace )
             : DeployCache::getPaths();
 
         // Apply search
-        if ( ! empty( $_GET['s'] ) ) {
-            $s = $_GET['s'];
+        $search_term = strval( filter_input( INPUT_GET, 's' ) );
+        if ( $search_term !== '' ) {
             $paths = array_filter(
                 $paths,
-                function ( $path ) use ( $s ) {
-                    return stripos( $path, $s ) !== false;
+                function ( $path ) use ( $search_term ) {
+                    return stripos( $path, $search_term ) !== false;
                 }
             );
         }
