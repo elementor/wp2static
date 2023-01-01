@@ -131,7 +131,6 @@ class ViewRenderer {
         $paginator = new Paginator( $urls, $page_size, $page );
         $view = [
             'paginatorPage' => $paginator->page(),
-            'paginatorRender' => $paginator->render(),
             'paginatorTotalRecords' => $paginator->totalRecords(),
             'paginatorRecords' => $paginator->records(),
         ];
@@ -163,7 +162,6 @@ class ViewRenderer {
         $paginator = new Paginator( $paths, $page_size, $page );
         $view = [
             'paginatorPage' => $paginator->page(),
-            'paginatorRender' => $paginator->render(),
             'paginatorTotalRecords' => $paginator->totalRecords(),
             'paginatorRecords' => $paginator->records(),
         ];
@@ -195,7 +193,6 @@ class ViewRenderer {
         $paginator = new Paginator( $paths, $page_size, $page );
         $view = [
             'paginatorPage' => $paginator->page(),
-            'paginatorRender' => $paginator->render(),
             'paginatorTotalRecords' => $paginator->totalRecords(),
             'paginatorRecords' => $paginator->records(),
         ];
@@ -229,7 +226,6 @@ class ViewRenderer {
         $paginator = new Paginator( $paths, $page_size, $page );
         $view = [
             'paginatorPage' => $paginator->page(),
-            'paginatorRender' => $paginator->render(),
             'paginatorTotalRecords' => $paginator->totalRecords(),
             'paginatorRecords' => $paginator->records(),
         ];

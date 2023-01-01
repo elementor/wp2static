@@ -44,7 +44,4 @@ parameters:
         - message: "#^Cannot access property \\$\\S+ on mixed\\.$#"
           path: views/addons-page.php
           count: 7
-        - message: "#^Variable \\$\\S+ might not be defined\\.$#"
-          path: views/_paginator.php
-          count: 10
         - '/^Parameter #2 \$callable of static method WP_CLI::add_command\(\) expects callable\(\): mixed, \S+ given\.$/'
