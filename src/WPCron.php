@@ -86,16 +86,14 @@ class WPCron {
             return $cron_request;
         }
 
-        $headers = [
+        $auth_headers = [
             'Authorization' =>
                 sprintf( 'Basic %s', base64_encode( $auth_user . ':' . $auth_password ) ),
         ];
 
-        $cron_request['args']['headers'] =
-            isset( $cron_request['args']['headers'] ) ?
-                array_merge( $cron_request['args']['headers'], $headers ) :
-                $headers;
+        $cron_request_args = (array) ( $cron_request['args'] ?? [] );
+        $cron_request_headers = (array) ( $cron_request_args['headers'] ?? [] );
 
-        return $cron_request;
+        return array_merge( $cron_request_headers, $auth_headers );
     }
 }
