@@ -22,6 +22,22 @@ $paginator_page = $view['paginatorPage'];
  * @var string $search_term
  */
 $search_term = filter_input( INPUT_GET, 's', FILTER_SANITIZE_URL ) ?? '';
+
+/**
+ * @var int $paginator_total_records
+ */
+$paginator_total_records = $view['paginatorTotalRecords'];
+
+/**
+ * @var int $paginator_first_page
+ */
+$paginator_first_page = $view['paginatorFirstPage'];
+
+/**
+ * @var int $paginator_last_page
+ */
+$paginator_last__page = $view['paginatorLastPage'];
+
 ?>
 
 <div class="wrap">

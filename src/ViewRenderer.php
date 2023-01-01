@@ -91,9 +91,11 @@ class ViewRenderer {
         $page = isset( $_GET['paged'] ) ? max( 1, intval( $_GET['paged'] ) ) : 1;
         $paginator = new Paginator( $urls, $page_size, $page );
         $view = [
+            'paginatorFirstPage' => $paginator->firstPage(),
+            'paginatorLastPage' => $paginator->lastPage(),
             'paginatorPage' => $paginator->page(),
-            'paginatorTotalRecords' => $paginator->totalRecords(),
             'paginatorRecords' => $paginator->records(),
+            'paginatorTotalRecords' => $paginator->totalRecords(),
         ];
 
         require_once WP2STATIC_PATH . 'views/crawl-queue-page.php';
@@ -130,9 +132,11 @@ class ViewRenderer {
         $page = isset( $_GET['paged'] ) ? max( 1, intval( $_GET['paged'] ) ) : 1;
         $paginator = new Paginator( $urls, $page_size, $page );
         $view = [
+            'paginatorFirstPage' => $paginator->firstPage(),
+            'paginatorLastPage' => $paginator->lastPage(),
             'paginatorPage' => $paginator->page(),
-            'paginatorTotalRecords' => $paginator->totalRecords(),
             'paginatorRecords' => $paginator->records(),
+            'paginatorTotalRecords' => $paginator->totalRecords(),
         ];
 
         require_once WP2STATIC_PATH . 'views/crawl-cache-page.php';
@@ -161,9 +165,11 @@ class ViewRenderer {
         $page = isset( $_GET['paged'] ) ? max( 1, intval( $_GET['paged'] ) ) : 1;
         $paginator = new Paginator( $paths, $page_size, $page );
         $view = [
+            'paginatorFirstPage' => $paginator->firstPage(),
+            'paginatorLastPage' => $paginator->lastPage(),
             'paginatorPage' => $paginator->page(),
-            'paginatorTotalRecords' => $paginator->totalRecords(),
             'paginatorRecords' => $paginator->records(),
+            'paginatorTotalRecords' => $paginator->totalRecords(),
         ];
 
         require_once WP2STATIC_PATH . 'views/post-processed-site-paths-page.php';
@@ -192,9 +198,11 @@ class ViewRenderer {
         $page = isset( $_GET['paged'] ) ? max( 1, intval( $_GET['paged'] ) ) : 1;
         $paginator = new Paginator( $paths, $page_size, $page );
         $view = [
+            'paginatorFirstPage' => $paginator->firstPage(),
+            'paginatorLastPage' => $paginator->lastPage(),
             'paginatorPage' => $paginator->page(),
-            'paginatorTotalRecords' => $paginator->totalRecords(),
             'paginatorRecords' => $paginator->records(),
+            'paginatorTotalRecords' => $paginator->totalRecords(),
         ];
 
         require_once WP2STATIC_PATH . 'views/static-site-paths-page.php';
@@ -225,9 +233,11 @@ class ViewRenderer {
         $page = isset( $_GET['paged'] ) ? max( 1, intval( $_GET['paged'] ) ) : 1;
         $paginator = new Paginator( $paths, $page_size, $page );
         $view = [
+            'paginatorFirstPage' => $paginator->firstPage(),
+            'paginatorLastPage' => $paginator->lastPage(),
             'paginatorPage' => $paginator->page(),
-            'paginatorTotalRecords' => $paginator->totalRecords(),
             'paginatorRecords' => $paginator->records(),
+            'paginatorTotalRecords' => $paginator->totalRecords(),
         ];
 
         require_once WP2STATIC_PATH . 'views/deploy-cache-page.php';
