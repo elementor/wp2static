@@ -10,8 +10,8 @@ Strattic is generously keeping the WP2Static plugin available and maintained for
 
 ## Installation options
 
- - from this source code `git clone https://github.com/leonstafford/wp2static.git` (run `composer install` afterwards)
- - via [Composer](https://github.com/composer/composer) `composer require leonstafford/wp2static`
+ - from this source code `git clone https://github.com/wp2static/wp2static.git` (run `composer install` afterwards)
+ - via [Composer](https://github.com/composer/composer) `composer require wp2static/wp2static`
  - get installer zip from [wp2static.com](https://wp2static.com/download/)
  - [compile your own installer zip from source code](https://wp2static.com/compiling-from-source/)
 
