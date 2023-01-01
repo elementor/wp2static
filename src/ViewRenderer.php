@@ -107,12 +107,14 @@ class ViewRenderer {
             die( 'Forbidden' );
         }
 
-        if ( ! empty( $_GET['action'] ) && ! empty( $_GET['id'] ) && is_array( $_GET['id'] ) ) {
-            switch ( $_GET['action'] ) {
-                case 'remove':
-                    CrawlCache::rmUrlsById( $_GET['id'] );
-                    break;
-            }
+        $action = filter_input( INPUT_GET, 'action' );
+        /**
+         * @var string[] $url_id
+         */
+        $url_id = filter_input( INPUT_GET, 'id' );
+
+        if ( $action === 'remove' && is_array( $url_id ) ) {
+            CrawlCache::rmUrlsById( $url_id );
         }
 
         $urls = CrawlCache::getURLs();
