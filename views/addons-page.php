@@ -5,6 +5,11 @@
 /**
  * @var mixed[] $view
  */
+
+/**
+ * @var mixed[] $addons
+ */
+$addons = $view['addons'];
 ?>
 
 <div class="wrap">
@@ -21,14 +26,14 @@
             </tr>
         </thead>
         <tbody>
-            <?php if ( ! $view['addons'] ) : ?>
+            <?php if ( ! $addons ) : ?>
                 <tr>
                     <td colspan="4">No addons are installed. <a href="https://wp2static.com/download">Get Add-Ons</a></td>
                 </tr>
             <?php endif; ?>
 
 
-            <?php foreach ( $view['addons'] as $addon ) : ?>
+            <?php foreach ( $addons as $addon ) : ?>
                 <tr>
                     <td>
                         <form
@@ -36,7 +41,7 @@
                             method="POST"
                             action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 
-                        <?php wp_nonce_field( $view['nonce_action'] ); ?>
+                        <?php wp_nonce_field( strval( $view['nonce_action'] ) ); ?>
                         <input name="action" type="hidden" value="wp2static_toggle_addon" />
                         <input name="addon_slug" type="hidden" value="<?php echo $addon->slug; ?>" />
 

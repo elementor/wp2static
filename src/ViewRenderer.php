@@ -64,30 +64,37 @@ class ViewRenderer {
             die( 'Forbidden' );
         }
 
-        if ( ! empty( $_GET['action'] ) && ! empty( $_GET['id'] ) && is_array( $_GET['id'] ) ) {
-            switch ( $_GET['action'] ) {
-                case 'remove':
-                    CrawlQueue::rmUrlsById( $_GET['id'] );
-                    break;
-            }
+        $action = filter_input( INPUT_GET, 'action' );
+        /**
+         * @var string[] $url_id
+         */
+        $url_id = filter_input( INPUT_GET, 'id' );
+
+        if ( $action === 'remove' && is_array( $url_id ) ) {
+            CrawlQueue::rmUrlsById( $url_id );
         }
 
         $urls = CrawlQueue::getCrawlablePaths();
         // Apply search
-        if ( ! empty( $_GET['s'] ) ) {
-            $s = $_GET['s'];
+        $search_term = strval( filter_input( INPUT_GET, 's' ) );
+        if ( $search_term !== '' ) {
             $urls = array_filter(
                 $urls,
-                function ( $url ) use ( $s ) {
-                    return stripos( $url, $s ) !== false;
+                function ( $url ) use ( $search_term ) {
+                    return stripos( $url, $search_term ) !== false;
                 }
             );
         }
 
         $page_size = 200;
         $page = isset( $_GET['paged'] ) ? max( 1, intval( $_GET['paged'] ) ) : 1;
+        $paginator = new Paginator( $urls, $page_size, $page );
         $view = [
-            'paginator' => new Paginator( $urls, $page_size, $page ),
+            'paginatorFirstPage' => $paginator->firstPage(),
+            'paginatorLastPage' => $paginator->lastPage(),
+            'paginatorPage' => $paginator->page(),
+            'paginatorRecords' => $paginator->records(),
+            'paginatorTotalRecords' => $paginator->totalRecords(),
         ];
 
         require_once WP2STATIC_PATH . 'views/crawl-queue-page.php';
@@ -99,31 +106,37 @@ class ViewRenderer {
             die( 'Forbidden' );
         }
 
-        if ( ! empty( $_GET['action'] ) && ! empty( $_GET['id'] ) && is_array( $_GET['id'] ) ) {
-            switch ( $_GET['action'] ) {
-                case 'remove':
-                    CrawlCache::rmUrlsById( $_GET['id'] );
-                    break;
-            }
+        $action = filter_input( INPUT_GET, 'action' );
+        /**
+         * @var string[] $url_id
+         */
+        $url_id = filter_input( INPUT_GET, 'id' );
+
+        if ( $action === 'remove' && is_array( $url_id ) ) {
+            CrawlCache::rmUrlsById( $url_id );
         }
 
         $urls = CrawlCache::getURLs();
-
         // Apply search
-        if ( ! empty( $_GET['s'] ) ) {
-            $s = $_GET['s'];
+        $search_term = strval( filter_input( INPUT_GET, 's' ) );
+        if ( $search_term !== '' ) {
             $urls = array_filter(
                 $urls,
-                function ( $url ) use ( $s ) {
-                    return stripos( isset( $url->url ) ? $url->url : '', $s ) !== false;
+                function ( $url ) use ( $search_term ) {
+                    return stripos( $url->url ?? '', $search_term ) !== false;
                 }
             );
         }
 
         $page_size = 200;
         $page = isset( $_GET['paged'] ) ? max( 1, intval( $_GET['paged'] ) ) : 1;
+        $paginator = new Paginator( $urls, $page_size, $page );
         $view = [
-            'paginator' => new Paginator( $urls, $page_size, $page ),
+            'paginatorFirstPage' => $paginator->firstPage(),
+            'paginatorLastPage' => $paginator->lastPage(),
+            'paginatorPage' => $paginator->page(),
+            'paginatorRecords' => $paginator->records(),
+            'paginatorTotalRecords' => $paginator->totalRecords(),
         ];
 
         require_once WP2STATIC_PATH . 'views/crawl-cache-page.php';
@@ -138,20 +151,25 @@ class ViewRenderer {
         $paths = ProcessedSite::getPaths();
 
         // Apply search
-        if ( ! empty( $_GET['s'] ) ) {
-            $s = $_GET['s'];
+        $search_term = strval( filter_input( INPUT_GET, 's' ) );
+        if ( $search_term !== '' ) {
             $paths = array_filter(
                 $paths,
-                function ( $path ) use ( $s ) {
-                    return stripos( $path, $s ) !== false;
+                function ( $path ) use ( $search_term ) {
+                    return stripos( $path, $search_term ) !== false;
                 }
             );
         }
 
         $page_size = 200;
         $page = isset( $_GET['paged'] ) ? max( 1, intval( $_GET['paged'] ) ) : 1;
+        $paginator = new Paginator( $paths, $page_size, $page );
         $view = [
-            'paginator' => new Paginator( $paths, $page_size, $page ),
+            'paginatorFirstPage' => $paginator->firstPage(),
+            'paginatorLastPage' => $paginator->lastPage(),
+            'paginatorPage' => $paginator->page(),
+            'paginatorRecords' => $paginator->records(),
+            'paginatorTotalRecords' => $paginator->totalRecords(),
         ];
 
         require_once WP2STATIC_PATH . 'views/post-processed-site-paths-page.php';
@@ -166,20 +184,25 @@ class ViewRenderer {
         $paths = StaticSite::getPaths();
 
         // Apply search
-        if ( ! empty( $_GET['s'] ) ) {
-            $s = $_GET['s'];
+        $search_term = strval( filter_input( INPUT_GET, 's' ) );
+        if ( $search_term !== '' ) {
             $paths = array_filter(
                 $paths,
-                function ( $path ) use ( $s ) {
-                    return stripos( $path, $s ) !== false;
+                function ( $path ) use ( $search_term ) {
+                    return stripos( $path, $search_term ) !== false;
                 }
             );
         }
 
         $page_size = 200;
         $page = isset( $_GET['paged'] ) ? max( 1, intval( $_GET['paged'] ) ) : 1;
+        $paginator = new Paginator( $paths, $page_size, $page );
         $view = [
-            'paginator' => new Paginator( $paths, $page_size, $page ),
+            'paginatorFirstPage' => $paginator->firstPage(),
+            'paginatorLastPage' => $paginator->lastPage(),
+            'paginatorPage' => $paginator->page(),
+            'paginatorRecords' => $paginator->records(),
+            'paginatorTotalRecords' => $paginator->totalRecords(),
         ];
 
         require_once WP2STATIC_PATH . 'views/static-site-paths-page.php';
@@ -191,25 +214,31 @@ class ViewRenderer {
             die( 'Forbidden' );
         }
 
-        $paths = isset( $_GET['deploy_namespace'] )
-            ? DeployCache::getPaths( $_GET['deploy_namespace'] )
+        $deploy_namespace = strval( filter_input( INPUT_GET, 'deploy_namespace' ) );
+        $paths = $deploy_namespace !== ''
+            ? DeployCache::getPaths( $deploy_namespace )
             : DeployCache::getPaths();
 
         // Apply search
-        if ( ! empty( $_GET['s'] ) ) {
-            $s = $_GET['s'];
+        $search_term = strval( filter_input( INPUT_GET, 's' ) );
+        if ( $search_term !== '' ) {
             $paths = array_filter(
                 $paths,
-                function ( $path ) use ( $s ) {
-                    return stripos( $path, $s ) !== false;
+                function ( $path ) use ( $search_term ) {
+                    return stripos( $path, $search_term ) !== false;
                 }
             );
         }
 
         $page_size = 200;
         $page = isset( $_GET['paged'] ) ? max( 1, intval( $_GET['paged'] ) ) : 1;
+        $paginator = new Paginator( $paths, $page_size, $page );
         $view = [
-            'paginator' => new Paginator( $paths, $page_size, $page ),
+            'paginatorFirstPage' => $paginator->firstPage(),
+            'paginatorLastPage' => $paginator->lastPage(),
+            'paginatorPage' => $paginator->page(),
+            'paginatorRecords' => $paginator->records(),
+            'paginatorTotalRecords' => $paginator->totalRecords(),
         ];
 
         require_once WP2STATIC_PATH . 'views/deploy-cache-page.php';
@@ -262,6 +291,9 @@ class ViewRenderer {
             );
 
             foreach ( $files as $file ) {
+                /**
+                 * @var \SplFileInfo $file
+                 */
                 $disk_space += $file->getSize();
             }
         }
@@ -294,6 +326,9 @@ class ViewRenderer {
             );
 
             foreach ( $files as $file ) {
+                /**
+                 * @var \SplFileInfo $file
+                 */
                 $disk_space += $file->getSize();
             }
         }

@@ -335,13 +335,15 @@ class WordPressAdmin {
      * Do security checks before calling Controller::wp2staticProcessQueue
      */
     public static function adminPostProcessQueue() : void {
-        $method = $_SERVER['REQUEST_METHOD'];
-        if ( 'POST' !== $method ) {
+        $method = filter_input( INPUT_SERVER, 'REQUEST_METHOD' );
+        if ( ! $method ) {
+            $msg = 'Empty method in request to admin-post.php (wp2static_process_queue)';
+        } elseif ( 'POST' !== $method ) {
+            $method = strval( $method );
             $msg = "Invalid method in request to admin-post.php (wp2static_process_queue): $method";
         }
-
-        $nonce = isset( $_POST['_wpnonce'] ) ? $_POST['_wpnonce'] : false;
-        $nonce_valid = $nonce && wp_verify_nonce( $nonce, 'wp2static_process_queue' );
+        $nonce = filter_input( INPUT_POST, '_wpnonce' );
+        $nonce_valid = $nonce && wp_verify_nonce( strval( $nonce ), 'wp2static_process_queue' );
         if ( ! $nonce_valid ) {
             $msg = 'Invalid nonce in request to admin-post.php (wpstatic_process_queue)';
         }

@@ -25,9 +25,23 @@ parameters:
           count: 25
         - message: '#^In method "WP2Static\\\S+::\S+", you should not use the \$_(GET|POST) superglobal#'
           path: src/ViewRenderer.php
-          count: 32
-        - message: '#^In method "WP2Static\\\S+::\S+", you should not use the \$_(GET|POST) superglobal#'
-          path: src/WordPressAdmin.php
+          count: 10
+        - message: "#^Cannot access property \\$value on mixed\\.$#"
+          path: views/options-page.php
+          count: 4
+        - message: "#^Cannot access property \\$name on mixed\\.$#"
+          path: views/options-page.php
           count: 2
+        - message: "#^Cannot access property \\$time on string\\.$#"
+          path: views/logs-page.php
+          count: 1
+        - message: "#^Cannot access property \\$log on string\\.$#"
+          path: views/logs-page.php
+          count: 1
+        - message: "#^Cannot access property \\$\\S+ on mixed\\.$#"
+          path: views/jobs-page.php
+          count: 12
+        - message: "#^Cannot access property \\$\\S+ on mixed\\.$#"
+          path: views/addons-page.php
+          count: 7
         - '/^Parameter #2 \$callable of static method WP_CLI::add_command\(\) expects callable\(\): mixed, \S+ given\.$/'
-

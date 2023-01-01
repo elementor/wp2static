@@ -8,6 +8,14 @@
 
 use WP2Static\OptionRenderer;
 
+/**
+ * @var mixed[] $jobs
+ */
+$jobs = $view['jobs'];
+
+/**
+ * @var array<string, mixed> $options
+ */
 $options = $view['jobOptions'];
 
 $input = function( $name ) use ( $options ) {
@@ -141,7 +149,7 @@ $row = function( $name ) use ( $options ) {
     <p/>
 
     <button class="button btn-primary">Save Job Automation Settings</button>
-    <?php wp_nonce_field( $view['nonce_action'] ); ?>
+    <?php wp_nonce_field( strval( $view['nonce_action'] ) ); ?>
     <input name="action" type="hidden" value="wp2static_ui_save_job_options" />
     </form>
 
@@ -175,7 +183,7 @@ $row = function( $name ) use ( $options ) {
             </tr>
         </thead>
         <tbody>
-            <?php foreach ( $view['jobs'] as $job ) : ?>
+            <?php foreach ( $jobs as $job ) : ?>
             <tr>
                 <td><?php echo $job->created_at; ?></td>
                 <td><?php echo $job->job_type; ?></td>
@@ -192,7 +200,7 @@ $row = function( $name ) use ( $options ) {
         method="POST"
         action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 
-    <?php wp_nonce_field( $view['nonce_action'] ); ?>
+    <?php wp_nonce_field( strval( $view['nonce_action'] ) ); ?>
     <input name="action" type="hidden" value="wp2static_delete_jobs_queue" />
 
     <button class="wp2static-button button btn-danger">Delete all Jobs from Queue</button>
@@ -208,7 +216,7 @@ $row = function( $name ) use ( $options ) {
         method="POST"
         action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 
-    <?php wp_nonce_field( $view['nonce_action'] ); ?>
+    <?php wp_nonce_field( strval( $view['nonce_action'] ) ); ?>
     <input name="action" type="hidden" value="wp2static_process_jobs_queue" />
 
     <button class="wp2static-button button btn-danger">Manually process Job Queue</button>
