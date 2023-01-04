@@ -364,8 +364,9 @@ class Controller {
     public static function wp2staticDeployCacheDelete() : void {
         check_admin_referer( 'wp2static-caches-page' );
 
-        if ( isset( $_POST['deploy_namespace'] ) ) {
-            DeployCache::truncate( $_POST['deploy_namespace'] );
+        $deploy_namespace = strval( filter_input( INPUT_POST, 'deploy_namespace' ) );
+        if ( $deploy_namespace !== '' ) {
+            DeployCache::truncate( $deploy_namespace );
         } else {
             DeployCache::truncate();
         }
@@ -377,11 +378,12 @@ class Controller {
     public static function wp2staticDeployCacheShow() : void {
         check_admin_referer( 'wp2static-caches-page' );
 
-        if ( isset( $_POST['deploy_namespace'] ) ) {
+        $deploy_namespace = strval( filter_input( INPUT_POST, 'deploy_namespace' ) );
+        if ( $deploy_namespace !== '' ) {
             wp_safe_redirect(
                 admin_url(
                     'admin.php?page=wp2static-deploy-cache&deploy_namespace=' .
-                    urlencode( $_POST['deploy_namespace'] )
+                    urlencode( $deploy_namespace )
                 )
             );
         } else {
@@ -515,7 +517,7 @@ class Controller {
         } else {
             check_admin_referer( 'wp2static-addons-page' );
 
-            $addon_slug = sanitize_text_field( $_POST['addon_slug'] );
+            $addon_slug = sanitize_text_field( strval( filter_input( INPUT_POST, 'addon_slug' ) ) );
         }
 
         global $wpdb;
