@@ -17,11 +17,12 @@ class OptionRenderer {
      * @return string
      */
     public static function optionInput( array $option ) : string {
-        return call_user_func(
-            /* @phpstan-ignore-next-line */
+        $option_input = call_user_func(
             [ 'WP2Static\OptionRenderer', self::INPUT_TYPE_FNS[ $option['type'] ] ],
             $option
         );
+
+        return strval( $option_input );
     }
 
     /**
@@ -38,7 +39,11 @@ class OptionRenderer {
      * @return string
      */
     public static function optionInputBoolean( array $option ) : string {
-        $checked = (int) $option['unfiltered_value'] === 1 ? ' checked' : '';
+        /**
+         * @var int $unfiltered_value
+         */
+        $unfiltered_value = $option['unfiltered_value'];
+        $checked = (int) $unfiltered_value === 1 ? ' checked' : '';
         return '<input id="' . $option['name'] . '" name="' . $option['name'] . '" value="1"' .
                ' type="checkbox"' . $checked . '>';
     }
@@ -49,7 +54,7 @@ class OptionRenderer {
      */
     public static function optionInputInteger( array $option ) : string {
         return '<input class="widefat" id="' . $option['name'] . '" name="' . $option['name'] .
-               '" type="number" value="' . esc_html( $option['value'] ) . '">';
+               '" type="number" value="' . esc_html( strval( $option['value'] ) ) . '">';
     }
 
     /**
@@ -58,7 +63,7 @@ class OptionRenderer {
      */
     public static function optionInputPassword( array $option ) : string {
         return '<input class="widefat" id="' . $option['name'] . '" name="' . $option['name'] .
-               '" type="password" value="' . esc_html( $option['value'] ) . '">';
+               '" type="password" value="' . esc_html( strval( $option['value'] ) ) . '">';
     }
 
     /**
@@ -67,7 +72,7 @@ class OptionRenderer {
      */
     public static function optionInputString( array $option ) : string {
         return '<input class="widefat" id="' . $option['name'] . '" name="' . $option['name'] .
-               '" type="text" value="' . esc_html( $option['value'] ) . '">';
+               '" type="text" value="' . esc_html( strval( $option['value'] ) ) . '">';
     }
 
     /**

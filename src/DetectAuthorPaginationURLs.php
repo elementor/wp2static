@@ -17,6 +17,10 @@ class DetectAuthorPaginationURLs {
         $urls_to_include = [];
         $users = get_users();
         $pagination_base = $wp_rewrite->pagination_base;
+
+        /**
+         * @var int $default_posts_per_page
+         */
         $default_posts_per_page = get_option( 'posts_per_page' );
 
         foreach ( $users as $author ) {
@@ -40,6 +44,10 @@ class DetectAuthorPaginationURLs {
         }
 
         foreach ( $authors_urls as $author => $total_posts ) {
+            /**
+             * @var int $total_posts
+             */
+
             $total_pages = ceil( $total_posts / $default_posts_per_page );
 
             for ( $page = 1; $page <= $total_pages; $page++ ) {

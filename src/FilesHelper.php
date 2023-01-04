@@ -65,6 +65,10 @@ class FilesHelper {
             );
 
             foreach ( $iterator as $filename => $file_object ) {
+                /**
+                 * @var string $filename
+                 */
+
                 $path_crawlable = self::pathLooksCrawlable(
                     $filename,
                     $filenames_to_ignore,

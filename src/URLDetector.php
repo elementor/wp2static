@@ -167,6 +167,9 @@ class URLDetector {
             $arrays_to_merge[] = DetectAuthorPaginationURLs::detect( SiteInfo::getUrl( 'site' ) );
         }
 
+        /**
+         * @var string[] $url_queue
+         */
         $url_queue = call_user_func_array( 'array_merge', $arrays_to_merge );
 
         $url_queue = FilesHelper::cleanDetectedURLs( $url_queue );

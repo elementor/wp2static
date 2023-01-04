@@ -19,10 +19,10 @@ parameters:
         # https://gist.github.com/nicolas-grekas/1028251#improving-native-php-interface
         - message: '#^In method "WP2Static\\\S+::\S+", you should not use the \$_(COOKIE|GET|POST) superglobal#'
           path: src/Controller.php
-          count: 6
+          count: 1
         - message: '#^In method "WP2Static\\\S+::\S+", you should not use the \$_(GET|POST) superglobal#'
           path: src/CoreOptions.php
-          count: 25
+          count: 16
         - message: '#^In method "WP2Static\\\S+::\S+", you should not use the \$_(GET|POST) superglobal#'
           path: src/ViewRenderer.php
           count: 10
@@ -44,4 +44,16 @@ parameters:
         - message: "#^Cannot access property \\$\\S+ on mixed\\.$#"
           path: views/addons-page.php
           count: 7
+        - message: "#^Cannot access offset \\S+ on mixed\\.$#"
+          path: src/SitemapParser.php
+          count: 3
+        - message: "#^Cannot access property \\S+ on mixed\\.$#"
+          path: src/Controller.php
+          count: 6
+        - message: "#^Cannot access property \\S+ on mixed\\.$#"
+          path: src/CLI.php
+          count: 9
+        - message: "#^Cannot access property \\S+ on mixed\\.$#"
+          path: src/Addons.php
+          count: 1
         - '/^Parameter #2 \$callable of static method WP_CLI::add_command\(\) expects callable\(\): mixed, \S+ given\.$/'

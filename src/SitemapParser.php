@@ -123,7 +123,7 @@ class SitemapParser {
             $sitemaps = $this->sitemaps;
             $urls = $this->urls;
             try {
-                $this->parse( $todo[0] );
+                $this->parse( strval( $todo[0] ) );
             } catch ( WP2StaticException $e ) {
                 WsLog::w( $e->getMessage() );
                 // Keep crawling
@@ -141,7 +141,7 @@ class SitemapParser {
      */
     public function addToQueue( array $url_array ) : void {
         foreach ( $url_array as $url ) {
-            $url = $this->urlEncode( $url );
+            $url = $this->urlEncode( strval( $url ) );
             if ( $this->urlValidate( $url ) ) {
                 $this->queue[] = $url;
             }
@@ -239,6 +239,11 @@ class SitemapParser {
                 $this->config['guzzle']['headers']['User-Agent'] = $this->user_agent;
             }
             $client = new WP2StaticGuzzleHttp\Client( [ 'verify' => false ] );
+
+            if ( ! is_array( $this->config['guzzle'] ) ) {
+                WsLog::w( 'Guzzle config is not in expected array format' );
+                return null;
+            }
             $res = $client->request( 'GET', $this->current_url, $this->config['guzzle'] );
             if ( $res->getStatusCode() === 200 ) {
                 return $res->getBody()->getContents();
@@ -319,7 +324,7 @@ class SitemapParser {
         if ( ! isset( $array['loc'] ) ) {
             return false;
         }
-        $array['loc'] = $this->urlEncode( trim( $array['loc'] ) );
+        $array['loc'] = $this->urlEncode( trim( strval( $array['loc'] ) ) );
         if ( $this->urlValidate( $array['loc'] ) ) {
             switch ( $type ) {
                 case self::XML_TAG_SITEMAP:

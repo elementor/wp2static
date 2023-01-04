@@ -96,10 +96,15 @@ class SiteInfo {
             throw new WP2StaticException( $err );
         }
 
-        // Standardise all paths to use / (Windows support)
-        $path = str_replace( '\\', '/', self::$info[ $key ] );
+        /**
+         * @var string $original_path
+         */
+        $original_path = self::$info[ $key ];
 
-        return $path;
+        // Standardise all paths to use / (Windows support)
+        $standardised_path = str_replace( '\\', '/', $original_path );
+
+        return $standardised_path;
     }
 
     /**
@@ -120,7 +125,12 @@ class SiteInfo {
             throw new WP2StaticException( $err );
         }
 
-        return self::$info[ $key ];
+        /**
+         * @var string $url
+         */
+        $url = self::$info[ $key ];
+
+        return $url;
     }
 
     // TODO Use WP_Http 'curl_enabled' => $this->hasCurlSupport(),
@@ -138,7 +148,11 @@ class SiteInfo {
              self::$instance = new SiteInfo();
         }
 
+        /**
+         * @var string $uploads_dir
+         */
         $uploads_dir = self::$info['uploads_path'];
+
         return file_exists( $uploads_dir ) && is_writeable( $uploads_dir );
     }
 
@@ -147,6 +161,9 @@ class SiteInfo {
              self::$instance = new SiteInfo();
         }
 
+        /**
+         * @var string $structure
+         */
         $structure = get_option( 'permalink_structure' );
 
         return strlen( $structure ) && 0 === strcmp( $structure[-1], '/' );
@@ -157,7 +174,12 @@ class SiteInfo {
              self::$instance = new SiteInfo();
         }
 
-        return get_option( 'permalink_structure' );
+        /**
+         * @var string $permalink_structure
+         */
+        $permalink_structure = get_option( 'permalink_structure' );
+
+        return $permalink_structure;
     }
 
     /**
@@ -170,7 +192,12 @@ class SiteInfo {
              self::$instance = new SiteInfo();
         }
 
-        $url_host = parse_url( self::$info['site_url'], PHP_URL_HOST );
+        /**
+         * @var string $site_url
+         */
+        $site_url = self::$info['site_url'];
+
+        $url_host = parse_url( $site_url, PHP_URL_HOST );
 
         if ( ! is_string( $url_host ) ) {
             $err = 'Failed to get hostname from Site URL';

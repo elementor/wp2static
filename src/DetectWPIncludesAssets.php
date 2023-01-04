@@ -29,6 +29,10 @@ class DetectWPIncludesAssets {
             );
 
             foreach ( $iterator as $filename => $file_object ) {
+                /**
+                 * @var string $filename
+                 */
+
                 $path_crawlable =
                     FilesHelper::filePathLooksCrawlable( $filename );
 
