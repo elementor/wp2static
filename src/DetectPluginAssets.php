@@ -26,13 +26,20 @@ class DetectPluginAssets {
                 )
             );
 
+            /**
+             * @var string[] $active_plugins
+             */
             $active_plugins = get_option( 'active_plugins' );
+            /**
+             * @var string[] $active_sitewide_plugins
+             */
+            $active_sitewide_plugins = get_option( 'active_sitewide_plugins' );
 
             if ( is_multisite() ) {
                 $active_plugins = array_unique(
                     array_merge(
                         $active_plugins,
-                        array_keys( get_site_option( 'active_sitewide_plugins' ) )
+                        array_keys( $active_sitewide_plugins )
                     )
                 );
             }
@@ -45,6 +52,10 @@ class DetectPluginAssets {
             );
 
             foreach ( $iterator as $filename => $file_object ) {
+                /**
+                 * @var string $filename
+                 */
+
                 $path_crawlable =
                     FilesHelper::filePathLooksCrawlable( $filename );
 
