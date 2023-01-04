@@ -62,7 +62,7 @@ class FileWriter {
         }
 
         $directory_in_archive =
-            $path_info['dirname'] ? $path_info['dirname'] : '';
+            $path_info['dirname'] ?? '';
 
         $file_dir = $archive_dir . ltrim( $directory_in_archive, '/' );
 
