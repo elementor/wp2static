@@ -26,7 +26,8 @@ class DetectCategoryPaginationURLs {
         foreach ( $taxonomies as $taxonomy ) {
             /** @var list<\WP_Term> $terms */
             $terms = get_terms(
-                [ $taxonomy->name ],
+                // @phpstan-ignore-next-line
+                $taxonomy->name,
                 [ 'hide_empty' => true ]
             );
 
