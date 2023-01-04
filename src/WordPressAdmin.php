@@ -293,6 +293,18 @@ class WordPressAdmin {
             0
         );
 
+        add_action(
+            'admin_enqueue_scripts',
+            [ self::class, 'wp2staticAdminStyles' ],
+            0
+        );
+
+        add_action(
+            'admin_enqueue_scripts',
+            [ self::class, 'wp2staticAdminScripts' ],
+            0
+        );
+
         /*
          * Register actions for when we should invalidate cache for
          * a URL(s) or whole site
@@ -354,6 +366,27 @@ class WordPressAdmin {
         }
 
         Controller::wp2staticProcessQueue();
+    }
+
+    public function wp2staticAdminStyles() : void {
+        wp_register_style(
+            'wp2static_admin_styles',
+            plugins_url( '../css/admin/style.css', __FILE__ ),
+            [],
+            WP2STATIC_VERSION
+        );
+        wp_enqueue_style( 'wp2static_admin_styles' );
+    }
+
+    public function wp2staticAdminScripts() : void {
+        wp_register_script(
+            'wp2static_admin_scripts',
+            plugins_url( '../js/admin/override-menu-style.js', __FILE__ ),
+            [],
+            WP2STATIC_VERSION,
+            false
+        );
+        wp_enqueue_script( 'wp2static_admin_scripts' );
     }
 }
 
