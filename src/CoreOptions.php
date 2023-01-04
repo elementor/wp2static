@@ -524,6 +524,7 @@ VALUES (%s, %s, %s);";
         if ( $option ) {
             $option->unfiltered_value = $option->value;
             $option->value = apply_filters( (string) $opt_spec['filter_name'], $option->value );
+            /** @phpstan-ignore-next-line */
         } elseif ( $opt_spec ) {
             $opt = array_merge( $opt_spec ); // Make a copy so we don't modify $cached_option_specs
             $opt['unfiltered_value'] = $opt_spec['default_value'];
@@ -599,11 +600,16 @@ VALUES (%s, %s, %s);";
     public static function encrypt_decrypt( string $action, string $string ) : string {
         $encrypt_method = 'AES-256-CBC';
 
+        /**
+         * @var string $secret_key
+         */
         $secret_key =
             defined( 'AUTH_KEY' ) ?
             constant( 'AUTH_KEY' ) :
             'LC>_cVZv34+W.P&_8d|ejfr]d31h)J?z5n(LB6iY=;P@?5/qzJSyB3qctr,.D$[L';
-
+        /**
+         * @var string $secret_iv
+         */
         $secret_iv =
             defined( 'AUTH_SALT' ) ?
             constant( 'AUTH_SALT' ) :
@@ -665,13 +671,21 @@ VALUES (%s, %s, %s);";
 
                 $wpdb->update(
                     $table_name,
-                    [ 'value' => esc_url_raw( $_POST['deploymentURL'] ) ],
+                    [
+                        'value' =>
+                        esc_url_raw( strval( filter_input( INPUT_POST, 'deploymentURL' ) ) ),
+                    ],
                     [ 'name' => 'deploymentURL' ]
                 );
 
                 $wpdb->update(
                     $table_name,
-                    [ 'value' => sanitize_text_field( $_POST['basicAuthUser'] ) ],
+                    [
+                        'value' =>
+                        sanitize_text_field(
+                            strval( filter_input( INPUT_POST, 'basicAuthUser' ) )
+                        ),
+                    ],
                     [ 'name' => 'basicAuthUser' ]
                 );
 
@@ -681,7 +695,9 @@ VALUES (%s, %s, %s);";
                         'value' =>
                         self::encrypt_decrypt(
                             'encrypt',
-                            sanitize_text_field( $_POST['basicAuthPassword'] )
+                            sanitize_text_field(
+                                strval( filter_input( INPUT_POST, 'basicAuthPassword' ) )
+                            )
                         ),
                     ],
                     [ 'name' => 'basicAuthPassword' ]
@@ -695,19 +711,32 @@ VALUES (%s, %s, %s);";
 
                 $wpdb->update(
                     $table_name,
-                    [ 'value' => sanitize_email( $_POST['completionEmail'] ) ],
+                    [
+                        'value' =>
+                        sanitize_text_field(
+                            strval( filter_input( INPUT_POST, 'completionEmail' ) )
+                        ),
+                    ],
                     [ 'name' => 'completionEmail' ]
                 );
 
                 $wpdb->update(
                     $table_name,
-                    [ 'value' => esc_url_raw( $_POST['completionWebhook'] ) ],
+                    [
+                        'value' =>
+                        esc_url_raw( strval( filter_input( INPUT_POST, 'completionWebhook' ) ) ),
+                    ],
                     [ 'name' => 'completionWebhook' ]
                 );
 
                 $wpdb->update(
                     $table_name,
-                    [ 'value' => sanitize_text_field( $_POST['completionWebhookMethod'] ) ],
+                    [
+                        'value' =>
+                        sanitize_text_field(
+                            strval( filter_input( INPUT_POST, 'completionWebhookMethod' ) )
+                        ),
+                    ],
                     [ 'name' => 'completionWebhookMethod' ]
                 );
 
@@ -735,6 +764,9 @@ VALUES (%s, %s, %s);";
                     [ 'name' => 'processQueueImmediately' ]
                 );
 
+                /**
+                 * @var int $process_queue_interval
+                 */
                 $process_queue_interval =
                     isset( $_POST['processQueueInterval'] ) ?
                      $_POST['processQueueInterval'] : 0;
@@ -783,7 +815,7 @@ VALUES (%s, %s, %s);";
                 $file_extensions_to_ignore = preg_replace(
                     '/^\s+|\s+$/m',
                     '',
-                    $_POST['fileExtensionsToIgnore']
+                    strval( filter_input( INPUT_POST, 'fileExtensionsToIgnore' ) )
                 );
                 $wpdb->update(
                     $table_name,
@@ -794,7 +826,7 @@ VALUES (%s, %s, %s);";
                 $filenames_to_ignore = preg_replace(
                     '/^\s+|\s+$/m',
                     '',
-                    $_POST['filenamesToIgnore']
+                    strval( filter_input( INPUT_POST, 'filenamesToIgnore' ) )
                 );
                 $wpdb->update(
                     $table_name,
@@ -805,7 +837,7 @@ VALUES (%s, %s, %s);";
                 $hosts_to_rewrite = preg_replace(
                     '/^\s+|\s+$/m',
                     '',
-                    $_POST['hostsToRewrite']
+                    strval( filter_input( INPUT_POST, 'hostsToRewrite' ) )
                 );
                 $wpdb->update(
                     $table_name,
