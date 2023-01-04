@@ -50,6 +50,10 @@ class PostProcessor {
         );
 
         foreach ( $iterator as $filename => $file_object ) {
+            /**
+             * @var string $filename
+             */
+
             $save_path = str_replace( $static_site_path, '', $filename );
 
             // copy file to ProcessedSite dir, then process it
