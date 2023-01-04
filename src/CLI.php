@@ -66,11 +66,14 @@ class CLI {
             [ 'key', 'value' ]
         );
 
-        $active_plugins = get_option( 'active_plugins' );
+        $active_plugins = (array) get_option( 'active_plugins' );
 
         WP_CLI::line( PHP_EOL . 'Active plugins:' . PHP_EOL );
 
         foreach ( $active_plugins as $active_plugin ) {
+            /**
+             * @var string $active_plugin
+             */
             WP_CLI::line( $active_plugin );
         }
 

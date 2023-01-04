@@ -50,4 +50,10 @@ parameters:
         - message: "#^Cannot access property \\S+ on mixed\\.$#"
           path: src/Controller.php
           count: 6
+        - message: "#^Cannot access property \\S+ on mixed\\.$#"
+          path: src/CLI.php
+          count: 9
+        - message: "#^Cannot access property \\S+ on mixed\\.$#"
+          path: src/Addons.php
+          count: 1
         - '/^Parameter #2 \$callable of static method WP_CLI::add_command\(\) expects callable\(\): mixed, \S+ given\.$/'
