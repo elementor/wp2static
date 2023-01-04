@@ -58,6 +58,15 @@ class ViewRenderer {
         require_once WP2STATIC_PATH . 'views/addons-page.php';
     }
 
+    public static function renderTry1ClickPublish() : void {
+        if ( ! is_admin() ) {
+            http_response_code( 403 );
+            die( 'Forbidden' );
+        }
+
+        require_once WP2STATIC_PATH . 'views/try-1-click-publishing.php';
+    }
+
     public static function renderCrawlQueue() : void {
         if ( ! is_admin() ) {
             http_response_code( 403 );
