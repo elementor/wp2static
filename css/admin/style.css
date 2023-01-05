@@ -4,3 +4,7 @@ a[href*="wp2static-try-1-click-publish"], .try-1-click-publish-menu-item {
   font-weight: bold; 
 }
 
+#wp2static-try-1-click-publish-plugin-screen {
+  color: #FB4247;
+  font-weight: bold;
+}

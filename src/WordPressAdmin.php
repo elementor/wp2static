@@ -327,6 +327,13 @@ class WordPressAdmin {
                 2
             );
         }
+
+        add_filter(
+            'plugin_row_meta',
+            [ self::class, 'wp2staticPluginMetaLinks' ],
+            10,
+            2
+        );
     }
 
     /**
@@ -387,6 +394,22 @@ class WordPressAdmin {
             false
         );
         wp_enqueue_script( 'wp2static_admin_scripts' );
+    }
+
+    /**
+     * Add extra link to WP2Static's Plugins page entry
+     *
+     * @param mixed[] $links plugin meta links
+     * @param string $file path to the plugin's entrypoint
+     * @return mixed[] $links plugin meta links
+     */
+    public function wp2staticPluginMetaLinks( $links, $file ) {
+        if ( $file === 'wp2static/wp2static.php' ) {
+            // phpcs:ignore Generic.Files.LineLength.MaxExceeded
+            $links[] = '<a id="wp2static-try-1-click-publish-plugin-screen" target="_blank" href="https://www.strattic.com/pricing/?utm_campaign=start-trial&utm_source=wp2static&utm_medium=wp-dash&utm_term=try-strattic&utm_content=plugins">Try 1-Click Publish</a>';
+        }
+
+        return $links;
     }
 }
 

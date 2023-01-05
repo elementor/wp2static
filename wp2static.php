@@ -4,7 +4,7 @@
  * Plugin URI:  https://wp2static.com
  * Description: Static site generator functionality for WordPress.
  * Version:     7.2.0-dev
- * Author:      WP2Static
+ * Author:      Strattic by Elementor
  * Author URI:  https://wp2static.com
  * Text Domain: wp2static
  *
