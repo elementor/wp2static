@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ["7.4", "8.0", "8.1"]
+        php: ["8.0", "8.1", "8.2"]
         wordpress: [ { "version": "5.9.2", "sha256": "12wzqrh21sh6pgvs0ayabcv66psq9a8cfz3qk43r5kjn5bfz4rbp" } ]
 
     name: PHP ${{ matrix.php }}, WordPress ${{ matrix.wordpress.version }}
