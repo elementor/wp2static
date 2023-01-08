@@ -3,6 +3,7 @@
 !.envrc
 !.github
 !.gitignore
+!.htaccess
 
 /integration-tests/bedrock/
 /integration-tests/mariadb/data/
