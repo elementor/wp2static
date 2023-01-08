@@ -42,6 +42,9 @@ class FileProcessor {
             case 'xml':
                 do_action( 'wp2static_process_xml', $filename );
                 break;
+            case 'xsl':
+                do_action( 'wp2static_process_xsl', $filename );
+                break;
         }
     }
 }

@@ -31,6 +31,7 @@
  - [#877](https://github.com/leonstafford/wp2static/issues/877): Detect from web UI was not adding any URLs. @timothylcooke
  - [#878](https://github.com/leonstafford/wp2static/issues/878): Fix deletion of old pages when crawl returns 404. @timothylcooke
  - [#868](https://github.com/WP2Static/wp2static/pull/868): Detect files in Divi et-cache/ directory when present. @dunklerfox
+ - [#881](https://github.com/WP2Static/wp2static/pull/881): Crawl XSL files. @vladstanca
 
 ## WP2Static 7.1.7 (2021-09-04)
 
