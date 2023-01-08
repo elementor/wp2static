@@ -23,7 +23,12 @@ jobs:
       fail-fast: false
       matrix:
         php: ["8.0", "8.1", "8.2"]
-        wordpress: [ { "version": "5.9.2", "sha256": "12wzqrh21sh6pgvs0ayabcv66psq9a8cfz3qk43r5kjn5bfz4rbp" } ]
+        wordpress: [
+          {
+            "version": "6.1.1",
+            "sha256": "sha256-IR6FSmm3Pd8cCHNQTH1oIaLYsEP1obVjr0bDJkD7H60="
+          }
+        ]
 
     name: PHP ${{ matrix.php }}, WordPress ${{ matrix.wordpress.version }}
 
