@@ -8,7 +8,6 @@
 .cpcache/
 .direnv/
 .lsp/
-.idea
 node_modules/
 coverage/
 admin/*.js*
