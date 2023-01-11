@@ -178,15 +178,4 @@
 
         </tbody>
     </table>
-
-    <div style="display:none;">
-        <b>TODO: load add-on diagnostics here, via filter</b>
-
-        ie
-
-        <p>PHP DOMDocument library available</p>
-        <code>        $view['domDocumentAvailable'] = class_exists( 'DOMDocument' );</code>
-        <h2 class="title">You're missing a required PHP library (DOMDocument)</h2>
-        <p> This is a library that is used to parse the HTML documents when WP2Static crawls your site. It's usually an easy fix to get this working. You can try Googling "DOMDocument missing", along with the name of the environment you are using to run your WordPress site. This may be something like DigitalOcean, GoDaddy or LAMP, MAMP, WAMP for your webserver on your local computer. If you're still having trouble, the developer of this plugin is eager to help you get up and running. Please ask for help on our <a href="https://forum.wp2static.com">forum</a>.</p>
-    </div>
 </div>
