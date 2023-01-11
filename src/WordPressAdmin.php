@@ -341,6 +341,17 @@ class WordPressAdmin {
             10,
             2
         );
+
+        // show admin notices on WP2Static pages if rules are met
+        if ( str_contains( URLHelper::getCurrent(), 'page=wp2static' ) ) {
+            error_log('WP2Static page');
+
+            add_action(
+                'admin_notices',
+                [ AdminNotices::class, 'showAdminNotices' ],
+                0
+            );
+        }
     }
 
     /**

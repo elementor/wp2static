@@ -27,6 +27,8 @@ class ViewRenderer {
     }
 
     public static function renderDiagnosticsPage() : void {
+        CoreOptions::init();
+
         $view = [];
         $view['memoryLimit'] = ini_get( 'memory_limit' );
         $view['coreOptions'] = array_values( CoreOptions::getAll() );

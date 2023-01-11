@@ -8,3 +8,11 @@ a[href*="wp2static-try-1-click-publish"], .try-1-click-publish-menu-item {
   color: #FB4247;
   font-weight: bold;
 }
+
+.wp2static-admin-notice {
+  margin-left: 2px;
+  margin-right: 36px;
+  margin-top: 20px;
+  margin-bottom: -7px;
+  padding-top: 10px;
+}
