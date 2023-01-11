@@ -15,4 +15,10 @@ a[href*="wp2static-try-1-click-publish"], .try-1-click-publish-menu-item {
   margin-top: 20px;
   margin-bottom: -7px;
   padding-top: 10px;
+
+}
+
+.wp2static-admin-notice a .button-primary {
+  margin-bottom: 10px;
+  margin-right: 10px;
 }
