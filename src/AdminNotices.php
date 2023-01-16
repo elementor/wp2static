@@ -10,16 +10,13 @@ namespace WP2Static;
 class AdminNotices {
 
     /**
-     * AdminNotices constructor
-     */
-    public function __construct() {
-
-    }
-
-    /**
      * Displays WP2Static admin notices
      */
-    public static function showAdminNotices() : void {
+    public function showAdminNotices() : void {
+        if ( ! self::userAllowedToSeeNotices() ) {
+            return;
+        }
+
         $class = 'notice notice-error is-dismissable wp2static-admin-notice';
         $title =
             'Super charge your static website using Strattic by Elementor!';
@@ -47,6 +44,13 @@ class AdminNotices {
             esc_html( $secondary_button_url ),
             esc_html( $secondary_button_title )
         );
+    }
+
+    /**
+     * Determine if a user should user see any notices
+     */
+    public function userAllowedToSeeNotices() : bool {
+        return current_user_can( 'upload_plugins' );
     }
 }
 
