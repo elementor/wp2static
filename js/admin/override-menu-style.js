@@ -12,4 +12,13 @@ document.addEventListener("DOMContentLoaded", function(event) {
   // set a custom external href for the submenu item 
   try1ClickPublish.href = 'https://www.strattic.com/pricing/?utm_campaign=start-trial&utm_source=wp2static&utm_medium=wp-dash&utm_content=sidebar';
 
+  // send admin notice dismissal events to backend
+  const wp2staticAdminNotice = document.querySelector('.wp2static-admin-notice');
+
+  wp2staticAdminNotice.addEventListener('click', function (e) {
+      if (e.target.className === 'wp2static-admin-notice-dismiss') {
+        // notify backend which admin notice was dismissed by user
+        console.log(e.target.id);
+      }
+  });
 });

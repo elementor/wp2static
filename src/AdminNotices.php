@@ -17,7 +17,7 @@ class AdminNotices {
             return;
         }
 
-        $class = 'notice notice-error is-dismissable wp2static-admin-notice';
+        $class = 'notice notice-error wp2static-admin-notice';
         $title =
             'Super charge your static website using Strattic by Elementor!';
         // phpcs:disable Generic.Files.LineLength.MaxExceeded
@@ -35,6 +35,7 @@ class AdminNotices {
             '<a href="%4$s" target="_blank"><button class="button button-primary">%5$s</button></a>' .
             // phpcs:disable Generic.Files.LineLength.TooLong
             '<a href="%6$s" target="_blank"><button class="button button-secondary">%7$s</button></a>' .
+            '<a href="#" class="wp2static-admin-notice-dismiss" id="wp2static-admin-notice-dismiss-generic">Don\'t show this again</a>' .
             '</div>',
             esc_attr( $class ),
             esc_html( $title ),
