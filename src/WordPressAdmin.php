@@ -342,6 +342,13 @@ class WordPressAdmin {
             2
         );
 
+        add_action(
+            'wp_ajax_wp2static_admin_notice_dismissal',
+            [ AdminNotices::class, 'handleDismissedNotice' ],
+            10,
+            1
+        );
+
         // show admin notices on WP2Static pages if rules are met
         if ( str_contains( URLHelper::getCurrent(), 'page=wp2static' ) ) {
             add_action(

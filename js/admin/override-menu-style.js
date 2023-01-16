@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function(event) { 
+jQuery(document).ready(function($){
 
   // locate the submenu item by partial match of its href value
   const try1ClickPublish = document.querySelector('a[href*="wp2static-try-1-click-publish"]');
@@ -18,7 +18,30 @@ document.addEventListener("DOMContentLoaded", function(event) {
   wp2staticAdminNotice.addEventListener('click', function (e) {
       if (e.target.className === 'wp2static-admin-notice-dismiss') {
         // notify backend which admin notice was dismissed by user
-        console.log(e.target.id);
+        dismissedAdminNotice = e.target.id.replace('wp2static-admin-notice-dismiss-', '')
+
+        adminNoticeNonce =
+          document.querySelector('#wp2static-admin-notice-nonce').textContent;
+
+        const ajax_data = {
+            action: 'wp2static_admin_notice_dismissal',
+            security: adminNoticeNonce,
+            dismissedNotice: dismissedAdminNotice,
+        };
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: ajax_data,
+            timeout: 0,
+            success: function() {
+              // hide the admin notice once backend has handled it
+              wp2staticAdminNotice.remove();
+            },
+            error: function() {
+              alert('Couldn\'t dismiss WP2Static admin notice. Please try again.');
+}
+        });
       }
   });
 });

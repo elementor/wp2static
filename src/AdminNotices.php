@@ -36,6 +36,8 @@ class AdminNotices {
             // phpcs:disable Generic.Files.LineLength.TooLong
             '<a href="%6$s" target="_blank"><button class="button button-secondary">%7$s</button></a>' .
             '<a href="#" class="wp2static-admin-notice-dismiss" id="wp2static-admin-notice-dismiss-generic">Don\'t show this again</a>' .
+            '<div id="wp2static-admin-notice-nonce">' .
+            wp_create_nonce( 'wp2static-admin-notice' ) . '</div>' .
             '</div>',
             esc_attr( $class ),
             esc_html( $title ),
@@ -45,6 +47,7 @@ class AdminNotices {
             esc_html( $secondary_button_url ),
             esc_html( $secondary_button_title )
         );
+        $run_nonce = wp_create_nonce( 'wp2static-run-page' );
     }
 
     /**
@@ -52,6 +55,14 @@ class AdminNotices {
      */
     public function userAllowedToSeeNotices() : bool {
         return current_user_can( 'upload_plugins' );
+    }
+
+    public function handleDismissedNotice( string $dismissed_notice ) : void {
+        check_ajax_referer( 'wp2static-admin-notice', 'security' );
+
+        error_log( filter_input( INPUT_POST, 'dismissedNotice' ) );
+
+        wp_die();
     }
 }
 
