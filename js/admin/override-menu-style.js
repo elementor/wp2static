@@ -15,33 +15,40 @@ jQuery(document).ready(function($){
   // send admin notice dismissal events to backend
   const wp2staticAdminNotice = document.querySelector('.wp2static-admin-notice');
 
-  wp2staticAdminNotice.addEventListener('click', function (e) {
-      if (e.target.className === 'wp2static-admin-notice-dismiss') {
-        // notify backend which admin notice was dismissed by user
-        dismissedAdminNotice = e.target.id.replace('wp2static-admin-notice-dismiss-', '')
+  if ( wp2staticAdminNotice ) {
+    wp2staticAdminNotice.addEventListener('click', function (e) {
+        if (e.target.className === 'wp2static-admin-notice-dismiss') {
+          // notify backend which admin notice was dismissed by user
+          dismissedAdminNotice = e.target.id.replace('wp2static-admin-notice-dismiss-', '')
 
-        adminNoticeNonce =
-          document.querySelector('#wp2static-admin-notice-nonce').textContent;
+          adminNoticeNonce =
+            document.querySelector('#wp2static-admin-notice-nonce').textContent;
 
-        const ajax_data = {
-            action: 'wp2static_admin_notice_dismissal',
-            security: adminNoticeNonce,
-            dismissedNotice: dismissedAdminNotice,
-        };
+          adminNoticeUserID =
+            document.querySelector('#wp2static-admin-notice-user-id').textContent;
 
-        $.ajax({
-            url: ajaxurl,
-            type: 'POST',
-            data: ajax_data,
-            timeout: 0,
-            success: function() {
-              // hide the admin notice once backend has handled it
-              wp2staticAdminNotice.remove();
-            },
-            error: function() {
-              alert('Couldn\'t dismiss WP2Static admin notice. Please try again.');
-}
-        });
-      }
-  });
+          const ajax_data = {
+              action: 'wp2static_admin_notice_dismissal',
+              security: adminNoticeNonce,
+              dismissedNotice: dismissedAdminNotice,
+              userID: adminNoticeUserID,
+          };
+
+          $.ajax({
+              url: ajaxurl,
+              type: 'POST',
+              data: ajax_data,
+              timeout: 0,
+              success: function() {
+                // hide the admin notice once backend has handled it
+                wp2staticAdminNotice.remove();
+              },
+              error: function() {
+                alert('Couldn\'t dismiss WP2Static admin notice. Please try again.');
+  }
+          });
+        }
+    });
+
+  }
 });

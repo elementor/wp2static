@@ -109,6 +109,7 @@ class Controller {
         DeployCache::createTable();
         JobQueue::createTable();
         Addons::createTable();
+        AdminNotices::createTable();
     }
 
     public static function activate( bool $network_wide = null ) : void {

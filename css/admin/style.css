@@ -28,6 +28,6 @@ a[href*="wp2static-try-1-click-publish"], .try-1-click-publish-menu-item {
   margin-top: 10px;
 }
 
-#wp2static-admin-notice-nonce {
+#wp2static-admin-notice-nonce, #wp2static-admin-notice-user-id {
   display: none;
 }

@@ -9,6 +9,26 @@ namespace WP2Static;
 
 class AdminNotices {
 
+    public static function createTable() : void {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'wp2static_notices';
+
+        $charset_collate = $wpdb->get_charset_collate();
+
+        $sql = "CREATE TABLE $table_name (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            name VARCHAR(191) NOT NULL,
+            user_id bigint(20) NOT NULL,
+            action VARCHAR(191) NOT NULL,
+            timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY  (id)
+        ) $charset_collate;";
+
+        require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+        dbDelta( $sql );
+    }
+
     /**
      * Displays WP2Static admin notices
      */
@@ -16,6 +36,8 @@ class AdminNotices {
         if ( ! self::userAllowedToSeeNotices() ) {
             return;
         }
+
+        self::logNoticeAction( 'generic', 'displayed' );
 
         $class = 'notice notice-error wp2static-admin-notice';
         $title =
@@ -38,6 +60,8 @@ class AdminNotices {
             '<a href="#" class="wp2static-admin-notice-dismiss" id="wp2static-admin-notice-dismiss-generic">Don\'t show this again</a>' .
             '<div id="wp2static-admin-notice-nonce">' .
             wp_create_nonce( 'wp2static-admin-notice' ) . '</div>' .
+            '<div id="wp2static-admin-notice-user-id">' .
+            get_current_user_id() . '</div>' .
             '</div>',
             esc_attr( $class ),
             esc_html( $title ),
@@ -47,7 +71,6 @@ class AdminNotices {
             esc_html( $secondary_button_url ),
             esc_html( $secondary_button_title )
         );
-        $run_nonce = wp_create_nonce( 'wp2static-run-page' );
     }
 
     /**
@@ -57,12 +80,31 @@ class AdminNotices {
         return current_user_can( 'upload_plugins' );
     }
 
-    public function handleDismissedNotice( string $dismissed_notice ) : void {
+    public function handleDismissedNotice() : void {
         check_ajax_referer( 'wp2static-admin-notice', 'security' );
 
-        error_log( filter_input( INPUT_POST, 'dismissedNotice' ) );
+        $dismissed_notice = strval( filter_input( INPUT_POST, 'dismissedNotice' ) );
+
+        self::logNoticeAction( $dismissed_notice, 'dismissed' );
 
         wp_die();
+    }
+
+    public function logNoticeAction( string $notice_name, string $action ) : void {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'wp2static_notices';
+
+        $current_user_id = get_current_user_id();
+
+        $wpdb->insert(
+            $table_name,
+            [
+                'name' => $notice_name,
+                'user_id' => $current_user_id,
+                'action' => $action,
+            ]
+        );
     }
 }
 
