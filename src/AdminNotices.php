@@ -77,7 +77,7 @@ class AdminNotices {
      * Determine if a user should user see any notices
      */
     public function userAllowedToSeeNotices() : bool {
-        return current_user_can( 'upload_plugins' );
+        return current_user_can( 'manage_options' );
     }
 
     public function handleDismissedNotice() : void {
