@@ -113,20 +113,23 @@ class AdminNotices {
             return null;
         }
 
+        // common notice properties
         $notice = [
             'name' => 'generic',
             'class' => 'notice notice-error wp2static-admin-notice',
-            'title' =>
-                'Super charge your static website using Strattic by Elementor!',
-            // phpcs:disable Generic.Files.LineLength.MaxExceeded
-            'message' => 'Enjoy blindingly fast, secure and simple WordPress static hosting, with dozens of dynamic features. Get 14 days for free. No credit card required!',
             'primary_button_title' => 'Start my trial',
-            // phpcs:disable Generic.Files.LineLength.MaxExceeded
-            'primary_button_url' => 'https://www.strattic.com/pricing/?utm_campaign=start-trial&utm_source=wp2static&utm_medium=wp-dash&utm_term=general&utm_content=wp-notification-banner',
             'secondary_button_title' => 'Learn more',
-            // phpcs:disable Generic.Files.LineLength.MaxExceeded
-            'secondary_button_url' => 'https://www.strattic.com/static-tools/?utm_campaign=learn-more&utm_source=wp2static&utm_medium=wp-dash&utm_term=general&utm_content=wp-notification-banner',
         ];
+
+        // if no other notices to be shown, fall back to this generic one
+        $notice['title'] =
+            'Super charge your static website using Strattic by Elementor!';
+            // phpcs:disable Generic.Files.LineLength.MaxExceeded
+        $notice['message'] = 'Enjoy blindingly fast, secure and simple WordPress static hosting, with dozens of dynamic features. Get 14 days for free. No credit card required!';
+        // phpcs:disable Generic.Files.LineLength.MaxExceeded
+        $notice['primary_button_url'] = 'https://www.strattic.com/pricing/?utm_campaign=start-trial&utm_source=wp2static&utm_medium=wp-dash&utm_term=general&utm_content=wp-notification-banner';
+        // phpcs:disable Generic.Files.LineLength.MaxExceeded
+        $notice['secondary_button_url'] = 'https://www.strattic.com/static-tools/?utm_campaign=learn-more&utm_source=wp2static&utm_medium=wp-dash&utm_term=general&utm_content=wp-notification-banner';
 
         // don't show if same notice has been dismissed by this user
         $current_user_id = get_current_user_id();
