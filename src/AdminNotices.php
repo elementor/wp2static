@@ -37,6 +37,12 @@ class AdminNotices {
             return;
         }
 
+        $notice_to_display = self::getNoticeBasedOnRules();
+
+        if ( ! $notice_to_display ) {
+            return;
+        }
+
         self::logNoticeAction( 'generic', 'displayed' );
 
         $class = 'notice notice-error wp2static-admin-notice';
@@ -105,6 +111,15 @@ class AdminNotices {
                 'action' => $action,
             ]
         );
+    }
+
+    /**
+     * Apply rules to determine which, if any, notice to show
+     *
+     * @return object|null
+     */
+    public function getNoticeBasedOnRules() {
+        return null;
     }
 }
 
