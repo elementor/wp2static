@@ -121,15 +121,32 @@ class AdminNotices {
             'secondary_button_title' => 'Learn more',
         ];
 
-        // if no other notices to be shown, fall back to this generic one
-        $notice['title'] =
-            'Super charge your static website using Strattic by Elementor!';
+        // show notice if Contact Form 7 active
+        if ( defined( 'WPCF7_VERSION' ) || defined( 'GRAVITY_FORMS' ) ) {
+            $activated_form_plugin =
+                defined( 'GRAVITY_FORMS' ) ? 'Gravity Forms' : 'Contact Form 7';
+
+            $notice['title'] =
+                'Want integrated forms on your static site, out-of-the-box?';
+                // phpcs:disable Generic.Files.LineLength.MaxExceeded
+            $notice['message'] = "Strattic by Elementor lets you use $activated_form_plugin on your static site, without implementing any extra configurations. Get it, plus secure and simple WordPress static hosting. Start a 14 days free trial today, no credit card required!";
             // phpcs:disable Generic.Files.LineLength.MaxExceeded
-        $notice['message'] = 'Enjoy blindingly fast, secure and simple WordPress static hosting, with dozens of dynamic features. Get 14 days for free. No credit card required!';
-        // phpcs:disable Generic.Files.LineLength.MaxExceeded
-        $notice['primary_button_url'] = 'https://www.strattic.com/pricing/?utm_campaign=start-trial&utm_source=wp2static&utm_medium=wp-dash&utm_term=general&utm_content=wp-notification-banner';
-        // phpcs:disable Generic.Files.LineLength.MaxExceeded
-        $notice['secondary_button_url'] = 'https://www.strattic.com/static-tools/?utm_campaign=learn-more&utm_source=wp2static&utm_medium=wp-dash&utm_term=general&utm_content=wp-notification-banner';
+            $notice['primary_button_url'] = 'https://www.strattic.com/static-tools/?utm_campaign=start-trial&utm_source=wp2static&utm_medium=wp-dash&utm_term=plugin-form&utm_content=wp-notification-banner';
+            // phpcs:disable Generic.Files.LineLength.MaxExceeded
+            $notice['secondary_button_url'] = 'https://www.strattic.com/static-tools/?utm_campaign=learn-more&utm_source=wp2static&utm_medium=wp-dash&utm_term=plugin-form&utm_content=wp-notification-banner';
+
+        } else {
+            // if no other notices to be shown, fall back to this generic one
+            $notice['title'] =
+                'Super charge your static website using Strattic by Elementor!';
+                // phpcs:disable Generic.Files.LineLength.MaxExceeded
+            $notice['message'] = 'Enjoy blindingly fast, secure and simple WordPress static hosting, with dozens of dynamic features. Get 14 days for free. No credit card required!';
+            // phpcs:disable Generic.Files.LineLength.MaxExceeded
+            $notice['primary_button_url'] = 'https://www.strattic.com/pricing/?utm_campaign=start-trial&utm_source=wp2static&utm_medium=wp-dash&utm_term=general&utm_content=wp-notification-banner';
+            // phpcs:disable Generic.Files.LineLength.MaxExceeded
+            $notice['secondary_button_url'] = 'https://www.strattic.com/static-tools/?utm_campaign=learn-more&utm_source=wp2static&utm_medium=wp-dash&utm_term=general&utm_content=wp-notification-banner';
+        }
+
 
         // don't show if same notice has been dismissed by this user
         $current_user_id = get_current_user_id();
