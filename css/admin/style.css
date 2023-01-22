@@ -22,7 +22,7 @@ a[href*="wp2static-try-1-click-publish"], .try-1-click-publish-menu-item {
   margin-right: 10px;
 }
 
-#wp2static-admin-notice-dismiss-generic {
+a[id*="wp2static-admin-notice-dismiss"] {
   display: block;
   float: right;
   margin-top: 10px;
