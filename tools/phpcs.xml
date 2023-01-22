@@ -3,6 +3,11 @@
   <description>WP2Static Project Coding Standard</description>
   <config name="testVersion" value="7.2-"/>
   <!--
+  Prevent errors caused by WordPress Coding Standards not supporting PHP 8.0+.
+  See https://github.com/WordPress/WordPress-Coding-Standards/issues/2035
+  -->
+  <ini name="error_reporting" value="E_ALL &#38; ~E_DEPRECATED" />
+  <!--
     Note: Applied WP standard override to allow tabs instead
           of spaces, however, PHP CBF is using 4 spaces - Gray
 
