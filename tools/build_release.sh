@@ -36,6 +36,8 @@ composer install --quiet --no-dev --optimize-autoloader
 cp -r "$EXEC_DIR"/src "$TMP_DIR"/wp2static/
 cp -r "$EXEC_DIR"/vendor "$TMP_DIR"/wp2static/
 cp -r "$EXEC_DIR"/views "$TMP_DIR"/wp2static/
+cp -r "$EXEC_DIR"/css "$TMP_DIR"/wp2static/
+cp -r "$EXEC_DIR"/js "$TMP_DIR"/wp2static/
 cp -r "$EXEC_DIR"/*.php "$TMP_DIR"/wp2static/
 
 cd "$TMP_DIR" || exit
