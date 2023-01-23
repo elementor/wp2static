@@ -127,6 +127,11 @@ class AdminNotices {
         ) {
             $notice['name'] = 'elementor-pro';
             $notice = array_merge( self::getNoticeContents( 'elementor-pro' ), $notice );
+        } elseif ( ! self::noticeAlreadyDismissed( 'wp-rocket' ) &&
+            is_plugin_active( 'wp-rocket/wp-rocket.php' )
+        ) {
+            $notice['name'] = 'wp-rocket';
+            $notice = array_merge( self::getNoticeContents( 'wp-rocket' ), $notice );
             // show notice if Gravity Forms or Contact Form 7 active and hasn't dismissed notice
             // if both are active, prioritise showing message for Gravity Forms
         } elseif ( ! self::noticeAlreadyDismissed( 'forms-plugin-activated' ) &&
@@ -314,6 +319,18 @@ class AdminNotices {
                     'primary_button_url' => 'https://www.strattic.com/pricing/?utm_campaign=start-trial&utm_source=wp2static&utm_medium=wp-dash&utm_term=seo-plugin&utm_content=wp-notification-banner',
                     // phpcs:disable Generic.Files.LineLength.MaxExceeded
                     'secondary_button_url' => 'https://www.strattic.com/static-tools/?utm_campaign=learn-more&utm_source=wp2static&utm_medium=wp-dash&utm_term=seo-plugin&utm_content=wp-notification-banner',
+                ];
+                break;
+            case 'wp-rocket':
+                $notice_contents = [
+                    'title' =>
+                        'Enhance your static site’s performance with Strattic by Elementor!',
+                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
+                    'message' => 'Strattic by Elementor lets you combine WP Rocket with static hosting - giving you blindingly fast, secure and simple WordPress static hosting, with dozens of dynamic features without implementing any extra configurations. Get 14 days for free. No credit card required!',
+                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
+                    'primary_button_url' => 'https://www.strattic.com/pricing/?utm_campaign=start-trial&utm_source=wp2static&utm_medium=wp-dash&utm_term=performance&utm_content=wp-notification-banner',
+                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
+                    'secondary_button_url' => 'https://www.strattic.com/static-tools/?utm_campaign=learn-more&utm_source=wp2static&utm_medium=wp-dash&utm_term=performance&utm_content=wp-notification-banner',
                 ];
                 break;
         }
