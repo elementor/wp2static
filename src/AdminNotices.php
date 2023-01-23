@@ -169,6 +169,18 @@ class AdminNotices {
             } else {
                 $notice = array_merge( self::getNoticeContents( 'rankmath' ), $notice );
             }
+            // if both are active, prioritise showing message for Redirection
+        } elseif ( ! self::noticeAlreadyDismissed( 'redirection-plugin-activated' ) &&
+            ( is_plugin_active( 'redirection/redirection.php' ) ||
+                is_plugin_active( 'simple-301-redirects/wp-simple-301-redirects.php' ) )
+        ) {
+            $notice['name'] = 'redirection-plugin-activated';
+
+            if ( is_plugin_active( 'redirection/redirection.php' ) ) {
+                $notice = array_merge( self::getNoticeContents( 'redirection' ), $notice );
+            } else {
+                $notice = array_merge( self::getNoticeContents( 'simple-301-redirects' ), $notice );
+            }
         } elseif ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
             // if at least one WooCommerce order exists, don't show any notices
             global $wpdb;
@@ -331,6 +343,30 @@ class AdminNotices {
                     'primary_button_url' => 'https://www.strattic.com/pricing/?utm_campaign=start-trial&utm_source=wp2static&utm_medium=wp-dash&utm_term=performance&utm_content=wp-notification-banner',
                     // phpcs:disable Generic.Files.LineLength.MaxExceeded
                     'secondary_button_url' => 'https://www.strattic.com/static-tools/?utm_campaign=learn-more&utm_source=wp2static&utm_medium=wp-dash&utm_term=performance&utm_content=wp-notification-banner',
+                ];
+                break;
+            case 'redirection':
+                $notice_contents = [
+                    'title' =>
+                        'Redirect visitors between static pages, just like you would on your live site.',
+                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
+                    'message' => 'Strattic by Elementor lets you use Redirection on your static site, without implementing any extra configurations. Get 14 days for free. No credit card required!',
+                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
+                    'primary_button_url' => 'https://www.strattic.com/pricing/?utm_campaign=start-trial&utm_source=wp2static&utm_medium=wp-dash&utm_term=redirection&utm_content=wp-notification-banner',
+                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
+                    'secondary_button_url' => 'https://www.strattic.com/static-tools/?utm_campaign=learn-more&utm_source=wp2static&utm_medium=wp-dash&utm_term=redirection&utm_content=wp-notification-banner',
+                ];
+                break;
+            case 'simple-301-redirects':
+                $notice_contents = [
+                    'title' =>
+                        'Redirect visitors between static pages, just like you would on your live site.',
+                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
+                    'message' => 'Strattic by Elementor lets you use Simple 301 Redirects on your static site, without implementing any extra configurations. Get 14 days for free. No credit card required!',
+                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
+                    'primary_button_url' => 'https://www.strattic.com/pricing/?utm_campaign=start-trial&utm_source=wp2static&utm_medium=wp-dash&utm_term=redirection&utm_content=wp-notification-banner',
+                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
+                    'secondary_button_url' => 'https://www.strattic.com/static-tools/?utm_campaign=learn-more&utm_source=wp2static&utm_medium=wp-dash&utm_term=redirection&utm_content=wp-notification-banner',
                 ];
                 break;
         }
