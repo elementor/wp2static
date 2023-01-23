@@ -135,6 +135,31 @@ class AdminNotices {
             } else {
                 $notice = array_merge( self::getNoticeContents( 'contact-form-7' ), $notice );
             }
+            // if both are active, prioritise showing message for WPML
+        } elseif ( ! self::noticeAlreadyDismissed( 'multilingual-plugin-activated' ) &&
+            ( is_plugin_active( 'sitepress-multilingual-cms/sitepress.php' ) ||
+                is_plugin_active( 'polylang/polylang.php' ) )
+        ) {
+            $notice['name'] = 'multilingual-plugin-activated';
+
+            if ( is_plugin_active( 'sitepress-multilingual-cms/sitepress.php' ) ) {
+                $notice = array_merge( self::getNoticeContents( 'wpml' ), $notice );
+            } else {
+                $notice = array_merge( self::getNoticeContents( 'polylang' ), $notice );
+            }
+        } elseif ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
+            // if at least one WooCommerce order exists, don't show any notices
+            global $wpdb;
+            $woocommerce_orders = $wpdb->get_results(
+                $wpdb->prepare(
+                    "SELECT count(*) FROM $wpdb->posts WHERE post_status = %s",
+                    'shop_order'
+                )
+            );
+
+            if ( $woocommerce_orders ) {
+                return null;
+            }
         } else {
             // if no other notices to be shown, fall back to this generic one
             $notice = array_merge( self::getNoticeContents( 'generic' ), $notice );
@@ -210,6 +235,30 @@ class AdminNotices {
                     'primary_button_url' => 'https://www.strattic.com/static-tools/?utm_campaign=start-trial&utm_source=wp2static&utm_medium=wp-dash&utm_term=plugin-form&utm_content=wp-notification-banner',
                     // phpcs:disable Generic.Files.LineLength.MaxExceeded
                     'secondary_button_url' => 'https://www.strattic.com/static-tools/?utm_campaign=learn-more&utm_source=wp2static&utm_medium=wp-dash&utm_term=plugin-form&utm_content=wp-notification-banner',
+                ];
+                break;
+            case 'wpml':
+                $notice_contents = [
+                    'title' =>
+                        'Create dynamic, multi-lingual static websites using Strattic by Elementor!',
+                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
+                    'message' => 'Strattic by Elementor lets you use WPML on your static site, without implementing any extra configurations. Get 14 days for free. No credit card required!',
+                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
+                    'primary_button_url' => 'https://www.strattic.com/pricing/?utm_campaign=start-trial&utm_source=wp2static&utm_medium=wp-dash&utm_term=multilingual&utm_content=wp-notification-banner',
+                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
+                    'secondary_button_url' => 'https://www.strattic.com/static-tools/?utm_campaign=learn-more&utm_source=wp2static&utm_medium=wp-dash&utm_term=multilingual&utm_content=wp-notification-banner',
+                ];
+                break;
+            case 'polylang':
+                $notice_contents = [
+                    'title' =>
+                        'Create dynamic, multi-lingual static websites using Strattic by Elementor!',
+                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
+                    'message' => 'Strattic by Elementor lets you use Polylang on your static site, without implementing any extra configurations. Get 14 days for free. No credit card required!',
+                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
+                    'primary_button_url' => 'https://www.strattic.com/pricing/?utm_campaign=start-trial&utm_source=wp2static&utm_medium=wp-dash&utm_term=multilingual&utm_content=wp-notification-banner',
+                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
+                    'secondary_button_url' => 'https://www.strattic.com/static-tools/?utm_campaign=learn-more&utm_source=wp2static&utm_medium=wp-dash&utm_term=multilingual&utm_content=wp-notification-banner',
                 ];
                 break;
         }
