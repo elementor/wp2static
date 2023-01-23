@@ -152,6 +152,18 @@ class AdminNotices {
             } else {
                 $notice = array_merge( self::getNoticeContents( 'polylang' ), $notice );
             }
+            // if both are active, prioritise showing message for Yoast
+        } elseif ( ! self::noticeAlreadyDismissed( 'seo-plugin-activated' ) &&
+            ( is_plugin_active( 'wordpress-seo/wp-seo.php' ) ||
+                is_plugin_active( 'seo-by-rank-math/rank-math.php' ) )
+        ) {
+            $notice['name'] = 'seo-plugin-activated';
+
+            if ( is_plugin_active( 'wordpress-seo/wp-seo.php' ) ) {
+                $notice = array_merge( self::getNoticeContents( 'yoast' ), $notice );
+            } else {
+                $notice = array_merge( self::getNoticeContents( 'rankmath' ), $notice );
+            }
         } elseif ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
             // if at least one WooCommerce order exists, don't show any notices
             global $wpdb;
@@ -278,6 +290,30 @@ class AdminNotices {
                     'primary_button_url' => 'https://www.strattic.com/pricing/?utm_campaign=start-trial&utm_source=wp2static&utm_medium=wp-dash&utm_term=elementor-pro&utm_content=wp-notification-banner',
                     // phpcs:disable Generic.Files.LineLength.MaxExceeded
                     'secondary_button_url' => 'https://www.strattic.com/static-tools/?utm_campaign=learn-more&utm_source=wp2static&utm_medium=wp-dash&utm_term=elementor-pro&utm_content=wp-notification-banner',
+                ];
+                break;
+            case 'yoast':
+                $notice_contents = [
+                    'title' =>
+                        'Improve the SEO results on your static site with Strattic by Elementor!',
+                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
+                    'message' => 'Strattic by Elementor lets you use Yoast on your static site, without implementing any extra configurations. Get fast, secure and simple WordPress static hosting, with dozens of dynamic features like XML sitemaps, search engine pinging, robots.txt support. Get 14 days for free. No credit card required!',
+                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
+                    'primary_button_url' => 'https://www.strattic.com/pricing/?utm_campaign=start-trial&utm_source=wp2static&utm_medium=wp-dash&utm_term=seo-plugin&utm_content=wp-notification-banner',
+                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
+                    'secondary_button_url' => 'https://www.strattic.com/static-tools/?utm_campaign=learn-more&utm_source=wp2static&utm_medium=wp-dash&utm_term=seo-plugin&utm_content=wp-notification-banner',
+                ];
+                break;
+            case 'rankmath':
+                $notice_contents = [
+                    'title' =>
+                        'Improve the SEO results on your static site with Strattic by Elementor!',
+                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
+                    'message' => 'Strattic by Elementor lets you use Rank Math on your static site, without implementing any extra configurations. Get fast, secure and simple WordPress static hosting, with dozens of dynamic features like XML sitemaps, search engine pinging, robots.txt support. Get 14 days for free. No credit card required!',
+                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
+                    'primary_button_url' => 'https://www.strattic.com/pricing/?utm_campaign=start-trial&utm_source=wp2static&utm_medium=wp-dash&utm_term=seo-plugin&utm_content=wp-notification-banner',
+                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
+                    'secondary_button_url' => 'https://www.strattic.com/static-tools/?utm_campaign=learn-more&utm_source=wp2static&utm_medium=wp-dash&utm_term=seo-plugin&utm_content=wp-notification-banner',
                 ];
                 break;
         }
