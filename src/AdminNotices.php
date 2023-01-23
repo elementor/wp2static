@@ -122,9 +122,14 @@ class AdminNotices {
             'secondary_button_title' => 'Learn more',
         ];
 
-        // show notice if Gravity Forms or Contact Form 7 active and hasn't dismissed notice
-        // if both are active, prioritise showing message for Gravity Forms
-        if ( ! self::noticeAlreadyDismissed( 'forms-plugin-activated' ) &&
+        if ( ! self::noticeAlreadyDismissed( 'elementor-pro' ) &&
+            is_plugin_active( 'elementor-pro/elementor-pro.php' )
+        ) {
+            $notice['name'] = 'elementor-pro';
+            $notice = array_merge( self::getNoticeContents( 'elementor-pro' ), $notice );
+            // show notice if Gravity Forms or Contact Form 7 active and hasn't dismissed notice
+            // if both are active, prioritise showing message for Gravity Forms
+        } elseif ( ! self::noticeAlreadyDismissed( 'forms-plugin-activated' ) &&
             ( is_plugin_active( 'gravityforms/gravityforms.php' ) ||
                 is_plugin_active( 'contact-form-7/wp-contact-form-7.php' ) )
         ) {
@@ -261,6 +266,18 @@ class AdminNotices {
                     'primary_button_url' => 'https://www.strattic.com/pricing/?utm_campaign=start-trial&utm_source=wp2static&utm_medium=wp-dash&utm_term=multilingual&utm_content=wp-notification-banner',
                     // phpcs:disable Generic.Files.LineLength.MaxExceeded
                     'secondary_button_url' => 'https://www.strattic.com/static-tools/?utm_campaign=learn-more&utm_source=wp2static&utm_medium=wp-dash&utm_term=multilingual&utm_content=wp-notification-banner',
+                ];
+                break;
+            case 'elementor-pro':
+                $notice_contents = [
+                    'title' =>
+                        'Get more out of your static website using Strattic by Elementor!',
+                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
+                    'message' => 'Enjoy fast, secure and simple WordPress static hosting, plus dozens of powerful features, such as integrated support for various Elementor and Elementor Pro features. Get 14 days for free. No credit card required!',
+                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
+                    'primary_button_url' => 'https://www.strattic.com/pricing/?utm_campaign=start-trial&utm_source=wp2static&utm_medium=wp-dash&utm_term=elementor-pro&utm_content=wp-notification-banner',
+                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
+                    'secondary_button_url' => 'https://www.strattic.com/static-tools/?utm_campaign=learn-more&utm_source=wp2static&utm_medium=wp-dash&utm_term=elementor-pro&utm_content=wp-notification-banner',
                 ];
                 break;
         }
