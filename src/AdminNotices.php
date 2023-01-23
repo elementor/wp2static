@@ -150,16 +150,18 @@ class AdminNotices {
         } elseif ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
             // if at least one WooCommerce order exists, don't show any notices
             global $wpdb;
-            $woocommerce_orders = $wpdb->get_results(
+            $table_name = $wpdb->prefix . 'wc_order_stats';
+            $woocommerce_orders = $wpdb->get_var(
                 $wpdb->prepare(
-                    "SELECT count(*) FROM $wpdb->posts WHERE post_status = %s",
-                    'shop_order'
+                    "SELECT count(*) FROM $table_name"
                 )
             );
 
             if ( $woocommerce_orders ) {
                 return null;
             }
+
+            $notice = array_merge( self::getNoticeContents( 'generic' ), $notice );
         } else {
             // if no other notices to be shown, fall back to this generic one
             $notice = array_merge( self::getNoticeContents( 'generic' ), $notice );
