@@ -32,18 +32,18 @@ class AdminNotices {
     /**
      * Displays WP2Static admin notices
      */
-    public function showAdminNotices() : void {
-        if ( ! self::userAllowedToSeeNotices() ) {
+    public static function showAdminNotices() : void {
+        if ( ! ( new self() )->userAllowedToSeeNotices() ) {
             return;
         }
 
-        $notice_to_display = self::getNoticeBasedOnRules();
+        $notice_to_display = ( new self() )->getNoticeBasedOnRules();
 
         if ( ! $notice_to_display ) {
             return;
         }
 
-        self::logNoticeAction( $notice_to_display['name'], 'displayed' );
+        ( new self() )->logNoticeAction( $notice_to_display['name'], 'displayed' );
 
         printf(
             '<div class="%1$s"><b>%2$s</b><p>%3$s</p>' .
@@ -72,21 +72,21 @@ class AdminNotices {
     /**
      * Determine if a user should user see any notices
      */
-    public function userAllowedToSeeNotices() : bool {
+    public static function userAllowedToSeeNotices() : bool {
         return current_user_can( 'manage_options' );
     }
 
-    public function handleDismissedNotice() : void {
+    public static function handleDismissedNotice() : void {
         check_ajax_referer( 'wp2static-admin-notice', 'security' );
 
         $dismissed_notice = strval( filter_input( INPUT_POST, 'dismissedNotice' ) );
 
-        self::logNoticeAction( $dismissed_notice, 'dismissed' );
+        ( new self() )->logNoticeAction( $dismissed_notice, 'dismissed' );
 
         wp_die();
     }
 
-    public function logNoticeAction( string $notice_name, string $action ) : void {
+    public static function logNoticeAction( string $notice_name, string $action ) : void {
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'wp2static_notices';
@@ -122,64 +122,64 @@ class AdminNotices {
             'secondary_button_title' => 'Learn more',
         ];
 
-        if ( ! self::noticeAlreadyDismissed( 'elementor-pro' ) &&
+        if ( ! ( new self() )->noticeAlreadyDismissed( 'elementor-pro' ) &&
             is_plugin_active( 'elementor-pro/elementor-pro.php' )
         ) {
             $notice['name'] = 'elementor-pro';
-            $notice = array_merge( self::getNoticeContents( 'elementor-pro' ), $notice );
-        } elseif ( ! self::noticeAlreadyDismissed( 'wp-rocket' ) &&
+            $notice = array_merge( ( new self() )->getNoticeContents( 'elementor-pro' ), $notice );
+        } elseif ( ! ( new self() )->noticeAlreadyDismissed( 'wp-rocket' ) &&
             is_plugin_active( 'wp-rocket/wp-rocket.php' )
         ) {
             $notice['name'] = 'wp-rocket';
-            $notice = array_merge( self::getNoticeContents( 'wp-rocket' ), $notice );
+            $notice = array_merge( ( new self() )->getNoticeContents( 'wp-rocket' ), $notice );
             // show notice if Gravity Forms or Contact Form 7 active and hasn't dismissed notice
             // if both are active, prioritise showing message for Gravity Forms
-        } elseif ( ! self::noticeAlreadyDismissed( 'forms-plugin-activated' ) &&
+        } elseif ( ! ( new self() )->noticeAlreadyDismissed( 'forms-plugin-activated' ) &&
             ( is_plugin_active( 'gravityforms/gravityforms.php' ) ||
                 is_plugin_active( 'contact-form-7/wp-contact-form-7.php' ) )
         ) {
             $notice['name'] = 'forms-plugin-activated';
 
             if ( is_plugin_active( 'gravityforms/gravityforms.php' ) ) {
-                $notice = array_merge( self::getNoticeContents( 'gravity-forms' ), $notice );
+                $notice = array_merge( ( new self() )->getNoticeContents( 'gravity-forms' ), $notice );
             } else {
-                $notice = array_merge( self::getNoticeContents( 'contact-form-7' ), $notice );
+                $notice = array_merge( ( new self() )->getNoticeContents( 'contact-form-7' ), $notice );
             }
             // if both are active, prioritise showing message for WPML
-        } elseif ( ! self::noticeAlreadyDismissed( 'multilingual-plugin-activated' ) &&
+        } elseif ( ! ( new self() )->noticeAlreadyDismissed( 'multilingual-plugin-activated' ) &&
             ( is_plugin_active( 'sitepress-multilingual-cms/sitepress.php' ) ||
                 is_plugin_active( 'polylang/polylang.php' ) )
         ) {
             $notice['name'] = 'multilingual-plugin-activated';
 
             if ( is_plugin_active( 'sitepress-multilingual-cms/sitepress.php' ) ) {
-                $notice = array_merge( self::getNoticeContents( 'wpml' ), $notice );
+                $notice = array_merge( ( new self() )->getNoticeContents( 'wpml' ), $notice );
             } else {
-                $notice = array_merge( self::getNoticeContents( 'polylang' ), $notice );
+                $notice = array_merge( ( new self() )->getNoticeContents( 'polylang' ), $notice );
             }
             // if both are active, prioritise showing message for Yoast
-        } elseif ( ! self::noticeAlreadyDismissed( 'seo-plugin-activated' ) &&
+        } elseif ( ! ( new self() )->noticeAlreadyDismissed( 'seo-plugin-activated' ) &&
             ( is_plugin_active( 'wordpress-seo/wp-seo.php' ) ||
                 is_plugin_active( 'seo-by-rank-math/rank-math.php' ) )
         ) {
             $notice['name'] = 'seo-plugin-activated';
 
             if ( is_plugin_active( 'wordpress-seo/wp-seo.php' ) ) {
-                $notice = array_merge( self::getNoticeContents( 'yoast' ), $notice );
+                $notice = array_merge( ( new self() )->getNoticeContents( 'yoast' ), $notice );
             } else {
-                $notice = array_merge( self::getNoticeContents( 'rankmath' ), $notice );
+                $notice = array_merge( ( new self() )->getNoticeContents( 'rankmath' ), $notice );
             }
             // if both are active, prioritise showing message for Redirection
-        } elseif ( ! self::noticeAlreadyDismissed( 'redirection-plugin-activated' ) &&
+        } elseif ( ! ( new self() )->noticeAlreadyDismissed( 'redirection-plugin-activated' ) &&
             ( is_plugin_active( 'redirection/redirection.php' ) ||
                 is_plugin_active( 'simple-301-redirects/wp-simple-301-redirects.php' ) )
         ) {
             $notice['name'] = 'redirection-plugin-activated';
 
             if ( is_plugin_active( 'redirection/redirection.php' ) ) {
-                $notice = array_merge( self::getNoticeContents( 'redirection' ), $notice );
+                $notice = array_merge( ( new self() )->getNoticeContents( 'redirection' ), $notice );
             } else {
-                $notice = array_merge( self::getNoticeContents( 'simple-301-redirects' ), $notice );
+                $notice = array_merge( ( new self() )->getNoticeContents( 'simple-301-redirects' ), $notice );
             }
         } elseif ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
             // if at least one WooCommerce order exists, don't show any notices
@@ -195,13 +195,13 @@ class AdminNotices {
                 return null;
             }
 
-            $notice = array_merge( self::getNoticeContents( 'generic' ), $notice );
+            $notice = array_merge( ( new self() )->getNoticeContents( 'generic' ), $notice );
         } else {
             // if no other notices to be shown, fall back to this generic one
-            $notice = array_merge( self::getNoticeContents( 'generic' ), $notice );
+            $notice = array_merge( ( new self() )->getNoticeContents( 'generic' ), $notice );
         }
 
-        if ( self::noticeAlreadyDismissed( $notice['name'] ) ) {
+        if ( ( new self() )->noticeAlreadyDismissed( $notice['name'] ) ) {
             return null;
         }
 

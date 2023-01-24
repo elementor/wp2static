@@ -398,7 +398,7 @@ class WordPressAdmin {
         Controller::wp2staticProcessQueue();
     }
 
-    public function wp2staticAdminStyles() : void {
+    public static function wp2staticAdminStyles() : void {
         wp_register_style(
             'wp2static_admin_styles',
             plugins_url( '../css/admin/style.css', __FILE__ ),
@@ -408,7 +408,7 @@ class WordPressAdmin {
         wp_enqueue_style( 'wp2static_admin_styles' );
     }
 
-    public function wp2staticAdminScripts() : void {
+    public static function wp2staticAdminScripts() : void {
         wp_register_script(
             'wp2static_admin_scripts',
             plugins_url( '../js/admin/override-menu-style.js', __FILE__ ),
@@ -426,7 +426,7 @@ class WordPressAdmin {
      * @param string $file path to the plugin's entrypoint
      * @return mixed[] $links plugin meta links
      */
-    public function wp2staticPluginMetaLinks( $links, $file ) {
+    public static function wp2staticPluginMetaLinks( $links, $file ) {
         if ( $file === 'wp2static/wp2static.php' ) {
             // phpcs:ignore Generic.Files.LineLength.MaxExceeded
             $links[] = '<a id="wp2static-try-1-click-publish-plugin-screen" target="_blank" href="https://www.strattic.com/pricing/?utm_campaign=start-trial&utm_source=wp2static&utm_medium=wp-dash&utm_term=try-strattic&utm_content=plugins">Try 1-Click Publish</a>';
