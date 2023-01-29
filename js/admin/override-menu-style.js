@@ -10,7 +10,7 @@ jQuery(document).ready(function($){
   try1ClickPublish.target = "_blank";
 
   // set a custom external href for the submenu item 
-  try1ClickPublish.href = 'https://www.strattic.com/pricing/?utm_campaign=start-trial&utm_source=wp2static&utm_medium=wp-dash&utm_content=sidebar';
+  try1ClickPublish.href = 'https://link.strattic.com/one-click-deploy';
 
   // send admin notice dismissal events to backend
   const wp2staticAdminNotice = document.querySelector('.wp2static-admin-notice');

@@ -11,6 +11,6 @@
 
     <p>Loving WP2Static but want to try 1-Click Publish on Strattic?</p>
 
-    <p><a href="https://www.strattic.com/pricing/?utm_campaign=start-trial&utm_source=wp2static&utm_medium=wp-dash&utm_content=sidebar">Click here</a> to try Strattic for free today!</p>
+    <p><a href="https://link.strattic.com/one-click-deploy">Click here</a> to try Strattic for free today!</p>
 
 </div>
