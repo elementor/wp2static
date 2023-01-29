@@ -37,6 +37,20 @@ class AdminNotices {
             return;
         }
 
+        // avoid missing table error for git users who don't re-activate plugin
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'wp2static_notices';
+
+        $check_table_query =
+            $wpdb->prepare(
+                'SHOW TABLES LIKE %s',
+                $wpdb->esc_like( $table_name )
+            );
+
+        if ( $wpdb->get_var( $check_table_query ) !== $table_name ) {
+            return;
+        }
+
         $notice_to_display = ( new self() )->getNoticeBasedOnRules();
 
         if ( ! $notice_to_display ) {
@@ -131,7 +145,14 @@ class AdminNotices {
             'secondary_button_title' => 'Learn more',
         ];
 
-        if ( ! ( new self() )->noticeAlreadyDismissed( 'elementor-pro' ) &&
+        $addons = Addons::getAll();
+
+        if ( ! ( new self() )->noticeAlreadyDismissed( 'wp2static-addons-installed' ) &&
+            $addons !== []
+        ) {
+            $notice['name'] = 'wp2static-addons-installed';
+            $notice = array_merge( ( new self() )->getNoticeContents( 'wp2static-addons-installed' ), $notice );
+        } elseif ( ! ( new self() )->noticeAlreadyDismissed( 'elementor-pro' ) &&
             is_plugin_active( 'elementor-pro/elementor-pro.php' )
         ) {
             $notice['name'] = 'elementor-pro';
@@ -354,6 +375,16 @@ class AdminNotices {
                     'message' => "Strattic by Elementor lets you use Simple 301 Redirects on your static site, without implementing any extra configurations. \nGet 14 days for free. No credit card required!",
                     'primary_button_url' => 'https://link.strattic.com/try-strattic-redirect',
                     'secondary_button_url' => 'https://link.strattic.com/learn-strattic-redirect',
+                ];
+                break;
+            case 'wp2static-addons-installed':
+                $notice_contents = [
+                    'title' =>
+                        'Strattic by Elementor: The simplest way to publish powerful static sites!',
+                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
+                    'message' => "Enjoy blindingly fast, secure and simple WordPress static hosting, with dozens of dynamic features. \nGet 14 days for free. No credit card required!",
+                    'primary_button_url' => 'https://link.strattic.com/try-strattic-publish',
+                    'secondary_button_url' => 'https://link.strattic.com/learn-strattic-publish',
                 ];
                 break;
         }
