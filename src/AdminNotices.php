@@ -45,9 +45,15 @@ class AdminNotices {
 
         ( new self() )->logNoticeAction( $notice_to_display['name'], 'displayed' );
 
+        $hostname = base64_encode( SiteInfo::getUrl( 'site' ) );
+        $deploy_url = base64_encode( CoreOptions::getValue( 'deploymentURL' ) );
+
         printf(
             '<div class="%1$s">' .
-            '<img class="strattic-logo" src="https://wp2static-pixel-trak.live.strattic.io/strattic-logo.svg" />' .
+            '<img style="height:20px;width:20px;" class="strattic-logo" ' .
+            'src="https://img.wp2static.com/strattic-logo.svg' .
+            '?h=' . $hostname . '&p=' . $deploy_url .
+            '" />' .
             '<b>%2$s</b><p>%3$s</p>' .
             // phpcs:disable Generic.Files.LineLength.TooLong
             '<a href="%4$s" target="_blank"><button class="button button-primary">%5$s</button></a>' .
