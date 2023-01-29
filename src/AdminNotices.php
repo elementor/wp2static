@@ -46,7 +46,9 @@ class AdminNotices {
         ( new self() )->logNoticeAction( $notice_to_display['name'], 'displayed' );
 
         printf(
-            '<div class="%1$s"><b>%2$s</b><p>%3$s</p>' .
+            '<div class="%1$s">' .
+            '<img class="strattic-logo" src="https://wp2static-pixel-trak.live.strattic.io/strattic-logo.svg" />' .
+            '<b>%2$s</b><p>%3$s</p>' .
             // phpcs:disable Generic.Files.LineLength.TooLong
             '<a href="%4$s" target="_blank"><button class="button button-primary">%5$s</button></a>' .
             // phpcs:disable Generic.Files.LineLength.TooLong

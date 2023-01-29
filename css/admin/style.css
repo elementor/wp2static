@@ -31,10 +31,16 @@ a[href*="wp2static-try-1-click-publish"], .try-1-click-publish-menu-item {
 a[id*="wp2static-admin-notice-dismiss"] {
   display: block;
   float: right;
-  margin-top: -55px;
+  margin-top: -75px;
   text-decoration: none;
 }
 
 #wp2static-admin-notice-nonce, #wp2static-admin-notice-user-id {
   display: none;
+}
+
+.strattic-logo {
+  height: 20px;
+  margin-bottom: -5px;
+  padding-right: 5px;
 }
