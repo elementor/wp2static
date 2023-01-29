@@ -118,7 +118,7 @@ class AdminNotices {
         // common notice properties
         $notice = [
             'name' => 'generic',
-            'class' => 'notice notice-error wp2static-admin-notice',
+            'class' => 'notice notice-info wp2static-admin-notice',
             'primary_button_title' => 'Start my trial',
             'secondary_button_title' => 'Learn more',
         ];
