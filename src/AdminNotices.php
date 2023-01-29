@@ -244,10 +244,8 @@ class AdminNotices {
                         'Super charge your static website using Strattic by Elementor!',
                     // phpcs:disable Generic.Files.LineLength.MaxExceeded
                     'message' => "Enjoy blindingly fast, secure and simple WordPress static hosting, with dozens of dynamic features. \nGet 14 days for free. No credit card required!",
-                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
-                    'primary_button_url' => 'https://www.strattic.com/pricing/?utm_campaign=start-trial&utm_source=wp2static&utm_medium=wp-dash&utm_term=general&utm_content=wp-notification-banner',
-                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
-                    'secondary_button_url' => 'https://www.strattic.com/static-tools/?utm_campaign=learn-more&utm_source=wp2static&utm_medium=wp-dash&utm_term=general&utm_content=wp-notification-banner',
+                    'primary_button_url' => 'https://link.strattic.com/try-strattic-general',
+                    'secondary_button_url' => 'https://link.strattic.com/learn-strattic-general',
                 ];
                 break;
             case 'contact-form-7':
@@ -256,10 +254,8 @@ class AdminNotices {
                         'Want integrated forms on your static site, out-of-the-box?',
                     // phpcs:disable Generic.Files.LineLength.MaxExceeded
                     'message' => "Strattic by Elementor lets you use Contact Form 7 on your static site, without implementing any extra configurations. \nGet it, plus secure and simple WordPress static hosting. Start a 14 days free trial today, no credit card required!",
-                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
-                    'primary_button_url' => 'https://www.strattic.com/static-tools/?utm_campaign=start-trial&utm_source=wp2static&utm_medium=wp-dash&utm_term=plugin-form&utm_content=wp-notification-banner',
-                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
-                    'secondary_button_url' => 'https://www.strattic.com/static-tools/?utm_campaign=learn-more&utm_source=wp2static&utm_medium=wp-dash&utm_term=plugin-form&utm_content=wp-notification-banner',
+                    'primary_button_url' => 'https://link.strattic.com/try-strattic-forms',
+                    'secondary_button_url' => 'https://link.strattic.com/learn-strattic-forms',
                 ];
                 break;
             case 'gravity-forms':
@@ -268,10 +264,8 @@ class AdminNotices {
                         'Want integrated forms on your static site, out-of-the-box?',
                     // phpcs:disable Generic.Files.LineLength.MaxExceeded
                     'message' => "Strattic by Elementor lets you use Gravity Forms on your static site, without implementing any extra configurations. \nGet it, plus secure and simple WordPress static hosting. Start a 14 days free trial today, no credit card required!",
-                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
-                    'primary_button_url' => 'https://www.strattic.com/static-tools/?utm_campaign=start-trial&utm_source=wp2static&utm_medium=wp-dash&utm_term=plugin-form&utm_content=wp-notification-banner',
-                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
-                    'secondary_button_url' => 'https://www.strattic.com/static-tools/?utm_campaign=learn-more&utm_source=wp2static&utm_medium=wp-dash&utm_term=plugin-form&utm_content=wp-notification-banner',
+                    'primary_button_url' => 'https://link.strattic.com/try-strattic-forms',
+                    'secondary_button_url' => 'https://link.strattic.com/learn-strattic-forms',
                 ];
                 break;
             case 'wpml':
@@ -280,10 +274,8 @@ class AdminNotices {
                         'Create dynamic, multi-lingual static websites using Strattic by Elementor!',
                     // phpcs:disable Generic.Files.LineLength.MaxExceeded
                     'message' => "Strattic by Elementor lets you use WPML on your static site, without implementing any extra configurations. \nGet 14 days for free. No credit card required!",
-                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
-                    'primary_button_url' => 'https://www.strattic.com/pricing/?utm_campaign=start-trial&utm_source=wp2static&utm_medium=wp-dash&utm_term=multilingual&utm_content=wp-notification-banner',
-                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
-                    'secondary_button_url' => 'https://www.strattic.com/static-tools/?utm_campaign=learn-more&utm_source=wp2static&utm_medium=wp-dash&utm_term=multilingual&utm_content=wp-notification-banner',
+                    'primary_button_url' => 'https://link.strattic.com/try-strattic-multilingual',
+                    'secondary_button_url' => 'https://link.strattic.com/learn-strattic-multilingual',
                 ];
                 break;
             case 'polylang':
@@ -292,10 +284,8 @@ class AdminNotices {
                         'Create dynamic, multi-lingual static websites using Strattic by Elementor!',
                     // phpcs:disable Generic.Files.LineLength.MaxExceeded
                     'message' => "Strattic by Elementor lets you use Polylang on your static site, without implementing any extra configurations. \nGet 14 days for free. No credit card required!",
-                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
-                    'primary_button_url' => 'https://www.strattic.com/pricing/?utm_campaign=start-trial&utm_source=wp2static&utm_medium=wp-dash&utm_term=multilingual&utm_content=wp-notification-banner',
-                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
-                    'secondary_button_url' => 'https://www.strattic.com/static-tools/?utm_campaign=learn-more&utm_source=wp2static&utm_medium=wp-dash&utm_term=multilingual&utm_content=wp-notification-banner',
+                    'primary_button_url' => 'https://link.strattic.com/try-strattic-multilingual',
+                    'secondary_button_url' => 'https://link.strattic.com/learn-strattic-multilingual',
                 ];
                 break;
             case 'elementor-pro':
@@ -304,10 +294,8 @@ class AdminNotices {
                         'Get more out of your static website using Strattic by Elementor!',
                     // phpcs:disable Generic.Files.LineLength.MaxExceeded
                     'message' => "Enjoy fast, secure and simple WordPress static hosting, plus dozens of powerful features, such as integrated support for various Elementor and Elementor Pro features. \nGet 14 days for free. No credit card required!",
-                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
-                    'primary_button_url' => 'https://www.strattic.com/pricing/?utm_campaign=start-trial&utm_source=wp2static&utm_medium=wp-dash&utm_term=elementor-pro&utm_content=wp-notification-banner',
-                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
-                    'secondary_button_url' => 'https://www.strattic.com/static-tools/?utm_campaign=learn-more&utm_source=wp2static&utm_medium=wp-dash&utm_term=elementor-pro&utm_content=wp-notification-banner',
+                    'primary_button_url' => 'https://link.strattic.com/try-strattic-elementor',
+                    'secondary_button_url' => 'https://link.strattic.com/learn-strattic-elementor',
                 ];
                 break;
             case 'yoast':
@@ -316,10 +304,8 @@ class AdminNotices {
                         'Improve the SEO results on your static site with Strattic by Elementor!',
                     // phpcs:disable Generic.Files.LineLength.MaxExceeded
                     'message' => "Strattic by Elementor lets you use Yoast on your static site, without implementing any extra configurations. \nGet fast, secure and simple WordPress static hosting, with dozens of dynamic features like XML sitemaps, search engine pinging, robots.txt support. \nGet 14 days for free. No credit card required!",
-                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
-                    'primary_button_url' => 'https://www.strattic.com/pricing/?utm_campaign=start-trial&utm_source=wp2static&utm_medium=wp-dash&utm_term=seo-plugin&utm_content=wp-notification-banner',
-                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
-                    'secondary_button_url' => 'https://www.strattic.com/static-tools/?utm_campaign=learn-more&utm_source=wp2static&utm_medium=wp-dash&utm_term=seo-plugin&utm_content=wp-notification-banner',
+                    'primary_button_url' => 'https://link.strattic.com/try-strattic-seo',
+                    'secondary_button_url' => 'https://link.strattic.com/learn-strattic-seo',
                 ];
                 break;
             case 'rankmath':
@@ -328,10 +314,8 @@ class AdminNotices {
                         'Improve the SEO results on your static site with Strattic by Elementor!',
                     // phpcs:disable Generic.Files.LineLength.MaxExceeded
                     'message' => "Strattic by Elementor lets you use Rank Math on your static site, without implementing any extra configurations. Get fast, secure and simple WordPress static hosting, with dozens of dynamic features like XML sitemaps, search engine pinging, robots.txt support. \nGet 14 days for free. No credit card required!",
-                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
-                    'primary_button_url' => 'https://www.strattic.com/pricing/?utm_campaign=start-trial&utm_source=wp2static&utm_medium=wp-dash&utm_term=seo-plugin&utm_content=wp-notification-banner',
-                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
-                    'secondary_button_url' => 'https://www.strattic.com/static-tools/?utm_campaign=learn-more&utm_source=wp2static&utm_medium=wp-dash&utm_term=seo-plugin&utm_content=wp-notification-banner',
+                    'primary_button_url' => 'https://link.strattic.com/try-strattic-seo',
+                    'secondary_button_url' => 'https://link.strattic.com/learn-strattic-seo',
                 ];
                 break;
             case 'wp-rocket':
@@ -340,10 +324,8 @@ class AdminNotices {
                         'Enhance your static site’s performance with Strattic by Elementor!',
                     // phpcs:disable Generic.Files.LineLength.MaxExceeded
                     'message' => "Strattic by Elementor lets you combine WP Rocket with static hosting - giving you blindingly fast, secure and simple WordPress static hosting, with dozens of dynamic features without implementing any extra configurations. \nGet 14 days for free. No credit card required!",
-                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
-                    'primary_button_url' => 'https://www.strattic.com/pricing/?utm_campaign=start-trial&utm_source=wp2static&utm_medium=wp-dash&utm_term=performance&utm_content=wp-notification-banner',
-                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
-                    'secondary_button_url' => 'https://www.strattic.com/static-tools/?utm_campaign=learn-more&utm_source=wp2static&utm_medium=wp-dash&utm_term=performance&utm_content=wp-notification-banner',
+                    'primary_button_url' => 'https://link.strattic.com/try-strattic-performance',
+                    'secondary_button_url' => 'https://link.strattic.com/learn-strattic-performance',
                 ];
                 break;
             case 'redirection':
@@ -352,10 +334,8 @@ class AdminNotices {
                         'Redirect visitors between static pages, just like you would on your live site.',
                     // phpcs:disable Generic.Files.LineLength.MaxExceeded
                     'message' => "Strattic by Elementor lets you use Redirection on your static site, without implementing any extra configurations. \nGet 14 days for free. No credit card required!",
-                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
-                    'primary_button_url' => 'https://www.strattic.com/pricing/?utm_campaign=start-trial&utm_source=wp2static&utm_medium=wp-dash&utm_term=redirection&utm_content=wp-notification-banner',
-                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
-                    'secondary_button_url' => 'https://www.strattic.com/static-tools/?utm_campaign=learn-more&utm_source=wp2static&utm_medium=wp-dash&utm_term=redirection&utm_content=wp-notification-banner',
+                    'primary_button_url' => 'https://link.strattic.com/try-strattic-redirect',
+                    'secondary_button_url' => 'https://link.strattic.com/learn-strattic-redirect',
                 ];
                 break;
             case 'simple-301-redirects':
@@ -364,10 +344,8 @@ class AdminNotices {
                         'Redirect visitors between static pages, just like you would on your live site.',
                     // phpcs:disable Generic.Files.LineLength.MaxExceeded
                     'message' => "Strattic by Elementor lets you use Simple 301 Redirects on your static site, without implementing any extra configurations. \nGet 14 days for free. No credit card required!",
-                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
-                    'primary_button_url' => 'https://www.strattic.com/pricing/?utm_campaign=start-trial&utm_source=wp2static&utm_medium=wp-dash&utm_term=redirection&utm_content=wp-notification-banner',
-                    // phpcs:disable Generic.Files.LineLength.MaxExceeded
-                    'secondary_button_url' => 'https://www.strattic.com/static-tools/?utm_campaign=learn-more&utm_source=wp2static&utm_medium=wp-dash&utm_term=redirection&utm_content=wp-notification-banner',
+                    'primary_button_url' => 'https://link.strattic.com/try-strattic-redirect',
+                    'secondary_button_url' => 'https://link.strattic.com/learn-strattic-redirect',
                 ];
                 break;
         }
