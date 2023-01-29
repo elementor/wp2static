@@ -1,6 +1,12 @@
 a[href*="wp2static-try-1-click-publish"], .try-1-click-publish-menu-item {
-  color: white;
+  color: white !important;
   background-color: #FB4247;
+  font-weight: bold; 
+}
+
+.try-1-click-publish-menu-item:hover {
+  color: #FB4247 !important;
+  background-color: white !important;
   font-weight: bold; 
 }
 
@@ -25,7 +31,8 @@ a[href*="wp2static-try-1-click-publish"], .try-1-click-publish-menu-item {
 a[id*="wp2static-admin-notice-dismiss"] {
   display: block;
   float: right;
-  margin-top: 10px;
+  margin-top: -55px;
+  text-decoration: none;
 }
 
 #wp2static-admin-notice-nonce, #wp2static-admin-notice-user-id {

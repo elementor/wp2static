@@ -51,9 +51,10 @@ class AdminNotices {
             '<a href="%4$s" target="_blank"><button class="button button-primary">%5$s</button></a>' .
             // phpcs:disable Generic.Files.LineLength.TooLong
             '<a href="%6$s" target="_blank"><button class="button button-secondary">%7$s</button></a>' .
+            '' .
             // phpcs:disable Generic.Files.LineLength.MaxExceeded
             '<a href="#" class="wp2static-admin-notice-dismiss" id="wp2static-admin-notice-dismiss-' .
-            $notice_to_display['name'] . '">Don\'t show this again</a>' .
+            $notice_to_display['name'] . '"><span class="dashicons dashicons-dismiss"></span></a>' .
             '<div id="wp2static-admin-notice-nonce">' .
             wp_create_nonce( 'wp2static-admin-notice' ) . '</div>' .
             '<div id="wp2static-admin-notice-user-id">' .

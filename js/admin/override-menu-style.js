@@ -17,9 +17,11 @@ jQuery(document).ready(function($){
 
   if ( wp2staticAdminNotice ) {
     wp2staticAdminNotice.addEventListener('click', function (e) {
-        if (e.target.className === 'wp2static-admin-notice-dismiss') {
+        const targetParent = e.target.parentNode;
+
+        if (targetParent.className === 'wp2static-admin-notice-dismiss') {
           // notify backend which admin notice was dismissed by user
-          dismissedAdminNotice = e.target.id.replace('wp2static-admin-notice-dismiss-', '')
+          dismissedAdminNotice = targetParent.id.replace('wp2static-admin-notice-dismiss-', '')
 
           adminNoticeNonce =
             document.querySelector('#wp2static-admin-notice-nonce').textContent;
