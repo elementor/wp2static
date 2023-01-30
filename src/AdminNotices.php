@@ -342,7 +342,7 @@ class AdminNotices {
                     'title' =>
                         'Improve the SEO results on your static site with Strattic by Elementor!',
                     // phpcs:disable Generic.Files.LineLength.MaxExceeded
-                    'message' => "Strattic by Elementor lets you use Rank Math on your static site, without implementing any extra configurations. Get fast, secure and simple WordPress static hosting, with dozens of dynamic features like XML sitemaps, search engine pinging, robots.txt support. \nGet 14 days for free. No credit card required!",
+                    'message' => "Strattic by Elementor lets you use Rank Math on your static site, without implementing any extra configurations. \nGet fast, secure and simple WordPress static hosting, with dozens of dynamic features like XML sitemaps, search engine pinging, robots.txt support. \nGet 14 days for free. No credit card required!",
                     'primary_button_url' => 'https://link.strattic.com/try-strattic-seo',
                     'secondary_button_url' => 'https://link.strattic.com/learn-strattic-seo',
                 ];
