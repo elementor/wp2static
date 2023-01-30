@@ -356,6 +356,11 @@ class WordPressAdmin {
                 [ AdminNotices::class, 'showAdminNotices' ],
                 0
             );
+
+            add_filter(
+                'admin_footer_text',
+                [ self::class, 'wp2staticAdminFooterText' ]
+            );
         }
     }
 
@@ -417,6 +422,12 @@ class WordPressAdmin {
             false
         );
         wp_enqueue_script( 'wp2static_admin_scripts' );
+    }
+
+    public static function wp2staticAdminFooterText( $content ) : string {
+        return 'Thank you for using ' .
+            '<a href="https://link.strattic.com/wp2static-footer" target="_blank">WP2Static</a> by ' .
+            '<a href="https://link.strattic.com/strattic-wp2static-footer" target="_blank">Strattic</a>.';
     }
 
     /**
