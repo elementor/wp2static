@@ -282,7 +282,7 @@ class AdminNotices {
                     'title' =>
                         'Want integrated forms on your static site, out-of-the-box?',
                     // phpcs:disable Generic.Files.LineLength.MaxExceeded
-                    'message' => "Strattic by Elementor lets you use Contact Form 7 on your static site, without implementing any extra configurations. \nGet it, plus secure and simple WordPress static hosting. Start a 14 days free trial today, no credit card required!",
+                    'message' => "Strattic by Elementor lets you use Contact Form 7 on your static site, without implementing any extra configurations. \nGet it, plus secure and simple WordPress static hosting. Start a 14 day free trial today, no credit card required!",
                     'primary_button_url' => 'https://link.strattic.com/try-strattic-forms',
                     'secondary_button_url' => 'https://link.strattic.com/learn-strattic-forms',
                 ];
@@ -292,7 +292,7 @@ class AdminNotices {
                     'title' =>
                         'Want integrated forms on your static site, out-of-the-box?',
                     // phpcs:disable Generic.Files.LineLength.MaxExceeded
-                    'message' => "Strattic by Elementor lets you use Gravity Forms on your static site, without implementing any extra configurations. \nGet it, plus secure and simple WordPress static hosting. Start a 14 days free trial today, no credit card required!",
+                    'message' => "Strattic by Elementor lets you use Gravity Forms on your static site, without implementing any extra configurations. \nGet it, plus secure and simple WordPress static hosting. Start a 14 day free trial today, no credit card required!",
                     'primary_button_url' => 'https://link.strattic.com/try-strattic-forms',
                     'secondary_button_url' => 'https://link.strattic.com/learn-strattic-forms',
                 ];
