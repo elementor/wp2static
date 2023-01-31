@@ -6,8 +6,9 @@ use Exception;
 
 class URLHelper {
     public static function isSecure() : bool {
-        return ( ! empty( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] !== 'off' ) ||
-            $_SERVER['SERVER_PORT'] == 443;
+        return ( ! empty( filter_input( INPUT_SERVER, 'HTTPS' ) ) &&
+            filter_input( INPUT_SERVER, 'HTTPS' ) !== 'off' ) ||
+            filter_input( INPUT_SERVER, 'SERVER_PORT' ) == 443;
     }
 
     /*
@@ -17,14 +18,14 @@ class URLHelper {
      */
     public static function getCurrent() : string {
         $scheme = self::isSecure() ? 'https' : 'http';
-        $url = $scheme . '://' . $_SERVER['HTTP_HOST'];
+        $url = $scheme . '://' . filter_input( INPUT_SERVER, 'HTTP_HOST' );
 
         // Only include port number if needed
-        if ( ! in_array( $_SERVER['SERVER_PORT'], [ 80, 443 ] ) ) {
-            $url .= ':' . $_SERVER['SERVER_PORT'];
+        if ( ! in_array( filter_input( INPUT_SERVER, 'SERVER_PORT' ), [ 80, 443 ] ) ) {
+            $url .= ':' . filter_input( INPUT_SERVER, 'SERVER_PORT' );
         }
 
-        $url .= $_SERVER['REQUEST_URI'];
+        $url .= filter_input( INPUT_SERVER, 'REQUEST_URI' );
 
         return $url;
     }
