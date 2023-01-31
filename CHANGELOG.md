@@ -1,4 +1,4 @@
-## Unreleased
+## WP2Static 7.2 (2023-02-01)
 
  - [#876](https://github.com/WP2Static/wp2static/pull/876): Fix #240: ignore SSL errors when fetching sitemap from local site with self-signed certificate. @timothylcooke
  - [d3977eab](d3977eab6be24c4985d998a7f4bf07409ef4a71b): Create an index on `wp2static_jobs.status`. @john-shaffer
@@ -32,6 +32,7 @@
  - [#878](https://github.com/leonstafford/wp2static/issues/878): Fix deletion of old pages when crawl returns 404. @timothylcooke
  - [#868](https://github.com/WP2Static/wp2static/pull/868): Detect files in Divi et-cache/ directory when present. @dunklerfox
  - [#881](https://github.com/WP2Static/wp2static/pull/881): Crawl XSL files. @vladstanca
+ - [#891](https://github.com/WP2Static/wp2static/pull/891): Promote Strattic by Elementor. @leonstafford
 
 ## WP2Static 7.1.7 (2021-09-04)
 
