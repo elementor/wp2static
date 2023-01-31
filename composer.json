@@ -26,6 +26,7 @@
         "php": ">=7.4",
         "wa72/url": "^0.7.1",
         "leonstafford/wp2staticguzzle": "^7.2.0",
+        "symfony/polyfill-php80": "^1.27.0",
         "ext-mbstring": "*",
         "ext-simplexml": "*",
         "lib-libxml": "*"
@@ -34,7 +35,7 @@
         "thecodingmachine/phpstan-strict-rules": "*",
         "szepeviktor/phpstan-wordpress": "*",
         "squizlabs/php_codesniffer": "*",
-        "phpunit/phpunit": "*",
+        "phpunit/phpunit": "9.5.24",
         "dealerdirect/phpcodesniffer-composer-installer": "*",
         "wp-coding-standards/wpcs": "*",
         "phpcompatibility/php-compatibility": "*",

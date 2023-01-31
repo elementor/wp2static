@@ -52,7 +52,6 @@ class Addons {
      */
     public static function getAll( string $type = 'all' ) : array {
         global $wpdb;
-        $addons = [];
 
         $table_name = $wpdb->prefix . 'wp2static_addons';
 

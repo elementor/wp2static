@@ -5,7 +5,7 @@
  * Description: Static site generator functionality for WordPress.
  * Version:     7.2.0-dev
  * Author:      Strattic by Elementor
- * Author URI:  https://wp2static.com
+ * Author URI:  https://link.strattic.com/strattic-by-elementor
  * Text Domain: wp2static
  *
  * @package     WP2Static
