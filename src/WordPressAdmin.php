@@ -424,7 +424,7 @@ class WordPressAdmin {
         wp_enqueue_script( 'wp2static_admin_scripts' );
     }
 
-    public static function wp2staticAdminFooterText( string $content ) : string {
+    public static function wp2staticAdminFooterText( ?string $content = null) : string {
         return 'Thank you for using ' .
             // @phpcs:ignore Generic.Files.LineLength.TooLong
             '<a href="https://link.strattic.com/wp2static-footer" target="_blank">WP2Static</a> by ' .
