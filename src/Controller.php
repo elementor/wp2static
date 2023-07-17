@@ -602,8 +602,8 @@ class Controller {
 
         foreach ( $jobs as $job ) {
             $lock = $wpdb->prefix . '.wp2static_jobs.' . $job->job_type;
-            $query = "SELECT GET_LOCK('$lock', 30) AS lck";
-            $locked = intval( $wpdb->get_row( $query )->lck );
+            $query = "SELECT GET_LOCK('$lock', 30)";
+            $locked = intval( $wpdb->get_row( $query, ARRAY_N )[0] );
             if ( ! $locked ) {
                 WsLog::l( "Failed to acquire \"$lock\" lock." );
                 return;
