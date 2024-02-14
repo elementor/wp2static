@@ -1,6 +1,6 @@
 ## Versioning & branches
 
-`develop` branch is considered unstable with latest code changes (current build status: ![codequality](https://github.com/leonstafford/wp2static/workflows/codequality/badge.svg?branch=develop)). `develop` branch should always have a `-dev` WordPress plugin version, ie `7.1.1-dev`.
+`develop` branch is considered unstable with latest code changes (current build status: ![codequality](https://github.com/elementor/wp2static/workflows/codequality/badge.svg?branch=develop)). `develop` branch should always have a `-dev` WordPress plugin version, ie `7.1.1-dev`.
 
 `master` branch should always reflect a stable release, such as `7.1.1`, which should have a matching tag.
 
@@ -10,7 +10,7 @@ Please don't be intimidated to contribute code to this project. I welcome code
  in any way you're comfortable to contribute it (email, forum, diff). If you're
  new to GitHub and this kind of thing, the below guide may help you. 
 
-1. Fork project with button in top of WP2static github [home page](https://github.com/leonstafford/wp2static)
+1. Fork project with button in top of WP2static github [home page](https://github.com/elementor/wp2static)
 1. Clone your project to your development computer (please, change <your-account> by your account name):  
    `git clone https://github.com/<your-account>/wp2static.git`
 1. Fork your new branch from **develop** naming with:
@@ -21,10 +21,10 @@ Please don't be intimidated to contribute code to this project. I welcome code
 1. Push to your repository  
    `git push origin feature-myfeature`
 1. Then go to your https://github.com/<your-account>/wp2static site and create a pull request:  
-   In base repository choose _leonstafford/wp2static_ and choose _development_ branch.
+   In base repository choose _elementor/wp2static_ and choose _development_ branch.
 1. After Pull Request is approved you need to sync repositories.
 1. In your local development add **upstream** branch:  
-   `git remote add upstream https://github.com/leonstafford/wp2static`
+   `git remote add upstream https://github.com/elementor/wp2static`
 1. Fetch **upstream**  
    `git fetch upstream`
 1. Checkout your local branch:  
@@ -37,13 +37,13 @@ Please don't be intimidated to contribute code to this project. I welcome code
 
 #### Preparing Repository
 
-Fork project WP2static [home page](https://github.com/leonstafford/wp2static)
+Fork project WP2static [home page](https://github.com/elementor/wp2static)
 
 `git clone https://github.com/ebavs/wp2static.git # clone repository (please,change ebavs by yours, this is only an example)`
 
 Then add WP2Static remote
 
-`git remote add upstream https://github.com/leonstafford/wp2static # add remote`
+`git remote add upstream https://github.com/elementor/wp2static # add remote`
 
 #### Working and Commiting
 
@@ -65,7 +65,7 @@ Then **Pull Request** in WP2Static
 
 ### Publishing a new release
 
-This is currently done by @leonstafford and involves these steps:
+This is currently done by @elementor and involves these steps:
 
  - test code in `develop` branch
  - set a new dev version if needed, ie `7.1.1-dev`
